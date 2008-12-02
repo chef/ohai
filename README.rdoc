@@ -4,7 +4,7 @@
 
 == DESCRIPTION:
 
-FIX (describe your package)
+I'm in yur server, findin yer dater
 
 == FEATURES/PROBLEMS:
 
@@ -12,7 +12,10 @@ FIX (describe your package)
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+./bin/ohai
+
+Will print out a JSON structure for all the known data about 
+your system.
 
 == REQUIREMENTS:
 
@@ -21,6 +24,12 @@ FIX (describe your package)
 == INSTALL:
 
 * FIX (sudo gem install, anything else)
+
+== SPECIAL THANKS:
+
+Ohai was significantly easier to build because of the pre-existing
+work of everyone who contributed to Facter, especially Luke Kanies
+of Reductive Labs.  Thanks, guys.
 
 == LICENSE:
 

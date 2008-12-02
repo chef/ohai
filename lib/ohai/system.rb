@@ -19,6 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+require 'rubygems'
 require 'extlib'
 require 'ohai/log'
 require 'ohai/mixin/from_file'

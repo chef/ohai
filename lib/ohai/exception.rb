@@ -19,12 +19,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-require 'ohai/config'
-require 'ohai/system'
-
 module Ohai
-  VERSION = '0.0.1'
+  module Exception
+    class Exec < RuntimeError; end
+  end
 end

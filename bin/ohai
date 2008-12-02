@@ -18,17 +18,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+$: << File.join(File.dirname(__FILE__), "..", "lib")
 require 'optparse'
 require 'rubygems'
-#require 'ohai'
+require 'ohai'
 require 'json'
 
 config = {
+  :directory => nil,
+  :file => nil,
   :kthxbye => false
 }
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} [-d DIR|-r FILE] (options)"
+  opts.banner = "Usage: #{$0} (options)"
+  opts.on("-d", "--directory NAME", "A directory to add to the Ohai search path") do |d|
+    config[:directory] = d
+  end
+  opts.on("-f", "--file NAME", "A file to run Ohai against") do |f|
+    config[:file] = f
+  end
   opts.on("-k", "--kthxbye", "LOLcats") do |k|
     config[:kthxbye] = true
   end
@@ -42,3 +51,15 @@ opts.parse!(ARGV)
 if config[:kthxbye]
   puts JSON.generate({ :lolcat => "http://icanhascheezburger.com/?random" })
 end
+
+ohai = Ohai::System.new
+if config[:file]
+  ohai.from_file(config[:file])
+else
+  if config[:directory]
+    Ohai::Config[:plugin_path] << config[:directory]
+  end
+  ohai.all_plugins
+end
+
+puts ohai.json_pretty_print

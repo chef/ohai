@@ -4,6 +4,9 @@
 # License:: GNU GPL, Version 3
 #
 # Copyright (C) 2008, OpsCode Inc. 
+#
+# Portions of this file benifited greatly from Facter 
+# (http://reductivelabs.com/projects/facter/)
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,12 +22,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
-require 'ohai/config'
-require 'ohai/system'
-
-module Ohai
-  VERSION = '0.0.1'
+popen4("lsb_release -a") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    case line
+    when /^Distributor ID:\t(.*)$/
+      lsb_dist_id $1
+    when /^LSB Version:\t(.*)$/
+      lsb_release $1
+    when /^Release:\t(.*)$/
+      lsb_dist_release $1
+    when /^Description:\t(.*)$/
+      lsb_dist_description $1
+    when /^Codename:\t(.*)$/
+      lsb_dist_codename $1
+    end
+  end
 end

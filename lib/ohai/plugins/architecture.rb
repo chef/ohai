@@ -19,12 +19,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-$:.unshift(File.dirname(__FILE__)) unless
-  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+require_plugin "kernel"
+require_plugin "os"
 
-require 'ohai/config'
-require 'ohai/system'
+hardware_model from('uname -m')
 
-module Ohai
-  VERSION = '0.0.1'
+case kernel
+when "Linux"
+  case hardware_model
+   when 'x86_64'
+     if os == "Debian" 
+        architecture "amd64"
+     else
+        architecture "x86_64"
+     end
+  when /(i[3456]86|pentium)/
+    architecture "i386"
+  end
+else
+  architecture hardware_model
 end

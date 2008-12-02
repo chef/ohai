@@ -102,7 +102,7 @@ describe Ohai::System, "require_plugin" do
   
   it "should convert the name of the plugin to a file path" do
     plugin_name = "foo::bar"
-    plugin_name.should_receive(:gsub).with("::", File::PATH_SEPARATOR)
+    plugin_name.should_receive(:gsub).with("::", File::SEPARATOR)
     @ohai.require_plugin(plugin_name)
   end
   

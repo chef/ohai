@@ -53,7 +53,7 @@ module Ohai
     
     # Set the value equal to the stdout of the command, plus run through a regex - the first piece of match data is the value.
     def from_with_regex(cmd, *regex_list)
-      regex.flatten.each do |regex|
+      regex_list.flatten.each do |regex|
         status, stdout, stderr = run_command(:command => cmd)
         stdout.chomp!
         md = stdout.match(regex)

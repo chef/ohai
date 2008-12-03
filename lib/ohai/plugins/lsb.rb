@@ -16,19 +16,21 @@
 # limitations under the License.
 #
 
-begin
-  File.open("/etc/lsb-release").each do |line|
-    case line
-    when /^DISTRIB_ID=(.+)$/
-      lsb_dist_id $1
-    when /^DISTRIB_RELEASE=(.+)$/
-      lsb_dist_release $1
-    when /^DISTRIB_CODENAME=(.+)$/
-      lsb_dist_codename $1
-    when /^DISTRIB_DESCRIPTION=(.+)$/
-      lsb_dist_description $1
+if os == "linux"
+  begin
+    File.open("/etc/lsb-release").each do |line|
+      case line
+      when /^DISTRIB_ID=(.+)$/
+        lsb_dist_id $1
+      when /^DISTRIB_RELEASE=(.+)$/
+        lsb_dist_release $1
+      when /^DISTRIB_CODENAME=(.+)$/
+        lsb_dist_codename $1
+      when /^DISTRIB_DESCRIPTION=(.+)$/
+        lsb_dist_description $1
+      end
     end
+  rescue
+    Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release")
   end
-rescue
-  Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release")
 end

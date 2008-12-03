@@ -23,33 +23,40 @@ describe Ohai::System, "plugin hostname" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.stub!(:from).with("uname -s").and_return("Darwin")
-    @ohai.stub!(:from).with("uname -r").and_return("9.5.0")
-    @ohai.stub!(:from).with("uname -v").and_return("Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
-    @ohai.stub!(:from).with("uname -m").and_return("i386")
-    @ohai.stub!(:from).with("uname -o").and_return("Linux")
   end
-
-  it_should_check_from("kernel", "kernel_name", "uname -s", "Darwin")
   
-  it_should_check_from("kernel", "kernel_release", "uname -r", "9.5.0")
-  
-  it_should_check_from("kernel", "kernel_version", "uname -v", "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
-  
-  it_should_check_from("kernel", "kernel_machine", "uname -m", "i386")
+  it "should require the os plugin" do
+    @ohai.should_receive(:require_plugin).with("os").and_return(true)  
+    @ohai._require_plugin("hostname")
+  end
   
   describe "on linux" do
     before(:each) do
-      @ohai.stub!(:from).with("uname -s").and_return("Linux")
+      @ohai[:os] = "linux"
+      @ohai.stub!(:from).with("hostname").and_return("katie")
+      @ohai.stub!(:from).with("hostname --fqdn").and_return("katie.bethell")
+    end
+ 
+    it_should_check_from("hostname", "hostname", "hostname", "katie")
+    
+    it_should_check_from("hostname", "fqdn", "hostname --fqdn", "katie.bethell")
+    
+    it "should set the domain to everything after the first dot of the fqdn" do
+      @ohai._require_plugin("hostname")
+      @ohai.domain.should == "bethell"
     end
     
-    it_should_check_from("kernel", "kernel_os", "uname -o", "Linux")
   end
   
   describe "on darwin" do
-    it "should set the kernel_os to the kernel_name value" do
-      @ohai._require_plugin("kernel")
-      @ohai[:kernel_os].should == @ohai[:kernel_name]
+    before(:each) do
+      @ohai[:os] = "darwin"
+      @ohai.stub!(:from).with("hostname -s").and_return("katie")
+      @ohai.stub!(:from).with("hostname").and_return("katie.bethell")
     end
+    
+    it_should_check_from("hostname", "hostname", "hostname -s", "katie")
+    
+    it_should_check_from("hostname", "fqdn", "hostname", "katie.bethell")
   end
 end

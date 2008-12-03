@@ -16,17 +16,4 @@
 # limitations under the License.
 #
 
-require_plugin 'os'
-
-case os
-when "linux"
-  hostname from("hostname")
-  fqdn from("hostname --fqdn")
-when "darwin"
-  hostname from("hostname -s")
-  fqdn from("hostname")
-end
-
-# Domain is everything after the first dot
-fqdn =~ /.+?\.(.*)/
-domain $1
+ohai_time Time.now.to_f

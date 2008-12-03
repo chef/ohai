@@ -23,13 +23,13 @@ when "linux"
   File.open("/proc/meminfo").each do |line|
     case line
     when /^MemTotal:\s+(\d+) (.+)$/
-      memory_total "#{$1$2}"
+      memory_total "#{$1}#{$2}"
     when /^MemFree:\s+(\d+) (.+)$/
-      memory_free  "#{$1$2}"
+      memory_free  "#{$1}#{$2}"
     when /^SwapTotal:\s+(\d+) (.+)$/
-      swap_total "#{$1$2}"
+      swap_total "#{$1}#{$2}"
     when /^SwapFree:\s+(\d+) (.+)$/
-      swap_total "#{$1$2}"
+      swap_total "#{$1}#{$2}"
     end
   end
 end

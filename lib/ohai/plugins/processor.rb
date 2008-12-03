@@ -58,6 +58,6 @@ when "linux"
   end
   
   cpu cpuinfo
-  cpu_total cpuinfo.keys.length
-  cpu_real cpureal.keys.length
+  cpu_total cpu_number
+  cpu_real real_cpu.keys.length
 end

@@ -35,6 +35,14 @@ module Ohai
       @seen_plugins = Hash.new
     end
     
+    def [](key)
+      @data[key]
+    end
+    
+    def []=(key, value)
+      @data[key] = value
+    end
+    
     def attribute?(name)
       Ohai::Log.debug("Attribute #{name} is #{@data.has_key?(name)}")
       @data.has_key?(name) 
@@ -83,8 +91,10 @@ module Ohai
       end
     end
     
-    def require_plugin(plugin_name)
-      return true if @seen_plugins[plugin_name]
+    def require_plugin(plugin_name, force=false)
+      unless force
+        return true if @seen_plugins[plugin_name]
+      end
       
       filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
             

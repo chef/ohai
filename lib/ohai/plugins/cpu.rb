@@ -20,15 +20,15 @@ require_plugin 'os'
 
 case os
 when "linux"
-  cpuinfo = Hash.new
-  real_cpu = Hash.new
+  cpuinfo = Mash.new
+  real_cpu = Mash.new
   cpu_number = 0
   current_cpu = nil
   
   File.open("/proc/cpuinfo").each do |line|
     case line
     when /processor\s+:\s(.+)/
-      cpuinfo[$1] = Hash.new
+      cpuinfo[$1] = Mash.new
       current_cpu = $1
       cpu_number += 1
     when /vendor_id\s+:\s(.+)/

@@ -113,6 +113,10 @@ module Ohai
       end
     end
     
+    # Sneaky!  Lets us stub out require_plugin when testing plugins, but still
+    # call the real require_plugin to kick the whole thing off.
+    alias :_require_plugin :require_plugin
+    
     # Serialize this object as a hash 
     def to_json(*a)
       output = @data.clone

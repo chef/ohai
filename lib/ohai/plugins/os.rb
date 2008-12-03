@@ -22,6 +22,8 @@ require_plugin 'kernel'
 case ruby_host_os
 when /darwin(.+)$/
   os "darwin"
+when /linux/
+  os "linux"
 else
   os ruby_host_os
 end

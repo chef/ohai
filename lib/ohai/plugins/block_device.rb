@@ -20,7 +20,7 @@ require_plugin 'os'
 
 case os
 when "linux"
-  if File.exists("/sys/block")
+  if File.exists?("/sys/block")
     block = Mash.new
     Dir["/sys/block/*"].each do |block_device_dir|
       dir = File.basename(block_device_dir)

@@ -45,7 +45,7 @@ describe Ohai::System, "plugin platform" do
     describe "on lsb compliant distributions" do
       before(:each) do
         @ohai[:lsb_dist_id] = "Ubuntu"
-        @ohai[:lsb_dist_version] = "8.04"
+        @ohai[:lsb_dist_release] = "8.04"
       end
       
       it "should set platform to lowercased lsb_dist_id" do
@@ -53,7 +53,7 @@ describe Ohai::System, "plugin platform" do
         @ohai[:platform].should == "ubuntu"
       end
       
-      it "should set platform_version to lsb_dist_version" do
+      it "should set platform_version to lsb_dist_release" do
         @ohai._require_plugin("platform")
         @ohai[:platform_version].should == "8.04"
       end

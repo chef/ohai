@@ -39,6 +39,4 @@ def _seconds_to_human(seconds)
   end
 end
 
-require_plugin 'os'
-require_plugin "#{os}::uptime"
 

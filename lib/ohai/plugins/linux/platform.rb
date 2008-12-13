@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+require_plugin 'linux::lsb'
+
 if lsb_dist_id
   platform lsb_dist_id.downcase
   platform_version lsb_dist_release

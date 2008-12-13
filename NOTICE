@@ -8,6 +8,7 @@ Contributors and Copyright holders:
 
  * Copyright 2008, OpsCode <legal@opscode.com>
  * Copyright 2008, Adam Jacob <adam@opscode.com>
+ * Copyright 2008, Ben Black <nostromo@gmail.com>
  
 Parts of Ohai were taken from Chef, a configuration management system.
 

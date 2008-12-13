@@ -20,6 +20,3 @@ kernel_name from("uname -s")
 kernel_release from("uname -r")
 kernel_version from("uname -v")
 kernel_machine from("uname -m")
-
-require_plugin 'os'
-require_plugin "#{os}::kernel"

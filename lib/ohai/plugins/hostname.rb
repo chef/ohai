@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin 'os'
 require_plugin "#{os}::hostname"
 
 # Domain is everything after the first dot

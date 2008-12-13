@@ -79,8 +79,13 @@ module Ohai
     end
     
     def all_plugins
+      require_plugin('os')
+      
       Ohai::Config[:plugin_path].each do |path|
-        Dir[File.join(path, '**', '*')].each do |file|
+        [ 
+          Dir[File.join(path, '*')], 
+          Dir[File.join(path, @data[:os], '**', '*')] 
+        ].flatten.each do |file|
           file_regex = Regexp.new("#{path}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
@@ -143,5 +148,10 @@ module Ohai
       
       set_attribute(name, *args)
     end
+    
+    private
+      def load_plugin_file
+        
+      end
   end
 end

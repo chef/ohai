@@ -20,9 +20,6 @@ kernel_name from("uname -s")
 kernel_release from("uname -r")
 kernel_version from("uname -v")
 kernel_machine from("uname -m")
-case kernel_name
-when "Darwin"
-  kernel_os kernel_name
-else
-  kernel_os from("uname -o")
-end
+
+require_plugin 'os'
+require_plugin "#{os}::kernel"

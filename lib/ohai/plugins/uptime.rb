@@ -40,16 +40,5 @@ def _seconds_to_human(seconds)
 end
 
 require_plugin 'os'
-
-case os
-when "linux"
-  uptime, idletime = File.open("/proc/uptime").gets.split(" ")
-  uptime_seconds uptime.to_i
-  uptime self._seconds_to_human(uptime.to_i)
-  idletime_seconds idletime.to_i
-  idletime self._seconds_to_human(idletime.to_i)
-when "darwin"
-  
-end
-
+require_plugin "#{os}::uptime"
 

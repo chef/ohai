@@ -18,43 +18,4 @@
 
 require_plugin 'os'
 require_plugin 'lsb'
-
-case os
-when "darwin"
-  popen4("sw_vers") do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout.each do |line|
-      case line
-      when /^ProductName:\s+(.+)$/
-        macname = $1
-        macname.downcase!
-        macname.gsub!(" ", "_")
-        platform macname
-      when /^ProductVersion:\s+(.+)$/
-        platform_version $1
-      when /^BuildVersion:\s+(.+)$/
-        platform_build $1
-      end
-    end
-  end
-when "linux"
-  if lsb_dist_id
-    platform lsb_dist_id.downcase
-    platform_version lsb_dist_release
-  elsif File.exists?("/etc/debian_version")
-    platform "debian"
-    platform_version from("cat /etc/debian_version")
-  elsif File.exists?("/etc/redhat-release")
-    platform "redhat"
-    File.open("/etc/redhat-release").each do |line|
-      platform "centos" if line =~ /centos/i
-      case line
-      when /\(Rawhide\)/
-        platform_version "rawhide"
-      when /release (\d+)/
-        platform_version $1
-      end
-    end
-  end
-end
- 
+require_plugin "#{os}::platform"

@@ -43,6 +43,12 @@ module Ohai
       @data[key] = value
     end
     
+    def each(&block)
+      @data.each do |key, value|
+        block.call(key, value)
+      end
+    end
+    
     def attribute?(name)
       Ohai::Log.debug("Attribute #{name} is #{@data.has_key?(name)}")
       @data.has_key?(name) 

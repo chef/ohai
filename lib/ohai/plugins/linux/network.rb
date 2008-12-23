@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+network_interfaces(Array.new)
+
 iface = Mash.new
 popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close

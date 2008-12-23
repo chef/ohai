@@ -16,15 +16,16 @@
 # limitations under the License.
 #
 
-network_interfaces(Array.new)
 
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-network_interfaces.each do |iface|
-  if iface !~ /lo/
-    if network_interface[iface].has_key?("ipaddress")
-      ipaddress network_interface[iface]["ipaddress"]
+if attribute?("network_interfaces")
+  network_interfaces.each do |iface|
+    if iface !~ /lo/
+      if network_interface[iface].has_key?("ipaddress")
+        ipaddress network_interface[iface]["ipaddress"]
+      end
     end
   end
 end

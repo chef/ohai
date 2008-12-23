@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-require 'resolv'
-
 network_interfaces(Array.new)
 
 require_plugin "hostname"

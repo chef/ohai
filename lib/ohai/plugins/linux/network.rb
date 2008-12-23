@@ -23,6 +23,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+)/
       cint = $1
+      network_interfaces.push(cint)
       iface[cint] = Mash.new
     end
     if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
@@ -32,7 +33,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["macaddress"] = $1
     end
     if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["ip_address"] = $1
+      iface[cint]["ipaddress"] = $1
     end
     if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
       iface[cint]["broadcast"] = $1

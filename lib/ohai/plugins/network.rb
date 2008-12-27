@@ -26,6 +26,9 @@ if attribute?("network_interfaces")
       if network_interface[iface].has_key?("ipaddress")
         ipaddress network_interface[iface]["ipaddress"]
       end
+      if network_interface[iface].has_key?("macaddress")
+        macaddress network_interface[iface]["macaddress"]
+      end
     end
   end
 end

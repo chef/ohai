@@ -12,6 +12,8 @@ Contributors and Copyright holders:
  
 Parts of Ohai were taken from Chef, a configuration management system.
 
+Ohai incorporates functionality from Open4 (http://www.codeforpeople.com/lib/ruby/open4/).
+
 ============
 Chef Notices
 ============

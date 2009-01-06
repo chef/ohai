@@ -33,6 +33,7 @@ lib/ohai/plugins/linux/memory.rb
 lib/ohai/plugins/linux/network.rb
 lib/ohai/plugins/linux/platform.rb
 lib/ohai/plugins/linux/uptime.rb
+lib/ohai/plugins/network.rb
 lib/ohai/plugins/ohai_time.rb
 lib/ohai/plugins/os.rb
 lib/ohai/plugins/ruby.rb

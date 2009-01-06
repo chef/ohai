@@ -35,4 +35,7 @@ elsif File.exists?("/etc/redhat-release")
       platform_version $1
     end
   end
+elsif File.exists?('/etc/gentoo-release')
+  platform "gentoo"
+  platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
 end

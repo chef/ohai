@@ -7,8 +7,7 @@ README.rdoc
 Rakefile
 bin/ohai
 extras/facter.rb
-features/development.feature
-features/ohai.feature
+features/ohai.feature.pending
 features/steps/common.rb
 features/steps/env.rb
 lib/ohai.rb
@@ -40,6 +39,7 @@ lib/ohai/plugins/platform.rb
 lib/ohai/plugins/ruby.rb
 lib/ohai/plugins/uptime.rb
 lib/ohai/system.rb
+ohai.gemspec
 script/console
 script/destroy
 script/generate

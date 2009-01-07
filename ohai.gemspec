@@ -53,8 +53,6 @@ Gem::Specification.new do |s|
     "script/destroy", 
     "script/generate", 
     "tasks/rspec.rake",
-  ]
-  s.test_files = [
     "features/development.feature", 
     "features/ohai.feature", 
     "features/steps/common.rb", 
@@ -85,7 +83,6 @@ Gem::Specification.new do |s|
   ]
   s.has_rdoc = true
   s.homepage = %q{http://www.opscode.com/ohai}
-  s.post_install_message = %q{PostInstall.txt}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.2.0}

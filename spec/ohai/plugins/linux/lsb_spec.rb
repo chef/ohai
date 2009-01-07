@@ -17,9 +17,9 @@
 #
 
 
-require File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb')
+require File.join(File.dirname(__FILE__), '..', '..', '..', '/spec_helper.rb')
 
-describe Ohai::System, "plugin lsb" do
+describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @ohai[:os] = "linux"    
@@ -33,22 +33,22 @@ describe Ohai::System, "plugin lsb" do
   end
   
   it "should set lsb_dist_id" do
-    @ohai._require_plugin("lsb")
+    @ohai._require_plugin("linux::lsb")
     @ohai[:lsb_dist_id] == "Ubuntu"
   end
   
   it "should set lsb_dist_release" do
-    @ohai._require_plugin("lsb")
+    @ohai._require_plugin("linux::lsb")
     @ohai[:lsb_dist_release] == "8.04"
   end
   
   it "should set lsb_dist_codename" do
-    @ohai._require_plugin("lsb")
+    @ohai._require_plugin("linux::lsb")
     @ohai[:lsb_dist_codename] == "hardy"
   end
   
   it "should set lsb dist description" do
-    @ohai._require_plugin("lsb")
+    @ohai._require_plugin("linux::lsb")
     @ohai[:lsb_dist_description] == "Ubuntu 8.04"
   end
   

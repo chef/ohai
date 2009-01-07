@@ -16,8 +16,4 @@
 # limitations under the License.
 #
 
-kernel_name from("uname -s")
-kernel_release from("uname -r")
-kernel_version from("uname -v")
-kernel_machine from("uname -m")
 kernel_os from("uname -o")

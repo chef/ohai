@@ -17,17 +17,18 @@
 #
 
 
-require File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb')
+require File.join(File.dirname(__FILE__), '..', '..', '..', '/spec_helper.rb')
 
-describe Ohai::System, "hostname plugin" do
+describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:fqdn] = "katie.bethell"
+    @ohai[:kernel_name] = "darwin"
   end
 
-  it "should set the domain to everything after the first dot of the fqdn" do
-    @ohai._require_plugin("hostname")
-    @ohai.domain.should == "bethell"
+  it "should set the kernel_os to the kernel_name value" do
+    @ohai._require_plugin("darwin::kernel")
+    @ohai[:kernel_os].should == @ohai[:kernel_name]
   end
+
 end

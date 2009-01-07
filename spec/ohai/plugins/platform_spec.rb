@@ -23,98 +23,34 @@ describe Ohai::System, "plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:os] = 'monkey'
+    @ohai[:os_version] = 'poop'
   end
   
-  it "should require the os plugin" do
-    @ohai.should_receive(:require_plugin).with("os").and_return(true)  
+  it "should require the os platform plugin" do
+    @ohai.should_receive(:require_plugin).with("monkey::platform")
     @ohai._require_plugin("platform")
   end
   
-  it "should require the lsb plugin" do
-    @ohai.should_receive(:require_plugin).with("lsb").and_return(true)  
+  it "should set the platform to the os if it was not set earlier" do
     @ohai._require_plugin("platform")
+    @ohai[:platform].should eql("monkey")
   end
   
-  describe "on linux" do
-    before(:each) do
-      @ohai[:os] = "linux"
-      #File.stub!(:exists?).with("/etc/debian_version").and_return(false)
-      #File.stub!(:exists?).with("/etc/redhat-release").and_return(false)
-    end
-    
-    describe "on lsb compliant distributions" do
-      before(:each) do
-        @ohai[:lsb_dist_id] = "Ubuntu"
-        @ohai[:lsb_dist_release] = "8.04"
-      end
-      
-      it "should set platform to lowercased lsb_dist_id" do
-        @ohai._require_plugin("platform")        
-        @ohai[:platform].should == "ubuntu"
-      end
-      
-      it "should set platform_version to lsb_dist_release" do
-        @ohai._require_plugin("platform")
-        @ohai[:platform_version].should == "8.04"
-      end
-    end
-    
-    # describe "on debian" do
-    #   before(:each) do
-    #     File.stub!(:exists?).and_return(true)
-    #   end
-    #   
-    #   it "should set the platform to debian" do
-    #     @ohai._require_plugin("platform")
-    #     @ohai[:platform].should == "debian"
-    #   end
-    #   
-    #   it_should_check_from("platform", "platform_version", "cat /etc/debian_version", "lenny/sid")
-    # end
+  it "should not set the platform to the os if it was set earlier" do
+    @ohai[:platform] = 'lars'
+    @ohai._require_plugin("platform")
+    @ohai[:platform].should eql("lars")
   end
   
-  describe "on darwin" do
-    before(:each) do
-      @ohai[:os] = "darwin"
-      @pid = 10
-      @stdin = mock("STDIN", { :close => true })
-      @stdout = mock("STDOUT")
-      @stdout.stub!(:each).
-        and_yield("ProductName:	Mac OS X").
-        and_yield("ProductVersion:	10.5.5").
-        and_yield("BuildVersion:	9F33")
-      @stderr = mock("STDERR") 
-      @ohai.stub!(:popen4).with("sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
-    end
-    
-    it "should run sw_vers" do
-      @ohai.should_receive(:popen4).with("sw_vers").and_return(true)
-      @ohai._require_plugin("platform")
-    end
-    
-    it "should close sw_vers stdin" do
-      @stdin.should_receive(:close)
-      @ohai._require_plugin("platform")
-    end
-    
-    it "should iterate over each line of sw_vers stdout" do
-      @stdout.should_receive(:each).and_return(true)
-      @ohai._require_plugin("platform")
-    end
-    
-    it "should set platform to ProductName, downcased with _ for \\s" do
-      @ohai._require_plugin("platform")
-      @ohai[:platform].should == "mac_os_x"
-    end
-    
-    it "should set platform_version to ProductVersion" do
-      @ohai._require_plugin("platform")
-      @ohai[:platform_version].should == "10.5.5"
-    end
-    
-    it "should set platform_build to BuildVersion" do
-      @ohai._require_plugin("platform")
-      @ohai[:platform_build].should == "9F33"
-    end
+  it "should set the platform_version to the os_version if it was not set earlier" do
+    @ohai._require_plugin("platform")
+    @ohai[:os_version].should eql("poop")
+  end
+  
+  it "should not set the platform to the os if it was set earlier" do
+    @ohai[:platform_version] = 'ulrich'
+    @ohai._require_plugin("platform")
+    @ohai[:platform_version].should eql("ulrich")
   end
 end

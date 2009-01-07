@@ -37,19 +37,5 @@ describe Ohai::System, "plugin kernel" do
   it_should_check_from("kernel", "kernel_version", "uname -v", "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
   
   it_should_check_from("kernel", "kernel_machine", "uname -m", "i386")
-  
-  describe "on linux" do
-    before(:each) do
-      @ohai.stub!(:from).with("uname -s").and_return("Linux")
-    end
-    
-    it_should_check_from("kernel", "kernel_os", "uname -o", "Linux")
-  end
-  
-  describe "on darwin" do
-    it "should set the kernel_os to the kernel_name value" do
-      @ohai._require_plugin("kernel")
-      @ohai[:kernel_os].should == @ohai[:kernel_name]
-    end
-  end
+
 end

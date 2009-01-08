@@ -54,5 +54,5 @@ File.open("/proc/cpuinfo").each do |line|
 end
 
 cpu cpuinfo
-cpu_total cpu_number
-cpu_real real_cpu.keys.length
+cpu[:total] = cpu_number
+cpu[:real] = real_cpu.keys.length

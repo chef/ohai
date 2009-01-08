@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-kernel_os kernel_name
+kernel[:os] = kernel[:name]

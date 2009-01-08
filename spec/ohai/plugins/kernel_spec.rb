@@ -30,12 +30,12 @@ describe Ohai::System, "plugin kernel" do
     @ohai.stub!(:from).with("uname -o").and_return("Linux")
   end
 
-  it_should_check_from("kernel", "kernel_name", "uname -s", "Darwin")
-  
-  it_should_check_from("kernel", "kernel_release", "uname -r", "9.5.0")
-  
-  it_should_check_from("kernel", "kernel_version", "uname -v", "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
-  
-  it_should_check_from("kernel", "kernel_machine", "uname -m", "i386")
+  it_should_check_from_mash("kernel", "name", "uname -s", "Darwin")
+
+  it_should_check_from_mash("kernel", "release", "uname -r", "9.5.0")
+
+  it_should_check_from_mash("kernel", "version", "uname -v", "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
+
+  it_should_check_from_mash("kernel", "machine", "uname -m", "i386")
 
 end

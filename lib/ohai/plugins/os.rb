@@ -19,14 +19,14 @@
 require_plugin 'ruby'
 require_plugin 'kernel'
 
-case ruby_host_os
+case ruby[:host_os]
 when /darwin(.+)$/
   os "darwin"
 when /linux/
   os "linux"
 else
-  os ruby_host_os
+  os ruby[:host_os]
 end
 
-os_version kernel_release
+os_version kernel[:release]
 

@@ -27,21 +27,21 @@ describe Ohai::System, "plugin ruby" do
   end
 
   {
-    :ruby_platform => RUBY_PLATFORM,
-    :ruby_version => RUBY_VERSION,
-    :ruby_release_date => RUBY_RELEASE_DATE,
-    :ruby_target => ::Config::CONFIG['target'],
-    :ruby_target_cpu => ::Config::CONFIG['target_cpu'],
-    :ruby_target_vendor => ::Config::CONFIG['target_vendor'],
-    :ruby_target_os => ::Config::CONFIG['target_os'],
-    :ruby_host => ::Config::CONFIG['host'],
-    :ruby_host_cpu => ::Config::CONFIG['host_cpu'],
-    :ruby_host_os => ::Config::CONFIG['host_os'],
-    :ruby_host_vendor => ::Config::CONFIG['host_vendor']
+    :platform => RUBY_PLATFORM,
+    :version => RUBY_VERSION,
+    :release_date => RUBY_RELEASE_DATE,
+    :target => ::Config::CONFIG['target'],
+    :target_cpu => ::Config::CONFIG['target_cpu'],
+    :target_vendor => ::Config::CONFIG['target_vendor'],
+    :target_os => ::Config::CONFIG['target_os'],
+    :host => ::Config::CONFIG['host'],
+    :host_cpu => ::Config::CONFIG['host_cpu'],
+    :host_os => ::Config::CONFIG['host_os'],
+    :host_vendor => ::Config::CONFIG['host_vendor']
   }.each do |attribute, value|
     it "should have #{attribute} set" do
       @ohai._require_plugin("ruby")
-      @ohai[attribute].should eql(value)
+      @ohai[:ruby][attribute].should eql(value)
     end
   end
   

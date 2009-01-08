@@ -18,9 +18,9 @@
 
 require_plugin 'linux::lsb'
 
-if lsb_dist_id
-  platform lsb_dist_id.downcase
-  platform_version lsb_dist_release
+if lsb[:id]
+  platform lsb[:id].downcase
+  platform_version lsb[:release]
 elsif File.exists?("/etc/debian_version")
   platform "debian"
   platform_version from("cat /etc/debian_version")

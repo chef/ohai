@@ -21,3 +21,27 @@ def it_should_check_from(plugin, attribute, from, value)
     @ohai[attribute].should == value
   end
 end
+
+def it_should_check_from_mash(plugin, attribute, from, value)
+  it "should get the #{plugin}[:#{attribute}] value from '#{from}'" do
+    @ohai.should_receive(:from).with(from).and_return(value)
+    @ohai._require_plugin(plugin)
+  end
+  
+  it "should set the #{plugin}[:#{attribute}] to the value from '#{from}'" do
+    @ohai._require_plugin(plugin)
+    @ohai[plugin][attribute].should == value
+  end
+end
+
+def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
+  it "should get the #{mash}[:#{attribute}] value from '#{from}'" do
+    @ohai.should_receive(:from).with(from).and_return(value)
+    @ohai._require_plugin(plugin)
+  end
+  
+  it "should set the #{mash}[:#{attribute}] to the value from '#{from}'" do
+    @ohai._require_plugin(plugin)
+    @ohai[mash][attribute].should == value
+  end
+end

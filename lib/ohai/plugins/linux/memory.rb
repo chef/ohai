@@ -16,63 +16,66 @@
 # limitations under the License.
 #
 
+memory Mash.new
+swap Mash.new
+
 File.open("/proc/meminfo").each do |line|
   case line
   when /^MemTotal:\s+(\d+) (.+)$/
-    memory_total "#{$1}#{$2}"
+    memory[:total] = "#{$1}#{$2}"
   when /^MemFree:\s+(\d+) (.+)$/
-    memory_free  "#{$1}#{$2}"
+    memory[:free] = "#{$1}#{$2}"
   when /^Buffers:\s+(\d+) (.+)$/
-    memory_buffers "#{$1}#{$2}"
+    memory[:buffers] = "#{$1}#{$2}"
   when /^Cached:\s+(\d+) (.+)$/
-    memory_cached "#{$1}#{$2}"
+    memory[:cached] = "#{$1}#{$2}"
   when /^Active:\s+(\d+) (.+)$/
-    memory_active "#{$1}#{$2}"
+    memory[:active] = "#{$1}#{$2}"
   when /^Inactive:\s+(\d+) (.+)$/
-    memory_inactive "#{$1}#{$2}"
+    memory[:inactive] = "#{$1}#{$2}"
   when /^HighTotal:\s+(\d+) (.+)$/
-    memory_high_total "#{$1}#{$2}"
+    memory[:high_total] = "#{$1}#{$2}"
   when /^HighFree:\s+(\d+) (.+)$/
-    memory_high_free "#{$1}#{$2}"
+    memory[:high_free] = "#{$1}#{$2}"
   when /^LowTotal:\s+(\d+) (.+)$/
-    memory_low_total "#{$1}#{$2}"
+    memory[:low_total] = "#{$1}#{$2}"
   when /^LowFree:\s+(\d+) (.+)$/
-    memory_low_free "#{$1}#{$2}"
+    memory[:low_free] = "#{$1}#{$2}"
   when /^Dirty:\s+(\d+) (.+)$/
-    memory_dirty "#{$1}#{$2}"
+    memory[:dirty] = "#{$1}#{$2}"
   when /^Writeback:\s+(\d+) (.+)$/
-    memory_writeback "#{$1}#{$2}"
+    memory[:writeback] = "#{$1}#{$2}"
   when /^AnonPages:\s+(\d+) (.+)$/
-    memory_anon_pages "#{$1}#{$2}"
+    memory[:anon_pages] = "#{$1}#{$2}"
   when /^Mapped:\s+(\d+) (.+)$/
-    memory_mapped "#{$1}#{$2}"
+    memory[:mapped] = "#{$1}#{$2}"
   when /^Slab:\s+(\d+) (.+)$/
-    memory_slab "#{$1}#{$2}"
+    memory[:slab] = "#{$1}#{$2}"
   when /^SReclaimable:\s+(\d+) (.+)$/
-    memory_slab_reclaimable "#{$1}#{$2}"
+    memory[:slab_reclaimable] = "#{$1}#{$2}"
   when /^SUnreclaim:\s+(\d+) (.+)$/
-    memory_slab_unreclaim "#{$1}#{$2}"
+    memory[:slab_unreclaim] = "#{$1}#{$2}"
   when /^PageTables:\s+(\d+) (.+)$/
-    memory_page_tables "#{$1}#{$2}"
+    memory[:page_tables] = "#{$1}#{$2}"
   when /^NFS_Unstable:\s+(\d+) (.+)$/
-    memory_nfs_unstable "#{$1}#{$2}"
+    memory[:nfs_unstable] = "#{$1}#{$2}"
   when /^Bounce:\s+(\d+) (.+)$/
-    memory_bounce "#{$1}#{$2}"
+    memory[:bounce] = "#{$1}#{$2}"
   when /^CommitLimit:\s+(\d+) (.+)$/
-    memory_commit_limit "#{$1}#{$2}"
+    memory[:commit_limit] = "#{$1}#{$2}"
   when /^Committed_AS:\s+(\d+) (.+)$/
-    memory_committed_as "#{$1}#{$2}"
+    memory[:committed_as] = "#{$1}#{$2}"
   when /^VmallocTotal:\s+(\d+) (.+)$/
-    memory_vmalloc_total "#{$1}#{$2}"
+    memory[:vmalloc_total] = "#{$1}#{$2}"
   when /^VmallocUsed:\s+(\d+) (.+)$/
-    memory_vmalloc_used "#{$1}#{$2}"
+    memory[:vmalloc_used] = "#{$1}#{$2}"
   when /^VmallocChunk:\s+(\d+) (.+)$/
-    memory_vmalloc_chunk "#{$1}#{$2}"
+    memory[:vmalloc_chunk] = "#{$1}#{$2}"
   when /^SwapCached:\s+(\d+) (.+)$/
-    swap_cached "#{$1}#{$2}"
+    swap[:cached] = "#{$1}#{$2}"
   when /^SwapTotal:\s+(\d+) (.+)$/
-    swap_total "#{$1}#{$2}"
+    swap[:total] = "#{$1}#{$2}"
   when /^SwapFree:\s+(\d+) (.+)$/
-    swap_free "#{$1}#{$2}"
+    swap[:free] = "#{$1}#{$2}"
   end
 end

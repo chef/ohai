@@ -24,6 +24,7 @@ describe Ohai::System, "Linux plugin platform" do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:os] = "linux"
+    @ohai[:lsb] = Mash.new
   end
   
   it "should require the lsb plugin" do
@@ -33,16 +34,16 @@ describe Ohai::System, "Linux plugin platform" do
   
   describe "on lsb compliant distributions" do
     before(:each) do
-      @ohai[:lsb_dist_id] = "Ubuntu"
-      @ohai[:lsb_dist_release] = "8.04"
+      @ohai[:lsb][:id] = "Ubuntu"
+      @ohai[:lsb][:release] = "8.04"
     end
     
-    it "should set platform to lowercased lsb_dist_id" do
+    it "should set platform to lowercased lsb[:id]" do
       @ohai._require_plugin("linux::platform")        
       @ohai[:platform].should == "ubuntu"
     end
     
-    it "should set platform_version to lsb_dist_release" do
+    it "should set platform_version to lsb[:release]" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform_version].should == "8.04"
     end

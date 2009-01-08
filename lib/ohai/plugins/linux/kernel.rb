@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-kernel_os from("uname -o")
+kernel[:os] = from("uname -o")

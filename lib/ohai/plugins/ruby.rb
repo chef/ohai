@@ -16,14 +16,16 @@
 # limitations under the License.
 #
 
-ruby_platform RUBY_PLATFORM
-ruby_version RUBY_VERSION
-ruby_release_date RUBY_RELEASE_DATE
-ruby_target ::Config::CONFIG['target']
-ruby_target_cpu ::Config::CONFIG['target_cpu']
-ruby_target_vendor ::Config::CONFIG['target_vendor']
-ruby_target_os ::Config::CONFIG['target_os']
-ruby_host ::Config::CONFIG['host']
-ruby_host_cpu ::Config::CONFIG['host_cpu']
-ruby_host_os ::Config::CONFIG['host_os']
-ruby_host_vendor ::Config::CONFIG['host_vendor']
+ruby Mash.new
+
+ruby[:platform] = RUBY_PLATFORM
+ruby[:version] = RUBY_VERSION
+ruby[:release_date] = RUBY_RELEASE_DATE
+ruby[:target] = ::Config::CONFIG['target']
+ruby[:target_cpu] = ::Config::CONFIG['target_cpu']
+ruby[:target_vendor] = ::Config::CONFIG['target_vendor']
+ruby[:target_os] = ::Config::CONFIG['target_os']
+ruby[:host] = ::Config::CONFIG['host']
+ruby[:host_cpu] = ::Config::CONFIG['host_cpu']
+ruby[:host_os] = ::Config::CONFIG['host_os']
+ruby[:host_vendor] = ::Config::CONFIG['host_vendor']

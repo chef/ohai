@@ -48,14 +48,14 @@ describe Ohai::System, "Linux cpu plugin" do
     File.stub!(:open).with("/proc/cpuinfo").and_return(@mock_file)
   end
   
-  it "should set cpu_total to 1" do
+  it "should set cpu[:total] to 1" do
     @ohai._require_plugin("linux::cpu")
-    @ohai[:cpu_total].should == 1
+    @ohai[:cpu][:total].should == 1
   end
   
-  it "should set cpu_real to 0" do
+  it "should set cpu[:real] to 0" do
     @ohai._require_plugin("linux::cpu")
-    @ohai[:cpu_real].should == 0
+    @ohai[:cpu][:real].should == 0
   end
   
   it "should have a cpu 0" do

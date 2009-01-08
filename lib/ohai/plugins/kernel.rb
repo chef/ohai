@@ -16,7 +16,8 @@
 # limitations under the License.
 #
 
-kernel_name from("uname -s")
-kernel_release from("uname -r")
-kernel_version from("uname -v")
-kernel_machine from("uname -m")
+kernel Mash.new
+kernel[:name] = from("uname -s")
+kernel[:release] = from("uname -r")
+kernel[:version] = from("uname -v")
+kernel[:machine] = from("uname -m")

@@ -23,12 +23,13 @@ describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:kernel_name] = "darwin"
+    @ohai[:kernel] = Mash.new
+    @ohai[:kernel][:name] = "darwin"
   end
 
   it "should set the kernel_os to the kernel_name value" do
     @ohai._require_plugin("darwin::kernel")
-    @ohai[:kernel_os].should == @ohai[:kernel_name]
+    @ohai[:kernel][:os].should == @ohai[:kernel][:name]
   end
 
 end

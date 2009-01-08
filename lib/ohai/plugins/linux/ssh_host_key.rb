@@ -17,5 +17,5 @@
 #
 
 ssh Mash.new
-ssh[:host_dsa_public_key] IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-ssh[:host_rsa_public_key] IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+ssh[:host_dsa_public_key] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+ssh[:host_rsa_public_key] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]

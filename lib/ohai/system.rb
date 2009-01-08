@@ -118,7 +118,7 @@ module Ohai
           return true
         rescue IOError => e
           Ohai::Log.debug("No #{plugin_name} at #{check_path}")
-        rescue Exception => e
+        rescue Exception,Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect}")
         end
       end

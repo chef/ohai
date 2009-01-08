@@ -16,8 +16,4 @@
 # limitations under the License.
 #
 
-module Ohai
-  module Exception
-    class Exec < RuntimeError; end
-  end
-end
+languages Mash.new

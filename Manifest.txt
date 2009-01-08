@@ -20,8 +20,11 @@ lib/ohai/mixin/from_file.rb
 lib/ohai/plugins/darwin/hostname.rb
 lib/ohai/plugins/darwin/kernel.rb
 lib/ohai/plugins/darwin/platform.rb
+lib/ohai/plugins/darwin/ssh_host_key.rb
 lib/ohai/plugins/hostname.rb
 lib/ohai/plugins/kernel.rb
+lib/ohai/plugins/keys.rb
+lib/ohai/plugins/languages.rb
 lib/ohai/plugins/linux/block_device.rb
 lib/ohai/plugins/linux/cpu.rb
 lib/ohai/plugins/linux/filesystem.rb
@@ -31,6 +34,7 @@ lib/ohai/plugins/linux/lsb.rb
 lib/ohai/plugins/linux/memory.rb
 lib/ohai/plugins/linux/network.rb
 lib/ohai/plugins/linux/platform.rb
+lib/ohai/plugins/linux/ssh_host_key.rb
 lib/ohai/plugins/linux/uptime.rb
 lib/ohai/plugins/network.rb
 lib/ohai/plugins/ohai_time.rb

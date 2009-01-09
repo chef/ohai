@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 OpsCode, Inc.
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,18 @@
 # limitations under the License.
 #
 
-ruby Mash.new
+require_plugin "languages"
 
-ruby[:platform] = RUBY_PLATFORM
-ruby[:version] = RUBY_VERSION
-ruby[:release_date] = RUBY_RELEASE_DATE
-ruby[:target] = ::Config::CONFIG['target']
-ruby[:target_cpu] = ::Config::CONFIG['target_cpu']
-ruby[:target_vendor] = ::Config::CONFIG['target_vendor']
-ruby[:target_os] = ::Config::CONFIG['target_os']
-ruby[:host] = ::Config::CONFIG['host']
-ruby[:host_cpu] = ::Config::CONFIG['host_cpu']
-ruby[:host_os] = ::Config::CONFIG['host_os']
-ruby[:host_vendor] = ::Config::CONFIG['host_vendor']
+languages[:ruby] = Mash.new
+
+languages[:ruby][:platform] = RUBY_PLATFORM
+languages[:ruby][:version] = RUBY_VERSION
+languages[:ruby][:release_date] = RUBY_RELEASE_DATE
+languages[:ruby][:target] = ::Config::CONFIG['target']
+languages[:ruby][:target_cpu] = ::Config::CONFIG['target_cpu']
+languages[:ruby][:target_vendor] = ::Config::CONFIG['target_vendor']
+languages[:ruby][:target_os] = ::Config::CONFIG['target_os']
+languages[:ruby][:host] = ::Config::CONFIG['host']
+languages[:ruby][:host_cpu] = ::Config::CONFIG['host_cpu']
+languages[:ruby][:host_os] = ::Config::CONFIG['host_os']
+languages[:ruby][:host_vendor] = ::Config::CONFIG['host_vendor']

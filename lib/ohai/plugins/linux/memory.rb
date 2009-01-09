@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 OpsCode, Inc.
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 #
 
 memory Mash.new
-swap Mash.new
+memory[:swap] = Mash.new
 
 File.open("/proc/meminfo").each do |line|
   case line
@@ -72,10 +72,10 @@ File.open("/proc/meminfo").each do |line|
   when /^VmallocChunk:\s+(\d+) (.+)$/
     memory[:vmalloc_chunk] = "#{$1}#{$2}"
   when /^SwapCached:\s+(\d+) (.+)$/
-    swap[:cached] = "#{$1}#{$2}"
+    memory[:swap][:cached] = "#{$1}#{$2}"
   when /^SwapTotal:\s+(\d+) (.+)$/
-    swap[:total] = "#{$1}#{$2}"
+    memory[:swap][:total] = "#{$1}#{$2}"
   when /^SwapFree:\s+(\d+) (.+)$/
-    swap[:free] = "#{$1}#{$2}"
+    memory[:swap][:free] = "#{$1}#{$2}"
   end
 end

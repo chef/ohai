@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 OpsCode, Inc.
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,9 @@
 # limitations under the License.
 #
 
-ssh Mash.new
+require_plugin "keys"
 
-ssh[:host_dsa_public_key] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-ssh[:host_rsa_public_key] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+keys[:ssh] = Mash.new
+
+keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 OpsCode, Inc.
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,8 @@ require File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb')
 describe Ohai::System, "plugin ruby" do
 
   before(:each) do
-    @ohai = Ohai::System.new    
+    @ohai = Ohai::System.new
+    @ohai[:languages] = Mash.new    
     @ohai.stub!(:require_plugin).and_return(true)
   end
 
@@ -41,7 +42,7 @@ describe Ohai::System, "plugin ruby" do
   }.each do |attribute, value|
     it "should have #{attribute} set" do
       @ohai._require_plugin("ruby")
-      @ohai[:ruby][attribute].should eql(value)
+      @ohai[:languages][:ruby][attribute].should eql(value)
     end
   end
   

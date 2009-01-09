@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 OpsCode, Inc.
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,13 +19,13 @@
 require_plugin 'ruby'
 require_plugin 'kernel'
 
-case ruby[:host_os]
+case languages[:ruby][:host_os]
 when /darwin(.+)$/
   os "darwin"
 when /linux/
   os "linux"
 else
-  os ruby[:host_os]
+  os languages[:ruby][:host_os]
 end
 
 os_version kernel[:release]

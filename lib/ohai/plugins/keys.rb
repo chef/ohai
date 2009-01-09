@@ -1,7 +1,8 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
-# License:: Apache License, Version 2.0
+# Cookbook Name:: apache2
+# Recipe:: default
+#
+# Copyright 2008, OpsCode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +17,4 @@
 # limitations under the License.
 #
 
-module Ohai
-  module Exception
-    class Exec < RuntimeError; end
-  end
-end
+keys Mash.new

@@ -19,11 +19,18 @@ your system.
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* rake
+* rubigen
+* newgem
+* json
+* rspec
+* extlib 
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* git clone git@github.com:hjkp/ohai.git 
+* cd ohai
+* rake install 
 
 == SPECIAL THANKS:
 

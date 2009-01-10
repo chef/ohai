@@ -80,7 +80,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
         flags = Array.new
       end
       iface[cint]["flags"] = flags.flatten
-      if cint =~ /^(\w+)(\d+)/
+      if cint =~ /^(\w+)(\d+.*)/
         iface[cint]["type"] = $1
         iface[cint]["number"] = $2
         iface[cint]["encapsulation"] = encaps_lookup($1)

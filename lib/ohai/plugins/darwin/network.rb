@@ -16,27 +16,6 @@
 # limitations under the License.
 #
 
-#lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
-#	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1
-#	inet 127.0.0.1 netmask 0xff000000
-#	inet6 ::1 prefixlen 128
-#gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
-#stf0: flags=0<> mtu 1280
-#en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-#	ether 00:22:41:2c:2f:d5
-#	media: autoselect status: inactive
-#	supported media: autoselect 10baseT/UTP <half-duplex> 10baseT/UTP <full-duplex> 10baseT/UTP <full-duplex,hw-loopback> 10baseT/UTP <full-duplex,flow-control> 100baseTX <half-duplex> 100baseTX <full-duplex> 100baseTX <full-duplex,hw-loopback> 100baseTX <full-duplex,flow-control> 1000baseT <full-duplex> 1000baseT <full-duplex,hw-loopback> 1000baseT <full-duplex,flow-control> none
-#en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-#	inet6 fe80::221:e9ff:fee4:aae7%en1 prefixlen 64 scopeid 0x5
-#	inet 192.168.0.83 netmask 0xffffff00 broadcast 192.168.0.255
-#	ether 00:21:e9:e4:aa:e7
-#	media: autoselect status: active
-#	supported media: autoselect
-#fw0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 4078
-#	lladdr 00:22:41:ff:fe:53:56:16
-#	media: autoselect <full-duplex> status: inactive
-#	supported media: autoselect <full-duplex>
-
 require 'resolv'
 require 'scanf'
 

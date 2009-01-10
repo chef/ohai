@@ -21,13 +21,20 @@ network(Mash.new)
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-if network.has_key?("interfaces")
+def find_ip_and_mac(addresses)
+  addresses.each do |addr|
+    ipaddress addr["address"] if addr["family"].eql?("inet")
+    macaddress addr["address"] if addr["family"].eql?("lladdr")
+  end
+  [ipaddress, macaddress]
+end
+
+if attribute?("default_interface")
+  ipaddress, macaddress = find_ip_and_mac(network["interfaces"][iface]["addresses"])
+else
   network["interfaces"].keys.each do |iface|
     if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")
-      network["interfaces"][iface]["addresses"].each do |addr|
-        ipaddress addr["address"] if addr["family"].eql?("inet")
-        macaddress addr["address"] if addr["family"].eql?("lladdr")
-      end
+      ipaddress, macaddress = find_ip_and_mac(network["interfaces"][iface]["addresses"])
       return if (ipaddress and macaddress)
     end
   end

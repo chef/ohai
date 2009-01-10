@@ -52,6 +52,14 @@ def parse_media(media_string)
   media
 end
 
+def encaps_lookup(ifname)
+  return "Loopback" if ifname.match(/^lo\d+/)
+  return "Ethernet" if ifname.match(/^en\d+/)
+  return "1394" if ifname.match(/^fw\d+/)
+  return "IPIP" if ifname.match(/^gif\d+/)
+  return "6to4" if ifname.match(/^stf\d+/)
+end
+
 network_interfaces(Array.new)
 
 iface = Mash.new
@@ -63,6 +71,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       cint = $1.chop
       network_interfaces.push(cint)
       iface[cint] = Mash.new
+      iface[cint]["encapsulation"] = encaps_lookup(cint)
       iface[cint]["mtu"] = $2
       STDERR.puts "LINE IS " + line
       if line =~ /flags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
@@ -74,14 +83,11 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     end
     if line =~ /^\s+ether (.+?)\s/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "ether", "address" => $1 }
-      iface[cint]["encapsulation"] = "Ethernet"
+      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
     end
-    #	lladdr 00:22:41:ff:fe:53:56:16
     if line =~ /^\s+lladdr (.+?)\s/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "1394", "address" => $1 }
-      iface[cint]["encapsulation"] = "1394"
     end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9]|[a-f]){1,8})(\s|(broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})))/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]

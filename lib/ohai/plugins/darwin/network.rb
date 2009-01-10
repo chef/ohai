@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-require 'resolv'
 require 'scanf'
 
 # wow, this is ugly!
@@ -101,13 +100,8 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)(\s|(scopeid 0x(([0-9]|[a-f]))))/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      begin
-        Resolv::IPv6.create($1) # this step validates the IPv6 address since the regex above is very loose
-        iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 }
-        iface[cint]["addresses"].last["scopeid"] = $5 if $5.length > 1
-      rescue
-        # guess it wasn't an IPv6 address!  this shouldn't happen, but we'll soldier on.
-      end
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 }
+      iface[cint]["addresses"].last["scopeid"] = $5 if $5.length > 1
     end
     if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
       iface[cint]["media"] = Hash.new unless iface[cint]["media"]

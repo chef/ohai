@@ -16,6 +16,16 @@
 # limitations under the License.
 #
 
+def encaps_lookup(encap)
+  return "Loopback" if encap.eql?("Local Loopback")
+  return "PPP" if encap.eql?("Point-to-Point Protocol")
+  return "SLIP" if encap.eql?("Serial Line IP")
+  return "VJSLIP" if encap.eql?("VJ Serial Line IP")
+  return "IPIP" if encap.eql?("IPIP Tunnel")
+  return "6to4" if encap.eql?("IPv6-in-IPv4")
+  encap
+end
+
 network_interfaces(Array.new)
 
 iface = Mash.new
@@ -33,7 +43,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       end
     end
     if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
-      iface[cint]["encapsulation"] = ("Loopback" if $1.eql("Local Loopback") else $1)
+      iface[cint]["encapsulation"] = encaps_lookup($1)
     end
     if line =~ /HWaddr (.+?)\s/
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }

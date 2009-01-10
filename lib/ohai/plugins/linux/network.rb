@@ -27,21 +27,28 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       cint = $1
       network_interfaces.push(cint)
       iface[cint] = Mash.new
+      if cint =~ /^(\w+)(\d+.*)/
+        iface[cint]["type"] = $1
+        iface[cint]["number"] = $2
+      end
     end
     if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
-      iface[cint]["link_encap"] = $1
+      iface[cint]["encapsulation"] = ("Loopback" if $1.eql("Local Loopback") else $1)
     end
     if line =~ /HWaddr (.+?)\s/
-      iface[cint]["macaddress"] = $1
+      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
     end
     if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["ipaddress"] = $1
+      iface[cint]["addresses"] << { "family" => "inet", "address" => $1 }
+    end
+    if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $2, "scope" => ("Node" if $3.eql?("Host") else $3) }
     end
     if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["broadcast"] = $1
+      iface[cint]["addresses"].last["broadcast"] = $1
     end
     if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["netmask"] = $1
+      iface[cint]["addresses"].last["netmask"] = $1
     end
     flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
     if flags.length > 1
@@ -50,36 +57,33 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /MTU:(\d+)/
       iface[cint]["mtu"] = $1
     end
-    if line =~ /Metric:(\d+)/
-      iface[cint]["metric"] = $1
-    end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-      iface[cint]["rx_packets"] = $1
-      iface[cint]["rx_errors"] = $2
-      iface[cint]["rx_dropped"] = $3
-      iface[cint]["rx_overruns"] = $4
-      iface[cint]["rx_frame"] = $5
+      iface[cint]["counters"]["rx_packets"] = $1
+      iface[cint]["counters"]["rx_errors"] = $2
+      iface[cint]["counters"]["rx_dropped"] = $3
+      iface[cint]["counters"]["rx_overruns"] = $4
+      iface[cint]["counters"]["rx_frame"] = $5
     end
     if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
-      iface[cint]["tx_packets"] = $1
-      iface[cint]["tx_errors"] = $2
-      iface[cint]["tx_dropped"] = $3
-      iface[cint]["tx_overruns"] = $4
-      iface[cint]["tx_carrier"] = $5
+      iface[cint]["counters"]["tx_packets"] = $1
+      iface[cint]["counters"]["tx_errors"] = $2
+      iface[cint]["counters"]["tx_dropped"] = $3
+      iface[cint]["counters"]["tx_overruns"] = $4
+      iface[cint]["counters"]["tx_carrier"] = $5
     end
     if line =~ /collisions:(\d+)/
-      iface[cint]['collisions'] = $1
+      iface[cint]["counters"]['collisions'] = $1
     end
     if line =~ /txqueuelen:(\d+)/
-      iface[cint]['txqueuelen'] = $1
+      iface[cint]["counters"]['txqueuelen'] = $1
     end
     if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint]["rx_bytes"] = $1
-      iface[cint]["rx_bytes_human"] = $2
+      iface[cint]["counters"]["rx_bytes"] = $1
+      iface[cint]["counters"]["rx_bytes_human"] = $2
     end
     if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint]["rx_bytes"] = $1
-      iface[cint]["rx_bytes_human"] = $2
+      iface[cint]["counters"]["rx_bytes"] = $1
+      iface[cint]["counters"]["rx_bytes_human"] = $2
     end
   end
 end

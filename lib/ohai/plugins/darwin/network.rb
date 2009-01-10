@@ -60,6 +60,11 @@ def encaps_lookup(ifname)
   return "dot1q" if ifname.eql?("vlan")
 end
 
+def scope_lookup(scope)
+  return "Link" if scope.match(/^fe80\:/)
+  return "Global"
+end
+
 network_interfaces(Array.new)
 
 iface = Mash.new
@@ -72,7 +77,6 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       network_interfaces.push(cint)
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
-      STDERR.puts "LINE IS " + line
       if line =~ /flags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
         flags = $1.split(',')
       else
@@ -88,6 +92,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /^\s+ether (.+?)\s/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
+      iface[cint]["encapsulation"] = "Ethernet"
     end
     if line =~ /^\s+lladdr (.+?)\s/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
@@ -98,10 +103,13 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*"."}
       iface[cint]["addresses"].last["broadcast"] = $4 if $4.length > 1
     end
-    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)(\s|(scopeid 0x(([0-9]|[a-f]))))/
+    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 }
-      iface[cint]["addresses"].last["scopeid"] = $5 if $5.length > 1
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => "Node"}
+    end
+    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*scopeid 0x([a-f0-9]+)/
+      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => scope_lookup($1) }
     end
     if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
       iface[cint]["media"] = Hash.new unless iface[cint]["media"]

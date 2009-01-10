@@ -18,27 +18,14 @@
 
 require 'scanf'
 
-# wow, this is ugly!
-def parse_medium(medium)
-  m_array = medium.split(' ')
-  medium = { m_array[0] => { "options" => [] }}
-  if m_array.length > 1
-    if m_array[1] =~ /^\<([a-zA-Z\-\,]+)\>/
-      medium[m_array[0]]["options"] = $1.split(',')
-    end
-  end
-
-  medium
-end
-
 def parse_media(media_string)
   media = Array.new
   line_array = media_string.split(' ')
 
   0.upto(line_array.length - 1) do |i|
     unless line_array[i].eql?("none")
-      if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>/
-        media << parse_medium(line_array[i,i + 1].join(' '))
+      if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
+        media << { line_array[i] => { "options" => $1.split(',') }}
       else
         media << { "autoselect" => { "options" => [] } } if line_array[i].eql?("autoselect")
         next
@@ -65,7 +52,7 @@ def scope_lookup(scope)
   return "Global"
 end
 
-network_interfaces(Array.new)
+network["interfaces"] = Array.new
 
 iface = Mash.new
 popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
@@ -74,7 +61,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+)$/
       cint = $1.chop
-      network_interfaces.push(cint)
+      network["interfaces"].push(cint)
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
       if line =~ /flags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
@@ -105,7 +92,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => "Node"}
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => "Node" }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*scopeid 0x([a-f0-9]+)/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
@@ -113,7 +100,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     end
     if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
       iface[cint]["media"] = Hash.new unless iface[cint]["media"]
-      iface[cint]["media"]["selected"] = parse_medium($1)
+      iface[cint]["media"]["selected"] = parse_media($1)
       iface[cint]["status"] = $4
     end
     if line =~ /^\s+supported media: (.*)/
@@ -123,4 +110,4 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-network_interface iface
+network["interfaces"] = iface

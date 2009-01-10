@@ -26,7 +26,7 @@ def encaps_lookup(encap)
   encap
 end
 
-network_interfaces(Array.new)
+network["interfaces"] = Array.new
 
 iface = Mash.new
 popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
@@ -35,7 +35,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+)/
       cint = $1
-      network_interfaces.push(cint)
+      network["interfaces"].push(cint)
       iface[cint] = Mash.new
       if cint =~ /^(\w+)(\d+.*)/
         iface[cint]["type"] = $1
@@ -98,4 +98,4 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-network_interface iface
+network["interfaces"] = iface

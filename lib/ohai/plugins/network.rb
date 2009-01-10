@@ -16,19 +16,19 @@
 # limitations under the License.
 #
 
+network(Mash.new)
 
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-if attribute?("network_interfaces")
-  network_interfaces.each do |iface|
-    if iface !~ /lo/
-      if network_interface[iface].has_key?("ipaddress")
-        ipaddress network_interface[iface]["ipaddress"]
+if network.has_key?("interfaces")
+  network["interfaces"].keys.each do |iface|
+    if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")
+      network["interfaces"][iface]["addresses"].each do |addr|
+        ipaddress addr["address"] if addr["family"].eql?("inet")
+        macaddress addr["address"] if addr["family"].eql?("lladdr")
       end
-      if network_interface[iface].has_key?("macaddress")
-        macaddress network_interface[iface]["macaddress"]
-      end
+      return if (ipaddress and macaddress)
     end
   end
 end

@@ -68,6 +68,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["mtu"] = $1
     end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
+      iface[cint]["counters"] = Hash.new unless iface[cint]["counters"]
       iface[cint]["counters"]["rx_packets"] = $1
       iface[cint]["counters"]["rx_errors"] = $2
       iface[cint]["counters"]["rx_dropped"] = $3

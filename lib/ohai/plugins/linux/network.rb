@@ -46,12 +46,15 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["encapsulation"] = encaps_lookup($1)
     end
     if line =~ /HWaddr (.+?)\s/
+      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
     end
     if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet", "address" => $1 }
     end
     if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
+      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $2, "scope" => ("Node" if $3.eql?("Host") else $3) }
     end
     if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/

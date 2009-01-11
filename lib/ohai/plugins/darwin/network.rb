@@ -49,6 +49,7 @@ end
 
 def scope_lookup(scope)
   return "Link" if scope.match(/^fe80\:/)
+  return "Site" if scope.match(/^fec0\:/)
   return "Global"
 end
 

@@ -36,7 +36,8 @@ if attribute?("default_interface")
 else
   network["interfaces"].keys.each do |iface|
     if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")
-      ipaddress, macaddress = find_ip_and_mac(network["interfaces"][iface]["addresses"])
+      im = find_ip_and_mac(network["interfaces"][iface]["addresses"])
+      ipaddress im.shift; macaddress im.shift
       return if (ipaddress and macaddress)
     end
   end

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-popen4("sw_vers") do |pid, stdin, stdout, stderr|
+popen4("/usr/bin/sw_vers") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line

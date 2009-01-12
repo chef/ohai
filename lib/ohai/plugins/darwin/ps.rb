@@ -18,4 +18,4 @@
 
 require_plugin 'command'
 
-command[:ps] = 'ps -ef'
+command[:ps] = '/bin/ps -ef'

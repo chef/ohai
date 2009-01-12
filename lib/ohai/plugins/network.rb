@@ -22,11 +22,13 @@ require_plugin "hostname"
 require_plugin "#{os}::network"
 
 def find_ip_and_mac(addresses)
+  ip = nil; mac = nil
   addresses.each do |addr|
-    ipaddress addr["address"] if addr["family"].eql?("inet")
-    macaddress addr["address"] if addr["family"].eql?("lladdr")
+    ip = addr["address"] if addr["family"].eql?("inet")
+    mac = addr["address"] if addr["family"].eql?("lladdr")
+    break if (ip and mac)
   end
-  [ipaddress, macaddress]
+  [ip, mac]
 end
 
 if attribute?("default_interface")

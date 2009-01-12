@@ -29,7 +29,7 @@ end
 network["interfaces"] = Array.new
 
 iface = Mash.new
-popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
+popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
   cint = nil
   stdout.each do |line|

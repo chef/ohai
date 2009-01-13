@@ -40,17 +40,17 @@ end
 
 def encaps_lookup(ifname)
   return "Loopback" if ifname.eql?("lo")
-  return "Ethernet" if ifname.eql?("en")
   return "1394" if ifname.eql?("fw")
   return "IPIP" if ifname.eql?("gif")
   return "6to4" if ifname.eql?("stf")
   return "dot1q" if ifname.eql?("vlan")
+  "Ethernet"
 end
 
 def scope_lookup(scope)
   return "Link" if scope.match(/^fe80\:/)
   return "Site" if scope.match(/^fec0\:/)
-  return "Global"
+  "Global"
 end
 
 iface = Mash.new

@@ -16,7 +16,8 @@
 # limitations under the License.
 #
 
-network(Mash.new)
+network Mash.new
+network["interfaces"] = Mash.new
 
 require_plugin "hostname"
 require_plugin "#{os}::network"

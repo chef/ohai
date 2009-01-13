@@ -53,8 +53,6 @@ def scope_lookup(scope)
   return "Global"
 end
 
-network["interfaces"] = Array.new
-
 iface = Mash.new
 popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
@@ -62,7 +60,6 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+)$/
       cint = $1.chop
-      network["interfaces"].push(cint)
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
       if line =~ /flags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/

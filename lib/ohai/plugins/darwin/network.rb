@@ -28,7 +28,6 @@ def parse_media(media_string)
         media << { line_array[i] => { "options" => $1.split(',') }}
       else
         media << { "autoselect" => { "options" => [] } } if line_array[i].eql?("autoselect")
-        next
       end
     else
       media << { "none" => { "options" => [] } }
@@ -58,8 +57,8 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
   cint = nil
   stdout.each do |line|
-    if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+)$/
-      cint = $1.chop
+    if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)$/
+      cint = $1
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
       if line =~ /\sflags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
@@ -79,7 +78,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
       iface[cint]["encapsulation"] = "Ethernet"
     end
-    if line =~ /^\s+lladdr (.+?)\s/
+    if line =~ /^\s+lladdr ([0-9a-f\:]+)\s/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
     end

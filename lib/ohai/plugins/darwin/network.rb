@@ -44,7 +44,7 @@ def encaps_lookup(ifname)
   return "IPIP" if ifname.eql?("gif")
   return "6to4" if ifname.eql?("stf")
   return "dot1q" if ifname.eql?("vlan")
-  "Ethernet"
+  "Unknown"
 end
 
 def scope_lookup(scope)

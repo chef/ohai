@@ -5,8 +5,8 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "ohai"
-GEM_VERSION = "0.1.0"
-AUTHOR = "Adam Jacobs"
+GEM_VERSION = "0.1.1"
+AUTHOR = "Adam Jacob"
 EMAIL = "adam@opscode.com"
 HOMEPAGE = "http://opscode.com"
 SUMMARY = "ohai profiles your system and emits JSON"

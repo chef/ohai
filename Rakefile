@@ -8,8 +8,8 @@ GEM = "ohai"
 GEM_VERSION = "0.1.2"
 AUTHOR = "Adam Jacob"
 EMAIL = "adam@opscode.com"
-HOMEPAGE = "http://opscode.com"
-SUMMARY = "ohai profiles your system and emits JSON"
+HOMEPAGE = "http://wiki.opscode.com/display/ohai"
+SUMMARY = "Ohai profiles your system and emits JSON"
 
 spec = Gem::Specification.new do |s|
   s.name = GEM

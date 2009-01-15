@@ -1,14 +1,12 @@
 = ohai
 
-* FIX (url)
+* http://wiki.opscode.com/display/ohai 
 
 == DESCRIPTION:
 
+Ohai detects data about your operating system. 
+
 I'm in yur server, findin yer dater
-
-== FEATURES/PROBLEMS:
-
-* FIX (list of features or problems)
 
 == SYNOPSIS:
 
@@ -20,8 +18,6 @@ your system.
 == REQUIREMENTS:
 
 * rake
-* rubigen
-* newgem
 * json
 * rspec
 * extlib 
@@ -36,7 +32,8 @@ your system.
 
 Ohai was significantly easier to build because of the pre-existing
 work of everyone who contributed to Facter, especially Luke Kanies
-of Reductive Labs.  Thanks, guys.
+of Reductive Labs.  Thanks, guys. (We didn't use your code, but we
+were strongly inspired by it.)
 
 == LICENSE:
 

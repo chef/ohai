@@ -1,0 +1,19 @@
+Thu Jan 15 11:13:45 PST 2009
+Release Notes - Ohai - Version 0.1.2
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-2] - Unit tests and Integration tests must all pass
+    * [OHAI-13] - need command[:ps] attribute for node
+    * [OHAI-15] - Ohai network plugin is broken on osx
+
+** Improvement
+    * [OHAI-10] - Refactor node data structure for bb's sanity
+    * [OHAI-12] - Refactor network interface section(s)
+
+** New Feature
+    * [OHAI-1] - Ensure Ohai gem builds completely
+    * [OHAI-8] - Add ssh host key attributes for Linux and Darwin
+
+
+

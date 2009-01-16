@@ -32,11 +32,11 @@ describe Ohai::System, "Darwin plugin platform" do
       and_yield("ProductVersion:	10.5.5").
       and_yield("BuildVersion:	9F33")
     @stderr = mock("STDERR") 
-    @ohai.stub!(:popen4).with("sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+    @ohai.stub!(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
   end
  
   it "should run sw_vers" do
-    @ohai.should_receive(:popen4).with("sw_vers").and_return(true)
+    @ohai.should_receive(:popen4).with("/usr/bin/sw_vers").and_return(true)
     @ohai._require_plugin("darwin::platform")
   end
   

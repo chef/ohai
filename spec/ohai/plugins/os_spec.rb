@@ -23,7 +23,8 @@ describe Ohai::System, "plugin os" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:ruby] = Mash.new
+    @ohai[:languages] = Mash.new
+    @ohai[:languages][:ruby] = Mash.new
     @ohai[:kernel] = Mash.new
     @ohai[:kernel][:release] = "kings of leon"
   end
@@ -35,8 +36,7 @@ describe Ohai::System, "plugin os" do
   
   describe "on linux" do
     before(:each) do
-      @ohai[:ruby] = Mash.new
-      @ohai[:ruby][:host_os] = "linux"
+      @ohai[:languages][:ruby][:host_os] = "linux"
     end
     
     it "should set the os to linux" do
@@ -47,8 +47,7 @@ describe Ohai::System, "plugin os" do
   
   describe "on darwin" do
     before(:each) do
-      @ohai[:ruby] = Mash.new
-      @ohai[:ruby][:host_os] = "darwin"
+      @ohai[:languages][:ruby][:host_os] = "darwin"
     end
     
     it "should set the os to darwin" do

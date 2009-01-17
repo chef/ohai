@@ -6,10 +6,11 @@ Developed at Opscode (http://www.opscode.com).
 
 Contributors and Copyright holders:
 
- * Copyright 2008, Opscode <legal@opscode.com>
- * Copyright 2008, Adam Jacob <adam@opscode.com>
- * Copyright 2008, Ben Black <nostromo@gmail.com>
- * Copyright 2008, Ezra Zygmuntowicz <ezra@engineyard.com>
+ * Copyright 2008-2009, Opscode <legal@opscode.com>
+ * Copyright 2008-2009, Adam Jacob <adam@opscode.com>
+ * Copyright 2008-2009, Ben Black <nostromo@gmail.com>
+ * Copyright 2008-2009, Ezra Zygmuntowicz <ezra@engineyard.com>
+ * Copyright 2009, Joe Williams <joe@joetify.com>
  
 Parts of Ohai were taken from Chef, a configuration management system.
 

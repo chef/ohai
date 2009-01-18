@@ -110,4 +110,29 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-network["interfaces"] = iface
+popen4("/usr/sbin/arp -a") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+) \[(\w+)\]/
+      # MAC addr really should be normalized to include all the zeroes.
+      next unless iface[$3] # this should never happen
+      iface[$3][:arp] = Array.new unless iface[$3][:arp]
+      iface[$3][:arp] <<  { $1 => $2 }
+    end
+  end
+end
+
+settings = Mash.new
+popen4("/usr/sbin/sysctl net") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^([a-zA-Z0-9\.\_]+)\: (.*)/
+      # should be more selective about how these are collected.  some are actually counters.  should also have
+      # normalized names between platforms for the same settings.
+      settings[$1] = $2
+    end
+  end
+end
+
+network[:settings] = settings
+network[:interfaces] = iface

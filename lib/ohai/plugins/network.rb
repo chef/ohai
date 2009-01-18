@@ -17,7 +17,7 @@
 #
 
 network Mash.new
-network["interfaces"] = Mash.new
+network[:interfaces] = Mash.new
 
 require_plugin "hostname"
 require_plugin "#{os}::network"

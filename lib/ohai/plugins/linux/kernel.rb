@@ -17,3 +17,15 @@
 #
 
 kernel[:os] = from("uname -o")
+
+kext = Mash.new
+popen4("/sbin/lsmod") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
+      kext[$1] = { :size => $2, :refcount => $3 }
+    end
+  end
+end
+
+kernel[:modules] = kext

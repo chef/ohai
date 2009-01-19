@@ -52,6 +52,10 @@ def scope_lookup(scope)
   "Global"
 end
 
+def excluded_setting?(setting)
+  setting.match('_sw_cksum')
+end
+
 iface = Mash.new
 popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
@@ -127,9 +131,8 @@ popen4("/usr/sbin/sysctl net") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^([a-zA-Z0-9\.\_]+)\: (.*)/
-      # should be more selective about how these are collected.  some are actually counters.  should also have
-      # normalized names between platforms for the same settings.
-      settings[$1] = $2
+      # should normalize names between platforms for the same settings.
+      settings[$1] = $2 unless excluded_setting?($1)
     end
   end
 end

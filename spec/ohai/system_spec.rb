@@ -91,10 +91,15 @@ end
 
 describe Ohai::System, "require_plugin" do
   before(:each) do
+    @plugin_path = Ohai::Config[:plugin_path]
     Ohai::Config[:plugin_path] = ["/tmp/plugins"]
     File.stub!(:exists?).and_return(true)
     @ohai = Ohai::System.new
     @ohai.stub!(:from_file).and_return(true)
+  end
+
+  after(:each) do
+    Ohai::Config[:plugin_path] = @plugin_path
   end
   
   it "should convert the name of the plugin to a file path" do

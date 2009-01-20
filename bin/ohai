@@ -27,8 +27,7 @@ require 'json'
 
 config = {
   :directory => nil,
-  :file => nil,
-  :kthxbye => false
+  :file => nil
 }
 
 opts = OptionParser.new do |opts|
@@ -39,19 +38,12 @@ opts = OptionParser.new do |opts|
   opts.on("-f", "--file NAME", "A file to run Ohai against") do |f|
     config[:file] = f
   end
-  opts.on("-k", "--kthxbye", "LOLcats") do |k|
-    config[:kthxbye] = true
-  end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
   end
 end
 opts.parse!(ARGV)
-
-if config[:kthxbye]
-  puts JSON.generate({ :lolcat => "http://icanhascheezburger.com/?random" })
-end
 
 ohai = Ohai::System.new
 if config[:file]

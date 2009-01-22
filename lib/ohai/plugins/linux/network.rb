@@ -99,7 +99,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-popen4("/sbin/arp -an") do |pid, stdin, stdout, stderr|
+popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/

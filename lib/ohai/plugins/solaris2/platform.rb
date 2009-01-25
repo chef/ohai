@@ -16,27 +16,6 @@
 # limitations under the License.
 #
 
-#"kernel": {
-#  "machine": "i386",
-#  "name": "Darwin",
-#  "os": "Darwin",
-#  "version": "Darwin Kernel Version 9.6.0: Mon Nov 24 17:37:00 PST 2008; root:xnu-1228.9.59~1\/RELEASE_I386",
-#  "release": "9.6.0"
-#}
-
-# > uname -X
-#System = SunOS
-#Node = aggr1.joyent.us
-#Release = 5.11
-#KernelID = snv_89
-#Machine = i86pc
-#BusType = <unknown>
-#Serial = <unknown>
-#Users = <unknown>
-#OEM# = 0
-#Origin# = 1
-#NumCPU = 8
-
 popen4("uname -X") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|

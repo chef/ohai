@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+# EXAMPLE SOLARIS IFCONFIG OUTPUT; CURRENTLY, ONLY SIMPLE STUFF IS SUPPORTED (E.G., NO TUNNELS)
+# DEAR SUN: YOU GET AN F FOR YOUR IFCONFIG
 #lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
 #        inet 127.0.0.1 netmask ff000000
 #e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 3
@@ -60,6 +62,14 @@ def encaps_lookup(ifname)
   "Unknown"
 end
 
+def arpname_to_ifname(iface, arpname)
+  iface.keys.each do |ifn|
+    return ifn if ifn.split(':')[0].eql?(arpname)
+  end
+
+  nil
+end
+
 iface = Mash.new
 popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
@@ -97,24 +107,6 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-#e1000g0 72.2.115.49          255.255.255.255 SPLA     00:15:17:74:52:04
-#bnx0   10.0.70.70           255.255.255.255 o        00:14:4f:8d:bb:5b
-#e1000g0 72.2.115.55          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.54          255.255.255.255 o        00:15:17:74:50:24
-#e1000g0 72.2.115.43          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.42          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.45          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.44          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.27          255.255.255.255 SPLA     00:15:17:74:52:04
-#e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
-def arpname_to_ifname(iface, arpname)
-  iface.keys.each do |ifn|
-    return ifn if ifn.split(':')[0].eql?(arpname)
-  end
-
-  nil
-end
-
 popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
@@ -122,6 +114,24 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
       next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
       iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
       iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
+    end
+  end
+end
+
+iface.keys.each do |ifn|
+  iaddr = nil
+  if ifn["encapsulation"].eql?("Ethernet")
+    ifn["addresses"].each do |addr|
+      if addr["family"].eql?("inet")
+        iaddr = addr["address"]
+        break
+      end
+    end
+    ifn["arp"].keys.each do |addr|
+      if addr.eql?(iaddr)
+        ifn["addresses"] << { "family" => "lladdr", "address" => ifn["arp"][iaddr] }
+        break
+      end
     end
   end
 end

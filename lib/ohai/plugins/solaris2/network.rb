@@ -66,8 +66,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   cint = nil
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+) index (\d+)/
-      cint = $1.chop
-      network[:interfaces].push(cint)
+      cint = $1
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
       iface[cint]["index"] = $3

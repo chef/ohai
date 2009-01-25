@@ -1,14 +1,14 @@
 #
-# Author:: Joe Williams (<joe@joetify.com>)
+# Author:: Adam Jacob (<adam@opscode.com>)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,22 +16,9 @@
 # limitations under the License.
 #
 
-require_plugin "languages"
-output = nil
+require_plugin "keys"
 
-status = popen4("erl +V") do |pid, stdin, stdout, stderr|
-  stdin.close
-  output = stderr.gets.split
-end
+keys[:ssh] = Mash.new
 
-if status == 0
-  languages[:erlang] = Mash.new
-
-  options = output[1]
-  options.gsub!(/(\(|\))/, '')
-
-  languages[:erlang][:version] = output[5]
-  languages[:erlang][:options] = options.split(',')
-  languages[:erlang][:emulator] = output[2].gsub!(/(\(|\))/, '')
-end
-
+keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]

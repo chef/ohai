@@ -1,6 +1,6 @@
 #
-# Author:: Joe Williams (<joe@joetify.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Bryan McLellan (btm@loftninjas.org)
+# Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,19 @@
 # limitations under the License.
 #
 
-require_plugin "languages"
-output = nil
+kernel[:ident] = from("uname -i")
+kernel[:securelevel] = from_with_regex("sysctl kern.securelevel", /kern.securelevel: (.+)$/)
 
-status = popen4("erl +V") do |pid, stdin, stdout, stderr|
+kld = Mash.new
+popen4("/sbin/kldstat") do |pid, stdin, stdout, stderr|
   stdin.close
-  output = stderr.gets.split
+  stdout.each do |line|
+    #  1    7 0xc0400000 97f830   kernel
+    if line =~ /(\d+)\s+(\d+)\s+([0-9a-fx]+)\s+([0-9a-fx]+)\s+([a-zA-Z0-9\_]+)/
+      kld[$5] = { :size => $4, :refcount => $2 }
+    end
+  end
 end
 
-if status == 0
-  languages[:erlang] = Mash.new
-
-  options = output[1]
-  options.gsub!(/(\(|\))/, '')
-
-  languages[:erlang][:version] = output[5]
-  languages[:erlang][:options] = options.split(',')
-  languages[:erlang][:emulator] = output[2].gsub!(/(\(|\))/, '')
-end
+kernel[:modules] = kld
 

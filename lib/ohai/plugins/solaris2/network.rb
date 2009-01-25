@@ -51,6 +51,12 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
+def encaps_lookup(ifname)
+  return "Ethernet" if ifname.eql?("e1000g")
+  return "Loopback" if ifname.eql?("lo")
+  "Unknown"
+end
+
 network["interfaces"] = Array.new
 
 iface = Mash.new
@@ -85,10 +91,13 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
     end
-    if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9]|[a-f]){1,8})(\s|(broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})))/
+    if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*"."}
-      iface[cint]["addresses"].last["broadcast"] = $4 if $4.length > 1
+    end
+    if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
+      iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]

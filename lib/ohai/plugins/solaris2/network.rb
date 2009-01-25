@@ -122,7 +122,7 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
     if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
       # MAC addr really should be normalized to include all the zeroes.
       STDERR.puts "ARP PARAMS ARE " + $1 + " " + $2 + " " + $5
-      next unless iface[arpname_to_ifname($1)] # this should never happen
+      next unless iface[arpname_to_ifname(iface, $1)] # this should never happen
       iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
       iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
     end

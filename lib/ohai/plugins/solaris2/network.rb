@@ -107,7 +107,7 @@ end
 #e1000g0 72.2.115.44          255.255.255.255 SPLA     00:15:17:74:52:04
 #e1000g0 72.2.115.27          255.255.255.255 SPLA     00:15:17:74:52:04
 #e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
-def arpname_to_ifname(arpname)
+def arpname_to_ifname(iface, arpname)
   iface.keys.each do |ifn|
     STDERR.puts "COMPARING " + ifn + " TO " + arpname
     return ifn if ifn.split(':')[0].eql?(arpname)
@@ -123,8 +123,8 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
       # MAC addr really should be normalized to include all the zeroes.
       STDERR.puts "ARP PARAMS ARE " + $1 + " " + $2 + " " + $5
       next unless iface[arpname_to_ifname($1)] # this should never happen
-      iface[arpname_to_ifname($1)][:arp] = Mash.new unless iface[arpname_to_ifname($1)][:arp]
-      iface[arpname_to_ifname($1)][:arp][$2] = $5
+      iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
+      iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
     end
   end
 end

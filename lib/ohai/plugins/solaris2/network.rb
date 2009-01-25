@@ -55,6 +55,7 @@ require 'scanf'
 
 def encaps_lookup(ifname)
   return "Ethernet" if ifname.eql?("e1000g")
+  return "Ethernet" if ifname.eql?("eri")
   return "Loopback" if ifname.eql?("lo")
   "Unknown"
 end
@@ -84,15 +85,6 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
         iface[cint]["encapsulation"] = encaps_lookup($1)
       end
     end
-    if line =~ /^\s+ether (.+?)\s/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
-      iface[cint]["encapsulation"] = "Ethernet"
-    end
-    if line =~ /^\s+lladdr (.+?)\s/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
-    end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*"."}
@@ -108,15 +100,6 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*scopeid 0x([a-f0-9]+)/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => scope_lookup($1) }
-    end
-    if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
-      iface[cint]["media"] = Hash.new unless iface[cint]["media"]
-      iface[cint]["media"]["selected"] = parse_media($1)
-      iface[cint]["status"] = $4
-    end
-    if line =~ /^\s+supported media: (.*)/
-      iface[cint]["media"] = Hash.new unless iface[cint]["media"]
-      iface[cint]["media"]["supported"] = parse_media($1)
     end
   end
 end

@@ -16,11 +16,10 @@
 # limitations under the License.
 #
 
-# FIXME: Fixed support for a single processor at the moment
+# all dmesg output for smp I can find only provides info about a single processor
+# identical processors is probably a hardware requirement so we'll duplicate data for each cpu
+# old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
 cpuinfo = Mash.new
-cpuinfo[0] = Mash.new
-cpu_number = 0
-current_cpu = nil
 
 # /var/run/dmesg.boot
 #CPU: QEMU Virtual CPU version 0.9.1 (1862.02-MHz 686-class CPU)
@@ -31,17 +30,21 @@ current_cpu = nil
 File.open("/var/run/dmesg.boot").each do |line|
   case line
   when /CPU:\s+(.+) \(([\d.]+).+\)/
-    cpuinfo[0]["model_name"] = $1
-    cpuinfo[0]["mhz"] = $2
+    cpuinfo["model_name"] = $1
+    cpuinfo["mhz"] = $2
   when /Origin = "(.+)"\s+Id = (.+)\s+Stepping = (.+)/
-    cpuinfo[0]["vendor_id"] = $1
-    cpuinfo[0]["stepping"] = $3
+    cpuinfo["vendor_id"] = $1
+    cpuinfo["stepping"] = $3
+  # These _should_ match /AMD Features2?/ lines as well 
   when /Features=.+<(.+)>/
-    cpuinfo[0]["flags"] = $1.downcase.split(',')
-  when /Features2=.+<(\w+)>/
-    cpuinfo[0]["flags"].insert($1.downcase.split(','))
+    cpuinfo["flags"] = $1.downcase.split(',')
+  # Features2=0x80000001<SSE3,<b31>>
+  when /Features2=[a-f\dx]+<(.+)>/
+    cpuinfo["flags"].concat($1.downcase.split(','))
+  when /Logical CPUs per core: (\d+)/
+    cpuinfo["cores"] = $1
   end
 end
 
 cpu cpuinfo
-cpu[:total] = cpu_number
+cpu[:total] = from("sysctl -n hw.ncpu")

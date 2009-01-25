@@ -51,6 +51,8 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
+require 'scanf'
+
 def encaps_lookup(ifname)
   return "Ethernet" if ifname.eql?("e1000g")
   return "Loopback" if ifname.eql?("lo")

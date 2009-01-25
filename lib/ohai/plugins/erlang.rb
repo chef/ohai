@@ -17,9 +17,10 @@
 #
 
 require_plugin "languages"
- 
+output = nil
+
 status = popen4("erl +V") do |pid, stdin, stdout, stderr|
-  stdin.close 
+  stdin.close
   output = stderr.gets.split
 end
 
@@ -33,3 +34,4 @@ if status == 0
   languages[:erlang][:options] = options.split(',')
   languages[:erlang][:emulator] = output[2].gsub!(/(\(|\))/, '')
 end
+

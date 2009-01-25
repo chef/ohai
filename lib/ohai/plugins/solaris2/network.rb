@@ -65,7 +65,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
   cint = nil
   stdout.each do |line|
-    if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+) index (\d+)/
+    if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
       cint = $1
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
@@ -90,13 +90,9 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
       iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
     end
-    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
+    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
       iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => "Node" }
-    end
-    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*scopeid 0x([a-f0-9]+)/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => scope_lookup($1) }
+      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 }
     end
   end
 end
@@ -113,6 +109,7 @@ end
 #e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
 def arpname_to_ifname(arpname)
   network[:interfaces].keys.each do |ifn|
+    STDERR.puts "COMPARING " + ifn " TO " + arpname
     return ifn if ifn.split(':')[0].eql?(arpname)
   end
 

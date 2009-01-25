@@ -76,4 +76,31 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   end
 end
 
+# From netstat(1), not sure of the implications:
+# Show the state of all network interfaces or a single interface
+# which have been auto-configured (interfaces statically configured
+# into a system, but not located at boot time are not shown). 
+popen4("netstat -ibdn") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    # Name    Mtu Network       Address              Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
+    # ed0    1500 <Link#1>      54:52:00:68:92:85   333604    26  151905886   175472     0   24897542     0  905 
+    # $1                        $2                      $3    $4         $5       $6    $7         $8    $9  $10
+    if line =~ /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+      next unless iface[$1] # this should never happen
+      iface[$1]["counters"] = Hash.new unless iface[$1]["counters"]
+      iface[$1]["counters"]["rx"] = Hash.new unless iface[$1]["counters"]["rx"]
+      iface[$1]["counters"]["tx"] = Hash.new unless iface[$1]["counters"]["tx"]
+      iface[$1]["counters"]["rx"]["packets"] = $3
+      iface[$1]["counters"]["rx"]["errors"] = $4
+      iface[$1]["counters"]["rx"]["bytes"] = $5
+      iface[$1]["counters"]["tx"]["packets"] = $6
+      iface[$1]["counters"]["tx"]["errors"] = $7
+      iface[$1]["counters"]["tx"]["bytes"] = $8
+      iface[$1]["counters"]["collisions"] = $9
+      iface[$1]["counters"]["dropped"] = $10
+    end
+  end
+end
+
 network["interfaces"] = iface

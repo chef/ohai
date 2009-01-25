@@ -109,7 +109,6 @@ end
 #e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
 def arpname_to_ifname(iface, arpname)
   iface.keys.each do |ifn|
-    STDERR.puts "COMPARING " + ifn + " TO " + arpname
     return ifn if ifn.split(':')[0].eql?(arpname)
   end
 
@@ -120,9 +119,7 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
-      # MAC addr really should be normalized to include all the zeroes.
-      STDERR.puts "ARP PARAMS ARE " + $1 + " " + $2 + " " + $5
-      next unless iface[arpname_to_ifname(iface, $1)] # this should never happen
+      next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
       iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
       iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
     end

@@ -120,16 +120,16 @@ end
 
 iface.keys.each do |ifn|
   iaddr = nil
-  if ifn["encapsulation"].eql?("Ethernet")
-    ifn["addresses"].each do |addr|
+  if iface[ifn]["encapsulation"].eql?("Ethernet")
+    iface[ifn]["addresses"].each do |addr|
       if addr["family"].eql?("inet")
         iaddr = addr["address"]
         break
       end
     end
-    ifn["arp"].keys.each do |addr|
+    iface[ifn]["arp"].keys.each do |addr|
       if addr.eql?(iaddr)
-        ifn["addresses"] << { "family" => "lladdr", "address" => ifn["arp"][iaddr] }
+        iface[ifn]["addresses"] << { "family" => "lladdr", "address" => iface[ifn]["arp"][iaddr] }
         break
       end
     end

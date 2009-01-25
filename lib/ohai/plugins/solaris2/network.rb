@@ -60,8 +60,6 @@ def encaps_lookup(ifname)
   "Unknown"
 end
 
-network["interfaces"] = Array.new
-
 iface = Mash.new
 popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
@@ -69,7 +67,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([[:alnum:]|\:|\-]+) \S+ mtu (\d+) index (\d+)/
       cint = $1.chop
-      network["interfaces"].push(cint)
+      network[:interfaces].push(cint)
       iface[cint] = Mash.new
       iface[cint]["mtu"] = $2
       iface[cint]["index"] = $3
@@ -104,4 +102,34 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-network["interfaces"] = iface
+#e1000g0 72.2.115.49          255.255.255.255 SPLA     00:15:17:74:52:04
+#bnx0   10.0.70.70           255.255.255.255 o        00:14:4f:8d:bb:5b
+#e1000g0 72.2.115.55          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.54          255.255.255.255 o        00:15:17:74:50:24
+#e1000g0 72.2.115.43          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.42          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.45          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.44          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.27          255.255.255.255 SPLA     00:15:17:74:52:04
+#e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
+def arpname_to_ifname(arpname)
+  network[:interfaces].keys.each do |ifn|
+    return ifn if ifn.split(':')[0].eql?(arpname)
+  end
+
+  nil
+end
+
+popen4("arp -an") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+) \[(\w+)\]/
+      # MAC addr really should be normalized to include all the zeroes.
+      next unless iface[arpname_to_ifname($3)] # this should never happen
+      iface[arpname_to_ifname($3)][:arp] = Mash.new unless iface[arpname_to_ifname($3)][:arp]
+      iface[arpname_to_ifname($3)][:arp][$1] = $2
+    end
+  end
+end
+
+network[:interfaces] = iface

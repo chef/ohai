@@ -108,7 +108,7 @@ end
 #e1000g0 72.2.115.27          255.255.255.255 SPLA     00:15:17:74:52:04
 #e1000g0 72.2.115.29          255.255.255.255 SPLA     00:15:17:74:52:04
 def arpname_to_ifname(arpname)
-  network[:interfaces].keys.each do |ifn|
+  iface.keys.each do |ifn|
     STDERR.puts "COMPARING " + ifn + " TO " + arpname
     return ifn if ifn.split(':')[0].eql?(arpname)
   end

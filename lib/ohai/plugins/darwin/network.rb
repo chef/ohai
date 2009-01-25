@@ -137,5 +137,18 @@ popen4("/usr/sbin/sysctl net") do |pid, stdin, stdout, stderr|
   end
 end
 
+popen4("/usr/sbin/netstat -i -d -l -b") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^([a-zA-Z0-9\.\:\-]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+[a-f0-9\:]+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+      iface[$1] = Mash.new unless iface[$1]
+      iface[$1][:counters] = Mash.new unless iface[$1][:counters]
+      iface[$1][:counters] = { :rx => { :bytes => $4, :packets => $2, :errors => $3, :drop => 0, :overrun => 0, :frame => 0, :compressed => 0, :multicast => 0 },
+                               :tx => { :bytes => $7, :packets => $5, :errors => $6, :drop => 0, :overrun => 0, :collisions => $8, :carrier => 0, :compressed => 0 }
+                             }
+    end
+  end
+end
+
 network[:settings] = settings
 network[:interfaces] = iface

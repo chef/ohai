@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-network Mash.new
-network[:interfaces] = Mash.new
+network Mash.new unless network
+network[:interfaces] = Mash.new unless network[:interfaces]
 
 require_plugin "hostname"
 require_plugin "#{os}::network"

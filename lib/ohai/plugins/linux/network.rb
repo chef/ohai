@@ -93,8 +93,8 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["counters"]["rx_bytes_human"] = $2
     end
     if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint]["counters"]["rx_bytes"] = $1
-      iface[cint]["counters"]["rx_bytes_human"] = $2
+      iface[cint]["counters"]["tx_bytes"] = $1
+      iface[cint]["counters"]["tx_bytes_human"] = $2
     end
   end
 end

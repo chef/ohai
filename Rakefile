@@ -23,6 +23,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = HOMEPAGE
   
   s.add_dependency "json"
+  s.add_dependency "extlib"
   s.bindir = "bin"
   s.executables = %w(ohai)
   

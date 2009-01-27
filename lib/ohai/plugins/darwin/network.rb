@@ -103,12 +103,12 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => scope_lookup($1) }
     end
     if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
-      iface[cint]["media"] = Hash.new unless iface[cint]["media"]
+      iface[cint]["media"] = Mash.new unless iface[cint]["media"]
       iface[cint]["media"]["selected"] = parse_media($1)
       iface[cint]["status"] = $4
     end
     if line =~ /^\s+supported media: (.*)/
-      iface[cint]["media"] = Hash.new unless iface[cint]["media"]
+      iface[cint]["media"] = Mash.new unless iface[cint]["media"]
       iface[cint]["media"]["supported"] = parse_media($1)
     end
   end

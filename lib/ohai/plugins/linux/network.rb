@@ -68,7 +68,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["mtu"] = $1
     end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-      iface[cint]["counters"] = Hash.new unless iface[cint]["counters"]
+      iface[cint]["counters"] = Mash.new unless iface[cint]["counters"]
       iface[cint]["counters"]["rx_packets"] = $1
       iface[cint]["counters"]["rx_errors"] = $2
       iface[cint]["counters"]["rx_dropped"] = $3
@@ -104,7 +104,7 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/
       next unless iface[$4] # this should never happen
-      iface[$4][:arp] = Hash.new unless iface[$4][:arp]
+      iface[$4][:arp] = Mash.new unless iface[$4][:arp]
       iface[$4][:arp][$1] = $2.downcase
     end
   end

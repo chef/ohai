@@ -88,9 +88,9 @@ popen4("netstat -ibdn") do |pid, stdin, stdout, stderr|
     # $1                        $2                      $3    $4         $5       $6    $7         $8    $9  $10
     if line =~ /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
       next unless iface[$1] # this should never happen
-      iface[$1]["counters"] = Hash.new unless iface[$1]["counters"]
-      iface[$1]["counters"]["rx"] = Hash.new unless iface[$1]["counters"]["rx"]
-      iface[$1]["counters"]["tx"] = Hash.new unless iface[$1]["counters"]["tx"]
+      iface[$1]["counters"] = Mash.new unless iface[$1]["counters"]
+      iface[$1]["counters"]["rx"] = Mash.new unless iface[$1]["counters"]["rx"]
+      iface[$1]["counters"]["tx"] = Mash.new unless iface[$1]["counters"]["tx"]
       iface[$1]["counters"]["rx"]["packets"] = $3
       iface[$1]["counters"]["rx"]["errors"] = $4
       iface[$1]["counters"]["rx"]["bytes"] = $5

@@ -17,6 +17,8 @@
 #
 # NOTICE - based on contributions from Tim Dysinger and Ezra Zygmuntowicz
 
+require 'open-uri'
+
 require_plugin "hostname"
 
 def metadata(id='')

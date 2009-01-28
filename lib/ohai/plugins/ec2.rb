@@ -20,6 +20,7 @@
 require 'open-uri'
 
 require_plugin "hostname"
+require_plugin "kernel"
 
 def metadata(id='')
   open("http://169.254.169.254/2008-02-01/meta-data/#{id}").read.
@@ -37,7 +38,8 @@ def metadata(id='')
   end
 end
 
-if domain =~ /\.amazonaws.com$/
-  ec2 = Mash.new
-  metadata
+if (domain =~ /\.amazonaws.com$/) ||
+   (kernel[:version] =~ /-ec2-/)
+  ec2 Mash.new
+  self.metadata
 end

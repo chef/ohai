@@ -68,33 +68,23 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint]["mtu"] = $1
     end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-      iface[cint]["counters"] = Mash.new unless iface[cint]["counters"]
-      iface[cint]["counters"]["rx_packets"] = $1
-      iface[cint]["counters"]["rx_errors"] = $2
-      iface[cint]["counters"]["rx_dropped"] = $3
-      iface[cint]["counters"]["rx_overruns"] = $4
-      iface[cint]["counters"]["rx_frame"] = $5
+      iface[cint][:counters] = Mash.new unless iface[cint][:counters]
+      iface[cint][:counters][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
     end
     if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
-      iface[cint]["counters"]["tx_packets"] = $1
-      iface[cint]["counters"]["tx_errors"] = $2
-      iface[cint]["counters"]["tx_dropped"] = $3
-      iface[cint]["counters"]["tx_overruns"] = $4
-      iface[cint]["counters"]["tx_carrier"] = $5
+      iface[cint][:counters][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
     end
     if line =~ /collisions:(\d+)/
-      iface[cint]["counters"]['collisions'] = $1
+      iface[cint][:counters][:tx]["collisions"] = $1
     end
     if line =~ /txqueuelen:(\d+)/
-      iface[cint]["counters"]['txqueuelen'] = $1
+      iface[cint][:counters][:tx]["queuelen"] = $1
     end
     if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint]["counters"]["rx_bytes"] = $1
-      iface[cint]["counters"]["rx_bytes_human"] = $2
+      iface[cint][:counters][:rx]["bytes"] = $1
     end
     if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint]["counters"]["tx_bytes"] = $1
-      iface[cint]["counters"]["tx_bytes_human"] = $2
+      iface[cint][:counters][:tx]["bytes"] = $1
     end
   end
 end

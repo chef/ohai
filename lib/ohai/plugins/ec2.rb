@@ -39,6 +39,7 @@ def metadata(id='')
 end
 
 if (domain =~ /\.amazonaws.com$/) ||
+   (domain =~ /\.internal$/) ||
    (kernel[:version] =~ /-ec2-/)
   ec2 Mash.new
   self.metadata

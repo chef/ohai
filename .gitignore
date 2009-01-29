@@ -1,3 +1,4 @@
 pkg/
 tmp/
 coverage/
+ohai.gemspec

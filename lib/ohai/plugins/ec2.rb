@@ -35,8 +35,7 @@ def metadata(id='')
   end
 end
 
-if (os == 'linux' &&
-    (domain =~ /\.internal$/ || kernel[:release] =~ /ec2/))
+if (domain =~ /\.internal$/ || kernel[:release] =~ /-ec2-/)
   ec2 Mash.new
   self.metadata
 end

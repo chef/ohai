@@ -32,64 +32,49 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "when not on linux" do
-    it_should_behave_like "!ec2"
-
+  describe "ec2", :shared => true do
     before(:each) do
-      @ohai.stub!(:os).and_return("darwin")
+      OpenURI.stub!(:open_uri).
+        with("http://169.254.169.254/2008-02-01/meta-data/").
+        and_return(mock(IO, :read => "instance_type\nami_id\n"))
+      OpenURI.stub!(:open_uri).
+        with("http://169.254.169.254/2008-02-01/meta-data/instance_type").
+        and_return(mock(IO, :gets => "c1.medium"))
+      OpenURI.stub!(:open_uri).
+        with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
+        and_return(mock(IO, :gets => "ami-5d2dc934"))
+    end
+
+    it "should recursively fetch all the ec2 metadata" do
+      @ohai._require_plugin("ec2")
+      @ohai[:ec2].should_not be_nil
+      @ohai[:ec2]['instance_type'].should == "c1.medium"
+      @ohai[:ec2]['ami_id'].should == "ami-5d2dc934"
     end
   end
 
-  describe "when on linux" do
+  describe "with ec2 dns attribute markers" do
+    it_should_behave_like "ec2"
+
     before(:each) do
-      @ohai.stub!(:os).and_return("linux")
+      @ohai.stub!(:domain).and_return('compute-1.internal')
     end
+  end
 
-    describe "ec2", :shared => true do
-      before(:each) do
-        @ohai.stub!(:os).and_return("linux")
-        OpenURI.stub!(:open_uri).
-          with("http://169.254.169.254/2008-02-01/meta-data/").
-          and_return(mock(IO, :read => "instance_type\nami_id\n"))
-        OpenURI.stub!(:open_uri).
-          with("http://169.254.169.254/2008-02-01/meta-data/instance_type").
-          and_return(mock(IO, :gets => "c1.medium"))
-        OpenURI.stub!(:open_uri).
-          with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
-          and_return(mock(IO, :gets => "ami-5d2dc934"))
-      end
+  describe "with ec2 kernel attribute markers" do
+    it_should_behave_like "ec2"
 
-      it "should recursively fetch all the ec2 metadata" do
-        @ohai._require_plugin("ec2")
-        @ohai[:ec2].should_not be_nil
-        @ohai[:ec2]['instance_type'].should == "c1.medium"
-        @ohai[:ec2]['ami_id'].should == "ami-5d2dc934"
-      end
+    before(:each) do
+      @ohai.stub!(:kernel).and_return({:release => 'blah -ec2- blah'})
     end
+  end
 
-    describe "with ec2 dns attribute markers" do
-      it_should_behave_like "ec2"
+  describe "without ec2 kernel or domain attribute markers" do
+    it_should_behave_like "!ec2"
 
-      before(:each) do
-        @ohai.stub!(:domain).and_return('compute-1.internal')
-      end
-    end
-
-    describe "with ec2 kernel attribute markers" do
-      it_should_behave_like "ec2"
-
-      before(:each) do
-        @ohai.stub!(:kernel).and_return({:release => 'blah ec2 blah'})
-      end
-    end
-
-    describe "without ec2 kernel or domain attribute markers" do
-      it_should_behave_like "!ec2"
-
-      before(:each) do
-        @ohai.stub!(:domain).and_return('local')
-        @ohai.stub!(:kernel).and_return({:release => '2.6.21'})
-      end
+    before(:each) do
+      @ohai.stub!(:domain).and_return('local')
+      @ohai.stub!(:kernel).and_return({:release => '2.6.21'})
     end
   end
 end

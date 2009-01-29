@@ -40,6 +40,7 @@ lib/ohai/plugins/linux/platform.rb
 lib/ohai/plugins/linux/ps.rb
 lib/ohai/plugins/linux/ssh_host_key.rb
 lib/ohai/plugins/linux/uptime.rb
+lib/ohai/plugins/linux/virtual.rb
 lib/ohai/plugins/network.rb
 lib/ohai/plugins/ohai_time.rb
 lib/ohai/plugins/os.rb
@@ -65,6 +66,7 @@ spec/ohai/plugins/linux/kernel_spec.rb
 spec/ohai/plugins/linux/lsb_spec.rb
 spec/ohai/plugins/linux/platform_spec.rb
 spec/ohai/plugins/linux/uptime_spec.rb
+spec/ohai/plugins/linux/virtual_spec.rb
 spec/ohai/plugins/ohai_time_spec.rb
 spec/ohai/plugins/os_spec.rb
 spec/ohai/plugins/platform_spec.rb

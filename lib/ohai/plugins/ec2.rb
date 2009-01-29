@@ -22,15 +22,13 @@ require_plugin "hostname"
 require_plugin "kernel"
 
 def metadata(id='')
-  OpenURI.open_uri("http://169.254.169.254/2008-02-01/meta-data/#{id}").read.
-    split("\n").each do |o|
+  OpenURI.open_uri("http://169.254.169.254/2008-02-01/meta-data/#{id}").
+    read.split("\n").each do |o|
     key = "#{id}#{o.gsub(/\=.*$/, '/')}"
     if key[-1..-1] != '/'
-      ec2[key.gsub(/\-|\//, '_').to_sym] = begin
-        value = OpenURI.open_uri("http://169.254.169.254/2008-02-01/meta-data/#{key}").
-          read.split("\n")
-        value.size > 1 ? value : value.first
-      end
+      ec2[key.gsub(/\-|\//, '_').to_sym] =
+        OpenURI.open_uri("http://169.254.169.254/2008-02-01" +
+                         "/meta-data/#{key}").gets
     else
       metadata(key)
     end

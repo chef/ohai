@@ -18,7 +18,7 @@
 
 require File.join(File.dirname(__FILE__), '..', '..', '..', '/spec_helper.rb')
 
-describe Ohai::System, "Linux virtualisation platform" do
+describe Ohai::System, "Linux virtualization platform" do
   before(:each) do
     @ohai = Ohai::System.new
     @ohai[:os] = "linux"
@@ -27,23 +27,23 @@ describe Ohai::System, "Linux virtualisation platform" do
     @mock_cap.stub!(:each).and_yield("control_d")
   end
 
-  it "should set xen0 if /proc/xen/capabilities contains control_d" do
-    @ohai._require_plugin("linux::virtual")
-    @ohai[:virtual] == "xen0"
+  it "should set xen host if /proc/xen/capabilities contains control_d" do
+    @ohai._require_plugin("linux::virtualization")
+    @ohai[:virtualization][:system] == "xen" && @ohai[:virtualization][:role] == "host"
   end
 
-  it "should set xenu if /proc/sys/xen/independent_wallclock exists" do
+  it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
     File.stub!(:exists).with("/proc/xen/capabilities").and_return(false)
     File.stub!(:exists).with("/proc/sys/xen/independent_wallclock").and_return(true)
-    @ohai._require_plugin("linux::virtual")
-    @ohai[:virtual] == "xenu"
+    @ohai._require_plugin("linux::virtualization")
+    @ohai[:virtualization][:system] == "xen" && @ohai[:virtualization][:role] == "guest"
   end
 
-  it "should set physical if xen isn't there" do
+  it "should not set virtualization if xen isn't there" do
     File.stub!(:exists).with("/proc/xen/capabilities").and_return(false)
     File.stub!(:exists).with("/proc/sys/xen/independent_wallclock").and_return(false)
     @ohai._require_plugin("linux::virtual")
-    @ohai[:virtual] == "physical"
+    @ohai[:virtualization].nil?
   end
 end
 

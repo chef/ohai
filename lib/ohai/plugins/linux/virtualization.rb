@@ -16,13 +16,16 @@
 # limitations under the License.
 #
 
+virtualization Mash.new
 
+# if it is possible to detect paravirt vs hardware virt, it should be put in
+# virtualization[:mechanism]
 if File.exists?("/proc/xen/capabilities")
   if File.read("/proc/xen/capabilities") =~ /control_d/i
-    virtual "xen0"
+    virtualization[:system] = "xen"
+    virtualization[:role] = "host"
   end
 elsif File.exists?("/proc/sys/xen/independent_wallclock")
-  virtual "xenu"
-else
-  virtual "physical"
+  virtualization[:system] = "xen"
+  virtualization[:role] = "guest"
 end

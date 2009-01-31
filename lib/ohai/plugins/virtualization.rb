@@ -26,11 +26,11 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   virtualization[:nodeinfo] = virtconn.nodeinfo
   virtualization[:domains] = virtconn.list_domains.collect {|d| virtconn.lookup_domain_by_id(d)}
   virtualization[:networks] = virtconn.list_networks.collect {|n| virtconn.lookup_network_by_name(n)}
-  virtualization[:storage] = Mash.new; virtualization[:storage][:pools] = Mash.new
+  virtualization[:storage] = Mash.new
   virtconn.list_storage_pools.each do |pool| 
-    virtualization[:storage][:pools][pool] = Mash.new
-    virtualization[:storage][:pools][pool][:info] = virtconn.lookup_storage_pool_by_name(pool).info
-    virtualization[:storage][:pools][pool][:volumes] = virtconn.list_volumes.collect {|v| virtconn.list_volume_by_name(pool).info}
+    virtualization[:storage][pool] = Mash.new
+    virtualization[:storage][pool][:info] = virtconn.lookup_storage_pool_by_name(pool).info
+    virtualization[:storage][pool][:volumes] = virtconn.list_volumes.collect {|v| virtconn.list_volume_by_name(pool).info}
   end
   virtconn.close
 end

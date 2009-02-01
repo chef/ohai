@@ -29,30 +29,26 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   # why doesn't the NodeInfo object respond to attributes?  argh.
   ['cores','cpus','memory','mhz','model','nodes','sockets','threads'].each {|a| virtualization[:nodeinfo][a] = virtconn.node_get_info.send(a)}
 
-  if virtconn.num_of_domains > 0
-    virtualization[:domains] = Mash.new
-    virtconn.list_domains.each do |d|
-      virtualization[:domains][d] = virtconn.lookup_domain_by_id(d).info.attributes
-      virtualization[:domains][d]["xml_desc"] = virtconn.lookup_domain_by_id(d).xml_desc
-    end
+  virtualization[:domains] = Mash.new
+  virtconn.list_domains.each do |d|
+    virtualization[:domains][d] = virtconn.lookup_domain_by_id(d).info.attributes
+    virtualization[:domains][d]["xml_desc"] = virtconn.lookup_domain_by_id(d).xml_desc
   end
-  if virtconn.num_of_networks > 0
-    virtualization[:networks] = Mash.new
-    virtconn.list_networks.each do |n|
-      virtualization[:networks][n] = Mash.new
-      virtualization[:networks][n]["xml_desc"] = virtconn.lookup_network_by_name(n).xml_desc
-      virtualization[:networks][n]["bridge"] = virtconn.lookup_network_by_name(n).bridge_name
-    end
+  
+  virtualization[:networks] = Mash.new
+  virtconn.list_networks.each do |n|
+    virtualization[:networks][n] = Mash.new
+    virtualization[:networks][n]["xml_desc"] = virtconn.lookup_network_by_name(n).xml_desc
+    virtualization[:networks][n]["bridge"] = virtconn.lookup_network_by_name(n).bridge_name
   end
-  if virtconn.num_of_storage_pools > 0
-    virtualization[:storage] = Mash.new
-    virtconn.list_storage_pools.each do |pool| 
-      virtualization[:storage][pool] = Mash.new
-      virtualization[:storage][pool][:info] = virtconn.lookup_storage_pool_by_name(pool).info.attributes
-    
-      virtualization[:storage][pool][:volumes] = Mash.new
-      virtconn.list_volumes.each {|v| virtualization[:storage][pool][:volumes][v] = virtconn.list_volume_by_name(pool).info.attributes}
-    end
+  
+  virtualization[:storage] = Mash.new
+  virtconn.list_storage_pools.each do |pool| 
+    virtualization[:storage][pool] = Mash.new
+    virtualization[:storage][pool][:info] = virtconn.lookup_storage_pool_by_name(pool).info.attributes
+  
+    virtualization[:storage][pool][:volumes] = Mash.new
+    virtconn.list_volumes.each {|v| virtualization[:storage][pool][:volumes][v] = virtconn.list_volume_by_name(pool).info.attributes}
   end
   
   virtconn.close

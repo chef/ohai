@@ -37,7 +37,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
     dv = virtconn.lookup_domain_by_id(d)
     virtualization[:domains][dv.name] = Mash.new
     virtualization[:domains][dv.name][:id] = d
-    ['os_type','uuid','xml_spec'].each {|a| virtualization[:domains][dv.name][a] = dv.send(a)}
+    ['os_type','uuid','xml_desc'].each {|a| virtualization[:domains][dv.name][a] = dv.send(a)}
     ['cpu_time','max_mem','memory','nr_virt_cpu','state'].each {|a| virtualization[:domains][dv.name][a] = dv.info.send(a)}
   end
   
@@ -45,8 +45,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   virtconn.list_networks.each do |n|
     nv = virtconn.lookup_network_by_name(n)
     virtualization[:networks][n] = Mash.new
-    virtualization[:networks][n][:bridge] = nv.bridge_name
-    virtualization[:networks][n][:xml_desc] = nv.xml_desc
+    ['bridge_name','uuid','xml_desc'].each {|a| virtualization[:networks][n][a] = nv.send(a)}
   end
   
   virtualization[:storage] = Mash.new

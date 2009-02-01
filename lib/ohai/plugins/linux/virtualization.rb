@@ -20,11 +20,9 @@ virtualization Mash.new
 
 # if it is possible to detect paravirt vs hardware virt, it should be put in
 # virtualization[:mechanism]
-if File.exists?("/proc/xen/capabilities")
-  if File.read("/proc/xen/capabilities") =~ /control_d/i
+if File.exists?("/proc/xen/capabilities") && File.read("/proc/xen/capabilities") =~ /control_d/i
     virtualization[:system] = "xen"
     virtualization[:role] = "host"
-  end
 elsif File.exists?("/proc/sys/xen/independent_wallclock")
   virtualization[:system] = "xen"
   virtualization[:role] = "guest"

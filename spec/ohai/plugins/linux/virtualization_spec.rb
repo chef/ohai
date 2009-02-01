@@ -74,6 +74,19 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai[:virtualization][:role].should == "guest"
   end
   
+  it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
+    ["/proc/xen/capabilities", "/proc/sys/xen/independent_wallclock", "/proc/modules", "/proc/cpuinfo"].each do |d|
+      File.should_receive(:exists?).with(d).and_return(false)
+    end
+    @stdout.stub!(:each).
+      and_yield("Manufacturer: Microsoft").
+      and_yield(" Product Name: Virtual Machine")
+    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr)
+    @ohai._require_plugin("linux::virtualization")
+    @ohai[:virtualization][:system].should == "virtualpc"
+    @ohai[:virtualization][:role].should == "guest"
+  end
+  
   it "should not set virtualization if xen isn't there" do
     File.should_receive(:exists?).at_least(:once).and_return(false)
     @ohai._require_plugin("linux::virtualization")

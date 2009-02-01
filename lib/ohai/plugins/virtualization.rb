@@ -45,8 +45,8 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   virtconn.list_networks.each do |n|
     nv = virtconn.lookup_network_by_name(n)
     virtualization[:networks][n] = Mash.new
-    virtualization[:networks][n][:bridge] = vn.bridge_name
-    virtualization[:networks][n][:xml_desc] = vn.xml_desc
+    virtualization[:networks][n][:bridge] = nv.bridge_name
+    virtualization[:networks][n][:xml_desc] = nv.xml_desc
   end
   
   virtualization[:storage] = Mash.new

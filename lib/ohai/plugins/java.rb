@@ -24,8 +24,8 @@ status = popen4("java -version") do |pid, stdin, stdout, stderr|
   stderr.each do |line|
     case line
     when /java version \"([0-9\.\_]+)\"/: java[:version] = $1
-    when /^(Java\(TM\).+) \(build (.+)\)$/: java[:runtime] = { "name" => $1, "build" => $2 }
-    when /^(Java HotSpot\(TM\).+) \(build (.+)\)$/: java[:hotspot] = { "name" => $1, "build" => $2 }
+    when /^(.+Runtime Environment.*) \(build (.+)\)$/: java[:runtime] = { "name" => $1, "build" => $2 }
+    when /^(.+ Client VM) \(build (.+)\)$/: java[:hotspot] = { "name" => $1, "build" => $2 }
     end
   end
 end

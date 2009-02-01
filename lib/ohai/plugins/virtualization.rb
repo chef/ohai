@@ -22,10 +22,10 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   require 'libvirt'
   require 'hpricot'
 
-  system = (virtualization[:system].eql?('kvm') ? 'qemu' : virtualization[:system])
-  virtualization[:libvirt_version] = Libvirt::version(system)[0].to_s
+  emu = (virtualization[:emulator].eql?('kvm') ? 'qemu' : virtualization[:emulator])
+  virtualization[:libvirt_version] = Libvirt::version(emu)[0].to_s
 
-  virtconn = Libvirt::open("#{system}:///system")
+  virtconn = Libvirt::open("#{emu}:///system")
 
   virtualization[:uri] = virtconn.uri
   virtualization[:capabilities] = Mash.new

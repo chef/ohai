@@ -20,21 +20,23 @@ require_plugin "#{os}::virtualization"
 
 unless virtualization.nil? || !(virtualization[:role].eql?("host"))
   require 'libvirt'
-  
-  virtconn = Libvirt::open("#{virtualization[:system]}:///system") # connect to default hypervisor
-  
+
+  virtconn = Libvirt::open("#{(virtualization[:system].eql?('kvm') ? 'qemu' : virtualization[:system])}:///system")
+
   virtualization[:uri] = virtconn.uri
   virtualization[:capabilities] = virtconn.capabilities
-  virtualization[:nodeinfo] = virtconn.nodeinfo
-  
-  if virtconn.num_of_domains
+  virtualization[:nodeinfo] = Mash.new
+  # why doesn't the NodeInfo object respond to attributes?  argh.
+  ['cores','cpus','memory','mhz','model','nodes','sockets','threads'].each {|a| virtualization[:nodeinfo][a] = virtconn.node_get_info.send(a)}
+
+  if virtconn.num_of_domains > 0
     virtualization[:domains] = Mash.new
     virtconn.list_domains.each do |d|
       virtualization[:domains][d] = virtconn.lookup_domain_by_id(d).info.attributes
       virtualization[:domains][d]["xml_desc"] = virtconn.lookup_domain_by_id(d).xml_desc
     end
   end
-  if virtconn.num_of_networks
+  if virtconn.num_of_networks > 0
     virtualization[:networks] = Mash.new
     virtconn.list_networks.each do |n|
       virtualization[:networks][n] = Mash.new
@@ -42,7 +44,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
       virtualization[:networks][n]["bridge"] = virtconn.lookup_network_by_name(n).bridge_name
     end
   end
-  if virtconn.num_of_storage_pools
+  if virtconn.num_of_storage_pools > 0
     virtualization[:storage] = Mash.new
     virtconn.list_storage_pools.each do |pool| 
       virtualization[:storage][pool] = Mash.new

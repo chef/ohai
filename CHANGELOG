@@ -1,3 +1,25 @@
+Sat Jan 31 19:05:49 PST 2009
+Release Notes - Ohai - Version 0.1.4
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-16] - 9 failing specs - investigate / patch
+    * [OHAI-17] - The kitten must die
+    * [OHAI-27] - linux network counters should have an extra array dimension for rx/tx
+    * [OHAI-35] - Clean up files left around from non-simple newgem, add some of the ones that are generated to gitignore
+    * [OHAI-42] - Properly detect Java env on RH/Fedora
+
+** New Feature
+    * [OHAI-4] - OpenSolaris plugins
+    * [OHAI-18] - Erlang language plugin
+    * [OHAI-20] - per-interface ARP table collection on linux and darwin
+    * [OHAI-22] - sysctl network setting reporting for darwin
+    * [OHAI-24] - not enough freebsd7 attributes for chef-client
+    * [OHAI-26] - darwin network interface counters
+    * [OHAI-33] - ec2 metadata should show up in ohai
+    * [OHAI-37] - add [:command][:ps] to freebsd
+    * [OHAI-38] - report langauges::java
+
 Thu Jan 15 11:13:45 PST 2009
 Release Notes - Ohai - Version 0.1.2
 http://tickets.opscode.com

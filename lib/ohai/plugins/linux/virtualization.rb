@@ -52,8 +52,8 @@ end
 if File.exists?("/usr/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|
     stdin.close
+    found_virt_manufacturer = nil
     stdout.each do |line|
-      found_virt_manufacturer = nil
       case line
       when /Manufacturer: Microsoft/
         found_virt_manufacturer = "virtualpc"

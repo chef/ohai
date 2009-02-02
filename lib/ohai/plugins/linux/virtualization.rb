@@ -53,18 +53,19 @@ if File.exists?("/usr/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|
     stdin.close
     stdout.each do |line|
+      found_virt_manufacturer = nil
       case line
       when /Manufacturer: Microsoft/
-        @found_virt_manufacturer = "virtualpc"
+        found_virt_manufacturer = "virtualpc"
       when / Product Name: Virtual Machine/
-        if @found_virt_manufacturer == "virtualpc" 
+        if found_virt_manufacturer == "virtualpc" 
           virtualization[:system] = "virtualpc"
           virtualization[:role] = "guest"
         end
       when /Manufacturer: VMware/
-        @found_virt_manufacturer = "vmware"
+        found_virt_manufacturer = "vmware"
       when /Product Name: VMware Virtual Platform/
-        if @found_virt_manufacturer == "vmware" 
+        if found_virt_manufacturer == "vmware" 
           virtualization[:system] = "vmware"
           virtualization[:role] = "guest"
         end

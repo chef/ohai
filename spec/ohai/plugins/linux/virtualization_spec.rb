@@ -74,16 +74,33 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai[:virtualization][:role].should == "guest"
   end
   
+  it "should run dmidecode" do
+    File.should_receive(:exists?).at_least(:once).and_return(false)
+    @ohai.should_receive(:popen4).with("dmidecode").and_return(true)
+    @ohai._require_plugin("linux::virtualization")
+  end
+
   it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
-    ["/proc/xen/capabilities", "/proc/sys/xen/independent_wallclock", "/proc/modules", "/proc/cpuinfo"].each do |d|
-      File.should_receive(:exists?).with(d).and_return(false)
-    end
+    File.should_receive(:exists?).at_least(:once).and_return(false)
+    @status = 0
     @stdout.stub!(:each).
       and_yield("Manufacturer: Microsoft").
       and_yield(" Product Name: Virtual Machine")
-    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr)
+    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
     @ohai._require_plugin("linux::virtualization")
     @ohai[:virtualization][:system].should == "virtualpc"
+    @ohai[:virtualization][:role].should == "guest"
+  end
+  
+  it "should set vmware guest if dmidecode detects VMware Virtual Platform" do
+    File.should_receive(:exists?).at_least(:once).and_return(false)
+    @status = 0
+    @stdout.stub!(:each).
+      and_yield("Manufacturer: VMware").
+      and_yield("Product Name: VMware Virtual Platform")
+    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @ohai._require_plugin("linux::virtualization")
+    @ohai[:virtualization][:system].should == "vmware"
     @ohai[:virtualization][:role].should == "guest"
   end
   

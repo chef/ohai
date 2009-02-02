@@ -24,88 +24,105 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai[:os] = "linux"
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai.extend(SimpleFromFile)
-    File.should_receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
-    @stdin = mock("STDIN", { :close => true })
-    @pid = 10
-    @stderr = mock("STDERR")
-    @stdout = mock("STDOUT")
+
+    # default to all requested Files not existing
+    File.stub!(:exists?).with("/proc/xen/capabilities").and_return(false)
+    File.stub!(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(false)
+    File.stub!(:exists?).with("/proc/modules").and_return(false)
+    File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
+    File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
   end
 
-  it "should set xen host if /proc/xen/capabilities contains control_d" do
-    ["/proc/modules", "/proc/cpuinfo"].each do |d|
-      File.should_receive(:exists?).with(d).and_return(false)
+  describe "when we are checking for xen" do
+    it "should set xen host if /proc/xen/capabilities contains control_d" do
+      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
+      File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "xen" 
+      @ohai[:virtualization][:role].should == "host"
     end
-    File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-    File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "xen" 
-    @ohai[:virtualization][:role].should == "host"
+
+    it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
+      File.should_receive(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(true)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "xen"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if xen isn't there" do
+      File.should_receive(:exists?).at_least(:once).and_return(false)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization].should == {}
+    end
   end
 
-  it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
-    ["/proc/xen/capabilities", "/proc/modules", "/proc/cpuinfo"].each do |d|
-      File.should_receive(:exists?).with(d).and_return(false)
+  describe "when we are checking for kvm" do
+    it "should set kvm host if /proc/modules contains kvm" do
+      File.should_receive(:exists?).with("/proc/modules").and_return(true)
+      File.stub!(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "kvm"
+      @ohai[:virtualization][:role].should == "host"
     end
-    File.should_receive(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(true)
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "xen"
-    @ohai[:virtualization][:role].should == "guest"
+    
+    it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
+      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "kvm"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if kvm isn't there" do
+      File.should_receive(:exists?).at_least(:once).and_return(false)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization].should == {}
+    end
   end
 
-  it "should set kvm host if /proc/modules contains kvm" do
-    ["/proc/xen/capabilities", "/proc/sys/xen/independent_wallclock", "/proc/cpuinfo"].each do |d|
-      File.should_receive(:exists?).with(d).and_return(false)
+  describe "when we are parsing dmidecode" do
+    before(:each) do
+      File.should_receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
+      @stdin = mock("STDIN", { :close => true })
+      @pid = 10
+      @stderr = mock("STDERR")
+      @stdout = mock("STDOUT")
+      @status = 0
     end
-    File.should_receive(:exists?).with("/proc/modules").and_return(true)
-    File.stub!(:read).with("/proc/modules").and_return("kvm")
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "kvm"
-    @ohai[:virtualization][:role].should == "host"
-  end
-  
-  it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
-    ["/proc/xen/capabilities", "/proc/sys/xen/independent_wallclock", "/proc/modules"].each do |d|
-      File.should_receive(:exists?).with(d).and_return(false)
+
+    it "should run dmidecode" do
+      @ohai.should_receive(:popen4).with("dmidecode").and_return(true)
+      @ohai._require_plugin("linux::virtualization")
     end
-    File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
-    File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "kvm"
-    @ohai[:virtualization][:role].should == "guest"
-  end
-  
-  it "should run dmidecode" do
-    File.should_receive(:exists?).at_least(:once).and_return(false)
-    @ohai.should_receive(:popen4).with("dmidecode").and_return(true)
-    @ohai._require_plugin("linux::virtualization")
+
+    it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
+      @stdout.stub!(:each).
+        and_yield("Manufacturer: Microsoft").
+        and_yield(" Product Name: Virtual Machine")
+      @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "virtualpc"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should set vmware guest if dmidecode detects VMware Virtual Platform" do
+      @stdout.stub!(:each).
+        and_yield("Manufacturer: VMware").
+        and_yield("Product Name: VMware Virtual Platform")
+      @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "vmware"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should run dmidecode and not set virtualization if nothing is detected" do
+      @ohai.should_receive(:popen4).with("dmidecode").and_return(true)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization].should == {}
+    end
   end
 
-  it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
-    File.should_receive(:exists?).at_least(:once).and_return(false)
-    @status = 0
-    @stdout.stub!(:each).
-      and_yield("Manufacturer: Microsoft").
-      and_yield(" Product Name: Virtual Machine")
-    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "virtualpc"
-    @ohai[:virtualization][:role].should == "guest"
-  end
-  
-  it "should set vmware guest if dmidecode detects VMware Virtual Platform" do
-    File.should_receive(:exists?).at_least(:once).and_return(false)
-    @status = 0
-    @stdout.stub!(:each).
-      and_yield("Manufacturer: VMware").
-      and_yield("Product Name: VMware Virtual Platform")
-    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-    @ohai._require_plugin("linux::virtualization")
-    @ohai[:virtualization][:system].should == "vmware"
-    @ohai[:virtualization][:role].should == "guest"
-  end
-  
-  it "should not set virtualization if xen isn't there" do
-    File.should_receive(:exists?).at_least(:once).and_return(false)
+  it "should not set virtualization if no tests match" do
     @ohai._require_plugin("linux::virtualization")
     @ohai[:virtualization].should == {}
   end

@@ -114,7 +114,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   end
 end
 
-popen4("/usr/sbin/arp -an") do |pid, stdin, stdout, stderr|
+popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+) \[(\w+)\]/
@@ -127,7 +127,7 @@ popen4("/usr/sbin/arp -an") do |pid, stdin, stdout, stderr|
 end
 
 settings = Mash.new
-popen4("/usr/sbin/sysctl net") do |pid, stdin, stdout, stderr|
+popen4("sysctl net") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^([a-zA-Z0-9\.\_]+)\: (.*)/
@@ -137,7 +137,7 @@ popen4("/usr/sbin/sysctl net") do |pid, stdin, stdout, stderr|
   end
 end
 
-popen4("/usr/sbin/netstat -i -d -l -b") do |pid, stdin, stdout, stderr|
+popen4("netstat -i -d -l -b -n") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^([a-zA-Z0-9\.\:\-]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+[a-f0-9\:]+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||

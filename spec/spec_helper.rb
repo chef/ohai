@@ -45,3 +45,9 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
     @ohai[mash][attribute].should == value
   end
 end
+
+module SimpleFromFile
+  def from_file(filename)
+    self.instance_eval(IO.read(filename), filename, 1)
+  end
+end

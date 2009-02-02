@@ -23,8 +23,7 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai = Ohai::System.new
     @ohai[:os] = "linux"
     @ohai.stub!(:require_plugin).and_return(true)
-    # XXX - there must be a better way to do this!
-    File.should_receive(:exists?).with(/linux\/virtualization.rb/).and_return(true)
+    @ohai.extend(SimpleFromFile)
     File.should_receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
     @stdin = mock("STDIN", { :close => true })
     @pid = 10

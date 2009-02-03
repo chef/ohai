@@ -25,42 +25,42 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       cint = $1
       iface[cint] = Mash.new
       if cint =~ /^(\w+)(\d+.*)/
-        iface[cint]["type"] = $1
-        iface[cint]["number"] = $2
+        iface[cint][:type] = $1
+        iface[cint][:number] = $2
       end
     end
     # call the family lladdr to match linux for consistency
     if line =~ /\s+ether (.+?)\s/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "lladdr" }
     end
     if line =~ /\s+inet ([\d.]+) netmask ([\da-fx]+)\s*\w*\s*([\d.]*)/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       # convert the netmask to decimal for consistency
       netmask = "#{$2[2,2].hex}.#{$2[4,2].hex}.#{$2[6,2].hex}.#{$2[8,2].hex}"
       if $3.empty?
-        iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => netmask }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => netmask }
       else
         # found a broadcast address
-        iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => netmask, "broadcast" => $3 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => netmask, "broadcast" => $3 }
       end
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)%?(\w*)\s+prefixlen\s+(\d+)\s*\w*\s*([\da-fx]*)/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       if $4.empty?
-        iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $3 }
+        iface[cint][:addresses] << { "family" => "inet6", "prefixlen" => $3 }
       else
         # found a zone_id / scope
-        iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
+        iface[cint][:addresses] << { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
       end
     end
     if line =~ /flags=\d+<(.+)>/
       flags = $1.split(',')
-      iface[cint]["flags"] = flags if flags.length > 0
+      iface[cint][:flags] = flags if flags.length > 0
     end
     if line =~ /metric: (\d+) mtu: (\d+)/
-      iface[cint]["metric"] = $1
-      iface[cint]["mtu"] = $2
+      iface[cint][:metric] = $1
+      iface[cint][:mtu] = $2
     end
   end
 end
@@ -97,8 +97,8 @@ popen4("netstat -ibdn") do |pid, stdin, stdout, stderr|
       iface[$1]["counters"]["tx"]["packets"] = $6
       iface[$1]["counters"]["tx"]["errors"] = $7
       iface[$1]["counters"]["tx"]["bytes"] = $8
-      iface[$1]["counters"]["collisions"] = $9
-      iface[$1]["counters"]["dropped"] = $10
+      iface[$1]["counters"]["tx"]["collisions"] = $9
+      iface[$1]["counters"]["tx"]["dropped"] = $10
     end
   end
 end

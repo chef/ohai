@@ -78,31 +78,31 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
       cint = $1
       iface[cint] = Mash.new
-      iface[cint]["mtu"] = $2
-      iface[cint]["index"] = $3
+      iface[cint][:mtu] = $2
+      iface[cint][:index] = $3
       if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
         flags = $1.split(',')
       else
         flags = Array.new
       end
-      iface[cint]["flags"] = flags.flatten
+      iface[cint][:flags] = flags.flatten
       if cint =~ /^(\w+)(\d+.*)/
-        iface[cint]["type"] = $1
-        iface[cint]["number"] = $2
-        iface[cint]["encapsulation"] = encaps_lookup($1)
+        iface[cint][:type] = $1
+        iface[cint][:number] = $2
+        iface[cint][:encapsulation] = encaps_lookup($1)
       end
     end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*"."}
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
     end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
     end
   end
 end
@@ -120,16 +120,16 @@ end
 
 iface.keys.each do |ifn|
   iaddr = nil
-  if iface[ifn]["encapsulation"].eql?("Ethernet")
-    iface[ifn]["addresses"].each do |addr|
-      if addr["family"].eql?("inet")
-        iaddr = addr["address"]
+  if iface[ifn][:encapsulation].eql?("Ethernet")
+    iface[ifn][:addresses].keys.each do |addr|
+      if [ifn][:addresses][addr]["family"].eql?("inet")
+        iaddr = addr
         break
       end
     end
-    iface[ifn]["arp"].keys.each do |addr|
+    iface[ifn][:arp].keys.each do |addr|
       if addr.eql?(iaddr)
-        iface[ifn]["addresses"] << { "family" => "lladdr", "address" => iface[ifn]["arp"][iaddr] }
+        iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
         break
       end
     end

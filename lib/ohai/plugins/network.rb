@@ -24,9 +24,9 @@ require_plugin "#{os}::network"
 
 def find_ip_and_mac(addresses)
   ip = nil; mac = nil
-  addresses.each do |addr|
-    ip = addr["address"] if addr["family"].eql?("inet")
-    mac = addr["address"] if addr["family"].eql?("lladdr")
+  addresses.keys.each do |addr|
+    ip = addr if addresses[addr]["family"].eql?("inet")
+    mac = addr if addresses[addr]["family"].eql?("lladdr")
     break if (ip and mac)
   end
   [ip, mac]

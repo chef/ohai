@@ -1,5 +1,5 @@
 #
-# Author:: Benjamin Black (<nostromo@gmail.com>)
+# Author:: Benjamin Black (<bb@opscode.com>)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -61,8 +61,8 @@ def locate_interface(ifaces, ifname, mac)
   # oh well, time to go hunting!
   return ifname.chop if ifname.match /\*$/
   ifaces.keys.each do |ifc|
-    ifaces[ifc][:addresses].each do |addr|
-      return ifc if addr["address"].eql? mac
+    ifaces[ifc][:addresses].keys.each do |addr|
+      return ifc if addr.eql? mac
     end
   end
   
@@ -76,7 +76,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)$/
       cint = $1
-      iface[cint] = Mash.new unless iface[cint]; iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
+      iface[cint] = Mash.new unless iface[cint]; iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       iface[cint][:mtu] = $2
       if line =~ /\sflags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
         flags = $1.split(',')
@@ -91,29 +91,29 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       end
     end
     if line =~ /^\s+ether ([0-9a-f\:]+)\s/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "lladdr", "address" => $1 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "lladdr" }
       iface[cint][:encapsulation] = "Ethernet"
     end
     if line =~ /^\s+lladdr ([0-9a-f\:]+)\s/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "lladdr", "address" => $1 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "lladdr" }
     end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8})\s*$/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*"."}
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
     end
     if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "inet", "address" => $1, "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => "Node" }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => "Node" }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+) scopeid 0x([a-f0-9]+)/
-      iface[cint][:addresses] = Array.new unless iface[cint][:addresses]
-      iface[cint][:addresses] << { "family" => "inet6", "address" => $1, "prefixlen" => $4 , "scope" => scope_lookup($1) }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => scope_lookup($1) }
     end
     if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
       iface[cint][:media] = Mash.new unless iface[cint][:media]

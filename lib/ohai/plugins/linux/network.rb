@@ -31,41 +31,43 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
   cint = nil
   stdout.each do |line|
+    tmp_addr = nil
     if line =~ /^([0-9a-zA-Z\.\:\-]+)\s+/
       cint = $1
       iface[cint] = Mash.new
       if cint =~ /^(\w+)(\d+.*)/
-        iface[cint]["type"] = $1
-        iface[cint]["number"] = $2
+        iface[cint][:type] = $1
+        iface[cint][:number] = $2
       end
     end
     if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
-      iface[cint]["encapsulation"] = encaps_lookup($1)
+      iface[cint][:encapsulation] = encaps_lookup($1)
     end
     if line =~ /HWaddr (.+?)\s/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "lladdr", "address" => $1 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "lladdr" }
     end
     if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet", "address" => $1 }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet" }
+      tmp_addr = $1
     end
     if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
-      iface[cint]["addresses"] = Array.new unless iface[cint]["addresses"]
-      iface[cint]["addresses"] << { "family" => "inet6", "address" => $1, "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
+      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
     end
     if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["addresses"].last["broadcast"] = $1
+      iface[cint][:addresses][tmp_adr]["broadcast"] = $1
     end
     if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint]["addresses"].last["netmask"] = $1
+      iface[cint][:addresses][tmp_adr]["netmask"] = $1
     end
     flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
     if flags.length > 1
-      iface[cint]["flags"] = flags.flatten
+      iface[cint][:flags] = flags.flatten
     end
     if line =~ /MTU:(\d+)/
-      iface[cint]["mtu"] = $1
+      iface[cint][:mtu] = $1
     end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
       iface[cint][:counters] = Mash.new unless iface[cint][:counters]

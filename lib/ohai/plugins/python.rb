@@ -19,9 +19,16 @@
 require_plugin "languages"
 output = nil
 
-status = popen4("python -c \"import sys; print sys.version; print sys.platform\"") do |pid, stdin, stdout, stderr|
+status = popen4("python -c \"import sys; print sys.version\"") do |pid, stdin, stdout, stderr|
   stdin.close
-  stdout.each do |line|
-  end
-
+  output = stdout.gets.split
 end
+
+if status == 0
+  languages[:python] = Mash.new
+  version = output[0]
+  builddate = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+  languages[:python][:version] = version
+  languages[:python][:builddate] = builddate
+end
+

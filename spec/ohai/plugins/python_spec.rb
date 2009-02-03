@@ -30,11 +30,11 @@ describe Ohai::System, "plugin python" do
     @stdout = mock(
       "STDOUT", 
       :null_object => true,
-      :gets => "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\nlinux2\n"
+      :gets => "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
     )
     @stdin = mock("STDIN", :null_object => true)
     @status = 0
-    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version; print sys.platform\"").and_yield(
+    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version\"").and_yield(
       @pid, 
       @stdin, 
       @stdout, 
@@ -43,7 +43,7 @@ describe Ohai::System, "plugin python" do
   end
   
   it "should get the python version from printing sys.version and sys.platform" do
-    @ohai.should_receive(:popen4).with("python -c \"import sys; print sys.version; print sys.platform\"").and_return(true)
+    @ohai.should_receive(:popen4).with("python -c \"import sys; print sys.version\"").and_return(true)
     @ohai._require_plugin("python")
   end
 
@@ -53,7 +53,7 @@ describe Ohai::System, "plugin python" do
   end
   
   it "should read the version data from stdout" do
-    @stderr.should_receive(:gets).and_return("Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n")
+    @stdout.should_receive(:gets).and_return("2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n")
     @ohai._require_plugin("python")
   end
   
@@ -64,7 +64,7 @@ describe Ohai::System, "plugin python" do
   
   it "should not set the languages[:python] tree up if python command fails" do
     @status = 1
-    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version; print sys.platform\"").and_yield(
+    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version\"").and_yield(
       @pid, 
       @stdin, 
       @stdout, 

@@ -33,6 +33,7 @@ if File.exists?("/usr/local/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|
     stdin.close
     found_virt_manufacturer = nil
+    found_virt_product = nil
     stdout.each do |line|
       case line
       when /Manufacturer: Microsoft/

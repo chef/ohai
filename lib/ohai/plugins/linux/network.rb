@@ -57,10 +57,10 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
     end
     if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses][tmp_adr]["broadcast"] = $1
+      iface[cint][:addresses][tmp_addr]["broadcast"] = $1
     end
     if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses][tmp_adr]["netmask"] = $1
+      iface[cint][:addresses][tmp_addr]["netmask"] = $1
     end
     flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
     if flags.length > 1

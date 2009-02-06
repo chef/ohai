@@ -1,5 +1,6 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
+# Author:: Christopher Brown (cb@opscode.com)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -23,6 +24,7 @@ describe Ohai::System, "plugin ec2" do
   before(:each) do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:network] = {:interfaces => {:eth0 => {} } }
   end
 
   describe "!ec2", :shared => true do
@@ -53,28 +55,20 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with ec2 dns attribute markers" do
+  describe "with ec2 mac and metadata address connected" do
     it_should_behave_like "ec2"
 
     before(:each) do
-      @ohai.stub!(:domain).and_return('compute-1.internal')
+      IO.stub!(:select).and_return([[],[1],[]])
+      @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
     end
   end
 
-  describe "with ec2 kernel attribute markers" do
-    it_should_behave_like "ec2"
-
-    before(:each) do
-      @ohai.stub!(:kernel).and_return({:release => 'blah -ec2- blah'})
-    end
-  end
-
-  describe "without ec2 kernel or domain attribute markers" do
+  describe "without ec2 mac and metadata address connected" do
     it_should_behave_like "!ec2"
-
+    
     before(:each) do
-      @ohai.stub!(:domain).and_return('local')
-      @ohai.stub!(:kernel).and_return({:release => '2.6.21'})
+      @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
     end
   end
 end

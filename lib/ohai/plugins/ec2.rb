@@ -1,6 +1,7 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@opscode.com>)
+# Author:: Christopher Brown (<cb@opscode.com>)
 # Copyright:: Copyright (c) 2009 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -17,25 +18,69 @@
 # limitations under the License.
 
 require 'open-uri'
+require 'socket'
 
 require_plugin "hostname"
 require_plugin "kernel"
+require_plugin "network"
+
+EC2_METADATA_ADDR = "169.254.169.254"
+EC2_METADATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/meta-data"
+
+def can_metadata_connect?(addr, port, timeout=2)
+  t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
+  saddr = Socket.pack_sockaddr_in(port, addr)
+  connected = false
+
+  begin
+    t.connect_nonblock(saddr)    
+  rescue Errno::EINPROGRESS
+    r,w,e = IO::select(nil,[t],nil,timeout)
+    if !w.nil?
+      connected = true
+    else
+      begin
+        t.connect_nonblock(saddr)
+      rescue Errno::EISCONN
+        t.close
+        connected = true
+      rescue SystemCallError
+      end
+    end
+  rescue SystemCallError
+  end
+
+  connected
+end
+
+def has_ec2_mac?
+  network[:interfaces].values.each do |iface|
+    unless iface[:arp].nil?
+      return true if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
+    end
+  end
+  false
+end
 
 def metadata(id='')
-  OpenURI.open_uri("http://169.254.169.254/2008-02-01/meta-data/#{id}").
-    read.split("\n").each do |o|
+  # Try non-blocking connect with lite spin so we don't "block" if 
+  # the Xen environment is *not* EC2
+  OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}").read.split("\n").each do |o|
     key = "#{id}#{o.gsub(/\=.*$/, '/')}"
     if key[-1..-1] != '/'
       ec2[key.gsub(/\-|\//, '_').to_sym] =
-        OpenURI.open_uri("http://169.254.169.254/2008-02-01" +
-                         "/meta-data/#{key}").gets
+        OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").gets
     else
       metadata(key)
     end
   end
 end
 
-if (domain =~ /\.internal$/ || kernel[:release] =~ /-ec2-/)
+def looks_like_ec2?
+  has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+end
+
+if looks_like_ec2?
   ec2 Mash.new
   self.metadata
 end

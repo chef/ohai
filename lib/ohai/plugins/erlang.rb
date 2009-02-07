@@ -23,18 +23,24 @@ require_plugin "languages"
 output = nil
 
 erlang = Mash.new
-status = popen4("erl +V") do |pid, stdin, stdout, stderr|
-  stdin.close
-  output = stderr.gets.split if stderr
-  options = output[1]
-  options.gsub!(/(\(|\))/, '')
-  erlang[:version] = output[5]
-  erlang[:options] = options.split(',')
-  erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
-end
+case languages[:ruby][:host_os]
+when /mswin32/
+  # do nothing
+  true
+else
+  status = popen4("erl +V") do |pid, stdin, stdout, stderr|
+    stdin.close
+    output = stderr.gets.split if stderr
+    options = output[1]
+    options.gsub!(/(\(|\))/, '')
+    erlang[:version] = output[5]
+    erlang[:options] = options.split(',')
+    erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
+  end
 
-if status == 0
-  if erlang[:version] and erlang[:options] and erlang[:emulator]
-    languages[:erlang] = erlang
+  if status == 0
+    if erlang[:version] and erlang[:options] and erlang[:emulator]
+      languages[:erlang] = erlang
+    end
   end
 end

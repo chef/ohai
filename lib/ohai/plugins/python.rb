@@ -23,6 +23,7 @@ require_plugin "languages"
 output = nil
 
 python = Mash.new
+
 status = popen4("python -c \"import sys; print sys.version\"") do |pid, stdin, stdout, stderr|
   stdin.close
   output_string = stdout.gets

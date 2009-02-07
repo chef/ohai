@@ -20,9 +20,10 @@ provides "languages/java"
 require_plugin "languages"
 
 java = Mash.new
-status = popen4("java -version") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stderr.each do |line|
+
+status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+if status == 0
+  stderr.split("\n").each do |line|
     case line
     when /java version \"([0-9\.\_]+)\"/: java[:version] = $1
     when /^(.+Runtime Environment.*) \(build (.+)\)$/: java[:runtime] = { "name" => $1, "build" => $2 }

@@ -69,13 +69,12 @@ iface_instance.keys.each do |i|
     iface[cint][:instance] = iface_instance[i]
 
     iface[cint][:counters] = Mash.new
-    iface[cint][:addresses] = []
+    iface[cint][:addresses] = Mash.new
     iface[cint][:configuration][:ip_address].each_index do |i|
       begin
          if iface[cint][:configuration][:ip_address][i] =~ /./
-           iface[cint][:addresses] << {
+           iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
              "family"    => "inet",
-             "address"   => iface[cint][:configuration][:ip_address][i],
              "netmask"   => iface[cint][:configuration][:ip_subnet][i],
              "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
                                           iface[cint][:configuration][:ip_subnet][i],
@@ -87,9 +86,8 @@ iface_instance.keys.each do |i|
       end
     end
     iface[cint][:configuration][:mac_address].each do |mac_addr|
-      iface[cint][:addresses] << {
-        "family"    => "lladdr",
-        "address"   => mac_addr
+      iface[cint][:addresses][mac_addr] = {
+        "family"    => "lladdr"
       }
     end
     iface[cint][:mtu] = iface[cint][:configuration][:mtu]

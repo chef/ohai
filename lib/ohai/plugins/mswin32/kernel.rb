@@ -16,15 +16,22 @@
 # limitations under the License.
 #
 
+def machine_lookup(sys_type)
+  return "i386" if sys_type.eql?("X86-based PC")
+  return "x86_64" if sys_type.eql?("x64-based PC")
+  sys_type
+end
+
 require 'ruby-wmi'
 host = WMI::Win32_OperatingSystem.find(:first)
 
 kernel[:name] = "#{host.Caption}"
 kernel[:release] = "#{host.Version}"
-kernel[:version] = "#{host.Version} Service Pack #{host.ServicePackMajorVersion} Build #{host.BuildNumber}"
-kernel[:machine] = languages[:ruby][:target_cpu]
+kernel[:version] = "#{host.Version} #{host.CSDVersion} Build #{host.BuildNumber}"
+
+host = WMI::Win32_ComputerSystem.find(:first)
+kernel[:machine] = machine_lookup("#{host.SystemType}")
 kernel[:os] = languages[:ruby][:host_os]
-#kernel[:os] = from("arp /a")
 
 kext = Mash.new
 pnp_drivers = Mash.new

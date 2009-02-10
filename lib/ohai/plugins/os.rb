@@ -28,6 +28,9 @@ when /linux/
   os "linux"
 when /freebsd(.+)$/
   os "freebsd"
+when /mswin/
+  # See notes in windows::platform.rb
+  os "windows"
 else
   os languages[:ruby][:host_os]
 end

@@ -22,28 +22,32 @@ def machine_lookup(sys_type)
   sys_type
 end
 
+def os_lookup(sys_type)
+  return "Unknown" if sys_type.to_s.eql?("0")
+  return "Other" if sys_type.to_s.eql?("1")
+  return "MSDOS" if sys_type.to_s.eql?("14")
+  return "WIN3x" if sys_type.to_s.eql?("15")
+  return "WIN95" if sys_type.to_s.eql?("16")
+  return "WIN98" if sys_type.to_s.eql?("17")
+  return "WINNT" if sys_type.to_s.eql?("18")
+  return "WINCE" if sys_type.to_s.eql?("19")
+  return nil
+end
+
+
 require 'ruby-wmi'
 host = WMI::Win32_OperatingSystem.find(:first)
 
 kernel[:name] = "#{host.Caption}"
 kernel[:release] = "#{host.Version}"
 kernel[:version] = "#{host.Version} #{host.CSDVersion} Build #{host.BuildNumber}"
+kernel[:os] = os_lookup(host.OSType) || languages[:ruby][:host_os]
 
 host = WMI::Win32_ComputerSystem.find(:first)
 kernel[:machine] = machine_lookup("#{host.SystemType}")
-kernel[:os] = languages[:ruby][:host_os]
 
 kext = Mash.new
 pnp_drivers = Mash.new
-
-#popen4("/sbin/lsmod") do |pid, stdin, stdout, stderr|
-#  stdin.close
-#  stdout.each do |line|
-#    if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
-#      kext[$1] = { :size => $2, :refcount => $3 }
-#    end
-#  end
-#end
 
 drivers = WMI::Win32_PnPSignedDriver.find(:all)
 drivers.each do |driver|
@@ -52,13 +56,6 @@ drivers.each do |driver|
     pnp_drivers[driver.DeviceID][p.name.underscore.to_sym] = driver[p.name]
   end
   if driver.DeviceName
-    #kext[driver.DeviceName] = { :version => driver.DriverVersion, 
-    #                            :signed => driver.IsSigned,
-    #                            :signer => driver.Signer,
-    #                            :id => driver.DeviceID,
-    #                            :class => driver.DeviceClass,
-    #                            :date => driver.DriverDate ? driver.DriverDate.to_s[0..7] : nil
-    #                          }
     kext[driver.DeviceName] = pnp_drivers[driver.DeviceID]
     kext[driver.DeviceName][:version] = pnp_drivers[driver.DeviceID][:driver_version]
     kext[driver.DeviceName][:date] = pnp_drivers[driver.DeviceID][:driver_date] ? pnp_drivers[driver.DeviceID][:driver_date].to_s[0..7] : nil

@@ -22,8 +22,8 @@ require_plugin 'ruby'
 
 kernel Mash.new
 case languages[:ruby][:host_os]
-when /mswin32/
-  require_plugin "#{languages[:ruby][:host_os]}::kernel"
+when /mswin/
+  require_plugin "windows::kernel"
 else
   kernel[:name] = from("uname -s")
   kernel[:release] = from("uname -r")

@@ -42,11 +42,10 @@ host.properties_.each do |p|
   kernel[:os_info][p.name.underscore.to_sym] = host[p.name]
 end
 
-
-kernel[:name] = "#{host.Caption}"
-kernel[:release] = "#{host.Version}"
-kernel[:version] = "#{host.Version} #{host.CSDVersion} Build #{host.BuildNumber}"
-kernel[:os] = os_lookup(host.OSType) || languages[:ruby][:host_os]
+kernel[:name] = "#{kernel[:os_info][:caption]}"
+kernel[:release] = "#{kernel[:os_info][:version]}"
+kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
+kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
 host = WMI::Win32_ComputerSystem.find(:first)
 kernel[:cs_info] = Mash.new
@@ -54,7 +53,7 @@ host.properties_.each do |p|
   kernel[:cs_info][p.name.underscore.to_sym] = host[p.name]
 end
 
-kernel[:machine] = machine_lookup("#{host.SystemType}")
+kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
 
 kext = Mash.new
 pnp_drivers = Mash.new

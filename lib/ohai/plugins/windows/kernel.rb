@@ -37,6 +37,11 @@ end
 
 require 'ruby-wmi'
 host = WMI::Win32_OperatingSystem.find(:first)
+kernel[:os_info] = Mash.new
+host.properties_.each do |p|
+  kernel[:os_info][p.name.underscore.to_sym] = host[p.name]
+end
+
 
 kernel[:name] = "#{host.Caption}"
 kernel[:release] = "#{host.Version}"
@@ -44,6 +49,11 @@ kernel[:version] = "#{host.Version} #{host.CSDVersion} Build #{host.BuildNumber}
 kernel[:os] = os_lookup(host.OSType) || languages[:ruby][:host_os]
 
 host = WMI::Win32_ComputerSystem.find(:first)
+kernel[:cs_info] = Mash.new
+host.properties_.each do |p|
+  kernel[:cs_info][p.name.underscore.to_sym] = host[p.name]
+end
+
 kernel[:machine] = machine_lookup("#{host.SystemType}")
 
 kext = Mash.new

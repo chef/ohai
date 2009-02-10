@@ -45,6 +45,9 @@ describe Ohai::System, "plugin ec2" do
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
         and_return(mock(IO, :gets => "ami-5d2dc934"))
+      OpenURI.stub!(:open_uri).
+        with("http://169.254.169.254/2008-02-01/user-data/").
+        and_return(mock(IO, :gets => "By the pricking of my thumb..."))
     end
 
     it "should recursively fetch all the ec2 metadata" do

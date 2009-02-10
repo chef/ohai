@@ -26,6 +26,7 @@ require_plugin "network"
 
 EC2_METADATA_ADDR = "169.254.169.254"
 EC2_METADATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/meta-data"
+EC2_USERDATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/user-data"
 
 def can_metadata_connect?(addr, port, timeout=2)
   t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
@@ -63,8 +64,6 @@ def has_ec2_mac?
 end
 
 def metadata(id='')
-  # Try non-blocking connect with lite spin so we don't "block" if 
-  # the Xen environment is *not* EC2
   OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}").read.split("\n").each do |o|
     key = "#{id}#{o.gsub(/\=.*$/, '/')}"
     if key[-1..-1] != '/'
@@ -76,11 +75,24 @@ def metadata(id='')
   end
 end
 
+def userdata()
+  ec2[:userdata] = nil
+  # assumes the only expected error is the 404 if there's no user-data
+  begin
+    ec2[:userdata] = OpenURI.open_uri("#{EC2_USERDATA_URL}/").gets
+  rescue OpenURI::HTTPError
+  end
+end
+
 def looks_like_ec2?
+  # Try non-blocking connect so we don't "block" if 
+  # the Xen environment is *not* EC2
   has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
 end
 
 if looks_like_ec2?
   ec2 Mash.new
   self.metadata
+  self.userdata
 end
+

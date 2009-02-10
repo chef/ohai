@@ -18,8 +18,8 @@
 
 require 'ruby-wmi'
 require 'socket'
-host = WMI::Win32_ComputerSystem.find(:first)
 
+host = WMI::Win32_ComputerSystem.find(:first)
 hostname "#{host.Name}"
 #hostname "#{Socket.gethostname}"
 fqdn "#{Socket.gethostbyname(Socket.gethostname).first}"

@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+require 'ruby-wmi'
+
 def machine_lookup(sys_type)
   return "i386" if sys_type.eql?("X86-based PC")
   return "x86_64" if sys_type.eql?("x64-based PC")
@@ -34,8 +36,6 @@ def os_lookup(sys_type)
   return nil
 end
 
-
-require 'ruby-wmi'
 host = WMI::Win32_OperatingSystem.find(:first)
 kernel[:os_info] = Mash.new
 host.properties_.each do |p|

@@ -19,6 +19,6 @@
 hostname from("hostname")
 begin
   fqdn from("hostname --fqdn")
-rescue Ohai::Exception::Exec
+rescue
   Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
 end

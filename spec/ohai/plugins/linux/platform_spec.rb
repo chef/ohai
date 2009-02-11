@@ -23,6 +23,7 @@ describe Ohai::System, "Linux plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai.extend(SimpleFromFile)
     @ohai[:os] = "linux"
     @ohai[:lsb] = Mash.new
   end
@@ -48,4 +49,25 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform_version].should == "8.04"
     end
   end
+
+  describe "on debian" do
+    before(:each) do
+      @ohai.lsb = nil
+    end
+    
+    it "should check for the existance of debian_version" do 
+      File.should_receive(:exists?).with("/etc/debian_version").and_return(true)
+      @ohai._require_plugin("linux::platform")
+    end
+
+    it "should read the version from /etc/debian_version" do
+      File.should_receive(:read).with("/etc/debian_version").and_return("")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform_version].should == nil
+    end
+
+
+  end
+
+      
 end  

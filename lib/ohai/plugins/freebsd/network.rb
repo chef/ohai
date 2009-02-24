@@ -70,8 +70,8 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([0-9a-zA-Z\.\:\-]+)/
       next unless iface[$3] # this should never happen
-      iface[$3][:arp] = Array.new unless iface[$3][:arp]
-      iface[$3][:arp] <<  { $1 => $2.downcase }
+      iface[$3][:arp] = Mash.new unless iface[$3][:arp]
+      iface[$3][:arp][$1] = $2.downcase
     end
   end
 end

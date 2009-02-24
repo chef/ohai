@@ -21,7 +21,7 @@ output = nil
 
 status = popen4("python -c \"import sys; print sys.version\"") do |pid, stdin, stdout, stderr|
   stdin.close
-  output = stdout.gets.split
+  output = stdout.gets.split if stdout
 end
 
 if status == 0

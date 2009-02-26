@@ -18,6 +18,10 @@
 
 kernel[:os] = kernel[:name]
 
+if from("sysctl -n hw.optional.x86_64").to_i == 1
+  kernel[:machine] = 'x86_64'
+end
+
 kext = Mash.new
 popen4("/usr/sbin/kextstat -k -l") do |pid, stdin, stdout, stderr|
   stdin.close

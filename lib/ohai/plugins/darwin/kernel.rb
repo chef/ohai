@@ -17,8 +17,8 @@
 #
 
 kernel[:os] = kernel[:name]
-is_64bit = (from("sysctl -n hw.cpu64bit_capable")).to_i
-if kernel[:machine].eql?('i386') && is_64bit == 1
+
+if from("sysctl -n hw.optional.x86_64").to_i == 1
   kernel[:machine] = 'x86_64'
 end
 

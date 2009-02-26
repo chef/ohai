@@ -17,6 +17,10 @@
 #
 
 kernel[:os] = kernel[:name]
+is_64bit = (from("sysctl -n hw.cpu64bit_capable")).to_i
+if kernel[:machine].eql?('i386') && is_64bit == 1
+  kernel[:machine] = 'x86_64'
+end
 
 kext = Mash.new
 popen4("/usr/sbin/kextstat -k -l") do |pid, stdin, stdout, stderr|

@@ -27,7 +27,7 @@ require 'ohai/mixin/from_file'
 
 module Ohai
   class Config
-  
+
     @configuration = {
       :log_level => :info,
       :log_location => STDOUT,

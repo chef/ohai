@@ -27,7 +27,8 @@ require 'json'
 
 config = {
   :directory => nil,
-  :file => nil
+  :file => nil,
+  :log_level => :info
 }
 
 with_debug = false
@@ -39,8 +40,8 @@ opts = OptionParser.new do |opts|
   opts.on("-f", "--file NAME", "A file to run Ohai against") do |f|
     config[:file] = f
   end
-  opts.on("-g", "--debug", "Turn on (extremely verbose) debugging") do |f|
-    with_debug = true
+  opts.on("-l", "--loglevel NAME", "Set log level for Ohai") do |l|
+    config[:log_level] = l
   end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
@@ -50,8 +51,9 @@ end
 opts.parse!(ARGV)
 
 ohai = Ohai::System.new
-if with_debug
-  Ohai::Config[:log_level] = :debug
+
+if %( debug info warn error fatal ).include?(config[:log_level])
+  Ohai::Config[:log_level] = config[:log_level].to_sym
 end
 if config[:file]
   ohai.from_file(config[:file])

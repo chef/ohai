@@ -48,10 +48,10 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /\s+inet6 ([a-f0-9\:]+)%?(\w*)\s+prefixlen\s+(\d+)\s*\w*\s*([\da-fx]*)/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       if $4.empty?
-        iface[cint][:addresses] << { "family" => "inet6", "prefixlen" => $3 }
+        iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }
       else
         # found a zone_id / scope
-        iface[cint][:addresses] << { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
       end
     end
     if line =~ /flags=\d+<(.+)>/
@@ -70,8 +70,8 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([0-9a-zA-Z\.\:\-]+)/
       next unless iface[$3] # this should never happen
-      iface[$3][:arp] = Array.new unless iface[$3][:arp]
-      iface[$3][:arp] <<  { $1 => $2.downcase }
+      iface[$3][:arp] = Mash.new unless iface[$3][:arp]
+      iface[$3][:arp][$1] = $2.downcase
     end
   end
 end

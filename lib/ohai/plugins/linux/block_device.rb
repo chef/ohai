@@ -23,12 +23,12 @@ if File.exists?("/sys/block")
     block[dir] = Mash.new
     %w{size removable}.each do |check|
       if File.exists?("/sys/block/#{dir}/#{check}")
-        block[dir][check] = from("cat /sys/block/#{dir}/#{check}")
+        block[dir][check] = File.read("/sys/block/#{dir}/#{check}").chomp
       end
     end
     %w{model rev state timeout vendor}.each do |check|
       if File.exists?("/sys/block/#{dir}/device/#{check}")
-        block[dir][check] = from("cat /sys/block/#{dir}/device/#{check}")
+        block[dir][check] = File.read("/sys/block/#{dir}/device/#{check}").chomp
       end
     end
   end

@@ -31,4 +31,22 @@ describe Ohai::System, "Linux hostname plugin" do
   it_should_check_from("linux::hostname", "hostname", "hostname", "katie")
   
   it_should_check_from("linux::hostname", "fqdn", "hostname --fqdn", "katie.bethell")
+
+  describe "when domain name is unset" do 
+    before(:each) do
+      @ohai.should_receive(:from).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
+    end
+
+    it "should not raise an error" do
+      lambda { @ohai._require_plugin("linux::hostname") }.should_not raise_error
+    end
+
+    it "should not set fqdn" do
+      @ohai._require_plugin("linux::hostname")
+      @ohai.fqdn.should == nil
+    end
+
+  end
+    
 end
+

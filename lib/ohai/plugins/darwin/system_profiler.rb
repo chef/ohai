@@ -16,13 +16,16 @@
 # limitations under the License.
 #
 
-require 'plist'
+begin
+  require 'plist'
 
-system_profile Array.new
-popen4("system_profiler -xml -detailLevel mini") do |pid, stdin, stdout, stderr|
-  stdin.close
-  Plist::parse_xml(stdout.read).each do |e|
-    system_profile << e
+  system_profile Array.new
+  popen4("system_profiler -xml -detailLevel mini") do |pid, stdin, stdout, stderr|
+    stdin.close
+    Plist::parse_xml(stdout.read).each do |e|
+      system_profile << e
+    end
   end
+rescue LoadError => e
+  Ohai::Log.info("Can't load gem: #{e})")
 end
-

@@ -23,7 +23,7 @@ if lsb[:id]
   platform_version lsb[:release]
 elsif File.exists?("/etc/debian_version")
   platform "debian"
-  platform_version from("cat /etc/debian_version")
+  platform_version File.read("/etc/debian_version").chomp
 elsif File.exists?("/etc/redhat-release")
   platform "redhat"
   File.open("/etc/redhat-release").each do |line|

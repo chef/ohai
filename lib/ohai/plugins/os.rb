@@ -25,7 +25,7 @@ when /darwin(.+)$/
 when /linux/
   os "linux"
 when /freebsd(.+)$/
- os "freebsd"
+  os "freebsd"
 else
   os languages[:ruby][:host_os]
 end

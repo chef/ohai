@@ -23,8 +23,12 @@ describe Ohai::System, "Linux plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai.extend(SimpleFromFile)
     @ohai[:os] = "linux"
     @ohai[:lsb] = Mash.new
+    File.stub!(:exists?).with("/etc/debian_version").and_return(false)
+    File.stub!(:exists?).with("/etc/redhat-release").and_return(false)
+    File.stub!(:exists?).with("/etc/gentoo-release").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -48,4 +52,30 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform_version].should == "8.04"
     end
   end
+
+  describe "on debian" do
+    before(:each) do
+      @ohai.lsb = nil
+      File.should_receive(:exists?).with("/etc/debian_version").and_return(true)
+    end
+    
+    it "should check for the existance of debian_version" do 
+      @ohai._require_plugin("linux::platform")
+    end
+
+    it "should read the version from /etc/debian_version" do
+      File.should_receive(:read).with("/etc/debian_version").and_return("5.0")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform_version].should == "5.0"
+    end
+
+    it "should correctly strip any newlines" do
+      File.should_receive(:read).with("/etc/debian_version").and_return("5.0\n")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform_version].should == "5.0"
+    end
+
+  end
+
+      
 end  

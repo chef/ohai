@@ -50,7 +50,6 @@ module Ohai
     end
     
     def attribute?(name)
-      Ohai::Log.debug("Attribute #{name} is #{@data.has_key?(name)}")
       @data.has_key?(name) 
     end
     
@@ -74,13 +73,11 @@ module Ohai
     end
     
     def set_attribute(name, *value)
-      Ohai::Log.debug("Setting attribute #{name} to #{value.inspect}")
       @data[name] = *value
       @data[name]
     end
     
     def get_attribute(name)
-      Ohai::Log.debug("Getting attribute #{name}, value #{@data[name].inspect}")
       @data[name]
     end
     
@@ -113,7 +110,7 @@ module Ohai
         check_path = File.expand_path(File.join(path, filename))
         begin
           @seen_plugins[plugin_name] = true
-          Ohai::Log.info("Loading plugin #{plugin_name}")
+          Ohai::Log.debug("Loading plugin #{plugin_name}")
           from_file(check_path)
           return true
         rescue IOError => e

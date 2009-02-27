@@ -27,9 +27,11 @@ require 'json'
 
 config = {
   :directory => nil,
-  :file => nil
+  :file => nil,
+  :log_level => :info
 }
 
+with_debug = false
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} (options)"
   opts.on("-d", "--directory NAME", "A directory to add to the Ohai search path") do |d|
@@ -37,6 +39,9 @@ opts = OptionParser.new do |opts|
   end
   opts.on("-f", "--file NAME", "A file to run Ohai against") do |f|
     config[:file] = f
+  end
+  opts.on("-l", "--loglevel NAME", "Set log level for Ohai") do |l|
+    config[:log_level] = l.to_sym
   end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
@@ -46,6 +51,10 @@ end
 opts.parse!(ARGV)
 
 ohai = Ohai::System.new
+
+if [ :debug, :info, :warn, :error, :fatal ].include?(config[:log_level])
+  Ohai::Config[:log_level] = config[:log_level]
+end
 if config[:file]
   ohai.from_file(config[:file])
 else

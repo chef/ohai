@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-kernel[:os] == kernel[:name]
+kernel[:os] = kernel[:name]
 kernel[:ident] = from("uname -i")
 kernel[:securelevel] = from_with_regex("sysctl kern.securelevel", /kern.securelevel: (.+)$/)
 

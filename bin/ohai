@@ -41,7 +41,7 @@ opts = OptionParser.new do |opts|
     config[:file] = f
   end
   opts.on("-l", "--loglevel NAME", "Set log level for Ohai") do |l|
-    config[:log_level] = l
+    config[:log_level] = l.to_sym
   end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
@@ -52,8 +52,8 @@ opts.parse!(ARGV)
 
 ohai = Ohai::System.new
 
-if %( debug info warn error fatal ).include?(config[:log_level])
-  Ohai::Config[:log_level] = config[:log_level].to_sym
+if [ :debug, :info, :warn, :error, :fatal ].include?(config[:log_level])
+  Ohai::Config[:log_level] = config[:log_level]
 end
 if config[:file]
   ohai.from_file(config[:file])

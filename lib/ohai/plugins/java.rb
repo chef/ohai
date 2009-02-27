@@ -30,4 +30,6 @@ status = popen4("java -version") do |pid, stdin, stdout, stderr|
   end
 end
 
-languages[:java] = java if java[:version]
+if status == 0
+  languages[:java] = java if java[:version]
+end

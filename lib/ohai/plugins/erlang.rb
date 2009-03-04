@@ -19,6 +19,7 @@
 provides "languages/erlang"
 
 require_plugin "languages"
+require_plugin "platform"
 
 output = nil
 

@@ -19,7 +19,7 @@
 fs = Mash.new
 
 # Grab filesystem data from df
-popen4("/bin/df -P") do |pid, stdin, stdout, stderr|
+popen4("df -P") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line
@@ -28,25 +28,25 @@ popen4("/bin/df -P") do |pid, stdin, stdout, stderr|
     when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
       filesystem = $1
       fs[filesystem] = Mash.new
-      fs[filesystem]['kb_size'] = $2
-      fs[filesystem]['kb_used'] = $3
-      fs[filesystem]['kb_available'] = $4
-      fs[filesystem]['percent_used'] = $5
-      fs[filesystem]['mount'] = $6
+      fs[filesystem][:kb_size] = $2
+      fs[filesystem][:kb_used] = $3
+      fs[filesystem][:kb_available] = $4
+      fs[filesystem][:percent_used] = $5
+      fs[filesystem][:mount] = $6
     end
   end
 end
 
 # Grab mount information from /bin/mount
-popen4("/bin/mount -l") do |pid, stdin, stdout, stderr|
+popen4("mount -l") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
       filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem]['mount'] = $2
-      fs[filesystem]['fs_type'] = $3
-      fs[filesystem]['mount-options'] = $4.split(",")
+      fs[filesystem][:mount] = $2
+      fs[filesystem][:fs_type] = $3
+      fs[filesystem][:mount_options] = $4.split(",")
     end
   end
 end

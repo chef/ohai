@@ -22,20 +22,3 @@ class String
      gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
   end
 end
-
-#module Ohai
-#  module Mixin
-#    module Inflections
-#      # Add string function to handle WMI conversion
-#      #   
-#      #
-#      # 
-#      class String
-#        def wmi_underscore
-#          self.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
-#          gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
-#       end
-#      end
-#    end
-#  end
-#end

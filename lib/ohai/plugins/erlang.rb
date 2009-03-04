@@ -23,10 +23,10 @@ require_plugin "languages"
 output = nil
 
 erlang = Mash.new
-status, stdout, error = run_command(:no_status_check => true, :command => "erl +V")
+status, stdout, stderr = run_command(:no_status_check => true, :command => "erl +V")
 
 if status == 0
-  output = stderr.to_s.split
+  output = stderr.split
   if output.length >= 6
     options = output[1]
     options.gsub!(/(\(|\))/, '')

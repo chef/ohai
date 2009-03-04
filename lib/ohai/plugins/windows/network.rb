@@ -48,7 +48,7 @@ adapters.each do |adapter|
     i = adapter.Index
     iface_config[i] = Mash.new
     adapter.properties_.each do |p|
-      iface_config[i][p.name.underscore.to_sym] = adapter[p.name]
+      iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name]
     end
 end
 
@@ -57,7 +57,7 @@ adapters.each do |adapter|
     i = adapter.Index
     iface_instance[i] = Mash.new
      adapter.properties_.each do |p|
-      iface_instance[i][p.name.underscore.to_sym] = adapter[p.name]
+      iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name]
     end
 end
 

@@ -35,7 +35,7 @@ status = popen4("python -c \"import sys; print sys.version\"") do |pid, stdin, s
 end
 
 if status == 0
-  output = stdout.to_s.split
+  output = stdout.split
   python[:version] = output[0]
   if output.length >= 6
     python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]

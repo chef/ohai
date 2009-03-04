@@ -22,6 +22,7 @@ require_plugin "languages"
 java = Mash.new
 
 status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+
 if status == 0
   stderr.split("\n").each do |line|
     case line
@@ -30,8 +31,6 @@ if status == 0
     when /^(.+ Client VM) \(build (.+)\)$/: java[:hotspot] = { "name" => $1, "build" => $2 }
     end
   end
-end
 
-if status == 0
   languages[:java] = java if java[:version]
 end

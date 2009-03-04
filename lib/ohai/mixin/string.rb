@@ -17,6 +17,11 @@
 #
 
 class String
+  # Add string function to handle WMI property conversion to json hash keys
+  # Makes an underscored, lowercase form from the expression in the string.
+  # underscore will also change ’::’ to ’/’ to convert namespaces to paths. 
+  # This should implement the same functionality as underscore method in
+  # ActiveSupport::CoreExtensions::String::Inflections
   def wmi_underscore
      self.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
      gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase

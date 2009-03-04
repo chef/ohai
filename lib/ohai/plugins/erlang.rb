@@ -19,27 +19,20 @@
 provides "languages/erlang"
 
 require_plugin "languages"
-require_plugin "platform"
 
 output = nil
 
 erlang = Mash.new
-case platform
-when /windows/
-  # do nothing
-  true
-else
-  status = popen4("erl +V") do |pid, stdin, stdout, stderr|
-    stdin.close
-    output = stderr.gets.split if stderr
+status, stdout, error = run_command(:no_status_check => true, :command => "erl +V")
+
+if status == 0
+  output = stderr.to_s.split
+  if output.length >= 6
     options = output[1]
     options.gsub!(/(\(|\))/, '')
     erlang[:version] = output[5]
     erlang[:options] = options.split(',')
     erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
-  end
-
-  if status == 0
     if erlang[:version] and erlang[:options] and erlang[:emulator]
       languages[:erlang] = erlang
     end

@@ -22,9 +22,12 @@ output = nil
 python = Mash.new
 status = popen4("python -c \"import sys; print sys.version\"") do |pid, stdin, stdout, stderr|
   stdin.close
-  output = stdout.gets.split if stdout
-  python[:version] = output[0]
-  python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+  output_string = stdout.gets
+  if output_string
+    output = output_string.split
+    python[:version] = output[0]
+    python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+  end
 end
 
 if status == 0

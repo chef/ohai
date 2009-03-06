@@ -19,19 +19,19 @@
 require_plugin "languages"
 output = nil
 
+erlang = Mash.new
 status = popen4("erl +V") do |pid, stdin, stdout, stderr|
   stdin.close
-  output = stderr.gets.split
+  output = stderr.gets.split if stderr
+  options = output[1]
+  options.gsub!(/(\(|\))/, '')
+  erlang[:version] = output[5]
+  erlang[:options] = options.split(',')
+  erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
 end
 
 if status == 0
-  languages[:erlang] = Mash.new
-
-  options = output[1]
-  options.gsub!(/(\(|\))/, '')
-
-  languages[:erlang][:version] = output[5]
-  languages[:erlang][:options] = options.split(',')
-  languages[:erlang][:emulator] = output[2].gsub!(/(\(|\))/, '')
+  if erlang[:version] and erlang[:options] and erlang[:emulator]
+    languages[:erlang] = erlang
+  end
 end
-

@@ -24,6 +24,7 @@ describe Ohai::System, "plugin java" do
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:languages] = Mash.new
     @pid = 10
+    @status = 0
     @stdin = mock("STDIN", { :close => true })
     @stdout = mock("STDOUT")
     @stderr = mock("STDERR")
@@ -31,7 +32,12 @@ describe Ohai::System, "plugin java" do
       and_yield("java version \"1.5.0_16\"").
       and_yield("Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)").
       and_yield("Java HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)") 
-    @ohai.stub!(:popen4).with("java -version").and_yield(@pid, @stdin, @stdout, @stderr)
+    @ohai.stub!(:popen4).with("java -version").and_yield(
+      @pid,
+      @stdin,
+      @stdout,
+      @stderr
+    ).and_return(@status)
   end
 
   it "should run java -version" do
@@ -51,26 +57,38 @@ describe Ohai::System, "plugin java" do
   
   it "should set java[:version]" do
     @ohai._require_plugin("java")
-    @ohai[:languages][:java][:version].should == "1.5.0_16"
+    @ohai.languages[:java][:version].should eql("1.5.0_16")
   end
 
   it "should set java[:runtime][:name] to runtime name" do
     @ohai._require_plugin("java")
-    @ohai[:languages][:java][:runtime][:name].should == "Java(TM) 2 Runtime Environment, Standard Edition"
+    @ohai.languages[:java][:runtime][:name].should eql("Java(TM) 2 Runtime Environment, Standard Edition")
   end
 
   it "should set java[:runtime][:build] to runtime build" do
     @ohai._require_plugin("java")
-    @ohai[:languages][:java][:runtime][:build].should == "1.5.0_16-b06-284"
+    @ohai.languages[:java][:runtime][:build].should eql("1.5.0_16-b06-284")
   end
 
   it "should set java[:hotspot][:name] to hotspot name" do
     @ohai._require_plugin("java")
-    @ohai[:languages][:java][:hotspot][:name].should == "Java HotSpot(TM) Client VM"
+    @ohai.languages[:java][:hotspot][:name].should eql("Java HotSpot(TM) Client VM")
   end
 
   it "should set java[:hotspot][:build] to hotspot build" do
     @ohai._require_plugin("java")
-    @ohai[:languages][:java][:hotspot][:build].should == "1.5.0_16-133, mixed mode, sharing"
+    @ohai.languages[:java][:hotspot][:build].should eql("1.5.0_16-133, mixed mode, sharing")
+  end
+
+  it "should not set the languages[:java] tree up if java command fails" do
+    @status = 1
+    @ohai.stub!(:popen4).with("java -version").and_yield(
+      @pid,
+      @stdin,
+      @stdout,
+      @stderr
+    ).and_return(@status)
+    @ohai._require_plugin("java")
+    @ohai.languages.should_not have_key(:java)
   end
 end

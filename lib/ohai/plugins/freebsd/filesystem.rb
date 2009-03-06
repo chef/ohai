@@ -28,11 +28,11 @@ popen4("df") do |pid, stdin, stdout, stderr|
     when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
       filesystem = $1
       fs[filesystem] = Mash.new
-      fs[filesystem]['kb_size'] = $2
-      fs[filesystem]['kb_used'] = $3
-      fs[filesystem]['kb_available'] = $4
-      fs[filesystem]['percent_used'] = $5
-      fs[filesystem]['mount'] = $6
+      fs[filesystem][:kb_size] = $2
+      fs[filesystem][:kb_used] = $3
+      fs[filesystem][:kb_available] = $4
+      fs[filesystem][:percent_used] = $5
+      fs[filesystem][:mount] = $6
     end
   end
 end
@@ -44,9 +44,9 @@ popen4("mount -l") do |pid, stdin, stdout, stderr|
     if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
       filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem]['mount'] = $2
-      fs[filesystem]['fs_type'] = $3
-      fs[filesystem]['mount-options'] = $4.split(/,\s*/)
+      fs[filesystem][:mount] = $2
+      fs[filesystem][:fs_type] = $3
+      fs[filesystem][:mount_options] = $4.split(/,\s*/)
     end
   end
 end

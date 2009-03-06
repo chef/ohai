@@ -1,3 +1,32 @@
+Thu Mar  5 23:15:03 PST 2009
+Release Notes - Ohai - Version 0.2.0
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-40] - virt and lsb spec's lack use of should/should_not
+    * [OHAI-44] - darwin network.rb should always use -n on relevant commands
+    * [OHAI-45] - vmnet interfaces confuse counter collection on darwin
+    * [OHAI-46] - lo0 counters not collected on darwin
+    * [OHAI-47] - virtualization plugin doesn't correctly detect VMware or VirtualPC platforms
+    * [OHAI-51] - If hostname -f exits with 1, ohai linux hostname plugin vomits
+    * [OHAI-54] - Use IO.read rather than cat
+    * [OHAI-61] - several items in lib/ohai/plugins/freebsd/network.rb have not been converted to Mash
+    * [OHAI-62] - ohai throws stack when python is not in path
+    * [OHAI-63] - ohai does not properly detect 64-bit on darwin
+    * [OHAI-64] - ohai/plugins/freebsd/kernel.rb does not set kernel[:os]
+
+** Improvement
+    * [OHAI-49] - network interface addresses should be stored in a hash not an array
+    * [OHAI-50] - python language plugin
+    * [OHAI-58] - Plugin specifications for FreeBSD
+
+** New Feature
+    * [OHAI-36] - Add libvirt-sourced data to ohai
+    * [OHAI-57] - ohai needs a --debug option to show errors during collection
+
+** Task
+    * [OHAI-55] - Need to grab 'user-data' as well as 'meta-data' for EC2
+
 Sat Jan 31 19:05:49 PST 2009
 Release Notes - Ohai - Version 0.1.4
 http://tickets.opscode.com

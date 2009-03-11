@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+network[:default_interface] = from("route get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
+
 iface = Mash.new
 popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close

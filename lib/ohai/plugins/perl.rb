@@ -22,7 +22,7 @@ output = nil
 perl = Mash.new
 status = popen4("perl -V:version -V:archname") do |pid, stdin, stdout, stderr|
   stdin.close
-  stdout.gets.split.each do |line|
+  stdout.each do |line|
     case line
     when /^version=\'(.+)\';$/: perl[:version] = $1
     when /^archname=\'(.+)\';$/: perl[:archname] = $1
@@ -31,5 +31,5 @@ status = popen4("perl -V:version -V:archname") do |pid, stdin, stdout, stderr|
 end
 
 if status == 0
-  languages[:perl] = perl if perl[:version] and perl[:archname] 
+  languages[:perl] = perl 
 end

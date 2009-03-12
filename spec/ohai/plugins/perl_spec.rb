@@ -25,11 +25,9 @@ describe Ohai::System, "plugin perl" do
     @ohai.stub!(:require_plugin).and_return(true)
     @pid = mock("PID", :null_object => true)
     @stderr = mock("STDERR", :null_object => true)
-    @stdout = mock(
-      "STDOUT", 
-      :null_object => true,
-      :gets => "version='5.8.8';\narchname='darwin-thread-multi-2level';\n"
-    )
+    @stdout = mock("STDOUT", :null_object => true)
+    @stdout.stub!(:each).and_yield("version='5.8.8';").
+      and_yield("archname='darwin-thread-multi-2level';")
     @stdin = mock("STDIN", :null_object => true)
     @status = 0
     @ohai.stub!(:popen4).with("perl -V:version -V:archname").and_yield(
@@ -51,7 +49,7 @@ describe Ohai::System, "plugin perl" do
   end
   
   it "should iterate over each line of perl command's stdout" do
-    @stdout.should_receive(:gets).and_return("version='5.8.8';\narchname='darwin-thread-multi-2level';\n")
+    @stdout.should_receive(:each).and_return(true)
     @ohai._require_plugin("perl")
   end
 
@@ -59,10 +57,22 @@ describe Ohai::System, "plugin perl" do
     @ohai._require_plugin("perl")
     @ohai.languages[:perl][:version].should eql("5.8.8")
   end  
-  
+    
   it "should set languages[:perl][:archname]" do
     @ohai._require_plugin("perl")
     @ohai.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
+  end
+  
+  it "should set languages[:perl] if perl command succeeds" do
+    @status = 0
+    @ohai.stub!(:popen4).with("perl -V:version -V:archname").and_yield(
+      @pid,
+      @stdin,
+      @stdout,
+      @stderr
+    ).and_return(@status)
+    @ohai._require_plugin("perl")
+    @ohai.languages.should have_key(:perl)
   end
   
   it "should not set languages[:perl] if perl command fails" do

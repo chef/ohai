@@ -18,7 +18,7 @@
 
 require 'scanf'
 
-network[:default_interface] = from("route get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
+network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
 
 def parse_media(media_string)
   media = Array.new

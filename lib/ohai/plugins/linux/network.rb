@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-network[:default_interface] = from("route \| grep default \| awk \'/ \+/ \{print \$8\}\'")
+network[:default_interface] = from("route -n \| grep default \| awk \'/ \+/ \{print \$8\}\'")
 
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback")

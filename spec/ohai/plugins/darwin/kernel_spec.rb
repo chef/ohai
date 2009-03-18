@@ -26,10 +26,21 @@ describe Ohai::System, "Darwin kernel plugin" do
     @ohai[:kernel] = Mash.new
     @ohai[:kernel][:name] = "darwin"
   end
-
+  
+  it "should not set kernel_machine to x86_64" do
+    @ohai.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("0")
+    @ohai._require_plugin("darwin::kernel")
+    @ohai[:kernel][:machine].should_not == 'x86_64'
+  end
+  
+  it "should set kernel_machine to x86_64" do
+    @ohai.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
+    @ohai._require_plugin("darwin::kernel")
+    @ohai[:kernel][:machine].should == 'x86_64'
+  end
+  
   it "should set the kernel_os to the kernel_name value" do
     @ohai._require_plugin("darwin::kernel")
     @ohai[:kernel][:os].should == @ohai[:kernel][:name]
   end
-
 end

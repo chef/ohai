@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "platform", "platform_version", "platform_build"
+
 popen4("uname -X") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|

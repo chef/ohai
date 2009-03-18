@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "kernel"
+
 kernel[:os] = from("uname -o")
 
 kext = Mash.new

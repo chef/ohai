@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "platform", "platform_version"
+
 require_plugin 'linux::lsb'
 
 if lsb[:id]

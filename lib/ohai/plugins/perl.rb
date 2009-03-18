@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "languages/perl"
+
 require_plugin "languages"
 output = nil
 

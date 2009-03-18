@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "platform", "platform_version"
+
 platform from("uname -s").downcase
 platform_version from("uname -r")
 

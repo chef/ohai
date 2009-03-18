@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
+provides "ohai_time"
+
 ohai_time Time.now.to_f

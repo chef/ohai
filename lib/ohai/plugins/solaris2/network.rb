@@ -53,6 +53,8 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
+provides "network"
+
 require 'scanf'
 
 def encaps_lookup(ifname)

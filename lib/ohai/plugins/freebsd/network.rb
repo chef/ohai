@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "network", "counters/network"
+
 network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
 
 iface = Mash.new
@@ -78,6 +80,9 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   end
 end
 
+network["interfaces"] = iface
+
+net_counters = Mash.new
 # From netstat(1), not sure of the implications:
 # Show the state of all network interfaces or a single interface
 # which have been auto-configured (interfaces statically configured
@@ -89,20 +94,19 @@ popen4("netstat -ibdn") do |pid, stdin, stdout, stderr|
     # ed0    1500 <Link#1>      54:52:00:68:92:85   333604    26  151905886   175472     0   24897542     0  905 
     # $1                        $2                      $3    $4         $5       $6    $7         $8    $9  $10
     if line =~ /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
-      next unless iface[$1] # this should never happen
-      iface[$1]["counters"] = Mash.new unless iface[$1]["counters"]
-      iface[$1]["counters"]["rx"] = Mash.new unless iface[$1]["counters"]["rx"]
-      iface[$1]["counters"]["tx"] = Mash.new unless iface[$1]["counters"]["tx"]
-      iface[$1]["counters"]["rx"]["packets"] = $3
-      iface[$1]["counters"]["rx"]["errors"] = $4
-      iface[$1]["counters"]["rx"]["bytes"] = $5
-      iface[$1]["counters"]["tx"]["packets"] = $6
-      iface[$1]["counters"]["tx"]["errors"] = $7
-      iface[$1]["counters"]["tx"]["bytes"] = $8
-      iface[$1]["counters"]["tx"]["collisions"] = $9
-      iface[$1]["counters"]["tx"]["dropped"] = $10
+      net_counters[$1] = Mash.new unless net_counters[$1]
+      net_counters[$1]["rx"] = Mash.new unless net_counters[$1]["rx"]
+      net_counters[$1]["tx"] = Mash.new unless net_counters[$1]["tx"]
+      net_counters[$1]["rx"]["packets"] = $3
+      net_counters[$1]["rx"]["errors"] = $4
+      net_counters[$1]["rx"]["bytes"] = $5
+      net_counters[$1]["tx"]["packets"] = $6
+      net_counters[$1]["tx"]["errors"] = $7
+      net_counters[$1]["tx"]["bytes"] = $8
+      net_counters[$1]["tx"]["collisions"] = $9
+      net_counters[$1]["tx"]["dropped"] = $10
     end
   end
 end
 
-network["interfaces"] = iface
+counters[:network][:interfaces] = net_counters

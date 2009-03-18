@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
+provides "kernel/os"
+
 kernel[:os] = from("uname -s")

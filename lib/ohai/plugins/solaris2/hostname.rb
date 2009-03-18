@@ -16,5 +16,7 @@
 # limitations under the License.
 #
 
+provides "hostname", "fqdn"
+
 hostname from("hostname").split('.')[0]
 fqdn from("hostname")

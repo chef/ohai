@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "virtualization"
+
 require_plugin "#{os}::virtualization"
 
 unless virtualization.nil? || !(virtualization[:role].eql?("host"))

@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+provides "ec2"
+
 require 'open-uri'
 require 'socket'
 
@@ -24,9 +26,9 @@ require_plugin "hostname"
 require_plugin "kernel"
 require_plugin "network"
 
-EC2_METADATA_ADDR = "169.254.169.254"
-EC2_METADATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/meta-data"
-EC2_USERDATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/user-data"
+EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
+EC2_METADATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/meta-data" unless defined?(EC2_METADATA_URL)
+EC2_USERDATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/user-data" unless defined?(EC2_USERDATA_URL)
 
 def can_metadata_connect?(addr, port, timeout=2)
   t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)

@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "filesystem"
+
 fs = Mash.new
 
 block_size = 0

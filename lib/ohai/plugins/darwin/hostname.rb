@@ -16,5 +16,7 @@
 # limitations under the License.
 #
 
+provides "fqdn", "hostname"
+
 hostname from("hostname -s")
 fqdn from("hostname")

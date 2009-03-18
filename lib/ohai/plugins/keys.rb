@@ -17,4 +17,6 @@
 # limitations under the License.
 #
 
+provides "keys"
+
 keys Mash.new

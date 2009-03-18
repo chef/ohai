@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "platform", "platform_version"
+
 require_plugin "#{os}::platform"
 
 platform os unless attribute?("platform")

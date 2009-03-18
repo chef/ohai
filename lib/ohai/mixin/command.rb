@@ -60,7 +60,7 @@ module Ohai
         
         args[:cwd] ||= Dir.tmpdir        
         unless File.directory?(args[:cwd])
-          raise Ohai::Exception::Exec, "#{args[:cwd]} does not exist or is not a directory"
+          raise Ohai::Exceptions::Exec, "#{args[:cwd]} does not exist or is not a directory"
         end
         
         status = nil
@@ -80,7 +80,7 @@ module Ohai
         
           args[:returns] ||= 0
           if status.exitstatus != args[:returns]
-            raise Ohai::Exception::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
+            raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
           else
             Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
           end
@@ -94,9 +94,9 @@ module Ohai
       # modified to suit the needs of Ohai.  Any bugs here are most likely
       # my own, and not Ara's.
       #
-      # The original appears in external/open4.rb in it's unmodified form. 
+      # The original appears in external/open4.rb in its unmodified form. 
       #
-      # Thanks, Ara. 
+      # Thanks Ara!
       def popen4(cmd, args={}, &b)
         
         args[:user] ||= nil

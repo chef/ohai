@@ -37,7 +37,7 @@ describe Ohai::System, "method_missing" do
     @ohai = Ohai::System.new
   end
   
-  it "should take a missing method and store the method name as a key, with it's arguments as values" do
+  it "should take a missing method and store the method name as a key, with its arguments as values" do
     @ohai.guns_n_roses("chinese democracy")
     @ohai.data["guns_n_roses"].should eql("chinese democracy")
   end

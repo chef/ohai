@@ -17,7 +17,7 @@
 #
 
 module Ohai
-  module Exception
+  module Exceptions
     class Exec < RuntimeError; end
   end
 end

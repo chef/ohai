@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "network", "counters/network"
+
 require 'scanf'
 
 network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
@@ -152,20 +154,23 @@ popen4("sysctl net") do |pid, stdin, stdout, stderr|
   end
 end
 
+network[:settings] = settings
+network[:interfaces] = iface
+
+net_counters = Mash.new
 popen4("netstat -i -d -l -b -n") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+([a-f0-9\:]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
        line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
       ifname = locate_interface(iface, $1, $2)
-      next if iface[ifname].nil?
-      iface[ifname][:counters] = Mash.new unless iface[ifname][:counters]
-      iface[ifname][:counters] = { :rx => { :bytes => $5, :packets => $3, :errors => $4, :drop => 0, :overrun => 0, :frame => 0, :compressed => 0, :multicast => 0 },
-                                   :tx => { :bytes => $8, :packets => $6, :errors => $7, :drop => 0, :overrun => 0, :collisions => $9, :carrier => 0, :compressed => 0 }
-                                 }
+      next if iface[ifname].nil? # this shouldn't happen, but just in case
+      net_counters[ifname] = Mash.new unless net_counters[ifname]
+      net_counters[ifname] = { :rx => { :bytes => $5, :packets => $3, :errors => $4, :drop => 0, :overrun => 0, :frame => 0, :compressed => 0, :multicast => 0 },
+                               :tx => { :bytes => $8, :packets => $6, :errors => $7, :drop => 0, :overrun => 0, :collisions => $9, :carrier => 0, :compressed => 0 }
+                             }
     end
   end
 end
 
-network[:settings] = settings
-network[:interfaces] = iface
+counters[:network][:interfaces] = net_counters

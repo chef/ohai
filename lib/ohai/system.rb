@@ -33,6 +33,8 @@ module Ohai
     def initialize
       @data = Mash.new
       @seen_plugins = Hash.new
+      @providers = Mash.new
+      @plugin_path = ""
     end
     
     def [](key)
@@ -60,6 +62,22 @@ module Ohai
     def from(cmd)
       status, stdout, stderr = run_command(:command => cmd)
       stdout.chomp!
+    end
+    
+    def provides(*paths)
+      paths.each do |path|
+        parts = path.split('/')
+        h = @providers
+        unless parts.length == 0
+          parts.shift if parts[0].length == 0
+          parts.each do |part|
+            h[part] ||= Mash.new
+            h = h[part]
+          end
+        end
+        h[:_providers] ||= []
+        h[:_providers] << @plugin_path
+      end
     end
     
     # Set the value equal to the stdout of the command, plus run through a regex - the first piece of match data is the value.
@@ -92,10 +110,50 @@ module Ohai
           file_regex = Regexp.new("#{path}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::") 
+            plugin_name = md[1].gsub(File::SEPARATOR, "::")
             require_plugin(plugin_name) unless @seen_plugins.has_key?(plugin_name)
           end
         end
+      end
+    end
+    
+    def collect_providers(providers)
+      refreshments = []
+      if providers.is_a?(Mash)
+        providers.keys.each do |provider|
+          if provider.eql?("_providers")
+            refreshments << providers[provider]
+          else
+            refreshments << collect_providers(providers[provider])
+          end
+        end
+      else
+        refreshments << providers
+      end
+      refreshments.flatten.uniq
+    end
+    
+    def refresh_plugins(path = '/')
+      parts = path.split('/')
+      if parts.length == 0
+        h = @providers
+      else
+        parts.shift if parts[0].length == 0
+        h = @providers
+        parts.each do |part|
+          break unless h.has_key?(part)
+          h = h[part]
+        end
+      end
+
+      refreshments = collect_providers(h)
+      Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
+      
+      refreshments.each do |r|
+        @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
+      end
+      refreshments.each do |r|
+        require_plugin(r) unless @seen_plugins.has_key?(r)        
       end
     end
     
@@ -103,6 +161,8 @@ module Ohai
       unless force
         return true if @seen_plugins[plugin_name]
       end
+      
+      @plugin_path = plugin_name
       
       filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
             

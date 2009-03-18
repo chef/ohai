@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "filesystem"
+
 fs = Mash.new
 
 # Grab filesystem data from df

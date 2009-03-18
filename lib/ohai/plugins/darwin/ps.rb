@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "command/ps"
+
 require_plugin 'command'
 
 command[:ps] = 'ps -ef'

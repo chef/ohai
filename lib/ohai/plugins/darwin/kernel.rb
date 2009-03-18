@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "kernel"
+
 kernel[:os] = kernel[:name]
 
 if from("sysctl -n hw.optional.x86_64").to_i == 1
@@ -23,7 +25,7 @@ if from("sysctl -n hw.optional.x86_64").to_i == 1
 end
 
 kext = Mash.new
-popen4("/usr/sbin/kextstat -k -l") do |pid, stdin, stdout, stderr|
+popen4("kextstat -k -l") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/

@@ -16,7 +16,10 @@
 # limitations under the License.
 #
 
+provides "languages/python"
+
 require_plugin "languages"
+
 output = nil
 
 python = Mash.new

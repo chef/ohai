@@ -16,9 +16,14 @@
 # limitations under the License.
 #
 
+provides "kernel"
+
 kernel Mash.new
+
 kernel[:name] = from("uname -s")
 kernel[:release] = from("uname -r")
 kernel[:version] = from("uname -v")
 kernel[:machine] = from("uname -m")
 kernel[:modules] = Mash.new
+
+

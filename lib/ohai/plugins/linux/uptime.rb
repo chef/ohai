@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "uptime", "idletime", "uptime_seconds", "idletime_seconds"
+
 uptime, idletime = File.open("/proc/uptime").gets.split(" ")
 uptime_seconds uptime.to_i
 uptime self._seconds_to_human(uptime.to_i)

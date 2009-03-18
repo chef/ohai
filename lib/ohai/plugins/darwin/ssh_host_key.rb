@@ -16,9 +16,10 @@
 # limitations under the License.
 #
 
+provides "keys/ssh"
+
 require_plugin "keys"
 
 keys[:ssh] = Mash.new
-
 keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh_host_dsa_key.pub").split[1]
 keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh_host_rsa_key.pub").split[1]

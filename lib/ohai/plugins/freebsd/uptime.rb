@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "uptime", "uptime_seconds"
+
 # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
 
 popen4("/sbin/sysctl kern.boottime") do |pid, stdin, stdout, stderr|

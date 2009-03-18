@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "virtualization"
+
 virtualization Mash.new
 
 # if it is possible to detect paravirt vs hardware virt, it should be put in

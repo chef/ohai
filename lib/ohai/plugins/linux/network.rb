@@ -16,7 +16,9 @@
 # limitations under the License.
 #
 
-network[:default_interface] = from("route -n \| grep default \| awk \'/ \+/ \{print \$8\}\'")
+provides "network", "counters/network"
+
+network[:default_interface] = from("route -n \| grep ^0.0.0.0 \| awk \'{print \$8\}\'")
 
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback")
@@ -29,6 +31,7 @@ def encaps_lookup(encap)
 end
 
 iface = Mash.new
+net_counters = Mash.new
 popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdin.close
   cint = nil
@@ -72,23 +75,23 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint][:mtu] = $1
     end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-      iface[cint][:counters] = Mash.new unless iface[cint][:counters]
-      iface[cint][:counters][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
+      net_counters[cint] = Mash.new unless net_counters[cint]
+      net_counters[cint][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
     end
     if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
-      iface[cint][:counters][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
+      net_counters[cint][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
     end
     if line =~ /collisions:(\d+)/
-      iface[cint][:counters][:tx]["collisions"] = $1
+      net_counters[cint][:tx]["collisions"] = $1
     end
     if line =~ /txqueuelen:(\d+)/
-      iface[cint][:counters][:tx]["queuelen"] = $1
+      net_counters[cint][:tx]["queuelen"] = $1
     end
     if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint][:counters][:rx]["bytes"] = $1
+      net_counters[cint][:rx]["bytes"] = $1
     end
     if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      iface[cint][:counters][:tx]["bytes"] = $1
+      net_counters[cint][:tx]["bytes"] = $1
     end
   end
 end
@@ -103,5 +106,7 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
     end
   end
 end
+
+counters[:network][:interfaces] = net_counters
 
 network["interfaces"] = iface

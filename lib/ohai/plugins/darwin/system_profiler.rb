@@ -16,7 +16,9 @@
 # limitations under the License.
 #
 
-begin
+provides "system_profile"
+
+begin  
   require 'plist'
 
   system_profile Array.new

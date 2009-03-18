@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "languages/ruby"
+
 require_plugin "languages"
 
 languages[:ruby] = Mash.new

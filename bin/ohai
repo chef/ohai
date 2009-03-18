@@ -31,7 +31,6 @@ config = {
   :log_level => :info
 }
 
-with_debug = false
 opts = OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} (options)"
   opts.on("-d", "--directory NAME", "A directory to add to the Ohai search path") do |d|

@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "cpu"
+
 # all dmesg output for smp I can find only provides info about a single processor
 # identical processors is probably a hardware requirement so we'll duplicate data for each cpu
 # old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm

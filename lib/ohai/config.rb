@@ -40,7 +40,7 @@ module Ohai
       # Pass Ohai::Config.configure() a block, and it will yield @configuration.
       #
       # === Parameters
-      # <block>:: A block that takes @configure as it's argument
+      # <block>:: A block that takes @configure as its argument
       def configure(&block)
         yield @configuration
       end

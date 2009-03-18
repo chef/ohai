@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "fqdn", "domain"
+
 require_plugin "#{os}::hostname"
 
 # Domain is everything after the first dot

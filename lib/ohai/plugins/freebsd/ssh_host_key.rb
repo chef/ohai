@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "keys/ssh"
+
 require_plugin "keys"
 
 keys[:ssh] = Mash.new

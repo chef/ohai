@@ -16,8 +16,12 @@
 # limitations under the License.
 #
 
+provides "network", "counters/network"
+
 network Mash.new unless network
 network[:interfaces] = Mash.new unless network[:interfaces]
+counters Mash.new unless counters
+counters[:network] = Mash.new unless counters[:network]
 
 require_plugin "hostname"
 require_plugin "#{os}::network"

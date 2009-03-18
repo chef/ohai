@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "cpu"
+
 cpuinfo = Mash.new
 real_cpu = Mash.new
 cpu_number = 0

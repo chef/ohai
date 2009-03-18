@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "os", "os_version"
+
 require_plugin 'ruby'
 require_plugin 'kernel'
 

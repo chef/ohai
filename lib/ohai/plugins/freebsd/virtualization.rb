@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "virtualization"
+
 virtualization Mash.new
 
 # KVM Host support for FreeBSD is in development

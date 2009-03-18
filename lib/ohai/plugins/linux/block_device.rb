@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "block_device"
+
 if File.exists?("/sys/block")
   block = Mash.new
   Dir["/sys/block/*"].each do |block_device_dir|

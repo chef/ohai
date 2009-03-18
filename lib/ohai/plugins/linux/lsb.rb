@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "lsb"
+
 lsb Mash.new
 
 begin

@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
+provides "command"
+
 command Mash.new

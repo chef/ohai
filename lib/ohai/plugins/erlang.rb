@@ -16,7 +16,10 @@
 # limitations under the License.
 #
 
+provides "languages/erlang"
+
 require_plugin "languages"
+
 output = nil
 
 erlang = Mash.new

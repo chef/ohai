@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "memory"
+
 memory Mash.new
 memory[:swap] = Mash.new
 

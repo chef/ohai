@@ -28,7 +28,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
     emu = (virtualization[:emulator].eql?('kvm') ? 'qemu' : virtualization[:emulator])
     virtualization[:libvirt_version] = Libvirt::version(emu)[0].to_s
 
-    virtconn = Libvirt::openReadOnly("#{emu}:///system")
+    virtconn = Libvirt::open_read_only("#{emu}:///system")
 
     virtualization[:uri] = virtconn.uri
     virtualization[:capabilities] = Mash.new

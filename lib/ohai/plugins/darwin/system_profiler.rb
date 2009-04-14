@@ -29,5 +29,5 @@ begin
     end
   end
 rescue LoadError => e
-  Ohai::Log.info("Can't load gem: #{e})")
+  Ohai::Log.debug("Can't load gem: #{e})")
 end

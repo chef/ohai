@@ -81,6 +81,6 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
 
     virtconn.close
   rescue LoadError => e
-    Ohai::Log.info("Can't load gem: #{e})")
+    Ohai::Log.debug("Can't load gem: #{e}.  virtualization plugin is disabled.")
   end
 end

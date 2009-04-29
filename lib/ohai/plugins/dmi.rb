@@ -18,7 +18,7 @@
 
 provides "dmi"
 
-# FIXME: Must be root
+# dmidecode does not return data without access to /dev/mem (or its equivalent)
 
 dmi Mash.new
 

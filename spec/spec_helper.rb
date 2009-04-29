@@ -34,15 +34,28 @@ def it_should_check_from_mash(plugin, attribute, from, value)
   end
 end
 
+# the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
-  it "should get the #{mash}[:#{attribute}] value from '#{from}'" do
+  it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
     @ohai.should_receive(:from).with(from).and_return(value)
     @ohai._require_plugin(plugin)
   end
-  
-  it "should set the #{mash}[:#{attribute}] to the value from '#{from}'" do
+ 
+  it "should set the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
     @ohai._require_plugin(plugin)
-    @ohai[mash][attribute].should == value
+    if mash.is_a?(String) 
+      @ohai[mash][attribute].should == value
+    elsif mash.is_a?(Array)
+      if mash.length == 2 
+        @ohai[mash[0]][mash[1]][attribute].should == value
+      elsif mash.length == 3
+        @ohai[mash[0]][mash[1]][mash[2]][attribute].should == value
+      else
+        return nil
+      end
+    else
+      return nil
+    end
   end
 end
 

@@ -38,7 +38,8 @@ describe Ohai::System, "plugin ruby" do
     :host => ::Config::CONFIG['host'],
     :host_cpu => ::Config::CONFIG['host_cpu'],
     :host_os => ::Config::CONFIG['host_os'],
-    :host_vendor => ::Config::CONFIG['host_vendor']
+    :host_vendor => ::Config::CONFIG['host_vendor'],
+    :gems_dir => %x{gem env gemdir}.chomp!
   }.each do |attribute, value|
     it "should have #{attribute} set" do
       @ohai._require_plugin("ruby")

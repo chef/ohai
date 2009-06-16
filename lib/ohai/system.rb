@@ -61,7 +61,8 @@ module Ohai
     
     def from(cmd)
       status, stdout, stderr = run_command(:command => cmd)
-      stdout.chomp!
+      return "" if stdout.nil?
+      stdout.chomp!.strip
     end
     
     def provides(*paths)
@@ -84,7 +85,8 @@ module Ohai
     def from_with_regex(cmd, *regex_list)
       regex_list.flatten.each do |regex|
         status, stdout, stderr = run_command(:command => cmd)
-        stdout.chomp!
+        return "" if stdout.nil?
+        stdout.chomp!.strip
         md = stdout.match(regex)
         return md[1]
       end

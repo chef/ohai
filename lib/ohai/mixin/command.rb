@@ -169,6 +169,9 @@ module Ohai
 
         begin
           e = Marshal.load ps.first
+          # If we get here, exec failed. Collect status of child to prevent
+          # zombies.
+          Process.waitpid(cid)
           raise(Exception === e ? e : "unknown failure!")
         rescue EOFError # If we get an EOF error, then the exec was successful
           42

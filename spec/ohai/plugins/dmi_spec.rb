@@ -21,7 +21,8 @@ require File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb')
 
 describe Ohai::System, "plugin dmi" do
   before(:each) do
-    @ohai = Ohai::System.new    
+    @ohai = Ohai::System.new
+    @ohai.stub!(:from).with("dmidecode --version").and_return("2.9")
     @ohai.stub!(:from).with("dmidecode -s bios-vendor").and_return("Dell Inc.")
     @ohai.stub!(:from).with("dmidecode -s bios-version").and_return("2.6.1")
     @ohai.stub!(:from).with("dmidecode -s bios-release-date").and_return("12\/06\/2007")
@@ -46,6 +47,7 @@ describe Ohai::System, "plugin dmi" do
     @ohai.stub!(:from).with("dmidecode -s processor-frequency").and_return("2000 Mhz")
   end
 
+  it_should_check_from_deep_mash("dmi", "dmi", "version", "dmidecode --version", "2.9")
   it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "vendor", "dmidecode -s bios-vendor", "Dell Inc.")
   it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "version", "dmidecode -s bios-version", "2.6.1")
   it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "release_date", "dmidecode -s bios-release-date", "12\/06\/2007")

@@ -42,12 +42,17 @@ opts = OptionParser.new do |opts|
   opts.on("-l", "--loglevel NAME", "Set log level for Ohai") do |l|
     config[:log_level] = l.to_sym
   end
+  opts.on("-v", "--version", "Display Ohai version") do |v|
+    puts "Ohai, version #{::Ohai::VERSION}"
+    exit
+  end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
   end
 end
-opts.parse!(ARGV)
+
+attributes = opts.parse(ARGV)
 
 ohai = Ohai::System.new
 
@@ -63,4 +68,10 @@ else
   ohai.all_plugins
 end
 
-puts ohai.json_pretty_print
+if attributes.length > 0
+  attributes.each do |a| 
+    puts ohai.attributes_print(a) 
+  end
+else
+  puts ohai.json_pretty_print
+end

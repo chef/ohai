@@ -118,7 +118,7 @@ module Ohai
         end
       end
     end
-    
+
     def collect_providers(providers)
       refreshments = []
       if providers.is_a?(Mash)
@@ -195,10 +195,13 @@ module Ohai
     end
     
     # Pretty Print this object as JSON 
-     def json_pretty_print
-       JSON.pretty_generate(@data)
-     end
+    def json_pretty_print
+      JSON.pretty_generate(@data)
+    end
     
+    def attributes_print(a)
+      JSON.pretty_generate(@data[a])
+    end
     # Create an Ohai::System from JSON
     def self.json_create(o)
       ohai = new

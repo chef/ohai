@@ -32,7 +32,7 @@ config = {
 }
 
 opts = OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} (options)"
+  opts.banner = "Usage: #{$0} (options) [attributes]"
   opts.on("-d", "--directory NAME", "A directory to add to the Ohai search path") do |d|
     config[:directory] = d
   end
@@ -48,6 +48,7 @@ opts = OptionParser.new do |opts|
   end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
+    puts "\n    [attributes] is a space-separated list of top-level attributes to display (JSON)."
     exit
   end
 end

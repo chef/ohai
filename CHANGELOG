@@ -1,3 +1,27 @@
+Thu Jun 18 15:34:06 MDT 2009
+Release Notes - Ohai - Version 0.3.0
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-69] - plugins/network.rb has unused and broken code relating to attribute "default_interface"
+    * [OHAI-76] - darwin kernel spec fails on linux system
+    * [OHAI-77] - no method error from current HEAD for 'chomp!'
+    * [OHAI-79] - Ohai::Exception was leaking into popen4, causing us to lose the exception raised by exec (Errno::ENOENT)
+    * [OHAI-82] - libvirt call fails with undefine method 'openReadOnly' for Libvirt:Module (NoMethodError)
+    * [OHAI-86] - ohai leaves zombie processes in it's wake.
+    * [OHAI-91] - dmi plugin should check version of dmidecode, only load attributes available.
+
+** Improvement
+    * [OHAI-81] - languages[:ruby] should also know about the gemdir and ruby binary
+    * [OHAI-83] - minor fix for libvirt not installed
+
+** New Feature
+    * [OHAI-6] - CLI output should allow filtering based on attribute
+    * [OHAI-67] - language/perl plugin
+    * [OHAI-75] - Need perl language bindings
+    * [OHAI-80] - Enable incremental updates of ohai data
+    * [OHAI-85] - Add DMI information
+
 Thu Mar  5 23:15:03 PST 2009
 Release Notes - Ohai - Version 0.2.0
 http://tickets.opscode.com

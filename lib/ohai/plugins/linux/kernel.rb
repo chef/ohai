@@ -21,7 +21,7 @@ provides "kernel"
 kernel[:os] = from("uname -o")
 
 kext = Mash.new
-popen4("/sbin/lsmod") do |pid, stdin, stdout, stderr|
+popen4("env lsmod") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/

@@ -24,7 +24,7 @@ your system.
 
 == INSTALL:
 
-* git clone git@github.com:hjkp/ohai.git 
+* git clone git://github.com/opscode/ohai.git
 * cd ohai
 * rake install 
 

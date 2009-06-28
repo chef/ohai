@@ -23,18 +23,29 @@ require 'scanf'
 network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
 
 def parse_media(media_string)
-  media = Array.new
+  media = Hash.new
   line_array = media_string.split(' ')
 
   0.upto(line_array.length - 1) do |i|
     unless line_array[i].eql?("none")
+
       if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
-        media << { line_array[i] => { "options" => $1.split(',') }}
+        media[line_array[i]] = Hash.new unless media.has_key?(line_array[i])
+        if media[line_array[i]].has_key?("options")
+          $1.split(",").each do |opt|
+            media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
+          end
+        else
+          media[line_array[i]]["options"] = $1.split(",") 
+        end
       else
-        media << { "autoselect" => { "options" => [] } } if line_array[i].eql?("autoselect")
+        if line_array[i].eql?("autoselect")
+          media["autoselect"] = Hash.new unless media.has_key?("autoselect")
+          media["autoselect"]["options"] = []
+        end
       end
     else
-      media << { "none" => { "options" => [] } }
+      media["none"] = { "options" => [] }
     end
   end
 

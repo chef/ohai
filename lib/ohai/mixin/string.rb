@@ -1,5 +1,5 @@
 #
-# Author:: Benjamin Black (<bb@opscode.com>)
+# Author:: James Gartrell (<jgartrel@gmail.com>)
 # Copyright:: Copyright (c) 2009 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -15,22 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-provides "languages/java"
 
-require_plugin "languages"
-
-java = Mash.new
-
-status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
-
-if status == 0
-  stderr.split("\n").each do |line|
-    case line
-    when /java version \"([0-9\.\_]+)\"/: java[:version] = $1
-    when /^(.+Runtime Environment.*) \(build (.+)\)$/: java[:runtime] = { "name" => $1, "build" => $2 }
-    when /^(.+ Client VM) \(build (.+)\)$/: java[:hotspot] = { "name" => $1, "build" => $2 }
-    end
+class String
+  # Add string function to handle WMI property conversion to json hash keys
+  # Makes an underscored, lowercase form from the expression in the string.
+  # underscore will also change ’::’ to ’/’ to convert namespaces to paths. 
+  # This should implement the same functionality as underscore method in
+  # ActiveSupport::CoreExtensions::String::Inflections
+  def wmi_underscore
+     self.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+     gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
   end
-
-  languages[:java] = java if java[:version]
 end

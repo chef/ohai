@@ -25,6 +25,7 @@ require 'ohai/log'
 require 'tmpdir'
 require 'fcntl'
 require 'etc'
+require 'systemu'
 
 module Ohai
   module Mixin
@@ -40,24 +41,7 @@ module Ohai
         
         stdout_string = nil
         stderr_string = nil
-        
-        exec_processing_block = lambda do |pid, stdin, stdout, stderr|
-          stdin.close
-
-          stdout_string = stdout.gets(nil)
-          if stdout_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
-            Ohai::Log.debug(stdout_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
-          end
-          stderr_string = stderr.gets(nil)
-          if stderr_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
-            Ohai::Log.debug(stderr_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
-          end
-        end
-        
+                
         args[:cwd] ||= Dir.tmpdir        
         unless File.directory?(args[:cwd])
           raise Ohai::Exceptions::Exec, "#{args[:cwd]} does not exist or is not a directory"
@@ -68,18 +52,36 @@ module Ohai
           if args[:timeout]
             begin
               Timeout.timeout(args[:timeout]) do
-                status = popen4(args[:command], args, &exec_processing_block)
+                status, stdout_string, stderr_string = systemu(args[:command])
               end
             rescue Exception => e
               Ohai::Log.error("#{args[:command_string]} exceeded timeout #{args[:timeout]}")
               raise(e)
             end
           else
-            status = popen4(args[:command], args, &exec_processing_block)
+            status, stdout_string, stderr_string = systemu(args[:command])
+          end
+
+          # systemu returns 42 when it hits unexpected errors
+          if status.exitstatus == 42 and stderr_string == ""
+            stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
+            Ohai::Log.debug(stderr_string)          
+          end
+
+          if stdout_string
+            Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
+            Ohai::Log.debug(stdout_string.strip)
+            Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
+          end
+          if stderr_string
+            Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
+            Ohai::Log.debug(stderr_string.strip)
+            Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
           end
         
           args[:returns] ||= 0
-          if status.exitstatus != args[:returns]
+          args[:no_status_check] ||= false
+          if status.exitstatus != args[:returns] and not args[:no_status_check]
             raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
           else
             Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
@@ -87,7 +89,7 @@ module Ohai
         end
         return status, stdout_string, stderr_string
       end
-      
+
       module_function :run_command
            
       # This is taken directly from Ara T Howard's Open4 library, and then 

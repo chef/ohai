@@ -25,38 +25,17 @@ describe Ohai::System, "plugin python" do
     @ohai = Ohai::System.new
     @ohai[:languages] = Mash.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @pid = mock("PID", :null_object => true)
-    @stderr = mock("STDERR", :null_object => true)
-    @stdout = mock(
-      "STDOUT", 
-      :null_object => true,
-      :gets => "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
-    )
-    @stdin = mock("STDIN", :null_object => true)
     @status = 0
-    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version\"").and_yield(
-      @pid, 
-      @stdin, 
-      @stdout, 
-      @stderr
-    ).and_return(@status)
+    @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
+    @stderr = ""
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([@status, @stdout, @stderr])
   end
   
   it "should get the python version from printing sys.version and sys.platform" do
-    @ohai.should_receive(:popen4).with("python -c \"import sys; print sys.version\"").and_return(true)
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([0, "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n", ""])
     @ohai._require_plugin("python")
   end
 
-  it "should close stdin" do
-    @stdin.should_receive(:close)
-    @ohai._require_plugin("python")
-  end
-  
-  it "should read the version data from stdout" do
-    @stdout.should_receive(:gets).and_return("2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n")
-    @ohai._require_plugin("python")
-  end
-  
   it "should set languages[:python][:version]" do
     @ohai._require_plugin("python")
     @ohai.languages[:python][:version].should eql("2.5.2")
@@ -64,12 +43,9 @@ describe Ohai::System, "plugin python" do
   
   it "should not set the languages[:python] tree up if python command fails" do
     @status = 1
-    @ohai.stub!(:popen4).with("python -c \"import sys; print sys.version\"").and_yield(
-      @pid, 
-      @stdin, 
-      @stdout, 
-      @stderr
-    ).and_return(@status)
+    @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
+    @stderr = ""
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([@status, @stdout, @stderr])
     @ohai._require_plugin("python")
     @ohai.languages.should_not have_key(:python)
   end

@@ -24,6 +24,7 @@ spec = Gem::Specification.new do |s|
   
   s.add_dependency "json"
   s.add_dependency "extlib"
+  s.add_dependency "systemu"
   s.bindir = "bin"
   s.executables = %w(ohai)
   

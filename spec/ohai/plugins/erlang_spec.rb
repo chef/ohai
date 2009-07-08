@@ -25,38 +25,17 @@ describe Ohai::System, "plugin erlang" do
     @ohai = Ohai::System.new
     @ohai[:languages] = Mash.new    
     @ohai.stub!(:require_plugin).and_return(true)
-    @pid = mock("PID", :null_object => true)
-    @stdout = mock("STDOUT", :null_object => true)
-    @stderr = mock(
-      "STDERR", 
-      :null_object => true,
-      :gets => "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    )
-    @stdin = mock("STDIN", :null_object => true)
     @status = 0
-    @ohai.stub!(:popen4).with("erl +V").and_yield(
-      @pid, 
-      @stdin, 
-      @stdout, 
-      @stderr
-    ).and_return(@status)
+    @stdin = ""
+    @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([@status, @stdout, @stderr])
   end
   
   it "should get the erlang version from erl +V" do
-    @ohai.should_receive(:popen4).with("erl +V").and_return(true)
+    @ohai.should_receive(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([0, "", "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"])
     @ohai._require_plugin("erlang")
   end
 
-  it "should close stdin" do
-    @stdin.should_receive(:close)
-    @ohai._require_plugin("erlang")
-  end
-  
-  it "should read the version data from stderr" do
-    @stderr.should_receive(:gets).and_return("Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n")
-    @ohai._require_plugin("erlang")
-  end
-  
   it "should set languages[:erlang][:version]" do
     @ohai._require_plugin("erlang")
     @ohai.languages[:erlang][:version].should eql("5.6.2")
@@ -74,12 +53,9 @@ describe Ohai::System, "plugin erlang" do
   
   it "should not set the languages[:erlang] tree up if erlang command fails" do
     @status = 1
-    @ohai.stub!(:popen4).with("erl +V").and_yield(
-      @pid, 
-      @stdin, 
-      @stdout, 
-      @stderr
-    ).and_return(@status)
+    @stdin = ""
+    @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([@status, @stdout, @stderr])
     @ohai._require_plugin("erlang")
     @ohai.languages.should_not have_key(:erlang)
   end

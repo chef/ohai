@@ -23,6 +23,8 @@ describe Ohai::System, "plugin kernel" do
   before(:each) do
     @ohai = Ohai::System.new    
     @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:languages] = Mash.new
+    @ohai[:languages][:ruby] = Mash.new
     @ohai.stub!(:from).with("uname -s").and_return("Darwin")
     @ohai.stub!(:from).with("uname -r").and_return("9.5.0")
     @ohai.stub!(:from).with("uname -v").and_return("Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")

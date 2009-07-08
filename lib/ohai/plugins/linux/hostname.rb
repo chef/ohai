@@ -18,7 +18,7 @@
 
 provides "hostname", "fqdn"
 
-hostname from("hostname")
+hostname from("hostname -s")
 begin
   fqdn from("hostname --fqdn")
 rescue

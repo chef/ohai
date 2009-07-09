@@ -1,41 +1,83 @@
 = ohai
 
-* http://wiki.opscode.com/display/ohai 
+= DESCRIPTION:
 
-== DESCRIPTION:
+Ohai detects data about your operating system. It can be used standalone, but it's primary purpose is to provide node data to Chef.
 
-Ohai detects data about your operating system. 
+Ohai will print out a JSON data blob for all the known data about your system. When used with Chef, that data is reported back via node attributes.
 
-I'm in yur server, findin yer dater
+Opscode distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the wiki:
 
-== SYNOPSIS:
+* http://wiki.opscode.com/display/ohai/Home
 
-./bin/ohai
+= DEVELOPMENT:
 
-Will print out a JSON structure for all the known data about 
-your system.
+Before working on the code, if you plan to contribute your changes, you need to read the Opscode Contributing document.
 
-== REQUIREMENTS:
+* http://wiki.opscode.com/display/opscode/Contributing
+
+You will also need to set up the repository with the appropriate branches. We document the process on the Chef Wiki.
+
+* http://wiki.opscode.com/display/opscode/Working+with+Git
+
+(Substitude 'ohai' for 'chef')
+
+Once your repository is set up, you can start working on the code. We do use BDD/TDD with RSpec, and soon Cucumber for integration/feature testing, so you'll need to get those installed.
+
+= ENVIRONMENT:
+
+In order to have a dev environment where you can work on Ohai, you'll need to install a few additional gems after setting up the Git repository.
+
+Install the following RubyGems.
 
 * rake
-* json
 * rspec
 * extlib 
+* systemu
+* json
 
-== INSTALL:
+  gem install rake rspec extlib systemu json
 
-* git clone git://github.com/opscode/ohai.git
-* cd ohai
-* rake install 
+== Rake Tasks
 
-== SPECIAL THANKS:
+Ohai has some Rake tasks for doing various things.
 
-Ohai was significantly easier to build because of the pre-existing
-work of everyone who contributed to Facter, especially Luke Kanies
-of Reductive Labs.  Thanks, guys. (We didn't use your code, but we
-were strongly inspired by it.)
+  rake -T
+  rake clobber_package  # Remove package products
+  rake gem              # Build the gem file ohai-$VERSION.gem
+  rake install          # install the gem locally
+  rake make_spec        # create a gemspec file
+  rake package          # Build all the packages
+  rake repackage        # Force a rebuild of the package files
+  rake spec             # Run specs
+  
+($VERSION is the current version, from the GemSpec in Rakefile)
 
-== LICENSE:
+== Spec Testing:
+
+We use RSpec for unit/spec tests.
+
+  rake spec
+
+Because ohai gathers system information, and we don't know what kind of system we might be running on (yet), we're moving away from specs for integration testing and to cucumber.
+
+= LINKS:
+
+Source:
+
+* http://github.com/opscode/ohai/tree/master
+
+Tickets/Issues:
+
+* http://tickets.opscode.com/
+
+(Use the OHAI project)
+
+Documentation:
+
+* http://wiki.opscode.com/display/ohai/Home/
+
+= LICENSE:
 
 Ohai - system information application
 

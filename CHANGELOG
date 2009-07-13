@@ -1,3 +1,22 @@
+Mon Jul 13 08:38:52 MDT 2009
+Release Notes - Ohai - Version 0.3.2
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-93] - plugin linux::kernel threw exception #<Errno::ENOENT: No such file or directory - /sbin/lsmod> 
+    * [OHAI-99] - Network media hash on darwin is nigh-unsable
+    * [OHAI-100] - hostname output differs between redhat dirivatives and debian dirivatives distributions
+    * [OHAI-102] - no uptime data for darwin/osx
+
+** Improvement
+    * [OHAI-98] - update readme.rdoc to focus more on developing/contributing for ohai
+
+** New Feature
+    * [OHAI-65] - Get ohai working on windows
+
+** Task
+    * [OHAI-97] - Fix git clone link in readme
+
 Thu Jun 18 15:34:06 MDT 2009
 Release Notes - Ohai - Version 0.3.0
 http://tickets.opscode.com

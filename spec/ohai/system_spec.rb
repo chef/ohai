@@ -90,9 +90,11 @@ describe Ohai::System, "get_attribute" do
 end
 
 describe Ohai::System, "require_plugin" do
+  tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
+
   before(:each) do
     @plugin_path = Ohai::Config[:plugin_path]
-    Ohai::Config[:plugin_path] = ["/tmp/plugins"]
+    Ohai::Config[:plugin_path] = ["#{tmp}/plugins"]
     File.stub!(:exists?).and_return(true)
     @ohai = Ohai::System.new
     @ohai.stub!(:from_file).and_return(true)
@@ -109,7 +111,7 @@ describe Ohai::System, "require_plugin" do
   end
   
   it "should check each part of the Ohai::Config[:plugin_path] for the plugin_filename.rb" do
-    @ohai.should_receive(:from_file).with("/tmp/plugins/foo.rb").and_return(true)
+    @ohai.should_receive(:from_file).with("#{tmp}/plugins/foo.rb").and_return(true)
     @ohai.require_plugin("foo")
   end
   

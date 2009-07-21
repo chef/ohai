@@ -51,6 +51,10 @@ describe Ohai::System, "plugin ec2" do
     end
 
     it "should recursively fetch all the ec2 metadata" do
+      IO.stub!(:select).and_return([[],[1],[]])
+      t = mock("connection")
+      t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      Socket.stub!(:new).and_return(t)
       @ohai._require_plugin("ec2")
       @ohai[:ec2].should_not be_nil
       @ohai[:ec2]['instance_type'].should == "c1.medium"

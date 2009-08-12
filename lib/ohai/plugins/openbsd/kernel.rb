@@ -18,6 +18,7 @@
 
 provides "kernel"
 
+kernel[:os] = kernel[:name]
 kernel[:securelevel] = from_with_regex("sysctl kern.securelevel", /kern.securelevel=(.+)$/)
 
 mod = Mash.new

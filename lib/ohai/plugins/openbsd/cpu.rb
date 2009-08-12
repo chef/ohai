@@ -1,6 +1,6 @@
 #
-# Author:: Bryan McLellan (btm@loftninjas.org)
-# Copyright:: Copyright (c) 2008 Bryan McLellan
+# Author:: Mathieu Sauve-Frankel <msf@kisoku.net>
+# Copyright:: Copyright (c) 2009 Mathieu Sauve-Frankel
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,35 +18,21 @@
 
 provides 'cpu'
 
-# all dmesg output for smp I can find only provides info about a single processor
-# identical processors is probably a hardware requirement so we'll duplicate data for each cpu
-# old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
 cpuinfo = Mash.new
 
-# /var/run/dmesg.boot
-#CPU: QEMU Virtual CPU version 0.9.1 (1862.02-MHz 686-class CPU)
-#  Origin = "GenuineIntel"  Id = 0x623  Stepping = 3
-#  Features=0x78bfbfd<FPU,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,CLFLUSH,MMX,FXSR,SSE,SSE2>
-#  Features2=0x80000001<SSE3,<b31>>
+# OpenBSD provides most cpu information via sysctl, the only thing we need to 
+# to scrape from dmesg.boot is the cpu feature list. 
+# cpu0: FPU,V86,DE,PSE,TSC,MSR,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,TM,SBF,EST,TM2
 
 File.open("/var/run/dmesg.boot").each do |line|
   case line
-  when /CPU:\s+(.+) \(([\d.]+).+\)/
-    cpuinfo["model_name"] = $1
-    cpuinfo["mhz"] = $2
-  when /Origin = "(.+)"\s+Id = (.+)\s+Stepping = (.+)/
-    cpuinfo["vendor_id"] = $1
-    cpuinfo["stepping"] = $3
-  # These _should_ match /AMD Features2?/ lines as well 
-  when /Features=.+<(.+)>/
-    cpuinfo["flags"] = $1.downcase.split(',')
-  # Features2=0x80000001<SSE3,<b31>>
-  when /Features2=[a-f\dx]+<(.+)>/
-    cpuinfo["flags"].concat($1.downcase.split(','))
-  when /Logical CPUs per core: (\d+)/
-    cpuinfo["cores"] = $1
+    when /cpu\d+:\s+([A-Z]+$|[A-Z]+,.*$)/
+      cpuinfo["flags"] = $1.downcase.split(',')
   end
 end
 
+cpuinfo[:model_name] = from("sysctl -n hw.model")
+cpuinfo[:total] = from("sysctl -n hw.ncpu")
+cpuinfo[:mhz] = from("sysctl -n hw.cpuspeed")
+
 cpu cpuinfo
-cpu[:total] = from("sysctl -n hw.ncpu")

@@ -16,10 +16,8 @@
 # limitations under the License.
 #
 
-require 'pp'
-
 provides "network", "counters/network"
-  
+
 network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
 
 iface = Mash.new
@@ -56,7 +54,7 @@ popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|
       if $4.empty?
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }
       else
-        # found a zone_id / scope
+        #found a zone_id / scope
         iface[cint][:addresses][$1] = { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
       end
     end
@@ -82,10 +80,13 @@ popen4("arp -an") do |pid, stdin, stdout, stderr|
   end
 end
 
+network["interfaces"] = iface
+
+net_counters = Mash.new
+# From netstat(1), not sure of the implications:
 # Show the state of all network interfaces or a single interface
 # which have been auto-configured (interfaces statically configured
 # into a system, but not located at boot time are not shown). 
-
 popen4("netstat -idn") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
@@ -93,18 +94,18 @@ popen4("netstat -idn") do |pid, stdin, stdout, stderr|
     # em0     1500  <Link>      00:11:25:2d:90:be  3719557     0  3369969     0     0    0
     # $1                        $2                      $3    $4    $5       $6    $7   $8
     if line =~ /^([\w\.\*]+)\s+\d+\s+<Link>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
-      next unless iface[$1] # this should never happen
-      iface[$1]["counters"] = Mash.new unless iface[$1]["counters"]
-      iface[$1]["counters"]["rx"] = Mash.new unless iface[$1]["counters"]["rx"]
-      iface[$1]["counters"]["tx"] = Mash.new unless iface[$1]["counters"]["tx"]
-      iface[$1]["counters"]["rx"]["packets"] = $3
-      iface[$1]["counters"]["rx"]["errors"] = $4
-      iface[$1]["counters"]["tx"]["packets"] = $5
-      iface[$1]["counters"]["tx"]["errors"] = $6
-      iface[$1]["counters"]["tx"]["collisions"] = $7
-      iface[$1]["counters"]["tx"]["dropped"] = $8
+      cint = $1
+      net_counters[cint] = Mash.new unless net_counters[cint]
+      net_counters[cint] = Mash.new unless net_counters[cint]["rx"]
+      net_counters[cint] = Mash.new unless net_counters[cint]["tx"]
+      net_counters[cint] = $3
+      net_counters[cint] = $4
+      net_counters[cint] = $5
+      net_counters[cint] = $6
+      net_counters[cint] = $7
+      net_counters[cint] = $8
     end
   end
 end
 
-network["interfaces"] = iface
+counters[:network][:interfaces] = net_counters

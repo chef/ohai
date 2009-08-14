@@ -33,5 +33,7 @@ languages[:ruby][:host] = ::Config::CONFIG['host']
 languages[:ruby][:host_cpu] = ::Config::CONFIG['host_cpu']
 languages[:ruby][:host_os] = ::Config::CONFIG['host_os']
 languages[:ruby][:host_vendor] = ::Config::CONFIG['host_vendor']
-languages[:ruby][:gems_dir] = %x{#{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!
+if File.exists?("#{::Config::CONFIG['bindir']}/gem")
+  languages[:ruby][:gems_dir] = %x{#{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!
+end
 languages[:ruby][:ruby_bin] = File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])

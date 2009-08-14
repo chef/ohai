@@ -20,8 +20,5 @@
 #
 
 $: << File.join(File.dirname(__FILE__), "..", "lib")
-
-require 'rubygems'
 require 'ohai/application'
-
 Ohai::Application.new.run

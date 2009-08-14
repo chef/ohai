@@ -113,7 +113,8 @@ module Ohai
 
         # Default on C locale so parsing commands output can be done
         # independently of the node's default locale.
-        unless args[:environment]["LC_ALL"]
+        # "LC_ALL" could be set to nil, in which case we also must ignore it.
+        unless args[:environment].has_key?("LC_ALL")
           args[:environment]["LC_ALL"] = "C"
         end
         

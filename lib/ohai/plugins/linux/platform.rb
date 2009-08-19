@@ -33,7 +33,7 @@ elsif File.exists?("/etc/redhat-release")
     case line
     when /\(Rawhide\)/
       platform_version "rawhide"
-    when /release (\d+)/
+    when /release ([\d\.]+)/
       platform_version $1
     end
   end

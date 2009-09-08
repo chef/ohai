@@ -1,9 +1,11 @@
 begin
-  require 'spec'
+  require 'spec' 
+  require 'mixlib/config'
 rescue LoadError
   require 'rubygems'
   gem 'rspec'
   require 'spec'
+  require 'mixlib/config'
 end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')

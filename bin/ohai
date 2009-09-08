@@ -20,59 +20,8 @@
 #
 
 $: << File.join(File.dirname(__FILE__), "..", "lib")
-require 'optparse'
+
 require 'rubygems'
-require 'ohai'
-require 'json'
+require 'ohai/application'
 
-config = {
-  :directory => nil,
-  :file => nil,
-  :log_level => :info
-}
-
-opts = OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} (options) [attributes]"
-  opts.on("-d", "--directory NAME", "A directory to add to the Ohai search path") do |d|
-    config[:directory] = d
-  end
-  opts.on("-f", "--file NAME", "A file to run Ohai against") do |f|
-    config[:file] = f
-  end
-  opts.on("-l", "--loglevel NAME", "Set log level for Ohai") do |l|
-    config[:log_level] = l.to_sym
-  end
-  opts.on("-v", "--version", "Display Ohai version") do |v|
-    puts "Ohai, version #{::Ohai::VERSION}"
-    exit
-  end
-  opts.on_tail("-h", "--help", "Show this message") do
-    puts opts
-    puts "\n    [attributes] is a space-separated list of top-level attributes to display (JSON)."
-    exit
-  end
-end
-
-attributes = opts.parse(ARGV)
-
-ohai = Ohai::System.new
-
-if [ :debug, :info, :warn, :error, :fatal ].include?(config[:log_level])
-  Ohai::Config[:log_level] = config[:log_level]
-end
-if config[:file]
-  ohai.from_file(config[:file])
-else
-  if config[:directory]
-    Ohai::Config[:plugin_path] << config[:directory]
-  end
-  ohai.all_plugins
-end
-
-if attributes.length > 0
-  attributes.each do |a| 
-    puts ohai.attributes_print(a) 
-  end
-else
-  puts ohai.json_pretty_print
-end
+Ohai::Application.new.run

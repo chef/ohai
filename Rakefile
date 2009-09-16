@@ -25,6 +25,9 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "json"
   s.add_dependency "extlib"
   s.add_dependency "systemu"
+  s.add_dependency "mixlib-cli"
+  s.add_dependency "mixlib-config"
+  s.add_dependency "mixlib-log"
   s.bindir = "bin"
   s.executables = %w(ohai)
   

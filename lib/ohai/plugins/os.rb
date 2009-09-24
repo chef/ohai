@@ -32,6 +32,8 @@ when /openbsd(.+)$/
   os "openbsd"
 when /netbsd(.+)$/
   os "netbsd"
+when /solaris2\.([\d]+)/
+  os "solaris2"
 when /mswin/
   # After long discussion in IRC the "powers that be" have come to a concensus
   # that there is no other Windows platforms exist that were not based on the

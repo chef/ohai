@@ -55,4 +55,15 @@ describe Ohai::System, "plugin os" do
       @ohai[:os].should == "darwin"
     end
   end
+  
+  describe "on solaris" do
+    before do
+      @ohai[:languages][:ruby][:host_os] = "solaris2.42" #heh
+    end
+    
+    it "sets the os to solaris2" do
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "solaris2"
+    end
+  end
 end

@@ -137,13 +137,15 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:kernel] = Mash.new
-    @modinfo_stdout = StringIO.new(MODINFO)
+    @ohai.stub(:from).with("uname -s").and_return("SunOS")
   end
+  
+  it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", "SunOS")
 
   it "gives excruciating detail about kernel modules" do
     stdin = mock("stdin", :null_object => true)
+    @modinfo_stdout = StringIO.new(MODINFO)
     @ohai.stub!(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
-    @ohai.stub(:from).with("uname -s").and_return("solaris2")
 
     @ohai._require_plugin("solaris2::kernel")
 

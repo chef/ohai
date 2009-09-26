@@ -32,8 +32,6 @@ popen4("modinfo") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if mod = module_description.match(line)
       modules[mod[4]] = { :id => mod[1].to_i, :loadaddr => mod[2], :size => mod[3].to_i(16), :description => mod[5]}
-    else
-      puts line
     end
   end
 end

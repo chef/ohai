@@ -70,7 +70,7 @@ def metadata(id='')
     key = "#{id}#{o.gsub(/\=.*$/, '/')}"
     if key[-1..-1] != '/'
       ec2[key.gsub(/\-|\//, '_').to_sym] =
-        OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").gets
+        OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read
     else
       metadata(key)
     end
@@ -81,7 +81,7 @@ def userdata()
   ec2[:userdata] = nil
   # assumes the only expected error is the 404 if there's no user-data
   begin
-    ec2[:userdata] = OpenURI.open_uri("#{EC2_USERDATA_URL}/").gets
+    ec2[:userdata] = OpenURI.open_uri("#{EC2_USERDATA_URL}/").read
   rescue OpenURI::HTTPError
   end
 end

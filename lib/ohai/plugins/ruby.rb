@@ -20,20 +20,28 @@ provides "languages/ruby"
 
 require_plugin "languages"
 
+def run_ruby(command)
+  cmd = "ruby -e \"require 'rbconfig'; #{command}\""
+  status, stdout, stderr = run_command(:no_status_check => true, :command => cmd)
+  stdout.strip
+end
+
 languages[:ruby] = Mash.new
 
-languages[:ruby][:platform] = RUBY_PLATFORM
-languages[:ruby][:version] = RUBY_VERSION
-languages[:ruby][:release_date] = RUBY_RELEASE_DATE
-languages[:ruby][:target] = ::Config::CONFIG['target']
-languages[:ruby][:target_cpu] = ::Config::CONFIG['target_cpu']
-languages[:ruby][:target_vendor] = ::Config::CONFIG['target_vendor']
-languages[:ruby][:target_os] = ::Config::CONFIG['target_os']
-languages[:ruby][:host] = ::Config::CONFIG['host']
-languages[:ruby][:host_cpu] = ::Config::CONFIG['host_cpu']
-languages[:ruby][:host_os] = ::Config::CONFIG['host_os']
-languages[:ruby][:host_vendor] = ::Config::CONFIG['host_vendor']
-if File.exists?("#{::Config::CONFIG['bindir']}/gem")
-  languages[:ruby][:gems_dir] = %x{#{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!
+languages[:ruby][:platform] = run_ruby "puts RUBY_PLATFORM"
+languages[:ruby][:version] = run_ruby "puts RUBY_VERSION"
+languages[:ruby][:release_date] = run_ruby "puts RUBY_RELEASE_DATE"
+languages[:ruby][:target] = run_ruby "puts ::Config::CONFIG['target']"
+languages[:ruby][:target_cpu] = run_ruby "puts ::Config::CONFIG['target_cpu']"
+languages[:ruby][:target_vendor] = run_ruby "puts ::Config::CONFIG['target_vendor']"
+languages[:ruby][:target_os] = run_ruby "puts ::Config::CONFIG['target_os']"
+languages[:ruby][:host] = run_ruby "puts ::Config::CONFIG['host']"
+languages[:ruby][:host_cpu] = run_ruby "puts ::Config::CONFIG['host_cpu']"
+languages[:ruby][:host_os] = run_ruby "puts ::Config::CONFIG['host_os']"
+languages[:ruby][:host_vendor] = run_ruby "puts ::Config::CONFIG['host_vendor']"
+
+bin_dir = run_ruby("puts ::Config::CONFIG['bindir']")
+if File.exist?("#{bin_dir}\/gem")
+	languages[:ruby][:gems_dir] = run_ruby "puts %x{#{bin_dir}\/gem env gemdir}.chomp!"
 end
-languages[:ruby][:ruby_bin] = File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])
+languages[:ruby][:ruby_bin] = run_ruby "puts File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])"

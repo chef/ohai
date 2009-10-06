@@ -32,7 +32,7 @@ rescue LoadError
     begin
       require 'json/pure'
     rescue LoadError
-      STDERR.puts "No valid JSON library detected, please install one of 'yajl-ruby', 'json' or 'json-pure'."
+      STDERR.puts "No valid JSON library detected, please install one of 'yajl-ruby', 'json' or 'json_pure'."
       exit -2
     end
   end

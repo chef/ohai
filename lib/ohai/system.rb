@@ -22,7 +22,21 @@ require 'ohai/log'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
-require 'json'
+
+begin
+  require 'yajl/json_gem'
+rescue LoadError
+  begin
+    require 'json'
+  rescue LoadError
+    begin
+      require 'json/pure'
+    rescue LoadError
+      STDERR.puts "No valid JSON library detected, please install one of 'yajl-ruby', 'json' or 'json-pure'."
+      exit -2
+    end
+  end
+end
 
 module Ohai
   class System

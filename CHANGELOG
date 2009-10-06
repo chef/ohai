@@ -1,3 +1,24 @@
+Wed Oct 7 12:30:00 NZDT 2009
+Release Notes - Ohai - Version 0.3.4rc0
+http://tickets.opscode.com
+
+** Bug
+    * [OHAI-107] - EC2 spec tests fails when not connected to network
+    * [OHAI-111] - ec2 userdata gets truncated
+    * [OHAI-112] - when installed on ubuntu/debian packages w/o rubygems, ohai fails with a type error
+    * [OHAI-122] - ohai on opensolaris 11 doesn't properly detect os for plugins
+    * [OHAI-125] - fqdn not set on solaris
+
+** Improvement
+    * [OHAI-95] - Support multiple JSON libraries
+    * [OHAI-116] - Redhat platform version should include the subrelease
+    * [OHAI-120] - refactor ohai to use Mixlib
+    * [OHAI-129] - Ohai on Solaris should produce gloriously verbose output about kernel modules
+
+** New Feature
+    * [OHAI-113] - Add support for OpenBSD
+    * [OHAI-114] - Add support for NetBSD
+
 Mon Jul 13 08:38:52 MDT 2009
 Release Notes - Ohai - Version 0.3.2
 http://tickets.opscode.com

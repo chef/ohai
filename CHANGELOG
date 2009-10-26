@@ -1,3 +1,13 @@
+Mon Oct 27 6:26:00 NZDT 2009
+Release Notes - Ohai - Version 0.3.6
+
+** Bug
+    * [OHAI-131] - ohai lies about its version
+    * [OHAI-134] - yajl-ruby causes incompatibility with json gem
+
+** Improvement
+    * [OHAI-135] - include man page
+
 Wed Oct 7 12:30:00 NZDT 2009
 Release Notes - Ohai - Version 0.3.4rc0
 http://tickets.opscode.com

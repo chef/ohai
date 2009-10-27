@@ -42,8 +42,8 @@ end
 
 # Fill cloud hash with ec2 values
 def get_ec2_values 
-  cloud[:public_ips][0] = ec2['public_ipv4']
-  cloud[:private_ips][0] = ec2['local_ipv4']
+  cloud[:public_ips] << ec2['public_ipv4']
+  cloud[:private_ips] << ec2['local_ipv4']
   cloud[:provider] = "ec2"
 end
 
@@ -68,8 +68,8 @@ end
 
 # Fill cloud hash with rackspace values
 def get_rackspace_values 
-  cloud[:public_ips][0] = rackspace['public_ip']
-  cloud[:private_ips][0] = rackspace['private_ip']
+  cloud[:public_ips] << rackspace['public_ip']
+  cloud[:private_ips] << rackspace['private_ip']
   cloud[:provider] = "rackspace"
 end
 

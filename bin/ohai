@@ -22,5 +22,19 @@
 require 'rubygems'
 
 $: << File.join(File.dirname(__FILE__), "..", "lib")
-require 'ohai/application'
+begin
+  require 'rubygems'
+rescue LoadError
+  # must be debian! ;) 
+  missing_rubygems = true
+end
+begin
+  require 'ohai/application'
+rescue LoadError
+  if missing_rubygems 
+    STDERR.puts "rubygems previously failed to load - is it installed?"
+  end
+
+  raise
+end
 Ohai::Application.new.run

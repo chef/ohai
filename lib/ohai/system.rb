@@ -24,17 +24,13 @@ require 'ohai/mixin/command'
 require 'ohai/mixin/string'
 
 begin
-  require 'yajl/json_gem'
+  require 'json'
 rescue LoadError
   begin
-    require 'json'
+    require 'json/pure'
   rescue LoadError
-    begin
-      require 'json/pure'
-    rescue LoadError
-      STDERR.puts "No valid JSON library detected, please install one of 'yajl-ruby', 'json' or 'json_pure'."
-      exit -2
-    end
+    STDERR.puts "No valid JSON library detected, please install one of 'json' or 'json_pure'."
+    exit -2
   end
 end
 

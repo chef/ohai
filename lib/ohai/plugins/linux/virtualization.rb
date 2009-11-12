@@ -54,24 +54,21 @@ end
 if File.exists?("/usr/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|
     stdin.close
-    found_virt_manufacturer = nil
-    stdout.each do |line|
-      case line
-      when /Manufacturer: Microsoft/
-        found_virt_manufacturer = "virtualpc"
-      when / Product Name: Virtual Machine/
-        if found_virt_manufacturer == "virtualpc" 
-          virtualization[:emulator] = "virtualpc"
-          virtualization[:role] = "guest"
-        end
-      when /Manufacturer: VMware/
-        found_virt_manufacturer = "vmware"
-      when /Product Name: VMware Virtual Platform/
-        if found_virt_manufacturer == "vmware" 
-          virtualization[:emulator] = "vmware"
-          virtualization[:role] = "guest"
-        end
+    dmi_info = stdout.string
+    case dmi_info
+    when /Manufacturer: Microsoft/
+      if dmi_info =~ /Product Name: Virtual Machine/ 
+        virtualization[:emulator] = "virtualpc"
+        virtualization[:role] = "guest"
+      end 
+    when /Manufacturer: VMware/
+      if dmi_info =~ /Product Name: VMware Virtual Platform/ 
+        virtualization[:emulator] = "vmware"
+        virtualization[:role] = "guest"
       end
+    else
+      nil
     end
+
   end
 end

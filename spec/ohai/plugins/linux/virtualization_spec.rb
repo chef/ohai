@@ -96,9 +96,17 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
-      @stdout.stub!(:each).
-        and_yield("Manufacturer: Microsoft").
-        and_yield(" Product Name: Virtual Machine")
+      ms_vpc_dmidecode=<<-MSVPC
+System Information
+	Manufacturer: Microsoft Corporation
+	Product Name: Virtual Machine
+	Version: VS2005R2
+	Serial Number: 1688-7189-5337-7903-2297-1012-52
+	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+	Wake-up Type: Power Switch
+MSVPC
+      @stdout.stub!(:string).and_return(ms_vpc_dmidecode) 
+       
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:emulator].should == "virtualpc"
@@ -106,9 +114,18 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "should set vmware guest if dmidecode detects VMware Virtual Platform" do
-      @stdout.stub!(:each).
-        and_yield("Manufacturer: VMware").
-        and_yield("Product Name: VMware Virtual Platform")
+      vmware_dmidecode=<<-VMWARE
+System Information
+	Manufacturer: VMware, Inc.
+	Product Name: VMware Virtual Platform
+	Version: None
+	Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
+	UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
+	Wake-up Type: Power Switch
+	SKU Number: Not Specified
+	Family: Not Specified
+VMWARE
+      @stdout.stub!(:string).and_return(vmware_dmidecode)
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:emulator].should == "vmware"

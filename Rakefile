@@ -21,7 +21,8 @@ spec = Gem::Specification.new do |s|
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-  
+
+  s.add_dependency "json"
   s.add_dependency "extlib"
   s.add_dependency "systemu"
   s.add_dependency "mixlib-cli"

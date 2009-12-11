@@ -73,7 +73,7 @@ module Ohai
     
     def from(cmd)
       status, stdout, stderr = run_command(:command => cmd)
-      return "" if stdout.nil?
+      return "" if stdout.nil? || stdout.empty?
       stdout.chomp!.strip
     end
     
@@ -97,7 +97,7 @@ module Ohai
     def from_with_regex(cmd, *regex_list)
       regex_list.flatten.each do |regex|
         status, stdout, stderr = run_command(:command => cmd)
-        return "" if stdout.nil?
+        return "" if stdout.nil? || stdout.empty?
         stdout.chomp!.strip
         md = stdout.match(regex)
         return md[1]

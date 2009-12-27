@@ -24,7 +24,7 @@ output = nil
 perl = Mash.new
 status = popen4("perl -V:version -V:archname") do |pid, stdin, stdout, stderr|
   stdin.close
-  stdout.each do |line|
+  stdout.each_line do |line|
     case line
     when /^version=\'(.+)\';$/
       perl[:version] = $1

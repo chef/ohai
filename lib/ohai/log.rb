@@ -22,5 +22,9 @@ require 'mixlib/log'
 module Ohai
   class Log
     extend Mixlib::Log
+    
+    init(Ohai::Config[:log_location])
+    level = Ohai::Config[:log_level]
+    
   end
 end

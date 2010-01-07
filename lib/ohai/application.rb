@@ -78,7 +78,7 @@ class Ohai::Application
  
   def configure_logging
     Ohai::Log.init(Ohai::Config[:log_location])
-    Ohai::Log.level(Ohai::Config[:log_level])
+    Ohai::Log.level = Ohai::Config[:log_level]
   end
 
   def run_application

@@ -46,7 +46,6 @@ module Ohai
       @seen_plugins = Hash.new
       @providers = Mash.new
       @plugin_path = ""
-      Ohai::Log.level(Ohai::Config.log_level) 
     end
     
     def [](key)

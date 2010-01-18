@@ -23,8 +23,12 @@ require 'rbconfig'
 require_plugin 'kernel'
 
 case ::Config::CONFIG['host_os']
+when /aix(.+)$/
+  os "aix"
 when /darwin(.+)$/
   os "darwin"
+when /hpux(.+)$/
+  os "hpux"
 when /linux/
   os "linux"
 when /freebsd(.+)$/

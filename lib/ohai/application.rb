@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ require 'mixlib/cli'
 
 class Ohai::Application
   include Mixlib::CLI
- 
+
   option :directory,
     :short       => "-d DIRECTORY",
     :long        => "--directory DIRECTORY",
@@ -31,8 +31,8 @@ class Ohai::Application
     :short       => "-f FILE",
     :long        => "--file FILE",
     :description => "A file to run Ohai against"
-   
-  option :log_level, 
+
+  option :log_level,
     :short        => "-l LEVEL",
     :long         => "--log_level LEVEL",
     :description  => "Set the log level (debug, info, warn, error, fatal)",
@@ -43,7 +43,7 @@ class Ohai::Application
     :long         => "--logfile LOGLOCATION",
     :description  => "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     :proc         => nil
- 
+
   option :help,
     :short        => "-h",
     :long         => "--help",
@@ -75,7 +75,7 @@ class Ohai::Application
       Ohai::Config[:plugin_path] << Ohai::Config[:directory]
     end
   end
- 
+
   def configure_logging
     Ohai::Log.init(Ohai::Config[:log_location])
     Ohai::Log.level = Ohai::Config[:log_level]
@@ -89,8 +89,8 @@ class Ohai::Application
       ohai.all_plugins
     end
     if @attributes.length > 0
-      @attributes.each do |a| 
-        puts ohai.attributes_print(a) 
+      @attributes.each do |a|
+        puts ohai.attributes_print(a)
       end
     else
       puts ohai.json_pretty_print

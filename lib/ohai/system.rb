@@ -211,12 +211,17 @@ module Ohai
     end
 
     def attributes_print(a)
-      if a.respond_to?(:fetch)
+      raise ArgumentError, "I cannot find an attribute named #{a}!" unless @data.has_key?(a)
+      case a
+      when Hash,Mash,Array
         JSON.pretty_generate(@data[a])
-      else
+      when String
         JSON.pretty_generate(@data[a].to_a)
+      else
+        raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{@data[a].class}!"
       end
     end
+
     # Create an Ohai::System from JSON
     def self.json_create(o)
       ohai = new

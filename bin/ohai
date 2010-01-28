@@ -19,6 +19,8 @@
 # limitations under the License.
 #
 
+require 'rubygems'
+
 $: << File.join(File.dirname(__FILE__), "..", "lib")
 require 'ohai/application'
 Ohai::Application.new.run

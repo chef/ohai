@@ -20,28 +20,49 @@ provides "languages/ruby"
 
 require_plugin "languages"
 
+
 def run_ruby(command)
   cmd = "ruby -e \"require 'rbconfig'; #{command}\""
   status, stdout, stderr = run_command(:no_status_check => true, :command => cmd)
   stdout.strip
 end
 
+
 languages[:ruby] = Mash.new
 
-languages[:ruby][:platform] = run_ruby "puts RUBY_PLATFORM"
-languages[:ruby][:version] = run_ruby "puts RUBY_VERSION"
-languages[:ruby][:release_date] = run_ruby "puts RUBY_RELEASE_DATE"
-languages[:ruby][:target] = run_ruby "puts ::Config::CONFIG['target']"
-languages[:ruby][:target_cpu] = run_ruby "puts ::Config::CONFIG['target_cpu']"
-languages[:ruby][:target_vendor] = run_ruby "puts ::Config::CONFIG['target_vendor']"
-languages[:ruby][:target_os] = run_ruby "puts ::Config::CONFIG['target_os']"
-languages[:ruby][:host] = run_ruby "puts ::Config::CONFIG['host']"
-languages[:ruby][:host_cpu] = run_ruby "puts ::Config::CONFIG['host_cpu']"
-languages[:ruby][:host_os] = run_ruby "puts ::Config::CONFIG['host_os']"
-languages[:ruby][:host_vendor] = run_ruby "puts ::Config::CONFIG['host_vendor']"
+values = {
+  :platform => "RUBY_PLATFORM",
+  :version => "RUBY_VERSION",
+  :release_date => "RUBY_RELEASE_DATE",
+  :target => "::Config::CONFIG['target']",
+  :target_cpu => "::Config::CONFIG['target_cpu']",
+  :target_vendor => "::Config::CONFIG['target_vendor']",
+  :target_os => "::Config::CONFIG['target_os']",
+  :host => "::Config::CONFIG['host']",
+  :host_cpu => "::Config::CONFIG['host_cpu']",
+  :host_os => "::Config::CONFIG['host_os']",
+  :host_vendor => "::Config::CONFIG['host_vendor']",
+  :bin_dir => "::Config::CONFIG['bindir']",
+  :ruby_bin => "::File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])" 
+}
 
-bin_dir = run_ruby("puts ::Config::CONFIG['bindir']")
-if File.exist?("#{bin_dir}\/gem")
-	languages[:ruby][:gems_dir] = run_ruby "puts %x{#{bin_dir}\/gem env gemdir}.chomp!"
+# Create a query string from above hash
+env_string = ""
+values.keys.each do |v| 
+  env_string << "#{v}:\#{#{values[v]}}," 
 end
-languages[:ruby][:ruby_bin] = run_ruby "puts File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])"
+
+# Query the system ruby
+result = run_ruby "puts \\\"#{env_string}\\\""
+
+# Parse results to plugin hash
+result.split(',').each do |entry|
+ key, value = entry.split(':')
+ languages[:ruby][key.to_sym] = value
+end
+
+# Perform one more (conditional) query
+bin_dir = languages[:ruby][:bin_dir]
+if File.exist?("#{bin_dir}\/gem")
+  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{bin_dir}\/gem env gemdir}.chomp!"
+end

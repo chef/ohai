@@ -43,4 +43,8 @@ elsif File.exists?('/etc/gentoo-release')
 elsif File.exists?('/etc/SuSE-release')
   platform "suse"
   platform_version IO.read('/etc/SuSE-release').scan(/\d+\.\d+/)[0]
+elsif File.exists?('/etc/arch-release')
+  platform "arch"
+  # no way to determine platform_version in a rolling release distribution
+  # kernel release will be used - ex. 2.6.32-ARCH
 end

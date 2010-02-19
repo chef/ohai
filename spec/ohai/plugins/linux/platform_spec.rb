@@ -90,4 +90,19 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform].should == "arch"
     end
   end
+
+  describe "on centos" do
+    before do
+      @ohai.lsb = nil
+      File.should_receive(:exists?).with("/etc/redhat-release").and_return(true)
+    end
+
+    it "sets the platform to centos on CentOS" do
+      File.should_receive(:open).with("/etc/redhat-release").and_return(["CentOS release 5.1"])
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "centos"
+    end
+
+  end
+
 end  

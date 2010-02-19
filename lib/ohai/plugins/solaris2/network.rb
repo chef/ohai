@@ -124,15 +124,17 @@ iface.keys.each do |ifn|
   iaddr = nil
   if iface[ifn][:encapsulation].eql?("Ethernet")
     iface[ifn][:addresses].keys.each do |addr|
-      if [ifn][:addresses][addr]["family"].eql?("inet")
+      if iface[ifn][:addresses][addr]["family"].eql?("inet")
         iaddr = addr
         break
       end
     end
-    iface[ifn][:arp].keys.each do |addr|
-      if addr.eql?(iaddr)
-        iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
-        break
+    if iface[ifn][:arp]
+      iface[ifn][:arp].keys.each do |addr|
+        if addr.eql?(iaddr)
+          iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
+          break
+        end
       end
     end
   end

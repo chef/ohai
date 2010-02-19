@@ -89,5 +89,5 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "arch"
     end
-  end      
+  end
 end  

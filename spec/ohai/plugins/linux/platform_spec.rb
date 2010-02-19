@@ -28,14 +28,10 @@ describe Ohai::System, "Linux plugin platform" do
     @ohai[:lsb] = Mash.new
     File.stub!(:exists?).with("/etc/debian_version").and_return(false)
     File.stub!(:exists?).with("/etc/redhat-release").and_return(false)
-<<<<<<< HEAD
     File.stub!(:exists?).with("/etc/gentoo-release").and_return(false)
     File.stub!(:exists?).with("/etc/SuSE-release").and_return(false)
     File.stub!(:exists?).with("/etc/arch-release").and_return(false)
-=======
-    File.stub!(:exists?).with("/etc/redhat-release").and_return(false)
     File.stub!(:exists?).with("/etc/fedora-release").and_return(false)
->>>>>>> OHAI-154 Have linux/platform.rb differentiate between Fedora when /etc/redhat-release exists
   end
   
   it "should require the lsb plugin" do
@@ -84,7 +80,6 @@ describe Ohai::System, "Linux plugin platform" do
 
   end
 
-<<<<<<< HEAD
   describe "on arch" do
     before(:each) do
       @ohai.lsb = nil
@@ -97,22 +92,58 @@ describe Ohai::System, "Linux plugin platform" do
     end
   end
 
-  describe "on centos" do
-    before do
+  describe "on redhat breeds" do
+    before(:each) do
       @ohai.lsb = nil
       File.should_receive(:exists?).with("/etc/redhat-release").and_return(true)
     end
 
-    it "sets the platform to centos on CentOS" do
-      File.should_receive(:open).with("/etc/redhat-release").and_return(["CentOS release 5.1"])
+    it "should check for the existance of redhat-release" do
+      @ohai._require_plugin("linux::platform")
+    end
+          
+    it "should read the platform as centos and version as 5.3" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("CentOS release 5.3")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "centos"
     end
 
+    it "may be that someone munged Red Hat to be RedHat" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "redhat"
+      @ohai[:platform_version].should == "5.3"
+    end
+
+    it "should read the platform as redhat and version as 5.3" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("Red Hat release 5.3")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "redhat"
+      @ohai[:platform_version].should == "5.3"
+    end
+  
+    it "should read the platform as fedora and version as 13 (rawhide)" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "fedora"
+      @ohai[:platform_version].should == "13 (rawhide)"
+    end
+    
+    it "should read the platform as fedora and version as 10" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 10")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "fedora"
+      @ohai[:platform_version].should == "10"
+    end
+
+    it "should read the platform as fedora and version as 13 using to_i" do
+      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "fedora"
+      @ohai[:platform_version].to_i.should == 13
+    end
   end
 
-end  
-=======
   describe "on redhat" do
     before(:each) do
       @ohai.lsb = nil
@@ -162,4 +193,3 @@ end
   end
 end
 
->>>>>>> OHAI-154 Have linux/platform.rb differentiate between Fedora when /etc/redhat-release exists

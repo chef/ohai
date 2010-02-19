@@ -15,9 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-def get_redhatish_version(file)
-  contents = File.read(file).chomp
-  contents[/Rawhide/] ? "rawhide" : contents[/release ([\d\.]+)/, 1]
+def get_redhatish_platform(contents)
+  contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
+end
+
+def get_redhatish_version(contents)
+  contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
 end
 
 provides "platform", "platform_version"
@@ -30,12 +33,10 @@ if lsb[:id]
 elsif File.exists?("/etc/debian_version")
   platform "debian"
   platform_version File.read("/etc/debian_version").chomp
-elsif File.exists?("/etc/fedora-release") and File.exists?("/etc/redhat-release")
-  platform "fedora"
-  platform_version get_redhatish_version("/etc/fedora-release")
 elsif File.exists?("/etc/redhat-release")
-  platform "redhat"
-  platform_version get_redhatish_version("/etc/redhat-release")
+  contents = File.read("/etc/redhat-release").chomp
+  platform get_redhatish_platform(contents)
+  platform_version get_redhatish_version(contents)
 elsif File.exists?('/etc/gentoo-release')
   platform "gentoo"
   platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join

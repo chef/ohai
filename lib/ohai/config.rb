@@ -25,5 +25,6 @@ module Ohai
     log_level :info
     log_location STDOUT
     plugin_path [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins'))]
+    disabled_plugins []
   end
 end

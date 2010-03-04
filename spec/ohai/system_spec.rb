@@ -111,7 +111,7 @@ describe Ohai::System, "require_plugin" do
   end
   
   it "should check each part of the Ohai::Config[:plugin_path] for the plugin_filename.rb" do
-    @ohai.should_receive(:from_file).with("#{tmp}/plugins/foo.rb").and_return(true)
+    @ohai.should_receive(:from_file).with(File.expand_path("#{tmp}/plugins/foo.rb")).and_return(true)
     @ohai.require_plugin("foo")
   end
   

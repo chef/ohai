@@ -53,7 +53,7 @@ values.keys.each do |v|
 end
 
 # Query the system ruby
-result = run_ruby "puts \\\"#{env_string}\\\""
+result = run_ruby "puts %Q(#{env_string})"
 
 # Parse results to plugin hash
 result.split(',').each do |entry|

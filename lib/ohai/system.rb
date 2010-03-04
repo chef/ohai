@@ -124,9 +124,7 @@ module Ohai
           md = file_regex.match(file)
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            if not Ohai::Config[:disabled_plugins].include?(plugin_name)
-              require_plugin(plugin_name) unless @seen_plugins.has_key?(plugin_name)
-            end
+            require_plugin(plugin_name) unless @seen_plugins.has_key?(plugin_name)
           end
         end
       end
@@ -178,6 +176,11 @@ module Ohai
     def require_plugin(plugin_name, force=false)
       unless force
         return true if @seen_plugins[plugin_name]
+      end
+
+      if Ohai::Config[:disabled_plugins].include?(plugin_name)
+        Ohai::Log.debug("Skipping disabled plugin #{plugin_name}")
+        return false
       end
 
       @plugin_path = plugin_name

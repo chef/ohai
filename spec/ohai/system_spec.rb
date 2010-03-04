@@ -126,5 +126,11 @@ describe Ohai::System, "require_plugin" do
   it "should return true if the plugin has been loaded" do
     @ohai.require_plugin("foo").should eql(true)
   end
+
+  it "should return false if the plugin is in the disabled plugins list" do
+    Ohai::Config[:disabled_plugins] = [ "foo" ]
+    Ohai::Log.should_receive(:debug).with("Skipping disabled plugin foo")
+    @ohai.require_plugin("foo").should eql(false)
+  end
 end
 

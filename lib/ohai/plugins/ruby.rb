@@ -49,7 +49,7 @@ values = {
 # Create a query string from above hash
 env_string = ""
 values.keys.each do |v| 
-  env_string << "#{v}:\#{#{values[v]}}," 
+  env_string << "#{v}=\#{#{values[v]}},"
 end
 
 # Query the system ruby
@@ -57,7 +57,7 @@ result = run_ruby "puts %Q(#{env_string})"
 
 # Parse results to plugin hash
 result.split(',').each do |entry|
- key, value = entry.split(':')
+ key, value = entry.split('=')
  languages[:ruby][key.to_sym] = value
 end
 

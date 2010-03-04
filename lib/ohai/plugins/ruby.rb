@@ -63,6 +63,7 @@ end
 
 # Perform one more (conditional) query
 bin_dir = languages[:ruby][:bin_dir]
+ruby_bin = languages[:ruby][:ruby_bin]
 if File.exist?("#{bin_dir}\/gem")
-  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{bin_dir}\/gem env gemdir}.chomp!"
+  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{bin_dir}\/gem env gemdir}.chomp!"
 end

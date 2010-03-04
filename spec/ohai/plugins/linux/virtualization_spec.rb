@@ -105,7 +105,7 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub!(:string).and_return(ms_vpc_dmidecode) 
+      @stdout.stub!(:read).and_return(ms_vpc_dmidecode) 
        
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
@@ -125,7 +125,7 @@ System Information
 	SKU Number: Not Specified
 	Family: Not Specified
 VMWARE
-      @stdout.stub!(:string).and_return(vmware_dmidecode)
+      @stdout.stub!(:read).and_return(vmware_dmidecode)
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:emulator].should == "vmware"

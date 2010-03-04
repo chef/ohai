@@ -128,6 +128,9 @@ module Ohai
           end
         end
       end
+      # Catch any errant children who need to be reaped
+      Process.waitall
+      true
     end
 
     def collect_providers(providers)

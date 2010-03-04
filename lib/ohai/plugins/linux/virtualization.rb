@@ -54,7 +54,7 @@ end
 if File.exists?("/usr/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|
     stdin.close
-    dmi_info = stdout.string
+    dmi_info = stdout.read
     case dmi_info
     when /Manufacturer: Microsoft/
       if dmi_info =~ /Product Name: Virtual Machine/ 

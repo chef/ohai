@@ -19,6 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::Mixin::Command, "popen4" do
+  break if RUBY_PLATFORM =~ /(win|w)32$/
 
   it "should default all commands to be run in the POSIX standard C locale" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL") do |pid, stdin, stdout, stderr|

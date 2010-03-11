@@ -26,8 +26,10 @@ status = popen4("perl -V:version -V:archname") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line
-    when /^version=\'(.+)\';$/: perl[:version] = $1
-    when /^archname=\'(.+)\';$/: perl[:archname] = $1
+    when /^version=\'(.+)\';$/
+      perl[:version] = $1
+    when /^archname=\'(.+)\';$/
+      perl[:archname] = $1
     end
   end
 end

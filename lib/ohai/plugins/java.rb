@@ -26,9 +26,12 @@ status, stdout, stderr = run_command(:no_status_check => true, :command => "java
 if status == 0
   stderr.split("\n").each do |line|
     case line
-    when /java version \"([0-9\.\_]+)\"/: java[:version] = $1
-    when /^(.+Runtime Environment.*) \(build (.+)\)$/: java[:runtime] = { "name" => $1, "build" => $2 }
-    when /^(.+ Client VM) \(build (.+)\)$/: java[:hotspot] = { "name" => $1, "build" => $2 }
+    when /java version \"([0-9\.\_]+)\"/
+      java[:version] = $1
+    when /^(.+Runtime Environment.*) \(build (.+)\)$/
+      java[:runtime] = { "name" => $1, "build" => $2 }
+    when /^(.+ Client VM) \(build (.+)\)$/ 
+      java[:hotspot] = { "name" => $1, "build" => $2 }
     end
   end
 

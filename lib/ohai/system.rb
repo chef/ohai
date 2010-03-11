@@ -104,7 +104,7 @@ module Ohai
     end
 
     def set_attribute(name, *value)
-      @data[name] = *value
+      @data[name] = value.length == 1 ? value[0] : value
       @data[name]
     end
 
@@ -197,7 +197,7 @@ module Ohai
         rescue IOError => e
           Ohai::Log.debug("No #{plugin_name} at #{check_path}")
         rescue Exception,Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect}")
+          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end
     end

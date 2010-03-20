@@ -42,7 +42,7 @@ elsif File.exists?('/etc/gentoo-release')
   platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/SuSE-release')
   platform "suse"
-  platform_version IO.read('/etc/SuSE-release').scan(/\d+\.\d+/)[0]
+  platform_version File.read("/etc/SuSE-release").scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
 elsif File.exists?('/etc/arch-release')
   platform "arch"
   # no way to determine platform_version in a rolling release distribution

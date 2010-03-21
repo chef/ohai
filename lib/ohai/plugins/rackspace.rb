@@ -16,7 +16,17 @@
 
 provides "rackspace"
 
+require_plugin "kernel"
 require_plugin "network"
+
+# Checks for matching rackspace kernel name
+#
+# === Return
+# true:: If kernel name matches 
+# false:: Otherwise
+def has_rackspace_kernel?
+  kernel[:release].split('-').last.eql?("rscloud")
+end
 
 # Checks for matching rackspace arp mac
 #
@@ -38,7 +48,7 @@ end
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?  
-  has_rackspace_mac?
+  has_rackspace_mac? || has_rackspace_kernel?
 end
 
 # Names rackspace ip address

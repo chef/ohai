@@ -129,7 +129,7 @@ module Ohai
         end
       end
       # Catch any errant children who need to be reaped
-      Process.waitall
+      Process.wait(-1, Process::WNOHANG) rescue Errno::ECHILD
       true
     end
 

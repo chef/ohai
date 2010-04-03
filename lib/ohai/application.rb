@@ -61,6 +61,14 @@ class Ohai::Application
     :proc         => lambda {|v| puts "Ohai: #{::Ohai::VERSION}"},
     :exit         => 0
 
+  def initialize
+    super
+
+    # Always switch to a readable directory. Keeps subsequent Dir.chdir() {}
+    # from failing due to permissions when launched as a less privileged user.
+    Dir.chdir("/")
+  end
+
   def run
     configure_ohai
     configure_logging

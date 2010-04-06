@@ -56,9 +56,8 @@ describe Ohai::System, "Linux lsb plugin" do
   
     it "should set lsb[:description]" do
       @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:description].should == "\"Ubuntu 8.04\""
+      @ohai[:lsb][:description].should == "Ubuntu 8.04"
     end
-  
   end
 
   describe "on systems with /usr/bin/lsb_release" do

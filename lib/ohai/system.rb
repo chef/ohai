@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-require 'rubygems'
 require 'extlib'
 require 'ohai/log'
 require 'ohai/mixin/from_file'

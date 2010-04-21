@@ -18,10 +18,11 @@
 
 provides "os", "os_version"
 
-require_plugin 'ruby'
+require 'rbconfig'
+
 require_plugin 'kernel'
 
-case languages[:ruby][:host_os]
+case ::Config::CONFIG['host_os']
 when /darwin(.+)$/
   os "darwin"
 when /linux/
@@ -42,7 +43,7 @@ when /mswin|mingw32|windows/
   # subsystems.
   os "windows"
 else
-  os languages[:ruby][:host_os]
+  os ::Config::CONFIG['host_os']
 end
 
 os_version kernel[:release]

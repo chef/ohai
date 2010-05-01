@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.join(File.dirname(__FILE__), '..', '..', '..', '/spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do

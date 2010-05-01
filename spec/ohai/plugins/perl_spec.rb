@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin perl" do
   before(:each) do
@@ -26,7 +26,7 @@ describe Ohai::System, "plugin perl" do
     @pid = mock("PID", :null_object => true)
     @stderr = mock("STDERR", :null_object => true)
     @stdout = mock("STDOUT", :null_object => true)
-    @stdout.stub!(:each).and_yield("version='5.8.8';").
+    @stdout.stub!(:each_line).and_yield("version='5.8.8';").
       and_yield("archname='darwin-thread-multi-2level';")
     @stdin = mock("STDIN", :null_object => true)
     @status = 0
@@ -49,7 +49,7 @@ describe Ohai::System, "plugin perl" do
   end
   
   it "should iterate over each line of perl command's stdout" do
-    @stdout.should_receive(:each).and_return(true)
+    @stdout.should_receive(:each_line).and_return(true)
     @ohai._require_plugin("perl")
   end
 

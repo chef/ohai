@@ -102,9 +102,9 @@ module Ohai
         return md[1]
       end
     end
-
-    def set_attribute(name, *value)
-      @data[name] = value.length == 1 ? value[0] : value
+    
+    def set_attribute(name, *values)
+      @data[name] = Array18(*values)
       @data[name]
     end
 
@@ -249,8 +249,11 @@ module Ohai
     end
 
     private
-      def load_plugin_file
-
-      end
+    
+    def Array18(*args)
+      return nil if args.empty?
+      return args.first if args.length == 1
+      return *args
+    end
   end
 end

@@ -22,7 +22,7 @@ require_plugin "network"
 # Checks for matching rackspace kernel name
 #
 # === Return
-# true:: If kernel name matches 
+# true:: If kernel name matches
 # false:: Otherwise
 def has_rackspace_kernel?
   kernel[:release].split('-').last.eql?("rscloud")
@@ -31,9 +31,9 @@ end
 # Checks for matching rackspace arp mac
 #
 # === Return
-# true:: If mac address matches 
+# true:: If mac address matches
 # false:: Otherwise
-def has_rackspace_mac?  
+def has_rackspace_mac?
   network[:interfaces].values.each do |iface|
     unless iface[:arp].nil?
       return true if iface[:arp].value?("00:00:0c:07:ac:01")
@@ -47,7 +47,7 @@ end
 # === Return
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
-def looks_like_rackspace?  
+def looks_like_rackspace?
   has_rackspace_mac? || has_rackspace_kernel?
 end
 

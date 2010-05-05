@@ -34,7 +34,7 @@ when /netbsd(.+)$/
   os "netbsd"
 when /solaris2\.([\d]+)/
   os "solaris2"
-when /mswin/
+when /mswin|mingw32|windows/
   # After long discussion in IRC the "powers that be" have come to a concensus
   # that there is no other Windows platforms exist that were not based on the
   # Windows_NT kernel, so we herby decree that "windows" will refer to all

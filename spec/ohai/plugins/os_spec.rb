@@ -19,6 +19,8 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
+ORIGINAL_CONFIG_HOST_OS = ::Config::CONFIG['host_os']
+
 describe Ohai::System, "plugin os" do
   before(:each) do
     @ohai = Ohai::System.new    
@@ -28,6 +30,10 @@ describe Ohai::System, "plugin os" do
     @ohai[:kernel] = Mash.new
     @ohai[:kernel][:release] = "kings of leon"
   end
+  
+  after do
+    ::Config::CONFIG['host_os'] = ORIGINAL_CONFIG_HOST_OS
+  end
 
   it "should set os_version to kernel_release" do
     @ohai._require_plugin("os")
@@ -36,7 +42,7 @@ describe Ohai::System, "plugin os" do
   
   describe "on linux" do
     before(:each) do
-      @ohai[:languages][:ruby][:host_os] = "linux"
+      ::Config::CONFIG['host_os'] = "linux"
     end
     
     it "should set the os to linux" do
@@ -58,7 +64,7 @@ describe Ohai::System, "plugin os" do
   
   describe "on solaris" do
     before do
-      @ohai[:languages][:ruby][:host_os] = "solaris2.42" #heh
+      ::Config::CONFIG['host_os'] = "solaris2.42" #heh
     end
     
     it "sets the os to solaris2" do

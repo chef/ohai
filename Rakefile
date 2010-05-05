@@ -33,7 +33,7 @@ spec = Gem::Specification.new do |s|
   
   s.require_path = 'lib'
   s.autorequire = GEM
-  s.files = %w(LICENSE README.rdoc Rakefile) + Dir.glob("{extras,lib,spec}/**/*")
+  s.files = %w(LICENSE README.rdoc Rakefile) + Dir.glob("{docs,lib,spec}/**/*")
 end
 
 task :default => :spec

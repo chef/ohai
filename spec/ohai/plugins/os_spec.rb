@@ -53,7 +53,7 @@ describe Ohai::System, "plugin os" do
   
   describe "on darwin" do
     before(:each) do
-      @ohai[:languages][:ruby][:host_os] = "darwin"
+      ::Config::CONFIG['host_os'] = "darwin"
     end
     
     it "should set the os to darwin" do

@@ -30,21 +30,15 @@ describe Ohai::System, "plugin perl" do
       and_yield("archname='darwin-thread-multi-2level';")
     @stdin = mock("STDIN", :null_object => true)
     @status = 0
-    @ohai.stub!(:popen4).with("perl -V:version -V:archname").and_yield(
-      @pid,
-      @stdin,
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+      @status,
       @stdout,
       @stderr
-    ).and_return(@status)
+    ])
   end
   
   it "should run perl -V:version -V:archname" do
-    @ohai.should_receive(:popen4).with("perl -V:version -V:archname").and_return(true)
-    @ohai._require_plugin("perl")
-  end
-  
-  it "should close perl command's stdin" do
-    @stdin.should_receive(:close)
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return(true)
     @ohai._require_plugin("perl")
   end
   
@@ -65,24 +59,22 @@ describe Ohai::System, "plugin perl" do
   
   it "should set languages[:perl] if perl command succeeds" do
     @status = 0
-    @ohai.stub!(:popen4).with("perl -V:version -V:archname").and_yield(
-      @pid,
-      @stdin,
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+      @status,
       @stdout,
       @stderr
-    ).and_return(@status)
+    ])
     @ohai._require_plugin("perl")
     @ohai.languages.should have_key(:perl)
   end
   
   it "should not set languages[:perl] if perl command fails" do
      @status = 1
-     @ohai.stub!(:popen4).with("perl -V:version -V:archname").and_yield(
-       @pid,
-       @stdin,
-       @stdout,
-       @stderr
-     ).and_return(@status)
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+      @status,
+      @stdout,
+      @stderr
+     ])
      @ohai._require_plugin("perl")
      @ohai.languages.should_not have_key(:perl)
   end

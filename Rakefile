@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "ohai"
-GEM_VERSION = "0.5.1"
+GEM_VERSION = "0.5.2"
 AUTHOR = "Adam Jacob"
 EMAIL = "adam@opscode.com"
 HOMEPAGE = "http://wiki.opscode.com/display/ohai"

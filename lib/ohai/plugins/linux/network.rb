@@ -37,7 +37,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   cint = nil
   stdout.each do |line|
     tmp_addr = nil
-    if line =~ /^([0-9a-zA-Z\.\:\-]+)\s+/
+    if line =~ /^([0-9a-zA-Z\.\:\-_]+)\s+/
       cint = $1
       iface[cint] = Mash.new
       if cint =~ /^(\w+)(\d+.*)/

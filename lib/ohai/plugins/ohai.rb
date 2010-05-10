@@ -19,5 +19,5 @@
 require "ohai"
 provides "ohai"
 
-ohai Mash.new
-ohai[:version] = Ohai::VERSION
+self[:ohai] = Mash.new
+self[:ohai][:version] = Ohai::VERSION

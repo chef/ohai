@@ -49,20 +49,21 @@ values = {
 # Create a query string from above hash
 env_string = ""
 values.keys.each do |v| 
-  env_string << "#{v}:\#{#{values[v]}}," 
+  env_string << "#{v}=\#{#{values[v]}},"
 end
 
 # Query the system ruby
-result = run_ruby "puts \\\"#{env_string}\\\""
+result = run_ruby "puts %Q(#{env_string})"
 
 # Parse results to plugin hash
 result.split(',').each do |entry|
- key, value = entry.split(':')
+ key, value = entry.split('=')
  languages[:ruby][key.to_sym] = value
 end
 
 # Perform one more (conditional) query
 bin_dir = languages[:ruby][:bin_dir]
+ruby_bin = languages[:ruby][:ruby_bin]
 if File.exist?("#{bin_dir}\/gem")
-  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{bin_dir}\/gem env gemdir}.chomp!"
+  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{bin_dir}\/gem env gemdir}.chomp!"
 end

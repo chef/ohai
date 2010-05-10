@@ -22,8 +22,8 @@ require_plugin "languages"
 output = nil
 
 perl = Mash.new
-status = popen4("perl -V:version -V:archname") do |pid, stdin, stdout, stderr|
-  stdin.close
+status, stdout, stderr = run_command(:no_status_check => true, :command => "perl -V:version -V:archname")
+if status == 0
   stdout.each_line do |line|
     case line
     when /^version=\'(.+)\';$/

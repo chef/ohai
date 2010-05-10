@@ -127,10 +127,12 @@ module Ohai
           end
         end
       end
-      # Catch any errant children who need to be reaped
-      begin
-        true while Process.wait(-1, Process::WNOHANG)
-      rescue Errno::ECHILD
+      unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+        # Catch any errant children who need to be reaped
+        begin
+          true while Process.wait(-1, Process::WNOHANG)
+        rescue Errno::ECHILD
+        end
       end
       true
     end

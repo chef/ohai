@@ -28,9 +28,9 @@ describe Ohai::System, "plugin chef" do
     @ohai.stub!(:require_plugin).and_return(true)
   end
   
-  it "should set chef[:version] to the current chef version" do
+  it "should set [:chef_packages][:chef][:version] to the current chef version" do
     @ohai._require_plugin("chef")
-    @ohai[:chef][:version].should == Chef::VERSION
+    @ohai[:chef_packages][:chef][:version].should == Chef::VERSION
   end
 end
 rescue LoadError

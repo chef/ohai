@@ -19,5 +19,6 @@
 require "ohai"
 provides "ohai"
 
-self[:ohai] = Mash.new
-self[:ohai][:version] = Ohai::VERSION
+self[:chef_packages] = Mash.new unless self[:chef_packages]
+self[:chef_packages][:ohai] = Mash.new
+self[:chef_packages][:ohai][:version] = Ohai::VERSION

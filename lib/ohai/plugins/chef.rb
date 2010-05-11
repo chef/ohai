@@ -19,5 +19,6 @@
 require 'chef'
 provides "chef"
 
-chef Mash.new
-chef[:version] = Chef::VERSION
+self[:chef_packages] = Mash.new unless self[:chef_packages]
+self[:chef_packages][:chef] = Mash.new
+self[:chef_packages][:chef][:version] = Chef::VERSION

@@ -26,8 +26,8 @@ describe Ohai::System, "plugin ohai" do
     @ohai.stub!(:require_plugin).and_return(true)
   end
   
-  it "should set ohai[:version] to the current version" do
+  it "should set [:chef_packages][:ohai][:version] to the current version" do
     @ohai._require_plugin("ohai")
-    @ohai[:ohai][:version].should == Ohai::VERSION
+    @ohai[:chef_packages][:ohai][:version].should == Ohai::VERSION
   end
 end

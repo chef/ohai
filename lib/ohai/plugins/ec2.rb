@@ -29,6 +29,7 @@ require_plugin "network"
 EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
 EC2_METADATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/meta-data" unless defined?(EC2_METADATA_URL)
 EC2_USERDATA_URL = "http://#{EC2_METADATA_ADDR}/2008-02-01/user-data" unless defined?(EC2_USERDATA_URL)
+EC2_ARRAY_VALUES = %w(security-groups)
 
 def can_metadata_connect?(addr, port, timeout=2)
   t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
@@ -69,8 +70,12 @@ def metadata(id='')
   OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}").read.split("\n").each do |o|
     key = "#{id}#{o.gsub(/\=.*$/, '/')}"
     if key[-1..-1] != '/'
-      ec2[key.gsub(/\-|\//, '_').to_sym] =
-        OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read
+      ec2[key.gsub(/\-|\//, '_').to_sym] = 
+        if EC2_ARRAY_VALUES.include? key
+          OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read.split("\n")
+        else
+          OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read
+        end
     else
       metadata(key)
     end

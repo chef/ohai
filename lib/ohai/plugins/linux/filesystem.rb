@@ -53,5 +53,17 @@ popen4("mount -l") do |pid, stdin, stdout, stderr|
   end
 end
 
+# Grab UUID from /dev/disk/by-uuid/*
+popen4("ls -l /dev/disk/by-uuid/* | awk '{print $11, $9}'") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^[.\/]+\/([a-z]+\d) \/.\/(.)$/
+      filesystem = "/dev/" + $1
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:uuid] = $2
+    end
+  end
+end
+
 # Set the filesystem data
 filesystem fs

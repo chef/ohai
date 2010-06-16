@@ -25,12 +25,12 @@ if File.exists?("/sys/block")
     block[dir] = Mash.new
     %w{size removable}.each do |check|
       if File.exists?("/sys/block/#{dir}/#{check}")
-        block[dir][check] = File.read("/sys/block/#{dir}/#{check}").chomp
+        File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
       end
     end
     %w{model rev state timeout vendor}.each do |check|
       if File.exists?("/sys/block/#{dir}/device/#{check}")
-        block[dir][check] = File.read("/sys/block/#{dir}/device/#{check}").chomp
+        File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
       end
     end
   end

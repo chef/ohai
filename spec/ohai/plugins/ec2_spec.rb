@@ -38,13 +38,16 @@ describe Ohai::System, "plugin ec2" do
     before(:each) do
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/meta-data/").
-        and_return(mock(IO, :read => "instance_type\nami_id\n"))
+        and_return(mock(IO, :read => "instance_type\nami_id\nsecurity-groups"))
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/meta-data/instance_type").
         and_return(mock(IO, :read => "c1.medium"))
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
         and_return(mock(IO, :read => "ami-5d2dc934"))
+      OpenURI.stub!(:open_uri).
+        with("http://169.254.169.254/2008-02-01/meta-data/security-groups").
+        and_return(mock(IO, :read => "group1\ngroup2"))
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/user-data/").
         and_return(mock(IO, :gets => "By the pricking of my thumb..."))
@@ -59,6 +62,7 @@ describe Ohai::System, "plugin ec2" do
       @ohai[:ec2].should_not be_nil
       @ohai[:ec2]['instance_type'].should == "c1.medium"
       @ohai[:ec2]['ami_id'].should == "ami-5d2dc934"
+      @ohai[:ec2]['security_groups'].should eql ['group1', 'group2']
     end
   end
 

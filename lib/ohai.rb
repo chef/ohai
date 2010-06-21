@@ -20,5 +20,5 @@ require 'ohai/config'
 require 'ohai/system'
 
 module Ohai
-  VERSION = '0.5.4'
+  VERSION = '0.5.6'
 end

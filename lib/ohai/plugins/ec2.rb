@@ -53,16 +53,37 @@ def can_metadata_connect?(addr, port, timeout=2)
     end
   rescue SystemCallError
   end
-
+  Ohai::Log.debug("can_metadata_connect? == #{connected}")
   connected
+end
+
+def get_mac_address(addresses)
+  detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }
+  if detected_addresses
+    return detected_addresses.first
+  else
+    return ""
+  end
+end
+
+def has_euca_mac?
+  network[:interfaces].values.each do |iface|
+    has_mac = (get_mac_address(iface[:addresses]) =~ /^[dD]0:0[dD]:/)
+    Ohai::Log.debug("has_euca_mac? == #{!!has_mac}")
+    return true if has_mac
+  end
+  Ohai::Log.debug("has_euca_mac? == false")
 end
 
 def has_ec2_mac?
   network[:interfaces].values.each do |iface|
     unless iface[:arp].nil?
-      return true if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
+      has_mac = iface[:arp].value?("fe:ff:ff:ff:ff:ff")
+      Ohai::Log.debug("has_ec2_mac? == true")
+      return true if has_mac
     end
   end
+  Ohai::Log.debug("has_ec2_mac? == false")
   false
 end
 
@@ -94,12 +115,15 @@ end
 def looks_like_ec2?
   # Try non-blocking connect so we don't "block" if 
   # the Xen environment is *not* EC2
-  has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+  (has_ec2_mac? || has_euca_mac?) && can_metadata_connect?(EC2_METADATA_ADDR,80)
 end
 
 if looks_like_ec2?
+  Ohai::Log.debug("looks_like_ec2? == true")
   ec2 Mash.new
   self.metadata
   self.userdata
+else
+  Ohai::Log.debug("looks_like_ec2? == false")
 end
 

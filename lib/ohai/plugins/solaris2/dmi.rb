@@ -129,7 +129,8 @@ smb_to_id = {
 header_type_line = /^ID\s+SIZE\s+TYPE/
 header_information_line = /^(\d+)\s+(\d+)\s+(\S+)\s+\(([^\)]+)\)/
 blank_line = /^\s*$/
-data_line = /^  ([^:]+): (.*)/
+data_key_value_line = /^  ([^:]+): (.*)/
+data_key_only_line = /^  (\S.*)(:\s*)?$/
 extended_data_line = /^\t(\S+) \((.+)\)/
 
 dmi_record = nil
@@ -184,12 +185,20 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:os_identifier] = header_information[4]
       field = nil
     
-    elsif data = data_line.match(line)
+    elsif data = data_key_value_line.match(line)
       if dmi_record == nil
         Ohai::Log.warn("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
+      field = data[1]
+    
+    elsif data = data_key_only_line.match(line)
+      if dmi_record == nil
+        Ohai::Log.warn("unexpected data line found before header; discarding:\n#{line}")
+        next
+      end
+      dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ''
       field = data[1]
     
     elsif extended_data = extended_data_line.match(line)

@@ -27,7 +27,7 @@ header_type_line = /^ID\s+SIZE\s+TYPE/
 header_information_line = /^(\d+)\s+(\d+)\s+(\S+)\s+\(([^\)]+)\)/
 header_type = /^SMB_TYPE_(\S+)$/
 blank_line = /^\s*$/
-data_line = /^  ([^:]+): (.+)/
+data_line = /^  ([^:]+): (.*)/
 extended_data_line = /^\t(\S+) \((.+)\)/
 
 dmi_record = nil
@@ -70,7 +70,7 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
     
     elsif data = data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.warn('unexpected data line found before header; discarding')
+        Ohai::Log.warn("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -78,16 +78,19 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
     
     elsif extended_data = extended_data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.warn('unexpected extended data line found before header; discarding')
+        Ohai::Log.warn("unexpected extended data line found before header; discarding:\n#{line}")
         next
       end
       if field == nil
-        Ohai::Log.warn('unexpected extended data line found outside data section; discarding')
+        Ohai::Log.warn("unexpected extended data line found outside data section; discarding:\n#{line}")
         next
       end
       # overwrite "raw" value with a new Mash
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == 'Mash'
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
+
+    else
+      Ohai::Log.warn("unrecognized output line; discarding:\n#{line}")
 
     end
   end

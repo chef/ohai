@@ -40,7 +40,7 @@ end
 status, stdout, stderr = run_command(:no_status_check => true, :command => "/lib/libc.so.6")
 if status == 0
   description = stdout.split($/).first
-  if description =~ /(\d+\.\d+\.\d+)/
+  if description =~ /(\d+\.\d+\.?\d*)/
     c[:glibc] = Mash.new
     c[:glibc][:version] = $1
     c[:glibc][:description] = description

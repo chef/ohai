@@ -27,7 +27,7 @@ Thread model: posix
 gcc version 3.4.6 20060404 (Red Hat 3.4.6-3)
 EOF
 
-C_GLIBC = <<EOF
+C_GLIBC_2_3_4 = <<EOF
 GNU C Library stable release version 2.3.4, by Roland McGrath et al.
 Copyright (C) 2005 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.
@@ -45,6 +45,28 @@ Available extensions:
         Glibc-2.0 compatibility add-on by Cristian Gafton 
         GNU Libidn by Simon Josefsson
         libthread_db work sponsored by Alpha Processor Inc
+Thread-local storage support included.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/libc/bugs.html>.
+EOF
+
+C_GLIBC_2_5 = <<EOF
+GNU C Library stable release version 2.5, by Roland McGrath et al.
+Copyright (C) 2006 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+Compiled by GNU CC version 4.1.2 20080704 (Red Hat 4.1.2-44).
+Compiled on a Linux 2.6.9 system on 2009-09-02.
+Available extensions:
+	The C stubs add-on version 2.1.2.
+	crypt add-on version 2.1 by Michael Glad and others
+	GNU Libidn by Simon Josefsson
+	GNU libio by Per Bothner
+	NIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk
+	Native POSIX Threads Library by Ulrich Drepper et al
+	BIND-8.2.3-T5B
+	RT using linux kernel aio
 Thread-local storage support included.
 For bug reporting instructions, please see:
 <http://www.gnu.org/software/libc/bugs.html>.
@@ -87,7 +109,7 @@ describe Ohai::System, "plugin c" do
     #gcc
     @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
     #glibc
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC, ""])
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
     #ms cl
     @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
     #ms vs
@@ -123,8 +145,8 @@ describe Ohai::System, "plugin c" do
   end
 
   #glibc
-  it "should get the glibc version from running gcc -v" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC, ""])
+  it "should get the glibc x.x.x version from running /lib/libc.so.6" do
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
     @ohai._require_plugin("c")
   end
 
@@ -135,13 +157,20 @@ describe Ohai::System, "plugin c" do
 
   it "should set languages[:c][:glibc][:description]" do
     @ohai._require_plugin("c")
-    @ohai.languages[:c][:glibc][:description].should eql(C_GLIBC.split($/).first)
+    @ohai.languages[:c][:glibc][:description].should eql(C_GLIBC_2_3_4.split($/).first)
   end
 
   it "should not set the languages[:c][:glibc] tree up if glibc command fails" do
     @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([1, "", ""])
     @ohai._require_plugin("c")
     @ohai[:languages][:c].should_not have_key(:glibc) if @ohai[:languages][:c]
+  end
+
+  it "should get the glibc x.x version from running /lib/libc.so.6" do
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
+    @ohai._require_plugin("c")
+    @ohai.languages[:c][:glibc][:version].should eql("2.5")
   end
 
   #ms cl

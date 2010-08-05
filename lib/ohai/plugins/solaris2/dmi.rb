@@ -21,7 +21,7 @@ require_plugin "dmi"
 # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
 # note that a single key just means dmidecode exited with its version
 if (dmi.class.to_s == 'Mash') and (dmi.keys.length > 1) 
-  Ohai::Log.info('skipping smbios output, since DMI information has already been provided')
+  Ohai::Log.debug('skipping smbios output, since DMI information has already been provided')
   return
 end
 
@@ -125,7 +125,7 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
 
       else
         dmi_record[:type] = header_information[3].downcase
-        Ohai::Log.info("unrecognized header type; falling back to #{dmi_record[:type]}")
+        Ohai::Log.debug("unrecognized header type; falling back to #{dmi_record[:type]}")
       end
 
       dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
@@ -139,7 +139,7 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
     
     elsif data = data_key_value_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -147,7 +147,7 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
     
     elsif data = data_key_only_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ''
@@ -155,11 +155,11 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
     
     elsif extended_data = extended_data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected extended data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
         next
       end
       if field == nil
-        Ohai::Log.info("unexpected extended data line found outside data section; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
         next
       end
       # overwrite "raw" value with a new Mash
@@ -167,7 +167,7 @@ popen4("smbios") do |pid, stdin, stdout, stderr|
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
 
     else
-      Ohai::Log.info("unrecognized output line; discarding:\n#{line}")
+      Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
 
     end
   end

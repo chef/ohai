@@ -86,14 +86,14 @@ popen4("dmidecode") do |pid, stdin, stdout, stderr|
     
     elsif type = type_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = type[1]
 
     elsif data = data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -101,11 +101,11 @@ popen4("dmidecode") do |pid, stdin, stdout, stderr|
     
     elsif extended_data = extended_data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.info("unexpected extended data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
         next
       end
       if field == nil
-        Ohai::Log.info("unexpected extended data line found outside data section; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
         next
       end
       # overwrite "raw" value with a new Mash
@@ -113,7 +113,7 @@ popen4("dmidecode") do |pid, stdin, stdout, stderr|
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = nil
 
     else
-      Ohai::Log.info("unrecognized output line; discarding:\n#{line}")
+      Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
 
     end
   end

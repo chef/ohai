@@ -76,11 +76,11 @@ module DMI
       elsif DMI::IdToDescription.has_key?(id)
         id = DMI::IdToDescription[id]
       else
-        Ohai::Log.info("unrecognized header id; falling back to 'unknown'")
+        Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
         id = 'unknown'
       end
     rescue
-      Ohai::Log.info("failed to look up id #{id}, returning unchanged")
+      Ohai::Log.debug("failed to look up id #{id}, returning unchanged")
       id
     end
   end
@@ -91,6 +91,8 @@ module DMI
   def DMI.convenience_keys(dmi)
     dmi.each{ |type, records|
       in_common = Mash.new
+      next unless records.class.to_s == 'Mash'
+      next unless records.has_key?('all_records')
       records[:all_records].each{ |record| 
         record.each{ |field, value| 
           next if value.class.to_s == 'Mash'

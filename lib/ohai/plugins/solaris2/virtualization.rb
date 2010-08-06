@@ -55,6 +55,8 @@ if File.exists?(smbios_path)
     else
       nil
     end
+  end
+end
 
 if File.executable?('/usr/sbin/zoneadm')
   zones = Mash.new
@@ -62,7 +64,7 @@ if File.executable?('/usr/sbin/zoneadm')
   popen4("zoneadm list -pc") do |pid, stdin, stdout, stderr|
     stdin.close
     stdout.each{ |line|
-      info = line.split(/:/)
+      info = line.chomp.split(/:/)
       zones[info[1]] = {
         'id' => info[0],
         'state' => info[2],

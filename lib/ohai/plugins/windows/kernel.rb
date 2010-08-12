@@ -18,6 +18,8 @@
 
 require 'ruby-wmi'
 
+WIN32OLE.codepage = WIN32OLE::CP_UTF8
+
 def machine_lookup(sys_type)
   return "i386" if sys_type.eql?("X86-based PC")
   return "x86_64" if sys_type.eql?("x64-based PC")

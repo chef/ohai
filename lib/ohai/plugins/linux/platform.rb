@@ -37,6 +37,10 @@ elsif File.exists?("/etc/redhat-release")
   contents = File.read("/etc/redhat-release").chomp
   platform get_redhatish_platform(contents)
   platform_version get_redhatish_version(contents)
+elsif File.exists?("/etc/system-release")
+  contents = File.read("/etc/system-release").chomp
+  platform get_redhatish_platform(contents)
+  platform_version get_redhatish_version(contents)
 elsif File.exists?('/etc/gentoo-release')
   platform "gentoo"
   platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join

@@ -32,7 +32,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub!(:exists?).with("/etc/gentoo-release").and_return(false)
     File.stub!(:exists?).with("/etc/SuSE-release").and_return(false)
     File.stub!(:exists?).with("/etc/arch-release").and_return(false)
-    File.stub!(:exists?).with("/etc/fedora-release").and_return(false)
+    File.stub!(:exists?).with("/etc/system-release").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -90,6 +90,18 @@ describe Ohai::System, "Linux plugin platform" do
     it "should set platform to arch" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "arch"
+    end
+  end
+  
+  describe "on gentoo" do
+    before(:each) do
+      @ohai.lsb = nil
+      File.should_receive(:exists?).with("/etc/gentoo-release").and_return(true)
+    end
+
+    it "should set platform to gentoo" do
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "gentoo"
     end
   end
 
@@ -150,23 +162,23 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai.lsb = nil
       File.should_receive(:exists?).with("/etc/SuSE-release").and_return(true)
     end
-
+  
     it "should check for the existance of SuSE-release" do
       @ohai._require_plugin("linux::platform")
     end
-
+  
     it "should set platform to suse" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
     end
-
+  
     it "should read the version as 10.1 for bogus SLES 10" do
       File.should_receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 10 (i586)\nVERSION = 10\nPATCHLEVEL = 1\n")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "10.1"
     end
-
+  
     it "should read the version as 11.2" do
       File.should_receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
       @ohai._require_plugin("linux::platform")

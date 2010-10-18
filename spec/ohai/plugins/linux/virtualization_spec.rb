@@ -38,14 +38,14 @@ describe Ohai::System, "Linux virtualization platform" do
       File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
       File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "xen" 
+      @ohai[:virtualization][:system].should == "xen" 
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
       File.should_receive(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(true)
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "xen"
+      @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "guest"
     end
 
@@ -61,7 +61,7 @@ describe Ohai::System, "Linux virtualization platform" do
       File.should_receive(:exists?).with("/proc/modules").and_return(true)
       File.stub!(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "kvm"
+      @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "host"
     end
     
@@ -69,7 +69,7 @@ describe Ohai::System, "Linux virtualization platform" do
       File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
       File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "kvm"
+      @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "guest"
     end
 
@@ -109,7 +109,7 @@ MSVPC
        
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "virtualpc"
+      @ohai[:virtualization][:system].should == "virtualpc"
       @ohai[:virtualization][:role].should == "guest"
     end
 
@@ -128,7 +128,7 @@ VMWARE
       @stdout.stub!(:read).and_return(vmware_dmidecode)
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "vmware"
+      @ohai[:virtualization][:system].should == "vmware"
       @ohai[:virtualization][:role].should == "guest"
     end
 

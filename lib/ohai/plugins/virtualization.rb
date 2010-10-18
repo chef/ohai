@@ -25,7 +25,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
     require 'libvirt'
     require 'hpricot'
 
-    emu = (virtualization[:emulator].eql?('kvm') ? 'qemu' : virtualization[:emulator])
+    emu = (virtualization[:system].eql?('kvm') ? 'qemu' : virtualization[:system])
     virtualization[:libvirt_version] = Libvirt::version(emu)[0].to_s
 
     virtconn = Libvirt::open_read_only("#{emu}:///system")

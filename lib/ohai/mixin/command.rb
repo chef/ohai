@@ -51,6 +51,8 @@ module Ohai
               Timeout.timeout(args[:timeout]) do
                 status, stdout_string, stderr_string = systemu(args[:command])
               end
+            rescue SystemExit => e
+              raise
             rescue Exception => e
               Ohai::Log.error("#{args[:command_string]} exceeded timeout #{args[:timeout]}")
               raise(e)
@@ -158,6 +160,8 @@ module Ohai
                 exec(cmd)
               end
               raise 'forty-two' 
+            rescue SystemExit => e
+              raise
             rescue Exception => e
               Marshal.dump(e, ps.last)
               ps.last.flush

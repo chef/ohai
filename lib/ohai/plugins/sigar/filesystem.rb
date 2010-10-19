@@ -36,6 +36,8 @@ sigar.file_system_list.each do |fsys|
     fs[filesystem][:kb_used] = ((usage.total - usage.free) / 1024).to_s
     fs[filesystem][:kb_available] = (usage.free / 1024).to_s
     fs[filesystem][:percent_used] = (usage.use_percent * 100).to_s + '%'
+  rescue SystemExit => e
+    raise
   rescue Exception => e
     #e.g. floppy or cdrom drive
   end

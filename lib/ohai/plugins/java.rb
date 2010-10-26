@@ -32,6 +32,8 @@ if status == 0
       java[:runtime] = { "name" => $1, "build" => $2 }
     when /^(.+ (Client|Server) VM) \(build (.+)\)$/
       java[:hotspot] = { "name" => $1, "build" => $3 }
+    when /^(.+Runtime Environment.*) \((.+)\)$/
+      java[:runtime] = { "name" => $1, "build" => $2 }
     end
   end
 

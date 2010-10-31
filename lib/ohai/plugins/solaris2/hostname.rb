@@ -17,9 +17,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'socket'
 
 provides "hostname", "fqdn"
 
 hostname from("hostname")
 
-fqdn(from("hostname") + "." + from("domainname"))
+fqdn Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]

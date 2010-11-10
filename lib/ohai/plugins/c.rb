@@ -37,13 +37,16 @@ if status == 0
 end
 
 #glibc
-status, stdout, stderr = run_command(:no_status_check => true, :command => "/lib/libc.so.6")
-if status == 0
-  description = stdout.split($/).first
-  if description =~ /(\d+\.\d+\.?\d*)/
-    c[:glibc] = Mash.new
-    c[:glibc][:version] = $1
-    c[:glibc][:description] = description
+["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
+  status, stdout, stderr = run_command(:no_status_check => true, :command => glibc)
+  if status == 0
+    description = stdout.split($/).first
+    if description =~ /(\d+\.\d+\.?\d*)/
+      c[:glibc] = Mash.new
+      c[:glibc][:version] = $1
+      c[:glibc][:description] = description
+    end
+    break
   end
 end
 

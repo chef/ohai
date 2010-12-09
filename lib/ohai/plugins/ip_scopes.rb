@@ -19,7 +19,7 @@ begin
 
   require 'ipaddr_extensions'
 
-  provides "network_ip_scope"
+  provides "network_ip_scope", "privateaddress"
 
   network Mash.new unless network
   network[:interfaces] = Mash.new unless network[:interfaces]
@@ -31,6 +31,7 @@ begin
     network['interfaces'][ifName]['addresses'].each do |address,attrs|
       begin
         attrs.merge! 'ip_scope' => address.to_ip.scope
+        privateaddress address if address.to_ip.scope =~ /PRIVATE/
       rescue ArgumentError
         # Just silently fail if we can't create an IP from the string.
       end

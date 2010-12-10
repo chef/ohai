@@ -30,8 +30,8 @@ if status == 0
       java[:version] = $1
     when /^(.+Runtime Environment.*) \(build (.+)\)$/
       java[:runtime] = { "name" => $1, "build" => $2 }
-    when /^(.+ Client VM) \(build (.+)\)$/ 
-      java[:hotspot] = { "name" => $1, "build" => $2 }
+    when /^(.+ (Client|Server) VM) \(build (.+)\)$/
+      java[:hotspot] = { "name" => $1, "build" => $3 }
     end
   end
 

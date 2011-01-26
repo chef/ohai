@@ -66,6 +66,11 @@ if File.exists?("/usr/sbin/dmidecode")
         virtualization[:emulator] = "vmware"
         virtualization[:role] = "guest"
       end
+    when /Manufacturer: Xen/
+      if dmi_info =~ /Product Name: HVM domU/
+        virtualization[:emulator] = "xen"
+        virtualization[:role] = "guest"  
+      end
     else
       nil
     end

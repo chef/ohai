@@ -233,11 +233,18 @@ describe Ohai::System, "plugin c" do
   end
 
 
-  it "should not set the languages[:c][:sunpro] tree if the corresponding cc command is not found" do
+  it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
     fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 
     @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", fedora_error_message])
-    @ohai._requre_plugin("c")
+    @ohai._require_plugin("c")
+    @ohai[:languages][:c].should_not have_key(:sunpro) if @ohai[:languages][:c]
+  end
+
+  it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
+    hpux_error_message = "cc: warning 901: unknown option: `-flags': use +help for online documentation.\ncc: HP C/aC++ B3910B A.06.25 [Nov 30 2009]"
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", hpux_error_message])
+    @ohai._require_plugin("c")
     @ohai[:languages][:c].should_not have_key(:sunpro) if @ohai[:languages][:c]
   end
 

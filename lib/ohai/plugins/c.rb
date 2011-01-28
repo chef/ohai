@@ -85,7 +85,7 @@ end
 status, stdout, stderr = run_command(:no_status_check => true, :command => "cc -V -flags")
 if status == 0
   output = stderr.split
-  if stderr !~ /^cc: error/ && output.size >= 4
+  if stderr =~ /^cc: Sun C/ && output.size >= 4
     c[:sunpro] = Mash.new
     c[:sunpro][:version] = output[3]
     c[:sunpro][:description] = stderr.chomp

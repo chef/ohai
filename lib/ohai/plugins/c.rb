@@ -75,12 +75,12 @@ end
 
 #ibm xlc
 status, stdout, stderr = run_command(:no_status_check => true, :command => "xlc -qversion")
-if status == 0
-  lines = stdout.split($/)
-  if lines.size >= 2
+if status == 0 or (status >> 8) == 249
+  description = stdout.split($/).first
+  if description =~ /V(\d+\.\d+)/
     c[:xlc] = Mash.new
-    c[:xlc][:version] = lines[1].split.last
-    c[:xlc][:description] = lines[0]
+    c[:xlc][:version] = $1
+    c[:xlc][:description] = description.strip
   end
 end
 

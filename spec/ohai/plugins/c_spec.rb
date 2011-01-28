@@ -225,7 +225,7 @@ describe Ohai::System, "plugin c" do
 
   it "should set languages[:c][:xlc][:version]" do
     @ohai._require_plugin("c")
-    @ohai.languages[:c][:xlc][:version].should eql("09.00.0000.0000")
+    @ohai.languages[:c][:xlc][:version].should eql("9.0")
   end
 
   it "should set languages[:c][:xlc][:description]" do
@@ -235,6 +235,12 @@ describe Ohai::System, "plugin c" do
 
   it "should not set the languages[:c][:xlc] tree up if xlc command fails" do
     @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([1, "", ""])
+    @ohai._require_plugin("c")
+    @ohai[:languages][:c].should_not have_key(:xlc) if @ohai[:languages][:c]
+  end
+
+  it "should set the languages[:c][:xlc] tree up if xlc exit status is 249" do
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([63744, "", ""])
     @ohai._require_plugin("c")
     @ohai[:languages][:c].should_not have_key(:xlc) if @ohai[:languages][:c]
   end

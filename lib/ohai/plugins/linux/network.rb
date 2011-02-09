@@ -18,7 +18,7 @@
 
 provides "network", "counters/network"
 
-network[:default_interface] = from("route -n \| grep -m 1 ^0.0.0.0 \| awk \'{print \$8\}\'")
+network[:default_gateway], network[:default_interface] = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/).values_at(1,7)
 
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback")

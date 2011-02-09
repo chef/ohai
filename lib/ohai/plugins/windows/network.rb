@@ -94,6 +94,10 @@ iface_instance.keys.each do |i|
     iface[cint][:type] = iface[cint][:instance][:adapter_type]
     iface[cint][:arp] = {}
     iface[cint][:encapsulation] = encaps_lookup(iface[cint][:instance][:adapter_type])
+    if iface_config[i][:default_ip_gateway] == "0.0.0.0" or iface_config[i][:default_ip_gateway].nil?
+      default_gateway = iface_config[i][:default_ip_gateway]
+      default_interface = iface[cint][:instance]
+    end
   end
 end
 
@@ -112,3 +116,7 @@ from("arp /a").split("\n").each do |line|
 end
 
 network["interfaces"] = iface
+if default_gateway
+  network["default_gateway"] = default_gateway
+  network["default_interface"] = default_interface
+end

@@ -18,7 +18,16 @@
 
 provides "network", "counters/network"
 
-network[:default_interface] = from("route -n get default \| grep interface: \| awk \'/: / \{print \$2\}\'")
+from("route -n get default").split("\n").each do |line|
+  if line =~ /(\w+): (\w+)/
+    case $1
+    when "gateway"
+      network[:default_gateway] = $2
+    when "interface"
+      network[:default_interface] = $2
+    end
+  end
+end
 
 iface = Mash.new
 popen4("/sbin/ifconfig -a") do |pid, stdin, stdout, stderr|

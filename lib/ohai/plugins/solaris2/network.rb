@@ -150,5 +150,10 @@ popen4("route get default") do |pid, stdin, stdout, stderr|
     Ohai::Log.debug("found gateway device: #{$1}")
     network[:default_interface] = matches[1]
   end
+  matches = /gateway: (\S+)/.match(route_get)
+  if matches
+    Ohai::Log.debug("found gateway: #{$1}")
+    network[:default_gateway] = matches[1]
+  end
 end
 

@@ -21,7 +21,7 @@ provides "network", "counters/network"
 require 'scanf'
 
 from("route -n get default").split("\n").each do |line|
-  if line =~ /(\w+): (\w+)/
+  if line =~ /(\w+): ([\w\.]+)/
     case $1
     when "gateway"
       network[:default_gateway] = $2

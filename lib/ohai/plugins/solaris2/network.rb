@@ -142,7 +142,7 @@ end
 
 network[:interfaces] = iface
 
-popen4("route get default") do |pid, stdin, stdout, stderr|
+popen4("route -n get default") do |pid, stdin, stdout, stderr|
   stdin.close
   route_get = stdout.read
   matches = /interface: (\S+)/.match(route_get)

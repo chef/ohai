@@ -19,7 +19,7 @@
 provides "network", "counters/network"
 
 from("route -n get default").split("\n").each do |line|
-  if line =~ /(\w+): (\w+)/
+  if line =~ /(\w+): ([\w\.]+)/
     case $1
     when "gateway"
       network[:default_gateway] = $2

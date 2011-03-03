@@ -90,9 +90,8 @@ table_location_line = /^Table at (0x[0-9A-E]+)\./
 dmi_record = nil
 field = nil
 
-popen4("dmidecode") do |pid, stdin, stdout, stderr|
-  stdin.close
-  
+status, stdout, stderr = run_command(:no_status_check => true, :command => "dmidecode")
+if status == 0
   # ==== EXAMPLE RECORD: ====
   #Handle 0x0000, DMI type 0, 24 bytes
   #BIOS Information

@@ -65,7 +65,7 @@ end
 
 iface_instance.keys.each do |i|
   if iface_config[i][:ip_enabled] and iface_instance[i][:net_connection_id] and iface_instance[i][:interface_index]
-    cint = sprintf("0x%X", iface_instance[i][:interface_index])
+    cint = sprintf("0x%x", iface_instance[i][:interface_index]).downcase
     iface[cint] = Mash.new
     iface[cint][:configuration] = iface_config[i]
     iface[cint][:instance] = iface_instance[i]
@@ -104,16 +104,16 @@ iface_instance.keys.each do |i|
 end
 
 cint=nil
-from("arp /a").split("\n").each do |line|
-  if line == ""
-    cint = nil
-  end
-  if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\d+)/
-    cint = $2
-  end
-  next unless iface[cint]
-  if line =~ /^\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9\:-]+)/
-    iface[cint][:arp][$1] = $2.gsub("-",":").downcase
+status, stdout, stderr = run_command(:command => "arp -a")
+if status == 0
+  stdout.each do |line|
+    if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
+      cint = $2.downcase
+    end
+    next unless iface[cint]
+    if line =~ /^\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9\:-]+)/
+      iface[cint][:arp][$1] = $2.gsub("-",":").downcase
+    end
   end
 end
 

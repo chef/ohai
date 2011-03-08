@@ -28,12 +28,10 @@ if status == 0
     case line
     when /java version \"([0-9\.\_]+)\"/
       java[:version] = $1
-    when /^(.+Runtime Environment.*) \(build (.+)\)$/
-      java[:runtime] = { "name" => $1, "build" => $2 }
+    when /^(.+Runtime Environment.*) \((build )?(.+)\)$/
+      java[:runtime] = { "name" => $1, "build" => $3 }
     when /^(.+ (Client|Server) VM) \(build (.+)\)$/
       java[:hotspot] = { "name" => $1, "build" => $3 }
-    when /^(.+Runtime Environment.*) \((.+)\)$/
-      java[:runtime] = { "name" => $1, "build" => $2 }
     end
   end
 

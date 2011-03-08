@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+provides "network"
+
 require 'ruby-wmi'
 
 def encaps_lookup(encap)
@@ -94,6 +96,10 @@ iface_instance.keys.each do |i|
     iface[cint][:type] = iface[cint][:instance][:adapter_type]
     iface[cint][:arp] = {}
     iface[cint][:encapsulation] = encaps_lookup(iface[cint][:instance][:adapter_type])
+    if iface[cint][:configuration][:default_ip_gateway] != nil and iface[cint][:configuration][:default_ip_gateway].size > 0
+      network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
+      network[:default_interface] = cint
+    end
   end
 end
 

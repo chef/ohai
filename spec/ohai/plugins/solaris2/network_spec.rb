@@ -123,7 +123,7 @@ ROUTE_GET
   describe "setting the node's default IP address attribute" do
     before do
       @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @ohai.stub!(:popen4).with("route get default").and_yield(nil,@stdin, @stdout, nil)
+      @ohai.stub!(:popen4).with("route -n get default").and_yield(nil,@stdin, @stdout, nil)
       @ohai._require_plugin("solaris2::network")
     end
 

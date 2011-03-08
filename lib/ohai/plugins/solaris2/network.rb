@@ -142,13 +142,18 @@ end
 
 network[:interfaces] = iface
 
-popen4("route get default") do |pid, stdin, stdout, stderr|
+popen4("route -n get default") do |pid, stdin, stdout, stderr|
   stdin.close
   route_get = stdout.read
   matches = /interface: (\S+)/.match(route_get)
   if matches
     Ohai::Log.debug("found gateway device: #{$1}")
     network[:default_interface] = matches[1]
+  end
+  matches = /gateway: (\S+)/.match(route_get)
+  if matches
+    Ohai::Log.debug("found gateway: #{$1}")
+    network[:default_gateway] = matches[1]
   end
 end
 

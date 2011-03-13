@@ -50,6 +50,17 @@ if File.exists?("/proc/cpuinfo")
   end
 end
 
+# http://wiki.openvz.org/Proc/user_beancounters
+if File.exists?("/proc/user_beancounters")
+  if File.read("/proc/user_beancounters") =~ /\n\s+0:\s+/
+    virtualization[:emulator] = "openvz"
+    virtualization[:role] = "host"
+  else
+    virtualization[:emulator] = "openvz"
+    virtualization[:role] = "guest"
+  end
+end
+
 # http://www.dmo.ca/blog/detecting-virtualization-on-linux
 if File.exists?("/usr/sbin/dmidecode")
   popen4("dmidecode") do |pid, stdin, stdout, stderr|

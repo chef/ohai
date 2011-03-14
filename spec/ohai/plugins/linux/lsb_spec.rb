@@ -20,10 +20,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux lsb plugin" do
-  before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:os] = "linux"    
-    @ohai.stub!(:require_plugin).and_return(true)
+
+  def variants
+    # FIRST VARIANT: only lsb_release is available
+    @mock_file = mock("lsb_release")
+    @mock_file.stub!(:each_line).
+      and_yield("Distributor ID:	Ubuntu").
+      and_yield("Description:	Ubuntu 8.04").
+      and_yield("Release:	8.04").
+      and_yield('Codename:	hardy')
+    @ohai.stub!(:from).with("lsb_release -idrc").and_return(@mock_file)
+    File.stub!(:open).with("/etc/lsb-release").and_raise(IOError)
+
+    yield
+
+    # SECOND VARIANT: only /etc/lsb-release is available
     @mock_file = mock("/etc/lsb-release")
     @mock_file.stub!(:each).
       and_yield("DISTRIB_ID=Ubuntu").
@@ -31,30 +42,48 @@ describe Ohai::System, "Linux lsb plugin" do
       and_yield("DISTRIB_CODENAME=hardy").
       and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
     File.stub!(:open).with("/etc/lsb-release").and_return(@mock_file)
+    @ohai.stub!(:from).with("lsb_release -idrc").and_raise(Ohai::Exceptions::Exec)
+
+    yield
   end
-  
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    @ohai[:os] = "linux"
+    @ohai.stub!(:require_plugin).and_return(true)
+  end
+
   it "should set lsb[:id]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:id].should == "Ubuntu"
+    variants do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:id].should == "Ubuntu"
+    end
   end
-  
+
   it "should set lsb[:release]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:release].should == "8.04"
+    variants do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:release].should == "8.04"
+    end
   end
-  
+
   it "should set lsb[:codename]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:codename].should == "hardy"
+    variants do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:codename].should == "hardy"
+    end
   end
-  
+
   it "should set lsb[:description]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:description].should == "\"Ubuntu 8.04\""
+    variants do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:description].should == "\"Ubuntu 8.04\""
+    end
   end
-  
-  it "should not set any lsb values if /etc/lsb-release cannot be read" do
+
+  it "should not set any lsb values if no lsb information is available" do
     File.stub!(:open).with("/etc/lsb-release").and_raise(IOError)
+    @ohai.stub!(:from).with("lsb_release -idrc").and_raise(Ohai::Exceptions::Exec)
     @ohai.attribute?(:lsb).should be(false)
   end
 end

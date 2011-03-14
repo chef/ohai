@@ -22,7 +22,7 @@ provides "network", "counters/network"
 
 route_result = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/)
 if route_result[7] =~ /(venet\d+)/
-  network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0.1 | grep -m 1 inet").split(/[ \t]+/).values_at(5)
+  network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0.1 | grep -m 1 inet").split(/[ \t]+/).values_at(6)
   network[:default_gateway] = route_result[1]
 else
   network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)

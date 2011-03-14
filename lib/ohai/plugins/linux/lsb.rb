@@ -21,18 +21,34 @@ provides "lsb"
 lsb Mash.new
 
 begin
-  File.open("/etc/lsb-release").each do |line|
+  from("lsb_release -idrc").each_line do |line|
     case line
-    when /^DISTRIB_ID=(.+)$/
+    when /^Distributor ID:\s*(.+)$/
       lsb[:id] = $1
-    when /^DISTRIB_RELEASE=(.+)$/
+    when /^Release:\s*(.+)$/
       lsb[:release] = $1
-    when /^DISTRIB_CODENAME=(.+)$/
+    when /^Codename:\s*(.+)$/
       lsb[:codename] = $1
-    when /^DISTRIB_DESCRIPTION=(.+)$/
-      lsb[:description] = $1
+    when /^Description:\s*(.+)$/
+      lsb[:description] = "\"#{$1}\""
     end
   end
 rescue
-  Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release")
+  Ohai::Log.debug("Falling back to reading /etc/lsb-release")
+  begin
+    File.open("/etc/lsb-release").each do |line|
+      case line
+      when /^DISTRIB_ID=(.+)$/
+        lsb[:id] = $1
+      when /^DISTRIB_RELEASE=(.+)$/
+        lsb[:release] = $1
+      when /^DISTRIB_CODENAME=(.+)$/
+        lsb[:codename] = $1
+      when /^DISTRIB_DESCRIPTION=(.+)$/
+        lsb[:description] = $1
+      end
+    end
+  rescue
+    Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release")
+  end
 end

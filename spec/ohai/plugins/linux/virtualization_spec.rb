@@ -27,7 +27,6 @@ describe Ohai::System, "Linux virtualization platform" do
 
     # default to all requested Files not existing
     File.stub!(:exists?).with("/proc/xen/capabilities").and_return(false)
-    File.stub!(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(false)
     File.stub!(:exists?).with("/proc/modules").and_return(false)
     File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
@@ -38,12 +37,13 @@ describe Ohai::System, "Linux virtualization platform" do
       File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
       File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:emulator].should == "xen" 
+      @ohai[:virtualization][:emulator].should == "xen"
       @ohai[:virtualization][:role].should == "host"
     end
 
-    it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
-      File.should_receive(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(true)
+    it "should set xen guest if /proc/xen/capabilities exists" do
+      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
+      File.stub!(:read).with("/proc/xen/capabilities").and_return("")
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:emulator].should == "xen"
       @ohai[:virtualization][:role].should == "guest"
@@ -64,7 +64,7 @@ describe Ohai::System, "Linux virtualization platform" do
       @ohai[:virtualization][:emulator].should == "kvm"
       @ohai[:virtualization][:role].should == "host"
     end
-    
+
     it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
       File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
       File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
@@ -105,8 +105,8 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub!(:read).and_return(ms_vpc_dmidecode) 
-       
+      @stdout.stub!(:read).and_return(ms_vpc_dmidecode)
+
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:emulator].should == "virtualpc"

@@ -132,18 +132,18 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   145  12138e4   15e4   4   1  RT (realtime scheduling class)
   146  121719e    28c   -   1  RT_DPTBL (realtime dispatch table)
   TOOMUCH
-  
+
   before(:each) do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:kernel] = Mash.new
     @ohai.stub(:from).with("uname -s").and_return("SunOS")
   end
-  
+
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", "SunOS")
 
   it "gives excruciating detail about kernel modules" do
-    stdin = mock("stdin", :null_object => true)
+    stdin = StringIO.new
     @modinfo_stdout = StringIO.new(MODINFO)
     @ohai.stub!(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
 
@@ -159,6 +159,6 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     @ohai[:kernel][:modules].keys.should_not include("Module")
     @ohai[:kernel][:modules]["specfs"].should == teh_daterz
   end
-  
-  
+
+
 end

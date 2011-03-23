@@ -27,14 +27,14 @@ describe Ohai::System, "plugin ec2" do
     @ohai[:network] = {:interfaces => {:eth0 => {} } }
   end
 
-  describe "!ec2", :shared => true do
+  shared_examples_for "!ec2" do
     it "should NOT attempt to fetch the ec2 metadata" do
       OpenURI.should_not_receive(:open)
       @ohai._require_plugin("ec2")
     end
   end
 
-  describe "ec2", :shared => true do
+  shared_examples_for "ec2" do
     before(:each) do
       OpenURI.stub!(:open_uri).
         with("http://169.254.169.254/2008-02-01/meta-data/").
@@ -77,7 +77,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "without ec2 mac and metadata address connected" do
     it_should_behave_like "!ec2"
-    
+
     before(:each) do
       @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
     end

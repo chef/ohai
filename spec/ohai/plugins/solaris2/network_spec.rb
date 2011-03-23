@@ -1,25 +1,25 @@
-# 
+#
 #  Author:: Daniel DeLeo <dan@opscode.com>
 #  Copyright:: Copyright (c) 2010 Opscode, Inc.
 #  License:: Apache License, Version 2.0
-# 
+#
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
-# 
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #  Unless required by applicable law or agreed to in writing, software
 #  distributed under the License is distributed on an "AS IS" BASIS,
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-# 
+#
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris2.X network plugin" do
-  
+
   before do
     solaris_ifconfig = <<-ENDIFCONFIG
 lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
@@ -60,17 +60,17 @@ ENDIFCONFIG
 
     solaris_netstat_rn = <<-NETSTAT_RN
 Routing Table: IPv4
-  Destination           Gateway           Flags  Ref     Use     Interface 
--------------------- -------------------- ----- ----- ---------- --------- 
-default              10.13.37.1           UG        1          0 e1000g0   
-10.13.37.0           10.13.37.157         U         1          2 e1000g0   
-127.0.0.1            127.0.0.1            UH        1         35 lo0       
- 
+  Destination           Gateway           Flags  Ref     Use     Interface
+-------------------- -------------------- ----- ----- ---------- ---------
+default              10.13.37.1           UG        1          0 e1000g0
+10.13.37.0           10.13.37.157         U         1          2 e1000g0
+127.0.0.1            127.0.0.1            UH        1         35 lo0
+
 Routing Table: IPv6
-  Destination/Mask            Gateway                   Flags Ref   Use    If   
---------------------------- --------------------------- ----- --- ------- ----- 
-fe80::/10                   fe80::250:56ff:fe13:3757    U       1       0 e1000g0 
-::1                         ::1                         UH      1       0 lo0   
+  Destination/Mask            Gateway                   Flags Ref   Use    If
+--------------------------- --------------------------- ----- --- ------- -----
+fe80::/10                   fe80::250:56ff:fe13:3757    U       1       0 e1000g0
+::1                         ::1                         UH      1       0 lo0
 NETSTAT_RN
 
     @solaris_route_get = <<-ROUTE_GET
@@ -81,20 +81,20 @@ destination: default
   interface: e1000g0
       flags: <UP,GATEWAY,DONE,STATIC>
  recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
-       0         0         0         0         0         0      1500         0 
+       0         0         0         0         0         0      1500         0
 ROUTE_GET
 
-    @stdin = mock("STDIN", :null_object => true)
+    @stdin = StringIO.new
     @ifconfig_lines = solaris_ifconfig.split("\n")
 
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:network] = Mash.new
- 
+
     @ohai.stub(:popen4).with("ifconfig -a")
     @ohai.stub(:popen4).with("arp -an")
   end
-  
+
   describe "gathering IP layer address info" do
     before do
       @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin, @ifconfig_lines, nil)
@@ -132,4 +132,4 @@ ROUTE_GET
     end
   end
 end
- 
+

@@ -38,8 +38,8 @@ describe Ohai::System, "plugin rackspace" do
         }}
       }
     }
-        
-    @ohai[:network][:interfaces][:eth1] = {:addresses => {  
+
+    @ohai[:network][:interfaces][:eth1] = {:addresses => {
          "fe80::4240:f5ff:feab:2836" => {
             "scope"=> "Link",
             "prefixlen"=> "64",
@@ -56,20 +56,20 @@ describe Ohai::System, "plugin rackspace" do
         }}
   end
 
-  describe "!rackspace", :shared => true  do
+  shared_examples_for "!rackspace"  do
     it "should NOT create rackspace" do
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace].should be_nil
     end
   end
-  
-  describe "rackspace", :shared => true do
-    
+
+  shared_examples_for "rackspace" do
+
     it "should create rackspace" do
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace].should_not be_nil
     end
-    
+
     it "should have all required attributes" do
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace][:public_ip].should_not be_nil
@@ -81,22 +81,22 @@ describe Ohai::System, "plugin rackspace" do
       @ohai[:rackspace][:public_ip].should == "1.2.3.4"
       @ohai[:rackspace][:private_ip].should == "5.6.7.8"
     end
-    
+
   end
 
     describe "with rackspace mac and hostname" do
       it_should_behave_like "rackspace"
-  
+
       before(:each) do
         IO.stub!(:select).and_return([[],[1],[]])
         @ohai[:hostname] = "slice74976"
-        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"} 
+        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
       end
     end
-  
+
     describe "without rackspace mac" do
       it_should_behave_like "!rackspace"
-      
+
       before(:each) do
         @ohai[:hostname] = "slice74976"
         @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
@@ -105,10 +105,10 @@ describe Ohai::System, "plugin rackspace" do
 
     describe "without rackspace hostname" do
       it_should_behave_like "rackspace"
-      
+
       before(:each) do
         @ohai[:hostname] = "bubba"
-        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"} 
+        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
       end
     end
 

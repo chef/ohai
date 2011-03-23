@@ -5,7 +5,7 @@ require 'date'
 require 'spec/rake/spectask'
 
 GEM = "ohai"
-GEM_VERSION = "0.5.9"
+GEM_VERSION = "0.6.0.beta.0"
 AUTHOR = "Adam Jacob"
 EMAIL = "adam@opscode.com"
 HOMEPAGE = "http://wiki.opscode.com/display/ohai"
@@ -22,7 +22,7 @@ spec = Gem::Specification.new do |s|
   s.email = EMAIL
   s.homepage = HOMEPAGE
 
-  s.add_dependency "json", ">= 1.4.4", "<= 1.4.6"
+  s.add_dependency "yajl-ruby", "~> 0.7.8"
   s.add_dependency "extlib"
   s.add_dependency "systemu"
   s.add_dependency "mixlib-cli"

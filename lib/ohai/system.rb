@@ -22,16 +22,7 @@ require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
 
-begin
-  require 'json'
-rescue LoadError
-  begin
-    require 'json/pure'
-  rescue LoadError
-    STDERR.puts "No valid JSON library detected, please install one of 'json' or 'json_pure'."
-    exit -2
-  end
-end
+require 'yajl'
 
 module Ohai
   class System
@@ -213,40 +204,29 @@ module Ohai
     alias :_require_plugin :require_plugin
 
     # Serialize this object as a hash
-    def to_json(*a)
-      output = @data.clone
-      output["json_class"] = self.class.name
-      output.to_json(*a)
+    def to_json
+      Yajl::Encoder.new.encode(@data)
     end
 
     # Pretty Print this object as JSON
-    def json_pretty_print
-      JSON.pretty_generate(@data)
+    def json_pretty_print(item=nil)
+      Yajl::Encoder.new(:pretty => true).encode(item || @data)
     end
 
     def attributes_print(a)
       raise ArgumentError, "I cannot find an attribute named #{a}!" unless @data.has_key?(a)
       case a
       when Hash,Mash,Array
-        JSON.pretty_generate(@data[a])
+        json_pretty_print(@data[a])
       when String
         if @data[a].respond_to?(:lines)
-          JSON.pretty_generate(@data[a].lines.to_a)
+          json_pretty_print(@data[a].lines.to_a)
         else
-          JSON.pretty_generate(@data[a].to_a)
+          json_pretty_print(@data[a].to_a)
         end
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{@data[a].class}!"
       end
-    end
-
-    # Create an Ohai::System from JSON
-    def self.json_create(o)
-      ohai = new
-      o.each do |key, value|
-        ohai.data[key] = value unless key == "json_class"
-      end
-      ohai
     end
 
     def method_missing(name, *args)

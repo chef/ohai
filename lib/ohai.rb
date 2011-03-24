@@ -20,5 +20,6 @@ require 'ohai/config'
 require 'ohai/system'
 
 module Ohai
+  OHAI_ROOT = File.expand_path(File.dirname(__FILE__))
   VERSION = '0.5.9'
 end

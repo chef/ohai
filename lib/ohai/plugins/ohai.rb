@@ -22,3 +22,4 @@ provides "ohai"
 self[:chef_packages] = Mash.new unless self[:chef_packages]
 self[:chef_packages][:ohai] = Mash.new
 self[:chef_packages][:ohai][:version] = Ohai::VERSION
+self[:chef_packages][:ohai][:ohai_root] = Ohai::OHAI_ROOT

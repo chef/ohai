@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'ohai/version'
-require 'ohai/config'
-require 'ohai/system'
+module Ohai
+  VERSION = '0.6.0.beta.0'
+end
 

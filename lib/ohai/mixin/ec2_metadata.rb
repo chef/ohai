@@ -56,27 +56,29 @@ module Ohai
       end
 
       def fetch_metadata(id='')
+        metadata = Hash.new
         OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}").read.split("\n").each do |o|
           key = "#{id}#{o.gsub(/\=.*$/, '/')}"
           if key[-1..-1] != '/'
-            ec2[key.gsub(/\-|\//, '_').to_sym] = 
+            metadata[key.gsub(/\-|\//, '_').to_sym] = 
               if EC2_ARRAY_VALUES.include? key
                 OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read.split("\n")
               else
                 OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read
               end
           else
-            metadata(key)
+            next
           end
         end
+        metadata
       end
       
       def fetch_userdata()
-        ec2[:userdata] = nil
         # assumes the only expected error is the 404 if there's no user-data
         begin
-          ec2[:userdata] = OpenURI.open_uri("#{EC2_USERDATA_URL}/").read
+          OpenURI.open_uri("#{EC2_USERDATA_URL}/").read
         rescue OpenURI::HTTPError
+          nil
         end
       end
     end

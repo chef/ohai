@@ -94,8 +94,8 @@ def on_eucalyptus?
 end
 
 def get_eucalyptus_values
-  cloud[:public_ips] << eucalyptus['public_ip']
-  cloud[:private_ips] << eucalyptus['private_ip']
+  cloud[:public_ips] << eucalyptus['public_ipv4']
+  cloud[:private_ips] << eucalyptus['local_ipv4']
   cloud[:provider] = "eucalyptus"
 end
 

@@ -56,8 +56,8 @@ end
 if looks_like_euca?
   Ohai::Log.debug("looks_like_euca? == true")
   eucalyptus Mash.new
-  self.fetch_metadata
-  self.fetch_userdata
+  self.fetch_metadata.each {|k, v| eucalyptus[k] = v }
+  eucalyptus[:userdata] = self.fetch_userdata
 else
   Ohai::Log.debug("looks_like_euca? == false")
   false

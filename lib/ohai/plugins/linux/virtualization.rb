@@ -22,13 +22,12 @@ virtualization Mash.new
 
 # if it is possible to detect paravirt vs hardware virt, it should be put in
 # virtualization[:mechanism]
-if File.exists?("/proc/xen/capabilities")
-  virtualization[:emulator] = "xen"
-  if File.read("/proc/xen/capabilities") =~ /control_d/i
+if File.exists?("/proc/xen/capabilities") && File.read("/proc/xen/capabilities") =~ /control_d/i
+    virtualization[:emulator] = "xen"
     virtualization[:role] = "host"
-  else
-    virtualization[:role] = "guest"
-  end
+elsif File.exists?("/proc/sys/xen/independent_wallclock")
+  virtualization[:emulator] = "xen"
+  virtualization[:role] = "guest"
 end
 
 # Detect KVM hosts by kernel module
@@ -58,19 +57,19 @@ if File.exists?("/usr/sbin/dmidecode")
     dmi_info = stdout.read
     case dmi_info
     when /Manufacturer: Microsoft/
-      if dmi_info =~ /Product Name: Virtual Machine/
+      if dmi_info =~ /Product Name: Virtual Machine/ 
         virtualization[:emulator] = "virtualpc"
         virtualization[:role] = "guest"
-      end
+      end 
     when /Manufacturer: VMware/
-      if dmi_info =~ /Product Name: VMware Virtual Platform/
+      if dmi_info =~ /Product Name: VMware Virtual Platform/ 
         virtualization[:emulator] = "vmware"
         virtualization[:role] = "guest"
       end
     when /Manufacturer: Xen/
       if dmi_info =~ /Product Name: HVM domU/
         virtualization[:emulator] = "xen"
-        virtualization[:role] = "guest"
+        virtualization[:role] = "guest"  
       end
     else
       nil

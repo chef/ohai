@@ -29,6 +29,7 @@ describe Ohai::System, "plugin cloud" do
     it "should NOT populate the cloud data" do
       @ohai[:ec2] = nil
       @ohai[:rackspace] = nil
+      @ohai[:eucalyptus] = nil
       @ohai._require_plugin("cloud")
       @ohai[:cloud].should be_nil
     end
@@ -83,6 +84,35 @@ describe Ohai::System, "plugin cloud" do
     it "should populate cloud provider" do
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:provider].should == "rackspace"
+    end
+  end
+  
+  describe "with eucalyptus" do
+    before(:each) do
+      @ohai[:eucalyptus] = Mash.new()
+    end  
+    
+    it "should populate cloud public ip" do
+      @ohai[:eucalyptus]['public_ip'] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips][0].should == @ohai[:eucalyptus][:public_ip]
+    end
+        
+    it "should populate cloud private ip" do
+      @ohai[:eucalyptus]['private_ip'] = "10.252.42.149"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:private_ips][0].should == @ohai[:eucalyptus][:private_ip]
+    end
+    
+     it "should populate first cloud public ip" do
+      @ohai[:eucalyptus]['public_ip'] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips].first.should == @ohai[:eucalyptus][:public_ip]
+    end
+        
+    it "should populate cloud provider" do
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:provider].should == "eucalyptus"
     end
   end
   

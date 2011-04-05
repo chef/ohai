@@ -100,6 +100,6 @@ def get_eucalyptus_values
 end
 
 if on_eucalyptus?
-  create objects
+  create_objects
   get_eucalyptus_values
 end

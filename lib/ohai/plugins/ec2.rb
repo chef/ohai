@@ -52,4 +52,5 @@ if looks_like_ec2?
   self.fetch_userdata
 else
   Ohai::Log.debug("looks_like_ec2? == false")
+  false
 end

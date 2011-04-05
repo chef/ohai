@@ -42,7 +42,9 @@ def has_euca_mac?
     Ohai::Log.debug("has_euca_mac? == #{!!has_mac}")
     return true if has_mac
   end
+
   Ohai::Log.debug("has_euca_mac? == false")
+  false
 end
 
 def looks_like_euca?
@@ -54,9 +56,10 @@ end
 if looks_like_euca?
   Ohai::Log.debug("looks_like_euca? == true")
   eucalyptus Mash.new
-  self.metadata
-  self.userdata
+  self.fetch_metadata
+  self.fetch_userdata
 else
   Ohai::Log.debug("looks_like_euca? == false")
+  false
 end
 

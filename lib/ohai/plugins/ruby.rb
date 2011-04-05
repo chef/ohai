@@ -58,7 +58,7 @@ result = run_ruby "puts %Q(#{env_string})"
 # Parse results to plugin hash
 result.split(',').each do |entry|
  key, value = entry.split('=')
- languages[:ruby][key.to_sym] = value
+ languages[:ruby][key.to_sym] = value || ""
 end
 
 # Perform one more (conditional) query

@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provides "ec2"
+provides "eucalyptus"
 
 require 'ohai/mixin/ec2_metadata'
 
@@ -27,30 +27,39 @@ require_plugin "network"
 
 extend Ohai::Mixin::Ec2Metadata
 
-def has_ec2_mac?
-  network[:interfaces].values.each do |iface|
-    unless iface[:arp].nil?
-      has_mac = iface[:arp].value?("fe:ff:ff:ff:ff:ff")
-      Ohai::Log.debug("has_ec2_mac? == true")
-      return true if has_mac
-    end
+def get_mac_address(addresses)
+  detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }
+  if detected_addresses
+    return detected_addresses.first
+  else
+    return ""
   end
-  Ohai::Log.debug("has_ec2_mac? == false")
+end
+
+def has_euca_mac?
+  network[:interfaces].values.each do |iface|
+    has_mac = (get_mac_address(iface[:addresses]) =~ /^[dD]0:0[dD]:/)
+    Ohai::Log.debug("has_euca_mac? == #{!!has_mac}")
+    return true if has_mac
+  end
+
+  Ohai::Log.debug("has_euca_mac? == false")
   false
 end
 
-def looks_like_ec2?
+def looks_like_euca?
   # Try non-blocking connect so we don't "block" if 
   # the Xen environment is *not* EC2
-  has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+  has_euca_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
 end
 
-if looks_like_ec2?
-  Ohai::Log.debug("looks_like_ec2? == true")
-  ec2 Mash.new
-  self.fetch_metadata.each {|k, v| ec2[k] = v }
-  ec2[:userdata] = self.fetch_userdata
+if looks_like_euca?
+  Ohai::Log.debug("looks_like_euca? == true")
+  eucalyptus Mash.new
+  self.fetch_metadata.each {|k, v| eucalyptus[k] = v }
+  eucalyptus[:userdata] = self.fetch_userdata
 else
-  Ohai::Log.debug("looks_like_ec2? == false")
+  Ohai::Log.debug("looks_like_euca? == false")
   false
 end
+

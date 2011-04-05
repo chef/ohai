@@ -18,6 +18,7 @@ provides "cloud"
 
 require_plugin "ec2"
 require_plugin "rackspace"
+require_plugin "eucalyptus"
 
 # Make top-level cloud hashes
 #
@@ -77,4 +78,28 @@ end
 if on_rackspace?
   create_objects
   get_rackspace_values
+end
+
+# ----------------------------------------
+# eucalyptus
+# ----------------------------------------
+
+# Is current cloud eucalyptus?
+#
+# === Return
+# true:: If eucalyptus Hash is defined
+# false:: Otherwise
+def on_eucalyptus?
+  eucalyptus != nil
+end
+
+def get_eucalyptus_values
+  cloud[:public_ips] << eucalyptus['public_ipv4']
+  cloud[:private_ips] << eucalyptus['local_ipv4']
+  cloud[:provider] = "eucalyptus"
+end
+
+if on_eucalyptus?
+  create_objects
+  get_eucalyptus_values
 end

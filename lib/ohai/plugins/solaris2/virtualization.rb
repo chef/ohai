@@ -1,6 +1,8 @@
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
+# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
 # Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2010 Kurt Yoder
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,6 +55,37 @@ if File.exists?(smbios_path)
     else
       nil
     end
+  end
+end
 
+if File.executable?('/usr/sbin/zoneadm')
+  zones = Mash.new
+
+  popen4("zoneadm list -pc") do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout.each{ |line|
+      info = line.chomp.split(/:/)
+      zones[info[1]] = {
+        'id' => info[0],
+        'state' => info[2],
+        'root' => info[3],
+        'uuid' => info[4],
+        'brand' => info[5],
+        'ip' => info[6],
+      }
+    }
+    
+    if (zones.length == 1)
+      first_zone = zones.keys[0]
+      unless( first_zone == 'global')
+        virtualization[:emulator] = 'zone'
+        virtualization[:role] = 'guest'
+        virtualization[:guest_uuid] = zones[first_zone]['uuid']
+      end
+    elsif (zones.length > 1)
+      virtualization[:emulator] = 'zone'
+      virtualization[:role] = 'host'
+      virtualization[:guests] = zones
+    end
   end
 end

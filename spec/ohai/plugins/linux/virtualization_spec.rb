@@ -31,6 +31,7 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub!(:exists?).with("/proc/modules").and_return(false)
     File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
+    File.stub!(:exists?).with("/proc/self/status").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -134,6 +135,46 @@ VMWARE
 
     it "should run dmidecode and not set virtualization if nothing is detected" do
       @ohai.should_receive(:popen4).with("dmidecode").and_return(true)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization].should == {}
+    end
+  end
+
+  describe "when we are checking for Linux-VServer" do
+    it "should set Linux-VServer host if /proc/self/status contains s_context: 0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub!(:read).with("/proc/self/status").and_return("s_context: 0")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "linux-vserver"
+      @ohai[:virtualization][:role].should == "host"
+    end
+
+    it "should set Linux-VServer host if /proc/self/status contains VxID: 0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub!(:read).with("/proc/self/status").and_return("VxID: 0")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "linux-vserver"
+      @ohai[:virtualization][:role].should == "host"
+    end
+
+    it "should set Linux-VServer guest if /proc/self/status contains s_context > 0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub!(:read).with("/proc/self/status").and_return("s_context: 2")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "linux-vserver"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should set Linux-VServer guest if /proc/self/status contains VxID > 0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub!(:read).with("/proc/self/status").and_return("VxID: 2")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "linux-vserver"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if Linux-VServer isn't there" do
+      File.should_receive(:exists?).at_least(:once).and_return(false)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization].should == {}
     end

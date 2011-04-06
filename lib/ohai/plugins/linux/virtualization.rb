@@ -77,3 +77,20 @@ if File.exists?("/usr/sbin/dmidecode")
 
   end
 end
+
+# Detect Linux-VServer
+if File.exists?("/proc/self/status")
+  proc_self_status = File.read("/proc/self/status")
+  vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
+  if vxid and vxid[2]
+    virtualization[:system] = "linux-vserver"
+    if vxid[2] == "0"
+      virtualization[:role] = "host"
+    else
+      virtualization[:role] = "guest"
+     end
+  end
+end
+
+# Detect OpenVZ
+# something in /proc/vz/veinfo

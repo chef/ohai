@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'chef'
+require 'chef/version'
 provides "chef"
 
 self[:chef_packages] = Mash.new unless self[:chef_packages]

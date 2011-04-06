@@ -33,6 +33,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub!(:exists?).with("/etc/SuSE-release").and_return(false)
     File.stub!(:exists?).with("/etc/arch-release").and_return(false)
     File.stub!(:exists?).with("/etc/system-release").and_return(false)
+    File.stub!(:exists?).with("/etc/slackware-version").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -81,6 +82,18 @@ describe Ohai::System, "Linux plugin platform" do
 
   end
 
+  describe "on slackware" do
+    before(:each) do
+      @ohai.lsb = nil
+      File.should_receive(:exists?).with("/etc/slackware-version").and_return(true)
+    end
+
+    it "should set platform to slackware" do
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "slackware"
+    end
+  end
+  
   describe "on arch" do
     before(:each) do
       @ohai.lsb = nil

@@ -68,7 +68,7 @@ if File.exists?("/usr/sbin/dmidecode")
       end
     when /Manufacturer: Xen/
       if dmi_info =~ /Product Name: HVM domU/
-        virtualization[:emulator] = "xen"
+        virtualization[:system] = "xen"
         virtualization[:role] = "guest"  
       end
     else

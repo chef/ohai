@@ -80,6 +80,9 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /MTU:(\d+)/
       iface[cint][:mtu] = $1
     end
+    if line =~ /P-t-P:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      iface[cint][:peer] = $1
+    end
     if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
       net_counters[cint] = Mash.new unless net_counters[cint]
       net_counters[cint][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }

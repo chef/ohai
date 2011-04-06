@@ -129,7 +129,7 @@ if status == 0
         dmi_record[:type] = id_to_description[dmi_record[:type].to_i]
       else
         dmi_record[:type] = 'unknown'
-        Ohai::Log.warn("unrecognized header id; falling back to 'unknown'")
+        Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
       end
 
       dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
@@ -142,14 +142,14 @@ if status == 0
     
     elsif type = type_line.match(line)
       if dmi_record == nil
-        Ohai::Log.warn("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:os_identifier] = type[1]
 
     elsif data = data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.warn("unexpected data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
         next
       end
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -157,11 +157,11 @@ if status == 0
     
     elsif extended_data = extended_data_line.match(line)
       if dmi_record == nil
-        Ohai::Log.warn("unexpected extended data line found before header; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
         next
       end
       if field == nil
-        Ohai::Log.warn("unexpected extended data line found outside data section; discarding:\n#{line}")
+        Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
         next
       end
       # overwrite "raw" value with a new Mash
@@ -169,7 +169,7 @@ if status == 0
       dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = nil
 
     else
-      Ohai::Log.warn("unrecognized output line; discarding:\n#{line}")
+      Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
 
     end
   end

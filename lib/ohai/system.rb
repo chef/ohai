@@ -63,7 +63,7 @@ module Ohai
     def from(cmd)
       status, stdout, stderr = run_command(:command => cmd)
       return "" if stdout.nil? || stdout.empty?
-      stdout.chomp!.strip
+      stdout.strip
     end
 
     def provides(*paths)
@@ -189,9 +189,9 @@ module Ohai
           Ohai::Log.debug("Loading plugin #{plugin_name}")
           from_file(check_path)
           return true
-        rescue IOError => e
+        rescue Errno::ENOENT => e
           Ohai::Log.debug("No #{plugin_name} at #{check_path}")
-        rescue SystemExit => e
+        rescue SystemExit, Interrupt
           raise
         rescue Exception,Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")

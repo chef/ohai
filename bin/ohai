@@ -29,7 +29,7 @@ end
 begin
   # if we're in a source code checkout, we want to run the code from that.
   # have to do this *after* rubygems is loaded.
-  $:.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+  $:.unshift File.expand_path('../../lib', __FILE__)
   require 'ohai/application'
 rescue LoadError
   if missing_rubygems

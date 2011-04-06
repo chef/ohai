@@ -23,17 +23,17 @@ virtualization Mash.new
 # if it is possible to detect paravirt vs hardware virt, it should be put in
 # virtualization[:mechanism]
 if File.exists?("/proc/xen/capabilities") && File.read("/proc/xen/capabilities") =~ /control_d/i
-    virtualization[:emulator] = "xen"
+    virtualization[:system] = "xen"
     virtualization[:role] = "host"
 elsif File.exists?("/proc/sys/xen/independent_wallclock")
-  virtualization[:emulator] = "xen"
+  virtualization[:system] = "xen"
   virtualization[:role] = "guest"
 end
 
 # Detect KVM hosts by kernel module
 if File.exists?("/proc/modules")
   if File.read("/proc/modules") =~ /^kvm/
-    virtualization[:emulator] = "kvm"
+    virtualization[:system] = "kvm"
     virtualization[:role] = "host"
   end
 end
@@ -45,7 +45,7 @@ end
 # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
 if File.exists?("/proc/cpuinfo")
   if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU/
-    virtualization[:emulator] = "kvm"
+    virtualization[:system] = "kvm"
     virtualization[:role] = "guest"
   end
 end
@@ -58,17 +58,17 @@ if File.exists?("/usr/sbin/dmidecode")
     case dmi_info
     when /Manufacturer: Microsoft/
       if dmi_info =~ /Product Name: Virtual Machine/ 
-        virtualization[:emulator] = "virtualpc"
+        virtualization[:system] = "virtualpc"
         virtualization[:role] = "guest"
       end 
     when /Manufacturer: VMware/
       if dmi_info =~ /Product Name: VMware Virtual Platform/ 
-        virtualization[:emulator] = "vmware"
+        virtualization[:system] = "vmware"
         virtualization[:role] = "guest"
       end
     when /Manufacturer: Xen/
       if dmi_info =~ /Product Name: HVM domU/
-        virtualization[:emulator] = "xen"
+        virtualization[:system] = "xen"
         virtualization[:role] = "guest"  
       end
     else

@@ -50,7 +50,7 @@ describe Ohai::System, "Solaris virtualization platform" do
       @stdout.stub!(:read).and_return("QEMU Virtual CPU") 
       @ohai.stub!(:popen4).with("/usr/sbin/psrinfo -pv").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:emulator].should == "kvm"
+      @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "guest"
     end
 
@@ -93,7 +93,7 @@ MSVPC
        
       @ohai.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:emulator].should == "virtualpc"
+      @ohai[:virtualization][:system].should == "virtualpc"
       @ohai[:virtualization][:role].should == "guest"
     end
 
@@ -113,7 +113,7 @@ VMWARE
       @stdout.stub!(:read).and_return(vmware_smbios)
       @ohai.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:emulator].should == "vmware"
+      @ohai[:virtualization][:system].should == "vmware"
       @ohai[:virtualization][:role].should == "guest"
     end
 

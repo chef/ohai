@@ -29,7 +29,7 @@ if File.exists?(psrinfo_path)
     stdin.close
     psr_info = stdout.read
     if psr_info =~ /QEMU Virtual CPU/
-      virtualization[:emulator] = "kvm"
+      virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
     end
   end
@@ -44,12 +44,12 @@ if File.exists?(smbios_path)
     case dmi_info
     when /Manufacturer: Microsoft/
       if dmi_info =~ /Product: Virtual Machine/ 
-        virtualization[:emulator] = "virtualpc"
+        virtualization[:system] = "virtualpc"
         virtualization[:role] = "guest"
       end 
     when /Manufacturer: VMware/
       if dmi_info =~ /Product: VMware Virtual Platform/ 
-        virtualization[:emulator] = "vmware"
+        virtualization[:system] = "vmware"
         virtualization[:role] = "guest"
       end
     else
@@ -78,12 +78,12 @@ if File.executable?('/usr/sbin/zoneadm')
     if (zones.length == 1)
       first_zone = zones.keys[0]
       unless( first_zone == 'global')
-        virtualization[:emulator] = 'zone'
+        virtualization[:system] = 'zone'
         virtualization[:role] = 'guest'
         virtualization[:guest_uuid] = zones[first_zone]['uuid']
       end
     elsif (zones.length > 1)
-      virtualization[:emulator] = 'zone'
+      virtualization[:system] = 'zone'
       virtualization[:role] = 'host'
       virtualization[:guests] = zones
     end

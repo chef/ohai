@@ -65,5 +65,17 @@ popen4("ls -l /dev/disk/by-uuid/* | awk '{print $11, $9}'") do |pid, stdin, stdo
   end
 end
 
+# Grab any missing mount information from /proc/mounts
+File.open('/proc/mounts').each do |line|
+  if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
+    filesystem = $1
+    next if fs.has_key?(filesystem)
+    fs[filesystem] = Mash.new
+    fs[filesystem][:mount] = $2
+    fs[filesystem][:fs_type] = $3
+    fs[filesystem][:mount_options] = $4.split(",")
+  end
+end
+
 # Set the filesystem data
 filesystem fs

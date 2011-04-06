@@ -28,6 +28,7 @@ describe Ohai::System, "Solaris virtualization platform" do
     # default to all requested Files not existing
     File.stub!(:exists?).with("/usr/sbin/psrinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/smbios").and_return(false)
+    File.stub!(:exists?).with("/usr/sbin/zoneadm").and_return(false)
   end
 
   describe "when we are checking for kvm" do

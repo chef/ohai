@@ -36,13 +36,15 @@ def find_ip_and_mac(addresses)
   [ip, mac]
 end
 
-unless network[:default_interface].nil?
+if network[:default_interface]
+  Ohai::Log.debug("Using default interface for default ip and mac address")
   im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"])
   ipaddress im.shift
   macaddress im.shift
 else
   network["interfaces"].keys.sort.each do |iface|
     if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")
+      Ohai::Log.debug("Picking ip and mac address from first Ethernet interface")
       im = find_ip_and_mac(network["interfaces"][iface]["addresses"])
       ipaddress im.shift
       macaddress im.shift

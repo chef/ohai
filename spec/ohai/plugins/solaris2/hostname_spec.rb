@@ -24,18 +24,13 @@ describe Ohai::System, "Solaris2.X hostname plugin" do
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:os] = "solaris2"
     @ohai.stub!(:from).with("hostname").and_return("kitteh")
-    @ohai.stub!(:from).with("domainname").and_return("inurfridge.eatinurfoodz")
+    Socket.stub!(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
   end
   
   it_should_check_from("solaris2::hostname", "hostname", "hostname", "kitteh")
   
-  it "should get the fqdn value from 'hostname' + 'domainname'" do
-    @ohai.should_receive(:from).with("hostname").and_return("kitteh")
-    @ohai.should_receive(:from).with("domainname").and_return("inurfridge.eatinurfoodz")
-    @ohai._require_plugin("solaris2::hostname")
-  end
-  
-  it "should set the fqdn to the value from 'hostname' and 'domainname'" do
+  it "should get the fqdn value from socket getaddrinfo" do
+    Socket.should_receive(:getaddrinfo)
     @ohai._require_plugin("solaris2::hostname")
     @ohai["fqdn"].should == "kitteh.inurfridge.eatinurfoodz"
   end

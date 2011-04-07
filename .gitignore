@@ -1,4 +1,6 @@
-*.swp
+*.sw?
 pkg/
 tmp/
 coverage/
+Gemfile.lock
+

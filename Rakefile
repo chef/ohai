@@ -1,16 +1,11 @@
 require 'rubygems'
-require 'rake/gempackagetask'
-require 'rubygems/specification'
 require 'date'
 
-gemspec = eval(IO.read("ohai.gemspec"))
-
-
-Rake::GemPackageTask.new(gemspec).define
-
-desc "install the gem locally"
-task :install => [:package] do
-  sh %{gem install pkg/#{ohai}-#{OHAI_VERSION}}
+begin
+  require 'bundler'
+  Bundler::GemHelper.install_tasks
+rescue LoadError
+  $stderr.puts "You should install Bundler with: gem install bundler"
 end
 
 begin
@@ -18,7 +13,6 @@ begin
 
   RSpec::Core::RakeTask.new do |t|
     t.pattern = 'spec/**/*_spec.rb'
-    t.rspec_opts = %w(-fs --color)
   end
 rescue LoadError
   desc "rspec is not installed, this task is disabled"

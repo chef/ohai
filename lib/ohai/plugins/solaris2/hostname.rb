@@ -23,4 +23,12 @@ provides "hostname", "fqdn"
 
 hostname from("hostname")
 
-fqdn Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+
+if fqdn_lookup.split('.').length > 1
+  # we recieved an fqdn
+  fqdn fqdn_lookup
+else
+  # default to assembling one
+  fqdn(from("hostname") + "." + from("domainname"))
+end

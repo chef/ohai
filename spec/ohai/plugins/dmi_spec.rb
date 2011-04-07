@@ -19,55 +19,110 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
+# NOTE: These data lines must be prefixed with one or two tabs, not spaces.
+DMI_OUT = <<EOS
+# dmidecode 2.9
+SMBIOS 2.4 present.
+98 structures occupying 3699 bytes.
+Table at 0x000E0010.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+	Vendor: Phoenix Technologies LTD
+	Version: 6.00
+	Release Date: 12/31/2009
+	Address: 0xEA2E0
+	Runtime Size: 89376 bytes
+	ROM Size: 64 kB
+	Characteristics:
+		ISA is supported
+		PCI is supported
+		PC Card (PCMCIA) is supported
+		PNP is supported
+		APM is supported
+		BIOS is upgradeable
+		BIOS shadowing is allowed
+		ESCD support is available
+		USB legacy is supported
+		Smart battery is supported
+		BIOS boot specification is supported
+		Targeted content distribution is supported
+	BIOS Revision: 4.6
+	Firmware Revision: 0.0
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+	Manufacturer: VMware, Inc.
+	Product Name: VMware Virtual Platform
+	Version: None
+	Serial Number: VMware-56 4d 71 d1 65 70 83 a8-df c8 14 12 19 41 71 45
+	UUID: 564D71D1-6570-83A8-DFC8-141219417145
+	Wake-up Type: Power Switch
+	SKU Number: Not Specified
+	Family: Not Specified
+
+Handle 0x0002, DMI type 2, 15 bytes
+Base Board Information
+	Manufacturer: Intel Corporation
+	Product Name: 440BX Desktop Reference Platform
+	Version: None
+	Serial Number: None
+	Asset Tag: Not Specified
+	Features: None
+	Location In Chassis: Not Specified
+	Chassis Handle: 0x0000
+	Type: Unknown
+	Contained Object Handles: 0
+
+Handle 0x0003, DMI type 3, 21 bytes
+Chassis Information
+	Manufacturer: No Enclosure
+	Type: Other
+	Lock: Not Present
+	Version: N/A
+	Serial Number: None
+	Asset Tag: No Asset Tag
+	Boot-up State: Safe
+	Power Supply State: Safe
+	Thermal State: Safe
+	Security Status: None
+	OEM Information: 0x00001234
+	Height: Unspecified
+	Number Of Power Cords: Unspecified
+	Contained Elements: 0
+EOS
+
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:from).with("dmidecode --version").and_return("2.9")
-    @ohai.stub!(:from).with("dmidecode -s bios-vendor").and_return("Dell Inc.")
-    @ohai.stub!(:from).with("dmidecode -s bios-version").and_return("2.6.1")
-    @ohai.stub!(:from).with("dmidecode -s bios-release-date").and_return("12\/06\/2007")
-    @ohai.stub!(:from).with("dmidecode -s system-manufacturer").and_return("Dell Inc.")
-    @ohai.stub!(:from).with("dmidecode -s system-product-name").and_return("OptiPlex 745")
-    @ohai.stub!(:from).with("dmidecode -s system-version").and_return("Not Specified")
-    @ohai.stub!(:from).with("dmidecode -s system-serial-number").and_return("XXXXXXX")
-    @ohai.stub!(:from).with("dmidecode -s system-uuid").and_return("44454C4C-4700-1032-8035-B9C04F474331")
-    @ohai.stub!(:from).with("dmidecode -s baseboard-manufacturer").and_return("Dell Inc.")
-    @ohai.stub!(:from).with("dmidecode -s baseboard-product-name").and_return("0RF703")
-    @ohai.stub!(:from).with("dmidecode -s baseboard-version").and_return("Not Specified")
-    @ohai.stub!(:from).with("dmidecode -s baseboard-serial-number").and_return("..CN137406CP0289.")
-    @ohai.stub!(:from).with("dmidecode -s baseboard-asset-tag").and_return("None")
-    @ohai.stub!(:from).with("dmidecode -s chassis-manufacturer").and_return("Dell Inc.")
-    @ohai.stub!(:from).with("dmidecode -s chassis-type").and_return("Mini Tower")
-    @ohai.stub!(:from).with("dmidecode -s chassis-version").and_return("Not Specified")
-    @ohai.stub!(:from).with("dmidecode -s chassis-serial-number").and_return("XXXXXXX")
-    @ohai.stub!(:from).with("dmidecode -s chassis-asset-tag").and_return("None")
-    @ohai.stub!(:from).with("dmidecode -s processor-family").and_return("Not Specified")
-    @ohai.stub!(:from).with("dmidecode -s processor-manufacturer").and_return("Intel")
-    @ohai.stub!(:from).with("dmidecode -s processor-version").and_return("Not Specified")
-    @ohai.stub!(:from).with("dmidecode -s processor-frequency").and_return("2000 Mhz")
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"dmidecode"}).and_return([0, DMI_OUT, ""])
   end
 
-  it_should_check_from_deep_mash("dmi", "dmi", "version", "dmidecode --version", "2.9")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "vendor", "dmidecode -s bios-vendor", "Dell Inc.")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "version", "dmidecode -s bios-version", "2.6.1")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "bios" ], "release_date", "dmidecode -s bios-release-date", "12\/06\/2007")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "system" ], "manufacturer", "dmidecode -s system-manufacturer", "Dell Inc.")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "system" ], "product_name", "dmidecode -s system-product-name", "OptiPlex 745")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "system" ], "version", "dmidecode -s system-version", "Not Specified")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "system" ], "serial_number", "dmidecode -s system-serial-number", "XXXXXXX")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "system" ], "uuid", "dmidecode -s system-uuid", "44454C4C-4700-1032-8035-B9C04F474331")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "baseboard" ], "manufacturer", "dmidecode -s baseboard-manufacturer", "Dell Inc.")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "baseboard" ], "product_name", "dmidecode -s baseboard-product-name", "0RF703")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "baseboard" ], "version", "dmidecode -s baseboard-version", "Not Specified")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "baseboard" ], "serial_number", "dmidecode -s baseboard-serial-number", "..CN137406CP0289.")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "baseboard" ], "asset_tag", "dmidecode -s baseboard-asset-tag", "None")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "chassis" ], "manufacturer", "dmidecode -s chassis-manufacturer", "Dell Inc.")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "chassis" ], "type", "dmidecode -s chassis-type", "Mini Tower")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "chassis" ], "version", "dmidecode -s chassis-version", "Not Specified")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "chassis" ], "serial_number", "dmidecode -s chassis-serial-number", "XXXXXXX")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "chassis" ], "asset_tag", "dmidecode -s chassis-asset-tag", "None")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "processor" ], "family", "dmidecode -s processor-family", "Not Specified")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "processor" ], "manufacturer", "dmidecode -s processor-manufacturer", "Intel")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "processor" ], "version", "dmidecode -s processor-version", "Not Specified")
-  it_should_check_from_deep_mash("dmi", [ "dmi", "processor" ], "frequency", "dmidecode -s processor-frequency", "2000 Mhz")
+  it "should run dmidecode" do
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"dmidecode"}).and_return([0, DMI_OUT, ""])
+    @ohai._require_plugin("dmi")
+  end
+
+  # Test some simple sample data
+  {
+    :bios => {
+      :vendor => "Phoenix Technologies LTD",
+      :release_date => "12/31/2009"
+    },
+    :system => {
+      :manufacturer => "VMware, Inc.",
+      :product_name => "VMware Virtual Platform"
+    },
+    :chassis => {
+      :lock => "Not Present",
+      :asset_tag => "No Asset Tag"
+    }
+  }.each do |id, data|
+    data.each do |attribute, value|
+      it "should have #{attribute} set" do
+        @ohai._require_plugin("dmi")
+        @ohai[:dmi][id][attribute].should eql(value)
+      end
+    end
+  end
 end

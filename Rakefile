@@ -18,7 +18,6 @@ begin
 
   RSpec::Core::RakeTask.new do |t|
     t.pattern = 'spec/**/*_spec.rb'
-    t.rspec_opts = %w(-fs --color)
   end
 rescue LoadError
   desc "rspec is not installed, this task is disabled"

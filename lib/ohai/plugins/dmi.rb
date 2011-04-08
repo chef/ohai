@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_plugin "dmi_common"
+require "ohai/plugins/dmi_common"
 
 provides "dmi"
 

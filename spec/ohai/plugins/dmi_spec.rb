@@ -16,11 +16,10 @@
 # limitations under the License.
 #
 
-
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 # NOTE: These data lines must be prefixed with one or two tabs, not spaces.
-DMI_OUT = <<EOS
+DMI_OUT = <<-EOS
 # dmidecode 2.9
 SMBIOS 2.4 present.
 98 structures occupying 3699 bytes.
@@ -95,11 +94,17 @@ EOS
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"dmidecode"}).and_return([0, DMI_OUT, ""])
+    @ohai.stub!(:require_plugin).and_return(true)
+    @stdin = mock("STDIN", { :close => true })
+    @pid = 10
+    @stderr = mock("STDERR")
+    @stdout = StringIO.new(DMI_OUT)
+    @status = 0
+    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
   end
 
   it "should run dmidecode" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"dmidecode"}).and_return([0, DMI_OUT, ""])
+    @ohai.should_receive(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
     @ohai._require_plugin("dmi")
   end
 
@@ -119,7 +124,7 @@ describe Ohai::System, "plugin dmi" do
     }
   }.each do |id, data|
     data.each do |attribute, value|
-      it "should have #{attribute} set" do
+      it "should have [:dmi][:#{id}][:#{attribute}] set" do
         @ohai._require_plugin("dmi")
         @ohai[:dmi][id][attribute].should eql(value)
       end

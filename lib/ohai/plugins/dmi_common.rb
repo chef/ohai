@@ -67,6 +67,10 @@ module DMI
     127 => 'end_of_table_marker',
   }
 
+  # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
+  # See OHAI-260. When we can give the user a choice, this will be a default.
+  IdToCapture = [ 0, 1, 2, 3, 4, 6, 11 ]
+
   # look up DMI ID
   def DMI.id_lookup(id)
     begin

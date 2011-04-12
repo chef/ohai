@@ -13,7 +13,7 @@ spec = Gem::Specification.new do |s|
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/ohai"
 
-  s.add_dependency "yajl-ruby", "~> 0.7.8"
+  s.add_dependency "yajl-ruby"
   s.add_dependency "systemu"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"

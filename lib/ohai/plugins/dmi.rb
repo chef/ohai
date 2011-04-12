@@ -74,6 +74,9 @@ popen4("dmidecode") do |pid, stdin, stdout, stderr|
       dmi[:table_location] = table_location[1]
 
     elsif handle = handle_line.match(line)
+      # Don't overcapture for now (OHAI-260)
+      next unless DMI::IdToCapture.include?(handle[2].to_i)
+
       dmi_record = {:type => DMI.id_lookup(handle[2])}
 
       dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])

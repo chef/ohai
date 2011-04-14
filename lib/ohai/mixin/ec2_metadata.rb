@@ -33,9 +33,9 @@ module Ohai
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         saddr = Socket.pack_sockaddr_in(port, addr)
         connected = false
-      
+
         begin
-          t.connect_nonblock(saddr)    
+          t.connect_nonblock(saddr)
         rescue Errno::EINPROGRESS
           r,w,e = IO::select(nil,[t],nil,timeout)
           if !w.nil?
@@ -57,14 +57,14 @@ module Ohai
 
       def fetch_metadata(id='')
         metadata = Hash.new
-        OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}").read.split("\n").each do |o|
+        OpenURI.open_uri("#{EC2_METADATA_URL}/#{id}", :read_timeout => 600).read.split("\n").each do |o|
           key = "#{id}#{o.gsub(/\=.*$/, '/')}"
           if key[-1..-1] != '/'
-            metadata[key.gsub(/\-|\//, '_').to_sym] = 
+            metadata[key.gsub(/\-|\//, '_').to_sym] =
               if EC2_ARRAY_VALUES.include? key
-                OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read.split("\n")
+                OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}", :read_timeout => 600).read.split("\n")
               else
-                OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}").read
+                OpenURI.open_uri("#{EC2_METADATA_URL}/#{key}", :read_timeout => 600).read
               end
           else
             next
@@ -72,11 +72,11 @@ module Ohai
         end
         metadata
       end
-      
+
       def fetch_userdata()
         # assumes the only expected error is the 404 if there's no user-data
         begin
-          OpenURI.open_uri("#{EC2_USERDATA_URL}/").read
+          OpenURI.open_uri("#{EC2_USERDATA_URL}/", :read_timeout => 600).read
         rescue OpenURI::HTTPError
           nil
         end

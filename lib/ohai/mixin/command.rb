@@ -99,7 +99,7 @@ module Ohai
         return status, stdout_string, stderr_string
       end
 
-      def run_comand_windows(command, timeout)
+      def run_command_windows(command, timeout)
         if timeout
           begin
             systemu(command)

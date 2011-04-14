@@ -48,7 +48,7 @@ end
 if looks_like_ec2?
   Ohai::Log.debug("looks_like_ec2? == true")
   ec2 Mash.new
-  self.fetch_metadata.each {|k, v| ec2[k] = v }
+  fetch_metadata.each {|k, v| ec2[k] = v }
   ec2[:userdata] = self.fetch_userdata
 else
   Ohai::Log.debug("looks_like_ec2? == false")

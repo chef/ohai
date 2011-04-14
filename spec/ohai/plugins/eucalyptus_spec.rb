@@ -35,21 +35,24 @@ describe Ohai::System, "plugin eucalyptus" do
 
   shared_examples_for "eucalyptus" do
     before(:each) do
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/").
-        and_return(mock(IO, :read => "instance_type\nami_id\nsecurity-groups"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/instance_type").
-        and_return(mock(IO, :read => "c1.medium"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
-        and_return(mock(IO, :read => "ami-5d2dc934"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/security-groups").
-        and_return(mock(IO, :read => "group1\ngroup2"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/user-data/").
-        and_return(mock(IO, :gets => "By the pricking of my thumb..."))
+      @http_client = mock("Net::HTTP client")
+      @ohai.stub!(:http_client).and_return(@http_client)
+
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/instance_type").
+        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/ami_id").
+        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/security-groups").
+        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/user-data/").
+        and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
     end
 
     it "should recursively fetch all the eucalyptus metadata" do

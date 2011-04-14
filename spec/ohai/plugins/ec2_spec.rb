@@ -12,7 +12,7 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# WITHOUT WARRANTIES OR CONDIT"Net::HTTP Response"NS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
@@ -29,28 +29,31 @@ describe Ohai::System, "plugin ec2" do
 
   shared_examples_for "!ec2" do
     it "should NOT attempt to fetch the ec2 metadata" do
-      OpenURI.should_not_receive(:open)
+      @ohai.should_not_receive(:http_client)
       @ohai._require_plugin("ec2")
     end
   end
 
   shared_examples_for "ec2" do
     before(:each) do
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/").
-        and_return(mock(IO, :read => "instance_type\nami_id\nsecurity-groups"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/instance_type").
-        and_return(mock(IO, :read => "c1.medium"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/ami_id").
-        and_return(mock(IO, :read => "ami-5d2dc934"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/meta-data/security-groups").
-        and_return(mock(IO, :read => "group1\ngroup2"))
-      OpenURI.stub!(:open_uri).
-        with("http://169.254.169.254/2008-02-01/user-data/").
-        and_return(mock(IO, :gets => "By the pricking of my thumb..."))
+      @http_client = mock("Net::HTTP client")
+      @ohai.stub!(:http_client).and_return(@http_client)
+
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/instance_type").
+        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/ami_id").
+        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/security-groups").
+        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/user-data/").
+        and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
     end
 
     it "should recursively fetch all the ec2 metadata" do

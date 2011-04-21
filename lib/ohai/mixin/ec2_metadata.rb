@@ -71,7 +71,7 @@ module Ohai
                 http_client.get("#{EC2_METADATA_URL}/#{key}").body
               end
           else
-            next
+            fetch_metadata(key).each{|k,v| metadata[k] = v}
           end
         end
         metadata

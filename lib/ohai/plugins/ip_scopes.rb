@@ -20,11 +20,8 @@ begin
 
   provides "network_ip_scope", "privateaddress"
 
-  network Mash.new unless network
-  network[:interfaces] = Mash.new unless network[:interfaces]
-
   require_plugin "hostname"
-  require_plugin "#{os}::network"
+  require_plugin "network"
 
   network['interfaces'].keys.each do |ifName|
     network['interfaces'][ifName]['addresses'].each do |address,attrs|

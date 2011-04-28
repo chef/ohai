@@ -45,6 +45,10 @@ end
 def get_ec2_values 
   cloud[:public_ips] << ec2['public_ipv4']
   cloud[:private_ips] << ec2['local_ipv4']
+  cloud[:public_ipv4] = ec2['public_ipv4']
+  cloud[:public_hostname] = ec2['public_hostname']
+  cloud[:local_ipv4] = ec2['local_ipv4']
+  cloud[:local_hostname] = ec2['local_hostname']
   cloud[:provider] = "ec2"
 end
 
@@ -71,6 +75,10 @@ end
 def get_rackspace_values 
   cloud[:public_ips] << rackspace['public_ip']
   cloud[:private_ips] << rackspace['private_ip']
+  cloud[:public_ipv4] = rackspace['public_ipv4']
+  cloud[:public_hostname] = rackspace['public_hostname']
+  cloud[:local_ipv4] = rackspace['local_ipv4']
+  cloud[:local_hostname] = rackspace['local_hostname']
   cloud[:provider] = "rackspace"
 end
 
@@ -96,6 +104,10 @@ end
 def get_eucalyptus_values
   cloud[:public_ips] << eucalyptus['public_ipv4']
   cloud[:private_ips] << eucalyptus['local_ipv4']
+  cloud[:public_ipv4] = eucalyptus['public_ipv4']
+  cloud[:public_hostname] = eucalyptus['public_hostname']
+  cloud[:local_ipv4] = eucalyptus['local_ipv4']
+  cloud[:local_hostname] = eucalyptus['local_hostname']
   cloud[:provider] = "eucalyptus"
 end
 

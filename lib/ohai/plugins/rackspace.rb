@@ -67,6 +67,7 @@ if looks_like_rackspace?
   rackspace Mash.new
   get_ip_address(:public_ip, :eth0)
   get_ip_address(:private_ip, :eth1)
+  # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
   rackspace[:public_ipv4] = rackspace[:public_ip]
   rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
   rackspace[:local_ipv4] = rackspace[:private_ip]

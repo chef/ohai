@@ -16,7 +16,6 @@
 # limitations under the License.
 
 begin
-
   require 'ipaddr_extensions'
 
   provides "network_ip_scope", "privateaddress"
@@ -39,8 +38,6 @@ begin
   end
 
 rescue LoadError => e
-
   # our favourite gem is not installed. Boohoo.
-  Ohai::Log.debug("Can't load gem: #{e})")
-
+  Ohai::Log.debug("ip_scopes: cannot load gem, plugin disabled: #{e}")
 end

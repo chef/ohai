@@ -24,37 +24,90 @@ describe Ohai::System, "Linux lsb plugin" do
     @ohai = Ohai::System.new
     @ohai[:os] = "linux"    
     @ohai.stub!(:require_plugin).and_return(true)
-    @mock_file = mock("/etc/lsb-release")
-    @mock_file.stub!(:each).
-      and_yield("DISTRIB_ID=Ubuntu").
-      and_yield("DISTRIB_RELEASE=8.04").
-      and_yield("DISTRIB_CODENAME=hardy").
-      and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-    File.stub!(:open).with("/etc/lsb-release").and_return(@mock_file)
+    @ohai.extend(SimpleFromFile)
   end
+
+  describe "on systems with /etc/lsb-release" do
+    before(:each) do
+      @mock_file = mock("/etc/lsb-release")
+      @mock_file.stub!(:each).
+        and_yield("DISTRIB_ID=Ubuntu").
+        and_yield("DISTRIB_RELEASE=8.04").
+        and_yield("DISTRIB_CODENAME=hardy").
+        and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
+      File.stub!(:open).with("/etc/lsb-release").and_return(@mock_file) 
+      File.stub!(:exists?).with("/etc/lsb-release").and_return(true)
+    end
+
+    it "should set lsb[:id]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:id].should == "Ubuntu"
+    end
   
-  it "should set lsb[:id]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:id].should == "Ubuntu"
+    it "should set lsb[:release]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:release].should == "8.04"
+    end
+  
+    it "should set lsb[:codename]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:codename].should == "hardy"
+    end
+  
+    it "should set lsb[:description]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:description].should == "\"Ubuntu 8.04\""
+    end
+  
   end
+
+  describe "on systems with /usr/bin/lsb_release" do
+    before(:each) do
+      File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
+      File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(true)
+
+      @stdin = mock("STDIN", { :close => true })
+      @pid = 10
+      @stderr = mock("STDERR")
+      @stdout = mock("STDOUT")
+      @status = 0
+
+      @stdout.stub!(:each).
+        and_yield("LSB Version:    :core-4.0-ia32:core-4.0-noarch").
+        and_yield("Distributor ID: Fedora").
+        and_yield("Description:    Fedora release 14 (Laughlin)").
+        and_yield("Release:        14").
+        and_yield("Codename:       Laughlin")
+
+      @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+
+    end
+
+    it "should set lsb[:id]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:id].should == "Fedora"
+    end
   
-  it "should set lsb[:release]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:release].should == "8.04"
+    it "should set lsb[:release]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:release].should == "14"
+    end
+  
+    it "should set lsb[:codename]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:codename].should == "Laughlin"
+    end
+  
+    it "should set lsb[:description]" do
+      @ohai._require_plugin("linux::lsb")
+      @ohai[:lsb][:description].should == "Fedora release 14 (Laughlin)"
+    end
+  
   end
-  
-  it "should set lsb[:codename]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:codename].should == "hardy"
-  end
-  
-  it "should set lsb[:description]" do
-    @ohai._require_plugin("linux::lsb")
-    @ohai[:lsb][:description].should == "\"Ubuntu 8.04\""
-  end
-  
-  it "should not set any lsb values if /etc/lsb-release cannot be read" do
-    File.stub!(:open).with("/etc/lsb-release").and_raise(IOError)
+
+  it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
+    File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
+    File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(false)
     @ohai.attribute?(:lsb).should be(false)
   end
 end

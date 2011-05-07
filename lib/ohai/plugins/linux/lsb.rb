@@ -20,7 +20,7 @@ provides "lsb"
 
 lsb Mash.new
 
-begin
+if File.exists?("/etc/lsb-release")
   File.open("/etc/lsb-release").each do |line|
     case line
     when /^DISTRIB_ID=(.+)$/
@@ -33,6 +33,27 @@ begin
       lsb[:description] = $1
     end
   end
-rescue
-  Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release")
+elsif File.exists?("/usr/bin/lsb_release")
+  # Fedora/Redhat, requires redhat-lsb package
+  popen4("lsb_release -a") do |pid, stdin, stdout, stderr|
+
+    stdin.close
+    stdout.each do |line|
+      case line
+      when /^Distributor ID:\s+(.+)$/
+        lsb[:id] = $1
+      when /^Description:\s+(.+)$/
+        lsb[:description] = $1
+      when /^Release:\s+(.+)$/
+        lsb[:release] = $1
+      when /^Codename:\s+(.+)$/
+        lsb[:codename] = $1
+      else
+        lsb[:id] = line
+      end
+
+    end
+  end
+else
+  Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
 end

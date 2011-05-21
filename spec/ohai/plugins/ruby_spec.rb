@@ -42,6 +42,8 @@ describe Ohai::System, "plugin ruby" do
     :host_os => ::Config::CONFIG['host_os'],
     :host_vendor => ::Config::CONFIG['host_vendor'],
     :gems_dir => %x{#{ruby_bin} #{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!,
+    :gem_bin => [ ::Gem.default_exec_format % 'gem', 'gem' ].map{|bin| "#{::Config::CONFIG['bindir']}/#{bin}"
+      }.find{|bin| ::File.exists? bin},
     :ruby_bin => ruby_bin
   }.each do |attribute, value|
     it "should have #{attribute} set" do

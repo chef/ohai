@@ -43,7 +43,7 @@ values = {
   :host_os => "::Config::CONFIG['host_os']",
   :host_vendor => "::Config::CONFIG['host_vendor']",
   :bin_dir => "::Config::CONFIG['bindir']",
-  :ruby_bin => "::File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])" 
+  :ruby_bin => "::File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])"
 }
 
 # Create a query string from above hash
@@ -64,6 +64,12 @@ end
 # Perform one more (conditional) query
 bin_dir = languages[:ruby][:bin_dir]
 ruby_bin = languages[:ruby][:ruby_bin]
-if File.exist?("#{bin_dir}\/gem")
-  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{bin_dir}\/gem env gemdir}.chomp!"
+gem_binaries = [ 
+  run_ruby("require 'rubygems'; puts ::Gem.default_exec_format % 'gem'"),
+  "gem"
+].map {|bin| ::File.join(bin_dir, bin)}
+gem_binary = gem_binaries.find {|bin| ::File.exists? bin }
+if gem_binary
+  languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{gem_binary} env gemdir}.chomp!"
+  languages[:ruby][:gem_bin] = gem_binary
 end

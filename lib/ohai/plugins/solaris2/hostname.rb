@@ -23,7 +23,13 @@ provides "hostname", "fqdn"
 
 hostname from("hostname")
 
-fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+# AI_CANONNAME is a native flag which is not available in the Java environment. Instead, use AI_PASSIVE. This is not exactly the same,
+# but there is no other way of achieving this.
+if RUBY_PLATFORM =~ /java/
+  fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_PASSIVE).first[2]
+else
+  fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+end
 
 if fqdn_lookup.split('.').length > 1
   # we recieved an fqdn

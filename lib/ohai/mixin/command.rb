@@ -299,6 +299,29 @@ module Ohai
               results = Process.waitpid2(cid) unless results
               o.rewind
               e.rewind
+
+              # **OHAI-275**
+              # The way we read from the pipes causes ruby to mark the strings
+              # as ASCII-8BIT (i.e., binary), but the content should be encoded
+              # as the default external encoding. For example, a command may
+              # return data encoded as UTF-8, but the strings will be marked as
+              # ASCII-8BIT. Later, when you attempt to print the values as
+              # UTF-8, Ruby will try to convert them and fail, raising an
+              # error.
+              #
+              # Ruby always marks strings as binary when read from IO in
+              # incomplete chunks, since you may have split the data within a
+              # multibyte char. In our case, we concat the chunks back
+              # together, so any multibyte chars will be reassembled.
+              #
+              # Note that all of this applies only to Ruby 1.9, which we check
+              # for by making sure that the Encoding class exists and strings
+              # have encoding methods.
+              if "".respond_to?(:force_encoding) && defined?(Encoding)
+                o.string.force_encoding(Encoding.default_external)
+                e.string.force_encoding(Encoding.default_external)
+              end
+
               b[cid, pi[0], o, e]
               results.last
             end

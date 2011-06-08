@@ -1,3 +1,4 @@
+# encoding: utf-8
 #
 # Author:: Diego Algorta (diego@oboxodo.com)
 # Copyright:: Copyright (c) 2009 Diego Algorta
@@ -32,6 +33,14 @@ describe Ohai::Mixin::Command, "popen4" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL", :environment => {"LC_ALL" => "es"}) do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.read.strip.should == "es"
+    end
+  end
+
+  if defined?(::Encoding) && "".respond_to?(:force_encoding) #i.e., ruby 1.9
+    it "[OHAI-275] should mark strings as in the default external encoding" do
+      extend Ohai::Mixin::Command
+      snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
+      snowy.encoding.should == Encoding.default_external
     end
   end
 

@@ -50,7 +50,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
     if line =~ /^([0-9a-zA-Z\.\:\-_]+)\s+/
       cint = $1
       iface[cint] = Mash.new
-      if cint =~ /^(\w+)(\d+.*)/
+      if cint =~ /^(\w+?)(\d+.*)/
         iface[cint][:type] = $1
         iface[cint][:number] = $2
       end

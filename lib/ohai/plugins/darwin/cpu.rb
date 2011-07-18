@@ -64,16 +64,12 @@ real_cpu = Mash.new
 
 `sysctl -a hw`.each_line do |line|
   case line
-  when /hw.ncpu: (\d+)/
-    cpuinfo[:total] = $1
+  when /hw.physicalcpu: (\d+)/ #hw.physicalcpu: 2
+    cpu[:total] = $1
   when /hw.physicalcpu: (\d+)/
-    cpuinfo[:real] = $1
-  else
-    puts "Unhandled line: #{line}"
+    cpu[:real] = $1
+  when /hw.cpufrequency_max: (\d+)/ #hw.cpufrequency_max: 2000000000
+    cpu[:mhz] = $1 / 1000000.0
   end
 end
-cpu cpuinfo
-
-#testing
-cpu[:total] = 2
-cpu[:real] = 2
+#cpu cpuinfo

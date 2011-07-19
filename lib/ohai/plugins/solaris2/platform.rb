@@ -18,7 +18,13 @@
 
 provides "platform", "platform_version", "platform_build"
 
-popen4("uname -X") do |pid, stdin, stdout, stderr|
+if File.exists?("/sbin/uname")
+  uname_exec = "/sbin/uname"
+else
+  uname_exec = "uname"
+end
+
+popen4("#{uname_exec} -X") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line

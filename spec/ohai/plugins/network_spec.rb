@@ -37,6 +37,7 @@ describe Ohai::System, "network plugin" do
         :broadcast => "192.168.1.255",
         :netmask => "255.255.255.0",
         :address6 => nil,
+        :tx_queue_len => 1000,
     },
       :eth1 => {
         :flags => 2115,
@@ -48,6 +49,7 @@ describe Ohai::System, "network plugin" do
         :broadcast => "192.168.2.255",
         :netmask => "255.255.255.0",
         :address6 => nil,
+        :tx_queue_len => 1000,
     },
       :lo => {
         :flags => 73,
@@ -59,6 +61,7 @@ describe Ohai::System, "network plugin" do
         :broadcast => "0.0.0.0",
         :netmask => "255.255.255.255",
         :address6 => nil,
+        :tx_queue_len => 0
     },
       :vboxnet0 => {
         :flags => 2050,
@@ -71,8 +74,43 @@ describe Ohai::System, "network plugin" do
         :netmask => "0.0.0.0",
         :address6 => "::",
         :prefix6_length => 0,
-        :scope6 => 0
+        :scope6 => 0,
+        :tx_queue_len => 1000
     }}
+    @net_interface_stat={
+      :eth0 => {
+        :rx_bytes=>1369035618, 
+        :rx_dropped=>0,
+        :rx_errors=>0,
+        :rx_frame=>0,
+        :rx_overruns=>0,
+        :rx_packets=>7271669,
+        :speed=>-1,
+        :tx_bytes=>3482843666,
+        :tx_carrier=>0,
+        :tx_collisions=>0,
+        :tx_dropped=>0,
+        :tx_errors=>0,
+        :tx_overruns=>0,
+        :tx_packets=>4392794
+      },
+      :lo => {
+        :rx_bytes=>335126,
+        :rx_dropped=>0,
+        :rx_errors=>0,
+        :rx_frame=>0,
+        :rx_overruns=>0,
+        :rx_packets=>2402,
+        :speed=>-1,
+        :tx_bytes=>335126,
+        :tx_carrier=>0,
+        :tx_collisions=>0,
+        :tx_dropped=>0,
+        :tx_errors=>0,
+        :tx_overruns=>0,
+        :tx_packets=>2402
+      }
+    }
     @net_info.stub!(:default_gateway).and_return("127.0.0.1")
     @net_info.stub!(:primary_dns).and_return("127.0.0.1")
     @net_info.stub!(:secondary_dns).and_return("127.0.0.2")
@@ -85,13 +123,19 @@ describe Ohai::System, "network plugin" do
       @net_interface_conf[interface.to_sym].each_pair do |k,v|
         net_config.stub!(k.to_sym).and_return(v)
       end
+      net_stat=mock('Sigar::NetStat')
+      if @net_interface_stat.has_key?(interface.to_sym)
+        @net_interface_stat[interface.to_sym].each_pair do |k,v|
+          net_stat.stub!(k.to_sym).and_return(v)
+        end
+      else
+        net_stat=nil
+      end
       @sigar.should_receive(:net_interface_config).with(interface).once.and_return(net_config)
-      @sigar.should_receive(:net_interface_stat).with(interface).once.and_return(nil)
+      @sigar.should_receive(:net_interface_stat).with(interface).once.and_return(net_stat)
     end
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai._require_plugin("network")
-    print "Network data: "
-    p @ohai[:network]
   end
 
   it "should get the default gateway" do
@@ -107,10 +151,30 @@ describe Ohai::System, "network plugin" do
   end
   
   it "should get the interface list" do
-    @ohai[:network][:interfaces].should have_key("lo")
-    @ohai[:network][:interfaces].should have_key("eth0")
-    @ohai[:network][:interfaces].should have_key("eth1")
-    @ohai[:network][:interfaces].should have_key("vboxnet0")
+    @interface_list.each do |interface|
+      @ohai[:network][:interfaces].should have_key(interface)
+    end
   end
-  
+
+  it "should get the interface config details" do
+    @interface_list.each do |interface|
+      @net_interface_conf[interface.to_sym].each_pair do |k,v|
+        next if ["flags","type"].member?(k.to_s)
+        @ohai[:network][:interfaces][interface][k].should eql(v) if @ohai[:network][:interfaces][interface].has_key?(k)
+      end
+    end
+  end
+
+  it "should get the interface stat details" do
+    @interface_list.each do |interface|
+      if @net_interface_stat.has_key?(interface.to_sym)
+        @net_interface_stat[interface.to_sym].each_pair do |k,v|
+          [:rx,:tx].each do |stat|
+            @ohai[:counters][:network][:interfaces][interface][stat][k].should eql(v) if @ohai[:counters][:network][:interfaces][interface].has_key?(stat) && @ohai[:counters][:network][:interfaces][interface][stat].has_key?(k)
+          end
+        end
+      end
+    end
+  end
+
 end

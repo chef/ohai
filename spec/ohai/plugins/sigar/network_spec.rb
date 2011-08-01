@@ -24,7 +24,6 @@ describe Ohai::System, "Sigar network plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:os]="sigar"
     @interface_list=%w(lo eth0 eth1 vboxnet0)
     @sigar=double("Sigar")
     @net_info=double("Sigar::NetInfo")
@@ -174,6 +173,8 @@ describe Ohai::System, "Sigar network plugin" do
       @sigar.should_receive(:net_interface_stat).with(interface).once.and_return(net_stat)
     end
     Sigar.should_receive(:new).and_return(@sigar)
+    @ohai.require_plugin("os")
+    @ohai[:os]="sigar"
     @ohai.require_plugin("network")
   end
   

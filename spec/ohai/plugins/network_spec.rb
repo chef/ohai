@@ -17,164 +17,46 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'sigar'
 
-describe Ohai::System, "network plugin" do
+describe Ohai::System, "Network plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @interface_list=%w(lo eth0 eth1 vboxnet0)
-    @sigar=mock('Sigar')
-    @net_info=mock('Sigar::NetInfo')
-    @net_interface_conf={
-      :eth0 => {
-        :flags => 2115,
-        :destination => "192.168.1.1",
-        :mtu => 1500,
-        :type => "Ethernet",
-        :hwaddr => "00:11:22:33:44:55:66",
-        :address => "192.168.1.1",
-        :broadcast => "192.168.1.255",
-        :netmask => "255.255.255.0",
-        :address6 => nil,
-        :tx_queue_len => 1000,
-    },
-      :eth1 => {
-        :flags => 2115,
-        :destination => "192.168.2.1",
-        :mtu => 1500,
-        :type => "Ethernet",
-        :hwaddr => "00:11:22:33:44:55:67",
-        :address => "192.168.2.1",
-        :broadcast => "192.168.2.255",
-        :netmask => "255.255.255.0",
-        :address6 => nil,
-        :tx_queue_len => 1000,
-    },
-      :lo => {
-        :flags => 73,
-        :destination => "127.0.0.1",
-        :mtu => 16436,
-        :type => "Local loopback",
-        :hwaddr => "00:00:00:00:00:00",
-        :address => "127.0.0.1",
-        :broadcast => "0.0.0.0",
-        :netmask => "255.255.255.255",
-        :address6 => nil,
-        :tx_queue_len => 0
-    },
-      :vboxnet0 => {
-        :flags => 2050,
-        :destination => "0.0.0.0",
-        :mtu => 1500,
-        :type => "Ethernet",
-        :hwaddr => "0A:00:27:00:00:00",
-        :address => "0.0.0.0",
-        :broadcast => "0.0.0.0",
-        :netmask => "0.0.0.0",
-        :address6 => "::",
-        :prefix6_length => 0,
-        :scope6 => 0,
-        :tx_queue_len => 1000
-    }}
-    @net_interface_stat={
-      :eth0 => {
-        :rx_bytes=>1369035618, 
-        :rx_dropped=>0,
-        :rx_errors=>0,
-        :rx_frame=>0,
-        :rx_overruns=>0,
-        :rx_packets=>7271669,
-        :speed=>-1,
-        :tx_bytes=>3482843666,
-        :tx_carrier=>0,
-        :tx_collisions=>0,
-        :tx_dropped=>0,
-        :tx_errors=>0,
-        :tx_overruns=>0,
-        :tx_packets=>4392794
-      },
-      :lo => {
-        :rx_bytes=>335126,
-        :rx_dropped=>0,
-        :rx_errors=>0,
-        :rx_frame=>0,
-        :rx_overruns=>0,
-        :rx_packets=>2402,
-        :speed=>-1,
-        :tx_bytes=>335126,
-        :tx_carrier=>0,
-        :tx_collisions=>0,
-        :tx_dropped=>0,
-        :tx_errors=>0,
-        :tx_overruns=>0,
-        :tx_packets=>2402
-      }
-    }
-    @net_info.stub!(:default_gateway).and_return("127.0.0.1")
-    @net_info.stub!(:primary_dns).and_return("127.0.0.1")
-    @net_info.stub!(:secondary_dns).and_return("127.0.0.2")
-    @net_info.stub!(:default_gateway_interface).and_return("eth1")
-    Sigar.should_receive(:new).and_return(@sigar)
-    @sigar.should_receive(:net_info).exactly(4).times.and_return(@net_info)
-    @sigar.should_receive(:net_interface_list).once.and_return(@interface_list)
-    @interface_list.each do |interface|
-      net_config=mock('Sigar::NetConf')
-      @net_interface_conf[interface.to_sym].each_pair do |k,v|
-        net_config.stub!(k.to_sym).and_return(v)
-      end
-      net_stat=mock('Sigar::NetStat')
-      if @net_interface_stat.has_key?(interface.to_sym)
-        @net_interface_stat[interface.to_sym].each_pair do |k,v|
-          net_stat.stub!(k.to_sym).and_return(v)
-        end
-      else
-        net_stat=nil
-      end
-      @sigar.should_receive(:net_interface_config).with(interface).once.and_return(net_config)
-      @sigar.should_receive(:net_interface_stat).with(interface).once.and_return(net_stat)
-    end
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai._require_plugin("network")
-  end
-
-  it "should get the default gateway" do
-    @ohai[:network][:default_gateway].should eql("127.0.0.1")
+    @ohai.require_plugin("network")
   end
   
-  it "should get the secondary dns" do
-    @ohai[:network][:secondary_dns].should eql("127.0.0.2")
+  it "should get the list of interfaces" do
+    @ohai[:network][:interfaces].should have_at_least(1).items
   end
   
-  it "should get the default_interface" do
-    @ohai[:network][:default_interface].should eql("eth1")
+  it "should have the loopback interface" do
+    @ohai[:network][:interfaces].keys.grep(/lo/).should have_at_least(1).items
   end
   
-  it "should get the interface list" do
-    @interface_list.each do |interface|
-      @ohai[:network][:interfaces].should have_key(interface)
+  it "should have the default interface set" do
+    @ohai[:network].should have_key(:default_interface)
+  end
+  
+  it "should have the default gateway set" do
+    @ohai[:network].should have_key(:default_gateway)
+  end
+  
+  it "should have addresses defined on interfaces" do
+    @ohai[:network][:interfaces].each_key do |interface|
+      @ohai[:network][:interfaces][interface][:addresses].should have_at_least(1).item
     end
   end
-
-  it "should get the interface config details" do
-    @interface_list.each do |interface|
-      @net_interface_conf[interface.to_sym].each_pair do |k,v|
-        next if ["flags","type"].member?(k.to_s)
-        @ohai[:network][:interfaces][interface][k].should eql(v) if @ohai[:network][:interfaces][interface].has_key?(k)
-      end
+  
+  it "should have encapsulation defined on interfaces" do
+    @ohai[:network][:interfaces].each_key do |interface|
+      @ohai[:network][:interfaces][interface].should have_key(:encapsulation)
     end
   end
-
-  it "should get the interface stat details" do
-    @interface_list.each do |interface|
-      if @net_interface_stat.has_key?(interface.to_sym)
-        @net_interface_stat[interface.to_sym].each_pair do |k,v|
-          [:rx,:tx].each do |stat|
-            @ohai[:counters][:network][:interfaces][interface][stat][k].should eql(v) if @ohai[:counters][:network][:interfaces][interface].has_key?(stat) && @ohai[:counters][:network][:interfaces][interface][stat].has_key?(k)
-          end
-        end
-      end
+  
+  it "should have flags defined on interfaces" do
+    @ohai[:network][:interfaces].each_key do |interface|
+      @ohai[:network][:interfaces][interface].should have_key(:flags)
     end
   end
-
+  
 end

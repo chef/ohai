@@ -30,6 +30,11 @@ network[:default_interface] = ninfo.default_gateway_interface
 
 network[:default_gateway] = ninfo.default_gateway
 
+%w(primary_dns secondary_dns).each do |i|
+  network[i.to_sym]=ninfo.send(i)
+end
+
+
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback")
   return "PPP" if encap.eql?("Point-to-Point Protocol")
@@ -67,8 +72,7 @@ sigar.net_interface_list.each do |cint|
     iface[cint][:addresses][ifconfig.address]["netmask"] = ifconfig.netmask
   end
   iface[cint][:flags] = Sigar.net_interface_flags_to_s(ifconfig.flags).split(' ')
-  iface[cint][:mtu] = ifconfig.mtu.to_s
-  iface[cint][:queuelen] = ifconfig.tx_queue_len.to_s
+  iface[cint][:mtu] = ifconfig.mtu
   if ifconfig.prefix6_length != 0
     iface[cint][:addresses][ifconfig.address6] = { "family" => "inet6" }
     iface[cint][:addresses][ifconfig.address6]["prefixlen"] = ifconfig.prefix6_length.to_s
@@ -83,7 +87,7 @@ sigar.net_interface_list.each do |cint|
     net_counters[cint][:tx] = { "packets" => ifstat.tx_packets.to_s, "errors"     => ifstat.tx_errors.to_s,
                                 "drop"    => ifstat.tx_dropped.to_s, "overrun"    => ifstat.tx_overruns.to_s,
                                 "carrier" => ifstat.tx_carrier.to_s, "collisions" => ifstat.tx_collisions.to_s,
-                                "bytes"   => ifstat.tx_bytes.to_s }
+                                "bytes"   => ifstat.tx_bytes.to_s, "queuelen" => ifconfig.tx_queue_len.to_s }
   end
 end
 

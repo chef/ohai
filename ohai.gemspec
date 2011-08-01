@@ -18,6 +18,7 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"
   s.add_dependency "mixlib-log"
+  s.add_dependency "sigar"
   s.add_development_dependency "rspec-core"
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"

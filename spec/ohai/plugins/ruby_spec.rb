@@ -52,4 +52,12 @@ describe Ohai::System, "plugin ruby" do
     end
   end
   
+  it "[OHAI-277] should use ruby_bin in run_ruby" do
+    @ohai.should_receive(:run_command).with(
+      :no_status_check=>true,
+      :command=>"#{ruby_bin} -e \"require 'rbconfig'; puts %Q(platform=\#{RUBY_PLATFORM},version=\#{RUBY_VERSION},release_date=\#{RUBY_RELEASE_DATE},target=\#{::Config::CONFIG['target']},target_cpu=\#{::Config::CONFIG['target_cpu']},target_vendor=\#{::Config::CONFIG['target_vendor']},target_os=\#{::Config::CONFIG['target_os']},host=\#{::Config::CONFIG['host']},host_cpu=\#{::Config::CONFIG['host_cpu']},host_os=\#{::Config::CONFIG['host_os']},host_vendor=\#{::Config::CONFIG['host_vendor']},bin_dir=\#{::Config::CONFIG['bindir']},ruby_bin=\#{::File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])},)\""
+    )
+    @ohai._require_plugin("ruby")
+  end
+  
 end

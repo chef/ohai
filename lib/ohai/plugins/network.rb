@@ -23,7 +23,8 @@ network[:interfaces] = Mash.new unless network[:interfaces]
 counters Mash.new unless counters
 counters[:network] = Mash.new unless counters[:network]
 
-require_plugin "hostname"
+require_plugin "os"
+Ohai::Log.debug("Loading OS specific networking plugin: #{os}::network")
 require_plugin "#{os}::network"
 
 def find_ip_and_mac(addresses)
@@ -51,4 +52,8 @@ else
       return if (ipaddress and macaddress)
     end
   end
+end
+
+def get_interface_ip(interface)
+  network[:interfaces][interface][:addresses].select {|address,data| data["family"] == "inet"}.first.first
 end

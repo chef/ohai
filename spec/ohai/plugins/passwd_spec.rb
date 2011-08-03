@@ -3,7 +3,6 @@ passwd_plugin_path=Ohai::Config[:plugin_path].first+"/passwd.rb"
 
 describe Ohai::System, "plugin passwd from files" do
   before(:each) do
-    Ohai::Log.level=:debug
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     File.should_receive(:exists?).with(passwd_plugin_path).and_return(true)

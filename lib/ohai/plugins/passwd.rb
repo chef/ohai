@@ -19,7 +19,6 @@ unless etc
       g_members = splitline[3..-1].join.split(",")
       etc[:group][splitline[0]] = Mash.new(:gid => splitline[2].to_i, :members => g_members)
     end
-    
   else
     Etc.passwd do |entry|
       etc[:passwd][entry.name] = Mash.new(:dir => entry.dir, :gid => entry.gid, :uid => entry.uid, :shell => entry.shell, :gecos => entry.gecos)

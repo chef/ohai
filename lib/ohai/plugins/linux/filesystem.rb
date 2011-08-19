@@ -18,6 +18,8 @@
 
 provides "filesystem"
 
+require 'timeout'
+
 fs = Mash.new
 
 # Grab filesystem data from df

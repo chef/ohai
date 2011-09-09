@@ -39,7 +39,7 @@ end
 host = WMI::Win32_OperatingSystem.find(:first)
 kernel[:os_info] = Mash.new
 host.properties_.each do |p|
-  kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name]
+  kernel[:os_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
 end
 
 kernel[:name] = "#{kernel[:os_info][:caption]}"
@@ -50,7 +50,7 @@ kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os
 host = WMI::Win32_ComputerSystem.find(:first)
 kernel[:cs_info] = Mash.new
 host.properties_.each do |p|
-  kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name]
+  kernel[:cs_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
 end
 
 kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
@@ -62,7 +62,7 @@ drivers = WMI::Win32_PnPSignedDriver.find(:all)
 drivers.each do |driver|
   pnp_drivers[driver.DeviceID] = Mash.new
   driver.properties_.each do |p|
-    pnp_drivers[driver.DeviceID][p.name.wmi_underscore.to_sym] = driver[p.name]
+    pnp_drivers[driver.DeviceID][p.name.wmi_underscore.to_sym] = driver.send(p.name)
   end
   if driver.DeviceName
     kext[driver.DeviceName] = pnp_drivers[driver.DeviceID]

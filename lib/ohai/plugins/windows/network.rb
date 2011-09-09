@@ -50,7 +50,7 @@ adapters.each do |adapter|
     i = adapter.Index
     iface_config[i] = Mash.new
     adapter.properties_.each do |p|
-      iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name]
+      iface_config[i][p.name.wmi_underscore.to_sym] = adapter.send(p.name)
     end
 end
 
@@ -59,7 +59,7 @@ adapters.each do |adapter|
     i = adapter.Index
     iface_instance[i] = Mash.new
      adapter.properties_.each do |p|
-      iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name]
+      iface_instance[i][p.name.wmi_underscore.to_sym] = adapter.send(p.name)
     end
 end
 
@@ -87,7 +87,8 @@ iface_instance.keys.each do |i|
       rescue
       end
     end
-    iface[cint][:configuration][:mac_address].each do |mac_addr|
+    # Apparently you can have more than one mac_address? Odd.
+    [iface[cint][:configuration][:mac_address]].flatten.each do |mac_addr|
       iface[cint][:addresses][mac_addr] = {
         "family"    => "lladdr"
       }
@@ -106,7 +107,7 @@ end
 cint=nil
 status, stdout, stderr = run_command(:command => "arp -a")
 if status == 0
-  stdout.each do |line|
+  stdout.split("\n").each do |line|
     if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
       cint = $2.downcase
     end

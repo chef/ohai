@@ -19,6 +19,7 @@
 require 'ohai/exception'
 require 'ohai/config'
 require 'ohai/log'
+require 'stringio'
 require 'tmpdir'
 require 'fcntl'
 require 'etc'

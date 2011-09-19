@@ -24,6 +24,8 @@ begin
   require_plugin "network"
 
   network['interfaces'].keys.each do |ifName|
+    next if network['interfaces'][ifName]['addresses'].nil?
+
     network['interfaces'][ifName]['addresses'].each do |address,attrs|
       begin
         attrs.merge! 'ip_scope' => address.to_ip.scope

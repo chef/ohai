@@ -18,16 +18,39 @@
 
 provides "platform", "platform_version", "platform_build"
 
-popen4("uname -X") do |pid, stdin, stdout, stderr|
+if File.exists?("/sbin/uname")
+  uname_exec = "/sbin/uname"
+else
+  uname_exec = "uname"
+end
+
+popen4("#{uname_exec} -X") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line
-    when /^System =\s+(.+)$/
-      platform = ($1.eql?("SunOS") ? "solaris2" : $1.downcase)
     when /^Release =\s+(.+)$/
       platform_version $1
     when /^KernelID =\s+(.+)$/
       platform_build $1
+    end
+  end
+end
+
+File.open("/etc/release") do |file|
+  while line = file.gets
+    case line
+    when /^\s*(OpenIndiana).*oi_(\d+).*$/
+      platform "openindiana"
+      platform_version $2
+    when /^\s*(OpenSolaris).*snv_(\d+).*$/
+      platform "opensolaris"
+      platform_version $2
+    when /^\s*(Oracle Solaris) (\d+)\s.*$/
+      platform "solaris2"
+    when /^\s*(Solaris)\s.*$/
+      platform "solaris2"
+    when /^\s*(NexentaCore)\s.*$/
+      platform "nexentacore"
     end
   end
 end

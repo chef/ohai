@@ -79,7 +79,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
       cint = $1
-      iface[cint] = Mash.new
+      iface[cint] = Mash.new unless iface[cint]
       iface[cint][:mtu] = $2
       iface[cint][:index] = $3
       if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/

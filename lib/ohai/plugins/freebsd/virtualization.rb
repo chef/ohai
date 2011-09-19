@@ -20,6 +20,17 @@ provides "virtualization"
 
 virtualization Mash.new
 
+if from("sysctl -n security.jail.jailed").to_i == 1
+  virtualization[:system] = "jail"
+  virtualization[:role] = "guest"
+end
+
+# XXX doesn't work when jail is there but not running (ezjail-admin stop)
+if from("jls -n \| wc -l").to_i >= 1
+    virtualization[:system] = "jail"
+    virtualization[:role] = "host"
+end
+
 # KVM Host support for FreeBSD is in development
 # http://feanor.sssup.it/~fabio/freebsd/lkvm/
 

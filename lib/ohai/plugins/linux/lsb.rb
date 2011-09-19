@@ -23,13 +23,13 @@ lsb Mash.new
 if File.exists?("/etc/lsb-release")
   File.open("/etc/lsb-release").each do |line|
     case line
-    when /^DISTRIB_ID=(.+)$/
+    when /^DISTRIB_ID=["']?(.+?)["']?$/
       lsb[:id] = $1
-    when /^DISTRIB_RELEASE=(.+)$/
+    when /^DISTRIB_RELEASE=["']?(.+?)["']?$/
       lsb[:release] = $1
-    when /^DISTRIB_CODENAME=(.+)$/
+    when /^DISTRIB_CODENAME=["']?(.+?)["']?$/
       lsb[:codename] = $1
-    when /^DISTRIB_DESCRIPTION=(.+)$/
+    when /^DISTRIB_DESCRIPTION=["']?(.+?)["']?$/
       lsb[:description] = $1
     end
   end

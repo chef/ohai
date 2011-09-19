@@ -29,7 +29,7 @@ disks.each do |disk|
     fs[filesystem] = Mash.new
     ld_info[filesystem] = Mash.new
     disk.properties_.each do |p|
-      ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk[p.name]
+      ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk.send(p.name)
     end
     fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
     fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000

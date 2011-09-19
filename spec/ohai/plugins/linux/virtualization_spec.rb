@@ -40,7 +40,7 @@ describe Ohai::System, "Linux virtualization platform" do
       File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
       File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
       @ohai._require_plugin("linux::virtualization")
-      @ohai[:virtualization][:system].should == "xen" 
+      @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "host"
     end
 
@@ -66,7 +66,7 @@ describe Ohai::System, "Linux virtualization platform" do
       @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "host"
     end
-    
+
     it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
       File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
       File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
@@ -76,6 +76,30 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "should not set virtualization if kvm isn't there" do
+      File.should_receive(:exists?).at_least(:once).and_return(false)
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization].should == {}
+    end
+  end
+
+  describe "when we are checking for VirtualBox" do
+    it "should set vbox host if /proc/modules contains vboxdrv" do
+      File.should_receive(:exists?).with("/proc/modules").and_return(true)
+      File.stub!(:read).with("/proc/modules").and_return("vboxdrv 268268 3 vboxnetadp,vboxnetflt")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "vbox"
+      @ohai[:virtualization][:role].should == "host"
+    end
+
+    it "should set vbox guest if /proc/modules contains vboxguest" do
+      File.should_receive(:exists?).with("/proc/modules").and_return(true)
+      File.stub!(:read).with("/proc/modules").and_return("vboxguest 177749 2 vboxsf")
+      @ohai._require_plugin("linux::virtualization")
+      @ohai[:virtualization][:system].should == "vbox"
+      @ohai[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if vbox isn't there" do
       File.should_receive(:exists?).at_least(:once).and_return(false)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization].should == {}
@@ -107,8 +131,8 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub!(:read).and_return(ms_vpc_dmidecode) 
-       
+      @stdout.stub!(:read).and_return(ms_vpc_dmidecode)
+
       @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "virtualpc"

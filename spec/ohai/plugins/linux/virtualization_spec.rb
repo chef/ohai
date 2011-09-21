@@ -27,7 +27,6 @@ describe Ohai::System, "Linux virtualization platform" do
 
     # default to all requested Files not existing
     File.stub!(:exists?).with("/proc/xen/capabilities").and_return(false)
-    File.stub!(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(false)
     File.stub!(:exists?).with("/proc/modules").and_return(false)
     File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
@@ -44,8 +43,9 @@ describe Ohai::System, "Linux virtualization platform" do
       @ohai[:virtualization][:role].should == "host"
     end
 
-    it "should set xen guest if /proc/sys/xen/independent_wallclock exists" do
-      File.should_receive(:exists?).with("/proc/sys/xen/independent_wallclock").and_return(true)
+    it "should set xen guest if /proc/xen/capabilities exists" do
+      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
+      File.stub!(:read).with("/proc/xen/capabilities").and_return("")
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "guest"

@@ -73,7 +73,11 @@ if File.exists?("/proc/cpuinfo")
 end
 
 # http://wiki.openvz.org/Proc/user_beancounters
-if File.exists?("/proc/user_beancounters")
+# http://wiki.openvz.org/BC_proc_entries
+if File.exists?("/proc/bc/0")
+  virtualization[:emulator] = "openvz"
+  virtualization[:role] = "host"
+elsif File.exists?("/proc/user_beancounters")
   if File.read("/proc/user_beancounters") =~ /\n\s+0:\s+/
     virtualization[:emulator] = "openvz"
     virtualization[:role] = "host"

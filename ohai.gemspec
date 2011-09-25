@@ -11,7 +11,7 @@ spec = Gem::Specification.new do |s|
   s.description = s.summary
   s.author = "Adam Jacob"
   s.email = "adam@opscode.com"
-  s.homepage = "http://wiki.opscode.com/display/ohai"
+  s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
   s.add_dependency "yajl-ruby"
   s.add_dependency "systemu"

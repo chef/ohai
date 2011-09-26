@@ -26,26 +26,27 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai.extend(SimpleFromFile)
 
     # default to all requested Files not existing
-    File.stub!(:exists?).with("/proc/xen/capabilities").and_return(false)
+    File.stub(:exists?).with("/proc/xen").and_return(false)
+    File.stub(:exists?).with("/dev/xen/evtchn").and_return(false)
     File.stub!(:exists?).with("/proc/modules").and_return(false)
     File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
     File.stub!(:exists?).with("/proc/self/status").and_return(false)
-		File.stub!(:exists?).with("/proc/user_beancounters").and_return(false)
+    File.stub!(:exists?).with("/proc/user_beancounters").and_return(false)
   end
 
   describe "when we are checking for xen" do
-    it "should set xen host if /proc/xen/capabilities contains control_d" do
-      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-      File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
+    it "should set xen host if /proc/xen " do
+      File.should_receive(:exists?).with("/proc/xen").and_return(true)
+      File.should_receive(:exists?).with("/dev/xen/evtchn").and_return(true)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "host"
     end
 
-    it "should set xen guest if /proc/xen/capabilities exists" do
-      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-      File.stub!(:read).with("/proc/xen/capabilities").and_return("")
+    it "should set xen guest if no /dev/xen/evtchn" do
+      File.should_receive(:exists?).with("/proc/xen").and_return(true)
+      File.should_receive(:exists?).with("/dev/xen/evtchn").and_return(false)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "guest"

@@ -28,11 +28,11 @@ provides "platform", "platform_version"
 require_plugin 'linux::lsb'
 
 if lsb[:id] =~ /RedHat/i
-	platform "redhat"
-    platform_version lsb[:release]
+  platform "redhat"
+  platform_version lsb[:release]
 elsif lsb[:id]	
-    platform lsb[:id].downcase
-    platform_version lsb[:release]
+  platform lsb[:id].downcase
+  platform_version lsb[:release]
 elsif File.exists?("/etc/debian_version")
   platform "debian"
   platform_version File.read("/etc/debian_version").chomp

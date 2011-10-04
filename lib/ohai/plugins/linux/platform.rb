@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 def get_redhatish_platform(contents)
   contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
 end
@@ -26,6 +27,8 @@ end
 provides "platform", "platform_version"
 
 require_plugin 'linux::lsb'
+  
+# platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
 
 if lsb[:id] =~ /RedHat/i
   platform "redhat"

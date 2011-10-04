@@ -66,7 +66,7 @@ popen4("ls -l /dev/disk/by-uuid/* | awk '{print $11, $9}'") do |pid, stdin, stdo
 end
 
 # Grab any missing mount information from /proc/mounts
-File.open('/proc/mounts').read_nonblock(4096).each do |line|
+File.open('/proc/mounts').read_nonblock(4096).each_line do |line|
   if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
     filesystem = $1
     next if fs.has_key?(filesystem)

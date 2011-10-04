@@ -119,54 +119,74 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "on redhat breeds" do
-    before(:each) do
-      @ohai.lsb = nil
-      File.should_receive(:exists?).with("/etc/redhat-release").and_return(true)
-    end
+    describe "with lsb_release results" do
+      it "should set the platform to redhat even if the LSB name is something absurd but redhat like" do
+        @ohai[:lsb][:id] = "RedHatEnterpriseServer"
+        @ohai[:lsb][:release] = "6.1"
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "redhat"
+        @ohai[:platform_version].should == "6.1"
+      end
 
-    it "should check for the existance of redhat-release" do
-      @ohai._require_plugin("linux::platform")
-    end
-          
-    it "should read the platform as centos and version as 5.3" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("CentOS release 5.3")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "centos"
-    end
-
-    it "may be that someone munged Red Hat to be RedHat" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "redhat"
-      @ohai[:platform_version].should == "5.3"
-    end
-
-    it "should read the platform as redhat and version as 5.3" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("Red Hat release 5.3")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "redhat"
-      @ohai[:platform_version].should == "5.3"
+      it "should set the platform to centos" do
+        @ohai[:lsb][:id] = "CentOS"
+        @ohai[:lsb][:release] = "5.4"
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "centos"
+        @ohai[:platform_version].should == "5.4"
+      end
     end
   
-    it "should read the platform as fedora and version as 13 (rawhide)" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "fedora"
-      @ohai[:platform_version].should == "13 (rawhide)"
-    end
-    
-    it "should read the platform as fedora and version as 10" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 10")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "fedora"
-      @ohai[:platform_version].should == "10"
-    end
-
-    it "should read the platform as fedora and version as 13 using to_i" do
-      File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "fedora"
-      @ohai[:platform_version].to_i.should == 13
+    describe "without lsb_release results" do
+      before(:each) do
+        @ohai.lsb = nil
+        File.should_receive(:exists?).with("/etc/redhat-release").and_return(true)
+      end
+  
+      it "should check for the existance of redhat-release" do
+        @ohai._require_plugin("linux::platform")
+      end
+            
+      it "should read the platform as centos and version as 5.3" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("CentOS release 5.3")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "centos"
+      end
+  
+      it "may be that someone munged Red Hat to be RedHat" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "redhat"
+        @ohai[:platform_version].should == "5.3"
+      end
+  
+      it "should read the platform as redhat and version as 5.3" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("Red Hat release 5.3")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "redhat"
+        @ohai[:platform_version].should == "5.3"
+      end
+  
+      it "should read the platform as fedora and version as 13 (rawhide)" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "fedora"
+        @ohai[:platform_version].should == "13 (rawhide)"
+      end
+      
+      it "should read the platform as fedora and version as 10" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 10")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "fedora"
+        @ohai[:platform_version].should == "10"
+      end
+  
+      it "should read the platform as fedora and version as 13 using to_i" do
+        File.should_receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "fedora"
+        @ohai[:platform_version].to_i.should == 13
+      end
     end
   end
 

@@ -19,6 +19,8 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
+# We do not alter case for lsb attributes and consume them as provided
+
 describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @ohai = Ohai::System.new
@@ -64,44 +66,80 @@ describe Ohai::System, "Linux lsb plugin" do
     before(:each) do
       File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
       File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(true)
-
+  
       @stdin = mock("STDIN", { :close => true })
       @pid = 10
       @stderr = mock("STDERR")
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
-        and_yield("LSB Version:    :core-4.0-ia32:core-4.0-noarch").
-        and_yield("Distributor ID: Fedora").
-        and_yield("Description:    Fedora release 14 (Laughlin)").
-        and_yield("Release:        14").
-        and_yield("Codename:       Laughlin")
+    end
+    
+    describe "on Centos 5.4 correctly" do
+      before(:each) do
+        @stdout.stub!(:each).
+          and_yield("LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch").
+          and_yield("Distributor ID: CentOS").
+          and_yield("Description:  CentOS release 5.4 (Final)").
+          and_yield("Release:  5.4").
+          and_yield("Codename: Final")
+  
+        @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      end
 
-      @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-
+      it "should set lsb[:id]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:id].should == "CentOS"
+      end
+    
+      it "should set lsb[:release]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:release].should == "5.4"
+      end
+    
+      it "should set lsb[:codename]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:codename].should == "Final"
+      end
+    
+      it "should set lsb[:description]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:description].should == "CentOS release 5.4 (Final)"
+      end
     end
 
-    it "should set lsb[:id]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:id].should == "Fedora"
-    end
+    describe "on Fedora 14 correctly" do
+      before(:each) do
+        @stdout.stub!(:each).
+          and_yield("LSB Version:    :core-4.0-ia32:core-4.0-noarch").
+          and_yield("Distributor ID: Fedora").
+          and_yield("Description:    Fedora release 14 (Laughlin)").
+          and_yield("Release:        14").
+          and_yield("Codename:       Laughlin")
   
-    it "should set lsb[:release]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:release].should == "14"
-    end
+        @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      end
   
-    it "should set lsb[:codename]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:codename].should == "Laughlin"
+      it "should set lsb[:id]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:id].should == "Fedora"
+      end
+    
+      it "should set lsb[:release]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:release].should == "14"
+      end
+    
+      it "should set lsb[:codename]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:codename].should == "Laughlin"
+      end
+    
+      it "should set lsb[:description]" do
+        @ohai._require_plugin("linux::lsb")
+        @ohai[:lsb][:description].should == "Fedora release 14 (Laughlin)"
+      end
     end
-  
-    it "should set lsb[:description]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:description].should == "Fedora release 14 (Laughlin)"
-    end
-  
   end
 
   it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do

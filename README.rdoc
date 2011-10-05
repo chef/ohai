@@ -8,17 +8,17 @@ Ohai will print out a JSON data blob for all the known data about your system. W
 
 Opscode distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the wiki:
 
-* http://wiki.opscode.com/display/ohai/Home
+* http://wiki.opscode.com/display/chef/Ohai
 
 = DEVELOPMENT:
 
 Before working on the code, if you plan to contribute your changes, you need to read the Opscode Contributing document.
 
-* http://wiki.opscode.com/display/opscode/Contributing
+* http://wiki.opscode.com/display/chef/How+to+Contribute
 
 You will also need to set up the repository with the appropriate branches. We document the process on the Chef Wiki.
 
-* http://wiki.opscode.com/display/opscode/Working+with+Git
+* http://wiki.opscode.com/display/chef/Working+with+git
 
 (Substitude 'ohai' for 'chef')
 
@@ -75,7 +75,7 @@ Tickets/Issues:
 
 Documentation:
 
-* http://wiki.opscode.com/display/ohai/Home/
+* http://wiki.opscode.com/display/chef/Ohai
 
 = LICENSE:
 

@@ -22,15 +22,23 @@ virtualization Mash.new
 
 # if it is possible to detect paravirt vs hardware virt, it should be put in
 # virtualization[:mechanism]
-if File.exists?("/proc/xen")
-  if File.exists?("/dev/xen/evtchn")
-    virtualization[:system] = "xen"
+
+## Xen
+# This file should exists on most Xen systems
+if File.exists?("/proc/xen/capabilities")
+  virtualization[:system] = "xen"
+  if File.read("/proc/xen/capabilities") =~ /control_d/i
     virtualization[:role] = "host"
   else
-    virtualization[:system] = "xen"
     virtualization[:role] = "guest"
   end
+# Guests do not always have this file, but may
+elsif File.exists?("/proc/sys/xen/independent_wallclock")
+  virtualization[:system] = "xen"
+  virtualization[:role] = "guest"
 end
+# cpuid of guests, if we could get it, would also be a clue
+# may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
 
 # Detect from kernel module
 if File.exists?("/proc/modules")

@@ -24,7 +24,7 @@ virtualization Mash.new
 # virtualization[:mechanism]
 
 ## Xen
-# Empty dir for EL6 guests
+# /proc/xen is an empty dir for EL6 + Linode Guests
 if File.exists?("/proc/xen")
   virtualization[:system] = "xen"
   # Assume guest
@@ -42,6 +42,8 @@ end
 # - cpuid of guests, if we could get it, would also be a clue
 # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
 # - EL6 guests carry a 'hypervisor' cpu flag
+# - Additional edge cases likely should not change the above assumptions
+#   but rather be additive - btm
 
 # Detect from kernel module
 if File.exists?("/proc/modules")

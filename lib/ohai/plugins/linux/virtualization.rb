@@ -24,21 +24,24 @@ virtualization Mash.new
 # virtualization[:mechanism]
 
 ## Xen
-# This file should exists on most Xen systems
-if File.exists?("/proc/xen/capabilities")
+# Empty dir for EL6 guests
+if File.exists?("/proc/xen")
   virtualization[:system] = "xen"
-  if File.read("/proc/xen/capabilities") =~ /control_d/i
-    virtualization[:role] = "host"
-  else
-    virtualization[:role] = "guest"
-  end
-# Guests do not always have this file, but may
-elsif File.exists?("/proc/sys/xen/independent_wallclock")
-  virtualization[:system] = "xen"
+  # Assume guest
   virtualization[:role] = "guest"
+
+  # This file should exist on most Xen systems, normally empty for guests
+  if File.exists?("/proc/xen/capabilities")
+    if File.read("/proc/xen/capabilities") =~ /control_d/i
+      virtualization[:role] = "host"
+    end
+  end
 end
-# cpuid of guests, if we could get it, would also be a clue
-# may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
+
+# Xen Notes:
+# - cpuid of guests, if we could get it, would also be a clue
+# - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
+# - EL6 guests carry a 'hypervisor' cpu flag
 
 # Detect from kernel module
 if File.exists?("/proc/modules")

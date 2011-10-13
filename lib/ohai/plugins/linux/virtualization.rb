@@ -105,9 +105,13 @@ if File.exists?("/usr/sbin/dmidecode")
         virtualization[:role] = "guest"
       end
     else
-      nil
+      if dmi_info =~ /Product Name: VirtualBox/
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "guest"
+      else
+      	nil
+      end
     end
-
   end
 end
 

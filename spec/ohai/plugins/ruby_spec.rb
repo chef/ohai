@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ describe Ohai::System, "plugin ruby" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new    
+    @ohai[:languages] = Mash.new
     @ohai.stub!(:require_plugin).and_return(true)
   end
 
@@ -33,14 +33,14 @@ describe Ohai::System, "plugin ruby" do
     :platform => RUBY_PLATFORM,
     :version => RUBY_VERSION,
     :release_date => RUBY_RELEASE_DATE,
-    :target => ::Config::CONFIG['target'],
-    :target_cpu => ::Config::CONFIG['target_cpu'],
-    :target_vendor => ::Config::CONFIG['target_vendor'],
-    :target_os => ::Config::CONFIG['target_os'],
-    :host => ::Config::CONFIG['host'],
-    :host_cpu => ::Config::CONFIG['host_cpu'],
-    :host_os => ::Config::CONFIG['host_os'],
-    :host_vendor => ::Config::CONFIG['host_vendor'],
+    :target => ::Config::CONFIG['target'] || "",
+    :target_cpu => ::Config::CONFIG['target_cpu'] || "",
+    :target_vendor => ::Config::CONFIG['target_vendor'] || "",
+    :target_os => ::Config::CONFIG['target_os'] || "",
+    :host => ::Config::CONFIG['host'] || "",
+    :host_cpu => ::Config::CONFIG['host_cpu'] || "",
+    :host_os => ::Config::CONFIG['host_os'] || "",
+    :host_vendor => ::Config::CONFIG['host_vendor'] || "",
     :gems_dir => %x{#{ruby_bin} #{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!,
     :gem_bin => [ ::Gem.default_exec_format % 'gem', 'gem' ].map{|bin| "#{::Config::CONFIG['bindir']}/#{bin}"
       }.find{|bin| ::File.exists? bin},
@@ -51,5 +51,5 @@ describe Ohai::System, "plugin ruby" do
       @ohai[:languages][:ruby][attribute].should eql(value)
     end
   end
-  
+
 end

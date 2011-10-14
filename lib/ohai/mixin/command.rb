@@ -24,6 +24,8 @@ require 'tmpdir'
 require 'fcntl'
 require 'etc'
 require 'systemu'
+require 'ohai/mixin/jruby_command'
+require 'timeout'
 
 module Ohai
   module Mixin
@@ -78,6 +80,18 @@ module Ohai
 
       module_function :run_command
 
+      def run_command_jruby(command, timeout)
+        begin
+          Timeout.timeout(timeout) do
+            return JrubyCommand.new(command).execute
+          end
+        rescue Timeout::Error => e
+          Ohai::Log.error("#{command} exceeded timeout #{timeout}")
+          raise(e)
+        end
+        return JrubyCommand.new(command).execute
+      end
+
       def run_command_unix(command, timeout)
         stderr_string, stdout_string, status = "", "", nil
 
@@ -117,6 +131,8 @@ module Ohai
 
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/
         alias :run_command_backend :run_command_windows
+      elsif RUBY_PLATFORM =~ /java/
+        alias :run_command_backend :run_command_jruby
       else
         alias :run_command_backend :run_command_unix
       end

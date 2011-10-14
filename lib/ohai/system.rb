@@ -21,8 +21,7 @@ require 'ohai/log'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
-
-require 'yajl'
+require 'ohai/json_parser'
 
 module Ohai
   class System
@@ -92,7 +91,7 @@ module Ohai
         return md[1]
       end
     end
-    
+
     def set_attribute(name, *values)
       @data[name] = Array18(*values)
       @data[name]
@@ -205,12 +204,12 @@ module Ohai
 
     # Serialize this object as a hash
     def to_json
-      Yajl::Encoder.new.encode(@data)
+      Ohai::JsonParser.new.to_json(@data)
     end
 
     # Pretty Print this object as JSON
     def json_pretty_print(item=nil)
-      Yajl::Encoder.new(:pretty => true).encode(item || @data)
+      Ohai::JsonParser.new.json_pretty_print(item || @data)
     end
 
     def attributes_print(a)
@@ -240,7 +239,7 @@ module Ohai
     end
 
     private
-    
+
     def Array18(*args)
       return nil if args.empty?
       return args.first if args.length == 1

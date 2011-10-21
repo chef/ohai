@@ -36,7 +36,10 @@ def find_ip_and_mac(addresses)
   [ip, mac]
 end
 
-if network[:default_interface]
+# If we have a default interface that has addresses, populate the short-cut attributes
+if network[:default_interface] and
+    network["interfaces"][network[:default_interface]] and
+    network["interfaces"][network[:default_interface]]["addresses"]
   Ohai::Log.debug("Using default interface for default ip and mac address")
   im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"])
   ipaddress im.shift

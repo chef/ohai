@@ -56,6 +56,20 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform_version].should == "8.04"
     end
+
+    it "should set platform to redhat when [:lsb][:id] contains Redhat" do
+      @ohai[:lsb][:id] = "RedHatEnterpriseServer"
+      @ohai[:lsb][:release] = "5.7"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "redhat"
+    end
+
+    it "should set platform to amazon when [:lsb][:id] contains Amazon" do
+      @ohai[:lsb][:id] = "AmazonAMI"
+      @ohai[:lsb][:release] = "2011.09"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "amazon"
+    end
   end
 
   describe "on debian" do

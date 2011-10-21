@@ -36,6 +36,7 @@ def find_ip_and_mac(addresses)
   [ip, mac]
 end
 
+# If we have a default interface that has addresses, populate the short-cut attributes
 if network[:default_interface] and
     network["interfaces"][network[:default_interface]] and
     network["interfaces"][network[:default_interface]]["addresses"]

@@ -19,6 +19,7 @@ provides "cloud"
 require_plugin "ec2"
 require_plugin "rackspace"
 require_plugin "eucalyptus"
+require_plugin "virtualbox"
 
 # Make top-level cloud hashes
 #
@@ -42,7 +43,7 @@ def on_ec2?
 end
 
 # Fill cloud hash with ec2 values
-def get_ec2_values 
+def get_ec2_values
   cloud[:public_ips] << ec2['public_ipv4']
   cloud[:private_ips] << ec2['local_ipv4']
   cloud[:public_ipv4] = ec2['public_ipv4']
@@ -52,7 +53,7 @@ def get_ec2_values
   cloud[:provider] = "ec2"
 end
 
-# setup ec2 cloud  
+# setup ec2 cloud
 if on_ec2?
   create_objects
   get_ec2_values
@@ -72,7 +73,7 @@ def on_rackspace?
 end
 
 # Fill cloud hash with rackspace values
-def get_rackspace_values 
+def get_rackspace_values
   cloud[:public_ips] << rackspace['public_ip']
   cloud[:private_ips] << rackspace['private_ip']
   cloud[:public_ipv4] = rackspace['public_ipv4']
@@ -82,7 +83,7 @@ def get_rackspace_values
   cloud[:provider] = "rackspace"
 end
 
-# setup rackspace cloud 
+# setup rackspace cloud
 if on_rackspace?
   create_objects
   get_rackspace_values
@@ -114,4 +115,33 @@ end
 if on_eucalyptus?
   create_objects
   get_eucalyptus_values
+end
+
+# ----------------------------------------
+# virtualbox
+# ----------------------------------------
+
+# Is current cloud virtualbox?
+#
+# === Return
+# true:: If virtualbox Hash is defined
+# false:: Otherwise
+def on_virtualbox?
+  virtualbox != nil
+end
+
+# Fill cloud hash with virtualbox heuristics
+def get_virtualbox_values
+  cloud[:public_ips]      = virtualbox['public_ips']
+  cloud[:private_ips]     = virtualbox['private_ips']
+  cloud[:public_ipv4]     = virtualbox['public_ipv4']
+  cloud[:public_hostname] = virtualbox['public_hostname']
+  cloud[:local_ipv4]      = virtualbox['local_ipv4']
+  cloud[:local_hostname]  = virtualbox['local_hostname']
+  cloud[:provider]        = "virtualbox"
+end
+
+if on_virtualbox?
+  create_objects
+  get_virtualbox_values
 end

@@ -117,7 +117,7 @@ def get_net_info_from_network
       ips.push(ip)
     end
   end
-  [first_ip, ips].flatten.compact.uniq
+  ips.flatten.compact.uniq
 end
 
 #

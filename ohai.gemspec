@@ -22,6 +22,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"
   s.add_development_dependency "sigar"
+  s.add_development_dependency "rspec_junit_formatter"
   s.bindir = "bin"
   s.executables = %w(ohai)
 

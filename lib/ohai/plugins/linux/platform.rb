@@ -24,19 +24,18 @@ def get_redhatish_version(contents)
   contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
 end
 
-provides "platform", "platform_version"
+provides "platform", "platform_version", "platform_family"
 
 require_plugin 'linux::lsb'
-  
-# platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
 
+# platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching 
 if lsb[:id] =~ /RedHat/i
   platform "redhat"
   platform_version lsb[:release]
 elsif lsb[:id] =~ /Amazon/i
  platform "amazon"
  platform_version lsb[:release]
-elsif lsb[:id]	
+elsif lsb[:id]
   platform lsb[:id].downcase
   platform_version lsb[:release]
 elsif File.exists?("/etc/debian_version")
@@ -52,16 +51,30 @@ elsif File.exists?("/etc/system-release")
   platform_version get_redhatish_version(contents)
 elsif File.exists?('/etc/gentoo-release')
   platform "gentoo"
+  platform_family "gentoo"
   platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/SuSE-release')
   platform "suse"
+  platform_family "suse"
   platform_version File.read("/etc/SuSE-release").scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
   platform_version File.read("/etc/SuSE-release").scan(/VERSION = ([\d\.]{2,})/).flatten.join(".") if platform_version == ""
 elsif File.exists?('/etc/slackware-version')
   platform "slackware"
+  platform_family "slackware"
   platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/arch-release')
   platform "arch"
+  platform_family "arch" 
+
   # no way to determine platform_version in a rolling release distribution
   # kernel release will be used - ex. 2.6.32-ARCH
+end
+
+
+case platform
+  when /debian/, /ubuntu/, /mint/
+    platform_family "debian"
+  # enterpriseenterprise is oracle's LSB "distributor ID"
+  when /fedora/, /amazon/, /enterpriseenterprise/, /centos/, /redhat/, /scientific/
+    platform_family "redhat"
 end

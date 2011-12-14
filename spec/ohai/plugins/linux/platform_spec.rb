@@ -34,6 +34,8 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub!(:exists?).with("/etc/arch-release").and_return(false)
     File.stub!(:exists?).with("/etc/system-release").and_return(false)
     File.stub!(:exists?).with("/etc/slackware-version").and_return(false)
+    File.stub!(:exists?).with("/etc/enterprise-release").and_return(false)
+    File.stub!(:exists?).with("/etc/oracle-release").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -262,6 +264,90 @@ describe Ohai::System, "Linux plugin platform" do
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "fedora"
         @ohai[:platform_version].to_i.should == 13
+      end
+    end
+  end
+
+  describe "on oracle enterprise linux" do
+    describe "with lsb_results" do
+      it "should read the platform as oracle and version as 5.7" do
+        @ohai[:lsb][:id] = "EnterpriseEnterpriseServer"
+        @ohai[:lsb][:release] = "5.7"
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.7"
+      end
+
+      it "should read the platform as oracle and version as 6.1" do
+        @ohai[:lsb][:id] = "OracleServer"
+        @ohai[:lsb][:release] = "6.1"
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.1"
+      end
+    end
+
+    describe "without lsb_results" do
+      before(:each) do
+        @ohai.lsb = nil
+      end
+ 
+      it "should read the platform as oracle and version as 5" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5"
+      end
+
+      it "should read the platform as oracle and version as 5.1" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.1"
+      end
+
+      it "should read the platform as oracle and version as 5.7" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.7"
+      end
+
+      it "should read the platform as oracle and version as 6.0" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.0 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.0")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.0"
+      end
+  
+      it "should read the platform as oracle and version as 6.1" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.1"
       end
     end
   end

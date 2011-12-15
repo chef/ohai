@@ -23,4 +23,5 @@
 # subsystems.
 platform os
 platform_version kernel['release']
+platform_family "windows"
 

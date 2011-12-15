@@ -51,21 +51,16 @@ elsif File.exists?("/etc/system-release")
   platform_version get_redhatish_version(contents)
 elsif File.exists?('/etc/gentoo-release')
   platform "gentoo"
-  platform_family "gentoo"
-  platform_version IO.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
+  platform_version File.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/SuSE-release')
   platform "suse"
-  platform_family "suse"
   platform_version File.read("/etc/SuSE-release").scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
   platform_version File.read("/etc/SuSE-release").scan(/VERSION = ([\d\.]{2,})/).flatten.join(".") if platform_version == ""
 elsif File.exists?('/etc/slackware-version')
   platform "slackware"
-  platform_family "slackware"
   platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/arch-release')
   platform "arch"
-  platform_family "arch" 
-
   # no way to determine platform_version in a rolling release distribution
   # kernel release will be used - ex. 2.6.32-ARCH
 end
@@ -74,7 +69,14 @@ end
 case platform
   when /debian/, /ubuntu/, /mint/
     platform_family "debian"
-  # enterpriseenterprise is oracle's LSB "distributor ID"
-  when /fedora/, /amazon/, /enterpriseenterprise/, /centos/, /redhat/, /scientific/
+  when /fedora/, /amazon/, /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/
     platform_family "redhat"
+  when /suse/
+    platform_family "suse"
+  when /gentoo/
+    platform_family "gentoo"
+  when /slackware/
+    platform_family "slackware"
+  when /arch/ 
+    platform_family "arch" 
 end

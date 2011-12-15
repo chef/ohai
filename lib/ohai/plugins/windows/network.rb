@@ -74,7 +74,7 @@ iface_instance.keys.each do |i|
     iface[cint][:addresses] = Mash.new
     iface[cint][:configuration][:ip_address].each_index do |i|
       begin
-         if iface[cint][:configuration][:ip_address][i] =~ /./
+         if iface[cint][:configuration][:ip_address][i] =~ /\./
            iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
              "family"    => "inet",
              "netmask"   => iface[cint][:configuration][:ip_subnet][i],

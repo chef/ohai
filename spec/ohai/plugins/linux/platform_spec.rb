@@ -123,9 +123,11 @@ describe Ohai::System, "Linux plugin platform" do
       File.should_receive(:exists?).with("/etc/slackware-version").and_return(true)
     end
 
-    it "should set platform to slackware" do
+    it "should set platform and platform_family to slackware" do
+      File.should_receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "slackware"
+      @ohai[:platform_family].should == "slackware"
     end
   end
   
@@ -150,6 +152,7 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     it "should set platform and platform_family to gentoo" do
+      File.should_receive(:read).with("/etc/gentoo-release").and_return("Gentoo Base System release 1.20.1.1")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "gentoo"
       @ohai[:platform_family].should == "gentoo"
@@ -265,9 +268,11 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
     end
   
-    it "should set platform to suse" do
+    it "should set platform and platform_family to suse and bogus verion to 10.0" do
+      File.should_receive(:read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
+      @ohai[:platform_family].should == "suse"
     end
   
     it "should read the version as 10.1 for bogus SLES 10" do
@@ -275,6 +280,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "10.1"
+      @ohai[:platform_family].should == "suse"
     end
   
     it "should read the version as 11.2" do
@@ -282,6 +288,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.2"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 11.3" do
@@ -289,6 +296,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.3"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 9.1" do
@@ -296,6 +304,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "9.1"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 11.4" do
@@ -303,6 +312,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.4"
+      @ohai[:platform_family].should == "suse"
     end
   end
 

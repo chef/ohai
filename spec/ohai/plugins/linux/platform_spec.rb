@@ -76,20 +76,20 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform].should == "debian"
       @ohai[:platform_family].should == "debian"
     end
-    it "should set platform to redhat and platform_family to redhat when [:lsb][:id] contains Redhat" do
+    it "should set platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
       @ohai[:lsb][:id] = "RedHatEnterpriseServer"
       @ohai[:lsb][:release] = "5.7"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "redhat"
-      @ohai[:platform_family].should == "redhat"
+      @ohai[:platform_family].should == "rhel"
     end
 
-    it "should set platform to amazon and platform_family to redhat when [:lsb][:id] contains Amazon" do
+    it "should set platform to amazon and platform_family to fedora when [:lsb][:id] contains Amazon" do
       @ohai[:lsb][:id] = "AmazonAMI"
       @ohai[:lsb][:release] = "2011.09"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "amazon"
-      @ohai[:platform_family].should == "redhat"
+      @ohai[:platform_family].should == "fedora"
     end
   end
 
@@ -161,47 +161,48 @@ describe Ohai::System, "Linux plugin platform" do
 
   describe "on redhat breeds" do
     describe "with lsb_release results" do
-      it "should set the platform and platform_family to redhat even if the LSB name is something absurd but redhat like" do
+      it "should set the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
         @ohai[:lsb][:id] = "RedHatEnterpriseServer"
         @ohai[:lsb][:release] = "6.1"
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "redhat"
         @ohai[:platform_version].should == "6.1"
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "rhel"
       end
 
-      it "should set the platform to centos and platform_family to redhat" do
+      it "should set the platform to centos and platform_family to rhel" do
         @ohai[:lsb][:id] = "CentOS"
         @ohai[:lsb][:release] = "5.4"
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "centos"
         @ohai[:platform_version].should == "5.4"
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "rhel"
+
       end
 
 
-      it "should set the platform_family to redhat if the LSB name is oracle-ish" do
+      it "should set the platform_family to rhel if the LSB name is oracle-ish" do
         @ohai[:lsb][:id] = "EnterpriseEnterpriseServer"
         @ohai._require_plugin("linux::platform")
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "rhel"
       end
 
-      it "should set the platform_family to redhat if the LSB name is amazon-ish" do
+      it "should set the platform_family to fedora if the LSB name is amazon-ish" do
         @ohai[:lsb][:id] = "Amazon"
         @ohai._require_plugin("linux::platform")
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "fedora"
       end
 
-      it "should set the platform_family to redhat if the LSB name is fedora-ish" do
+      it "should set the platform_family to fedora if the LSB name is fedora-ish" do
         @ohai[:lsb][:id] = "Fedora"
         @ohai._require_plugin("linux::platform")
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "fedora"
       end
 
       it "should set the platform_family to redhat if the LSB name is scientific-ish" do
         @ohai[:lsb][:id] = "Scientific"
         @ohai._require_plugin("linux::platform")
-	@ohai[:platform_family].should == "redhat"
+	@ohai[:platform_family].should == "rhel"
       end
     end
   

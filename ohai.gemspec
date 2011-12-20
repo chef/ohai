@@ -6,7 +6,6 @@ spec = Gem::Specification.new do |s|
   s.name = "ohai"
   s.version = Ohai::VERSION
   s.platform = Gem::Platform::RUBY
-  s.has_rdoc = true
   s.summary = "Ohai profiles your system and emits JSON"
   s.description = s.summary
   s.author = "Adam Jacob"

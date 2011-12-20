@@ -46,7 +46,7 @@ net_counters = Mash.new
 
 sigar.net_interface_list.each do |cint|
   iface[cint] = Mash.new
-  if cint =~ /^(\w+)(\d+.*)/
+  if cint =~ /^(\w+?)(\d+.*)/
     iface[cint][:type] = $1
     iface[cint][:number] = $2
   end

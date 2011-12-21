@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+require 'ipaddr'
 provides "network", "counters/network"
 
 begin
@@ -31,82 +32,159 @@ rescue Ohai::Exceptions::Exec
 end
 
 def encaps_lookup(encap)
-  return "Loopback" if encap.eql?("Local Loopback")
+  return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
   return "PPP" if encap.eql?("Point-to-Point Protocol")
   return "SLIP" if encap.eql?("Serial Line IP")
   return "VJSLIP" if encap.eql?("VJ Serial Line IP")
   return "IPIP" if encap.eql?("IPIP Tunnel")
   return "6to4" if encap.eql?("IPv6-in-IPv4")
+  return "Ethernet" if encap.eql?("ether")
   encap
 end
 
 iface = Mash.new
 net_counters = Mash.new
-popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
-  stdin.close
-  cint = nil
-  stdout.each do |line|
-    tmp_addr = nil
-    if line =~ /^([0-9a-zA-Z\.\:\-_]+)\s+/
-      cint = $1
-      iface[cint] = Mash.new
-      if cint =~ /^(\w+)(\d+.*)/
-        iface[cint][:type] = $1
-        iface[cint][:number] = $2
+
+if File.exist?("/sbin/ip")
+  popen4("ip addr") do |pid, stdin, stdout, stderr|
+    stdin.close
+    cint = nil
+    stdout.each do |line|
+      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
+        cint = $2
+        iface[cint] = Mash.new
+        if cint =~ /^(\w+)(\d+.*)/
+          iface[cint][:type] = $1
+          iface[cint][:number] = $2
+        end
+
+        if line =~ /mtu (\d+)/
+          iface[cint][:mtu] = $1
+        end
+
+        flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|LOWER_UP|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)/)
+        if flags.length > 1
+          iface[cint][:flags] = flags.flatten.uniq
+        end
+      end
+      if line =~ /link\/(\w+) ([\da-f\:]+) /
+        iface[cint][:encapsulation] = encaps_lookup($1)
+        unless $2 == "00:00:00:00:00:00"
+          iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+          iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
+        end
+      end
+      if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d{1,2})/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        tmp_addr = $1
+        iface[cint][:addresses][tmp_addr] = { "family" => "inet" }
+        iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask($2.to_i).to_s
+
+        if line =~ /brd (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+          iface[cint][:addresses][tmp_addr][:broadcast] = $1
+        end
+      end
+      if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        tmp_addr = $1
+        iface[cint][:addresses][tmp_addr] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("host") ? "Node" : $3.capitalize) }
       end
     end
-    if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
-      iface[cint][:encapsulation] = encaps_lookup($1)
-    end
-    if line =~ /HWaddr (.+?)\s/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "lladdr" }
-    end
-    if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet" }
-      tmp_addr = $1
-    end
-    if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
-    end
-    if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses][tmp_addr]["broadcast"] = $1
-    end
-    if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses][tmp_addr]["netmask"] = $1
-    end
-    flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
-    if flags.length > 1
-      iface[cint][:flags] = flags.flatten
-    end
-    if line =~ /MTU:(\d+)/
-      iface[cint][:mtu] = $1
-    end
-    if line =~ /P-t-P:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:peer] = $1
-    end
-    if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-      net_counters[cint] = Mash.new unless net_counters[cint]
-      net_counters[cint][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
-    end
-    if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
-      net_counters[cint][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
-    end
-    if line =~ /collisions:(\d+)/
-      net_counters[cint][:tx]["collisions"] = $1
-    end
-    if line =~ /txqueuelen:(\d+)/
-      net_counters[cint][:tx]["queuelen"] = $1
-    end
-    if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      net_counters[cint][:rx]["bytes"] = $1
-    end
-    if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
-      net_counters[cint][:tx]["bytes"] = $1
+  end
+
+  popen4("ip link -s") do |pid, stdin, stdout, stderr|
+    stdin.close
+    tmp_int = nil
+    on_rx = true
+    stdout.each do |line|
+       if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
+        tmp_int = $2
+        net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
+      end
+
+      if line =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+        int = on_rx ? :rx : :tx
+        net_counters[tmp_int][int] = Mash.new unless net_counters[tmp_int][int]
+        net_counters[tmp_int][int][:bytes] = $1
+        net_counters[tmp_int][int][:packets] = $2
+        net_counters[tmp_int][int][:errors] = $3
+        net_counters[tmp_int][int][:dropped] = $4
+        net_counters[tmp_int][int][:collisions] = $5 if int == :rx
+        on_rx = !on_rx
+      end
+       
     end
   end
+
+else
+
+  popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
+    stdin.close
+    cint = nil
+    stdout.each do |line|
+      tmp_addr = nil
+      if line =~ /^([0-9a-zA-Z\.\:\-_]+)\s+/
+        cint = $1
+        iface[cint] = Mash.new
+        if cint =~ /^(\w+)(\d+.*)/
+          iface[cint][:type] = $1
+          iface[cint][:number] = $2
+        end
+      end
+      if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
+        iface[cint][:encapsulation] = encaps_lookup($1)
+      end
+      if line =~ /HWaddr (.+?)\s/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "lladdr" }
+      end
+      if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "inet" }
+        tmp_addr = $1
+      end
+      if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
+      end
+      if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        iface[cint][:addresses][tmp_addr]["broadcast"] = $1
+      end
+      if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        iface[cint][:addresses][tmp_addr]["netmask"] = $1
+      end
+      flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
+      if flags.length > 1
+        iface[cint][:flags] = flags.flatten
+      end
+      if line =~ /MTU:(\d+)/
+        iface[cint][:mtu] = $1
+      end
+      if line =~ /P-t-P:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        iface[cint][:peer] = $1
+      end
+      if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
+        net_counters[cint] = Mash.new unless net_counters[cint]
+        net_counters[cint][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
+      end
+      if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
+        net_counters[cint][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
+      end
+      if line =~ /collisions:(\d+)/
+        net_counters[cint][:tx]["collisions"] = $1
+      end
+      if line =~ /txqueuelen:(\d+)/
+        net_counters[cint][:tx]["queuelen"] = $1
+      end
+      if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
+        net_counters[cint][:rx]["bytes"] = $1
+      end
+      if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
+        net_counters[cint][:tx]["bytes"] = $1
+      end
+    end
+  end
+
 end
 
 popen4("arp -an") do |pid, stdin, stdout, stderr|

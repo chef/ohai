@@ -42,12 +42,33 @@ lo        Link encap:Local Loopback
           RX bytes:35224 (34.3 KiB)  TX bytes:35224 (34.3 KiB)
 ENDIFCONFIG
 
-    linux_netstat_in = <<-NETSTAT_IN
-Kernel Interface table
-Iface       MTU Met    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
-eth0       1500   0  2659994      0      0      0  1919707      0      0      0 BMRU
-lo        16436   0      524      0      0      0      524      0      0      0 LRU
-NETSTAT_IN
+    linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
+    inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
+       valid_lft forever preferred_lft forever
+IP_ADDR
+
+    linux_ip_link_s = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+IP_LINK_S
 
     linux_route_n = <<-ROUTE_N
 Kernel IP routing table
@@ -63,9 +84,14 @@ ARP_AN
 
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
+    @stdin_ipaddr = StringIO.new
+    @stdin_iplink = StringIO.new
+
     @ifconfig_lines = linux_ifconfig.split("\n")
     @route_lines = linux_route_n.split("\n")
     @arp_lines = linux_arp_an.split("\n")
+    @ipaddr_lines = linux_ip_addr.split("\n")
+    @iplink_lines = linux_ip_link_s.split("\n")
 
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
@@ -74,83 +100,149 @@ ARP_AN
     @ohai.stub(:popen4).with("arp -an")
   end
 
-  describe "gathering IP layer address info" do
-    before do
-      @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-      @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-      @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-      @ohai._require_plugin("network")
-      @ohai._require_plugin("linux::network")
-    end
+  ["ifconfig","iproute2"].each do |network_method|
 
-    it "completes the run" do
-      @ohai['network'].should_not be_nil
-    end
+    describe "gathering IP layer address info via #{network_method}" do
+      before do
+        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+        @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+      end
 
-    it "detects the interfaces" do
-      @ohai['network']['interfaces'].keys.sort.should == ["eth0", "lo"]
-    end
+      it "completes the run" do
+        @ohai['network'].should_not be_nil
+      end
 
-    it "detects the ipv4 addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('10.116.201.76')
-      @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask'].should == '255.255.255.0'
-      @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast'].should == '10.116.201.255'
-      @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family'].should == 'inet'
-    end
+      it "detects the interfaces" do
+        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "lo"]
+      end
 
-    it "detects the ipv6 addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('fe80::1031:3dff:fe02:bea2')
-      @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
-      @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
-      @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
-    end
+      it "detects the ipv4 addresses of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('10.116.201.76')
+        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask'].should == '255.255.255.0'
+        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast'].should == '10.116.201.255'
+        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family'].should == 'inet'
+      end
 
-    it "detects the mac addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('12:31:3D:02:BE:A2')
-      @ohai['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family'].should == 'lladdr'
-    end
+      it "detects the ipv6 addresses of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('fe80::1031:3dff:fe02:bea2')
+        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
+        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
+        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
+      end
 
-    it "detects the encapsulation type of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['encapsulation'].should == 'Ethernet'
-    end
+      it "detects the mac addresses of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('12:31:3D:02:BE:A2')
+        @ohai['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family'].should == 'lladdr'
+      end
 
-    it "detects the flags of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','MULTICAST','RUNNING','UP']
-    end
+      it "detects the encapsulation type of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['encapsulation'].should == 'Ethernet'
+      end
 
-    it "detects the number of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['number'].should == "0"
-    end
+      it "detects the flags of the ethernet interface" do
+        if network_method == "ifconfig"
+          @ohai['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','MULTICAST','RUNNING','UP']
+        else
+          @ohai['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','LOWER_UP','MULTICAST','UP']
+        end
+      end
 
-    it "detects the mtu of the ethernet interface" do
-      @ohai['network']['interfaces']['eth0']['mtu'].should == "1500"
-    end
+      it "detects the number of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['number'].should == "0"
+      end
 
+      it "detects the mtu of the ethernet interface" do
+        @ohai['network']['interfaces']['eth0']['mtu'].should == "1500"
+      end
     
-    it "detects the ipv4 addresses of the loopback interface" do
-      @ohai['network']['interfaces']['lo']['addresses'].keys.should include('127.0.0.1')
-      @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
-      @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['family'].should == 'inet'
+      it "detects the ipv4 addresses of the loopback interface" do
+        @ohai['network']['interfaces']['lo']['addresses'].keys.should include('127.0.0.1')
+        @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
+        @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['family'].should == 'inet'
+      end
+
+      it "detects the ipv6 addresses of the loopback interface" do
+        @ohai['network']['interfaces']['lo']['addresses'].keys.should include('::1')
+        @ohai['network']['interfaces']['lo']['addresses']['::1']['scope'].should == 'Node'
+        @ohai['network']['interfaces']['lo']['addresses']['::1']['prefixlen'].should == '128'
+        @ohai['network']['interfaces']['lo']['addresses']['::1']['family'].should == 'inet6'
+      end
+
+      it "detects the encapsulation type of the loopback interface" do
+        @ohai['network']['interfaces']['lo']['encapsulation'].should == 'Loopback'
+      end
+
+      it "detects the flags of the ethernet interface" do
+        if network_method == "ifconfig"
+          @ohai['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','RUNNING','UP']
+        else
+          @ohai['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','LOWER_UP','UP']
+        end
+      end
+
+
+      it "detects the mtu of the loopback interface" do
+        @ohai['network']['interfaces']['lo']['mtu'].should == "16436"
+      end
+
     end
+  
+    describe "gathering interface counters via #{network_method}" do
+      before do
+        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+        @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+      end
 
-    it "detects the ipv6 addresses of the loopback interface" do
-      @ohai['network']['interfaces']['lo']['addresses'].keys.should include('::1')
-      @ohai['network']['interfaces']['lo']['addresses']['::1']['scope'].should == 'Node'
-      @ohai['network']['interfaces']['lo']['addresses']['::1']['prefixlen'].should == '128'
-      @ohai['network']['interfaces']['lo']['addresses']['::1']['family'].should == 'inet6'
+      it "detects the ethernet counters" do
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['bytes'].should == "691785313"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['packets'] == "2012214"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['collisions'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['queuelen'] == "1000"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['errors'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['carrier'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['overrun'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['drop'] == "0"
+
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['bytes'] == "1392844460`"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['packets'] == "2764108"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['errors'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['overrun'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['drop'] == "0"
+      end
+
+      it "detects the loopback counters" do
+        @ohai['counters']['network']['interfaces']['lo']['tx']['bytes'] == "35224"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['packets'] == "524"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['collisions'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['queuelen'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['errors'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['carrier'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['overrun'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['drop'] == "0"
+
+        @ohai['counters']['network']['interfaces']['lo']['rx']['bytes'] == "35224"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['packets'] == "524"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['errors'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['overrun'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['drop'] == "0"
+      end
     end
+  end 
 
-    it "detects the encapsulation type of the loopback interface" do
-      @ohai['network']['interfaces']['lo']['encapsulation'].should == 'Loopback'
-    end
 
-    it "detects the mtu of the loopback interface" do
-      @ohai['network']['interfaces']['lo']['mtu'].should == "16436"
-    end
-
-  end
-
- describe "setting the node's default IP address attribute" do
+  describe "setting the node's default IP address attribute" do
     before do
       @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
       @ohai._require_plugin("network")
@@ -164,7 +256,6 @@ ARP_AN
     it "finds the default interface by asking which iface has the default route" do
       @ohai['network'][:default_gateway].should == '10.116.201.1'
     end
-
   end
 end
 

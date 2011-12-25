@@ -19,18 +19,6 @@
 require 'ipaddr'
 provides "network", "counters/network"
 
-begin
-  route_result = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/)
-  if route_result.last =~ /(venet\d+)/
-    network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0.1 | grep -m 1 inet").split(/[ \t]+/).last
-    network[:default_gateway] = route_result[1]
-  else
-    network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)
-  end
-rescue Ohai::Exceptions::Exec
-  Ohai::Log.debug("Unable to determine default interface")
-end
-
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
   return "PPP" if encap.eql?("Point-to-Point Protocol")
@@ -46,6 +34,20 @@ iface = Mash.new
 net_counters = Mash.new
 
 if File.exist?("/sbin/ip")
+
+  begin
+    route_result = from("ip route show exact 0.0.0.0/0").chomp.split(/[ \t]+/)
+
+    if route_result[4] =~ /(venet\d+)/
+      network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0.1 | grep -m 1 inet").split(/[ \t]+/).last
+      network[:default_gateway] = route_result[1]
+    else
+      network[:default_gateway], network[:default_interface] = route_result.values_at(2,4)
+    end
+  rescue Ohai::Exceptions::Exec
+    Ohai::Log.debug("Unable to determine default interface")
+  end
+
   popen4("ip addr") do |pid, stdin, stdout, stderr|
     stdin.close
     cint = nil
@@ -97,7 +99,7 @@ if File.exist?("/sbin/ip")
     tmp_int = nil
     on_rx = true
     stdout.each do |line|
-       if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
+      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
         tmp_int = $2
         net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
       end
@@ -108,15 +110,44 @@ if File.exist?("/sbin/ip")
         net_counters[tmp_int][int][:bytes] = $1
         net_counters[tmp_int][int][:packets] = $2
         net_counters[tmp_int][int][:errors] = $3
-        net_counters[tmp_int][int][:dropped] = $4
-        net_counters[tmp_int][int][:collisions] = $5 if int == :rx
+        net_counters[tmp_int][int][:drop] = $4
+        if(int == :rx)
+          net_counters[tmp_int][int][:overrun] = $5
+        else
+          net_counters[tmp_int][int][:carrier] = $5
+          net_counters[tmp_int][int][:collisions] = $6
+        end
+
         on_rx = !on_rx
+      end
+
+      if line =~ /qlen (\d+)/
+        net_counters[tmp_int][:tx] = Mash.new unless net_counters[tmp_int][:tx]
+        net_counters[tmp_int][:tx][:queuelen] = $1
       end
        
     end
   end
 
+  popen4("ip neighbor show") do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout.each do |line|
+      if line =~ /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) dev ([0-9a-zA-Z\.\:\-]+) lladdr ([a-fA-F0-9\:]+)/
+        next unless iface[$2]
+        iface[$2][:arp] = Mash.new unless iface[$2][:arp]
+        iface[$2][:arp][$1] = $3.downcase
+      end
+    end
+  end
+
 else
+
+  begin
+    route_result = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/)
+    network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)
+  rescue Ohai::Exceptions::Exec
+    Ohai::Log.debug("Unable to determine default interface")
+  end
 
   popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
     stdin.close
@@ -185,19 +216,22 @@ else
     end
   end
 
-end
 
-popen4("arp -an") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/
-      next unless iface[$4] # this should never happen
-      iface[$4][:arp] = Mash.new unless iface[$4][:arp]
-      iface[$4][:arp][$1] = $2.downcase
+  popen4("arp -an") do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout.each do |line|
+      if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/
+        next unless iface[$4] # this should never happen
+        iface[$4][:arp] = Mash.new unless iface[$4][:arp]
+        iface[$4][:arp][$1] = $2.downcase
+      end
     end
   end
+
 end
+
 
 counters[:network][:interfaces] = net_counters
 
 network["interfaces"] = iface
+

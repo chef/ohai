@@ -82,16 +82,27 @@ ROUTE_N
 ? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
 ARP_AN
 
+    linux_ip_neighbor_show = <<-NEIGHBOR_SHOW
+10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
+NEIGHBOR_SHOW
+
+    linux_ip_route_show_exact = <<-IP_ROUTE
+default via 10.116.201.1 dev eth0
+IP_ROUTE
+
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
     @stdin_ipaddr = StringIO.new
     @stdin_iplink = StringIO.new
+    @stdin_ipneighbor = StringIO.new
 
     @ifconfig_lines = linux_ifconfig.split("\n")
     @route_lines = linux_route_n.split("\n")
     @arp_lines = linux_arp_an.split("\n")
     @ipaddr_lines = linux_ip_addr.split("\n")
     @iplink_lines = linux_ip_link_s.split("\n")
+    @ipneighbor_lines = linux_ip_neighbor_show.split("\n")
+    @iproute_lines = linux_ip_route_show_exact
 
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
@@ -106,8 +117,10 @@ ARP_AN
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
@@ -191,14 +204,20 @@ ARP_AN
         @ohai['network']['interfaces']['lo']['mtu'].should == "16436"
       end
 
+      it "detects the arp entries" do
+        @ohai['network']['interfaces']['eth0']['arp']['10.116.201.1'].should == 'fe:ff:ff:ff:ff:ff'
+      end
+
     end
   
     describe "gathering interface counters via #{network_method}" do
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
@@ -207,55 +226,60 @@ ARP_AN
 
       it "detects the ethernet counters" do
         @ohai['counters']['network']['interfaces']['eth0']['tx']['bytes'].should == "691785313"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['packets'] == "2012214"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['collisions'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['queuelen'] == "1000"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['errors'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['carrier'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['overrun'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['drop'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['packets'].should == "1919690"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['collisions'].should == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['queuelen'].should == "1000"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['errors'].should == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['carrier'].should == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['tx']['drop'].should == "0"
 
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['bytes'] == "1392844460`"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['packets'] == "2764108"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['errors'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['overrun'] == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['drop'] == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['bytes'].should == "1392844460"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['packets'].should == "2659966"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['errors'].should == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['overrun'].should == "0"
+        @ohai['counters']['network']['interfaces']['eth0']['rx']['drop'].should == "0"
       end
 
       it "detects the loopback counters" do
-        @ohai['counters']['network']['interfaces']['lo']['tx']['bytes'] == "35224"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['packets'] == "524"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['collisions'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['queuelen'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['errors'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['carrier'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['overrun'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['drop'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['bytes'].should == "35224"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['packets'].should == "524"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['collisions'].should == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['errors'].should == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['carrier'].should == "0"
+        @ohai['counters']['network']['interfaces']['lo']['tx']['drop'].should == "0"
 
-        @ohai['counters']['network']['interfaces']['lo']['rx']['bytes'] == "35224"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['packets'] == "524"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['errors'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['overrun'] == "0"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['drop'] == "0"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['bytes'].should == "35224"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['packets'].should == "524"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['errors'].should == "0"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['overrun'].should == "0"
+        @ohai['counters']['network']['interfaces']['lo']['rx']['drop'].should == "0"
       end
     end
-  end 
 
+    describe "setting the node's default IP address attribute with #{network_method}" do
+      before do
+        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+        @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+      end
 
-  describe "setting the node's default IP address attribute" do
-    before do
-      @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-      @ohai._require_plugin("network")
-      @ohai._require_plugin("linux::network")
+      it "finds the default interface by asking which iface has the default route" do
+        @ohai['network'][:default_interface].should == 'eth0'
+      end
+
+      it "finds the default interface by asking which iface has the default route" do
+        @ohai['network'][:default_gateway].should == '10.116.201.1'
+      end
     end
 
-    it "finds the default interface by asking which iface has the default route" do
-      @ohai['network'][:default_interface].should == 'eth0'
-    end
-
-    it "finds the default interface by asking which iface has the default route" do
-      @ohai['network'][:default_gateway].should == '10.116.201.1'
-    end
   end
+
 end
 

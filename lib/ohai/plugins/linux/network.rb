@@ -19,6 +19,18 @@
 require 'ipaddr'
 provides "network", "counters/network"
 
+begin
+  route_result = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/)
+  if route_result.last =~ /(venet\d+)/
+    network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0. | grep -m 1 inet").split(/[ \t]+/).last
+    network[:default_gateway] = route_result[1]
+  else
+    network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)
+  end
+rescue Ohai::Exceptions::Exec
+  Ohai::Log.debug("Unable to determine default interface")
+end
+
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
   return "PPP" if encap.eql?("Point-to-Point Protocol")

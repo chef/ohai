@@ -48,14 +48,15 @@ describe Ohai::System, "Sigar network route plugin" do
       @net_route_conf={
         :destination => "192.168.1.0",
         :gateway => "0.0.0.0",
+        :mask => "255.255.255.0",
         :flags => 1,
         :refcnt => 0,
         :use => 0,
-        :ifname => "eth0",
         :metric => 0,
         :mtu => 0,
         :window => 0,
-        :irtt => 0
+        :irtt => 0,
+        :ifname => "eth0"
       }
       net_route=double("Sigar::NetRoute")
       @net_route_conf.each_pair do |k,v|

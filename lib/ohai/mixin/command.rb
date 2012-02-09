@@ -128,7 +128,10 @@ module Ohai
       #
       # Thanks Ara!
       def popen4(cmd, args={}, &b)
-
+	
+	## Disable garbage collection to work around possible bug in MRI
+	GC.disable
+	
         # Waitlast - this is magic.
         #
         # Do we wait for the child process to die before we yield
@@ -334,6 +337,9 @@ module Ohai
         end
       rescue Errno::ENOENT
         raise Ohai::Exceptions::Exec, "command #{cmd} doesn't exist or is not in the PATH"
+      ensure
+	# we disabled GC entering
+	GC.enable
       end
 
       module_function :popen4

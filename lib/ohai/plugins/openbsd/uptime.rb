@@ -18,13 +18,13 @@
 
 provides "uptime", "uptime_seconds"
 
-# kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
+# kern.boottime=Tue Nov  1 14:45:52 2011
 
 popen4("/sbin/sysctl kern.boottime") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /kern.boottime:\D+(\d+)/
-      uptime_seconds Time.new.to_i - $1.to_i
+    if line =~ /kern.boottime=(.+)/
+      uptime_seconds Time.new.to_i - Time.parse($1).to_i
       uptime self._seconds_to_human(uptime_seconds)
     end
   end

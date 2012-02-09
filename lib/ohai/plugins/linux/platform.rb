@@ -33,8 +33,11 @@ if lsb[:id] =~ /RedHat/i
   platform "redhat"
   platform_version lsb[:release]
 elsif lsb[:id] =~ /Amazon/i
- platform "amazon"
- platform_version lsb[:release]
+  platform "amazon"
+  platform_version lsb[:release]
+elsif lsb[:id] =~ /ScientificSL/i
+  platform "scientific"
+  platform_version lsb[:release]
 elsif lsb[:id]
   platform lsb[:id].downcase
   platform_version lsb[:release]

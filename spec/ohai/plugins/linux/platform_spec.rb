@@ -91,6 +91,13 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform].should == "amazon"
       @ohai[:platform_family].should == "fedora"
     end
+
+    it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
+      @ohai[:lsb][:id] = "ScientificSL"
+      @ohai[:lsb][:release] = "5.7"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "scientific"
+    end
   end
 
   describe "on debian" do

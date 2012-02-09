@@ -22,7 +22,7 @@ require 'rbconfig'
 
 require_plugin 'kernel'
 
-case Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG['host_os']
+case ::RbConfig::CONFIG['host_os']
 when /aix(.+)$/
   os "aix"
 when /darwin(.+)$/

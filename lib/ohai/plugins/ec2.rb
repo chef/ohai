@@ -30,9 +30,10 @@ extend Ohai::Mixin::Ec2Metadata
 def has_ec2_mac?
   network[:interfaces].values.each do |iface|
     unless iface[:arp].nil?
-      has_mac = iface[:arp].value?("fe:ff:ff:ff:ff:ff")
-      Ohai::Log.debug("has_ec2_mac? == true")
-      return true if has_mac
+      if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
+        Ohai::Log.debug("has_ec2_mac? == true")
+        return true
+      end
     end
   end
   Ohai::Log.debug("has_ec2_mac? == false")

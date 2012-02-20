@@ -75,10 +75,10 @@ end
 # Detect OpenVZ / Virtuozzo.
 # http://wiki.openvz.org/BC_proc_entries
 if File.exists?("/proc/bc/0")
-  virtualization[:emulator] = "openvz"
+  virtualization[:system] = "openvz"
   virtualization[:role] = "host"
 elsif File.exists?("/proc/vz")
-  virtualization[:emulator] = "openvz"
+  virtualization[:system] = "openvz"
   virtualization[:role] = "guest"
 end
 

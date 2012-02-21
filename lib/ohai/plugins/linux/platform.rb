@@ -80,9 +80,9 @@ end
 case platform
   when /debian/, /ubuntu/, /mint/
     platform_family "debian"
-  when /fedora/, /amazon/
+  when /fedora/
     platform_family "fedora"
-  when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/
+  when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/
     platform_family "rhel"
   when /suse/
     platform_family "suse"

@@ -86,12 +86,12 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform_family].should == "rhel"
     end
 
-    it "should set platform to amazon and platform_family to fedora when [:lsb][:id] contains Amazon" do
+    it "should set platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
       @ohai[:lsb][:id] = "AmazonAMI"
       @ohai[:lsb][:release] = "2011.09"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "amazon"
-      @ohai[:platform_family].should == "fedora"
+      @ohai[:platform_family].should == "rhel"
     end
 
     it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
@@ -196,10 +196,10 @@ describe Ohai::System, "Linux plugin platform" do
 	@ohai[:platform_family].should == "rhel"
       end
 
-      it "should set the platform_family to fedora if the LSB name is amazon-ish" do
+      it "should set the platform_family to rhel if the LSB name is amazon-ish" do
         @ohai[:lsb][:id] = "Amazon"
         @ohai._require_plugin("linux::platform")
-	@ohai[:platform_family].should == "fedora"
+	@ohai[:platform_family].should == "rhel"
       end
 
       it "should set the platform_family to fedora if the LSB name is fedora-ish" do

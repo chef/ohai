@@ -51,6 +51,7 @@ ENDIFCONFIG
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
     inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
+    inet 10.116.201.75/32 scope global eth0
     inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
        valid_lft forever preferred_lft forever
 IP_ADDR
@@ -122,7 +123,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -219,7 +220,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -265,7 +266,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip link -s").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end

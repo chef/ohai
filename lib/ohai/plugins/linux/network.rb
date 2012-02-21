@@ -106,7 +106,7 @@ if File.exist?("/sbin/ip")
     end
   end
 
-  popen4("ip link -s") do |pid, stdin, stdout, stderr|
+  popen4("ip -s link") do |pid, stdin, stdout, stderr|
     stdin.close
     tmp_int = nil
     on_rx = true

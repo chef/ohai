@@ -13,7 +13,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
   s.add_dependency "yajl-ruby"
-  s.add_dependency "systemu", "~> 2.2.0"
+  s.add_dependency "systemu", "~> 2.4.2"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"
   s.add_dependency "mixlib-log"

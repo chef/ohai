@@ -23,7 +23,13 @@ require 'stringio'
 require 'tmpdir'
 require 'fcntl'
 require 'etc'
+
+### TODO: Remove this when systemu ~> 2.4.0 fixes https://github.com/ahoward/systemu/issues/14
+# Hack to suppress deprecation warning in systemu 2.2.0; see http://tickets.opscode.com/browse/OHAI-311
+original_verbosity = $VERBOSE
+$VERBOSE = nil
 require 'systemu'
+$VERBOSE = original_verbosity
 
 module Ohai
   module Mixin

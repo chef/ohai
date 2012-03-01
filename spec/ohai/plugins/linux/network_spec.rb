@@ -52,6 +52,7 @@ ENDIFCONFIG
     link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
     inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
     inet 10.116.201.75/32 scope global eth0
+    inet 10.116.201.74/24 scope global secondary eth0
     inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
        valid_lft forever preferred_lft forever
 IP_ADDR

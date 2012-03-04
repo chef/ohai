@@ -97,6 +97,10 @@ if File.exist?("/sbin/ip")
         if line =~ /brd (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
           iface[cint][:addresses][tmp_addr][:broadcast] = $1
         end
+
+        if line =~ /scope (\w+)/
+          iface[cint][:addresses][tmp_addr][:scope] = ($1.eql?("host") ? "Node" : $1.capitalize)
+        end
       end
       if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]

@@ -88,11 +88,16 @@ if File.exist?("/sbin/ip")
           iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
         end
       end
-      if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d{1,2})/
+      if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        tmp_addr = $1
-        iface[cint][:addresses][tmp_addr] = { "family" => "inet" }
-        iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask($2.to_i).to_s
+        tmp_addr, tmp_prefix = $1, $3
+        tmp_prefix ||= "32"
+        iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
+        iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
+
+        if line =~ /peer (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+          iface[cint][:addresses][tmp_addr][:peer] = $1
+        end
 
         if line =~ /brd (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
           iface[cint][:addresses][tmp_addr][:broadcast] = $1

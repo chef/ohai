@@ -47,7 +47,7 @@ def network_contains_address(address_to_match, network_ip, network_opts)
   if network_opts[:peer]
     network_opts[:peer] == address_to_match
   else
-    network = IPAddress "#{network_ip}/#{network_mask}"
+    network = IPAddress "#{network_ip}/#{network_opts[:netmask]}"
     host = IPAddress address_to_match
     network.include?(host)
   end

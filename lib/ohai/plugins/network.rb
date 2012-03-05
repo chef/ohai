@@ -34,7 +34,7 @@ def find_ip_and_mac(addresses, match = nil)
     if match.nil?
       ip = addr if addresses[addr]["family"].eql?("inet")
     else
-      ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr][:netmask])
+      ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr])
     end
     mac = addr if addresses[addr]["family"].eql?("lladdr")
     break if (ip and mac)
@@ -43,10 +43,14 @@ def find_ip_and_mac(addresses, match = nil)
   [ip, mac]
 end
 
-def network_contains_address(address_to_match, network_ip, network_mask)
-  network = IPAddress "#{network_ip}/#{network_mask}"
-  host = IPAddress address_to_match
-  network.include?(host)
+def network_contains_address(address_to_match, network_ip, network_opts)
+  if network_opts[:peer]
+    network_opts[:peer] == address_to_match
+  else
+    network = IPAddress "#{network_ip}/#{network_opts[:netmask]}"
+    host = IPAddress address_to_match
+    network.include?(host)
+  end
 end
 
 # If we have a default interface that has addresses, populate the short-cut attributes

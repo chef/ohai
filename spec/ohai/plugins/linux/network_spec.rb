@@ -18,6 +18,13 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
+begin
+  require 'ipaddress'
+rescue LoadError => e
+  puts "The linux network plugin spec tests will fail without the 'ipaddress' library/gem.\n\n"
+  raise e
+end
+
 describe Ohai::System, "Linux Network Plugin" do
 
   before do

@@ -64,7 +64,9 @@ if File.exist?("/sbin/ip")
     stdin.close
     cint = nil
     stdout.each do |line|
-      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
+      # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+      # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
+      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+)(@[0-9a-zA-Z]+|):\s/
         cint = $2
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/

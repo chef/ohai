@@ -6,22 +6,26 @@ spec = Gem::Specification.new do |s|
   s.name = "ohai"
   s.version = Ohai::VERSION
   s.platform = Gem::Platform::RUBY
-  s.has_rdoc = true
   s.summary = "Ohai profiles your system and emits JSON"
   s.description = s.summary
   s.author = "Adam Jacob"
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
+  if s.platform.to_s == 'x86-mswin32'
+    s.add_dependency "systemu", "~> 2.2.0"
+  else
+    s.add_dependency "systemu"
+  end
+
   s.add_dependency "yajl-ruby"
-  s.add_dependency "systemu", "~> 2.2.0"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"
   s.add_dependency "mixlib-log"
+  s.add_dependency "ipaddress"
   s.add_development_dependency "rspec-core"
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"
-  s.add_development_dependency "sigar"
   s.add_development_dependency "rspec_junit_formatter"
   s.bindir = "bin"
   s.executables = %w(ohai)

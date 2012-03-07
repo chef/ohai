@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 
+require 'ipaddress'
+
 provides "network", "counters/network"
 
 network Mash.new unless network
@@ -26,14 +28,29 @@ counters[:network] = Mash.new unless counters[:network]
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-def find_ip_and_mac(addresses)
+def find_ip_and_mac(addresses, match = nil)
   ip = nil; mac = nil
   addresses.keys.each do |addr|
-    ip = addr if addresses[addr]["family"].eql?("inet")
+    if match.nil?
+      ip = addr if addresses[addr]["family"].eql?("inet")
+    else
+      ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr])
+    end
     mac = addr if addresses[addr]["family"].eql?("lladdr")
     break if (ip and mac)
   end
+  Ohai::Log.debug("Found IPv4 address #{ip} with MAC #{mac} #{match.nil? ? '' : 'matching address ' + match}")
   [ip, mac]
+end
+
+def network_contains_address(address_to_match, network_ip, network_opts)
+  if network_opts[:peer]
+    network_opts[:peer] == address_to_match
+  else
+    network = IPAddress "#{network_ip}/#{network_opts[:netmask]}"
+    host = IPAddress address_to_match
+    network.include?(host)
+  end
 end
 
 # If we have a default interface that has addresses, populate the short-cut attributes
@@ -41,7 +58,7 @@ if network[:default_interface] and
     network["interfaces"][network[:default_interface]] and
     network["interfaces"][network[:default_interface]]["addresses"]
   Ohai::Log.debug("Using default interface for default ip and mac address")
-  im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"])
+  im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"], network[:default_gateway])
   ipaddress im.shift
   macaddress im.shift
 else

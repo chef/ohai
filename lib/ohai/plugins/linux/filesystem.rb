@@ -40,7 +40,7 @@ popen4("df -P") do |pid, stdin, stdout, stderr|
 end
 
 # Grab mount information from /bin/mount
-popen4("mount -l") do |pid, stdin, stdout, stderr|
+popen4("mount") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
@@ -53,27 +53,53 @@ popen4("mount -l") do |pid, stdin, stdout, stderr|
   end
 end
 
-# Grab UUID from /dev/disk/by-uuid/*
-popen4("ls -l /dev/disk/by-uuid/* | awk '{print $11, $9}'") do |pid, stdin, stdout, stderr|
+# Gather more filesystem types via libuuid, even devices that's aren't mounted
+popen4("blkid -s TYPE") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /^[.\/]+\/([a-z]+\d) \/.\/(.)$/
-      filesystem = "/dev/" + $1
+    if line =~ /^(\S+): TYPE="(\S+)"/
+      filesystem = $1
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:fs_type] = $2
+    end
+  end
+end
+
+# Gather device UUIDs via libuuid
+popen4("blkid -s UUID") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^(\S+): UUID="(\S+)"/
+      filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:uuid] = $2
     end
   end
 end
 
+# Gather device labels via libuuid
+popen4("blkid -s LABEL") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /^(\S+): LABEL="(\S+)"/
+      filesystem = $1
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:label] = $2
+    end
+  end
+end
+
 # Grab any missing mount information from /proc/mounts
-File.open('/proc/mounts').read_nonblock(4096).each_line do |line|
-  if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
-    filesystem = $1
-    next if fs.has_key?(filesystem)
-    fs[filesystem] = Mash.new
-    fs[filesystem][:mount] = $2
-    fs[filesystem][:fs_type] = $3
-    fs[filesystem][:mount_options] = $4.split(",")
+if File.exists?('/proc/mounts')
+  File.open('/proc/mounts').read_nonblock(4096).each_line do |line|
+    if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
+      filesystem = $1
+      next if fs.has_key?(filesystem)
+      fs[filesystem] = Mash.new
+      fs[filesystem][:mount] = $2
+      fs[filesystem][:fs_type] = $3
+      fs[filesystem][:mount_options] = $4.split(",")
+    end
   end
 end
 

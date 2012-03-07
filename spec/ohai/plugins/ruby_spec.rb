@@ -23,10 +23,17 @@ ruby_bin = File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_
 
 describe Ohai::System, "plugin ruby" do
 
-  before(:each) do
+  before(:all) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new    
-    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:languages] = Mash.new
+
+    @ohai.require_plugin("ruby")
+
+    @ruby_ohai_data_pristine = @ohai[:languages][:ruby]
+  end
+
+  before(:each) do
+    @ruby_ohai_data = @ruby_ohai_data_pristine.dup
   end
 
   {
@@ -47,8 +54,7 @@ describe Ohai::System, "plugin ruby" do
     :ruby_bin => ruby_bin
   }.each do |attribute, value|
     it "should have #{attribute} set" do
-      @ohai._require_plugin("ruby")
-      @ohai[:languages][:ruby][attribute].should eql(value)
+      @ruby_ohai_data[attribute].should eql(value)
     end
   end
   

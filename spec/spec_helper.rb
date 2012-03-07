@@ -1,3 +1,4 @@
+require 'rspec'
 require 'mixlib/config'
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')

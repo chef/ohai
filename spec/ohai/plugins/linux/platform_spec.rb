@@ -18,7 +18,7 @@
 
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb') 
 
 describe Ohai::System, "Linux plugin platform" do
   before(:each) do
@@ -34,6 +34,8 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub!(:exists?).with("/etc/arch-release").and_return(false)
     File.stub!(:exists?).with("/etc/system-release").and_return(false)
     File.stub!(:exists?).with("/etc/slackware-version").and_return(false)
+    File.stub!(:exists?).with("/etc/enterprise-release").and_return(false)
+    File.stub!(:exists?).with("/etc/oracle-release").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -50,6 +52,7 @@ describe Ohai::System, "Linux plugin platform" do
     it "should set platform to lowercased lsb[:id]" do
       @ohai._require_plugin("linux::platform")        
       @ohai[:platform].should == "ubuntu"
+      
     end
     
     it "should set platform_version to lsb[:release]" do
@@ -57,18 +60,45 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform_version].should == "8.04"
     end
 
-    it "should set platform to redhat when [:lsb][:id] contains Redhat" do
+    it "should set platform to ubuntu and platform_family to debian [:lsb][:id] contains Ubuntu" do
+      @ohai[:lsb][:id] = "Ubuntu"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "ubuntu"
+      @ohai[:platform_family].should == "debian"
+    end
+    it "should set platform to mint and platform_family to debian [:lsb][:id] contains Mint" do
+      @ohai[:lsb][:id] = "Mint"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "mint"
+      @ohai[:platform_family].should == "debian"
+    end
+    it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
+      @ohai[:lsb][:id] = "Debian"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "debian"
+      @ohai[:platform_family].should == "debian"
+    end
+    it "should set platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
       @ohai[:lsb][:id] = "RedHatEnterpriseServer"
       @ohai[:lsb][:release] = "5.7"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "redhat"
+      @ohai[:platform_family].should == "rhel"
     end
 
-    it "should set platform to amazon when [:lsb][:id] contains Amazon" do
+    it "should set platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
       @ohai[:lsb][:id] = "AmazonAMI"
       @ohai[:lsb][:release] = "2011.09"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "amazon"
+      @ohai[:platform_family].should == "rhel"
+    end
+
+    it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
+      @ohai[:lsb][:id] = "ScientificSL"
+      @ohai[:lsb][:release] = "5.7"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "scientific"
     end
   end
 
@@ -102,9 +132,11 @@ describe Ohai::System, "Linux plugin platform" do
       File.should_receive(:exists?).with("/etc/slackware-version").and_return(true)
     end
 
-    it "should set platform to slackware" do
+    it "should set platform and platform_family to slackware" do
+      File.should_receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "slackware"
+      @ohai[:platform_family].should == "slackware"
     end
   end
   
@@ -114,10 +146,12 @@ describe Ohai::System, "Linux plugin platform" do
       File.should_receive(:exists?).with("/etc/arch-release").and_return(true)
     end
 
-    it "should set platform to arch" do
+    it "should set platform to arch and platform_family to arch" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "arch"
+      @ohai[:platform_family].should == "arch"
     end
+
   end
   
   describe "on gentoo" do
@@ -126,28 +160,58 @@ describe Ohai::System, "Linux plugin platform" do
       File.should_receive(:exists?).with("/etc/gentoo-release").and_return(true)
     end
 
-    it "should set platform to gentoo" do
+    it "should set platform and platform_family to gentoo" do
+      File.should_receive(:read).with("/etc/gentoo-release").and_return("Gentoo Base System release 1.20.1.1")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "gentoo"
+      @ohai[:platform_family].should == "gentoo"
     end
   end
 
   describe "on redhat breeds" do
     describe "with lsb_release results" do
-      it "should set the platform to redhat even if the LSB name is something absurd but redhat like" do
+      it "should set the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
         @ohai[:lsb][:id] = "RedHatEnterpriseServer"
         @ohai[:lsb][:release] = "6.1"
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "redhat"
         @ohai[:platform_version].should == "6.1"
+	@ohai[:platform_family].should == "rhel"
       end
 
-      it "should set the platform to centos" do
+      it "should set the platform to centos and platform_family to rhel" do
         @ohai[:lsb][:id] = "CentOS"
         @ohai[:lsb][:release] = "5.4"
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "centos"
         @ohai[:platform_version].should == "5.4"
+	@ohai[:platform_family].should == "rhel"
+
+      end
+
+
+      it "should set the platform_family to rhel if the LSB name is oracle-ish" do
+        @ohai[:lsb][:id] = "EnterpriseEnterpriseServer"
+        @ohai._require_plugin("linux::platform")
+	@ohai[:platform_family].should == "rhel"
+      end
+
+      it "should set the platform_family to rhel if the LSB name is amazon-ish" do
+        @ohai[:lsb][:id] = "Amazon"
+        @ohai._require_plugin("linux::platform")
+	@ohai[:platform_family].should == "rhel"
+      end
+
+      it "should set the platform_family to fedora if the LSB name is fedora-ish" do
+        @ohai[:lsb][:id] = "Fedora"
+        @ohai._require_plugin("linux::platform")
+	@ohai[:platform_family].should == "fedora"
+      end
+
+      it "should set the platform_family to redhat if the LSB name is scientific-ish" do
+        @ohai[:lsb][:id] = "Scientific"
+        @ohai._require_plugin("linux::platform")
+	@ohai[:platform_family].should == "rhel"
       end
     end
   
@@ -204,6 +268,90 @@ describe Ohai::System, "Linux plugin platform" do
     end
   end
 
+  describe "on oracle enterprise linux" do
+    describe "with lsb_results" do
+      it "should read the platform as oracle and version as 5.7" do
+        @ohai[:lsb][:id] = "EnterpriseEnterpriseServer"
+        @ohai[:lsb][:release] = "5.7"
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.7"
+      end
+
+      it "should read the platform as oracle and version as 6.1" do
+        @ohai[:lsb][:id] = "OracleServer"
+        @ohai[:lsb][:release] = "6.1"
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.1"
+      end
+    end
+
+    describe "without lsb_results" do
+      before(:each) do
+        @ohai.lsb = nil
+      end
+ 
+      it "should read the platform as oracle and version as 5" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5"
+      end
+
+      it "should read the platform as oracle and version as 5.1" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.1"
+      end
+
+      it "should read the platform as oracle and version as 5.7" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
+        File.should_receive(:exists?).with("/etc/enterprise-release").and_return(true)
+        File.should_receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "5.7"
+      end
+
+      it "should read the platform as oracle and version as 6.0" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.0 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.0")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.0"
+      end
+  
+      it "should read the platform as oracle and version as 6.1" do
+        File.stub!(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub!(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
+        File.should_receive(:exists?).with("/etc/oracle-release").and_return(true)
+        File.should_receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
+        @ohai._require_plugin("linux::platform")
+        @ohai[:platform].should == "oracle"
+        @ohai[:platform_version].should == "6.1"
+      end
+    end
+  end
+
   describe "on suse" do
     before(:each) do
       @ohai.lsb = nil
@@ -214,9 +362,11 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
     end
   
-    it "should set platform to suse" do
+    it "should set platform and platform_family to suse and bogus verion to 10.0" do
+      File.should_receive(:read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
+      @ohai[:platform_family].should == "suse"
     end
   
     it "should read the version as 10.1 for bogus SLES 10" do
@@ -224,6 +374,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "10.1"
+      @ohai[:platform_family].should == "suse"
     end
   
     it "should read the version as 11.2" do
@@ -231,6 +382,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.2"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 11.3" do
@@ -238,6 +390,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.3"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 9.1" do
@@ -245,6 +398,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "9.1"
+      @ohai[:platform_family].should == "suse"
     end
     
     it "[OHAI-272] should read the version as 11.4" do
@@ -252,6 +406,7 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "suse"
       @ohai[:platform_version].should == "11.4"
+      @ohai[:platform_family].should == "suse"
     end
   end
 

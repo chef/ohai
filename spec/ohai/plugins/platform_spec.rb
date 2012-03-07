@@ -32,9 +32,10 @@ describe Ohai::System, "plugin platform" do
     @ohai._require_plugin("platform")
   end
   
-  it "should set the platform to the os if it was not set earlier" do
+  it "should set the platform and platform family to the os if it was not set earlier" do
     @ohai._require_plugin("platform")
     @ohai[:platform].should eql("monkey")
+    @ohai[:platform_family].should eql ("monkey")
   end
   
   it "should not set the platform to the os if it was set earlier" do
@@ -43,6 +44,20 @@ describe Ohai::System, "plugin platform" do
     @ohai[:platform].should eql("lars")
   end
   
+  it "should set the platform_family to the platform if platform was set earlier but not platform_family" do
+    @ohai[:platform] = 'lars'
+    @ohai[:platform_family] = 'jack'
+    @ohai._require_plugin("platform")
+    @ohai[:platform_family].should eql ("jack")
+  end
+ 
+  it "should not set the platform_family if the platform_family was set earlier." do
+    @ohai[:platform] = 'lars'
+    @ohai._require_plugin("platform")
+    @ohai[:platform].should eql("lars")
+    @ohai[:platform_family].should eql ("lars")
+  end
+
   it "should set the platform_version to the os_version if it was not set earlier" do
     @ohai._require_plugin("platform")
     @ohai[:os_version].should eql("poop")

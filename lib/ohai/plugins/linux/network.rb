@@ -66,7 +66,7 @@ if File.exist?("/sbin/ip")
     stdout.each do |line|
       # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
       # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+)(@[0-9a-zA-Z]+|):\s/
+      if line =~ /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
         cint = $2
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/
@@ -177,7 +177,9 @@ else
     cint = nil
     stdout.each do |line|
       tmp_addr = nil
-      if line =~ /^([0-9a-zA-Z\.\:\-_]+)\s+/
+      # dev_valid_name in the kernel only excludes slashes, nulls, spaces 
+      # http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=blob;f=net/core/dev.c#l851
+      if line =~ /^([0-9a-zA-Z@\.\:\-_]+)\s+/
         cint = $1
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/

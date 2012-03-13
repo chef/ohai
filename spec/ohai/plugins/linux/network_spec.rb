@@ -75,6 +75,9 @@ eth0.153  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           collisions:0 txqueuelen:0 
           RX bytes:4047036732 (3.7 GiB)  TX bytes:3451231474 (3.2 GiB)
 
+foo:veth0@eth0 Link encap:Ethernet  HWaddr ca:b3:73:8b:0c:e4  
+          BROADCAST MULTICAST  MTU:1500  Metric:1
+
 lo        Link encap:Local Loopback  
           inet addr:127.0.0.1  Mask:255.0.0.0
           inet6 addr: ::1/128 Scope:Host
@@ -84,6 +87,8 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0 
           RX bytes:35224 (34.3 KiB)  TX bytes:35224 (34.3 KiB)
 ENDIFCONFIG
+# Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
+# This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
 
     linux_ip_addr = <<-IP_ADDR
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
@@ -119,6 +124,9 @@ ENDIFCONFIG
     inet 10.153.1.16/22 brd 10.153.3.255 scope global eth0.153
     inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
        valid_lft forever preferred_lft forever
+7: foo:veth0@eth0@veth0: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc noop state DOWN 
+    link/ether ca:b3:73:8b:0c:e4 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.212.2/24 scope global foo:veth0@eth0
 IP_ADDR
 
     linux_ip_link_s = <<-IP_LINK_S
@@ -198,7 +206,7 @@ IP_ROUTE
       end
 
       it "detects the interfaces" do
-        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "lo"]
+        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "foo:veth0@eth0", "lo"]
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
@@ -390,5 +398,26 @@ ROUTE_N
       end
     end
   end
+
+  describe "for newer network features using iproute2 only" do
+      before do
+        File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+        @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+      end
+
+      it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
+        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
+        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
+        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
+      end
+  end 
 end
 

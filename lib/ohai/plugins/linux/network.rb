@@ -45,6 +45,11 @@ end
 iface = Mash.new
 net_counters = Mash.new
 
+# Match the lead line for an interface from iproute2
+# 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+# The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
+IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
+
 if File.exist?("/sbin/ip")
 
   begin
@@ -64,9 +69,7 @@ if File.exist?("/sbin/ip")
     stdin.close
     cint = nil
     stdout.each do |line|
-      # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
-      # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-      if line =~ /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
+      if line =~ IPROUTE_INT_REGEX
         cint = $2
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/
@@ -131,12 +134,12 @@ if File.exist?("/sbin/ip")
     end
   end
 
-  popen4("ip -s link") do |pid, stdin, stdout, stderr|
+  popen4("ip -d -s link") do |pid, stdin, stdout, stderr|
     stdin.close
     tmp_int = nil
     on_rx = true
     stdout.each do |line|
-      if line =~ /^(\d+): ([0-9a-zA-Z\.\-_]+):\s/
+      if line =~ IPROUTE_INT_REGEX
         tmp_int = $2
         net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
       end
@@ -163,6 +166,22 @@ if File.exist?("/sbin/ip")
         net_counters[tmp_int][:tx][:queuelen] = $1
       end
        
+      if line =~ /vlan id (\d+)/
+        tmp_id = $1
+        iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
+        iface[tmp_int][:vlan][:id] = tmp_id
+
+        vlan_flags = line.scan(/(REORDER_HDR|GVRP|LOOSE_BINDING)/)
+        if vlan_flags.length > 0
+          iface[tmp_int][:vlan][:flags] = vlan_flags.flatten.uniq
+        end
+      end
+
+      if line =~ /state (\w+)/
+        iface[tmp_int]['state'] = $1.downcase
+      end
+
+
     end
   end
 

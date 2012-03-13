@@ -134,7 +134,7 @@ ENDIFCONFIG
     inet 192.168.212.2/24 scope global foo:veth0@eth0
 IP_ADDR
 
-    linux_ip_link_s = <<-IP_LINK_S
+    linux_ip_link_s_d = <<-IP_LINK_S
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     RX: bytes  packets  errors  dropped overrun mcast   
@@ -147,6 +147,13 @@ IP_ADDR
     1392844460 2659966  0       0       0       0      
     TX: bytes  packets  errors  dropped carrier collsns 
     691785313  1919690  0       0       0       0      
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+    link/ether 00:0c:29:41:71:45 brd ff:ff:ff:ff:ff:ff
+    vlan id 11 <REORDER_HDR> 
+    RX: bytes  packets  errors  dropped overrun mcast   
+    0          0        0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    0          0        0       0       0       0      
 IP_LINK_S
 
     linux_route_n = <<-ROUTE_N
@@ -179,7 +186,7 @@ IP_ROUTE
     @route_lines = linux_route_n.split("\n")
     @arp_lines = linux_arp_an.split("\n")
     @ipaddr_lines = linux_ip_addr.split("\n")
-    @iplink_lines = linux_ip_link_s.split("\n")
+    @iplink_lines = linux_ip_link_s_d.split("\n")
     @ipneighbor_lines = linux_ip_neighbor_show.split("\n")
     @iproute_lines = linux_ip_route_show_exact
 
@@ -201,7 +208,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -305,7 +312,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -351,7 +358,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
       end
 
       describe "without a subinterface" do
@@ -413,7 +420,7 @@ ROUTE_N
       @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
       @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
       @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-      @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+      @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
       @ohai._require_plugin("network")
       @ohai._require_plugin("linux::network")
     end
@@ -429,6 +436,16 @@ ROUTE_N
       @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
       @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
     end
+
+    it "adds the vlan information of an interface" do
+      @ohai['network']['interfaces']['eth0.11']['vlan']['id'].should == '11'
+      @ohai['network']['interfaces']['eth0.11']['vlan']['flags'].should == [ 'REORDER_HDR' ]
+    end
+
+    it "adds the state of an interface" do
+      @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
+    end
+
   end 
 end
 

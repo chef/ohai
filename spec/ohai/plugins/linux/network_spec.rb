@@ -39,6 +39,10 @@ eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2
           RX bytes:1392844460 (1.2 GiB)  TX bytes:691785313 (659.7 MiB)
           Interrupt:16 
 
+eth0:5    Link encap:Ethernet  HWaddr 00:0c:29:41:71:45  
+          inet addr:192.168.5.1  Bcast:192.168.5.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+
 eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
           inet addr:192.168.0.16  Bcast:192.168.0.255  Mask:255.255.255.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
@@ -101,6 +105,7 @@ ENDIFCONFIG
     inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
     inet 10.116.201.75/32 scope global eth0
     inet 10.116.201.74/24 scope global secondary eth0
+    inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
     inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
        valid_lft forever preferred_lft forever
 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
@@ -206,7 +211,7 @@ IP_ROUTE
       end
 
       it "detects the interfaces" do
-        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "foo:veth0@eth0", "lo"]
+        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo"]
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
@@ -400,24 +405,30 @@ ROUTE_N
   end
 
   describe "for newer network features using iproute2 only" do
-      before do
-        File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
-        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
-        @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-        @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
-        @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-        @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-        @ohai._require_plugin("network")
-        @ohai._require_plugin("linux::network")
-      end
+    before do
+      File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+      @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+      @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+      @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+      @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+      @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+      @ohai.stub!(:popen4).with("ip -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
+    end
 
-      it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
-        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
-        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
-        @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
-      end
+    it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
+      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
+      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
+      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
+    end
+
+    it "generates a fake interface for ip aliases for backward compatibility" do
+      @ohai['network']['interfaces']['eth0:5']['addresses'].keys.should include('192.168.5.1')
+      @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
+      @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
+    end
   end 
 end
 

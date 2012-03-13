@@ -91,9 +91,20 @@ if File.exist?("/sbin/ip")
         end
       end
       if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         tmp_addr, tmp_prefix = $1, $3
         tmp_prefix ||= "32"
+        original_int = nil
+
+        # Are we a formerly aliased interface?
+        if line =~ /#{cint}:(\d+)$/
+          sub_int = $1
+          alias_int = "#{cint}:#{sub_int}"
+          original_int = cint
+          cint = alias_int
+        end
+
+        iface[cint] = Mash.new unless iface[cint] # Create the fake alias interface if needed
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
         iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
 
@@ -108,6 +119,9 @@ if File.exist?("/sbin/ip")
         if line =~ /scope (\w+)/
           iface[cint][:addresses][tmp_addr][:scope] = ($1.eql?("host") ? "Node" : $1.capitalize)
         end
+
+        # If we found we were an an alias interface, restore cint to its original value
+        cint = original_int unless original_int.nil?
       end
       if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]

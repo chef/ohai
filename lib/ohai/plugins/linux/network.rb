@@ -196,6 +196,21 @@ if File.exist?("/sbin/ip")
     end
   end
 
+  popen4("ip route show scope link") do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout.each do |line|
+      if line =~ /^([^\s]+)\s+dev\s+([^\s]+).*\s+src\s+([^\s]+)\b/
+        iface[$2][:routes] = Mash.new unless iface[$2][:routes]
+        iface[$2][:routes][$1] = Mash.new( :scope => "Link", :src => $3 )
+        if network[:default_interface] == $2 and
+            IPAddr.new($1).include? network[:default_gateway]
+          ipaddress $3
+          macaddress iface[$2][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
+        end
+      end
+    end
+  end
+
 else
 
   begin

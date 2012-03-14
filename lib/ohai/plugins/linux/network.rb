@@ -200,12 +200,18 @@ if File.exist?("/sbin/ip")
     stdin.close
     stdout.each do |line|
       if line =~ /^([^\s]+)\s+dev\s+([^\s]+).*\s+src\s+([^\s]+)\b/
-        iface[$2][:routes] = Mash.new unless iface[$2][:routes]
-        iface[$2][:routes][$1] = Mash.new( :scope => "Link", :src => $3 )
-        if network[:default_interface] == $2 and
-            IPAddr.new($1).include? network[:default_gateway]
-          ipaddress $3
-          macaddress iface[$2][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
+        tmp_route_cidr = $1
+        tmp_int = $2
+        tmp_source_addr = $3
+        unless iface[tmp_int]
+          Ohai::Log.warn("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
+          next
+        end
+        iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]
+        iface[tmp_int][:routes][tmp_route_cidr] = Mash.new( :scope => "Link", :src => tmp_source_addr )
+        if (network[:default_interface] == tmp_int ) && (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
+          ipaddress tmp_source_addr
+          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
         end
       end
     end

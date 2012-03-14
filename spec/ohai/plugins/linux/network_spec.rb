@@ -176,11 +176,19 @@ NEIGHBOR_SHOW
 default via 10.116.201.1 dev eth0
 IP_ROUTE
 
+    linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+IP_ROUTE_SCOPE
+
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
     @stdin_ipaddr = StringIO.new
     @stdin_iplink = StringIO.new
     @stdin_ipneighbor = StringIO.new
+    @stdin_ip_route_scope_link = StringIO.new
 
     @ifconfig_lines = linux_ifconfig.split("\n")
     @route_lines = linux_route_n.split("\n")
@@ -189,6 +197,7 @@ IP_ROUTE
     @iplink_lines = linux_ip_link_s_d.split("\n")
     @ipneighbor_lines = linux_ip_neighbor_show.split("\n")
     @iproute_lines = linux_ip_route_show_exact
+    @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
 
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
@@ -209,6 +218,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -313,6 +323,7 @@ IP_ROUTE
         @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -421,6 +432,7 @@ ROUTE_N
       @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
       @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
       @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+      @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
       @ohai._require_plugin("network")
       @ohai._require_plugin("linux::network")
     end
@@ -446,6 +458,24 @@ ROUTE_N
       @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
     end
 
+    # This should never happen in the real world.
+    describe "when encountering a surprise interface" do
+      before do
+        linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
+IP_ROUTE_SCOPE
+        @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+      end
+      
+      it "logs a message and skips previously unseen interfaces in 'ip route show scope link'" do
+      pending "btm has to go home and is bad at rspec"
+        Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show scope link': virbr0")
+      end
+    end
   end 
+
 end
 

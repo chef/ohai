@@ -196,6 +196,27 @@ if File.exist?("/sbin/ip")
     end
   end
 
+  popen4("ip route show scope link") do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout.each do |line|
+      if line =~ /^([^\s]+)\s+dev\s+([^\s]+).*\s+src\s+([^\s]+)\b/
+        tmp_route_cidr = $1
+        tmp_int = $2
+        tmp_source_addr = $3
+        unless iface[tmp_int]
+          Ohai::Log.debug("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
+          next
+        end
+        iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]
+        iface[tmp_int][:routes][tmp_route_cidr] = Mash.new( :scope => "Link", :src => tmp_source_addr )
+        if (network[:default_interface] == tmp_int ) && (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
+          ipaddress tmp_source_addr
+          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
+        end
+      end
+    end
+  end
+
 else
 
   begin

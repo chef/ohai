@@ -25,8 +25,15 @@ network[:interfaces] = Mash.new unless network[:interfaces]
 counters Mash.new unless counters
 counters[:network] = Mash.new unless counters[:network]
 
+ipaddress nil
+macaddress nil
+
 require_plugin "hostname"
 require_plugin "#{os}::network"
+
+# ipaddress and macaddress can be set from the #{os}::network plugin
+# both ipaddress and macaddress have to be set in that case
+return unless ipaddress.nil? or macaddress.nil?
 
 def find_ip_and_mac(addresses, match = nil)
   ip = nil; mac = nil

@@ -434,42 +434,54 @@ ROUTE_N
       @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
       @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
       @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
-      @ohai._require_plugin("network")
-      @ohai._require_plugin("linux::network")
     end
 
     it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
       @ohai['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
       @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
       @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
       @ohai['network']['interfaces']['eth0:5']['addresses'].keys.should include('192.168.5.1')
       @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
       @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
     end
 
     it "adds the vlan information of an interface" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
       @ohai['network']['interfaces']['eth0.11']['vlan']['id'].should == '11'
       @ohai['network']['interfaces']['eth0.11']['vlan']['flags'].should == [ 'REORDER_HDR' ]
     end
 
     it "adds the state of an interface" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
       @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
     end
 
     it "adds link level routes" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
       @ohai['network']['interfaces']['eth0']['routes']['10.116.201.0/24'].should == Mash.new( :scope => "Link", :src => "10.116.201.76" )
       @ohai['network']['interfaces']['foo:veth0@eth0']['routes']['192.168.212.0/24'].should == Mash.new( :scope => "Link", :src => "192.168.212.2" )
     end
 
     describe "checking for the source address to reach the default gateway" do
       it "sets ipaddress" do
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
         @ohai['ipaddress'].should == "10.116.201.76"
       end
 
-      it "set macaddress" do
+      it "sets macaddress" do
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
         @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
       end
     end
@@ -482,13 +494,13 @@ ROUTE_N
 IP_ROUTE_SCOPE
         @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
         @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
-        @ohai._require_plugin("network")
-        @ohai._require_plugin("linux::network")
       end
       
       it "logs a message and skips previously unseen interfaces in 'ip route show scope link'" do
-      pending "btm has to go home and is bad at rspec"
-        Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show scope link': virbr0")
+        Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show scope link': virbr0").once
+        Ohai::Log.should_receive(:debug).any_number_of_times # Catches the 'Loading plugin network' type messages
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
       end
     end
   end 

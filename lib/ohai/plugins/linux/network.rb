@@ -204,7 +204,7 @@ if File.exist?("/sbin/ip")
         tmp_int = $2
         tmp_source_addr = $3
         unless iface[tmp_int]
-          Ohai::Log.warn("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
+          Ohai::Log.debug("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
           next
         end
         iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]

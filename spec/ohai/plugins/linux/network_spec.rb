@@ -177,6 +177,7 @@ default via 10.116.201.1 dev eth0
 IP_ROUTE
 
     linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
@@ -456,6 +457,21 @@ ROUTE_N
 
     it "adds the state of an interface" do
       @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
+    end
+
+    it "adds link level routes" do
+      @ohai['network']['interfaces']['eth0']['routes']['10.116.201.0/24'].should == Mash.new( :scope => "Link", :src => "10.116.201.76" )
+      @ohai['network']['interfaces']['foo:veth0@eth0']['routes']['192.168.212.0/24'].should == Mash.new( :scope => "Link", :src => "192.168.212.2" )
+    end
+
+    describe "checking for the source address to reach the default gateway" do
+      it "sets ipaddress" do
+        @ohai['ipaddress'].should == "10.116.201.76"
+      end
+
+      it "set macaddress" do
+        @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+      end
     end
 
     # This should never happen in the real world.

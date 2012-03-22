@@ -37,7 +37,7 @@ when /openbsd(.+)$/
   os "openbsd"
 when /netbsd(.+)$/
   os "netbsd"
-when /solaris2\.([\d]+)/
+when /solaris2/
   os "solaris2"
 when /mswin|mingw32|windows/
   # After long discussion in IRC the "powers that be" have come to a concensus

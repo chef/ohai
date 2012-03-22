@@ -72,15 +72,14 @@ if File.exists?("/proc/cpuinfo")
   end
 end
 
-# http://wiki.openvz.org/Proc/user_beancounters
-if File.exists?("/proc/user_beancounters")
-  if File.read("/proc/user_beancounters") =~ /\n\s+0:\s+/
-    virtualization[:emulator] = "openvz"
-    virtualization[:role] = "host"
-  else
-    virtualization[:emulator] = "openvz"
-    virtualization[:role] = "guest"
-  end
+# Detect OpenVZ / Virtuozzo.
+# http://wiki.openvz.org/BC_proc_entries
+if File.exists?("/proc/bc/0")
+  virtualization[:system] = "openvz"
+  virtualization[:role] = "host"
+elsif File.exists?("/proc/vz")
+  virtualization[:system] = "openvz"
+  virtualization[:role] = "guest"
 end
 
 # http://www.dmo.ca/blog/detecting-virtualization-on-linux

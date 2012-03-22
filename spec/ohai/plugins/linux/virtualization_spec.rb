@@ -216,24 +216,24 @@ VMWARE
     end
   end
 	describe "when we are checking for openvz" do
-		it "should set openvz host if /proc/user_beancounters contains 0:" do
-			File.should_receive(:exists?).with("/proc/user_beancounters").and_return(true)
-			File.stub!(:read).with("/proc/user_beancounters").and_return("\n 0: ")
+		it "should set openvz host if /proc/bc/0 exists" do
+			File.should_receive(:exists?).with("/proc/bc/0").and_return(true)
 			@ohai._require_plugin("linux::virtualization")
-			@ohai[:virtualization][:emulator].should == "openvz"
+			@ohai[:virtualization][:system].should == "openvz"
 			@ohai[:virtualization][:role].should == "host"
 		end
 
-		it "should set openvz guest if /proc/user_beancounters doesn't contain 0:" do
-			File.should_receive(:exists?).with("/proc/user_beancounters").and_return(true)
-			File.stub!(:read).with("/proc/user_beancounters").and_return("101:")
+		it "should set openvz guest if /proc/bc/0 doesn't exist and /proc/vz exists" do
+			File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
+			File.should_receive(:exists?).with("/proc/vz").and_return(true)
 			@ohai._require_plugin("linux::virtualization")
-			@ohai[:virtualization][:emulator].should == "openvz"
+			@ohai[:virtualization][:system].should == "openvz"
 			@ohai[:virtualization][:role].should == "guest"
 		end
 
 		it "should not set virtualization if openvz isn't there" do
-			File.should_receive(:exists?).at_least(:once).and_return(false)
+			File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
+			File.should_receive(:exists?).with("/proc/vz").and_return(false)
 			@ohai._require_plugin("linux::virtualization")
 			@ohai[:virtualization].should == {}
 		end

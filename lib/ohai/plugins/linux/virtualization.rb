@@ -20,6 +20,8 @@ provides "virtualization"
 
 virtualization Mash.new
 
+virtualization[:systems] = Mash.new
+
 # if it is possible to detect paravirt vs hardware virt, it should be put in
 # virtualization[:mechanism]
 
@@ -29,11 +31,13 @@ if File.exists?("/proc/xen")
   virtualization[:system] = "xen"
   # Assume guest
   virtualization[:role] = "guest"
+  virtualization[:systems][:xen] = "guest"
 
   # This file should exist on most Xen systems, normally empty for guests
   if File.exists?("/proc/xen/capabilities")
     if File.read("/proc/xen/capabilities") =~ /control_d/i
       virtualization[:role] = "host"
+      virtualization[:systems][:xen] = "host"
     end
   end
 end
@@ -51,12 +55,15 @@ if File.exists?("/proc/modules")
   if modules =~ /^kvm/
     virtualization[:system] = "kvm"
     virtualization[:role] = "host"
+    virtualization[:systems][:kvm] = "host"
   elsif modules =~ /^vboxdrv/
     virtualization[:system] = "vbox"
     virtualization[:role] = "host"
+    virtualization[:systems][:vbox] = "host"
   elsif modules =~ /^vboxguest/
     virtualization[:system] = "vbox"
     virtualization[:role] = "guest"
+    virtualization[:systems][:vbox] = "guest"
   end
 end
 
@@ -69,17 +76,20 @@ if File.exists?("/proc/cpuinfo")
   if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU/
     virtualization[:system] = "kvm"
     virtualization[:role] = "guest"
+    virtualization[:systems][:kvm] = "guest"
   end
 end
 
 # http://wiki.openvz.org/Proc/user_beancounters
 if File.exists?("/proc/user_beancounters")
   if File.read("/proc/user_beancounters") =~ /\n\s+0:\s+/
-    virtualization[:emulator] = "openvz"
+    virtualization[:system] = "openvz"
     virtualization[:role] = "host"
+    virtualization[:systems][:openvz] = "host"
   else
-    virtualization[:emulator] = "openvz"
+    virtualization[:system] = "openvz"
     virtualization[:role] = "guest"
+    virtualization[:systems][:openvz] = "guest"
   end
 end
 
@@ -93,16 +103,19 @@ if File.exists?("/usr/sbin/dmidecode")
       if dmi_info =~ /Product Name: Virtual Machine/
         virtualization[:system] = "virtualpc"
         virtualization[:role] = "guest"
+        virtualization[:systems][:virtualpc] = "guest"
       end
     when /Manufacturer: VMware/
       if dmi_info =~ /Product Name: VMware Virtual Platform/
         virtualization[:system] = "vmware"
         virtualization[:role] = "guest"
+        virtualization[:systems][:vmware] = "guest"
       end
     when /Manufacturer: Xen/
       if dmi_info =~ /Product Name: HVM domU/
         virtualization[:system] = "xen"
         virtualization[:role] = "guest"
+        virtualization[:systems][:xen] = "guest"
       end
     else
       nil
@@ -119,8 +132,10 @@ if File.exists?("/proc/self/status")
     virtualization[:system] = "linux-vserver"
     if vxid[2] == "0"
       virtualization[:role] = "host"
+      virtualization[:systems]["linux-vserver"] = "host"
     else
       virtualization[:role] = "guest"
+      virtualization[:systems]["linux-vserver"] = "guest"
      end
   end
 end

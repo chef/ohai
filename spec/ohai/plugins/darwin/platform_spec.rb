@@ -64,4 +64,36 @@ describe Ohai::System, "Darwin plugin platform" do
     @ohai._require_plugin("darwin::platform")
     @ohai[:platform_build].should == "9F33"
   end
+
+  it "should set platform_family to mac_os_x" do
+    @ohai._require_plugin("darwin::platform")
+    @ohai[:platform_family].should == "mac_os_x"
+  end
+
+  describe "on os x server" do
+    before(:each) do
+      @ohai = Ohai::System.new
+      @ohai.stub!(:require_plugin).and_return(true)
+      @ohai[:os] = "darwin"
+      @pid = 10
+      @stdin = mock("STDIN", { :close => true })
+      @stdout = mock("STDOUT")
+      @stdout.stub!(:each).
+        and_yield("ProductName:	Mac OS X Server").
+        and_yield("ProductVersion:	10.6.8").
+        and_yield("BuildVersion:	10K549")
+      @stderr = mock("STDERR")
+      @ohai.stub!(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+    end
+
+    it "should set platform to mac_os_x_server" do
+      @ohai._require_plugin("darwin::platform")
+      @ohai[:platform].should == "mac_os_x_server"
+    end
+
+    it "should set platform_family to mac_os_x" do
+      @ohai._require_plugin("darwin::platform")
+      @ohai[:platform_family].should == "mac_os_x"
+    end
+  end
 end

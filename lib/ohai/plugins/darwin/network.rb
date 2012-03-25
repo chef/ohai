@@ -71,6 +71,7 @@ def encaps_lookup(ifname)
 end
 
 def scope_lookup(scope)
+  return "Node" if scope.eql?("::1")
   return "Link" if scope.match(/^fe80\:/)
   return "Site" if scope.match(/^fec0\:/)
   "Global"
@@ -114,7 +115,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
         iface[cint][:encapsulation] = encaps_lookup($1)
       end
     end
-    if line =~ /^\s+ether ([0-9a-f\:]+)\s/
+    if line =~ /^\s+ether ([0-9a-f\:]+)/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       iface[cint][:addresses][$1] = { "family" => "lladdr" }
       iface[cint][:encapsulation] = "Ethernet"
@@ -131,9 +132,9 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
     end
-    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*$/
+    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => "Node" }
+      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => scope_lookup($1) }
     end
     if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+) scopeid 0x([a-f0-9]+)/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
@@ -154,7 +155,7 @@ end
 popen4("arp -an") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+) \[(\w+)\]/
+    if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+).*\[(\w+)\]/
       # MAC addr really should be normalized to include all the zeroes.
       next if iface[$3].nil? # this should never happen
       iface[$3][:arp] = Mash.new unless iface[$3][:arp]

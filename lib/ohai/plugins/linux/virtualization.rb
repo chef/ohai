@@ -123,6 +123,3 @@ if File.exists?("/proc/self/status")
      end
   end
 end
-
-# Detect OpenVZ
-# something in /proc/vz/veinfo

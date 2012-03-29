@@ -32,7 +32,8 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
     File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
     File.stub!(:exists?).with("/proc/self/status").and_return(false)
-    File.stub!(:exists?).with("/proc/user_beancounters").and_return(false)
+    File.stub!(:exists?).with("/proc/bc/0").and_return(false)
+    File.stub!(:exists?).with("/proc/vz").and_return(false)
   end
 
   describe "when we are checking for xen" do

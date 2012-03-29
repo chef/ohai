@@ -108,6 +108,8 @@ ENDIFCONFIG
     inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
     inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
        valid_lft forever preferred_lft forever
+   inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic 
+       valid_lft 6128sec preferred_lft 2526sec
 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 192.168.0.16/24 brd 192.168.0.255 scope global eth0.11
@@ -478,6 +480,12 @@ ROUTE_N
         @ohai._require_plugin("linux::network")
         @ohai['ipaddress'].should == "10.116.201.76"
       end
+
+      it "sets ip6address" do
+        @ohai._require_plugin("network")
+        @ohai._require_plugin("linux::network")
+        @ohai['ip6address'].should == "2001:44b8:4160:8f00:a00:27ff:fe13:eacd"
+      end        
 
       it "sets macaddress" do
         @ohai._require_plugin("network")

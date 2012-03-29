@@ -26,6 +26,7 @@ counters Mash.new unless counters
 counters[:network] = Mash.new unless counters[:network]
 
 ipaddress nil
+ip6address
 macaddress nil
 
 require_plugin "hostname"
@@ -36,18 +37,20 @@ require_plugin "#{os}::network"
 return unless ipaddress.nil? or macaddress.nil?
 
 def find_ip_and_mac(addresses, match = nil)
-  ip = nil; mac = nil
+  ip = nil; mac = nil; ip6 = nil
   addresses.keys.each do |addr|
     if match.nil?
       ip = addr if addresses[addr]["family"].eql?("inet")
     else
       ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr])
     end
+    ip6 = addr if addresses[addr]["family"].eql?("inet6") && addresses[addr]["scope"].eql?("Global")
     mac = addr if addresses[addr]["family"].eql?("lladdr")
     break if (ip and mac)
   end
   Ohai::Log.debug("Found IPv4 address #{ip} with MAC #{mac} #{match.nil? ? '' : 'matching address ' + match}")
-  [ip, mac]
+  Ohai::Log.debug("Found IPv6 address #{ip6}") if ip6
+  [ip, mac, ip6]
 end
 
 def network_contains_address(address_to_match, network_ip, network_opts)
@@ -68,6 +71,7 @@ if network[:default_interface] and
   im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"], network[:default_gateway])
   ipaddress im.shift
   macaddress im.shift
+  ip6address im.shift
 else
   network["interfaces"].keys.sort.each do |iface|
     if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")

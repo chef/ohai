@@ -29,25 +29,28 @@ describe Ohai::System, "Solaris plugin platform" do
   
   describe "on SmartOS" do
     before(:each) do
+      uname_x = <<-UNAME_X
+System = SunOS
+Node = node.example.com
+Release = 5.11
+KernelID = joyent_20120130T201844Z
+Machine = i86pc
+BusType = <unknown>
+Serial = <unknown>
+Users = <unknown>
+OEM# = 0
+Origin# = 1
+NumCPU = 16
+UNAME_X
       @stdin = mock("STDIN", { :close => true })
       @pid = 10
       @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
       @status = 0
-      @stdout.stub!(:each).
-        and_yield("System = SunOS").
-        and_yield("Node = node.example.com").
-        and_yield("Release = 5.11").
-        and_yield("KernelID = joyent_20120130T201844Z").
-        and_yield("Machine = i86pc").
-        and_yield("BusType = <unknown>").
-        and_yield("Serial = <unknown>").
-        and_yield("Users = <unknown>").
-        and_yield("OEM# = 0").
-        and_yield("Origin# = 1").
-        and_yield("NumCPU = 16")
+
+      @uname_x_lines = uname_x.split("\n")
+
       File.stub!(:exists?).with("/sbin/uname").and_return(true)
-      @ohai.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @ohai.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
       @mock_file.stub!(:close).and_return(0)

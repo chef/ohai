@@ -47,7 +47,7 @@ when /mswin|mingw32|windows/
   # subsystems.
   os "windows"
 else
-  Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG['host_os']
+  os ::RbConfig::CONFIG['host_os']
 end
 
 os_version kernel[:release]

@@ -72,4 +72,15 @@ describe Ohai::System, "plugin os" do
       @ohai[:os].should == "solaris2"
     end
   end
+
+  describe "on something we have never seen before, but ruby has" do
+    before do
+      ::RbConfig::CONFIG['host_os'] = "tron"
+    end
+
+    it "sets the os to the ruby 'host_os'" do
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "tron"
+    end
+  end
 end

@@ -209,7 +209,17 @@ if File.exist?("/sbin/ip")
         end
         iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]
         iface[tmp_int][:routes][tmp_route_cidr] = Mash.new( :scope => "Link", :src => tmp_source_addr )
-        if (network[:default_interface] == tmp_int ) && (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
+        # while looping through the link level scope routes we will set ipaddress from the source address if
+        # 1) there's a default route,
+        #    the interface is the default_interface
+        #    the ip source address from the routing table is really set on the node,
+        #    the route entry matches the default_gateway
+        # macaddress is then set from this interface
+        # for now the ip6address is brutaly associated with ipaddress' iface
+        if (network.has_key? "default_interface") &&
+            (network[:default_interface] == tmp_int) &&
+            (iface[tmp_int][:addresses].has_key? tmp_source_addr) &&
+            (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
           ipaddress tmp_source_addr
           macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
           ip6address iface[tmp_int][:addresses].reject{|address, hash| hash['family'] != "inet6" || hash['scope'] != 'Global'}.first.first

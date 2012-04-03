@@ -492,6 +492,121 @@ ROUTE_N
         @ohai._require_plugin("linux::network")
         @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
       end
+
+      describe "with Linux-VServer" do
+        before do
+          linux_ip_link_s_d = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a3 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+IP_LINK_S
+
+          linux_ip_route_show_exact = <<-IP_ROUTE
+default via 172.16.19.1 dev eth0
+IP_ROUTE
+
+          linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    link/ether 00:26:2d:03:80:56 brd ff:ff:ff:ff:ff:ff
+    inet 172.16.19.48/26 brd 172.16.19.63 scope global secondary eth0
+3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    link/ether 00:26:2d:03:80:57 brd ff:ff:ff:ff:ff:ff
+    inet 10.118.19.48/26 brd 10.118.19.63 scope global secondary eth1
+IP_ADDR
+
+          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+172.16.19.0/26 dev eth0 proto kernel  src 172.16.19.39
+172.16.19.0/26 dev if4 proto kernel  src 172.16.19.45
+10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
+10.118.19.0/26 dev eth1 proto kernel  src 10.118.19.11
+10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
+IP_ROUTE_SCOPE
+
+          @iplink_lines = linux_ip_link_s_d.split("\n")
+          @ipaddr_lines = linux_ip_addr.split("\n")
+          @iproute_lines = linux_ip_route_show_exact
+          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+          @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+        end
+        it "sets ipaddress" do
+          @ohai['ipaddress'].should be_nil
+        end
+      end
+
+      describe "with OpenVZ" do
+        before do
+          linux_ip_link_s_d = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: venet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    link/void
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0         
+IP_LINK_S
+
+          linux_ip_route_show_exact = <<-IP_ROUTE
+default dev venet0 scope link
+IP_ROUTE
+
+          linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+2: venet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    link/void
+    inet 127.0.0.2/32 scope host venet0
+    inet 172.16.19.48/32 scope global venet0:0
+IP_ADDR
+
+          linux_ip_route_scope_link = ""
+
+          @iplink_lines = linux_ip_link_s_d.split("\n")
+          @ipaddr_lines = linux_ip_addr.split("\n")
+          @iproute_lines = linux_ip_route_show_exact
+          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+          @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+        end
+
+        it "sets ipaddress" do
+          @ohai['ipaddress'].should be_nil
+        end
+      end
     end
 
     # This should never happen in the real world.

@@ -390,6 +390,35 @@ IP_ROUTE_SCOPE
         end
       end
   
+      describe "with a link level scope default route" do
+        before do
+          linux_ip_route_show_exact = <<-IP_ROUTE
+default dev eth0 scope link
+IP_ROUTE
+          linux_route_n = <<-ROUTE_N
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
+0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
+ROUTE_N
+          @iproute_lines = linux_ip_route_show_exact
+          @route_lines = linux_route_n.split("\n")
+          @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+        end
+
+        it "finds the default interface by asking which iface has the default route" do
+          @ohai['network'][:default_interface].should == 'eth0'
+        end
+  
+        it "finds the default interface by asking which iface has the default route" do
+          @ohai['network'][:default_gateway].should == '0.0.0.0'
+        end
+      end
+
       describe "with a subinterface" do
         before do
           linux_ip_route_show_exact = <<-IP_ROUTE
@@ -626,7 +655,6 @@ IP_ROUTE_SCOPE
         @ohai._require_plugin("linux::network")
       end
     end
-  end 
+  end
 
 end
-

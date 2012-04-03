@@ -19,18 +19,6 @@
 require 'ipaddr'
 provides "network", "counters/network"
 
-begin
-  route_result = from("route -n \| grep -m 1 ^0.0.0.0").split(/[ \t]+/)
-  if route_result.last =~ /(venet\d+)/
-    network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0. | grep -m 1 inet").split(/[ \t]+/).last
-    network[:default_gateway] = route_result[1]
-  else
-    network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)
-  end
-rescue Ohai::Exceptions::Exec
-  Ohai::Log.debug("Unable to determine default interface")
-end
-
 def encaps_lookup(encap)
   return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
   return "PPP" if encap.eql?("Point-to-Point Protocol")
@@ -53,15 +41,23 @@ IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
 if File.exist?("/sbin/ip")
 
   begin
-    route_result = from("ip route show exact 0.0.0.0/0").chomp.split(/[ \t]+/)
+    route_result = from("ip route show exact 0.0.0.0/0").chomp
 
-    if route_result[4] =~ /(venet\d+)/
-      network[:default_interface] = from("ip addr show dev #{$1} | grep -v 127.0.0.1 | grep -m 1 inet").split(/[ \t]+/).last
-      network[:default_gateway] = route_result[1]
+    # expected results:
+    # - default via 10.0.2.4 dev br0
+    # - default dev br0  scope link
+    if route_result_match = route_result.match(/\svia\s+([^\s+]+)\s+dev\s([^\s+]+)\b/)
+      network[:default_interface] = route_result_match[2]
+      network[:default_gateway] = route_result_match[1]
+    elsif route_result_match = route_result.match(/\sdev\s([^\s+]+)\s+scope\s+link/)
+      network[:default_interface] = route_result_match[1]
+      network[:default_gateway] = "0.0.0.0" # backward compatible result
     else
-      network[:default_gateway], network[:default_interface] = route_result.values_at(2,4)
+      # should nodes always have a default route ? i don't think so
+      # anyway, backward compatible raise ! :-)
+      raise
     end
-  rescue Ohai::Exceptions::Exec
+  rescue
     Ohai::Log.debug("Unable to determine default interface")
   end
 

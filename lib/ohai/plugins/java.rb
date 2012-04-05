@@ -21,7 +21,14 @@ require_plugin "languages"
 
 java = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+status, stdout, stderr = nil
+if RUBY_PLATFORM.downcase.include?("darwin") 
+  if system("/usr/libexec/java_home 2&>1 >/dev/null")
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+  end
+else
+  status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+end
 
 if status == 0
   stderr.split("\n").each do |line|

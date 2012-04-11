@@ -117,7 +117,7 @@ describe Ohai::System, "plugin rackspace" do
 
     before(:each) do
       File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
-      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('rackspace')
+      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return("rackspace\n")
     end
   end
 

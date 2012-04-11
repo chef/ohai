@@ -23,7 +23,7 @@ module Ohai
 
       def cloud_file?(check)
         if File.exist? CLOUD_FILE
-          contents = File.read(CLOUD_FILE)
+          contents = File.read(CLOUD_FILE).strip
           has_it = contents == check
         else
           has_it = false

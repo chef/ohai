@@ -84,4 +84,31 @@ describe Ohai::System, "plugin eucalyptus" do
       @ohai[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
+  
+  describe "with eucalyptus cloud file" do
+    it_should_behave_like "eucalyptus"
+
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
+      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('eucalyptus')
+    end
+  end
+
+  describe "without cloud file" do
+    it_should_behave_like "!eucalyptus"
+  
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(false)
+    end
+  end
+  
+  describe "with rackspace cloud file" do
+    it_should_behave_like "!eucalyptus"
+  
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
+      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('rackspace')
+    end
+  end
+  
 end

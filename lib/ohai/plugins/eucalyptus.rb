@@ -20,12 +20,14 @@
 provides "eucalyptus"
 
 require 'ohai/mixin/ec2_metadata'
+require 'ohai/mixin/cloud'
 
 require_plugin "hostname"
 require_plugin "kernel"
 require_plugin "network"
 
 extend Ohai::Mixin::Ec2Metadata
+extend Ohai::Mixin::Cloud
 
 def get_mac_address(addresses)
   detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }
@@ -50,7 +52,7 @@ end
 def looks_like_euca?
   # Try non-blocking connect so we don't "block" if 
   # the Xen environment is *not* EC2
-  has_euca_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+  cloud_file?('eucalyptus') || has_euca_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
 end
 
 if looks_like_euca?

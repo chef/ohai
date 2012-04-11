@@ -20,12 +20,14 @@
 provides "ec2"
 
 require 'ohai/mixin/ec2_metadata'
+require 'ohai/mixin/cloud'
 
 require_plugin "hostname"
 require_plugin "kernel"
 require_plugin "network"
 
 extend Ohai::Mixin::Ec2Metadata
+extend Ohai::Mixin::Cloud
 
 def has_ec2_mac?
   network[:interfaces].values.each do |iface|
@@ -43,7 +45,7 @@ end
 def looks_like_ec2?
   # Try non-blocking connect so we don't "block" if 
   # the Xen environment is *not* EC2
-  has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+  cloud_file?('ec2') || has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
 end
 
 if looks_like_ec2?

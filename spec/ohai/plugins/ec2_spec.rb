@@ -85,4 +85,31 @@ describe Ohai::System, "plugin ec2" do
       @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
     end
   end
+  
+  describe "with ec2 cloud file" do
+    it_should_behave_like "ec2"
+
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
+      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('ec2')
+    end
+  end
+
+  describe "without cloud file" do
+    it_should_behave_like "!ec2"
+  
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(false)
+    end
+  end
+  
+  describe "with rackspace cloud file" do
+    it_should_behave_like "!ec2"
+  
+    before(:each) do
+      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
+      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('rackspace')
+    end
+  end
+  
 end

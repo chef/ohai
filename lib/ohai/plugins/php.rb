@@ -20,8 +20,6 @@ provides "languages/php"
 
 require_plugin "languages"
 
-output = nil
-
 php = Mash.new
 
 status, stdout, stderr = run_command(:no_status_check => true, :command => "php -i | head -10")

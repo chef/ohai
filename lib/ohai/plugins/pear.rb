@@ -10,7 +10,7 @@ status, stdout, stderr = run_command(:no_status_check => true, :command => "pear
 
 if status == 0
   output = stdout
-  pear[:version] = output.grep(/Release Version/).to_s.chomp.split[2]
-  pear[:builddate] = output.grep(/Release Date/).to_s.chomp.split[2]
+  pear[:version] = output.grep(/Release Version/).to_s.split[2]
+  pear[:builddate] = output.grep(/Release Date/).to_s.split[2..3].join(' ')
   languages[:pear] = pear if pear[:version]
 end

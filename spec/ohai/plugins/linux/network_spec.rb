@@ -578,6 +578,140 @@ IP_ROUTE_SCOPE
         end
       end
 
+      describe "when not having a global scope ipv6 address" do
+        before do
+          linux_ip_link_s_d = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+IP_LINK_S
+
+          linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
+    inet 10.116.201.75/32 scope global eth0
+    inet 10.116.201.74/24 scope global secondary eth0
+    inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
+    inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
+       valid_lft forever preferred_lft forever
+IP_ADDR
+
+              linux_ip_route_show_exact = <<-IP_ROUTE
+default via 10.116.201.1 dev eth0
+IP_ROUTE
+
+          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+IP_ROUTE_SCOPE
+
+          @iplink_lines = linux_ip_link_s_d.split("\n")
+          @ipaddr_lines = linux_ip_addr.split("\n")
+          @iproute_lines = linux_ip_route_show_exact
+          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+          @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        end
+
+        it "shoudn't fail if there's no global scope inet6 address" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be_nil
+        end
+
+      end
+
+      # kind of a crude test
+      describe "when the ipv6 address is set on another interface than the one used by the ipv4 default route" do
+        before do
+          linux_ip_link_s_d = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+    link/ether 00:0c:29:41:71:45 brd ff:ff:ff:ff:ff:ff
+    vlan id 11 <REORDER_HDR> 
+    RX: bytes  packets  errors  dropped overrun mcast   
+    0          0        0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    0          0        0       0       0       0      
+IP_LINK_S
+
+          linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+    inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
+    inet 10.116.201.75/32 scope global eth0
+    inet 10.116.201.74/24 scope global secondary eth0
+    inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
+    inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
+       valid_lft forever preferred_lft forever
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+    link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
+    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+       valid_lft forever preferred_lft forever
+    inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic 
+       valid_lft 6128sec preferred_lft 2526sec
+IP_ADDR
+
+              linux_ip_route_show_exact = <<-IP_ROUTE
+default via 10.116.201.1 dev eth0
+IP_ROUTE
+
+          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+IP_ROUTE_SCOPE
+
+          @iplink_lines = linux_ip_link_s_d.split("\n")
+          @ipaddr_lines = linux_ip_addr.split("\n")
+          @iproute_lines = linux_ip_route_show_exact
+          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+          @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        end
+
+        it "sets ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should == "2001:44b8:4160:8f00:a00:27ff:fe13:eacd"
+        end
+      end
+
       describe "with Linux-VServer" do
         before do
           linux_ip_link_s_d = <<-IP_LINK_S

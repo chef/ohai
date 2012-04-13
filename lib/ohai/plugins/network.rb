@@ -64,7 +64,10 @@ def network_contains_address(address_to_match, network_ip, network_opts)
 end
 
 # If we have a default interface that has addresses, populate the short-cut attributes
+# 0.0.0.0 is not a valid gateway address in this case
 if network[:default_interface] and
+    network[:default_gateway] and
+    network[:default_gateway] != "0.0.0.0" and
     network["interfaces"][network[:default_interface]] and
     network["interfaces"][network[:default_interface]]["addresses"]
   Ohai::Log.debug("Using default interface for default ip and mac address")

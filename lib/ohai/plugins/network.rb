@@ -39,14 +39,10 @@ return unless ipaddress.nil? or macaddress.nil?
 def find_ip_and_mac(addresses, match = nil)
   ip = nil; mac = nil; ip6 = nil
   addresses.keys.each do |addr|
-    if addresses[addr]["family"].eql?("inet")
-      # skip non global scope addresses (if attribute "scope" exists)
-      next if addresses[addr].has_key? "scope" && addresses[addr]["scope"].downcase != "global"
-      if match.nil?
-        ip = addr
-      else
-        ip = addr if network_contains_address(match, addr, addresses[addr])
-      end
+    if match.nil?
+      ip = addr if addresses[addr]["family"].eql?("inet")
+    else
+      ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr])
     end
     ip6 = addr if addresses[addr]["family"].eql?("inet6") && addresses[addr]["scope"].eql?("Global")
     mac = addr if addresses[addr]["family"].eql?("lladdr")

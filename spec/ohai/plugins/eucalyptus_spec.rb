@@ -89,8 +89,8 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
-      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('eucalyptus')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
     end
   end
 
@@ -98,16 +98,16 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
   
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(false)
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
     end
   end
   
-  describe "with rackspace cloud file" do
+  describe "with ec2 cloud file" do
     it_should_behave_like "!eucalyptus"
   
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
-      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('rackspace')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
     end
   end
   

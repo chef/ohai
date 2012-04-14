@@ -116,8 +116,8 @@ describe Ohai::System, "plugin rackspace" do
     it_should_behave_like "rackspace"
 
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
-      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return("rackspace\n")
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
     end
   end
 
@@ -125,7 +125,7 @@ describe Ohai::System, "plugin rackspace" do
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(false)
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
     end
   end
   
@@ -133,8 +133,8 @@ describe Ohai::System, "plugin rackspace" do
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub!(:exist?).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return(true)
-      File.stub!(:read).with(Ohai::Mixin::Cloud::CLOUD_FILE).and_return('ec2')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
     end
   end
 

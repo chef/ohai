@@ -16,12 +16,8 @@
 
 provides "rackspace"
 
-require 'ohai/mixin/cloud'
-
 require_plugin "kernel"
 require_plugin "network"
-
-extend Ohai::Mixin::Cloud
 
 # Checks for matching rackspace kernel name
 #
@@ -52,7 +48,7 @@ end
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?
-  cloud_file?('rackspace') || has_rackspace_mac? || has_rackspace_kernel?
+  hint?('rackspace') || has_rackspace_mac? || has_rackspace_kernel?
 end
 
 # Names rackspace ip address

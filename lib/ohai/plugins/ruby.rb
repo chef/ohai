@@ -71,5 +71,6 @@ gem_binaries = [
 gem_binary = gem_binaries.find {|bin| ::File.exists? bin }
 if gem_binary
   languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{gem_binary} env gemdir}.chomp!"
+  languages[:ruby][:gems_bin_dir] = run_ruby("require 'rubygems'; puts ::Gem.bindir")
   languages[:ruby][:gem_bin] = gem_binary
 end

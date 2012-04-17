@@ -516,10 +516,66 @@ ROUTE_N
         @ohai['ip6address'].should == "2001:44b8:4160:8f00:a00:27ff:fe13:eacd"
       end        
 
-      it "sets macaddress" do
-        @ohai._require_plugin("network")
-        @ohai._require_plugin("linux::network")
-        @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+      describe "when about to set macaddress" do
+        it "sets macaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+        end
+
+        describe "when then interface has the NOARP flag" do
+          before do
+            linux_ip_link_s_d = <<-IP_LINK_S
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    35224      524      0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    35224      524      0       0       0       0      
+2: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN qlen 100
+    link/none 
+    RX: bytes  packets  errors  dropped overrun mcast   
+    1392844460 2659966  0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    691785313  1919690  0       0       0       0      
+IP_LINK_S
+
+            linux_ip_route_show_exact = <<-IP_ROUTE
+default via 172.16.19.1 dev tun0
+IP_ROUTE
+
+            linux_ip_addr = <<-IP_ADDR
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+2: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    link/none
+    inet 172.16.19.39 peer 172.16.19.1 scope global tun0
+IP_ADDR
+
+            linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
+IP_ROUTE_SCOPE
+
+            @iplink_lines = linux_ip_link_s_d.split("\n")
+            @ipaddr_lines = linux_ip_addr.split("\n")
+            @iproute_lines = linux_ip_route_show_exact
+            @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+            @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+            @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+            @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+            @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+
+            @ohai._require_plugin("network")
+            @ohai._require_plugin("linux::network")
+          end
+
+          it "macaddress shouldn't be set" do
+            @ohai._require_plugin("network")
+            @ohai._require_plugin("linux::network")
+            @ohai['macaddress'].should be_nil
+          end
+        end
       end
 
       describe "with Linux-VServer" do

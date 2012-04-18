@@ -46,6 +46,7 @@ eth0:5    Link encap:Ethernet  HWaddr 00:0c:29:41:71:45
 eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
           inet addr:192.168.0.16  Bcast:192.168.0.255  Mask:255.255.255.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
+          inet6 addr: 1111:2222:3333:4444::2/64 Scope:Global
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:1208795008 errors:0 dropped:0 overruns:0 frame:0
           TX packets:3269635153 errors:0 dropped:0 overruns:0 carrier:0
@@ -114,6 +115,7 @@ ENDIFCONFIG
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 192.168.0.16/24 brd 192.168.0.255 scope global eth0.11
     inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+    inet6 1111:2222:3333:4444::2/64 scope global
        valid_lft forever preferred_lft forever
 4: eth0.151@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
@@ -174,8 +176,17 @@ ARP_AN
 10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
 NEIGHBOR_SHOW
 
+    linux_ip_inet6_neighbor_show = <<-NEIGHBOR_SHOW
+1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
+fe80::21c:eff:fe12:3456 dev eth0.11 lladdr 00:1c:0e:30:28:00 router REACHABLE
+NEIGHBOR_SHOW
+
     linux_ip_route_show_exact = <<-IP_ROUTE
 default via 10.116.201.1 dev eth0
+IP_ROUTE
+
+    linux_ip_inet6_route_show_exact = <<-IP_ROUTE
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE
 
     linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
@@ -191,6 +202,7 @@ IP_ROUTE_SCOPE
     @stdin_ipaddr = StringIO.new
     @stdin_iplink = StringIO.new
     @stdin_ipneighbor = StringIO.new
+    @stdin_ipneighbor_inet6 = StringIO.new
     @stdin_ip_route_scope_link = StringIO.new
 
     @ifconfig_lines = linux_ifconfig.split("\n")
@@ -199,7 +211,9 @@ IP_ROUTE_SCOPE
     @ipaddr_lines = linux_ip_addr.split("\n")
     @iplink_lines = linux_ip_link_s_d.split("\n")
     @ipneighbor_lines = linux_ip_neighbor_show.split("\n")
+    @ipneighbor_lines_inet6 = linux_ip_inet6_neighbor_show.split("\n")
     @iproute_lines = linux_ip_route_show_exact
+    @iproute_inet6_lines = linux_ip_inet6_route_show_exact
     @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
 
     @ohai = Ohai::System.new
@@ -215,10 +229,12 @@ IP_ROUTE_SCOPE
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
@@ -253,6 +269,13 @@ IP_ROUTE_SCOPE
         @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
         @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
         @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
+      end
+
+      it "detects the ipv6 addresses of an ethernet subinterface" do
+        @ohai['network']['interfaces']['eth0.11']['addresses'].keys.should include('1111:2222:3333:4444::2')
+        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['scope'].should == 'Global'
+        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['prefixlen'].should == '64'
+        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['family'].should == 'inet6'
       end
 
       it "detects the mac addresses of the ethernet interface" do
@@ -320,10 +343,12 @@ IP_ROUTE_SCOPE
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
         @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
@@ -367,10 +392,12 @@ IP_ROUTE_SCOPE
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-        @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+        @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-        @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
       end
@@ -385,7 +412,7 @@ IP_ROUTE_SCOPE
           @ohai['network'][:default_interface].should == 'eth0'
         end
   
-        it "finds the default interface by asking which iface has the default route" do
+        it "finds the default gateway by asking which iface has the default route" do
           @ohai['network'][:default_gateway].should == '10.116.201.1'
         end
       end
@@ -405,7 +432,7 @@ ROUTE_N
           @iproute_lines = linux_ip_route_show_exact
           @route_lines = linux_route_n.split("\n")
           @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
         end
@@ -438,7 +465,7 @@ ROUTE_N
           @iproute_lines = linux_ip_route_show_exact
           @route_lines = linux_route_n.split("\n")
           @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
         end
@@ -458,13 +485,33 @@ ROUTE_N
     before do
       File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
       @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-      @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+      @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+      @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
       @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
       @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-      @ohai.stub!(:popen4).with("ip neighbor show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+      @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+      @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
       @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
       @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
       @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+    end
+
+    it "finds the default inet6 interface if there's a inet6 default route" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
+      @ohai['network'][:default_inet6_interface].should == 'eth0.11'
+    end
+
+    it "finds the default inet6 gateway if there's a inet6 default route" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
+      @ohai['network'][:default_inet6_gateway].should == '1111:2222:3333:4444::1'
+    end
+
+    it "finds inet6 neighbours" do
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
+      @ohai['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1'].should == '00:1c:0e:12:34:56'
     end
 
     it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
@@ -765,7 +812,7 @@ IP_ROUTE_SCOPE
           @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
           @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
           @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
           @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
 
           @ohai._require_plugin("network")
@@ -815,7 +862,7 @@ IP_ADDR
           @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
           @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
           @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
           @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
 
           @ohai._require_plugin("network")

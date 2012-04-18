@@ -40,25 +40,44 @@ IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
 
 if File.exist?("/sbin/ip")
 
-  begin
-    route_result = from("ip route show exact 0.0.0.0/0").chomp
+  # families to get default routes from
+  families = [
+              {
+                :name => "inet",
+                :default_route => "0.0.0.0/0",
+                :attribute_prefix => :default,
+                :neighbour_attribute => :arp
+              },
+              {
+                :name => "inet6",
+                :default_route => "::/0",
+                :attribute_prefix => :default_inet6,
+                :neighbour_attribute => :neighbour_inet6
+              }
+             ]
 
-    # expected results:
-    # - default via 10.0.2.4 dev br0
-    # - default dev br0  scope link
-    if route_result_match = route_result.match(/\svia\s+([^\s+]+)\s+dev\s([^\s+]+)\b/)
-      network[:default_interface] = route_result_match[2]
-      network[:default_gateway] = route_result_match[1]
-    elsif route_result_match = route_result.match(/\sdev\s([^\s+]+)\s+scope\s+link/)
-      network[:default_interface] = route_result_match[1]
-      network[:default_gateway] = "0.0.0.0" # backward compatible result
-    else
-      # should nodes always have a default route ? i don't think so
-      # anyway, backward compatible raise ! :-)
-      raise
+  families.each do |family|
+    begin
+      route_result = from("ip -f #{family[:name]} route show exact #{family[:default_route]}").chomp
+
+      prefix = family[:attribute_prefix]
+      # expected results:
+      # - default via 10.0.2.4 dev br0
+      # - default dev br0  scope link
+      if route_result_match = route_result.match(/\svia\s+([^\s+]+)\s+dev\s([^\s+]+)\b/)
+        network["#{prefix}_interface"] = route_result_match[2]
+        network["#{prefix}_gateway"] = route_result_match[1]
+      elsif route_result_match = route_result.match(/\sdev\s([^\s+]+)\s+scope\s+link/)
+        network["#{prefix}_interface"] = route_result_match[1]
+        network["#{prefix}_gateway"] = family[:default_route].chomp("/0") # backward compatible result
+      else
+        # should nodes always have a default route ? i don't think so
+        # anyway, backward compatible raise for inet4 only ! :-)
+        raise unless family[:name] == "inet"
+      end
+    rescue
+      Ohai::Log.debug("Unable to determine default interface")
     end
-  rescue
-    Ohai::Log.debug("Unable to determine default interface")
   end
 
   popen4("ip addr") do |pid, stdin, stdout, stderr|
@@ -181,13 +200,19 @@ if File.exist?("/sbin/ip")
     end
   end
 
-  popen4("ip neighbor show") do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout.each do |line|
-      if line =~ /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) dev ([0-9a-zA-Z\.\:\-]+) lladdr ([a-fA-F0-9\:]+)/
-        next unless iface[$2]
-        iface[$2][:arp] = Mash.new unless iface[$2][:arp]
-        iface[$2][:arp][$1] = $3.downcase
+  families.each do |family|
+    key = family[:neighbour_attribute]
+    popen4("ip -f #{family[:name]} neigh show") do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
+          unless iface[$2]
+            Ohai::Log.warn("neighbour list has entries for unknown interface #{iface[$2]}")
+            next
+          end
+          iface[$2][key] = Mash.new unless iface[$2][key]
+          iface[$2][key][$1] = $3.downcase
+        end
       end
     end
   end

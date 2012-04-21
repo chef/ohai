@@ -44,17 +44,20 @@ def find_ip_and_iface(family = "inet", match = nil)
     iface_v['addresses'].each do |addr, addr_v|
       next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
       ipaddresses <<  {
-        :ipaddress => IPAddress("#{addr}/#{addr_v["prefixlen"]}"),
+        :ipaddress => IPAddress("#{addr}/#{addr_v["netmask"]}"),
         :scope => addr_v["scope"],
         :iface => iface
       }
     end
   end
 
+  # return if there isn't any #{family} address !
+  return [ nil, nil ] if ipaddresses.empty?
+
   if match.nil?
     # sort ip addresses by scope, by prefixlen and then by ip address
     # then return the first ip address
-    r = ipaddresses.sort_by! do |v|
+    r = ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope].downcase) or 999999 ),
         v[:ipaddress].prefix,
         ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
@@ -65,7 +68,8 @@ def find_ip_and_iface(family = "inet", match = nil)
     # return the first matching ip address
     r = ipaddresses.sort do |a,b|
       a[:ipaddress].prefix <=> b[:ipaddress].prefix
-    end.select do |v|
+    end
+    r = r.select do |v|
       v[:ipaddress].include? IPAddress(match)
     end.first
   end
@@ -94,15 +98,15 @@ if network[:default_interface] and
     network[:default_gateway] != "0.0.0.0" and
     network["interfaces"][network[:default_interface]] and
     network["interfaces"][network[:default_interface]]["addresses"]
-  Ohai::Log.debug("Using default interface for default ip and mac address")
+  Ohai::Log.debug("Using default interface '#{network[:default_interface]}' and default gateway '#{network[:default_gateway]}' to set the default ip")
   ( ip, iface ) = find_ip_and_iface("inet", network[:default_gateway])
-  raise "something wrong happened #{network[:default_interface]} != #{iface}" if network[:default_interface] != iface
+  raise "error: looking for the default ip on '#{network[:default_interface]}' gives an ip '#{ip}' on '#{iface}'" if network[:default_interface] != iface
   ipaddress ip
 else
   ( ip, iface ) = find_ip_and_iface("inet")
   ipaddress ip
 end
-macaddress find_mac_from_iface(iface)
+macaddress find_mac_from_iface(iface) unless iface.nil?
 ( ip6, iface6 ) = find_ip_and_iface("inet6")
 ip6address ip6
-Ohai::Log.warn("ipaddress and ip6address are set from different interfaces (#{iface} & #{iface6}), macaddress has been set using the ipaddress interface") if iface != iface6
+Ohai::Log.warn("ipaddress and ip6address are set from different interfaces (#{iface} & #{iface6}), macaddress has been set using the ipaddress interface") if iface and iface6 and iface != iface6

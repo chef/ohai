@@ -76,7 +76,7 @@ iface_instance.keys.each do |i|
       begin
          if iface[cint][:configuration][:ip_address][i] =~ /./
            iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
-             "family"    => "inet",
+             "family"    => iface[cint][:configuration][:ip_address][i] =~ /:/ ? "inet6" : "inet",
              "netmask"   => iface[cint][:configuration][:ip_subnet][i],
              "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
                                           iface[cint][:configuration][:ip_subnet][i],

@@ -26,7 +26,7 @@ require 'yajl'
 
 module Ohai
   class System
-    attr_accessor :data, :seen_plugins
+    attr_accessor :data, :seen_plugins, :hints
 
     include Ohai::Mixin::FromFile
     include Ohai::Mixin::Command
@@ -36,6 +36,7 @@ module Ohai
       @seen_plugins = Hash.new
       @providers = Mash.new
       @plugin_path = ""
+      @hints = Hash.new
     end
 
     def [](key)
@@ -101,6 +102,27 @@ module Ohai
     def get_attribute(name)
       @data[name]
     end
+    
+    def hint?(name)
+      @json_parser ||= Yajl::Parser.new
+      
+      return @hints[name] if @hints[name]
+      
+      Ohai::Config[:hints_path].each do |path|
+        filename = File.join(path, "#{name}.json")
+        if File.exist?(filename)
+          begin
+            hash = @json_parser.parse(File.read(filename))
+            @hints[name] = hash || Hash.new # hint should exist because the file did, even if it didn't contain anything
+          rescue Yajl::ParseError => e
+            Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
+          end
+        end
+      end
+
+      @hints[name]
+    end
+    
 
     def all_plugins
       require_plugin('os')
@@ -159,6 +181,9 @@ module Ohai
 
       refreshments = collect_providers(h)
       Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
+      
+      # remove the hints cache
+      @hints = Hash.new
 
       refreshments.each do |r|
         @seen_plugins.delete(r) if @seen_plugins.has_key?(r)

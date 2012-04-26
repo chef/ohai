@@ -84,4 +84,36 @@ describe Ohai::System, "plugin eucalyptus" do
       @ohai[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
+  
+  describe "with eucalyptus cloud file" do
+    it_should_behave_like "eucalyptus"
+
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
+    end
+  end
+
+  describe "without cloud file" do
+    it_should_behave_like "!eucalyptus"
+  
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+    end
+  end
+  
+  describe "with ec2 cloud file" do
+    it_should_behave_like "!eucalyptus"
+  
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+    end
+  end
+  
 end

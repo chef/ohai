@@ -21,10 +21,23 @@ require 'mixlib/config'
 module Ohai
   class Config
     extend Mixlib::Config
+    
+    # from chef/config.rb, should maybe be moved to mixlib-config?
+    def self.platform_specific_path(path)
+      if RUBY_PLATFORM =~ /mswin|mingw|windows/
+        # turns /etc/chef/client.rb into C:/chef/client.rb
+        path = File.join(ENV['SYSTEMDRIVE'], path.split('/')[2..-1])
+        # ensure all forward slashes are backslashes
+        path.gsub!(File::SEPARATOR, (File::ALT_SEPARATOR || '\\'))
+      end
+      path
+    end
+    
 
     log_level :info
     log_location STDOUT
     plugin_path [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins'))]
     disabled_plugins []
+    hints_path [ platform_specific_path('/etc/chef/ohai/hints') ]
   end
 end

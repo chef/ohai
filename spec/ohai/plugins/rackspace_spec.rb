@@ -22,38 +22,38 @@ describe Ohai::System, "plugin rackspace" do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:network] = {:interfaces => {:eth0 => {"addresses"=> {
-          "1.2.3.4"=> {
-            "broadcast"=> "67.23.20.255",
-            "netmask"=> "255.255.255.0",
-            "family"=> "inet"
-          },
-          "fe80::4240:95ff:fe47:6eed"=> {
-            "scope"=> "Link",
-            "prefixlen"=> "64",
-            "family"=> "inet6"
-          },
-          "40:40:95:47:6E:ED"=> {
-            "family"=> "lladdr"
-          }
-        }}
+      "1.2.3.4"=> {
+        "broadcast"=> "67.23.20.255",
+        "netmask"=> "255.255.255.0",
+        "family"=> "inet"
+      },
+      "fe80::4240:95ff:fe47:6eed"=> {
+        "scope"=> "Link",
+        "prefixlen"=> "64",
+        "family"=> "inet6"
+      },
+      "40:40:95:47:6E:ED"=> {
+        "family"=> "lladdr"
       }
+      }}
     }
+  }
 
-    @ohai[:network][:interfaces][:eth1] = {:addresses => {
-         "fe80::4240:f5ff:feab:2836" => {
-            "scope"=> "Link",
-            "prefixlen"=> "64",
-            "family"=> "inet6"
-          },
-          "5.6.7.8"=> {
-            "broadcast"=> "10.176.191.255",
-            "netmask"=> "255.255.224.0",
-            "family"=> "inet"
-          },
-          "40:40:F5:AB:28:36" => {
-            "family"=> "lladdr"
-          }
-        }}
+  @ohai[:network][:interfaces][:eth1] = {:addresses => {
+    "fe80::4240:f5ff:feab:2836" => {
+      "scope"=> "Link",
+      "prefixlen"=> "64",
+      "family"=> "inet6"
+    },
+    "5.6.7.8"=> {
+      "broadcast"=> "10.176.191.255",
+      "netmask"=> "255.255.224.0",
+      "family"=> "inet"
+    },
+    "40:40:F5:AB:28:36" => {
+      "family"=> "lladdr"
+    }
+    }}
   end
 
   shared_examples_for "!rackspace"  do
@@ -84,32 +84,63 @@ describe Ohai::System, "plugin rackspace" do
 
   end
 
-    describe "with rackspace mac and hostname" do
-      it_should_behave_like "rackspace"
+  describe "with rackspace mac and hostname" do
+    it_should_behave_like "rackspace"
 
-      before(:each) do
-        IO.stub!(:select).and_return([[],[1],[]])
-        @ohai[:hostname] = "slice74976"
-        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
-      end
+    before(:each) do
+      IO.stub!(:select).and_return([[],[1],[]])
+      @ohai[:hostname] = "slice74976"
+      @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
     end
+  end
 
-    describe "without rackspace mac" do
-      it_should_behave_like "!rackspace"
+  describe "without rackspace mac" do
+    it_should_behave_like "!rackspace"
 
-      before(:each) do
-        @ohai[:hostname] = "slice74976"
-        @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
-      end
+    before(:each) do
+      @ohai[:hostname] = "slice74976"
+      @ohai[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
     end
+  end
 
-    describe "without rackspace hostname" do
-      it_should_behave_like "rackspace"
+  describe "without rackspace hostname" do
+    it_should_behave_like "rackspace"
 
-      before(:each) do
-        @ohai[:hostname] = "bubba"
-        @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
-      end
+    before(:each) do
+      @ohai[:hostname] = "bubba"
+      @ohai[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
     end
+  end
+  
+  describe "with rackspace cloud file" do
+    it_should_behave_like "rackspace"
+
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+    end
+  end
+
+  describe "without cloud file" do
+    it_should_behave_like "!rackspace"
+  
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+    end
+  end
+  
+  describe "with ec2 cloud file" do
+    it_should_behave_like "!rackspace"
+  
+    before(:each) do
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+    end
+  end
 
 end

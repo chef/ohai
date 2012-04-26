@@ -74,16 +74,19 @@ iface_instance.keys.each do |i|
     iface[cint][:addresses] = Mash.new
     iface[cint][:configuration][:ip_address].each_index do |i|
       begin
-         if iface[cint][:configuration][:ip_address][i] =~ /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
-           iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
-             "family"    => iface[cint][:configuration][:ip_address][i] =~ /:/ ? "inet6" : "inet",
-             "netmask"   => iface[cint][:configuration][:ip_subnet][i],
-             "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
-                                          iface[cint][:configuration][:ip_subnet][i],
-                                          iface[cint][:configuration][:ip_use_zero_broadcast]
-             )
-           }
-         end
+        iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
+          "family"    => case iface[cint][:configuration][:ip_address][i]
+                         when /:/
+                           "inet6"
+                         when /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
+                           "inet"
+                         end
+          "netmask"   => iface[cint][:configuration][:ip_subnet][i],
+          "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
+            iface[cint][:configuration][:ip_subnet][i],
+            iface[cint][:configuration][:ip_use_zero_broadcast]
+            )
+        }
       rescue
       end
     end

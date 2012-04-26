@@ -80,7 +80,7 @@ iface_instance.keys.each do |i|
                            "inet6"
                          when /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
                            "inet"
-                         end
+                         end,
           "netmask"   => iface[cint][:configuration][:ip_subnet][i],
           "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
             iface[cint][:configuration][:ip_subnet][i],

@@ -29,6 +29,7 @@ iface = Mash.new
 iface_config = Mash.new
 iface_instance = Mash.new
 
+# http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
 adapters = WMI::Win32_NetworkAdapterConfiguration.find(:all)
 adapters.each do |adapter|
     i = adapter.Index
@@ -38,6 +39,7 @@ adapters.each do |adapter|
     end
 end
 
+# http://msdn.microsoft.com/en-us/library/windows/desktop/aa394216(v=vs.85).aspx
 adapters = WMI::Win32_NetworkAdapter.find(:all)
 adapters.each do |adapter|
     i = adapter.Index
@@ -48,8 +50,8 @@ adapters.each do |adapter|
 end
 
 iface_instance.keys.each do |i|
-  if iface_config[i][:ip_enabled] and iface_instance[i][:net_connection_id] and iface_instance[i][:interface_index]
-    cint = sprintf("0x%x", iface_instance[i][:interface_index]).downcase
+  if iface_config[i][:ip_enabled] and iface_instance[i][:net_connection_id]
+    cint = sprintf("0x%x", iface_instance[i][:interface_index] ? iface_instance[i][:interface_index] : iface_instance[i][:index] ).downcase
     iface[cint] = Mash.new
     iface[cint][:configuration] = iface_config[i]
     iface[cint][:instance] = iface_instance[i]

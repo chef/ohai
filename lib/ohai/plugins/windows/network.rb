@@ -25,22 +25,6 @@ def encaps_lookup(encap)
   encap
 end
 
-def derive_bcast(ipaddr, ipmask, zero_bcast = false)
-  begin
-    ipaddr_int = ipaddr.split(".").collect{ |x| x.to_i}.pack("C4").unpack("N").first
-    ipmask_int = ipmask.split(".").collect{ |x| x.to_i}.pack("C4").unpack("N").first
-    if zero_bcast
-      bcast_int = ipaddr_int & ipmask_int
-    else
-      bcast_int = ipaddr_int | 2 ** 32 - ipmask_int - 1  
-    end  
-    bcast = [bcast_int].pack("N").unpack("C4").join(".")                                     
-    return bcast
-  rescue
-    return nil
-  end
-end
-
 iface = Mash.new
 iface_config = Mash.new
 iface_instance = Mash.new
@@ -73,18 +57,23 @@ iface_instance.keys.each do |i|
     iface[cint][:counters] = Mash.new
     iface[cint][:addresses] = Mash.new
     iface[cint][:configuration][:ip_address].each_index do |i|
-      begin
-         if iface[cint][:configuration][:ip_address][i] =~ /./
-           iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
-             "family"    => "inet",
-             "netmask"   => iface[cint][:configuration][:ip_subnet][i],
-             "broadcast" => derive_bcast( iface[cint][:configuration][:ip_address][i],
-                                          iface[cint][:configuration][:ip_subnet][i],
-                                          iface[cint][:configuration][:ip_use_zero_broadcast]
-             )
-           }
-         end
-      rescue
+      ip = iface[cint][:configuration][:ip_address][i]
+      _ip = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
+      iface[cint][:addresses][ip] = Mash.new(
+        :prefixlen => _ip.prefix
+      )
+      if _ip.ipv6?
+        # inet6 address
+        iface[cint][:addresses][ip][:family] = "inet6"
+      else
+        # should be an inet4 address
+        iface[cint][:addresses][ip][:netmask] =  _ip.netmask.to_s
+        if iface[cint][:configuration][:ip_use_zero_broadcast]
+          iface[cint][:addresses][ip][:broadcast] = _ip.network.to_s
+        else
+          iface[cint][:addresses][ip][:broadcast] = _ip.broadcast.to_s
+        end
+        iface[cint][:addresses][ip][:family] = "inet"
       end
     end
     # Apparently you can have more than one mac_address? Odd.

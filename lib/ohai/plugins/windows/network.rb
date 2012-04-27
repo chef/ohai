@@ -65,6 +65,7 @@ iface_instance.keys.each do |i|
       if _ip.ipv6?
         # inet6 address
         iface[cint][:addresses][ip][:family] = "inet6"
+        iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
       else
         # should be an inet4 address
         iface[cint][:addresses][ip][:netmask] =  _ip.netmask.to_s

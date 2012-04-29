@@ -47,6 +47,7 @@ eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           inet addr:192.168.0.16  Bcast:192.168.0.255  Mask:255.255.255.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
           inet6 addr: 1111:2222:3333:4444::2/64 Scope:Global
+          inet6 addr: 1111:2222:3333:4444::3/64 Scope:Global
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:1208795008 errors:0 dropped:0 overruns:0 frame:0
           TX packets:3269635153 errors:0 dropped:0 overruns:0 carrier:0
@@ -116,6 +117,8 @@ ENDIFCONFIG
     inet 192.168.0.16/24 brd 192.168.0.255 scope global eth0.11
     inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
     inet6 1111:2222:3333:4444::2/64 scope global
+       valid_lft forever preferred_lft forever
+    inet6 1111:2222:3333:4444::3/64 scope global
        valid_lft forever preferred_lft forever
 4: eth0.151@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
@@ -189,12 +192,19 @@ IP_ROUTE
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE
 
-    linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+    linux_ip_route = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+IP_ROUTE_SCOPE
+
+    linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
     @stdin_ifconfig = StringIO.new
@@ -203,7 +213,8 @@ IP_ROUTE_SCOPE
     @stdin_iplink = StringIO.new
     @stdin_ipneighbor = StringIO.new
     @stdin_ipneighbor_inet6 = StringIO.new
-    @stdin_ip_route_scope_link = StringIO.new
+    @stdin_ip_route = StringIO.new
+    @stdin_ip_route_inet6 = StringIO.new
 
     @ifconfig_lines = linux_ifconfig.split("\n")
     @route_lines = linux_route_n.split("\n")
@@ -214,7 +225,8 @@ IP_ROUTE_SCOPE
     @ipneighbor_lines_inet6 = linux_ip_inet6_neighbor_show.split("\n")
     @iproute_lines = linux_ip_route_show_exact
     @iproute_inet6_lines = linux_ip_inet6_route_show_exact
-    @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+    @ip_route_lines = linux_ip_route.split("\n")
+    @ip_route_inet6_lines = linux_ip_route_inet6.split("\n")
 
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
@@ -237,7 +249,8 @@ IP_ROUTE_SCOPE
         @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -272,10 +285,12 @@ IP_ROUTE_SCOPE
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        @ohai['network']['interfaces']['eth0.11']['addresses'].keys.should include('1111:2222:3333:4444::2')
-        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['scope'].should == 'Global'
-        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['prefixlen'].should == '64'
-        @ohai['network']['interfaces']['eth0.11']['addresses']['1111:2222:3333:4444::2']['family'].should == 'inet6'
+        %w[ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 ].each  do |addr|
+          @ohai['network']['interfaces']['eth0.11']['addresses'].keys.should include(addr)
+          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['scope'].should == 'Global'
+          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen'].should == '64'
+          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['family'].should == 'inet6'
+        end
       end
 
       it "detects the mac addresses of the ethernet interface" do
@@ -351,7 +366,8 @@ IP_ROUTE_SCOPE
         @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
         @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
         @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+        @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")
       end
@@ -391,9 +407,6 @@ IP_ROUTE_SCOPE
     describe "setting the node's default IP address attribute with #{network_method}" do
       before do
         File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
-        @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-        @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
-        @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
         @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
         @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
         @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
@@ -404,6 +417,11 @@ IP_ROUTE_SCOPE
 
       describe "without a subinterface" do
         before do
+          @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+          @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+          @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
         end
@@ -433,6 +451,10 @@ ROUTE_N
           @route_lines = linux_route_n.split("\n")
           @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
           @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+          @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
         end
@@ -466,6 +488,10 @@ ROUTE_N
           @route_lines = linux_route_n.split("\n")
           @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
           @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
+          @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+          @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
         end
@@ -493,7 +519,15 @@ ROUTE_N
       @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
       @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
       @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-      @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+      @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+      @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+    end
+
+    it "completes the run" do
+      Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+      @ohai._require_plugin("network")
+      @ohai._require_plugin("linux::network")
+      @ohai['network'].should_not be_nil
     end
 
     it "finds the default inet6 interface if there's a inet6 default route" do
@@ -543,36 +577,84 @@ ROUTE_N
       @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
     end
 
-    it "adds link level routes" do
+    it "adds routes" do
       @ohai._require_plugin("network")
       @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['eth0']['routes']['10.116.201.0/24'].should == Mash.new( :scope => "Link", :src => "10.116.201.76" )
-      @ohai['network']['interfaces']['foo:veth0@eth0']['routes']['192.168.212.0/24'].should == Mash.new( :scope => "Link", :src => "192.168.212.2" )
+      @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
+      @ohai['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
+      @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
+      @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new ( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
+      @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new ( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
     end
 
     describe "checking for the source address to reach the default gateway" do
-      it "sets ipaddress" do
-        @ohai._require_plugin("network")
-        @ohai._require_plugin("linux::network")
-        @ohai['ipaddress'].should == "10.116.201.76"
-      end
-
-      it "sets ip6address" do
-        @ohai._require_plugin("network")
-        @ohai._require_plugin("linux::network")
-        @ohai['ip6address'].should == "2001:44b8:4160:8f00:a00:27ff:fe13:eacd"
-      end        
-
-      describe "when about to set macaddress" do
-        it "sets macaddress" do
+      describe "when there isn't a source field in route entry " do
+        it "doesn't set ipaddress" do
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
-          @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+          @ohai['ipaddress'].should be nil
         end
 
-        describe "when then interface has the NOARP flag" do
-          before do
-            linux_ip_link_s_d = <<-IP_LINK_S
+        it "doesn't set macaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['macaddress'].should be nil
+        end
+
+        it "doesn't set ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be nil
+        end
+      end
+
+      describe "when there's a source field in route entry " do
+        before do
+          linux_ip_route = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+IP_ROUTE_SCOPE
+
+          linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
+IP_ROUTE_SCOPE
+
+          @ip_route_lines = linux_ip_route.split("\n")
+          @ip_route_inet6_lines = linux_ip_route_inet6.split("\n")
+
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+          @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+        end
+
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "sets ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should == "10.116.201.76"
+        end
+
+        describe "when about to set macaddress" do
+          it "sets macaddress" do
+            @ohai._require_plugin("network")
+            @ohai._require_plugin("linux::network")
+            @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+          end
+
+          describe "when then interface has the NOARP flag" do
+            before do
+              linux_ip_link_s_d = <<-IP_LINK_S
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     RX: bytes  packets  errors  dropped overrun mcast   
@@ -587,11 +669,11 @@ ROUTE_N
     691785313  1919690  0       0       0       0      
 IP_LINK_S
 
-            linux_ip_route_show_exact = <<-IP_ROUTE
+              linux_ip_route_show_exact = <<-IP_ROUTE
 default via 172.16.19.1 dev tun0
 IP_ROUTE
 
-            linux_ip_addr = <<-IP_ADDR
+              linux_ip_addr = <<-IP_ADDR
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -600,28 +682,39 @@ IP_ROUTE
     inet 172.16.19.39 peer 172.16.19.1 scope global tun0
 IP_ADDR
 
-            linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+              linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
 10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 IP_ROUTE_SCOPE
 
-            @iplink_lines = linux_ip_link_s_d.split("\n")
-            @ipaddr_lines = linux_ip_addr.split("\n")
-            @iproute_lines = linux_ip_route_show_exact
-            @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
-            @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-            @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-            @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
-            @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+              @iplink_lines = linux_ip_link_s_d.split("\n")
+              @ipaddr_lines = linux_ip_addr.split("\n")
+              @iproute_lines = linux_ip_route_show_exact
+              @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+              @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+              @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+              @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
+              @ohai.stub!(:popen4).with("ip -f inet route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+            end
 
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-          end
+            it "completes the run" do
+              Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+              @ohai._require_plugin("network")
+              @ohai._require_plugin("linux::network")
+              @ohai['network'].should_not be_nil
+            end
 
-          it "macaddress shouldn't be set" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['macaddress'].should be_nil
+            it "doesn't set macaddress" do
+              @ohai._require_plugin("network")
+              @ohai._require_plugin("linux::network")
+              @ohai['macaddress'].should be_nil
+            end
           end
+        end
+
+        it "sets ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should == "1111:2222:3333:4444::3"
         end
       end
 
@@ -658,105 +751,38 @@ IP_LINK_S
        valid_lft forever preferred_lft forever
 IP_ADDR
 
-              linux_ip_route_show_exact = <<-IP_ROUTE
-default via 10.116.201.1 dev eth0
+          linux_ip_inet6_route_show_exact = <<-IP_ROUTE
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE
-
-          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
-192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+          linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+default via fe80::21c:eff:fe12:3456 dev eth0  src fe80::1031:3dff:fe02:bea2  metric 1024
 IP_ROUTE_SCOPE
 
           @iplink_lines = linux_ip_link_s_d.split("\n")
           @ipaddr_lines = linux_ip_addr.split("\n")
-          @iproute_lines = linux_ip_route_show_exact
-          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @iproute_inet6_lines = linux_ip_inet6_route_show_exact
+          @ip_route_inet6_lines = linux_ip_route_inet6.split("\n")
+
           @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
           @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
-          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+          @ohai.stub!(:from).with("ip -f inet6 route show exact ::/0").and_return(@iproute_inet6_lines)
+          @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
         end
 
-        it "shoudn't fail if there's no global scope inet6 address" do
+        it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "doesn't set ip6address" do
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
           @ohai['ip6address'].should be_nil
         end
 
-      end
-
-      # kind of a crude test
-      describe "when the ipv6 address is set on another interface than the one used by the ipv4 default route" do
-        before do
-          linux_ip_link_s_d = <<-IP_LINK_S
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    RX: bytes  packets  errors  dropped overrun mcast   
-    35224      524      0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    35224      524      0       0       0       0      
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped overrun mcast   
-    1392844460 2659966  0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    691785313  1919690  0       0       0       0      
-3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
-    link/ether 00:0c:29:41:71:45 brd ff:ff:ff:ff:ff:ff
-    vlan id 11 <REORDER_HDR> 
-    RX: bytes  packets  errors  dropped overrun mcast   
-    0          0        0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    0          0        0       0       0       0      
-IP_LINK_S
-
-          linux_ip_addr = <<-IP_ADDR
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-    inet6 ::1/128 scope host 
-       valid_lft forever preferred_lft forever
-2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
-    inet 10.116.201.76/24 brd 10.116.201.255 scope global eth0
-    inet 10.116.201.75/32 scope global eth0
-    inet 10.116.201.74/24 scope global secondary eth0
-    inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
-    inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
-       valid_lft forever preferred_lft forever
-3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
-    link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
-    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
-       valid_lft forever preferred_lft forever
-    inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic 
-       valid_lft 6128sec preferred_lft 2526sec
-IP_ADDR
-
-              linux_ip_route_show_exact = <<-IP_ROUTE
-default via 10.116.201.1 dev eth0
-IP_ROUTE
-
-          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
-192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
-IP_ROUTE_SCOPE
-
-          @iplink_lines = linux_ip_link_s_d.split("\n")
-          @ipaddr_lines = linux_ip_addr.split("\n")
-          @iproute_lines = linux_ip_route_show_exact
-          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
-          @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-          @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-          @ohai.stub!(:from).with("ip route show exact 0.0.0.0/0").and_return(@iproute_lines)
-          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
-        end
-
-        it "sets ip6address" do
-          @ohai._require_plugin("network")
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should == "2001:44b8:4160:8f00:a00:27ff:fe13:eacd"
-        end
       end
 
       describe "with Linux-VServer" do
@@ -798,7 +824,7 @@ IP_ROUTE
     inet 10.118.19.48/26 brd 10.118.19.63 scope global secondary eth1
 IP_ADDR
 
-          linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+          linux_ip_route = <<-IP_ROUTE_SCOPE
 172.16.19.0/26 dev eth0 proto kernel  src 172.16.19.39
 172.16.19.0/26 dev if4 proto kernel  src 172.16.19.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
@@ -809,16 +835,23 @@ IP_ROUTE_SCOPE
           @iplink_lines = linux_ip_link_s_d.split("\n")
           @ipaddr_lines = linux_ip_addr.split("\n")
           @iproute_lines = linux_ip_route_show_exact
-          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ip_route_lines = linux_ip_route.split("\n")
           @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
           @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
           @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
-          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+        end
 
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
         end
-        it "sets ipaddress" do
+        
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
           @ohai['ipaddress'].should be_nil
         end
       end
@@ -854,22 +887,28 @@ IP_ROUTE
     inet 172.16.19.48/32 scope global venet0:0
 IP_ADDR
 
-          linux_ip_route_scope_link = ""
+          linux_ip_route = ""
 
           @iplink_lines = linux_ip_link_s_d.split("\n")
           @ipaddr_lines = linux_ip_addr.split("\n")
           @iproute_lines = linux_ip_route_show_exact
-          @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
+          @ip_route_lines = linux_ip_route.split("\n")
           @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
           @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
           @ohai.stub!(:from).with("ip -f inet route show exact 0.0.0.0/0").and_return(@iproute_lines)
-          @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
-
-          @ohai._require_plugin("network")
-          @ohai._require_plugin("linux::network")
+          @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
         end
 
-        it "sets ipaddress" do
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+        
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
           @ohai['ipaddress'].should be_nil
         end
       end
@@ -878,15 +917,15 @@ IP_ADDR
     # This should never happen in the real world.
     describe "when encountering a surprise interface" do
       before do
-        linux_ip_route_scope_link = <<-IP_ROUTE_SCOPE
+        linux_ip_route = <<-IP_ROUTE_SCOPE
 192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
 IP_ROUTE_SCOPE
-        @ip_route_scope_link_lines = linux_ip_route_scope_link.split("\n")
-        @ohai.stub!(:popen4).with("ip route show scope link").and_yield(nil, @stdin_ip_route_scope_link, @ip_route_scope_link_lines, nil)
+        @ip_route_lines = linux_ip_route.split("\n")
+        @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
       end
       
-      it "logs a message and skips previously unseen interfaces in 'ip route show scope link'" do
-        Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show scope link': virbr0").once
+      it "logs a message and skips previously unseen interfaces in 'ip route show'" do
+        Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
         Ohai::Log.should_receive(:debug).any_number_of_times # Catches the 'Loading plugin network' type messages
         @ohai._require_plugin("network")
         @ohai._require_plugin("linux::network")

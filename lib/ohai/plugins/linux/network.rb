@@ -201,7 +201,8 @@ if File.exist?("/sbin/ip")
   end
 
   families.each do |family|
-    key = family[:neighbour_attribute]
+    neigh_attr = family[:neighbour_attribute]
+    attr_prefix = family[:attribute_prefix]
     popen4("ip -f #{family[:name]} neigh show") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
@@ -210,40 +211,70 @@ if File.exist?("/sbin/ip")
             Ohai::Log.warn("neighbour list has entries for unknown interface #{iface[$2]}")
             next
           end
-          iface[$2][key] = Mash.new unless iface[$2][key]
-          iface[$2][key][$1] = $3.downcase
+          iface[$2][neigh_attr] = Mash.new unless iface[$2][neigh_attr]
+          iface[$2][neigh_attr][$1] = $3.downcase
         end
       end
     end
-  end
 
-  popen4("ip route show scope link") do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout.each do |line|
-      if line =~ /^([^\s]+)\s+dev\s+([^\s]+).*\s+src\s+([^\s]+)\b/
-        tmp_route_cidr = $1
-        tmp_int = $2
-        tmp_source_addr = $3
-        unless iface[tmp_int]
-          Ohai::Log.debug("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
-          next
-        end
-        iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]
-        iface[tmp_int][:routes][tmp_route_cidr] = Mash.new( :scope => "Link", :src => tmp_source_addr )
-        # while looping through the link level scope routes we will set ipaddress from the source address if
-        # 1) there's a default route,
-        #    the interface is the default_interface
-        #    the ip source address from the routing table is really set on the node,
-        #    the route entry matches the default_gateway
-        # macaddress is then set from this interface
-        # for now the ip6address is brutaly associated with ipaddress' iface
-        if (network.has_key? "default_interface") &&
-            (network[:default_interface] == tmp_int) &&
-            (iface[tmp_int][:addresses].has_key? tmp_source_addr) &&
-            (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
-          ipaddress tmp_source_addr
-          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[tmp_int][:flags].include? "NOARP"
-          ip6address iface[tmp_int][:addresses].reject{|address, hash| hash['family'] != "inet6" || hash['scope'] != 'Global'}.first.first
+    # checking the routing tables
+    # why ?
+    # 1) on some occasions, the best way to select node[:ipaddress] is to look at
+    #    the routing table source field.
+    # 2) and since we're at it, let's populate some :routes attributes
+    # (going to do that for both inet and inet6 addresses)
+    popen4("ip -f #{family[:name]} route show") do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /^([^\s]+)\s(.*)$/
+          route_dest = $1
+          route_ending = $2
+          #
+          if route_ending =~ /\bdev\s+([^\s]+)\b/
+            route_int = $1
+          else
+            Ohai::Log.debug("Skipping route entry without a device: '#{line}'")
+            next
+          end
+
+          unless iface[route_int]
+            Ohai::Log.debug("Skipping previously unseen interface from 'ip route show': #{route_int}")
+            next
+          end
+
+          route_entry = Mash.new( :destination => route_dest,
+                                  :family => family[:name] )
+          %w[via scope metric proto src].each do |k|
+            route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)\b/
+          end
+
+          # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
+          # don't report the route entry if the src address isn't set on the node
+          next if route_entry[:src] and not iface[route_int][:addresses].has_key? route_entry[:src]
+
+          iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
+          iface[route_int][:routes] << route_entry
+
+          # if
+          #   - there's a known default route
+          #   - the interface for this route entry matches the default interface
+          #   - the source ip address is actually set on this interface
+          #   - the route entry does actually match the default gateway
+          #     (networkingly speaking: the route entry includes the gateway)
+          # THEN the #{family} address is set from here
+          if tmp_source_addr = route_entry[:src]
+            if (network.has_key? "#{attr_prefix}_interface") &&
+                (network["#{attr_prefix}_interface"] == route_int) &&
+                (iface[route_int][:addresses].has_key? tmp_source_addr) && # even it has already been tested 15 lines before, i'd rather have this duplicate test. iow : don't remove this test ! :-)
+                (IPAddr.new(route_dest).include? network["#{attr_prefix}_gateway"])
+              if family[:name] == "inet"
+                ipaddress tmp_source_addr
+                macaddress iface[route_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route_int][:flags].include? "NOARP"
+              else
+                ip6address tmp_source_addr
+              end
+            end
+          end
         end
       end
     end

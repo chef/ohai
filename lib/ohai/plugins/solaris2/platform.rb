@@ -39,6 +39,9 @@ end
 File.open("/etc/release") do |file|
   while line = file.gets
     case line
+    when /^\s*(OmniOS).*r(\d+).*$/
+      platform "omnios"
+      platform_version $2
     when /^\s*(OpenIndiana).*oi_(\d+).*$/
       platform "openindiana"
       platform_version $2

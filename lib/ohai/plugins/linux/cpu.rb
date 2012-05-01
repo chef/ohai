@@ -23,7 +23,7 @@ real_cpu = Mash.new
 cpu_number = 0
 current_cpu = nil
 
-File.open("/proc/cpuinfo").each do |line|
+File.open("/proc/cpuinfo").read_nonblock(4096).each_line do |line|
   case line
   when /processor\s+:\s(.+)/
     cpuinfo[$1] = Mash.new

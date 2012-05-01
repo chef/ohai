@@ -63,6 +63,22 @@ adapters.each do |adapter|
     end
 end
 
+import socket
+
+def check_ipv6(n):
+    try:
+        socket.inet_pton(socket.AF_INET6, n)
+        return True
+    except socket.error:
+        return False
+
+def check_ipv6(n):
+    try:
+        socket.inet_pton(socket.AF_INET6, n)
+        return True
+    except socket.error:
+        return False
+
 iface_instance.keys.each do |i|
   if iface_config[i][:ip_enabled] and iface_instance[i][:net_connection_id] and iface_instance[i][:interface_index]
     cint = sprintf("0x%x", iface_instance[i][:interface_index]).downcase
@@ -74,7 +90,7 @@ iface_instance.keys.each do |i|
     iface[cint][:addresses] = Mash.new
     iface[cint][:configuration][:ip_address].each_index do |i|
       begin
-         if iface[cint][:configuration][:ip_address][i] =~ /./
+         if iface[cint][:configuration][:ip_address][i] =~ /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
            iface[cint][:addresses][iface[cint][:configuration][:ip_address][i]] = {
              "family"    => "inet",
              "netmask"   => iface[cint][:configuration][:ip_subnet][i],

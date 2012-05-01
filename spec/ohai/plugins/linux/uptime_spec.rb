@@ -25,7 +25,8 @@ describe Ohai::System, "Linux plugin uptime" do
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:os] = "linux"
     @ohai._require_plugin("uptime")
-    @mock_file = mock("/proc/uptime", { :gets => "18423 989" })
+    @content = "18423 989\n"
+    @mock_file = mock("/proc/uptime", { :read_nonblock => "18423 989\n" } )
     File.stub!(:open).with("/proc/uptime").and_return(@mock_file)
   end
  
@@ -34,10 +35,15 @@ describe Ohai::System, "Linux plugin uptime" do
     @ohai._require_plugin("linux::uptime")
   end
   
-  it "should split the value of /proc uptime" do
-    @mock_file.gets.should_receive(:split).with(" ").and_return(["18423", "989"])
+  it "should do non-block read of /proc/uptime succesfully" do
+    @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
     @ohai._require_plugin("linux::uptime")
   end
+
+  #it "should split the value of /proc uptime" do
+  #  @mock_file.read_nonblock.strip.should_receive(:split).with(" ").and_return(["18423", "989"])
+  #  @ohai._require_plugin("linux::uptime")
+  #end
   
   it "should set uptime_seconds to uptime" do
     @ohai._require_plugin("linux::uptime")

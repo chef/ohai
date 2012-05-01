@@ -217,7 +217,7 @@ if File.exist?("/sbin/ip")
             (iface[tmp_int][:addresses].has_key? tmp_source_addr) &&
             (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
           ipaddress tmp_source_addr
-          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first
+          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[tmp_int][:flags].include? "NOARP"
           ip6address iface[tmp_int][:addresses].reject{|address, hash| hash['family'] != "inet6" || hash['scope'] != 'Global'}.first.first
         end
       end

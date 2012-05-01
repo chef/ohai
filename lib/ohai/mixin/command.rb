@@ -130,6 +130,8 @@ module Ohai
       def popen4(cmd, args={}, &b)
 	
 	## Disable garbage collection to work around possible bug in MRI
+  # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
+  # See OHAI-330 / CHEF-2916 / CHEF-1305
 	GC.disable
 	
         # Waitlast - this is magic.

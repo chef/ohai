@@ -37,18 +37,6 @@ elsif File.exists?("/etc/enterprise-release")
   contents = File.read("/etc/enterprise-release").chomp
   platform "oracle"
   platform_version get_redhatish_version(contents)
-elsif lsb[:id] =~ /RedHat/i
-  platform "redhat"
-  platform_version lsb[:release]
-elsif lsb[:id] =~ /Amazon/i
-  platform "amazon"
-  platform_version lsb[:release]
-elsif lsb[:id] =~ /ScientificSL/i
-  platform "scientific"
-  platform_version lsb[:release]
-elsif lsb[:id]
-  platform lsb[:id].downcase
-  platform_version lsb[:release]
 elsif File.exists?("/etc/debian_version")
   platform "debian"
   platform_version File.read("/etc/debian_version").chomp
@@ -74,6 +62,18 @@ elsif File.exists?('/etc/arch-release')
   platform "arch"
   # no way to determine platform_version in a rolling release distribution
   # kernel release will be used - ex. 2.6.32-ARCH
+elsif lsb[:id] =~ /RedHat/i
+  platform "redhat"
+  platform_version lsb[:release]
+elsif lsb[:id] =~ /Amazon/i
+  platform "amazon"
+  platform_version lsb[:release]
+elsif lsb[:id] =~ /ScientificSL/i
+  platform "scientific"
+  platform_version lsb[:release]
+elsif lsb[:id]
+  platform lsb[:id].downcase
+  platform_version lsb[:release]
 end
 
 

@@ -71,7 +71,7 @@ elsif lsb[:id] =~ /Amazon/i
 elsif lsb[:id] =~ /ScientificSL/i
   platform "scientific"
   platform_version lsb[:release]
-elsif lsb[:id]
+elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties 
   platform lsb[:id].downcase
   platform_version lsb[:release]
 end

@@ -47,11 +47,12 @@ describe Ohai::System, "Linux cpu plugin" do
       "clflush size  : 32" ].join("\n")
     @w.write @contents
     File.stub!(:open).with("/proc/cpuinfo").and_return(@mock_file)
+    File.stub!(:size).with("/proc/cpuinfo").and_return(@contents.size)
   end
 
   it "should read non-blocking succesfully" do
    File.should_receive(:open).with("/proc/cpuinfo").and_return(@mock_file)
-   @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+   @mock_file.should_receive(:read_nonblock).with(File.size("/proc/cpuinfo")).and_return(@contents)
    @ohai._require_plugin("linux::cpu")
   end
 

@@ -31,8 +31,9 @@ if File.exists?("/proc/xen")
   virtualization[:role] = "guest"
 
   # This file should exist on most Xen systems, normally empty for guests
-  if File.exists?("/proc/xen/capabilities")
-    File.open("/proc/xen/capabilities").read_nonblock(4096).each_line do |line|
+  xen_capab_file="/proc/xen/capabilities"
+  if File.exists?(xen_capab_file)
+    File.open(xen_capab_file).read_nonblock(File.size(xen_capab_file)).each_line do |line|
       virtualization[:role] = "host" if line  =~ /control_d/i
     end
   end
@@ -46,8 +47,9 @@ end
 #   but rather be additive - btm
 
 # Detect from kernel module
-if File.exists?("/proc/modules")
-  File.open("/proc/modules").read_nonblock(4096).each_line do |modules|
+modules_file="/proc/modules"
+if File.exists?(modules_file)
+  File.open(modules_file).read_nonblock(File.size(modules_file)).each_line do |modules|
     if modules =~ /^kvm/
       virtualization[:system] = "kvm"
       virtualization[:role] = "host"
@@ -66,8 +68,9 @@ end
 # 2.6.27-9-server (intrepid) has this / 2.6.18-6-amd64 (etch) does not
 # It would be great if we could read pv_info in the kernel
 # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
-if File.exists?("/proc/cpuinfo")
-  File.open("/proc/cpuinfo").read_nonblock(4096).each_line do |line|
+cpuinfo_file="/proc/cpuinfo"
+if File.exists?(cpuinfo_file)
+  File.open(cpuinfo_file).read_nonblock(File.size(cpuinfo_file)).each_line do |line|
     if line =~ /QEMU Virtual CPU/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
@@ -114,8 +117,9 @@ if File.exists?("/usr/sbin/dmidecode")
 end
 
 # Detect Linux-VServer
-if File.exists?("/proc/self/status")
-  File.open("/proc/self/status").read_nonblock(4096).each_line do |proc_self_status|
+self_status_file="/proc/self/status"
+if File.exists?(self_status_file)
+  File.open(self_status_file).read_nonblock(File.size(self_status_file)).each_line do |proc_self_status|
     vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
     if vxid and vxid[2]
       virtualization[:system] = "linux-vserver"

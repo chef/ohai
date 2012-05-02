@@ -54,9 +54,10 @@ describe Ohai::System, "Linux virtualization platform" do
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
       File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
 
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "xen"
@@ -81,15 +82,16 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for kvm" do
     it "should set kvm host if /proc/modules contains kvm" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-
-      @contents = "kvm 165872  1 kvm_intel"
+      @contents = "kvm 165872  1 kvm_intel\n"
       @fname = "/proc/modules"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
       File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
 
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "kvm"
@@ -97,13 +99,16 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
-      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
       @contents = "QEMU Virtual CPU"
-      @mock_file = mock("/proc/cpuinfo", { :read_nonblock => @contents } )
-      File.stub!(:open).with("/proc/cpuinfo").and_return(@mock_file)
+      @fname = "/proc/cpuinfo"
+      @mock_file = mock(@fname, { :read_nonblock => @contents } )
 
-      File.should_receive(:open).with("/proc/cpuinfo").and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:open).with(@fname).and_return(@mock_file)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
+
+      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
 
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "kvm"
@@ -119,32 +124,32 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for VirtualBox" do
     it "should set vbox host if /proc/modules contains vboxdrv" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-
-      @contents = "vboxdrv 268268 3 vboxnetadp,vboxnetflt"
+      @contents = "vboxdrv 268268 3 vboxnetadp,vboxnetflt\n"
       @fname = "/proc/modules"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with("/proc/modules").and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "vbox"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set vbox guest if /proc/modules contains vboxguest" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-
       @contents = "vboxguest 177749 2 vboxsf"
       @fname = "/proc/modules"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "vbox"
       @ohai[:virtualization][:role].should == "guest"
@@ -218,64 +223,64 @@ VMWARE
 
   describe "when we are checking for Linux-VServer" do
     it "should set Linux-VServer host if /proc/self/status contains s_context: 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-
       @contents = "s_context: 0"
       @fname = "/proc/self/status"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set Linux-VServer host if /proc/self/status contains VxID: 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-
       @contents = "VxID: 0"
       @fname = "/proc/self/status"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set Linux-VServer guest if /proc/self/status contains s_context > 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-
       @contents = "s_context: 2"
       @fname = "/proc/self/status"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "guest"
     end
 
     it "should set Linux-VServer guest if /proc/self/status contains VxID > 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-
       @contents = "VxID: 2"
       @fname = "/proc/self/status"
 
       @mock_file = mock(@fname, { :read_nonblock => @contents } )
       File.stub!(:open).with(@fname).and_return(@mock_file)
-      File.should_receive(:open).with(@fname).and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(4096).and_return(@contents)
+      File.stub!(:size).with(@fname).and_return(@contents.size)
 
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:open).with(@fname).and_return(@mock_file)
+      @mock_file.should_receive(:read_nonblock).with(File.size(@fname)).and_return(@contents)
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "guest"

@@ -19,7 +19,7 @@
 provides "uptime", "idletime", "uptime_seconds", "idletime_seconds"
 
 uptime_file='/proc/uptime'
-uptime, idletime = File.open(uptime_file).read_nonblock(File.size(uptime_file)).strip.split(' ')
+uptime, idletime = File.read_procfile(uptime_file).first.split(' ')
 uptime_seconds uptime.to_i
 uptime self._seconds_to_human(uptime.to_i)
 idletime_seconds idletime.to_i

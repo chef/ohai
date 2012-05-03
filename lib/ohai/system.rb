@@ -21,6 +21,7 @@ require 'ohai/log'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
+require 'ohai/mixin/read_procfile'
 
 require 'yajl'
 
@@ -93,7 +94,7 @@ module Ohai
         return md[1]
       end
     end
-    
+
     def set_attribute(name, *values)
       @data[name] = Array18(*values)
       @data[name]
@@ -265,7 +266,7 @@ module Ohai
     end
 
     private
-    
+
     def Array18(*args)
       return nil if args.empty?
       return args.first if args.length == 1

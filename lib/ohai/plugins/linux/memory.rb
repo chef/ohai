@@ -22,7 +22,7 @@ memory Mash.new
 memory[:swap] = Mash.new
 
 meminfo_file='/proc/meminfo'
-File.open(meminfo_file).read_nonblock(File.size(meminfo_file)).each_line do |line|
+File.read_procfile(meminfo_file).each do |line|
   case line
   when /^MemTotal:\s+(\d+) (.+)$/
     memory[:total] = "#{$1}#{$2}"

@@ -24,7 +24,6 @@ describe Ohai::System, "Linux cpu plugin" do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:os] = "linux"
-    @mock_file, @w = IO.pipe
     @contents = [
       "processor     : 0",
       "vendor_id     : GenuineIntel",
@@ -44,15 +43,12 @@ describe Ohai::System, "Linux cpu plugin" do
       "wp            : yes",
       "flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov",
       "bogomips      : 2575.86",
-      "clflush size  : 32" ].join("\n")
-    @w.write @contents
-    File.stub!(:open).with("/proc/cpuinfo").and_return(@mock_file)
-    File.stub!(:size).with("/proc/cpuinfo").and_return(@contents.size)
+      "clflush size  : 32" ]
+    File.stub!(:read_procfile).with("/proc/cpuinfo").and_return(@contents)
   end
 
   it "should read non-blocking succesfully" do
-   File.should_receive(:open).with("/proc/cpuinfo").and_return(@mock_file)
-   @mock_file.should_receive(:read_nonblock).with(File.size("/proc/cpuinfo")).and_return(@contents)
+   File.should_receive(:read_procfile).with("/proc/cpuinfo").and_return(@contents)
    @ohai._require_plugin("linux::cpu")
   end
 

@@ -248,7 +248,6 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
-      @mock_file, @w = IO.pipe
       @contents = [
         "rootfs / rootfs rw 0 0",
         "none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0",
@@ -266,16 +265,13 @@ describe Ohai::System, "Linux filesystem plugin" do
         "/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0",
         "fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0",
         "binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0"
-      ].join("\n")
-      @w.write @contents
+      ]
       File.stub!(:exists?).with("/proc/mounts").and_return(true)
-      File.stub!(:open).with("/proc/mounts").and_return(@mock_file)
-      File.stub!(:size).with("/proc/mounts").and_return(@contents.size)
+      File.stub!(:read_procfile).with("/proc/mounts").and_return(@contents)
     end
 
     it "should read non-blocking succesfully" do
-      File.should_receive(:open).with("/proc/mounts").and_return(@mock_file)
-      @mock_file.should_receive(:read_nonblock).with(File.size("/proc/mounts")).and_return(@contents)
+      File.should_receive(:read_procfile).with("/proc/mounts").and_return(@contents)
       @ohai._require_plugin("linux::filesystem")
     end
 

@@ -33,7 +33,7 @@ if File.exists?("/proc/xen")
   # This file should exist on most Xen systems, normally empty for guests
   xen_capab_file="/proc/xen/capabilities"
   if File.exists?(xen_capab_file)
-    File.open(xen_capab_file).read_nonblock(File.size(xen_capab_file)).each_line do |line|
+    File.read_procfile(xen_capab_file).each do |line|
       virtualization[:role] = "host" if line  =~ /control_d/i
     end
   end
@@ -49,7 +49,7 @@ end
 # Detect from kernel module
 modules_file="/proc/modules"
 if File.exists?(modules_file)
-  File.open(modules_file).read_nonblock(File.size(modules_file)).each_line do |modules|
+  File.read_procfile(modules_file).each do |modules|
     if modules =~ /^kvm/
       virtualization[:system] = "kvm"
       virtualization[:role] = "host"
@@ -70,7 +70,7 @@ end
 # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
 cpuinfo_file="/proc/cpuinfo"
 if File.exists?(cpuinfo_file)
-  File.open(cpuinfo_file).read_nonblock(File.size(cpuinfo_file)).each_line do |line|
+  File.read_procfile(cpuinfo_file).each do |line|
     if line =~ /QEMU Virtual CPU/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
@@ -119,7 +119,7 @@ end
 # Detect Linux-VServer
 self_status_file="/proc/self/status"
 if File.exists?(self_status_file)
-  File.open(self_status_file).read_nonblock(File.size(self_status_file)).each_line do |proc_self_status|
+  File.read_procfile(self_status_file).each do |proc_self_status|
     vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
     if vxid and vxid[2]
       virtualization[:system] = "linux-vserver"

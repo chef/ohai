@@ -92,7 +92,7 @@ end
 # Grab any missing mount information from /proc/mounts
 mounts_file='/proc/mounts'
 if File.exists?(mounts_file)
-  File.open(mounts_file).read_nonblock(File.size(mounts_file)).each_line do |line|
+  File.read_procfile(mounts_file).each do |line|
     if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
       filesystem = $1
       next if fs.has_key?(filesystem)

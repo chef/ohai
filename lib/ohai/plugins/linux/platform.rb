@@ -78,7 +78,7 @@ end
 
 
 case platform
-  when /debian/, /ubuntu/, /mint/
+  when /debian/, /ubuntu/, /linuxmint/
     platform_family "debian"
   when /fedora/
     platform_family "fedora"

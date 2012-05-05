@@ -66,10 +66,10 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform].should == "ubuntu"
       @ohai[:platform_family].should == "debian"
     end
-    it "should set platform to mint and platform_family to debian [:lsb][:id] contains Mint" do
-      @ohai[:lsb][:id] = "Mint"
+    it "should set platform to linuxmint and platform_family to debian [:lsb][:id] contains LinuxMint" do
+      @ohai[:lsb][:id] = "LinuxMint"
       @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "mint"
+      @ohai[:platform].should == "linuxmint"
       @ohai[:platform_family].should == "debian"
     end
     it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do

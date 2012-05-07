@@ -1,4 +1,3 @@
-# -*- coding: iso-8859-15 -*-
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
@@ -279,6 +278,7 @@ if File.exist?("/sbin/ip")
         r[:src] and # it has a src field
           iface[r[:dev]] and # the iface exists
           iface[r[:dev]][:addresses].has_key? r[:src] and # the src field is an ip set on the node
+          iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" and # this isn't a link level addresse
           ( r[:destination] == "default" or
             ( default_route[:via] and # the default route has a gateway
               IPAddress(r[:destination]).include? IPAddress(default_route[:via])# the route matches the gateway
@@ -291,15 +291,24 @@ if File.exist?("/sbin/ip")
         # - then by prefixlen
         [
          r[:destination] == default ? 0 : 1,
-         r[:metric].nil? ? "0" : r[:metric].nil?, 
-         IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
+         r[:metric].nil? ? "0" : r[:metric].nil?,
+         # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
+         # just a quick workaround: use 0 if IPAddress fails
+         begin
+           IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
+         rescue
+           0
+         end
         ]
       end.first
-      if family[:name] == "inet"
-        ipaddress route[:src]
-        macaddress ||= iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
-      else
-        ip6address route[:src]
+
+      unless route.nil? or route.empty?
+        if family[:name] == "inet"
+          ipaddress route[:src]
+          macaddress iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
+        else
+          ip6address route[:src]
+        end
       end
     end
   end

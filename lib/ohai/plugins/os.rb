@@ -35,7 +35,7 @@ when /freebsd(.+)$/
   os "freebsd"
 when /openbsd(.+)$/
   os "openbsd"
-when /netbsd(.+)$/
+when /netbsd(.*)$/
   os "netbsd"
 when /solaris2/
   os "solaris2"

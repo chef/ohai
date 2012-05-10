@@ -256,7 +256,7 @@ if File.exist?("/sbin/ip")
     default_route = routes.select do |r|
       r[:destination] == "default"
     end.sort do |x,y|
-      (x[:metric].nil? ? "0" : x[:metric]) <=> (y[:metric].nil? ? "0" : y[:metric])
+      (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
     end.first
 
     if default_route.nil? or default_route.empty?
@@ -277,11 +277,11 @@ if File.exist?("/sbin/ip")
         # selecting routes
         r[:src] and # it has a src field
           iface[r[:dev]] and # the iface exists
-          iface[r[:dev]][:addresses].has_key? r[:src] and # the src field is an ip set on the node
+          iface[r[:dev]][:addresses].has_key? r[:src] and # the src ip is set on the node
           iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" and # this isn't a link level addresse
           ( r[:destination] == "default" or
             ( default_route[:via] and # the default route has a gateway
-              IPAddress(r[:destination]).include? IPAddress(default_route[:via])# the route matches the gateway
+              IPAddress(r[:destination]).include? IPAddress(default_route[:via]) # the route matches the gateway
               )
             )
       end.sort_by do |r|
@@ -290,8 +290,8 @@ if File.exist?("/sbin/ip")
         # - then sort by metric
         # - then by prefixlen
         [
-         r[:destination] == default ? 0 : 1,
-         r[:metric].nil? ? "0" : r[:metric].nil?,
+         r[:destination] == "default" ? 0 : 1,
+         r[:metric].nil? ? 0 : r[:metric].to_i,
          # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
          # just a quick workaround: use 0 if IPAddress fails
          begin

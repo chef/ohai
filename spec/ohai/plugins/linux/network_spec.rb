@@ -894,22 +894,62 @@ IP_ROUTE_SCOPE
 
       end
 
+      describe "with no default route" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+IP_ROUTE
+
+          @linux_ip_route_inet6 = <<-IP_ROUTE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
+IP_ROUTE
+
+          prepare_data
+          do_stubs
+        end
+
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should be_nil
+        end
+
+        it "doesn't set ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be_nil
+        end
+      end
+
       describe "with irrelevant routes (container setups)" do
         before do
-          @linux_ip_route = <<-IP_ROUTE_SCOPE
+          @linux_ip_route = <<-IP_ROUTE
 10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
 10.116.201.0/26 dev if4 proto kernel  src 10.116.201.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
 10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
 default via 10.116.201.1 dev eth0  src 10.116.201.99
-IP_ROUTE_SCOPE
+IP_ROUTE
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+          @linux_ip_route_inet6 = <<-IP_ROUTE
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-IP_ROUTE_SCOPE
+IP_ROUTE
 
           prepare_data
           do_stubs

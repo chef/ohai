@@ -479,15 +479,15 @@ IP_ROUTE_SCOPE
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network'][:default_interface].should == 'eth0'
+          @ohai['network']['default_interface'].should == 'eth0'
         end
   
         it "finds the default gateway by asking which iface has the default route" do
-          @ohai['network'][:default_gateway].should == '10.116.201.1'
+          @ohai['network']['default_gateway'].should == '10.116.201.1'
         end
       end
   
-      describe "with a link level scope default route" do
+      describe "with a link level default route" do
         before do
           @linux_ip_route = <<-IP_ROUTE
 10.116.201.0/24 dev eth0  proto kernel
@@ -507,11 +507,11 @@ ROUTE_N
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network'][:default_interface].should == 'eth0'
+          @ohai['network']['default_interface'].should == 'eth0'
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network'][:default_gateway].should == '0.0.0.0'
+          @ohai['network']['default_gateway'].should == '0.0.0.0'
         end
       end
 
@@ -536,11 +536,11 @@ ROUTE_N
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network'][:default_interface].should == 'eth0.11'
+          @ohai['network']["default_interface"].should == 'eth0.11'
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network'][:default_gateway].should == '192.168.0.15'
+          @ohai['network']["default_gateway"].should == '192.168.0.15'
         end
       end
     end
@@ -562,13 +562,13 @@ ROUTE_N
     it "finds the default inet6 interface if there's a inet6 default route" do
       @ohai._require_plugin("network")
       @ohai._require_plugin("linux::network")
-      @ohai['network'][:default_inet6_interface].should == 'eth0.11'
+      @ohai['network']['default_inet6_interface'].should == 'eth0.11'
     end
 
     it "finds the default inet6 gateway if there's a inet6 default route" do
       @ohai._require_plugin("network")
       @ohai._require_plugin("linux::network")
-      @ohai['network'][:default_inet6_gateway].should == '1111:2222:3333:4444::1'
+      @ohai['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::1'
     end
 
     it "finds inet6 neighbours" do
@@ -617,46 +617,161 @@ ROUTE_N
         @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new ( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
-      describe "when there're irrelevant routes (container setups)" do
-        pending
+      describe "when there isn't a source field in route entries " do
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should be nil
+        end
+
+        it "doesn't set macaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['macaddress'].should be nil
+        end
+
+        it "doesn't set ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be nil
+        end
       end
 
-      describe "when establishing whether ipaddress ip6address and macaddress should be set" do
-        describe "when there isn't a source field in route entries " do
-          it "doesn't set ipaddress" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ipaddress'].should be nil
-          end
+      describe "when there's a source field in the default route entry" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+default via 10.116.201.1 dev eth0  src 10.116.201.76
+IP_ROUTE_SCOPE
 
-          it "doesn't set macaddress" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['macaddress'].should be nil
-          end
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
+IP_ROUTE_SCOPE
 
-          it "doesn't set ip6address" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ip6address'].should be nil
-          end
+          prepare_data
+          do_stubs
         end
 
-        describe "when there's a source field in the default route entry" do
-          pending
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
         end
 
-        describe "when there're several default routes" do
-          pending
+        it "sets ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should == "10.116.201.76"
         end
 
-        describe "when there're a mixed setup of routes that could be used to set ipaddress" do
-          pending
+        it "sets ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should == "1111:2222:3333:4444::3"
+        end
+      end
+
+      describe "when there're several default routes" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+default via 10.116.201.1 dev eth0 metric 10
+default via 10.116.201.254 dev eth0 metric 9
+IP_ROUTE_SCOPE
+
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
+default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
+IP_ROUTE_SCOPE
+
+          prepare_data
+          do_stubs
         end
 
-        describe "when there's a source field in a local route entry " do
-          before do
-            @linux_ip_route = <<-IP_ROUTE_SCOPE
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "sets default ipv4 interface and gateway" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network']['default_interface'].should == 'eth0'
+          @ohai['network']['default_gateway'].should == '10.116.201.254'
+        end
+
+        it "sets default ipv6 interface and gateway" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network']['default_inet6_interface'].should == 'eth0.11'
+          @ohai['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::ffff'
+        end
+      end
+
+      describe "when there're a mixed setup of routes that could be used to set ipaddress" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE_SCOPE
+10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+default via 10.116.201.1 dev eth0 metric 10
+default via 10.116.201.254 dev eth0 metric 9 src 10.116.201.74
+IP_ROUTE_SCOPE
+
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
+default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
+IP_ROUTE_SCOPE
+
+          prepare_data
+          do_stubs
+        end
+
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "sets ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai["ipaddress"].should == "10.116.201.74"
+        end
+
+        it "sets ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai["ip6address"].should == "1111:2222:3333:4444::2"
+        end
+      end
+
+      describe "when there's a source field in a local route entry " do
+        before do
+          @linux_ip_route = <<-IP_ROUTE_SCOPE
 10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -665,146 +780,166 @@ ROUTE_N
 default via 10.116.201.1 dev eth0
 IP_ROUTE_SCOPE
 
-            @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
-            prepare_data
-            do_stubs
-          end
+          prepare_data
+          do_stubs
+        end
 
-          it "completes the run" do
-            Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "sets ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should == "10.116.201.76"
+        end
+
+        describe "when about to set macaddress" do
+          it "sets macaddress" do
             @ohai._require_plugin("network")
             @ohai._require_plugin("linux::network")
-            @ohai['network'].should_not be_nil
+            @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
           end
 
-          it "sets ipaddress" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ipaddress'].should == "10.116.201.76"
-          end
-
-          describe "when about to set macaddress" do
-            it "sets macaddress" do
-              @ohai._require_plugin("network")
-              @ohai._require_plugin("linux::network")
-              @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
-            end
-
-            describe "when then interface has the NOARP flag" do
-              before do
-                @linux_ip_route = <<-IP_ROUTE
+          describe "when then interface has the NOARP flag" do
+            before do
+              @linux_ip_route = <<-IP_ROUTE
 10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
 IP_ROUTE
 
-                prepare_data
-                do_stubs
-              end
-
-              it "completes the run" do
-                Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-                @ohai._require_plugin("network")
-                @ohai._require_plugin("linux::network")
-                @ohai['network'].should_not be_nil
-              end
-
-              it "doesn't set macaddress" do
-                @ohai._require_plugin("network")
-                @ohai._require_plugin("linux::network")
-                @ohai['macaddress'].should be_nil
-              end
+              prepare_data
+              do_stubs
             end
-          end
 
-          it "sets ip6address" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ip6address'].should == "1111:2222:3333:4444::3"
+            it "completes the run" do
+              Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+              @ohai._require_plugin("network")
+              @ohai._require_plugin("linux::network")
+              @ohai['network'].should_not be_nil
+            end
+
+            it "doesn't set macaddress" do
+              @ohai._require_plugin("network")
+              @ohai._require_plugin("linux::network")
+              @ohai['macaddress'].should be_nil
+            end
           end
         end
 
-        describe "when not having a global scope ipv6 address" do
-          before do
-            @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+        it "sets ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should == "1111:2222:3333:4444::3"
+        end
+      end
+
+      describe "with a link level default route" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE
+default dev venet0 scope link
+IP_ROUTE
+
+          prepare_data
+          do_stubs
+        end
+
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should be_nil
+        end
+      end
+
+      describe "when not having a global scope ipv6 address" do
+        before do
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
 fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
 IP_ROUTE_SCOPE
 
-            prepare_data
-            do_stubs
-          end
-
-          it "completes the run" do
-            Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['network'].should_not be_nil
-          end
-
-          it "doesn't set ip6address" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ip6address'].should be_nil
-          end
-
+          prepare_data
+          do_stubs
         end
 
-        describe "with Linux-VServer" do
-          before do
-            @linux_ip_route = <<-IP_ROUTE_SCOPE
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
+
+        it "doesn't set ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be_nil
+        end
+
+      end
+
+      describe "with irrelevant routes (container setups)" do
+        before do
+          @linux_ip_route = <<-IP_ROUTE_SCOPE
 10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
 10.116.201.0/26 dev if4 proto kernel  src 10.116.201.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
 10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
-default via 10.116.201.1 dev eth0
+default via 10.116.201.1 dev eth0  src 10.116.201.99
 IP_ROUTE_SCOPE
 
-            prepare_data
-            do_stubs
-          end
+          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
+fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
+IP_ROUTE_SCOPE
 
-          it "completes the run" do
-            Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['network'].should_not be_nil
-          end
-          
-          it "doesn't set ipaddress" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ipaddress'].should be_nil
-          end
+          prepare_data
+          do_stubs
         end
 
-        describe "with OpenVZ" do
-          before do
-            @linux_ip_route = <<-IP_ROUTE
-default dev venet0 scope link
-IP_ROUTE
+        it "completes the run" do
+          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network'].should_not be_nil
+        end
 
-            prepare_data
-            do_stubs
-          end
+        it "doesn't add bogus routes" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
+        end
 
-          it "completes the run" do
-            Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['network'].should_not be_nil
-          end
-          
-          it "doesn't set ipaddress" do
-            @ohai._require_plugin("network")
-            @ohai._require_plugin("linux::network")
-            @ohai['ipaddress'].should be_nil
-          end
+        it "doesn't set ipaddress" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ipaddress'].should be_nil
+        end
+
+        it "doesn't set ip6address" do
+          @ohai._require_plugin("network")
+          @ohai._require_plugin("linux::network")
+          @ohai['ip6address'].should be_nil
         end
       end
 

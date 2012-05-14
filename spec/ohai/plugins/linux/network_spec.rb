@@ -613,8 +613,8 @@ ROUTE_N
         @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
         @ohai['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
         @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
-        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new ( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
-        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new ( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
+        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
+        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
       describe "when there isn't a source field in route entries " do
@@ -965,9 +965,9 @@ IP_ROUTE
         it "doesn't add bogus routes" do
           @ohai._require_plugin("network")
           @ohai._require_plugin("linux::network")
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new ( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
+          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
         end
 
         it "doesn't set ipaddress" do

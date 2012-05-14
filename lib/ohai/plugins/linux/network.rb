@@ -40,26 +40,21 @@ IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
 
 if File.exist?("/sbin/ip")
 
-  begin
-    route_result = from("ip route show exact 0.0.0.0/0").chomp
-
-    # expected results:
-    # - default via 10.0.2.4 dev br0
-    # - default dev br0  scope link
-    if route_result_match = route_result.match(/\svia\s+([^\s+]+)\s+dev\s([^\s+]+)\b/)
-      network[:default_interface] = route_result_match[2]
-      network[:default_gateway] = route_result_match[1]
-    elsif route_result_match = route_result.match(/\sdev\s([^\s+]+)\s+scope\s+link/)
-      network[:default_interface] = route_result_match[1]
-      network[:default_gateway] = "0.0.0.0" # backward compatible result
-    else
-      # should nodes always have a default route ? i don't think so
-      # anyway, backward compatible raise ! :-)
-      raise
-    end
-  rescue
-    Ohai::Log.debug("Unable to determine default interface")
-  end
+  # families to get default routes from
+  families = [
+              {
+                :name => "inet",
+                :default_route => "0.0.0.0/0",
+                :default_prefix => :default,
+                :neighbour_attribute => :arp
+              },
+              {
+                :name => "inet6",
+                :default_route => "::/0",
+                :default_prefix => :default_inet6,
+                :neighbour_attribute => :neighbour_inet6
+              }
+             ]
 
   popen4("ip addr") do |pid, stdin, stdout, stderr|
     stdin.close
@@ -181,44 +176,138 @@ if File.exist?("/sbin/ip")
     end
   end
 
-  popen4("ip neighbor show") do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout.each do |line|
-      if line =~ /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) dev ([0-9a-zA-Z\.\:\-]+) lladdr ([a-fA-F0-9\:]+)/
-        next unless iface[$2]
-        iface[$2][:arp] = Mash.new unless iface[$2][:arp]
-        iface[$2][:arp][$1] = $3.downcase
+  families.each do |family|
+    neigh_attr = family[:neighbour_attribute]
+    default_prefix = family[:default_prefix]
+
+    popen4("ip -f #{family[:name]} neigh show") do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
+          unless iface[$2]
+            Ohai::Log.warn("neighbour list has entries for unknown interface #{iface[$2]}")
+            next
+          end
+          iface[$2][neigh_attr] = Mash.new unless iface[$2][neigh_attr]
+          iface[$2][neigh_attr][$1] = $3.downcase
+        end
       end
     end
-  end
 
-  popen4("ip route show scope link") do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout.each do |line|
-      if line =~ /^([^\s]+)\s+dev\s+([^\s]+).*\s+src\s+([^\s]+)\b/
-        tmp_route_cidr = $1
-        tmp_int = $2
-        tmp_source_addr = $3
-        unless iface[tmp_int]
-          Ohai::Log.debug("Skipping previously unseen interface from 'ip route show scope link': #{tmp_int}")
-          next
+    # checking the routing tables
+    # why ?
+    # 1) to set the default gateway and default interfaces attributes
+    # 2) on some occasions, the best way to select node[:ipaddress] is to look at
+    #    the routing table source field.
+    # 3) and since we're at it, let's populate some :routes attributes
+    # (going to do that for both inet and inet6 addresses)
+    popen4("ip -f #{family[:name]} route show") do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /^([^\s]+)\s(.*)$/
+          route_dest = $1
+          route_ending = $2
+          #
+          if route_ending =~ /\bdev\s+([^\s]+)\b/
+            route_int = $1
+          else
+            Ohai::Log.debug("Skipping route entry without a device: '#{line}'")
+            next
+          end
+
+          unless iface[route_int]
+            Ohai::Log.debug("Skipping previously unseen interface from 'ip route show': #{route_int}")
+            next
+          end
+
+          route_entry = Mash.new( :destination => route_dest,
+                                  :family => family[:name] )
+          %w[via scope metric proto src].each do |k|
+            route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)\b/
+          end
+
+          # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
+          # don't report the route entry if the src address isn't set on the node
+          next if route_entry[:src] and not iface[route_int][:addresses].has_key? route_entry[:src]
+
+          iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
+          iface[route_int][:routes] << route_entry
         end
-        iface[tmp_int][:routes] = Mash.new unless iface[tmp_int][:routes]
-        iface[tmp_int][:routes][tmp_route_cidr] = Mash.new( :scope => "Link", :src => tmp_source_addr )
-        # while looping through the link level scope routes we will set ipaddress from the source address if
-        # 1) there's a default route,
-        #    the interface is the default_interface
-        #    the ip source address from the routing table is really set on the node,
-        #    the route entry matches the default_gateway
-        # macaddress is then set from this interface
-        # for now the ip6address is brutaly associated with ipaddress' iface
-        if (network.has_key? "default_interface") &&
-            (network[:default_interface] == tmp_int) &&
-            (iface[tmp_int][:addresses].has_key? tmp_source_addr) &&
-            (IPAddr.new(tmp_route_cidr).include? network[:default_gateway])
-          ipaddress tmp_source_addr
-          macaddress iface[tmp_int][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[tmp_int][:flags].include? "NOARP"
-          ip6address iface[tmp_int][:addresses].reject{|address, hash| hash['family'] != "inet6" || hash['scope'] != 'Global'}.first.first
+      end
+    end
+    # now looking at the routes to set the default attributes
+    # for information, default routes can be of this form :
+    # - default via 10.0.2.4 dev br0
+    # - default dev br0  scope link
+    # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
+    # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
+
+    # using a temporary var to hold routes and their interface name
+    routes = iface.collect do |i,iv|
+      iv[:routes].collect do |r|
+        r.merge(:dev=>i) if r[:family] == family[:name]
+      end.compact if iv[:routes]
+    end.compact.flatten
+
+    # using a temporary var to hold the default route
+    # in case there are more than 1 default route, sort it by its metric
+    # and return the first one
+    # (metric value when unspecified is 0)
+    default_route = routes.select do |r|
+      r[:destination] == "default"
+    end.sort do |x,y|
+      (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
+    end.first
+
+    if default_route.nil? or default_route.empty?
+      Ohai::Log.debug("Unable to determine default #{family[:name]} interface")
+    else
+      network["#{default_prefix}_interface"] = default_route[:dev]
+      Ohai::Log.debug("#{default_prefix}_interface set to #{default_route[:dev]}")
+
+      # setting gateway to 0.0.0.0 or :: if the default route is a link level one
+      network["#{default_prefix}_gateway"] = default_route[:via] ? default_route[:via] : family[:default_route].chomp("/0")
+      Ohai::Log.debug("#{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
+
+      # since we're at it, let's populate {ip,mac,ip6}address with the best values
+      # using the source field when it's specified :
+      # 1) in the default route
+      # 2) in the route entry used to reach the default gateway
+      route = routes.select do |r|
+        # selecting routes
+        r[:src] and # it has a src field
+          iface[r[:dev]] and # the iface exists
+          iface[r[:dev]][:addresses].has_key? r[:src] and # the src ip is set on the node
+          iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" and # this isn't a link level addresse
+          ( r[:destination] == "default" or
+            ( default_route[:via] and # the default route has a gateway
+              IPAddress(r[:destination]).include? IPAddress(default_route[:via]) # the route matches the gateway
+              )
+            )
+      end.sort_by do |r|
+        # sorting the selected routes:
+        # - getting default routes first
+        # - then sort by metric
+        # - then by prefixlen
+        [
+         r[:destination] == "default" ? 0 : 1,
+         r[:metric].nil? ? 0 : r[:metric].to_i,
+         # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
+         # just a quick workaround: use 0 if IPAddress fails
+         begin
+           IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
+         rescue
+           0
+         end
+        ]
+      end.first
+
+      unless route.nil? or route.empty?
+        if family[:name] == "inet"
+          ipaddress route[:src]
+          macaddress iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
+        else
+          ip6address route[:src]
         end
       end
     end

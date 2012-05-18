@@ -50,22 +50,19 @@ def find_ip_and_iface(family = "inet", match = nil)
   # return if there isn't any #{family} address !
   return [ nil, nil ] if ipaddresses.empty?
 
+  # sort ip addresses by scope, by prefixlen and then by ip address
+  # 128 - prefixlen: longest prefixes first
+  r = ipaddresses.sort_by do |v|
+    [ ( scope_prio.index(v[:scope].downcase) or 999999 ),
+      128 - v[:ipaddress].prefix.to_i,
+      ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
+    ]
+  end
   if match.nil? or match ~ /^0\.0\.0\.0/ or match ~ /^::$/
-    # sort ip addresses by scope, by prefixlen and then by ip address
-    # then return the first ip address
-    # 128 - prefixlen: longest prefixes first
-    r = ipaddresses.sort_by do |v|
-      [ ( scope_prio.index(v[:scope].downcase) or 999999 ),
-        128 - v[:ipaddress].prefix.to_i,
-        ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
-      ]
-    end.first
+    # return the first ip address
+    r = r.first
   else
-    # sort by prefixlen
-    # return the first matching ip address
-    r = ipaddresses.sort do |a,b|
-      b[:ipaddress].prefix.to_i <=> a[:ipaddress].prefix.to_i
-    end
+    # use the match argument to select the address
     r = r.select do |v|
       v[:ipaddress].include? IPAddress(match)
     end.first

@@ -67,7 +67,8 @@ def find_ip_and_iface(family = "inet", match = nil)
       v[:ipaddress].include? IPAddress(match)
     end.first
   end
-  returni [ nil, nil ] if r.nil?
+
+  return [ nil, nil ] if r.nil?
   [ r[:ipaddress].to_s, r[:iface] ]
 end
 

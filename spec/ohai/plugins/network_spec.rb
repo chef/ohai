@@ -34,7 +34,6 @@ describe Ohai::System, "Network Plugin" do
     "linux" => {
       # pp Hash[node['network']] from  shef to get the network data
       # have just removed the neighbour and route entries by hand
-      "default_interface"=>"eth0",
       "interfaces"=>
       {"lo"=>
         {"flags"=>["LOOPBACK", "UP"],
@@ -223,7 +222,23 @@ describe Ohai::System, "Network Plugin" do
         end
 
 	context "no default route" do
-	pending "meme tests"
+          before do
+            @ohai["network"]["default_gateway"] = nil
+            @ohai["network"]["default_interface"] = nil
+            @ohai["network"]["default_inet6_gateway"] = nil
+            @ohai["network"]["default_inet6_interface"] = nil
+            # removing inet* addresses from eth0, to complicate things a bit
+            @ohai["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
+          end
+
+          it_does_not_fail
+
+          it "picks {ip,mac,ip6}address from the first interface" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "192.168.99.11"
+            @ohai["macaddress"].should == "00:16:3E:2F:36:80"
+            @ohai["ip6address"].should == "3ffe:1111:3333::1"
+          end
 	end
 
 	context "link level default route" do

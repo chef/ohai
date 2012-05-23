@@ -46,7 +46,7 @@ def sorted_ips(family = "inet")
       next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
       ipaddresses <<  {
         :ipaddress => addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
-        :scope => addr_v["scope"],
+        :scope => addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
         :iface => iface
       }
     end
@@ -55,7 +55,7 @@ def sorted_ips(family = "inet")
   # sort ip addresses by scope, by prefixlen and then by ip address
   # 128 - prefixlen: longest prefixes first
   ipaddresses.sort_by do |v|
-    [ ( scope_prio.index(v[:scope].downcase) or 999999 ),
+    [ ( scope_prio.index(v[:scope]) or 999999 ),
       128 - v[:ipaddress].prefix.to_i,
       ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
     ]

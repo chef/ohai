@@ -137,6 +137,7 @@ end
 
 results = {}
 
+# inet family is treated before inet6
 FAMILIES.keys.sort.each do |family|
   r = {}
   ( r["ip"], r["iface"] ) = find_ip(family)
@@ -145,10 +146,11 @@ FAMILIES.keys.sort.each do |family|
   if family == "inet" and ipaddress.nil?
     if r["ip"].nil?
       Ohai::Log.warn("unable to detect ipaddress")
+      # i don't issue this warning if r["ip"] exists and r["mac"].nil?
+      # as it could be a valid setup with a NOARP default_interface
       Ohai::Log.warn("unable to detect macaddress")
     else
       ipaddress r["ip"]
-      # ATM, macaddress is always set from the ipv4 d
       macaddress r["mac"]
     end
   elsif family == "inet6" and ip6address.nil?
@@ -156,10 +158,12 @@ FAMILIES.keys.sort.each do |family|
       Ohai::Log.warn("unable to detect ip6address")
     else
       ip6address r["ip"]
+      if r["mac"] and macaddress.nil? and ipaddress.nil?
+        Ohai::Log.info("macaddress set to #{r["mac"]} from the ipv6 setup")
+        macaddress r["mac"]
+      end
     end
   end
-  # but we might decide to change this behavior
-  #macaddress r["mac"] unless macaddress # macaddress set from ipv4 otherwise from ipv6
   results[family] = r
 end
 

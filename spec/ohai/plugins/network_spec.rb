@@ -20,16 +20,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 def it_does_not_fail
   it "doesn't fail" do
-    Ohai::Log.should_not_receive(:debug).with(/Plugin network threw exception/)
+    Ohai::Log.should_receive(:warn).any_number_of_times
+    Ohai::Log.should_not_receive(:debug).with(/^Plugin network threw exception/)
     @ohai._require_plugin("network")
     %w[ ipaddress, macaddress, ip6address ].each do |attribute|
       @ohai.should have_key(attribute)
     end
   end
-end      
+end
 
 describe Ohai::System, "Network Plugin" do
-  
+
   basic_network_data = {
     "linux" => {
       # pp Hash[node['network']] from  shef to get the network data
@@ -92,132 +93,250 @@ describe Ohai::System, "Network Plugin" do
       "default_inet6_interface" => "eth0"
     }
   }
-  
+
   %w[ linux ].each do |os|
     describe "with #{os}" do
       before(:each) do
         @ohai = Ohai::System.new
-        @ohai.stub!(:require_plugin).and_return(true)
+        @ohai.stub!(:require_plugin).twice.and_return(true)
         @ohai["network"] = basic_network_data[os]
       end
-      
-      describe "when the #{os}::network plugin hasn't set {ip,ip6,mac}address" do
+
+      describe "when the #{os}::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
         context "simple setup" do
           it_does_not_fail
-          
+
+          it "logs 2 debug messages" do
+            Ohai::Log.should_receive(:debug).with(/^Loading plugin network/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet\] Using default/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet6\] Using default/).once
+            @ohai._require_plugin("network")
+          end
+
           it "detects {ip,ip6,mac}address" do
-            @ohai._require_plugin("network")          
+            @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.66.33"
             @ohai["macaddress"].should == "00:16:3E:2F:36:79"
             @ohai["ip6address"].should == "3ffe:1111:2222::33"
           end
         end
-        
+
         context "default ipv4 and ipv6 gateway on different interfaces" do
           before do
             @ohai["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
             @ohai["network"]["default_inet6_interface"] = "eth1"
           end
-          
+
           it_does_not_fail
-          
+
           it "detects {ip,ip6,mac}address" do
-            @ohai._require_plugin("network")          
+            @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.66.33"
             @ohai["macaddress"].should == "00:16:3E:2F:36:79"
             @ohai["ip6address"].should == "3ffe:1111:3333::1"
           end
-          
+
           it "informs about this setup" do
-            Ohai::Log.should_receive(:info).with(/ipaddress and ip6address are set from different interfaces/)
+            Ohai::Log.should_receive(:info).with(/^ipaddress and ip6address are set from different interfaces/)
             @ohai._require_plugin("network")
-          end
-        end
-        
-        context "conflicting results" do
-          before do
-            @ohai["network"]["default_interface"] = "eth1"
-            @ohai["network"]["default_inet6_interface"] = "eth1"
-          end
-          
-          it_does_not_fail
-          
-          it "detects {ip,ip6,mac}address" do
-            @ohai._require_plugin("network")          
-            @ohai["ipaddress"].should == "192.168.66.33"
-            @ohai["macaddress"].should == "00:16:3E:2F:36:79"
-            @ohai["ip6address"].should == "3ffe:1111:2222::33"
-          end
-          
-          it "warns about this conflict" do
-            Ohai::Log.should_receive(:warn).with(/conflict when looking for the default/).exactly(2).times
-            @ohai._require_plugin("network")
-          end
-        end
-        
-        context "several ipaddresses matching the default route, bigger prefix wins" do
-          before do
-            @ohai["network"]["interfaces"]["eth2"] = {
-              "flags" =>["BROADCAST", "MULTICAST", "UP"],
-              "number" =>"2",
-              "addresses" => {
-                "fe80::216:3eff:fe2f:3681" => { "scope"=>"Link", "prefixlen"=>"64", "family"=>"inet6"},
-                "00:16:3E:2F:36:81" =>{"family"=>"lladdr"},
-                "192.168.66.99" => {
-                  "scope"=>"Global",
-                  "netmask"=>"255.255.255.127",
-                  "broadcast"=>"192.168.99.127",
-                  "prefixlen"=>"25",
-                  "family"=>"inet"},
-                "3ffe:1111:2222:0:4444::1"=> {
-                  "prefixlen"=> "64",
-                  "family"=> "inet6",
-                  "scope"=> "Global"
-                }
-              }
-            }
-          end
-          
-          it_does_not_fail
-          
-          it "detects {ip,ip6,mac}address" do
-            @ohai._require_plugin("network")          
-            @ohai["ipaddress"].should == "192.168.66.99"
-            @ohai["macaddress"].should == "00:16:3E:2F:36:81"
-            @ohai["ip6address"].should == "3ffe:1111:2222:0:4444::1"
           end
         end
 
-        context "several ipaddresses matching the default route, smallest ip wins" do
-          before do
-            @ohai["network"]["interfaces"]["eth2"] = {
-              "flags" =>["BROADCAST", "MULTICAST", "UP"],
-              "number" =>"2",
-              "addresses" => {
-                "fe80::216:3eff:fe2f:3681" => { "scope"=>"Link", "prefixlen"=>"64", "family"=>"inet6"},
-                "00:16:3E:2F:36:81" =>{"family"=>"lladdr"},
-                "192.168.66.32" => {
-                  "scope"=>"Global",
-                  "netmask"=>"255.255.255.0",
-                  "broadcast"=>"192.168.66.255",
-                  "prefixlen"=>"24",
-                  "family"=>"inet"},
-                "3ffe:1111:2222::32"=> {
-                  "prefixlen"=> "48",
-                  "family"=> "inet6",
-                  "scope"=> "Global"
+        describe "conflicting results from the #{os}::network plugin" do
+          context "default interface doesn't match the default_gateway" do
+            before do
+              @ohai["network"]["default_interface"] = "eth1"
+              @ohai["network"]["default_inet6_interface"] = "eth1"
+            end
+
+            it_does_not_fail
+
+            it "doesn't detect {ip,ip6,mac}address" do
+              Ohai::Log.should_receive(:warn).any_number_of_times
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should be_nil
+              @ohai["macaddress"].should be_nil
+              @ohai["ip6address"].should be_nil
+            end
+
+            it "warns about this conflict" do
+              Ohai::Log.should_receive(:warn).with(/^\[inet\] no ipaddress\/mask on eth1/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+              @ohai._require_plugin("network")
+            end
+          end
+
+          context "no ip address for the given default interface/gateway" do
+            before do
+              @ohai["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
+            end
+
+            it_does_not_fail
+
+            it "doesn't detect {ip,ip6,mac}address" do
+              Ohai::Log.should_receive(:warn).any_number_of_times
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should be_nil
+              @ohai["macaddress"].should be_nil
+              @ohai["ip6address"].should be_nil
+            end
+
+            it "warns about this conflict" do
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^\[inet\] no ip on eth0/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+              Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ip on eth0/).once
+              @ohai._require_plugin("network")
+            end
+          end
+
+          context "no ip at all" do
+            before do
+              @ohai["network"]["default_gateway"] = nil
+              @ohai["network"]["default_interface"] = nil
+              @ohai["network"]["default_inet6_gateway"] = nil
+              @ohai["network"]["default_inet6_interface"] = nil
+              @ohai["network"]["interfaces"].each do |i,iv|
+                iv["addresses"].delete_if{|k,kv| %w[inet inet6].include? kv["family"]}
+              end
+            end
+
+            it_does_not_fail
+
+            it "doesn't detect {ip,ip6,mac}address" do
+              Ohai::Log.should_receive(:warn).any_number_of_times
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should be_nil
+              @ohai["macaddress"].should be_nil
+              @ohai["ip6address"].should be_nil
+            end
+
+            it "should warn about it" do
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+              @ohai._require_plugin("network")
+            end
+          end
+        end
+
+        context "several ipaddresses matching the default route" do
+          context "bigger prefix not set on the default interface" do
+            before do
+              @ohai["network"]["interfaces"]["eth2"] = {
+                "flags" =>["BROADCAST", "MULTICAST", "UP"],
+                "number" =>"2",
+                "addresses" => {
+                  "fe80::216:3eff:fe2f:3681" => { "scope"=>"Link", "prefixlen"=>"64", "family"=>"inet6"},
+                  "00:16:3E:2F:36:81" =>{"family"=>"lladdr"},
+                  "192.168.66.99" => {
+                    "scope"=>"Global",
+                    "netmask"=>"255.255.255.128",
+                    "broadcast"=>"192.168.99.127",
+                    "prefixlen"=>"25",
+                    "family"=>"inet"},
+                  "3ffe:1111:2222:0:4444::1"=> {
+                    "prefixlen"=> "64",
+                    "family"=> "inet6",
+                    "scope"=> "Global"
+                  }
                 }
               }
-            }
+            end
+
+            it_does_not_fail
+
+            it "sets {ip,ip6,mac}address correctly" do
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should == "192.168.66.33"
+              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ip6address"].should == "3ffe:1111:2222::33"
+            end
           end
-          
-          it_does_not_fail
-          
-          it "detects {ip,ip6,mac}address" do
-            @ohai._require_plugin("network")          
-            @ohai["ipaddress"].should == "192.168.66.32"
-            @ohai["macaddress"].should == "00:16:3E:2F:36:81"
-            @ohai["ip6address"].should == "3ffe:1111:2222::32"
+
+          context "bigger prefix set on the default interface" do
+            before do
+              @ohai["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.99"] = {
+                "scope"=>"Global",
+                "netmask"=>"255.255.255.128",
+                "broadcast"=>"192.168.66.127",
+                "prefixlen"=>"25",
+                "family"=>"inet"}
+              @ohai["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222:0:4444::1"] = {
+                "prefixlen"=> "64",
+                "family"=> "inet6",
+                "scope"=> "Global"}
+            end
+
+            it_does_not_fail
+
+            it "sets {ip,ip6,mac}address correctly" do
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should == "192.168.66.99"
+              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ip6address"].should == "3ffe:1111:2222:0:4444::1"
+            end
+          end
+
+          context "smallest ip not set on the default_interface" do
+            before do
+              @ohai["network"]["interfaces"]["eth2"] = {
+                "flags" =>["BROADCAST", "MULTICAST", "UP"],
+                "number" =>"2",
+                "addresses" => {
+                  "fe80::216:3eff:fe2f:3681" => { "scope"=>"Link", "prefixlen"=>"64", "family"=>"inet6"},
+                  "00:16:3E:2F:36:81" =>{"family"=>"lladdr"},
+                  "192.168.66.32" => {
+                    "scope"=>"Global",
+                    "netmask"=>"255.255.255.0",
+                    "broadcast"=>"192.168.66.255",
+                    "prefixlen"=>"24",
+                    "family"=>"inet"},
+                  "3ffe:1111:2222::32"=> {
+                    "prefixlen"=> "48",
+                    "family"=> "inet6",
+                    "scope"=> "Global"
+                  }
+                }
+              }
+            end
+
+            it_does_not_fail
+
+            it "sets {ip,ip6,mac}address correctly" do
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should == "192.168.66.33"
+              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ip6address"].should == "3ffe:1111:2222::33"
+            end
+          end
+
+          context "smallest ip set on the default_interface" do
+            before do
+              @ohai["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.32"] = {
+                "scope"=>"Global",
+                "netmask"=>"255.255.255.0",
+                "broadcast"=>"192.168.66.255",
+                "prefixlen"=>"24",
+                "family"=>"inet"}
+              @ohai["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222::32"] = {
+                "prefixlen"=> "48",
+                "family"=> "inet6",
+                "scope"=> "Global"}
+            end
+
+            it_does_not_fail
+
+            it "sets {ip,ip6,mac}address correctly" do
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should == "192.168.66.32"
+              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ip6address"].should == "3ffe:1111:2222::32"
+            end
           end
         end
 
@@ -234,6 +353,8 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "picks {ip,mac,ip6}address from the first interface" do
+            Ohai::Log.should_receive(:warn).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no default interface/).once
             @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.99.11"
             @ohai["macaddress"].should == "00:16:3E:2F:36:80"
@@ -241,109 +362,253 @@ describe Ohai::System, "Network Plugin" do
           end
 	end
 
+	context "no default route, there are global and link level addresses" do
+          before do
+            @ohai["network"]["default_gateway"] = nil
+            @ohai["network"]["default_interface"] = nil
+            @ohai["network"]["default_inet6_gateway"] = nil
+            @ohai["network"]["default_inet6_interface"] = nil
+            # just changing scopes to lInK for eth0 addresses
+            @ohai["network"]["interfaces"]["eth0"]["addresses"].each{|k,v| v[:scope]="lInK" if %w[inet inet6].include? v["family"]}
+          end
+
+          it_does_not_fail
+
+          it "prefers {ip,mac,ip6}address with global scope" do
+            Ohai::Log.should_receive(:warn).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no default interface/).once
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "192.168.99.11"
+            @ohai["macaddress"].should == "00:16:3E:2F:36:80"
+            @ohai["ip6address"].should == "3ffe:1111:3333::1"
+          end
+        end
+
 	context "link level default route" do
-	pending
+          before do
+            @ohai["network"]["default_gateway"] = "0.0.0.0"
+            @ohai["network"]["default_interface"] = "eth1"
+            @ohai["network"]["default_inet6_gateway"] = "::"
+            @ohai["network"]["default_inet6_interface"] = "eth1"
+          end
+
+          it_does_not_fail
+
+          it "displays debug messages" do
+            Ohai::Log.should_receive(:debug).with(/^Loading plugin network/).once
+            Ohai::Log.should_receive(:debug).with(/^link level default inet /).once
+            Ohai::Log.should_receive(:debug).with(/^link level default inet6 /).once
+            @ohai._require_plugin("network")
+          end
+
+          it "picks {ip,mac,ip6}address from the default interface" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "192.168.99.11"
+            @ohai["macaddress"].should == "00:16:3E:2F:36:80"
+            @ohai["ip6address"].should == "3ffe:1111:3333::1"
+          end
         end
 
-	context "link level addresses" do
-	pending
+        context "point to point address" do
+          before do
+            @ohai["network"]["interfaces"]["eth2"] = {
+              "flags" =>["POINTOPOINT", "BROADCAST", "MULTICAST", "UP"],
+              "number" =>"2",
+              "addresses" => {
+                "fe80::216:3eff:fe2f:3681" => { "scope"=>"Link", "prefixlen"=>"64", "family"=>"inet6"},
+                "00:16:3E:2F:36:81" =>{"family"=>"lladdr"},
+                "192.168.66.99" => {
+                  "scope"=>"Global",
+                  "netmask"=>"255.255.255.255",
+                  "peer"=>"192.168.99.126",
+                  "prefixlen"=>"32",
+                  "family"=>"inet"},
+                "3ffe:1111:2222:0:4444::1"=> {
+                  "prefixlen"=> "128",
+                  "peer" => "3ffe:1111:2222:0:4444::2",
+                  "family"=> "inet6",
+                  "scope"=> "Global"
+                }
+              }
+            }
+            @ohai["network"]["default_gateway"] = "192.168.99.126"
+            @ohai["network"]["default_interface"] = "eth2"
+            @ohai["network"]["default_inet6_gateway"] = "3ffe:1111:2222:0:4444::2"
+            @ohai["network"]["default_inet6_interface"] = "eth2"
+          end
+
+          it_does_not_fail
+
+          it "picks {ip,mac,ip6}address from the default interface" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "192.168.66.99"
+            @ohai["macaddress"].should == "00:16:3E:2F:36:81"
+            @ohai["ip6address"].should == "3ffe:1111:2222:0:4444::1"
+          end
+        end
+
+        context "ipv6 only node" do
+          before do
+            @ohai["network"]["default_gateway"] = nil
+            @ohai["network"]["default_interface"] = nil
+            @ohai["network"]["interfaces"].each do |i,iv|
+              iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+            end
+          end
+
+          it "can't detect {ip,mac}address" do
+            Ohai::Log.should_receive(:warn).any_number_of_times
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should be_nil
+            @ohai["macaddress"].should be_nil
+          end
+
+          # ATM IT WON'T SET MACADDRESS
+          it "warns about not being able to set ipv4 related attributes" do
+            Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
+            Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
+            @ohai._require_plugin("network")
+          end
+
+          it "sets ip6address" do
+            Ohai::Log.should_receive(:warn).any_number_of_times
+            @ohai._require_plugin("network")
+            @ohai["ip6address"].should == "3ffe:1111:2222::33"
+          end
         end
 
       end
-      
-      describe "when the #{os}::network plugin sets {ip,mac}address" do
-        before do
-          @ohai["ipaddress"] = "10.11.12.13"
-          @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
+
+      describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
+        describe "{ip,mac}address are already set" do
+          before do
+            @ohai["ipaddress"] = "10.11.12.13"
+            @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
+          end
+
+          it_does_not_fail
+
+          it "detects ip6address" do
+            @ohai._require_plugin("network")
+            @ohai["ip6address"].should == "3ffe:1111:2222::33"
+          end
+
+          it "doesn't overwrite {ip,mac}address" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "10.11.12.13"
+            @ohai["macaddress"].should == "00:AA:BB:CC:DD:EE"
+          end
         end
 
-        it_does_not_fail
-        
-        it "detects ip6address" do
-          @ohai._require_plugin("network")
-          @ohai["ip6address"].should == "3ffe:1111:2222::33"
+        describe "ip6address is already set" do
+          context "node has ipv4 and ipv6" do
+            before do
+              @ohai["ip6address"] = "3ffe:8888:9999::1"
+            end
+
+            it_does_not_fail
+
+            it "detects {ip,mac}address" do
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should == "192.168.66.33"
+              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+            end
+
+            it "doesn't overwrite ip6address" do
+              @ohai._require_plugin("network")
+              @ohai["ip6address"].should == "3ffe:8888:9999::1"
+            end
+          end
+
+          context "ipv6 only node" do
+            before do
+              @ohai["network"]["default_gateway"] = nil
+              @ohai["network"]["default_interface"] = nil
+              @ohai["network"]["interfaces"].each do |i,iv|
+                iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+              end
+              @ohai["ip6address"] = "3ffe:8888:9999::1"
+            end
+
+            it_does_not_fail
+
+            it "can't detect {ip,mac}address" do
+              Ohai::Log.should_receive(:warn).any_number_of_times
+              @ohai._require_plugin("network")
+              @ohai["ipaddress"].should be_nil
+              @ohai["macaddress"].should be_nil
+            end
+
+            # ATM IT WON'T SET MACADDRESS
+            it "warns about not being able to set ipv4 related attributes" do
+              Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
+              Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
+              @ohai._require_plugin("network")
+            end
+
+            it "doesn't overwrite ip6address" do
+              Ohai::Log.should_receive(:warn).any_number_of_times
+              @ohai._require_plugin("network")
+              @ohai["ip6address"].should == "3ffe:8888:9999::1"
+            end
+          end
         end
-        
-        it "doesn't overwrite {ip,mac}address" do
-          @ohai._require_plugin("network")
-          @ohai["ipaddress"].should == "10.11.12.13"
-          @ohai["macaddress"].should == "00:AA:BB:CC:DD:EE"
+
+        describe "{mac,ip6}address are already set" do
+          before do
+            @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
+            @ohai["ip6address"] = "3ffe:8888:9999::1"
+          end
+
+          it_does_not_fail
+
+          it "detects {ip,mac}address" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "192.168.66.33"
+            @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+          end
+
+          it "doesn't overwrite ip6address" do
+            @ohai._require_plugin("network")
+            @ohai["ip6address"].should == "3ffe:8888:9999::1"
+          end
         end
+
+        describe "{ip,mac,ip6}address are already set" do
+          before do
+            @ohai["ipaddress"] = "10.11.12.13"
+            @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
+            @ohai["ip6address"] = "3ffe:8888:9999::1"
+          end
+
+          it_does_not_fail
+
+          it "doesn't overwrite {ip,mac,ip6}address" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "10.11.12.13"
+            @ohai["macaddress"].should == "00:AA:BB:CC:DD:EE"
+            @ohai["ip6address"].should == "3ffe:8888:9999::1"
+          end
+        end
+
+        describe "{ip,ip6}address are already set" do
+          before do
+            @ohai["ipaddress"] = "10.11.12.13"
+            @ohai["ip6address"] = "3ffe:8888:9999::1"
+          end
+
+          it_does_not_fail
+
+          it "doesn't overwrite {ip,mac,ip6}address" do
+            @ohai._require_plugin("network")
+            @ohai["ipaddress"].should == "10.11.12.13"
+            @ohai["macaddress"].should == nil
+            @ohai["ip6address"].should == "3ffe:8888:9999::1"
+          end
+        end
+
       end
-
-      describe "when the #{os}::network plugin sets ip6address" do
-        before do
-          @ohai["ip6address"] = "3ffe:8888:9999::1"
-        end
-
-        it_does_not_fail
-        
-        it "detects {ip,mac}address" do
-          @ohai._require_plugin("network")
-          @ohai["ipaddress"].should == "192.168.66.33"
-          @ohai["macaddress"].should == "00:16:3E:2F:36:79"
-        end
-        
-        it "doesn't overwrite ip6address" do
-          @ohai._require_plugin("network")
-          @ohai["ip6address"].should == "3ffe:8888:9999::1"
-        end
-      end
-      
-      describe "when the #{os}::network plugin sets {mac,ip6}address" do
-        before do
-          @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
-          @ohai["ip6address"] = "3ffe:8888:9999::1"
-        end
-
-        it_does_not_fail
-        
-        it "detects {ip,mac}address" do
-          @ohai._require_plugin("network")
-          @ohai["ipaddress"].should == "192.168.66.33"
-          @ohai["macaddress"].should == "00:16:3E:2F:36:79"
-        end
-        
-        it "doesn't overwrite ip6address" do
-          @ohai._require_plugin("network")
-          @ohai["ip6address"].should == "3ffe:8888:9999::1"
-        end
-      end
-      
-      describe "when the #{os}::network plugin sets {ip,mac,ip6}address" do
-        before do
-          @ohai["ipaddress"] = "10.11.12.13"
-          @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
-          @ohai["ip6address"] = "3ffe:8888:9999::1"
-        end
-
-        it_does_not_fail
-        
-        it "doesn't overwrite {ip,mac,ip6}address" do
-          @ohai._require_plugin("network")
-          @ohai["ipaddress"].should == "10.11.12.13"
-          @ohai["macaddress"].should == "00:AA:BB:CC:DD:EE"
-          @ohai["ip6address"].should == "3ffe:8888:9999::1"
-        end
-      end
-
-      describe "when the #{os}::network plugin sets {ip,ip6}address" do
-        before do
-          @ohai["ipaddress"] = "10.11.12.13"
-          @ohai["ip6address"] = "3ffe:8888:9999::1"
-        end
-        
-        it_does_not_fail
-        
-        it "doesn't overwrite {ip,mac,ip6}address" do
-          @ohai._require_plugin("network")
-          @ohai["ipaddress"].should == "10.11.12.13"
-          @ohai["macaddress"].should == nil
-          @ohai["ip6address"].should == "3ffe:8888:9999::1"
-        end
-      end
-
     end
-    
+
   end
 end

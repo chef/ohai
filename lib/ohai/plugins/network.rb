@@ -28,7 +28,12 @@ counters[:network] = Mash.new unless counters[:network]
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-def find_ip_and_iface(family = "inet", match = nil)
+FAMILIES = {
+  "inet" => "default",
+  "inet6" => "default_inet6"
+}
+
+def sorted_ips(family = "inet")
   raise "bad family #{family}" unless [ "inet", "inet6" ].include? family
 
   # going to use that later to sort by scope
@@ -47,42 +52,80 @@ def find_ip_and_iface(family = "inet", match = nil)
     end
   end
 
-  # return if there isn't any #{family} address !
-  return [ nil, nil ] if ipaddresses.empty?
-
   # sort ip addresses by scope, by prefixlen and then by ip address
   # 128 - prefixlen: longest prefixes first
-  r = ipaddresses.sort_by do |v|
+  ipaddresses.sort_by do |v|
     [ ( scope_prio.index(v[:scope].downcase) or 999999 ),
       128 - v[:ipaddress].prefix.to_i,
       ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
     ]
   end
-  if match.nil? or match ~ /^0\.0\.0\.0/ or match ~ /^::$/
-    # return the first ip address
-    r = r.first
-  else
-    # use the match argument to select the address
+end
+
+def find_ip(family = "inet")
+  r=sorted_ips(family)
+
+  # return if there isn't any #{family} address !
+  return [ nil, nil ] if r.empty?
+
+  # shortcuts to access default #{family} interface and gateway
+  int_attr = FAMILIES[family] +"_interface"
+  gw_attr = FAMILIES[family] + "_gateway"
+
+  # If we have a default interface that has addresses,
+  # populate the short-cut attributes
+  if network[int_attr]
+
+    # network[int_attr] exists, the choosen ip must be exist on this interface
     r = r.select do |v|
-      v[:ipaddress].include? IPAddress(match)
-    end.first
+      v[:iface] == network[int_attr]
+    end
+    if r.empty?
+      Ohai::Log.warn("[#{family}] no ip on #{network[int_attr]}")
+    elsif network[gw_attr] and
+        network["interfaces"][network[int_attr]] and
+        network["interfaces"][network[int_attr]]["addresses"]
+      if [ "0.0.0.0", "::" ].include? network[gw_attr]
+        # link level default route
+        Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
+        r = r.first
+      else
+        r = r.select do |v|
+          network_contains_address(network[gw_attr], v[:ipaddress], v[:iface])
+        end.first
+        if r.nil?
+          Ohai::Log.warn("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}")
+        else
+          Ohai::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
+        end
+      end
+    else
+      # return the first ip address on network[int_attr]
+      r = r.first
+    end
+  else
+    r = r.first
+    Ohai::Log.warn("[#{family}] no default interface, picking the first ipaddress")
   end
 
-  return [ nil, nil ] if r.nil?
+  return [ nil, nil ] if r.nil? or r.empty?
+
   [ r[:ipaddress].to_s, r[:iface] ]
 end
 
 def find_mac_from_iface(iface)
-  network["interfaces"][iface]["addresses"].select{|k,v| v["family"]=="lladdr"}.first.first
+  r = network["interfaces"][iface]["addresses"].select{|k,v| v["family"]=="lladdr"}
+  r.nil? or r.first.nil? ? nil : r.first.first
 end
 
-def network_contains_address(address_to_match, network_ip, network_opts)
-  if network_opts[:peer]
-    network_opts[:peer] == address_to_match
+def network_contains_address(address_to_match, ipaddress, iface)
+  # address_to_match: String
+  # ipaddress: IPAddress
+  # iface: String
+  if peer = network["interfaces"][iface]["addresses"][ipaddress.to_s][:peer]
+    IPAddress(peer) == IPAddress(address_to_match)
   else
-    network = IPAddress "#{network_ip}/#{network_opts[:netmask]}"
-    host = IPAddress address_to_match
-    network.include?(host)
+    ipaddress.include? IPAddress(address_to_match)
   end
 end
 
@@ -94,40 +137,30 @@ end
 
 results = {}
 
-[
- { :name => "inet",
-   :prefix => "default" },
- { :name => "inet6",
-   :prefix => "default_inet6" }
-].each do |f|
+FAMILIES.keys.sort.each do |family|
   r = {}
-  # If we have a default interface that has addresses,
-  # populate the short-cut attributes
-  # 0.0.0.0 is not a valid gateway address in this case
-  if network["#{f[:prefix]}_interface"] and
-      network["#{f[:prefix]}_gateway"] and
-      network["interfaces"][network["#{f[:prefix]}_interface"]] and
-      network["interfaces"][network["#{f[:prefix]}_interface"]]["addresses"]
-    Ohai::Log.debug("Using default #{f[:name]} interface '#{network["#{f[:prefix]}_interface"]}' and default #{f[:name]} gateway '#{network["#{f[:prefix]}_gateway"]}' to set the default #{f[:name]} ip")
-    ( r["ip"], r["iface"] ) = find_ip_and_iface(f[:name], network["#{f[:prefix]}_gateway"])
-  else
-    ( r["ip"], r["iface"] ) = find_ip_and_iface(f[:name])
-  end
-  Ohai::Log.warn("conflict when looking for the default #{f[:name]} ip: network[:#{f[:prefix]}_interface] is set to '#{network["#{f[:prefix]}_interface"]}' ipaddress '#{r["ip"]}' is set on '#{r["iface"]}'") if network["#{f[:prefix]}_interface"] and network["#{f[:prefix]}_interface"] != r["iface"]
+  ( r["ip"], r["iface"] ) = find_ip(family)
   r["mac"] = find_mac_from_iface(r["iface"]) unless r["iface"].nil?
-  unless r["ip"].nil?
-    # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
-    if f[:name] == "inet" and ipaddress.nil?
+  # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
+  if family == "inet" and ipaddress.nil?
+    if r["ip"].nil?
+      Ohai::Log.warn("unable to detect ipaddress")
+      Ohai::Log.warn("unable to detect macaddress")
+    else
       ipaddress r["ip"]
-      # macaddress is always set from the ipv4 default_route
+      # ATM, macaddress is always set from the ipv4 d
       macaddress r["mac"]
-    elsif f[:name] == "inet6" and ip6address.nil?
+    end
+  elsif family == "inet6" and ip6address.nil?
+    if r["ip"].nil?
+      Ohai::Log.warn("unable to detect ip6address")
+    else
       ip6address r["ip"]
     end
-    #macaddress r["mac"] unless macaddress # macaddress set from ipv4 otherwise from ipv6
-
   end
-  results[f[:name]] = r
+  # but we might decide to change this behavior
+  #macaddress r["mac"] unless macaddress # macaddress set from ipv4 otherwise from ipv6
+  results[family] = r
 end
 
 if results["inet"]["iface"] and results["inet6"]["iface"] and

@@ -31,97 +31,127 @@ end
 
 describe Ohai::System, "Network Plugin" do
 
-  basic_network_data = {
+  basic_data = {
     "linux" => {
-      # pp Hash[node['network']] from  shef to get the network data
-      # have just removed the neighbour and route entries by hand
-      "interfaces" => {
-        "lo" => {
-          "flags" => ["LOOPBACK", "UP"],
-          "addresses" => {
-            "::1" => {
-              "scope" => "Node",
-              "prefixlen" => "128",
-              "family" => "inet6"
+      "network" => {
+        # pp Hash[node['network']] from  shef to get the network data
+        # have just removed the neighbour and route entries by hand
+        "interfaces" => {
+          "lo" => {
+            "flags" => ["LOOPBACK", "UP"],
+            "addresses" => {
+              "::1" => {
+                "scope" => "Node",
+                "prefixlen" => "128",
+                "family" => "inet6"
+              },
+              "127.0.0.1" => {
+                "scope" => "Node",
+                "netmask" => "255.0.0.0",
+                "prefixlen" => "8",
+                "family" => "inet"
+              }
             },
-            "127.0.0.1" => {
-              "scope" => "Node",
-              "netmask" => "255.0.0.0",
-              "prefixlen" => "8",
-              "family" => "inet"
-            }
+            "mtu" => "16436",
+            "encapsulation" => "Loopback"
           },
-          "mtu" => "16436",
-          "encapsulation" => "Loopback"
+          "eth0" => {
+            "flags" => ["BROADCAST", "MULTICAST", "UP"],
+            "number" => "0",
+            "addresses" => {
+              "fe80::216:3eff:fe2f:3679" => {
+                "scope" => "Link",
+                "prefixlen" => "64",
+                "family" => "inet6"
+              },
+              "00:16:3E:2F:36:79" => {"family" => "lladdr"},
+              "192.168.66.33" => {
+                "scope" => "Global",
+                "netmask" => "255.255.255.0",
+                "broadcast" => "192.168.66.255",
+                "prefixlen" => "24",
+                "family" => "inet"
+              },
+              "3ffe:1111:2222::33" => {
+                "prefixlen" => "48",
+                "family" => "inet6",
+                "scope" => "Global"
+              }
+            },
+            "mtu" => "1500",
+            "type" => "eth",
+            "encapsulation" => "Ethernet"
+          },
+          "eth1" => {
+            "flags" => ["BROADCAST", "MULTICAST", "UP"],
+            "number" => "1",
+            "addresses" => {
+              "fe80::216:3eff:fe2f:3680" => {
+                "scope" => "Link",
+                "prefixlen" => "64",
+                "family" => "inet6"
+              },
+              "00:16:3E:2F:36:80" => {"family" => "lladdr"},
+              "192.168.99.11" => {
+                "scope" => "Global",
+                "netmask" => "255.255.255.0",
+                "broadcast" => "192.168.99.255",
+                "prefixlen" => "24",
+                "family" => "inet"
+              },
+              "3ffe:1111:3333::1" => {
+                "prefixlen" => "48",
+                "family" => "inet6",
+                "scope" => "Global"
+              }
+            },
+            "mtu" => "1500",
+            "type" => "eth",
+            "encapsulation" => "Ethernet"
+          }
         },
-        "eth0" => {
-          "flags" => ["BROADCAST", "MULTICAST", "UP"],
-          "number" => "0",
-          "addresses" => {
-            "fe80::216:3eff:fe2f:3679" => {
-              "scope" => "Link",
-              "prefixlen" => "64",
-              "family" => "inet6"
+        "default_gateway" => "192.168.66.15",
+        "default_interface" => "eth0",
+        "default_inet6_gateway" => "3ffe:1111:2222::",
+        "default_inet6_interface" => "eth0"
+      }
+    },
+    "windows" => {
+      "network" => {
+        "interfaces" => {
+          "0xb" => {
+            "addresses" => {
+              "172.19.0.130" => {
+                "prefixlen" => "24",
+                "netmask" => "255.255.255.0",
+                "broadcast" => "172.19.0.255",
+                "family" => "inet"
+              },
+              "fe80::698d:3e37:7950:b28c" => {
+                "prefixlen" => "64",
+                "family" => "inet6",
+                "scope" => "Link"
+              },
+              "52:54:44:66:66:02" => {
+                "family" => "lladdr"
+              }
             },
-            "00:16:3E:2F:36:79" => {"family" => "lladdr"},
-            "192.168.66.33" => {
-              "scope" => "Global",
-              "netmask" => "255.255.255.0",
-              "broadcast" => "192.168.66.255",
-              "prefixlen" => "24",
-              "family" => "inet"
-            },
-            "3ffe:1111:2222::33" => {
-              "prefixlen" => "48",
-              "family" => "inet6",
-              "scope" => "Global"
-            }
-          },
-          "mtu" => "1500",
-          "type" => "eth",
-          "encapsulation" => "Ethernet"
+            "mtu" => nil,
+            "type" => "Ethernet 802.3",
+            "encapsulation" => "Ethernet"
+          }
         },
-        "eth1" => {
-          "flags" => ["BROADCAST", "MULTICAST", "UP"],
-          "number" => "1",
-          "addresses" => {
-            "fe80::216:3eff:fe2f:3680" => {
-              "scope" => "Link",
-              "prefixlen" => "64",
-              "family" => "inet6"
-            },
-            "00:16:3E:2F:36:80" => {"family" => "lladdr"},
-            "192.168.99.11" => {
-              "scope" => "Global",
-              "netmask" => "255.255.255.0",
-              "broadcast" => "192.168.99.255",
-              "prefixlen" => "24",
-              "family" => "inet"
-            },
-            "3ffe:1111:3333::1" => {
-              "prefixlen" => "48",
-              "family" => "inet6",
-              "scope" => "Global"
-            }
-          },
-          "mtu" => "1500",
-          "type" => "eth",
-          "encapsulation" => "Ethernet"
-        }
-      },
-      "default_gateway" => "192.168.66.15",
-      "default_interface" => "eth0",
-      "default_inet6_gateway" => "3ffe:1111:2222::",
-      "default_inet6_interface" => "eth0"
+        "default_gateway" => "172.19.0.1",
+        "default_interface" => "0xb"
+      }
     }
   }
-
 
   describe "with linux" do
     before(:each) do
       @ohai = Ohai::System.new
       @ohai.stub!(:require_plugin).twice.and_return(true)
-      @ohai["network"] = basic_network_data["linux"]
+      @ohai["network"] = basic_data["linux"]["network"]
     end
 
     describe "when the linux::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
@@ -597,19 +627,33 @@ describe Ohai::System, "Network Plugin" do
 
     end
 
-    basic_network_data.keys.sort.each do |os|
+    basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
+        before(:each) do
+          @ohai = Ohai::System.new
+          @ohai.stub!(:require_plugin).twice.and_return(true)
+          @ohai["network"] = basic_data[os]["network"]
+        end
+
         describe "{ip,mac}address are already set" do
           before do
             @ohai["ipaddress"] = "10.11.12.13"
             @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
+            @expected_results = {
+              "linux" => {
+                "ip6address" => "3ffe:1111:2222::33"
+              },
+              "windows" => {
+                "ip6address" => "fe80::698d:3e37:7950:b28c"
+              }
+            }
           end
 
           it_does_not_fail
 
           it "detects ip6address" do
             @ohai._require_plugin("network")
-            @ohai["ip6address"].should == "3ffe:1111:2222::33"
+            @ohai["ip6address"].should == @expected_results[os]["ip6address"]
           end
 
           it "doesn't overwrite {ip,mac}address" do
@@ -623,14 +667,24 @@ describe Ohai::System, "Network Plugin" do
           describe "node has ipv4 and ipv6" do
             before do
               @ohai["ip6address"] = "3ffe:8888:9999::1"
+              @expected_results = {
+                "linux" => {
+                  "ipaddress" => "192.168.66.33",
+                  "macaddress" => "00:16:3E:2F:36:79"
+                },
+                "windows" => {
+                  "ipaddress" => "172.19.0.130",
+                  "macaddress" => "52:54:44:66:66:02"
+                }
+              }
             end
 
             it_does_not_fail
 
             it "detects {ip,mac}address" do
               @ohai._require_plugin("network")
-              @ohai["ipaddress"].should == "192.168.66.33"
-              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ipaddress"].should == @expected_results[os]["ipaddress"]
+              @ohai["macaddress"].should == @expected_results[os]["macaddress"]
             end
 
             it "doesn't overwrite ip6address" do
@@ -663,7 +717,6 @@ describe Ohai::System, "Network Plugin" do
               @ohai["macaddress"].should be_nil
             end
 
-            # ATM IT WON'T SET MACADDRESS
             it "warns about not being able to set {ip,mac}address" do
               Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
               Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
@@ -683,14 +736,24 @@ describe Ohai::System, "Network Plugin" do
             before do
               @ohai["macaddress"] = "00:AA:BB:CC:DD:EE"
               @ohai["ip6address"] = "3ffe:8888:9999::1"
+              @expected_results = {
+                "linux" => {
+                  "ipaddress" => "192.168.66.33",
+                  "macaddress" => "00:16:3E:2F:36:79"
+                },
+                "windows" => {
+                  "ipaddress" => "172.19.0.130",
+                  "macaddress" => "52:54:44:66:66:02"
+                }
+              }
             end
 
             it_does_not_fail
 
             it "detects ipaddress and overwrite macaddress" do
               @ohai._require_plugin("network")
-              @ohai["ipaddress"].should == "192.168.66.33"
-              @ohai["macaddress"].should == "00:16:3E:2F:36:79"
+              @ohai["ipaddress"].should == @expected_results[os]["ipaddress"]
+              @ohai["macaddress"].should == @expected_results[os]["macaddress"]
             end
 
             it "doesn't overwrite ip6address" do

@@ -427,6 +427,9 @@ net.smb.fs.tcprcvbuf: 261120
 
     @ohai.stub(:from).with("route -n get default").and_return(darwin_route)
     @ohai.stub(:popen4).with("netstat -i -d -l -b -n")
+
+    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
+    @ohai._require_plugin("network")
   end
 
   describe "gathering IP layer address info" do
@@ -435,7 +438,6 @@ net.smb.fs.tcprcvbuf: 261120
       @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
       @ohai.stub(:popen4).with("netstat -i -d -l -b -n").and_yield(nil, @stdin_netstat, @netstat_lines, nil)
       @ohai.stub(:popen4).with("sysctl net").and_yield(nil, @stdin_sysctl, @sysctl_lines, nil)
-      @ohai._require_plugin("network")
       @ohai._require_plugin("darwin::network")
     end
 

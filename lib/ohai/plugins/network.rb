@@ -105,7 +105,7 @@ def find_ip(family = "inet")
     end
   else
     r = r.first
-    Ohai::Log.warn("[#{family}] no default interface, picking the first ipaddress")
+    Ohai::Log.info("[#{family}] no default interface, picking the first ipaddress")
   end
 
   return [ nil, nil ] if r.nil? or r.empty?

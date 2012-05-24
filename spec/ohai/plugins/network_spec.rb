@@ -455,8 +455,8 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "picks {ip,mac,ip6}address from the first interface" do
-            Ohai::Log.should_receive(:warn).with(/^\[inet\] no default interface/).once
-            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:info).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:info).with(/^\[inet6\] no default interface/).once
             @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.99.11"
             @ohai["macaddress"].should == "00:16:3E:2F:36:80"
@@ -477,8 +477,8 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
-            Ohai::Log.should_receive(:warn).with(/^\[inet\] no default interface/).once
-            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:info).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:info).with(/^\[inet6\] no default interface/).once
             @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.99.11"
             @ohai["macaddress"].should == "00:16:3E:2F:36:80"

@@ -38,8 +38,15 @@ elsif File.exists?("/etc/enterprise-release")
   platform "oracle"
   platform_version get_redhatish_version(contents)
 elsif File.exists?("/etc/debian_version")
-  platform "debian"
-  platform_version File.read("/etc/debian_version").chomp
+  # Ubuntu and Debian both have /etc/debian_version
+  # Ubuntu should always have a working lsb, debian does not by default
+  if lsb[:id] =~ /Ubuntu/i
+    platform "ubuntu"
+    platform_version lsb[:release]
+  else 
+    platform "debian"
+    platform_version File.read("/etc/debian_version").chomp
+  end
 elsif File.exists?("/etc/redhat-release")
   contents = File.read("/etc/redhat-release").chomp
   platform get_redhatish_platform(contents)

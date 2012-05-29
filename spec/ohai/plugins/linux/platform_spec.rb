@@ -52,7 +52,6 @@ describe Ohai::System, "Linux plugin platform" do
     it "should set platform to lowercased lsb[:id]" do
       @ohai._require_plugin("linux::platform")        
       @ohai[:platform].should == "ubuntu"
-      
     end
     
     it "should set platform_version to lsb[:release]" do
@@ -124,6 +123,13 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:platform_version].should == "5.0"
     end
 
+    # Ubuntu has /etc/debian_version as well
+    it "should detect Ubuntu as itself rather than debian" do
+      @ohai[:lsb][:id] = "Ubuntu"
+      @ohai[:lsb][:release] = "8.04"
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "ubuntu"
+    end
   end
 
   describe "on slackware" do

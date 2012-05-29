@@ -18,6 +18,6 @@
 
 module Ohai
   OHAI_ROOT = File.expand_path(File.dirname(__FILE__))
-  VERSION = '0.6.14.rc.1'
+  VERSION = '6.14.0.rc.1'
 end
 

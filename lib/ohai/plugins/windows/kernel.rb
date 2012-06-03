@@ -56,22 +56,3 @@ host.properties_.each do |p|
 end
 
 kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
-
-kext = Mash.new
-pnp_drivers = Mash.new
-
-drivers = WMI::Win32_PnPSignedDriver.find(:all)
-drivers.each do |driver|
-  pnp_drivers[driver.DeviceID] = Mash.new
-  driver.properties_.each do |p|
-    pnp_drivers[driver.DeviceID][p.name.wmi_underscore.to_sym] = driver.send(p.name)
-  end
-  if driver.DeviceName
-    kext[driver.DeviceName] = pnp_drivers[driver.DeviceID]
-    kext[driver.DeviceName][:version] = pnp_drivers[driver.DeviceID][:driver_version]
-    kext[driver.DeviceName][:date] = pnp_drivers[driver.DeviceID][:driver_date] ? pnp_drivers[driver.DeviceID][:driver_date].to_s[0..7] : nil
-  end 
-end
-
-kernel[:pnp_drivers] = pnp_drivers
-kernel[:modules] = kext

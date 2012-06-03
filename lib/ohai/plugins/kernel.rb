@@ -24,6 +24,7 @@ kernel Mash.new
 case languages[:ruby][:host_os]
 when /mswin|mingw32|windows/
   require_plugin "windows::kernel"
+  require_plugin "windows::kernel_devices"
 else
   kernel[:name] = from("uname -s")
   kernel[:release] = from("uname -r")

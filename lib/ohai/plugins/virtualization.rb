@@ -73,7 +73,7 @@ unless virtualization.nil? || !(virtualization[:role].eql?("host"))
       virtualization[:storage][pool][:volumes] = Mash.new
       sp.list_volumes.each do |v|
         virtualization[:storage][pool][:volumes][v] = Mash.new
-        sv = sp.lookup_volume_by_name pool
+        sv = sp.lookup_volume_by_name v
         ['key','name','path'].each {|a| virtualization[:storage][pool][:volumes][v][a] = sv.send(a)}
         ['allocation','capacity','type'].each {|a| virtualization[:storage][pool][:volumes][v][a] = sv.info.send(a)}
       end

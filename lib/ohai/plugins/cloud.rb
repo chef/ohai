@@ -20,6 +20,7 @@ require_plugin "ec2"
 require_plugin "rackspace"
 require_plugin "eucalyptus"
 require_plugin "linode"
+require_plugin "openstack"
 
 # Make top-level cloud hashes
 #
@@ -145,4 +146,34 @@ end
 if on_eucalyptus?
   create_objects
   get_eucalyptus_values
+end
+
+# ----------------------------------------
+# openstack
+# ----------------------------------------
+
+# Is current cloud openstack-based?
+#
+# === Return
+# true:: If openstack Hash is defined
+# false:: Otherwise
+def on_openstack?
+  openstack != nil
+end
+
+# Fill cloud hash with openstack values
+def get_openstack_values
+  cloud[:public_ips] << openstack['public_ipv4']
+  cloud[:private_ips] << openstack['local_ipv4']
+  cloud[:public_ipv4] = openstack['public_ipv4']
+  cloud[:public_hostname] = openstack['public_hostname']
+  cloud[:local_ipv4] = openstack['local_ipv4']
+  cloud[:local_hostname] = openstack['local_hostname']
+  cloud[:provider] = "openstack"
+end
+
+# setup openstack cloud
+if on_openstack?
+  create_objects
+  get_openstack_values
 end

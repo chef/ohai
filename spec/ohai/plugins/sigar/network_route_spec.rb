@@ -122,6 +122,7 @@ describe Ohai::System, "Sigar network route plugin" do
       Sigar.should_receive(:new).at_least(2).times.and_return(@sigar)
       @ohai.require_plugin("os")
       @ohai[:os]="sigar"
+      Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
       @ohai.require_plugin("network")
       @ohai.require_plugin("sigar::network_route")
     end

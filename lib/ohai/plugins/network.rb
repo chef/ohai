@@ -25,63 +25,149 @@ network[:interfaces] = Mash.new unless network[:interfaces]
 counters Mash.new unless counters
 counters[:network] = Mash.new unless counters[:network]
 
-ipaddress nil
-ip6address
-macaddress nil
-
 require_plugin "hostname"
 require_plugin "#{os}::network"
 
-# ipaddress and macaddress can be set from the #{os}::network plugin
-return unless ipaddress.nil?
+FAMILIES = {
+  "inet" => "default",
+  "inet6" => "default_inet6"
+}
 
-def find_ip_and_mac(addresses, match = nil)
-  ip = nil; mac = nil; ip6 = nil
-  addresses.keys.each do |addr|
-    if match.nil?
-      ip = addr if addresses[addr]["family"].eql?("inet")
+def sorted_ips(family = "inet")
+  raise "bad family #{family}" unless [ "inet", "inet6" ].include? family
+
+  # going to use that later to sort by scope
+  scope_prio = [ "global", "site", "link", "host", "node", nil ]
+
+  ipaddresses = []
+  # ipaddresses going to hold #{family} ipaddresses and their scope
+  Mash[network['interfaces']].each do |iface, iface_v|
+    iface_v['addresses'].each do |addr, addr_v|
+      next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
+      ipaddresses <<  {
+        :ipaddress => addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
+        :scope => addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
+        :iface => iface
+      }
+    end
+  end
+
+  # sort ip addresses by scope, by prefixlen and then by ip address
+  # 128 - prefixlen: longest prefixes first
+  ipaddresses.sort_by do |v|
+    [ ( scope_prio.index(v[:scope]) or 999999 ),
+      128 - v[:ipaddress].prefix.to_i,
+      ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
+    ]
+  end
+end
+
+def find_ip(family = "inet")
+  r=sorted_ips(family)
+
+  # return if there isn't any #{family} address !
+  return [ nil, nil ] if r.empty?
+
+  # shortcuts to access default #{family} interface and gateway
+  int_attr = FAMILIES[family] +"_interface"
+  gw_attr = FAMILIES[family] + "_gateway"
+
+  # If we have a default interface that has addresses,
+  # populate the short-cut attributes
+  if network[int_attr]
+
+    # network[int_attr] exists, the choosen ip must be exist on this interface
+    r = r.select do |v|
+      v[:iface] == network[int_attr]
+    end
+    if r.empty?
+      Ohai::Log.warn("[#{family}] no ip on #{network[int_attr]}")
+    elsif network[gw_attr] and
+        network["interfaces"][network[int_attr]] and
+        network["interfaces"][network[int_attr]]["addresses"]
+      if [ "0.0.0.0", "::" ].include? network[gw_attr]
+        # link level default route
+        Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
+        r = r.first
+      else
+        r = r.select do |v|
+          network_contains_address(network[gw_attr], v[:ipaddress], v[:iface])
+        end.first
+        if r.nil?
+          Ohai::Log.warn("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}")
+        else
+          Ohai::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
+        end
+      end
     else
-      ip = addr if addresses[addr]["family"].eql?("inet") && network_contains_address(match, addr, addresses[addr])
+      # return the first ip address on network[int_attr]
+      r = r.first
     end
-    ip6 = addr if addresses[addr]["family"].eql?("inet6") && addresses[addr]["scope"].eql?("Global")
-    mac = addr if addresses[addr]["family"].eql?("lladdr")
-    break if (ip and mac)
-  end
-  Ohai::Log.debug("Found IPv4 address #{ip} with MAC #{mac} #{match.nil? ? '' : 'matching address ' + match}")
-  Ohai::Log.debug("Found IPv6 address #{ip6}") if ip6
-  [ip, mac, ip6]
-end
-
-def network_contains_address(address_to_match, network_ip, network_opts)
-  if network_opts[:peer]
-    network_opts[:peer] == address_to_match
   else
-    network = IPAddress "#{network_ip}/#{network_opts[:netmask]}"
-    host = IPAddress address_to_match
-    network.include?(host)
+    r = r.first
+    Ohai::Log.info("[#{family}] no default interface, picking the first ipaddress")
+  end
+
+  return [ nil, nil ] if r.nil? or r.empty?
+
+  [ r[:ipaddress].to_s, r[:iface] ]
+end
+
+def find_mac_from_iface(iface)
+  r = network["interfaces"][iface]["addresses"].select{|k,v| v["family"]=="lladdr"}
+  r.nil? or r.first.nil? ? nil : r.first.first
+end
+
+def network_contains_address(address_to_match, ipaddress, iface)
+  # address_to_match: String
+  # ipaddress: IPAddress
+  # iface: String
+  if peer = network["interfaces"][iface]["addresses"][ipaddress.to_s][:peer]
+    IPAddress(peer) == IPAddress(address_to_match)
+  else
+    ipaddress.include? IPAddress(address_to_match)
   end
 end
 
-# If we have a default interface that has addresses, populate the short-cut attributes
-# 0.0.0.0 is not a valid gateway address in this case
-if network[:default_interface] and
-    network[:default_gateway] and
-    network[:default_gateway] != "0.0.0.0" and
-    network["interfaces"][network[:default_interface]] and
-    network["interfaces"][network[:default_interface]]["addresses"]
-  Ohai::Log.debug("Using default interface for default ip and mac address")
-  im = find_ip_and_mac(network["interfaces"][network[:default_interface]]["addresses"], network[:default_gateway])
-  ipaddress im.shift
-  macaddress im.shift
-  ip6address im.shift
-else
-  network["interfaces"].keys.sort.each do |iface|
-    if network["interfaces"][iface]["encapsulation"].eql?("Ethernet")
-      Ohai::Log.debug("Picking ip and mac address from first Ethernet interface")
-      im = find_ip_and_mac(network["interfaces"][iface]["addresses"])
-      ipaddress im.shift
-      macaddress im.shift
-      return if (ipaddress and macaddress)
+# ipaddress, ip6address and macaddress can be set by the #{os}::network plugin
+# atm it is expected macaddress is set at the same time than ipaddress
+# if ipaddress is set and macaddress is nil, that means the interface
+# ipaddress is bound to has the NOARP flag
+
+
+results = {}
+
+# inet family is treated before inet6
+FAMILIES.keys.sort.each do |family|
+  r = {}
+  ( r["ip"], r["iface"] ) = find_ip(family)
+  r["mac"] = find_mac_from_iface(r["iface"]) unless r["iface"].nil?
+  # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
+  if family == "inet" and ipaddress.nil?
+    if r["ip"].nil?
+      Ohai::Log.warn("unable to detect ipaddress")
+      # i don't issue this warning if r["ip"] exists and r["mac"].nil?
+      # as it could be a valid setup with a NOARP default_interface
+      Ohai::Log.warn("unable to detect macaddress")
+    else
+      ipaddress r["ip"]
+      macaddress r["mac"]
+    end
+  elsif family == "inet6" and ip6address.nil?
+    if r["ip"].nil?
+      Ohai::Log.warn("unable to detect ip6address")
+    else
+      ip6address r["ip"]
+      if r["mac"] and macaddress.nil? and ipaddress.nil?
+        Ohai::Log.info("macaddress set to #{r["mac"]} from the ipv6 setup")
+        macaddress r["mac"]
+      end
     end
   end
+  results[family] = r
+end
+
+if results["inet"]["iface"] and results["inet6"]["iface"] and
+    results["inet"]["iface"] != results["inet6"]["iface"]
+  Ohai::Log.info("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]}), macaddress has been set using the ipaddress interface")
 end

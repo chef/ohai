@@ -18,26 +18,35 @@
 
 provides "filesystem"
 
+require 'timeout'
+
 fs = Mash.new
 
 # Grab filesystem data from df
-popen4("df -P") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    case line
-    when /^Filesystem\s+1024-blocks/
-      next
-    when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-      filesystem = $1
-      fs[filesystem] = Mash.new
-      fs[filesystem][:kb_size] = $2
-      fs[filesystem][:kb_used] = $3
-      fs[filesystem][:kb_available] = $4
-      fs[filesystem][:percent_used] = $5
-      fs[filesystem][:mount] = $6
-    end
-  end
+begin
+  timeout(30){
+    popen4("df -P") do |pid, stdin, stdout, stderr|
+          stdin.close
+          stdout.each do |line|
+            case line
+            when /^Filesystem\s+1024-blocks/
+              next
+            when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+              filesystem = $1
+              fs[filesystem] = Mash.new
+              fs[filesystem][:kb_size] = $2
+              fs[filesystem][:kb_used] = $3
+              fs[filesystem][:kb_available] = $4
+              fs[filesystem][:percent_used] = $5
+              fs[filesystem][:mount] = $6
+            end
+          end
+        end
+      }
+    rescue "Timeout::Error"
+      puts "Timed out executing df -P"
 end
+
 
 # Grab mount information from /bin/mount
 popen4("mount") do |pid, stdin, stdout, stderr|

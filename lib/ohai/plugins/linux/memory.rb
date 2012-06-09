@@ -21,7 +21,8 @@ provides "memory"
 memory Mash.new
 memory[:swap] = Mash.new
 
-File.open("/proc/meminfo").each do |line|
+meminfo_file='/proc/meminfo'
+File.read_procfile(meminfo_file).each do |line|
   case line
   when /^MemTotal:\s+(\d+) (.+)$/
     memory[:total] = "#{$1}#{$2}"

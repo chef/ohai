@@ -31,9 +31,10 @@ if File.exists?("/proc/xen")
   virtualization[:role] = "guest"
 
   # This file should exist on most Xen systems, normally empty for guests
-  if File.exists?("/proc/xen/capabilities")
-    if File.read("/proc/xen/capabilities") =~ /control_d/i
-      virtualization[:role] = "host"
+  xen_capab_file="/proc/xen/capabilities"
+  if File.exists?(xen_capab_file)
+    File.read_procfile(xen_capab_file).each do |line|
+      virtualization[:role] = "host" if line  =~ /control_d/i
     end
   end
 end
@@ -46,17 +47,19 @@ end
 #   but rather be additive - btm
 
 # Detect from kernel module
-if File.exists?("/proc/modules")
-  modules = File.read("/proc/modules")
-  if modules =~ /^kvm/
-    virtualization[:system] = "kvm"
-    virtualization[:role] = "host"
-  elsif modules =~ /^vboxdrv/
-    virtualization[:system] = "vbox"
-    virtualization[:role] = "host"
-  elsif modules =~ /^vboxguest/
-    virtualization[:system] = "vbox"
-    virtualization[:role] = "guest"
+modules_file="/proc/modules"
+if File.exists?(modules_file)
+  File.read_procfile(modules_file).each do |modules|
+    if modules =~ /^kvm/
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "host"
+    elsif modules =~ /^vboxdrv/
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "host"
+    elsif modules =~ /^vboxguest/
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "guest"
+    end
   end
 end
 
@@ -65,10 +68,13 @@ end
 # 2.6.27-9-server (intrepid) has this / 2.6.18-6-amd64 (etch) does not
 # It would be great if we could read pv_info in the kernel
 # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
-if File.exists?("/proc/cpuinfo")
-  if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU/
-    virtualization[:system] = "kvm"
-    virtualization[:role] = "guest"
+cpuinfo_file="/proc/cpuinfo"
+if File.exists?(cpuinfo_file)
+  File.read_procfile(cpuinfo_file).each do |line|
+    if line =~ /QEMU Virtual CPU/
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+    end
   end
 end
 
@@ -111,15 +117,17 @@ if File.exists?("/usr/sbin/dmidecode")
 end
 
 # Detect Linux-VServer
-if File.exists?("/proc/self/status")
-  proc_self_status = File.read("/proc/self/status")
-  vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
-  if vxid and vxid[2]
-    virtualization[:system] = "linux-vserver"
-    if vxid[2] == "0"
-      virtualization[:role] = "host"
-    else
-      virtualization[:role] = "guest"
-     end
+self_status_file="/proc/self/status"
+if File.exists?(self_status_file)
+  File.read_procfile(self_status_file).each do |proc_self_status|
+    vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
+    if vxid and vxid[2]
+      virtualization[:system] = "linux-vserver"
+      if vxid[2] == "0"
+        virtualization[:role] = "host"
+      else
+        virtualization[:role] = "guest"
+       end
+    end
   end
 end

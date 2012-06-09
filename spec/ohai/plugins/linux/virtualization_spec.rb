@@ -47,8 +47,14 @@ describe Ohai::System, "Linux virtualization platform" do
 
     it "should set xen host if /proc/xen/capabilities contains control_d " do
       File.should_receive(:exists?).with("/proc/xen").and_return(true)
-      File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-      File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
+
+      @fname = "/proc/xen/capabilities"
+      @contents = [ "control_d" ]
+      File.should_receive(:exists?).with(@fname).and_return(true)
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "xen"
       @ohai[:virtualization][:role].should == "host"
@@ -72,16 +78,28 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for kvm" do
     it "should set kvm host if /proc/modules contains kvm" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
+      @contents = [ "kvm 165872  1 kvm_intel\n" ]
+      @fname = "/proc/modules"
+
+      File.stub!(:read_nonblock).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
-      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
-      File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
+      @contents = [ "QEMU Virtual CPU" ]
+      @fname = "/proc/cpuinfo"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "kvm"
       @ohai[:virtualization][:role].should == "guest"
@@ -96,16 +114,28 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for VirtualBox" do
     it "should set vbox host if /proc/modules contains vboxdrv" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("vboxdrv 268268 3 vboxnetadp,vboxnetflt")
+      @contents = "vboxdrv 268268 3 vboxnetadp,vboxnetflt\n"
+      @fname = "/proc/modules"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "vbox"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set vbox guest if /proc/modules contains vboxguest" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("vboxguest 177749 2 vboxsf")
+      @contents = "vboxguest 177749 2 vboxsf"
+      @fname = "/proc/modules"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "vbox"
       @ohai[:virtualization][:role].should == "guest"
@@ -179,32 +209,56 @@ VMWARE
 
   describe "when we are checking for Linux-VServer" do
     it "should set Linux-VServer host if /proc/self/status contains s_context: 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("s_context: 0")
+      @contents = "s_context: 0"
+      @fname = "/proc/self/status"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set Linux-VServer host if /proc/self/status contains VxID: 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("VxID: 0")
+      @contents = "VxID: 0"
+      @fname = "/proc/self/status"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "host"
     end
 
     it "should set Linux-VServer guest if /proc/self/status contains s_context > 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("s_context: 2")
+      @contents = "s_context: 2"
+      @fname = "/proc/self/status"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "guest"
     end
 
     it "should set Linux-VServer guest if /proc/self/status contains VxID > 0" do
-      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("VxID: 2")
+      @contents = "VxID: 2"
+      @fname = "/proc/self/status"
+
+      File.stub!(:read_procfile).with(@fname).and_return(@contents)
+
+      File.should_receive(:exists?).with(@fname).and_return(true)
+      File.should_receive(:read_procfile).with(@fname).and_return(@contents)
+
       @ohai._require_plugin("linux::virtualization")
       @ohai[:virtualization][:system].should == "linux-vserver"
       @ohai[:virtualization][:role].should == "guest"

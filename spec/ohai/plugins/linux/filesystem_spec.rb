@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     @ohai.stub!(:popen4).with("blkid -s LABEL").and_return(false)
 
     File.stub!(:exists?).with("/proc/mounts").and_return(false)
+
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -247,39 +248,43 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
+      @contents = [
+        "rootfs / rootfs rw 0 0",
+        "none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0",
+        "none /proc proc rw,nosuid,nodev,noexec,relatime 0 0",
+        "none /dev devtmpfs rw,relatime,size=2025576k,nr_inodes=506394,mode=755 0 0",
+        "none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0",
+        "/dev/mapper/sys.vg-root.lv / ext4 rw,noatime,errors=remount-ro,barrier=1,data=ordered 0 0",
+        "tmpfs /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0",
+        "/dev/mapper/sys.vg-home.lv /home xfs rw,noatime,attr2,noquota 0 0",
+        "/dev/mapper/sys.vg-special.lv /special xfs ro,noatime,attr2,noquota 0 0",
+        "/dev/mapper/sys.vg-tmp.lv /tmp ext4 rw,noatime,barrier=1,data=ordered 0 0",
+        "/dev/mapper/sys.vg-usr.lv /usr ext4 rw,noatime,barrier=1,data=ordered 0 0",
+        "/dev/mapper/sys.vg-var.lv /var ext4 rw,noatime,barrier=1,data=ordered 0 0",
+        "/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0",
+        "fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0",
+        "binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0"
+      ]
       File.stub!(:exists?).with("/proc/mounts").and_return(true)
-      @mock_file = mock("/proc/mounts")
-      @mock_file.stub!(:read_nonblock).and_return(@mock_file)
-      @mock_file.stub!(:each_line).
-        and_yield("rootfs / rootfs rw 0 0").
-        and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").
-        and_yield("none /proc proc rw,nosuid,nodev,noexec,relatime 0 0").
-        and_yield("none /dev devtmpfs rw,relatime,size=2025576k,nr_inodes=506394,mode=755 0 0").
-        and_yield("none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0").
-        and_yield("/dev/mapper/sys.vg-root.lv / ext4 rw,noatime,errors=remount-ro,barrier=1,data=ordered 0 0").
-        and_yield("tmpfs /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0").
-        and_yield("tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0").
-        and_yield("/dev/mapper/sys.vg-home.lv /home xfs rw,noatime,attr2,noquota 0 0").
-        and_yield("/dev/mapper/sys.vg-special.lv /special xfs ro,noatime,attr2,noquota 0 0").
-        and_yield("/dev/mapper/sys.vg-tmp.lv /tmp ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/mapper/sys.vg-usr.lv /usr ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/mapper/sys.vg-var.lv /var ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0").
-        and_yield("fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0").
-        and_yield("binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0")
-      File.stub!(:open).with("/proc/mounts").and_return(@mock_file)
+      File.stub!(:read_procfile).with("/proc/mounts").and_return(@contents)
+    end
+
+    it "should read non-blocking succesfully" do
+      File.should_receive(:read_procfile).with("/proc/mounts").and_return(@contents)
+      @ohai._require_plugin("linux::filesystem")
     end
 
     it "should set mount to value from /proc/mounts" do
       @ohai._require_plugin("linux::filesystem")
       @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
-  
+
     it "should set fs_type to value from /proc/mounts" do
       @ohai._require_plugin("linux::filesystem")
       @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
     end
-  
+
     it "should set mount_options to an array of values from /proc/mounts" do
       @ohai._require_plugin("linux::filesystem")
       @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime", "attr2", "noquota" ]

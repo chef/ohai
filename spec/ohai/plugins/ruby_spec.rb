@@ -18,8 +18,7 @@
 
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-
-ruby_bin = File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])
+require 'tempfile'
 
 describe Ohai::System, "plugin ruby" do
 
@@ -36,23 +35,34 @@ describe Ohai::System, "plugin ruby" do
     @ruby_ohai_data = @ruby_ohai_data_pristine.dup
   end
 
-  {
+  code = <<-EOS
+  ruby_bin = File.join(::RbConfig::CONFIG['bindir'], ::RbConfig::CONFIG['ruby_install_name'])
+  data = {
     :platform => RUBY_PLATFORM,
     :version => RUBY_VERSION,
     :release_date => RUBY_RELEASE_DATE,
-    :target => ::Config::CONFIG['target'],
-    :target_cpu => ::Config::CONFIG['target_cpu'],
-    :target_vendor => ::Config::CONFIG['target_vendor'],
-    :target_os => ::Config::CONFIG['target_os'],
-    :host => ::Config::CONFIG['host'],
-    :host_cpu => ::Config::CONFIG['host_cpu'],
-    :host_os => ::Config::CONFIG['host_os'],
-    :host_vendor => ::Config::CONFIG['host_vendor'],
-    :gems_dir => %x{#{ruby_bin} #{::Config::CONFIG['bindir']}/gem env gemdir}.chomp!,
-    :gem_bin => [ ::Gem.default_exec_format % 'gem', 'gem' ].map{|bin| "#{::Config::CONFIG['bindir']}/#{bin}"
+    :target => ::RbConfig::CONFIG['target'],
+    :target_cpu => ::RbConfig::CONFIG['target_cpu'],
+    :target_vendor => ::RbConfig::CONFIG['target_vendor'],
+    :target_os => ::RbConfig::CONFIG['target_os'],
+    :host => ::RbConfig::CONFIG['host'],
+    :host_cpu => ::RbConfig::CONFIG['host_cpu'],
+    :host_os => ::RbConfig::CONFIG['host_os'],
+    :host_vendor => ::RbConfig::CONFIG['host_vendor'],
+    :gems_dir => %x{\#{ruby_bin} \#{::RbConfig::CONFIG['bindir']}/gem env gemdir}.chomp!,
+    :gem_bin => [ ::Gem.default_exec_format % 'gem', 'gem' ].map{|bin| "\#{::RbConfig::CONFIG['bindir']}/\#{bin}"
       }.find{|bin| ::File.exists? bin},
     :ruby_bin => ruby_bin
-  }.each do |attribute, value|
+  }
+  puts data.inspect
+  EOS
+  program = Tempfile.new('ruby')
+  program.write(code)
+  program.close
+  data = eval(`ruby #{program.path}`)
+  program.unlink
+
+  data.each do |attribute, value|
     it "should have #{attribute} set" do
       @ruby_ohai_data[attribute].should eql(value)
     end

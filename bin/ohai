@@ -19,25 +19,12 @@
 # limitations under the License.
 #
 
-
-begin
-  require 'rubygems'
-rescue LoadError
-  # must be debian! ;)
-  missing_rubygems = true
-end
-begin
+if File.exists?(File.expand_path('../../ohai.gemspec', __FILE__))
   # if we're in a source code checkout, we want to run the code from that.
-  # have to do this *after* rubygems is loaded.
   $:.unshift File.expand_path('../../lib', __FILE__)
-  require 'ohai/application'
-rescue LoadError
-  if missing_rubygems
-    STDERR.puts "rubygems previously failed to load - is it installed?"
-  end
-
-  raise
 end
+
+require 'ohai/application'
 
 if RUBY_PLATFORM =~ /mswin|mingw32|windows/
   begin

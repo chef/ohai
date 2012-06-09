@@ -20,16 +20,13 @@ provides "languages/php"
 
 require_plugin "languages"
 
-output = nil
-
 php = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "php -v")
+status, stdout, stderr = run_command(:no_status_check => true, :command => "php -i | head -10")
 if status == 0
-  output = stdout.split
-  if output.length >= 6
-    php[:version] = output[1]
-    php[:builddate] = "%s %s %s" % [output[4],output[5],output[6]]
+  if stdout.split.length >= 6
+    php[:version] = stdout.grep(/Version/).to_s.chomp.split(' => ').last
+    php[:builddate] = stdout.grep(/Build/).to_s.chomp.split(' => ').last
   end
   languages[:php] = php if php[:version]
 end

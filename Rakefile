@@ -5,12 +5,11 @@ require 'date'
 
 gemspec = eval(IO.read("ohai.gemspec"))
 
-
 Rake::GemPackageTask.new(gemspec).define
 
 desc "install the gem locally"
 task :install => [:package] do
-  sh %{gem install pkg/#{ohai}-#{OHAI_VERSION}}
+  sh %{gem install pkg/ohai-#{Ohai::VERSION}}
 end
 
 begin

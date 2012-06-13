@@ -25,7 +25,7 @@ extend Ohai::Mixin::Ec2Metadata
 #Ec2Metadata::EC2_METADATA_URL = "/latest/meta-data"
 
 # Adds openstack Mash
-if File.exists?("/etc/chef/ohai/hints/openstack.json")
+if hint?('openstack')
   Ohai::Log.debug("ohai openstack")
   openstack Mash.new
   #for now, use the metadata service

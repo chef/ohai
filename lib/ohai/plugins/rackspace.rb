@@ -36,7 +36,7 @@ end
 def has_rackspace_mac?
   network[:interfaces].values.each do |iface|
     unless iface[:arp].nil?
-      return true if iface[:arp].value?("00:00:0c:07:ac:01") or iface[:arp].value?("00:00:0c:9f:f0:01")
+      return true if iface[:arp].value?("00:00:0c:07:ac:01") or iface[:arp].value?("00:00:0c:9f:f0:01") or iface[:arp].value?("00:18:8b:f9:70:05")
     end
   end
   false

@@ -48,6 +48,7 @@ end
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?
+  return false if network[:interfaces][:eth1].nil?
   hint?('rackspace') || has_rackspace_mac? || has_rackspace_kernel?
 end
 

@@ -46,32 +46,37 @@ module Ohai
         end
 
         status = nil
-        Dir.chdir(args[:cwd]) do
-          status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
-          # systemu returns 42 when it hits unexpected errors
-          if status.exitstatus == 42 and stderr_string == ""
-            stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
-            Ohai::Log.debug(stderr_string)
+        begin
+          Dir.chdir(args[:cwd]) do
+            status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
+            # systemu returns 42 when it hits unexpected errors
+            if status.exitstatus == 42 and stderr_string == ""
+              stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
+              Ohai::Log.debug(stderr_string)
+            end
+  
+            if stdout_string
+              Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
+              Ohai::Log.debug(stdout_string.strip)
+              Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
+            end
+            if stderr_string
+              Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
+              Ohai::Log.debug(stderr_string.strip)
+              Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
+            end
+  
+            args[:returns] ||= 0
+            args[:no_status_check] ||= false
+            if status.exitstatus != args[:returns] and not args[:no_status_check]
+              raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
+            else
+              Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
+            end
           end
-
-          if stdout_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
-            Ohai::Log.debug(stdout_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
-          end
-          if stderr_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
-            Ohai::Log.debug(stderr_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
-          end
-
-          args[:returns] ||= 0
-          args[:no_status_check] ||= false
-          if status.exitstatus != args[:returns] and not args[:no_status_check]
-            raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
-          else
-            Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
-          end
+        rescue Errno::ENOENT => e
+          Chef::Log.debug("Changing to #{args[:cwd]} because the current path doesn't exists")
+          Dir.chdir(args[:cwd])
         end
         return status, stdout_string, stderr_string
       end

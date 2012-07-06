@@ -238,12 +238,13 @@ module Ohai
       Yajl::Encoder.new(:pretty => true).encode(item || @data)
     end
 
+    DOT_OR_SLASH = /\.|\//
     def attributes_print(a)
       data = @data
-      a.split("/").each do |part|
+      a.split(DOT_OR_SLASH).each do |part|
         data = data[part]
       end
-      raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
+      raise ArgumentError, "I cannot find an attribute named #{a}! If you wanted a nest attribute, chain using the . operator"" if data.nil?
       case a
       when Hash,Mash,Array
         json_pretty_print(data)

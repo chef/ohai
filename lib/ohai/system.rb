@@ -249,9 +249,9 @@ module Ohai
         json_pretty_print(data)
       when String
         if data.respond_to?(:lines)
-          json_pretty_print(data.lines.to_a)
+          data.lines.is_a?(Array) ? json_pretty_print(data.lines.to_a) : json_pretty_print([data.lines])
         else
-          json_pretty_print(data.to_a)
+          data.is_a?(Array) ? json_pretty_print(data.to_a) : json_pretty_print([data])
         end
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"

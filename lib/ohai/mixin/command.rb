@@ -101,17 +101,17 @@ module Ohai
       def run_command_windows(command, timeout, cwd)
         if timeout
           begin
+            original_dir = Dir.pwd
             Dir.chdir(cwd) do 
               systemu(command)
             end
-          rescue  Errno::ENOENT => e
-           Chef::Log.debug("Changing to #{cwd} because the current path doesn't exists")
-           Dir.chdir(cwd)          
           rescue SystemExit => e
             raise
           rescue Timeout::Error => e
             Ohai::Log.error("#{command} exceeded timeout #{timeout}")
             raise(e)
+          ensure
+            Dir.chdir(original_dir)
           end
         else
           systemu(command)

@@ -244,14 +244,14 @@ module Ohai
         data = data[part]
       end
       raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
-      case a
-      when Hash,Mash,Array
+      case data
+      when Hash,Mash,Array,Fixnum
         json_pretty_print(data)
       when String
         if data.respond_to?(:lines)
-          data.lines.is_a?(Array) ? json_pretty_print(data.lines.to_a) : json_pretty_print([data.lines])
+          json_pretty_print(data.lines.to_a)
         else
-          data.is_a?(Array) ? json_pretty_print(data.to_a) : json_pretty_print([data])
+          json_pretty_print(data.to_a)
         end
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"

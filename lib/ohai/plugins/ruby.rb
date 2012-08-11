@@ -20,9 +20,11 @@ provides "languages/ruby"
 
 require_plugin "languages"
 
+require 'rbconfig'
 
 def run_ruby(command)
-  cmd = "ruby -e \"require 'rbconfig'; #{command}\""
+  ruby = ::File.join(::Config::CONFIG['bindir'], ::Config::CONFIG['ruby_install_name'])
+  cmd = %{#{ruby} -e "require 'rbconfig'; #{command}"}
   status, stdout, stderr = run_command(:no_status_check => true, :command => cmd)
   stdout.strip
 end

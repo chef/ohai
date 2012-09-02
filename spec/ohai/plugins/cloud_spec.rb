@@ -17,8 +17,6 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-
 describe Ohai::System, "plugin cloud" do
   before(:each) do
     @ohai = Ohai::System.new

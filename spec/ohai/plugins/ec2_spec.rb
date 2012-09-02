@@ -38,34 +38,79 @@ describe Ohai::System, "plugin ec2" do
     before(:each) do
       @http_client = mock("Net::HTTP client")
       @ohai.stub!(:http_client).and_return(@http_client)
-
-      @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/").
-        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
-      @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/instance_type").
-        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
-      @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/ami_id").
-        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
-      @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/security-groups").
-        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
-      @http_client.should_receive(:get).
-        with("/2008-02-01/user-data/").
-        and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
-    end
-
-    it "should recursively fetch all the ec2 metadata" do
       IO.stub!(:select).and_return([[],[1],[]])
       t = mock("connection")
       t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       Socket.stub!(:new).and_return(t)
+    end
+
+    it "should recursively fetch all the ec2 metadata" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/instance_type").
+        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/ami_id").
+        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/security-groups").
+        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/user-data/").
+        and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
       @ohai._require_plugin("ec2")
+
       @ohai[:ec2].should_not be_nil
       @ohai[:ec2]['instance_type'].should == "c1.medium"
       @ohai[:ec2]['ami_id'].should == "ami-5d2dc934"
       @ohai[:ec2]['security_groups'].should eql ['group1', 'group2']
+    end
+
+    it "should parse ec2 network/ directory as a multi-level hash" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "network/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/network/").
+        and_return(mock("Net::HTTP Response", :body => "interfaces/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/network/interfaces/").
+        and_return(mock("Net::HTTP Response", :body => "macs/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/network/interfaces/macs/").
+        and_return(mock("Net::HTTP Response", :body => "fe:ff:ff:ff:ff:ff/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/network/interfaces/macs/fe:ff:ff:ff:ff:ff/").
+        and_return(mock("Net::HTTP Response", :body => "public_hostname"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/network/interfaces/macs/fe:ff:ff:ff:ff:ff/public_hostname").
+        and_return(mock("Net::HTTP Response", :body => "server17.opscode.com"))
+      @ohai._require_plugin("ec2")
+
+      @ohai[:ec2].should_not be_nil
+      @ohai[:ec2]['network_interfaces_macs']['fe:ff:ff:ff:ff:ff']['public_hostname'].should eql('server17.opscode.com')
+    end
+
+    it "should parse ec2 iam/ directory and its JSON files properly" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "iam/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/iam/").
+        and_return(mock("Net::HTTP Response", :body => "security-credentials/"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/iam/security-credentials/").
+        and_return(mock("Net::HTTP Response", :body => "MyRole"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/iam/security-credentials/MyRole").
+        and_return(mock("Net::HTTP Response", :body => "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}"))
+      @ohai._require_plugin("ec2")
+
+      @ohai[:ec2].should_not be_nil
+      @ohai[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
+      @ohai[:ec2]['iam']['security-credentials']['MyRole']['Token'].should eql '12345678'
     end
   end
 

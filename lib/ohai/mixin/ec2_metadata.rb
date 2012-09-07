@@ -64,9 +64,9 @@ module Ohai
       def fetch_metadata(id='')
         metadata = Hash.new
         http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
-          key = _pv_expand_path("#{id}#{o}")
+          key = expand_path("#{id}#{o}")
           if key[-1..-1] != '/'
-            metadata[_pv_metadata_key(key)] =
+            metadata[metadata_key(key)] =
               if EC2_ARRAY_VALUES.include? key
                 http_client.get("#{EC2_METADATA_URL}/#{key}").body.split("\n")
               else
@@ -74,7 +74,7 @@ module Ohai
               end
           elsif not key.eql?(id) and not key.eql?("/")
             name = key[0..-2]
-	    sym = _pv_metadata_key(name)
+	    sym = metadata_key(name)
             if EC2_ARRAY_DIR.include?(name)
               metadata[sym] = fetch_dir_metadata(key)
             elsif EC2_JSON_DIR.include?(name)
@@ -90,9 +90,9 @@ module Ohai
       def fetch_dir_metadata(id)
         metadata = Hash.new
         http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
-          key = _pv_expand_path(o)
+          key = expand_path(o)
           if key[-1..-1] != '/'
-            metadata[_pv_metadata_key(key)] = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
+            metadata[metadata_key(key)] = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
           elsif not key.eql?('/')
             metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}")
           end
@@ -103,12 +103,12 @@ module Ohai
       def fetch_json_dir_metadata(id)
         metadata = Hash.new
         http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
-          key = _pv_expand_path(o)
+          key = expand_path(o)
           if key[-1..-1] != '/'
             data = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
             json = StringIO.new(data)
             parser = Yajl::Parser.new
-            metadata[_pv_metadata_key(key)] = parser.parse(json)
+            metadata[metadata_key(key)] = parser.parse(json)
           elsif not key.eql?('/')
             metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}")
           end
@@ -123,14 +123,14 @@ module Ohai
 
       private
 
-      def _pv_expand_path(file_name)
+      def expand_path(file_name)
         path = File.expand_path(file_name.gsub(/\=.*$/, '/'), '/')
         path[0] = '' # remove the initial "/"
         path << '/' if file_name[-1..-1].eql?('/') # it was a directory
         path
       end
 
-      def _pv_metadata_key(key)
+      def metadata_key(key)
         key.gsub(/\-|\//, '_').to_sym
       end
 

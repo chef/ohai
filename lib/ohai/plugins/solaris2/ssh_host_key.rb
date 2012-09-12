@@ -22,5 +22,10 @@ require_plugin "keys"
 
 keys[:ssh] = Mash.new
 
-keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+if File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
+  keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+  keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+else
+  keys[:ssh][:host_dsa_public] = IO.read("/var/ssh/ssh_host_dsa_key.pub").split[1]
+  keys[:ssh][:host_rsa_public] = IO.read("/var/ssh/ssh_host_rsa_key.pub").split[1]
+end

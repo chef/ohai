@@ -131,7 +131,7 @@ module Ohai
       end
 
       def metadata_key(key)
-        key.gsub(/\-|\//, '_').to_sym
+        key.gsub(/\-|\//, '_')
       end
 
     end

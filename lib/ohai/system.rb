@@ -21,6 +21,7 @@ require 'ohai/log'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
+require 'mixlib/shellout'
 
 require 'yajl'
 

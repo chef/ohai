@@ -29,7 +29,7 @@ popen4('who -b') do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /.* boot (.+)/
       uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
-		uptime self._seconds_to_human(uptime_seconds)
+		  uptime seconds_to_human(uptime_seconds)
 		break
     end
   end

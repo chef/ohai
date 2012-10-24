@@ -413,7 +413,7 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/network.rb", PLUGIN_PATH))
 
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
@@ -425,429 +425,429 @@ net.smb.fs.tcprcvbuf: 261120
     @netstat_lines = darwin_netstat.split("\n")
     @sysctl_lines = darwin_sysctl.split("\n")
 
-    @ohai.stub(:from).with("route -n get default").and_return(darwin_route)
-    @ohai.stub(:popen4).with("netstat -i -d -l -b -n")
+    @plugin.stub(:from).with("route -n get default").and_return(darwin_route)
+    @plugin.stub(:popen4).with("netstat -i -d -l -b -n")
 
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-    @ohai._require_plugin("network")
+    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(6).times
+    @plugin.require_plugin("network")
   end
 
   describe "gathering IP layer address info" do
     before do
-      @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-      @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-      @ohai.stub(:popen4).with("netstat -i -d -l -b -n").and_yield(nil, @stdin_netstat, @netstat_lines, nil)
-      @ohai.stub(:popen4).with("sysctl net").and_yield(nil, @stdin_sysctl, @sysctl_lines, nil)
-      @ohai._require_plugin("darwin::network")
+      @plugin.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+      @plugin.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+      @plugin.stub(:popen4).with("netstat -i -d -l -b -n").and_yield(nil, @stdin_netstat, @netstat_lines, nil)
+      @plugin.stub(:popen4).with("sysctl net").and_yield(nil, @stdin_sysctl, @sysctl_lines, nil)
+      @plugin.run
     end
 
     it "completes the run" do
-      @ohai['network'].should_not be_nil
+      @plugin['network'].should_not be_nil
     end
 
     it "detects the interfaces" do
-      @ohai['network']['interfaces'].keys.sort.should == ["en0", "en1", "fw0", "gif0", "lo0", "p2p0", "stf0", "utun0"]
+      @plugin['network']['interfaces'].keys.sort.should == ["en0", "en1", "fw0", "gif0", "lo0", "p2p0", "stf0", "utun0"]
     end
 
     it "detects the ipv4 addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['addresses'].keys.should include('10.20.10.144')
-      @ohai['network']['interfaces']['en1']['addresses']['10.20.10.144']['netmask'].should == '255.255.255.0'
-      @ohai['network']['interfaces']['en1']['addresses']['10.20.10.144']['broadcast'].should == '10.20.10.255'
-      @ohai['network']['interfaces']['en1']['addresses']['10.20.10.144']['family'].should == 'inet'
+      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('10.20.10.144')
+      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['netmask'].should == '255.255.255.0'
+      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['broadcast'].should == '10.20.10.255'
+      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['family'].should == 'inet'
     end
 
     it "detects the ipv6 addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['addresses'].keys.should include('fe80::ba8d:12ff:fe3a:32de')
-      @ohai['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['scope'].should == 'Link'
-      @ohai['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
-      @ohai['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
+      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('fe80::ba8d:12ff:fe3a:32de')
+      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['scope'].should == 'Link'
+      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
+      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
 
-      @ohai['network']['interfaces']['en1']['addresses'].keys.should include('2001:44b8:4186:1100:ba8d:12ff:fe3a:32de')
-      @ohai['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['scope'].should == 'Global'
-      @ohai['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
-      @ohai['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
+      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('2001:44b8:4186:1100:ba8d:12ff:fe3a:32de')
+      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['scope'].should == 'Global'
+      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
+      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
     end
 
     it "detects the mac addresses of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['addresses'].keys.should include('b8:8d:12:3a:32:de')
-      @ohai['network']['interfaces']['en1']['addresses']['b8:8d:12:3a:32:de']['family'].should == 'lladdr'
+      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('b8:8d:12:3a:32:de')
+      @plugin['network']['interfaces']['en1']['addresses']['b8:8d:12:3a:32:de']['family'].should == 'lladdr'
     end
 
     it "detects the encapsulation type of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['encapsulation'].should == 'Ethernet'
+      @plugin['network']['interfaces']['en1']['encapsulation'].should == 'Ethernet'
     end
 
     it "detects the flags of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['flags'].sort.should == ["BROADCAST", "MULTICAST", "RUNNING", "SIMPLEX", "SMART", "UP"]
+      @plugin['network']['interfaces']['en1']['flags'].sort.should == ["BROADCAST", "MULTICAST", "RUNNING", "SIMPLEX", "SMART", "UP"]
     end
 
 
     it "detects the mtu of the ethernet interface" do
-      @ohai['network']['interfaces']['en1']['mtu'].should == "1500"
+      @plugin['network']['interfaces']['en1']['mtu'].should == "1500"
     end
 
     it "detects the ipv4 addresses of the loopback interface" do
-      @ohai['network']['interfaces']['lo0']['addresses'].keys.should include('127.0.0.1')
-      @ohai['network']['interfaces']['lo0']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
-      @ohai['network']['interfaces']['lo0']['addresses']['127.0.0.1']['family'].should == 'inet'
+      @plugin['network']['interfaces']['lo0']['addresses'].keys.should include('127.0.0.1')
+      @plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
+      @plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['family'].should == 'inet'
     end
 
     it "detects the ipv6 addresses of the loopback interface" do
-      @ohai['network']['interfaces']['lo0']['addresses'].keys.should include('::1')
-      @ohai['network']['interfaces']['lo0']['addresses']['::1']['scope'].should == 'Node'
-      @ohai['network']['interfaces']['lo0']['addresses']['::1']['prefixlen'].should == '128'
-      @ohai['network']['interfaces']['lo0']['addresses']['::1']['family'].should == 'inet6'
+      @plugin['network']['interfaces']['lo0']['addresses'].keys.should include('::1')
+      @plugin['network']['interfaces']['lo0']['addresses']['::1']['scope'].should == 'Node'
+      @plugin['network']['interfaces']['lo0']['addresses']['::1']['prefixlen'].should == '128'
+      @plugin['network']['interfaces']['lo0']['addresses']['::1']['family'].should == 'inet6'
     end
 
     it "detects the encapsulation type of the loopback interface" do
-      @ohai['network']['interfaces']['lo0']['encapsulation'].should == 'Loopback'
+      @plugin['network']['interfaces']['lo0']['encapsulation'].should == 'Loopback'
     end
 
     it "detects the flags of the ethernet interface" do
-      @ohai['network']['interfaces']['lo0']['flags'].sort.should == ["LOOPBACK", "MULTICAST", "RUNNING", "UP"]
+      @plugin['network']['interfaces']['lo0']['flags'].sort.should == ["LOOPBACK", "MULTICAST", "RUNNING", "UP"]
     end
 
     it "detects the mtu of the loopback interface" do
-      @ohai['network']['interfaces']['lo0']['mtu'].should == "16384"
+      @plugin['network']['interfaces']['lo0']['mtu'].should == "16384"
     end
 
     it "detects the arp entries" do
-      @ohai['network']['interfaces']['en1']['arp']['10.20.10.1'].should == '0:4:ed:de:41:bf'
+      @plugin['network']['interfaces']['en1']['arp']['10.20.10.1'].should == '0:4:ed:de:41:bf'
     end
 
     it "detects the ethernet counters" do
-      @ohai['counters']['network']['interfaces']['en1']['tx']['bytes'].should == "18228234970"
-      @ohai['counters']['network']['interfaces']['en1']['tx']['packets'].should == "14314573"
-      @ohai['counters']['network']['interfaces']['en1']['tx']['collisions'].should == "0"
-      @ohai['counters']['network']['interfaces']['en1']['tx']['errors'].should == "0"
-      @ohai['counters']['network']['interfaces']['en1']['tx']['carrier'].should == 0
-      @ohai['counters']['network']['interfaces']['en1']['tx']['drop'].should == 0
+      @plugin['counters']['network']['interfaces']['en1']['tx']['bytes'].should == "18228234970"
+      @plugin['counters']['network']['interfaces']['en1']['tx']['packets'].should == "14314573"
+      @plugin['counters']['network']['interfaces']['en1']['tx']['collisions'].should == "0"
+      @plugin['counters']['network']['interfaces']['en1']['tx']['errors'].should == "0"
+      @plugin['counters']['network']['interfaces']['en1']['tx']['carrier'].should == 0
+      @plugin['counters']['network']['interfaces']['en1']['tx']['drop'].should == 0
 
-      @ohai['counters']['network']['interfaces']['en1']['rx']['bytes'].should == "2530556736"
-      @ohai['counters']['network']['interfaces']['en1']['rx']['packets'].should == "5921903"
-      @ohai['counters']['network']['interfaces']['en1']['rx']['errors'].should == "0"
-      @ohai['counters']['network']['interfaces']['en1']['rx']['overrun'].should == 0
-      @ohai['counters']['network']['interfaces']['en1']['rx']['drop'].should == 0
+      @plugin['counters']['network']['interfaces']['en1']['rx']['bytes'].should == "2530556736"
+      @plugin['counters']['network']['interfaces']['en1']['rx']['packets'].should == "5921903"
+      @plugin['counters']['network']['interfaces']['en1']['rx']['errors'].should == "0"
+      @plugin['counters']['network']['interfaces']['en1']['rx']['overrun'].should == 0
+      @plugin['counters']['network']['interfaces']['en1']['rx']['drop'].should == 0
     end
 
     it "detects the loopback counters" do
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['bytes'].should == "25774844"
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['packets'].should == "174982"
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['collisions'].should == "0"
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['errors'].should == "0"
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['carrier'].should == 0
-      @ohai['counters']['network']['interfaces']['lo0']['tx']['drop'].should == 0
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['bytes'].should == "25774844"
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['packets'].should == "174982"
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['collisions'].should == "0"
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['errors'].should == "0"
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['carrier'].should == 0
+      @plugin['counters']['network']['interfaces']['lo0']['tx']['drop'].should == 0
 
-      @ohai['counters']['network']['interfaces']['lo0']['rx']['bytes'].should == "25774844"
-      @ohai['counters']['network']['interfaces']['lo0']['rx']['packets'].should == "174982"
-      @ohai['counters']['network']['interfaces']['lo0']['rx']['errors'].should == "0"
-      @ohai['counters']['network']['interfaces']['lo0']['rx']['overrun'].should == 0
-      @ohai['counters']['network']['interfaces']['lo0']['rx']['drop'].should == 0
+      @plugin['counters']['network']['interfaces']['lo0']['rx']['bytes'].should == "25774844"
+      @plugin['counters']['network']['interfaces']['lo0']['rx']['packets'].should == "174982"
+      @plugin['counters']['network']['interfaces']['lo0']['rx']['errors'].should == "0"
+      @plugin['counters']['network']['interfaces']['lo0']['rx']['overrun'].should == 0
+      @plugin['counters']['network']['interfaces']['lo0']['rx']['drop'].should == 0
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @ohai['network'][:default_interface].should == 'en1'
+      @plugin['network'][:default_interface].should == 'en1'
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @ohai['network'][:default_gateway].should == '10.20.10.1'
+      @plugin['network'][:default_gateway].should == '10.20.10.1'
     end
 
     it "should detect network settings" do
-      @ohai['network']['settings']['net.local.stream.sendspace'].should == '8192'
-      @ohai["network"]["settings"]['net.local.stream.recvspace'].should == '8192'
-      @ohai["network"]["settings"]['net.local.stream.tracemdns'].should == '0'
-      @ohai["network"]["settings"]['net.local.dgram.maxdgram'].should == '2048'
-      @ohai["network"]["settings"]['net.local.dgram.recvspace'].should == '4096'
-      @ohai["network"]["settings"]['net.local.inflight'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.lowfirst'].should == '1023'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.lowlast'].should == '600'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.first'].should == '49152'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.last'].should == '65535'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.hifirst'].should == '49152'
-      @ohai["network"]["settings"]['net.inet.ip.portrange.hilast'].should == '65535'
-      @ohai["network"]["settings"]['net.inet.ip.forwarding'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.redirect'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.ttl'].should == '64'
-      @ohai["network"]["settings"]['net.inet.ip.rtexpire'].should == '12'
-      @ohai["network"]["settings"]['net.inet.ip.rtminexpire'].should == '10'
-      @ohai["network"]["settings"]['net.inet.ip.rtmaxcache'].should == '128'
-      @ohai["network"]["settings"]['net.inet.ip.sourceroute'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.intr_queue_maxlen'].should == '50'
-      @ohai["network"]["settings"]['net.inet.ip.intr_queue_drops'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.accept_sourceroute'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.keepfaith'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.gifttl'].should == '30'
-      @ohai["network"]["settings"]['net.inet.ip.subnets_are_local'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.mcast.maxgrpsrc'].should == '512'
-      @ohai["network"]["settings"]['net.inet.ip.mcast.maxsocksrc'].should == '128'
-      @ohai["network"]["settings"]['net.inet.ip.mcast.loop'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.check_route_selfref'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.use_route_genid'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.hash_size'].should == '64'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.curr_time'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.ready_heap'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.extract_heap'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.searches'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.search_steps'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.expire'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.max_chain_len'].should == '16'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.red_lookup_depth'].should == '256'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.red_avg_pkt_size'].should == '512'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.red_max_pkt_size'].should == '1500'
-      @ohai["network"]["settings"]['net.inet.ip.dummynet.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.enable'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.fw.autoinc_step'].should == '100'
-      @ohai["network"]["settings"]['net.inet.ip.fw.one_pass'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.verbose'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.verbose_limit'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_buckets'].should == '256'
-      @ohai["network"]["settings"]['net.inet.ip.fw.curr_dyn_buckets'].should == '256'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_count'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_max'].should == '4096'
-      @ohai["network"]["settings"]['net.inet.ip.fw.static_count'].should == '2'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_ack_lifetime'].should == '300'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_syn_lifetime'].should == '20'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_fin_lifetime'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_rst_lifetime'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_udp_lifetime'].should == '10'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_short_lifetime'].should == '5'
-      @ohai["network"]["settings"]['net.inet.ip.fw.dyn_keepalive'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.maxfragpackets'].should == '1536'
-      @ohai["network"]["settings"]['net.inet.ip.maxfragsperpacket'].should == '128'
-      @ohai["network"]["settings"]['net.inet.ip.maxfrags'].should == '3072'
-      @ohai["network"]["settings"]['net.inet.ip.scopedroute'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.check_interface'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.linklocal.in.allowbadttl'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.random_id'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ip.maxchainsent'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ip.select_srcif_debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet.icmp.maskrepl'].should == '0'
-      @ohai["network"]["settings"]['net.inet.icmp.icmplim'].should == '250'
-      @ohai["network"]["settings"]['net.inet.icmp.timestamp'].should == '0'
-      @ohai["network"]["settings"]['net.inet.icmp.drop_redirect'].should == '0'
-      @ohai["network"]["settings"]['net.inet.icmp.log_redirect'].should == '0'
-      @ohai["network"]["settings"]['net.inet.icmp.bmcastecho'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.recvifkludge'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.sendra'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.sendlocal'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.v1enable'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.v2enable'].should == '1'
-      @ohai["network"]["settings"]['net.inet.igmp.legacysupp'].should == '0'
-      @ohai["network"]["settings"]['net.inet.igmp.default_version'].should == '3'
-      @ohai["network"]["settings"]['net.inet.igmp.gsrdelay'].should == '10'
-      @ohai["network"]["settings"]['net.inet.igmp.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.rfc1323'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.rfc1644'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.mssdflt'].should == '512'
-      @ohai["network"]["settings"]['net.inet.tcp.keepidle'].should == '7200000'
-      @ohai["network"]["settings"]['net.inet.tcp.keepintvl'].should == '75000'
-      @ohai["network"]["settings"]['net.inet.tcp.sendspace'].should == '65536'
-      @ohai["network"]["settings"]['net.inet.tcp.recvspace'].should == '65536'
-      @ohai["network"]["settings"]['net.inet.tcp.keepinit'].should == '75000'
-      @ohai["network"]["settings"]['net.inet.tcp.v6mssdflt'].should == '1024'
-      @ohai["network"]["settings"]['net.inet.tcp.log_in_vain'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.blackhole'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.delayed_ack'].should == '3'
-      @ohai["network"]["settings"]['net.inet.tcp.tcp_lq_overflow'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.recvbg'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.drop_synfin'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.reass.maxsegments'].should == '3072'
-      @ohai["network"]["settings"]['net.inet.tcp.reass.cursegments'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.reass.overflows'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.slowlink_wsize'].should == '8192'
-      @ohai["network"]["settings"]['net.inet.tcp.maxseg_unacked'].should == '8'
-      @ohai["network"]["settings"]['net.inet.tcp.rfc3465'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.rfc3465_lim2'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.rtt_samples_per_slot'].should == '20'
-      @ohai["network"]["settings"]['net.inet.tcp.recv_allowed_iaj'].should == '5'
-      @ohai["network"]["settings"]['net.inet.tcp.acc_iaj_high_thresh'].should == '100'
-      @ohai["network"]["settings"]['net.inet.tcp.rexmt_thresh'].should == '2'
-      @ohai["network"]["settings"]['net.inet.tcp.path_mtu_discovery'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.slowstart_flightsize'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.local_slowstart_flightsize'].should == '8'
-      @ohai["network"]["settings"]['net.inet.tcp.tso'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.ecn_initiate_out'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.ecn_negotiate_in'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.packetchain'].should == '50'
-      @ohai["network"]["settings"]['net.inet.tcp.socket_unlocked_on_output'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.rfc3390'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.min_iaj_win'].should == '4'
-      @ohai["network"]["settings"]['net.inet.tcp.acc_iaj_react_limit'].should == '200'
-      @ohai["network"]["settings"]['net.inet.tcp.sack'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.sack_maxholes'].should == '128'
-      @ohai["network"]["settings"]['net.inet.tcp.sack_globalmaxholes'].should == '65536'
-      @ohai["network"]["settings"]['net.inet.tcp.sack_globalholes'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.minmss'].should == '216'
-      @ohai["network"]["settings"]['net.inet.tcp.minmssoverload'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.do_tcpdrain'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.pcbcount'].should == '86'
-      @ohai["network"]["settings"]['net.inet.tcp.icmp_may_rst'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.strict_rfc1948'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.isn_reseed_interval'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.background_io_enabled'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.rtt_min'].should == '100'
-      @ohai["network"]["settings"]['net.inet.tcp.rexmt_slop'].should == '200'
-      @ohai["network"]["settings"]['net.inet.tcp.randomize_ports'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.newreno_sockets'].should == '81'
-      @ohai["network"]["settings"]['net.inet.tcp.background_sockets'].should == '-1'
-      @ohai["network"]["settings"]['net.inet.tcp.tcbhashsize'].should == '4096'
-      @ohai["network"]["settings"]['net.inet.tcp.background_io_trigger'].should == '5'
-      @ohai["network"]["settings"]['net.inet.tcp.msl'].should == '15000'
-      @ohai["network"]["settings"]['net.inet.tcp.max_persist_timeout'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.always_keepalive'].should == '0'
-      @ohai["network"]["settings"]['net.inet.tcp.timer_fastmode_idlemax'].should == '20'
-      @ohai["network"]["settings"]['net.inet.tcp.broken_peer_syn_rxmit_thres'].should == '7'
-      @ohai["network"]["settings"]['net.inet.tcp.tcp_timer_advanced'].should == '5'
-      @ohai["network"]["settings"]['net.inet.tcp.tcp_resched_timerlist'].should == '12209'
-      @ohai["network"]["settings"]['net.inet.tcp.pmtud_blackhole_detection'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.pmtud_blackhole_mss'].should == '1200'
-      @ohai["network"]["settings"]['net.inet.tcp.timer_fastquantum'].should == '100'
-      @ohai["network"]["settings"]['net.inet.tcp.timer_slowquantum'].should == '500'
-      @ohai["network"]["settings"]['net.inet.tcp.win_scale_factor'].should == '3'
-      @ohai["network"]["settings"]['net.inet.tcp.sockthreshold'].should == '64'
-      @ohai["network"]["settings"]['net.inet.tcp.bg_target_qdelay'].should == '100'
-      @ohai["network"]["settings"]['net.inet.tcp.bg_allowed_increase'].should == '2'
-      @ohai["network"]["settings"]['net.inet.tcp.bg_tether_shift'].should == '1'
-      @ohai["network"]["settings"]['net.inet.tcp.bg_ss_fltsz'].should == '2'
-      @ohai["network"]["settings"]['net.inet.udp.checksum'].should == '1'
-      @ohai["network"]["settings"]['net.inet.udp.maxdgram'].should == '9216'
-      @ohai["network"]["settings"]['net.inet.udp.recvspace'].should == '42080'
-      @ohai["network"]["settings"]['net.inet.udp.log_in_vain'].should == '0'
-      @ohai["network"]["settings"]['net.inet.udp.blackhole'].should == '0'
-      @ohai["network"]["settings"]['net.inet.udp.pcbcount'].should == '72'
-      @ohai["network"]["settings"]['net.inet.udp.randomize_ports'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.def_policy'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.esp_trans_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.esp_net_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.ah_trans_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.ah_net_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.ah_cleartos'].should == '1'
-      @ohai["network"]["settings"]['net.inet.ipsec.ah_offsetmask'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ipsec.dfbit'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ipsec.ecn'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ipsec.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ipsec.esp_randpad'].should == '-1'
-      @ohai["network"]["settings"]['net.inet.ipsec.bypass'].should == '0'
-      @ohai["network"]["settings"]['net.inet.ipsec.esp_port'].should == '4500'
-      @ohai["network"]["settings"]['net.inet.raw.maxdgram'].should == '8192'
-      @ohai["network"]["settings"]['net.inet.raw.recvspace'].should == '8192'
-      @ohai["network"]["settings"]['net.link.generic.system.ifcount'].should == '10'
-      @ohai["network"]["settings"]['net.link.generic.system.dlil_verbose'].should == '0'
-      @ohai["network"]["settings"]['net.link.generic.system.multi_threaded_input'].should == '1'
-      @ohai["network"]["settings"]['net.link.generic.system.dlil_input_sanity_check'].should == '0'
-      @ohai["network"]["settings"]['net.link.ether.inet.prune_intvl'].should == '300'
-      @ohai["network"]["settings"]['net.link.ether.inet.max_age'].should == '1200'
-      @ohai["network"]["settings"]['net.link.ether.inet.host_down_time'].should == '20'
-      @ohai["network"]["settings"]['net.link.ether.inet.apple_hwcksum_tx'].should == '1'
-      @ohai["network"]["settings"]['net.link.ether.inet.apple_hwcksum_rx'].should == '1'
-      @ohai["network"]["settings"]['net.link.ether.inet.arp_llreach_base'].should == '30'
-      @ohai["network"]["settings"]['net.link.ether.inet.maxtries'].should == '5'
-      @ohai["network"]["settings"]['net.link.ether.inet.useloopback'].should == '1'
-      @ohai["network"]["settings"]['net.link.ether.inet.proxyall'].should == '0'
-      @ohai["network"]["settings"]['net.link.ether.inet.sendllconflict'].should == '0'
-      @ohai["network"]["settings"]['net.link.ether.inet.log_arp_warnings'].should == '0'
-      @ohai["network"]["settings"]['net.link.ether.inet.keep_announcements'].should == '1'
-      @ohai["network"]["settings"]['net.link.ether.inet.send_conflicting_probes'].should == '1'
-      @ohai["network"]["settings"]['net.link.bridge.log_stp'].should == '0'
-      @ohai["network"]["settings"]['net.link.bridge.debug'].should == '0'
-      @ohai["network"]["settings"]['net.key.debug'].should == '0'
-      @ohai["network"]["settings"]['net.key.spi_trycnt'].should == '1000'
-      @ohai["network"]["settings"]['net.key.spi_minval'].should == '256'
-      @ohai["network"]["settings"]['net.key.spi_maxval'].should == '268435455'
-      @ohai["network"]["settings"]['net.key.int_random'].should == '60'
-      @ohai["network"]["settings"]['net.key.larval_lifetime'].should == '30'
-      @ohai["network"]["settings"]['net.key.blockacq_count'].should == '10'
-      @ohai["network"]["settings"]['net.key.blockacq_lifetime'].should == '20'
-      @ohai["network"]["settings"]['net.key.esp_keymin'].should == '256'
-      @ohai["network"]["settings"]['net.key.esp_auth'].should == '0'
-      @ohai["network"]["settings"]['net.key.ah_keymin'].should == '128'
-      @ohai["network"]["settings"]['net.key.prefered_oldsa'].should == '0'
-      @ohai["network"]["settings"]['net.key.natt_keepalive_interval'].should == '20'
-      @ohai["network"]["settings"]['net.inet6.ip6.forwarding'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.redirect'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.hlim'].should == '64'
-      @ohai["network"]["settings"]['net.inet6.ip6.maxfragpackets'].should == '1536'
-      @ohai["network"]["settings"]['net.inet6.ip6.accept_rtadv'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.keepfaith'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.log_interval'].should == '5'
-      @ohai["network"]["settings"]['net.inet6.ip6.hdrnestlimit'].should == '15'
-      @ohai["network"]["settings"]['net.inet6.ip6.dad_count'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.auto_flowlabel'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.defmcasthlim'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.gifhlim'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.kame_version'].should == '2009/apple-darwin'
-      @ohai["network"]["settings"]['net.inet6.ip6.use_deprecated'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.rr_prune'].should == '5'
-      @ohai["network"]["settings"]['net.inet6.ip6.v6only'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.rtexpire'].should == '3600'
-      @ohai["network"]["settings"]['net.inet6.ip6.rtminexpire'].should == '10'
-      @ohai["network"]["settings"]['net.inet6.ip6.rtmaxcache'].should == '128'
-      @ohai["network"]["settings"]['net.inet6.ip6.use_tempaddr'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.temppltime'].should == '86400'
-      @ohai["network"]["settings"]['net.inet6.ip6.tempvltime'].should == '604800'
-      @ohai["network"]["settings"]['net.inet6.ip6.auto_linklocal'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.prefer_tempaddr'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.use_defaultzone'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.maxfrags'].should == '12288'
-      @ohai["network"]["settings"]['net.inet6.ip6.mcast_pmtu'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.neighborgcthresh'].should == '1024'
-      @ohai["network"]["settings"]['net.inet6.ip6.maxifprefixes'].should == '16'
-      @ohai["network"]["settings"]['net.inet6.ip6.maxifdefrouters'].should == '16'
-      @ohai["network"]["settings"]['net.inet6.ip6.maxdynroutes'].should == '1024'
-      @ohai["network"]["settings"]['net.inet6.ip6.fw.enable'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.fw.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.fw.verbose'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.fw.verbose_limit'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.scopedroute'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.select_srcif_debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ip6.mcast.maxgrpsrc'].should == '512'
-      @ohai["network"]["settings"]['net.inet6.ip6.mcast.maxsocksrc'].should == '128'
-      @ohai["network"]["settings"]['net.inet6.ip6.mcast.loop'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ip6.only_allow_rfc4193_prefixes'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.def_policy'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.esp_trans_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.esp_net_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.ah_trans_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.ah_net_deflev'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.ecn'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.ipsec6.esp_randpad'].should == '-1'
-      @ohai["network"]["settings"]['net.inet6.icmp6.rediraccept'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.icmp6.redirtimeout'].should == '600'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_prune'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_delay'].should == '5'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_umaxtries'].should == '3'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_mmaxtries'].should == '3'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_useloopback'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nodeinfo'].should == '3'
-      @ohai["network"]["settings"]['net.inet6.icmp6.errppslimit'].should == '500'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_maxnudhint'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_debug'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_accept_6to4'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_onlink_ns_rfc4861'].should == '0'
-      @ohai["network"]["settings"]['net.inet6.icmp6.nd6_llreach_base'].should == '30'
-      @ohai["network"]["settings"]['net.inet6.mld.gsrdelay'].should == '10'
-      @ohai["network"]["settings"]['net.inet6.mld.v1enable'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.mld.use_allow'].should == '1'
-      @ohai["network"]["settings"]['net.inet6.mld.debug'].should == '0'
-      @ohai["network"]["settings"]['net.idle.route.expire_timeout'].should == '30'
-      @ohai["network"]["settings"]['net.idle.route.drain_interval'].should == '10'
-      @ohai["network"]["settings"]['net.statistics'].should == '1'
-      @ohai["network"]["settings"]['net.alf.loglevel'].should == '55'
-      @ohai["network"]["settings"]['net.alf.perm'].should == '0'
-      @ohai["network"]["settings"]['net.alf.defaultaction'].should == '1'
-      @ohai["network"]["settings"]['net.alf.mqcount'].should == '0'
-      @ohai["network"]["settings"]['net.smb.fs.version'].should == '107000'
-      @ohai["network"]["settings"]['net.smb.fs.loglevel'].should == '0'
-      @ohai["network"]["settings"]['net.smb.fs.kern_ntlmssp'].should == '0'
-      @ohai["network"]["settings"]['net.smb.fs.kern_deprecatePreXPServers'].should == '1'
-      @ohai["network"]["settings"]['net.smb.fs.kern_deadtimer'].should == '60'
-      @ohai["network"]["settings"]['net.smb.fs.kern_hard_deadtimer'].should == '600'
-      @ohai["network"]["settings"]['net.smb.fs.kern_soft_deadtimer'].should == '30'
-      @ohai["network"]["settings"]['net.smb.fs.tcpsndbuf'].should == '261120'
-      @ohai["network"]["settings"]['net.smb.fs.tcprcvbuf'].should == '261120'
+      @plugin['network']['settings']['net.local.stream.sendspace'].should == '8192'
+      @plugin["network"]["settings"]['net.local.stream.recvspace'].should == '8192'
+      @plugin["network"]["settings"]['net.local.stream.tracemdns'].should == '0'
+      @plugin["network"]["settings"]['net.local.dgram.maxdgram'].should == '2048'
+      @plugin["network"]["settings"]['net.local.dgram.recvspace'].should == '4096'
+      @plugin["network"]["settings"]['net.local.inflight'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.lowfirst'].should == '1023'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.lowlast'].should == '600'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.first'].should == '49152'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.last'].should == '65535'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.hifirst'].should == '49152'
+      @plugin["network"]["settings"]['net.inet.ip.portrange.hilast'].should == '65535'
+      @plugin["network"]["settings"]['net.inet.ip.forwarding'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.redirect'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.ttl'].should == '64'
+      @plugin["network"]["settings"]['net.inet.ip.rtexpire'].should == '12'
+      @plugin["network"]["settings"]['net.inet.ip.rtminexpire'].should == '10'
+      @plugin["network"]["settings"]['net.inet.ip.rtmaxcache'].should == '128'
+      @plugin["network"]["settings"]['net.inet.ip.sourceroute'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.intr_queue_maxlen'].should == '50'
+      @plugin["network"]["settings"]['net.inet.ip.intr_queue_drops'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.accept_sourceroute'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.keepfaith'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.gifttl'].should == '30'
+      @plugin["network"]["settings"]['net.inet.ip.subnets_are_local'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.mcast.maxgrpsrc'].should == '512'
+      @plugin["network"]["settings"]['net.inet.ip.mcast.maxsocksrc'].should == '128'
+      @plugin["network"]["settings"]['net.inet.ip.mcast.loop'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.check_route_selfref'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.use_route_genid'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.hash_size'].should == '64'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.curr_time'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.ready_heap'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.extract_heap'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.searches'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.search_steps'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.expire'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.max_chain_len'].should == '16'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_lookup_depth'].should == '256'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_avg_pkt_size'].should == '512'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_max_pkt_size'].should == '1500'
+      @plugin["network"]["settings"]['net.inet.ip.dummynet.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.enable'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.fw.autoinc_step'].should == '100'
+      @plugin["network"]["settings"]['net.inet.ip.fw.one_pass'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.verbose'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.verbose_limit'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_buckets'].should == '256'
+      @plugin["network"]["settings"]['net.inet.ip.fw.curr_dyn_buckets'].should == '256'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_count'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_max'].should == '4096'
+      @plugin["network"]["settings"]['net.inet.ip.fw.static_count'].should == '2'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_ack_lifetime'].should == '300'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_syn_lifetime'].should == '20'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_fin_lifetime'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_rst_lifetime'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_udp_lifetime'].should == '10'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_short_lifetime'].should == '5'
+      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_keepalive'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.maxfragpackets'].should == '1536'
+      @plugin["network"]["settings"]['net.inet.ip.maxfragsperpacket'].should == '128'
+      @plugin["network"]["settings"]['net.inet.ip.maxfrags'].should == '3072'
+      @plugin["network"]["settings"]['net.inet.ip.scopedroute'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.check_interface'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.linklocal.in.allowbadttl'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.random_id'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ip.maxchainsent'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ip.select_srcif_debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet.icmp.maskrepl'].should == '0'
+      @plugin["network"]["settings"]['net.inet.icmp.icmplim'].should == '250'
+      @plugin["network"]["settings"]['net.inet.icmp.timestamp'].should == '0'
+      @plugin["network"]["settings"]['net.inet.icmp.drop_redirect'].should == '0'
+      @plugin["network"]["settings"]['net.inet.icmp.log_redirect'].should == '0'
+      @plugin["network"]["settings"]['net.inet.icmp.bmcastecho'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.recvifkludge'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.sendra'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.sendlocal'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.v1enable'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.v2enable'].should == '1'
+      @plugin["network"]["settings"]['net.inet.igmp.legacysupp'].should == '0'
+      @plugin["network"]["settings"]['net.inet.igmp.default_version'].should == '3'
+      @plugin["network"]["settings"]['net.inet.igmp.gsrdelay'].should == '10'
+      @plugin["network"]["settings"]['net.inet.igmp.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.rfc1323'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.rfc1644'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.mssdflt'].should == '512'
+      @plugin["network"]["settings"]['net.inet.tcp.keepidle'].should == '7200000'
+      @plugin["network"]["settings"]['net.inet.tcp.keepintvl'].should == '75000'
+      @plugin["network"]["settings"]['net.inet.tcp.sendspace'].should == '65536'
+      @plugin["network"]["settings"]['net.inet.tcp.recvspace'].should == '65536'
+      @plugin["network"]["settings"]['net.inet.tcp.keepinit'].should == '75000'
+      @plugin["network"]["settings"]['net.inet.tcp.v6mssdflt'].should == '1024'
+      @plugin["network"]["settings"]['net.inet.tcp.log_in_vain'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.blackhole'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.delayed_ack'].should == '3'
+      @plugin["network"]["settings"]['net.inet.tcp.tcp_lq_overflow'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.recvbg'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.drop_synfin'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.reass.maxsegments'].should == '3072'
+      @plugin["network"]["settings"]['net.inet.tcp.reass.cursegments'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.reass.overflows'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.slowlink_wsize'].should == '8192'
+      @plugin["network"]["settings"]['net.inet.tcp.maxseg_unacked'].should == '8'
+      @plugin["network"]["settings"]['net.inet.tcp.rfc3465'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.rfc3465_lim2'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.rtt_samples_per_slot'].should == '20'
+      @plugin["network"]["settings"]['net.inet.tcp.recv_allowed_iaj'].should == '5'
+      @plugin["network"]["settings"]['net.inet.tcp.acc_iaj_high_thresh'].should == '100'
+      @plugin["network"]["settings"]['net.inet.tcp.rexmt_thresh'].should == '2'
+      @plugin["network"]["settings"]['net.inet.tcp.path_mtu_discovery'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.slowstart_flightsize'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.local_slowstart_flightsize'].should == '8'
+      @plugin["network"]["settings"]['net.inet.tcp.tso'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.ecn_initiate_out'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.ecn_negotiate_in'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.packetchain'].should == '50'
+      @plugin["network"]["settings"]['net.inet.tcp.socket_unlocked_on_output'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.rfc3390'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.min_iaj_win'].should == '4'
+      @plugin["network"]["settings"]['net.inet.tcp.acc_iaj_react_limit'].should == '200'
+      @plugin["network"]["settings"]['net.inet.tcp.sack'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.sack_maxholes'].should == '128'
+      @plugin["network"]["settings"]['net.inet.tcp.sack_globalmaxholes'].should == '65536'
+      @plugin["network"]["settings"]['net.inet.tcp.sack_globalholes'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.minmss'].should == '216'
+      @plugin["network"]["settings"]['net.inet.tcp.minmssoverload'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.do_tcpdrain'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.pcbcount'].should == '86'
+      @plugin["network"]["settings"]['net.inet.tcp.icmp_may_rst'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.strict_rfc1948'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.isn_reseed_interval'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.background_io_enabled'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.rtt_min'].should == '100'
+      @plugin["network"]["settings"]['net.inet.tcp.rexmt_slop'].should == '200'
+      @plugin["network"]["settings"]['net.inet.tcp.randomize_ports'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.newreno_sockets'].should == '81'
+      @plugin["network"]["settings"]['net.inet.tcp.background_sockets'].should == '-1'
+      @plugin["network"]["settings"]['net.inet.tcp.tcbhashsize'].should == '4096'
+      @plugin["network"]["settings"]['net.inet.tcp.background_io_trigger'].should == '5'
+      @plugin["network"]["settings"]['net.inet.tcp.msl'].should == '15000'
+      @plugin["network"]["settings"]['net.inet.tcp.max_persist_timeout'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.always_keepalive'].should == '0'
+      @plugin["network"]["settings"]['net.inet.tcp.timer_fastmode_idlemax'].should == '20'
+      @plugin["network"]["settings"]['net.inet.tcp.broken_peer_syn_rxmit_thres'].should == '7'
+      @plugin["network"]["settings"]['net.inet.tcp.tcp_timer_advanced'].should == '5'
+      @plugin["network"]["settings"]['net.inet.tcp.tcp_resched_timerlist'].should == '12209'
+      @plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_detection'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_mss'].should == '1200'
+      @plugin["network"]["settings"]['net.inet.tcp.timer_fastquantum'].should == '100'
+      @plugin["network"]["settings"]['net.inet.tcp.timer_slowquantum'].should == '500'
+      @plugin["network"]["settings"]['net.inet.tcp.win_scale_factor'].should == '3'
+      @plugin["network"]["settings"]['net.inet.tcp.sockthreshold'].should == '64'
+      @plugin["network"]["settings"]['net.inet.tcp.bg_target_qdelay'].should == '100'
+      @plugin["network"]["settings"]['net.inet.tcp.bg_allowed_increase'].should == '2'
+      @plugin["network"]["settings"]['net.inet.tcp.bg_tether_shift'].should == '1'
+      @plugin["network"]["settings"]['net.inet.tcp.bg_ss_fltsz'].should == '2'
+      @plugin["network"]["settings"]['net.inet.udp.checksum'].should == '1'
+      @plugin["network"]["settings"]['net.inet.udp.maxdgram'].should == '9216'
+      @plugin["network"]["settings"]['net.inet.udp.recvspace'].should == '42080'
+      @plugin["network"]["settings"]['net.inet.udp.log_in_vain'].should == '0'
+      @plugin["network"]["settings"]['net.inet.udp.blackhole'].should == '0'
+      @plugin["network"]["settings"]['net.inet.udp.pcbcount'].should == '72'
+      @plugin["network"]["settings"]['net.inet.udp.randomize_ports'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.def_policy'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.esp_trans_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.esp_net_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.ah_trans_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.ah_net_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.ah_cleartos'].should == '1'
+      @plugin["network"]["settings"]['net.inet.ipsec.ah_offsetmask'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ipsec.dfbit'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ipsec.ecn'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ipsec.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ipsec.esp_randpad'].should == '-1'
+      @plugin["network"]["settings"]['net.inet.ipsec.bypass'].should == '0'
+      @plugin["network"]["settings"]['net.inet.ipsec.esp_port'].should == '4500'
+      @plugin["network"]["settings"]['net.inet.raw.maxdgram'].should == '8192'
+      @plugin["network"]["settings"]['net.inet.raw.recvspace'].should == '8192'
+      @plugin["network"]["settings"]['net.link.generic.system.ifcount'].should == '10'
+      @plugin["network"]["settings"]['net.link.generic.system.dlil_verbose'].should == '0'
+      @plugin["network"]["settings"]['net.link.generic.system.multi_threaded_input'].should == '1'
+      @plugin["network"]["settings"]['net.link.generic.system.dlil_input_sanity_check'].should == '0'
+      @plugin["network"]["settings"]['net.link.ether.inet.prune_intvl'].should == '300'
+      @plugin["network"]["settings"]['net.link.ether.inet.max_age'].should == '1200'
+      @plugin["network"]["settings"]['net.link.ether.inet.host_down_time'].should == '20'
+      @plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_tx'].should == '1'
+      @plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_rx'].should == '1'
+      @plugin["network"]["settings"]['net.link.ether.inet.arp_llreach_base'].should == '30'
+      @plugin["network"]["settings"]['net.link.ether.inet.maxtries'].should == '5'
+      @plugin["network"]["settings"]['net.link.ether.inet.useloopback'].should == '1'
+      @plugin["network"]["settings"]['net.link.ether.inet.proxyall'].should == '0'
+      @plugin["network"]["settings"]['net.link.ether.inet.sendllconflict'].should == '0'
+      @plugin["network"]["settings"]['net.link.ether.inet.log_arp_warnings'].should == '0'
+      @plugin["network"]["settings"]['net.link.ether.inet.keep_announcements'].should == '1'
+      @plugin["network"]["settings"]['net.link.ether.inet.send_conflicting_probes'].should == '1'
+      @plugin["network"]["settings"]['net.link.bridge.log_stp'].should == '0'
+      @plugin["network"]["settings"]['net.link.bridge.debug'].should == '0'
+      @plugin["network"]["settings"]['net.key.debug'].should == '0'
+      @plugin["network"]["settings"]['net.key.spi_trycnt'].should == '1000'
+      @plugin["network"]["settings"]['net.key.spi_minval'].should == '256'
+      @plugin["network"]["settings"]['net.key.spi_maxval'].should == '268435455'
+      @plugin["network"]["settings"]['net.key.int_random'].should == '60'
+      @plugin["network"]["settings"]['net.key.larval_lifetime'].should == '30'
+      @plugin["network"]["settings"]['net.key.blockacq_count'].should == '10'
+      @plugin["network"]["settings"]['net.key.blockacq_lifetime'].should == '20'
+      @plugin["network"]["settings"]['net.key.esp_keymin'].should == '256'
+      @plugin["network"]["settings"]['net.key.esp_auth'].should == '0'
+      @plugin["network"]["settings"]['net.key.ah_keymin'].should == '128'
+      @plugin["network"]["settings"]['net.key.prefered_oldsa'].should == '0'
+      @plugin["network"]["settings"]['net.key.natt_keepalive_interval'].should == '20'
+      @plugin["network"]["settings"]['net.inet6.ip6.forwarding'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.redirect'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.hlim'].should == '64'
+      @plugin["network"]["settings"]['net.inet6.ip6.maxfragpackets'].should == '1536'
+      @plugin["network"]["settings"]['net.inet6.ip6.accept_rtadv'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.keepfaith'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.log_interval'].should == '5'
+      @plugin["network"]["settings"]['net.inet6.ip6.hdrnestlimit'].should == '15'
+      @plugin["network"]["settings"]['net.inet6.ip6.dad_count'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.auto_flowlabel'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.defmcasthlim'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.gifhlim'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.kame_version'].should == '2009/apple-darwin'
+      @plugin["network"]["settings"]['net.inet6.ip6.use_deprecated'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.rr_prune'].should == '5'
+      @plugin["network"]["settings"]['net.inet6.ip6.v6only'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.rtexpire'].should == '3600'
+      @plugin["network"]["settings"]['net.inet6.ip6.rtminexpire'].should == '10'
+      @plugin["network"]["settings"]['net.inet6.ip6.rtmaxcache'].should == '128'
+      @plugin["network"]["settings"]['net.inet6.ip6.use_tempaddr'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.temppltime'].should == '86400'
+      @plugin["network"]["settings"]['net.inet6.ip6.tempvltime'].should == '604800'
+      @plugin["network"]["settings"]['net.inet6.ip6.auto_linklocal'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.prefer_tempaddr'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.use_defaultzone'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.maxfrags'].should == '12288'
+      @plugin["network"]["settings"]['net.inet6.ip6.mcast_pmtu'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.neighborgcthresh'].should == '1024'
+      @plugin["network"]["settings"]['net.inet6.ip6.maxifprefixes'].should == '16'
+      @plugin["network"]["settings"]['net.inet6.ip6.maxifdefrouters'].should == '16'
+      @plugin["network"]["settings"]['net.inet6.ip6.maxdynroutes'].should == '1024'
+      @plugin["network"]["settings"]['net.inet6.ip6.fw.enable'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.fw.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.fw.verbose'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.fw.verbose_limit'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.scopedroute'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.select_srcif_debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ip6.mcast.maxgrpsrc'].should == '512'
+      @plugin["network"]["settings"]['net.inet6.ip6.mcast.maxsocksrc'].should == '128'
+      @plugin["network"]["settings"]['net.inet6.ip6.mcast.loop'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ip6.only_allow_rfc4193_prefixes'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.def_policy'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_trans_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_net_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.ah_trans_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.ah_net_deflev'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.ecn'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_randpad'].should == '-1'
+      @plugin["network"]["settings"]['net.inet6.icmp6.rediraccept'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.icmp6.redirtimeout'].should == '600'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_prune'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_delay'].should == '5'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_umaxtries'].should == '3'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_mmaxtries'].should == '3'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_useloopback'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nodeinfo'].should == '3'
+      @plugin["network"]["settings"]['net.inet6.icmp6.errppslimit'].should == '500'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_maxnudhint'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_debug'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_accept_6to4'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_onlink_ns_rfc4861'].should == '0'
+      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_llreach_base'].should == '30'
+      @plugin["network"]["settings"]['net.inet6.mld.gsrdelay'].should == '10'
+      @plugin["network"]["settings"]['net.inet6.mld.v1enable'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.mld.use_allow'].should == '1'
+      @plugin["network"]["settings"]['net.inet6.mld.debug'].should == '0'
+      @plugin["network"]["settings"]['net.idle.route.expire_timeout'].should == '30'
+      @plugin["network"]["settings"]['net.idle.route.drain_interval'].should == '10'
+      @plugin["network"]["settings"]['net.statistics'].should == '1'
+      @plugin["network"]["settings"]['net.alf.loglevel'].should == '55'
+      @plugin["network"]["settings"]['net.alf.perm'].should == '0'
+      @plugin["network"]["settings"]['net.alf.defaultaction'].should == '1'
+      @plugin["network"]["settings"]['net.alf.mqcount'].should == '0'
+      @plugin["network"]["settings"]['net.smb.fs.version'].should == '107000'
+      @plugin["network"]["settings"]['net.smb.fs.loglevel'].should == '0'
+      @plugin["network"]["settings"]['net.smb.fs.kern_ntlmssp'].should == '0'
+      @plugin["network"]["settings"]['net.smb.fs.kern_deprecatePreXPServers'].should == '1'
+      @plugin["network"]["settings"]['net.smb.fs.kern_deadtimer'].should == '60'
+      @plugin["network"]["settings"]['net.smb.fs.kern_hard_deadtimer'].should == '600'
+      @plugin["network"]["settings"]['net.smb.fs.kern_soft_deadtimer'].should == '30'
+      @plugin["network"]["settings"]['net.smb.fs.tcpsndbuf'].should == '261120'
+      @plugin["network"]["settings"]['net.smb.fs.tcprcvbuf'].should == '261120'
     end
   end
 end

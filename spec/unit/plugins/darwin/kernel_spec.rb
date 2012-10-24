@@ -21,26 +21,26 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:kernel] = Mash.new
-    @ohai[:kernel][:name] = "darwin"
+    @ohai = Ohai::System.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/kernel.rb", PLUGIN_PATH))
+    @plugin[:kernel] = Mash.new
+    @plugin[:kernel][:name] = "darwin"
   end
-  
+
   it "should not set kernel_machine to x86_64" do
-    @ohai.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("0")
-    @ohai._require_plugin("darwin::kernel")
-    @ohai[:kernel][:machine].should_not == 'x86_64'
+    @plugin.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("0")
+    @plugin.run
+    @plugin[:kernel][:machine].should_not == 'x86_64'
   end
-  
+
   it "should set kernel_machine to x86_64" do
-    @ohai.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
-    @ohai._require_plugin("darwin::kernel")
-    @ohai[:kernel][:machine].should == 'x86_64'
+    @plugin.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
+    @plugin.run
+    @plugin[:kernel][:machine].should == 'x86_64'
   end
-  
+
   it "should set the kernel_os to the kernel_name value" do
-    @ohai._require_plugin("darwin::kernel")
-    @ohai[:kernel][:os].should == @ohai[:kernel][:name]
+    @plugin.run
+    @plugin[:kernel][:os].should == @plugin[:kernel][:name]
   end
 end

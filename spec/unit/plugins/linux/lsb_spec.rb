@@ -24,9 +24,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:os] = "linux"    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.extend(SimpleFromFile)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/lsb.rb", PLUGIN_PATH))
+    @plugin[:os] = "linux"    
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.extend(SimpleFromFile)
   end
 
   describe "on systems with /etc/lsb-release" do
@@ -42,23 +43,23 @@ describe Ohai::System, "Linux lsb plugin" do
     end
 
     it "should set lsb[:id]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:id].should == "Ubuntu"
+      @plugin.run
+      @plugin[:lsb][:id].should == "Ubuntu"
     end
   
     it "should set lsb[:release]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:release].should == "8.04"
+      @plugin.run
+      @plugin[:lsb][:release].should == "8.04"
     end
   
     it "should set lsb[:codename]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:codename].should == "hardy"
+      @plugin.run
+      @plugin[:lsb][:codename].should == "hardy"
     end
   
     it "should set lsb[:description]" do
-      @ohai._require_plugin("linux::lsb")
-      @ohai[:lsb][:description].should == "Ubuntu 8.04"
+      @plugin.run
+      @plugin[:lsb][:description].should == "Ubuntu 8.04"
     end
   end
 
@@ -84,27 +85,27 @@ describe Ohai::System, "Linux lsb plugin" do
           and_yield("Release:  5.4").
           and_yield("Codename: Final")
   
-        @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @plugin.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       end
 
       it "should set lsb[:id]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:id].should == "CentOS"
+        @plugin.run
+        @plugin[:lsb][:id].should == "CentOS"
       end
     
       it "should set lsb[:release]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:release].should == "5.4"
+        @plugin.run
+        @plugin[:lsb][:release].should == "5.4"
       end
     
       it "should set lsb[:codename]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:codename].should == "Final"
+        @plugin.run
+        @plugin[:lsb][:codename].should == "Final"
       end
     
       it "should set lsb[:description]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:description].should == "CentOS release 5.4 (Final)"
+        @plugin.run
+        @plugin[:lsb][:description].should == "CentOS release 5.4 (Final)"
       end
     end
 
@@ -117,27 +118,27 @@ describe Ohai::System, "Linux lsb plugin" do
           and_yield("Release:        14").
           and_yield("Codename:       Laughlin")
   
-        @ohai.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @plugin.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       end
   
       it "should set lsb[:id]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:id].should == "Fedora"
+        @plugin.run
+        @plugin[:lsb][:id].should == "Fedora"
       end
     
       it "should set lsb[:release]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:release].should == "14"
+        @plugin.run
+        @plugin[:lsb][:release].should == "14"
       end
     
       it "should set lsb[:codename]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:codename].should == "Laughlin"
+        @plugin.run
+        @plugin[:lsb][:codename].should == "Laughlin"
       end
     
       it "should set lsb[:description]" do
-        @ohai._require_plugin("linux::lsb")
-        @ohai[:lsb][:description].should == "Fedora release 14 (Laughlin)"
+        @plugin.run
+        @plugin[:lsb][:description].should == "Fedora release 14 (Laughlin)"
       end
     end
   end
@@ -145,6 +146,6 @@ describe Ohai::System, "Linux lsb plugin" do
   it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
     File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
     File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(false)
-    @ohai.attribute?(:lsb).should be(false)
+    @plugin.attribute?(:lsb).should be(false)
   end
 end

@@ -26,7 +26,7 @@ begin
   describe Ohai::System, "plugin chef" do
     before(:each) do
       @ohai = Ohai::System.new
-      @ohai.stub!(:require_plugin).and_return(true)
+      @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "chef.rb"))
     end
     
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
@@ -35,8 +35,8 @@ begin
     end
   
     pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
-  
   end
+  
 rescue LoadError
   # the chef module is not available, ignoring.
 

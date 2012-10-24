@@ -25,6 +25,7 @@ describe Ohai::System, "Darwin kernel plugin" do
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/kernel.rb", PLUGIN_PATH))
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:name] = "darwin"
+    @plugin.should_receive(:popen4).with("kextstat -k -l").and_yield(1, StringIO.new, StringIO.new, StringIO.new)
   end
 
   it "should not set kernel_machine to x86_64" do
@@ -40,6 +41,7 @@ describe Ohai::System, "Darwin kernel plugin" do
   end
 
   it "should set the kernel_os to the kernel_name value" do
+    @plugin.stub!(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
     @plugin.run
     @plugin[:kernel][:os].should == @plugin[:kernel][:name]
   end

@@ -135,30 +135,29 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:kernel] = Mash.new
-    @ohai.stub(:from).with("uname -s").and_return("SunOS")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/kernel.rb", PLUGIN_PATH))
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin[:kernel] = Mash.new
+    @plugin.stub(:from).with("uname -s").and_return("SunOS")
+    stdin = StringIO.new
+    @modinfo_stdout = StringIO.new(MODINFO)
+    @plugin.stub!(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
   end
 
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", "SunOS")
 
   it "gives excruciating detail about kernel modules" do
-    stdin = StringIO.new
-    @modinfo_stdout = StringIO.new(MODINFO)
-    @ohai.stub!(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
+    @plugin.run
 
-    @ohai._require_plugin("solaris2::kernel")
-
-    @ohai[:kernel][:modules].should have(107).modules
+    @plugin[:kernel][:modules].should have(107).modules
 
     # Teh daterz
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
     teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" =>  17955, "description" => "filesystem for specfs"}
-    @ohai[:kernel][:modules].keys.should include("specfs")
-    @ohai[:kernel][:modules].keys.should_not include("Module")
-    @ohai[:kernel][:modules]["specfs"].should == teh_daterz
+    @plugin[:kernel][:modules].keys.should include("specfs")
+    @plugin[:kernel][:modules].keys.should_not include("Module")
+    @plugin[:kernel][:modules]["specfs"].should == teh_daterz
   end
-
 
 end

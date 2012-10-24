@@ -22,9 +22,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai._require_plugin("kernel")
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.stub!(:from).with("uname -o").and_return("Linux")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/kernel.rb", PLUGIN_PATH))
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub!(:from).with("uname -o").and_return("Linux")
+    @plugin[:kernel] = {}
+    @plugin.run
   end
 
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", "Linux")

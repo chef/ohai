@@ -22,31 +22,32 @@ describe Ohai::System, "plugin php" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "php.rb"))
+    @plugin[:languages] = Mash.new
+    @plugin.stub!(:require_plugin).and_return(true)
     @status = 0
     @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"
     @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
   end
 
   it "should get the php version from running php -V" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([0, "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n", ""])
-    @ohai._require_plugin("php")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([0, "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n", ""])
+    @plugin.run
   end
 
   it "should set languages[:php][:version]" do
-    @ohai._require_plugin("php")
-    @ohai.languages[:php][:version].should eql("5.1.6")
+    @plugin.run
+    @plugin.languages[:php][:version].should eql("5.1.6")
   end
 
   it "should not set the languages[:php] tree up if php command fails" do
     @status = 1
     @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"
     @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
-    @ohai._require_plugin("php")
-    @ohai.languages.should_not have_key(:php)
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.run
+    @plugin.languages.should_not have_key(:php)
   end
 
 end

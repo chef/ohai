@@ -94,18 +94,19 @@ EOS
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "dmi.rb"))
+    @plugin.stub!(:require_plugin).and_return(true)
     @stdin = mock("STDIN", { :close => true })
     @pid = 10
     @stderr = mock("STDERR")
     @stdout = StringIO.new(DMI_OUT)
     @status = 0
-    @ohai.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @plugin.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
   end
 
   it "should run dmidecode" do
-    @ohai.should_receive(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-    @ohai._require_plugin("dmi")
+    @plugin.should_receive(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @plugin.run
   end
 
   # Test some simple sample data
@@ -125,8 +126,8 @@ describe Ohai::System, "plugin dmi" do
   }.each do |id, data|
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do
-        @ohai._require_plugin("dmi")
-        @ohai[:dmi][id][attribute].should eql(value)
+        @plugin.run
+        @plugin[:dmi][id][attribute].should eql(value)
       end
     end
   end

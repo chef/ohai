@@ -22,40 +22,31 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux plugin uptime" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = "linux"
-    @ohai._require_plugin("uptime")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/uptime.rb", PLUGIN_PATH))
+    @plugin[:os] = "linux"
+    @plugin.require_plugin("uptime")
     @mock_file = mock("/proc/uptime", { :gets => "18423 989" })
     File.stub!(:open).with("/proc/uptime").and_return(@mock_file)
+    @plugin.stub!(:require_plugin).and_return(true)
   end
  
-  it "should check /proc/uptime for the uptime and idletime" do
-    File.should_receive(:open).with("/proc/uptime").and_return(@mock_file)
-    @ohai._require_plugin("linux::uptime")
-  end
-  
-  it "should split the value of /proc uptime" do
-    @mock_file.gets.should_receive(:split).with(" ").and_return(["18423", "989"])
-    @ohai._require_plugin("linux::uptime")
-  end
-  
   it "should set uptime_seconds to uptime" do
-    @ohai._require_plugin("linux::uptime")
-    @ohai[:uptime_seconds].should == 18423
+    @plugin.run
+    @plugin[:uptime_seconds].should == 18423
   end
   
   it "should set uptime to a human readable date" do
-    @ohai._require_plugin("linux::uptime")
-    @ohai[:uptime].should == "5 hours 07 minutes 03 seconds"
+    @plugin.run
+    @plugin[:uptime].should == "5 hours 07 minutes 03 seconds"
   end
   
   it "should set idletime_seconds to uptime" do
-    @ohai._require_plugin("linux::uptime")
-    @ohai[:idletime_seconds].should == 989
+    @plugin.run
+    @plugin[:idletime_seconds].should == 989
   end
   
   it "should set idletime to a human readable date" do
-    @ohai._require_plugin("linux::uptime")
-    @ohai[:idletime].should == "16 minutes 29 seconds"
+    @plugin.run
+    @plugin[:idletime].should == "16 minutes 29 seconds"
   end
 end

@@ -25,11 +25,12 @@ describe Ohai::System, "plugin ruby" do
 
   before(:all) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ruby.rb"))
+    @plugin[:languages] = Mash.new
 
-    @ohai.require_plugin("ruby")
+    @plugin.require_plugin("ruby")
 
-    @ruby_ohai_data_pristine = @ohai[:languages][:ruby]
+    @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
   end
 
   before(:each) do

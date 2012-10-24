@@ -104,204 +104,208 @@ describe Ohai::System, "plugin c" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @path = File.join(PLUGIN_PATH, "c.rb")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, @path)
+
+
+    @plugin[:languages] = Mash.new
     #gcc
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
     #glibc
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
     #ms cl
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
     #ms vs
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
     #ibm xlc
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
     #sun pro
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
     #hpux cc
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
   end
 
   #gcc
   it "should get the gcc version from running gcc -v" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
+    @plugin.run
   end
 
   it "should set languages[:c][:gcc][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:gcc][:version].should eql("3.4.6")
+    @plugin.run
+    @plugin.languages[:c][:gcc][:version].should eql("3.4.6")
   end
 
   it "should set languages[:c][:gcc][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:gcc][:description].should eql(C_GCC.split($/).last)
+    @plugin.run
+    @plugin.languages[:c][:gcc][:description].should eql(C_GCC.split($/).last)
   end
 
   it "should not set the languages[:c][:gcc] tree up if gcc command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:gcc) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:gcc) if @plugin[:languages][:c]
   end
 
   #glibc
   it "should get the glibc x.x.x version from running /lib/libc.so.6" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
+    @plugin.run
   end
 
   it "should set languages[:c][:glibc][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:glibc][:version].should eql("2.3.4")
+    @plugin.run
+    @plugin.languages[:c][:glibc][:version].should eql("2.3.4")
   end
 
   it "should set languages[:c][:glibc][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:glibc][:description].should eql(C_GLIBC_2_3_4.split($/).first)
+    @plugin.run
+    @plugin.languages[:c][:glibc][:description].should eql(C_GLIBC_2_3_4.split($/).first)
   end
 
   it "should not set the languages[:c][:glibc] tree up if glibc command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:glibc) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([1, "", ""])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib64/libc.so.6"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:glibc) if @plugin[:languages][:c]
   end
 
   it "should get the glibc x.x version from running /lib/libc.so.6" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:glibc][:version].should eql("2.5")
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
+    @plugin.run
+    @plugin.languages[:c][:glibc][:version].should eql("2.5")
   end
 
   #ms cl
   it "should get the cl version from running cl /?" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
+    @plugin.run
   end
 
   it "should set languages[:c][:cl][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:cl][:version].should eql("14.00.50727.762")
+    @plugin.run
+    @plugin.languages[:c][:cl][:version].should eql("14.00.50727.762")
   end
 
   it "should set languages[:c][:cl][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:cl][:description].should eql(C_CL.split($/).first)
+    @plugin.run
+    @plugin.languages[:c][:cl][:description].should eql(C_CL.split($/).first)
   end
 
   it "should not set the languages[:c][:cl] tree up if cl command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:cl) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:cl) if @plugin[:languages][:c]
   end
 
   #ms vs
   it "should get the vs version from running devenv.com /?" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
+    @plugin.run
   end
 
   it "should set languages[:c][:vs][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:vs][:version].should eql("8.0.50727.762")
+    @plugin.run
+    @plugin.languages[:c][:vs][:version].should eql("8.0.50727.762")
   end
 
   it "should set languages[:c][:vs][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:vs][:description].should eql(C_VS.split($/)[1])
+    @plugin.run
+    @plugin.languages[:c][:vs][:description].should eql(C_VS.split($/)[1])
   end
 
   it "should not set the languages[:c][:vs] tree up if devenv command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:vs) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:vs) if @plugin[:languages][:c]
   end
 
   #ibm xlc
   it "should get the xlc version from running xlc -qversion" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
+    @plugin.run
   end
 
   it "should set languages[:c][:xlc][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:xlc][:version].should eql("9.0")
+    @plugin.run
+    @plugin.languages[:c][:xlc][:version].should eql("9.0")
   end
 
   it "should set languages[:c][:xlc][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:xlc][:description].should eql(C_XLC.split($/).first)
+    @plugin.run
+    @plugin.languages[:c][:xlc][:description].should eql(C_XLC.split($/).first)
   end
 
   it "should not set the languages[:c][:xlc] tree up if xlc command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:xlc) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:xlc) if @plugin[:languages][:c]
   end
 
   it "should set the languages[:c][:xlc] tree up if xlc exit status is 249" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([63744, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:xlc) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([63744, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:xlc) if @plugin[:languages][:c]
   end
 
   #sun pro
   it "should get the cc version from running cc -V -flags" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
+    @plugin.run
   end
 
   it "should set languages[:c][:sunpro][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:sunpro][:version].should eql("5.8")
+    @plugin.run
+    @plugin.languages[:c][:sunpro][:version].should eql("5.8")
   end
 
   it "should set languages[:c][:sunpro][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:sunpro][:description].should eql(C_SUN.chomp)
+    @plugin.run
+    @plugin.languages[:c][:sunpro][:description].should eql(C_SUN.chomp)
   end
 
   it "should not set the languages[:c][:sunpro] tree up if cc command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:sunpro) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
 
   it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
     fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", fedora_error_message])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:sunpro) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", fedora_error_message])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
   it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
     hpux_error_message = "cc: warning 901: unknown option: `-flags': use +help for online documentation.\ncc: HP C/aC++ B3910B A.06.25 [Nov 30 2009]"
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", hpux_error_message])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:sunpro) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", hpux_error_message])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
   #hpux cc
   it "should get the cc version from running what cc" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
-    @ohai._require_plugin("c")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
+    @plugin.run
   end
 
   it "should set languages[:c][:hpcc][:version]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:hpcc][:version].should eql("B.11.11.16")
+    @plugin.run
+    @plugin.languages[:c][:hpcc][:version].should eql("B.11.11.16")
   end
 
   it "should set languages[:c][:hpcc][:description]" do
-    @ohai._require_plugin("c")
-    @ohai.languages[:c][:hpcc][:description].should eql(C_HPUX.split($/)[3].strip)
+    @plugin.run
+    @plugin.languages[:c][:hpcc][:description].should eql(C_HPUX.split($/)[3].strip)
   end
 
   it "should not set the languages[:c][:hpcc] tree up if cc command fails" do
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([1, "", ""])
-    @ohai._require_plugin("c")
-    @ohai[:languages][:c].should_not have_key(:hpcc) if @ohai[:languages][:c]
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([1, "", ""])
+    @plugin.run
+    @plugin[:languages][:c].should_not have_key(:hpcc) if @plugin[:languages][:c]
   end
 end

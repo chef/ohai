@@ -36,6 +36,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub!(:exists?).with("/etc/slackware-version").and_return(false)
     File.stub!(:exists?).with("/etc/enterprise-release").and_return(false)
     File.stub!(:exists?).with("/etc/oracle-release").and_return(false)
+    File.stub!(:exists?).with("/usr/bin/raspi-config").and_return(false)
   end
   
   it "should require the lsb plugin" do
@@ -129,6 +130,15 @@ describe Ohai::System, "Linux plugin platform" do
       @ohai[:lsb][:release] = "8.04"
       @ohai._require_plugin("linux::platform")
       @ohai[:platform].should == "ubuntu"
+    end
+
+    # Raspbian is a debian clone
+    it "should detect Raspbian as itself with debian as the family" do
+      File.should_receive(:exists?).with("/usr/bin/raspi-config").and_return(true)
+      File.should_receive(:read).with("/etc/debian_version").and_return("wheezy/sid")
+      @ohai._require_plugin("linux::platform")
+      @ohai[:platform].should == "raspbian"
+      @ohai[:platform_family].should == "debian"
     end
   end
 

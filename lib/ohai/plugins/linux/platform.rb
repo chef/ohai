@@ -44,7 +44,11 @@ elsif File.exists?("/etc/debian_version")
     platform "ubuntu"
     platform_version lsb[:release]
   else 
-    platform "debian"
+    if File.exists?("/usr/bin/raspi-config")
+      platform "raspbian"
+    else
+      platform "debian"
+    end
     platform_version File.read("/etc/debian_version").chomp
   end
 elsif File.exists?("/etc/redhat-release")
@@ -85,7 +89,7 @@ end
 
 
 case platform
-  when /debian/, /ubuntu/, /linuxmint/
+  when /debian/, /ubuntu/, /linuxmint/, /raspbian/
     platform_family "debian"
   when /fedora/
     platform_family "fedora"

@@ -169,7 +169,7 @@ def get_openstack_values
   cloud[:public_hostname] = openstack['public_hostname']
   cloud[:local_ipv4] = openstack['local_ipv4']
   cloud[:local_hostname] = openstack['local_hostname']
-  cloud[:provider] = "openstack"
+  cloud[:provider] = openstack['provider']
 end
 
 # setup openstack cloud

@@ -25,13 +25,21 @@ extend Ohai::Mixin::Ec2Metadata
 #Ec2Metadata::EC2_METADATA_URL = "/latest/meta-data"
 
 # Adds openstack Mash
-if hint?('openstack')
+if hint?('openstack') || hint?('hp')
   Ohai::Log.debug("ohai openstack")
   openstack Mash.new
   #for now, use the metadata service
   if can_metadata_connect?(EC2_METADATA_ADDR,80)
     Ohai::Log.debug("connecting to the OpenStack metadata service")
     self.fetch_metadata.each {|k, v| openstack[k] = v }
+    case
+    when hint?('hp')
+      openstack['provider'] = 'hp'
+    when hint?('rackspace')
+      openstack['provider'] = 'rackspace'
+    else
+      openstack['provider'] = 'openstack'
+    end
   else
     Ohai::Log.debug("unable to connect to the OpenStack metadata service")
   end

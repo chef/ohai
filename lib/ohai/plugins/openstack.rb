@@ -35,8 +35,6 @@ if hint?('openstack') || hint?('hp')
     case
     when hint?('hp')
       openstack['provider'] = 'hp'
-    when hint?('rackspace')
-      openstack['provider'] = 'rackspace'
     else
       openstack['provider'] = 'openstack'
     end

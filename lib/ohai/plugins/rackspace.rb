@@ -80,11 +80,23 @@ def get_global_ipv6_address(name, eth)
   end
 end
 
+# Get the rackspace region
+#
+def get_region()
+  status, stdout, stderr = run_command(:no_status_check => true, :command => "xenstore-ls vm-data/provider_data")
+  if status == 0
+    stdout.split("\n").each do |line|
+      rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
+    end
+  end
+end
+
 # Adds rackspace Mash
 if looks_like_rackspace?
   rackspace Mash.new
   get_ip_address(:public_ip, :eth0)
   get_ip_address(:private_ip, :eth1)
+  get_region()
   # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
   rackspace[:public_ipv4] = rackspace[:public_ip]
   get_global_ipv6_address(:public_ipv6, :eth0)

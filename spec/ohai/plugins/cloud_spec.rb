@@ -84,7 +84,36 @@ describe Ohai::System, "plugin cloud" do
       @ohai[:cloud][:provider].should == "rackspace"
     end
   end
-  
+
+  describe "with linode" do
+    before do
+      @ohai[:linode] = Mash.new()
+    end
+
+    it "populates cloud public ip" do
+      @ohai[:linode]['public_ip'] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips][0].should == @ohai[:linode][:public_ip]
+    end
+
+    it "populates cloud private ip" do
+      @ohai[:linode]['private_ip'] = "10.252.42.149"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:private_ips][0].should == @ohai[:linode][:private_ip]
+    end
+
+    it "populates first cloud public ip" do
+      @ohai[:linode]['public_ip'] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips].first.should == @ohai[:linode][:public_ip]
+    end
+
+    it "populates cloud provider" do
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:provider].should == "linode"
+    end
+  end
+
   describe "with eucalyptus" do
     before(:each) do
       @ohai[:eucalyptus] = Mash.new()

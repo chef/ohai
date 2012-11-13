@@ -244,8 +244,8 @@ module Ohai
         data = data[part]
       end
       raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
-      case a
-      when Hash,Mash,Array
+      case data
+      when Hash,Mash,Array,Fixnum
         json_pretty_print(data)
       when String
         if data.respond_to?(:lines)

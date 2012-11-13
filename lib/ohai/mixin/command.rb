@@ -46,39 +46,37 @@ module Ohai
         end
 
         status = nil
-        Dir.chdir(args[:cwd]) do
-          status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
-          # systemu returns 42 when it hits unexpected errors
-          if status.exitstatus == 42 and stderr_string == ""
-            stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
-            Ohai::Log.debug(stderr_string)
-          end
+        status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout],args[:cwd])
+        # systemu returns 42 when it hits unexpected errors
+        if status.exitstatus == 42 and stderr_string == ""
+          stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
+          Ohai::Log.debug(stderr_string)
+        end
 
-          if stdout_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
-            Ohai::Log.debug(stdout_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
-          end
-          if stderr_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
-            Ohai::Log.debug(stderr_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
-          end
+        if stdout_string
+          Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
+          Ohai::Log.debug(stdout_string.strip)
+          Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
+        end
+        if stderr_string
+          Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
+          Ohai::Log.debug(stderr_string.strip)
+          Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
+        end
 
-          args[:returns] ||= 0
-          args[:no_status_check] ||= false
-          if status.exitstatus != args[:returns] and not args[:no_status_check]
-            raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
-          else
-            Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
-          end
+        args[:returns] ||= 0
+        args[:no_status_check] ||= false
+        if status.exitstatus != args[:returns] and not args[:no_status_check]
+          raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
+        else
+          Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
         end
         return status, stdout_string, stderr_string
       end
 
       module_function :run_command
 
-      def run_command_unix(command, timeout)
+      def run_command_unix(command, timeout, cwd)
         stderr_string, stdout_string, status = "", "", nil
 
         exec_processing_block = lambda do |pid, stdin, stdout, stderr|
@@ -88,27 +86,32 @@ module Ohai
         if timeout
           begin
             Timeout.timeout(timeout) do
-              status = popen4(command, {}, &exec_processing_block)
+              status = popen4(command, {}, &exec_processing_block, cwd)
             end
           rescue Timeout::Error => e
             Chef::Log.error("#{command} exceeded timeout #{timeout}")
             raise(e)
           end
         else
-          status = popen4(command, {}, &exec_processing_block)
+          status = popen4(command, {}, &exec_processing_block, cwd)
         end
         return status, stdout_string, stderr_string
       end
 
-      def run_command_windows(command, timeout)
+      def run_command_windows(command, timeout, cwd)
         if timeout
           begin
-            systemu(command)
+            original_dir = Dir.pwd
+            Dir.chdir(cwd) do 
+              systemu(command)
+            end
           rescue SystemExit => e
             raise
           rescue Timeout::Error => e
             Ohai::Log.error("#{command} exceeded timeout #{timeout}")
             raise(e)
+          ensure
+            Dir.chdir(original_dir)
           end
         else
           systemu(command)
@@ -127,7 +130,7 @@ module Ohai
       # The original appears in external/open4.rb in its unmodified form.
       #
       # Thanks Ara!
-      def popen4(cmd, args={}, &b)
+      def popen4(cmd, args={}, &b, cwd)
 	
 	## Disable garbage collection to work around possible bug in MRI
   # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
@@ -167,54 +170,56 @@ module Ohai
           ps.last.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
 
           cid = fork {
-            Process.setsid
-
-            pw.last.close
-            STDIN.reopen pw.first
-            pw.first.close
-
-            pr.first.close
-            STDOUT.reopen pr.last
-            pr.last.close
-
-            pe.first.close
-            STDERR.reopen pe.last
-            pe.last.close
-
-            STDOUT.sync = STDERR.sync = true
-
-            if args[:group]
-              Process.egid = args[:group]
-              Process.gid = args[:group]
-            end
-
-            if args[:user]
-              Process.euid = args[:user]
-              Process.uid = args[:user]
-            end
-
-            args[:environment].each do |key,value|
-              ENV[key] = value
-            end
-
-            if args[:umask]
-              umask = ((args[:umask].respond_to?(:oct) ? args[:umask].oct : args[:umask].to_i) & 007777)
-              File.umask(umask)
-            end
-
-            begin
-              if cmd.kind_of?(Array)
-                exec(*cmd)
-              else
-                exec(cmd)
+            Dir.chdir(cwd) do
+              Process.setsid
+  
+              pw.last.close
+              STDIN.reopen pw.first
+              pw.first.close
+  
+              pr.first.close
+              STDOUT.reopen pr.last
+              pr.last.close
+  
+              pe.first.close
+              STDERR.reopen pe.last
+              pe.last.close
+  
+              STDOUT.sync = STDERR.sync = true
+  
+              if args[:group]
+                Process.egid = args[:group]
+                Process.gid = args[:group]
               end
-              raise 'forty-two'
-            rescue Exception => e
-              Marshal.dump(e, ps.last)
-              ps.last.flush
+  
+              if args[:user]
+                Process.euid = args[:user]
+                Process.uid = args[:user]
+              end
+  
+              args[:environment].each do |key,value|
+                ENV[key] = value
+              end
+  
+              if args[:umask]
+                umask = ((args[:umask].respond_to?(:oct) ? args[:umask].oct : args[:umask].to_i) & 007777)
+                File.umask(umask)
+              end
+  
+              begin
+                if cmd.kind_of?(Array)
+                  exec(*cmd)
+                else
+                  exec(cmd)
+                end
+                raise 'forty-two'
+              rescue Exception => e
+                Marshal.dump(e, ps.last)
+                ps.last.flush
+              end
+              ps.last.close unless (ps.last.closed?)
+              exit!
             end
-            ps.last.close unless (ps.last.closed?)
-            exit!
           }
         ensure
           $VERBOSE = verbose

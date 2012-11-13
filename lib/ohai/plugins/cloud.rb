@@ -19,6 +19,7 @@ provides "cloud"
 require_plugin "ec2"
 require_plugin "rackspace"
 require_plugin "eucalyptus"
+require_plugin "linode"
 
 # Make top-level cloud hashes
 #
@@ -86,6 +87,36 @@ end
 if on_rackspace?
   create_objects
   get_rackspace_values
+end
+
+# ----------------------------------------
+# linode
+# ----------------------------------------
+
+# Is current cloud linode?
+#
+# === Return
+# true:: If linode Hash is defined
+# false:: Otherwise
+def on_linode?
+  linode != nil
+end
+
+# Fill cloud hash with linode values
+def get_linode_values
+  cloud[:public_ips] << linode['public_ip']
+  cloud[:private_ips] << linode['private_ip']
+  cloud[:public_ipv4] = linode['public_ipv4']
+  cloud[:public_hostname] = linode['public_hostname']
+  cloud[:local_ipv4] = linode['local_ipv4']
+  cloud[:local_hostname] = linode['local_hostname']
+  cloud[:provider] = "linode"
+end
+
+# setup linode cloud data
+if on_linode?
+  create_objects
+  get_linode_values
 end
 
 # ----------------------------------------

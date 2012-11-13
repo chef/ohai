@@ -19,19 +19,28 @@
 #
 
 begin
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-
-describe Ohai::System, "plugin chef" do
-  before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-  end
+  require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
   
-  it "should set [:chef_packages][:chef][:version] to the current chef version" do
-    @ohai._require_plugin("chef")
-    @ohai[:chef_packages][:chef][:version].should == Chef::VERSION
+  require 'chef'
+  
+  describe Ohai::System, "plugin chef" do
+    before(:each) do
+      @ohai = Ohai::System.new
+      @ohai.stub!(:require_plugin).and_return(true)
+    end
+    
+    it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
+      @ohai._require_plugin("chef")
+      @ohai[:chef_packages][:chef][:version].should == Chef::VERSION
+    end
+  
+    pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
+  
   end
-end
 rescue LoadError
   # the chef module is not available, ignoring.
+
+  describe Ohai::System, "plugin chef" do
+    pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
+  end
 end

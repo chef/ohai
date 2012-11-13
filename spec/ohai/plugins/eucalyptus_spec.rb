@@ -39,19 +39,19 @@ describe Ohai::System, "plugin eucalyptus" do
       @ohai.stub!(:http_client).and_return(@http_client)
 
       @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/").
+        with("/2012-01-12/meta-data/").
         and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
       @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/instance_type").
+        with("/2012-01-12/meta-data/instance_type").
         and_return(mock("Net::HTTP Response", :body => "c1.medium"))
       @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/ami_id").
+        with("/2012-01-12/meta-data/ami_id").
         and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
       @http_client.should_receive(:get).
-        with("/2008-02-01/meta-data/security-groups").
+        with("/2012-01-12/meta-data/security-groups").
         and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
       @http_client.should_receive(:get).
-        with("/2008-02-01/user-data/").
+        with("/2012-01-12/user-data/").
         and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
     end
 

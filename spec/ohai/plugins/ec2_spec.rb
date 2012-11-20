@@ -112,6 +112,40 @@ describe Ohai::System, "plugin ec2" do
       @ohai[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
       @ohai[:ec2]['iam']['security-credentials']['MyRole']['Token'].should eql '12345678'
     end
+
+    it "should ignore \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => ".\n./\n..\n../\npath1/.\npath2/./\npath3/..\npath4/../"))
+
+      @http_client.should_not_receive(:get).
+        with("/2012-01-12/meta-data/.")
+      @http_client.should_not_receive(:get).
+        with("/2012-01-12/meta-data/./")
+      @http_client.should_not_receive(:get).
+        with("/2012-01-12/meta-data/..")
+      @http_client.should_not_receive(:get).
+        with("/2012-01-12/meta-data/../")
+      @http_client.should_not_receive(:get).
+        with("/2012-01-12/meta-data/path1/..")
+
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/path1/").
+        and_return(mock("Net::HTTP Response", :body => ""))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/path2/").
+        and_return(mock("Net::HTTP Response", :body => ""))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/path3/").
+        and_return(mock("Net::HTTP Response", :body => ""))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/path4/").
+        and_return(mock("Net::HTTP Response", :body => ""))
+
+      @ohai._require_plugin("ec2")
+
+      @ohai[:ec2].should_not be_nil
+    end
   end
 
   describe "with ec2 mac and metadata address connected" do

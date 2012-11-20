@@ -64,7 +64,7 @@ module Ohai
       def fetch_metadata(id='')
         metadata = Hash.new
         http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
-          key = "#{id}#{o.gsub(/\=.*$/, '/')}"
+          key = expand_path("#{id}#{o}")
           if key[-1..-1] != '/'
             metadata[metadata_key(key)] =
               if EC2_ARRAY_VALUES.include? key
@@ -72,7 +72,7 @@ module Ohai
               else
                 http_client.get("#{EC2_METADATA_URL}/#{key}").body
               end
-          elsif not key.eql?(id) and not key.eql?("/")
+          elsif not key.eql?(id) and not key.eql?('/')
             name = key[0..-2]
 	    sym = metadata_key(name)
             if EC2_ARRAY_DIR.include?(name)
@@ -122,6 +122,13 @@ module Ohai
       end
 
       private
+
+      def expand_path(file_name)
+        path = File.expand_path(file_name.gsub(/\=.*$/, '/'), '/')
+        path[0] = '' # remove the initial "/"
+        path << '/' if file_name[-1..-1].eql?('/') # it was a directory
+        path
+      end
 
       def metadata_key(key)
         key.gsub(/\-|\//, '_')

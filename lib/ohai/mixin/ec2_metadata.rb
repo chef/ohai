@@ -124,10 +124,12 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = File.expand_path(file_name.gsub(/\=.*$/, '/'), '/')
-        path[0] = '' # remove the initial "/"
-        path << '/' if file_name[-1..-1].eql?('/') # it was a directory
-        path
+        uri = URI.parse(file_name.gsub(/\=.*$/, '/'))
+        path = uri.normalize.to_s
+        # ignore "./" and "../"
+        path.gsub(%r{/\.\.?(?:/|$)}, '/').
+          sub(%r{^\.\.?(?:/|$)}, '').
+          sub(%r{^$}, '/')
       end
 
       def metadata_key(key)

@@ -21,7 +21,7 @@
 begin
   require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
   
-  require 'chef'
+  require 'chef/version'
   
   describe Ohai::System, "plugin chef" do
     before(:each) do

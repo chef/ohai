@@ -25,6 +25,22 @@ if from("sysctl -n security.jail.jailed").to_i == 1
   virtualization[:role] = "guest"
 end
 
+# detect from modules
+popen4("/sbin/kldstat") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    case line
+    when /vboxdrv/
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "host"
+    when /vboxguest/
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "guest"
+    end
+  end
+end
+
+
 # XXX doesn't work when jail is there but not running (ezjail-admin stop)
 if from("jls -n \| wc -l").to_i >= 1
     virtualization[:system] = "jail"

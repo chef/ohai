@@ -25,7 +25,24 @@ cpu_number = 0
 index = 0
 
 WMI::Win32_Processor.find(:all).each do |processor|
-  cpu_number += processor.numberofcores
+  #
+  # On Windows Server 2003 R2 (i.e. 5.2.*), numberofcores property 
+  # doesn't exist on the Win32_Processor class unless the user has
+  # patched their system with:
+  # http://support.microsoft.com/kb/932370
+  # 
+  # We're returning nil for cpu["cores"] and cpu["count"]
+  # when we don't see numberofcores property
+  #
+
+  number_of_cores = nil
+  begin
+    number_of_cores = processor.numberofcores
+    cpu_number += number_of_cores
+  rescue NoMethodError => e
+    Ohai::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
+  end
+
   current_cpu = index.to_s
   index += 1
   cpuinfo[current_cpu] = Mash.new
@@ -35,7 +52,7 @@ WMI::Win32_Processor.find(:all).each do |processor|
   cpuinfo[current_cpu]["stepping"] = processor.stepping
   cpuinfo[current_cpu]["physical_id"] = processor.deviceid
   #cpuinfo[current_cpu]["core_id"] = XXX
-  cpuinfo[current_cpu]["cores"] = processor.numberofcores
+  cpuinfo[current_cpu]["cores"] = number_of_cores
   cpuinfo[current_cpu]["model_name"] = processor.description
   cpuinfo[current_cpu]["mhz"] = processor.maxclockspeed.to_s
   cpuinfo[current_cpu]["cache_size"] = "#{processor.l2cachesize} KB"
@@ -43,5 +60,5 @@ WMI::Win32_Processor.find(:all).each do |processor|
 end
 
 cpu cpuinfo
-cpu[:total] = cpu_number
+cpu[:total] = (cpu_number == 0) ? nil : cpu_number
 cpu[:real] = index

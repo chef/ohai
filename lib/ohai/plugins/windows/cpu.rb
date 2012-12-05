@@ -40,6 +40,7 @@ WMI::Win32_Processor.find(:all).each do |processor|
     number_of_cores = processor.numberofcores
     cpu_number += number_of_cores
   rescue NoMethodError => e
+    Ohai::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
   end
 
   current_cpu = index.to_s

@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
+# Copyright:: Copyright (c) 2012 Jacques Marneweck.  All rights reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,19 @@
 # limitations under the License.
 #
 
-provides "keys/ssh"
+provides "languages/nodejs"
 
-require_plugin "keys"
+require_plugin "languages"
 
-keys[:ssh] = Mash.new
+output = nil
 
-if File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
-  keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-  keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
-else
-  keys[:ssh][:host_dsa_public] = IO.read("/var/ssh/ssh_host_dsa_key.pub").split[1]
-  keys[:ssh][:host_rsa_public] = IO.read("/var/ssh/ssh_host_rsa_key.pub").split[1]
+nodejs = Mash.new
+
+status, stdout, stderr = run_command(:no_status_check => true, :command => "node -v")
+if status == 0
+  output = stdout.split
+  if output.length >= 1
+    nodejs[:version] = output[0][1..output[0].length]
+  end
+  languages[:nodejs] = nodejs if nodejs[:version]
 end

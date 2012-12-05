@@ -60,6 +60,7 @@ require 'scanf'
 def encaps_lookup(ifname)
   return "Ethernet" if ifname.eql?("e1000g")
   return "Ethernet" if ifname.eql?("eri")
+  return "Ethernet" if ifname.eql?("net")
   return "Loopback" if ifname.eql?("lo")
   "Unknown"
 end
@@ -82,7 +83,7 @@ popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       iface[cint] = Mash.new unless iface[cint]
       iface[cint][:mtu] = $2
       iface[cint][:index] = $3
-      if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
+      if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
         flags = $1.split(',')
       else
         flags = Array.new

@@ -94,6 +94,20 @@ describe Ohai::System, "plugin rackspace" do
       @ohai[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
     end
 
+    it "should capture region information" do
+      @stderr = StringIO.new
+      @stdout = <<-OUT
+provider = "Rackspace"
+service_type = "cloudServers"
+server_id = "21301000"
+created_at = "2012-12-06T22:08:16Z"
+region = "dfw"
+OUT
+      @status = 0
+      @ohai.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ @status, @stdout, @stderr ])
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace][:region].should == "dfw"
+    end
   end
 
   describe "with rackspace mac and hostname" do

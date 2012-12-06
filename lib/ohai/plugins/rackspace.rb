@@ -89,6 +89,8 @@ def get_region()
       rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
     end
   end
+rescue Ohai::Exceptions::Exec
+  Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
 end
 
 # Adds rackspace Mash

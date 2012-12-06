@@ -19,6 +19,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 require File.expand_path("#{File.dirname(__FILE__)}/system_profiler_output.rb")
 
+begin
+  require 'plist'
+rescue LoadError => e
+  puts "The darwin systemprofile plugin spec tests will fail without the 'plist' library/gem.\n\n"
+  raise e
+end
+
 describe Ohai::System, "Darwin system_profiler plugin" do
   before(:each) do
     @ohai = Ohai::System.new

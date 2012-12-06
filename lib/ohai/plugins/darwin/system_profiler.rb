@@ -15,14 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 provides "system_profile"
 
-begin  
+begin
   require 'plist'
 
   system_profile Array.new
-
   detail_level = {
     'mini' => [
       "SPParallelATAData",
@@ -66,7 +64,6 @@ begin
   end
 
   system_profile.sort_by! { |h| h['_dataType'] }
-
 rescue LoadError => e
   Ohai::Log.debug("Can't load gem: #{e})")
 end

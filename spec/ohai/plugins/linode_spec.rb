@@ -25,8 +25,8 @@ describe Ohai::System, "plugin linode" do
     @ohai = Ohai::System.new
     @ohai.stub!(:require_plugin).and_return(true)
     @ohai[:network] = {
-      interfaces: {
-        eth0: {
+      "interfaces"=> {
+        "eth0"=> {
           "addresses"=> {
             "1.2.3.4"=> {
               "broadcast"=> "67.23.20.255",
@@ -74,7 +74,7 @@ describe Ohai::System, "plugin linode" do
 
   context "without linode kernel" do
     before do
-      @ohai[:kernel] = { release: "3.5.2-x86_64" }
+      @ohai[:kernel] = { "release" => "3.5.2-x86_64" }
     end
 
     it_should_behave_like "!linode"
@@ -82,7 +82,7 @@ describe Ohai::System, "plugin linode" do
 
   context "with linode kernel" do
     before do
-      @ohai[:kernel] = { release: "3.5.2-x86_64-linode24" }
+      @ohai[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
     end
 
     it_should_behave_like "linode"
@@ -92,7 +92,7 @@ describe Ohai::System, "plugin linode" do
     context "with configured private ip address as suggested by linode" do
       before do
         @ohai[:network][:interfaces]["eth0:1"] = {
-          addresses: {
+          "addresses" => {
             "5.6.7.8"=> {
               "broadcast"=> "10.176.191.255",
               "netmask"=> "255.255.224.0",

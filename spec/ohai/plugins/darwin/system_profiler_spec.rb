@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Paul Mooring (<paul@opscode.com>)
+# Copyright:: Copyright (c) 2012 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,11 +28,15 @@ describe Ohai::System, "Darwin system_profiler plugin" do
   end
   
   it "should return the right serial number" do
-    @ohai.stub!(:popen4).with("system_profiler -xml -detailLevel full SPHardwareDataType").and_yield(nil, nil, SystemProfilerOutput::Full, nil)
-    @ohai.stub!(:popen4).with("system_profiler -xml -detailLevel mini").and_yield(nil, nil, SystemProfilerOutput::Mini, nil)
+    mini_cmd = "system_profiler -xml -detailLevel mini SPParallelATAData SPAudioData SPBluetoothData"
+    mini_cmd += " SPCardReaderData SPDiagnosticsData SPDiscBurningData SPEthernetData SPFibreChannelData"
+    mini_cmd += " SPFireWireData SPDisplaysData SPHardwareRAIDData SPMemoryData SPModemData SPNetworkData"
+    mini_cmd += " SPPCIData SPParallelSCSIData SPPrintersSoftwareData SPPrintersData SPSASData SPSerialATAData"
+    mini_cmd += " SPSoftwareData SPThunderboltData SPUSBData SPWWANData SPAirPortData"
+    full_cmd = "system_profiler -xml -detailLevel full SPHardwareDataType"
+    @ohai.stub!(:popen4).with(full_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Full), nil)
+    @ohai.stub!(:popen4).with(mini_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Mini), nil)
     @ohai._require_plugin("darwin::system_profiler")
-    require 'pp'
-    pp @ohai['system_profile']
-    @ohai['system_profile'][10]["_items"][0]["serial_number"].should == 'ABCDEFG12345'
+    @ohai['system_profile'][18]["_items"][0]["serial_number"].should == 'ABCDEFG12345'
   end
 end

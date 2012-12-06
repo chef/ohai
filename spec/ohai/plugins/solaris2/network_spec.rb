@@ -29,6 +29,9 @@ e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 ind
 e1000g2:1: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 4
         inet 10.2.115.28 netmask ffffff80 broadcast 10.2.115.127
         inet6 2001:0db8:3c4d:55:a00:20ff:fe8e:f3ad/64
+net0: flags=40201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS,L3PROTECT> mtu 1500 index 2
+        inet 37.153.96.148 netmask fffffe00 broadcast 37.153.97.255
+        ether 90:b8:d0:16:9b:97
 ip.tun0: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
        inet tunnel src 109.146.85.57   tunnel dst 109.146.85.212
        tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
@@ -106,7 +109,7 @@ ROUTE_GET
     end
 
     it "detects the interfaces" do
-      @ohai['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "qfe1"]
+      @ohai['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "qfe1"]
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -115,6 +118,10 @@ ROUTE_GET
 
     it "detects the encapsulation type of the interfaces" do
       @ohai['network']['interfaces']['e1000g0:3']['encapsulation'].should == 'Ethernet'
+    end
+    
+    it "detects the L3PROTECT network flag" do
+      @ohai['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
     end
   end
 

@@ -1,5 +1,6 @@
 require 'rspec'
-require 'mixlib/config'
+
+require 'spec/support/platform_helpers'
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'ohai'
@@ -53,4 +54,15 @@ module SimpleFromFile
   def from_file(filename)
     self.instance_eval(IO.read(filename), filename, 1)
   end
+end
+
+RSpec.configure do |config|
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  config.filter_run_excluding :windows_only => true unless windows?
+  config.filter_run_excluding :unix_only => true unless unix?
+  config.filter_run_excluding :ruby_18_only => true unless ruby_18?
+  config.filter_run_excluding :ruby_19_only => true unless ruby_19?
+  config.filter_run_excluding :requires_root => true unless ENV['USER'] == 'root'
+  config.filter_run_excluding :requires_unprivileged_user => true if ENV['USER'] == 'root'
 end

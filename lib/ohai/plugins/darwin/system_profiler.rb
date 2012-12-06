@@ -21,6 +21,7 @@ begin
   require 'plist'
 
   system_profile Array.new
+  items Array.new
   detail_level = {
     'mini' => [
       "SPParallelATAData",
@@ -58,12 +59,12 @@ begin
     popen4("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}") do |pid, stdin, stdout, stderr|
       stdin.close
       Plist::parse_xml(stdout.read).each do |e|
-        system_profile << e
+        items << e
       end
     end
   end
 
-  system_profile.sort_by! { |h| h['_dataType'] }
+  system_profile items.sort_by { |h| h['_dataType'] }
 rescue LoadError => e
   Ohai::Log.debug("Can't load gem: #{e})")
 end

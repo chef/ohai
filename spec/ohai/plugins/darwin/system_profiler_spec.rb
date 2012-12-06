@@ -31,7 +31,6 @@ describe Ohai::System, "Darwin system_profiler plugin" do
     @ohai = Ohai::System.new
 
     @ohai.stub!(:require_plugin).and_return(true)
-    @ohai['system_profile'] = Mash.new
   end
   
   it "should return the right serial number" do

@@ -2,5 +2,9 @@ source :rubygems
 
 gemspec
 
-gem "sigar", :group => :development, :platform => "ruby"
+group :development do
+  gem "sigar", :platform => "ruby"
+  gem 'plist'
+end
+
 

@@ -26,7 +26,7 @@ rescue LoadError => e
   raise e
 end
 
-describe Ohai::System, "Darwin system_profiler plugin" do
+describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
     @ohai = Ohai::System.new
 

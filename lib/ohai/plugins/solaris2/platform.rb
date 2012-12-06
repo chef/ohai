@@ -39,6 +39,8 @@ end
 File.open("/etc/release") do |file|
   while line = file.gets
     case line
+    when /^.*(SmartOS).*$/
+      platform "smartos"
     when /^\s*(OmniOS).*r(\d+).*$/
       platform "omnios"
       platform_version $2
@@ -54,8 +56,6 @@ File.open("/etc/release") do |file|
       platform "solaris2"
     when /^\s*(NexentaCore)\s.*$/
       platform "nexentacore"
-    when /^\s*(SmartOS)\s.*$/
-      platform "smartos"
     end
   end
 end

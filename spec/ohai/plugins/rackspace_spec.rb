@@ -27,6 +27,11 @@ describe Ohai::System, "plugin rackspace" do
         "netmask"=> "255.255.255.0",
         "family"=> "inet"
       },
+      "2a00:1a48:7805:111:e875:efaf:ff08:75"=> {
+        "family"=> "inet6",
+        "prefixlen"=> "64",
+        "scope"=> "Global"
+      },
       "fe80::4240:95ff:fe47:6eed"=> {
         "scope"=> "Link",
         "prefixlen"=> "64",
@@ -74,12 +79,19 @@ describe Ohai::System, "plugin rackspace" do
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace][:public_ip].should_not be_nil
       @ohai[:rackspace][:private_ip].should_not be_nil
+      @ohai[:rackspace][:public_ipv4].should_not be_nil
+      @ohai[:rackspace][:local_ipv4].should_not be_nil
+      @ohai[:rackspace][:public_ipv6].should_not be_nil
+      @ohai[:rackspace][:local_ipv6].should be_nil
     end
 
     it "should have correct values for all attributes" do
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace][:public_ip].should == "1.2.3.4"
       @ohai[:rackspace][:private_ip].should == "5.6.7.8"
+      @ohai[:rackspace][:public_ipv4].should == "1.2.3.4"
+      @ohai[:rackspace][:local_ipv4].should == "5.6.7.8"
+      @ohai[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
     end
 
   end

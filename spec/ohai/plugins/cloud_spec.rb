@@ -60,24 +60,42 @@ describe Ohai::System, "plugin cloud" do
   describe "with rackspace" do
     before do
       @ohai[:rackspace] = Mash.new()
-    end
-
+    end  
+    
     it "populates cloud public ip" do
-      @ohai[:rackspace]['public_ip'] = "174.129.150.8"
+      @ohai[:rackspace][:public_ipv4] = "174.129.150.8"
       @ohai._require_plugin("cloud")
-      @ohai[:cloud][:public_ips][0].should == @ohai[:rackspace][:public_ip]
+      @ohai[:cloud][:public_ipv4].should == @ohai[:rackspace][:public_ipv4]
     end
-
+    
+    it "populates cloud public ipv6" do
+      @ohai[:rackspace][:public_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ipv6].should == @ohai[:rackspace][:public_ipv6]
+    end
+    
     it "populates cloud private ip" do
-      @ohai[:rackspace]['private_ip'] = "10.252.42.149"
+      @ohai[:rackspace][:local_ipv4] = "10.252.42.149"
       @ohai._require_plugin("cloud")
-      @ohai[:cloud][:private_ips][0].should == @ohai[:rackspace][:private_ip]
+      @ohai[:cloud][:local_ipv4].should == @ohai[:rackspace][:local_ipv4]
     end
-
-     it "populates first cloud public ip" do
-      @ohai[:rackspace]['public_ip'] = "174.129.150.8"
+    
+    it "populates cloud private ipv6" do
+      @ohai[:rackspace][:local_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @ohai._require_plugin("cloud")
-      @ohai[:cloud][:public_ips].first.should == @ohai[:rackspace][:public_ip]
+      @ohai[:cloud][:local_ipv6].should == @ohai[:rackspace][:local_ipv6]
+    end
+    
+    it "populates first cloud public ip" do
+      @ohai[:rackspace][:public_ipv4] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips].first.should == @ohai[:rackspace][:public_ipv4]
+    end
+    
+    it "populates first cloud public ip" do
+      @ohai[:rackspace][:local_ipv4] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:private_ips].first.should == @ohai[:rackspace][:local_ipv4]
     end
 
     it "populates cloud provider" do

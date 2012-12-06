@@ -58,7 +58,25 @@ end
 # eth<Symbol>:: Interface name of public or private ip
 def get_ip_address(name, eth)
   network[:interfaces][eth][:addresses].each do |key, info|
-    rackspace[name] = key if info['family'] == 'inet'
+    if info['family'] == 'inet'
+      rackspace[name] = key 
+      break # break when we found an address
+    end
+  end
+end
+
+# Names rackspace ipv6 address for interface
+#
+# === Parameters
+# name<Symbol>:: Use :public_ip or :private_ip
+# eth<Symbol>:: Interface name of public or private ip
+def get_global_ipv6_address(name, eth)
+  network[:interfaces][eth][:addresses].each do |key, info|
+    # check if we got an ipv6 address and if its in global scope
+    if info['family'] == 'inet6' && info['scope'] == 'Global'
+      rackspace[name] = key 
+      break # break when we found an address
+    end
   end
 end
 
@@ -69,7 +87,9 @@ if looks_like_rackspace?
   get_ip_address(:private_ip, :eth1)
   # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
   rackspace[:public_ipv4] = rackspace[:public_ip]
+  get_global_ipv6_address(:public_ipv6, :eth0)
   rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
   rackspace[:local_ipv4] = rackspace[:private_ip]
+  get_global_ipv6_address(:local_ipv6, :eth1)
   rackspace[:local_hostname] = hostname
 end

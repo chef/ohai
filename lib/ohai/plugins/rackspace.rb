@@ -56,7 +56,7 @@ end
 # === Parameters
 # name<Symbol>:: Use :public_ip or :private_ip
 # eth<Symbol>:: Interface name of public or private ip
-def get_ip_address(name, eth, family = 'inet')
+def get_ip_address(name, eth)
   network[:interfaces][eth][:addresses].each do |key, info|
     if info['family'] == 'inet'
       rackspace[name] = key 
@@ -70,7 +70,7 @@ end
 # === Parameters
 # name<Symbol>:: Use :public_ip or :private_ip
 # eth<Symbol>:: Interface name of public or private ip
-def get_global_ipv6_address(name, eth, family = 'inet')
+def get_global_ipv6_address(name, eth)
   network[:interfaces][eth][:addresses].each do |key, info|
     # check if we got an ipv6 address and if its in global scope
     if info['family'] == 'inet6' && info['scope'] == 'Global'

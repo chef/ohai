@@ -15,19 +15,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 provides "system_profile"
 
-begin  
+begin
   require 'plist'
 
   system_profile Array.new
-  popen4("system_profiler -xml -detailLevel mini") do |pid, stdin, stdout, stderr|
-    stdin.close
-    Plist::parse_xml(stdout.read).each do |e|
-      system_profile << e
+  detail_level = {
+    'mini' => [
+      "SPParallelATAData",
+      "SPAudioData",
+      "SPBluetoothData",
+      "SPCardReaderData",
+      "SPDiagnosticsData",
+      "SPDiscBurningData",
+      "SPEthernetData",
+      "SPFibreChannelData",
+      "SPFireWireData",
+      "SPDisplaysData",
+      "SPHardwareRAIDData",
+      "SPMemoryData",
+      "SPModemData",
+      "SPNetworkData",
+      "SPPCIData",
+      "SPParallelSCSIData",
+      "SPPrintersSoftwareData",
+      "SPPrintersData",
+      "SPSASData",
+      "SPSerialATAData",
+      "SPSoftwareData",
+      "SPThunderboltData",
+      "SPUSBData",
+      "SPWWANData",
+      "SPAirPortData"
+    ],
+    'full' => [
+      "SPHardwareDataType"
+    ]
+  }
+
+  detail_level.each do |level, data_types|
+    popen4("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}") do |pid, stdin, stdout, stderr|
+      stdin.close
+      Plist::parse_xml(stdout.read).each do |e|
+        system_profile << e
+      end
     end
   end
+
+  system_profile.sort_by! { |h| h['_dataType'] }
 rescue LoadError => e
   Ohai::Log.debug("Can't load gem: #{e})")
 end

@@ -1,8 +1,9 @@
 require 'rspec'
 
-require 'spec/support/platform_helpers'
-
+$:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + '/../lib')
+
+require 'spec/support/platform_helpers'
 require 'ohai'
 Ohai::Config[:log_level] = :error
 

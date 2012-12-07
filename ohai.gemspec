@@ -11,6 +11,7 @@ spec = Gem::Specification.new do |s|
   s.author = "Adam Jacob"
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
+  s.required_rubygems_version = "1.3.7.1"
 
   if s.platform.to_s == 'x86-mswin32'
     s.add_dependency "systemu", "~> 2.2.0"

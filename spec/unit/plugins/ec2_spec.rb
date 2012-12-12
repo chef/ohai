@@ -80,17 +80,17 @@ describe Ohai::System, "plugin ec2" do
         and_return(mock("Net::HTTP Response", :body => "macs/"))
       @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/network/interfaces/macs/").
-        and_return(mock("Net::HTTP Response", :body => "fe:ff:ff:ff:ff:ff/"))
+        and_return(mock("Net::HTTP Response", :body => "12:34:56:78:9a:bc/"))
       @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/network/interfaces/macs/fe:ff:ff:ff:ff:ff/").
+        with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/").
         and_return(mock("Net::HTTP Response", :body => "public_hostname"))
       @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/network/interfaces/macs/fe:ff:ff:ff:ff:ff/public_hostname").
+        with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/public_hostname").
         and_return(mock("Net::HTTP Response", :body => "server17.opscode.com"))
       @ohai._require_plugin("ec2")
 
       @ohai[:ec2].should_not be_nil
-      @ohai[:ec2]['network_interfaces_macs']['fe:ff:ff:ff:ff:ff']['public_hostname'].should eql('server17.opscode.com')
+      @ohai[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname'].should eql('server17.opscode.com')
     end
 
     it "should parse ec2 iam/ directory and its JSON files properly" do

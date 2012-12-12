@@ -124,8 +124,8 @@ module Ohai
       private
 
       def expand_path(file_name)
-        uri = URI.parse(file_name.gsub(/\=.*$/, '/'))
-        path = uri.normalize.to_s
+        uri = URI.parse(URI.escape(file_name.gsub(/\=.*$/, '/'), ':'))
+        path = URI.unescape(uri.normalize.to_s)
         # ignore "./" and "../"
         path.gsub(%r{/\.\.?(?:/|$)}, '/').
           sub(%r{^\.\.?(?:/|$)}, '').

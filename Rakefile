@@ -1,12 +1,12 @@
 require 'rubygems'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 require 'rubygems/specification'
 require 'date'
 
 gemspec = eval(IO.read("ohai.gemspec"))
 
 
-Rake::GemPackageTask.new(gemspec).define
+Gem::PackageTask.new(gemspec).define
 
 desc "install the gem locally"
 task :install => [:package] do

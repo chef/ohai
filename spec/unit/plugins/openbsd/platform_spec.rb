@@ -37,4 +37,9 @@ describe Ohai::System, "OpenBSD plugin platform" do
     @ohai._require_plugin("openbsd::platform")
     @ohai[:platform_version].should == "4.5"
   end
+
+  it 'should set the root_group to wheel' do
+    @ohai._require_plugin("openbsd::platform")
+    @ohai[:root_group].should == 'wheel'
+  end
 end  

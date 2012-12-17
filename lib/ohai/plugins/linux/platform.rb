@@ -24,9 +24,11 @@ def get_redhatish_version(contents)
   contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
 end
 
-provides "platform", "platform_version", "platform_family"
+provides "platform", "platform_version", "platform_family", "root_group"
 
 require_plugin 'linux::lsb'
+
+root_group "root"
 
 # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching 
 if File.exists?("/etc/oracle-release")

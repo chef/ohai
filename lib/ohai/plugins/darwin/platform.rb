@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version", "platform_build", "platform_family"
+provides "platform", "platform_version", "platform_build", "platform_family", "root_group"
 
 popen4("/usr/bin/sw_vers") do |pid, stdin, stdout, stderr|
   stdin.close
@@ -36,3 +36,4 @@ popen4("/usr/bin/sw_vers") do |pid, stdin, stdout, stderr|
 end
 
 platform_family "mac_os_x"
+root_group "wheel"

@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version"
+provides "platform", "platform_version", "root_group"
 
 platform from("uname -s").downcase
 platform_version from("uname -r")
+root_group "wheel"
 

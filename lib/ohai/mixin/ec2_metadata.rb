@@ -2,7 +2,7 @@
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@opscode.com>)
 # Author:: Christopher Brown (<cb@opscode.com>)
-# Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2009-2012 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,56 +61,57 @@ module Ohai
         Net::HTTP.start(EC2_METADATA_ADDR).tap {|h| h.read_timeout = 600}
       end
 
-      def fetch_metadata(id='')
+      def fetch_metadata(id='', metadata_url=EC2_METADATA_URL)
+        Ohai::Log.debug("fetch_metadata: #{id} #{metadata_url}")
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+        http_client.get("#{metadata_url}/#{id}").body.split("\n").each do |o|
           key = expand_path("#{id}#{o}")
           if key[-1..-1] != '/'
             metadata[metadata_key(key)] =
               if EC2_ARRAY_VALUES.include? key
-                http_client.get("#{EC2_METADATA_URL}/#{key}").body.split("\n")
+                http_client.get("#{metadata_url}/#{key}").body.split("\n")
               else
-                http_client.get("#{EC2_METADATA_URL}/#{key}").body
+                http_client.get("#{metadata_url}/#{key}").body
               end
           elsif not key.eql?(id) and not key.eql?('/')
             name = key[0..-2]
-	    sym = metadata_key(name)
+            sym = metadata_key(name)
             if EC2_ARRAY_DIR.include?(name)
-              metadata[sym] = fetch_dir_metadata(key)
+              metadata[sym] = fetch_dir_metadata(key, metadata_url)
             elsif EC2_JSON_DIR.include?(name)
-              metadata[sym] = fetch_json_dir_metadata(key)
+              metadata[sym] = fetch_json_dir_metadata(key, metadata_url)
             else
-              fetch_metadata(key).each{|k,v| metadata[k] = v}
+              fetch_metadata(key, metadata_url).each{|k,v| metadata[k] = v}
             end
           end
         end
         metadata
       end
 
-      def fetch_dir_metadata(id)
+      def fetch_dir_metadata(id, metadata_url=EC2_METADATA_URL)
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+        http_client.get("#{metadata_url}/#{id}").body.split("\n").each do |o|
           key = expand_path(o)
           if key[-1..-1] != '/'
-            metadata[metadata_key(key)] = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
+            metadata[metadata_key(key)] = http_client.get("#{metadata_url}/#{id}#{key}").body
           elsif not key.eql?('/')
-            metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}")
+            metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", metadata_url)
           end
         end
         metadata
       end
 
-      def fetch_json_dir_metadata(id)
+      def fetch_json_dir_metadata(id, metadata_url=EC2_METADATA_URL)
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+        http_client.get("#{metadata_url}/#{id}").body.split("\n").each do |o|
           key = expand_path(o)
           if key[-1..-1] != '/'
-            data = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
+            data = http_client.get("#{metadata_url}/#{id}#{key}").body
             json = StringIO.new(data)
             parser = Yajl::Parser.new
             metadata[metadata_key(key)] = parser.parse(json)
           elsif not key.eql?('/')
-            metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}")
+            metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", metadata_url)
           end
         end
         metadata

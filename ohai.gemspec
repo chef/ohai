@@ -11,6 +11,7 @@ spec = Gem::Specification.new do |s|
   s.author = "Adam Jacob"
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
+  s.required_rubygems_version = "1.3.7.1"
 
   # This only helps with bundler because otherwise we make a dependency based
   # on what platform we are building a gem on, not what platform we are

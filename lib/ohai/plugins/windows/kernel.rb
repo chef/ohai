@@ -40,8 +40,8 @@ end
 
 host = WMI::Win32_OperatingSystem.find(:first)
 kernel[:os_info] = Mash.new
-host.properties_.each do |p|
-  kernel[:os_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+host.attributes.each_pair do |key, val|
+  kernel[:os_info][key.to_sym] = val
 end
 
 kernel[:name] = "#{kernel[:os_info][:caption]}"
@@ -51,8 +51,8 @@ kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os
 
 host = WMI::Win32_ComputerSystem.find(:first)
 kernel[:cs_info] = Mash.new
-host.properties_.each do |p|
-  kernel[:cs_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+host.attributes.each_pair do |key, val|
+  kernel[:cs_info][key.to_sym] = val
 end
 
 kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")

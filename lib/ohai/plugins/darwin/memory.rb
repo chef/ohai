@@ -24,10 +24,10 @@ popen4("top -l1 -R -n0") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     if line =~ /PhysMem:/
-      memory[:total] = "#{$1}#{$2}B" if line =~ /(\d+)([A-Z]{1})\s+used/
-      memory[:free] = "#{$1}#{$2}B" if line =~ /(\d+)([A-Z]{1})\s+free/
-      memory[:active] = "#{$1}#{$2}B" if line =~ /(\d+)([A-Z]{1})\s+active/
-      memory[:inactive] = "#{$1}#{$2}B" if line =~ /(\d+)([A-Z]{1})\s+inactive/
+      memory[:total] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+used/i
+      memory[:free] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+free/i
+      memory[:active] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+active/i
+      memory[:inactive] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+inactive/i
     end
   end
 end

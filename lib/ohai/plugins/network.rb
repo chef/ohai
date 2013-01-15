@@ -105,7 +105,7 @@ def find_ip(family = "inet")
     end
   else
     r = r.first
-    Ohai::Log.info("[#{family}] no default interface, picking the first ipaddress")
+    Ohai::Log.debug("[#{family}] no default interface, picking the first ipaddress")
   end
 
   return [ nil, nil ] if r.nil? or r.empty?
@@ -159,7 +159,7 @@ FAMILIES.keys.sort.each do |family|
     else
       ip6address r["ip"]
       if r["mac"] and macaddress.nil? and ipaddress.nil?
-        Ohai::Log.info("macaddress set to #{r["mac"]} from the ipv6 setup")
+        Ohai::Log.debug("macaddress set to #{r["mac"]} from the ipv6 setup")
         macaddress r["mac"]
       end
     end
@@ -169,5 +169,5 @@ end
 
 if results["inet"]["iface"] and results["inet6"]["iface"] and
     results["inet"]["iface"] != results["inet6"]["iface"]
-  Ohai::Log.info("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]}), macaddress has been set using the ipaddress interface")
+  Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]}), macaddress has been set using the ipaddress interface")
 end

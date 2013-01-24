@@ -28,20 +28,6 @@ def has_rackspace_kernel?
   kernel[:release].split('-').last.eql?("rscloud")
 end
 
-# Checks for matching rackspace arp mac
-#
-# === Return
-# true:: If mac address matches
-# false:: Otherwise
-def has_rackspace_mac?
-  network[:interfaces].values.each do |iface|
-    unless iface[:arp].nil?
-      return true if iface[:arp].value?("00:00:0c:07:ac:01") or iface[:arp].value?("00:00:0c:9f:f0:01")
-    end
-  end
-  false
-end
-
 # Checks for rackspace provider attribute
 #
 # === Return
@@ -62,7 +48,7 @@ end
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?
-  hint?('rackspace') || has_rackspace_metadata? || has_rackspace_mac? || has_rackspace_kernel?
+  hint?('rackspace') || has_rackspace_metadata? || has_rackspace_kernel?
 end
 
 # Names rackspace ip address
@@ -73,7 +59,7 @@ end
 def get_ip_address(name, eth)
   network[:interfaces][eth][:addresses].each do |key, info|
     if info['family'] == 'inet'
-      rackspace[name] = key 
+      rackspace[name] = key
       break # break when we found an address
     end
   end
@@ -88,7 +74,7 @@ def get_global_ipv6_address(name, eth)
   network[:interfaces][eth][:addresses].each do |key, info|
     # check if we got an ipv6 address and if its in global scope
     if info['family'] == 'inet6' && info['scope'] == 'Global'
-      rackspace[name] = key 
+      rackspace[name] = key
       break # break when we found an address
     end
   end

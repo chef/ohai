@@ -43,6 +43,9 @@ elsif File.exists?("/etc/debian_version")
   if lsb[:id] =~ /Ubuntu/i
     platform "ubuntu"
     platform_version lsb[:release]
+  elsif lsb[:id] =~ /LinuxMint/i
+    platform "linuxmint"
+    platform_version lsb[:release]
   else 
     if File.exists?("/usr/bin/raspi-config")
       platform "raspbian"

@@ -26,6 +26,7 @@ describe Ohai::System, "plugin cloud" do
   describe "with no cloud mashes" do
     it "doesn't populate the cloud data" do
       @ohai[:ec2] = nil
+      @ohai[:openstack] = nil
       @ohai[:rackspace] = nil
       @ohai[:eucalyptus] = nil
       @ohai[:linode] = nil
@@ -57,41 +58,71 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe "with openstack" do
+    before do
+      @ohai[:openstack] = Mash.new()
+    end
+
+    it "populates cloud public ip" do
+      @ohai[:openstack][:public_ipv4] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ipv4].should == @ohai[:openstack][:public_ipv4]
+    end
+
+    it "populates cloud private ip" do
+      @ohai[:openstack][:local_ipv4] = "10.252.42.149"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:local_ipv4].should == @ohai[:openstack][:local_ipv4]
+    end
+
+    it "populates first cloud public ip" do
+      @ohai[:openstack][:public_ipv4] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips].first.should == @ohai[:openstack][:public_ipv4]
+    end
+
+    it "populates cloud provider" do
+      @ohai[:openstack][:provider] = "openstack"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:provider].should == "openstack"
+    end
+  end
+
   describe "with rackspace" do
     before do
       @ohai[:rackspace] = Mash.new()
-    end  
-    
+    end
+
     it "populates cloud public ip" do
       @ohai[:rackspace][:public_ipv4] = "174.129.150.8"
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:public_ipv4].should == @ohai[:rackspace][:public_ipv4]
     end
-    
+
     it "populates cloud public ipv6" do
       @ohai[:rackspace][:public_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:public_ipv6].should == @ohai[:rackspace][:public_ipv6]
     end
-    
+
     it "populates cloud private ip" do
       @ohai[:rackspace][:local_ipv4] = "10.252.42.149"
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:local_ipv4].should == @ohai[:rackspace][:local_ipv4]
     end
-    
+
     it "populates cloud private ipv6" do
       @ohai[:rackspace][:local_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:local_ipv6].should == @ohai[:rackspace][:local_ipv6]
     end
-    
+
     it "populates first cloud public ip" do
       @ohai[:rackspace][:public_ipv4] = "174.129.150.8"
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:public_ips].first.should == @ohai[:rackspace][:public_ipv4]
     end
-    
+
     it "populates first cloud public ip" do
       @ohai[:rackspace][:local_ipv4] = "174.129.150.8"
       @ohai._require_plugin("cloud")

@@ -27,6 +27,10 @@ module Ohai
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
       EC2_METADATA_URL = "/2012-01-12/meta-data" unless defined?(EC2_METADATA_URL)
       EC2_USERDATA_URL = "/2012-01-12/user-data" unless defined?(EC2_USERDATA_URL)
+
+      EC2_2008_METADATA_URL = "/2008-02-01/meta-data" unless defined?(EC2_2008_METADATA_URL)
+      EC2_2008_USERDATA_URL = "/2008-02-01/user-data" unless defined?(EC2_2008_USERDATA_URL)
+
       EC2_ARRAY_VALUES = %w(security-groups)
       EC2_ARRAY_DIR    = %w(network/interfaces/macs)
       EC2_JSON_DIR     = %w(iam)
@@ -61,20 +65,32 @@ module Ohai
         Net::HTTP.start(EC2_METADATA_ADDR).tap {|h| h.read_timeout = 600}
       end
 
+      def metadata_get(id='')
+        response = http_client.get("#{EC2_METADATA_URL}/#{id}")
+        response = http_client.get("#{EC2_2008_METADATA_URL}/#{id}") if response.code != '200'
+        response
+      end
+
+      def userdata_get
+        response = http_client.get("#{EC2_USERDATA_URL}/")
+        response = http_client.get("#{EC2_2008_USERDATA_URL}/") if response.code != '200'
+        response
+      end
+
       def fetch_metadata(id='')
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+        metadata_get(id).body.split("\n").each do |o|
           key = expand_path("#{id}#{o}")
           if key[-1..-1] != '/'
             metadata[metadata_key(key)] =
               if EC2_ARRAY_VALUES.include? key
-                http_client.get("#{EC2_METADATA_URL}/#{key}").body.split("\n")
+                metadata_get(key).body.split("\n")
               else
-                http_client.get("#{EC2_METADATA_URL}/#{key}").body
+                metadata_get(key).body
               end
           elsif not key.eql?(id) and not key.eql?('/')
             name = key[0..-2]
-	    sym = metadata_key(name)
+        sym = metadata_key(name)
             if EC2_ARRAY_DIR.include?(name)
               metadata[sym] = fetch_dir_metadata(key)
             elsif EC2_JSON_DIR.include?(name)
@@ -89,10 +105,10 @@ module Ohai
 
       def fetch_dir_metadata(id)
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+          metadata_get(id).body.split("\n").each do |o|
           key = expand_path(o)
           if key[-1..-1] != '/'
-            metadata[metadata_key(key)] = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
+            metadata[metadata_key(key)] = metadata_get("#{id}#{key}").body
           elsif not key.eql?('/')
             metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}")
           end
@@ -102,10 +118,10 @@ module Ohai
 
       def fetch_json_dir_metadata(id)
         metadata = Hash.new
-        http_client.get("#{EC2_METADATA_URL}/#{id}").body.split("\n").each do |o|
+        metadata_get(id).body.split("\n").each do |o|
           key = expand_path(o)
           if key[-1..-1] != '/'
-            data = http_client.get("#{EC2_METADATA_URL}/#{id}#{key}").body
+            data = metadata_get("#{id}#{key}").body
             json = StringIO.new(data)
             parser = Yajl::Parser.new
             metadata[metadata_key(key)] = parser.parse(json)
@@ -117,7 +133,7 @@ module Ohai
       end
 
       def fetch_userdata()
-        response = http_client.get("#{EC2_USERDATA_URL}/")
+        response = userdata_get
         response.code == "200" ? response.body : nil
       end
 
@@ -138,4 +154,3 @@ module Ohai
     end
   end
 end
-

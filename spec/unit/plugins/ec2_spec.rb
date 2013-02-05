@@ -68,6 +68,45 @@ describe Ohai::System, "plugin ec2" do
       @ohai[:ec2]['security_groups'].should eql ['group1', 'group2']
     end
 
+    it "should fall-back to '2008-02-01' API if a 404 response occurs accessing the '2012-01-12' API, but still fetch all the ec2 metadata" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "Not Found", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/instance_type").
+        and_return(mock("Net::HTTP Response", :body => "Not Found", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/instance_type").
+        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/ami_id").
+        and_return(mock("Net::HTTP Response", :body => "Not Found", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/ami_id").
+        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/security-groups").
+        and_return(mock("Net::HTTP Response", :body => "Not Found", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/meta-data/security-groups").
+        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/user-data/").
+        and_return(mock("Net::HTTP Response", :body => "Not Found", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2008-02-01/user-data/").
+        and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+      @ohai._require_plugin("ec2")
+
+      @ohai[:ec2].should_not be_nil
+      @ohai[:ec2]['instance_type'].should == "c1.medium"
+      @ohai[:ec2]['ami_id'].should == "ami-5d2dc934"
+      @ohai[:ec2]['security_groups'].should eql ['group1', 'group2']
+    end
+
     it "should parse ec2 network/ directory as a multi-level hash" do
       @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/").

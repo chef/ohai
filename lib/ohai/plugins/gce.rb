@@ -34,7 +34,6 @@ if looks_like_gce?
   Ohai::Log.debug("looks_like_gce? == true")
   gce Mash.new
   fetch_metadata.each {|k, v| gce[k] = v }
-  gce[:userdata] = self.fetch_userdata
 else
   Ohai::Log.debug("looks_like_gce? == false")
   false

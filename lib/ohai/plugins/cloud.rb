@@ -17,6 +17,7 @@
 provides "cloud"
 
 require_plugin "ec2"
+require_plugin "gce"
 require_plugin "rackspace"
 require_plugin "eucalyptus"
 require_plugin "linode"
@@ -28,6 +29,41 @@ def create_objects
   cloud Mash.new
   cloud[:public_ips] = Array.new
   cloud[:private_ips] = Array.new
+end
+#---------------------------------------
+# Google Compute Engine (gce)
+#--------------------------------------
+
+def on_gce?
+  gce != nil
+end
+def get_gce_values
+  cloud[:public_ipv4] = []
+  cloud[:local_ipv4] = []
+
+  public_ips = gce['network']["networkInterface"].collect do |interface|
+    if interface.has_key?('accessConfiguration')
+      interface['accessConfiguration'].collect{|ac| ac['externalIp']}
+    end
+  end.flatten.compact
+
+  private_ips = gce['network']["networkInterface"].collect do |interface|
+    interface['ip']
+  end.compact
+  
+  cloud[:public_ips] += public_ips
+  cloud[:private_ips] += private_ips
+  cloud[:public_ipv4] +=  public_ips
+  cloud[:public_hostname] = nil
+  cloud[:local_ipv4] += private_ips
+  cloud[:local_hostname] = gce['hostname']
+  cloud[:provider] = "gce"
+end
+
+# setup gce cloud
+if on_gce?
+  create_objects
+  get_gce_values
 end
 
 # ----------------------------------------

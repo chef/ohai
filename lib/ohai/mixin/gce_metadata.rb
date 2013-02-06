@@ -57,7 +57,7 @@ module Ohai
       def fetch_metadata(id='')
         uri = "#{GCE_METADATA_URL}/#{id}"
         response = http_client.get(uri).response
-        return nil unless response.is_a?(Net::HTTPOK)
+        return nil unless response.code == "200"
         
         if json?(response.body)
           data = StringIO.new(response.body)

@@ -42,6 +42,9 @@ describe Ohai::System, "plugin ec2" do
       t = mock("connection")
       t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       Socket.stub!(:new).and_return(t)
+      @http_client.should_receive(:get).
+        with("/").twice.
+        and_return(mock("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
     end
 
     it "should recursively fetch all the ec2 metadata" do

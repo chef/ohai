@@ -74,4 +74,18 @@ EOS
 
     it_behaves_like "loads keys"
   end
+
+  context "when an sshd_config is found but does not contain valid keys" do
+    before do
+          sshd_config_file_without_keys =<<EOS
+# HostKeys for protocol version 2
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_dsa_key
+EOS
+    File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file_without_keys)
+    File.stub(:exists?).and_return(true)
+    end
+
+    it_behaves_like "loads keys"
+  end
 end

@@ -52,7 +52,10 @@ if sshd_config
       end
     end
   end
-else
+end
+
+# Fall back to looking at files directly if sshd_config yields no valid keys.
+if keys[:ssh].empty?
   if keys[:ssh][:host_dsa_public].nil? && File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
     keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
   end

@@ -63,48 +63,50 @@ def sorted_ips(family = "inet")
 end
 
 def find_ip(family = "inet")
-  r=sorted_ips(family)
+  ips=sorted_ips(family)
 
   # return if there isn't any #{family} address !
-  return [ nil, nil ] if r.empty?
+  return [ nil, nil ] if ips.empty?
 
   # shortcuts to access default #{family} interface and gateway
   int_attr = FAMILIES[family] +"_interface"
   gw_attr = FAMILIES[family] + "_gateway"
 
   # If we have a default interface that has addresses,
-  # populate the short-cut attributes
+  # populate the short-cut attributes ipaddress, ip6address and macaddress
   if network[int_attr]
 
-    # network[int_attr] exists, the choosen ip must be exist on this interface
-    r = r.select do |v|
+    # working with the address(es) of the default network interface
+    gw_if_ips = ips.select do |v|
       v[:iface] == network[int_attr]
     end
-    if r.empty?
-      Ohai::Log.warn("[#{family}] no ip on #{network[int_attr]}")
+    if gw_if_ips.empty?
+      Ohai::Log.warn("[#{family}] no ip address on #{network[int_attr]}")
     elsif network[gw_attr] and
         network["interfaces"][network[int_attr]] and
         network["interfaces"][network[int_attr]]["addresses"]
       if [ "0.0.0.0", "::" ].include? network[gw_attr]
         # link level default route
         Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
-        r = r.first
+        r = gw_if_ips.first
       else
-        r = r.select do |v|
+        # checking network masks
+        r = gw_if_ips.select do |v|
           network_contains_address(network[gw_attr], v[:ipaddress], v[:iface])
         end.first
         if r.nil?
-          Ohai::Log.warn("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}")
+          r = gw_if_ips.first
+          Ohai::Log.warn("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking one anyway")
         else
           Ohai::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
         end
       end
     else
       # return the first ip address on network[int_attr]
-      r = r.first
+      r = gw_if_ips.first
     end
   else
-    r = r.first
+    r = ips.first
     Ohai::Log.debug("[#{family}] no default interface, picking the first ipaddress")
   end
 

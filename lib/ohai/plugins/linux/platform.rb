@@ -69,10 +69,15 @@ elsif File.exists?('/etc/gentoo-release')
   platform "gentoo"
   platform_version File.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
 elsif File.exists?('/etc/SuSE-release')
-  platform "suse"
   suse_release = File.read("/etc/SuSE-release")
-  platform_version suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
-  platform_version suse_release.scan(/VERSION = ([\d\.]{2,})/).flatten.join(".") if platform_version == ""
+  suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
+  suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
+  platform_version suse_version
+  if suse_release =~ /^openSUSE/
+    platform "opensuse"
+  else
+    platform "suse"
+  end
 elsif File.exists?('/etc/slackware-version')
   platform "slackware"
   platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join

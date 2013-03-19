@@ -386,7 +386,7 @@ describe Ohai::System, "Linux plugin platform" do
       
       it "should read the platform as suse" do
         @ohai[:lsb][:release] = "12.1"
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
+        File.should_receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "suse"
         @ohai[:platform_version].should == "12.1"
@@ -427,7 +427,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 11.3" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
+        File.should_receive(:read).with("/etc/SuSE-release").and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "suse"
         @ohai[:platform_version].should == "11.3"
@@ -435,7 +435,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 9.1" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
+        File.should_receive(:read).with("/etc/SuSE-release").and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "suse"
         @ohai[:platform_version].should == "9.1"
@@ -443,7 +443,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 11.4" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
+        File.should_receive(:read).with("/etc/SuSE-release").and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
         @ohai._require_plugin("linux::platform")
         @ohai[:platform].should == "suse"
         @ohai[:platform_version].should == "11.4"

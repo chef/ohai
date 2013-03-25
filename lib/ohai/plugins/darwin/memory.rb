@@ -16,19 +16,39 @@
 # limitations under the License.
 #
 
-provides "memory"
+provides 'memory'
 
 memory Mash.new
 
-popen4("top -l1 -R -n0") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /PhysMem:/
-      memory[:total] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+used/i
-      memory[:free] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+free/i
-      memory[:active] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+active/i
-      memory[:inactive] = "#{$1}#{$2}B" if line =~ /(\d+)([a-z]{1})\s+inactive/i
+installed_memory = `sysctl -n hw.memsize`.to_i / 1024 / 1024.0
+memory[:total] = "#{installed_memory.to_i}MB"
+
+total_consumed = 0
+active = 0
+inactive = 0
+vm_stat = `vm_stat`
+page_size = begin; /page size of (\d+) bytes/.match(vm_stat)[1].to_i; rescue; 4096; end
+vm_stat.split("\n").each do |line|
+  ['wired down', 'active', 'inactive'].each do |match|
+    unless line.index("Pages #{match}:").nil? or page_size.nil?
+      pages = line.split.last.to_i
+      megabyte_val = (pages * page_size) / 1024 / 1024.0
+      total_consumed += megabyte_val
+      case match
+      when 'wired down'
+        active += megabyte_val.to_i
+      when 'active'
+        active += megabyte_val.to_i
+      when 'inactive'
+        inactive += megabyte_val.to_i
+      end
     end
   end
 end
+
+memory[:active] = "#{active}MB" if active > 0
+memory[:inactive] = "#{inactive}MB" if inactive > 0
+
+free_memory = installed_memory - total_consumed
+memory[:free] = "#{free_memory.to_i}MB" if total_consumed > 0
 

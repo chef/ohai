@@ -1,6 +1,6 @@
 #
 # Author:: Patrick Collins (<pat@burned.com>)
-# Copyright:: Copyright (c) 2013 Patrick Collins
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,13 @@ provides 'memory'
 
 memory Mash.new
 
-installed_memory = `sysctl -n hw.memsize`.to_i / 1024 / 1024.0
+installed_memory = from("sysctl -n hw.memsize").to_i / 1024 / 1024.0
 memory[:total] = "#{installed_memory.to_i}MB"
 
 total_consumed = 0
 active = 0
 inactive = 0
-vm_stat = `vm_stat`
+vm_stat = from("vm_stat")
 page_size = begin; /page size of (\d+) bytes/.match(vm_stat)[1].to_i; rescue; 4096; end
 vm_stat.split("\n").each do |line|
   ['wired down', 'active', 'inactive'].each do |match|

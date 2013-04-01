@@ -33,11 +33,14 @@ describe Ohai::System, "ssh_host_key plugin" do
 # HostKeys for protocol version 2
 HostKey /etc/ssh/ssh_host_rsa_key
 HostKey /etc/ssh/ssh_host_dsa_key
+# Explicitly specify only RSA/DSA Host keys, and not the newer ECDSA.
+# However, let the ECDSA key and public key exist on disk (/etc/ssh/ssh_host_ecdsa_key{,.pub})
 EOS
     File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
     File.stub(:exists?).and_return(true)
     File.stub(:exists?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
     File.stub(:exists?).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(true)
+    File.stub(:exists?).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(true)
 
     # Ensure we can still use IO.read
     io_read = IO.method(:read)
@@ -46,11 +49,13 @@ EOS
     # Return fake public key files so we don't have to go digging for them in unit tests
     @dsa_key = "ssh-dss AAAAB3NzaC1kc3MAAACBAMHlT02xN8kietxPfhcb98xHueTzKCOTz6dZlP/dmKILHrQOAExuSEeNiA2uvmhHNVQvs/cBsRiDxgSKux3ie2q8+MB6vHCiSpSkoPjrL75iT57YDilCB4/sytt6IJpj+H42wRDWTX0/QRybMHUvmnmEL0cwZXykSvrIum0BKB6hAAAAFQDsi6WUCClhtZIiTY9uh8eAre+SbQAAAIEAgNnuw0uEuqtcVif+AYd/bCZvL9FPqg7DrmTkamNEcVinhUGwsPGJTLJf+o5ens1X4RzQoi1R6Y6zCTL2FN/hZgINJNO0z9BN402wWrZmQd+Vb1U5DyDtveuvipqyQS+fm9neRwdLuv36Fc9f9nkZ7YHpkGPJp+yJpG4OoeREhwgAAACBAIf9kKLf2XiXnlByzlJ2Naa55d/hp2E059VKCRsBS++xFKYKvSqjnDQBFiMtAUhb8EdTyBGyalqOgqogDQVtwHfTZWZwqHAhry9aM06y92Eu/xSey4tWjKeknOsnRe640KC4zmKDBRTrjjkuAdrKPN9k3jl+OCc669JHlIfo6kqf oppa"
     @rsa_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAuhcVXV+nNapkyUC5p4TH1ymRxUjtMBKqYWmwyI29gVFnUNeHkKFHWon0KFeGJP2Rm8BfTiZa9ER9e8pRr4Nd+z1C1o0kVoxEEfB9tpSdTlpk1GG83D94l57fij8THRVIwuCEosViUlg1gDgC4SpxbqfdBkUN2qyf6JDOh7t2QpYh7berpDEWeBpb7BKdLEDT57uw7ijKzSNyaXqq8KkB9I+UFrRwpuos4W7ilX+PQ+mWLi2ZZJfTYZMxxVS+qJwiDtNxGCRwTOQZG03kI7eLBZG+igupr0uD4o6qeftPOr0kxgjoPU4nEKvYiGq8Rqd2vYrhiaJHLk9QB6xStQvS3Q== oppa"
+    @ecdsa_key = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDEdbyBHrn9y2z6ICMaVvZ+r7AMuNgK5lIA78F/Y86JVsFl4rgfi+NsjQMW6FvcjBEeyHAxHNnmBhPgE4OZ9TBE= oppa"
     IO.stub(:read).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(@dsa_key)
     IO.stub(:read).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(@rsa_key)
+    IO.stub(:read).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(@ecdsa_key)
   end
 
-  shared_examples "loads keys" do
+  shared_examples "loads specified keys" do
     it "reads the key and sets the dsa attribute correctly" do
       @ohai._require_plugin("ssh_host_key")
       @ohai[:keys][:ssh][:host_dsa_public].should eql(@dsa_key.split[1])
@@ -60,10 +65,20 @@ EOS
       @ohai._require_plugin("ssh_host_key")
       @ohai[:keys][:ssh][:host_rsa_public].should eql(@rsa_key.split[1])
     end
+
+  end
+
+  shared_examples "loads all keys" do
+    include_examples "loads specified keys"
+
+    it "reads the key and sets the ecdsa_key attribute correctly" do
+      @ohai._require_plugin("ssh_host_key")
+      @ohai[:keys][:ssh][:host_ecdsa_public].should eql(@ecdsa_key.split[1])
+    end
   end
 
   context "when an sshd_config exists" do
-    it_behaves_like "loads keys"
+    it_behaves_like "loads specified keys"
   end
 
   context "when an sshd_config can not be found" do
@@ -72,6 +87,22 @@ EOS
       File.stub(:exists?).with("/etc/sshd_config").and_return(false)
     end
 
-    it_behaves_like "loads keys"
+    it_behaves_like "loads all keys"
   end
+
+  context "when an sshd_config exists, but HostKey is not specified" do
+    before do
+      sshd_config_file =<<-EOS
+# HostKey for protocol version 1
+#HostKey /etc/ssh/ssh_host_key
+# HostKeys for protocol version 2
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_dsa_key
+      EOS
+      File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
+    end
+    
+    it_behaves_like "loads all keys"
+  end
+
 end

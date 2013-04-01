@@ -21,12 +21,14 @@ require_plugin "keys"
 
 keys[:ssh] = Mash.new
 
-def is_dsa_or_rsa?(file)
+def is_dsa_or_rsa_or_ecdsa?(file)
   case IO.read(file).split[0]
   when "ssh-dss"
     "dsa"
   when "ssh-rsa"
     "rsa"
+  when /^ecdsa\-/
+    "ecdsa"
   else
     nil
   end
@@ -47,17 +49,21 @@ if sshd_config
     conf.each_line do |line|
       if line.match(/^hostkey\s/i)
         pub_file = "#{line.split[1]}.pub"
-        key_type = is_dsa_or_rsa?(pub_file)
+        key_type = is_dsa_or_rsa_or_ecdsa?(pub_file)
         keys[:ssh]["host_#{key_type}_public"] = IO.read(pub_file).split[1] unless key_type.nil?
       end
     end
   end
-else
-  if keys[:ssh][:host_dsa_public].nil? && File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
-    keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-  end
+end
 
-  if keys[:ssh][:host_rsa_public].nil? && File.exists?("/etc/ssh/ssh_host_rsa_key.pub")
-    keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+# Try the defaults.
+
+if keys[:ssh].empty?
+  ["dsa", "rsa", "ecdsa"].each do |type|
+    pub_file = "/etc/ssh/ssh_host_#{type}_key.pub"
+    if File.exists? pub_file
+      keys[:ssh]["host_#{type}_public"] = IO.read(pub_file).split[1]
+    end
   end
 end
+

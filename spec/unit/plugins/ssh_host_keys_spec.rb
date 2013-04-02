@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,12 +29,6 @@ describe Ohai::System, "ssh_host_key plugin" do
     @ohai.extend(SimpleFromFile)
 
     File.stub(:exists?).with("/etc/ssh/sshd_config").and_return(true)
-    sshd_config_file =<<EOS
-# HostKeys for protocol version 2
-HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_dsa_key
-HostKey /etc/ssh/ssh_host_ecdsa_key
-EOS
     File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
     File.stub(:exists?).and_return(true)
     File.stub(:exists?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
@@ -60,7 +54,7 @@ EOS
       @ohai[:keys][:ssh][:host_dsa_public].should eql(@dsa_key.split[1])
       @ohai[:keys][:ssh][:host_dsa_type].should be_nil
     end
-  
+
     it "reads the key and sets the rsa attribute correctly" do
       @ohai._require_plugin("ssh_host_key")
       @ohai[:keys][:ssh][:host_rsa_public].should eql(@rsa_key.split[1])
@@ -75,10 +69,33 @@ EOS
   end
 
   context "when an sshd_config exists" do
+    let :sshd_config_file do
+      <<EOS
+# HostKeys for protocol version 2
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_dsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+EOS
+    end
+    it_behaves_like "loads keys"
+  end
+
+  context "when an sshd_config exists with commented entries" do
+    let :sshd_config_file do
+      <<EOS
+# HostKeys for protocol version 2
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_dsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+EOS
+    end
     it_behaves_like "loads keys"
   end
 
   context "when an sshd_config can not be found" do
+    let :sshd_config_file do
+      nil
+    end
     before do
       File.stub(:exists?).with("/etc/ssh/sshd_config").and_return(false)
       File.stub(:exists?).with("/etc/sshd_config").and_return(false)

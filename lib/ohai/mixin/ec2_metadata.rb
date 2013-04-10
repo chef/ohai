@@ -22,6 +22,22 @@ require 'socket'
 
 module Ohai
   module Mixin
+    ##
+    # This code parses the EC2 Instance Metadata API to provide details
+    # of the running instance.
+    #
+    # Earlier version of this code assumed a specific version of the
+    # metadata API was available. Unfortunately the API versions
+    # supported by a particular instance are determined at instance
+    # launch and are not extended over the life of the instance. As such
+    # the earlier code would fail depending on the age of the instance.
+    #
+    # The updated code probes the instance metadata endpoint for
+    # available versions, determines the most advanced version known to
+    # work and executes the metadata retrieval using that version.
+    #
+    # If no compatible version is found, an empty hash is returned.
+    #
     module Ec2Metadata
 
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)

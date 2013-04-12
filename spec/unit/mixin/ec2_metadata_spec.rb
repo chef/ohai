@@ -39,8 +39,8 @@ describe Ohai::Mixin::Ec2Metadata do
 
     context "with an unsorted list of metadata versions" do
       let(:response) { mock("Net::HTTP Response", :body => "1.0\n2009-04-04\n2007-03-01\n2011-05-01\n2008-09-01\nUnsupported", :code => "200") }
-      it "returns the most recent version" do
 
+      it "returns the most recent version (using string sort)" do
         mixin.best_api_version.should == "2011-05-01"
       end
     end

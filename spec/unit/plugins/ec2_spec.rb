@@ -44,7 +44,14 @@ describe Ohai::System, "plugin ec2" do
       Socket.stub!(:new).and_return(t)
       @http_client.should_receive(:get).
         with("/").twice.
-        and_return(mock("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
+        and_return(mock("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "200"))
+    end
+
+    it "should determine the best supported ec2 metadata api version" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(mock("Net::HTTP Response", :body => "", :code => "200"))
+      @ohai._require_plugin("ec2")
     end
 
     it "should recursively fetch all the ec2 metadata" do

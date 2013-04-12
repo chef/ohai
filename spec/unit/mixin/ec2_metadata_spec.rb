@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 require 'ohai/mixin/ec2_metadata'
 
 describe Ohai::Mixin::Ec2Metadata do
-  let(:mixin) { 
+  let(:mixin) {
     metadata_object = Object.new.extend(Ohai::Mixin::Ec2Metadata)
     http_client = mock("Net::HTTP client")
     http_client.stub!(:get).and_return(response)
@@ -31,39 +31,39 @@ describe Ohai::Mixin::Ec2Metadata do
   context "#best_api_version" do
     context "with a sorted list of metadata versions" do
       let(:response) { mock("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "200") }
-  
+
       it "returns the most recent version" do
         mixin.best_api_version.should == "2012-01-12"
       end
     end
-  
+
     context "with an unsorted list of metadata versions" do
       let(:response) { mock("Net::HTTP Response", :body => "1.0\n2009-04-04\n2007-03-01\n2011-05-01\n2008-09-01\nUnsupported", :code => "200") }
-  
       it "returns the most recent version" do
+
         mixin.best_api_version.should == "2011-05-01"
       end
     end
-  
+
     context "when no supported versions are found" do
       let(:response) { mock("Net::HTTP Response", :body => "2020-01-01\nUnsupported", :code => "200") }
-  
+
       it "raises an error" do
         lambda { mixin.best_api_version}.should raise_error
       end
     end
-  
+
     context "when the response code is 404" do
       let(:response) { mock("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "404") }
-  
+
       it "raises an error" do
         lambda { mixin.best_api_version}.should raise_error
       end
     end
-  
+
     context "when the response code is unexpected" do
       let(:response) { mock("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "418") }
-  
+
       it "raises an error" do
         lambda { mixin.best_api_version}.should raise_error
       end

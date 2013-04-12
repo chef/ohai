@@ -76,7 +76,9 @@ module Ohai
 
       def best_api_version
         response = http_client.get("/")
-        return nil if (response.code != '200')
+        unless response.code == '200'
+          raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
+        end
         versions = response.body.split("\n")
         until (versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)) do
           pv = versions.pop

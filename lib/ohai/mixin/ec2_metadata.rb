@@ -85,6 +85,9 @@ module Ohai
           Ohai::Log.debug("EC2 shows unsupported metadata version: #{pv}") unless pv == 'latest'
         end
         Ohai::Log.debug("EC2 metadata version: #{versions.last}")
+        if versions.empty?
+          raise "Unable to determine EC2 metadata version (no supported entries found)"
+        end
         versions.last
       end
 

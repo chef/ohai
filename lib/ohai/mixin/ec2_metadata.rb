@@ -99,7 +99,11 @@ module Ohai
       end
 
       def metadata_get(id, api_version)
-        http_client.get("/#{api_version}/meta-data/#{id}")
+        response = http_client.get("/#{api_version}/meta-data/#{id}")
+        unless response.code == '200'
+          raise "Encountered error retrieving EC2 metadata (returned #{response.code} response)"
+        end
+        response
       end
 
       def fetch_metadata(id='', api_version=nil)

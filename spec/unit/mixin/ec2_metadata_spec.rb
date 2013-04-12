@@ -69,4 +69,14 @@ describe Ohai::Mixin::Ec2Metadata do
       end
     end
   end
+
+  context "#metadata_get" do
+    context "when the response code is unexpected" do
+      let(:response) { mock("Net::HTTP Response", :body => "", :code => "418") }
+
+      it "raises an error" do
+        lambda { mixin.metadata_get('', '2012-01-12') }.should raise_error(RuntimeError)
+      end
+    end
+  end
 end

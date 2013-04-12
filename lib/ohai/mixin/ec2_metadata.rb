@@ -76,6 +76,7 @@ module Ohai
 
       def best_api_version
         response = http_client.get("/")
+        return nil if (response.code != '200')
         versions = response.body.split("\n")
         until (versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)) do
           pv = versions.pop

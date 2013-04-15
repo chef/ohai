@@ -39,17 +39,20 @@ describe Ohai::System, "plugin eucalyptus" do
       @ohai.stub!(:http_client).and_return(@http_client)
 
       @http_client.should_receive(:get).
+        with("/").twice.
+        and_return(mock("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
+      @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/").
-        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups"))
+        and_return(mock("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups", :code => "200"))
       @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/instance_type").
-        and_return(mock("Net::HTTP Response", :body => "c1.medium"))
+        and_return(mock("Net::HTTP Response", :body => "c1.medium", :code => "200"))
       @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/ami_id").
-        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934"))
+        and_return(mock("Net::HTTP Response", :body => "ami-5d2dc934", :code => "200"))
       @http_client.should_receive(:get).
         with("/2012-01-12/meta-data/security-groups").
-        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2"))
+        and_return(mock("Net::HTTP Response", :body => "group1\ngroup2", :code => "200"))
       @http_client.should_receive(:get).
         with("/2012-01-12/user-data/").
         and_return(mock("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
@@ -84,7 +87,7 @@ describe Ohai::System, "plugin eucalyptus" do
       @ohai[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
-  
+
   describe "with eucalyptus cloud file" do
     it_should_behave_like "eucalyptus"
 
@@ -98,16 +101,16 @@ describe Ohai::System, "plugin eucalyptus" do
 
   describe "without cloud file" do
     it_should_behave_like "!eucalyptus"
-  
+
     before(:each) do
       File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
       File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
     end
   end
-  
+
   describe "with ec2 cloud file" do
     it_should_behave_like "!eucalyptus"
-  
+
     before(:each) do
       File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
       File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
@@ -115,5 +118,5 @@ describe Ohai::System, "plugin eucalyptus" do
       File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
-  
+
 end

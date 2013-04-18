@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ EOS
       @ohai._require_plugin("ssh_host_key")
       @ohai[:keys][:ssh][:host_dsa_public].should eql(@dsa_key.split[1])
     end
-  
+
     it "reads the key and sets the rsa attribute correctly" do
       @ohai._require_plugin("ssh_host_key")
       @ohai[:keys][:ssh][:host_rsa_public].should eql(@rsa_key.split[1])
@@ -63,6 +63,14 @@ EOS
   end
 
   context "when an sshd_config exists" do
+    it_behaves_like "loads keys"
+  end
+
+  context "when an sshd_config exists but contains no HostKeys" do
+    before do
+      File.stub(:open).with("/etc/ssh/sshd_config").and_yield('')
+    end
+
     it_behaves_like "loads keys"
   end
 

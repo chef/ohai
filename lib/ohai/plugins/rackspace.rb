@@ -42,13 +42,27 @@ def has_rackspace_mac?
   false
 end
 
+# Checks for rackspace provider attribute
+#
+# === Return
+# true:: If rackspace provider attribute found
+# false:: Otherwise
+def has_rackspace_metadata?
+  status, stdout, stderr = run_command(:no_status_check => true, :command => "xenstore-read vm-data/provider_data/provider")
+  if status == 0
+    stdout.strip.downcase == 'rackspace'
+  end
+rescue Ohai::Exceptions::Exec
+  false
+end
+
 # Identifies the rackspace cloud
 #
 # === Return
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?
-  hint?('rackspace') || has_rackspace_mac? || has_rackspace_kernel?
+  hint?('rackspace') || has_rackspace_mac? || has_rackspace_kernel? || has_rackspace_metadata?
 end
 
 # Names rackspace ip address

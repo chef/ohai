@@ -35,9 +35,9 @@ end
 # false:: Otherwise
 def has_rackspace_mac?
   network[:interfaces].values.each do |iface|
+    return true if iface[:addresses].select{|k,v| v["family"] == "lladdr" && k.start_with?("bc:76:4e")}
     unless iface[:arp].nil?
       return true if iface[:arp].value?("00:00:0c:07:ac:01") or iface[:arp].value?("00:00:0c:9f:f0:01")
-      return true if iface[:addresses].select{|k,v| v["family"] == "lladdr" && k.start_with?("bc:76:4e")}
     end
   end
   false
@@ -154,4 +154,6 @@ if looks_like_rackspace?
   rackspace[:local_ipv4] = val_or_first_from_array(:private_ip, :private_ips)
   get_global_ipv6_address(:local_ipv6, :eth1)
   rackspace[:local_hostname] ||= hostname
+  # finally, merge all data from the hints file
+  rackspace.merge!(hint?("rackspace")) if hint?("rackspace")
 end

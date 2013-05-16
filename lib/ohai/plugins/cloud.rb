@@ -75,8 +75,16 @@ end
 
 # Fill cloud hash with rackspace values
 def get_rackspace_values 
-  cloud[:public_ips] << rackspace['public_ipv4'] if rackspace['public_ipv4']
-  cloud[:private_ips] << rackspace['local_ipv4'] if rackspace['local_ipv4']
+  if rackspace['public_ips']
+    cloud[:public_ips] = rackspace['public_ips']
+  else
+    cloud[:public_ips] << rackspace['public_ipv4'] if rackspace['public_ipv4']
+  end
+  if rackspace['local_ips']
+    cloud[:private_ips] = rackspace['local_ips'] 
+  else
+    cloud[:private_ips] << rackspace['local_ipv4'] if rackspace['local_ipv4']
+  end
   cloud[:public_ipv4] = rackspace['public_ipv4']
   cloud[:public_ipv6] = rackspace['public_ipv6']
   cloud[:public_hostname] = rackspace['public_hostname']

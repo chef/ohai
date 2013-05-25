@@ -18,17 +18,16 @@
 
 provides "getconf"
 
-getconf = Mash.new
-
 status, stdout, stderr = run_command(
                                      :no_status_check => true,
                                      :command => "getconf -a")
+getconf = Mash.new
+self[:getconf] = getconf
 
 if status == 0
   stdout.lines.each do |line|
     fields = line.strip.split
     getconf[fields[0].to_sym] = fields[1]
   end
-  
-  self[:getconf] = getconf
 end
+

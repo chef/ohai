@@ -22,22 +22,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux getconf plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai._require_plugin("getconf")
-    @ohai.stub!(:require_plugin).and_return(true)
-    @status = 0
-    @stdout = "PAGE_SIZE __PAGE_SIZE__\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with(
-                                   :no_status_check=>true,
-                                   :command=>"getconf -a"
-                                   ).and_return(
-                                                @status,
-                                                @stdout,
-                                                @stderr)
   end
 
   it "should parse getconf output" do
-    @ohai._require_plugin("getconf")
+    @status = 0
+    @stdout = "PAGE_SIZE __PAGE_SIZE__\n"
+    @stderr = ""
+    @ohai.stub!(:run_command).with({
+                                   :no_status_check=>true,
+                                   :command=>"getconf -a"
+                                   }).and_return([
+                                                @status,
+                                                @stdout,
+                                                @stderr])
+    @ohai._require_plugin("linux/getconf")
     @ohai.getconf[:PAGE_SIZE].should eql("__PAGE_SIZE__")
   end
 
@@ -45,8 +43,15 @@ describe Ohai::System, "Linux getconf plugin" do
     @status = 1
     @stdout = ""
     @stderr = "whops\n"
-    @ohai._require_plugin("getconf")
-    @ohai.should_not have_key(:getconf)
+    @ohai.stub!(:run_command).with({
+                                   :no_status_check=>true,
+                                   :command=>"getconf -a"
+                                   }).and_return([
+                                                @status,
+                                                @stdout,
+                                                @stderr])
+    @ohai._require_plugin("linux/getconf")
+    @ohai.getconf[:PAGE_SIZE].should eql(nil)
   end
 
 end

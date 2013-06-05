@@ -29,6 +29,7 @@ describe Ohai::System, "plugin cloud" do
       @ohai[:rackspace] = nil
       @ohai[:eucalyptus] = nil
       @ohai[:linode] = nil
+      @ohai[:azure] = nil
       @ohai._require_plugin("cloud")
       @ohai[:cloud].should be_nil
     end
@@ -153,6 +154,53 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @ohai._require_plugin("cloud")
       @ohai[:cloud][:provider].should == "eucalyptus"
+    end
+  end
+
+  describe "with Azure mash" do
+    before do
+      @ohai[:azure] = Mash.new()
+    end
+
+    it "populates cloud public ip" do
+      @ohai[:azure]['public_ip'] = "174.129.150.8"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ips][0].should == @ohai[:azure]['public_ip']
+    end
+
+    it "populates cloud vm_name" do
+      @ohai[:azure]['vm_name'] = "linux-vm"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:vm_name].should == @ohai[:azure]['vm_name']
+    end
+
+    it "populates cloud public_fqdn" do
+      @ohai[:azure]['public_fqdn'] = "linux-vm-svc.cloudapp.net"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_fqdn].should == @ohai[:azure]['public_fqdn']
+    end
+
+    it "populates cloud public_ssh_port" do
+      @ohai[:azure]['public_ssh_port'] = "22"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ssh_port].should == @ohai[:azure]['public_ssh_port']
+    end
+
+    it "should not populate cloud public_ssh_port when winrm is used" do
+      @ohai[:azure]['public_winrm_port'] = "5985"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_ssh_port].should be_nil
+    end
+
+    it "populates cloud public_winrm_port" do
+      @ohai[:azure]['public_winrm_port'] = "5985"
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:public_winrm_port].should == @ohai[:azure]['public_winrm_port']
+    end
+
+    it "populates cloud provider" do
+      @ohai._require_plugin("cloud")
+      @ohai[:cloud][:provider].should == "azure"
     end
   end
 

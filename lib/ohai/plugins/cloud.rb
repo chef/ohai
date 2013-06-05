@@ -196,8 +196,9 @@ end
 
 # Fill cloud hash with azure values
 def get_azure_values
-  cloud[:public_ip] = azure['public_ip']
-  cloud[:public_hostname] = azure['public_hostname']
+  cloud[:vm_name] = azure["vm_name"]
+  cloud[:public_ips] << azure['public_ip']
+  cloud[:public_fqdn] = azure['public_fqdn']
   cloud[:public_ssh_port] = azure['public_ssh_port'] if azure['public_ssh_port']
   cloud[:public_winrm_port] = azure['public_winrm_port'] if azure['public_winrm_port']
   cloud[:provider] = "azure"

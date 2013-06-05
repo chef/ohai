@@ -21,6 +21,7 @@ require_plugin "rackspace"
 require_plugin "eucalyptus"
 require_plugin "linode"
 require_plugin "openstack"
+require_plugin "azure"
 
 # Make top-level cloud hashes
 #
@@ -178,4 +179,32 @@ end
 if on_openstack?
   create_objects
   get_openstack_values
+end
+
+# ----------------------------------------
+# azure
+# ----------------------------------------
+
+# Is current cloud azure?
+#
+# === Return
+# true:: If azure Hash is defined
+# false:: Otherwise
+def on_azure?
+  azure != nil
+end
+
+# Fill cloud hash with azure values
+def get_azure_values
+  cloud[:public_ip] = azure['public_ip']
+  cloud[:public_hostname] = azure['public_hostname']
+  cloud[:public_ssh_port] = azure['public_ssh_port'] if azure['public_ssh_port']
+  cloud[:public_winrm_port] = azure['public_winrm_port'] if azure['public_winrm_port']
+  cloud[:provider] = "azure"
+end
+
+# setup azure cloud data
+if on_azure?
+  create_objects
+  get_azure_values
 end

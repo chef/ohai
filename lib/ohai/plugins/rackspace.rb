@@ -154,6 +154,7 @@ if looks_like_rackspace?
   rackspace[:local_ipv4] = val_or_first_from_array(:private_ip, :private_ips)
   get_global_ipv6_address(:local_ipv6, :eth1)
   rackspace[:local_hostname] ||= hostname
+  rackspace[:instance_id] = xenstore_read("name")[/instance-([a-f0-9-]+)/,1]
   # finally, merge all data from the hints file
   rackspace.merge!(hint?("rackspace")) if hint?("rackspace")
 end

@@ -43,6 +43,11 @@ describe Ohai::System, "Linux plugin platform" do
     @ohai.should_receive(:require_plugin).with("linux::lsb").and_return(true)  
     @ohai._require_plugin("linux::platform")
   end
+
+  it 'should set the root_group to root' do
+    @ohai._require_plugin("linux::platform")
+    @ohai[:root_group].should == 'root'
+  end
   
   describe "on lsb compliant distributions" do
     before(:each) do

@@ -25,3 +25,9 @@ platform os
 platform_version kernel['release']
 platform_family "windows"
 
+# Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
+# internal name for the Administrators group, which lets us work
+# properly in environments with a renamed or localized name for the
+# Administrators group
+group = WMI::Win32_Group.find(:first, :conditions => {:SID => 'S-1-5-32-544'})
+root_group group['Name']

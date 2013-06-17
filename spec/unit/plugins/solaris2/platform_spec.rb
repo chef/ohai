@@ -72,6 +72,11 @@ UNAME_X
       @ohai[:platform_version].should == "5.11"
     end
 
+    it 'should set the root_group to root' do
+      @ohai._require_plugin("solaris2::platform")
+      @ohai[:root_group].should == 'root'
+    end
+
   end
 
 end

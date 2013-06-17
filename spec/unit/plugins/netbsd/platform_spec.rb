@@ -37,4 +37,9 @@ describe Ohai::System, "NetBSD plugin platform" do
     @ohai._require_plugin("netbsd::platform")
     @ohai[:platform_version].should == "4.5"
   end
+
+  it 'should set the root_group to wheel' do
+    @ohai._require_plugin("netbsd::platform")
+    @ohai[:root_group].should == 'wheel'
+  end
 end

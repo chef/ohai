@@ -16,7 +16,9 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version", "platform_build"
+provides "platform", "platform_version", "platform_build", "root_group"
+
+root_group "root"
 
 if File.exists?("/sbin/uname")
   uname_exec = "/sbin/uname"

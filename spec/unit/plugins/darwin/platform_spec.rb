@@ -95,5 +95,10 @@ describe Ohai::System, "Darwin plugin platform" do
       @ohai._require_plugin("darwin::platform")
       @ohai[:platform_family].should == "mac_os_x"
     end
+
+    it 'should set the root_group to wheel' do
+      @ohai._require_plugin("darwin::platform")
+      @ohai[:root_group].should == 'wheel'
+    end
   end
 end

@@ -25,7 +25,7 @@ describe Ohai::System, 'root_group' do
     @ohai = Ohai::System.new
   end
 
-  describe 'unix platform' do
+  describe 'unix platform', :unix_only do
     before(:each) do
       # this is deeply intertwingled. unfortunately, the law of demeter
       # apparently didn't apply to this api. we're just trying to fake
@@ -78,7 +78,7 @@ describe Ohai::System, 'root_group' do
     end
   end
 
-  describe 'windows' do
+  describe 'windows', :windows_only do
     before(:each) do
       ::RbConfig::CONFIG['host_os'] = 'windows'
 

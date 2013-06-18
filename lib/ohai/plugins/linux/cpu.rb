@@ -57,4 +57,8 @@ end
 
 cpu cpuinfo
 cpu[:total] = cpu_number
-cpu[:real] = real_cpu.keys.length
+cpu[:real] = ( real_cpu.keys.length == 0 ? 1 : real_cpu.keys.length )
+
+cores_per_cpu = ( cpu['0']['cores'].nil? ? cpu[:total] : cpu['0']['cores'] )
+cpu[:real_cores] = cores_per_cpu * cpu[:real]
+

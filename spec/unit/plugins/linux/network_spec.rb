@@ -27,6 +27,7 @@ end
 
 def prepare_data
   @ifconfig_lines = @linux_ifconfig.split("\n")
+  @ifconfig_gentoo_lines = @linux_gentoo_ifconfig.split("\n")
   @route_lines = @linux_route_n.split("\n")
   @arp_lines = @linux_arp_an.split("\n")
   @ipaddr_lines = @linux_ip_addr.split("\n")
@@ -39,7 +40,7 @@ end
 
 def do_stubs
   @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-  @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+  @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, @ifconfig_gentoo_lines, nil)
   @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
   @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
   @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
@@ -52,6 +53,40 @@ end
 describe Ohai::System, "Linux Network Plugin" do
 
   before do
+    @linux_gentoo_ifconfig = <<-ENDIFCONFIG
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.16.100.7  netmask 255.255.0.0  broadcast 172.16.255.255
+        inet6 fe80::a00:27ff:fe69:189b  prefixlen 64  scopeid 0x20<link>
+        ether 08:00:27:69:18:9b  txqueuelen 1000  (Ethernet)
+        RX packets 490139  bytes 127932795 (122.0 MiB)
+        RX errors 0  dropped 107  overruns 0  frame 0
+        TX packets 698588  bytes 1024413392 (976.9 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ip_vti0: flags=128<NOARP>  mtu 1500
+        tunnel   txqueuelen 0  (IPIP Tunnel)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 0  (Local Loopback)
+        RX packets 562186  bytes 431756757 (411.7 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 562186  bytes 431756757 (411.7 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+sit0: flags=128<NOARP>  mtu 1480
+        sit  txqueuelen 0  (IPv6-in-IPv4)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+    ENDIFCONFIG
+
     @linux_ifconfig = <<-ENDIFCONFIG
 eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2  
           inet addr:10.116.201.76  Bcast:10.116.201.255  Mask:255.255.255.0

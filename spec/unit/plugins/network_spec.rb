@@ -194,7 +194,8 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "informs about this setup" do
-            Ohai::Log.should_receive(:info).with(/^ipaddress and ip6address are set from different interfaces/)
+            Ohai::Log.should_receive(:debug).with(/^ipaddress and ip6address are set from different interfaces/)
+            Ohai::Log.should_receive(:debug).any_number_of_times
             @ohai._require_plugin("network")
           end
         end
@@ -223,7 +224,8 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "informs about this setup" do
-            Ohai::Log.should_receive(:info).with(/^ipaddress and ip6address are set from different interfaces/)
+            Ohai::Log.should_receive(:debug).with(/^ipaddress and ip6address are set from different interfaces/)
+            Ohai::Log.should_receive(:debug).any_number_of_times
             @ohai._require_plugin("network")
           end
         end
@@ -455,8 +457,9 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "picks {ip,mac,ip6}address from the first interface" do
-            Ohai::Log.should_receive(:info).with(/^\[inet\] no default interface/).once
-            Ohai::Log.should_receive(:info).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:debug).any_number_of_times
             @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.99.11"
             @ohai["macaddress"].should == "00:16:3E:2F:36:80"
@@ -477,8 +480,9 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
-            Ohai::Log.should_receive(:info).with(/^\[inet\] no default interface/).once
-            Ohai::Log.should_receive(:info).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet6\] no default interface/).once
+            Ohai::Log.should_receive(:debug).any_number_of_times
             @ohai._require_plugin("network")
             @ohai["ipaddress"].should == "192.168.99.11"
             @ohai["macaddress"].should == "00:16:3E:2F:36:80"
@@ -619,8 +623,8 @@ describe Ohai::System, "Network Plugin" do
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          Ohai::Log.should_receive(:warn).any_number_of_times
-          Ohai::Log.should_receive(:info).with(/^macaddress set to 00:16:3E:2F:36:79 from the ipv6 setup/).once
+          Ohai::Log.should_receive(:debug).with(/^macaddress set to 00:16:3E:2F:36:79 from the ipv6 setup/).once
+          Ohai::Log.should_receive(:debug).any_number_of_times
           @ohai._require_plugin("network")
         end
       end

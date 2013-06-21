@@ -52,12 +52,12 @@ if sshd_config
       end
     end
   end
-else
-  if keys[:ssh][:host_dsa_public].nil? && File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
-    keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
-  end
+end
 
-  if keys[:ssh][:host_rsa_public].nil? && File.exists?("/etc/ssh/ssh_host_rsa_key.pub")
-    keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
-  end
+if keys[:ssh][:host_dsa_public].nil? && File.exists?("/etc/ssh/ssh_host_dsa_key.pub")
+  keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+end
+
+if keys[:ssh][:host_rsa_public].nil? && File.exists?("/etc/ssh/ssh_host_rsa_key.pub")
+  keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
 end

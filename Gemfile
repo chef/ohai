@@ -10,7 +10,6 @@ end
 group :test do
 	gem "rake"
 	gem "rspec"
-	gem "extlib"
 	gem "systemu"
 	gem "json"
 end

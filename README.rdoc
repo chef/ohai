@@ -32,11 +32,10 @@ Install the following RubyGems.
 
 * rake
 * rspec
-* extlib 
 * systemu
 * json
 
-  gem install rake rspec extlib systemu json
+  gem install rake rspec systemu json
 
 == Rake Tasks
 
@@ -59,7 +58,6 @@ We use RSpec for unit/spec tests.
 
   rake spec
 
-Because ohai gathers system information, and we don't know what kind of system we might be running on (yet), we're moving away from specs for integration testing and to cucumber.
 
 = LINKS:
 

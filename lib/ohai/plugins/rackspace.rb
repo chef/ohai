@@ -93,12 +93,23 @@ rescue Ohai::Exceptions::Exec
   Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
 end
 
+# Get the rackspace cloud instance id
+def get_instance_id()
+  status, stdout = stderr = run_command(:no_status_check => true, :command => "xenstore-read name")
+  if status == 0
+    rackspace[:instance_id] = stdout.match("instance-(.*)").captures[0]
+  end
+rescue Ohai::Exceptions::Exec
+  Ohai::Log.debug("Can't capture instance id information for Rackspace cloud")
+end
+
 # Adds rackspace Mash
 if looks_like_rackspace?
   rackspace Mash.new
   get_ip_address(:public_ip, :eth0)
   get_ip_address(:private_ip, :eth1)
   get_region()
+  get_instance_id()
   # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
   rackspace[:public_ipv4] = rackspace[:public_ip]
   get_global_ipv6_address(:public_ipv6, :eth0)

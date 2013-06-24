@@ -62,7 +62,7 @@ end
 # true:: If the rackspace cloud can be identified
 # false:: Otherwise
 def looks_like_rackspace?
-  hint?('rackspace') || has_rackspace_mac? || has_rackspace_kernel? || has_rackspace_metadata?
+  hint?('rackspace') || has_rackspace_metadata? || has_rackspace_mac? || has_rackspace_kernel?
 end
 
 # Names rackspace ip address

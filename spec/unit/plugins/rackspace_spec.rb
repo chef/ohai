@@ -40,25 +40,31 @@ describe Ohai::System, "plugin rackspace" do
       "40:40:95:47:6E:ED"=> {
         "family"=> "lladdr"
       }
-      }}
-    }
-  }
+    }}}}
 
-  @ohai[:network][:interfaces][:eth1] = {:addresses => {
-    "fe80::4240:f5ff:feab:2836" => {
-      "scope"=> "Link",
-      "prefixlen"=> "64",
-      "family"=> "inet6"
-    },
-    "5.6.7.8"=> {
-      "broadcast"=> "10.176.191.255",
-      "netmask"=> "255.255.224.0",
-      "family"=> "inet"
-    },
-    "40:40:F5:AB:28:36" => {
-      "family"=> "lladdr"
-    }
+    @ohai[:network][:interfaces][:eth1] = {:addresses => {
+      "fe80::4240:f5ff:feab:2836" => {
+        "scope"=> "Link",
+        "prefixlen"=> "64",
+        "family"=> "inet6"
+      },
+      "5.6.7.8"=> {
+        "broadcast"=> "10.176.191.255",
+        "netmask"=> "255.255.224.0",
+        "family"=> "inet"
+      },
+      "40:40:F5:AB:28:36" => {
+        "family"=> "lladdr"
+      }
     }}
+
+    # In olden days we could detect rackspace by a -rscloud suffix on the kernel
+    # This is here to make #has_rackspace_kernel? fail until we remove that check
+    @ohai[:kernel] = { :release => "1.2.13-not-rackspace" }
+
+    # We need a generic stub here for the later stubs with arguments to work
+    # Because, magic.
+    @ohai.stub(:run_command).and_return(false)
   end
 
   shared_examples_for "!rackspace"  do
@@ -95,16 +101,14 @@ describe Ohai::System, "plugin rackspace" do
     end
 
     it "should capture region information" do
-      @stderr = StringIO.new
-      @stdout = <<-OUT
+      provider_data = <<-OUT
 provider = "Rackspace"
 service_type = "cloudServers"
 server_id = "21301000"
 created_at = "2012-12-06T22:08:16Z"
 region = "dfw"
 OUT
-      @status = 0
-      @ohai.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ @status, @stdout, @stderr ])
+      @ohai.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ 0, provider_data, ""])
       @ohai._require_plugin("rackspace")
       @ohai[:rackspace][:region].should == "dfw"
     end
@@ -169,4 +173,25 @@ OUT
     end
   end
 
+  describe "xenstore provider returns rackspace" do
+    it_should_behave_like "rackspace"
+
+    before(:each) do
+      stderr = StringIO.new
+      stdout = "Rackspace\n"
+      status = 0
+      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+    end
+  end
+
+  describe "xenstore provider does not return rackspace" do
+    it_should_behave_like "!rackspace"
+
+    before(:each) do
+      stderr = StringIO.new
+      stdout = "cumulonimbus\n"
+      status = 0
+      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+    end
+  end
 end

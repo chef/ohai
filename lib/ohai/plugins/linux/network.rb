@@ -329,7 +329,7 @@ else
       tmp_addr = nil
       # dev_valid_name in the kernel only excludes slashes, nulls, spaces 
       # http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=blob;f=net/core/dev.c#l851
-      if line =~ /^([0-9a-zA-Z@\.\:\-_]+)\s+/
+      if line =~ /^([0-9a-zA-Z@\.\-_]+:(\d+|\w+\d@\w+\d)|[0-9a-zA-Z@\.\-_]+)/
         cint = $1
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/
@@ -337,33 +337,33 @@ else
           iface[cint][:number] = $2
         end
       end
-      if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
+      if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/ || line =~ /ether.+\((.+?)\)/ || line =~ /loop.+\((.+?)\)/
         iface[cint][:encapsulation] = encaps_lookup($1)
       end
-      if line =~ /HWaddr (.+?)\s/
+      if line =~ /HWaddr (.+?)\s/ || line =~ /ether (.+?) /
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         iface[cint][:addresses][$1] = { "family" => "lladdr" }
       end
-      if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/ || line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         iface[cint][:addresses][$1] = { "family" => "inet" }
         tmp_addr = $1
       end
-      if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
+      if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/ || line =~ /inet6 ([a-f0-9\:]+).+prefixlen (\d+).+scopeid 0x.0<(\w+)>/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
       end
-      if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/ || line =~ /broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses][tmp_addr]["broadcast"] = $1
       end
-      if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+      if line =~ /Mask:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/ || line =~ /netmask (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses][tmp_addr]["netmask"] = $1
       end
-      flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)\s/)
+      flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)/)
       if flags.length > 1
         iface[cint][:flags] = flags.flatten
       end
-      if line =~ /MTU:(\d+)/
+      if line =~ /MTU:(\d+)/ || line =~ /mtu (\d+)/
         iface[cint][:mtu] = $1
       end
       if line =~ /P-t-P:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
@@ -376,16 +376,41 @@ else
       if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
         net_counters[cint][:tx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "carrier" => $5 }
       end
+      # BEGIN Gentoo specific
+      if line =~ /txqueuelen (\d+)/
+        net_counters[cint] = Mash.new unless net_counters[cint]
+        net_counters[cint][:tx] = { "queuelen" => $1 }
+      end
+      if line =~ /RX packets (\d+)/
+        net_counters[cint][:rx] = { "packets" => $1}
+      end
+      if line =~ /TX packets (\d+)/
+        net_counters[cint][:tx]["packets"] = $1
+      end
+      if line =~ /TX\s+errors\s+(\d+)\s+dropped\s+(\d+)\s+overruns\s+(\d+)\s+carrier\s+(\d+)\s+collisions\s+(\d+)/
+        net_counters[cint][:tx]["errors"] = $1
+        net_counters[cint][:tx]["drop"] = $2
+        net_counters[cint][:tx]["overrun"] = $3
+        net_counters[cint][:tx]["carrier"] = $4
+        net_counters[cint][:tx]["collisions"] = $5
+      end  
+      if line =~ /RX\s+errors\s+(\d+)\s+dropped\s+(\d+)\s+overruns\s+(\d+)\s+frame\s+(\d+)/
+        net_counters[cint][:rx]["errors"] = $1
+        net_counters[cint][:rx]["drop"] = $2
+        net_counters[cint][:rx]["overrun"] = $3
+        net_counters[cint][:rx]["frame"] = $4
+      end      
+      # END Gentoo specific
       if line =~ /collisions:(\d+)/
         net_counters[cint][:tx]["collisions"] = $1
       end
       if line =~ /txqueuelen:(\d+)/
         net_counters[cint][:tx]["queuelen"] = $1
       end
-      if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
+      if line =~ /RX bytes:(\d+) \((\d+?\.\d+ .+?)\)/ || line =~ /RX.+?bytes (\d+) \((\d+?\.\d+ .+?)\)/
         net_counters[cint][:rx]["bytes"] = $1
       end
-      if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/
+      if line =~ /TX bytes:(\d+) \((\d+?\.\d+ .+?)\)/ || line =~ /TX.+bytes (\d+) \((\d+?\.\d+ .+?)\)/
         net_counters[cint][:tx]["bytes"] = $1
       end
     end

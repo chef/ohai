@@ -95,7 +95,7 @@ elsif lsb[:id] =~ /ScientificSL/i
   platform "scientific"
   platform_version lsb[:release]
 elsif lsb[:id] =~ /XenServer/i
-  platform " xenserver"
+  platform "xenserver"
   platform_version lsb[:release]
 elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties 
   platform lsb[:id].downcase
@@ -108,7 +108,7 @@ case platform
     platform_family "debian"
   when /fedora/
     platform_family "fedora"
-  when /oracle/, /centos/, /redhat/, /scientific/, /enterprise/, /amazon/, /xenserver/
+  when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
     platform_family "rhel"
   when /suse/
     platform_family "suse"

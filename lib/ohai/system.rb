@@ -129,6 +129,7 @@ module Ohai
       require_plugin('os')
 
       Ohai::Config[:plugin_path].each do |path|
+        path.chomp!(File::SEPARATOR)
         [
           Dir[File.join(path, '*')],
           Dir[File.join(path, @data[:os], '**', '*')]

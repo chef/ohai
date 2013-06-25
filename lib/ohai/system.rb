@@ -133,7 +133,7 @@ module Ohai
           Dir[File.join(path, '*')],
           Dir[File.join(path, @data[:os], '**', '*')]
         ].flatten.each do |file|
-          file_regex = Regexp.new("#{path}#{File::SEPARATOR}(.+).rb$")
+          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")

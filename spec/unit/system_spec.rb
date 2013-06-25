@@ -114,7 +114,7 @@ describe Ohai::System, "require_plugin" do
     @ohai.should_receive(:from_file).with(File.expand_path("#{tmp}/plugins/foo.rb")).and_return(true)
     @ohai.require_plugin("foo")
   end
-  
+
   it "should add a found plugin to the list of seen plugins" do
     @ohai.require_plugin("foo")
     @ohai.seen_plugins["foo"].should eql(true)
@@ -136,3 +136,21 @@ describe Ohai::System, "require_plugin" do
   end
 end
 
+describe Ohai::System, "all_plugins" do
+  before(:each) do
+    @ohai = Ohai::System.new
+    @ohai.stub!(:from_file).and_return(true)
+    @ohai.stub!(:require_plugin).and_return(false)
+    @ohai.data[:os] = "ubuntu"
+  end
+
+  it "should load plugins when plugin_path has a trailing slash" do
+    Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
+    File.stub(:expand_path).with("/tmp/plugins/").and_return("/tmp/plugins") # windows
+    Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/darius.rb"])
+    Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
+    @ohai.should_receive(:require_plugin).with("darius")
+    @ohai.all_plugins
+  end
+  
+end

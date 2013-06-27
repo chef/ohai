@@ -224,6 +224,10 @@ module Ohai
 
         begin
           e = Marshal.load ps.first
+          pw.last.close
+          pr.first.close
+          pe.first.close
+          Process.wait(cid)
           raise(Exception === e ? e : "unknown failure!")
         rescue EOFError # If we get an EOF error, then the exec was successful
           42

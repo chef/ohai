@@ -146,10 +146,10 @@ end
 def get_linode_values
   cloud[:public_ips] << linode['public_ip']
   cloud[:private_ips] << linode['private_ip']
-  cloud[:public_ipv4] = linode['public_ipv4']
-  cloud[:public_hostname] = linode['public_hostname']
-  cloud[:local_ipv4] = linode['local_ipv4']
-  cloud[:local_hostname] = linode['local_hostname']
+  cloud[:public_ipv4] = linode['public_ip']
+  cloud[:public_hostname] = nil
+  cloud[:local_ipv4] = linode['private_ip']
+  cloud[:local_hostname] = nil
   cloud[:provider] = "linode"
 end
 

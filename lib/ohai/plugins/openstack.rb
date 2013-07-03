@@ -22,7 +22,7 @@ require 'ohai/mixin/ec2_metadata'
 extend Ohai::Mixin::Ec2Metadata
 
 # does it matter that it's not hitting latest?
-#Ec2Metadata::EC2_METADATA_URL = "/latest/meta-data"
+Ec2Metadata::EC2_METADATA_URL = "/latest/meta-data"
 
 # Adds openstack Mash
 if hint?('openstack') || hint?('hp')

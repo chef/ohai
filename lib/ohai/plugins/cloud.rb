@@ -23,6 +23,7 @@ require_plugin "eucalyptus"
 require_plugin "linode"
 require_plugin "openstack"
 require_plugin "azure"
+require_plugin "sce"
 
 # Make top-level cloud hashes
 #
@@ -244,4 +245,28 @@ end
 if on_azure?
   create_objects
   get_azure_values
+end
+
+# ----------------------------------------
+# sce
+# ----------------------------------------
+
+# Is current cloud sce?
+#
+# === Return
+# true:: If sce Hash is defined
+# false:: Otherwise
+def on_sce?
+  sce != nil
+end
+
+# Fill cloud hash with sce values
+def get_sce_values
+  cloud.merge!(sce)
+end
+
+# setup sce cloud data
+if on_sce?
+  create_objects
+  get_sce_values
 end

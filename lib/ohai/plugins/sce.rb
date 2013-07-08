@@ -27,10 +27,12 @@ when "windows"
   cloud_dir = 'c:/cloud'
 when "linux"
   cloud_dir = '/etc/cloud'
+else
+  cloud_dir = nil
 end
 
 sce_hints = hint?("sce")
-if File.directory?(cloud_dir) and File.exist?(cloud_dir+"/parameters.xml")
+if cloud_dir and (File.directory?(cloud_dir) and File.exist?(cloud_dir+"/parameters.xml"))
   require 'ipaddress'
   require 'rexml/document'
   doc = REXML::Document.new(File.open(cloud_dir+"/parameters.xml", "r") {|f| f.read })

@@ -23,6 +23,8 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, 'root_group' do
   before(:each) do
     @ohai = Ohai::System.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "root_group.rb"))
+    @plugin.stub(:require_plugin)
   end
 
   describe 'unix platform', :unix_only do
@@ -42,8 +44,8 @@ describe Ohai::System, 'root_group' do
         @grgid.stub!(:name).and_return('wheel')
       end
       it 'should have a root_group of wheel' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'wheel'
+        @plugin.run
+        @plugin[:root_group].should == 'wheel'
       end
     end
 
@@ -52,8 +54,8 @@ describe Ohai::System, 'root_group' do
         @grgid.stub!(:name).and_return('root')
       end
       it 'should have a root_group of root' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'root'
+        @plugin.run
+        @plugin[:root_group].should == 'root'
       end
     end
 
@@ -63,8 +65,8 @@ describe Ohai::System, 'root_group' do
         @grgid.stub!(:name).and_return('sys')
       end
       it 'should have a root_group of sys' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'sys'
+        @plugin.run
+        @plugin[:root_group].should == 'sys'
       end
     end
     describe 'platform aix with system group' do
@@ -72,8 +74,8 @@ describe Ohai::System, 'root_group' do
         @grgid.stub!(:name).and_return('system')
       end
       it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'system'
+        @plugin.run
+        @plugin[:root_group].should == 'system'
       end
     end
   end

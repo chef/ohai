@@ -245,7 +245,6 @@ describe Ohai::System, "Network Plugin" do
           it "warns about this conflict" do
             Ohai::Log.should_receive(:warn).with(/^\[inet\] no ipaddress\/mask on eth1/).once
             Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
-            Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
             @plugin.run
           end
         end

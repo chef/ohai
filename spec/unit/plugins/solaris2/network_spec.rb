@@ -111,7 +111,7 @@ ROUTE_GET
     end
 
     it "detects the interfaces" do
-      @plugin['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "qfe1"]
+      @plugin['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3","net0", "qfe1"]
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -123,7 +123,7 @@ ROUTE_GET
     end
     
     it "detects the L3PROTECT network flag" do
-      @ohai['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
+      @plugin['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
     end
   end
 

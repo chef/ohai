@@ -21,10 +21,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.extend(SimpleFromFile)
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = "solaris2"
-    @ohai.stub!(:popen4).with("/sbin/uname -X")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/platform.rb", PLUGIN_PATH))
+    @plugin.extend(SimpleFromFile)
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin[:os] = "solaris2"
+    @plugin.stub!(:popen4).with("/sbin/uname -X")
   end
   
   describe "on SmartOS" do
@@ -50,26 +51,25 @@ UNAME_X
       @uname_x_lines = uname_x.split("\n")
 
       File.stub!(:exists?).with("/sbin/uname").and_return(true)
-      @ohai.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
-      @mock_file.stub!(:close).and_return(0)
       File.stub!(:open).with("/etc/release").and_yield(@release)
     end
 
     it "should run uname and set platform and build" do 
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform_build].should == "joyent_20120130T201844Z"
+      @plugin.run
+      @plugin[:platform_build].should == "joyent_20120130T201844Z"
     end
 
     it "should set the platform" do
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform].should == "smartos"
+      @plugin.run
+      @plugin[:platform].should == "smartos"
     end
     
     it "should set the platform_version" do
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform_version].should == "5.11"
+      @plugin.run
+      @plugin[:platform_version].should == "5.11"
     end
 
   end

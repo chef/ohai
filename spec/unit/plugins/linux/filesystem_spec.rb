@@ -21,15 +21,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux filesystem plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:os] = "linux"
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.extend(SimpleFromFile)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/filesystem.rb", PLUGIN_PATH))
+    @plugin[:os] = "linux"
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.extend(SimpleFromFile)
 
-    @ohai.stub!(:popen4).with("df -P").and_return(false)
-    @ohai.stub!(:popen4).with("mount").and_return(false)
-    @ohai.stub!(:popen4).with("blkid -s TYPE").and_return(false)
-    @ohai.stub!(:popen4).with("blkid -s UUID").and_return(false)
-    @ohai.stub!(:popen4).with("blkid -s LABEL").and_return(false)
+    @plugin.stub!(:popen4).with("df -P").and_return(false)
+    @plugin.stub!(:popen4).with("mount").and_return(false)
+    @plugin.stub!(:popen4).with("blkid -s TYPE").and_return(false)
+    @plugin.stub!(:popen4).with("blkid -s UUID").and_return(false)
+    @plugin.stub!(:popen4).with("blkid -s LABEL").and_return(false)
 
     File.stub!(:exists?).with("/proc/mounts").and_return(false)
   end
@@ -57,38 +58,38 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should run df -P" do
-      @ohai.should_receive(:popen4).with("df -P").and_return(true)
-      @ohai._require_plugin("linux::filesystem")
+      @plugin.should_receive(:popen4).with("df -P").and_return(true)
+      @plugin.run
     end
 
     it "should set kb_size to value from df -P" do
-      @ohai.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size].should be == "97605057"
+      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size].should be == "97605057"
     end
 
     it "should set kb_used to value from df -P" do
-      @ohai.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used].should be == "53563253"
+      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used].should be == "53563253"
     end
 
     it "should set kb_available to value from df -P" do
-      @ohai.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available].should be == "44041805"
+      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available].should be == "44041805"
     end
 
     it "should set percent_used to value from df -P" do
-      @ohai.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used].should be == "56%"
+      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used].should be == "56%"
     end
 
     it "should set mount to value from df -P" do
-      @ohai.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
   end
 
@@ -119,26 +120,26 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should run mount" do
-      @ohai.should_receive(:popen4).with("mount").and_return(true)
-      @ohai._require_plugin("linux::filesystem")
+      @plugin.should_receive(:popen4).with("mount").and_return(true)
+      @plugin.run
     end
 
     it "should set mount to value from mount" do
-      @ohai.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
 
     it "should set fs_type to value from mount" do
-      @ohai.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
+      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
     end
 
     it "should set mount_options to an array of values from mount" do
-      @ohai.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime" ]
+      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime" ]
     end
   end
 
@@ -166,14 +167,14 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should run blkid -s TYPE" do
-      @ohai.should_receive(:popen4).with("blkid -s TYPE").and_return(true)
-      @ohai._require_plugin("linux::filesystem")
+      @plugin.should_receive(:popen4).with("blkid -s TYPE").and_return(true)
+      @plugin.run
     end
 
     it "should set kb_size to value from blkid -s TYPE" do
-      @ohai.stub!(:popen4).with("blkid -s TYPE").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/md1"][:fs_type].should be == "LVM2_member"
+      @plugin.stub!(:popen4).with("blkid -s TYPE").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/md1"][:fs_type].should be == "LVM2_member"
     end
   end
 
@@ -201,14 +202,14 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should run blkid -s UUID" do
-      @ohai.should_receive(:popen4).with("blkid -s UUID").and_return(true)
-      @ohai._require_plugin("linux::filesystem")
+      @plugin.should_receive(:popen4).with("blkid -s UUID").and_return(true)
+      @plugin.run
     end
 
     it "should set kb_size to value from blkid -s UUID" do
-      @ohai.stub!(:popen4).with("blkid -s UUID").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+      @plugin.stub!(:popen4).with("blkid -s UUID").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
     end
   end
 
@@ -234,14 +235,14 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should run blkid -s LABEL" do
-      @ohai.should_receive(:popen4).with("blkid -s LABEL").and_return(true)
-      @ohai._require_plugin("linux::filesystem")
+      @plugin.should_receive(:popen4).with("blkid -s LABEL").and_return(true)
+      @plugin.run
     end
 
     it "should set kb_size to value from blkid -s LABEL" do
-      @ohai.stub!(:popen4).with("blkid -s LABEL").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/md0"][:label].should be == "/boot"
+      @plugin.stub!(:popen4).with("blkid -s LABEL").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:filesystem]["/dev/md0"][:label].should be == "/boot"
     end
   end
 
@@ -271,18 +272,18 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set mount to value from /proc/mounts" do
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
   
     it "should set fs_type to value from /proc/mounts" do
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
     end
   
     it "should set mount_options to an array of values from /proc/mounts" do
-      @ohai._require_plugin("linux::filesystem")
-      @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime", "attr2", "noquota" ]
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime", "attr2", "noquota" ]
     end
   end
 

@@ -22,50 +22,51 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = 'monkey'
-    @ohai[:os_version] = 'poop'
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "platform.rb"))
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin[:os] = 'monkey'
+    @plugin[:os_version] = 'poop'
   end
   
   it "should require the os platform plugin" do
-    @ohai.should_receive(:require_plugin).with("monkey::platform")
-    @ohai._require_plugin("platform")
+    @plugin.should_receive(:require_plugin).with("monkey::platform")
+    @plugin.run
   end
   
   it "should set the platform and platform family to the os if it was not set earlier" do
-    @ohai._require_plugin("platform")
-    @ohai[:platform].should eql("monkey")
-    @ohai[:platform_family].should eql("monkey")
+    @plugin.run
+    @plugin[:platform].should eql("monkey")
+    @plugin[:platform_family].should eql("monkey")
   end
   
   it "should not set the platform to the os if it was set earlier" do
-    @ohai[:platform] = 'lars'
-    @ohai._require_plugin("platform")
-    @ohai[:platform].should eql("lars")
+    @plugin[:platform] = 'lars'
+    @plugin.run
+    @plugin[:platform].should eql("lars")
   end
   
   it "should set the platform_family to the platform if platform was set earlier but not platform_family" do
-    @ohai[:platform] = 'lars'
-    @ohai[:platform_family] = 'jack'
-    @ohai._require_plugin("platform")
-    @ohai[:platform_family].should eql("jack")
+    @plugin[:platform] = 'lars'
+    @plugin[:platform_family] = 'jack'
+    @plugin.run
+    @plugin[:platform_family].should eql("jack")
   end
  
   it "should not set the platform_family if the platform_family was set earlier." do
-    @ohai[:platform] = 'lars'
-    @ohai._require_plugin("platform")
-    @ohai[:platform].should eql("lars")
-    @ohai[:platform_family].should eql("lars")
+    @plugin[:platform] = 'lars'
+    @plugin.run
+    @plugin[:platform].should eql("lars")
+    @plugin[:platform_family].should eql("lars")
   end
 
   it "should set the platform_version to the os_version if it was not set earlier" do
-    @ohai._require_plugin("platform")
-    @ohai[:os_version].should eql("poop")
+    @plugin.run
+    @plugin[:os_version].should eql("poop")
   end
   
   it "should not set the platform to the os if it was set earlier" do
-    @ohai[:platform_version] = 'ulrich'
-    @ohai._require_plugin("platform")
-    @ohai[:platform_version].should eql("ulrich")
+    @plugin[:platform_version] = 'ulrich'
+    @plugin.run
+    @plugin[:platform_version].should eql("ulrich")
   end
 end

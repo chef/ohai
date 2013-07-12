@@ -24,11 +24,12 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, "plugin os" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:languages] = Mash.new
-    @ohai[:languages][:ruby] = Mash.new
-    @ohai[:kernel] = Mash.new
-    @ohai[:kernel][:release] = "kings of leon"
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "os.rb"))
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin[:languages] = Mash.new
+    @plugin[:languages][:ruby] = Mash.new
+    @plugin[:kernel] = Mash.new
+    @plugin[:kernel][:release] = "kings of leon"
   end
   
   after do
@@ -36,8 +37,8 @@ describe Ohai::System, "plugin os" do
   end
 
   it "should set os_version to kernel_release" do
-    @ohai._require_plugin("os")
-    @ohai[:os_version].should == @ohai[:kernel][:release]
+    @plugin.run
+    @plugin[:os_version].should == @plugin[:kernel][:release]
   end
   
   describe "on linux" do
@@ -46,8 +47,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "should set the os to linux" do
-      @ohai._require_plugin("os")
-      @ohai[:os].should == "linux"
+      @plugin.run
+      @plugin[:os].should == "linux"
     end
   end
   
@@ -57,8 +58,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "should set the os to darwin" do
-      @ohai._require_plugin("os")
-      @ohai[:os].should == "darwin"
+      @plugin.run
+      @plugin[:os].should == "darwin"
     end
   end
   
@@ -68,8 +69,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "sets the os to solaris2" do
-      @ohai._require_plugin("os")
-      @ohai[:os].should == "solaris2"
+      @plugin.run
+      @plugin[:os].should == "solaris2"
     end
   end
 
@@ -79,8 +80,8 @@ describe Ohai::System, "plugin os" do
     end
 
     it "sets the os to the ruby 'host_os'" do
-      @ohai._require_plugin("os")
-      @ohai[:os].should == "tron"
+      @plugin.run
+      @plugin[:os].should == "tron"
     end
   end
 end

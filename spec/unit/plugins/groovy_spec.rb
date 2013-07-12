@@ -23,31 +23,32 @@ describe Ohai::System, "plugin groovy" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "groovy.rb"))
+    @plugin[:languages] = Mash.new
+    @plugin.stub!(:require_plugin).and_return(true)
     @status = 0
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
     @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
   end
 
   it "should get the groovy version from running groovy -v" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([0, "Groovy Version: 1.6.3 JVM: 1.6.0_0\n", ""])
-    @ohai._require_plugin("groovy")
+    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([0, "Groovy Version: 1.6.3 JVM: 1.6.0_0\n", ""])
+    @plugin.run
   end
 
   it "should set languages[:groovy][:version]" do
-    @ohai._require_plugin("groovy")
-    @ohai.languages[:groovy][:version].should eql("1.6.3")
+    @plugin.run
+    @plugin.languages[:groovy][:version].should eql("1.6.3")
   end
 
   it "should not set the languages[:groovy] tree up if groovy command fails" do
     @status = 1
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
     @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
-    @ohai._require_plugin("groovy")
-    @ohai.languages.should_not have_key(:groovy)
+    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.run
+    @plugin.languages.should_not have_key(:groovy)
   end
 
 end

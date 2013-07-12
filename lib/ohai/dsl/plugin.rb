@@ -72,7 +72,7 @@ module Ohai
             end
           end
           h[:_providers] ||= []
-          h[:_providers] << @plugin_path
+          h[:_providers] << @file
         end
       end
 

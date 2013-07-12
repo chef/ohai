@@ -41,6 +41,9 @@ module Ohai
       @hints = Hash.new
     end
 
+    def [](key)
+      @data[key]
+    end
 
     def all_plugins
       require_plugin('os')

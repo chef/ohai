@@ -23,7 +23,9 @@ require_plugin "network"
 #
 # Returns true or false
 def has_linode_kernel?
-  kernel[:release].split('-').last =~ /linode/
+  if kernel_data = kernel
+    kernel_data[:release].split('-').last =~ /linode/
+  end
 end
 
 # Identifies the linode cloud by preferring the hint, then
@@ -40,8 +42,10 @@ end
 #
 # Alters linode mash with new interface based on name parameter
 def get_ip_address(name, eth)
-  network[:interfaces][eth][:addresses].each do |key, info|
-    linode[name] = key if info['family'] == 'inet'
+  if eth_iface = network[:interfaces][eth]
+    eth_iface[:addresses].each do |key, info|
+      linode[name] = key if info['family'] == 'inet'
+    end
   end
 end
 

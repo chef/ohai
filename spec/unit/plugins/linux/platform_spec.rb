@@ -74,10 +74,10 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:platform_family].should == "debian"
     end
     it "should set platform to gcel and platform_family to debian [:lsb][:id] contains GCEL" do
-      @ohai[:lsb][:id] = "GCEL"
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "gcel"
-      @ohai[:platform_family].should == "debian"
+      @plugin[:lsb][:id] = "GCEL"
+      @plugin.run
+      @plugin[:platform].should == "gcel"
+      @plugin[:platform_family].should == "debian"
     end
     it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
       @plugin[:lsb][:id] = "Debian"
@@ -139,9 +139,9 @@ describe Ohai::System, "Linux plugin platform" do
     it "should detect Raspbian as itself with debian as the family" do
       File.should_receive(:exists?).with("/usr/bin/raspi-config").and_return(true)
       File.should_receive(:read).with("/etc/debian_version").and_return("wheezy/sid")
-      @ohai._require_plugin("linux::platform")
-      @ohai[:platform].should == "raspbian"
-      @ohai[:platform_family].should == "debian"
+      @plugin.run
+      @plugin[:platform].should == "raspbian"
+      @plugin[:platform_family].should == "debian"
     end
   end
 
@@ -379,7 +379,7 @@ describe Ohai::System, "Linux plugin platform" do
       
       it "should read the platform as suse" do
         @plugin[:lsb][:release] = "12.1"
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
+        File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
         @plugin.run
         @plugin[:platform].should == "suse"
         @plugin[:platform_version].should == "12.1"
@@ -416,7 +416,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 11.3" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
+        File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
         @plugin.run
         @plugin[:platform].should == "suse"
         @plugin[:platform_version].should == "11.3"
@@ -424,7 +424,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 9.1" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
+        File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
         @plugin.run
         @plugin[:platform].should == "suse"
         @plugin[:platform_version].should == "9.1"
@@ -432,7 +432,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
       
       it "[OHAI-272] should read the version as 11.4" do
-        File.should_receive(:read).with("/etc/SuSE-release").exactly(2).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
+        File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
         @plugin.run
         @plugin[:platform].should == "suse"
         @plugin[:platform_version].should == "11.4"

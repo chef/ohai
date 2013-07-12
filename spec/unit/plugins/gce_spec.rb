@@ -21,20 +21,21 @@ require 'open-uri'
 describe Ohai::System, "plugin gce" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "gce.rb"))
+    @plugin.stub(:require_plugin)
   end
 
   shared_examples_for "!gce" do
     it "should NOT attempt to fetch the gce metadata" do
-      @ohai.should_not_receive(:http_client)
-      @ohai._require_plugin("gce")
+      @plugin.should_not_receive(:http_client)
+      @plugin.run
     end
   end
 
   shared_examples_for "gce" do
     before(:each) do
       @http_client = mock("Net::HTTP client")
-      @ohai.stub!(:http_client).and_return(@http_client)
+      @plugin.stub!(:http_client).and_return(@http_client)
       IO.stub!(:select).and_return([[],[1],[]])
       t = mock("connection")
       t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
@@ -57,12 +58,12 @@ describe Ohai::System, "plugin gce" do
         with("/0.1/meta-data/description").
         and_return(mock("Net::HTTPOK", :body => "test-description", :code=>"200"))
 
-      @ohai._require_plugin("gce")
+      @plugin.run
 
-      @ohai[:gce].should_not be_nil
-      @ohai[:gce]['hostname'].should == "test-host"
-      @ohai[:gce]['domain'].should == "test-domain"
-      @ohai[:gce]['description'].should  == "test-description"
+      @plugin[:gce].should_not be_nil
+      @plugin[:gce]['hostname'].should == "test-host"
+      @plugin[:gce]['domain'].should == "test-domain"
+      @plugin[:gce]['description'].should  == "test-description"
     end
 
     it "should properly parse json metadata" do
@@ -74,10 +75,10 @@ describe Ohai::System, "plugin gce" do
         and_return(mock("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
                     "index":0,"mode":"READ_WRITE","type":"EPHEMERAL"}]}', :code=>"200"))
 
-      @ohai._require_plugin("gce")
+      @plugin.run
 
-      @ohai[:gce].should_not be_nil
-      @ohai[:gce]['attached_disks'].should eq({"disks"=>[{"deviceName"=>"boot",
+      @plugin[:gce].should_not be_nil
+      @plugin[:gce]['attached_disks'].should eq({"disks"=>[{"deviceName"=>"boot",
                                               "index"=>0,"mode"=>"READ_WRITE",
                                               "type"=>"EPHEMERAL"}]})
     end
@@ -112,6 +113,8 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
+      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
+
       File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
     end
@@ -121,6 +124,11 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
+      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
+
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
+      File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+
       File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
       File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
       File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)

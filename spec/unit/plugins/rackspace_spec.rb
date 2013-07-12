@@ -63,11 +63,11 @@ describe Ohai::System, "plugin rackspace" do
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
     # This is here to make #has_rackspace_kernel? fail until we remove that check
-    @ohai[:kernel] = { :release => "1.2.13-not-rackspace" }
+    @plugin[:kernel] = { :release => "1.2.13-not-rackspace" }
 
     # We need a generic stub here for the later stubs with arguments to work
     # Because, magic.
-    @ohai.stub(:run_command).and_return(false)
+    @plugin.stub(:run_command).and_return(false)
   end
 
   shared_examples_for "!rackspace"  do
@@ -117,35 +117,6 @@ OUT
     end
   end
 
-  describe "with rackspace mac and hostname" do
-    it_should_behave_like "rackspace"
-
-    before(:each) do
-      IO.stub!(:select).and_return([[],[1],[]])
-      @plugin[:hostname] = "slice74976"
-      @plugin[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
-    end
-  end
-
-  describe "without rackspace mac" do
-    it_should_behave_like "!rackspace"
-
-    before(:each) do
-      @plugin[:kernel] = {:release => "foo" }
-      @plugin[:hostname] = "slice74976"
-      @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
-    end
-  end
-
-  describe "without rackspace hostname" do
-    it_should_behave_like "rackspace"
-
-    before(:each) do
-      @plugin[:hostname] = "bubba"
-      @plugin[:network][:interfaces][:eth0][:arp] = {"67.23.20.1" => "00:00:0c:07:ac:01"}
-    end
-  end
-  
   describe "with rackspace cloud file" do
     it_should_behave_like "rackspace"
 
@@ -161,8 +132,6 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      @plugin[:network] = {:interfaces => {} }
-      @plugin[:kernel] = {:release => "foo" }
       File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
       File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
@@ -172,9 +141,6 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      @plugin[:network] = {:interfaces => {} }
-      @plugin[:kernel] = {:release => "foo" }
-
       File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
       File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
       File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
@@ -192,7 +158,7 @@ OUT
       stderr = StringIO.new
       stdout = "Rackspace\n"
       status = 0
-      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 
@@ -203,7 +169,7 @@ OUT
       stderr = StringIO.new
       stdout = "cumulonimbus\n"
       status = 0
-      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 end

@@ -30,5 +30,5 @@ if fqdn_lookup.split('.').length > 1
   fqdn fqdn_lookup
 else
   # default to assembling one
-  fqdn(from("hostname") + "." + from("domainname"))
+  fqdn(from("hostname"))
 end

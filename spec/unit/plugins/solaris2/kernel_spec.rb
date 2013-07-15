@@ -136,12 +136,12 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/kernel.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:kernel] = Mash.new
     @plugin.stub(:from).with("uname -s").and_return("SunOS")
     stdin = StringIO.new
     @modinfo_stdout = StringIO.new(MODINFO)
-    @plugin.stub!(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
+    @plugin.stub(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
   end
 
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", "SunOS")

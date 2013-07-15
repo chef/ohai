@@ -23,10 +23,10 @@ describe Ohai::System, "NetBSD hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("netbsd/hostname.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "netbsd"
-    @plugin.stub!(:from).with("hostname -s").and_return("katie")
-    @plugin.stub!(:from).with("hostname").and_return("katie.bethell")
+    @plugin.stub(:from).with("hostname -s").and_return("katie")
+    @plugin.stub(:from).with("hostname").and_return("katie.bethell")
   end
 
   it_should_check_from("netbsd::hostname", "hostname", "hostname -s", "katie")

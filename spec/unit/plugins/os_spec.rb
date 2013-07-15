@@ -25,7 +25,7 @@ describe Ohai::System, "plugin os" do
   before(:each) do
     @ohai = Ohai::System.new    
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "os.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:languages] = Mash.new
     @plugin[:languages][:ruby] = Mash.new
     @plugin[:kernel] = Mash.new

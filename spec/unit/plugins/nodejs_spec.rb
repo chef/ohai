@@ -28,7 +28,7 @@ describe Ohai::System, "plugin nodejs" do
     @status = 0
     @stdout = "v0.8.11\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
   end
 
   it "should get the nodejs version from running node -v" do
@@ -45,7 +45,7 @@ describe Ohai::System, "plugin nodejs" do
     @status = 1
     @stdout = "v0.8.11\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
     @plugin.run
     @plugin.languages.should_not have_key(:nodejs)
   end

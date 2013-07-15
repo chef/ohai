@@ -38,15 +38,15 @@ def prepare_data
 end
 
 def do_stubs
-  @plugin.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-  @plugin.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-  @plugin.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-  @plugin.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
-  @plugin.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
-  @plugin.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-  @plugin.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-  @plugin.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
-  @plugin.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+  @plugin.stub(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
+  @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+  @plugin.stub(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+  @plugin.stub(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
+  @plugin.stub(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
+  @plugin.stub(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
+  @plugin.stub(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
+  @plugin.stub(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+  @plugin.stub(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
 end
 
 describe Ohai::System, "Linux Network Plugin" do
@@ -285,14 +285,14 @@ IP_ROUTE_SCOPE
     
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(6).times
     @plugin.require_plugin("network")
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
   end
 
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
       end
 
@@ -415,7 +415,7 @@ IP_ROUTE_SCOPE
   
     describe "gathering interface counters via #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
         @plugin.run
       end
@@ -454,7 +454,7 @@ IP_ROUTE_SCOPE
 
     describe "setting the node's default IP address attribute with #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
       end
 
@@ -531,7 +531,7 @@ ROUTE_N
 
   describe "for newer network features using iproute2 only" do
     before do
-      File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      File.stub(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
       do_stubs
     end
 

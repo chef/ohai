@@ -122,10 +122,10 @@ describe Ohai::System, "plugin linode" do
 
   describe "with linode cloud file" do
     before do
-      File.stub!(:exist?).with(hint_path_nix).and_return(true)
-      File.stub!(:read).with(hint_path_nix).and_return('')
-      File.stub!(:exist?).with(hint_path_win).and_return(true)
-      File.stub!(:read).with(hint_path_win).and_return('')
+      File.stub(:exist?).with(hint_path_nix).and_return(true)
+      File.stub(:read).with(hint_path_nix).and_return('')
+      File.stub(:exist?).with(hint_path_win).and_return(true)
+      File.stub(:read).with(hint_path_win).and_return('')
     end
 
     it_should_behave_like "linode"
@@ -133,8 +133,8 @@ describe Ohai::System, "plugin linode" do
 
   describe "without cloud file" do
     before do
-      File.stub!(:exist?).with(hint_path_nix).and_return(false)
-      File.stub!(:exist?).with(hint_path_win).and_return(false)
+      File.stub(:exist?).with(hint_path_nix).and_return(false)
+      File.stub(:exist?).with(hint_path_win).and_return(false)
     end
 
     it_should_behave_like "!linode"
@@ -145,13 +145,13 @@ describe Ohai::System, "plugin linode" do
     let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
 
     before do
-      File.stub!(:exist?).with(hint_path_nix).and_return(false)
-      File.stub!(:exist?).with(hint_path_win).and_return(false)
+      File.stub(:exist?).with(hint_path_nix).and_return(false)
+      File.stub(:exist?).with(hint_path_win).and_return(false)
 
-      File.stub!(:exist?).with(ec2_hint_path_nix).and_return(true)
-      File.stub!(:read).with(ec2_hint_path_nix).and_return('')
-      File.stub!(:exist?).with(ec2_hint_path_win).and_return(true)
-      File.stub!(:read).with(ec2_hint_path_win).and_return('')
+      File.stub(:exist?).with(ec2_hint_path_nix).and_return(true)
+      File.stub(:read).with(ec2_hint_path_nix).and_return('')
+      File.stub(:exist?).with(ec2_hint_path_win).and_return(true)
+      File.stub(:read).with(ec2_hint_path_win).and_return('')
     end
 
     it_should_behave_like "!linode"

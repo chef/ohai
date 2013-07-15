@@ -38,11 +38,11 @@ describe Ohai::System, "plugin ec2" do
   shared_examples_for "ec2" do
     before(:each) do
       @http_client = mock("Net::HTTP client")
-      @plugin.stub!(:http_client).and_return(@http_client)
-      IO.stub!(:select).and_return([[],[1],[]])
+      @plugin.stub(:http_client).and_return(@http_client)
+      IO.stub(:select).and_return([[],[1],[]])
       t = mock("connection")
-      t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub!(:new).and_return(t)
+      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      Socket.stub(:new).and_return(t)
       @http_client.should_receive(:get).
         with("/").twice.
         and_return(mock("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
@@ -165,7 +165,7 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "ec2"
 
     before(:each) do
-      IO.stub!(:select).and_return([[],[1],[]])
+      IO.stub(:select).and_return([[],[1],[]])
       @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
     end
   end
@@ -182,10 +182,10 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "ec2"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 
@@ -193,8 +193,8 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "!ec2"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
     end
   end
 
@@ -202,13 +202,13 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "!ec2"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
 
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
   end
 

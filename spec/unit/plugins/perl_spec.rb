@@ -23,7 +23,7 @@ describe Ohai::System, "plugin perl" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "perl.rb"))
     @plugin[:languages] = Mash.new
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @pid = 2342
     @stderr = StringIO.new
     @stdout = StringIO.new(<<-OUT)
@@ -32,7 +32,7 @@ archname='darwin-thread-multi-2level';
 OUT
     @stdin = StringIO.new
     @status = 0
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr
@@ -61,7 +61,7 @@ OUT
 
   it "should set languages[:perl] if perl command succeeds" do
     @status = 0
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr
@@ -72,7 +72,7 @@ OUT
 
   it "should not set languages[:perl] if perl command fails" do
      @status = 1
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr

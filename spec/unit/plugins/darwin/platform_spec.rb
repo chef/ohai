@@ -23,17 +23,17 @@ describe Ohai::System, "Darwin plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/platform.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "darwin"
     @pid = 10
     @stdin = mock("STDIN", { :close => true })
     @stdout = mock("STDOUT")
-    @stdout.stub!(:each).
+    @stdout.stub(:each).
       and_yield("ProductName:	Mac OS X").
       and_yield("ProductVersion:	10.5.5").
       and_yield("BuildVersion:	9F33")
     @stderr = mock("STDERR") 
-    @plugin.stub!(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+    @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
   end
  
   it "should run sw_vers" do
@@ -73,17 +73,17 @@ describe Ohai::System, "Darwin plugin platform" do
 
   describe "on os x server" do
     before(:each) do
-      @plugin.stub!(:require_plugin).and_return(true)
+      @plugin.stub(:require_plugin).and_return(true)
       @plugin[:os] = "darwin"
       @pid = 10
       @stdin = mock("STDIN", { :close => true })
       @stdout = mock("STDOUT")
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("ProductName:	Mac OS X Server").
         and_yield("ProductVersion:	10.6.8").
         and_yield("BuildVersion:	10K549")
       @stderr = mock("STDERR")
-      @plugin.stub!(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+      @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
     end
 
     it "should set platform to mac_os_x_server" do

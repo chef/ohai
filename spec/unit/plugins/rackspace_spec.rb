@@ -21,7 +21,7 @@ describe Ohai::System, "plugin rackspace" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "rackspace.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
       "1.2.3.4"=> {
         "broadcast"=> "67.23.20.255",
@@ -121,10 +121,10 @@ OUT
     it_should_behave_like "rackspace"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
   end
 
@@ -132,8 +132,8 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
   
@@ -141,13 +141,13 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
 
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
 
@@ -158,7 +158,7 @@ OUT
       stderr = StringIO.new
       stdout = "Rackspace\n"
       status = 0
-      @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 
@@ -169,7 +169,7 @@ OUT
       stderr = StringIO.new
       stdout = "cumulonimbus\n"
       status = 0
-      @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 end

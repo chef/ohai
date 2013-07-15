@@ -91,7 +91,7 @@ ROUTE_GET
 
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/network.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:network] = Mash.new
 
     @plugin.stub(:popen4).with("ifconfig -a")
@@ -101,8 +101,8 @@ ROUTE_GET
   describe "gathering IP layer address info" do
     before do
       @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @plugin.stub!(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
-      @plugin.stub!(:popen4).with("ifconfig -a").and_yield(nil, StringIO.new, @ifconfig_lines, nil)
+      @plugin.stub(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
+      @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, StringIO.new, @ifconfig_lines, nil)
       @plugin.run
     end
 
@@ -132,7 +132,7 @@ ROUTE_GET
   describe "setting the node's default IP address attribute" do
     before do
       @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @plugin.stub!(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
+      @plugin.stub(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
       @plugin.run
     end
 

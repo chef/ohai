@@ -28,10 +28,10 @@ describe Ohai::System, "plugin azure" do
 
   describe "with azure cloud file" do
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/azure.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/azure.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
+      File.stub(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
       @plugin.run
     end
 
@@ -48,8 +48,8 @@ describe Ohai::System, "plugin azure" do
 
   describe "without azure cloud file" do
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/azure.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/azure.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
     end
 
     it 'should not behave like azure' do
@@ -59,10 +59,10 @@ describe Ohai::System, "plugin azure" do
 
   describe "with rackspace cloud file" do
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
 
     it 'should not behave like azure' do

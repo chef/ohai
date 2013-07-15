@@ -23,9 +23,9 @@ describe Ohai::System, "Solaris plugin platform" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/platform.rb", PLUGIN_PATH))
     @plugin.extend(SimpleFromFile)
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "solaris2"
-    @plugin.stub!(:popen4).with("/sbin/uname -X")
+    @plugin.stub(:popen4).with("/sbin/uname -X")
   end
   
   describe "on SmartOS" do
@@ -50,11 +50,11 @@ UNAME_X
 
       @uname_x_lines = uname_x.split("\n")
 
-      File.stub!(:exists?).with("/sbin/uname").and_return(true)
+      File.stub(:exists?).with("/sbin/uname").and_return(true)
       @plugin.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
-      File.stub!(:open).with("/etc/release").and_yield(@release)
+      File.stub(:open).with("/etc/release").and_yield(@release)
     end
 
     it "should run uname and set platform and build" do 

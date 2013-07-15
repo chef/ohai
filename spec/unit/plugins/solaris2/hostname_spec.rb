@@ -22,10 +22,10 @@ describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new    
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/hostname.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "solaris2"
-    @plugin.stub!(:from).with("hostname").and_return("kitteh")
-    Socket.stub!(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
+    @plugin.stub(:from).with("hostname").and_return("kitteh")
+    Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
   end
   
   it_should_check_from("solaris2::hostname", "hostname", "hostname", "kitteh")

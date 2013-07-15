@@ -23,8 +23,8 @@ describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) {
     metadata_object = Object.new.extend(Ohai::Mixin::Ec2Metadata)
     http_client = mock("Net::HTTP client")
-    http_client.stub!(:get).and_return(response)
-    metadata_object.stub!(:http_client).and_return(http_client)
+    http_client.stub(:get).and_return(response)
+    metadata_object.stub(:http_client).and_return(http_client)
     metadata_object
   }
 

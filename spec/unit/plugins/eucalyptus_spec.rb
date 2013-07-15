@@ -24,7 +24,7 @@ describe Ohai::System, "plugin eucalyptus" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "eucalyptus.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
   end
 
   shared_examples_for "!eucalyptus" do
@@ -37,7 +37,7 @@ describe Ohai::System, "plugin eucalyptus" do
   shared_examples_for "eucalyptus" do
     before(:each) do
       @http_client = mock("Net::HTTP client")
-      @plugin.stub!(:http_client).and_return(@http_client)
+      @plugin.stub(:http_client).and_return(@http_client)
 
       @http_client.should_receive(:get).
         with("/").twice.
@@ -60,10 +60,10 @@ describe Ohai::System, "plugin eucalyptus" do
     end
 
     it "should recursively fetch all the eucalyptus metadata" do
-      IO.stub!(:select).and_return([[],[1],[]])
+      IO.stub(:select).and_return([[],[1],[]])
       t = mock("connection")
-      t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub!(:new).and_return(t)
+      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      Socket.stub(:new).and_return(t)
       @plugin.run
       @plugin[:eucalyptus].should_not be_nil
       @plugin[:eucalyptus]['instance_type'].should == "c1.medium"
@@ -76,7 +76,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      IO.stub!(:select).and_return([[],[1],[]])
+      IO.stub(:select).and_return([[],[1],[]])
       @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
@@ -93,10 +93,10 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
     end
   end
 
@@ -105,8 +105,8 @@ describe Ohai::System, "plugin eucalyptus" do
 
     before(:each) do
       @plugin[:network] = {:interfaces => {}}
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
     end
   end
 
@@ -116,12 +116,12 @@ describe Ohai::System, "plugin eucalyptus" do
     before(:each) do
       @plugin[:network] = {:interfaces => {}}
 
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 

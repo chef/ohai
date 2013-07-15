@@ -940,7 +940,7 @@ IP_ROUTE
         
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
           Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
-          Ohai::Log.should_receive(:debug).any_number_of_times # Catches the 'Loading plugin network' type messages
+          Ohai::Log.stub(:debug) # Catches the 'Loading plugin network' type messages
           @plugin.run
         end
       end

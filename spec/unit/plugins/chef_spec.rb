@@ -30,8 +30,8 @@ begin
     end
     
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
-      @ohai._require_plugin("chef")
-      @ohai[:chef_packages][:chef][:version].should == Chef::VERSION
+      @plugin.run
+      @plugin[:chef_packages][:chef][:version].should == Chef::VERSION
     end
   
     pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)

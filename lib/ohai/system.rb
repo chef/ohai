@@ -18,6 +18,7 @@
 
 require 'ohai/mash'
 require 'ohai/log'
+require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/string'
@@ -27,10 +28,10 @@ require 'yajl'
 
 module Ohai
   class System
-    attr_accessor :data, :seen_plugins, :hints
-
-    include Ohai::Mixin::FromFile
-    include Ohai::Mixin::Command
+    attr_accessor :data
+    attr_reader :seen_plugins
+    attr_reader :hints
+    attr_reader :providers
 
     def initialize
       @data = Mash.new
@@ -43,87 +44,6 @@ module Ohai
     def [](key)
       @data[key]
     end
-
-    def []=(key, value)
-      @data[key] = value
-    end
-
-    def each(&block)
-      @data.each do |key, value|
-        block.call(key, value)
-      end
-    end
-
-    def attribute?(name)
-      @data.has_key?(name)
-    end
-
-    def set(name, *value)
-      set_attribute(name, *value)
-    end
-
-    def from(cmd)
-      status, stdout, stderr = run_command(:command => cmd)
-      return "" if stdout.nil? || stdout.empty?
-      stdout.strip
-    end
-
-    def provides(*paths)
-      paths.each do |path|
-        parts = path.split('/')
-        h = @providers
-        unless parts.length == 0
-          parts.shift if parts[0].length == 0
-          parts.each do |part|
-            h[part] ||= Mash.new
-            h = h[part]
-          end
-        end
-        h[:_providers] ||= []
-        h[:_providers] << @plugin_path
-      end
-    end
-
-    # Set the value equal to the stdout of the command, plus run through a regex - the first piece of match data is the value.
-    def from_with_regex(cmd, *regex_list)
-      regex_list.flatten.each do |regex|
-        status, stdout, stderr = run_command(:command => cmd)
-        return "" if stdout.nil? || stdout.empty?
-        stdout.chomp!.strip
-        md = stdout.match(regex)
-        return md[1]
-      end
-    end
-    
-    def set_attribute(name, *values)
-      @data[name] = Array18(*values)
-      @data[name]
-    end
-
-    def get_attribute(name)
-      @data[name]
-    end
-    
-    def hint?(name)
-      @json_parser ||= Yajl::Parser.new
-      
-      return @hints[name] if @hints[name]
-      
-      Ohai::Config[:hints_path].each do |path|
-        filename = File.join(path, "#{name}.json")
-        if File.exist?(filename)
-          begin
-            hash = @json_parser.parse(File.read(filename))
-            @hints[name] = hash || Hash.new # hint should exist because the file did, even if it didn't contain anything
-          rescue Yajl::ParseError => e
-            Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
-          end
-        end
-      end
-
-      @hints[name]
-    end
-    
 
     def all_plugins
       require_plugin('os')
@@ -204,30 +124,37 @@ module Ohai
         return false
       end
 
-      @plugin_path = plugin_name
-
-      filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
-
-      Ohai::Config[:plugin_path].each do |path|
-        check_path = File.expand_path(File.join(path, filename))
+      if plugin = plugin_for(plugin_name)
+        @seen_plugins[plugin_name] = true
         begin
-          @seen_plugins[plugin_name] = true
-          Ohai::Log.debug("Loading plugin #{plugin_name}")
-          from_file(check_path)
-          return true
-        rescue Errno::ENOENT => e
-          Ohai::Log.debug("No #{plugin_name} at #{check_path}")
+          plugin.run
+          true
         rescue SystemExit, Interrupt
           raise
         rescue Exception,Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
+      else
+        Ohai::Log.debug("No #{plugin_name} found in #{Ohai::Config[:plugin_path]}")
       end
     end
 
-    # Sneaky!  Lets us stub out require_plugin when testing plugins, but still
-    # call the real require_plugin to kick the whole thing off.
-    alias :_require_plugin :require_plugin
+    def plugin_for(plugin_name)
+      filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
+
+      plugin = nil
+
+      Ohai::Config[:plugin_path].each do |path|
+        check_path = File.expand_path(File.join(path, filename))
+        if File.exist?(check_path)
+          plugin = DSL::Plugin.new(self, check_path)
+          break
+        else
+          next
+        end
+      end
+      plugin
+    end
 
     # Serialize this object as a hash
     def to_json
@@ -259,18 +186,6 @@ module Ohai
       end
     end
 
-    def method_missing(name, *args)
-      return get_attribute(name) if args.length == 0
 
-      set_attribute(name, *args)
-    end
-
-    private
-    
-    def Array18(*args)
-      return nil if args.empty?
-      return args.first if args.length == 1
-      return *args
-    end
   end
 end

@@ -2,7 +2,7 @@
 $:.unshift File.expand_path('../lib', __FILE__)
 require 'ohai/version'
 
-spec = Gem::Specification.new do |s|
+Gem::Specification.new do |s|
   s.name = "ohai"
   s.version = Ohai::VERSION
   s.platform = Gem::Platform::RUBY
@@ -32,6 +32,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"
   s.add_development_dependency "rspec_junit_formatter"
+  s.add_development_dependency "chef"
   s.bindir = "bin"
   s.executables = %w(ohai)
 

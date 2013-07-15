@@ -16,7 +16,7 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'open-uri'
+require 'ohai/mixin/gce_metadata'
 
 describe Ohai::System, "plugin gce" do
   before(:each) do
@@ -26,7 +26,7 @@ describe Ohai::System, "plugin gce" do
 
   shared_examples_for "!gce" do
     it "should NOT attempt to fetch the gce metadata" do
-      @ohai.should_not_receive(:http_client)
+      Ohai::Mixin::GCEMetadata.should_not_receive(:http_client)
       @ohai._require_plugin("gce")
     end
   end
@@ -34,7 +34,7 @@ describe Ohai::System, "plugin gce" do
   shared_examples_for "gce" do
     before(:each) do
       @http_client = mock("Net::HTTP client")
-      @ohai.stub!(:http_client).and_return(@http_client)
+      Ohai::Mixin::GCEMetadata.stub(:http_client).and_return(@http_client)
       IO.stub!(:select).and_return([[],[1],[]])
       t = mock("connection")
       t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)

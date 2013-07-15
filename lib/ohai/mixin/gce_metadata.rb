@@ -21,6 +21,8 @@ module Ohai
   module Mixin
     module GCEMetadata
 
+      extend self
+
       GCE_METADATA_ADDR = "metadata.google.internal" unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/0.1/meta-data" unless defined?(GCE_METADATA_URL)
 

@@ -37,10 +37,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering filesystem usage data from df" do
     before(:each) do
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
       @stdout.stub(:each).
@@ -95,10 +95,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering mounted filesystem data from mount" do
     before(:each) do
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
       @stdout.stub(:each).
@@ -145,10 +145,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering filesystem type data from blkid" do
     before(:each) do
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
       @stdout.stub(:each).
@@ -180,10 +180,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering filesystem uuid data from blkid" do
     before(:each) do
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
       @stdout.stub(:each).
@@ -215,10 +215,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering filesystem label data from blkid" do
     before(:each) do
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
       @stdout.stub(:each).
@@ -249,9 +249,9 @@ describe Ohai::System, "Linux filesystem plugin" do
   describe "when gathering data from /proc/mounts" do
     before(:each) do
       File.stub(:exists?).with("/proc/mounts").and_return(true)
-      @mock_file = mock("/proc/mounts")
-      @mock_file.stub(:read_nonblock).and_return(@mock_file)
-      @mock_file.stub(:each_line).
+      @double_file = double("/proc/mounts")
+      @double_file.stub(:read_nonblock).and_return(@double_file)
+      @double_file.stub(:each_line).
         and_yield("rootfs / rootfs rw 0 0").
         and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").
         and_yield("none /proc proc rw,nosuid,nodev,noexec,relatime 0 0").
@@ -268,7 +268,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         and_yield("/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0").
         and_yield("fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0").
         and_yield("binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0")
-      File.stub(:open).with("/proc/mounts").and_return(@mock_file)
+      File.stub(:open).with("/proc/mounts").and_return(@double_file)
     end
 
     it "should set mount to value from /proc/mounts" do

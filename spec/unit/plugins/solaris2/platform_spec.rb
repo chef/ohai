@@ -43,9 +43,9 @@ OEM# = 0
 Origin# = 1
 NumCPU = 16
 UNAME_X
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
+      @stderr = double("STDERR")
       @status = 0
 
       @uname_x_lines = uname_x.split("\n")

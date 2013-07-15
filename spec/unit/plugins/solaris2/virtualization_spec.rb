@@ -35,10 +35,10 @@ describe Ohai::System, "Solaris virtualization platform" do
   describe "when we are checking for kvm" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/psrinfo").and_return(true)
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
     end
 
@@ -65,10 +65,10 @@ describe Ohai::System, "Solaris virtualization platform" do
   describe "when we are parsing smbios" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/smbios").and_return(true)
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 20
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
     end
 

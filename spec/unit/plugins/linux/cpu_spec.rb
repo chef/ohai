@@ -25,8 +25,8 @@ describe Ohai::System, "Linux cpu plugin" do
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/cpu.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "linux"
-    @mock_file = mock("/proc/cpuinfo")
-    @mock_file.stub(:each).
+    @double_file = double("/proc/cpuinfo")
+    @double_file.stub(:each).
       and_yield("processor     : 0").
       and_yield("vendor_id     : GenuineIntel").
       and_yield("cpu family    : 6").
@@ -46,7 +46,7 @@ describe Ohai::System, "Linux cpu plugin" do
       and_yield("flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov").
       and_yield("bogomips      : 2575.86").
       and_yield("clflush size  : 32")
-    File.stub(:open).with("/proc/cpuinfo").and_return(@mock_file)
+    File.stub(:open).with("/proc/cpuinfo").and_return(@double_file)
   end
   
   it "should set cpu[:total] to 1" do

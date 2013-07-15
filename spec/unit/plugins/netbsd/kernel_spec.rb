@@ -22,15 +22,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "NetBSD kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.stub!(:from).with("uname -i").and_return("foo")
-    @ohai.stub!(:from_with_regex).with("sysctl kern.securelevel").and_return("kern.securelevel: 1")
-    @ohai[:kernel] = Mash.new
-    @ohai[:kernel][:name] = "netbsd"
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("netbsd/kernel.rb", PLUGIN_PATH))
+    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub!(:from).with("uname -i").and_return("foo")
+    @plugin.stub!(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel=(.+)$/).and_return("kern.securelevel: 1")
+    @plugin.should_receive(:popen4).with("/usr/bin/modstat").and_yield(1, StringIO.new, StringIO.new, StringIO.new)
+    @plugin[:kernel] = Mash.new
+    @plugin[:kernel][:name] = "netbsd"
   end
 
   it "should set the kernel_os to the kernel_name value" do
-    @ohai._require_plugin("netbsd::kernel")
-    @ohai[:kernel][:os].should == @ohai[:kernel][:name]
+    @plugin.run
+    @plugin[:kernel][:os].should == @plugin[:kernel][:name]
   end
 end

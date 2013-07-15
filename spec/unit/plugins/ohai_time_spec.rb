@@ -22,25 +22,26 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin ohai_time" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ohai_time.rb"))
+    @plugin.stub!(:require_plugin).and_return(true)
   end
   
   it "should get the current time" do
     Time.should_receive(:now)
-    @ohai._require_plugin("ohai_time")
+    @plugin.run
   end
   
   it "should turn the time into a floating point number" do
     time = Time.now
     time.should_receive(:to_f)
     Time.stub!(:now).and_return(time)
-    @ohai._require_plugin("ohai_time")
+    @plugin.run
   end
   
   it "should set ohai_time to the current time" do
     time = Time.now
     Time.stub!(:now).and_return(time)
-    @ohai._require_plugin("ohai_time")
-    @ohai[:ohai_time].should == time.to_f    
+    @plugin.run
+    @plugin[:ohai_time].should == time.to_f    
   end
 end

@@ -20,4 +20,4 @@ require 'ruby-wmi'
 provides "uptime", "uptime_seconds"
 
 uptime_seconds ::WMI::Win32_PerfFormattedData_PerfOS_System.find(:first).SystemUpTime.to_i
-uptime self._seconds_to_human(uptime_seconds)
+uptime seconds_to_human(uptime_seconds)

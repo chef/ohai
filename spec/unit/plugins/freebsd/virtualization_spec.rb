@@ -22,29 +22,30 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = "freebsd"
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "freebsd/virtualization.rb"))
+    @plugin.stub(:require_plugin)
+    @plugin[:os] = "freebsd"
     @stderr = StringIO.new
     @stdin = StringIO.new
     @status = 0
     @pid = 42
-    @ohai.stub(:popen4).with("/sbin/kldstat")
-    @ohai.stub(:from)
+    @plugin.stub(:popen4).with("/sbin/kldstat")
+    @plugin.stub(:from)
   end
 
   context "jails" do
     it "detects we are in a jail" do
-      @ohai.stub(:from).with("sysctl -n security.jail.jailed").and_return("1")
-      @ohai._require_plugin("freebsd::virtualization")
-      @ohai[:virtualization][:system].should == "jail"
-      @ohai[:virtualization][:role].should == "guest"
+      @plugin.stub(:from).with("sysctl -n security.jail.jailed").and_return("1")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "jail"
+      @plugin[:virtualization][:role].should == "guest"
     end
 
     it "detects we are hosing jails" do
-      @ohai.stub(:from).with("jls -n \| wc -l").and_return("1")
-      @ohai._require_plugin("freebsd::virtualization")
-      @ohai[:virtualization][:system].should == "jail"
-      @ohai[:virtualization][:role].should == "host"
+      @plugin.stub(:from).with("jls -n \| wc -l").and_return("1")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "jail"
+      @plugin[:virtualization][:role].should == "host"
     end
   end
 
@@ -56,13 +57,13 @@ Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxguest.ko
 OUT
-      @ohai.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
     end
 
     it "detects we are a guest" do
-      @ohai._require_plugin("freebsd::virtualization")
-      @ohai[:virtualization][:system].should == "vbox"
-      @ohai[:virtualization][:role].should == "guest"
+      @plugin.run
+      @plugin[:virtualization][:system].should == "vbox"
+      @plugin[:virtualization][:role].should == "guest"
     end
   end
 
@@ -73,22 +74,22 @@ Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxdrv.ko
 OUT
-      @ohai.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
     end
 
     it "detects we are a host" do
-      @ohai._require_plugin("freebsd::virtualization")
-      @ohai[:virtualization][:system].should == "vbox"
-      @ohai[:virtualization][:role].should == "host"
+      @plugin.run
+      @plugin[:virtualization][:system].should == "vbox"
+      @plugin[:virtualization][:role].should == "host"
     end
   end
 
   context "when on a QEMU guest" do
     it "detects we are a guest" do
-      @ohai.stub(:from).with("sysctl -n hw.model").and_return('QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)')
-      @ohai._require_plugin("freebsd::virtualization")
-      @ohai[:virtualization][:system].should == "kvm"
-      @ohai[:virtualization][:role].should == "guest"
+      @plugin.stub(:from).with("sysctl -n hw.model").and_return('QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)')
+      @plugin.run
+      @plugin[:virtualization][:system].should == "kvm"
+      @plugin[:virtualization][:role].should == "guest"
     end
   end
 

@@ -34,10 +34,10 @@ describe Ohai::System, "plugin gce" do
 
   shared_examples_for "gce" do
     before(:each) do
-      @http_client = mock("Net::HTTP client")
+      @http_client = double("Net::HTTP client")
       @plugin.stub(:http_client).and_return(@http_client)
       IO.stub(:select).and_return([[],[1],[]])
-      t = mock("connection")
+      t = double("connection")
       t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       Socket.stub(:new).and_return(t)
       Socket.stub(:pack_sockaddr_in).and_return(nil)
@@ -46,17 +46,17 @@ describe Ohai::System, "plugin gce" do
     it "should recursively fetch metadata" do
       @http_client.should_receive(:get).
         with("/0.1/meta-data/").
-        and_return(mock("Net::HTTPOK",
+        and_return(double("Net::HTTPOK",
                          :body => "domain\nhostname\ndescription", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/domain").
-        and_return(mock("Net::HTTPOK", :body => "test-domain", :code=>"200"))
+        and_return(double("Net::HTTPOK", :body => "test-domain", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/hostname").
-        and_return(mock("Net::HTTPOK", :body => "test-host", :code=>"200"))
+        and_return(double("Net::HTTPOK", :body => "test-host", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/description").
-        and_return(mock("Net::HTTPOK", :body => "test-description", :code=>"200"))
+        and_return(double("Net::HTTPOK", :body => "test-description", :code=>"200"))
 
       @plugin.run
 
@@ -69,10 +69,10 @@ describe Ohai::System, "plugin gce" do
     it "should properly parse json metadata" do
       @http_client.should_receive(:get).
         with("/0.1/meta-data/").
-        and_return(mock("Net::HTTP Response", :body => "attached-disks\n", :code=>"200"))
+        and_return(double("Net::HTTP Response", :body => "attached-disks\n", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/attached-disks").
-        and_return(mock("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
+        and_return(double("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
                     "index":0,"mode":"READ_WRITE","type":"EPHEMERAL"}]}', :code=>"200"))
 
       @plugin.run

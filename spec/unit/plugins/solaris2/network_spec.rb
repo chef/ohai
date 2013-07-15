@@ -100,7 +100,7 @@ ROUTE_GET
 
   describe "gathering IP layer address info" do
     before do
-      @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
+      @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
       @plugin.stub(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
       @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, StringIO.new, @ifconfig_lines, nil)
       @plugin.run
@@ -131,7 +131,7 @@ ROUTE_GET
 
   describe "setting the node's default IP address attribute" do
     before do
-      @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
+      @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
       @plugin.stub(:popen4).with("route -n get default").and_yield(nil,StringIO.new, @stdout, nil)
       @plugin.run
     end

@@ -26,13 +26,13 @@ describe Ohai::System, "Darwin plugin platform" do
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "darwin"
     @pid = 10
-    @stdin = mock("STDIN", { :close => true })
-    @stdout = mock("STDOUT")
+    @stdin = double("STDIN", { :close => true })
+    @stdout = double("STDOUT")
     @stdout.stub(:each).
       and_yield("ProductName:	Mac OS X").
       and_yield("ProductVersion:	10.5.5").
       and_yield("BuildVersion:	9F33")
-    @stderr = mock("STDERR") 
+    @stderr = double("STDERR") 
     @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
   end
  
@@ -76,13 +76,13 @@ describe Ohai::System, "Darwin plugin platform" do
       @plugin.stub(:require_plugin).and_return(true)
       @plugin[:os] = "darwin"
       @pid = 10
-      @stdin = mock("STDIN", { :close => true })
-      @stdout = mock("STDOUT")
+      @stdin = double("STDIN", { :close => true })
+      @stdout = double("STDOUT")
       @stdout.stub(:each).
         and_yield("ProductName:	Mac OS X Server").
         and_yield("ProductVersion:	10.6.8").
         and_yield("BuildVersion:	10K549")
-      @stderr = mock("STDERR")
+      @stderr = double("STDERR")
       @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
     end
 

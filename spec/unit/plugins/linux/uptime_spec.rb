@@ -25,8 +25,8 @@ describe Ohai::System, "Linux plugin uptime" do
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/uptime.rb", PLUGIN_PATH))
     @plugin[:os] = "linux"
     @plugin.require_plugin("uptime")
-    @mock_file = mock("/proc/uptime", { :gets => "18423 989" })
-    File.stub(:open).with("/proc/uptime").and_return(@mock_file)
+    @double_file = double("/proc/uptime", { :gets => "18423 989" })
+    File.stub(:open).with("/proc/uptime").and_return(@double_file)
     @plugin.stub(:require_plugin).and_return(true)
   end
  

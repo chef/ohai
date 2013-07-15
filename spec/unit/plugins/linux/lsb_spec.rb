@@ -32,13 +32,13 @@ describe Ohai::System, "Linux lsb plugin" do
 
   describe "on systems with /etc/lsb-release" do
     before(:each) do
-      @mock_file = mock("/etc/lsb-release")
-      @mock_file.stub(:each).
+      @double_file = double("/etc/lsb-release")
+      @double_file.stub(:each).
         and_yield("DISTRIB_ID=Ubuntu").
         and_yield("DISTRIB_RELEASE=8.04").
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-      File.stub(:open).with("/etc/lsb-release").and_return(@mock_file) 
+      File.stub(:open).with("/etc/lsb-release").and_return(@double_file) 
       File.stub(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
@@ -68,10 +68,10 @@ describe Ohai::System, "Linux lsb plugin" do
       File.stub(:exists?).with("/etc/lsb-release").and_return(false)
       File.stub(:exists?).with("/usr/bin/lsb_release").and_return(true)
   
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
 
     end

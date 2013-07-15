@@ -23,6 +23,8 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, 'root_group' do
   before(:each) do
     @ohai = Ohai::System.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "root_group.rb"))
+    @plugin.stub(:require_plugin)
   end
 
   describe 'unix platform', :unix_only do
@@ -31,49 +33,49 @@ describe Ohai::System, 'root_group' do
       # apparently didn't apply to this api. we're just trying to fake
       # Etc.getgrgid(Etc.getpwnam('root').gid).name
       @pwnam = Object.new
-      @pwnam.stub!(:gid).and_return(0)
-      Etc.stub!(:getpwnam).with('root').and_return(@pwnam)
+      @pwnam.stub(:gid).and_return(0)
+      Etc.stub(:getpwnam).with('root').and_return(@pwnam)
       @grgid = Object.new
-      Etc.stub!(:getgrgid).and_return(@grgid)
+      Etc.stub(:getgrgid).and_return(@grgid)
     end
 
     describe 'with wheel group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('wheel')
+        @grgid.stub(:name).and_return('wheel')
       end
       it 'should have a root_group of wheel' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'wheel'
+        @plugin.run
+        @plugin[:root_group].should == 'wheel'
       end
     end
 
     describe 'with root group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('root')
+        @grgid.stub(:name).and_return('root')
       end
       it 'should have a root_group of root' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'root'
+        @plugin.run
+        @plugin[:root_group].should == 'root'
       end
     end
 
     describe 'platform hpux with sys group' do
       before(:each) do
-        @pwnam.stub!(:gid).and_return(3)
-        @grgid.stub!(:name).and_return('sys')
+        @pwnam.stub(:gid).and_return(3)
+        @grgid.stub(:name).and_return('sys')
       end
       it 'should have a root_group of sys' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'sys'
+        @plugin.run
+        @plugin[:root_group].should == 'sys'
       end
     end
     describe 'platform aix with system group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('system')
+        @grgid.stub(:name).and_return('system')
       end
       it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'system'
+        @plugin.run
+        @plugin[:root_group].should == 'system'
       end
     end
   end
@@ -93,7 +95,7 @@ describe Ohai::System, 'root_group' do
 
       @group = Object.new
       WMI::Win32_Group.
-        stub!(:find).
+        stub(:find).
         with(:first, :conditions => {:SID => 'S-1-5-32-544'}).
         and_return(@group)
     end
@@ -105,26 +107,26 @@ describe Ohai::System, 'root_group' do
     describe 'with administrator group' do
       before(:each) do
         @group.
-          stub!(:[]).
+          stub(:[]).
           with('Name').
           and_return('Administrator')
       end
       it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'Administrator'
+        @plugin.run
+        @plugin[:root_group].should == 'Administrator'
       end
     end
 
     describe 'with renamed administrator group' do
       before(:each) do
         @group.
-          stub!(:[]).
+          stub(:[]).
           with('Name').
           and_return('BOFH')
       end
       it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'BOFH'
+        @plugin.run
+        @plugin[:root_group].should == 'BOFH'
       end
     end
   end

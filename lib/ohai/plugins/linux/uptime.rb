@@ -20,9 +20,9 @@ provides "uptime", "idletime", "uptime_seconds", "idletime_seconds"
 
 uptime, idletime = File.open("/proc/uptime").gets.split(" ")
 uptime_seconds uptime.to_i
-uptime self._seconds_to_human(uptime.to_i)
+uptime seconds_to_human(uptime.to_i)
 idletime_seconds idletime.to_i
-idletime self._seconds_to_human(idletime.to_i)
+idletime seconds_to_human(idletime.to_i)
 
 
 

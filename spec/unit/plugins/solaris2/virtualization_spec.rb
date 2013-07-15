@@ -21,59 +21,60 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris virtualization platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:os] = "solaris2"
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.extend(SimpleFromFile)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/virtualization.rb", PLUGIN_PATH))
+    @plugin[:os] = "solaris2"
+    @plugin.stub(:require_plugin).and_return(true)
+    @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
-    File.stub!(:exists?).with("/usr/sbin/psrinfo").and_return(false)
-    File.stub!(:exists?).with("/usr/sbin/smbios").and_return(false)
-    File.stub!(:exists?).with("/usr/sbin/zoneadm").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/psrinfo").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/smbios").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/zoneadm").and_return(false)
   end
 
   describe "when we are checking for kvm" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/psrinfo").and_return(true)
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 10
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
     end
 
     it "should run psrinfo -pv" do
-      @ohai.should_receive(:popen4).with("/usr/sbin/psrinfo -pv").and_return(true)
-      @ohai._require_plugin("solaris2::virtualization")
+      @plugin.should_receive(:popen4).with("/usr/sbin/psrinfo -pv").and_return(true)
+      @plugin.run
     end
 
     it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
-      @stdout.stub!(:read).and_return("QEMU Virtual CPU") 
-      @ohai.stub!(:popen4).with("/usr/sbin/psrinfo -pv").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:system].should == "kvm"
-      @ohai[:virtualization][:role].should == "guest"
+      @stdout.stub(:read).and_return("QEMU Virtual CPU") 
+      @plugin.stub(:popen4).with("/usr/sbin/psrinfo -pv").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "kvm"
+      @plugin[:virtualization][:role].should == "guest"
     end
 
     it "should not set virtualization if kvm isn't there" do
-      @ohai.should_receive(:popen4).with("/usr/sbin/psrinfo -pv").and_return(true)
-      @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization].should == {}
+      @plugin.should_receive(:popen4).with("/usr/sbin/psrinfo -pv").and_return(true)
+      @plugin.run
+      @plugin[:virtualization].should == {}
     end
   end
 
   describe "when we are parsing smbios" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/smbios").and_return(true)
-      @stdin = mock("STDIN", { :close => true })
+      @stdin = double("STDIN", { :close => true })
       @pid = 20
-      @stderr = mock("STDERR")
-      @stdout = mock("STDOUT")
+      @stderr = double("STDERR")
+      @stdout = double("STDOUT")
       @status = 0
     end
 
     it "should run smbios" do
-      @ohai.should_receive(:popen4).with("/usr/sbin/smbios").and_return(true)
-      @ohai._require_plugin("solaris2::virtualization")
+      @plugin.should_receive(:popen4).with("/usr/sbin/smbios").and_return(true)
+      @plugin.run
     end
 
     it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
@@ -89,12 +90,12 @@ ID    SIZE TYPE
   UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
   Wake-Up Event: 0x6 (power switch)
 MSVPC
-      @stdout.stub!(:read).and_return(ms_vpc_smbios) 
+      @stdout.stub(:read).and_return(ms_vpc_smbios) 
        
-      @ohai.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:system].should == "virtualpc"
-      @ohai[:virtualization][:role].should == "guest"
+      @plugin.stub(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "virtualpc"
+      @plugin[:virtualization][:role].should == "guest"
     end
 
     it "should set vmware guest if smbios detects VMware Virtual Platform" do
@@ -110,23 +111,23 @@ ID    SIZE TYPE
   UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
   Wake-Up Event: 0x6 (power switch)
 VMWARE
-      @stdout.stub!(:read).and_return(vmware_smbios)
-      @ohai.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
-      @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization][:system].should == "vmware"
-      @ohai[:virtualization][:role].should == "guest"
+      @stdout.stub(:read).and_return(vmware_smbios)
+      @plugin.stub(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "vmware"
+      @plugin[:virtualization][:role].should == "guest"
     end
 
     it "should run smbios and not set virtualization if nothing is detected" do
-      @ohai.should_receive(:popen4).with("/usr/sbin/smbios").and_return(true)
-      @ohai._require_plugin("solaris2::virtualization")
-      @ohai[:virtualization].should == {}
+      @plugin.should_receive(:popen4).with("/usr/sbin/smbios").and_return(true)
+      @plugin.run
+      @plugin[:virtualization].should == {}
     end
   end
 
   it "should not set virtualization if no tests match" do
-    @ohai._require_plugin("solaris2::virtualization")
-    @ohai[:virtualization].should == {}
+    @plugin.run
+    @plugin[:virtualization].should == {}
   end
 end
 

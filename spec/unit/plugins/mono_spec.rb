@@ -25,11 +25,11 @@ describe Ohai::System, "plugin mono" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "mono.rb"))
     @plugin[:languages] = Mash.new
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @status = 0
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
   end
 
   it "should get the mono version from running mono -V" do
@@ -46,7 +46,7 @@ describe Ohai::System, "plugin mono" do
     @status = 1
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
     @plugin.run
     @plugin.languages.should_not have_key(:mono)
   end

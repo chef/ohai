@@ -23,7 +23,7 @@ describe Ohai::System, "plugin ohai_time" do
   before(:each) do
     @ohai = Ohai::System.new    
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ohai_time.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
   end
   
   it "should get the current time" do
@@ -34,13 +34,13 @@ describe Ohai::System, "plugin ohai_time" do
   it "should turn the time into a floating point number" do
     time = Time.now
     time.should_receive(:to_f)
-    Time.stub!(:now).and_return(time)
+    Time.stub(:now).and_return(time)
     @plugin.run
   end
   
   it "should set ohai_time to the current time" do
     time = Time.now
-    Time.stub!(:now).and_return(time)
+    Time.stub(:now).and_return(time)
     @plugin.run
     @plugin[:ohai_time].should == time.to_f    
   end

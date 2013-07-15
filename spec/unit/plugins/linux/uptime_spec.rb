@@ -26,8 +26,8 @@ describe Ohai::System, "Linux plugin uptime" do
     @plugin[:os] = "linux"
     @plugin.require_plugin("uptime")
     @mock_file = mock("/proc/uptime", { :gets => "18423 989" })
-    File.stub!(:open).with("/proc/uptime").and_return(@mock_file)
-    @plugin.stub!(:require_plugin).and_return(true)
+    File.stub(:open).with("/proc/uptime").and_return(@mock_file)
+    @plugin.stub(:require_plugin).and_return(true)
   end
  
   it "should set uptime_seconds to uptime" do

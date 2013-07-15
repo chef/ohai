@@ -434,8 +434,8 @@ net.smb.fs.tcprcvbuf: 261120
 
   describe "gathering IP layer address info" do
     before do
-      @plugin.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-      @plugin.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
+      @plugin.stub(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
+      @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
       @plugin.stub(:popen4).with("netstat -i -d -l -b -n").and_yield(nil, @stdin_netstat, @netstat_lines, nil)
       @plugin.stub(:popen4).with("sysctl net").and_yield(nil, @stdin_sysctl, @sysctl_lines, nil)
       @plugin.run

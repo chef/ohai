@@ -23,13 +23,13 @@ describe Ohai::System, "Solaris virtualization platform" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/virtualization.rb", PLUGIN_PATH))
     @plugin[:os] = "solaris2"
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
-    File.stub!(:exists?).with("/usr/sbin/psrinfo").and_return(false)
-    File.stub!(:exists?).with("/usr/sbin/smbios").and_return(false)
-    File.stub!(:exists?).with("/usr/sbin/zoneadm").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/psrinfo").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/smbios").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/zoneadm").and_return(false)
   end
 
   describe "when we are checking for kvm" do
@@ -48,8 +48,8 @@ describe Ohai::System, "Solaris virtualization platform" do
     end
 
     it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
-      @stdout.stub!(:read).and_return("QEMU Virtual CPU") 
-      @plugin.stub!(:popen4).with("/usr/sbin/psrinfo -pv").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @stdout.stub(:read).and_return("QEMU Virtual CPU") 
+      @plugin.stub(:popen4).with("/usr/sbin/psrinfo -pv").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:virtualization][:system].should == "kvm"
       @plugin[:virtualization][:role].should == "guest"
@@ -90,9 +90,9 @@ ID    SIZE TYPE
   UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
   Wake-Up Event: 0x6 (power switch)
 MSVPC
-      @stdout.stub!(:read).and_return(ms_vpc_smbios) 
+      @stdout.stub(:read).and_return(ms_vpc_smbios) 
        
-      @plugin.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:virtualization][:system].should == "virtualpc"
       @plugin[:virtualization][:role].should == "guest"
@@ -111,8 +111,8 @@ ID    SIZE TYPE
   UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
   Wake-Up Event: 0x6 (power switch)
 VMWARE
-      @stdout.stub!(:read).and_return(vmware_smbios)
-      @plugin.stub!(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @stdout.stub(:read).and_return(vmware_smbios)
+      @plugin.stub(:popen4).with("/usr/sbin/smbios").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:virtualization][:system].should == "vmware"
       @plugin[:virtualization][:role].should == "guest"

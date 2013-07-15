@@ -23,8 +23,8 @@ describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/kernel.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
-    @plugin.stub!(:from).with("uname -o").and_return("Linux")
+    @plugin.stub(:require_plugin).and_return(true)
+    @plugin.stub(:from).with("uname -o").and_return("Linux")
     @plugin.should_receive(:popen4).with("env lsmod").at_least(1).times
     @plugin[:kernel] = {}
     @plugin.run

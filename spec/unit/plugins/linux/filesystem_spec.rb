@@ -23,16 +23,16 @@ describe Ohai::System, "Linux filesystem plugin" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/filesystem.rb", PLUGIN_PATH))
     @plugin[:os] = "linux"
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)
 
-    @plugin.stub!(:popen4).with("df -P").and_return(false)
-    @plugin.stub!(:popen4).with("mount").and_return(false)
-    @plugin.stub!(:popen4).with("blkid -s TYPE").and_return(false)
-    @plugin.stub!(:popen4).with("blkid -s UUID").and_return(false)
-    @plugin.stub!(:popen4).with("blkid -s LABEL").and_return(false)
+    @plugin.stub(:popen4).with("df -P").and_return(false)
+    @plugin.stub(:popen4).with("mount").and_return(false)
+    @plugin.stub(:popen4).with("blkid -s TYPE").and_return(false)
+    @plugin.stub(:popen4).with("blkid -s UUID").and_return(false)
+    @plugin.stub(:popen4).with("blkid -s LABEL").and_return(false)
 
-    File.stub!(:exists?).with("/proc/mounts").and_return(false)
+    File.stub(:exists?).with("/proc/mounts").and_return(false)
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -43,7 +43,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("Filesystem         1024-blocks      Used Available Capacity Mounted on").
         and_yield("/dev/mapper/sys.vg-root.lv   4805760    378716   4182924       9% /").
         and_yield("tmpfs                  2030944         0   2030944       0% /lib/init/rw").
@@ -63,31 +63,31 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set kb_size to value from df -P" do
-      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size].should be == "97605057"
     end
 
     it "should set kb_used to value from df -P" do
-      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used].should be == "53563253"
     end
 
     it "should set kb_available to value from df -P" do
-      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available].should be == "44041805"
     end
 
     it "should set percent_used to value from df -P" do
-      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used].should be == "56%"
     end
 
     it "should set mount to value from df -P" do
-      @plugin.stub!(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("df -P").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
@@ -101,7 +101,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("/dev/mapper/sys.vg-root.lv on / type ext4 (rw,noatime,errors=remount-ro)").
         and_yield("tmpfs on /lib/init/rw type tmpfs (rw,nosuid,mode=0755)").
         and_yield("proc on /proc type proc (rw,noexec,nosuid,nodev)").
@@ -125,19 +125,19 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set mount to value from mount" do
-      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
     end
 
     it "should set fs_type to value from mount" do
-      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
     end
 
     it "should set mount_options to an array of values from mount" do
-      @plugin.stub!(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("mount").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime" ]
     end
@@ -151,7 +151,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("/dev/sdb1: TYPE=\"linux_raid_member\" ").
         and_yield("/dev/sdb2: TYPE=\"linux_raid_member\" ").
         and_yield("/dev/sda1: TYPE=\"linux_raid_member\" ").
@@ -172,7 +172,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set kb_size to value from blkid -s TYPE" do
-      @plugin.stub!(:popen4).with("blkid -s TYPE").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("blkid -s TYPE").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/md1"][:fs_type].should be == "LVM2_member"
     end
@@ -186,7 +186,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("/dev/sdb1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" ").
         and_yield("/dev/sdb2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" ").
         and_yield("/dev/sda1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" ").
@@ -207,7 +207,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set kb_size to value from blkid -s UUID" do
-      @plugin.stub!(:popen4).with("blkid -s UUID").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("blkid -s UUID").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
     end
@@ -221,7 +221,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       @stdout = mock("STDOUT")
       @status = 0
 
-      @stdout.stub!(:each).
+      @stdout.stub(:each).
         and_yield("/dev/sda1: LABEL=\"fuego:0\" ").
         and_yield("/dev/sda2: LABEL=\"fuego:1\" ").
         and_yield("/dev/sdb1: LABEL=\"fuego:0\" ").
@@ -240,7 +240,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
 
     it "should set kb_size to value from blkid -s LABEL" do
-      @plugin.stub!(:popen4).with("blkid -s LABEL").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("blkid -s LABEL").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:filesystem]["/dev/md0"][:label].should be == "/boot"
     end
@@ -248,10 +248,10 @@ describe Ohai::System, "Linux filesystem plugin" do
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
-      File.stub!(:exists?).with("/proc/mounts").and_return(true)
+      File.stub(:exists?).with("/proc/mounts").and_return(true)
       @mock_file = mock("/proc/mounts")
-      @mock_file.stub!(:read_nonblock).and_return(@mock_file)
-      @mock_file.stub!(:each_line).
+      @mock_file.stub(:read_nonblock).and_return(@mock_file)
+      @mock_file.stub(:each_line).
         and_yield("rootfs / rootfs rw 0 0").
         and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").
         and_yield("none /proc proc rw,nosuid,nodev,noexec,relatime 0 0").
@@ -268,7 +268,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         and_yield("/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0").
         and_yield("fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0").
         and_yield("binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0")
-      File.stub!(:open).with("/proc/mounts").and_return(@mock_file)
+      File.stub(:open).with("/proc/mounts").and_return(@mock_file)
     end
 
     it "should set mount to value from /proc/mounts" do

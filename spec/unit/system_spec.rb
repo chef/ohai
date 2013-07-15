@@ -74,8 +74,8 @@ end
 describe Ohai::System, "all_plugins" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:from_file).and_return(true)
-    @ohai.stub!(:require_plugin).and_return(false)
+    @ohai.stub(:from_file).and_return(true)
+    @ohai.stub(:require_plugin).and_return(false)
     @ohai.data[:os] = "ubuntu"
   end
 

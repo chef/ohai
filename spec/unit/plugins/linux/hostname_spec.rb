@@ -23,10 +23,10 @@ describe Ohai::System, "Linux hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new    
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/hostname.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "linux"
-    @plugin.stub!(:from).with("hostname -s").and_return("katie")
-    @plugin.stub!(:from).with("hostname --fqdn").and_return("katie.bethell")
+    @plugin.stub(:from).with("hostname -s").and_return("katie")
+    @plugin.stub(:from).with("hostname --fqdn").and_return("katie.bethell")
   end
 
   it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")

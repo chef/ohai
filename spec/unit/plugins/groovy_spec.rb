@@ -25,11 +25,11 @@ describe Ohai::System, "plugin groovy" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "groovy.rb"))
     @plugin[:languages] = Mash.new
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @status = 0
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
   end
 
   it "should get the groovy version from running groovy -v" do
@@ -46,7 +46,7 @@ describe Ohai::System, "plugin groovy" do
     @status = 1
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
     @stderr = ""
-    @plugin.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
     @plugin.run
     @plugin.languages.should_not have_key(:groovy)
   end

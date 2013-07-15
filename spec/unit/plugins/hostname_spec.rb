@@ -23,7 +23,7 @@ describe Ohai::System, "hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "hostname.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
   end
 
   it "should set the domain to everything after the first dot of the fqdn" do

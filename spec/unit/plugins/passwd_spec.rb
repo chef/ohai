@@ -4,7 +4,7 @@ describe Ohai::System, "plugin etc" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "passwd.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
   end
 
   PasswdEntry = Struct.new(:name, :uid, :gid, :dir, :shell, :gecos)
@@ -35,7 +35,7 @@ describe Ohai::System, "plugin etc" do
     it "sets the encoding of strings to the default external encoding" do
       fields = ["root", 1, 1, '/root', '/bin/zsh', 'BOFH']
       fields.each {|f| f.force_encoding(Encoding::ASCII_8BIT) if f.respond_to?(:force_encoding) }
-      Etc.stub!(:passwd).and_yield(PasswdEntry.new(*fields))
+      Etc.stub(:passwd).and_yield(PasswdEntry.new(*fields))
       @plugin.run
       root = @plugin[:etc][:passwd]['root']
       root['gecos'].encoding.should == Encoding.default_external

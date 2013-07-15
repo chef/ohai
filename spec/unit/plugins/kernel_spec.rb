@@ -24,14 +24,14 @@ describe Ohai::System, "plugin kernel" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "kernel.rb"))
 
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin[:languages] = Mash.new
     @plugin[:languages][:ruby] = Mash.new
-    @plugin.stub!(:from).with("uname -s").and_return("Darwin")
-    @plugin.stub!(:from).with("uname -r").and_return("9.5.0")
-    @plugin.stub!(:from).with("uname -v").and_return("Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
-    @plugin.stub!(:from).with("uname -m").and_return("i386")
-    @plugin.stub!(:from).with("uname -o").and_return("Linux")
+    @plugin.stub(:from).with("uname -s").and_return("Darwin")
+    @plugin.stub(:from).with("uname -r").and_return("9.5.0")
+    @plugin.stub(:from).with("uname -v").and_return("Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386")
+    @plugin.stub(:from).with("uname -m").and_return("i386")
+    @plugin.stub(:from).with("uname -o").and_return("Linux")
   end
 
   it_should_check_from_mash("kernel", "name", "uname -s", "Darwin")

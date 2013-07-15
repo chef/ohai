@@ -33,15 +33,15 @@ describe Ohai::System, 'root_group' do
       # apparently didn't apply to this api. we're just trying to fake
       # Etc.getgrgid(Etc.getpwnam('root').gid).name
       @pwnam = Object.new
-      @pwnam.stub!(:gid).and_return(0)
-      Etc.stub!(:getpwnam).with('root').and_return(@pwnam)
+      @pwnam.stub(:gid).and_return(0)
+      Etc.stub(:getpwnam).with('root').and_return(@pwnam)
       @grgid = Object.new
-      Etc.stub!(:getgrgid).and_return(@grgid)
+      Etc.stub(:getgrgid).and_return(@grgid)
     end
 
     describe 'with wheel group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('wheel')
+        @grgid.stub(:name).and_return('wheel')
       end
       it 'should have a root_group of wheel' do
         @plugin.run
@@ -51,7 +51,7 @@ describe Ohai::System, 'root_group' do
 
     describe 'with root group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('root')
+        @grgid.stub(:name).and_return('root')
       end
       it 'should have a root_group of root' do
         @plugin.run
@@ -61,8 +61,8 @@ describe Ohai::System, 'root_group' do
 
     describe 'platform hpux with sys group' do
       before(:each) do
-        @pwnam.stub!(:gid).and_return(3)
-        @grgid.stub!(:name).and_return('sys')
+        @pwnam.stub(:gid).and_return(3)
+        @grgid.stub(:name).and_return('sys')
       end
       it 'should have a root_group of sys' do
         @plugin.run
@@ -71,7 +71,7 @@ describe Ohai::System, 'root_group' do
     end
     describe 'platform aix with system group' do
       before(:each) do
-        @grgid.stub!(:name).and_return('system')
+        @grgid.stub(:name).and_return('system')
       end
       it 'should have a root_group of system' do
         @plugin.run
@@ -95,7 +95,7 @@ describe Ohai::System, 'root_group' do
 
       @group = Object.new
       WMI::Win32_Group.
-        stub!(:find).
+        stub(:find).
         with(:first, :conditions => {:SID => 'S-1-5-32-544'}).
         and_return(@group)
     end
@@ -107,7 +107,7 @@ describe Ohai::System, 'root_group' do
     describe 'with administrator group' do
       before(:each) do
         @group.
-          stub!(:[]).
+          stub(:[]).
           with('Name').
           and_return('Administrator')
       end
@@ -120,7 +120,7 @@ describe Ohai::System, 'root_group' do
     describe 'with renamed administrator group' do
       before(:each) do
         @group.
-          stub!(:[]).
+          stub(:[]).
           with('Name').
           and_return('BOFH')
       end

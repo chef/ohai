@@ -95,13 +95,13 @@ describe Ohai::System, "plugin dmi" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "dmi.rb"))
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @stdin = mock("STDIN", { :close => true })
     @pid = 10
     @stderr = mock("STDERR")
     @stdout = StringIO.new(DMI_OUT)
     @status = 0
-    @plugin.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
   end
 
   it "should run dmidecode" do

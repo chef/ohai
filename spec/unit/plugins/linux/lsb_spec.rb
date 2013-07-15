@@ -26,20 +26,20 @@ describe Ohai::System, "Linux lsb plugin" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/lsb.rb", PLUGIN_PATH))
     @plugin[:os] = "linux"    
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)
   end
 
   describe "on systems with /etc/lsb-release" do
     before(:each) do
       @mock_file = mock("/etc/lsb-release")
-      @mock_file.stub!(:each).
+      @mock_file.stub(:each).
         and_yield("DISTRIB_ID=Ubuntu").
         and_yield("DISTRIB_RELEASE=8.04").
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-      File.stub!(:open).with("/etc/lsb-release").and_return(@mock_file) 
-      File.stub!(:exists?).with("/etc/lsb-release").and_return(true)
+      File.stub(:open).with("/etc/lsb-release").and_return(@mock_file) 
+      File.stub(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
     it "should set lsb[:id]" do
@@ -65,8 +65,8 @@ describe Ohai::System, "Linux lsb plugin" do
 
   describe "on systems with /usr/bin/lsb_release" do
     before(:each) do
-      File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
-      File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(true)
+      File.stub(:exists?).with("/etc/lsb-release").and_return(false)
+      File.stub(:exists?).with("/usr/bin/lsb_release").and_return(true)
   
       @stdin = mock("STDIN", { :close => true })
       @pid = 10
@@ -78,14 +78,14 @@ describe Ohai::System, "Linux lsb plugin" do
     
     describe "on Centos 5.4 correctly" do
       before(:each) do
-        @stdout.stub!(:each).
+        @stdout.stub(:each).
           and_yield("LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch").
           and_yield("Distributor ID: CentOS").
           and_yield("Description:  CentOS release 5.4 (Final)").
           and_yield("Release:  5.4").
           and_yield("Codename: Final")
   
-        @plugin.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @plugin.stub(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       end
 
       it "should set lsb[:id]" do
@@ -111,14 +111,14 @@ describe Ohai::System, "Linux lsb plugin" do
 
     describe "on Fedora 14 correctly" do
       before(:each) do
-        @stdout.stub!(:each).
+        @stdout.stub(:each).
           and_yield("LSB Version:    :core-4.0-ia32:core-4.0-noarch").
           and_yield("Distributor ID: Fedora").
           and_yield("Description:    Fedora release 14 (Laughlin)").
           and_yield("Release:        14").
           and_yield("Codename:       Laughlin")
   
-        @plugin.stub!(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @plugin.stub(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       end
   
       it "should set lsb[:id]" do
@@ -144,8 +144,8 @@ describe Ohai::System, "Linux lsb plugin" do
   end
 
   it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
-    File.stub!(:exists?).with("/etc/lsb-release").and_return(false)
-    File.stub!(:exists?).with("/usr/bin/lsb_release").and_return(false)
+    File.stub(:exists?).with("/etc/lsb-release").and_return(false)
+    File.stub(:exists?).with("/usr/bin/lsb_release").and_return(false)
     @plugin.attribute?(:lsb).should be(false)
   end
 end

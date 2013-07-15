@@ -23,18 +23,18 @@ describe Ohai::System, "Linux virtualization platform" do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/virtualization.rb", PLUGIN_PATH))
     @plugin[:os] = "linux"
-    @plugin.stub!(:require_plugin).and_return(true)
+    @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
-    File.stub!(:exists?).with("/proc/xen").and_return(false)
-    File.stub!(:exists?).with("/proc/xen/capabilities").and_return(false)
-    File.stub!(:exists?).with("/proc/modules").and_return(false)
-    File.stub!(:exists?).with("/proc/cpuinfo").and_return(false)
-    File.stub!(:exists?).with("/usr/sbin/dmidecode").and_return(false)
-    File.stub!(:exists?).with("/proc/self/status").and_return(false)
-    File.stub!(:exists?).with("/proc/bc/0").and_return(false)
-    File.stub!(:exists?).with("/proc/vz").and_return(false)
+    File.stub(:exists?).with("/proc/xen").and_return(false)
+    File.stub(:exists?).with("/proc/xen/capabilities").and_return(false)
+    File.stub(:exists?).with("/proc/modules").and_return(false)
+    File.stub(:exists?).with("/proc/cpuinfo").and_return(false)
+    File.stub(:exists?).with("/usr/sbin/dmidecode").and_return(false)
+    File.stub(:exists?).with("/proc/self/status").and_return(false)
+    File.stub(:exists?).with("/proc/bc/0").and_return(false)
+    File.stub(:exists?).with("/proc/vz").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -49,7 +49,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "should set xen host if /proc/xen/capabilities contains control_d " do
       File.should_receive(:exists?).with("/proc/xen").and_return(true)
       File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-      File.stub!(:read).with("/proc/xen/capabilities").and_return("control_d")
+      File.stub(:read).with("/proc/xen/capabilities").and_return("control_d")
       @plugin.run
       @plugin[:virtualization][:system].should == "xen"
       @plugin[:virtualization][:role].should == "host"
@@ -58,7 +58,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "should set xen guest if /proc/xen/capabilities exists but is empty" do
       File.should_receive(:exists?).with("/proc/xen").and_return(true)
       File.should_receive(:exists?).with("/proc/xen/capabilities").and_return(true)
-      File.stub!(:read).with("/proc/xen/capabilities").and_return("")
+      File.stub(:read).with("/proc/xen/capabilities").and_return("")
       @plugin.run
       @plugin[:virtualization][:system].should == "xen"
       @plugin[:virtualization][:role].should == "guest"
@@ -74,7 +74,7 @@ describe Ohai::System, "Linux virtualization platform" do
   describe "when we are checking for kvm" do
     it "should set kvm host if /proc/modules contains kvm" do
       File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
+      File.stub(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
       @plugin.run
       @plugin[:virtualization][:system].should == "kvm"
       @plugin[:virtualization][:role].should == "host"
@@ -82,7 +82,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
     it "should set kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
       File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
-      File.stub!(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
+      File.stub(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
       @plugin.run
       @plugin[:virtualization][:system].should == "kvm"
       @plugin[:virtualization][:role].should == "guest"
@@ -98,7 +98,7 @@ describe Ohai::System, "Linux virtualization platform" do
   describe "when we are checking for VirtualBox" do
     it "should set vbox host if /proc/modules contains vboxdrv" do
       File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("vboxdrv 268268 3 vboxnetadp,vboxnetflt")
+      File.stub(:read).with("/proc/modules").and_return("vboxdrv 268268 3 vboxnetadp,vboxnetflt")
       @plugin.run
       @plugin[:virtualization][:system].should == "vbox"
       @plugin[:virtualization][:role].should == "host"
@@ -106,7 +106,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
     it "should set vbox guest if /proc/modules contains vboxguest" do
       File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub!(:read).with("/proc/modules").and_return("vboxguest 177749 2 vboxsf")
+      File.stub(:read).with("/proc/modules").and_return("vboxguest 177749 2 vboxsf")
       @plugin.run
       @plugin[:virtualization][:system].should == "vbox"
       @plugin[:virtualization][:role].should == "guest"
@@ -144,9 +144,9 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub!(:read).and_return(ms_vpc_dmidecode)
+      @stdout.stub(:read).and_return(ms_vpc_dmidecode)
 
-      @plugin.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:virtualization][:system].should == "virtualpc"
       @plugin[:virtualization][:role].should == "guest"
@@ -164,8 +164,8 @@ System Information
 	SKU Number: Not Specified
 	Family: Not Specified
 VMWARE
-      @stdout.stub!(:read).and_return(vmware_dmidecode)
-      @plugin.stub!(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @stdout.stub(:read).and_return(vmware_dmidecode)
+      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @plugin.run
       @plugin[:virtualization][:system].should == "vmware"
       @plugin[:virtualization][:role].should == "guest"
@@ -181,7 +181,7 @@ VMWARE
   describe "when we are checking for Linux-VServer" do
     it "should set Linux-VServer host if /proc/self/status contains s_context: 0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("s_context: 0")
+      File.stub(:read).with("/proc/self/status").and_return("s_context: 0")
       @plugin.run
       @plugin[:virtualization][:system].should == "linux-vserver"
       @plugin[:virtualization][:role].should == "host"
@@ -189,7 +189,7 @@ VMWARE
 
     it "should set Linux-VServer host if /proc/self/status contains VxID: 0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("VxID: 0")
+      File.stub(:read).with("/proc/self/status").and_return("VxID: 0")
       @plugin.run
       @plugin[:virtualization][:system].should == "linux-vserver"
       @plugin[:virtualization][:role].should == "host"
@@ -197,7 +197,7 @@ VMWARE
 
     it "should set Linux-VServer guest if /proc/self/status contains s_context > 0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("s_context: 2")
+      File.stub(:read).with("/proc/self/status").and_return("s_context: 2")
       @plugin.run
       @plugin[:virtualization][:system].should == "linux-vserver"
       @plugin[:virtualization][:role].should == "guest"
@@ -205,7 +205,7 @@ VMWARE
 
     it "should set Linux-VServer guest if /proc/self/status contains VxID > 0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
-      File.stub!(:read).with("/proc/self/status").and_return("VxID: 2")
+      File.stub(:read).with("/proc/self/status").and_return("VxID: 2")
       @plugin.run
       @plugin[:virtualization][:system].should == "linux-vserver"
       @plugin[:virtualization][:role].should == "guest"

@@ -23,10 +23,10 @@ describe Ohai::System, "FreeBSD kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("freebsd/kernel.rb", PLUGIN_PATH))
-    @plugin.stub!(:require_plugin).and_return(true)
-    @plugin.stub!(:from).with("uname -i").and_return("foo")
-    @plugin.stub!(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel: (.+)$/).and_return("kern.securelevel: 1")
-    @plugin.stub!(:popen4).with("/sbin/kldstat").and_yield(0, StringIO.new, StringIO.new, StringIO.new)
+    @plugin.stub(:require_plugin).and_return(true)
+    @plugin.stub(:from).with("uname -i").and_return("foo")
+    @plugin.stub(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel: (.+)$/).and_return("kern.securelevel: 1")
+    @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(0, StringIO.new, StringIO.new, StringIO.new)
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:name] = "freebsd"
   end

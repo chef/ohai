@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 def it_does_not_fail
   it "doesn't fail" do
-    Ohai::Log.should_receive(:warn).any_number_of_times
+    Ohai::Log.stub(:warn)
     Ohai::Log.should_not_receive(:debug).with(/^Plugin network threw exception/)
     @plugin.run
     %w[ ipaddress, macaddress, ip6address ].each do |attribute|
@@ -189,7 +189,7 @@ describe Ohai::System, "Network Plugin" do
 
           it "informs about this setup" do
             Ohai::Log.should_receive(:debug).with(/^ipaddress and ip6address are set from different interfaces/)
-            Ohai::Log.should_receive(:debug).any_number_of_times
+            Ohai::Log.stub(:debug)
             @plugin.run
           end
         end
@@ -219,7 +219,7 @@ describe Ohai::System, "Network Plugin" do
 
           it "informs about this setup" do
             Ohai::Log.should_receive(:debug).with(/^ipaddress and ip6address are set from different interfaces/)
-            Ohai::Log.should_receive(:debug).any_number_of_times
+            Ohai::Log.stub(:debug)
             @plugin.run
           end
         end
@@ -235,7 +235,7 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "picks {ip,ip6,mac}address" do
-            Ohai::Log.should_receive(:warn).any_number_of_times
+            Ohai::Log.stub(:warn)
             @plugin.run
             @plugin["ipaddress"].should == "192.168.99.11"
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
@@ -256,7 +256,7 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "picks {ip,ip6,mac}address" do
-            Ohai::Log.should_receive(:warn).any_number_of_times
+            Ohai::Log.stub(:warn)
             @plugin.run
             @plugin["ipaddress"].should == "192.168.66.33"
             @plugin["macaddress"].should == "00:16:3E:2F:36:79"
@@ -273,7 +273,7 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            Ohai::Log.should_receive(:warn).any_number_of_times
+            Ohai::Log.stub(:warn)
             @plugin.run
             @plugin["ipaddress"].should be_nil
             @plugin["macaddress"].should be_nil
@@ -304,7 +304,7 @@ describe Ohai::System, "Network Plugin" do
           it_does_not_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            Ohai::Log.should_receive(:warn).any_number_of_times
+            Ohai::Log.stub(:warn)
             @plugin.run
             @plugin["ipaddress"].should be_nil
             @plugin["macaddress"].should be_nil
@@ -466,7 +466,7 @@ describe Ohai::System, "Network Plugin" do
           it "picks {ip,mac,ip6}address from the first interface" do
             Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
             Ohai::Log.should_receive(:debug).with(/^\[inet6\] no default interface/).once
-            Ohai::Log.should_receive(:debug).any_number_of_times
+            Ohai::Log.stub(:debug)
             @plugin.run
             @plugin["ipaddress"].should == "192.168.99.11"
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
@@ -489,7 +489,7 @@ describe Ohai::System, "Network Plugin" do
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
             Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
             Ohai::Log.should_receive(:debug).with(/^\[inet6\] no default interface/).once
-            Ohai::Log.should_receive(:debug).any_number_of_times
+            Ohai::Log.stub(:debug)
             @plugin.run
             @plugin["ipaddress"].should == "192.168.99.11"
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
@@ -597,7 +597,7 @@ describe Ohai::System, "Network Plugin" do
         it_does_not_fail
 
         it "can't detect ipaddress" do
-          Ohai::Log.should_receive(:warn).any_number_of_times
+          Ohai::Log.stub(:warn)
           @plugin.run
           @plugin["ipaddress"].should be_nil
         end
@@ -609,7 +609,7 @@ describe Ohai::System, "Network Plugin" do
         end
 
         it "sets {ip6,mac}address" do
-          Ohai::Log.should_receive(:warn).any_number_of_times
+          Ohai::Log.stub(:warn)
           @plugin.run
           @plugin["ip6address"].should == "3ffe:1111:2222::33"
           @plugin["macaddress"].should == "00:16:3E:2F:36:79"
@@ -617,7 +617,7 @@ describe Ohai::System, "Network Plugin" do
 
         it "informs about macaddress being set using the ipv6 setup" do
           Ohai::Log.should_receive(:debug).with(/^macaddress set to 00:16:3E:2F:36:79 from the ipv6 setup/).once
-          Ohai::Log.should_receive(:debug).any_number_of_times
+          Ohai::Log.stub(:debug)
           @plugin.run
         end
       end
@@ -702,13 +702,13 @@ describe Ohai::System, "Network Plugin" do
             it_does_not_fail
 
             it "can't detect ipaddress (ipv4)" do
-              Ohai::Log.should_receive(:warn).any_number_of_times
+              Ohai::Log.stub(:warn)
               @plugin.run
               @plugin["ipaddress"].should be_nil
             end
 
             it "can't detect macaddress either" do
-              Ohai::Log.should_receive(:warn).any_number_of_times
+              Ohai::Log.stub(:warn)
               @plugin.run
               @plugin["macaddress"].should be_nil
             end
@@ -720,7 +720,7 @@ describe Ohai::System, "Network Plugin" do
             end
 
             it "doesn't overwrite ip6address" do
-              Ohai::Log.should_receive(:warn).any_number_of_times
+              Ohai::Log.stub(:warn)
               @plugin.run
               @plugin["ip6address"].should == "3ffe:8888:9999::1"
             end
@@ -772,13 +772,13 @@ describe Ohai::System, "Network Plugin" do
             it_does_not_fail
 
             it "can't set ipaddress" do
-              Ohai::Log.should_receive(:warn).any_number_of_times
+              Ohai::Log.stub(:warn)
               @plugin.run
               @plugin["ipaddress"].should be_nil
             end
 
             it "doesn't overwrite {ip6,mac}address" do
-              Ohai::Log.should_receive(:warn).any_number_of_times
+              Ohai::Log.stub(:warn)
               @plugin.run
               @plugin["ip6address"].should == "3ffe:8888:9999::1"
               @plugin["macaddress"].should == "00:AA:BB:CC:DD:EE"

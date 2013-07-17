@@ -19,12 +19,10 @@ provides 'root_group'
 
 case ::RbConfig::CONFIG['host_os']
 when /mswin|mingw32|windows/
-  # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
-  # internal name for the Administrators group, which lets us work
-  # properly in environments with a renamed or localized name for the
-  # Administrators group
-  group = WMI::Win32_Group.find(:first, :conditions => {:SID => 'S-1-5-32-544'})
-  root_group group['Name']
+  # TODO: OHAI-491
+  # http://tickets.opscode.com/browse/OHAI-491
+  # The windows implementation of this plugin has been removed because of
+  # performance considerations (see: OHAI-490).
 else
   root_group Etc.getgrgid(Etc.getpwnam('root').gid).name
 end

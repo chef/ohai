@@ -79,53 +79,12 @@ describe Ohai::System, 'root_group' do
   end
 
   describe 'windows', :windows_only do
-    before(:each) do
-      ::RbConfig::CONFIG['host_os'] = 'windows'
 
-      # fake out WMI::Win32_Group#find
-      unless defined?(WMI)
-        module WMI
-          unless defined?(WMI::Win32_Group)
-            class Win32_Group; end
-          end
-        end
-      end
+    # TODO: Not implemented on windows.
+    # See also:
+    #
+    # http://tickets.opscode.com/browse/OHAI-490
+    # http://tickets.opscode.com/browse/OHAI-491
 
-      @group = Object.new
-      WMI::Win32_Group.
-        stub!(:find).
-        with(:first, :conditions => {:SID => 'S-1-5-32-544'}).
-        and_return(@group)
-    end
-
-    after do
-      ::RbConfig::CONFIG['host_os'] = ORIGINAL_CONFIG_HOST_OS
-    end
-
-    describe 'with administrator group' do
-      before(:each) do
-        @group.
-          stub!(:[]).
-          with('Name').
-          and_return('Administrator')
-      end
-      it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'Administrator'
-      end
-    end
-
-    describe 'with renamed administrator group' do
-      before(:each) do
-        @group.
-          stub!(:[]).
-          with('Name').
-          and_return('BOFH')
-      end
-      it 'should have a root_group of system' do
-        @ohai._require_plugin('root_group')
-        @ohai[:root_group].should == 'BOFH'
-      end
-    end
   end
 end

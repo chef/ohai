@@ -39,6 +39,7 @@ Ohai.plugin do
     ipaddresses = []
     # ipaddresses going to hold #{family} ipaddresses and their scope
     Mash[network['interfaces']].each do |iface, iface_v|
+      next if iface_v.nil? or not iface_v.has_key? 'addresses'
       iface_v['addresses'].each do |addr, addr_v|
         next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
         ipaddresses <<  {

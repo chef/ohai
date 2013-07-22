@@ -50,5 +50,121 @@ describe Ohai::System, "plugin python" do
     @plugin.run
     @plugin.languages.should_not have_key(:python)
   end
-  
+end
+
+##########
+
+require '../path/ohai_plugin_common.rb'
+require 'pp'
+require 'pry'
+
+expected = [{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { "languages" => { "python" => { :version => "2.4.3"}}},
+            },{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { "languages" => { "python" => { :version => "2.4.3"}}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => { "python" => { :version => "2.6.6"}}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => { "python" => { :version => "2.6.6"}}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { "languages" => { "python" => { :version => "2.6.5"}}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { "languages" => { "python" => { :version => "2.6.5"}}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { "languages" => { "python" => { :version => "2.7.3"}}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { "languages" => { "python" => { :version => "2.7.3"}}},
+            },{
+              :env => [],
+              :platform => "ubuntu-13.04",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["python"],
+              :platform => "ubuntu-13.04",
+              :arch => "x86",
+              :ohai => { "languages" => { "python" => { :version => "2.7.4"}}},
+            }]
+              
+describe Ohai::System, "cross platform data" do
+  before (:all) do
+    @opc = OhaiPluginCommon.new
+    @opc.set_path '/../path'
+  end
+
+  before (:each) do
+    @ohai = Ohai::System.new
+  end
+
+  expected.each do |e|
+    it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
+      @opc.set_env e[:platform], e[:arch], e[:env]
+      @ohai._require_plugin "python"
+      @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
+    end
+  end
 end

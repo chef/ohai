@@ -161,7 +161,7 @@ describe Ohai::System, "cross platform data" do
   expected.each do |e|
     it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
       @opc.set_env e[:platform], e[:arch], e[:env]
-      @ohai._require_plugin "python"
+      @ohai.require_plugin "python"
       @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
     end
   end

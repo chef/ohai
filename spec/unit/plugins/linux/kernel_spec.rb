@@ -96,8 +96,8 @@ describe Ohai::System, "Linux kernel plugin" do
   expected.each do |e|
     it "should provide the expected values when the platform is '#{e[:platform]}' and the architecture is '#{e[:arch]}'" do
       @opc.set_env e[:platform], e[:arch], e[:env]
-      @ohai._require_plugin "kernel"
-      @ohai._require_plugin "linux::kernel"
+      @ohai.require_plugin "kernel"
+      @ohai.require_plugin "linux::kernel"
       @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
     end
   end

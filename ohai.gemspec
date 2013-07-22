@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-mocks"
   s.add_development_dependency "rspec_junit_formatter"
   s.add_development_dependency "chef"
-  s.add_development_dependency "yaml"
   s.bindir = "bin"
   s.executables = %w(ohai)
 

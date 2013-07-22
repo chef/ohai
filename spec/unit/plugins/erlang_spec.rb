@@ -170,7 +170,7 @@ describe Ohai::System, "cross platform data" do
   expected.each do |e|
     it "should provide the expected values when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
       @opc.set_env e[:platform].to_s, e[:arch].to_s, e[:env].to_json
-      @ohai._require_plugin "erlang"
+      @ohai.require_plugin "erlang"
       @opc.subsumes? @ohai.data, e[:ohai]
     end
   end

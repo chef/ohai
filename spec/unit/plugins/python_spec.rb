@@ -54,7 +54,7 @@ end
 
 ##########
 
-require '../path/ohai_plugin_common.rb'
+require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
 require 'pp'
 require 'pry'
 

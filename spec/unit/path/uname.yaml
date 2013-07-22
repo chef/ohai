@@ -1,0 +1,103 @@
+---
+centos-5.9:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+centos-6.4:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+debian-7.1.0:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+ubuntu-10.04:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+ubuntu-12.04:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+ubuntu-13.04:
+  x64:
+  - :env: []
+    :params: -o
+    :stdout: ! 'GNU/Linux
+
+'
+    :stderr: ''
+    :exit_status: 0
+omnios-151006c-r1:
+  x86:
+  - :env: []
+    :params: -o
+    :stdout: ''
+    :stderr: ! "uname: illegal option -- o\nusage:\tuname [-snrvmapiX]\n\tuname [-S
+      system_name]\n"
+    :exit_status: 1

@@ -1,0 +1,8 @@
+#!/Users/theonordsieck/.rbenv/versions/1.9.3-p385/bin/ruby
+
+require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
+require 'yaml'
+
+yaml_file = "#{File.expand_path(__FILE__)}.yaml"
+
+OhaiPluginCommon.new.fake_command YAML::load_file yaml_file

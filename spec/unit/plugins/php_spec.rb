@@ -16,7 +16,11 @@
 # limitations under the License.
 #
 
+require 'pry'
+require 'pp'
+require 'json'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin php" do
 
@@ -49,5 +53,117 @@ describe Ohai::System, "plugin php" do
     @plugin.run
     @plugin.languages.should_not have_key(:php)
   end
+end
 
+#########
+
+expected = [{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["php"],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.3"}}},
+            },{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["php"],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.3" }}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["php"],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.3" }}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["php"],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.3" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => [:php],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => [:php],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => [:php],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => [:php],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-13.04",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => [:php],
+              :platform => "ubuntu-13.04",
+              :arch => "x64",
+              :ohai => { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}},
+            }]
+
+describe Ohai::System, "cross platform data" do
+  before (:all) do
+    @opc = OhaiPluginCommon.new
+    @opc.set_path '/../path'
+  end
+
+  before (:each) do
+    @ohai = Ohai::System.new
+  end
+
+  expected.each do |e|
+    it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
+      @opc.set_env e[:platform], e[:arch], e[:env]
+      @ohai._require_plugin "php"
+      @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
+    end
+  end
 end

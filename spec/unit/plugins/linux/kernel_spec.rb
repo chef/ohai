@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-require 'pry'
-
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../../path/ohai_plugin_common.rb')
 
@@ -98,14 +96,8 @@ describe Ohai::System, "Linux kernel plugin" do
   expected.each do |e|
     it "should provide the expected values when the platform is '#{e[:platform]}' and the architecture is '#{e[:arch]}'" do
       @opc.set_env e[:platform], e[:arch], e[:env]
-
-      # binding.pry
-
       @ohai._require_plugin "kernel"
       @ohai._require_plugin "linux::kernel"
-
-      # puts "ohai.data: #{@ohai.data}"
-
       @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
     end
   end

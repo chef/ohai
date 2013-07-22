@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
-
+require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin erlang" do
 
@@ -60,5 +61,117 @@ describe Ohai::System, "plugin erlang" do
     @plugin.run
     @plugin.languages.should_not have_key(:erlang)
   end
-  
+end
+
+##########
+
+expected = [{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "centos-5.9",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "centos-5.9",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => { :version => "5.7.4", :options => ["ASYNC_THREADS", "HIPE"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => { :version => "5.7.4", :options => ["ASYNC_THREADS", "HIPE"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :ohai => { :languages => { :erlang => { :version => "5.8.5", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            },{
+              :env => [],
+              :platform => "ubuntu-13.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => nil }},
+            },{
+              :env => [:erlang],
+              :platform => "ubuntu-13.04",
+              :arch => "x86",
+              :ohai => { :languages => { :erlang => { :version => "5.9.1", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
+            }]
+
+describe Ohai::System, "cross platform data" do
+  before (:all) do
+    @opc = OhaiPluginCommon.new
+    @opc.set_path '/../path'
+  end
+
+  before (:each) do
+    @ohai = Ohai::System.new
+  end
+
+  expected.each do |e|
+    it "should provide the expected values when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
+      @opc.set_env e[:platform].to_s, e[:arch].to_s, e[:env].to_json
+      @ohai._require_plugin "erlang"
+      @opc.subsumes? @ohai.data, e[:ohai]
+    end
+  end
 end

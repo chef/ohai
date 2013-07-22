@@ -1,0 +1,132 @@
+---
+centos-5.9:
+  x86:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+centos-6.4:
+  x86:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+ubuntu-10.04:
+  x86:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS,HIPE) (BEAM) emulator version 5.7.4\r\n"
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS,HIPE) (BEAM) emulator version 5.7.4\r\n"
+    :exit_status: 0
+ubuntu-12.04:
+  x86:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+  x64:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+    :exit_status: 0
+ubuntu-13.04:
+  x64:
+  - :env: []
+    :params: +V
+    :stdout: ''
+    :stderr: ! 'bash: line 2: erl: command not found
+
+'
+    :exit_status: 127
+  - :env:
+    - erlang
+    :params: +V
+    :stdout: ''
+    :stderr: ! "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.9.1\r\n"
+    :exit_status: 0

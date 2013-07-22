@@ -1,6 +1,5 @@
 require 'json'
 require 'rspec'
-require 'pp'
 
 class OhaiPluginCommon
 

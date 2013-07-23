@@ -1,5 +1,6 @@
 require 'json'
 require 'rspec'
+require 'ohai'
 
 class OhaiPluginCommon
 
@@ -40,5 +41,20 @@ class OhaiPluginCommon
     return true if lesser.empty?
     # lesser.all?{ |k,v| greater[k] == v || ( greater[k].instance_of?( Hash ) && subsumes?( greater[k], lesser[k] ))}
     lesser.map { |k,v| greater.key?( k ) && subsumes?( greater[k], v )}
+  end
+
+  def check_expected(plugin_name, expected_data)
+    RSpec.describe "cross platform data" do
+      expected_data.each do |e|
+        it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
+          @opc = OhaiPluginCommon.new
+          @opc.set_path '/../path'
+          @ohai = Ohai::System.new
+          @opc.set_env e[:platform], e[:arch], e[:env]
+          @ohai.require_plugin plugin_name
+          @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
+        end
+      end
+    end
   end
 end

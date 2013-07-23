@@ -147,22 +147,5 @@ expected = [{
               :arch => "x86",
               :ohai => { "languages" => { "python" => { :version => "2.7.4"}}},
             }]
-              
-describe Ohai::System, "cross platform data" do
-  before (:all) do
-    @opc = OhaiPluginCommon.new
-    @opc.set_path '/../path'
-  end
 
-  before (:each) do
-    @ohai = Ohai::System.new
-  end
-
-  expected.each do |e|
-    it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
-      @opc.set_env e[:platform], e[:arch], e[:env]
-      @ohai.require_plugin "python"
-      @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
-    end
-  end
-end
+OhaiPluginCommon.new.check_expected "php", expected

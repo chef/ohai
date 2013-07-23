@@ -157,21 +157,4 @@ expected = [{
               :ohai => { :languages => { :erlang => { :version => "5.9.1", :options => ["ASYNC_THREADS"], :emulator => "BEAM" }}},
             }]
 
-describe Ohai::System, "cross platform data" do
-  before (:all) do
-    @opc = OhaiPluginCommon.new
-    @opc.set_path '/../path'
-  end
-
-  before (:each) do
-    @ohai = Ohai::System.new
-  end
-
-  expected.each do |e|
-    it "should provide the expected values when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
-      @opc.set_env e[:platform].to_s, e[:arch].to_s, e[:env].to_json
-      @ohai.require_plugin "erlang"
-      @opc.subsumes? @ohai.data, e[:ohai]
-    end
-  end
-end
+OhaiPluginCommon.new.check_expected "erlang", expected

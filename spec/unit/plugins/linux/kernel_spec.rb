@@ -83,22 +83,4 @@ expected = [{
               :ohai => { "kernel" => { "os" => "GNU/Linux" }}
             }]
 
-describe Ohai::System, "Linux kernel plugin" do
-  before (:all) do
-    @opc = OhaiPluginCommon.new
-    @opc.set_path '/../path'
-  end
-
-  before (:each) do
-    @ohai = Ohai::System.new
-  end
-
-  expected.each do |e|
-    it "should provide the expected values when the platform is '#{e[:platform]}' and the architecture is '#{e[:arch]}'" do
-      @opc.set_env e[:platform], e[:arch], e[:env]
-      @ohai.require_plugin "kernel"
-      @ohai.require_plugin "linux::kernel"
-      @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
-    end
-  end
-end
+OhaiPluginCommon.new.check_expected "linux::kernel", expected

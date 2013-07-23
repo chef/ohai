@@ -57,6 +57,26 @@ require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.r
 
 expected = [{
               :env => [],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["nodejs"],
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+            },{
+              :env => [],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => {}},
+            },{
+              :env => ["nodejs"],
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+            },{
+              :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x86",
               :ohai => { "languages" => {}},
@@ -64,7 +84,7 @@ expected = [{
               :env => ["nodejs"],
               :platform => "ubuntu-10.04",
               :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.13" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-10.04",
@@ -74,7 +94,7 @@ expected = [{
               :env => ["nodejs"],
               :platform => "ubuntu-10.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.13" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-12.04",
@@ -84,7 +104,7 @@ expected = [{
               :env => ["nodejs"],
               :platform => "ubuntu-12.04",
               :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.13" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-12.04",
@@ -94,7 +114,7 @@ expected = [{
               :env => ["nodejs"],
               :platform => "ubuntu-12.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.13" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-13.04",
@@ -104,24 +124,7 @@ expected = [{
               :env => ["nodejs"],
               :platform => "ubuntu-13.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.13" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
             }]
 
-describe Ohai::System, "cross platform data" do
-  before (:all) do
-    @opc = OhaiPluginCommon.new
-    @opc.set_path '/../path'
-  end
-
-  before (:each) do
-    @ohai = Ohai::System.new
-  end
-
-  expected.each do |e|
-    it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
-      @opc.set_env e[:platform], e[:arch], e[:env]
-      @ohai.require_plugin "nodejs"
-      @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
-    end
-  end
-end
+OhaiPluginCommon.new.check_expected "nodejs", expected

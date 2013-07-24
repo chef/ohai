@@ -25,7 +25,8 @@ network[:interfaces] = Mash.new unless network[:interfaces]
 counters Mash.new unless counters
 counters[:network] = Mash.new unless counters[:network]
 
-require_plugin "hostname"
+require_plugin "os"
+Ohai::Log.debug("Loading OS specific networking plugin: #{os}::network")
 require_plugin "#{os}::network"
 
 FAMILIES = {
@@ -172,4 +173,8 @@ end
 if results["inet"]["iface"] and results["inet6"]["iface"] and
     results["inet"]["iface"] != results["inet6"]["iface"]
   Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]}), macaddress has been set using the ipaddress interface")
+end
+
+def get_interface_ip(interface)
+  network[:interfaces][interface][:addresses].select {|address,data| data["family"] == "inet"}.first.first
 end

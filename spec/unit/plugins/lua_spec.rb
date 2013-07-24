@@ -52,3 +52,79 @@ describe Ohai::System, "plugin lua" do
   end
 
 end
+
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', '/ohai_plugin_common.rb'))
+
+expected = [{
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :env => [],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "centos-6.4",
+              :arch => "x86",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :env => [],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "centos-6.4",
+              :arch => "x64",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :env => [],
+              :ohai => { "language" => {}},
+            },{
+              :platform => "ubuntu-10.04",
+              :arch => "x86",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :env => [],
+              :ohai => { "language" => {}},
+            },{
+              :platform => "ubuntu-10.04",
+              :arch => "x64",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :env => [],
+              :ohai => { "language" => {}},
+            },{
+              :platform => "ubuntu-12.04",
+              :arch => "x86",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :env => [],
+              :ohai => { "language" => {}},
+            },{
+              :platform => "ubuntu-12.04",
+              :arch => "x64",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.4" }},
+            },{
+              :platform => "ubuntu-13.04",
+              :arch => "x64",
+              :env => [],
+              :ohai => { "language" => {}},
+            },{
+              :platform => "ubuntu-13.04",
+              :arch => "x64",
+              :env => ["lua"],
+              :ohai => { "language" => { "version" => "5.1.5" }},
+            }]
+
+OhaiPluginCommon.new.check_expected 'lua', expected

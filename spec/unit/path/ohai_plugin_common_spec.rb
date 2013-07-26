@@ -1,4 +1,4 @@
-require './ohai_plugin_common.rb'
+require File.expand_path(File.dirname(__FILE__) + "/ohai_plugin_common.rb")
 
 describe OhaiPluginCommon, "subsumes?" do
   before(:each) do

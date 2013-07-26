@@ -31,12 +31,12 @@ module Ohai
     attr_accessor :data
     attr_reader :seen_plugins
     attr_reader :hints
-    attr_reader :providers
+    attr_reader :metadata
 
     def initialize
       @data = Mash.new
       @seen_plugins = Hash.new
-      @providers = Mash.new
+      @metadata = Mash.new
       @plugin_path = ""
       @hints = Hash.new
     end
@@ -90,10 +90,10 @@ module Ohai
     def refresh_plugins(path = '/')
       parts = path.split('/')
       if parts.length == 0
-        h = @providers
+        h = @metadata
       else
         parts.shift if parts[0].length == 0
-        h = @providers
+        h = @metadata
         parts.each do |part|
           break unless h.has_key?(part)
           h = h[part]
@@ -147,7 +147,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = DSL::Plugin.new(self, check_path)
+          plugin = DSL::Plugin.new(self, filename.split('.')[0], check_path)
           break
         else
           next

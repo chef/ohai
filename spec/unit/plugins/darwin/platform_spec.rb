@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Darwin plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/platform.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "darwin/platform", File.expand_path("darwin/platform.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "darwin"
     @pid = 10

@@ -13,11 +13,12 @@ module Ohai
       attr_reader :file
       attr_reader :data
 
-      def initialize(controller, file)
+      def initialize(controller, name,  file)
         @controller = controller
         @data = controller.data
-        @providers = controller.providers
+        @metadata = controller.metadata
         @file = file
+        @name = name
       end
 
       def run
@@ -63,7 +64,7 @@ module Ohai
       def provides(*paths)
         paths.each do |path|
           parts = path.split('/')
-          h = @providers
+          h = @metadata
           unless parts.length == 0
             parts.shift if parts[0].length == 0
             parts.each do |part|
@@ -73,6 +74,8 @@ module Ohai
           end
           h[:_providers] ||= []
           h[:_providers] << @file
+          h[:_plugin_name] ||= []
+          h[:_plugin_name] << @name
         end
       end
 

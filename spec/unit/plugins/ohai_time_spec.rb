@@ -21,8 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin ohai_time" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ohai_time.rb"))
+    @ohai = Ohai::System.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "ohai_time", File.join(PLUGIN_PATH, "ohai_time.rb"))
     @plugin.stub(:require_plugin).and_return(true)
   end
   

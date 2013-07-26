@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "NetBSD hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("netbsd/hostname.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "netbsd/hostname", File.expand_path("netbsd/hostname.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "netbsd"
     @plugin.stub(:from).with("hostname -s").and_return("katie")

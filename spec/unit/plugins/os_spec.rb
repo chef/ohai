@@ -23,8 +23,8 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 
 describe Ohai::System, "plugin os" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "os.rb"))
+    @ohai = Ohai::System.new
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "os", File.join(PLUGIN_PATH, "os.rb"))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:languages] = Mash.new
     @plugin[:languages][:ruby] = Mash.new

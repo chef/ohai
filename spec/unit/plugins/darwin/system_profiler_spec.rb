@@ -29,7 +29,7 @@ end
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/system_profiler.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "darwin/system_profiler", File.expand_path("darwin/system_profiler.rb", PLUGIN_PATH))
   end
   
   it "should return the right serial number" do

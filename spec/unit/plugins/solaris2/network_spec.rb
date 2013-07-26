@@ -90,7 +90,7 @@ ROUTE_GET
     @ifconfig_lines = solaris_ifconfig.split("\n")
 
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/network.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "solaris2/network", File.expand_path("solaris2/network.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:network] = Mash.new
 

@@ -22,7 +22,7 @@ describe Ohai::System, "plugin php" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "php.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "php", File.join(PLUGIN_PATH, "php.rb"))
     @plugin[:languages] = Mash.new
     @plugin.stub(:require_plugin).and_return(true)
     @status = 0

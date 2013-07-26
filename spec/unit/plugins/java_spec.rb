@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin java (Java5 Client VM)" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "java.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "java", File.join(PLUGIN_PATH, "java.rb"))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:languages] = Mash.new
     @status = 0
@@ -73,7 +73,7 @@ end
 describe Ohai::System, "plugin java (Java6 Server VM)" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "java.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "java", File.join(PLUGIN_PATH, "java.rb"))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:languages] = Mash.new
     @status = 0

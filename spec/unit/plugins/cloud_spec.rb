@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin cloud" do
   before do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("cloud.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "cloud", File.expand_path("cloud.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin)
   end
 

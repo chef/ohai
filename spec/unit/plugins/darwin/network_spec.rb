@@ -413,7 +413,7 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/network.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "darwin/network", File.expand_path("darwin/network.rb", PLUGIN_PATH))
 
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new

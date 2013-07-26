@@ -59,7 +59,7 @@ expected = [{
               :env => [],
               :platform => "centos-5.9",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
               :env => ["php"],
               :platform => "centos-5.9",
@@ -69,7 +69,7 @@ expected = [{
               :env => [],
               :platform => "centos-5.9",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
               :env => ["php"],
               :platform => "centos-5.9",
@@ -79,7 +79,7 @@ expected = [{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
               :env => ["php"],
               :platform => "centos-6.4",
@@ -89,7 +89,7 @@ expected = [{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
               :env => ["php"],
               :platform => "centos-6.4",
@@ -99,9 +99,9 @@ expected = [{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
-              :env => [:php],
+              :env => ["php"],
               :platform => "ubuntu-10.04",
               :arch => "x86",
               :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
@@ -109,9 +109,9 @@ expected = [{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
-              :env => [:php],
+              :env => ["php"],
               :platform => "ubuntu-10.04",
               :arch => "x64",
               :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
@@ -119,9 +119,9 @@ expected = [{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
-              :env => [:php],
+              :env => ["php"],
               :platform => "ubuntu-12.04",
               :arch => "x86",
               :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
@@ -129,9 +129,9 @@ expected = [{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
-              :env => [:php],
+              :env => ["php"],
               :platform => "ubuntu-12.04",
               :arch => "x64",
               :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
@@ -139,12 +139,12 @@ expected = [{
               :env => [],
               :platform => "ubuntu-13.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "php" => nil }},
             },{
-              :env => [:php],
+              :env => ["php"],
               :platform => "ubuntu-13.04",
               :arch => "x64",
               :ohai => { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}},
             }]
 
-OhaiPluginCommon.new.check_expected "php", expected
+OhaiPluginCommon.new.check_expected ["php"], expected, ["php"]

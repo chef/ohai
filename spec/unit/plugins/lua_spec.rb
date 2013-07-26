@@ -59,72 +59,72 @@ expected = [{
               :platform => "centos-6.4",
               :arch => "x86",
               :env => [],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "centos-6.4",
               :arch => "x86",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "centos-6.4",
               :arch => "x64",
               :env => [],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "centos-6.4",
               :arch => "x64",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "ubuntu-10.04",
               :arch => "x86",
               :env => [],
-              :ohai => { "language" => {}},
+              :ohai => { "languages" => { "lua" => nil }},
             },{
               :platform => "ubuntu-10.04",
               :arch => "x86",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "ubuntu-10.04",
               :arch => "x64",
               :env => [],
-              :ohai => { "language" => {}},
+              :ohai => { "languages" => { "lua" => nil }},
             },{
               :platform => "ubuntu-10.04",
               :arch => "x64",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "ubuntu-12.04",
               :arch => "x86",
               :env => [],
-              :ohai => { "language" => {}},
+              :ohai => { "languages" => { "lua" => nil }},
             },{
               :platform => "ubuntu-12.04",
               :arch => "x86",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "ubuntu-12.04",
               :arch => "x64",
               :env => [],
-              :ohai => { "language" => {}},
+              :ohai => { "languages" => { "lua" => nil }},
             },{
               :platform => "ubuntu-12.04",
               :arch => "x64",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.4" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
               :platform => "ubuntu-13.04",
               :arch => "x64",
               :env => [],
-              :ohai => { "language" => {}},
+              :ohai => { "languages" => { "lua" => nil }},
             },{
               :platform => "ubuntu-13.04",
               :arch => "x64",
               :env => ["lua"],
-              :ohai => { "language" => { "version" => "5.1.5" }},
+              :ohai => { "languages" => { "lua" => { "version" => "5.1.5" }}},
             }]
 
-OhaiPluginCommon.new.check_expected 'lua', expected
+OhaiPluginCommon.new.check_expected ['lua'], expected, ["lua"]

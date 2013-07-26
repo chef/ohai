@@ -1,17 +1,20 @@
 require 'json'
 require 'rspec'
 require 'ohai'
+require 'yaml'
+require 'pry'
+# require 'pp'
 
 class OhaiPluginCommon
 
-  def fake_command(data)
+  def fake_command(data, platform, arch, env)
 
     # If the platform or architecture aren't set, take the first one
-    platform = ENV['OHAI_TEST_PLATFORM']
-    arch = ENV['OHAI_TEST_ARCH']
-    env = ENV['OHAI_TEST_ENVIRONMENT']
+    # platform = ENV['OHAI_TEST_PLATFORM']
+    # arch = ENV['OHAI_TEST_ARCH']
+    # env = ENV['OHAI_TEST_ENVIRONMENT']
 
-    env = JSON.load(env)
+    # env = JSON.load(env)
 
     argv = ARGV.map { |arg| if /\ / =~ arg then "\"" + arg + "\"" else arg end }.join ' '
     match = data[platform][arch].select{ |v| v[:params] == argv && v[:env] == env }
@@ -23,6 +26,10 @@ class OhaiPluginCommon
     $stdout.puts match[:stdout] if match[:stdout] != ''
     $stderr.puts match[:stderr] if match[:stderr] != ''
     exit match[:exit_status]
+  end
+
+  def get_path(path)
+    File.expand_path(File.dirname(__FILE__) + path)
   end
 
   def set_path(path)
@@ -37,24 +44,52 @@ class OhaiPluginCommon
 
   # monkey patch the Hash class?  I don't like the idea, but it seems like it would be idiomatic
   def subsumes?(greater, lesser)
-    return greater == lesser unless lesser.instance_of? Hash
-    return true if lesser.empty?
+    return greater == lesser unless ((lesser.instance_of?( Hash ) || lesser.instance_of?( Mash )) && (greater.instance_of?( Hash ) || greater.instance_of?( Mash )))
+    # return true if lesser.empty?
     # lesser.all?{ |k,v| greater[k] == v || ( greater[k].instance_of?( Hash ) && subsumes?( greater[k], lesser[k] ))}
-    lesser.map { |k,v| greater.key?( k ) && subsumes?( greater[k], v )}
+    lesser.all? { |k,v| subsumes?( greater[k], v )}
   end
 
-  def check_expected(plugin_name, expected_data)
+  def check_expected(plugin_names, expected_data, cmd_list)
     RSpec.describe "cross platform data" do
       expected_data.each do |e|
         it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
           @opc = OhaiPluginCommon.new
-          @opc.set_path '/../path'
+          path = @opc.get_path '/../path'
+   
+          cmd_list.each { |c| @opc.create_exe c, path, e[:platform], e[:arch], e[:env] }
+          old_path = ENV['PATH']
+          ENV['PATH'] = path
+          
           @ohai = Ohai::System.new
-          @opc.set_env e[:platform], e[:arch], e[:env]
-          @ohai.require_plugin plugin_name
+
+          # binding.pry
+
+          begin
+            plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }
+          ensure
+            ENV['PATH'] = old_path
+            cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command }
+          end
+          
           @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
         end
       end
     end
+  end
+  
+  def create_exe(cmd, path, platform, arch, env)
+    cmd_path = path + "/" + cmd
+    file = <<-eof
+#!#{RbConfig.ruby}
+
+require 'yaml'
+require '#{path}/ohai_plugin_common.rb'
+
+OhaiPluginCommon.new.fake_command YAML::load_file('#{cmd_path}.yaml'), '#{platform}', '#{arch}', #{env}
+eof
+    File.open(cmd_path, "w") { |f| f.puts file }
+    sleep 0.01 until File.exists? cmd_path
+    Mixlib::ShellOut.new("chmod 755 #{cmd_path}").run_command
   end
 end

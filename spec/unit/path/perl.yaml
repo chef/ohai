@@ -3,9 +3,9 @@ centos-5.9:
   x86:
   - :env: []
     :params: -V:version -V:archname
-    :stdout: ! 'version=''5.14.2'';
+    :stdout: ! 'version=''5.8.8'';
 
-      archname=''x86_64-linux-gnu-thread-multi'';
+      archname=''i386-linux-thread-multi'';
 
 '
     :stderr: ''
@@ -13,9 +13,9 @@ centos-5.9:
   - :env:
     - perl
     :params: -V:version -V:archname
-    :stdout: ! 'version=''5.14.2'';
+    :stdout: ! 'version=''5.8.8'';
 
-      archname=''x86_64-linux-gnu-thread-multi'';
+      archname=''i386-linux-thread-multi'';
 
 '
     :stderr: ''

@@ -130,7 +130,7 @@ expected = [{
               :env => [],
               :platform => "centos-5.9",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "centos-5.9",
@@ -142,7 +142,7 @@ expected = [{
               :env => [],
               :platform => "centos-5.9",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "centos-5.9",
@@ -154,7 +154,7 @@ expected = [{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "centos-6.4",
@@ -166,7 +166,7 @@ expected = [{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "centos-6.4",
@@ -178,7 +178,7 @@ expected = [{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "ubuntu-10.04",
@@ -190,10 +190,10 @@ expected = [{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
-              :platform => "ubnutu-10.04",
+              :platform => "ubuntu-10.04",
               :arch => "x64",
               :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
                     "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.10.04.1" },
@@ -202,7 +202,7 @@ expected = [{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "ubuntu-12.04",
@@ -214,10 +214,10 @@ expected = [{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
-              :platform => "ubnutu-12.04",
+              :platform => "ubuntu-12.04",
               :arch => "x64",
               :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
                     "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.12.04.1" },
@@ -226,7 +226,7 @@ expected = [{
               :env => [],
               :platform => "ubuntu-13.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "java" => nil }},
             },{
               :env => ["java"],
               :platform => "ubuntu-13.04",
@@ -236,23 +236,4 @@ expected = [{
                     "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
             }]
 
-# describe Ohai::System, "cross platform data" do
-#   before (:all) do
-#     @opc = OhaiPluginCommon.new
-#     @opc.set_path '/../path'
-#   end
-
-#   before (:each) do
-#     @ohai = Ohai::System.new
-#   end
-
-#   expected.each do |e|
-#     it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
-#       @opc.set_env e[:platform], e[:arch], e[:env]
-#       @ohai.require_plugin "java"
-#       @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
-#     end
-#   end
-# end
-
-OhaiPluginCommon.new.check_expected( "java", expected )
+OhaiPluginCommon.new.check_expected ["java"], expected, ["java"]

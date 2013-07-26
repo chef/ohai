@@ -59,72 +59,72 @@ expected = [{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "centos-6.4",
               :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "centos-6.4",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "centos-6.4",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "ubuntu-10.04",
               :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-10.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "ubuntu-10.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x86",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "ubuntu-12.04",
               :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-12.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "ubuntu-12.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
               :env => [],
               :platform => "ubuntu-13.04",
               :arch => "x64",
-              :ohai => { "languages" => {}},
+              :ohai => { "languages" => { "nodejs" => nil }},
             },{
               :env => ["nodejs"],
               :platform => "ubuntu-13.04",
               :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "v0.10.2" }}},
+              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             }]
 
-OhaiPluginCommon.new.check_expected "nodejs", expected
+OhaiPluginCommon.new.check_expected ["nodejs"], expected, ["node"]

@@ -17,6 +17,7 @@
 #
 
 require 'ohai/mash'
+require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
@@ -29,20 +30,44 @@ require 'yajl'
 module Ohai
   class System
     attr_accessor :data
-    attr_reader :seen_plugins
-    attr_reader :hints
     attr_reader :metadata
+    attr_reader :seen_plugins
+    attr_reader :loaded_plugins
+    attr_reader :hints
 
     def initialize
       @data = Mash.new
-      @seen_plugins = Hash.new
       @metadata = Mash.new
+      @seen_plugins = Hash.new
+      @loaded_plugins = Hash.new
       @plugin_path = ""
       @hints = Hash.new
     end
 
     def [](key)
       @data[key]
+    end
+
+    def load_plugins
+      loader = Ohai::Loader.new(self)
+      
+      # in all_plugins, we run 'os' and all the plugins it requires (kernel,
+      # ruby, languages) before running the remaining plugins. this
+      # helps find the correct plugins based on the operating system
+      # and os version. we can take a similar approach here by loading
+      # os, kernel, ruby, and languages plugins and collecting their
+      # data first
+
+      # @todo: a better way of marking these plugins for pre-loading
+      %w{ languages ruby kernel os }.each do |plgn|
+        loader.load_plugin(plgn)
+      end
+
+      %w{ languages ruby kernel os }.each do |plgn|
+        @loaded_plugins[plgn].new(self).run
+      end
+
+      # @todo: use the data collected above to load the remaining plugins 
     end
 
     def all_plugins

@@ -2,8 +2,6 @@ require 'json'
 require 'rspec'
 require 'ohai'
 require 'yaml'
-require 'pry'
-# require 'pp'
 
 class OhaiPluginCommon
 
@@ -62,8 +60,6 @@ class OhaiPluginCommon
           ENV['PATH'] = path
           
           @ohai = Ohai::System.new
-
-          # binding.pry
 
           begin
             plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }

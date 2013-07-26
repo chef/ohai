@@ -83,4 +83,4 @@ expected = [{
               :ohai => { "kernel" => { "os" => "GNU/Linux" }}
             }]
 
-OhaiPluginCommon.new.check_expected "linux::kernel", expected
+OhaiPluginCommon.new.check_expected ["kernel", "linux/kernel"], expected, ["uname", "lsmod"]

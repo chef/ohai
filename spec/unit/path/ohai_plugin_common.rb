@@ -5,6 +5,8 @@ require 'yaml'
 
 class OhaiPluginCommon
 
+  
+
   def fake_command(data, platform, arch, env)
 
     # If the platform or architecture aren't set, take the first one
@@ -24,6 +26,10 @@ class OhaiPluginCommon
     $stdout.puts match[:stdout] if match[:stdout] != ''
     $stderr.puts match[:stderr] if match[:stderr] != ''
     exit match[:exit_status]
+  end
+
+  def data_path()
+    File.expand_path(File.dirname(__FILE__) + '../../../data/plugins')
   end
 
   def get_path(path)
@@ -75,6 +81,7 @@ class OhaiPluginCommon
   end
   
   def create_exe(cmd, path, platform, arch, env)
+    
     cmd_path = path + "/" + cmd
     file = <<-eof
 #!#{RbConfig.ruby}
@@ -82,7 +89,7 @@ class OhaiPluginCommon
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'
 
-OhaiPluginCommon.new.fake_command YAML::load_file('#{cmd_path}.yaml'), '#{platform}', '#{arch}', #{env}
+OhaiPluginCommon.new.fake_command YAML::load_file('#{data_path}/#{cmd}.yaml'), '#{platform}', '#{arch}', #{env}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
     sleep 0.01 until File.exists? cmd_path

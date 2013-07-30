@@ -10,9 +10,9 @@ class OhaiPluginCommon
     # platform = ENV['OHAI_TEST_PLATFORM']
     # arch = ENV['OHAI_TEST_ARCH']
     # env = ENV['OHAI_TEST_ENVIRONMENT']
-
+    
     # env = JSON.load(env)
-
+    
     argv = ARGV.map { |arg| if /\ / =~ arg then "\"" + arg + "\"" else arg end }.join ' '
     match = data[platform][arch].select{ |v| v[:params] == argv && v[:env] == env }
     
@@ -24,42 +24,44 @@ class OhaiPluginCommon
     $stderr.puts match[:stderr] if match[:stderr] != ''
     exit match[:exit_status]
   end
-
+  
   def data_path()
     File.expand_path(File.dirname(__FILE__) + '../../../data/plugins')
   end
-
+  
   def get_path(path)
     File.expand_path(File.dirname(__FILE__) + path)
   end
-
+  
   def set_path(path)
     ENV['PATH'] = File.expand_path(File.dirname(__FILE__) + path)
   end
-
+  
   def set_env(platform = nil, arch = nil, env = nil)
     ENV['OHAI_TEST_PLATFORM'] = platform.to_s if !platform.nil?
     ENV['OHAI_TEST_ARCH'] = arch.to_s if !arch.nil?
     ENV['OHAI_TEST_ENVIRONMENT'] = env.to_json if !env.nil?
   end
-
-  # monkey patch the Hash class?  I don't like the idea, but it seems like it would be idiomatic
-  def subsumes?(greater, lesser)
-    return greater == lesser unless ((lesser.instance_of?( Hash ) || lesser.instance_of?( Mash )) && (greater.instance_of?( Hash ) || greater.instance_of?( Mash )))
-    # return true if lesser.empty?
-    # lesser.all?{ |k,v| greater[k] == v || ( greater[k].instance_of?( Hash ) && subsumes?( greater[k], lesser[k] ))}
-    lesser.all? { |k,v| subsumes?( greater[k], v )}
+  
+  #checks to see if the elements in test are also in source.  Recursively decends into Hashes.
+  #nil values in test match against both nil and non-existance in source.
+  def subsumes?(source, test)
+    if source.is_a?( Hash ) && test.is_a?( Hash )
+      test.all? { |k,v| subsumes?( source[k], v )}
+    else
+      source == test
+    end
   end
-
+  
   def check_expected(plugin_names, expected_data, cmd_list)
     RSpec.describe "cross platform data" do
       expected_data.each do |e|
         it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
           @opc = OhaiPluginCommon.new
           path = @opc.get_path '/../path'
-
+          
           cmd_not_found = Set.new
-   
+          
           cmd_list.each do |c|
             data = YAML::load_file @opc.data_path + "/" + c + ".yaml"
             data = data[e[:platform]][e[:arch]].select { |f| f[:env] == e[:env] }
@@ -69,13 +71,13 @@ class OhaiPluginCommon
               @opc.create_exe c, path, e[:platform], e[:arch], e[:env]
             end
           end
-
-
+          
+          
           old_path = ENV['PATH']
           ENV['PATH'] = path
           
           @ohai = Ohai::System.new
-
+          
           begin
             plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }
           ensure

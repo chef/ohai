@@ -56,7 +56,7 @@ end
 popen4("lsdev -Cc if") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /(\S+) (\S+)(\s+)(.+)/
+    if line =~ /(\S+) (\S+)\s+(.+)/
       interface = $1
       iface[interface] = Mash.new unless iface[interface]
       iface[interface][:state] = ($2 == 'Available' ? 'up' : 'down')

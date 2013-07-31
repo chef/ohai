@@ -87,94 +87,44 @@ end
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 expected = [{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x86",
+              :env => [[], ["perl"]],
+              :platform => ["centos-5.9"],
+              :arch => ["x86"],
               :ohai => { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "i386-linux-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "centos-5.9",
-              :arch => "x86",
-              :ohai => { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "i386-linux-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x64",
+              :env => [[], ["perl"]],
+              :platform => ["centos-5.9"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "x86_64-linux-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "centos-5.9",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "x86_64-linux-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x86",
+              :env => [[], ["perl"]],
+              :platform => ["centos-6.4"],
+              :arch => ["x86"],
               :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i386-linux-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "centos-6.4",
-              :arch => "x86",
-              :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i386-linux-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x64",
+              :env => [[], ["perl"]],
+              :platform => ["centos-6.4"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
+              :env => [[], ["perl"]],
+              :platform => ["ubuntu-10.04"],
+              :arch => ["x86"],
               :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i486-linux-gnu-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i486-linux-gnu-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
+              :env => [[], ["perl"]],
+              :platform => ["ubuntu-10.04"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-gnu-thread-multi" }}},
             },{
-              :env => ["perl"],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-gnu-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
+              :env => [[], ["perl"]],
+              :platform => ["ubuntu-12.04"],
+              :arch => ["x86"],
               :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "i686-linux-gnu-thread-multi-64int" }}},
             },{
-              :env => ["perl"],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "i686-linux-gnu-thread-multi-64int" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" }}},
-            },{
-              :env => ["perl"],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" }}},
-            },{
-              :env => ["perl"],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
+              :env => [[], ["perl"]],
+              :platform => ["ubuntu-12.04", "ubuntu-13.04"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" }}},
             }]
 

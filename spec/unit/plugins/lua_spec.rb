@@ -56,74 +56,29 @@ end
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', '/ohai_plugin_common.rb'))
 
 expected = [{
-              :platform => "centos-6.4",
-              :arch => "x86",
-              :env => [],
+              :platform => ["centos-6.4"],
+              :arch => ["x86", "x64"],
+              :env => [[], ["lua"]],
               :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
-              :platform => "centos-6.4",
-              :arch => "x86",
-              :env => ["lua"],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :env => [],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :env => ["lua"],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :env => [],
+              :platform => ["ubuntu-10.04", "ubuntu-12.04"],
+              :arch => ["x86", "x64"],
+              :env => [[]],
               :ohai => { "languages" => { "lua" => nil }},
             },{
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :env => ["lua"],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :env => [],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
+              :env => [[]],
               :ohai => { "languages" => { "lua" => nil }},
             },{
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :env => ["lua"],
+              :platform => ["ubuntu-10.04", "ubuntu-12.04" ],
+              :arch => ["x86", "x64"],
+              :env => [["lua"]],
               :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
             },{
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :env => [],
-              :ohai => { "languages" => { "lua" => nil }},
-            },{
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :env => ["lua"],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :env => [],
-              :ohai => { "languages" => { "lua" => nil }},
-            },{
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :env => ["lua"],
-              :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-            },{
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :env => [],
-              :ohai => { "languages" => { "lua" => nil }},
-            },{
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :env => ["lua"],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
+              :env => [["lua"]],
               :ohai => { "languages" => { "lua" => { "version" => "5.1.5" }}},
             }]
 

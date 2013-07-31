@@ -37,50 +37,15 @@ end
 ###############################
 
 expected = [{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x86",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
+              :env => [[]],
+              :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+              :arch => ["x86", "x64"],
+              :ohai => { "kernel" => { "os" => "GNU/Linux" }},
             },{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x64",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x86",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
-            },{
-              :env => [],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }}
+              :env => [[]],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
+              :ohai => { "kernel" => { "os" => "GNU/Linux" }},
             }]
 
 OhaiPluginCommon.new.check_expected ["kernel", "linux/kernel"], expected, ["uname", "lsmod"]

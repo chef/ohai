@@ -74,36 +74,43 @@ class OhaiPluginCommon
   def check_expected(plugin_names, expected_data, cmd_list)
     RSpec.describe "cross platform data" do
       expected_data.each do |e|
-        it "provides data when the platform is '#{e[:platform]}', the architecture is '#{e[:arch]}' and the environment is '#{e[:env]}'" do
-          @opc = OhaiPluginCommon.new
-          path = @opc.get_path '/../path'
-          
-          cmd_not_found = Set.new
-          
-          cmd_list.each do |c|
-            data = YAML::load_file @opc.data_path + "/" + c + ".yaml"
-            data = data[e[:platform]][e[:arch]].select { |f| f[:env] == e[:env] }
-            if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
-              cmd_not_found.add c
-            else
-              @opc.create_exe c, path, e[:platform], e[:arch], e[:env]
+        e[:platform].each do |platform|
+          e[:arch].each do |arch|
+            e[:env].each do |env|
+              it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
+                @opc = OhaiPluginCommon.new
+                path = @opc.get_path '/../path'
+                
+                cmd_not_found = Set.new
+                
+                cmd_list.each do |c|
+                  data = YAML::load_file @opc.data_path + "/" + c + ".yaml"
+
+                  data = data[platform][arch].select { |f| f[:env] == env }
+                  if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
+                    cmd_not_found.add c
+                  else
+                    @opc.create_exe c, path, platform, arch, env
+                  end
+                end
+                
+                
+                old_path = ENV['PATH']
+                ENV['PATH'] = path
+                
+                @ohai = Ohai::System.new
+                
+                begin
+                  plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }
+                ensure
+                  ENV['PATH'] = old_path
+                  cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c ) }
+                end
+                
+                @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
+              end
             end
           end
-          
-          
-          old_path = ENV['PATH']
-          ENV['PATH'] = path
-          
-          @ohai = Ohai::System.new
-          
-          begin
-            plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }
-          ensure
-            ENV['PATH'] = old_path
-            cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c ) }
-          end
-          
-          @opc.subsumes?(@ohai.data, e[:ohai]).should be_true
         end
       end
     end

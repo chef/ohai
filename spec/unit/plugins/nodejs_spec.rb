@@ -56,74 +56,24 @@ end
 require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
 
 expected = [{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x86",
+              :env => [[]],
+              :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+              :arch => ["x86", "x64"],
               :ohai => { "languages" => { "nodejs" => nil }},
             },{
-              :env => ["nodejs"],
-              :platform => "centos-6.4",
-              :arch => "x86",
+              :env => [[]],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
+              :ohai => { "languages" => { "nodejs" => nil }},
+            },{
+              :env => [["nodejs"]],
+              :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+              :arch => ["x86", "x64"],
               :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-            },{
-              :env => [],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "nodejs" => nil }},
-            },{
-              :env => ["nodejs"],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
+              :env => [["nodejs"]],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
             }]
 

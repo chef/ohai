@@ -57,94 +57,29 @@ end
 require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
 
 expected = [{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x86",
-              :ohai => { "languages" => { "python" => { "version" => "2.4.3"}}},
+              :env => [[], ["python"]],
+              :platform => ["centos-5.9"],
+              :arch => ["x86", "x64"],
+              :ohai => { "languages" => { "python" => { "version" => "2.4.3" }}},
             },{
-              :env => ["python"],
-              :platform => "centos-5.9",
-              :arch => "x86",
-              :ohai => { "languages" => { "python" => { "version" => "2.4.3"}}},
-            },{
-              :env => [],
-              :platform => "centos-5.9",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.4.3"}}},
-            },{
-              :env => ["python"],
-              :platform => "centos-5.9",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.4.3"}}},
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x86",
+              :env => [[], ["python"]],
+              :platform => ["centos-6.4"],
+              :arch => ["x86", "x64"],
               :ohai => { "languages" => { "python" => { "version" => "2.6.6"}}},
             },{
-              :env => ["python"],
-              :platform => "centos-6.4",
-              :arch => "x86",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.6"}}},
-            },{
-              :env => [],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.6"}}},
-            },{
-              :env => ["python"],
-              :platform => "centos-6.4",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.6"}}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
+              :env => [[], ["python"]],
+              :platform => ["ubuntu-10.04"],
+              :arch => ["x86", "x64"],
               :ohai => { "languages" => { "python" => { "version" => "2.6.5"}}},
             },{
-              :env => ["python"],
-              :platform => "ubuntu-10.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.5"}}},
-            },{
-              :env => [],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.5"}}},
-            },{
-              :env => ["python"],
-              :platform => "ubuntu-10.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.6.5"}}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
+              :env => [[], ["python"]],
+              :platform => ["ubuntu-12.04"],
+              :arch => ["x86", "x64"],
               :ohai => { "languages" => { "python" => { "version" => "2.7.3"}}},
             },{
-              :env => ["python"],
-              :platform => "ubuntu-12.04",
-              :arch => "x86",
-              :ohai => { "languages" => { "python" => { "version" => "2.7.3"}}},
-            },{
-              :env => [],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.7.3"}}},
-            },{
-              :env => ["python"],
-              :platform => "ubuntu-12.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.7.3"}}},
-            },{
-              :env => [],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
-              :ohai => { "languages" => { "python" => { "version" => "2.7.4"}}},
-            },{
-              :env => ["python"],
-              :platform => "ubuntu-13.04",
-              :arch => "x64",
+              :env => [[], ["python"]],
+              :platform => ["ubuntu-13.04"],
+              :arch => ["x64"],
               :ohai => { "languages" => { "python" => { "version" => "2.7.4"}}},
             }]
 

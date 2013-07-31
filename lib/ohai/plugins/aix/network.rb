@@ -120,7 +120,7 @@ popen4("lsdev -Cc if") do |pid, stdin, stdout, stderr|
 end
 
 # Query routes information
-['inet', 'inet6'].each do |family|
+%w{inet inet6}.each do |family|
   popen4("netstat -nrf #{family}") do |n_pid, n_stdin, n_stdout, n_stderr|
     n_stdin.close
     n_stdout.each do |line|

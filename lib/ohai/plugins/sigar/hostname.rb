@@ -18,11 +18,15 @@
 
 require 'sigar'
 
-provides "hostname", "fqdn"
+Ohai.plugin(:Hostname) do
+  provides "hostname", "fqdn"
 
-sigar = Sigar.new
+  collect_data do
+    sigar = Sigar.new
 
-hostname sigar.net_info.host_name
+    hostname sigar.net_info.host_name
 
-fqdn sigar.fqdn
+    fqdn sigar.fqdn
+  end
+end
 

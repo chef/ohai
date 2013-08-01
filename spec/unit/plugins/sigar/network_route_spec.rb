@@ -33,7 +33,7 @@ describe Ohai::System, "Sigar network route plugin" do
 
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = Ohai::DSL::Plugin.new(@ohai, "sigar/network_route_spec", File.expand_path("sigar/network_route_spec.rb", PLUGIN_PATH))
+      @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("sigar/network_route_spec.rb", PLUGIN_PATH))
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",

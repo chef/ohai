@@ -87,28 +87,5 @@ describe Ohai::System, "all_plugins" do
     @ohai.should_receive(:require_plugin).with("darius")
     @ohai.all_plugins
   end
-end
-
-describe Ohai::System, "plugin metadata" do
-  before(:all) do
-    @ohai = Ohai::System.new
-    Ohai::Config[:plugin_path] = [PLUGIN_PATH]
-    @ohai.all_plugins
-  end
-
-  it "should save which plugin an attribute is defined in when the plugin and attribute have the same name" do
-    @ohai.metadata[:os][:_plugin_name].should eql(["os"])
-  end
-
-  it "should save which plugin an attribute is defined in when the plugin and attribute have different names" do
-    @ohai.metadata[:os_version][:_plugin_name].should eql(["os"])
-  end
-
-  it "should save which plugin an attribute is defined in when the plugin is a sub-plugin" do
-    @ohai.metadata[:languages][:ruby][:_plugin_name].should eql(["ruby"])
-  end
-
-  it "should save which plugin an attribute is defined in when the plugin has sub-plugins" do
-    @ohai.metadata[:languages][:_plugin_name].should eql(["languages"])
-  end
+  
 end

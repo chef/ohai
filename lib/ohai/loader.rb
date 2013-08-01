@@ -2,6 +2,7 @@
 #
 #
 
+require 'ohai/log'
 require 'ohai/mash'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
@@ -11,58 +12,52 @@ module Ohai
     include Ohai::Mixin::FromFile
 
     def initialize(controller)
-      @metadata = controller.metadata
-      @loaded_plugins = controller.loaded_plugins
+      @attributes = controller.attributes
+      @plugins = controller.plugins
     end
 
-    def load_plugin(plugin_name)
-      filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
+    def load_plugin(plugin_path, plugin_name=nil)
       plugin = nil
-
-      # @todo: what to do with plugins found on multiple paths?
-      # currently assumes one path per plugin (or, last loaded plugin
-      # gets saved)
-      Ohai::Config[:plugin_path].each do |path|
-        check_path = File.expand_path(File.join(path, filename))
-        if File.exist?(check_path)
-          plugin = from_file(check_path)
-          collect_metadata(plugin_name, check_path, plugin)
-        end
-      end
-
-      # @todo: some better error handling here
+      
+      plugin = from_file(plugin_path)
       if plugin.nil?
-        puts "Unable to load plugin #{plugin_name}!"
-      else
-        @loaded_plugins[plugin_name] = plugin
+        Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
+        return
       end
+
+      plugin_key = plugin_name || plugin.name
+      register_plugin(plugin, plugin_path, plugin_key)
+      collect_provides(plugin, plugin_key)
     end
 
     private
 
-    def collect_metadata(plugin_name, file, plugin)
-      collect_provides(plugin_name, file, plugin.provides_attrs)
-      # @todo: collect depends data and fill in to metadata
-    end
+    def register_plugin(plugin, file, plugin_key)
+      @plugins[plugin_key] ||= Mash.new
 
-    def collect_provides(plugin_name, file, attrs)
-      attrs.each do |attr|
+      p = @plugins[plugin_key]
+      p[:plugin] = plugin
+      p[:source] = file
+      p[:depends] = plugin.depends_attrs
+    end
+    
+
+    def collect_provides(plugin, plugin_key)
+      plugin_provides = plugin.provides_attrs
+      
+      plugin_provides.each do |attr|
         parts = attr.split('/')
-        m = @metadata
+        a = @attributes
         unless parts.length == 0
           parts.shift if parts[0].length == 0
           parts.each do |part|
-            m[part] ||= Mash.new
-            m = m[part]
+            a[part] ||= Mash.new
+            a = a[part]
           end
         end
 
-        %w{ _providers _plugin_name }.each do |key|
-          m[key] ||= []
-        end
-
-        m[:_providers] << file
-        m[:_plugin_name] << plugin_name
+        a[:_providers] ||= []
+        a[:_providers] << plugin_key
       end
     end
 

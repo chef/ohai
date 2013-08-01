@@ -150,7 +150,7 @@ describe Ohai::System, "Network Plugin" do
   describe "with linux" do
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = Ohai::DSL::Plugin.new(@ohai, "network", File.join(PLUGIN_PATH, "network.rb"))
+      @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "network.rb"))
       @plugin.stub(:require_plugin).and_return(true)
       @plugin["network"] = basic_data["linux"]["network"]
     end

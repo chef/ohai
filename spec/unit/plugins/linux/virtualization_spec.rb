@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux virtualization platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "linux/virtualization", File.expand_path("linux/virtualization.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/virtualization.rb", PLUGIN_PATH))
     @plugin[:os] = "linux"
     @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)

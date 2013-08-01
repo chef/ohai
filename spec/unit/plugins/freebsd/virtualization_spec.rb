@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "freebsd/virtualization", File.join(PLUGIN_PATH, "freebsd/virtualization.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "freebsd/virtualization.rb"))
     @plugin.stub(:require_plugin)
     @plugin[:os] = "freebsd"
     @stderr = StringIO.new

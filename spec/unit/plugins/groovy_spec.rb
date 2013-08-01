@@ -23,7 +23,7 @@ describe Ohai::System, "plugin groovy" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "groovy", File.join(PLUGIN_PATH, "groovy.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "groovy.rb"))
     @plugin[:languages] = Mash.new
     @plugin.stub(:require_plugin).and_return(true)
     @status = 0

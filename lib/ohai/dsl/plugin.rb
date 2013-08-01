@@ -1,3 +1,9 @@
+#
+#
+#
+
+require 'ohai/os'
+
 require 'ohai/mixin/command'
 require 'ohai/mixin/seconds_to_human'
 
@@ -9,10 +15,11 @@ module Ohai
     plugin_class = Class.new(DSL::Plugin, &block)
     const_set(plugin_name, plugin_class)
   end
-  
+
   module DSL
     class Plugin
 
+      include Ohai::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
 
@@ -39,6 +46,12 @@ module Ohai
         end
       end
 
+      def self.depends_os(*args)
+        args.each do |attr|
+          depends_attrs << "#{Ohai::OS.collect_os}/#{attr}"
+        end
+      end
+
       def self.collect_data(&block)
         define_method(:run, &block)
       end
@@ -53,6 +66,7 @@ module Ohai
       end
       
       def require_plugin(*args)
+        # @todo: backwards compat
         # @controller.require_plugin(*args)
       end
 

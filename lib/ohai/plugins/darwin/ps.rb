@@ -16,8 +16,12 @@
 # limitations under the License.
 #
 
-provides "command/ps"
+Ohai.plugin(:DarwinPs) do
+  provides "command/ps"
 
-require_plugin 'command'
+  depends 'command'
 
-command[:ps] = 'ps -ef'
+  collect_data do
+    command[:ps] = 'ps -ef'
+  end
+end

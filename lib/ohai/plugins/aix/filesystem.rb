@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::filesystem"
+Ohai.plugin(:Filesystem) do
+  depends "sigar::filesystem"
+end

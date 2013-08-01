@@ -16,8 +16,12 @@
 # limitations under the License.
 #
 
-provides "cpu"
+Ohai.plugin(:DarwinCpu) do
+  provides "cpu"
 
-cpu Mash.new
-cpu[:real]  = from("sysctl -n hw.physicalcpu").to_i
-cpu[:total] = from("sysctl -n hw.logicalcpu").to_i
+  collect_data do
+    cpu Mash.new
+    cpu[:real]  = from("sysctl -n hw.physicalcpu").to_i
+    cpu[:total] = from("sysctl -n hw.logicalcpu").to_i
+  end
+end

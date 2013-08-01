@@ -16,23 +16,27 @@
 # limitations under the License.
 #
 
-provides 'cpu'
+Ohai.plugin(:Cpu) do
+  provides 'cpu'
 
-cpuinfo = Mash.new
+  collect_data do
+    cpuinfo = Mash.new
 
-# OpenBSD provides most cpu information via sysctl, the only thing we need to 
-# to scrape from dmesg.boot is the cpu feature list. 
-# cpu0: FPU,V86,DE,PSE,TSC,MSR,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,TM,SBF,EST,TM2
+    # OpenBSD provides most cpu information via sysctl, the only thing we need to 
+    # to scrape from dmesg.boot is the cpu feature list. 
+    # cpu0: FPU,V86,DE,PSE,TSC,MSR,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,TM,SBF,EST,TM2
 
-File.open("/var/run/dmesg.boot").each do |line|
-  case line
-    when /cpu\d+:\s+([A-Z]+$|[A-Z]+,.*$)/
-      cpuinfo["flags"] = $1.downcase.split(',')
+    File.open("/var/run/dmesg.boot").each do |line|
+      case line
+      when /cpu\d+:\s+([A-Z]+$|[A-Z]+,.*$)/
+        cpuinfo["flags"] = $1.downcase.split(',')
+      end
+    end
+
+    cpuinfo[:model_name] = from("sysctl -n hw.model")
+    cpuinfo[:total] = from("sysctl -n hw.ncpu")
+    cpuinfo[:mhz] = from("sysctl -n hw.cpuspeed")
+
+    cpu cpuinfo
   end
 end
-
-cpuinfo[:model_name] = from("sysctl -n hw.model")
-cpuinfo[:total] = from("sysctl -n hw.ncpu")
-cpuinfo[:mhz] = from("sysctl -n hw.cpuspeed")
-
-cpu cpuinfo

@@ -278,7 +278,7 @@ IP_ROUTE_SCOPE
     prepare_data
     
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "linux/network", File.expand_path("linux/network.rb", PLUGIN_PATH))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/network.rb", PLUGIN_PATH))
 
     @plugin.stub(:popen4).with("ifconfig -a")
     @plugin.stub(:popen4).with("arp -an")

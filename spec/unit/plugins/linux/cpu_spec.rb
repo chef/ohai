@@ -21,8 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux cpu plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "linux/cpu", File.expand_path("linux/cpu.rb", PLUGIN_PATH))
+    @ohai = Ohai::System.new    
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/cpu.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "linux"
     @double_file = double("/proc/cpuinfo")

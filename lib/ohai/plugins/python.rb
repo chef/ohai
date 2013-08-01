@@ -16,22 +16,26 @@
 # limitations under the License.
 #
 
-provides "languages/python"
+Ohai.plugin(:Python) do
+  provides "languages/python"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-python = Mash.new
+    python = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "python -c \"import sys; print sys.version\"")
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "python -c \"import sys; print sys.version\"")
 
-if status == 0
-  output = stdout.split
-  python[:version] = output[0]
-  if output.length >= 6
-    python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+    if status == 0
+      output = stdout.split
+      python[:version] = output[0]
+      if output.length >= 6
+        python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+      end
+
+      languages[:python] = python if python[:version] and python[:builddate]
+    end
   end
-
-  languages[:python] = python if python[:version] and python[:builddate]
 end

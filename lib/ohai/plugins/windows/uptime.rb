@@ -17,7 +17,11 @@
 #
 require 'ruby-wmi'
 
-provides "uptime", "uptime_seconds"
+Ohai.plugin(:Uptime) do
+  provides "uptime", "uptime_seconds"
 
-uptime_seconds ::WMI::Win32_PerfFormattedData_PerfOS_System.find(:first).SystemUpTime.to_i
-uptime seconds_to_human(uptime_seconds)
+  collect_data do
+    uptime_seconds ::WMI::Win32_PerfFormattedData_PerfOS_System.find(:first).SystemUpTime.to_i
+    uptime seconds_to_human(uptime_seconds)
+  end
+end

@@ -23,7 +23,7 @@ describe Ohai::System, "plugin mono" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "mono", File.join(PLUGIN_PATH, "mono.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "mono.rb"))
     @plugin[:languages] = Mash.new
     @plugin.stub(:require_plugin).and_return(true)
     @status = 0

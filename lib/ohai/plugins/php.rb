@@ -16,21 +16,24 @@
 # limitations under the License.
 #
 
-provides "languages/php"
+Ohai.plugin(:Php) do
+  provides "languages/php"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-php = Mash.new
+    php = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "php -v")
-if status == 0
-  output = stdout.split
-  if output.length >= 6
-    php[:version] = output[1]
-    php[:builddate] = "%s %s %s" % [output[4],output[5],output[6]]
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "php -v")
+    if status == 0
+      output = stdout.split
+      if output.length >= 6
+        php[:version] = output[1]
+        php[:builddate] = "%s %s %s" % [output[4],output[5],output[6]]
+      end
+      languages[:php] = php if php[:version]
+    end
   end
-  languages[:php] = php if php[:version]
 end
-

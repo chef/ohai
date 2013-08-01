@@ -23,15 +23,17 @@ require 'open-uri'
 describe Ohai::System, "plugin ec2" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "ec2", File.join(PLUGIN_PATH, "ec2.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "ec2.rb"), "ec2")
+    @plugin = @ohai.plugins[:ec2][:plugin]
     @plugin.stub(:require_plugin)
-    @plugin[:network] = {:interfaces => {:eth0 => {} } }
+    @data = @ohai.data
+    @data[:network] = {:interfaces => {:eth0 => {} } }
   end
 
   shared_examples_for "!ec2" do
     it "should NOT attempt to fetch the ec2 metadata" do
       @plugin.should_not_receive(:http_client)
-      @plugin.run
+      @plugin.new(@ohai).run
     end
   end
 
@@ -65,11 +67,11 @@ describe Ohai::System, "plugin ec2" do
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
-      @plugin[:ec2].should_not be_nil
-      @plugin[:ec2]['instance_type'].should == "c1.medium"
-      @plugin[:ec2]['ami_id'].should == "ami-5d2dc934"
-      @plugin[:ec2]['security_groups'].should eql ['group1', 'group2']
+      @plugin.new(@ohai).run
+      @data[:ec2].should_not be_nil
+      @data[:ec2]['instance_type'].should == "c1.medium"
+      @data[:ec2]['ami_id'].should == "ami-5d2dc934"
+      @data[:ec2]['security_groups'].should eql ['group1', 'group2']
     end
 
     it "should parse ec2 network/ directory as a multi-level hash" do
@@ -94,10 +96,10 @@ describe Ohai::System, "plugin ec2" do
       @http_client.should_receive(:get).
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
-      @plugin.run
+      @plugin.new(@ohai).run
 
-      @plugin[:ec2].should_not be_nil
-      @plugin[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname'].should eql('server17.opscode.com')
+      @data[:ec2].should_not be_nil
+      @data[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname'].should eql('server17.opscode.com')
     end
 
     it "should parse ec2 iam/ directory and its JSON files properly" do
@@ -116,10 +118,10 @@ describe Ohai::System, "plugin ec2" do
       @http_client.should_receive(:get).
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
-      @plugin.run
+      @plugin.new(@ohai).run
 
-      @plugin[:ec2].should_not be_nil
-      @plugin[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
+      @data[:ec2].should_not be_nil
+      @data[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
       @plugin[:ec2]['iam']['security-credentials']['MyRole']['Token'].should eql '12345678'
     end
 
@@ -155,9 +157,9 @@ describe Ohai::System, "plugin ec2" do
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
+      @plugin.new(@ohai).run
 
-      @plugin[:ec2].should_not be_nil
+      @data[:ec2].should_not be_nil
     end
   end
 
@@ -166,7 +168,7 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       IO.stub(:select).and_return([[],[1],[]])
-      @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
+      @data[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
     end
   end
 
@@ -174,7 +176,7 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "!ec2"
 
     before(:each) do
-      @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
+      @data[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
     end
   end
 

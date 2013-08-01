@@ -22,7 +22,7 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "ssh_host_key", File.join(PLUGIN_PATH, "ssh_host_key.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ssh_host_key.rb"))
     @plugin.stub(:require_plugin)
     @plugin[:keys] = Mash.new
 

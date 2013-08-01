@@ -16,12 +16,16 @@
 # limitations under the License.
 #
 
-provides "fqdn", "domain"
+Ohai.plugin(:Hostname) do
+  provides "fqdn", "domain"
 
-require_plugin "#{os}::hostname"
+  depends_os "hostname"
 
-# Domain is everything after the first dot
-if fqdn
-  fqdn =~ /.+?\.(.*)/
-  domain $1 
+  collect_data do
+    # Domain is everything after the first dot
+    if fqdn
+      fqdn =~ /.+?\.(.*)/
+      domain $1 
+    end
+  end
 end

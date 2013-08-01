@@ -22,7 +22,7 @@ require File.expand_path("../../../spec_helper", __FILE__)
 describe Ohai::DSL::Plugin do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "", "")
+    @plugin = Ohai::DSL::Plugin.new(@ohai, "")
   end
 
   describe "when accessing data via method_missing" do

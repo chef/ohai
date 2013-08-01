@@ -21,9 +21,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin java (Java5 Client VM)" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "java", File.join(PLUGIN_PATH, "java.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "java.rb"), "java")
+    @plugin = @ohai.plugins[:java][:plugin]
     @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:languages] = Mash.new
+    @data = @ohai.data
+    @data[:languages] = Mash.new
     @status = 0
     @stdout = ""
     @stderr = "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"
@@ -32,32 +34,32 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
 
   it "should run java -version" do
     @plugin.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"])
-    @plugin.run
+    @plugin.new(@ohai).run
   end
 
   it "should set java[:version]" do
-    @plugin.run
-    @plugin.languages[:java][:version].should eql("1.5.0_16")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:version].should eql("1.5.0_16")
   end
 
   it "should set java[:runtime][:name] to runtime name" do
-    @plugin.run
-    @plugin.languages[:java][:runtime][:name].should eql("Java(TM) 2 Runtime Environment, Standard Edition")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:runtime][:name].should eql("Java(TM) 2 Runtime Environment, Standard Edition")
   end
 
   it "should set java[:runtime][:build] to runtime build" do
-    @plugin.run
-    @plugin.languages[:java][:runtime][:build].should eql("1.5.0_16-b06-284")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:runtime][:build].should eql("1.5.0_16-b06-284")
   end
 
   it "should set java[:hotspot][:name] to hotspot name" do
-    @plugin.run
-    @plugin.languages[:java][:hotspot][:name].should eql("Java HotSpot(TM) Client VM")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:hotspot][:name].should eql("Java HotSpot(TM) Client VM")
   end
 
   it "should set java[:hotspot][:build] to hotspot build" do
-    @plugin.run
-    @plugin.languages[:java][:hotspot][:build].should eql("1.5.0_16-133, mixed mode, sharing")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:hotspot][:build].should eql("1.5.0_16-133, mixed mode, sharing")
   end
 
   it "should not set the languages[:java] tree up if java command fails" do
@@ -65,17 +67,18 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     @stdout = ""
     @stderr = "Some error output here"
     @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
-    @plugin.run
-    @plugin.languages.should_not have_key(:java)
+    @plugin.new(@ohai).run
+    @data[:languages].should_not have_key(:java)
   end
 end
 
 describe Ohai::System, "plugin java (Java6 Server VM)" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "java", File.join(PLUGIN_PATH, "java.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "java.rb"), "java")
+    @plugin = @ohai.plugins[:java][:plugin]
     @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:languages] = Mash.new
+    @data[:languages] = Mash.new
     @status = 0
     @stdout = ""
     @stderr = "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"
@@ -84,32 +87,32 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
 
   it "should run java -version" do
     @plugin.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"])
-    @plugin.run
+    @plugin.new(@ohai).run
   end
 
   it "should set java[:version]" do
-    @plugin.run
-    @plugin.languages[:java][:version].should eql("1.6.0_22")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:version].should eql("1.6.0_22")
   end
 
   it "should set java[:runtime][:name] to runtime name" do
-    @plugin.run
-    @plugin.languages[:java][:runtime][:name].should eql("Java(TM) 2 Runtime Environment")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:runtime][:name].should eql("Java(TM) 2 Runtime Environment")
   end
 
   it "should set java[:runtime][:build] to runtime build" do
-    @plugin.run
-    @plugin.languages[:java][:runtime][:build].should eql("1.6.0_22-b04")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:runtime][:build].should eql("1.6.0_22-b04")
   end
 
   it "should set java[:hotspot][:name] to hotspot name" do
-    @plugin.run
-    @plugin.languages[:java][:hotspot][:name].should eql("Java HotSpot(TM) Server VM")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:hotspot][:name].should eql("Java HotSpot(TM) Server VM")
   end
 
   it "should set java[:hotspot][:build] to hotspot build" do
-    @plugin.run
-    @plugin.languages[:java][:hotspot][:build].should eql("17.1-b03, mixed mode")
+    @plugin.new(@ohai).run
+    @data[:languages][:java][:hotspot][:build].should eql("17.1-b03, mixed mode")
   end
 
   it "should not set the languages[:java] tree up if java command fails" do
@@ -117,8 +120,8 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
     @stdout = ""
     @stderr = "Some error output here"
     @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
-    @plugin.run
-    @plugin.languages.should_not have_key(:java)
+    @plugin.new(@ohai).run
+    @data[:languages].should_not have_key(:java)
   end
 end
 

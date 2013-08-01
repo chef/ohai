@@ -20,8 +20,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "solaris2/hostname", File.expand_path("solaris2/hostname.rb", PLUGIN_PATH))
+    @ohai = Ohai::System.new    
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/hostname.rb", PLUGIN_PATH))
     @plugin.stub(:require_plugin).and_return(true)
     @plugin[:os] = "solaris2"
     @plugin.stub(:from).with("hostname").and_return("kitteh")

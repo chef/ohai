@@ -21,7 +21,7 @@ require 'open-uri'
 describe Ohai::System, "plugin gce" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "gce", File.join(PLUGIN_PATH, "gce.rb"))
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "gce.rb"))
     @plugin.stub(:require_plugin)
   end
 

@@ -18,27 +18,33 @@
 
 require 'ruby-wmi'
 
-fs = Mash.new
-ld_info = Mash.new
+Ohai.plugin(:Filesystem) do
+  provides "filesystem"
 
-# Grab filesystem data from WMI
-# Note: we should really be parsing Win32_Volume and Win32_Mapped drive
-disks = WMI::Win32_LogicalDisk.find(:all)
-disks.each do |disk|
-    filesystem = disk.DeviceID
-    fs[filesystem] = Mash.new
-    ld_info[filesystem] = Mash.new
-    disk.properties_.each do |p|
-      ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk.send(p.name)
+  collect_data do
+    fs = Mash.new
+    ld_info = Mash.new
+
+    # Grab filesystem data from WMI
+    # Note: we should really be parsing Win32_Volume and Win32_Mapped drive
+    disks = WMI::Win32_LogicalDisk.find(:all)
+    disks.each do |disk|
+      filesystem = disk.DeviceID
+      fs[filesystem] = Mash.new
+      ld_info[filesystem] = Mash.new
+      disk.properties_.each do |p|
+        ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk.send(p.name)
+      end
+      fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
+      fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000
+      fs[filesystem][:kb_used] = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
+      fs[filesystem][:percent_used]  = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
+      fs[filesystem][:mount] = ld_info[filesystem][:name]
+      fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system] == nil
+      fs[filesystem][:volume_name] = ld_info[filesystem][:volume_name]
     end
-    fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
-    fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000
-    fs[filesystem][:kb_used] = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
-    fs[filesystem][:percent_used]  = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
-    fs[filesystem][:mount] = ld_info[filesystem][:name]
-    fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system] == nil
-    fs[filesystem][:volume_name] = ld_info[filesystem][:volume_name]
-end
 
-# Set the filesystem data
-filesystem fs
+    # Set the filesystem data
+    filesystem fs
+  end
+end

@@ -23,7 +23,8 @@ require 'open-uri'
 describe Ohai::System, "plugin azure" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, "azure", File.expand_path("azure.rb", PLUGIN_PATH))
+    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("azure.rb", PLUGIN_PATH), "azure")
+    @plugin = @ohai.plugins[:azure][:plugin]
   end
 
   describe "with azure cloud file" do
@@ -32,16 +33,17 @@ describe Ohai::System, "plugin azure" do
       File.stub(:read).with('/etc/chef/ohai/hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
       File.stub(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(true)
       File.stub(:read).with('C:\chef\ohai\hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
-      @plugin.run
+      @plugin.new(@ohai).run
+      @data = @ohai.data
     end
 
     it 'should set the azure cloud attributes' do
-      @plugin[:azure].should_not be_nil
-      @plugin[:azure]['public_ip'].should  == "137.135.46.202"
-      @plugin[:azure]['vm_name'].should == "test-vm"
-      @plugin[:azure]['public_fqdn'].should == "service.cloudapp.net"
-      @plugin[:azure]['public_ssh_port'].should == "22"
-      @plugin[:azure]['public_winrm_port'].should == "5985"
+      @data[:azure].should_not be_nil
+      @data[:azure]['public_ip'].should  == "137.135.46.202"
+      @data[:azure]['vm_name'].should == "test-vm"
+      @data[:azure]['public_fqdn'].should == "service.cloudapp.net"
+      @data[:azure]['public_ssh_port'].should == "22"
+      @data[:azure]['public_winrm_port'].should == "5985"
     end
 
   end
@@ -53,7 +55,7 @@ describe Ohai::System, "plugin azure" do
     end
 
     it 'should not behave like azure' do
-      @plugin[:azure].should be_nil
+      @data[:azure].should be_nil
     end
   end
 
@@ -66,7 +68,7 @@ describe Ohai::System, "plugin azure" do
     end
 
     it 'should not behave like azure' do
-      @plugin[:azure].should be_nil
+      @data[:azure].should be_nil
     end
   end
 

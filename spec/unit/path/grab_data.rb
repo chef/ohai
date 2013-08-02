@@ -28,40 +28,32 @@
 require 'yaml'
 require 'set'
 require 'mixlib/shellout'
+require 'optparse'
 require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
 
-####################################
-#                                  #
-#           Parameters             #
-#                                  #
-####################################
+cmd, params, platform, arch, env = nil, nil, nil, nil, nil
 
-# the command, from which to collect data
-cmd = "ls"
+#get options
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "A tool to gather shell command output"
+  opts.on( "-c", "--command CMD", "The command to run") { |c| cmd = c }
+  opts.on( "-p", "--params [P1,P2,...]", Array,
+           "List of parameters, applied one at a time") { |p| params = p || [ "" ] }
+  opts.on( "-f", "--platform PLATFORM", "Description of the platform") { |p| platform = p }
+  opts.on( "-a", "--architecture ARCH", "Description of the architecture") { |a| arch = a }
+  opts.on( "-e", "--environment [E1,E2,...]", Array,
+           "List of labels that describe the environment") { |e| env = e || [] }
+end.parse!
 
-# a list of parameters to use; only one will be used at a time
-params = ["", "-l", "-alF"]
-
-# human readable name for this platform
-platform = "osx"
-
-# human readable name for this architecture
-arch = "intel"
-
-# human readable description of the environment.
-# this is a list to accomodate multiple vars here.
-env = []
-
-####################################
-#                                  #
-####################################
+params = params.map { |e| if e.nil? then "" else e end }
 
 # read in data
 opc = OhaiPluginCommon.new
-filename = cmd + ".output"
+# filename = cmd + ".output"
 
-Mixlib::ShellOut.new("touch #{filename}").run_command
-data = opc.read_output cmd, File.expand_path( File.dirname(__FILE__))
+# Mixlib::ShellOut.new("touch #{filename}").run_command
+# data = opc.read_output cmd, File.expand_path( File.dirname(__FILE__))
 data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
@@ -85,4 +77,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-File.write( filename, opc.data_to_string( data ))
+puts opc.data_to_string data 

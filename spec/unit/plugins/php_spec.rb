@@ -1,6 +1,8 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
 # Copyright:: Copyright (c) 2009 VMware, Inc.
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

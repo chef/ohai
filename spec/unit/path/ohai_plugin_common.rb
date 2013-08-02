@@ -20,7 +20,6 @@ require 'json'
 require 'rspec'
 require 'ohai'
 require 'yaml'
-require File.expand_path(File.dirname(__FILE__) + '/fake_exe.rb')
 
 class OhaiPluginCommon
   def fake_command(data, platform, arch, env)

@@ -1,0 +1,143 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x86"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x64"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "bash: line 2: lua: command not found\n"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["lua"]
+params "-v"
+stdout ""
+stderr "Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio\n"
+exit_status 0

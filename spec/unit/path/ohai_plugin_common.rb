@@ -20,6 +20,7 @@ require 'json'
 require 'rspec'
 require 'ohai'
 require 'yaml'
+require File.expand_path(File.dirname(__FILE__) + '/fake_exe.rb')
 
 class OhaiPluginCommon
   def fake_command(data, platform, arch, env)
@@ -80,12 +81,10 @@ class OhaiPluginCommon
               it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
                 @opc = OhaiPluginCommon.new
                 path = @opc.get_path '/../path'
-                
                 cmd_not_found = Set.new
-                
-                cmd_list.each do |c|
-                  data = YAML::load_file @opc.data_path + "/" + c + ".yaml"
 
+                cmd_list.each do |c|
+                  data = @opc.read_output c
                   data = data[platform][arch].select { |f| f[:env] == env }
                   if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
                     cmd_not_found.add c
@@ -93,13 +92,12 @@ class OhaiPluginCommon
                     @opc.create_exe c, path, platform, arch, env
                   end
                 end
-                
-                
+
                 old_path = ENV['PATH']
                 ENV['PATH'] = path
                 
                 @ohai = Ohai::System.new
-                
+
                 begin
                   plugin_names.each{ |plugin_name| @ohai.require_plugin plugin_name }
                 ensure
@@ -115,7 +113,40 @@ class OhaiPluginCommon
       end
     end
   end
-  
+
+  def read_output( cmd )
+    @data = Class.new do
+      @instances
+
+      #DSL - make a list of hashes with 
+      def push(param, value)
+        @instances ||= []
+        @instances[0] ||= {}
+        current = {}
+        current = @instances.pop if @instances.last[param].nil?
+        current[param] = value
+        @instances << current
+      end
+      @methods = [:platform, :arch, :env, :params, :stdout, :stderr, :exit_status]
+      @methods.each { |m| self.send(:define_method, m.to_s) { |text| push m.to_sym, text }}
+
+      #Format data into a form the rest of the app expects
+      def process
+        data = {}
+        @instances.each do |i|
+          data[i[:platform]] ||= {}
+          data[i[:platform]][i[:arch]] ||= []
+          data[i[:platform]][i[:arch]] << i.reject { |k,v| k == :platform || k == :arch }
+        end
+        data
+      end
+    end
+
+    @data = @data.new
+    @data.instance_eval( File.read( "#{data_path}/#{cmd}.output" ))
+    @data.process
+  end
+
   def create_exe(cmd, path, platform, arch, env)
     
     cmd_path = path + "/" + cmd
@@ -125,7 +156,7 @@ class OhaiPluginCommon
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'
 
-OhaiPluginCommon.new.fake_command YAML::load_file('#{data_path}/#{cmd}.yaml'), '#{platform}', '#{arch}', #{env}
+OhaiPluginCommon.new.fake_command OhaiPluginCommon.new.read_output( '#{cmd}' ), '#{platform}', '#{arch}', #{env}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
     sleep 0.01 until File.exists? cmd_path

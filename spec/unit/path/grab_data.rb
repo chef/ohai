@@ -51,9 +51,6 @@ data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
 
-require 'pry'
-binding.pry
-
 # collect output
 
 results = params.map do |p|

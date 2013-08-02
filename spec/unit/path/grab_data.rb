@@ -28,6 +28,7 @@
 require 'yaml'
 require 'set'
 require 'mixlib/shellout'
+require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
 
 ####################################
 #                                  #
@@ -39,15 +40,19 @@ params = ["", "-l", "-alF"]
 platform = "osx"
 arch = "intel"
 env = []
+opc = OhaiPluginCommon.new
 
 # read in data
-filename = cmd + ".yaml"
+filename = cmd + ".output"
 
 Mixlib::ShellOut.new("touch #{filename}").run_command
-data = YAML::load_file filename
+data = opc.read_output cmd, File.expand_path( File.dirname(__FILE__))
 data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
+
+require 'pry'
+binding.pry
 
 # collect output
 
@@ -68,4 +73,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-File.write( filename, data.to_yaml )
+File.write( filename, OhaiPluginCommon.new.data_to_string( data ))

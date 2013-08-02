@@ -113,7 +113,7 @@ class OhaiPluginCommon
     end
   end
 
-  def read_output( cmd )
+  def read_output( cmd, path = "#{data_path}" )
     @data = Class.new do
       @instances
 
@@ -132,6 +132,9 @@ class OhaiPluginCommon
       #Format data into a form the rest of the app expects
       def process
         data = {}
+
+        @instances ||= []
+
         @instances.each do |i|
           data[i[:platform]] ||= {}
           data[i[:platform]][i[:arch]] ||= []
@@ -142,8 +145,31 @@ class OhaiPluginCommon
     end
 
     @data = @data.new
-    @data.instance_eval( File.read( "#{data_path}/#{cmd}.output" ))
+    @data.instance_eval( File.read( "#{path}/#{cmd}.output" ))
     @data.process
+  end
+
+  def to_fake_exe_format(platform, arch, env, params, stdout, stderr, exit_status)
+    <<-eos
+platform "#{platform}"
+arch "#{arch}"
+env #{env}
+params #{params.to_json}
+stdout #{stdout.to_json}
+stderr #{stderr.to_json}
+exit_status #{exit_status}
+eos
+  end
+
+  def data_to_string(data)
+    a = data.map do |platform,v| 
+      v.map do |arch,v| 
+        v.map do |e| 
+          to_fake_exe_format platform, arch, e[:env], e[:params], e[:stdout], e[:stderr], e[:exit_status]
+        end
+      end
+    end
+    a.flatten.join( "\n" )
   end
 
   def create_exe(cmd, path, platform, arch, env)

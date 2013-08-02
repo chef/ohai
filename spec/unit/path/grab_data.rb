@@ -35,14 +35,29 @@ require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
 #           Parameters             #
 #                                  #
 ####################################
+
+# the command, from which to collect data
 cmd = "ls"
+
+# a list of parameters to use; only one will be used at a time
 params = ["", "-l", "-alF"]
+
+# human readable name for this platform
 platform = "osx"
+
+# human readable name for this architecture
 arch = "intel"
+
+# human readable description of the environment.
+# this is a list to accomodate multiple vars here.
 env = []
-opc = OhaiPluginCommon.new
+
+####################################
+#                                  #
+####################################
 
 # read in data
+opc = OhaiPluginCommon.new
 filename = cmd + ".output"
 
 Mixlib::ShellOut.new("touch #{filename}").run_command

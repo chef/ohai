@@ -85,4 +85,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-File.write( filename, OhaiPluginCommon.new.data_to_string( data ))
+File.write( filename, opc.data_to_string( data ))

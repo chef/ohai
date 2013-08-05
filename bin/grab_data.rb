@@ -30,7 +30,7 @@ require 'set'
 require 'mixlib/shellout'
 require 'mixlib/cli'
 require 'optparse'
-require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../spec/unit/path/ohai_plugin_common.rb')
 
 #get options
 class MyCLI

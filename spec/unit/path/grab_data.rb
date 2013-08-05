@@ -28,25 +28,49 @@
 require 'yaml'
 require 'set'
 require 'mixlib/shellout'
+require 'mixlib/cli'
 require 'optparse'
 require File.expand_path(File.dirname(__FILE__) + '/ohai_plugin_common.rb')
 
-cmd, params, platform, arch, env = nil, nil, nil, nil, nil
-
 #get options
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "A tool to gather shell command output"
-  opts.on( "-c", "--command CMD", "The command to run") { |c| cmd = c }
-  opts.on( "-p", "--params [P1,P2,...]", Array,
-           "List of parameters, applied one at a time") { |p| params = p || [ "" ] }
-  opts.on( "-f", "--platform PLATFORM", "Description of the platform") { |p| platform = p }
-  opts.on( "-a", "--architecture ARCH", "Description of the architecture") { |a| arch = a }
-  opts.on( "-e", "--environment [E1,E2,...]", Array,
-           "List of labels that describe the environment") { |e| env = e || [] }
-end.parse!
+class MyCLI
+  include Mixlib::CLI
+  
+  option :command,
+    :short => "-c CMD",
+    :long => "--command CMD",
+    :description => "The command to run",
+    :required => true
 
-params = params.map { |e| if e.nil? then "" else e end }
+  option :params,
+    :short => "-p [P1,P2,...]",
+    :long => "--params [P1,P2,...]",
+    :description => "List of parameters, applied one at a time",
+    #not sure how to use optparse's array syntax, so this is a hack to reproduce that behavior
+    :proc => Proc.new { |s| if s then s.split( "," ) else [""] end }
+
+  option :platform,
+    :short => "-f PLATFORM",
+    :long => "--platform PLATFORM",
+    :description => "Description of the platform",
+    :required => true
+
+  option :arch,
+    :short => "-a ARCH",
+    :long => "--architecture ARCH",
+    :description => "Description of the architecture",
+    :required => true
+
+  option :env,
+    :short => "-e [E1,E2,...]",
+    :long => "--environment [E1,E2,...]",
+    :description => "List of labels that describe the environment",
+    :proc => Proc.new { |s| if s then s.split( "," ) else [] end } #same here
+
+end
+cli = MyCLI.new
+cli.parse_options
+cmd, params, platform, arch, env = cli.config[:command], cli.config[:params], cli.config[:platform], cli.config[:arch], cli.config[:env]
 
 # read in data
 opc = OhaiPluginCommon.new

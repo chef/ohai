@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + "/ohai_plugin_common.rb")
 describe OhaiPluginCommon, "subsumes?" do
   before(:each) do
     @hash = { "languages" => { "python" => { "version" => "1.6.2", "type" => "interpreted" }}}
-    @opc = OhaiPluginCommon.new
+    @opc = OhaiPluginCommon
   end
 
   it "returns true if given an exact duplicate" do

@@ -73,11 +73,10 @@ cli.parse_options
 cmd, params, platform, arch, env = cli.config[:command], cli.config[:params], cli.config[:platform], cli.config[:arch], cli.config[:env]
 
 # read in data
-opc = OhaiPluginCommon.new
 # filename = cmd + ".output"
 
 # Mixlib::ShellOut.new("touch #{filename}").run_command
-# data = opc.read_output cmd, File.expand_path( File.dirname(__FILE__))
+# data = OhaiPluginCommon.read_output cmd, File.expand_path( File.dirname(__FILE__))
 data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
@@ -101,4 +100,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-puts opc.data_to_string data 
+puts OhaiPluginCommon.data_to_string data 

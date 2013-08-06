@@ -33,20 +33,19 @@ describe Ohai::System, "Linux kernel plugin" do
   end
 
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", "Linux")
+
+  expected = [{
+                :env => [[]],
+                :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "kernel" => { "os" => "GNU/Linux" }},
+              },{
+                :env => [[]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "kernel" => { "os" => "GNU/Linux" }},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["kernel", "linux/kernel"], expected, ["uname", "lsmod"]
 end
-
-###############################
-
-expected = [{
-              :env => [[]],
-              :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
-              :arch => ["x86", "x64"],
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }},
-            },{
-              :env => [[]],
-              :platform => ["ubuntu-13.04"],
-              :arch => ["x64"],
-              :ohai => { "kernel" => { "os" => "GNU/Linux" }},
-            }]
-
-OhaiPluginCommon.new.check_expected ["kernel", "linux/kernel"], expected, ["uname", "lsmod"]

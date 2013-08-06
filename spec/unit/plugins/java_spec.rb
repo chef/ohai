@@ -121,85 +121,87 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
     @plugin.run
     @plugin[:languages].should_not have_key(:java)
   end
+
+
+  ###########
+
+  require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
+
+  expected = [{
+                :env => [[]],
+                :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "java" => nil }},
+              },{
+                :env => [[]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => nil }},
+              },{
+                :env => [["java"]],
+                :platform => ["centos-5.9"],
+                :arch => ["x86"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.41.1.11.11.90.el5_9-i386" },
+                      "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["centos-5.9"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.41.1.11.11.90.el5_9-x86_64" },
+                      "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["centos-6.4"],
+                :arch => ["x86"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.62.1.11.11.90.el6_4-i386" },
+                      "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["centos-6.4"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.62.1.11.11.90.el6_4-x86_64" },
+                      "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["ubuntu-10.04"],
+                :arch => ["x86"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.10.04.1" },
+                      "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode, sharing" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["ubuntu-10.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.10.04.1" },
+                      "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["ubuntu-12.04"],
+                :arch => ["x86"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.12.04.1" },
+                      "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode, sharing" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["ubuntu-12.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.12.04.1" },
+                      "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
+              },{
+                :env => [["java"]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
+                      "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-1ubuntu1" },
+                      "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["java"], expected, ["java"]
 end
-
-###########
-
-require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
-
-expected = [{
-              :env => [[]],
-              :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
-              :arch => ["x86", "x64"],
-              :ohai => { "languages" => { "java" => nil }},
-            },{
-              :env => [[]],
-              :platform => ["ubuntu-13.04"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => nil }},
-            },{
-              :env => [["java"]],
-              :platform => ["centos-5.9"],
-              :arch => ["x86"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.41.1.11.11.90.el5_9-i386" },
-                    "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["centos-5.9"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.41.1.11.11.90.el5_9-x86_64" },
-                    "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["centos-6.4"],
-              :arch => ["x86"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.62.1.11.11.90.el6_4-i386" },
-                    "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["centos-6.4"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_24",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.11.11.90)", "build" => "rhel-1.62.1.11.11.90.el6_4-x86_64" },
-                    "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["ubuntu-10.04"],
-              :arch => ["x86"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.10.04.1" },
-                    "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode, sharing" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["ubuntu-10.04"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.10.04.1" },
-                    "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["ubuntu-12.04"],
-              :arch => ["x86"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.12.04.1" },
-                    "hotspot" => { "name" => "OpenJDK Client VM", "build" => "20.0-b12, mixed mode, sharing" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["ubuntu-12.04"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-0ubuntu0.12.04.1" },
-                    "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
-            },{
-              :env => [["java"]],
-              :platform => ["ubuntu-13.04"],
-              :arch => ["x64"],
-              :ohai => { "languages" => { "java" => { "version" => "1.6.0_27",
-                    "runtime" => { "name" => "OpenJDK Runtime Environment (IcedTea6 1.12.5)", "build" => "6b27-1.12.5-1ubuntu1" },
-                    "hotspot" => { "name" => "OpenJDK 64-Bit Server VM", "build" => "20.0-b12, mixed mode" }}}},
-            }]
-
-OhaiPluginCommon.new.check_expected ["java"], expected, ["java"]

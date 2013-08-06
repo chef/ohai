@@ -143,42 +143,42 @@ eof
 
   module_function( :fake_command, :data_path, :get_path, :subsumes?, :read_output,
                    :to_fake_exe_format, :data_to_string, :create_exe )
+end
 
-  # for use in 
-  shared_context "cross platform data" do
-    shared_examples_for "a plugin" do |plugin_names, data, cmd_list|
-      data.each do |e|
-        e[:platform].each do |platform|
-          e[:arch].each do |arch|
-            e[:env].each do |env|
-              it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
-                path = OhaiPluginCommon.get_path
-                cmd_not_found = Set.new
+# for use in plugins
+shared_context "cross platform data" do
+  shared_examples_for "a plugin" do |plugin_names, data, cmd_list|
+    data.each do |e|
+      e[:platform].each do |platform|
+        e[:arch].each do |arch|
+          e[:env].each do |env|
+            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
+              path = OhaiPluginCommon.get_path
+              cmd_not_found = Set.new
 
-                cmd_list.each do |c|
-                  data = OhaiPluginCommon.read_output c
-                  data = data[platform][arch].select { |f| f[:env] == env }
-                  if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
-                    cmd_not_found.add c
-                  else
-                    OhaiPluginCommon.create_exe c, path, platform, arch, env
-                  end
+              cmd_list.each do |c|
+                data = OhaiPluginCommon.read_output c
+                data = data[platform][arch].select { |f| f[:env] == env }
+                if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
+                  cmd_not_found.add c
+                else
+                  OhaiPluginCommon.create_exe c, path, platform, arch, env
                 end
-
-                old_path = ENV['PATH']
-                ENV['PATH'] = path
-
-                @ohai = Ohai::System.new
-
-                begin
-                  plugin_names.each { |plugin_name| @ohai.require_plugin plugin_name }
-                ensure
-                  ENV['PATH'] = old_path
-                  cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c )}
-                end
-
-                OhaiPluginCommon.subsumes?( @ohai.data, e[:ohai] ).should be_true
               end
+
+              old_path = ENV['PATH']
+              ENV['PATH'] = path
+
+              @ohai = Ohai::System.new
+
+              begin
+                plugin_names.each { |plugin_name| @ohai.require_plugin plugin_name }
+              ensure
+                ENV['PATH'] = old_path
+                cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c )}
+              end
+
+              OhaiPluginCommon.subsumes?( @ohai.data, e[:ohai] ).should be_true
             end
           end
         end

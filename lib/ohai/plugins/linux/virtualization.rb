@@ -54,9 +54,6 @@ if File.exists?("/proc/modules")
   elsif modules =~ /^vboxdrv/
     virtualization[:system] = "vbox"
     virtualization[:role] = "host"
-  elsif modules =~ /^vboxguest/
-    virtualization[:system] = "vbox"
-    virtualization[:role] = "guest"
   end
 end
 
@@ -103,10 +100,12 @@ if File.exists?("/usr/sbin/dmidecode")
         virtualization[:system] = "xen"
         virtualization[:role] = "guest"
       end
+    when /Product Name: VirtualBox/
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "guest"
     else
       nil
     end
-
   end
 end
 

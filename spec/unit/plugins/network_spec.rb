@@ -627,7 +627,6 @@ describe Ohai::System, "Network Plugin" do
     basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
         before(:each) do
-          @plugin.stub(:require_plugin).twice.and_return(true)
           @plugin["network"] = basic_data[os]["network"]
         end
 

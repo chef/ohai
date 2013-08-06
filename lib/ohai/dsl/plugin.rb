@@ -156,7 +156,6 @@ module Ohai
         return *args
       end
 
-
     end
   end
 end

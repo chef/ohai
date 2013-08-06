@@ -33,7 +33,9 @@ describe Ohai::System, "Sigar network route plugin" do
 
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("sigar/network_route_spec.rb", PLUGIN_PATH))
+      @loader = Ohai::Loader.new(@ohai)
+      @loader.load_plugin(File.expand_path("sigar/network_route.rb", PLUGIN_PATH), "snr")
+      @plugin = @ohai.plugins[:snr][:plugin].new(@ohai)
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",
@@ -121,11 +123,23 @@ describe Ohai::System, "Sigar network route plugin" do
       # Since we double net_route_list here, flags never gets called
       @sigar.should_receive(:net_route_list).once.and_return([net_route])
       Sigar.should_receive(:new).at_least(2).times.and_return(@sigar)
-      @plugin.require_plugin("os")
-      @plugin[:os]="sigar"
-      Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
-      @plugin.require_plugin("network")
-      @plugin.require_plugin("sigar::network_route")
+
+      %w{ languages ruby kernel os }.each do |plgn|
+        @loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH), plgn)
+        @ohai.plugins[plgn][:plugin].new(@ohai).run
+      end
+      @ohai.data[:os]="sigar"
+      
+      #Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
+      %w{ counters network_basic sigar/hostname hostname sigar/network network }.each do |plgn|
+        plgn_key = plgn.gsub("/", "_")
+        @loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH), plgn_key)
+        @ohai.plugins[plgn_key][:plugin].new(@ohai).run
+      end
+
+      @loader.load_plugin(File.expand_path("sigar/network_route.rb", PLUGIN_PATH), "snr")
+      @plugin = @ohai.plugins[:snr][:plugin].new(@ohai)
+      @plugin.run
     end
 
     it "should set the routes" do

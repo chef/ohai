@@ -73,7 +73,6 @@ describe Ohai::System, "Darwin plugin platform" do
 
   describe "on os x server" do
     before(:each) do
-      @plugin.stub(:require_plugin).and_return(true)
       @plugin[:os] = "darwin"
       @pid = 10
       @stdin = double("STDIN", { :close => true })

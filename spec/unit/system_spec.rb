@@ -69,9 +69,8 @@ describe Ohai::System, "require_plugin" do
     Ohai::Log.should_receive(:debug).with("Skipping disabled plugin foo")
     @ohai.require_plugin("foo").should eql(false)
   end
-end
 
-describe Ohai::System, "all_plugins" do
+  describe Ohai::System, "all_plugins" do
   before(:each) do
     @ohai = Ohai::System.new
     @ohai.stub(:from_file).and_return(true)
@@ -87,5 +86,4 @@ describe Ohai::System, "all_plugins" do
     @ohai.should_receive(:require_plugin).with("darius")
     @ohai.all_plugins
   end
-  
 end

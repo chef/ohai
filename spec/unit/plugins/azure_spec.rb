@@ -23,7 +23,8 @@ require 'open-uri'
 describe Ohai::System, "plugin azure" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("azure.rb", PLUGIN_PATH))
+    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("azure.rb", PLUGIN_PATH), "azure")
+    @plugin = @ohai.plugins[:azure][:plugin].new(@ohai)
   end
 
   describe "with azure cloud file" do

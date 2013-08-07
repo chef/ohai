@@ -18,10 +18,13 @@
 
 require "sigar"
 
-sigar = Sigar.new
+Ohai.plugin(:Uptime) do
+  provides "uptime", "uptime_seconds"
 
-provides "uptime", "uptime_seconds"
-
-uptime = sigar.uptime.uptime
-uptime_seconds uptime.to_i * 1000
-uptime seconds_to_human(uptime.to_i)
+  collect_data do
+    sigar = Sigar.new
+    uptime = sigar.uptime.uptime
+    uptime_seconds uptime.to_i * 1000
+    uptime seconds_to_human(uptime.to_i)
+  end
+end

@@ -17,9 +17,14 @@
 #
 
 require 'chef/version'
-provides "chef"
 
-self[:chef_packages] = Mash.new unless self[:chef_packages]
-self[:chef_packages][:chef] = Mash.new
-self[:chef_packages][:chef][:version] = Chef::VERSION
-self[:chef_packages][:chef][:chef_root] = Chef::CHEF_ROOT
+Ohai.plugin(:CHEF) do
+  provides "chef"
+
+  collect_data do
+    self[:chef_packages] = Mash.new unless self[:chef_packages]
+    self[:chef_packages][:chef] = Mash.new
+    self[:chef_packages][:chef][:version] = Chef::VERSION
+    self[:chef_packages][:chef][:chef_root] = Chef::CHEF_ROOT
+  end
+end

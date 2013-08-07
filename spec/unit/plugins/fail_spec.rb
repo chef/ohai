@@ -32,7 +32,7 @@ describe Ohai::System, "plugin fail" do
     fail_plugin.write("provides \"fail\"require 'thiswillblowupinyourface'\nk=MissingClassName.new\nfail \"ohnoes\"")
     fail_plugin.close
     real_plugin=File.open("#{tmp}/plugins/real.rb","w+")
-    real_plugin.write("provides \"real\"\nreal \"useful\"\n")
+    real_plugin.write("Ohai.plugin(:Real) do\nprovides \"real\"\ncollect_data do\nreal \"useful\"\nend\nend\n")
     real_plugin.close
     @plugin_path=Ohai::Config[:plugin_path]
   end
@@ -40,6 +40,7 @@ describe Ohai::System, "plugin fail" do
   before(:each) do
     Ohai::Config[:plugin_path]=["#{tmp}/plugins"]
     @ohai=Ohai::System.new
+    @loader=Ohai::Loader.new(@ohai)
   end
   
   after(:all) do
@@ -54,8 +55,13 @@ describe Ohai::System, "plugin fail" do
   end
   
   it "should continue gracefully if plugin loading fails" do
-    @ohai.require_plugin("fail")
-    @ohai.require_plugin("real")
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    @loader.load_plugin("#{tmp}/plugins/real.rb")
+
+    @ohai.plugins.keys.each do |plgn_key|
+      @ohai.plugins[plgn_key][:plugin].new(@ohai).run
+    end
+    
     @ohai.data[:real].should eql("useful")
     @ohai.data.should_not have_key("fail")
   end

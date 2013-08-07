@@ -16,20 +16,23 @@
 # limitations under the License.
 #
 
-provides "languages/groovy"
+Ohai.plugin(:Groovy) do
+  provides "languages/groovy"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-groovy = Mash.new
+    groovy = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "groovy -v")
-if status == 0
-  output = stdout.split
-  if output.length >= 2
-    groovy[:version] = output[2]
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "groovy -v")
+    if status == 0
+      output = stdout.split
+      if output.length >= 2
+        groovy[:version] = output[2]
+      end
+      languages[:groovy] = groovy if groovy[:version]
+    end
   end
-  languages[:groovy] = groovy if groovy[:version]
 end
-

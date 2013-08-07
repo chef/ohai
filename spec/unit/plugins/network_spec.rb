@@ -150,8 +150,8 @@ describe Ohai::System, "Network Plugin" do
   describe "with linux" do
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "network.rb"))
-      @plugin.stub(:require_plugin).and_return(true)
+      Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "network.rb"), "net")
+      @plugin = @ohai.plugins[:net][:plugin].new(@ohai)
       @plugin["network"] = basic_data["linux"]["network"]
     end
 
@@ -627,7 +627,6 @@ describe Ohai::System, "Network Plugin" do
     basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
         before(:each) do
-          @plugin.stub(:require_plugin).twice.and_return(true)
           @plugin["network"] = basic_data[os]["network"]
         end
 

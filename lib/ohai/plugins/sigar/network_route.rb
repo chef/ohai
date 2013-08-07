@@ -17,38 +17,43 @@
 #
 
 require "sigar"
-require_plugin "network"
 
-provides "network"
+Ohai.plugin(:NetworkRoute) do
+  depends "network"
 
-def flags(flags)
-  f = ""
-  if (flags & Sigar::RTF_UP) != 0
-    f += "U"
+  provides "network"
+
+  def flags(flags)
+    f = ""
+    if (flags & Sigar::RTF_UP) != 0
+      f += "U"
+    end
+    if (flags & Sigar::RTF_GATEWAY) != 0
+      f += "G"
+    end
+    if (flags & Sigar::RTF_HOST) != 0
+      f += "H"
+    end
+    f
   end
-  if (flags & Sigar::RTF_GATEWAY) != 0
-    f += "G"
-  end
-  if (flags & Sigar::RTF_HOST) != 0
-    f += "H"
-  end
-  f
-end
 
-# From sigar: include/sigar.h sigar_net_route_t
-SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
+  # From sigar: include/sigar.h sigar_net_route_t
+  SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
 
-sigar=Sigar.new
-sigar.net_route_list.each do |route|
-  next unless network[:interfaces][route.ifname] # this should never happen
-  network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
-  route_data={}
-  SIGAR_ROUTE_METHODS.each do |m|
-    if(m == :flags)
-      route_data[m]=flags(route.send(m))
-    else
-      route_data[m]=route.send(m)
+  collect_data do
+    sigar=Sigar.new
+    sigar.net_route_list.each do |route|
+      next unless network[:interfaces][route.ifname] # this should never happen
+      network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
+      route_data={}
+      SIGAR_ROUTE_METHODS.each do |m|
+        if(m == :flags)
+          route_data[m]=flags(route.send(m))
+        else
+          route_data[m]=route.send(m)
+        end
+      end
+      network[:interfaces][route.ifname][:route][route.destination] = route_data
     end
   end
-  network[:interfaces][route.ifname][:route][route.destination] = route_data
 end

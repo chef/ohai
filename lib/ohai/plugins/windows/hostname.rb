@@ -19,15 +19,21 @@
 require 'ruby-wmi'
 require 'socket'
 
-host = WMI::Win32_ComputerSystem.find(:first)
-hostname "#{host.Name}"
+Ohai.plugin(:Hostname) do
+  provides "hostname"
+  provides "fqdn"
 
-info = Socket.gethostbyname(Socket.gethostname)
-if info.first =~ /.+?\.(.*)/
-  fqdn info.first
-else
-  #host is not in dns. optionally use:
-  #C:\WINDOWS\system32\drivers\etc\hosts
-  fqdn Socket.gethostbyaddr(info.last).first
+  collect_data do
+    host = WMI::Win32_ComputerSystem.find(:first)
+    hostname "#{host.Name}"
+
+    info = Socket.gethostbyname(Socket.gethostname)
+    if info.first =~ /.+?\.(.*)/
+      fqdn info.first
+    else
+      #host is not in dns. optionally use:
+      #C:\WINDOWS\system32\drivers\etc\hosts
+      fqdn Socket.gethostbyaddr(info.last).first
+    end
+  end
 end
-

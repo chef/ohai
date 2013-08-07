@@ -22,8 +22,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "NetBSD plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("netbsd/platform.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "netbsd/platform.rb"), "nplat")
+    @plugin = @ohai.plugins[:nplat][:plugin].new(@ohai)
     @plugin.stub(:from).with("uname -s").and_return("NetBSD")
     @plugin.stub(:from).with("uname -r").and_return("4.5")
     @plugin[:os] = "netbsd"

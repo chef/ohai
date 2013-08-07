@@ -105,8 +105,8 @@ describe Ohai::System, "plugin c" do
   before(:each) do
     @ohai = Ohai::System.new
     @path = File.join(PLUGIN_PATH, "c.rb")
-    @plugin = Ohai::DSL::Plugin.new(@ohai, @path)
-
+    Ohai::Loader.new(@ohai).load_plugin(@path, "c")
+    @plugin = @ohai.plugins["c"][:plugin].new(@ohai)
 
     @plugin[:languages] = Mash.new
     #gcc

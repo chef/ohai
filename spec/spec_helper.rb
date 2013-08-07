@@ -1,5 +1,9 @@
 require 'rspec'
 
+require 'pry'
+require 'pry-debugger'
+require 'pry-stack_explorer'
+
 $:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
@@ -9,6 +13,10 @@ Ohai::Config[:log_level] = :error
 
 PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
 SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
+
+if Ohai::OS.collect_os == /mswin|mingw32|windows/
+  ENV["PATH"] = ""
+end
 
 def it_should_check_from(plugin, attribute, from, value)
   it "should set the #{attribute} to the value from '#{from}'" do

@@ -23,8 +23,8 @@ require 'open-uri'
 describe Ohai::System, "plugin eucalyptus" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "eucalyptus.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "eucalyptus.rb"), "euca")
+    @plugin = @ohai.plugins[:euca][:plugin].new(@ohai)
   end
 
   shared_examples_for "!eucalyptus" do

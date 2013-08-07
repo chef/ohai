@@ -17,18 +17,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 require 'socket'
 
-provides "hostname", "fqdn"
+Ohai.plugin(:Hostname) do
+  provides "hostname", "fqdn"
 
-hostname from("hostname")
+  collect_data do
+    hostname from("hostname")
 
-fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+    fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
 
-if fqdn_lookup.split('.').length > 1
-  # we recieved an fqdn
-  fqdn fqdn_lookup
-else
-  # default to assembling one
-  fqdn(from("hostname") + "." + from("domainname"))
+    if fqdn_lookup.split('.').length > 1
+      # we recieved an fqdn
+      fqdn fqdn_lookup
+    else
+      # default to assembling one
+      fqdn(from("hostname") + "." + from("domainname"))
+    end
+  end
 end

@@ -16,9 +16,13 @@
 # limitations under the License.
 #
 
-provides "command/ps"
+Ohai.plugin(:Ps) do
+  provides "command/ps"
 
-require_plugin 'command'
+  depends 'command'
 
-# ps -e requires procfs
-command[:ps] = 'ps -ax'
+  collect_data do
+    # ps -e requires procfs
+    command[:ps] = 'ps -ax'
+  end
+end

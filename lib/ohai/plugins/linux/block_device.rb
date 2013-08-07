@@ -16,23 +16,27 @@
 # limitations under the License.
 #
 
-provides "block_device"
+Ohai.plugin(:BlockDevice) do
+  provides "block_device"
 
-if File.exists?("/sys/block")
-  block = Mash.new
-  Dir["/sys/block/*"].each do |block_device_dir|
-    dir = File.basename(block_device_dir)
-    block[dir] = Mash.new
-    %w{size removable}.each do |check|
-      if File.exists?("/sys/block/#{dir}/#{check}")
-        File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+  collect_data do
+    if File.exists?("/sys/block")
+      block = Mash.new
+      Dir["/sys/block/*"].each do |block_device_dir|
+        dir = File.basename(block_device_dir)
+        block[dir] = Mash.new
+        %w{size removable}.each do |check|
+          if File.exists?("/sys/block/#{dir}/#{check}")
+            File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          end
+        end
+        %w{model rev state timeout vendor}.each do |check|
+          if File.exists?("/sys/block/#{dir}/device/#{check}")
+            File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          end
+        end
       end
-    end
-    %w{model rev state timeout vendor}.each do |check|
-      if File.exists?("/sys/block/#{dir}/device/#{check}")
-        File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
-      end
+      block_device block
     end
   end
-  block_device block
 end

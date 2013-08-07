@@ -14,44 +14,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provides "linode"
+Ohai.plugin(:Linode) do
+  provides "linode"
 
-require_plugin "kernel"
-require_plugin "network"
+  depends "kernel"
+  depends "network", "counters/network"
 
-# Checks for matching linode kernel name
-#
-# Returns true or false
-def has_linode_kernel?
-  if kernel_data = kernel
-    kernel_data[:release].split('-').last =~ /linode/
-  end
-end
-
-# Identifies the linode cloud by preferring the hint, then
-#
-# Returns true or false
-def looks_like_linode?
-  hint?('linode') || has_linode_kernel?
-end
-
-# Names linode ip address
-#
-# name - symbol of ohai name (e.g. :public_ip)
-# eth - Interface name (e.g. :eth0)
-#
-# Alters linode mash with new interface based on name parameter
-def get_ip_address(name, eth)
-  if eth_iface = network[:interfaces][eth]
-    eth_iface[:addresses].each do |key, info|
-      linode[name] = key if info['family'] == 'inet'
+  # Checks for matching linode kernel name
+  #
+  # Returns true or false
+  def has_linode_kernel?
+    if kernel_data = kernel
+      kernel_data[:release].split('-').last =~ /linode/
     end
   end
-end
 
-# Setup linode mash if it is a linode system
-if looks_like_linode?
-  linode Mash.new
-  get_ip_address(:public_ip, :eth0)
-  get_ip_address(:private_ip, "eth0:1")
+  # Identifies the linode cloud by preferring the hint, then
+  #
+  # Returns true or false
+  def looks_like_linode?
+    hint?('linode') || has_linode_kernel?
+  end
+
+  # Names linode ip address
+  #
+  # name - symbol of ohai name (e.g. :public_ip)
+  # eth - Interface name (e.g. :eth0)
+  #
+  # Alters linode mash with new interface based on name parameter
+  def get_ip_address(name, eth)
+    if eth_iface = network[:interfaces][eth]
+      eth_iface[:addresses].each do |key, info|
+        linode[name] = key if info['family'] == 'inet'
+      end
+    end
+  end
+
+  collect_data do
+    # Setup linode mash if it is a linode system
+    if looks_like_linode?
+      linode Mash.new
+      get_ip_address(:public_ip, :eth0)
+      get_ip_address(:private_ip, "eth0:1")
+    end
+  end
 end

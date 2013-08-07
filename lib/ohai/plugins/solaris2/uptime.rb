@@ -19,18 +19,22 @@ require 'date'
 # It would be far better if we could include sys/uptime from sys-uptime RubyGem
 # It would also be good if we could pull idle time; how do we do this on Solaris?
 
-provides "uptime", "uptime_seconds"
+Ohai.plugin(:Uptime) do
+  provides "uptime", "uptime_seconds"
 
-# Example output:
-# $ who -b
-#   .       system boot  Jul  9 17:51
-popen4('who -b') do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /.* boot (.+)/
-      uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
-		  uptime seconds_to_human(uptime_seconds)
-		break
+  collect_data do
+    # Example output:
+    # $ who -b
+    #   .       system boot  Jul  9 17:51
+    popen4('who -b') do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /.* boot (.+)/
+          uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
+          uptime seconds_to_human(uptime_seconds)
+          break
+        end
+      end
     end
   end
 end

@@ -23,7 +23,8 @@ describe Ohai::System, "plugin erlang" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "erlang.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("erlang.rb", PLUGIN_PATH), "erl")
+    @plugin = @ohai.plugins[:erl][:plugin].new(@ohai)
     @plugin[:languages] = Mash.new
     @status = 0
     @stdin = ""

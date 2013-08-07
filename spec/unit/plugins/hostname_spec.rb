@@ -22,19 +22,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "hostname.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "hostname.rb"), "hostname")
+    @plugin = @ohai.plugins[:hostname][:plugin].new(@ohai)
   end
 
   it "should set the domain to everything after the first dot of the fqdn" do
     @plugin[:fqdn] = "katie.bethell"
     @plugin.run
-    @plugin.domain.should == "bethell"
+    @plugin[:domain].should == "bethell"
   end
 
   it "should not set a domain if fqdn is not set" do
     @plugin.run
-    @plugin.domain.should == nil
+    @plugin[:domain].should == nil
   end
     
 end

@@ -16,6 +16,10 @@
 # limitations under the License.
 #
 
-provides "ohai_time"
+Ohai.plugin(:OhaiTime) do
+  provides "ohai_time"
 
-ohai_time Time.now.to_f
+  collect_data do
+    ohai_time Time.now.to_f
+  end
+end

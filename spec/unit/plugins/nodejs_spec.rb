@@ -22,8 +22,8 @@ describe Ohai::System, "plugin nodejs" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "nodejs.rb"))
-    @plugin.stub(:require_plugin)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "nodejs.rb"), "njs")
+    @plugin = @ohai.plugins[:njs][:plugin].new(@ohai)
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "v0.8.11\n"

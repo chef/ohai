@@ -18,41 +18,47 @@
 
 require 'ruby-wmi'
 
-WIN32OLE.codepage = WIN32OLE::CP_UTF8
+Ohai.plugin(:Kernel) do
+  provides "kernel"
 
-def machine_lookup(sys_type)
-  return "i386" if sys_type.eql?("X86-based PC")
-  return "x86_64" if sys_type.eql?("x64-based PC")
-  sys_type
+  WIN32OLE.codepage = WIN32OLE::CP_UTF8
+
+  def machine_lookup(sys_type)
+    return "i386" if sys_type.eql?("X86-based PC")
+    return "x86_64" if sys_type.eql?("x64-based PC")
+    sys_type
+  end
+
+  def os_lookup(sys_type)
+    return "Unknown" if sys_type.to_s.eql?("0")
+    return "Other" if sys_type.to_s.eql?("1")
+    return "MSDOS" if sys_type.to_s.eql?("14")
+    return "WIN3x" if sys_type.to_s.eql?("15")
+    return "WIN95" if sys_type.to_s.eql?("16")
+    return "WIN98" if sys_type.to_s.eql?("17")
+    return "WINNT" if sys_type.to_s.eql?("18")
+    return "WINCE" if sys_type.to_s.eql?("19")
+    return nil
+  end
+
+  collect_data do
+    host = WMI::Win32_OperatingSystem.find(:first)
+    kernel[:os_info] = Mash.new
+    host.properties_.each do |p|
+      kernel[:os_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+    end
+
+    kernel[:name] = "#{kernel[:os_info][:caption]}"
+    kernel[:release] = "#{kernel[:os_info][:version]}"
+    kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
+    kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
+
+    host = WMI::Win32_ComputerSystem.find(:first)
+    kernel[:cs_info] = Mash.new
+    host.properties_.each do |p|
+      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+    end
+
+    kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
+  end
 end
-
-def os_lookup(sys_type)
-  return "Unknown" if sys_type.to_s.eql?("0")
-  return "Other" if sys_type.to_s.eql?("1")
-  return "MSDOS" if sys_type.to_s.eql?("14")
-  return "WIN3x" if sys_type.to_s.eql?("15")
-  return "WIN95" if sys_type.to_s.eql?("16")
-  return "WIN98" if sys_type.to_s.eql?("17")
-  return "WINNT" if sys_type.to_s.eql?("18")
-  return "WINCE" if sys_type.to_s.eql?("19")
-  return nil
-end
-
-host = WMI::Win32_OperatingSystem.find(:first)
-kernel[:os_info] = Mash.new
-host.properties_.each do |p|
-  kernel[:os_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
-end
-
-kernel[:name] = "#{kernel[:os_info][:caption]}"
-kernel[:release] = "#{kernel[:os_info][:version]}"
-kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
-kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
-
-host = WMI::Win32_ComputerSystem.find(:first)
-kernel[:cs_info] = Mash.new
-host.properties_.each do |p|
-  kernel[:cs_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
-end
-
-kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")

@@ -18,23 +18,27 @@
 
 require "sigar"
 
-sigar = Sigar.new
+Ohai.plugin(:Cpu) do
+  provides "cpu"
 
-provides "cpu"
+  collect_data do
+    sigar = Sigar.new
 
-cpuinfo = Mash.new
-ix = 0
+    cpuinfo = Mash.new
+    ix = 0
 
-sigar.cpu_info_list.each do |info|
-  current_cpu = ix.to_s
-  ix += 1
-  cpuinfo[current_cpu] = Mash.new
-  cpuinfo[current_cpu]["vendor_id"] = info.vendor
-  cpuinfo[current_cpu]["model"] = info.model
-  cpuinfo[current_cpu]["mhz"] = info.mhz.to_s
-  cpuinfo[current_cpu]["cache_size"] = info.cache_size.to_s
-  cpuinfo[:total] = info.total_cores
-  cpuinfo[:real] = info.total_sockets
+    sigar.cpu_info_list.each do |info|
+      current_cpu = ix.to_s
+      ix += 1
+      cpuinfo[current_cpu] = Mash.new
+      cpuinfo[current_cpu]["vendor_id"] = info.vendor
+      cpuinfo[current_cpu]["model"] = info.model
+      cpuinfo[current_cpu]["mhz"] = info.mhz.to_s
+      cpuinfo[current_cpu]["cache_size"] = info.cache_size.to_s
+      cpuinfo[:total] = info.total_cores
+      cpuinfo[:real] = info.total_sockets
+    end
+
+    cpu cpuinfo
+  end
 end
-
-cpu cpuinfo

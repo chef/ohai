@@ -16,8 +16,11 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version"
 
-platform from("uname -s").downcase
-platform_version from("uname -r")
-
+  collect_data do
+    platform from("uname -s").downcase
+    platform_version from("uname -r")
+  end
+end

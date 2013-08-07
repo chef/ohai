@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::hostname"
+Ohai.plugin(:Hostname) do
+  depends "sigar::hostname"
+end

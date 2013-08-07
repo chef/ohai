@@ -23,8 +23,8 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, 'root_group' do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "root_group.rb"))
-    @plugin.stub(:require_plugin)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "root_group.rb"), "root")
+    @plugin = @ohai.plugins[:root][:plugin].new(@ohai)
   end
 
   describe 'unix platform', :unix_only do

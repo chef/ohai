@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::network"
+Ohai.plugin(:Network) do
+  depends "sigar::network"
+end

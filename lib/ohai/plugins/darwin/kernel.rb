@@ -16,22 +16,26 @@
 # limitations under the License.
 #
 
-provides "kernel"
+Ohai.plugin(:DarwinKernel) do
+  provides "kernel"
 
-kernel[:os] = kernel[:name]
+  collect_data do
+    kernel[:os] = kernel[:name]
 
-if from("sysctl -n hw.optional.x86_64").to_i == 1
-  kernel[:machine] = 'x86_64'
-end
-
-kext = Mash.new
-popen4("kextstat -k -l") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/
-      kext[$4] = { :version => $5, :size => $3.hex, :index => $1, :refcount => $2 }
+    if from("sysctl -n hw.optional.x86_64").to_i == 1
+      kernel[:machine] = 'x86_64'
     end
+
+    kext = Mash.new
+    popen4("kextstat -k -l") do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout.each do |line|
+        if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/
+          kext[$4] = { :version => $5, :size => $3.hex, :index => $1, :refcount => $2 }
+        end
+      end
+    end
+
+    kernel[:modules] = kext
   end
 end
-
-kernel[:modules] = kext

@@ -21,18 +21,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "platform.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
+    @ohai = Ohai::System.new
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "platform.rb"), "plat")
+    @plugin = @ohai.plugins[:plat][:plugin].new(@ohai)
     @plugin[:os] = 'monkey'
     @plugin[:os_version] = 'poop'
   end
-  
-  it "should require the os platform plugin" do
-    @plugin.should_receive(:require_plugin).with("monkey::platform")
-    @plugin.run
-  end
-  
+
   it "should set the platform and platform family to the os if it was not set earlier" do
     @plugin.run
     @plugin[:platform].should eql("monkey")

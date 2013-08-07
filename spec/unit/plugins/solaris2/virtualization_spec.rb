@@ -21,9 +21,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris virtualization platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/virtualization.rb", PLUGIN_PATH))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "solaris2/virtualization.rb"), "svirt")
+    @plugin = @ohai.plugins[:svirt][:plugin].new(@ohai)
     @plugin[:os] = "solaris2"
-    @plugin.stub(:require_plugin).and_return(true)
     @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing

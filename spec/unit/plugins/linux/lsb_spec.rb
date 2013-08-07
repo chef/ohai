@@ -24,9 +24,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/lsb.rb", PLUGIN_PATH))
-    @plugin[:os] = "linux"    
-    @plugin.stub(:require_plugin).and_return(true)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "linux/lsb.rb"), "lsb")
+    @plugin = @ohai.plugins[:lsb][:plugin].new(@ohai)
+    @plugin[:os] = "linux"
     @plugin.extend(SimpleFromFile)
   end
 

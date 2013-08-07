@@ -21,7 +21,14 @@
 # Windows_NT kernel, so we herby decree that "windows" will refer to all
 # platforms built upon the Windows_NT kernel and have access to win32 or win64
 # subsystems.
-platform os
-platform_version kernel['release']
-platform_family "windows"
+
+Ohai.plugin(:Platform) do
+  provides "platform"
+
+  collect_data do
+    platform os
+    platform_version kernel['release']
+    platform_family "windows"
+  end
+end
 

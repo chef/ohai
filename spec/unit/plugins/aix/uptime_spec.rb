@@ -19,16 +19,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Aix plugin uptime" do
 
-  uptime_info=<<-WHO
-    .       system boot  Jul  9 17:51
-  WHO
-
   before(:each) do
     @ohai = Ohai::System.new
     @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("aix/uptime.rb", PLUGIN_PATH))
     @plugin[:os] = "aix"
-    @uptime_info =  uptime_info.split("\n")
-    @plugin.stub(:popen4).with("who -b").and_yield(nil, StringIO.new, @uptime_info, nil)
+    @plugin.stub(:popen4).with("who -b").and_yield(nil, StringIO.new, StringIO.new(" .  system boot  Jul  9 17:51"), nil)
     Time.stub_chain(:now, :to_i).and_return(1375857797)
   end
 

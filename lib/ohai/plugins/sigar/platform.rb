@@ -18,9 +18,13 @@
 
 require "sigar"
 
-provides "platform", "platform_version"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version"
 
-sys = Sigar.new.sys_info
+  collect_data do
+    sys = Sigar.new.sys_info
 
-platform sys.name.downcase
-platform_version sys.version
+    platform sys.name.downcase
+    platform_version sys.version
+  end
+end

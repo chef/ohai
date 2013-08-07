@@ -16,32 +16,36 @@
 # limitations under the License.
 #
 
-provides "filesystem"
-
 require "sigar"
 
-fs = Mash.new
+Ohai.plugin(:Filesystem) do
+  provides "filesystem"
 
-sigar = Sigar.new
+  collect_data do
+    fs = Mash.new
 
-sigar.file_system_list.each do |fsys|
-  filesystem = fsys.dev_name
-  fs[filesystem] = Mash.new
-  fs[filesystem][:mount] = fsys.dir_name
-  fs[filesystem][:fs_type] = fsys.sys_type_name
-  fs[filesystem][:mount_options] = fsys.options
-  begin
-    usage = sigar.file_system_usage(fsys.dir_name)
-    fs[filesystem][:kb_size] = (usage.total / 1024).to_s
-    fs[filesystem][:kb_used] = ((usage.total - usage.free) / 1024).to_s
-    fs[filesystem][:kb_available] = (usage.free / 1024).to_s
-    fs[filesystem][:percent_used] = (usage.use_percent * 100).to_s + '%'
-  rescue SystemExit => e
-    raise
-  rescue Exception => e
-    #e.g. floppy or cdrom drive
+    sigar = Sigar.new
+
+    sigar.file_system_list.each do |fsys|
+      filesystem = fsys.dev_name
+      fs[filesystem] = Mash.new
+      fs[filesystem][:mount] = fsys.dir_name
+      fs[filesystem][:fs_type] = fsys.sys_type_name
+      fs[filesystem][:mount_options] = fsys.options
+      begin
+        usage = sigar.file_system_usage(fsys.dir_name)
+        fs[filesystem][:kb_size] = (usage.total / 1024).to_s
+        fs[filesystem][:kb_used] = ((usage.total - usage.free) / 1024).to_s
+        fs[filesystem][:kb_available] = (usage.free / 1024).to_s
+        fs[filesystem][:percent_used] = (usage.use_percent * 100).to_s + '%'
+      rescue SystemExit => e
+        raise
+      rescue Exception => e
+        #e.g. floppy or cdrom drive
+      end
+    end
+
+    # Set the filesystem data
+    filesystem fs
   end
 end
-
-# Set the filesystem data
-filesystem fs

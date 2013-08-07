@@ -23,8 +23,8 @@ require 'open-uri'
 describe Ohai::System, "plugin ec2" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ec2.rb"))
-    @plugin.stub(:require_plugin)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "ec2.rb"), "ec2")
+    @plugin = @ohai.plugins[:ec2][:plugin].new(@ohai)
     @plugin[:network] = {:interfaces => {:eth0 => {} } }
   end
 

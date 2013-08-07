@@ -23,9 +23,9 @@ describe Ohai::System, "plugin lua" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "lua.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "lua.rb"), "lua")
+    @plugin = @ohai.plugins[:lua][:plugin].new(@ohai)
     @plugin[:languages] = Mash.new
-    @plugin.stub(:require_plugin).and_return(true)
     @status = 0
     @stdout = ""
     @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"

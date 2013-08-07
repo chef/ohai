@@ -16,19 +16,23 @@
 # limitations under the License.
 #
 
-provides "kernel"
+Ohai.plugin(:Kernel) do
+  provides "kernel"
 
-require_plugin 'ruby'
+  depends 'ruby'
 
-kernel Mash.new
-case languages[:ruby][:host_os]
-when /mswin|mingw32|windows/
-  require_plugin "windows::kernel"
-  require_plugin "windows::kernel_devices"
-else
-  kernel[:name] = from("uname -s")
-  kernel[:release] = from("uname -r")
-  kernel[:version] = from("uname -v")
-  kernel[:machine] = from("uname -m")
-  kernel[:modules] = Mash.new
+  collect_data do
+    kernel Mash.new
+    case languages[:ruby][:host_os]
+    when /mswin|mingw32|windows/
+      require_plugin "windows::kernel"
+      require_plugin "windows::kernel_devices"
+    else
+      kernel[:name] = from("uname -s")
+      kernel[:release] = from("uname -r")
+      kernel[:version] = from("uname -v")
+      kernel[:machine] = from("uname -m")
+      kernel[:modules] = Mash.new
+    end
+  end
 end

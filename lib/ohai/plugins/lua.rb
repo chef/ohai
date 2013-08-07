@@ -16,19 +16,23 @@
 # limitations under the License.
 #
 
-provides "languages/lua"
+Ohai.plugin(:Lua) do
+  provides "languages/lua"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-lua = Mash.new
+    lua = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "lua -v")
-if status == 0
-  output = stderr.split
-  if output.length >= 1
-    lua[:version] = output[1]
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "lua -v")
+    if status == 0
+      output = stderr.split
+      if output.length >= 1
+        lua[:version] = output[1]
+      end
+      languages[:lua] = lua if lua[:version]
+    end
   end
-  languages[:lua] = lua if lua[:version]
 end

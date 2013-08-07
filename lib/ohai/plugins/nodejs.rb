@@ -16,19 +16,23 @@
 # limitations under the License.
 #
 
-provides "languages/nodejs"
+Ohai.plugin(:Nodejs) do
+  provides "languages/nodejs"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-nodejs = Mash.new
+    nodejs = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "node -v")
-if status == 0
-  output = stdout.split
-  if output.length >= 1
-    nodejs[:version] = output[0][1..output[0].length]
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "node -v")
+    if status == 0
+      output = stdout.split
+      if output.length >= 1
+        nodejs[:version] = output[0][1..output[0].length]
+      end
+      languages[:nodejs] = nodejs if nodejs[:version]
+    end
   end
-  languages[:nodejs] = nodejs if nodejs[:version]
 end

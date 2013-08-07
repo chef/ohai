@@ -16,8 +16,10 @@
 # limitations under the License.
 #
 
-require 'ohai/mash'
+require 'ohai/loader'
 require 'ohai/log'
+require 'ohai/mash'
+require 'ohai/os'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
@@ -29,20 +31,39 @@ require 'yajl'
 module Ohai
   class System
     attr_accessor :data
-    attr_reader :seen_plugins
+    attr_reader :attributes
+    attr_reader :plugins
     attr_reader :hints
-    attr_reader :providers
 
     def initialize
       @data = Mash.new
-      @seen_plugins = Hash.new
-      @providers = Mash.new
-      @plugin_path = ""
+      @attributes = Hash.new
+      @plugins = Mash.new
       @hints = Hash.new
+      @plugin_path = ""
     end
 
     def [](key)
       @data[key]
+    end
+
+    def load_plugins
+      loader = Ohai::Loader.new(self)
+      
+      Ohai::Config[:plugin_path].each do |path|
+        [
+         Dir[File.join(path, '*')],
+         Dir[File.join(path, Ohai::OS.collect_os, '**', '*')]
+        ].flatten.each do |file|
+          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
+          md = file_regex.match(file)
+          if md
+            plugin_path = md[0]
+            plugin_name = md[1]
+            loader.load_plugin(plugin_path, plugin_name) unless @plugins.has_key?(plugin_name)
+          end
+        end
+      end
     end
 
     def all_plugins
@@ -90,10 +111,10 @@ module Ohai
     def refresh_plugins(path = '/')
       parts = path.split('/')
       if parts.length == 0
-        h = @providers
+        h = @metadata
       else
         parts.shift if parts[0].length == 0
-        h = @providers
+        h = @metadata
         parts.each do |part|
           break unless h.has_key?(part)
           h = h[part]
@@ -147,7 +168,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = DSL::Plugin.new(self, check_path)
+          plugin = DSL::Plugin.new(self, filename.split('.')[0], check_path)
           break
         else
           next

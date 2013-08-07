@@ -23,9 +23,9 @@ describe Ohai::System, "plugin mono" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "mono.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "mono.rb"), "mono")
+    @plugin = @ohai.plugins[:mono][:plugin].new(@ohai)
     @plugin[:languages] = Mash.new
-    @plugin.stub(:require_plugin).and_return(true)
     @status = 0
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
     @stderr = ""

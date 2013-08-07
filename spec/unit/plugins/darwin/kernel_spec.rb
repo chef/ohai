@@ -22,7 +22,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/kernel.rb", PLUGIN_PATH))
+    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("darwin/kernel.rb", PLUGIN_PATH), "dkern")
+    @plugin = @ohai.plugins[:dkern][:plugin].new(@ohai)
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:name] = "darwin"
     @plugin.should_receive(:popen4).with("kextstat -k -l").and_yield(1, StringIO.new, StringIO.new, StringIO.new)

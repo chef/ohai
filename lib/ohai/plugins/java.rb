@@ -15,32 +15,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-provides "languages/java"
 
-require_plugin "languages"
+Ohai.plugin(:Java) do
+  provides "languages/java"
 
-java = Mash.new
+  depends "languages"
 
-status, stdout, stderr = nil
-if RUBY_PLATFORM.downcase.include?("darwin") 
-  if system("/usr/libexec/java_home 2>&1 >/dev/null")
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
-  end
-else
-  status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
-end
+  collect_data do
+    java = Mash.new
 
-if status == 0
-  stderr.split("\n").each do |line|
-    case line
-    when /java version \"([0-9\.\_]+)\"/
-      java[:version] = $1
-    when /^(.+Runtime Environment.*) \((build )?(.+)\)$/
-      java[:runtime] = { "name" => $1, "build" => $3 }
-    when /^(.+ (Client|Server) VM) \(build (.+)\)$/
-      java[:hotspot] = { "name" => $1, "build" => $3 }
+    status, stdout, stderr = nil
+    if RUBY_PLATFORM.downcase.include?("darwin") 
+      if system("/usr/libexec/java_home 2>&1 >/dev/null")
+        status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+      end
+    else
+      status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+    end
+
+    if status == 0
+      stderr.split("\n").each do |line|
+        case line
+        when /java version \"([0-9\.\_]+)\"/
+          java[:version] = $1
+        when /^(.+Runtime Environment.*) \((build )?(.+)\)$/
+          java[:runtime] = { "name" => $1, "build" => $3 }
+        when /^(.+ (Client|Server) VM) \(build (.+)\)$/
+          java[:hotspot] = { "name" => $1, "build" => $3 }
+        end
+      end
+
+      languages[:java] = java if java[:version]
     end
   end
-
-  languages[:java] = java if java[:version]
 end

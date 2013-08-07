@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::cpu"
+Ohai.plugin(:Cpu) do
+  depends "sigar::cpu"
+end

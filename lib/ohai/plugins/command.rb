@@ -16,6 +16,10 @@
 # limitations under the License.
 #
 
-provides "command"
+Ohai.plugin(:Command) do
+  provides "command"
 
-command Mash.new
+  collect_data do
+    command Mash.new
+  end
+end

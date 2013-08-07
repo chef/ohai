@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::memory"
+Ohai.plugin(:Memory) do
+  depends "sigar::memory"
+end

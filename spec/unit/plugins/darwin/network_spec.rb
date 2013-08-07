@@ -413,7 +413,9 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/network.rb", PLUGIN_PATH))
+    @loader = Ohai::Loader.new(@ohai)
+    @loader.load_plugin(File.expand_path("darwin/network.rb", PLUGIN_PATH), "dnet")
+    @plugin = @ohai.plugins[:dnet][:plugin].new(@ohai)
 
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
@@ -428,8 +430,16 @@ net.smb.fs.tcprcvbuf: 261120
     @plugin.stub(:from).with("route -n get default").and_return(darwin_route)
     @plugin.stub(:popen4).with("netstat -i -d -l -b -n")
 
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(6).times
-    @plugin.require_plugin("network")
+    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
+
+    %w{ counters network_basic darwin/hostname hostname network }.each do |plgn|
+      key = plgn.gsub("/", "_")
+      @loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH), key)
+      p = @ohai.plugins[key][:plugin].new(@ohai)
+      p.stub(:from).with("hostname -s").and_return("katie")
+      p.stub(:from).with("hostname").and_return("katie.bethell")
+      p.run
+    end
   end
 
   describe "gathering IP layer address info" do

@@ -23,8 +23,8 @@ describe Ohai::System, "plugin linode" do
 
   before do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "linode.rb"))
-    @plugin.stub(:require_plugin)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "linode.rb"), "lin")
+    @plugin = @ohai.plugins[:lin][:plugin].new(@ohai)
     @plugin[:network] = {
       "interfaces"=> {
         "eth0"=> {

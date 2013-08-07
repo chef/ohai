@@ -1,31 +1,74 @@
+#
+#
+#
+
+require 'ohai/os'
+
 require 'ohai/mixin/command'
-require 'ohai/mixin/from_file'
 require 'ohai/mixin/seconds_to_human'
 
 module Ohai
+  #=========================================================
+  # define new plugin class
+  #=========================================================
+  def self.plugin(plugin_name, &block)
+    plugin_class = Class.new(DSL::Plugin, &block)
+    const_set(plugin_name, plugin_class)
+  end
+
   module DSL
     class Plugin
 
+      include Ohai::OS
       include Ohai::Mixin::Command
-      include Ohai::Mixin::FromFile
       include Ohai::Mixin::SecondsToHuman
 
-      attr_reader :file
+      #=====================================================
+      # plugin loading phase
+      #=====================================================
+      def self.provides_attrs
+        @provides_attrs ||= []
+      end
+
+      def self.depends_attrs
+        @depends_attrs ||= []
+      end
+
+      def self.provides(*args)
+        args.each do |attr|
+          provides_attrs << attr
+        end
+      end
+
+      def self.depends(*args)
+        args.each do |attr|
+          depends_attrs << attr
+        end
+      end
+
+      def self.depends_os(*args)
+        args.each do |attr|
+          depends_attrs << "#{Ohai::OS.collect_os}/#{attr}"
+        end
+      end
+
+      def self.collect_data(&block)
+        define_method(:run, &block)
+      end
+
+      #=====================================================
+      # plugin run phase
+      #=====================================================
       attr_reader :data
 
-      def initialize(controller, file)
+      def initialize(controller)
         @controller = controller
         @data = controller.data
-        @providers = controller.providers
-        @file = file
       end
-
-      def run
-        from_file(@file)
-      end
-
+      
       def require_plugin(*args)
-        @controller.require_plugin(*args)
+        # @todo: backwards compat
+        # @controller.require_plugin(*args)
       end
 
       def hints
@@ -58,22 +101,6 @@ module Ohai
         status, stdout, stderr = run_command(:command => cmd)
         return "" if stdout.nil? || stdout.empty?
         stdout.strip
-      end
-
-      def provides(*paths)
-        paths.each do |path|
-          parts = path.split('/')
-          h = @providers
-          unless parts.length == 0
-            parts.shift if parts[0].length == 0
-            parts.each do |part|
-              h[part] ||= Mash.new
-              h = h[part]
-            end
-          end
-          h[:_providers] ||= []
-          h[:_providers] << @file
-        end
       end
 
       # Set the value equal to the stdout of the command, plus run through a regex - the first piece of match data is the value.
@@ -129,7 +156,6 @@ module Ohai
         return args.first if args.length == 1
         return *args
       end
-
 
     end
   end

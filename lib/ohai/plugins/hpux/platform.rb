@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::platform"
+Ohai.plugin(:Platform) do
+  depends "sigar::platform"
+end

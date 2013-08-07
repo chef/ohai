@@ -23,9 +23,9 @@ describe Ohai::System, "plugin python" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "python.rb"))
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "python.rb"), "py")
+    @plugin = @ohai.plugins[:py][:plugin].new(@ohai)
     @plugin[:languages] = Mash.new
-    @plugin.stub(:require_plugin).and_return(true)
     @status = 0
     @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
     @stderr = ""

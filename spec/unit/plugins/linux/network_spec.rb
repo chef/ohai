@@ -278,8 +278,10 @@ IP_ROUTE_SCOPE
     prepare_data
     
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/network.rb", PLUGIN_PATH))
-
+    @loader = Ohai::Loader.new(@ohai)
+    @loader.load_plugin(File.join(PLUGIN_PATH, "linux/network.rb"), "lnet")
+    @plugin = @ohai.plugins[:lnet][:plugin].new(@ohai)
+    
     @plugin.stub(:popen4).with("ifconfig -a")
     @plugin.stub(:popen4).with("arp -an")
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times

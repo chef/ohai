@@ -24,15 +24,13 @@ describe Ohai::System, "plugin eucalyptus" do
   before(:each) do
     @ohai = Ohai::System.new
     Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "eucalyptus.rb"), "euca")
-    @plugin = @ohai.plugins[:euca][:plugin]
-    @plugin.stub(:require_plugin).and_return(true)
-    @data = @ohai.data
+    @plugin = @ohai.plugins[:euca][:plugin].new(@ohai)
   end
 
   shared_examples_for "!eucalyptus" do
     it "should NOT attempt to fetch the eucalyptus metadata" do
       OpenURI.should_not_receive(:open)
-      @plugin.new(@ohai).run
+      @plugin.run
     end
   end
 
@@ -66,11 +64,11 @@ describe Ohai::System, "plugin eucalyptus" do
       t = double("connection")
       t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       Socket.stub(:new).and_return(t)
-      @plugin.new(@ohai).run
-      @data[:eucalyptus].should_not be_nil
-      @data[:eucalyptus]['instance_type'].should == "c1.medium"
-      @data[:eucalyptus]['ami_id'].should == "ami-5d2dc934"
-      @data[:eucalyptus]['security_groups'].should eql ['group1', 'group2']
+      @plugin.run
+      @plugin[:eucalyptus].should_not be_nil
+      @plugin[:eucalyptus]['instance_type'].should == "c1.medium"
+      @plugin[:eucalyptus]['ami_id'].should == "ami-5d2dc934"
+      @plugin[:eucalyptus]['security_groups'].should eql ['group1', 'group2']
     end
   end
 
@@ -79,7 +77,7 @@ describe Ohai::System, "plugin eucalyptus" do
 
     before(:each) do
       IO.stub(:select).and_return([[],[1],[]])
-      @data[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
+      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
 
@@ -87,7 +85,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @data[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
+      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
 
@@ -106,7 +104,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @data[:network] = {:interfaces => {}}
+      @plugin[:network] = {:interfaces => {}}
       File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
     end
@@ -116,7 +114,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @data[:network] = {:interfaces => {}}
+      @plugin[:network] = {:interfaces => {}}
 
       File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)

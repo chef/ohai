@@ -18,9 +18,10 @@
 # limitations under the License.
 
 require 'ohai/mixin/ec2_metadata'
-extend Ohai::Mixin::Ec2Metadata
 
 Ohai.plugin(:Eucalyptus) do
+  include Ohai::Mixin::Ec2Metadata
+
   provides "eucalyptus"
 
   depends "fqdn", "domain"
@@ -50,7 +51,7 @@ Ohai.plugin(:Eucalyptus) do
   def looks_like_euca?
     # Try non-blocking connect so we don't "block" if 
     # the Xen environment is *not* EC2
-    hint?('eucalyptus') || has_euca_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+    hint?('eucalyptus') || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
 
   collect_data do

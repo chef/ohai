@@ -32,14 +32,6 @@ describe Ohai::Loader do
     it "should return an Ohai::Loader object" do
       @loader.should be_a_kind_of(Ohai::Loader)
     end
-
-    it "should set @attributes to Ohai::System's @attributes" do
-      @loader.attributes.should equal(@ohai.attributes)
-    end
-
-    it "should set @plugins to Ohai::System's @plugins" do
-      @loader.plugins.should equal(@ohai.plugins)
-    end
   end
 
   context "when loading a plugin" do

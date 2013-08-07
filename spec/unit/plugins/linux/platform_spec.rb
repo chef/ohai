@@ -22,9 +22,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("linux/platform.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
+    @ohai = Ohai::System.new
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "linux/platform.rb"), "lplat")
+    @plugin = @ohai.plugins[:lplat][:plugin].new(@ohai)
     @plugin.extend(SimpleFromFile)
     @plugin[:os] = "linux"
     @plugin[:lsb] = Mash.new
@@ -38,11 +38,6 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub(:exists?).with("/etc/enterprise-release").and_return(false)
     File.stub(:exists?).with("/etc/oracle-release").and_return(false)
     File.stub(:exists?).with("/usr/bin/raspi-config").and_return(false)
-  end
-  
-  it "should require the lsb plugin" do
-    @plugin.should_receive(:require_plugin).with("linux::lsb").and_return(true)  
-    @plugin.run
   end
   
   describe "on lsb compliant distributions" do

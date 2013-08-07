@@ -18,7 +18,7 @@
 
 require 'chef/version'
 
-Ohai.plugin(:Chef) do
+Ohai.plugin(:CHEF) do
   provides "chef"
 
   collect_data do

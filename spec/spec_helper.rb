@@ -1,8 +1,8 @@
 require 'rspec'
 
-#require 'pry'
-#require 'pry-debugger'
-#require 'pry-stack_explorer'
+require 'pry'
+require 'pry-debugger'
+require 'pry-stack_explorer'
 
 $:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + '/../lib')

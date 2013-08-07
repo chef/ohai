@@ -23,7 +23,7 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     @ohai = Ohai::System.new
     Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "java.rb"), "java")
     @plugin = @ohai.plugins[:java][:plugin].new(@ohai)
-    @data[:languages] = Mash.new
+    @plugin[:languages] = Mash.new
     @status = 0
     @stdout = ""
     @stderr = "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"

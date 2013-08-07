@@ -135,8 +135,8 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("solaris2/kernel.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "solaris2/kernel.rb"), "skern")
+    @plugin = @ohai.plugins[:skern][:plugin].new(@ohai)
     @plugin[:kernel] = Mash.new
     @plugin.stub(:from).with("uname -s").and_return("SunOS")
     stdin = StringIO.new

@@ -22,8 +22,8 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ssh_host_key.rb"))
-    @plugin.stub(:require_plugin)
+    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "ssh_host_key.rb"), "shk")
+    @plugin = @ohai.plugins[:shk][:plugin].new(@ohai)
     @plugin[:keys] = Mash.new
 
     # Avoid using the real from_file to load the plugin => less stubbing required

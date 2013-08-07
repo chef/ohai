@@ -18,9 +18,10 @@
 # limitations under the License.
 
 require 'ohai/mixin/ec2_metadata'
-extend Ohai::Mixin::Ec2Metadata
 
 Ohai.plugin(:Ec2) do
+  include Ohai::Mixin::Ec2Metadata
+  
   provides "ec2"
 
   depends "fqdn", "domain"
@@ -43,7 +44,7 @@ Ohai.plugin(:Ec2) do
   def looks_like_ec2?
     # Try non-blocking connect so we don't "block" if 
     # the Xen environment is *not* EC2
-    hint?('ec2') || has_ec2_mac? && can_metadata_connect?(EC2_METADATA_ADDR,80)
+    hint?('ec2') || has_ec2_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
 
   collect_data do

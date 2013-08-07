@@ -20,8 +20,9 @@ require 'ipaddress'
 
 Ohai.plugin(:Network) do
   provides "network", "counters/network"
-  
+
   depends "hostname"
+  depends "network_basic"
   depends_os "network"
 
   FAMILIES = {
@@ -133,11 +134,6 @@ Ohai.plugin(:Network) do
   # ipaddress is bound to has the NOARP flag
 
   collect_data do
-    network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
-    counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
-
     results = {}
 
     # inet family is treated before inet6

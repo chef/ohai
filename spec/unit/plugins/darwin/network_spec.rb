@@ -427,7 +427,6 @@ net.smb.fs.tcprcvbuf: 261120
     @netstat_lines = darwin_netstat.split("\n")
     @sysctl_lines = darwin_sysctl.split("\n")
 
-    @plugin.stub(:from).and_raise(Exception)
     @plugin.stub(:from).with("route -n get default").and_return(darwin_route)
     @plugin.stub(:popen4).with("netstat -i -d -l -b -n")
 

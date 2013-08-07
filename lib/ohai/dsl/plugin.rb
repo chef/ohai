@@ -59,6 +59,7 @@ module Ohai
       #=====================================================
       # plugin run phase
       #=====================================================
+      attr_reader :data
 
       def initialize(controller)
         @controller = controller

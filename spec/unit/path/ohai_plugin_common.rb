@@ -146,7 +146,7 @@ eof
   end
 
   module_function( :fake_command, :data_path, :get_path, :subsumes?, :read_output,
-                   :to_fake_exe_format, :data_to_string, :create_exe )
+                   :to_fake_exe_format, :data_to_string, :create_exe, :plugin_path )
 end
 
 # for use in plugins

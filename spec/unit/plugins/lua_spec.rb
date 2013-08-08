@@ -83,5 +83,5 @@ describe Ohai::System, "plugin lua" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["lua"], expected, ["lua"]
+  it_behaves_like "a plugin", ["languages", "lua"], expected, ["lua"]
 end

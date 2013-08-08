@@ -99,5 +99,5 @@ describe Ohai::System, "plugin erlang" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["erlang"], expected, ["erl"]
+  it_behaves_like "a plugin", ["languages", "erlang"], expected, ["erl"]
 end

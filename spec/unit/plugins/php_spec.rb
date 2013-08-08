@@ -89,5 +89,5 @@ describe Ohai::System, "plugin php" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["php"], expected, ["php"]
+  it_behaves_like "a plugin", ["languages", "php"], expected, ["php"]
 end

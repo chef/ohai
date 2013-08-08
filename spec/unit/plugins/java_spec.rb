@@ -203,5 +203,5 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["java"], expected, ["java"]
+  it_behaves_like "a plugin", ["languages", "java"], expected, ["java"]
 end

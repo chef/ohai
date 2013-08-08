@@ -84,5 +84,5 @@ describe Ohai::System, "plugin python" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["python"], expected, ["python"]
+  it_behaves_like "a plugin", ["languages", "python"], expected, ["python"]
 end

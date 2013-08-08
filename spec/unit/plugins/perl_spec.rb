@@ -129,5 +129,5 @@ OUT
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["perl"], expected, ["perl"]
+  it_behaves_like "a plugin", ["languages", "perl"], expected, ["perl"]
 end

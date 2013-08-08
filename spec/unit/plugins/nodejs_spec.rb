@@ -79,5 +79,5 @@ describe Ohai::System, "plugin nodejs" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["nodejs"], expected, ["node"]
+  it_behaves_like "a plugin", ["languages", "nodejs"], expected, ["node"]
 end

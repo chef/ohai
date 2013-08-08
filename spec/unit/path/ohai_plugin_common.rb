@@ -43,12 +43,16 @@ module OhaiPluginCommon
     exit match[:exit_status]
   end
   
-  def data_path()
+  def data_path
     File.expand_path(File.dirname(__FILE__) + '../../../data/plugins')
   end
   
   def get_path(path = '')
     File.expand_path(File.dirname(__FILE__) + path)
+  end
+
+  def plugin_path
+    get_path '/../../../lib/ohai/plugins'
   end
   
   #checks to see if the elements in test are also in source.  Recursively decends into Hashes.
@@ -172,7 +176,11 @@ shared_context "cross platform data" do
               @ohai = Ohai::System.new
 
               begin
-                plugin_names.each { |plugin_name| @ohai.require_plugin plugin_name }
+                plugin_names.each do | plugin_name |
+                  Ohai::Loader.new( @ohai ).load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ), plugin_name )
+                  @plugin = @ohai.plugins[plugin_name.to_sym][:plugin].new( @ohai )
+                  @plugin.run
+                end
               ensure
                 ENV['PATH'] = old_path
                 cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c )}

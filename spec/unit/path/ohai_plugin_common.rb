@@ -130,10 +130,9 @@ eos
   end
 
   def create_exe(cmd, path, platform, arch, env)
-    
     cmd_path = path + "/" + cmd
     file = <<-eof
-#!#{RbConfig.ruby}
+#!#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )}
 
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'

@@ -50,7 +50,7 @@ popen4("mount") do |pid, stdin, stdout, stderr|
      when /^\s*---/
       next
      when /^\s*\/\w/
-      fields = line.split(" ")
+      fields = line.split
       filesystem = fields[0]
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:mount] = fields[1]
@@ -58,11 +58,11 @@ popen4("mount") do |pid, stdin, stdout, stderr|
       #fs[filesystem][:mount_options] = fields[6]
       fs[filesystem][:mount_options] = fields[6]
      else
-      fields = line.split(" ")
+      fields = line.split
       filesystem = fields[0] + ":" + fields[1]
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:mount] = fields[3]
-      fs[filesystem][:fs_type] = fields[4]
+      fs[filesystem][:mount] = fields[2]
+      fs[filesystem][:fs_type] = fields[3]
       fs[filesystem][:mount_options] = fields[7]
     end
   end

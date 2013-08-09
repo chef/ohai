@@ -16,7 +16,8 @@
 # limitations under the License.
 #
 
-require 'json'
+require 'rubygems'
+require 'yajl'
 require 'rspec'
 require 'ohai'
 require 'yaml'
@@ -106,13 +107,14 @@ module OhaiPluginCommon
 
   # output a fake executable case in the DSL
   def to_fake_exe_format(platform, arch, env, params, stdout, stderr, exit_status)
+    p = Yajl::Parser.new
     <<-eos
 platform "#{platform}"
 arch "#{arch}"
 env #{env}
-params #{params.to_json}
-stdout #{stdout.to_json}
-stderr #{stderr.to_json}
+params #{p.parse( params )}
+stdout #{p.parse( stdout )}
+stderr #{p.parse( stderr )}
 exit_status #{exit_status}
 eos
   end
@@ -130,14 +132,14 @@ eos
   end
 
   def create_exe(cmd, path, platform, arch, env)
-    cmd_path = path + "/" + cmd
+    cmd_path = File.join( path, cmd )
     file = <<-eof
 #!#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )}
 
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'
 
-OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd}' ), '#{platform}', '#{arch}', #{env}
+OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd}' ), '#{platform}', '#{arch}', #{Yajl::Encoder.encode( env )}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
     sleep 0.01 until File.exists? cmd_path
@@ -163,10 +165,12 @@ shared_context "cross platform data" do
 
               cmd_list.each do |c|
                 data = OhaiPluginCommon.read_output c
+
                 data = data[platform][arch].select { |f| f[:env] == env }
                 if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
                   cmd_not_found.add c
                 else
+                  puts "create_exe c: #{c}, path: #{path}, platform: #{platform}, arch: #{arch}, env: #{env}"
                   OhaiPluginCommon.create_exe c, path, platform, arch, env
                 end
               end

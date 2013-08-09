@@ -170,7 +170,6 @@ shared_context "cross platform data" do
                 if data.all? { |f| /command not found/ =~ f[:stderr] && f[:exit_status] == 127 }
                   cmd_not_found.add c
                 else
-                  puts "create_exe c: #{c}, path: #{path}, platform: #{platform}, arch: #{arch}, env: #{env}"
                   OhaiPluginCommon.create_exe c, path, platform, arch, env
                 end
               end

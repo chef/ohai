@@ -1,6 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
+# Copyright:: Copyright (c) 2008-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +17,9 @@
 # limitations under the License.
 #
 
-
+require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin erlang" do
 
@@ -60,5 +62,42 @@ describe Ohai::System, "plugin erlang" do
     @plugin.run
     @plugin.languages.should_not have_key(:erlang)
   end
-  
+
+
+  ##########
+
+  expected = [{
+                :env => [[]],
+                :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "erlang" => nil }},
+              },{
+                :env => [[]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "erlang" => nil }},
+              },{
+                :env => [["erlang"]],
+                :platform => ["centos-5.9", "centos-6.4"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "erlang" => { "version" => "5.8.5", "options" => ["ASYNC_THREADS"], "emulator" => "BEAM" }}},
+              },{
+                :env => [["erlang"]],
+                :platform => ["ubuntu-10.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "erlang" => { "version" => "5.7.4", "options" => ["ASYNC_THREADS", "HIPE"], "emulator" => "BEAM" }}},
+              },{
+                :env => [["erlang"]],
+                :platform => ["ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "erlang" => { "version" => "5.8.5", "options" => ["ASYNC_THREADS"], "emulator" => "BEAM" }}},
+              },{
+                :env => [["erlang"]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "erlang" => { "version" => "5.9.1", "options" => ["ASYNC_THREADS"], "emulator" => "BEAM" }}},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["languages", "erlang"], expected, ["erl"]
 end

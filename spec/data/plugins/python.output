@@ -1,0 +1,143 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.4.3 (#1, Jan  9 2013, 06:49:54) \n[GCC 4.1.2 20080704 (Red Hat 4.1.2-54)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x86"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.4.3 (#1, Jan  9 2013, 06:49:54) \n[GCC 4.1.2 20080704 (Red Hat 4.1.2-54)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.4.3 (#1, Jan  9 2013, 06:47:03) \n[GCC 4.1.2 20080704 (Red Hat 4.1.2-54)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.4.3 (#1, Jan  9 2013, 06:47:03) \n[GCC 4.1.2 20080704 (Red Hat 4.1.2-54)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.6.6 (r266:84292, Feb 21 2013, 23:54:59) \n[GCC 4.4.7 20120313 (Red Hat 4.4.7-3)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.6.6 (r266:84292, Jul 10 2013, 22:43:23) \n[GCC 4.4.7 20120313 (Red Hat 4.4.7-3)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.6.6 (r266:84292, Feb 22 2013, 00:00:18) \n[GCC 4.4.7 20120313 (Red Hat 4.4.7-3)]\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.6.6 (r266:84292, Jul 10 2013, 22:48:45) \n[GCC 4.4.7 20120313 (Red Hat 4.4.7-3)]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.6.5 (r265:79063, Oct  1 2012, 22:07:21) \n[GCC 4.4.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.6.5 (r265:79063, Oct  1 2012, 22:07:21) \n[GCC 4.4.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.6.5 (r265:79063, Oct  1 2012, 22:04:36) \n[GCC 4.4.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.6.5 (r265:79063, Oct  1 2012, 22:04:36) \n[GCC 4.4.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.7.3 (default, Aug  1 2012, 05:16:07) \n[GCC 4.6.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.7.3 (default, Apr 10 2013, 05:46:21) \n[GCC 4.6.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.7.3 (default, Aug  1 2012, 05:14:39) \n[GCC 4.6.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.7.3 (default, Apr 10 2013, 06:20:15) \n[GCC 4.6.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-c \"import sys; print sys.version\""
+stdout "2.7.4 (default, Apr 19 2013, 18:28:01) \n[GCC 4.7.3]\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["python"]
+params "-c \"import sys; print sys.version\""
+stdout "2.7.4 (default, Apr 19 2013, 18:28:01) \n[GCC 4.7.3]\n"
+stderr ""
+exit_status 0

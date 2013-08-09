@@ -1,6 +1,8 @@
 #
 # Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
 # Copyright:: Copyright (c) Jacques Marneweck
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,4 +51,33 @@ describe Ohai::System, "plugin nodejs" do
     @plugin.run
     @plugin.languages.should_not have_key(:nodejs)
   end
+
+  #############
+
+  require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
+
+  expected = [{
+                :env => [[]],
+                :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "nodejs" => nil }},
+              },{
+                :env => [[]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "nodejs" => nil }},
+              },{
+                :env => [["nodejs"]],
+                :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
+              },{
+                :env => [["nodejs"]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["languages", "nodejs"], expected, ["node"]
 end

@@ -1,5 +1,6 @@
 #
 # Author:: Deepali Jagtap (<deepali.jagtap@clogeny.com>)
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -61,7 +62,7 @@ popen4("mount") do |pid, stdin, stdout, stderr|
       filesystem = fields[0] + ":" + fields[1]
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:mount] = fields[3]
-      fs[filesystem][:fs_type] = fields[3]
+      fs[filesystem][:fs_type] = fields[4]
       fs[filesystem][:mount_options] = fields[7]
     end
   end

@@ -79,7 +79,8 @@ ARP_AN
     @plugin.stub(:popen4).with("lsdev -Cc if").and_yield(nil, StringIO.new, StringIO.new(@lsdev_Cc_if), nil)
     @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new(@ifconfig_en0), nil)
     @plugin.stub(:popen4).with("entstat -d en0 | grep \"Hardware Address\"").and_yield(nil, StringIO.new, StringIO.new("Hardware Address: be:42:80:00:b0:05"), nil)
-    %w{inet inet6}.each { |i| @plugin.stub(:popen4).with("netstat -nrf #{i}").and_yield(nil, StringIO.new, StringIO.new(@netstat_nrf_inet), nil)}
+    @plugin.stub(:popen4).with("netstat -nrf inet").and_yield(nil, StringIO.new, StringIO.new(@netstat_nrf_inet), nil)
+    @plugin.stub(:popen4).with("netstat -nrf inet6").and_yield(nil, StringIO.new, StringIO.new("::1%1  ::1%1  UH 1 109392 en0  -  -"), nil)
     @plugin.stub(:popen4).with("arp -an").and_yield(nil, StringIO.new, StringIO.new(@aix_arp_an), nil)
   end
 
@@ -203,25 +204,49 @@ ARP_AN
   end
 
   describe "netstat -nrf family" do
-    before do
-      @plugin.run
+    context "inet" do
+      before do
+        @plugin.run
+      end
+
+      it "detects the route destinations" do
+        @plugin['network']['interfaces']['en0'][:routes][0][:destination].should == "default"
+        @plugin['network']['interfaces']['en0'][:routes][1][:destination].should == "172.29.128.0"
+      end
+
+      it "detects the route family" do
+        @plugin['network']['interfaces']['en0'][:routes][0][:family].should == "inet"
+      end
+
+      it "detects the route gateway" do
+        @plugin['network']['interfaces']['en0'][:routes][0][:via].should == "172.29.128.13"
+      end
+
+      it "detects the route flags" do
+        @plugin['network']['interfaces']['en0'][:routes][0][:flags].should == "UG"
+      end
     end
 
-    it "detects the route destinations" do
-      @plugin['network']['interfaces']['en0'][:routes][0][:destination].should == "default"
-      @plugin['network']['interfaces']['en0'][:routes][1][:destination].should == "172.29.128.0"
-    end
+    context "inet6" do
+      before do
+        @plugin.run
+      end
 
-    it "detects the route family" do
-      @plugin['network']['interfaces']['en0'][:routes][0][:family].should == "inet"
-    end
+      it "detects the route destinations" do
+        @plugin['network']['interfaces']['en0'][:routes][4][:destination].should == "::1%1"
+      end
 
-    it "detects the route gateway" do
-      @plugin['network']['interfaces']['en0'][:routes][0][:via].should == "172.29.128.13"
-    end
+      it "detects the route family" do
+        @plugin['network']['interfaces']['en0'][:routes][4][:family].should == "inet6"
+      end
 
-    it "detects the route flags" do
-      @plugin['network']['interfaces']['en0'][:routes][0][:flags].should == "UG"
+      it "detects the route gateway" do
+        @plugin['network']['interfaces']['en0'][:routes][4][:via].should == "::1%1"
+      end
+
+      it "detects the route flags" do
+        @plugin['network']['interfaces']['en0'][:routes][4][:flags].should == "UH"
+      end
     end
   end
 

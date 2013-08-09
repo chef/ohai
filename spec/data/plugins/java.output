@@ -1,0 +1,143 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x86"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_24\"\nOpenJDK Runtime Environment (IcedTea6 1.11.11.90) (rhel-1.41.1.11.11.90.el5_9-i386)\nOpenJDK Client VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x64"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_24\"\nOpenJDK Runtime Environment (IcedTea6 1.11.11.90) (rhel-1.41.1.11.11.90.el5_9-x86_64)\nOpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "centos-6.4"
+arch "x86"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_24\"\nOpenJDK Runtime Environment (IcedTea6 1.11.11.90) (rhel-1.62.1.11.11.90.el6_4-i386)\nOpenJDK Client VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "centos-6.4"
+arch "x64"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_24\"\nOpenJDK Runtime Environment (IcedTea6 1.11.11.90) (rhel-1.62.1.11.11.90.el6_4-x86_64)\nOpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_27\"\nOpenJDK Runtime Environment (IcedTea6 1.12.5) (6b27-1.12.5-0ubuntu0.10.04.1)\nOpenJDK Client VM (build 20.0-b12, mixed mode, sharing)\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_27\"\nOpenJDK Runtime Environment (IcedTea6 1.12.5) (6b27-1.12.5-0ubuntu0.10.04.1)\nOpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_27\"\nOpenJDK Runtime Environment (IcedTea6 1.12.5) (6b27-1.12.5-0ubuntu0.12.04.1)\nOpenJDK Client VM (build 20.0-b12, mixed mode, sharing)\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_27\"\nOpenJDK Runtime Environment (IcedTea6 1.12.5) (6b27-1.12.5-0ubuntu0.12.04.1)\nOpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)\n"
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-version"
+stdout ""
+stderr "bash: line 2: java: command not found\n"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["java"]
+params "-version"
+stdout ""
+stderr "java version \"1.6.0_27\"\nOpenJDK Runtime Environment (IcedTea6 1.12.5) (6b27-1.12.5-1ubuntu1)\nOpenJDK 64-Bit Server VM (build 20.0-b12, mixed mode)\n"
+exit_status 0

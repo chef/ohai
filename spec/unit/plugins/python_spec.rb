@@ -1,6 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
+# Copyright:: Copyright (c) 2008-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,5 +51,38 @@ describe Ohai::System, "plugin python" do
     @plugin.run
     @plugin.languages.should_not have_key(:python)
   end
-  
+
+  ##########
+
+  require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
+
+  expected = [{
+                :env => [[], ["python"]],
+                :platform => ["centos-5.9"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "python" => { "version" => "2.4.3" }}},
+              },{
+                :env => [[], ["python"]],
+                :platform => ["centos-6.4"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "python" => { "version" => "2.6.6"}}},
+              },{
+                :env => [[], ["python"]],
+                :platform => ["ubuntu-10.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "python" => { "version" => "2.6.5"}}},
+              },{
+                :env => [[], ["python"]],
+                :platform => ["ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "python" => { "version" => "2.7.3"}}},
+              },{
+                :env => [[], ["python"]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "python" => { "version" => "2.7.4"}}},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["languages", "python"], expected, ["python"]
 end

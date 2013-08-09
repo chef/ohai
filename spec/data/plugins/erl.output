@@ -1,0 +1,144 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x86"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "centos-5.9"
+arch "x64"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "centos-6.4"
+arch "x86"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "centos-6.4"
+arch "x64"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS,HIPE) (BEAM) emulator version 5.7.4\r\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS,HIPE) (BEAM) emulator version 5.7.4\r\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.8.5\r\n"
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "+V"
+stdout ""
+stderr "bash: line 2: erl: command not found\n"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["erlang"]
+params "+V"
+stdout ""
+stderr "Erlang (ASYNC_THREADS) (BEAM) emulator version 5.9.1\r\n"
+exit_status 0
+

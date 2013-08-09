@@ -143,6 +143,16 @@ module Ohai
         hints[name]
       end
 
+      #emulates the old plugin loading behavior
+      def safe_run
+        begin
+          self.run
+        rescue => e
+          Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
+          e.backtrace.each { |line| Ohai::Log.error( line )}
+        end
+      end
+
       def method_missing(name, *args)
         return get_attribute(name) if args.length == 0
 

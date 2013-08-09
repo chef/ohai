@@ -1,6 +1,8 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
 # Copyright:: Copyright (c) 2009 VMware, Inc.
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +18,9 @@
 # limitations under the License.
 #
 
+require 'json'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin php" do
 
@@ -50,4 +54,40 @@ describe Ohai::System, "plugin php" do
     @plugin.languages.should_not have_key(:php)
   end
 
+  #########
+
+  expected = [{
+                :env => [[]],
+                :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "php" => nil }},
+              },{
+                :env => [[]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "php" => nil }},
+              },{
+                :env => [["php"]],
+                :platform => ["centos-5.9", "centos-6.4"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "php" => { "version" => "5.3.3" }}},
+              },{
+                :env => [["php"]],
+                :platform => ["ubuntu-10.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
+              },{
+                :env => [["php"]],
+                :platform => ["ubuntu-12.04"],
+                :arch => ["x86", "x64"],
+                :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
+              },{
+                :env => [["php"]],
+                :platform => ["ubuntu-13.04"],
+                :arch => ["x64"],
+                :ohai => { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}},
+              }]
+
+  include_context "cross platform data"
+  it_behaves_like "a plugin", ["languages", "php"], expected, ["php"]
 end

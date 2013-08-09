@@ -1,0 +1,143 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "-V:version -V:archname"
+stdout "version='5.8.8';\narchname='i386-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x86"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.8.8';\narchname='i386-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "-V:version -V:archname"
+stdout "version='5.8.8';\narchname='x86_64-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.8.8';\narchname='x86_64-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='i386-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='i386-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='x86_64-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='x86_64-linux-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='i486-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='i486-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.10.1';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='i686-linux-gnu-thread-multi-64int';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='i686-linux-gnu-thread-multi-64int';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["perl"]
+params "-V:version -V:archname"
+stdout "version='5.14.2';\narchname='x86_64-linux-gnu-thread-multi';\n"
+stderr ""
+exit_status 0

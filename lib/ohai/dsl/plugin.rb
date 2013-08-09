@@ -143,6 +143,14 @@ module Ohai
         hints[name]
       end
 
+      #emulates the old plugin loading behavior
+      def safe_run
+        begin
+          self.run
+        rescue
+        end
+      end
+
       def method_missing(name, *args)
         return get_attribute(name) if args.length == 0
 

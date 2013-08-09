@@ -1,5 +1,6 @@
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -21,7 +22,7 @@ provides "network", "counters/network"
 
 # Loads following information.
 # :default_interface, :default_gateway - route -n get 0
-# :interfaces 
+# :interfaces
 # => routes(netstat -nr | grep en0)
 # => addresses (ifconfig en0 or lsattr -El en0), macaddress (entstat -d en0 = Hardware Address: be:42:80:00:b0:05)
 # => flags (ifconfig en0)
@@ -78,7 +79,7 @@ popen4("lsdev -Cc if") do |pid, stdin, stdout, stderr|
                 netmask = hex_to_dec_netmask($1) if line =~ /netmask\s(\S+)\s/
                 unless netmask
                   tmp_prefix ||= "32"
-                  IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
+                  netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
                 end
               else
                 netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
@@ -91,7 +92,7 @@ popen4("lsdev -Cc if") do |pid, stdin, stdout, stderr|
               if line =~ /broadcast\s(\S+)\s/
                 iface[interface][:addresses][tmp_addr][:broadcast] = $1
               end
-            elsif line =~ /inet6 ([a-f0-9\:]+)\/(\d+)/
+            elsif line =~ /inet6 ([a-f0-9\:%]+)\/(\d+)/
               # TODO do we have more properties on inet6 in aix? broadcast
               iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
               iface[interface][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2 }
@@ -99,8 +100,8 @@ popen4("lsdev -Cc if") do |pid, stdin, stdout, stderr|
               # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
               properties = line.split
               n = properties.length/2 - 1
-              for i in 0..n
-                iface[interface][properties[i]] = properties[(i == 0 ? 1 : i*2)]
+              (0..n).each do |i|
+                iface[interface][properties[i*2]] = properties[(i*2+1)]
               end
             end
           end

@@ -147,7 +147,9 @@ module Ohai
       def safe_run
         begin
           self.run
-        rescue
+        rescue => e
+          Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
+          e.backtrace.each { |line| Ohai::Log.error( line )}
         end
       end
 

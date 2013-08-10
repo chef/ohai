@@ -154,12 +154,12 @@ end
 shared_context "cross platform data" do
   shared_examples_for "a plugin" do |plugin_names, data, cmd_list|
     data.each do |e|
-      next if RUBY_PLATFORM =~ /cygwin|windows|mingw/ #disable for windows
+      # next if RUBY_PLATFORM =~ /cygwin|windows|mingw/ #disable for windows
 
       e[:platform].each do |platform|
         e[:arch].each do |arch|
           e[:env].each do |env|
-            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
+            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" :unix_only do
               path = OhaiPluginCommon.get_path
               cmd_not_found = Set.new
 

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Hostname) do
+Ohai.plugin do
   provides "fqdn", "domain"
 
   depends_os "hostname"

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Keys) do
+Ohai.plugin do
   provides "keys"
 
   collect_data do

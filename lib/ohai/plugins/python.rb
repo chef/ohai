@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Python) do
+Ohai.plugin do
   provides "languages/python"
 
   depends "languages"

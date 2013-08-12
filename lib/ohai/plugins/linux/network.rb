@@ -18,7 +18,7 @@
 
 require 'ipaddr'
 
-Ohai.plugin(:Network) do
+Ohai.plugin do
   provides "network", "counters/network"
 
   def encaps_lookup(encap)
@@ -35,6 +35,11 @@ Ohai.plugin(:Network) do
   collect_data do
     iface = Mash.new
     net_counters = Mash.new
+
+    network Mash.new unless network
+    network[:interfaces] Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] Mash.new unless counters[:network]
 
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 

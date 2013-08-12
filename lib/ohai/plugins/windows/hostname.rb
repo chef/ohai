@@ -19,7 +19,7 @@
 require 'ruby-wmi'
 require 'socket'
 
-Ohai.plugin(:Hostname) do
+Ohai.plugin do
   provides "hostname"
   provides "fqdn"
 

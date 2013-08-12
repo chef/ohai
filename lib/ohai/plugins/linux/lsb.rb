@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Lsb) do
+Ohai.plugin do
   provides "lsb"
 
   collect_data do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Command) do
+Ohai.plugin do
   provides "command"
 
   collect_data do

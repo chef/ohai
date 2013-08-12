@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Groovy) do
+Ohai.plugin do
   provides "languages/groovy"
 
   depends "languages"

@@ -1,5 +1,19 @@
 #
+# Author:: Claire McQuin (<claire@opscode.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# License:: Apache License, Version 2.0
 #
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
 require 'ohai/os'
@@ -11,9 +25,17 @@ module Ohai
   #=========================================================
   # define new plugin class
   #=========================================================
-  def self.plugin(plugin_name, &block)
+  def self.plugin(&block)
     plugin_class = Class.new(DSL::Plugin, &block)
-    const_set(plugin_name, plugin_class)
+
+    # give this plugin class a unique name
+    plugin_const = ""
+    begin
+      x = rand
+      plugin_const = "P" + x.to_s.delete("0.")
+    end while Ohai.const_defined?(plugin_const, true)
+
+    const_set(plugin_const, plugin_class)
   end
 
   module DSL

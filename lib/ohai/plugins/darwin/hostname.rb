@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DarwinHostname) do
+Ohai.plugin do
   provides "fqdn", "hostname"
 
   collect_data do

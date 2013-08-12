@@ -55,7 +55,7 @@
 
 require 'scanf'
 
-Ohai.plugin(:Network) do
+Ohai.plugin do
   provides "network"
 
   def encaps_lookup(ifname)

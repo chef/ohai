@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:NetworkRoute) do
+Ohai.plugin do
   depends "network"
 
   provides "network"

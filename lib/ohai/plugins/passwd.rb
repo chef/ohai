@@ -1,7 +1,7 @@
 
 require 'etc'
 
-Ohai.plugin(:Passwd) do
+Ohai.plugin do
   provides 'etc', 'current_user'
 
   def fix_encoding(str)

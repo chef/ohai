@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DarwinPlatform) do
+Ohai.plugin do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data do

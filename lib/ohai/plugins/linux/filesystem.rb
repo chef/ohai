@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem) do
+Ohai.plugin do
   provides "filesystem"
 
   collect_data do

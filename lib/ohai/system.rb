@@ -33,12 +33,14 @@ module Ohai
     attr_accessor :data
     attr_reader :attributes
     attr_reader :plugins
+    attr_reader :sources
     attr_reader :hints
 
     def initialize
       @data = Mash.new
       @attributes = Hash.new
       @plugins = Mash.new
+      @sources = Hash.new
       @hints = Hash.new
       @plugin_path = ""
     end
@@ -60,7 +62,7 @@ module Ohai
           if md
             plugin_path = md[0]
             plugin_name = md[1]
-            loader.load_plugin(plugin_path, plugin_name) unless @plugins.has_key?(plugin_name)
+            loader.load_plugin(plugin_path, plugin_name) unless @sources.has_key?(plugin_path)
           end
         end
       end

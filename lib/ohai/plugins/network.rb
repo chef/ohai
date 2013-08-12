@@ -18,11 +18,10 @@
 
 require 'ipaddress'
 
-Ohai.plugin(:Network) do
+Ohai.plugin do
   provides "network", "counters/network"
 
   depends "hostname"
-  depends "network_basic"
   depends_os "network"
 
   FAMILIES = {
@@ -135,6 +134,10 @@ Ohai.plugin(:Network) do
 
   collect_data do
     results = {}
+    network Mash.new unless network
+    network[:interfaces] Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] Mash.new unless counters[:network]
 
     # inet family is treated before inet6
     FAMILIES.keys.sort.each do |family|

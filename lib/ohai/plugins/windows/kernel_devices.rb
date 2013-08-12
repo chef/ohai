@@ -17,7 +17,7 @@
 #
 require 'ruby-wmi'
 
-Ohai.plugin(:KernelDevices) do
+Ohai.plugin do
   provides "kernel"
   
   WIN32OLE.codepage = WIN32OLE::CP_UTF8

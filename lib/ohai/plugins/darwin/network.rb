@@ -18,7 +18,7 @@
 
 require 'scanf'
 
-Ohai.plugin(:DarwinNetwork) do
+Ohai.plugin do
   provides "network", "counters/network"
 
   def parse_media(media_string)
@@ -85,7 +85,10 @@ Ohai.plugin(:DarwinNetwork) do
   end
 
   collect_data do
-    network Mash.new
+    network Mash.new unless network
+    network[:interfaces] Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] Mash.new unless counters[:network]
     
     from("route -n get default").split("\n").each do |line|
       if line =~ /(\w+): ([\w\.]+)/

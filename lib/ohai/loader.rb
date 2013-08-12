@@ -28,9 +28,12 @@ module Ohai
     def initialize(controller)
       @attributes = controller.attributes
       @plugins = controller.plugins
+      @sources = controller.sources
     end
 
     def load_plugin(plugin_path, plugin_name=nil)
+      clean_up(plugin_path) if @sources.has_key?(plugin_path)
+      
       plugin = nil
 
       begin
@@ -47,19 +50,30 @@ module Ohai
         return
       end
 
-      plugin_key = plugin_name || plugin.name
+      plugin_key = plugin_name || plugin.name 
       register_plugin(plugin, plugin_path, plugin_key)
       collect_provides(plugin, plugin_key)
     end
 
     private
 
+    def clean_up(file)
+      key = @sources[file]
+      @plugins[key][:provides].each do |attr|
+        @attributes[attr][:providers].delete(key)
+      end
+
+      @plugins.delete(key)
+      @sources.delete(file)
+    end
+
     def register_plugin(plugin, file, plugin_key)
       @plugins[plugin_key] ||= Mash.new
+      @sources[file] = plugin_key
 
       p = @plugins[plugin_key]
       p[:plugin] = plugin
-      p[:source] = file
+      p[:provides] = plugin.provides_attrs
       p[:depends] = plugin.depends_attrs
     end
     
@@ -78,8 +92,8 @@ module Ohai
           end
         end
 
-        a[:_providers] ||= []
-        a[:_providers] << plugin_key
+        a[:providers] ||= []
+        a[:providers] << plugin_key
       end
     end
 

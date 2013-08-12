@@ -20,7 +20,7 @@
 
 require 'socket'
 
-Ohai.plugin(:Hostname) do
+Ohai.plugin do
   provides "hostname", "fqdn"
 
   collect_data do

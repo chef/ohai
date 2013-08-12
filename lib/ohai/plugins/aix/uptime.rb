@@ -16,6 +16,6 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
+Ohai.plugin do
   depends "sigar::uptime"
 end

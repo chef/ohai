@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Network) do
+Ohai.plugin do
   provides "network", "counters/network"
 
   collect_data do

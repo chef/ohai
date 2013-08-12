@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:Memory) do
+Ohai.plugin do
   provides "memory"
 
   collect_data do

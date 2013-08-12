@@ -20,7 +20,7 @@
 
 require "sigar"
 
-Ohai.plugin(:Network) do
+Ohai.plugin do
   provides "network", "counters/network"
 
   def encaps_lookup(encap)

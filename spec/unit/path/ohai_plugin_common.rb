@@ -159,7 +159,8 @@ shared_context "cross platform data" do
       e[:platform].each do |platform|
         e[:arch].each do |arch|
           e[:env].each do |env|
-            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" :unix_only do
+            RUBY_PLATFORM = "windows"
+            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'", :unix_only do
               path = OhaiPluginCommon.get_path
               cmd_not_found = Set.new
 

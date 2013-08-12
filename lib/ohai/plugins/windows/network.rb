@@ -30,11 +30,10 @@ Ohai.plugin do
     iface = Mash.new
     iface_config = Mash.new
     iface_instance = Mash.new
-
     network Mash.new unless network
-    network[:interfaces] Mash.new unless network[:interfaces]
+    network[:interfaces] = Mash.new unless network[:interfaces]
     counters Mash.new unless counters
-    counters[:network] Mash.new unless counters[:network]
+    counters[:network] = Mash.new unless counters[:network]
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
     adapters = WMI::Win32_NetworkAdapterConfiguration.find(:all)

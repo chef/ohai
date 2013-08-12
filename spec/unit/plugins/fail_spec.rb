@@ -32,7 +32,7 @@ describe Ohai::System, "plugin fail" do
     fail_plugin.write("provides \"fail\"require 'thiswillblowupinyourface'\nk=MissingClassName.new\nfail \"ohnoes\"")
     fail_plugin.close
     real_plugin=File.open("#{tmp}/plugins/real.rb","w+")
-    real_plugin.write("Ohai.plugin(:Real) do\nprovides \"real\"\ncollect_data do\nreal \"useful\"\nend\nend\n")
+    real_plugin.write("Ohai.plugin do\nprovides \"real\"\ncollect_data do\nreal \"useful\"\nend\nend\n")
     real_plugin.close
     @plugin_path=Ohai::Config[:plugin_path]
   end

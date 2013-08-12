@@ -20,6 +20,11 @@ Ohai.plugin do
   provides "network", "counters/network"
 
   collect_data do
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
     from("route -n get default").split("\n").each do |line|
       if line =~ /(\w+): ([\w\.]+)/
         case $1

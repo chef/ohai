@@ -76,6 +76,11 @@ Ohai.plugin do
 
   collect_data do
     iface = Mash.new
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
     popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
       stdin.close
       cint = nil

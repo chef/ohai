@@ -134,10 +134,16 @@ Ohai.plugin do
 
   collect_data do
     results = {}
+
     network Mash.new unless network
-    network[:interfaces] Mash.new unless network[:interfaces]
+    network[:interfaces] = Mash.new unless network[:interfaces]
     counters Mash.new unless counters
-    counters[:network] Mash.new unless counters[:network]
+    counters[:network] = Mash.new unless counters[:network]
+
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
 
     # inet family is treated before inet6
     FAMILIES.keys.sort.each do |family|

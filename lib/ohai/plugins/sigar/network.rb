@@ -35,6 +35,10 @@ Ohai.plugin do
 
   collect_data do
     sigar = Sigar.new
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
 
     ninfo = sigar.net_info
 

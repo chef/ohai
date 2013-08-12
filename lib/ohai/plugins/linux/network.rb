@@ -37,9 +37,9 @@ Ohai.plugin do
     net_counters = Mash.new
 
     network Mash.new unless network
-    network[:interfaces] Mash.new unless network[:interfaces]
+    network[:interfaces] = Mash.new unless network[:interfaces]
     counters Mash.new unless counters
-    counters[:network] Mash.new unless counters[:network]
+    counters[:network] = Mash.new unless counters[:network]
 
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 

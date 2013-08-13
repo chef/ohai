@@ -27,15 +27,6 @@ module Ohai
   #=========================================================
   def self.plugin(&block)
     plugin_class = Class.new(DSL::Plugin, &block)
-
-    # give this plugin class a unique name
-    plugin_const = ""
-    begin
-      x = rand
-      plugin_const = "P" + x.to_s.delete("0.")
-    end while Ohai.const_defined?(plugin_const, true)
-
-    const_set(plugin_const, plugin_class)
   end
 
   module DSL

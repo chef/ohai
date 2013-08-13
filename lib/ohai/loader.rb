@@ -50,7 +50,7 @@ module Ohai
         return
       end
 
-      plugin_key = plugin_name || plugin.name 
+      plugin_key = plugin_name || plugin.to_s 
       register_plugin(plugin, plugin_path, plugin_key)
       collect_provides(plugin, plugin_key)
     end

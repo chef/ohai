@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
+Ohai.plugin do
   provides "uptime", "idletime", "uptime_seconds", "idletime_seconds"
 
   collect_data do

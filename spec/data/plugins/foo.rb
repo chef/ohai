@@ -1,2 +1,2 @@
-Ohai.plugin(:Foo) do
+Ohai.plugin do
 end

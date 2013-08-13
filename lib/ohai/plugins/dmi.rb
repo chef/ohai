@@ -18,7 +18,7 @@
 
 require "ohai/plugins/dmi_common"
 
-Ohai.plugin(:Dmi) do
+Ohai.plugin do
   provides "dmi"
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)

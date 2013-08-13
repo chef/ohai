@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Ruby) do
+Ohai.plugin do
   provides "languages/ruby"
 
   depends "languages"

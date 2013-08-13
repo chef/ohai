@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DarwinKernel) do
+Ohai.plugin do
   provides "kernel"
 
   collect_data do

@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:Platform) do
+Ohai.plugin do
   provides "platform", "platform_version"
 
   collect_data do

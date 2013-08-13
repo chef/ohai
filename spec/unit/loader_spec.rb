@@ -37,12 +37,12 @@ describe Ohai::Loader do
   context "when loading a plugin" do
     it "should add the plugin class to Ohai::System's @plugins" do
       @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.plugins[:easy][:plugin].name.should eql("Ohai::Easy")
+      @ohai.plugins.has_key?(:easy).should be_true
     end
 
     it "should save the plugin source file" do
       @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.plugins[:easy][:source].should eql(File.expand_path("easy.rb", @plugin_path))
+      @ohai.sources.has_key?(File.expand_path("easy.rb", @plugin_path)).should be_true
     end
 
     context "should collect provides" do
@@ -81,7 +81,7 @@ describe Ohai::Loader do
 
     it "should save the plugin an attribute is defined in" do
       @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.attributes["easy"]["_providers"].should eql(["easy"])
+      @ohai.attributes["easy"]["providers"].should eql(["easy"])
     end
   end
 end

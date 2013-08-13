@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Zpools) do
+Ohai.plugin do
   provides "zpools"
 
   collect_data do

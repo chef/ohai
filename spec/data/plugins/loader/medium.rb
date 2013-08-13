@@ -2,7 +2,7 @@
 #
 #
 
-Ohai.plugin("Medium") do
+Ohai.plugin do
   provides "medium", "medium/hard"
   depends "easy"
 end

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
+Ohai.plugin do
   provides "platform", "platform_version", "platform_family"
 
   depends 'linux::lsb'

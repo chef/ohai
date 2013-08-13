@@ -19,7 +19,7 @@ require 'date'
 # It would be far better if we could include sys/uptime from sys-uptime RubyGem
 # It would also be good if we could pull idle time; how do we do this on Solaris?
 
-Ohai.plugin(:Uptime) do
+Ohai.plugin do
   provides "uptime", "uptime_seconds"
 
   collect_data do

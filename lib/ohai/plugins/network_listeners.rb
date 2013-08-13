@@ -18,7 +18,7 @@
 
 require 'sigar'
 
-Ohai.plugin(:Listeners) do
+Ohai.plugin do
   provides "network/listeners"
 
   depends "network", "counters/network"
@@ -26,6 +26,7 @@ Ohai.plugin(:Listeners) do
   flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
 
   collect_data do
+    network Mash.new unless network
     listeners = Mash.new
 
     sigar = Sigar.new

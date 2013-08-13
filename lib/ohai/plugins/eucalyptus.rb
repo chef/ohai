@@ -19,7 +19,7 @@
 
 require 'ohai/mixin/ec2_metadata'
 
-Ohai.plugin(:Eucalyptus) do
+Ohai.plugin do
   include Ohai::Mixin::Ec2Metadata
 
   provides "eucalyptus"

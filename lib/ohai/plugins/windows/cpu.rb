@@ -18,7 +18,7 @@
 
 require 'ruby-wmi'
 
-Ohai.plugin(:Cpu) do
+Ohai.plugin do
   provides "cpu"
 
   collect_data do

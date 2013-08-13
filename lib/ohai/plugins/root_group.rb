@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:RootGroup) do
+Ohai.plugin do
   provides 'root_group'
 
   collect_data do

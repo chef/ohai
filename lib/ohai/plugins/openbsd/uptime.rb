@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
+Ohai.plugin do
   provides "uptime", "uptime_seconds"
 
   # kern.boottime=Tue Nov  1 14:45:52 2011

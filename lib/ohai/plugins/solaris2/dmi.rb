@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Dmi) do
+Ohai.plugin do
   depends "dmi"
 
   collect_data do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Languages) do
+Ohai.plugin do
   provides "languages"
 
   collect_data do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Perl) do
+Ohai.plugin do
   provides "languages/perl"
 
   depends "languages"

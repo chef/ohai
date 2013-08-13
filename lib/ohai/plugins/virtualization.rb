@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Virtualization) do
+Ohai.plugin do
   provides "virtualization"
 
   depends_os "virtualization"

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Ps) do
+Ohai.plugin do
   provides "command/ps"
 
   depends 'command'

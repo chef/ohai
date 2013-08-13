@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DarwinUptime) do
+Ohai.plugin do
   provides "uptime", "uptime_seconds"
 
   # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009

@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:Filesystem) do
+Ohai.plugin do
   provides "filesystem"
 
   collect_data do

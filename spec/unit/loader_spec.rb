@@ -20,6 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
 describe Ohai::Loader do
   before(:all) do
+    @v6plugin_path = File.expand_path("../../data/plugins/v6", __FILE__)
     @plugin_path = File.expand_path("../../data/plugins/loader", __FILE__)
   end
 
@@ -84,4 +85,36 @@ describe Ohai::Loader do
       @ohai.attributes["easy"]["providers"].should eql(["easy"])
     end
   end
+
+  it "should add plugin_path to sources" do
+    path = File.expand_path("easy.rb", @plugin_path)
+    @loader.load_plugin(path)
+    @ohai.sources.has_key?(path).should be_true
+  end
+
+  context "when loading v6 plugins" do
+    it "should save the plugin for future loading" do
+      Ohai::Config[:plugin_path] = [@v6plugin_path]
+      path = File.expand_path("os.rb", @v6plugin_path)
+      @loader.load_plugin(path)
+      @ohai.v6plugins.has_key?("os").should be_true
+      @ohai.sources.has_key?(path).should be_true
+    end
+
+    it "should not load the plugin as a class" do
+      path = File.expand_path("os.rb", @v6plugin_path)
+      Ohai::Config[:plugin_path] = [path]
+      @loader.load_plugin(path)
+      @ohai.attributes.has_key?("os").should be_false
+      @ohai.plugins.has_key?("os").should be_false
+    end
+  end
+
+  it "should load both v6 and v7 plugins" do
+    path = File.expand_path(File.dirname(__FILE__) + '/../data/plugins/mix')
+    Ohai::Config[:plugin_path] = [path]
+    @ohai.load_plugins
+    @ohai.sources.keys.sort.should eql(Dir[File.join(path, '*')].sort)
+  end
+  
 end

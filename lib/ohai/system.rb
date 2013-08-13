@@ -33,6 +33,7 @@ module Ohai
     attr_accessor :data
     attr_reader :attributes
     attr_reader :plugins
+    attr_reader :v6plugins
     attr_reader :sources
     attr_reader :hints
 
@@ -40,6 +41,7 @@ module Ohai
       @data = Mash.new
       @attributes = Hash.new
       @plugins = Mash.new
+      @v6plugins = Hash.new
       @sources = Hash.new
       @hints = Hash.new
       @plugin_path = ""
@@ -51,7 +53,7 @@ module Ohai
 
     def load_plugins
       loader = Ohai::Loader.new(self)
-      
+
       Ohai::Config[:plugin_path].each do |path|
         [
          Dir[File.join(path, '*')],
@@ -208,7 +210,6 @@ module Ohai
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
     end
-
 
   end
 end

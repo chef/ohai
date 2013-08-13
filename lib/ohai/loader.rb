@@ -28,34 +28,57 @@ module Ohai
     def initialize(controller)
       @attributes = controller.attributes
       @plugins = controller.plugins
+      @v6plugins = controller.v6plugins
       @sources = controller.sources
     end
 
     def load_plugin(plugin_path, plugin_name=nil)
-      clean_up(plugin_path) if @sources.has_key?(plugin_path)
-      
-      plugin = nil
+      if version6?(plugin_path)
+        save_plugin(plugin_path)
+      else
+        clean_up(plugin_path) if @sources.has_key?(plugin_path)
+        
+        plugin = nil
 
-      begin
-        plugin = from_file(plugin_path)
-      rescue SystemExit, Interrupt
-        raise
-      rescue Exception, Errno::ENOENT => e
-        Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
-        return
+        begin
+          plugin = from_file(plugin_path)
+        rescue SystemExit, Interrupt
+          raise
+        rescue Exception, Errno::ENOENT => e
+          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+          return
+        end
+
+        if plugin.nil?
+          Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
+          return
+        end
+
+        plugin_key = plugin_name || plugin.to_s 
+        register_plugin(plugin, plugin_path, plugin_key)
+        collect_provides(plugin, plugin_key)
       end
-
-      if plugin.nil?
-        Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
-        return
-      end
-
-      plugin_key = plugin_name || plugin.to_s 
-      register_plugin(plugin, plugin_path, plugin_key)
-      collect_provides(plugin, plugin_key)
     end
 
     private
+
+    def version6?(plugin_path)
+      File.open(plugin_path) { |f| f.grep(/Ohai\.plugin/).empty? }
+    end
+
+    def save_plugin(plugin_path)
+      unless @sources.has_key?(plugin_path)
+        Ohai::Config[:plugin_path].each do |path|
+          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
+          md = file_regex.match(plugin_path)
+          if md
+            plugin_name = md[1].gsub(File::SEPARATOR, "::")
+            @v6plugins[plugin_name] = plugin_path
+            @sources[plugin_path] = plugin_name
+          end
+        end
+      end
+    end
 
     def clean_up(file)
       key = @sources[file]

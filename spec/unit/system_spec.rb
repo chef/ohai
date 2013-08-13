@@ -40,6 +40,7 @@ describe Ohai::System, "load_plugins" do
 
   it "should load plugins when plugin_path has a trailing slash" do
     Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
+    File.stub(:open).and_return(false)
     File.stub(:expand_path).with("/tmp/plugins/").and_return("/tmp/plugins") # windows
     Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/darius.rb"])
     Dir.should_receive(:[]).with("/tmp/plugins/#{Ohai::OS.collect_os}/**/*").and_return([])

@@ -47,5 +47,5 @@ describe Ohai::System, "Linux kernel plugin" do
               }]
 
   include_context "cross platform data"
-  it_behaves_like "a plugin", ["kernel", "linux/kernel"], expected, ["uname", "lsmod"]
+  it_behaves_like "a plugin", ["kernel", "linux/kernel"], expected, ["uname", "env"]
 end

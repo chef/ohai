@@ -133,6 +133,9 @@ eos
 
   def create_exe(cmd, path, platform, arch, env)
     cmd_path = File.join( path, cmd )
+    bat_path = cmd_path + ".bat"
+
+    #fake exe
     file = <<-eof
 #!#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )}
 
@@ -142,7 +145,14 @@ require '#{path}/ohai_plugin_common.rb'
 OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd}' ), '#{platform}', '#{arch}', #{Yajl::Encoder.encode( env )}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
-    sleep 0.01 until File.exists? cmd_path
+
+    #.bat shim for windows
+    bat = <<-eof
+@#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )} #{cmd_path} %1 %2 %3 %4 %5 %6 %7 %8 %9
+eof
+    File.open(bat_path, "w") { |f| f.puts bat }
+ 
+    # sleep 0.01 until File.exists? cmd_path
     Mixlib::ShellOut.new("chmod 755 #{cmd_path}").run_command
   end
 
@@ -157,7 +167,7 @@ shared_context "cross platform data" do
       e[:platform].each do |platform|
         e[:arch].each do |arch|
           e[:env].each do |env|
-            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'", :unix_only do
+            it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
               path = OhaiPluginCommon.get_path
               cmd_not_found = Set.new
 
@@ -185,7 +195,7 @@ shared_context "cross platform data" do
                 end
               ensure
                 ENV['PATH'] = old_path
-                cmd_list.each { |c| Mixlib::ShellOut.new("rm #{path}/#{c}").run_command if !cmd_not_found.include?( c )}
+                cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
               end
 
               OhaiPluginCommon.subsumes?( @ohai.data, e[:ohai] ).should be_true

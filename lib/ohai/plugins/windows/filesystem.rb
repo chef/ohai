@@ -18,7 +18,7 @@
 
 require 'ruby-wmi'
 
-Ohai.plugin(:Filesystem) do
+Ohai.plugin do
   provides "filesystem"
 
   collect_data do

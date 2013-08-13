@@ -2,7 +2,7 @@
 #
 #
 
-Ohai.plugin("Hard") do
+Ohai.plugin do
   provides "this"
   provides "plugin"
 

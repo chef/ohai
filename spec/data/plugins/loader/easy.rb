@@ -2,6 +2,6 @@
 #
 #
 
-Ohai.plugin("Easy") do
+Ohai.plugin do
   provides "easy"
 end

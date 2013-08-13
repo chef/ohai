@@ -2,6 +2,6 @@
 #
 #
 
-Ohai.plugin("Load") do
+Ohai.plugin do
 
 end

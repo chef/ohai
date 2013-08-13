@@ -18,7 +18,7 @@
 
 require "ohai"
 
-Ohai.plugin(:OHAI) do
+Ohai.plugin do
   provides "ohai"
 
   collect_data do

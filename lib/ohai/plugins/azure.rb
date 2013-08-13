@@ -1,5 +1,5 @@
 
-Ohai.plugin(:Azure) do
+Ohai.plugin do
   provides "azure"
 
   collect_data do

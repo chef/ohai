@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Cloud) do
+Ohai.plugin do
   provides "cloud"
 
   depends "ec2"

@@ -18,7 +18,7 @@
 
 require 'rbconfig'
 
-Ohai.plugin(:C) do
+Ohai.plugin do
   provides "languages/c"
 
   depends "languages"

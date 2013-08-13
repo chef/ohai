@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Nodejs) do
+Ohai.plugin do
   provides "languages/nodejs"
 
   depends "languages"

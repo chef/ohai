@@ -2,6 +2,6 @@
 #
 #
 
-Ohai.plugin("Test") do
+Ohai.plugin do
 
 end

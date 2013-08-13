@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DarwinCpu) do
+Ohai.plugin do
   provides "cpu"
 
   collect_data do

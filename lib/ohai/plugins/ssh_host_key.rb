@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:SshHostKey) do
+Ohai.plugin do
   provides "keys/ssh"
   depends "keys"
 

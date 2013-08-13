@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Kernel) do
+Ohai.plugin do
   provides "kernel"
 
   depends 'ruby'

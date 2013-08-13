@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:NetworkRoute) do
+Ohai.plugin do
   depends "network"
 
   provides "network"
@@ -42,6 +42,11 @@ Ohai.plugin(:NetworkRoute) do
 
   collect_data do
     sigar=Sigar.new
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
     sigar.net_route_list.each do |route|
       next unless network[:interfaces][route.ifname] # this should never happen
       network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]

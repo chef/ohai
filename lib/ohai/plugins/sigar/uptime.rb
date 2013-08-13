@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin(:Uptime) do
+Ohai.plugin do
   provides "uptime", "uptime_seconds"
 
   collect_data do

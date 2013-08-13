@@ -22,7 +22,7 @@
 # platforms built upon the Windows_NT kernel and have access to win32 or win64
 # subsystems.
 
-Ohai.plugin(:Platform) do
+Ohai.plugin do
   provides "platform"
 
   collect_data do

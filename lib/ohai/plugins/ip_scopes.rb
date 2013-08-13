@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:IpScopes) do
+Ohai.plugin do
   provides "network_ip_scope", "privateaddres"
 
   depends "domain", "fqdn"

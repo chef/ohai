@@ -131,7 +131,7 @@ describe Ohai::System, "Sigar network route plugin" do
       @ohai.data[:os]="sigar"
       
       #Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
-      %w{ counters network_basic sigar/hostname hostname sigar/network network }.each do |plgn|
+      %w{ sigar/hostname hostname sigar/network network }.each do |plgn|
         plgn_key = plgn.gsub("/", "_")
         @loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH), plgn_key)
         @ohai.plugins[plgn_key][:plugin].new(@ohai).run

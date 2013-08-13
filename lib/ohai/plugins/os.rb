@@ -18,9 +18,8 @@
 
 require 'ohai/os'
 
-Ohai.plugin(:Os) do
+Ohai.plugin do
   provides "os", "os_version"
-
   depends 'kernel'
 
   collect_data do

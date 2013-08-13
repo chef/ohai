@@ -187,9 +187,6 @@ shared_context "cross platform data" do
 
               @ohai = Ohai::System.new
 
-              # require 'pry'
-              # binding.pry unless env == []
-
               begin
                 plugin_names.each do | plugin_name |
                   Ohai::Loader.new( @ohai ).load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ), plugin_name )

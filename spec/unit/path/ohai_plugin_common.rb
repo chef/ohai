@@ -107,14 +107,14 @@ module OhaiPluginCommon
 
   # output a fake executable case in the DSL
   def to_fake_exe_format(platform, arch, env, params, stdout, stderr, exit_status)
-    p = Yajl::Parser.new
+    e = Yajl::Encoder.new
     <<-eos
 platform "#{platform}"
 arch "#{arch}"
 env #{env}
-params #{p.parse( params )}
-stdout #{p.parse( stdout )}
-stderr #{p.parse( stderr )}
+params #{e.encode( params )}
+stdout #{e.encode( stdout )}
+stderr #{e.encode( stderr )}
 exit_status #{exit_status}
 eos
   end

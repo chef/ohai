@@ -152,7 +152,7 @@ eof
 eof
     File.open(bat_path, "w") { |f| f.puts bat }
  
-    sleep 0.01 until File.exists? cmd_path
+    # sleep 0.01 until File.exists? cmd_path
     Mixlib::ShellOut.new("chmod 755 #{cmd_path}").run_command
   end
 

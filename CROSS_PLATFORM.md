@@ -40,12 +40,18 @@ In general, you should only add a string to env if it affects the execution of t
 
 Run the get_output.rb command to collect data.  Both "parameters" and "env" are comma separated lists of strings.  If any of the parameters begins with the "-" character, that parameter needs to be adjacent to its flag, as in the example:
 
-    ruby get_output.rb -c "python" -p'-c "import sys; print sys.version"' -f "osx-10.8.4" -a x64 -e python
+    ruby get_output.rb -c python -p'-c "import sys; print sys.version"' -f "osx-10.8.4" -a x64 -e python
+
+One thing to note: -p is a comma separated list of strings.  Each string will be treated as a complete set of parameters and run individually.  For example
+
+    ruby get_output.rb -c ls -p',-l' -f "osx-10.8" -a x64 -e
+
+Would cause get_output.rb to collect the output of both the "ls" and "ls -l" commands.
 
 ## Adding data to the library
 
 To add data to the library, copy the output of the get_output.rb command to the file named <command>.output in the ohai/spec/data/plugins directory.  For example, if I collected data using the command
 
-    ruby get_output.rb -c "ls" -p',-l' -f "osx-10.8" -a x64 -e
+    ruby get_output.rb -c ls -p',-l' -f "osx-10.8" -a x64 -e
 
 I would copy the output and paste it to the end of the ls.output file in ohai/spec/data/plugins.  If there is no ls.output file, create one.

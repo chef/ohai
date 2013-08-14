@@ -1,4 +1,4 @@
-### Terms
+## Terms
 
 ##### Command
 
@@ -36,7 +36,16 @@ For example, if I made sure to install python and ruby before executing a comman
 
 In general, you should only add a string to env if it affects the execution of the command.
 
-### Collecting Data
+## Collecting Data
 
-Run the get_output.rb command to collect data.
+Run the get_output.rb command to collect data.  Both "parameters" and "env" are comma separated lists of strings.  If any of the parameters begins with the "-" character, that parameter needs to be adjacent to its flag, as in the example:
 
+    ruby get_output.rb -c "python" -p'-c "import sys; print sys.version"' -f "osx-10.8.4" -a x64 -e python
+
+## Adding data to the library
+
+To add data to the library, copy the output of the get_output.rb command to the file named <command>.output in the ohai/spec/data/plugins directory.  For example, if I collected data using the command
+
+    ruby get_output.rb -c "ls" -p',-l' -f "osx-10.8" -a x64 -e
+
+I would copy the output and paste it to the end of the ls.output file in ohai/spec/data/plugins.  If there is no ls.output file, create one.

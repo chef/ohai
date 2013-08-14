@@ -46,7 +46,7 @@ One thing to note: -p is a comma separated list of strings.  Each string will be
 
     ruby get_output.rb -c ls -p',-l' -f "osx-10.8" -a x64 -e
 
-Would cause get_output.rb to collect the output of both the "ls" and "ls -l" commands.
+Would cause get_output.rb to collect the output of both "ls" and "ls -l".
 
 ## Adding data to the library
 

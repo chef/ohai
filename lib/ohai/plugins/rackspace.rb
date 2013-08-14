@@ -104,7 +104,11 @@ Ohai.plugin do
       # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
       rackspace[:public_ipv4] = rackspace[:public_ip]
       get_global_ipv6_address(:public_ipv6, :eth0)
-      rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
+      if rackspace[:public_ip].nil?
+        rackspace[:public_hostname] = nil
+      else
+        rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
+      end
       rackspace[:local_ipv4] = rackspace[:private_ip]
       get_global_ipv6_address(:local_ipv6, :eth1)
       rackspace[:local_hostname] = hostname

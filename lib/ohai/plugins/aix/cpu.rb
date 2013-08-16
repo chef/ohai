@@ -1,5 +1,6 @@
 #
 # Author:: Joshua Timberman <joshua@opscode.com>
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Copyright:: Copyright (c) 2013, Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -18,7 +19,7 @@
 
 provides "cpu"
 
-cpu = Mash.new
+cpu Mash.new
 
 # IBM is the only maker of CPUs for AIX systems.
 cpu[:vendor_id] = "IBM"

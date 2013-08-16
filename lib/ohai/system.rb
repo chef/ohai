@@ -32,18 +32,14 @@ module Ohai
   class System
     attr_accessor :data
     attr_reader :attributes
-    attr_reader :plugins
-    attr_reader :v6plugins
-    attr_reader :sources
     attr_reader :hints
+    attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
       @attributes = Hash.new
-      @plugins = Mash.new
-      @v6plugins = Hash.new
-      @sources = Hash.new
       @hints = Hash.new
+      @v6_dependency_solver = Hash.new
       @plugin_path = ""
     end
 

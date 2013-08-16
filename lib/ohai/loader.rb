@@ -27,81 +27,48 @@ module Ohai
 
     def initialize(controller)
       @attributes = controller.attributes
-      @plugins = controller.plugins
-      @v6plugins = controller.v6plugins
-      @sources = controller.sources
+      @v6_dependency_solver = controller.v6_dependency_solver
     end
 
     def load_plugin(plugin_path, plugin_name=nil)
-      if version6?(plugin_path)
-        save_plugin(plugin_path)
-      else
-        clean_up(plugin_path) if @sources.has_key?(plugin_path)
-        
-        plugin = nil
+      plugin = nil
 
+      contents = ""
+      begin
+        contents = IO.read(plugin_path)
+      rescue SystemExit, Interrupt
+        raise
+      rescue IOError, Errno::ENOENT
+        Ohai::Log.debug("Unable to open or read #{plugin_path}")
+        return plugin
+      end
+
+      if contents.include?("Ohai.plugin")
         begin
-          plugin = from_file(plugin_path)
+          plugin = self.instance_eval(contents, plugin_path, 1)
         rescue SystemExit, Interrupt
           raise
         rescue Exception, Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
-          return
+          Ohai::Log.debug("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
 
-        if plugin.nil?
-          Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
-          return
-        end
-
-        plugin_key = plugin_name || plugin.to_s 
-        register_plugin(plugin, plugin_path, plugin_key)
-        collect_provides(plugin, plugin_key)
+        collect_provides(plugin) unless plugin.nil?
+      else
+        plugin = Ohai.v6plugin do collect_contents contents end
       end
+
+      if plugin.nil?
+        Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
+      else
+        @v6_dependency_solver[plugin_path] = plugin
+      end
+
+      plugin
     end
 
     private
 
-    def version6?(plugin_path)
-      File.open(plugin_path) { |f| f.grep(/Ohai\.plugin/).empty? }
-    end
-
-    def save_plugin(plugin_path)
-      unless @sources.has_key?(plugin_path)
-        Ohai::Config[:plugin_path].each do |path|
-          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
-          md = file_regex.match(plugin_path)
-          if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            @v6plugins[plugin_name] = plugin_path
-            @sources[plugin_path] = plugin_name
-          end
-        end
-      end
-    end
-
-    def clean_up(file)
-      key = @sources[file]
-      @plugins[key][:provides].each do |attr|
-        @attributes[attr][:providers].delete(key)
-      end
-
-      @plugins.delete(key)
-      @sources.delete(file)
-    end
-
-    def register_plugin(plugin, file, plugin_key)
-      @plugins[plugin_key] ||= Mash.new
-      @sources[file] = plugin_key
-
-      p = @plugins[plugin_key]
-      p[:plugin] = plugin
-      p[:provides] = plugin.provides_attrs
-      p[:depends] = plugin.depends_attrs
-    end
-    
-
-    def collect_provides(plugin, plugin_key)
+    def collect_provides(plugin)
       plugin_provides = plugin.provides_attrs
       
       plugin_provides.each do |attr|
@@ -116,7 +83,7 @@ module Ohai
         end
 
         a[:providers] ||= []
-        a[:providers] << plugin_key
+        a[:providers] << plugin
       end
     end
 

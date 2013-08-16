@@ -36,4 +36,8 @@ describe Ohai::System, "Aix plugin platform" do
   it "should set the platform_version" do
     @plugin[:platform_version].should == "1.0"
   end
+
+  it "should set platform_family" do
+    @plugin[:platform_family].should == @plugin[:platform]
+  end
 end

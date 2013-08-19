@@ -47,7 +47,7 @@ class MyCLI
     :long => "--params [P1,P2,...]",
     :description => "List of parameters, applied one at a time",
     #not sure how to use optparse's array syntax, so this is a hack to reproduce that behavior
-    :proc => Proc.new { |s| if s then s.split( "," ) else [""] end }
+    :proc => Proc.new { |s| if s then s.split( "," ) end }
 
   option :platform,
     :short => "-f PLATFORM",
@@ -65,7 +65,7 @@ class MyCLI
     :short => "-e [E1,E2,...]",
     :long => "--environment [E1,E2,...]",
     :description => "List of labels that describe the environment",
-    :proc => Proc.new { |s| if s then s.split( "," ) else [] end } #same here
+    :proc => Proc.new { |s| if s then s.split( "," ) end } #same here
 
 end
 cli = MyCLI.new
@@ -80,6 +80,8 @@ cmd, params, platform, arch, env = cli.config[:command], cli.config[:params], cl
 data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
+params ||= [""]
+env ||= []
 
 # collect output
 

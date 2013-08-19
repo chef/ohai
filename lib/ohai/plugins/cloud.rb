@@ -35,20 +35,27 @@ end
 # Google Compute Engine (gce)
 #--------------------------------------
 
+# Is current cloud gce?
+#
+# === Return
+# true:: If gce Hash is defined
+# false:: Otherwise
 def on_gce?
   gce != nil
 end
+
+# Fill cloud hash with gce values
 def get_gce_values
   cloud[:public_ipv4] = []
   cloud[:local_ipv4] = []
 
-  public_ips = gce['network']["networkInterface"].collect do |interface|
-    if interface.has_key?('accessConfiguration')
-      interface['accessConfiguration'].collect{|ac| ac['externalIp']}
+  public_ips = gce['instance']["networkInterface"].collect do |interface|
+    if interface.has_key?('accessConfigs')
+      interface['accessConfigs'].collect{|ac| ac['externalIp']}
     end
   end.flatten.compact
 
-  private_ips = gce['network']["networkInterface"].collect do |interface|
+  private_ips = gce['instance']["networkInterface"].collect do |interface|
     interface['ip']
   end.compact
   

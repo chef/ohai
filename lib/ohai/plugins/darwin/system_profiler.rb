@@ -24,7 +24,7 @@ Ohai.plugin do
       require 'plist'
 
       system_profile Array.new
-      items Array.new
+      items =  Array.new
       detail_level = {
         'mini' => [
                    "SPParallelATAData",

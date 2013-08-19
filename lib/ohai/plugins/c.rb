@@ -24,7 +24,7 @@ Ohai.plugin do
   depends "languages"
 
   collect_data do
-    c Mash.new
+    c = Mash.new
 
     #gcc
     status, stdout, stderr = run_command(:no_status_check => true, :command => "gcc -v")

@@ -20,9 +20,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux filesystem plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "linux/filesystem.rb"), "lfs")
-    @plugin = @ohai.plugins[:lfs][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "linux/filesystem.rb")).new(ohai)
     @plugin[:os] = "linux"
     @plugin.extend(SimpleFromFile)
 

@@ -18,10 +18,29 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
-describe Ohai::Loader do
+shared_examples "Ohai::Loader" do
+
+  context "when loading a plugin, v6_dependency_solver" do
+    before(:each) do
+      @ohai = Ohai::System.new
+      @loader = Ohai::Loader.new(@ohai)
+    end
+
+    it "should have the plugin file as a key" do
+      @loader.load_plugin(plugin_file)
+      @ohai.v6_dependency_solver.has_key?(plugin_file).should be_true
+    end
+
+    it "should store the plugin class instance as a value with the plugin file" do
+      plugin = @loader.load_plugin(plugin_file)
+      @ohai.v6_dependency_solver[plugin_file].should eql(plugin)
+    end
+  end
+end
+
+describe "Ohai::Loader" do
   before(:all) do
-    @v6plugin_path = File.expand_path("../../data/plugins/v6", __FILE__)
-    @plugin_path = File.expand_path("../../data/plugins/loader", __FILE__)
+    @plugin_path = File.expand_path('../../data/plugins', __FILE__)
   end
 
   before(:each) do
@@ -35,78 +54,59 @@ describe Ohai::Loader do
     end
   end
 
-  context "when loading a plugin" do
-    it "should add the plugin class to Ohai::System's @plugins" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.plugins.has_key?(:easy).should be_true
-    end
-
-    it "should save the plugin source file" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.sources.has_key?(File.expand_path("easy.rb", @plugin_path)).should be_true
-    end
-
+  describe "when loading v7 plugins" do
     context "should collect provides" do
       it "for a single attribute" do
-        @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-        @ohai.plugins[:easy][:plugin].provides_attrs.should eql(["easy"])
+        plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+        plugin.provides_attrs.should eql(["easy"])
       end
 
       it "for an array of attributes" do
-        @loader.load_plugin(File.expand_path("medium.rb", @plugin_path), "medium")
-        @ohai.plugins[:medium][:plugin].provides_attrs.sort.should eql(["medium", "medium/hard"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/medium.rb", @plugin_path))
+        plugin.provides_attrs.sort.should eql(["medium", "medium/hard"].sort)
       end
 
       it "for all provided attributes" do
-        @loader.load_plugin(File.expand_path("hard.rb", @plugin_path), "hard")
-        @ohai.plugins[:hard][:plugin].provides_attrs.sort.should eql(["this", "plugin", "provides", "a/lot", "of", "attributes"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/hard.rb", @plugin_path))
+        plugin.provides_attrs.sort.should eql(["this", "plugin", "provides", "a/lot", "of", "attributes"].sort)
       end
     end
 
     context "should collect depends" do
       it "if no dependencies" do
-        @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-        @ohai.plugins[:easy][:depends].should eql([])
+        plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+        plugin.depends_attrs.should eql([])
       end
 
       it "for a single dependency" do
-        @loader.load_plugin(File.expand_path("medium.rb", @plugin_path), "medium")
-        @ohai.plugins[:medium][:depends].should eql(["easy"])
+        plugin = @loader.load_plugin(File.expand_path("loader/medium.rb", @plugin_path))
+        plugin.depends_attrs.should eql(["easy"])
       end
 
       it "for all attributes it depends on" do
-        @loader.load_plugin(File.expand_path("hard.rb", @plugin_path), "hard")
-        @ohai.plugins[:hard][:depends].sort.should eql(["it/also", "depends", "on/a", "lot", "of", "other/attributes"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/hard.rb", @plugin_path))
+        plugin.depends_attrs.sort.should eql(["it/also", "depends", "on/a", "lot", "of", "other/attributes"].sort)
       end
     end
 
     it "should save the plugin an attribute is defined in" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.attributes["easy"]["providers"].should eql(["easy"])
+      plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+      @ohai.attributes["easy"]["providers"].should eql([plugin])
     end
-  end
 
-  it "should add plugin_path to sources" do
-    path = File.expand_path("easy.rb", @plugin_path)
-    @loader.load_plugin(path)
-    @ohai.sources.has_key?(path).should be_true
+    it_behaves_like "Ohai::Loader" do
+      let (:plugin_file) { File.expand_path("foo.rb", @plugin_path) }
+    end
   end
 
   context "when loading v6 plugins" do
-    it "should save the plugin for future loading" do
-      Ohai::Config[:plugin_path] = [@v6plugin_path]
-      path = File.expand_path("os.rb", @v6plugin_path)
-      @loader.load_plugin(path)
-      @ohai.v6plugins.has_key?("os").should be_true
-      @ohai.sources.has_key?(path).should be_true
+    it_behaves_like "Ohai::Loader" do
+      let (:plugin_file) { File.expand_path("v6/languages.rb", @plugin_path) }
     end
 
-    it "should not load the plugin as a class" do
-      path = File.expand_path("os.rb", @v6plugin_path)
-      Ohai::Config[:plugin_path] = [path]
-      @loader.load_plugin(path)
-      @ohai.attributes.has_key?("os").should be_false
-      @ohai.plugins.has_key?("os").should be_false
+    it "should not include provided attributes" do
+      @loader.load_plugin(File.expand_path("v6/languages.rb", @plugin_path))
+      @ohai.attributes.has_key?(:languages).should be_false
     end
   end
 
@@ -114,7 +114,6 @@ describe Ohai::Loader do
     path = File.expand_path(File.dirname(__FILE__) + '/../data/plugins/mix')
     Ohai::Config[:plugin_path] = [path]
     @ohai.load_plugins
-    @ohai.sources.keys.sort.should eql(Dir[File.join(path, '*')].sort)
-  end
-  
+    @ohai.v6_dependency_solver.keys.sort.should eql(Dir[File.join(path, '*')].sort)
+  end  
 end

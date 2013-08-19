@@ -19,6 +19,7 @@
 
 require 'ohai/os'
 require 'ohai/mixin/command'
+require 'ohai/mixin/seconds_to_human'
 
 module Ohai
   def self.plugin(&block)
@@ -33,6 +34,9 @@ module Ohai
     class Plugin
       include Ohai::OS
       include Ohai::Mixin::Command
+      include Ohai::Mixin::SecondsToHuman
+
+      attr_reader :data
 
       def initialize(controller)
         @controller = controller
@@ -207,7 +211,6 @@ module Ohai
         return args.first if args.length == 1
         return *args
       end
-
     end
   end
 end

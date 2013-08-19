@@ -48,6 +48,8 @@ module Ohai
           plugin = self.instance_eval(contents, plugin_path, 1)
         rescue SystemExit, Interrupt
           raise
+        rescue NoMethodError => e
+          Ohai::Log.debug("Undefined method \'#{e.name.to_s}\' \"#{e.args.join(", ")}\"")
         rescue Exception, Errno::ENOENT => e
           Ohai::Log.debug("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end

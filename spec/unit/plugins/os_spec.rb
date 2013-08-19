@@ -23,9 +23,9 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 
 describe Ohai::System, "plugin os" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "os.rb"), "os")
-    @plugin = @ohai.plugins[:os][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "os.rb")).new(ohai)
     @plugin[:languages] = Mash.new
     @plugin[:languages][:ruby] = Mash.new
     @plugin[:kernel] = Mash.new

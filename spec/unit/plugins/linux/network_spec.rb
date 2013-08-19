@@ -277,19 +277,15 @@ IP_ROUTE_SCOPE
 
     prepare_data
     
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
-    @loader.load_plugin(File.join(PLUGIN_PATH, "linux/network.rb"), "lnet")
-    @plugin = @ohai.plugins[:lnet][:plugin].new(@ohai)
-    
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "linux/network.rb")).new(ohai)
     @plugin.stub(:popen4).with("ifconfig -a")
     @plugin.stub(:popen4).with("arp -an")
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
     
     %w{ linux/hostname hostname network }.each do |plgn|
-      key = plgn.gsub("/", "_")
-      @loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH), key)
-      p = @ohai.plugins[key][:plugin].new(@ohai)
+      p = loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH)).new(ohai)
       p.stub(:from).with("hostname -s").and_return("katie")
       p.stub(:from).with("hostname --fqdn").and_return("katie.bethell")
       p.run

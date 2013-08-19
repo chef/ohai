@@ -25,9 +25,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_p
 describe Ohai::System, "plugin php" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "php.rb"), "php")
-    @plugin = @ohai.plugins[:php][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "php.rb")).new(ohai)
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"

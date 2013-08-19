@@ -189,8 +189,8 @@ shared_context "cross platform data" do
 
               begin
                 plugin_names.each do | plugin_name |
-                  Ohai::Loader.new( @ohai ).load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ), plugin_name )
-                  @plugin = @ohai.plugins[plugin_name.to_sym][:plugin].new( @ohai )
+                  @loader = Ohai::Loader.new( @ohai )
+                  @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ) ).new(@ohai)
                   @plugin.safe_run
                 end
               ensure

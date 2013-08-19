@@ -25,9 +25,9 @@ begin
   
   describe Ohai::System, "plugin chef" do
     before(:each) do
-      @ohai = Ohai::System.new
-      Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "chef.rb"), "chef")
-      @plugin = @ohai.plugins[:chef][:plugin].new(@ohai)
+      ohai = Ohai::System.new
+      loader = Ohai::Loader.new(ohai)
+      @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "chef.rb")).new(ohai)
     end
     
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do

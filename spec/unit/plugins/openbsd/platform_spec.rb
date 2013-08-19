@@ -21,9 +21,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "OpenBSD plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "openbsd/platform.rb"), "oplat")
-    @plugin = @ohai.plugins[:oplat][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "openbsd/platform.rb")).new(ohai)
     @plugin.stub(:from).with("uname -s").and_return("OpenBSD")
     @plugin.stub(:from).with("uname -r").and_return("4.5")
     @plugin[:os] = "openbsd"

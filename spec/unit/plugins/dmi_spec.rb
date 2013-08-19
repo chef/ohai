@@ -93,9 +93,9 @@ EOS
 
 describe Ohai::System, "plugin dmi" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("dmi.rb", PLUGIN_PATH), "dmi")
-    @plugin = @ohai.plugins[:dmi][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.expand_path("dmi.rb", PLUGIN_PATH)).new(ohai)
     @stdin = double("STDIN", { :close => true })
     @pid = 10
     @stderr = double("STDERR")

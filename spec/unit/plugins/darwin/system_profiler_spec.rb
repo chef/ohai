@@ -28,9 +28,9 @@ end
 
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("darwin/system_profiler.rb", PLUGIN_PATH), "dpro")
-    @plugin = @ohai.plugins[:dpro][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.expand_path("darwin/system_profiler.rb", PLUGIN_PATH)).new(ohai)
   end
   
   it "should return the right serial number" do

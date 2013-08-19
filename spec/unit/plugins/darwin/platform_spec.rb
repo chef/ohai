@@ -21,9 +21,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("darwin/platform.rb", PLUGIN_PATH), "dplat")
-    @plugin = @ohai.plugins[:dplat][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.expand_path("darwin/platform.rb", PLUGIN_PATH)).new(ohai)
     @plugin[:os] = "darwin"
     @pid = 10
     @stdin = double("STDIN", { :close => true })

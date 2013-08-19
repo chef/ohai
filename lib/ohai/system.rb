@@ -60,7 +60,7 @@ module Ohai
           if md
             plugin_path = md[0]
             plugin_name = md[1]
-            loader.load_plugin(plugin_path, plugin_name) unless @sources.has_key?(plugin_path)
+            loader.load_plugin(plugin_path, plugin_name) unless @v6_dependency_solver.has_key?(plugin_path)
           end
         end
       end

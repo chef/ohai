@@ -24,9 +24,9 @@ ruby_bin = File.join(::RbConfig::CONFIG['bindir'], ::RbConfig::CONFIG['ruby_inst
 describe Ohai::System, "plugin ruby" do
 
   before(:all) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "ruby.rb"), "ruby")
-    @plugin = @ohai.plugins[:ruby][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "ruby.rb")).new(ohai)
     @plugin[:languages] = Mash.new
     @plugin.run
 

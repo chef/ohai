@@ -21,9 +21,9 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "ssh_host_key plugin" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "ssh_host_key.rb"), "shk")
-    @plugin = @ohai.plugins[:shk][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "ssh_host_key.rb")).new(ohai)
     @plugin[:keys] = Mash.new
 
     # Avoid using the real from_file to load the plugin => less stubbing required

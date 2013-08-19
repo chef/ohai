@@ -22,9 +22,9 @@ describe Ohai::System, "plugin linode" do
   let(:hint_path_win) { 'C:\chef\ohai\hints/linode.json' }
 
   before do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "linode.rb"), "lin")
-    @plugin = @ohai.plugins[:lin][:plugin].new(@ohai)
+    ohai = Ohai::System.new
+    loader = Ohai::Loader.new(ohai)
+    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "linode.rb")).new(ohai)
     @plugin[:network] = {
       "interfaces"=> {
         "eth0"=> {

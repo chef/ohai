@@ -106,10 +106,13 @@ module Ohai
       #=====================================================
       # plugin DSL methods
       #=====================================================
-      # @note: v6 plugins only
       def require_plugin(*args)
-        # @todo: log deprecation message
-        @controller.require_plugin(*args)
+        if self.class.version == :version6
+          Ohai::Log.warn("[DEPRECATION] \'require_plugin\' is deprecated. Please use \'depends\' instead.")
+          @controller.require_plugin(*args)
+        else
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+        end
       end
 
       def hints

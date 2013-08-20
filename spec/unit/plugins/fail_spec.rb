@@ -64,7 +64,7 @@ shared_examples "a v7 loading failure" do
   end
 
   it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:debug).twice
+    Ohai::Log.should_receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -112,7 +112,7 @@ shared_examples "a v7 loading success" do
   end
 
   it "should not write to Ohai::Log" do
-    Ohai::Log.should_not_receive(:debug)
+    Ohai::Log.should_not_receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -155,11 +155,12 @@ shared_examples "a v7 run failure" do
   end
 
   it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:debug).once
+    Ohai::Log.should_receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end
 end
 
+=begin
 shared_examples "a v6 run failure" do
   before(:all) do
     begin
@@ -198,10 +199,11 @@ shared_examples "a v6 run failure" do
   end
 
   it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:debug).twice
+    Ohai::Log.should_receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end
 end
+=end
 
 describe "when using DSL commands outside Ohai.plugin block" do
   failstr1 = "provides \"fail\"\nOhai.plugin do\nend\n"

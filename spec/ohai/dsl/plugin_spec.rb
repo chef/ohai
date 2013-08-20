@@ -25,7 +25,6 @@ shared_examples "Ohai::DSL::Plugin" do
   before(:each) do
     @ohai = ohai
     @plugin = instance.new(@ohai)
-    @plugin.stub(:attribute_declared?).and_return(true)
   end
 
   context "when accessing data via method_missing" do
@@ -67,7 +66,6 @@ shared_examples "Ohai::DSL::Plugin" do
 
   context "when getting attributes" do
     before(:each) do
-      
       @plugin.set_attribute(:tea, "is soothing")
     end
 

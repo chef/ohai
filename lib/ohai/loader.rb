@@ -35,11 +35,9 @@ module Ohai
 
       contents = ""
       begin
-        contents = IO.read(plugin_path)
-      rescue SystemExit, Interrupt
-        raise
+        contents << IO.read(plugin_path)
       rescue IOError, Errno::ENOENT
-        Ohai::Log.debug("Unable to open or read #{plugin_path}")
+        Ohai::Log.warn("Unable to open or read plugin at #{plugin_path}")
         return plugin
       end
 
@@ -49,22 +47,22 @@ module Ohai
         rescue SystemExit, Interrupt
           raise
         rescue NoMethodError => e
-          Ohai::Log.debug("Undefined method \'#{e.name.to_s}\' \"#{e.args.join(", ")}\"")
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
         rescue Exception, Errno::ENOENT => e
-          Ohai::Log.debug("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+          Ohai::Log.warn("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
 
-        collect_provides(plugin) unless plugin.nil?
+        return plugin if plugin.nil?
+        collect_provides(plugin)
       else
         plugin = Ohai.v6plugin do collect_contents contents end
+        if plugin.nil?
+          Ohai::Log.warn("Unable to load plugin at #{plugin_path}")
+          return plugin
+        end
       end
 
-      if plugin.nil?
-        Ohai::Log.debug("Unable to load plugin at #{plugin_path}")
-      else
-        @v6_dependency_solver[plugin_path] = plugin
-      end
-
+      @v6_dependency_solver[plugin_path] = plugin
       plugin
     end
 

@@ -59,8 +59,7 @@ module Ohai
           md = file_regex.match(file)
           if md
             plugin_path = md[0]
-            plugin_name = md[1]
-            loader.load_plugin(plugin_path, plugin_name) unless @v6_dependency_solver.has_key?(plugin_path)
+            loader.load_plugin(plugin_path) unless @v6_dependency_solver.has_key?(plugin_path)
           end
         end
       end

@@ -64,7 +64,7 @@ def get_gce_values
   cloud[:public_ipv4] +=  public_ips
   cloud[:public_hostname] = nil
   cloud[:local_ipv4] += private_ips
-  cloud[:local_hostname] = gce['hostname']
+  cloud[:local_hostname] = gce['instance']['hostname']
   cloud[:provider] = "gce"
 end
 

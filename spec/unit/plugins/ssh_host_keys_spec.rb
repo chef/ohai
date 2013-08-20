@@ -22,11 +22,12 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai[:keys] = Mash.new
-    @ohai.stub(:require_plugin).and_return(true)
+    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ssh_host_key.rb"))
+    @plugin.stub(:require_plugin)
+    @plugin[:keys] = Mash.new
 
     # Avoid using the real from_file to load the plugin => less stubbing required
-    @ohai.extend(SimpleFromFile)
+    @plugin.extend(SimpleFromFile)
 
     File.stub(:exists?).with("/etc/ssh/sshd_config").and_return(true)
     File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
@@ -50,21 +51,21 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   shared_examples "loads keys" do
     it "reads the key and sets the dsa attribute correctly" do
-      @ohai._require_plugin("ssh_host_key")
-      @ohai[:keys][:ssh][:host_dsa_public].should eql(@dsa_key.split[1])
-      @ohai[:keys][:ssh][:host_dsa_type].should be_nil
+      @plugin.run
+      @plugin[:keys][:ssh][:host_dsa_public].should eql(@dsa_key.split[1])
+      @plugin[:keys][:ssh][:host_dsa_type].should be_nil
     end
 
     it "reads the key and sets the rsa attribute correctly" do
-      @ohai._require_plugin("ssh_host_key")
-      @ohai[:keys][:ssh][:host_rsa_public].should eql(@rsa_key.split[1])
-      @ohai[:keys][:ssh][:host_rsa_type].should be_nil
+      @plugin.run
+      @plugin[:keys][:ssh][:host_rsa_public].should eql(@rsa_key.split[1])
+      @plugin[:keys][:ssh][:host_rsa_type].should be_nil
     end
 
     it "reads the key and sets the ecdsa attribute correctly" do
-      @ohai._require_plugin("ssh_host_key")
-      @ohai[:keys][:ssh][:host_ecdsa_public].should eql(@ecdsa_key.split[1])
-      @ohai[:keys][:ssh][:host_ecdsa_type].should eql(@ecdsa_key.split[0])
+      @plugin.run
+      @plugin[:keys][:ssh][:host_ecdsa_public].should eql(@ecdsa_key.split[1])
+      @plugin[:keys][:ssh][:host_ecdsa_type].should eql(@ecdsa_key.split[0])
     end
   end
 

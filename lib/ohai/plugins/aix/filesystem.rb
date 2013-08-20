@@ -1,6 +1,7 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Deepali Jagtap (<deepali.jagtap@clogeny.com>)
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,4 +17,57 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::filesystem"
+provides "filesystem"
+
+fs = Mash.new
+
+# Grab filesystem data from df
+popen4("df -P") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    case line
+    when /^Filesystem\s+1024-blocks/
+      next
+    when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+      filesystem = $1
+      fs[filesystem] = Mash.new
+      fs[filesystem][:kb_size] = $2
+      fs[filesystem][:kb_used] = $3
+      fs[filesystem][:kb_available] = $4
+      fs[filesystem][:percent_used] = $5
+      fs[filesystem][:mount] = $6
+    end
+  end
+end
+
+# Grab mount information from /bin/mount
+popen4("mount") do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    case line
+     when /^\s*node/
+      next
+     when /^\s*---/
+      next
+     when /^\s*\/\w/
+      fields = line.split
+      filesystem = fields[0]
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:mount] = fields[1]
+      fs[filesystem][:fs_type] = fields[2]
+      #fs[filesystem][:mount_options] = fields[6]
+      fs[filesystem][:mount_options] = fields[6]
+     else
+      fields = line.split
+      filesystem = fields[0] + ":" + fields[1]
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:mount] = fields[2]
+      fs[filesystem][:fs_type] = fields[3]
+      fs[filesystem][:mount_options] = fields[7]
+    end
+  end
+end
+
+# Set the filesystem data
+filesystem fs
+

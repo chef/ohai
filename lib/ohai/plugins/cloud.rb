@@ -49,13 +49,13 @@ def get_gce_values
   cloud[:public_ipv4] = []
   cloud[:local_ipv4] = []
 
-  public_ips = gce['instance']["networkInterface"].collect do |interface|
+  public_ips = gce['instance']["networkInterfaces"].collect do |interface|
     if interface.has_key?('accessConfigs')
       interface['accessConfigs'].collect{|ac| ac['externalIp']}
     end
   end.flatten.compact
 
-  private_ips = gce['instance']["networkInterface"].collect do |interface|
+  private_ips = gce['instance']["networkInterfaces"].collect do |interface|
     interface['ip']
   end.compact
   

@@ -16,4 +16,6 @@
 # limitations under the License.
 #
 
-require_plugin "sigar::hostname"
+provides "hostname"
+
+hostname from("hostname")

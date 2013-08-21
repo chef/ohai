@@ -152,13 +152,12 @@ end
 
 #checks to see if the elements in test are also in source.  Recursively decends into Hashes.
 #nil values in test match against both nil and non-existance in source.
-def subsumes?(source, test, path = [])
+def subsumes?(source, test, path = [], &block)
   if source.is_a?( Hash ) && test.is_a?( Hash )
-    test.all? { |k,v| subsumes?( source[k], v, path.clone << k )}
+    test.all? { |k,v| subsumes?( source[k], v, path.clone << k, &block )}
   else
-    it "should set " + path.map { |s| "[#{s}]" }.join + " to #{source || 'nil'}" do
-      source.should eq( test )
-    end
+    block.call( path, source, test ) if block
+    source == test
   end
 end
 
@@ -204,7 +203,14 @@ shared_context "cross platform data" do
                     cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
                   end
                   
-                  subsumes?( @ohai.data, e[:ohai] )
+                  enc = Yajl::Encoder
+                  subsumes?( @ohai.data, e[:ohai] ) do | path, source, test |
+                    path_txt = path.map { |e| "[#{enc.encode( e )}]" }.join
+                    source_txt = if source.nil? then "nil" else enc.encode( source ) end
+                    it "should set #{path_txt} to #{source_txt}" do
+                      source.should eq( test )
+                    end
+                  end
                 end
               end
             end

@@ -16,30 +16,6 @@
 # limitations under the License.
 #
 
+provides "languages"
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-
-describe Ohai::System, "plugin ohai_time" do
-  before(:each) do
-    @plugin = get_plugin("ohai_time")
-  end
-  
-  it "should get the current time" do
-    Time.should_receive(:now)
-    @plugin.run
-  end
-  
-  it "should turn the time into a floating point number" do
-    time = Time.now
-    time.should_receive(:to_f)
-    Time.stub(:now).and_return(time)
-    @plugin.run
-  end
-  
-  it "should set ohai_time to the current time" do
-    time = Time.now
-    Time.stub(:now).and_return(time)
-    @plugin.run
-    @plugin[:ohai_time].should == time.to_f    
-  end
-end
+languages Mash.new

@@ -19,9 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "rackspace.rb"), "rack")
-    @plugin = @ohai.plugins[:rack][:plugin].new(@ohai)
+    @plugin = get_plugin("rackspace")
     @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
       "1.2.3.4"=> {
         "broadcast"=> "67.23.20.255",

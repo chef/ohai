@@ -2,9 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin etc" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "passwd.rb"), "etc")
-    @plugin = @ohai.plugins[:etc][:plugin].new(@ohai)
+    @plugin = get_plugin("passwd")
   end
 
   PasswdEntry = Struct.new(:name, :uid, :gid, :dir, :shell, :gecos)

@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "platform.rb"), "plat")
-    @plugin = @ohai.plugins[:plat][:plugin].new(@ohai)
+    @plugin = get_plugin("platform")
     @plugin[:os] = 'monkey'
     @plugin[:os_version] = 'poop'
   end

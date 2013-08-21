@@ -103,10 +103,7 @@ EOF
 describe Ohai::System, "plugin c" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @path = File.join(PLUGIN_PATH, "c.rb")
-    Ohai::Loader.new(@ohai).load_plugin(@path, "c")
-    @plugin = @ohai.plugins["c"][:plugin].new(@ohai)
+    @plugin = get_plugin("c")
 
     @plugin[:languages] = Mash.new
     #gcc

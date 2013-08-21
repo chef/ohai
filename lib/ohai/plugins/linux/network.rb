@@ -20,6 +20,7 @@ require 'ipaddr'
 
 Ohai.plugin do
   provides "network", "counters/network"
+  provides "ipaddress", "ip6address", "macaddress"
 
   def encaps_lookup(encap)
     return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")

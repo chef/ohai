@@ -22,9 +22,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin groovy" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "groovy.rb"), "groovy")
-    @plugin = @ohai.plugins[:groovy][:plugin].new(@ohai)
+    @plugin = get_plugin("groovy")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"

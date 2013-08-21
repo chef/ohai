@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin kernel" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "kernel.rb"), "kern")
-    @plugin = @ohai.plugins[:kern][:plugin].new(@ohai)
+    @plugin = get_plugin("kernel")
 
     @plugin[:languages] = Mash.new
     @plugin[:languages][:ruby] = Mash.new

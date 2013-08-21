@@ -18,9 +18,9 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
-describe Ohai::Loader do
+describe "Ohai::Loader" do
   before(:all) do
-    @plugin_path = File.expand_path("../../data/plugins/loader", __FILE__)
+    @plugin_path = File.expand_path('../../data/plugins', __FILE__)
   end
 
   before(:each) do
@@ -34,54 +34,58 @@ describe Ohai::Loader do
     end
   end
 
-  context "when loading a plugin" do
-    it "should add the plugin class to Ohai::System's @plugins" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.plugins.has_key?(:easy).should be_true
-    end
-
-    it "should save the plugin source file" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.sources.has_key?(File.expand_path("easy.rb", @plugin_path)).should be_true
-    end
-
+  describe "when loading v7 plugins" do
     context "should collect provides" do
       it "for a single attribute" do
-        @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-        @ohai.plugins[:easy][:plugin].provides_attrs.should eql(["easy"])
+        plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+        plugin.provides_attrs.should eql(["easy"])
       end
 
       it "for an array of attributes" do
-        @loader.load_plugin(File.expand_path("medium.rb", @plugin_path), "medium")
-        @ohai.plugins[:medium][:plugin].provides_attrs.sort.should eql(["medium", "medium/hard"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/medium.rb", @plugin_path))
+        plugin.provides_attrs.sort.should eql(["medium", "medium/hard"].sort)
       end
 
       it "for all provided attributes" do
-        @loader.load_plugin(File.expand_path("hard.rb", @plugin_path), "hard")
-        @ohai.plugins[:hard][:plugin].provides_attrs.sort.should eql(["this", "plugin", "provides", "a/lot", "of", "attributes"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/hard.rb", @plugin_path))
+        plugin.provides_attrs.sort.should eql(["this", "plugin", "provides", "a/lot", "of", "attributes"].sort)
       end
     end
 
     context "should collect depends" do
       it "if no dependencies" do
-        @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-        @ohai.plugins[:easy][:depends].should eql([])
+        plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+        plugin.depends_attrs.should eql([])
       end
 
       it "for a single dependency" do
-        @loader.load_plugin(File.expand_path("medium.rb", @plugin_path), "medium")
-        @ohai.plugins[:medium][:depends].should eql(["easy"])
+        plugin = @loader.load_plugin(File.expand_path("loader/medium.rb", @plugin_path))
+        plugin.depends_attrs.should eql(["easy"])
       end
 
       it "for all attributes it depends on" do
-        @loader.load_plugin(File.expand_path("hard.rb", @plugin_path), "hard")
-        @ohai.plugins[:hard][:depends].sort.should eql(["it/also", "depends", "on/a", "lot", "of", "other/attributes"].sort)
+        plugin = @loader.load_plugin(File.expand_path("loader/hard.rb", @plugin_path))
+        plugin.depends_attrs.sort.should eql(["it/also", "depends", "on/a", "lot", "of", "other/attributes"].sort)
       end
     end
 
     it "should save the plugin an attribute is defined in" do
-      @loader.load_plugin(File.expand_path("easy.rb", @plugin_path), "easy")
-      @ohai.attributes["easy"]["providers"].should eql(["easy"])
+      plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
+      @ohai.attributes["easy"]["providers"].should eql([plugin])
     end
   end
+
+  context "when loading v6 plugins" do
+    it "should not include provided attributes" do
+      @loader.load_plugin(File.expand_path("v6/languages.rb", @plugin_path))
+      @ohai.attributes.has_key?(:languages).should be_false
+    end
+  end
+
+  it "should load both v6 and v7 plugins" do
+    path = File.expand_path(File.dirname(__FILE__) + '/../data/plugins/mix')
+    Ohai::Config[:plugin_path] = [path]
+    @ohai.load_plugins
+    @ohai.v6_dependency_solver.keys.sort.should eql(Dir[File.join(path, '*')].sort)
+  end  
 end

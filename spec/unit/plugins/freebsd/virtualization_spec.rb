@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("freebsd/virtualization.rb", PLUGIN_PATH), "fvirt")
-    @plugin = @ohai.plugins[:fvirt][:plugin].new(@ohai)
+    @plugin = get_plugin("freebsd/virtualization")
     @plugin[:os] = "freebsd"
     @stderr = StringIO.new
     @stdin = StringIO.new

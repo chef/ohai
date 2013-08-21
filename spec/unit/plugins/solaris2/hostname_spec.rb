@@ -20,9 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "solaris2/hostname.rb"), "shost")
-    @plugin = @ohai.plugins[:shost][:plugin].new(@ohai)
+    @plugin = get_plugin("solaris2/hostname")
     @plugin[:os] = "solaris2"
     @plugin.stub(:from).with("hostname").and_return("kitteh")
     Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );

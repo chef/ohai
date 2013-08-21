@@ -32,16 +32,14 @@ module Ohai
   class System
     attr_accessor :data
     attr_reader :attributes
-    attr_reader :plugins
-    attr_reader :sources
     attr_reader :hints
+    attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
       @attributes = Hash.new
-      @plugins = Mash.new
-      @sources = Hash.new
       @hints = Hash.new
+      @v6_dependency_solver = Hash.new
       @plugin_path = ""
     end
 
@@ -51,7 +49,7 @@ module Ohai
 
     def load_plugins
       loader = Ohai::Loader.new(self)
-      
+
       Ohai::Config[:plugin_path].each do |path|
         [
          Dir[File.join(path, '*')],
@@ -61,8 +59,12 @@ module Ohai
           md = file_regex.match(file)
           if md
             plugin_path = md[0]
-            plugin_name = md[1]
-            loader.load_plugin(plugin_path, plugin_name) unless @sources.has_key?(plugin_path)
+            unless @v6_dependency_solver.has_key?(plugin_path)
+              plugin = loader.load_plugin(plugin_path)
+              @v6_dependency_solver[plugin_path] = plugin unless plugin.nil?
+            else
+              Ohai::Log.debug("Already loaded plugin at #{plugin_path}")
+            end
           end
         end
       end
@@ -208,7 +210,6 @@ module Ohai
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
     end
-
 
   end
 end

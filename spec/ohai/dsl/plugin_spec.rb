@@ -1,7 +1,8 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
 # Author:: Daniel DeLeo (<dan@opscode.com>)
-# Copyright:: Copyright (c) 2008, 2012 Opscode, Inc.
+# Author:: Claire McQuin (<claire@opscode.com>)
+# Copyright:: Copyright (c) 2008, 2012, 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,16 +19,15 @@
 #
 
 require File.expand_path("../../../spec_helper", __FILE__)
+tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
 
-describe Ohai::DSL::Plugin do
+shared_examples "Ohai::DSL::Plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("../../../data/plugins/foo.rb", __FILE__), "foo")
-    @plugin = @ohai.plugins[:foo][:plugin].new(@ohai)
+    @ohai = ohai
+    @plugin = instance.new(@ohai)
   end
 
-  describe "when accessing data via method_missing" do
-
+  context "when accessing data via method_missing" do
     it "should take a missing method and store the method name as a key, with its arguments as values" do
       @plugin.guns_n_roses("chinese democracy")
       @plugin.data["guns_n_roses"].should eql("chinese democracy")
@@ -43,7 +43,7 @@ describe Ohai::DSL::Plugin do
     end
   end
 
-  describe "when checking attribute existence" do
+  context "when checking attribute existence" do
     before(:each) do
       @plugin.metallica("death magnetic")
     end
@@ -57,14 +57,14 @@ describe Ohai::DSL::Plugin do
     end
   end
 
-  describe "when setting attributes" do
+  context "when setting attributes" do
     it "should let you set an attribute" do
       @plugin.set_attribute(:tea, "is soothing")
       @plugin.data["tea"].should eql("is soothing")
     end
   end
 
-  describe "when getting attributes" do
+  context "when getting attributes" do
     before(:each) do
       @plugin.set_attribute(:tea, "is soothing")
     end
@@ -75,3 +75,94 @@ describe Ohai::DSL::Plugin do
   end
 end
 
+describe "VersionVII" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ingore
+    end
+    v7plugin = File.open("#{tmp}/plugins/v7plugin.rb", "w+")
+    v7plugin.write("Ohai.plugin do\n\tprovides \"version\"\n\tcollect_data do\n\t\tversion \"seven\"\n\tend\nend\n")
+    v7plugin.close
+  end
+
+  after(:all) do
+    File.delete("#{tmp}/plugins/v7plugin.rb")
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    loader = Ohai::Loader.new(@ohai)
+    @instance = loader.load_plugin("#{tmp}/plugins/v7plugin.rb")
+  end
+
+  context "after loading" do
+    it "should have version :version7" do
+      @instance.version.should eql(:version7)
+    end
+
+    it "should return which attributes it provides" do
+      @instance.provides_attrs.should eql(["version"])
+    end
+
+    it "should return which attributes it depends on" do
+      @instance.depends_attrs.should eql([])
+    end
+  end
+
+  it_behaves_like "Ohai::DSL::Plugin" do
+    let (:ohai) { @ohai }
+    let (:instance) { @instance }
+  end
+end
+
+describe "VersionVI" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ingore
+    end
+    v6plugin = File.open("#{tmp}/plugins/v6plugin.rb", "w+")
+    v6plugin.write("provides \"version\"\n\tversion \"six\"\nend\n")
+    v6plugin.close
+  end
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    loader = Ohai::Loader.new(@ohai)
+
+    Ohai::Log.should_receive(:warn).with(/DEPRECATION/)
+    @instance = loader.load_plugin("#{tmp}/plugins/v6plugin.rb")
+  end
+
+  after(:all) do
+    File.delete("#{tmp}/plugins/v6plugin.rb")
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
+  context "after loading" do
+    it "should have version :version6" do
+      @instance.version.should eql(:version6)
+    end
+
+    it "should not have any attributes listed" do
+      @ohai.attributes.should_not have_key("version")
+    end
+  end
+
+  it_behaves_like "Ohai::DSL::Plugin" do
+    let (:ohai) { @ohai }
+    let (:instance) { @instance }
+  end
+end

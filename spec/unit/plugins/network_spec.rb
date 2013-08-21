@@ -23,7 +23,7 @@ def it_does_not_fail
     Ohai::Log.stub(:warn)
     Ohai::Log.should_not_receive(:debug).with(/^Plugin network threw exception/)
     @plugin.run
-    %w[ ipaddress, macaddress, ip6address ].each do |attribute|
+    %w{ ipaddress macaddress ip6address }.each do |attribute|
       @plugin.should have_key(attribute)
     end
   end
@@ -149,9 +149,7 @@ describe Ohai::System, "Network Plugin" do
 
   describe "with linux" do
     before(:each) do
-      @ohai = Ohai::System.new
-      Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "network.rb"), "net")
-      @plugin = @ohai.plugins[:net][:plugin].new(@ohai)
+      @plugin = get_plugin("network")
       @plugin["network"] = basic_data["linux"]["network"]
     end
 

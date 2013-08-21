@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin ohai_time" do
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "ohai_time.rb")).new(ohai)
+    @plugin = get_plugin("ohai_time")
   end
   
   it "should get the current time" do

@@ -22,9 +22,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin mono" do
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "mono.rb")).new(ohai)
+    @plugin = get_plugin("mono")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"

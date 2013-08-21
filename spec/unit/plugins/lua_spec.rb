@@ -24,9 +24,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin lua" do
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "lua.rb")).new(ohai)
+    @plugin = get_plugin("lua")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = ""

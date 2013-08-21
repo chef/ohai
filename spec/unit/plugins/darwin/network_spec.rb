@@ -412,9 +412,7 @@ net.smb.fs.tcpsndbuf: 261120
 net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.expand_path("darwin/network.rb", PLUGIN_PATH)).new(ohai)
+    @plugin = get_plugin("darwin/network")
 
     @stdin_ifconfig = StringIO.new
     @stdin_arp = StringIO.new
@@ -432,7 +430,7 @@ net.smb.fs.tcprcvbuf: 261120
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
 
     %w{ darwin/hostname hostname network }.each do |plgn|
-      p = loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH)).new(ohai)
+      p = get_plugin(plgn)
       p.stub(:from).with("hostname -s").and_return("katie")
       p.stub(:from).with("hostname").and_return("katie.bethell")
       p.run

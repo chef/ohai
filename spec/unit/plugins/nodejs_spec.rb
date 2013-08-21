@@ -23,9 +23,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin nodejs" do
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "nodejs.rb")).new(ohai)
+    @plugin = get_plugin("nodejs")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "v0.8.11\n"

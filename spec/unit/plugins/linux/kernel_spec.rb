@@ -23,9 +23,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../path/ohai_plugin_commo
 
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "linux/kernel.rb")).new(ohai)
+    @plugin = get_plugin("linux/kernel")
     @plugin.stub(:from).with("uname -o").and_return("Linux")
     @plugin.should_receive(:popen4).with("env lsmod").at_least(1).times
     @plugin[:kernel] = {}

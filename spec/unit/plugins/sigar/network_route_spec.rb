@@ -32,9 +32,8 @@ describe Ohai::System, "Sigar network route plugin" do
   if sigar_available
 
     before(:each) do
-      ohai = Ohai::System.new
-      loader = Ohai::Loader.new(ohai)
-      @plugin = loader.load_plugin(File.expand_path("sigar/network_route.rb", PLUGIN_PATH)).new(ohai)
+      @ohai = Ohai::System.new
+      @plugin = get_plugin("sigar/network_route", @ohai)
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",
@@ -124,15 +123,13 @@ describe Ohai::System, "Sigar network route plugin" do
       Sigar.should_receive(:new).at_least(2).times.and_return(@sigar)
 
       %w{ languages ruby kernel os }.each do |plgn|
-        p = loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH))
-        p.new(ohai).run
+        get_plugin(plgn, @ohai).run
       end
       @plugin.data[:os]="sigar"
       
       #Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
       %w{ sigar/hostname hostname sigar/network network }.each do |plgn|
-        p = loader.load_plugin(File.expand_path("#{plgn}.rb", PLUGIN_PATH))
-        p.new(ohai).run
+        get_plugin(plgn, @ohai).run
       end
 
       @plugin.run

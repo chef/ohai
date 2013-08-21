@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "hostname plugin" do
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "hostname.rb")).new(ohai)
+    @plugin = get_plugin("hostname")
   end
 
   it "should set the domain to everything after the first dot of the fqdn" do

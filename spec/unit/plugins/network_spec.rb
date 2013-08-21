@@ -149,9 +149,7 @@ describe Ohai::System, "Network Plugin" do
 
   describe "with linux" do
     before(:each) do
-      ohai = Ohai::System.new
-      loader = Ohai::Loader.new(ohai)
-      @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "network.rb")).new(ohai)
+      @plugin = get_plugin("network")
       @plugin["network"] = basic_data["linux"]["network"]
     end
 

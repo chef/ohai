@@ -89,9 +89,7 @@ ROUTE_GET
 
     @ifconfig_lines = solaris_ifconfig.split("\n")
 
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "solaris2/network.rb")).new(ohai)
+    @plugin = get_plugin("solaris2/network")
     @plugin[:network] = Mash.new
 
     @plugin.stub(:popen4).with("ifconfig -a")

@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "FreeBSD hostname plugin" do
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.expand_path("freebsd/hostname.rb", PLUGIN_PATH)).new(ohai)
+    @plugin = get_plugin("freebsd/hostname")
     @plugin[:os] = "freebsd"
     @plugin.stub(:from).with("hostname -s").and_return("katie")
     @plugin.stub(:from).with("hostname -f").and_return("katie.bethell")

@@ -134,9 +134,7 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   TOOMUCH
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.join(PLUGIN_PATH, "solaris2/kernel.rb")).new(ohai)
+    @plugin = get_plugin("solaris2/kernel")
     @plugin[:kernel] = Mash.new
     @plugin.stub(:from).with("uname -s").and_return("SunOS")
     stdin = StringIO.new

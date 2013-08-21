@@ -24,9 +24,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_p
 describe Ohai::System, "plugin erlang" do
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
-    @plugin = loader.load_plugin(File.expand_path("erlang.rb", PLUGIN_PATH)).new(ohai)
+    @plugin = get_plugin("erlang")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdin = ""

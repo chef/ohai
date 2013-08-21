@@ -27,7 +27,6 @@ module Ohai
 
     def initialize(controller)
       @attributes = controller.attributes
-      @v6_dependency_solver = controller.v6_dependency_solver
     end
 
     def load_plugin(plugin_path, plugin_name=nil)
@@ -63,7 +62,6 @@ module Ohai
         end
       end
 
-      @v6_dependency_solver[plugin_path] = plugin
       plugin
     end
 

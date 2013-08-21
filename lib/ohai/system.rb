@@ -59,9 +59,9 @@ module Ohai
           md = file_regex.match(file)
           if md
             plugin_path = md[0]
-
             unless @v6_dependency_solver.has_key?(plugin_path)
-              loader.load_plugin(plugin_path)
+              plugin = loader.load_plugin(plugin_path)
+              @v6_dependency_solver[plugin_path] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{plugin_path}")
             end

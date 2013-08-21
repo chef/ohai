@@ -80,4 +80,11 @@ describe Ohai::System, "load_plugins" do
     Ohai::Log.should_receive(:debug).with(/Already loaded plugin at/).once
     @ohai.load_plugins
   end
+
+  it "should add loaded plugins to @v6_dependency_solver" do
+    Ohai::Config[:plugin_path] = ["#{tmp}/plugins"]
+    File.stub(:expand_path).with("#{tmp}/plugins").and_return("#{tmp}/plugins") # windows
+    @ohai.load_plugins
+    @ohai.v6_dependency_solver.should have_key("#{tmp}/plugins/plgn.rb")
+  end
 end

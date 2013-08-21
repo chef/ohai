@@ -18,26 +18,6 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
-shared_examples "Ohai::Loader" do
-
-  context "when loading a plugin, v6_dependency_solver" do
-    before(:each) do
-      @ohai = Ohai::System.new
-      @loader = Ohai::Loader.new(@ohai)
-    end
-
-    it "should have the plugin file as a key" do
-      @loader.load_plugin(plugin_file)
-      @ohai.v6_dependency_solver.has_key?(plugin_file).should be_true
-    end
-
-    it "should store the plugin class instance as a value with the plugin file" do
-      plugin = @loader.load_plugin(plugin_file)
-      @ohai.v6_dependency_solver[plugin_file].should eql(plugin)
-    end
-  end
-end
-
 describe "Ohai::Loader" do
   before(:all) do
     @plugin_path = File.expand_path('../../data/plugins', __FILE__)
@@ -93,17 +73,9 @@ describe "Ohai::Loader" do
       plugin = @loader.load_plugin(File.expand_path("loader/easy.rb", @plugin_path))
       @ohai.attributes["easy"]["providers"].should eql([plugin])
     end
-
-    it_behaves_like "Ohai::Loader" do
-      let (:plugin_file) { File.expand_path("foo.rb", @plugin_path) }
-    end
   end
 
   context "when loading v6 plugins" do
-    it_behaves_like "Ohai::Loader" do
-      let (:plugin_file) { File.expand_path("v6/languages.rb", @plugin_path) }
-    end
-
     it "should not include provided attributes" do
       @loader.load_plugin(File.expand_path("v6/languages.rb", @plugin_path))
       @ohai.attributes.has_key?(:languages).should be_false

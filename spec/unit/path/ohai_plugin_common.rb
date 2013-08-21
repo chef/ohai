@@ -154,7 +154,7 @@ end
 #nil values in test match against both nil and non-existance in source.
 def subsumes?(source, test, path = [])
   if source.is_a?( Hash ) && test.is_a?( Hash )
-    test.all? { |k,v| subsumes?( source[k], v, path << k )}
+    test.all? { |k,v| subsumes?( source[k], v, path.clone << k )}
   else
     it "should set " + path.map { |s| "[#{s}]" }.join + " to #{source || 'nil'}" do
       source.should eq( test )

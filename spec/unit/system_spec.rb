@@ -17,6 +17,7 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
+tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
 
 describe Ohai::System, "initialize" do
   it "should return an Ohai::System object" do
@@ -33,17 +34,50 @@ describe Ohai::System, "initialize" do
 end
 
 describe Ohai::System, "load_plugins" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ignore
+    end
+
+    str = "Ohai.plugin do\nend\n"
+    file = File.open("#{tmp}/plugins/plgn.rb", "w+")
+    file.write(str)
+    file.close
+
+    @plugin_path = Ohai::Config[:plugin_path]
+    Dir.should_receive(:[]).with("#{tmp}/plugins/*")
+    Dir.should_receive(:[]).with("#{tmp}/plugins/#{Ohai::OS.collect_os}/**/*").and_return([])
+  end
+
   before(:each) do
     @ohai = Ohai::System.new
     @ohai.stub(:from_file).and_return(true)
   end
 
+  after(:all) do
+    Ohai::Config[:plugin_path] = @plugin_path
+
+    File.delete("#{tmp}/plugins/plgn.rb")
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
   it "should load plugins when plugin_path has a trailing slash" do
-    Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
-    File.stub(:open).and_return(false)
-    File.stub(:expand_path).with("/tmp/plugins/").and_return("/tmp/plugins") # windows
-    Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/darius.rb"])
-    Dir.should_receive(:[]).with("/tmp/plugins/#{Ohai::OS.collect_os}/**/*").and_return([])
+    Ohai::Config[:plugin_path] = ["#{tmp}/plugins/"]
+    File.stub(:expand_path).with("#{tmp}/plugins/").and_return("#{tmp}/plugins") # windows
+    @ohai.load_plugins
+  end
+
+  it "should log debug message for already loaded plugin" do
+    Ohai::Config[:plugin_path] = ["#{tmp}/plugins", "#{tmp}/plugins"]
+    File.stub(:expand_path).with("#{tmp}/plugins").and_return("#{tmp}/plugins") # windows
+
+    Ohai::Log.should_receive(:debug).with(/Already loaded plugin at/).once
     @ohai.load_plugins
   end
 end

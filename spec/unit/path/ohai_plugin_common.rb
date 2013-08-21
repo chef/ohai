@@ -161,8 +161,6 @@ def subsumes?(source, test, path = [], &block)
   end
 end
 
-require 'pry'
-
 # for use in plugins
 shared_context "cross platform data" do
   shared_examples_for "a plugin" do |plugin_names, data, cmd_list|
@@ -171,7 +169,6 @@ shared_context "cross platform data" do
         describe "when the platform is #{platform}" do
           e[:arch].each do |arch|
             describe "and the architecture is #{arch}" do
-              binding.pry
               e[:env].each do |env|
                 describe "and the environment is #{env}" do
                   path = OhaiPluginCommon.get_path

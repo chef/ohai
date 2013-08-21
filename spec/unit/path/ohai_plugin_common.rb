@@ -161,6 +161,8 @@ def subsumes?(source, test, path = [], &block)
   end
 end
 
+require 'pry'
+
 # for use in plugins
 shared_context "cross platform data" do
   shared_examples_for "a plugin" do |plugin_names, data, cmd_list|
@@ -169,6 +171,7 @@ shared_context "cross platform data" do
         describe "when the platform is #{platform}" do
           e[:arch].each do |arch|
             describe "and the architecture is #{arch}" do
+              binding.pry
               e[:env].each do |env|
                 describe "and the environment is #{env}" do
                   path = OhaiPluginCommon.get_path
@@ -205,7 +208,7 @@ shared_context "cross platform data" do
                   
                   enc = Yajl::Encoder
                   subsumes?( @ohai.data, e[:ohai] ) do | path, source, test |
-                    path_txt = path.map { |e| "[#{enc.encode( e )}]" }.join
+                    path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
                     source_txt = if source.nil? then "nil" else enc.encode( source ) end
                     it "should set #{path_txt} to #{source_txt}" do
                       source.should eq( test )

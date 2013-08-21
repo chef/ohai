@@ -206,9 +206,24 @@ end
 =end
 
 describe "when using DSL commands outside Ohai.plugin block" do
-  failstr1 = "provides \"fail\"\nOhai.plugin do\nend\n"
-  failstr2 = "depends \"fail\"\nOhai.plugin do\nend\n"
-  failstr3 = "collect_data do\nend\nOhai.plugin do\nend\n"
+  failstr1 = <<EOF
+provides "fail"
+Ohai.plugin do
+end
+EOF
+
+  failstr2 = <<EOF
+depends "fail"
+Ohai.plugin do
+end
+EOF
+
+  failstr3 = <<EOF
+collect_data do
+end
+Ohai.plugin do
+end
+EOF
 
   it_behaves_like "a v7 loading failure" do
     let(:failstr) { failstr1 }
@@ -233,8 +248,23 @@ end
 
 =begin
 describe "when using DSL commands in collect_data block" do
-  failstr1 = "Ohai.plugin do\n\tprovides \"fail\"\n\tcollect_data do\n\t\tprovides \"other\"\n\tend\nend\n"
-  failstr2 = "Ohai.plugin do\n\tprovides \"fail\"\n\tcollect_data do\n\t\tdepends \"other\"\n\tend\nend\n"
+  failstr1 = <<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    provides "other"
+  end
+end
+EOF
+
+  failstr2 =<<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    provides "other"
+  end
+end
+EOF
   
   it_behaves_like "a v7 loading success" do
     let(:failstr) { failstr1 }
@@ -254,8 +284,14 @@ describe "when using DSL commands in collect_data block" do
 end
 
 describe "when setting undeclared attribute in collect_data block" do
-  failstr = "Ohai.plugin do\n\tprovides \"fail\"\n\tcollect_data do\n\t\tcreates \"other\"\n\tend\nend\n"
-
+  failstr = <<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    creates "other"
+  end
+end
+EOF
   it_behaves_like "a v7 loading success" do
     let(:failstr) { failstr }
   end
@@ -266,7 +302,10 @@ describe "when setting undeclared attribute in collect_data block" do
 end
 
 describe "when setting undeclared attribute" do
-  failstr = "provides \"fail\"\nother \"attribute\"\n"
+  failstr = <<EOF
+provides "fail"
+other "attribute"
+EOF
 
   it_behaves_like "a v6 run failure" do
     let(:failstr) { failstr }

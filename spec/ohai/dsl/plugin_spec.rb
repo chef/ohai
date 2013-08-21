@@ -97,8 +97,8 @@ describe "VersionVII" do
   end
 
   before(:each) do
-    ohai = Ohai::System.new
-    loader = Ohai::Loader.new(ohai)
+    @ohai = Ohai::System.new
+    loader = Ohai::Loader.new(@ohai)
     @instance = loader.load_plugin("#{tmp}/plugins/v7plugin.rb")
   end
 
@@ -117,8 +117,8 @@ describe "VersionVII" do
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:instance) { Ohai::Loader.new(ohai).load_plugin("#{tmp}/plugins/v7plugin.rb") }
+    let (:ohai) { @ohai }
+    let (:instance) { @instance }
   end
 end
 
@@ -137,6 +137,8 @@ describe "VersionVI" do
   before(:each) do
     @ohai = Ohai::System.new
     loader = Ohai::Loader.new(@ohai)
+
+    Ohai::Log.should_receive(:warn).with(/DEPRECATION/)
     @instance = loader.load_plugin("#{tmp}/plugins/v6plugin.rb")
   end
 
@@ -160,7 +162,7 @@ describe "VersionVI" do
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:instance) { Ohai::Loader.new(ohai).load_plugin("#{tmp}/plugins/v6plugin.rb") }
+    let (:ohai) { @ohai }
+    let (:instance) { @instance }
   end
 end

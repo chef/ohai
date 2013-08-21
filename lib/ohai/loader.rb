@@ -55,6 +55,7 @@ module Ohai
         return plugin if plugin.nil?
         collect_provides(plugin)
       else
+        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. Version 6 plugins will not be supported in future releases of Ohai. Please upgrage your plugin to version 7 plugin syntax. For more information visit here: XXX")
         plugin = Ohai.v6plugin do collect_contents contents end
         if plugin.nil?
           Ohai::Log.warn("Unable to load plugin at #{plugin_path}")

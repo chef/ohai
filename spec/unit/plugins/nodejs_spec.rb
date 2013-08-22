@@ -54,28 +54,14 @@ describe Ohai::System, "plugin nodejs" do
 
   require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
 
-  expected = [{
-                :env => [[]],
-                :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "nodejs" => nil }},
-              },{
-                :env => [[]],
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :ohai => { "languages" => { "nodejs" => nil }},
-              },{
-                :env => [["nodejs"]],
-                :platform => ["centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-              },{
-                :env => [["nodejs"]],
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :ohai => { "languages" => { "nodejs" => { "version" => "0.10.2" }}},
-              }]
-
-  include_context "cross platform data"
-  it_behaves_like "a plugin", ["languages", "nodejs"], expected, ["node"]
+  test_plugin([ "languages", "nodejs" ], [ "node" ]) do | p |
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "nodejs" => nil }})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
+           { "languages" => { "nodejs" => nil }})
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "nodejs" ]],
+           { "languages" => { "nodejs" => { "version" => "0.10.2" }}})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "nodejs" ]],
+           { "languages" => { "nodejs" => { "version" => "0.10.2" }}})
+  end
 end

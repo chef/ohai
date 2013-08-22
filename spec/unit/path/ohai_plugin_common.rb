@@ -161,8 +161,8 @@ def subsumes?(source, test, path = [], &block)
   end
 end
 
-def test_case(plugin_names, cmd_list)
-  lambda do | platforms, archs, envs, ohai |
+def test_plugin(plugin_names, cmd_list)
+  l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|
       archs.each do |arch|
         envs.each do |env|
@@ -205,6 +205,12 @@ def test_case(plugin_names, cmd_list)
       end
     end
   end
+
+  # human friendlier syntax
+  l.instance_exec do
+    alias :test :call
+  end
+  yield l
 end
 
 # for use in plugins

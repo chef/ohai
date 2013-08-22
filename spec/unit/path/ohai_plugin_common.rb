@@ -166,9 +166,9 @@ def test_plugin(plugin_names, cmd_list)
     platforms.each do |platform|
       describe "when the platform is #{platform}" do
         archs.each do |arch|
-          describe "when the architecture is #{arch}" do
+          describe "and the architecture is #{arch}" do
             envs.each do |env|
-              describe "when the environment is #{env}" do
+              describe "and the environment is #{env}" do
                 path = OhaiPluginCommon.get_path
                 cmd_not_found = Set.new
                 
@@ -204,8 +204,12 @@ def test_plugin(plugin_names, cmd_list)
                 enc = Yajl::Encoder
                 subsumes?( @ohai.data, ohai ) do | path, source, test |
                   path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
-                  source_txt = if source.nil? then "nil" else enc.encode( source ) end
-                  it "should set #{path_txt} to #{source_txt}" do
+                  if source.nil?
+                    txt = "should not set #{path_txt}"
+                  else
+                    txt = "should set #{path_txt} to #{enc.encode( source )}"
+                  end
+                  it txt do
                     source.should eq( test )
                   end
                 end
@@ -269,8 +273,12 @@ shared_context "cross platform data" do
                   enc = Yajl::Encoder
                   subsumes?( @ohai.data, e[:ohai] ) do | path, source, test |
                     path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
-                    source_txt = if source.nil? then "nil" else enc.encode( source ) end
-                    it "should set #{path_txt} to #{source_txt}" do
+                    if source.nil?
+                      txt = "should not set #{path_txt}"
+                    else
+                      txt = "should set #{path_txt} to #{enc.encode( source )}"
+                    end
+                    it txt do
                       source.should eq( test )
                     end
                   end

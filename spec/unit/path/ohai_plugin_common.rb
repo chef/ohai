@@ -164,42 +164,53 @@ end
 def test_plugin(plugin_names, cmd_list)
   l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|
-      archs.each do |arch|
-        envs.each do |env|
-          it "provides data when the platform is '#{platform}', the architecture is '#{arch}' and the environment is '#{env}'" do
-            path = OhaiPluginCommon.get_path
-            cmd_not_found = Set.new
-            
-            # create fake executables
-            cmd_list.each do |c|
-              data = OhaiPluginCommon.read_output c
-              
-              data = data[platform][arch].select { |f| f[:env] == env }
-              if data.all? { |f| ( /command not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
-                cmd_not_found.add c
-              else
-                OhaiPluginCommon.create_exe c, path, platform, arch, env
+      describe "when the platform is #{platform}" do
+        archs.each do |arch|
+          describe "when the architecture is #{arch}" do
+            envs.each do |env|
+              describe "when the environment is #{env}" do
+                path = OhaiPluginCommon.get_path
+                cmd_not_found = Set.new
+                
+                # create fake executables
+                cmd_list.each do |c|
+                  data = OhaiPluginCommon.read_output c
+                  
+                  data = data[platform][arch].select { |f| f[:env] == env }
+                  if data.all? { |f| ( /command not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
+                    cmd_not_found.add c
+                  else
+                    OhaiPluginCommon.create_exe c, path, platform, arch, env
+                  end
+                end
+                
+                # preserve the path
+                old_path = ENV['PATH']
+                ENV['PATH'] = path
+                
+                @ohai = Ohai::System.new
+                
+                begin
+                  plugin_names.each do | plugin_name |
+                    Ohai::Loader.new( @ohai ).load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ), plugin_name )
+                    @plugin = @ohai.plugins[plugin_name.to_sym][:plugin].new( @ohai )
+                    @plugin.safe_run
+                  end
+                ensure
+                  ENV['PATH'] = old_path
+                  cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
+                end
+                
+                enc = Yajl::Encoder
+                subsumes?( @ohai.data, ohai ) do | path, source, test |
+                  path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
+                  source_txt = if source.nil? then "nil" else enc.encode( source ) end
+                  it "should set #{path_txt} to #{source_txt}" do
+                    source.should eq( test )
+                  end
+                end
               end
             end
-            
-            # preserve the path
-            old_path = ENV['PATH']
-            ENV['PATH'] = path
-            
-            @ohai = Ohai::System.new
-            
-            begin
-              plugin_names.each do | plugin_name |
-                Ohai::Loader.new( @ohai ).load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ), plugin_name )
-                @plugin = @ohai.plugins[plugin_name.to_sym][:plugin].new( @ohai )
-                @plugin.safe_run
-              end
-            ensure
-              ENV['PATH'] = old_path
-              cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
-            end
-            
-            subsumes?( @ohai.data, ohai ).should be_true
           end
         end
       end

@@ -17,14 +17,13 @@
 #
 
 Ohai.plugin do
-  provides "cpu"
+  provides "cpu/total"
+  provides "cpu/real"
 
   collect_data do
     chip_ids = Hash.new
     core_ids = Hash.new
 
-    chip_num = 0
-    core_num = 0
     vcpu_num = 0
 
     popen4("kstat cpu_info") do |pid, stdin, stdout, stderr|
@@ -43,6 +42,7 @@ Ohai.plugin do
 
     cpu Mash.new
 
+    # TODO: find where to put chip_ids.keys.length
     # solaris vcpus are like hyperthreads in intel-land
     cpu[:total] = vcpu_num
     # cores are cores

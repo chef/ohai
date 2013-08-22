@@ -53,33 +53,16 @@ describe Ohai::System, "plugin lua" do
 
   require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', '/ohai_plugin_common.rb'))
 
-  expected = [{
-                :platform => ["centos-6.4"],
-                :arch => ["x86", "x64"],
-                :env => [[], ["lua"]],
-                :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-              },{
-                :platform => ["ubuntu-10.04", "ubuntu-12.04"],
-                :arch => ["x86", "x64"],
-                :env => [[]],
-                :ohai => { "languages" => { "lua" => nil }},
-              },{
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :env => [[]],
-                :ohai => { "languages" => { "lua" => nil }},
-              },{
-                :platform => ["ubuntu-10.04", "ubuntu-12.04" ],
-                :arch => ["x86", "x64"],
-                :env => [["lua"]],
-                :ohai => { "languages" => { "lua" => { "version" => "5.1.4" }}},
-              },{
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :env => [["lua"]],
-                :ohai => { "languages" => { "lua" => { "version" => "5.1.5" }}},
-              }]
-
-  include_context "cross platform data"
-  it_behaves_like "a plugin", ["languages", "lua"], expected, ["lua"]
+  test_plugin([ "languages", "lua" ], [ "lua" ]) do | p |
+    p.test([ "centos-6.4" ], ["x86", "x64"], [[], ["lua"]],
+           { "languages" => { "lua" => { "version" => "5.1.4" }}})
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "lua" => nil }})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
+           { "languages" => { "lua" => nil }})
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "lua" ]],
+           { "languages" => { "lua" => { "version" => "5.1.4" }}})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [["lua"]],
+           { "languages" => { "lua" => { "version" => "5.1.5" }}})
+  end
 end

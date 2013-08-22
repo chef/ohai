@@ -65,7 +65,6 @@ describe Ohai::System, "plugin erlang" do
   ##########
 
   test_plugin(["languages", "erlang"], ["erl"]) do | p |
-
     p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
            { "languages" => { "erlang" => nil }})
     p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],

@@ -20,9 +20,7 @@ require 'open-uri'
 
 describe Ohai::System, "plugin gce" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("gce.rb", PLUGIN_PATH), "gce")
-    @plugin = @ohai.plugins[:gce][:plugin].new(@ohai)
+    @plugin = get_plugin("gce")
   end
 
   shared_examples_for "!gce" do

@@ -16,30 +16,19 @@
 # limitations under the License.
 #
 
+provides "kernel"
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require_plugin 'ruby'
 
-describe Ohai::System, "plugin ohai_time" do
-  before(:each) do
-    @plugin = get_plugin("ohai_time")
-  end
-  
-  it "should get the current time" do
-    Time.should_receive(:now)
-    @plugin.run
-  end
-  
-  it "should turn the time into a floating point number" do
-    time = Time.now
-    time.should_receive(:to_f)
-    Time.stub(:now).and_return(time)
-    @plugin.run
-  end
-  
-  it "should set ohai_time to the current time" do
-    time = Time.now
-    Time.stub(:now).and_return(time)
-    @plugin.run
-    @plugin[:ohai_time].should == time.to_f    
-  end
+kernel Mash.new
+case languages[:ruby][:host_os]
+when /mswin|mingw32|windows/
+  require_plugin "windows::kernel"
+  require_plugin "windows::kernel_devices"
+else
+  kernel[:name] = from("uname -s")
+  kernel[:release] = from("uname -r")
+  kernel[:version] = from("uname -v")
+  kernel[:machine] = from("uname -m")
+  kernel[:modules] = Mash.new
 end

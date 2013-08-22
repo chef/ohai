@@ -23,9 +23,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin python" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "python.rb"), "py")
-    @plugin = @ohai.plugins[:py][:plugin].new(@ohai)
+    @plugin = get_plugin("python")
     @plugin[:languages] = Mash.new
     @status = 0
     @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"

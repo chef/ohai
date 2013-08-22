@@ -18,6 +18,11 @@ if Ohai::OS.collect_os == /mswin|mingw32|windows/
   ENV["PATH"] = ""
 end
 
+def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
+  loader = Ohai::Loader.new(ohai)
+  loader.load_plugin(File.join(path, "#{plugin}.rb")).new(ohai)
+end
+
 def it_should_check_from(plugin, attribute, from, value)
   it "should set the #{attribute} to the value from '#{from}'" do
     @plugin.run

@@ -21,9 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "NetBSD kernel plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.join(PLUGIN_PATH, "netbsd/kernel.rb"), "nkern")
-    @plugin = @ohai.plugins[:nkern][:plugin].new(@ohai)
+    @plugin = get_plugin("netbsd/kernel")
     @plugin.stub(:from).with("uname -i").and_return("foo")
     @plugin.stub(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel=(.+)$/).and_return("kern.securelevel: 1")
     @plugin.should_receive(:popen4).with("/usr/bin/modstat").and_yield(1, StringIO.new, StringIO.new, StringIO.new)

@@ -19,9 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin cloud" do
   before do
-    @ohai = Ohai::System.new
-    Ohai::Loader.new(@ohai).load_plugin(File.expand_path("cloud.rb", PLUGIN_PATH), "cloud")
-    @plugin = @ohai.plugins[:cloud][:plugin].new(@ohai)
+    @plugin = get_plugin("cloud")
   end
 
   describe "with no cloud mashes" do

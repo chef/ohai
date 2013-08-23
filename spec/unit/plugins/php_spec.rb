@@ -54,38 +54,18 @@ describe Ohai::System, "plugin php" do
 
   #########
 
-  expected = [{
-                :env => [[]],
-                :platform => ["centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "php" => nil }},
-              },{
-                :env => [[]],
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :ohai => { "languages" => { "php" => nil }},
-              },{
-                :env => [["php"]],
-                :platform => ["centos-5.9", "centos-6.4"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "php" => { "version" => "5.3.3" }}},
-              },{
-                :env => [["php"]],
-                :platform => ["ubuntu-10.04"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}},
-              },{
-                :env => [["php"]],
-                :platform => ["ubuntu-12.04"],
-                :arch => ["x86", "x64"],
-                :ohai => { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}},
-              },{
-                :env => [["php"]],
-                :platform => ["ubuntu-13.04"],
-                :arch => ["x64"],
-                :ohai => { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}},
-              }]
-
-  include_context "cross platform data"
-  it_behaves_like "a plugin", ["languages", "php"], expected, ["php"]
+  test_plugin([ "languages", "php" ], [ "php" ]) do | p |
+    p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "php" => nil }})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
+           { "languages" => { "php" => nil }})
+    p.test([ "centos-5.9", "centos-6.4" ], [ "x86", "x64" ], [[ "php" ]],
+           { "languages" => { "php" => { "version" => "5.3.3" }}})
+    p.test([ "ubuntu-10.04" ], ["x86", "x64"], [[ "php" ]],
+           { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}})
+    p.test([ "ubuntu-12.04" ], [ "x86", "x64" ], [[ "php" ]],
+           { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "php" ]],
+           { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}})
+  end
 end

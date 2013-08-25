@@ -32,6 +32,142 @@ end
 describe Ohai::System, "Network Plugin" do
 
   basic_data = {
+    "freebsd" => {
+      "network" => {
+        "interfaces" => {
+          "vr0" => {
+            "type" => "vr",
+            "number" => "0",
+            "flags" => ["UP", "BROADCAST", "RUNNING", "SIMPLEX", "MULTICAST"],
+            "addresses" => {
+              "00:00:24:c9:5e:b8" => {"family" => "lladdr"},
+              "fe80::200:24ff:fec9:5eb8" => {
+                "family" => "inet6",
+                "zoneid" => "vr0",
+                "prefixlen" => "64",
+                "scopeid" => "0x1"
+              },
+              "76.91.1.255" => {
+                "family" => "inet",
+                "netmask" => "255.255.252.0",
+                "broadcast" => "255.255.255.255"
+              }
+            },
+            "arp" => {
+              "76.91.1.255" => "00:00:24:c9:5e:b8",
+              "76.91.0.1" => "00:01:5c:24:8c:01"
+            }
+          },
+          "vr1" => {
+            "type" => "vr",
+            "number" => "1",
+            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "addresses" => {
+              "00:00:24:c9:5e:b9" => {"family" => "lladdr"},
+              "fe80::200:24ff:fec9:5eb9" => {
+                "family" => "inet6",
+                "zoneid" => "vr1",
+                "prefixlen" => "64",
+                "scopeid" => "0x2"
+              }
+            }
+          },
+          "vr2" => {
+            "type" => "vr",
+            "number" => "2",
+            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "addresses" => {
+              "00:00:24:c9:5e:ba" => {"family" => "lladdr"},
+              "fe80::200:24ff:fec9:5eba" => {
+                "family" => "inet6",
+                "zoneid" => "vr2",
+                "prefixlen" => "64",
+                "scopeid" => "0x3"
+              }
+            }
+          },
+          "vr3" => {
+            "type" => "vr",
+            "number" => "3",
+            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "addresses" => {
+              "00:00:24:c9:5e:bb" => {"family" => "lladdr"},
+              "fe80::200:24ff:fec9:5ebb" => {
+                "family" => "inet6",
+                "zoneid" => "vr3",
+                "prefixlen" => "64",
+                "scopeid" => "0x4"
+              }
+            }
+          },
+          "ipfw0" => {
+            "type" => "ipfw",
+            "number" => "0",
+            "flags" => ["UP", "SIMPLEX", "MULTICAST"]
+          },
+          "lo0" => {
+            "type" => "lo",
+            "number" => "0",
+            "flags" => ["UP", "LOOPBACK", "RUNNING", "MULTICAST"],
+            "addresses" => {
+              "127.0.0.1" => {"family" => "inet", "netmask" => "255.0.0.0"},
+              "::1" => {"family" => "inet6", "prefixlen" => "128"},
+              "fe80::1" => {
+                "family" => "inet6",
+                "zoneid" => "lo0",
+                "prefixlen" => "64",
+                "scopeid" => "0x8"
+              }
+            }
+          },
+          "bridge0" => {
+            "type" => "bridge",
+            "number" => "0",
+            "flags" => ["LEARNING", "DISCOVER", "AUTOEDGE", "AUTOPTP"],
+            "addresses" => {
+              "02:20:6f:d2:c4:00" => {"family"=>"lladdr"},
+              "192.168.2.1" => {
+                "family" => "inet",
+                "netmask" => "255.255.255.0",
+                "broadcast" => "192.168.2.255"
+              },
+              "2001:470:d:cb4::1" => {"family" => "inet6", "prefixlen" => "64"},
+              "fe80::cafe:babe:dead:beef" => {
+                "family" => "inet6",
+                "zoneid" => "bridge0",
+                "prefixlen" => "64",
+                "scopeid" => "0x9"
+              }
+            },
+            "arp" => {
+              "192.168.2.142" => "60:67:20:75:a2:0c",
+              "192.168.2.205" => "c0:c1:c0:f9:40:ed",
+              "192.168.2.160" => "cc:3a:61:cf:67:13",
+              "192.168.2.1" => "02:20:6f:d2:c4:00",
+              "192.168.2.135" => "f8:0c:f3:d7:c6:b6",
+              "192.168.2.165" => "f8:8f:ca:24:49:ad",
+              "192.168.2.158" => "48:5d:60:1f:ea:d1",
+              "192.168.2.150" => "60:a4:4c:60:b3:d9"
+            }
+          },
+          "gif0" => {
+            "type" => "gif",
+            "number" => "0",
+            "flags" => ["UP", "POINTOPOINT", "RUNNING", "MULTICAST"],
+            "addresses" => {
+              "fe80::200:24ff:fec9:5eb8" => {
+                "family" => "inet6",
+                "zoneid" => "gif0",
+                "prefixlen" => "64",
+                "scopeid" => "0xa"
+              }
+            }
+          }
+        },
+        "default_gateway" => "76.91.0.1",
+        "default_interface" => "vr0"
+      }
+    },
     "linux" => {
       "network" => {
         # pp Hash[node['network']] from  shef to get the network data
@@ -633,6 +769,9 @@ describe Ohai::System, "Network Plugin" do
             @plugin["ipaddress"] = "10.11.12.13"
             @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
             @expected_results = {
+              "freebsd" => {
+                "ip6address" => "::1"
+              },
               "linux" => {
                 "ip6address" => "3ffe:1111:2222::33"
               },
@@ -661,6 +800,10 @@ describe Ohai::System, "Network Plugin" do
             before do
               @plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
+                "freebsd" => {
+                  "ipaddress" => "76.91.1.255",
+                  "macaddress" => "00:00:24:c9:5e:b8"
+                },
                 "linux" => {
                   "ipaddress" => "192.168.66.33",
                   "macaddress" => "00:16:3E:2F:36:79"
@@ -691,7 +834,9 @@ describe Ohai::System, "Network Plugin" do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
               @plugin["network"]["interfaces"].each do |i,iv|
-                iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                if iv.has_key? "addresses"
+                  iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                end
               end
               @plugin["ip6address"] = "3ffe:8888:9999::1"
             end
@@ -730,6 +875,10 @@ describe Ohai::System, "Network Plugin" do
               @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
               @plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
+                "freebsd" => {
+                  "ipaddress" => "76.91.1.255",
+                  "macaddress" => "00:00:24:c9:5e:b8"
+                },
                 "linux" => {
                   "ipaddress" => "192.168.66.33",
                   "macaddress" => "00:16:3E:2F:36:79"
@@ -760,7 +909,9 @@ describe Ohai::System, "Network Plugin" do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
               @plugin["network"]["interfaces"].each do |i,iv|
-                iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                if iv.has_key? "addresses"
+                  iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                end
               end
               @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
               @plugin["ip6address"] = "3ffe:8888:9999::1"

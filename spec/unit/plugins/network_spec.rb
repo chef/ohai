@@ -101,6 +101,7 @@ describe Ohai::System, "Network Plugin" do
             }
           },
           "ipfw0" => {
+            # OHAI-492: Ensure network plugin works with interfaces without addresses.
             "type" => "ipfw",
             "number" => "0",
             "flags" => ["UP", "SIMPLEX", "MULTICAST"]

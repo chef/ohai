@@ -24,7 +24,11 @@ Ohai.plugin do
     begin
       fqdn from("hostname --fqdn")
     rescue
-      Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      if `hostname`.strip.split('.').count >= 3
+        fqdn from("hostname")
+      else
+        Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      end
     end
   end
 end

@@ -20,6 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
     @plugin = get_plugin("rackspace")
+    @plugin[:hostname] = "katie"
     @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
       "1.2.3.4"=> {
         "broadcast"=> "67.23.20.255",
@@ -90,6 +91,8 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:local_ipv4].should_not be_nil
       @plugin[:rackspace][:public_ipv6].should_not be_nil
       @plugin[:rackspace][:local_ipv6].should be_nil
+      @plugin[:rackspace][:local_hostname].should_not be_nil
+      @plugin[:rackspace][:public_hostname].should_not be_nil
     end
 
     it "should have correct values for all attributes" do
@@ -99,6 +102,8 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:public_ipv4].should == "1.2.3.4"
       @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
       @plugin[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
+      @plugin[:rackspace][:local_hostname].should == 'katie'
+      @plugin[:rackspace][:public_hostname].should == "1-2-3-4.static.cloud-ips.com"
     end
 
     it "should capture region information" do
@@ -123,6 +128,34 @@ OUT
       File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
       File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
       File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+    end
+
+    describe 'with no public interfaces (empty eth0)' do
+      before do
+        # unset public (eth0) addresses
+        @plugin[:network][:interfaces][:eth0]['addresses'] = {} 
+      end
+
+      it "should have all required attributes" do
+        @plugin.run
+        # expliticly nil
+        @plugin[:rackspace][:public_ip].should be_nil
+        @plugin[:rackspace][:public_ipv4].should be_nil
+        @plugin[:rackspace][:public_ipv6].should be_nil
+        @plugin[:rackspace][:public_hostname].should be_nil
+        # per normal
+        @plugin[:rackspace][:private_ip].should_not be_nil
+        @plugin[:rackspace][:local_ipv4].should_not be_nil
+        @plugin[:rackspace][:local_ipv6].should be_nil
+        @plugin[:rackspace][:local_hostname].should_not be_nil
+      end
+  
+      it "should have correct values for all attributes" do
+        @plugin.run
+        @plugin[:rackspace][:private_ip].should == "5.6.7.8"
+        @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
+        @plugin[:rackspace][:local_hostname].should == 'katie'
+      end
     end
   end
 

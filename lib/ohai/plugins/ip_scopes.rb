@@ -16,7 +16,7 @@
 # limitations under the License.
 
 Ohai.plugin do
-  provides "network_ip_scope", "privateaddres"
+  provides "network_ip_scope", "privateaddress"
 
   depends "domain", "fqdn"
   depends "network", "counters/network"

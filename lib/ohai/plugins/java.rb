@@ -26,7 +26,7 @@ Ohai.plugin do
 
     status, stdout, stderr = nil
     if RUBY_PLATFORM.downcase.include?("darwin") 
-      if system("/usr/libexec/java_home 2>&1 >#{Ohai.dev_null}")
+      if system("#{ Ohai.abs_path( "/usr/libexec/java_home" )} 2>&1 >#{ Ohai.dev_null }")
         status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
       end
     else

@@ -28,7 +28,7 @@ Ohai.plugin do
     end
 
     # detect from modules
-    popen4("/sbin/kldstat") do |pid, stdin, stdout, stderr|
+    popen4("#{ Ohai.abs_path( "/sbin/kldstat" )}") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
         case line

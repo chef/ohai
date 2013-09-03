@@ -165,15 +165,7 @@ def test_plugin(plugin_names, cmd_list)
   require 'rspec'
 
   # clean the path directory, in case a previous test was interrupted
-  o = nil
-  if RUBY_PLATFORM =~ /mswin|mingw|windows/
-    o = Mixlib::ShellOut.new( "dir #{ OhaiPluginCommon }" )
-  else
-    o = Mixlib::ShellOut.new( "ls #{ OhaiPluginCommon }" )
-  end
-  o.run_command.stdout.split(/\r?\n/).reject { |e| /\.rb$/ =~ e }.each do |e|
-    Mixlib::ShellOut.new( "rm #{ File.join( OhaiPluginCommon.get_path, e )}" ).run_command
-  end
+  FileUtils.rm( Dir.glob( "*" ).reject { |e| e =~ /^.*\.rb$/ })
 
   l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|

@@ -20,6 +20,7 @@ require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/mash'
 require 'ohai/os'
+require 'ohai/runner'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
@@ -37,7 +38,7 @@ module Ohai
 
     def initialize
       @data = Mash.new
-      @attributes = Hash.new
+      @attributes = Mash.new
       @hints = Hash.new
       @v6_dependency_solver = Hash.new
       @plugin_path = ""
@@ -58,16 +59,27 @@ module Ohai
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
-            plugin_path = md[0]
-            unless @v6_dependency_solver.has_key?(plugin_path)
-              plugin = loader.load_plugin(plugin_path)
-              @v6_dependency_solver[plugin_path] = plugin unless plugin.nil?
+            unless @v6_dependency_solver.has_key?(file)
+              plugin = loader.load_plugin(file)
+              @v6_dependency_solver[file] = plugin unless plugin.nil?
             else
-              Ohai::Log.debug("Already loaded plugin at #{plugin_path}")
+              Ohai::Log.debug("Already loaded plugin at #{file}")
             end
           end
         end
       end
+    end
+
+    def run_plugins(safe = false, force = false)
+      runner = Ohai::Runner.new(self, safe)
+      plugins = collect_providers(@attributes)
+      begin
+        plugins.each { |plugin| runner.run_plugin(plugin, force) }
+      rescue DependencyCycleError, NoAttributeError => e
+        Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+        raise
+      end
+      nil
     end
 
     def all_plugins
@@ -97,19 +109,19 @@ module Ohai
     end
 
     def collect_providers(providers)
-      refreshments = []
+      plugins = []
       if providers.is_a?(Mash)
         providers.keys.each do |provider|
-          if provider.eql?("_providers")
-            refreshments << providers[provider]
+          if provider.eql?("providers")
+            plugins << providers[provider]
           else
-            refreshments << collect_providers(providers[provider])
+            plugins << collect_providers(providers[provider])
           end
         end
       else
-        refreshments << providers
+        plugins << providers
       end
-      refreshments.flatten.uniq
+      plugins.flatten.uniq
     end
 
     def refresh_plugins(path = '/')

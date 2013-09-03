@@ -28,8 +28,8 @@ describe Ohai::System, "initialize" do
     Ohai::System.new.data.should be_a_kind_of(Mash)
   end
 
-  it "should set @attributes to a Hash" do
-    Ohai::System.new.attributes.should be_a_kind_of(Hash)
+  it "should set @v6_dependency_solver to a Hash" do
+    Ohai::System.new.v6_dependency_solver.should be_a_kind_of(Hash)
   end
 end
 

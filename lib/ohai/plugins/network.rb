@@ -39,13 +39,40 @@ Ohai.plugin do
     ipaddresses = []
     # ipaddresses going to hold #{family} ipaddresses and their scope
     Mash[network['interfaces']].each do |iface, iface_v|
+    next if iface.nil? or iface_v.nil? or iface_v['addresses'].nil?
       iface_v['addresses'].each do |addr, addr_v|
+        Ohai::Log.debug("Ohai::network|found iface =		" + iface.inspect)
+        Ohai::Log.debug("Ohai::network|knows about #{iface} =	" + iface_v.inspect)
         next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
-        ipaddresses <<  {
-          :ipaddress => addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
-          :scope => addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
+        Ohai::Log.debug("Ohai::network|and theese address:	" + addr.inspect)
+        Ohai::Log.debug("Ohai::network|In detail:			" + addr_v.inspect)
+
+        ipa = nil
+        if addr_v.has_key?("prefixlen") and not addr_v["prefixlen"].nil? and addr_v["prefixlen"]
+          ipa = IPAddress("#{addr}/#{addr_v["prefixlen"]}")
+        else
+          ipa = IPAddress("#{addr}/#{addr_v["netmask"]}")
+        end
+        Ohai::Log.debug("Ohai::network|Processed IP:		" + ipa.inspect)
+
+        scope = nil
+        if addr_v["scope"].nil?
+          if not addr_v["scopeid"].nil?
+            scope = addr_v["scopeid"]
+          end
+        else
+          scope = addr_v["scope"]
+        end
+        Ohai::Log.debug("Ohai::network|Processed scope:		" + scope.inspect)
+
+        address = {
+          :ipaddress => ipa,
+          :scope => scope,
           :iface => iface
         }
+        Ohai::Log.debug("Ohai::network|Processed address:		" + address.inspect)
+
+        ipaddresses << address
       end
     end
 

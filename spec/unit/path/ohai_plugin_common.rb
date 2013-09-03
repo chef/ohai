@@ -54,7 +54,7 @@ module OhaiPluginCommon
   def plugin_path
     get_path '/../../../lib/ohai/plugins'
   end
-  
+
   # read in the data file for fake executables
   def read_output( cmd, path = "#{data_path}" )
 

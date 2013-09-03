@@ -30,6 +30,15 @@ module Ohai
     Class.new(DSL::Plugin::VersionVI, &block)
   end
 
+  # cross platform /dev/null
+  def self.dev_null
+    if RUBY_PLATFORM =~ /mswin|mingw|windows/
+      "NUL"
+    else
+      "/dev/null"
+    end
+  end
+
   module DSL
     class Plugin
       include Ohai::OS
@@ -190,7 +199,7 @@ module Ohai
         hints[name]
       end
 
-      #emulates the old plugin loading behavior
+      # emulates the old plugin loading behavior
       def safe_run
         begin
           self.run

@@ -37,22 +37,38 @@ module Ohai
       include Ohai::Mixin::SecondsToHuman
 
       attr_reader :data
+      attr_reader :source
 
-      def initialize(controller)
+      def initialize(controller, source)
         @controller = controller
         @data = controller.data
+        @source = source
+        @has_run = false
+      end
+
+      def run
+        @has_run = true
+        run_plugin
+      end
+
+      def has_run?
+        @has_run
       end
 
       #=====================================================
       # version 7 plugin class
       #=====================================================
       class VersionVII < Plugin
-        def initialize(controller)
-          super(controller)
+        def initialize(controller, source)
+          super(controller, source)
         end
 
-        def self.version
+        def version
           :version7
+        end
+
+        def dependencies
+          self.class.depends_attrs
         end
 
         def self.provides_attrs
@@ -82,7 +98,7 @@ module Ohai
         end
 
         def self.collect_data(&block)
-          define_method(:run, &block)
+          define_method(:run_plugin, &block)
         end
       end
 
@@ -90,16 +106,16 @@ module Ohai
       # version 6 plugin class
       #=====================================================
       class VersionVI < Plugin
-        def initialize(controller)
-          super(controller)
+        def initialize(controller, source)
+          super(controller, source)
         end
 
-        def self.version
+        def version
           :version6
         end
 
         def self.collect_contents(contents)
-          define_method(:run) { self.instance_eval(contents) }
+          define_method(:run_plugin) { self.instance_eval(contents) }
         end
       end
 
@@ -107,7 +123,7 @@ module Ohai
       # plugin DSL methods
       #=====================================================
       def require_plugin(*args)
-        if self.class.version == :version6
+        if self.version == :version6
           @controller.require_plugin(*args)
         else
           Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
@@ -144,6 +160,26 @@ module Ohai
         status, stdout, stderr = run_command(:command => cmd)
         return "" if stdout.nil? || stdout.empty?
         stdout.strip
+      end
+
+      def provides(*paths)
+        if self.version == :version7
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
+        else
+          paths.each do |path|
+            parts = path.split("/")
+            a = @attributes
+            unless parts.length == 0
+              parts.shift if parts[0].length == 0
+              parts.each do |part|
+                a[part] ||= Mash.new
+                a = a[part]
+              end
+            end
+            a[:providers] ||= []
+            a[:providers] << self
+          end
+        end
       end
 
       # Set the value equal to the stdout of the command, plus

@@ -165,7 +165,7 @@ def test_plugin(plugin_names, cmd_list)
   require 'rspec'
 
   # clean the path directory, in case a previous test was interrupted
-  FileUtils.rm( Dir.glob( "*" ).reject { |e| e =~ /^.*\.rb$/ })
+  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
 
   l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|
@@ -204,7 +204,7 @@ def test_plugin(plugin_names, cmd_list)
                   end
                 ensure
                   ENV['PATH'] = old_path
-                  cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
+                  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
                 end
                 
                 enc = Yajl::Encoder

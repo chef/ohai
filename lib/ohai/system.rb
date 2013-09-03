@@ -79,7 +79,6 @@ module Ohai
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
-      nil
     end
 
     def all_plugins

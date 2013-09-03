@@ -200,12 +200,12 @@ EOF
 
       it "should not define run_plugin if no collect data block exists" do
         klass = self.instance_eval(@no_collect_data)
-        klass.instance_methods.include?(:run_plugin).should be_false
+        klass.method_defined?(:run_plugin).should be_false
       end
 
       it "should define run_plugin if a collect data block exists" do
         klass = self.instance_eval(@collect_data)
-        klass.instance_methods.include?(:run_plugin).should be_true
+        klass.method_defined?(:run_plugin).should be_true
       end
     end
 
@@ -281,7 +281,7 @@ EOF
 
     it "should define run_plugin with contents string" do
       klass = Ohai.v6plugin { collect_contents(@contents) }
-      klass.instance_methods.include?(:run_plugin).should be_true
+      klass.method_defined?(:run_plugin).should be_true
     end
   end
 

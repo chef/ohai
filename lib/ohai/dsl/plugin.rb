@@ -39,6 +39,12 @@ module Ohai
     end
   end
 
+  # this methods gets overridden at test time, to force the shell to check
+  # ohai/spec/unit/path/original/absolute/path/to/exe
+  def self.abs_path( abs_path )
+    abs_path
+  end
+
   module DSL
     class Plugin
       include Ohai::OS

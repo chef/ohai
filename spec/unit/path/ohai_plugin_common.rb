@@ -199,7 +199,7 @@ def test_plugin(plugin_names, cmd_list)
                 
                   plugin_names.each do | plugin_name |
                     @loader = Ohai::Loader.new( @ohai )
-                    @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ) ).new(@ohai)
+                    @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ) )
                     @plugin.safe_run
                   end
                 ensure

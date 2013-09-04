@@ -19,7 +19,7 @@
 require 'chef/version'
 
 Ohai.plugin do
-  provides "chef"
+  provides "chef_packages/chef"
 
   collect_data do
     self[:chef_packages] = Mash.new unless self[:chef_packages]

@@ -40,7 +40,8 @@ describe Ohai::System, "FreeBSD virtualization plugin" do
     end
 
     it "detects we are hosing jails" do
-      @plugin.stub(:from).with("jls -n \| wc -l").and_return("1")
+      # from http://www.freebsd.org/doc/handbook/jails-application.html
+      @plugin.stub(:from).with("jls -n").and_return("JID  IP Address      Hostname                      Path\n     3  192.168.3.17    ns.example.org                /home/j/ns\n     2  192.168.3.18    mail.example.org              /home/j/mail\n     1  62.123.43.14    www.example.org               /home/j/www")
       @plugin.run
       @plugin[:virtualization][:system].should == "jail"
       @plugin[:virtualization][:role].should == "host"

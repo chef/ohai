@@ -28,7 +28,7 @@ Ohai.plugin do
     end
 
     # detect from modules
-    popen4("/sbin/kldstat") do |pid, stdin, stdout, stderr|
+    popen4("#{ Ohai.abs_path( "/sbin/kldstat" )}") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
         case line
@@ -44,7 +44,7 @@ Ohai.plugin do
 
 
     # XXX doesn't work when jail is there but not running (ezjail-admin stop)
-    if from("jls -n \| wc -l").to_i >= 1
+    if ( from( "jls -n" ) || "" ).lines.count >= 1
       virtualization[:system] = "jail"
       virtualization[:role] = "host"
     end

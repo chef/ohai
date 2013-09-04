@@ -54,7 +54,7 @@ module OhaiPluginCommon
   def plugin_path
     get_path '/../../../lib/ohai/plugins'
   end
-  
+
   # read in the data file for fake executables
   def read_output( cmd, path = "#{data_path}" )
 
@@ -163,6 +163,10 @@ end
 # test that a plugin conforms populates ohai with the correct data
 def test_plugin(plugin_names, cmd_list)
   require 'rspec'
+
+  # clean the path directory, in case a previous test was interrupted
+  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
+
   l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|
       describe "when the platform is #{platform}" do
@@ -173,25 +177,26 @@ def test_plugin(plugin_names, cmd_list)
                 path = OhaiPluginCommon.get_path
                 cmd_not_found = Set.new
                 
-                # create fake executables
-                cmd_list.each do |c|
-                  data = OhaiPluginCommon.read_output c
-                  
-                  data = data[platform][arch].select { |f| f[:env] == env }
-                  if data.all? { |f| ( /command not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
-                    cmd_not_found.add c
-                  else
-                    OhaiPluginCommon.create_exe c, path, platform, arch, env
-                  end
-                end
-                
-                # preserve the path
-                old_path = ENV['PATH']
-                ENV['PATH'] = path
-                
-                @ohai = Ohai::System.new
-                
                 begin
+                  # preserve the path
+                  old_path = ENV[ 'PATH' ]
+                
+                  # create fake executables
+                  cmd_list.each do |c|
+                    data = OhaiPluginCommon.read_output c
+                    
+                    data = data[platform][arch].select { |f| f[:env] == env }
+                    if data.all? { |f| ( /command not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
+                      cmd_not_found.add c
+                    else
+                      OhaiPluginCommon.create_exe c, path, platform, arch, env
+                    end
+                  end
+                  
+                  ENV['PATH'] = path
+                  
+                  @ohai = Ohai::System.new
+                
                   plugin_names.each do | plugin_name |
                     @loader = Ohai::Loader.new( @ohai )
                     @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ) ).new(@ohai)
@@ -199,7 +204,7 @@ def test_plugin(plugin_names, cmd_list)
                   end
                 ensure
                   ENV['PATH'] = old_path
-                  cmd_list.each { |c| [ "", ".bat" ].each { |ext| Mixlib::ShellOut.new("rm #{path}/#{c}#{ext}").run_command if !cmd_not_found.include?( c )}}
+                  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
                 end
                 
                 enc = Yajl::Encoder

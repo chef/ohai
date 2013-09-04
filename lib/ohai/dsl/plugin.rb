@@ -30,6 +30,21 @@ module Ohai
     Class.new(DSL::Plugin::VersionVI, &block)
   end
 
+  # cross platform /dev/null
+  def self.dev_null
+    if RUBY_PLATFORM =~ /mswin|mingw|windows/
+      "NUL"
+    else
+      "/dev/null"
+    end
+  end
+
+  # this methods gets overridden at test time, to force the shell to check
+  # ohai/spec/unit/path/original/absolute/path/to/exe
+  def self.abs_path( abs_path )
+    abs_path
+  end
+
   module DSL
     class Plugin
       include Ohai::OS
@@ -190,7 +205,7 @@ module Ohai
         hints[name]
       end
 
-      #emulates the old plugin loading behavior
+      # emulates the old plugin loading behavior
       def safe_run
         begin
           self.run

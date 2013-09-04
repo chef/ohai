@@ -22,7 +22,7 @@ Ohai.plugin do
   # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
 
   collect_data do
-    popen4("/usr/sbin/sysctl kern.boottime") do |pid, stdin, stdout, stderr|
+    popen4("#{ Ohai.abs_path( "/usr/sbin/sysctl" )} kern.boottime") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
         if line =~ /kern.boottime:\D+(\d+)/

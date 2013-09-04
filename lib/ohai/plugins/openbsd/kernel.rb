@@ -24,7 +24,7 @@ Ohai.plugin do
     kernel[:securelevel] = from_with_regex("sysctl kern.securelevel", /kern.securelevel=(.+)$/)
 
     mod = Mash.new
-    popen4("/usr/bin/modstat") do |pid, stdin, stdout, stderr|
+    popen4("#{ Ohai.abs_path( "/usr/bin/modstat" )}") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
         #  1    7 0xc0400000 97f830   kernel

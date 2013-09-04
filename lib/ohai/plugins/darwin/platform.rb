@@ -20,7 +20,7 @@ Ohai.plugin do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data do
-    popen4("/usr/bin/sw_vers") do |pid, stdin, stdout, stderr|
+    popen4("#{ Ohai.abs_path( "/usr/bin/sw_vers" )}") do |pid, stdin, stdout, stderr|
       stdin.close
       stdout.each do |line|
         case line

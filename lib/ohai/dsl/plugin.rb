@@ -56,6 +56,7 @@ module Ohai
 
       def initialize(controller, source)
         @controller = controller
+        @attributes = controller.attributes
         @data = controller.data
         @source = source
         @has_run = false

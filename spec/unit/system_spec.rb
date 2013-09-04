@@ -138,6 +138,51 @@ describe "Ohai::System" do
     end
   end
 
+  describe "#all_plugins" do
+    before(:each) do
+      @plugin_path = Ohai::Config[:plugin_path]
+      Ohai::Config[:plugin_path] = ["/tmp/plugins"]
+
+      @ohai = Ohai::System.new
+      @ohai.stub(:require_plugin).with('os').and_return(true)
+      @ohai.data[:os] = "ubuntu"
+
+      @klass = Ohai.v6plugin { }
+
+      File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
+    end
+
+    after(:each) do
+      Ohai::Config[:plugin_path] = @plugin_path
+      @ohai.data.clear
+    end
+
+    it "should log a deprecation message" do
+      @ohai.stub(:require_plugin).and_return(true)
+      Ohai::Config[:plugin_path] = []
+      Ohai::Log.should_receive(:warn).with(/[DEPRECATION]/)
+      @ohai.all_plugins
+    end
+    
+    it "should locate plugins on the plugin path" do
+      plugin = @klass.new(@ohai, "/tmp/plugins/empty.rb")
+      Dir.stub(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
+      Dir.stub(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
+      @ohai.stub(:require_plugin).with("empty").and_return(true)
+      @ohai.should_receive(:require_plugin).with("empty")
+      @ohai.all_plugins
+    end
+
+    it "should locate os-specific plugins on the plugin path" do
+      plugin = @klass.new(@ohai, "/tmp/plugins/ubuntu/empty.rb")
+      Dir.stub(:[]).with("/tmp/plugins/*").and_return([])
+      Dir.stub(:[]).with("/tmp/plugins/ubuntu/**/*").and_return(["/tmp/plugins/ubuntu/empty.rb"])
+      @ohai.stub(:require_plugin).with("ubuntu::empty").and_return(true)
+      @ohai.should_receive(:require_plugin).with("ubuntu::empty")
+      @ohai.all_plugins
+    end
+  end
+
   describe "#collect_providers" do
     before(:each) do
       @ohai = Ohai::System.new
@@ -166,6 +211,139 @@ describe "Ohai::System" do
       @plugins.each do |plugin|
         providers.include?(plugin).should be_true
       end
+    end
+  end
+
+  describe "#require_plugin" do
+    before(:each) do
+      @plugin_path = Ohai::Config[:plugin_path]
+      Ohai::Config[:plugin_path] = ["/tmp/plugins"]
+
+      @ohai = Ohai::System.new
+      klass = Ohai.v6plugin { }
+      @plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
+
+      @ohai.stub(:plugin_for).with("empty").and_return(@plugin)
+    end
+
+    after(:each) do
+      Ohai::Config[:plugin_path] = @plugin_path
+    end
+
+    it "should immediately return if force is false and the plugin has already run" do
+      @ohai.v6_dependency_solver['empty'] = @plugin
+      @plugin.stub(:has_run?).and_return(true)
+
+      @ohai.should_not_receive(:plugin_for).with("empty")
+      @ohai.require_plugin("empty", true).should be_true
+    end
+
+    context "when a plugin is disabled" do
+      before(:all) do
+        @disabled_plugins = Ohai::Config[:disabled_plugins]
+        Ohai::Config[:disabled_plugins] = ["empty"]
+      end
+
+      after(:all) do
+        Ohai::Config[:disabled_plugins] = @disabled_plugins
+      end
+
+      it "should not run the plugin" do
+        Ohai::Log.should_receive(:debug).with(/Skipping disabled plugin/)
+        @ohai.should_not_receive(:plugin_for).with("empty")
+        @ohai.require_plugin("empty").should be_false
+      end
+
+      it "should not run the plugin even if force is true" do
+        Ohai::Log.should_receive(:debug).with(/Skipping disabled plugin/)
+        @ohai.should_not_receive(:plugin_for).with("empty")
+        @ohai.require_plugin("empty", true).should be_false
+      end
+    end
+
+    it "should check for the plugin in v6_dependency_solver first" do
+      @ohai.v6_dependency_solver['empty'] = @plugin
+      @ohai.should_not_receive(:plugin_for).with("empty")
+      @plugin.stub(:safe_run).and_return(true)
+      @ohai.require_plugin("empty").should be_true
+    end
+
+    it "should load the plugin if not already loaded" do
+      @ohai.stub(:plugin_for).with("empty").and_return(@plugin)
+      @ohai.should_receive(:plugin_for).with("empty")
+      @plugin.stub(:safe_run).and_return(true)
+      @ohai.require_plugin("empty").should be_true
+    end
+
+    it "should run the plugin if the plugin has not yet run" do
+      @ohai.stub(:plugin_for).with("empty").and_return(@plugin)
+      @plugin.stub(:safe_run).and_return(true)
+      @ohai.require_plugin("empty").should be_true
+    end
+
+    it "should log a message to debug if a plugin cannot be found" do
+      @ohai.stub(:plugin_for).with("fake").and_return(nil)
+      Ohai::Log.should_receive(:debug).with(/No fake found in/)
+      @ohai.require_plugin("fake")
+    end
+  end
+
+  describe "#plugin_for" do
+    before(:each) do
+      @plugin_path = Ohai::Config[:plugin_path]
+      Ohai::Config[:plugin_path] = ["/tmp/plugins"]
+
+      @ohai = Ohai::System.new
+      @klass = Ohai.v6plugin { }
+
+      @loader = double('loader')
+      Ohai::Loader.stub(:new) { @loader }
+    end
+
+    after(:each) do
+      Ohai::Config[:plugin_path] = @plugin_path
+    end
+
+    it "should find a plugin with a simple name" do
+      plugin = @klass.new(@ohai, "/tmp/plugins/empty.rb")
+      File.stub(:join).with("/tmp/plugins", "empty.rb").and_return("/tmp/plugins/empty.rb")
+      File.stub(:expand_path).with("/tmp/plugins/empty.rb").and_return("/tmp/plugins/empty.rb")
+      File.stub(:exist?).with("/tmp/plugins/empty.rb").and_return(true)
+      @loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
+
+      found_plugin = @ohai.plugin_for("empty")
+      found_plugin.should eql(plugin)
+    end
+
+    it "should find a plugin with a complex name" do
+      plugin = @klass.new(@ohai, "/tmp/plugins/ubuntu/empty.rb")
+      File.stub(:join).with("/tmp/plugins", "ubuntu/empty.rb").and_return("/tmp/plugins/ubuntu/empty.rb")
+      File.stub(:expand_path).with("/tmp/plugins/ubuntu/empty.rb").and_return("/tmp/plugins/ubuntu/empty.rb")
+      File.stub(:exist?).with("/tmp/plugins/ubuntu/empty.rb").and_return(true)
+      @loader.stub(:load_plugin).with("/tmp/plugins/ubuntu/empty.rb").and_return(plugin)
+
+      found_plugin = @ohai.plugin_for("ubuntu::empty")
+      found_plugin.should eql(plugin)
+    end
+
+    it "should return nil if a plugin is not found" do
+      File.stub(:join).with("/tmp/plugins", "fake.rb").and_return("/tmp/plugins/fake.rb")
+      File.stub(:expand_path).with("/tmp/plugins/fake.rb").and_return("/tmp/plugins/fake.rb")
+      File.should_receive(:exist?).with("/tmp/plugins/fake.rb").and_return(false)
+
+      @ohai.plugin_for("fake").should be_nil
+    end
+
+    it "should add the plugin to the v6_dependency_solver" do
+      plugin = @klass.new(@ohai, "/tmp/plugins/empty.rb")
+      File.stub(:join).with("/tmp/plugins", "empty.rb").and_return("/tmp/plugins/empty.rb")
+      File.stub(:expand_path).with("/tmp/plugins/empty.rb").and_return("/tmp/plugins/empty.rb")
+      File.stub(:exist?).with("/tmp/plugins/empty.rb").and_return(true)
+      @loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
+
+      @ohai.plugin_for("empty")
+      @ohai.v6_dependency_solver.should have_key('empty')
+      @ohai.v6_dependency_solver['empty'].should eql(plugin)
     end
   end
 end

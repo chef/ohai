@@ -44,7 +44,7 @@ Ohai.plugin do
 
 
     # XXX doesn't work when jail is there but not running (ezjail-admin stop)
-    if ( from( "jls -n" ) || "" ).split( $/ ).count >= 1
+    if ( from( "jls -n" ) || "" ).lines.count >= 1
       virtualization[:system] = "jail"
       virtualization[:role] = "host"
     end

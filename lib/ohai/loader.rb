@@ -41,7 +41,7 @@ module Ohai
 
       if contents.include?("Ohai.plugin")
         begin
-          klass = self.instance_eval(contents, plugin_path, 1)
+          klass = eval(contents, TOPLEVEL_BINDING)
           plugin = klass.new(@controller, plugin_path) unless klass.nil?
         rescue SystemExit, Interrupt
           raise

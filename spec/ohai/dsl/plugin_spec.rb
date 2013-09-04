@@ -87,125 +87,72 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "when loaded" do
     describe "#self.provides_attrs" do
       before(:all) do
-        @provides_one = <<EOF
-Ohai.plugin do
-  provides "thing"
-end
-EOF
-        @provides_list = <<EOF
-Ohai.plugin do
-  provides "thing", "something", "otherthing"
-end
-EOF
-        @provides_many = <<EOF
-Ohai.plugin do
-  provides "list", "something"
-  provides "somethingelse"
-end
-EOF
+        @provides_one = Ohai.plugin { provides("thing") }
+        @provides_list = Ohai.plugin { provides("thing", "something", "otherthing") }
+        @provides_many = Ohai.plugin { provides("list", "something"); provides("somethingelse") }
       end
 
       it "should collect a single attribute" do
-        klass = self.instance_eval(@provides_one)
-        klass.provides_attrs.should eql(["thing"])
+        @provides_one.provides_attrs.should eql(["thing"])
       end
 
       it "should collect a list of attributes" do
-        klass = self.instance_eval(@provides_list)
-        klass.provides_attrs.should eql(["thing", "something", "otherthing"])
+        @provides_list.provides_attrs.should eql(["thing", "something", "otherthing"])
       end
 
       it "should collect from multiple provides statements" do
-        klass = self.instance_eval(@provides_many)
-        klass.provides_attrs.should eql(["list", "something", "somethingelse"])
+        @provides_many.provides_attrs.should eql(["list", "something", "somethingelse"])
       end
     end
 
     describe "#self.depends_attrs" do
       before(:all) do
-        @depends_none = <<EOF
-Ohai.plugin do
-end
-EOF
-        @depends_one = <<EOF
-Ohai.plugin do
-  depends "other"
-end
-EOF
-        @depends_list = <<EOF
-Ohai.plugin do
-  depends "on", "list"
-end
-EOF
-        @depends_many = <<EOF
-Ohai.plugin do
-  depends "on", "list"
-  depends "single"
-end
-EOF
+        @depends_none = Ohai.plugin { }
+        @depends_one = Ohai.plugin { depends("other") }
+        @depends_list = Ohai.plugin { depends("on", "list") }
+        @depends_many = Ohai.plugin { depends("on", "list"); depends("single") }
       end
 
       it "should return an empty array if no dependencies" do
-        klass = self.instance_eval(@depends_none)
-        klass.depends_attrs.should be_empty
+        @depends_none.depends_attrs.should be_empty
       end
 
       it "should collect a single dependency" do
-        klass = self.instance_eval(@depends_one)
-        klass.depends_attrs.should eql(["other"])
+        @depends_one.depends_attrs.should eql(["other"])
       end
 
       it "should collect a list of dependencies" do
-        klass = self.instance_eval(@depends_list)
-        klass.depends_attrs.should eql(["on", "list"])
+        @depends_list.depends_attrs.should eql(["on", "list"])
       end
 
       it "should collect from multiple depends statements" do
-        klass = self.instance_eval(@depends_many)
-        klass.depends_attrs.should eql(["on", "list", "single"])
+        @depends_many.depends_attrs.should eql(["on", "list", "single"])
       end
     end
 
     describe "#self.depends_os" do
       before(:all) do
-        @depends_os = <<EOF
-Ohai.plugin do
-  depends_os "specific"
-end
-EOF
+        Ohai::OS.stub(:collect_os).and_return("ubuntu")
+        @depends_os = Ohai.plugin { depends_os("specific") }
       end
 
       it "should append the OS to the attribute" do
-        Ohai::OS.stub(:collect_os).and_return("ubuntu")
-        klass = self.instance_eval(@depends_os)
-        klass.depends_attrs.should eql(["ubuntu/specific"])
+        @depends_os.depends_attrs.should eql(["ubuntu/specific"])
       end
     end
 
     describe "#self.collect_data" do
       before(:all) do
-        @no_collect_data = <<EOF
-Ohai.plugin do
-end
-EOF
-        @collect_data = <<EOF
-Ohai.plugin do
-  provides "math"
-  collect_data do
-    math "is awesome"
-  end
-end
-EOF
+        @no_collect_data = Ohai.plugin { }
+        @collect_data = Ohai.plugin { provides "math"; collect_data { math("is awesome") } }
       end
 
       it "should not define run_plugin if no collect data block exists" do
-        klass = self.instance_eval(@no_collect_data)
-        klass.method_defined?(:run_plugin).should be_false
+        @no_collect_data.method_defined?(:run_plugin).should be_false
       end
 
       it "should define run_plugin if a collect data block exists" do
-        klass = self.instance_eval(@collect_data)
-        klass.method_defined?(:run_plugin).should be_true
+        @collect_data.method_defined?(:run_plugin).should be_true
       end
     end
 
@@ -215,7 +162,7 @@ Ohai.plugin do
   require_plugin "other"
 end
 EOF
-      expect { self.instance_eval(bad_plugin_string) }.to raise_error(NoMethodError)
+      expect { eval(bad_plugin_string, TOPLEVEL_BINDING) }.to raise_error(NoMethodError)
     end
   end
 
@@ -239,7 +186,7 @@ Ohai.plugin do
   end
 end
 EOF
-      klass = self.instance_eval(bad_plugin_string)
+      klass = eval(bad_plugin_string, TOPLEVEL_BINDING)
       plugin = klass.new(@ohai, "/tmp/plugins/bad_plugin.rb")
       Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]+\'require_plugin\'/)
       plugin.run
@@ -253,7 +200,7 @@ Ohai.plugin do
   end
 end
 EOF
-      klass = self.instance_eval(bad_plugin_string)
+      klass = eval(bad_plugin_string, TOPLEVEL_BINDING)
       plugin = klass.new(@ohai, "/tmp/plugins/bad_plugin.rb")
       Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]+\'provides\'/)
       plugin.run

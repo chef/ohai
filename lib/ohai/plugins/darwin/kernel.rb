@@ -17,7 +17,8 @@
 #
 
 Ohai.plugin do
-  provides "kernel"
+  provides "kernel/os", "kernel/machine", "kernel/modules"
+  depends "kernel/name"
 
   collect_data do
     kernel[:os] = kernel[:name]

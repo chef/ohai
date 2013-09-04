@@ -20,7 +20,7 @@ end
 
 def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
   loader = Ohai::Loader.new(ohai)
-  loader.load_plugin(File.join(path, "#{plugin}.rb")).new(ohai)
+  loader.load_plugin(File.join(path, "#{plugin}.rb"))
 end
 
 def it_should_check_from(plugin, attribute, from, value)

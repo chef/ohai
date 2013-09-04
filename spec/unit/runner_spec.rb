@@ -272,4 +272,35 @@ describe Ohai::Runner, "fetch_providers" do
   end
 end
 
+describe Ohai::Runner, "#cycle_sources" do
+  before(:each) do
+    @ohai = Ohai::System.new
+    @runner = Ohai::Runner.new(@ohai, true)
 
+    klass1 = Ohai.plugin { provides("one"); depends("two"); collect_data { one(two) } }
+    klass2 = Ohai.plugin { provides("two"); depends("one"); collect_data { two(one) } }
+    klass3 = Ohai.plugin { provides("three"); depends("two"); collect_data { three(two) } }
+
+    plugins = []
+    [klass1, klass2, klass3].each_with_index do |klass, idx|
+      plugins << klass.new(@ohai, "/tmp/plugins/plugin#{idx}.rb")
+    end
+    @plugin1, @plugin2, @plugin3 = plugins
+  end
+
+  it "should return the sources for the plugins in the cycle, when given an exact cycle" do
+    cycle = [@plugin1, @plugin2]
+    cycle_start = @plugin1
+
+    sources = @runner.cycle_sources(cycle, cycle_start)
+    sources.should eql([@plugin1.source, @plugin2.source])
+  end
+
+  it "should return the sources for only the plugins in the cycle, when there are plugins before the cycle begins" do
+    cycle = [@plugin3, @plugin1, @plugin2]
+    cycle_start = @plugin1
+
+    sources = @runner.cycle_sources(cycle, cycle_start)
+    sources.should eql([@plugin1.source, @plugin2.source])
+  end
+end

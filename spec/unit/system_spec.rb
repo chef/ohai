@@ -18,34 +18,13 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
-tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
 
 describe "Ohai::System" do
-  before(:all) do
-    @plugin_path = Ohai::Config[:plugin_path]
-
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
-      # ignore
-    end
-  end
-
-  before(:each) do
-    @ohai = Ohai::System.new
-  end
-
-  after(:all) do
-    Ohai::Config[:plugin_path] = @plugin_path
-
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
-      # ignore
-    end
-  end
-
   describe "#initialize" do
+    before(:each) do
+      @ohai = Ohai::System.new
+    end
+
     it "should return an Ohai::System object" do
       @ohai.should be_a_kind_of(Ohai::System)
     end
@@ -61,279 +40,100 @@ describe "Ohai::System" do
 
   describe "#load_plugins" do
     before(:each) do
-      f = File.open("#{tmp}/plugins/plgn.rb", "w+")
-      f.write("Ohai.plugin do\nend\n")
-      f.close
+      @plugin_path = Ohai::Config[:plugin_path]
+      Ohai::OS.stub(:collect_os).and_return("ubuntu")
+
+      @ohai = Ohai::System.new
+      klass = Ohai.plugin { }
+      plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
+      
+      loader = double('loader')
+      Ohai::Loader.stub(:new) { loader }
+      loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
     end
 
     after(:each) do
-      File.delete("#{tmp}/plugins/plgn.rb")
+      Ohai::Config[:plugin_path] = @plugin_path
     end
 
     it "should load plugins when plugin_path has a trailing slash" do
-      Ohai::Config[:plugin_path] = ["#{tmp}/plugins/"]
-      Ohai::OS.stub(:collect_os).and_return("ubuntu")
-      Dir.should_receive(:[]).with("#{tmp}/plugins/*").and_return(["#{tmp}/plugins/plgn.rb"])
-      Dir.should_receive(:[]).with("#{tmp}/plugins/ubuntu/**/*").and_return([])
-      File.stub(:expand_path).with("#{tmp}/plugins/").and_return("#{tmp}/plugins")
+      Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
+      Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
+      Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
+      File.stub(:expand_path).with("/tmp/plugins/").and_return("/tmp/plugins")
       @ohai.load_plugins
     end
 
     it "should log debug message for already loaded plugin" do
-      Ohai::Config[:plugin_path] = ["#{tmp}/plugins",
-                                    "#{tmp}/plugins"]
-      Ohai::OS.stub(:collect_os).and_return("ubuntu")
-      Dir.should_receive(:[]).with("#{tmp}/plugins/*").twice.and_return(["#{tmp}/plugins/plgn.rb"])
-      Dir.should_receive(:[]).with("#{tmp}/plugins/ubuntu/**/*").twice.and_return([])
-      File.stub(:expand_path).with("#{tmp}/plugins").and_return("#{tmp}/plugins")
+      Ohai::Config[:plugin_path] = ["/tmp/plugins","/tmp/plugins"]
+      Dir.should_receive(:[]).with("/tmp/plugins/*").twice.and_return(["/tmp/plugins/empty.rb"])
+      Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").twice.and_return([])
+      File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
       Ohai::Log.should_receive(:debug).with(/Already loaded plugin at/)
       @ohai.load_plugins
     end
 
     it "should add loaded plugins to @v6_dependency_solver" do
-      Ohai::Config[:plugin_path] = ["#{tmp}/plugins"]
+      Ohai::Config[:plugin_path] = ["/tmp/plugins"]
       Ohai::OS.stub(:collect_os).and_return("ubuntu")
-      Dir.should_receive(:[]).with("#{tmp}/plugins/*").and_return(["#{tmp}/plugins/plgn.rb"])
-      Dir.should_receive(:[]).with("#{tmp}/plugins/ubuntu/**/*").and_return([])
-      File.stub(:expand_path).with("#{tmp}/plugins").and_return("#{tmp}/plugins")
+      Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
+      Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
+      File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
       @ohai.load_plugins
-      @ohai.v6_dependency_solver.should have_key("#{tmp}/plugins/plgn.rb")
+      @ohai.v6_dependency_solver.should have_key("/tmp/plugins/empty.rb")
     end
   end
 
   describe "#run_plugins" do
-    before(:all) do
-      Ohai::Config[:plugin_path] = ["#{tmp}/plugins"]
-    end
-
-    before(:each) do
-      @ohai = Ohai::System.new
-    end
-
-    describe "when a NoAttributeError is received" do
-      it "should log the error" do
-        klass = Ohai.plugin { provides("single"); depends("other"); collect_data { single(other) } }
-        plugin = klass.new(@ohai, "")
-        @ohai.attributes[:single] = Mash.new
-        @ohai.attributes[:single][:providers] = [plugin]
-
-        Ohai::Log.should_receive(:error).with(/NoAttributeError/)
-        expect { @ohai.run_plugins(true) }.to raise_error(Ohai::NoAttributeError)
-      end
-    end
-
-    describe "a dependency cycle of length 2" do
+    describe "when handling an error" do
       before(:each) do
-        str0 = <<EOF
-Ohai.plugin do
-  provides 'attr1'
-  depends 'attr2'
+        @ohai = Ohai::System.new
+        klass = Ohai.plugin { }
+        plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
+        @ohai.stub(:collect_providers).and_return([plugin])
+        
+        @runner = double('runner')
+        Ohai::Runner.stub(:new) { @runner }
+      end
 
-  collect_data do
-    attr1 attr2
-  end
-end
-EOF
-        str1 = <<EOF
-Ohai.plugin do
-  provides 'attr2'
-  depends 'attr1'
-
-  collect_data do
-    attr2 attr1
-  end
-end
-EOF
-        loader = Ohai::Loader.new(@ohai)
-        plugins = []
-        [str0, str1].each_with_index do |str, idx|
-          filename = "#{tmp}/plugins/str#{idx}.rb"
-          file = File.open(filename, "w+")
-          file.write(str)
-          file.close
-
-          plugins << loader.load_plugin(filename)
+      describe "when a NoAttributeError is received" do
+        it "should write an error to Ohai::Log" do
+          @runner.stub(:run_plugin).and_raise(Ohai::NoAttributeError)
+          Ohai::Log.should_receive(:error).with(/NoAttributeError/)
+          expect { @ohai.run_plugins }.to raise_error(Ohai::NoAttributeError)
         end
       end
 
-      after(:each) do
-        %w{ str0 str1 }.each do |file|
-          File.delete("#{tmp}/plugins/#{file}.rb")
+      describe "when a DependencyCycleError is received" do
+        it "should write an error to Ohai::Log" do
+          @runner.stub(:run_plugin).and_raise(Ohai::DependencyCycleError)
+          Ohai::Log.should_receive(:error).with(/DependencyCycleError/)
+          expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
         end
-      end
-
-      it "should raise an error" do
-        expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
-      end
-
-      it "should print cycle to error log" do
-        Ohai::Log.should_receive(:error) do |string|
-          string.should include("Dependency cycle detected")
-          string.should include("#{tmp}/plugins/str0.rb")
-          string.should include("#{tmp}/plugins/str1.rb")
-        end
-        expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
       end
     end
 
-    describe "a dependency cycle of length 2 with 3 plugins" do
+    describe "when running all loaded plugins" do
       before(:each) do
-        str0 = <<EOF
-Ohai.plugin do
-  provides 'attr1'
+        @ohai = Ohai::System.new
 
-  collect_data do
-    attr1 "works"
-  end
-end
-EOF
-        str1 = <<EOF
-Ohai.plugin do
-  provides 'attr2'
-  depends 'attr3'
-
-  collect_data do
-    attr2 attr3
-  end
-end
-EOF
-        str2 = <<EOF
-Ohai.plugin do
-  provides 'attr3'
-  depends 'attr2'
-
-  collect_data do
-    attr3 attr2
-  end
-end
-EOF
-        loader = Ohai::Loader.new(@ohai)
-        plugins = []
-        [str0, str1, str2].each_with_index do |str, idx|
-          filename = "#{tmp}/plugins/str#{idx}.rb"
-          file = File.open(filename, "w+")
-          file.write(str)
-          file.close
-
-          plugins << loader.load_plugin(filename)
-        end
-      end
-
-      after(:each) do
-        %w{ str0 str1 str2 }.each do |file|
-          File.delete("#{tmp}/plugins/#{file}.rb")
-        end
-      end
-
-      it "should raise an error" do
-        expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
-      end
-
-      it "should print cycle to error log" do
-        Ohai::Log.should_receive(:error) do |string|
-          string.should include("Dependency cycle detected")
-          string.should include("#{tmp}/plugins/str1.rb")
-          string.should include("#{tmp}/plugins/str2.rb")
-        end
-        expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
-      end
-    end
-
-    describe "correctly defined plugins" do
-      before(:each) do
-        str0 = <<EOF
-Ohai.plugin do
-  provides 'ice', 'ice/needs'
-  depends 'temperature', 'water/formula'
-
-  collect_data do
-    ice Mash.new
-
-    things_to_make_ice = []
-    things_to_make_ice << temperature
-    things_to_make_ice << water[:formula]
-
-    ice[:needs] = things_to_make_ice
-  end
-end
-EOF
-        str1 = <<EOF
-Ohai.plugin do
-  provides 'temperature'
-
-  collect_data do
-    temperature "cold"
-  end
-end
-EOF
-        str2 = <<EOF
-Ohai.plugin do
-  provides 'oxygen', 'hydrogen'
-
-  collect_data do
-    oxygen "O"
-    hydrogen "H"
-  end
-end
-EOF
-        str3 = <<EOF
-Ohai.plugin do
-  provides 'water', 'water/formula'
-  depends 'oxygen', 'hydrogen'
-
-  collect_data do
-    water Mash.new
-
-    water[:formula] = hydrogen + "2" + oxygen
-  end
-end
-EOF
-
+        klass = Ohai.plugin { provides("itself"); collect_data { itself("me") } }
         @plugins = []
-        loader = Ohai::Loader.new(@ohai)
-        [str0, str1, str2, str3].each_with_index do |str, idx|
-          filename = "#{tmp}/plugins/str#{idx}.rb"
-          file = File.open(filename, "w+")
-          file.write(str)
-          file.close
-
-          @plugins << loader.load_plugin(filename)
+        5.times do |x|
+          @plugins << klass.new(@ohai, "/tmp/plugins/plugin#{x}.rb")
         end
+
+        @ohai.stub(:collect_providers).and_return(@plugins)
+
+        @runner = double('runner')
+        Ohai::Runner.stub(:new) { @runner }
       end
 
-      after(:each) do
-        %w{ str0 str1 str2 str3 }.each do |file|
-          File.delete("#{tmp}/plugins/#{file}.rb")
-        end
-      end
-
-      it "should run all the plugins" do
-        @ohai.run_plugins
+      it "should run each plugin once from Ohai::System" do
         @plugins.each do |plugin|
-          plugin.has_run?.should be_true
+          @runner.should_receive(:run_plugin).with(plugin, false)
         end
-      end
-
-      it "should add plugin data" do
-        expected_data = Mash.new
-
-        # from str2
-        expected_data[:hydrogen] = "H"
-        expected_data[:oxygen] = "O"
-
-        # from str3
-        expected_data[:water] = Mash.new
-        expected_data[:water][:formula] = "H2O"
-
-        # from str1
-        expected_data[:temperature] = "cold"
-
-        # from str0
-        expected_data[:ice] = Mash.new
-        expected_data[:ice][:needs] = ["cold", "H2O"]
-
         @ohai.run_plugins
-        @ohai.data.sort_by { |key, value| key.to_s }.should eql( expected_data.sort_by { |key, value| key.to_s })
       end
     end
   end

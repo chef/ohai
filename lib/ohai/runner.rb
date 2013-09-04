@@ -83,9 +83,9 @@ module Ohai
     # returns the list of plugin source files responsible for the
     # cycle. does not include plugins that aren't a part of the cycle
     def cycle_sources(plugins, cycle_start)
-      plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
+      cycle = plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
       sources = []
-      plugins.each { |plugin| sources << plugin.source }
+      cycle.each { |plugin| sources << plugin.source }
       sources
     end
 

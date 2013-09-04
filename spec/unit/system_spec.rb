@@ -85,55 +85,95 @@ describe "Ohai::System" do
   end
 
   describe "#run_plugins" do
-    describe "when handling an error" do
+    describe "with v6 plugins only" do
       before(:each) do
         @ohai = Ohai::System.new
-        klass = Ohai.plugin { }
-        plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
-        @ohai.stub(:collect_providers).and_return([plugin])
-        
-        @runner = double('runner')
-        Ohai::Runner.stub(:new) { @runner }
+        @klass = Ohai.v6plugin { collect_contents("") }
+
+        @plugins = []
+        5.times do |x|
+          @plugins << @klass.new(@ohai, "/tmp/plugins/plugin#{x}.rb")
+        end
+
+        ['one', 'two', 'three', 'four', 'five'].each_with_index do |plugin_name, idx|
+          @ohai.v6_dependency_solver[plugin_name] = @plugins[idx]
+        end
+
+        @ohai.stub(:collect_providers).and_return([])
       end
 
-      describe "when a NoAttributeError is received" do
-        it "should write an error to Ohai::Log" do
-          @runner.stub(:run_plugin).and_raise(Ohai::NoAttributeError)
-          Ohai::Log.should_receive(:error).with(/NoAttributeError/)
-          expect { @ohai.run_plugins }.to raise_error(Ohai::NoAttributeError)
+      after(:each) do
+        @ohai.v6_dependency_solver.clear
+      end
+
+      it "should run all version 6 plugins" do
+        @ohai.run_plugins(true)
+        @plugins.each do |plugin|
+          plugin.has_run?.should be_true
         end
       end
 
-      describe "when a DependencyCycleError is received" do
-        it "should write an error to Ohai::Log" do
-          @runner.stub(:run_plugin).and_raise(Ohai::DependencyCycleError)
-          Ohai::Log.should_receive(:error).with(/DependencyCycleError/)
-          expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
+      it "should force plugins to run again if force is set to true" do
+        @plugins.each do |plugin|
+          plugin.stub(:has_run?).and_return(:true)
+          plugin.should_receive(:safe_run)
         end
+
+        @ohai.run_plugins(true, true)
       end
     end
 
-    describe "when running all loaded plugins" do
-      before(:each) do
-        @ohai = Ohai::System.new
-
-        klass = Ohai.plugin { provides("itself"); collect_data { itself("me") } }
-        @plugins = []
-        5.times do |x|
-          @plugins << klass.new(@ohai, "/tmp/plugins/plugin#{x}.rb")
+    describe "with v7 plugins only" do
+      describe "when handling an error" do
+        before(:each) do
+          @ohai = Ohai::System.new
+          klass = Ohai.plugin { }
+          plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
+          @ohai.stub(:collect_providers).and_return([plugin])
+          
+          @runner = double('runner')
+          Ohai::Runner.stub(:new) { @runner }
         end
 
-        @ohai.stub(:collect_providers).and_return(@plugins)
+        describe "when a NoAttributeError is received" do
+          it "should write an error to Ohai::Log" do
+            @runner.stub(:run_plugin).and_raise(Ohai::NoAttributeError)
+            Ohai::Log.should_receive(:error).with(/NoAttributeError/)
+            expect { @ohai.run_plugins }.to raise_error(Ohai::NoAttributeError)
+          end
+        end
 
-        @runner = double('runner')
-        Ohai::Runner.stub(:new) { @runner }
+        describe "when a DependencyCycleError is received" do
+          it "should write an error to Ohai::Log" do
+            @runner.stub(:run_plugin).and_raise(Ohai::DependencyCycleError)
+            Ohai::Log.should_receive(:error).with(/DependencyCycleError/)
+            expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
+          end
+        end
       end
 
-      it "should run each plugin once from Ohai::System" do
-        @plugins.each do |plugin|
-          @runner.should_receive(:run_plugin).with(plugin, false)
+      describe "when running all loaded plugins" do
+        before(:each) do
+          @ohai = Ohai::System.new
+
+          klass = Ohai.plugin { provides("itself"); collect_data { itself("me") } }
+          @plugins = []
+          5.times do |x|
+            @plugins << klass.new(@ohai, "/tmp/plugins/plugin#{x}.rb")
+          end
+
+          @ohai.stub(:collect_providers).and_return(@plugins)
+
+          @runner = double('runner')
+          Ohai::Runner.stub(:new) { @runner }
         end
-        @ohai.run_plugins
+
+        it "should run each plugin once from Ohai::System" do
+          @plugins.each do |plugin|
+            @runner.should_receive(:run_plugin).with(plugin, false)
+          end
+          @ohai.run_plugins
+        end
       end
     end
   end

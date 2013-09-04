@@ -74,6 +74,17 @@ module Ohai
 
     def run_plugins(safe = false, force = false)
       runner = Ohai::Runner.new(self, safe)
+
+      # collect and run version 6 plugins
+      v6plugins = []
+      @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
+      v6plugins.each do |v6plugin|
+        if !v6plugin.has_run? || force
+          safe ? v6plugin.safe_run : v6plugin.run
+        end
+      end
+
+      # collect and run version 7 plugins
       plugins = collect_providers(@attributes)
       begin
         plugins.each { |plugin| runner.run_plugin(plugin, force) }

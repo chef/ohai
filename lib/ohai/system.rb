@@ -59,9 +59,10 @@ module Ohai
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
-            unless @v6_dependency_solver.has_key?(file)
+            plugin_name = md[1].gsub(File::SEPARATOR, "::")
+            unless @v6_dependency_solver.has_key?(plugin_name)
               plugin = loader.load_plugin(file)
-              @v6_dependency_solver[file] = plugin unless plugin.nil?
+              @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{file}")
             end

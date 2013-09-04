@@ -80,7 +80,7 @@ describe "Ohai::System" do
       Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
       File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
       @ohai.load_plugins
-      @ohai.v6_dependency_solver.should have_key("/tmp/plugins/empty.rb")
+      @ohai.v6_dependency_solver.should have_key("empty")
     end
   end
 

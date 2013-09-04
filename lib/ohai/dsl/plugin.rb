@@ -71,6 +71,15 @@ module Ohai
           self.class.depends_attrs
         end
 
+        
+        def provides(*paths)
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
+        end
+
+        def require_plugin(*args)
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+        end
+
         def self.provides_attrs
           @provides_attrs ||= []
         end
@@ -114,6 +123,26 @@ module Ohai
           :version6
         end
 
+        def provides(*paths)
+          paths.each do |path|
+            parts = path.split("/")
+            a = @attributes
+            unless parts.length == 0
+              parts.shift if parts[0].length == 0
+              parts.each do |part|
+                a[part] ||= Mash.new
+                a = a[part]
+              end
+            end
+            a[:providers] ||= []
+            a[:providers] << self
+          end
+        end
+
+        def require_plugin(*args)
+          @controller.require_plugin(*args)
+        end
+
         def self.collect_contents(contents)
           define_method(:run_plugin) { self.instance_eval(contents) }
         end
@@ -122,14 +151,6 @@ module Ohai
       #=====================================================
       # plugin DSL methods
       #=====================================================
-      def require_plugin(*args)
-        if self.version == :version6
-          @controller.require_plugin(*args)
-        else
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
-        end
-      end
-
       def hints
         @controller.hints
       end
@@ -160,26 +181,6 @@ module Ohai
         status, stdout, stderr = run_command(:command => cmd)
         return "" if stdout.nil? || stdout.empty?
         stdout.strip
-      end
-
-      def provides(*paths)
-        if self.version == :version7
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
-        else
-          paths.each do |path|
-            parts = path.split("/")
-            a = @attributes
-            unless parts.length == 0
-              parts.shift if parts[0].length == 0
-              parts.each do |part|
-                a[part] ||= Mash.new
-                a = a[part]
-              end
-            end
-            a[:providers] ||= []
-            a[:providers] << self
-          end
-        end
       end
 
       # Set the value equal to the stdout of the command, plus

@@ -268,7 +268,6 @@ describe Ohai::System, "plugin c" do
     @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
-
   it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
     fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 

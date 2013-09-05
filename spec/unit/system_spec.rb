@@ -43,12 +43,12 @@ describe "Ohai::System" do
       @plugin_path = Ohai::Config[:plugin_path]
       Ohai::OS.stub(:collect_os).and_return("ubuntu")
 
+      loader = double('@loader')
+      Ohai::Loader.stub(:new) { loader }
+
       @ohai = Ohai::System.new
       klass = Ohai.plugin { }
       plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
-      
-      loader = double('loader')
-      Ohai::Loader.stub(:new) { loader }
       loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
     end
 
@@ -126,13 +126,13 @@ describe "Ohai::System" do
     describe "with v7 plugins only" do
       describe "when handling an error" do
         before(:each) do
+          @runner = double('@runner')
+          Ohai::Runner.stub(:new) { @runner }
+
           @ohai = Ohai::System.new
           klass = Ohai.plugin { }
           plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
           @ohai.stub(:collect_providers).and_return([plugin])
-          
-          @runner = double('runner')
-          Ohai::Runner.stub(:new) { @runner }
         end
 
         describe "when a NoAttributeError is received" do
@@ -142,14 +142,16 @@ describe "Ohai::System" do
             expect { @ohai.run_plugins }.to raise_error(Ohai::NoAttributeError)
           end
         end
+      end
+    end
 
-        describe "when a DependencyCycleError is received" do
-          it "should write an error to Ohai::Log" do
-            @runner.stub(:run_plugin).and_raise(Ohai::DependencyCycleError)
-            Ohai::Log.should_receive(:error).with(/DependencyCycleError/)
-            expect { @ohai.run_plugins }.to raise_error(Ohai::DependencyCycleError)
-          end
-        end
+    describe "when running all loaded plugins" do
+      before(:each) do
+        @runner = double('@runner')
+        Ohai::Runner.stub(:new) { @runner }
+
+        @ohai = Ohai::System.new
+        @ohai.stub(:collect_providers).and_return(@plugins)
       end
 
       describe "when running all loaded plugins" do
@@ -288,11 +290,11 @@ describe "Ohai::System" do
       @plugin_path = Ohai::Config[:plugin_path]
       Ohai::Config[:plugin_path] = ["/tmp/plugins"]
 
+      @loader = double('@loader')
+      Ohai::Loader.stub(:new) { @loader }
+
       @ohai = Ohai::System.new
       @klass = Ohai.v6plugin { }
-
-      @loader = double('loader')
-      Ohai::Loader.stub(:new) { @loader }
     end
 
     after(:each) do

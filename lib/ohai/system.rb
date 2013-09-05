@@ -42,6 +42,9 @@ module Ohai
       @hints = Hash.new
       @v6_dependency_solver = Hash.new
       @plugin_path = ""
+
+      @loader = Ohai::Loader.new(self)
+      @runner = Ohai::Runner.new(self, true)
     end
 
     def [](key)
@@ -49,8 +52,6 @@ module Ohai
     end
 
     def load_plugins
-      loader = Ohai::Loader.new(self)
-
       Ohai::Config[:plugin_path].each do |path|
         [
          Dir[File.join(path, '*')],
@@ -61,7 +62,7 @@ module Ohai
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")
             unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = loader.load_plugin(file)
+              plugin = @loader.load_plugin(file)
               @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{file}")
@@ -73,8 +74,6 @@ module Ohai
     end
 
     def run_plugins(safe = false, force = false)
-      runner = Ohai::Runner.new(self, safe)
-
       # collect and run version 6 plugins
       v6plugins = []
       @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
@@ -87,7 +86,7 @@ module Ohai
       # collect and run version 7 plugins
       plugins = collect_providers(@attributes)
       begin
-        plugins.each { |plugin| runner.run_plugin(plugin, force) }
+        plugins.each { |plugin| @runner.run_plugin(plugin, force) }
       rescue DependencyCycleError, NoAttributeError => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
@@ -173,11 +172,10 @@ module Ohai
       filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
 
       plugin = nil
-      loader = Ohai::Loader.new(self)
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = loader.load_plugin(check_path)
+          plugin = @loader.load_plugin(check_path)
           @v6_dependency_solver[plugin_name] = plugin
           break
         else

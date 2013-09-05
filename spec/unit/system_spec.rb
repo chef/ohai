@@ -178,51 +178,6 @@ describe "Ohai::System" do
     end
   end
 
-  describe "#all_plugins" do
-    before(:each) do
-      @plugin_path = Ohai::Config[:plugin_path]
-      Ohai::Config[:plugin_path] = ["/tmp/plugins"]
-
-      @ohai = Ohai::System.new
-      @ohai.stub(:require_plugin).with('os').and_return(true)
-      @ohai.data[:os] = "ubuntu"
-
-      @klass = Ohai.v6plugin { }
-
-      File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
-    end
-
-    after(:each) do
-      Ohai::Config[:plugin_path] = @plugin_path
-      @ohai.data.clear
-    end
-
-    it "should log a deprecation message" do
-      @ohai.stub(:require_plugin).and_return(true)
-      Ohai::Config[:plugin_path] = []
-      Ohai::Log.should_receive(:warn).with(/[DEPRECATION]/)
-      @ohai.all_plugins
-    end
-    
-    it "should locate plugins on the plugin path" do
-      plugin = @klass.new(@ohai, "/tmp/plugins/empty.rb")
-      Dir.stub(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
-      Dir.stub(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
-      @ohai.stub(:require_plugin).with("empty").and_return(true)
-      @ohai.should_receive(:require_plugin).with("empty")
-      @ohai.all_plugins
-    end
-
-    it "should locate os-specific plugins on the plugin path" do
-      plugin = @klass.new(@ohai, "/tmp/plugins/ubuntu/empty.rb")
-      Dir.stub(:[]).with("/tmp/plugins/*").and_return([])
-      Dir.stub(:[]).with("/tmp/plugins/ubuntu/**/*").and_return(["/tmp/plugins/ubuntu/empty.rb"])
-      @ohai.stub(:require_plugin).with("ubuntu::empty").and_return(true)
-      @ohai.should_receive(:require_plugin).with("ubuntu::empty")
-      @ohai.all_plugins
-    end
-  end
-
   describe "#collect_providers" do
     before(:each) do
       @ohai = Ohai::System.new

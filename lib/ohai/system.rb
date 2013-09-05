@@ -96,31 +96,8 @@ module Ohai
     end
 
     def all_plugins
-      Ohai::Log.warn("[DEPRECATION] \'all_plugins\' is an Ohai version 6 operation that will not be supported in version 7. Please use \'load_plugins\' to load all plugins and \'run_plugins\' to run all loaded plugins. For more information visited here: XXX")
-
-      require_plugin('os')
-
-      Ohai::Config[:plugin_path].each do |path|
-        [
-          Dir[File.join(path, '*')],
-          Dir[File.join(path, @data[:os], '**', '*')]
-        ].flatten.each do |file|
-          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
-          md = file_regex.match(file)
-          if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            require_plugin(plugin_name) unless @v6_dependency_solver.has_key?(plugin_name)
-          end
-        end
-      end
-      unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
-        # Catch any errant children who need to be reaped
-        begin
-          true while Process.wait(-1, Process::WNOHANG)
-        rescue Errno::ECHILD
-        end
-      end
-      true
+      load_plugins
+      run_plugins(true)
     end
 
     def collect_providers(providers)

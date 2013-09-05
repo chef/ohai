@@ -20,6 +20,8 @@ describe Ohai::System, "Smartos cpu plugin" do
   before(:each) do
     @plugin = get_plugin("smartos/cpu")
     @plugin[:os] = "smartos"
+    @plugin.stub(:from).with("psrinfo | wc -l").and_return("1")
+    @plugin.stub(:from).with("psrinfo -p").and_return("0")
   end
 
   it "should set cpu[:total] to 1" do

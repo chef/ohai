@@ -248,7 +248,7 @@ module Ohai
           self.run
         rescue => e
           Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
-          e.backtrace.each { |line| Ohai::Log.error( line )}
+          e.backtrace.each { |line| Ohai::Log.debug( line )}
         end
       end
 

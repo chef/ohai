@@ -21,4 +21,14 @@ describe Ohai::System, "Smartos cpu plugin" do
     @plugin = get_plugin("smartos/cpu")
     @plugin[:os] = "smartos"
   end
+
+  it "should set cpu[:total] to 1" do
+    @plugin.run
+    @plugin[:cpu][:total].should == 1
+  end
+
+   it "should set cpu[:real] to 0" do
+    @plugin.run
+    @plugin[:cpu][:real].should == 0
+  end
 end

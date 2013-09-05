@@ -107,24 +107,24 @@ describe Ohai::System, "plugin c" do
 
     @plugin[:languages] = Mash.new
     #gcc
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
+    @plugin.stub(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
     #glibc
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
+    @plugin.stub(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
     #ms cl
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
+    @plugin.stub(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
     #ms vs
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
+    @plugin.stub(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
     #ibm xlc
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
+    @plugin.stub(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
     #sun pro
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
+    @plugin.stub(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
     #hpux cc
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
+    @plugin.stub(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
   end
 
   #gcc
   it "should get the gcc version from running gcc -v" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([0, "", C_GCC])
+    @plugin.should_receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
     @plugin.run
   end
 
@@ -139,14 +139,14 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:gcc] tree up if gcc command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"gcc -v"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("gcc -v").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:gcc) if @plugin[:languages][:c]
   end
 
   #glibc
   it "should get the glibc x.x.x version from running /lib/libc.so.6" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_3_4, ""])
+    @plugin.should_receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
     @plugin.run
   end
 
@@ -161,22 +161,22 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:glibc] tree up if glibc command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([1, "", ""])
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"/lib64/libc.so.6"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(1, "", ""))
+    @plugin.stub(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:glibc) if @plugin[:languages][:c]
   end
 
   it "should get the glibc x.x version from running /lib/libc.so.6" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"/lib/libc.so.6"}).and_return([0, C_GLIBC_2_5, ""])
+    @plugin.stub(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
+    @plugin.should_receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
     @plugin.run
     @plugin.languages[:c][:glibc][:version].should eql("2.5")
   end
 
   #ms cl
   it "should get the cl version from running cl /?" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([0, "", C_CL])
+    @plugin.should_receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
     @plugin.run
   end
 
@@ -191,14 +191,14 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:cl] tree up if cl command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cl /\?"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("cl /\?").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:cl) if @plugin[:languages][:c]
   end
 
   #ms vs
   it "should get the vs version from running devenv.com /?" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([0, C_VS, ""])
+    @plugin.should_receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
     @plugin.run
   end
 
@@ -213,14 +213,14 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:vs] tree up if devenv command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"devenv.com /\?"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:vs) if @plugin[:languages][:c]
   end
 
   #ibm xlc
   it "should get the xlc version from running xlc -qversion" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([0, C_XLC, ""])
+    @plugin.should_receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
     @plugin.run
   end
 
@@ -235,20 +235,20 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:xlc] tree up if xlc command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:xlc) if @plugin[:languages][:c]
   end
 
   it "should set the languages[:c][:xlc] tree up if xlc exit status is 249" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xlc -qversion"}).and_return([63744, "", ""])
+    @plugin.stub(:shell_out).with("xlc -qversion").and_return(mock_shell_out(63744, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:xlc) if @plugin[:languages][:c]
   end
 
   #sun pro
   it "should get the cc version from running cc -V -flags" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", C_SUN])
+    @plugin.should_receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
     @plugin.run
   end
 
@@ -263,7 +263,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:sunpro] tree up if cc command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("cc -V -flags").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
@@ -271,21 +271,21 @@ describe Ohai::System, "plugin c" do
   it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
     fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", fedora_error_message])
+    @plugin.stub(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", fedora_error_message))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
   it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
     hpux_error_message = "cc: warning 901: unknown option: `-flags': use +help for online documentation.\ncc: HP C/aC++ B3910B A.06.25 [Nov 30 2009]"
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"cc -V -flags"}).and_return([0, "", hpux_error_message])
+    @plugin.stub(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", hpux_error_message))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:sunpro) if @plugin[:languages][:c]
   end
 
   #hpux cc
   it "should get the cc version from running what cc" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([0, C_HPUX, ""])
+    @plugin.should_receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
     @plugin.run
   end
 
@@ -300,7 +300,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "should not set the languages[:c][:hpcc] tree up if cc command fails" do
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"what /opt/ansic/bin/cc"}).and_return([1, "", ""])
+    @plugin.stub(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(1, "", ""))
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:hpcc) if @plugin[:languages][:c]
   end

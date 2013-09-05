@@ -27,9 +27,9 @@ Ohai.plugin do
     c = Mash.new
 
     #gcc
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "gcc -v")
-    if status == 0
-      description = stderr.split($/).last
+    so = shell_out("gcc -v")
+    if so.exitstatus == 0
+      description = so.stderr.split($/).last
       output = description.split
       if output.length >= 3
         c[:gcc] = Mash.new
@@ -40,9 +40,9 @@ Ohai.plugin do
 
     #glibc
     ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-      status, stdout, stderr = run_command(:no_status_check => true, :command => glibc)
-      if status == 0
-        description = stdout.split($/).first
+      so = shell_out(glibc)
+      if so.exitstatus == 0
+        description = so.stdout.split($/).first
         if description =~ /(\d+\.\d+\.?\d*)/
           c[:glibc] = Mash.new
           c[:glibc][:version] = $1
@@ -53,9 +53,9 @@ Ohai.plugin do
     end
 
     #ms cl
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "cl /?")
-    if status == 0
-      description = stderr.split($/).first
+    so = shell_out("cl /?")
+    if so.exitstatus == 0
+      description = so.stderr.split($/).first
       if description =~ /Compiler Version ([\d\.]+)/
         c[:cl] = Mash.new
         c[:cl][:version] = $1
@@ -64,9 +64,9 @@ Ohai.plugin do
     end
 
     #ms vs
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "devenv.com /?")
-    if status == 0
-      lines = stdout.split($/)
+    so = shell_out("devenv.com /?")
+    if so.exitstatus == 0
+      lines = so.stdout.split($/)
       description = lines[0].length == 0 ? lines[1] : lines[0]
       if description =~ /Visual Studio Version ([\d\.]+)/
         c[:vs] = Mash.new
@@ -76,9 +76,9 @@ Ohai.plugin do
     end
 
     #ibm xlc
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "xlc -qversion")
-    if status == 0 or (status >> 8) == 249
-      description = stdout.split($/).first
+    so = shell_out("xlc -qversion")
+    if so.exitstatus == 0 or (so.exitstatus >> 8) == 249
+      description = so.stdout.split($/).first
       if description =~ /V(\d+\.\d+)/
         c[:xlc] = Mash.new
         c[:xlc][:version] = $1
@@ -87,20 +87,20 @@ Ohai.plugin do
     end
 
     #sun pro
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "cc -V -flags")
-    if status == 0
-      output = stderr.split
-      if stderr =~ /^cc: Sun C/ && output.size >= 4
+    so = shell_out("cc -V -flags")
+    if so.exitstatus == 0
+      output = so.stderr.split
+      if so.stderr =~ /^cc: Sun C/ && output.size >= 4
         c[:sunpro] = Mash.new
         c[:sunpro][:version] = output[3]
-        c[:sunpro][:description] = stderr.chomp
+        c[:sunpro][:description] = so.stderr.chomp
       end
     end
 
     #hpux cc
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "what /opt/ansic/bin/cc")
-    if status == 0
-      description = stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
+    so = shell_out("what /opt/ansic/bin/cc")
+    if so.exitstatus == 0
+      description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
       if description
         output = description.split
         c[:hpcc] = Mash.new

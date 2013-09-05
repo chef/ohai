@@ -24,7 +24,8 @@ Ohai.plugin do
     begin
       fqdn from("hostname --fqdn")
     rescue
-      Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      Ohai::Log.debug("hostname -f returned an error, falling back to hostname")
+      fqdn from("hostname")
     end
   end
 end

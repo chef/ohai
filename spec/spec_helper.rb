@@ -42,6 +42,14 @@ def it_should_check_from_mash(plugin, attribute, from, value)
   end
 end
 
+def mock_shell_out(exitstatus, stdout, stderr)
+  shell_out = double("mixlib_shell_out")
+  shell_out.stub(:exitstatus).and_return(exitstatus)
+  shell_out.stub(:stdout).and_return(stdout)
+  shell_out.stub(:stderr).and_return(stderr)
+  shell_out
+end
+
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do

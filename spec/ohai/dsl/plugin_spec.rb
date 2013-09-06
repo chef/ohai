@@ -164,6 +164,13 @@ end
 EOF
       expect { eval(bad_plugin_string, TOPLEVEL_BINDING) }.to raise_error(NoMethodError)
     end
+
+    it "should log a deprecation warning when calling require_plugin from collect_data" do
+      klass = Ohai.plugin { provides("bad"); collect_data { require_plugin("other") } }
+      plugin = klass.new(Ohai::System.new, "/tmp/plugins/bad_plugin.rb")
+      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]+\'require_plugin\'/)
+      plugin.run
+    end
   end
 
   describe "when initialized" do

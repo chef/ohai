@@ -59,19 +59,32 @@ module Ohai
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
-            unless @v6_dependency_solver.has_key?(file)
+            plugin_name = md[1].gsub(File::SEPARATOR, "::")
+            unless @v6_dependency_solver.has_key?(plugin_name)
               plugin = loader.load_plugin(file)
-              @v6_dependency_solver[file] = plugin unless plugin.nil?
+              @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{file}")
             end
           end
         end
       end
+      true
     end
 
     def run_plugins(safe = false, force = false)
       runner = Ohai::Runner.new(self, safe)
+
+      # collect and run version 6 plugins
+      v6plugins = []
+      @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
+      v6plugins.each do |v6plugin|
+        if !v6plugin.has_run? || force
+          safe ? v6plugin.safe_run : v6plugin.run
+        end
+      end
+
+      # collect and run version 7 plugins
       plugins = collect_providers(@attributes)
       begin
         plugins.each { |plugin| runner.run_plugin(plugin, force) }
@@ -79,32 +92,12 @@ module Ohai
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
+      true
     end
 
     def all_plugins
-      require_plugin('os')
-
-      Ohai::Config[:plugin_path].each do |path|
-        [
-          Dir[File.join(path, '*')],
-          Dir[File.join(path, @data[:os], '**', '*')]
-        ].flatten.each do |file|
-          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
-          md = file_regex.match(file)
-          if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            require_plugin(plugin_name) unless @seen_plugins.has_key?(plugin_name)
-          end
-        end
-      end
-      unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
-        # Catch any errant children who need to be reaped
-        begin
-          true while Process.wait(-1, Process::WNOHANG)
-        rescue Errno::ECHILD
-        end
-      end
-      true
+      load_plugins
+      run_plugins(true)
     end
 
     def collect_providers(providers)
@@ -123,6 +116,7 @@ module Ohai
       plugins.flatten.uniq
     end
 
+    # todo: fixup for running w/ new internals
     def refresh_plugins(path = '/')
       parts = path.split('/')
       if parts.length == 0
@@ -152,7 +146,8 @@ module Ohai
 
     def require_plugin(plugin_name, force=false)
       unless force
-        return true if @seen_plugins[plugin_name]
+        plugin = @v6_dependency_solver[plugin_name]
+        return true if plugin && plugin.has_run?
       end
 
       if Ohai::Config[:disabled_plugins].include?(plugin_name)
@@ -160,10 +155,9 @@ module Ohai
         return false
       end
 
-      if plugin = plugin_for(plugin_name)
-        @seen_plugins[plugin_name] = true
+      if plugin = @v6_dependency_solver[plugin_name] or plugin = plugin_for(plugin_name)
         begin
-          plugin.run
+          plugin.safe_run
           true
         rescue SystemExit, Interrupt
           raise
@@ -179,11 +173,12 @@ module Ohai
       filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
 
       plugin = nil
-
+      loader = Ohai::Loader.new(self)
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = DSL::Plugin.new(self, filename.split('.')[0], check_path)
+          plugin = loader.load_plugin(check_path)
+          @v6_dependency_solver[plugin_name] = plugin
           break
         else
           next

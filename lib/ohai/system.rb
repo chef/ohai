@@ -156,9 +156,12 @@ module Ohai
 
       if plugin = @v6_dependency_solver[plugin_name] or plugin = plugin_for(plugin_name)
         begin
-          plugin.safe_run
+          plugin.version.eql?(:version7) ? @runner.run_plugin(plugin, force) : plugin.safe_run
           true
         rescue SystemExit, Interrupt
+          raise
+        rescue DependencyCycleError, NoAttributeError => e
+          Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
           raise
         rescue Exception,Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")

@@ -1,2 +1,0 @@
-Ohai.plugin do
-end

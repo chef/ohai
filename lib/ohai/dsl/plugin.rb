@@ -56,6 +56,7 @@ module Ohai
 
       def initialize(controller, source)
         @controller = controller
+        @attributes = controller.attributes
         @data = controller.data
         @source = source
         @has_run = false
@@ -86,7 +87,6 @@ module Ohai
           self.class.depends_attrs
         end
 
-        
         def provides(*paths)
           Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
         end

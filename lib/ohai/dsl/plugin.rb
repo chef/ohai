@@ -66,16 +66,6 @@ module Ohai
         @has_run = true
         run_plugin
       end
-      
-      # emulates the old plugin loading behavior
-      def safe_run
-        begin
-          run
-        rescue => e
-          Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
-          e.backtrace.each { |line| Ohai::Log.error( line )}
-        end
-      end
 
       def has_run?
         @has_run

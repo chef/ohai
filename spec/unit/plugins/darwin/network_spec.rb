@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin Network Plugin" do
   before do
-    darwin_ifconfig = <<-DARWIN_IFCONFIG
+    @darwin_ifconfig = <<-DARWIN_IFCONFIG
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
         options=3<RXCSUM,TXCSUM>
         inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1
@@ -55,7 +55,7 @@ utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
         inet6 fd00:6587:52d7:c87:ba8d:12ff:fe3a:32de prefixlen 64
     DARWIN_IFCONFIG
 
-    darwin_arp = <<-DARWIN_ARP
+    @darwin_arp = <<-DARWIN_ARP
 ? (10.20.10.1) at 0:4:ed:de:41:bf on en1 ifscope [ethernet]
 ? (10.20.10.2) at 0:1e:c9:55:7e:ee on en1 ifscope [ethernet]
 ? (10.20.10.6) at 34:15:9e:18:a1:20 on en1 ifscope [ethernet]
@@ -74,7 +74,7 @@ utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
 ? (10.20.10.255) at ff:ff:ff:ff:ff:ff on en1 ifscope [ethernet]
     DARWIN_ARP
 
-    darwin_route = <<-DARWIN_ROUTE
+    @darwin_route = <<-DARWIN_ROUTE
    route to: default
 destination: default
        mask: default
@@ -85,7 +85,7 @@ destination: default
        0         0         0         0         0         0      1500         0
     DARWIN_ROUTE
 
-    darwin_netstat = <<-DARWIN_NETSTAT
+    @darwin_netstat = <<-DARWIN_NETSTAT
 Name  Mtu   Network       Address            Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
 lo0   16384 <Link#1>                        174982     0   25774844   174982     0   25774844     0
 lo0   16384 fe80::1%lo0 fe80:1::1           174982     -   25774844   174982     -   25774844     -   -
@@ -107,7 +107,7 @@ utun0 1380  fe80::ba8d: fe80:8::ba8d:12ff        5     -        324       13    
 utun0 1380  fd00:6587:5 fd00:6587:52d7:c8        5     -        324       13     -        740     -   -
     DARWIN_NETSTAT
 
-    darwin_sysctl = <<-DARWIN_SYSCTL
+    @darwin_sysctl = <<-DARWIN_SYSCTL
 net.local.stream.sendspace: 8192
 net.local.stream.recvspace: 8192
 net.local.stream.tracemdns: 0
@@ -414,35 +414,35 @@ net.smb.fs.tcprcvbuf: 261120
 
     @plugin = get_plugin("darwin/network")
 
-    @stdin_ifconfig = StringIO.new
-    @stdin_arp = StringIO.new
-    @stdin_sysctl = StringIO.new
-    @stdin_netstat = StringIO.new
+    # @stdin_ifconfig = StringIO.new
+    # @stdin_arp = StringIO.new
+    # @stdin_sysctl = StringIO.new
+    # @stdin_netstat = StringIO.new
 
-    @ifconfig_lines = darwin_ifconfig.split("\n")
-    @arp_lines = darwin_arp.split("\n")
-    @netstat_lines = darwin_netstat.split("\n")
-    @sysctl_lines = darwin_sysctl.split("\n")
+    # @ifconfig_lines = darwin_ifconfig.split("\n")
+    # @arp_lines = darwin_arp.split("\n")
+    # @netstat_lines = darwin_netstat.split("\n")
+    # @sysctl_lines = darwin_sysctl.split("\n")
 
-    @plugin.stub(:from).with("route -n get default").and_return(darwin_route)
-    @plugin.stub(:popen4).with("netstat -i -d -l -b -n")
+    @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
+    @plugin.stub(:shell_out).with("netstat -i -d -l -b -n")
 
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
 
     %w{ darwin/hostname hostname network }.each do |plgn|
       p = get_plugin(plgn)
-      p.stub(:from).with("hostname -s").and_return("katie")
-      p.stub(:from).with("hostname").and_return("katie.bethell")
+      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+      p.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
       p.run
     end
   end
 
   describe "gathering IP layer address info" do
     before do
-      @plugin.stub(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-      @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-      @plugin.stub(:popen4).with("netstat -i -d -l -b -n").and_yield(nil, @stdin_netstat, @netstat_lines, nil)
-      @plugin.stub(:popen4).with("sysctl net").and_yield(nil, @stdin_sysctl, @sysctl_lines, nil)
+      @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
+      @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
+      @plugin.stub(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))
+      @plugin.stub(:shell_out).with("sysctl net").and_return(mock_shell_out(0, @darwin_sysctl, ""))
       @plugin.run
     end
 

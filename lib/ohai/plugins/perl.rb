@@ -25,9 +25,9 @@ Ohai.plugin do
     output = nil
 
     perl = Mash.new
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "perl -V:version -V:archname")
-    if status == 0
-      stdout.each_line do |line|
+    so = shell_out("perl -V:version -V:archname")
+    if so.exitstatus == 0
+      so.stdout.lines do |line|
         case line
         when /^version=\'(.+)\';$/
           perl[:version] = $1
@@ -37,7 +37,7 @@ Ohai.plugin do
       end
     end
 
-    if status == 0
+    if so.exitstatus == 0
       languages[:perl] = perl 
     end
   end

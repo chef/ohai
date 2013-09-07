@@ -23,28 +23,12 @@ describe Ohai::System, "plugin perl" do
   before(:each) do
     @plugin = get_plugin("perl")
     @plugin[:languages] = Mash.new
-    @pid = 2342
-    @stderr = StringIO.new
-    @stdout = StringIO.new(<<-OUT)
-version='5.8.8';
-archname='darwin-thread-multi-2level';
-OUT
-    @stdin = StringIO.new
-    @status = 0
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-                                                                                                                   @status,
-                                                                                                                   @stdout,
-                                                                                                                   @stderr
-                                                                                                                  ])
+    @stdout = "version='5.8.8';#{$/}archname='darwin-thread-multi-2level';"
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run perl -V:version -V:archname" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return(true)
-    @plugin.run
-  end
-
-  it "should iterate over each line of perl command's stdout" do
-    @stdout.should_receive(:each_line).and_return(true)
+    @plugin.should_receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -59,23 +43,14 @@ OUT
   end
 
   it "should set languages[:perl] if perl command succeeds" do
-    @status = 0
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-                                                                                                                   @status,
-                                                                                                                   @stdout,
-                                                                                                                   @stderr
-                                                                                                                  ])
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
     @plugin.languages.should have_key(:perl)
   end
 
   it "should not set languages[:perl] if perl command fails" do
     @status = 1
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-                                                                                                                   @status,
-                                                                                                                   @stdout,
-                                                                                                                   @stderr
-                                                                                                                  ])
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
     @plugin.languages.should_not have_key(:perl)
   end

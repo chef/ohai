@@ -59,11 +59,9 @@ Ohai.plugin do
       }
 
       detail_level.each do |level, data_types|
-        popen4("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}") do |pid, stdin, stdout, stderr|
-          stdin.close
-          Plist::parse_xml(stdout.read).each do |e|
-            items << e
-          end
+        so = shell_out("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}")
+        Plist::parse_xml(so.stdout).each do |e|
+          items << e
         end
       end
 

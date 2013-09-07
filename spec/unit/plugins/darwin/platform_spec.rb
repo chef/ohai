@@ -24,32 +24,15 @@ describe Ohai::System, "Darwin plugin platform" do
     @plugin = get_plugin("darwin/platform")
 
     @plugin[:os] = "darwin"
-    @pid = 10
-    @stdin = double("STDIN", { :close => true })
-    @stdout = double("STDOUT")
-    @stdout.stub(:each).
-      and_yield("ProductName:	Mac OS X").
-      and_yield("ProductVersion:	10.5.5").
-      and_yield("BuildVersion:	9F33")
-    @stderr = double("STDERR") 
-    @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+    @stdout = "ProductName:	Mac OS X\nProductVersion:	10.5.5\nBuildVersion:	9F33"
+    @plugin.stub(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
   end
  
   it "should run sw_vers" do
-    @plugin.should_receive(:popen4).with("/usr/bin/sw_vers").and_return(true)
+    @plugin.should_receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
-  
-  it "should close sw_vers stdin" do
-    @stdin.should_receive(:close)
-    @plugin.run
-  end
-  
-  it "should iterate over each line of sw_vers stdout" do
-    @stdout.should_receive(:each).and_return(true)
-    @plugin.run
-  end
-  
+
   it "should set platform to ProductName, downcased with _ for \\s" do
     @plugin.run
     @plugin[:platform].should == "mac_os_x"
@@ -73,15 +56,8 @@ describe Ohai::System, "Darwin plugin platform" do
   describe "on os x server" do
     before(:each) do
       @plugin[:os] = "darwin"
-      @pid = 10
-      @stdin = double("STDIN", { :close => true })
-      @stdout = double("STDOUT")
-      @stdout.stub(:each).
-        and_yield("ProductName:	Mac OS X Server").
-        and_yield("ProductVersion:	10.6.8").
-        and_yield("BuildVersion:	10K549")
-      @stderr = double("STDERR")
-      @plugin.stub(:popen4).with("/usr/bin/sw_vers").and_yield(@pid, @stdin, @stdout, @stderr)
+      @stdout = "ProductName:	Mac OS X Server\nProductVersion:	10.6.8\nBuildVersion:	10K549"
+      @plugin.stub(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should set platform to mac_os_x_server" do

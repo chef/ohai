@@ -65,7 +65,7 @@ describe Ohai::System, "plugin rackspace" do
 
     # We need a generic stub here for the later stubs with arguments to work
     # Because, magic.
-    @plugin.stub(:run_command).and_return(false)
+    @plugin.stub(:shell_out).and_return(mock_shell_out(1, "", ""))
   end
 
   shared_examples_for "!rackspace"  do
@@ -109,7 +109,7 @@ server_id = "21301000"
 created_at = "2012-12-06T22:08:16Z"
 region = "dfw"
 OUT
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ 0, provider_data, ""])
+      @plugin.stub(:shell_out).with("xenstore-ls vm-data/provider_data").and_return(mock_shell_out(0, provider_data, ""))
       @plugin.run
       @plugin[:rackspace][:region].should == "dfw"
     end
@@ -153,10 +153,8 @@ OUT
     it_should_behave_like "rackspace"
 
     before(:each) do
-      stderr = StringIO.new
       stdout = "Rackspace\n"
-      status = 0
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
 
@@ -164,10 +162,8 @@ OUT
     it_should_behave_like "!rackspace"
 
     before(:each) do
-      stderr = StringIO.new
       stdout = "cumulonimbus\n"
-      status = 0
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @plugin.stub(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
 end

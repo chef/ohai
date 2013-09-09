@@ -32,13 +32,13 @@ end
 
 def it_should_check_from_mash(plugin, attribute, from, value)
   it "should get the #{plugin}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:from).with(from).and_return(value)
+    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
   it "should set the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    @plugin[plugin][attribute].should == value
+    @plugin[plugin][attribute].should == value[1].split($/)[0]
   end
 end
 

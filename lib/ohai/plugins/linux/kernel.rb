@@ -20,15 +20,14 @@ Ohai.plugin do
   provides "kernel"
 
   collect_data do
-    kernel[:os] = from("uname -o")
+    so = shell_out("uname -o")
+    kernel[:os] = so.stdout.split($/)[0]
 
     kext = Mash.new
-    popen4("env lsmod") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
-          kext[$1] = { :size => $2, :refcount => $3 }
-        end
+    so = shell_out("env lsmod")
+    so.stdout.lines do |line|
+      if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
+        kext[$1] = { :size => $2, :refcount => $3 }
       end
     end
 

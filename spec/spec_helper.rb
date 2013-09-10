@@ -53,7 +53,7 @@ end
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:shell_out).with(from).and_return(value)
+    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 

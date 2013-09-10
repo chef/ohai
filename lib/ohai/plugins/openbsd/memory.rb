@@ -62,40 +62,36 @@ Ohai.plugin do
     #             deletions 0%, falsehits 6%, toolong 26%
     #           0 select collisions
 
-    popen4("vmstat -s") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        case line
-        when /(\d+) bytes per page/
-          memory[:page_size] = $1
-        when /(\d+) pages managed/
-          memory[:page_count] = $1
-          memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
-        when /(\d+) pages free/
-          memory[:free] = memory[:page_size].to_i * $1.to_i 
-        when /(\d+) pages active/
-          memory[:active] = memory[:page_size].to_i * $1.to_i 
-        when /(\d+) pages inactive/
-          memory[:inactive] = memory[:page_size].to_i * $1.to_i 
-        when /(\d+) pages wired/
-          memory[:wired] = memory[:page_size].to_i * $1.to_i 
-        end
+    so = shell_out("vmstat -s")
+    so.stdout.lines do |line|
+      case line
+      when /(\d+) bytes per page/
+        memory[:page_size] = $1
+      when /(\d+) pages managed/
+        memory[:page_count] = $1
+        memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
+      when /(\d+) pages free/
+        memory[:free] = memory[:page_size].to_i * $1.to_i 
+      when /(\d+) pages active/
+        memory[:active] = memory[:page_size].to_i * $1.to_i 
+      when /(\d+) pages inactive/
+        memory[:inactive] = memory[:page_size].to_i * $1.to_i 
+      when /(\d+) pages wired/
+        memory[:wired] = memory[:page_size].to_i * $1.to_i 
       end
     end
 
-    popen4("swapctl -l") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        # Device      1024-blocks     Used    Avail Capacity  Priority
-        # swap_device     1048824        0  1048824     0%    0
-        if line =~ /^([\d\w\/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)/
-          mdev = $1
-          memory[:swap][mdev] = Mash.new
-          memory[:swap][mdev][:total] = $2
-          memory[:swap][mdev][:used] = $3
-          memory[:swap][mdev][:free] = $4
-          memory[:swap][mdev][:percent_free] = $5
-        end
+    so = shell_out("swapctl -l")
+    so.stdout.lines do |line|
+      # Device      1024-blocks     Used    Avail Capacity  Priority
+      # swap_device     1048824        0  1048824     0%    0
+      if line =~ /^([\d\w\/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)/
+        mdev = $1
+        memory[:swap][mdev] = Mash.new
+        memory[:swap][mdev][:total] = $2
+        memory[:swap][mdev][:used] = $3
+        memory[:swap][mdev][:free] = $4
+        memory[:swap][mdev][:percent_free] = $5
       end
     end
   end

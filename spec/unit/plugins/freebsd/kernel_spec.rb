@@ -22,9 +22,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD kernel plugin" do
   before(:each) do
     @plugin = get_plugin("freebsd/kernel")
-    @plugin.stub(:from).with("uname -i").and_return("foo")
-    @plugin.stub(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel: (.+)$/).and_return("kern.securelevel: 1")
-    @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(0, StringIO.new, StringIO.new, StringIO.new)
+    @plugin.stub(:shell_out).with("uname -i").and_return(mock_shell_out(0, "foo\n", ""))
+    @plugin.stub(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1", ""))
+    @plugin.stub(:shell_out).with( Ohai.abs_path( "/sbin/kldstat" )).and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:name] = "freebsd"
   end

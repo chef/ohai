@@ -23,35 +23,31 @@ Ohai.plugin do
     fs = Mash.new
 
     # Grab filesystem data from df
-    popen4("df") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        case line
-        when /^Filesystem/
-          next
-        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-          filesystem = $1
-          fs[filesystem] = Mash.new
-          fs[filesystem]['kb_size'] = $2
-          fs[filesystem]['kb_used'] = $3
-          fs[filesystem]['kb_available'] = $4
-          fs[filesystem]['percent_used'] = $5
-          fs[filesystem]['mount'] = $6
-        end
+    so = shell_out("df")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem/
+        next
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+        filesystem = $1
+        fs[filesystem] = Mash.new
+        fs[filesystem]['kb_size'] = $2
+        fs[filesystem]['kb_used'] = $3
+        fs[filesystem]['kb_available'] = $4
+        fs[filesystem]['percent_used'] = $5
+        fs[filesystem]['mount'] = $6
       end
     end
 
     # Grab mount information from mount
-    popen4("mount -l") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
-          filesystem = $1
-          fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-          fs[filesystem]['mount'] = $2
-          fs[filesystem]['fs_type'] = $3
-          fs[filesystem]['mount-options'] = $4.split(/,\s*/)
-        end
+    so = shell_out("mount -l")
+    so.stdout.lines do |line|
+      if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
+        filesystem = $1
+        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+        fs[filesystem]['mount'] = $2
+        fs[filesystem]['fs_type'] = $3
+        fs[filesystem]['mount-options'] = $4.split(/,\s*/)
       end
     end
 

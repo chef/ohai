@@ -28,10 +28,10 @@ Ohai.plugin do
 
     status, stdout, stderr = run_command(:no_status_check => true, :command => "php -v")
     if status == 0
-      output = stdout.split
-      if output.length >= 6
+      output = /PHP (\S+).+built: ([^)]+)/.match(stdout)
+      if output
         php[:version] = output[1]
-        php[:builddate] = "%s %s %s" % [output[4],output[5],output[6]]
+        php[:builddate] = output[2]
       end
       languages[:php] = php if php[:version]
     end

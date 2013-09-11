@@ -27,14 +27,12 @@ describe Ohai::System, "plugin php" do
   before(:each) do
     @plugin = get_plugin("php")
     @plugin[:languages] = Mash.new
-    @status = 0
     @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the php version from running php -V" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([0, "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n", ""])
+    @plugin.should_receive(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -44,10 +42,8 @@ describe Ohai::System, "plugin php" do
   end
 
   it "should not set the languages[:php] tree up if php command fails" do
-    @status = 1
     @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("php -v").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
     @plugin.languages.should_not have_key(:php)
   end

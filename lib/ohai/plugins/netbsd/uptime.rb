@@ -22,13 +22,11 @@ Ohai.plugin do
   # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
 
   collect_data do
-    popen4("#{ Ohai.abs_path( "/sbin/sysctl" )} kern.boottime") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        if line =~ /kern.boottime:\D+(\d+)/
-          uptime_seconds Time.new.to_i - $1.to_i
-          uptime seconds_to_human(uptime_seconds)
-        end
+    so = shell_out("#{ Ohai.abs_path( "/sbin/sysctl" )} kern.boottime")
+    so.stdout.lines do |line|
+      if line =~ /kern.boottime:\D+(\d+)/
+        uptime_seconds Time.new.to_i - $1.to_i
+        uptime seconds_to_human(uptime_seconds)
       end
     end
   end

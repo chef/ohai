@@ -24,7 +24,8 @@ Ohai.plugin do
   provides "hostname", "fqdn"
 
   collect_data do
-    hostname from("hostname")
+    so = shell_out("hostname")
+    hostname so.stdout.split($/)[0]
 
     fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
 
@@ -33,7 +34,12 @@ Ohai.plugin do
       fqdn fqdn_lookup
     else
       # default to assembling one
-      fqdn(from("hostname") + "." + from("domainname"))
+      so = shell_out("hostname")
+      h = so.stdout.split($/)[0]
+      so = shell_out("domainname")
+      d = so.stdout.split($/)[0]
+
+      fqdn("#{h}.#{d}")
     end
   end
 end

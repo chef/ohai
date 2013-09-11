@@ -23,8 +23,8 @@ describe Ohai::System, "Darwin hostname plugin" do
   before(:each) do
     @plugin = get_plugin("darwin/hostname")
     @plugin[:os] = "darwin"
-    @plugin.stub(:from).with("hostname -s").and_return("katie")
-    @plugin.stub(:from).with("hostname").and_return("katie.bethell")
+    @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
   end
   
   it_should_check_from("darwin::hostname", "hostname", "hostname -s", "katie")

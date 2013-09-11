@@ -20,9 +20,11 @@ Ohai.plugin do
   provides "hostname", "fqdn"
 
   collect_data do
-    hostname from("hostname -s")
+    so = shell_out("hostname -s")
+    hostname so.stdout.split($/)[0]
     begin
-      fqdn from("hostname --fqdn")
+      so = shell_out("hostname --fqdn")
+      fqdn so.stdout.split($/)[0]
     rescue
       Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
     end

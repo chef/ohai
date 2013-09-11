@@ -37,23 +37,19 @@ Ohai.plugin do
       end
     elsif File.exists?("/usr/bin/lsb_release")
       # Fedora/Redhat, requires redhat-lsb package
-      popen4("lsb_release -a") do |pid, stdin, stdout, stderr|
-
-        stdin.close
-        stdout.each do |line|
-          case line
-          when /^Distributor ID:\s+(.+)$/
-            lsb[:id] = $1
-          when /^Description:\s+(.+)$/
-            lsb[:description] = $1
-          when /^Release:\s+(.+)$/
-            lsb[:release] = $1
-          when /^Codename:\s+(.+)$/
-            lsb[:codename] = $1
-          else
-            lsb[:id] = line
-          end
-
+      so = shell_out("lsb_release -a")
+      so.stdout.lines do |line|
+        case line
+        when /^Distributor ID:\s+(.+)$/
+          lsb[:id] = $1
+        when /^Description:\s+(.+)$/
+          lsb[:description] = $1
+        when /^Release:\s+(.+)$/
+          lsb[:release] = $1
+        when /^Codename:\s+(.+)$/
+          lsb[:codename] = $1
+        else
+          lsb[:id] = line
         end
       end
     else

@@ -26,15 +26,13 @@ Ohai.plugin do
       uname_exec = "uname"
     end
 
-    popen4("#{uname_exec} -X") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        case line
-        when /^Release =\s+(.+)$/
-          platform_version $1
-        when /^KernelID =\s+(.+)$/
-          platform_build $1
-        end
+    so = shell_out("#{uname_exec} -X")
+    so.stdout.lines do |line|
+      case line
+      when /^Release =\s+(.+)$/
+        platform_version $1
+      when /^KernelID =\s+(.+)$/
+        platform_build $1
       end
     end
 

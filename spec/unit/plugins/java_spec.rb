@@ -23,14 +23,12 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
   before(:each) do
     @plugin = get_plugin("java")
     @plugin[:languages] = Mash.new
-    @status = 0
-    @stdout = ""
     @stderr = "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
   end
 
   it "should run java -version" do
-    @plugin.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"])
+    @plugin.should_receive(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
   end
 
@@ -60,10 +58,8 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
   end
 
   it "should not set the languages[:java] tree up if java command fails" do
-    @status = 1
-    @stdout = ""
     @stderr = "Some error output here"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("java -version").and_return(mock_shell_out(1, "", @stderr))
     @plugin.run
     @plugin[:languages].should_not have_key(:java)
   end
@@ -73,14 +69,12 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
   before(:each) do
     @plugin = get_plugin("java")
     @plugin[:languages] = Mash.new
-    @status = 0
-    @stdout = ""
     @stderr = "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
   end
 
   it "should run java -version" do
-    @plugin.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"])
+    @plugin.should_receive(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
   end
 
@@ -110,10 +104,8 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
   end
 
   it "should not set the languages[:java] tree up if java command fails" do
-    @status = 1
-    @stdout = ""
     @stderr = "Some error output here"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
     @plugin[:languages].should_not have_key(:java)
   end
@@ -122,11 +114,6 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
   ###########
 
   require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
-
-  # test_plugin([ "languages", "java" ], [ "java" ]) do | p |
-  #   p.test([ "centos-5.9" ], [ "x86" ], [[]],
-  #          { "languages" => { "java" => nil }})
-  # end
 
   test_plugin([ "languages", "java" ], [ "java" ]) do | p |
     p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],

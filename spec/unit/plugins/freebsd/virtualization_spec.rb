@@ -23,25 +23,24 @@ describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
     @plugin = get_plugin("freebsd/virtualization")
     @plugin[:os] = "freebsd"
-    @stderr = StringIO.new
-    @stdin = StringIO.new
-    @status = 0
-    @pid = 42
-    @plugin.stub(:popen4).with("/sbin/kldstat")
-    @plugin.stub(:from)
+    @plugin.stub(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
+    @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
+    @plugin.stub(:shell_out).with("jls -n").and_return(mock_shell_out(0, "",""))
+    @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
   end
 
   context "jails" do
     it "detects we are in a jail" do
-      @plugin.stub(:from).with("sysctl -n security.jail.jailed").and_return("1")
+      @plugin.stub(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "1", ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "jail"
       @plugin[:virtualization][:role].should == "guest"
     end
 
-    it "detects we are hosing jails" do
+    it "detects we are hosting jails" do
       # from http://www.freebsd.org/doc/handbook/jails-application.html
-      @plugin.stub(:from).with("jls -n").and_return("JID  IP Address      Hostname                      Path\n     3  192.168.3.17    ns.example.org                /home/j/ns\n     2  192.168.3.18    mail.example.org              /home/j/mail\n     1  62.123.43.14    www.example.org               /home/j/www")
+    @jails = "JID  IP Address      Hostname                      Path\n     3  192.168.3.17    ns.example.org                /home/j/ns\n     2  192.168.3.18    mail.example.org              /home/j/mail\n     1  62.123.43.14    www.example.org               /home/j/www"
+      @plugin.stub(:shell_out).with("jls -n").and_return(mock_shell_out(0, @jails, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "jail"
       @plugin[:virtualization][:role].should == "host"
@@ -51,12 +50,12 @@ describe Ohai::System, "FreeBSD virtualization plugin" do
 
   context "when on a virtualbox guest" do
     before do
-      @stdout = StringIO.new(<<-OUT)
+      @vbox_guest = <<-OUT
 Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxguest.ko
 OUT
-      @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, @vbox_guest, ""))
     end
 
     it "detects we are a guest" do
@@ -68,12 +67,12 @@ OUT
 
   context "when on a virtualbox host" do
     before do
-      @stdout = StringIO.new(<<-OUT)
+      @stdout = <<-OUT
 Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxdrv.ko
 OUT
-      @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("/sbin/kldstat").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "detects we are a host" do
@@ -85,7 +84,8 @@ OUT
 
   context "when on a QEMU guest" do
     it "detects we are a guest" do
-      @plugin.stub(:from).with("sysctl -n hw.model").and_return('QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)')
+      @qemu_guest = 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)'
+      @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, @qemu_guest, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "kvm"
       @plugin[:virtualization][:role].should == "guest"

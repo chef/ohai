@@ -25,14 +25,12 @@ describe Ohai::System, "plugin nodejs" do
   before(:each) do
     @plugin = get_plugin("nodejs")
     @plugin[:languages] = Mash.new
-    @status = 0
     @stdout = "v0.8.11\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the nodejs version from running node -v" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([0, "v0.8.11\n", ""])
+    @plugin.should_receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -42,10 +40,8 @@ describe Ohai::System, "plugin nodejs" do
   end
 
   it "should not set the languages[:nodejs] tree up if node command fails" do
-    @status = 1
     @stdout = "v0.8.11\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"node -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
     @plugin.languages.should_not have_key(:nodejs)
   end

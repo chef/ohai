@@ -29,10 +29,11 @@ Ohai.plugin do
       require_plugin "windows::kernel"
       require_plugin "windows::kernel_devices"
     else
-      kernel[:name] = from("uname -s")
-      kernel[:release] = from("uname -r")
-      kernel[:version] = from("uname -v")
-      kernel[:machine] = from("uname -m")
+      [["uname -s", :name], ["uname -r", :release],
+       ["uname -v", :version], ["uname -m", :machine]].each do |command, node|
+        so = shell_out(command)
+        kernel[node] = so.stdout.split($/)[0]
+      end
       kernel[:modules] = Mash.new
     end
   end

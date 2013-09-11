@@ -38,8 +38,8 @@ describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
     mini_cmd += " SPPCIData SPParallelSCSIData SPPrintersSoftwareData SPPrintersData SPSASData SPSerialATAData"
     mini_cmd += " SPSoftwareData SPThunderboltData SPUSBData SPWWANData SPAirPortData"
     full_cmd = "system_profiler -xml -detailLevel full SPHardwareDataType"
-    @plugin.stub(:popen4).with(full_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Full), nil)
-    @plugin.stub(:popen4).with(mini_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Mini), nil)
+    @plugin.stub(:shell_out).with(full_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Full, ""))
+    @plugin.stub(:shell_out).with(mini_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Mini, ""))
     @plugin.run
     @plugin['system_profile'][18]["_items"][0]["serial_number"].should == 'ABCDEFG12345'
   end

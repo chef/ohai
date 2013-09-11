@@ -23,8 +23,8 @@ describe Ohai::System, "Linux hostname plugin" do
   before(:each) do
     @plugin = get_plugin("linux/hostname")
     @plugin[:os] = "linux"
-    @plugin.stub(:from).with("hostname -s").and_return("katie")
-    @plugin.stub(:from).with("hostname --fqdn").and_return("katie.bethell")
+    @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    @plugin.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
   end
 
   it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")
@@ -33,7 +33,7 @@ describe Ohai::System, "Linux hostname plugin" do
 
   describe "when domain name is unset" do 
     before(:each) do
-      @plugin.should_receive(:from).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
+      @plugin.should_receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
     end
 
     it "should not raise an error" do

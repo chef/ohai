@@ -25,28 +25,16 @@ rescue LoadError => e
   raise e
 end
 
-def prepare_data
-  @ifconfig_lines = @linux_ifconfig.split("\n")
-  @route_lines = @linux_route_n.split("\n")
-  @arp_lines = @linux_arp_an.split("\n")
-  @ipaddr_lines = @linux_ip_addr.split("\n")
-  @iplink_lines = @linux_ip_link_s_d.split("\n")
-  @ipneighbor_lines = @linux_ip_neighbor_show.split("\n")
-  @ipneighbor_lines_inet6 = @linux_ip_inet6_neighbor_show.split("\n")
-  @ip_route_lines = @linux_ip_route.split("\n")
-  @ip_route_inet6_lines = @linux_ip_route_inet6.split("\n")
-end
-
 def do_stubs
-  @plugin.stub(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-  @plugin.stub(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-  @plugin.stub(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-  @plugin.stub(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
-  @plugin.stub(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
-  @plugin.stub(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-  @plugin.stub(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-  @plugin.stub(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
-  @plugin.stub(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+  @plugin.stub(:shell_out).with("ip addr").and_return(mock_shell_out(0, @linux_ip_addr, ""))
+  @plugin.stub(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, @linux_ip_link_s_d, ""))
+  @plugin.stub(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, @linux_ip_neighbor_show, ""))
+  @plugin.stub(:shell_out).with("ip -f inet6 neigh show").and_return(mock_shell_out(0, @linux_ip_inet6_neighbor_show, ""))
+  @plugin.stub(:shell_out).with("ip -f inet route show").and_return(mock_shell_out(0, @linux_ip_route, ""))
+  @plugin.stub(:shell_out).with("ip -f inet6 route show").and_return(mock_shell_out(0, @linux_ip_route_inet6, ""))
+  @plugin.stub(:shell_out).with("route -n").and_return(mock_shell_out(0, @linux_route_n, ""))
+  @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @linux_ifconfig, ""))
+  @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @linux_arp_an, ""))
 end
 
 describe Ohai::System, "Linux Network Plugin" do
@@ -266,26 +254,15 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
-    @stdin_ifconfig = StringIO.new
-    @stdin_arp = StringIO.new
-    @stdin_ipaddr = StringIO.new
-    @stdin_iplink = StringIO.new
-    @stdin_ipneighbor = StringIO.new
-    @stdin_ipneighbor_inet6 = StringIO.new
-    @stdin_ip_route = StringIO.new
-    @stdin_ip_route_inet6 = StringIO.new
-
-    prepare_data
-
     @plugin = get_plugin("linux/network")
-    @plugin.stub(:popen4).with("ifconfig -a")
-    @plugin.stub(:popen4).with("arp -an")
+    @plugin.stub(:shell_out).with("ifconfig -a").and_return([0, @linux_ifconfig, ""])
+    @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
     Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-    
+
     %w{ linux/hostname hostname network }.each do |plgn|
       p = get_plugin(plgn)
-      p.stub(:from).with("hostname -s").and_return("katie")
-      p.stub(:from).with("hostname --fqdn").and_return("katie.bethell")
+      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+      p.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
       p.run
     end
   end
@@ -486,7 +463,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
 ROUTE_N
-          prepare_data
           do_stubs
 
           @plugin.run
@@ -514,7 +490,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
 ROUTE_N
 
-          prepare_data
           do_stubs
 
           @plugin.run
@@ -628,7 +603,6 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
@@ -669,7 +643,6 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
@@ -712,7 +685,6 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
@@ -751,7 +723,6 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
@@ -779,7 +750,6 @@ IP_ROUTE_SCOPE
 default via 172.16.19.1 dev tun0
 IP_ROUTE
 
-              prepare_data
               do_stubs
             end
 
@@ -808,7 +778,6 @@ IP_ROUTE
 default dev venet0 scope link
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
@@ -831,7 +800,6 @@ fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
@@ -864,7 +832,6 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
@@ -902,7 +869,6 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
@@ -936,7 +902,6 @@ IP_ROUTE
           @linux_ip_route = <<-IP_ROUTE
 192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
 IP_ROUTE
-          prepare_data
           do_stubs
         end
         

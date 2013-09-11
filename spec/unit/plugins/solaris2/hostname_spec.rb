@@ -22,7 +22,7 @@ describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/hostname")
     @plugin[:os] = "solaris2"
-    @plugin.stub(:from).with("hostname").and_return("kitteh")
+    @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "kitteh\n", ""))
     Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
   end
   

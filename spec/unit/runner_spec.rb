@@ -120,7 +120,7 @@ describe Ohai::Runner, "run_plugin" do
         @ohai.attributes[:other] = Mash.new
         @ohai.attributes[:other][:providers] = [@plugin3]
 
-        @runner.should_receive(:fetch_providers).twice.with(["thing"]).and_return([@plugin1, @plugin2])
+        @runner.should_receive(:fetch_providers).exactly(3).times.with(["thing"]).and_return([@plugin1, @plugin2])
         @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
         @runner.run_plugin(@plugin3)
       end
@@ -161,7 +161,7 @@ describe Ohai::Runner, "run_plugin" do
       @ohai.attributes[:three][:providers] = [@plugin3]
 
       @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
-      @runner.should_receive(:fetch_providers).twice.with(["one", "two"]).and_return([@plugin1, @plugin2])
+      @runner.should_receive(:fetch_providers).exactly(3).times.with(["one", "two"]).and_return([@plugin1, @plugin2])
       @runner.run_plugin(@plugin3)
     end
 
@@ -194,6 +194,53 @@ describe Ohai::Runner, "run_plugin" do
       @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1])
       @runner.stub(:fetch_providers).with(["other"]).and_return([@plugin2])
       expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::DependencyCycleError)
+    end
+  end
+
+  describe "when A depends on B and C, and B depends on C" do
+    before(:each) do
+      @ohai = Ohai::System.new
+      @runner = Ohai::Runner.new(@ohai, true)
+
+      klassA = Ohai.plugin { provides("A"); depends("B", "C"); collect_data { } }
+      klassB = Ohai.plugin { provides("B"); depends("C"); collect_data { } }
+      klassC = Ohai.plugin { provides("C"); collect_data { } }
+
+      @plugins = []
+      [klassA, klassB, klassC].each do |klass|
+        @plugins << klass.new(@ohai, "")
+      end
+      @pluginA, @pluginB, @pluginC = @plugins
+
+      @ohai.attributes[:A] = Mash.new
+      @ohai.attributes[:A][:providers] = [@pluginA]
+      @ohai.attributes[:B] = Mash.new
+      @ohai.attributes[:B][:providers] = [@pluginB]
+      @ohai.attributes[:C] = Mash.new
+      @ohai.attributes[:C][:providers] = [@pluginC]
+      
+      @runner.stub(:fetch_providers).with(["C"]).and_return([@pluginC])
+      @runner.stub(:fetch_providers).with([]).and_return([])
+    end
+
+    it "should not detect a cycle when B is the first provider returned" do
+      @runner.stub(:fetch_providers).with(["B", "C"]).and_return([@pluginB, @pluginC])
+      Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
+      @runner.run_plugin(@pluginA)
+
+      @plugins.each do |plugin|
+        plugin.has_run?.should be_true
+      end
+    end
+
+    it "should not detect a cycle when C is the first provider returned" do
+      @runner.stub(:fetch_providers).with(["B", "C"]).and_return([@pluginC, @pluginB])
+      Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
+      @runner.run_plugin(@pluginA)
+
+      @plugins.each do |plugin|
+        plugin.has_run?.should be_true
+      end
     end
   end
 end

@@ -22,8 +22,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "NetBSD plugin platform" do
   before(:each) do
     @plugin = get_plugin("netbsd/platform")
-    @plugin.stub(:from).with("uname -s").and_return("NetBSD")
-    @plugin.stub(:from).with("uname -r").and_return("4.5")
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "NetBSD\n", ""))
+    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
     @plugin[:os] = "netbsd"
   end
 

@@ -26,9 +26,9 @@ Ohai.plugin do
 
     groovy = Mash.new
 
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "groovy -v")
-    if status == 0
-      output = stdout.split
+    so = shell_out("groovy -v")
+    if so.exitstatus == 0
+      output = so.stdout.split
       if output.length >= 2
         groovy[:version] = output[2]
       end

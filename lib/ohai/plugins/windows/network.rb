@@ -103,9 +103,9 @@ Ohai.plugin do
     end
 
     cint=nil
-    status, stdout, stderr = run_command(:command => "arp -a")
-    if status == 0
-      stdout.split("\n").each do |line|
+    so = shell_out("arp -a")
+    if so.exitstatus == 0
+      so.stdout.lines do |line|
         if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
           cint = $2.downcase
         end

@@ -26,9 +26,9 @@ Ohai.plugin do
 
     php = Mash.new
 
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "php -v")
-    if status == 0
-      output = stdout.split
+    so = shell_out("php -v")
+    if so.exitstatus == 0
+      output = so.stdout.split
       if output.length >= 6
         php[:version] = output[1]
         php[:builddate] = "%s %s %s" % [output[4],output[5],output[6]]

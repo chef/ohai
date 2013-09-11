@@ -32,25 +32,34 @@ end
 
 def it_should_check_from_mash(plugin, attribute, from, value)
   it "should get the #{plugin}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:from).with(from).and_return(value)
+    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
   it "should set the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    @plugin[plugin][attribute].should == value
+    @plugin[plugin][attribute].should == value[1].split($/)[0]
   end
+end
+
+def mock_shell_out(exitstatus, stdout, stderr)
+  shell_out = double("mixlib_shell_out")
+  shell_out.stub(:exitstatus).and_return(exitstatus)
+  shell_out.stub(:stdout).and_return(stdout)
+  shell_out.stub(:stderr).and_return(stderr)
+  shell_out
 end
 
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:from).with(from).and_return(value)
+    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
   it "should set the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
+    value = value[1].split($/)[0]
     if mash.is_a?(String)
       @plugin[mash][attribute].should == value
     elsif mash.is_a?(Array)

@@ -23,14 +23,25 @@ require File.expand_path(File.dirname(__FILE__) + '/../../path/ohai_plugin_commo
 
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
+    @env_lsmod = <<-ENV_LSMOD
+Module                  Size  Used by
+dm_crypt               22321  0
+psmouse                81038  0
+acpiphp                23314  0
+microcode              18286  0
+serio_raw              13031  0
+virtio_balloon         13168  0
+floppy                 55441  0
+ENV_LSMOD
     @plugin = get_plugin("linux/kernel")
-    @plugin.stub(:from).with("uname -o").and_return("Linux")
-    @plugin.should_receive(:popen4).with("env lsmod").at_least(1).times
+    @plugin.stub(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
+    @plugin.stub(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
+    @plugin.should_receive(:shell_out).with("env lsmod").at_least(1).times
     @plugin[:kernel] = {}
     @plugin.run
   end
 
-  it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", "Linux")
+  it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", [0, "Linux", ""])
 
   test_plugin([ "kernel", "linux/kernel" ], [ "uname", "env" ]) do | p |
     p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],

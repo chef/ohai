@@ -120,16 +120,6 @@ describe Ohai::System, "Linux virtualization platform" do
   describe "when we are parsing dmidecode" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
-      @stdin = double("STDIN", { :close => true })
-      @pid = 10
-      @stderr = double("STDERR")
-      @stdout = double("STDOUT")
-      @status = 0
-    end
-
-    it "should run dmidecode" do
-      @plugin.should_receive(:popen4).with("dmidecode").and_return(true)
-      @plugin.run
     end
 
     it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
@@ -142,9 +132,7 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub(:read).and_return(ms_vpc_dmidecode)
-
-      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vpc_dmidecode, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "virtualpc"
       @plugin[:virtualization][:role].should == "guest"
@@ -162,15 +150,14 @@ System Information
 	SKU Number: Not Specified
 	Family: Not Specified
 VMWARE
-      @stdout.stub(:read).and_return(vmware_dmidecode)
-      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vmware_dmidecode, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "vmware"
       @plugin[:virtualization][:role].should == "guest"
     end
 
     it "should run dmidecode and not set virtualization if nothing is detected" do
-      @plugin.should_receive(:popen4).with("dmidecode").and_return(true)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       @plugin.run
       @plugin[:virtualization].should == {}
     end

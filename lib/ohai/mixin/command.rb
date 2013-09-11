@@ -28,6 +28,13 @@ require 'systemu'
 module Ohai
   module Mixin
     module Command
+      def shell_out(cmd)
+        m = Mixlib::ShellOut.new(cmd)
+        m.run_command
+        m
+      end
+
+      module_function :shell_out
 
       def run_command(args={})
         if args.has_key?(:creates)

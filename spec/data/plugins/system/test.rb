@@ -1,7 +1,0 @@
-#
-#
-#
-
-Ohai.plugin do
-
-end

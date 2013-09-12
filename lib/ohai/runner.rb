@@ -41,12 +41,11 @@ module Ohai
       visited = [plugin]
       while !visited.empty?
         p = visited.pop
-        unless force
-          next if p.has_run?
-        end
+
+        next if p.has_run? unless force
 
         if visited.include?(p)
-          raise DependencyCycleError, "Dependency cycle detected. Please examine the following plugin files: #{cycle_sources(visited, p).join(", ")}"
+          raise DependencyCycleError, "Dependency cycle detected. Please refer to the following plugin files: #{cycle_sources(visited, p).join(", ") }"
         end
 
         dependency_providers = fetch_providers(p.dependencies)
@@ -55,8 +54,7 @@ module Ohai
         if dependency_providers.empty?
           @safe_run ? p.safe_run : p.run
         else
-          visited << p << dependency_providers
-          visited.flatten!
+          visited << p << dependency_providers.first
         end
       end
     end

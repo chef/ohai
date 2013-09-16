@@ -23,7 +23,7 @@ require 'stringio'
 require 'tmpdir'
 require 'fcntl'
 require 'etc'
-require 'systemu'
+require 'mixlib/shellout'
 
 module Ohai
   module Mixin
@@ -55,11 +55,6 @@ module Ohai
         status = nil
         Dir.chdir(args[:cwd]) do
           status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
-          # systemu returns 42 when it hits unexpected errors
-          if status.exitstatus == 42 and stderr_string == ""
-            stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
-            Ohai::Log.debug(stderr_string)
-          end
 
           if stdout_string
             Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
@@ -110,7 +105,9 @@ module Ohai
       def run_command_windows(command, timeout)
         if timeout
           begin
-            systemu(command)
+            m = Mixlib::ShellOut.new(command)
+            m.run_command
+            [m.status, m.stdout, m.stderr]
           rescue SystemExit => e
             raise
           rescue Timeout::Error => e
@@ -118,7 +115,9 @@ module Ohai
             raise(e)
           end
         else
-          systemu(command)
+          m = Mixlib::ShellOut.new(command)
+          m.run_command
+          [m.status, m.stdout, m.stderr]
         end
       end
 

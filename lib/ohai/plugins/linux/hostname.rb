@@ -26,7 +26,11 @@ Ohai.plugin do
       so = shell_out("hostname --fqdn")
       fqdn so.stdout.split($/)[0]
     rescue
-      Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      if `hostname`.strip.split('.').count >= 3
+        fqdn from("hostname")
+      else
+        Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      end
     end
   end
 end

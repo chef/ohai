@@ -27,7 +27,7 @@ Ohai.plugin do
     perl = Mash.new
     so = shell_out("perl -V:version -V:archname")
     if so.exitstatus == 0
-      so.stdout.lines do |line|
+      so.stdout.split(/\r?\n/).each do |line|
         case line
         when /^version=\'(.+)\';$/
           perl[:version] = $1

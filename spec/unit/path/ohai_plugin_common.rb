@@ -210,10 +210,10 @@ def test_plugin(plugin_names, cmd_list)
                 enc = Yajl::Encoder
                 subsumes?( @ohai.data, ohai ) do | path, source, test |
                   path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
-                  if source.nil?
+                  if test.nil?
                     txt = "should not set #{path_txt}"
                   else
-                    txt = "should set #{path_txt} to #{enc.encode( source )}"
+                    txt = "should set #{path_txt} to #{enc.encode( test )}"
                   end
                   it txt do
                     source.should eq( test )

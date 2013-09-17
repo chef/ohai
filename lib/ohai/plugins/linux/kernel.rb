@@ -21,7 +21,7 @@ Ohai.plugin do
 
   collect_data do
     so = shell_out("uname -o")
-    kernel[:os] = so.stdout.split($/)[0]
+    kernel[:os] = so.stdout.split(/\r?\n/)[0]
 
     kext = Mash.new
     so = shell_out("env lsmod")

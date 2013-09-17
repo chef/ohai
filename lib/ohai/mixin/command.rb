@@ -103,22 +103,12 @@ module Ohai
       end
 
       def run_command_windows(command, timeout)
-        if timeout
-          begin
-            m = Mixlib::ShellOut.new(command)
-            m.run_command
-            [m.status, m.stdout, m.stderr]
-          rescue SystemExit => e
-            raise
-          rescue Timeout::Error => e
-            Ohai::Log.error("#{command} exceeded timeout #{timeout}")
-            raise(e)
-          end
-        else
-          m = Mixlib::ShellOut.new(command)
-          m.run_command
-          [m.status, m.stdout, m.stderr]
-        end
+        shellout_opts = {}
+        shellout_opts[:timeout] = timeout if timeout
+
+        m = Mixlib::ShellOut.new(command, shellout_opts)
+        m.run_command
+        [m.status, m.stdout, m.stderr]
       end
 
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/

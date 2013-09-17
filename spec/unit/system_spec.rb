@@ -40,7 +40,6 @@ describe "Ohai::System" do
 
   describe "#load_plugins" do
     before(:each) do
-      @plugin_path = Ohai::Config[:plugin_path]
       Ohai::OS.stub(:collect_os).and_return("ubuntu")
 
       loader = double('@loader')
@@ -50,10 +49,6 @@ describe "Ohai::System" do
       klass = Ohai.plugin { }
       plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
       loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
-    end
-
-    after(:each) do
-      Ohai::Config[:plugin_path] = @plugin_path
     end
 
     it "should load plugins when plugin_path has a trailing slash" do
@@ -262,13 +257,8 @@ describe "Ohai::System" do
     end
 
     context "when a plugin is disabled" do
-      before(:all) do
-        @disabled_plugins = Ohai::Config[:disabled_plugins]
+      before(:each) do
         Ohai::Config[:disabled_plugins] = ["empty"]
-      end
-
-      after(:all) do
-        Ohai::Config[:disabled_plugins] = @disabled_plugins
       end
 
       it "should not run the plugin" do
@@ -392,7 +382,6 @@ EOF
 
   describe "#plugin_for" do
     before(:each) do
-      @plugin_path = Ohai::Config[:plugin_path]
       Ohai::Config[:plugin_path] = ["/tmp/plugins"]
 
       @loader = double('@loader')
@@ -400,10 +389,6 @@ EOF
 
       @ohai = Ohai::System.new
       @klass = Ohai.v6plugin { }
-    end
-
-    after(:each) do
-      Ohai::Config[:plugin_path] = @plugin_path
     end
 
     it "should find a plugin with a simple name" do

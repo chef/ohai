@@ -34,10 +34,10 @@ module Ohai
     end
     
 
-    log_level :info
-    log_location STDOUT
-    plugin_path [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins'))]
-    disabled_plugins []
-    hints_path [ platform_specific_path('/etc/chef/ohai/hints') ]
+    default :log_level, :info
+    default :log_location, STDOUT
+    default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins'))]
+    default :disabled_plugins, []
+    default(:hints_path) { [ platform_specific_path('/etc/chef/ohai/hints') ] }
   end
 end

@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "yajl-ruby"
   s.add_dependency "mixlib-cli"
-  s.add_dependency "mixlib-config"
+  s.add_dependency "mixlib-config", ">= 2.0.0.rc.4"
   s.add_dependency "mixlib-log"
   s.add_dependency "mixlib-shellout"
   s.add_dependency "ipaddress"

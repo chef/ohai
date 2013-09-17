@@ -26,8 +26,8 @@ module Ohai
       when /solaris2/
         return "solaris2"
       when /mswin|mingw32|windows/
-        # After long discussion in IRC the "powers that be" have come to a concensus
-        # that there is no other Windows platforms exist that were not based on the
+        # After long discussion in IRC the "powers that be" have come to a consensus
+        # that no Windows platform exists that was not based on the
         # Windows_NT kernel, so we herby decree that "windows" will refer to all
         # platforms built upon the Windows_NT kernel and have access to win32 or win64
         # subsystems.

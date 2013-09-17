@@ -34,7 +34,7 @@ Ohai.plugin do
     end
 
     if so.exitstatus == 0
-      so.stderr.lines do |line|
+      so.stderr.split(/\r?\n/).each do |line|
         case line
         when /java version \"([0-9\.\_]+)\"/
           java[:version] = $1

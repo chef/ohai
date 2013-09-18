@@ -47,26 +47,13 @@ describe Ohai::System, "plugin gce" do
       @http_client.should_receive(:get).
         with("/computeMetadata/v1beta1/?recursive=true/").
         and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code=>"200"))
+
       @plugin.run
       @plugin[:gce].should_not be_nil
       @plugin[:gce]['instance'].should eq("hostname"=>"test-host")
     end
   end
 
-  describe "with dmi and metadata address connected" do
-    it_should_behave_like "gce"
-    before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Google')
-    end
-  end
-
-  describe "without dmi and metadata address connected" do
-    it_should_behave_like "!gce"
-    before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-    end
-  end
-  
   describe "with hint file" do
     it_should_behave_like "gce"
 
@@ -82,8 +69,6 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-
       File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
     end
@@ -93,8 +78,6 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-
       File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
 

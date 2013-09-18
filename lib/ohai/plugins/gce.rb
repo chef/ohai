@@ -19,15 +19,9 @@ provides "gce"
 require 'ohai/mixin/gce_metadata'
 
 extend Ohai::Mixin::GCEMetadata
-GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
-
-#https://developers.google.com/compute/docs/instances#dmi
-def has_google_dmi?
- ::File.read(GOOGLE_SYSFS_DMI).include?('Google')
-end
 
 def looks_like_gce?
-  hint?('gce') || has_google_dmi? && can_metadata_connect?(GCE_METADATA_ADDR,80)
+  hint?('gce') || can_metadata_connect?(GCE_METADATA_ADDR,80)
 end
 
 if looks_like_gce?

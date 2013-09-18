@@ -43,44 +43,13 @@ describe Ohai::System, "plugin gce" do
       Socket.stub(:pack_sockaddr_in).and_return(nil)
     end
 
-    it "should recursively fetch metadata" do
-      @http_client.should_receive(:get).
-        with("/0.1/meta-data/").
-        and_return(double("Net::HTTPOK",
-                         :body => "domain\nhostname\ndescription", :code=>"200"))
-      @http_client.should_receive(:get).
-        with("/0.1/meta-data/domain").
-        and_return(double("Net::HTTPOK", :body => "test-domain", :code=>"200"))
-      @http_client.should_receive(:get).
-        with("/0.1/meta-data/hostname").
-        and_return(double("Net::HTTPOK", :body => "test-host", :code=>"200"))
-      @http_client.should_receive(:get).
-        with("/0.1/meta-data/description").
-        and_return(double("Net::HTTPOK", :body => "test-description", :code=>"200"))
-
-      @plugin.run
-
-      @plugin[:gce].should_not be_nil
-      @plugin[:gce]['hostname'].should == "test-host"
-      @plugin[:gce]['domain'].should == "test-domain"
-      @plugin[:gce]['description'].should  == "test-description"
-    end
-
     it "should properly parse json metadata" do
       @http_client.should_receive(:get).
-        with("/0.1/meta-data/").
-        and_return(double("Net::HTTP Response", :body => "attached-disks\n", :code=>"200"))
-      @http_client.should_receive(:get).
-        with("/0.1/meta-data/attached-disks").
-        and_return(double("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
-                    "index":0,"mode":"READ_WRITE","type":"EPHEMERAL"}]}', :code=>"200"))
-
+        with("/computeMetadata/v1beta1/?recursive=true/").
+        and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code=>"200"))
       @plugin.run
-
       @plugin[:gce].should_not be_nil
-      @plugin[:gce]['attached_disks'].should eq({"disks"=>[{"deviceName"=>"boot",
-                                              "index"=>0,"mode"=>"READ_WRITE",
-                                              "type"=>"EPHEMERAL"}]})
+      @plugin[:gce]['instance'].should eq("hostname"=>"test-host")
     end
   end
 

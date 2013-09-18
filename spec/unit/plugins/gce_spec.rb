@@ -54,20 +54,6 @@ describe Ohai::System, "plugin gce" do
     end
   end
 
-  describe "with dmi and metadata address connected" do
-    it_should_behave_like "gce"
-    before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Google')
-    end
-  end
-
-  describe "without dmi and metadata address connected" do
-    it_should_behave_like "!gce"
-    before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-    end
-  end
-  
   describe "with hint file" do
     it_should_behave_like "gce"
 
@@ -92,6 +78,9 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
+      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+      
       File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
       File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
       File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)

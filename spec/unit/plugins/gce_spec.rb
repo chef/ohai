@@ -25,9 +25,8 @@ describe Ohai::System, "plugin gce" do
   end
 
   shared_examples_for "!gce" do
-    it "should NOT attempt to fetch the gce metadata" do
-      Ohai::Mixin::GCEMetadata.should_not_receive(:http_client)
-      @ohai._require_plugin("gce")
+    it 'should not behave like gce' do
+      @plugin[:gce].should be_nil
     end
   end
 
@@ -67,7 +66,7 @@ describe Ohai::System, "plugin gce" do
 
   describe "without hint file" do
     it_should_behave_like "!gce"
-  
+
     before(:each) do
       File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
@@ -87,4 +86,5 @@ describe Ohai::System, "plugin gce" do
       File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
+
 end

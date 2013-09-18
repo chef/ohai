@@ -41,7 +41,7 @@ describe Ohai::System, "plugin gce" do
       Socket.stub!(:pack_sockaddr_in).and_return(nil)
     end
 
-    it "should properly parse json metadata" do
+    it "should recursively fetch and properly parse json metadata" do
       @http_client.should_receive(:get).
         with("/computeMetadata/v1beta1/?recursive=true/").
         and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code=>"200"))

@@ -1,0 +1,159 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 2.1.7 JVM: 1.6.0_24 Vendor: Sun Microsystems Inc. OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.2"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x86"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 2.1.7 JVM: 1.6.0_24 Vendor: Sun Microsystems Inc. OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.2"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 2.1.7 JVM: 1.6.0_24 Vendor: Sun Microsystems Inc. OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.6.4 JVM: 1.6.0_27\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.6.4 JVM: 1.6.0_27\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.8.6 JVM: 1.6.0_27 Vendor: Sun Microsystems Inc. OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.8.6 JVM: 1.6.0_27 Vendor: Sun Microsystems Inc. OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.8.6 JVM: 1.7.0_25 Vendor: Oracle Corporation OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.8.6 JVM: 1.7.0_25 Vendor: Oracle Corporation OS: Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env ["java", "groovy"]
+params "-v"
+stdout "Groovy Version: 1.8.6 JVM: 1.7.0_25 Vendor: Oracle Corporation OS: Linux\n"
+stderr ""
+exit_status 0

@@ -22,18 +22,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Darwin cpu plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("darwin/cpu.rb", PLUGIN_PATH))
-    @plugin.stub(:from).with("sysctl -n hw.physicalcpu").and_return("1")
-    @plugin.stub(:from).with("sysctl -n hw.logicalcpu").and_return("2")
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:os] = "darwin"
+    @ohai.stub(:from).with("sysctl -n hw.physicalcpu").and_return("1")
+    @ohai.stub(:from).with("sysctl -n hw.logicalcpu").and_return("2")
   end
 
   it "should set cpu[:total] to 2" do
-    @plugin.run
-    @plugin[:cpu][:total].should == 2
+    @ohai._require_plugin("darwin::cpu")
+    @ohai[:cpu][:total].should == 2
   end
 
   it "should set cpu[:real] to 1" do
-    @plugin.run
-    @plugin[:cpu][:real].should == 1
+    @ohai._require_plugin("darwin::cpu")
+    @ohai[:cpu][:real].should == 1
   end
 end

@@ -23,9 +23,8 @@ describe Ohai::System, "plugin linode" do
 
   before do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "linode.rb"))
-    @plugin.stub(:require_plugin)
-    @plugin[:network] = {
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:network] = {
       "interfaces"=> {
         "eth0"=> {
           "addresses"=> {
@@ -50,32 +49,32 @@ describe Ohai::System, "plugin linode" do
 
   shared_examples_for "!linode"  do
     it "does not create the linode mash" do
-      @plugin.run
-      @plugin[:linode].should be_nil
+      @ohai._require_plugin("linode")
+      @ohai[:linode].should be_nil
     end
   end
 
   shared_examples_for "linode" do
     it "creates a linode mash" do
-      @plugin.run
-      @plugin[:linode].should_not be_nil
+      @ohai._require_plugin("linode")
+      @ohai[:linode].should_not be_nil
     end
 
     it "has all required attributes" do
-      @plugin.run
-      @plugin[:linode][:public_ip].should_not be_nil
+      @ohai._require_plugin("linode")
+      @ohai[:linode][:public_ip].should_not be_nil
     end
 
     it "has correct values for all attributes" do
-      @plugin.run
-      @plugin[:linode][:public_ip].should == "1.2.3.4"
+      @ohai._require_plugin("linode")
+      @ohai[:linode][:public_ip].should == "1.2.3.4"
     end
 
   end
 
   context "without linode kernel" do
     before do
-      @plugin[:kernel] = { "release" => "3.5.2-x86_64" }
+      @ohai[:kernel] = { "release" => "3.5.2-x86_64" }
     end
 
     it_should_behave_like "!linode"
@@ -83,7 +82,7 @@ describe Ohai::System, "plugin linode" do
 
   context "with linode kernel" do
     before do
-      @plugin[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
+      @ohai[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
     end
 
     it_should_behave_like "linode"
@@ -92,7 +91,7 @@ describe Ohai::System, "plugin linode" do
     # http://library.linode.com/networking/configuring-static-ip-interfaces
     context "with configured private ip address as suggested by linode" do
       before do
-        @plugin[:network][:interfaces]["eth0:1"] = {
+        @ohai[:network][:interfaces]["eth0:1"] = {
           "addresses" => {
             "5.6.7.8"=> {
               "broadcast"=> "10.176.191.255",
@@ -112,9 +111,9 @@ describe Ohai::System, "plugin linode" do
       end
 
       it "detects and sets the private ip" do
-        @plugin.run
-        @plugin[:linode][:private_ip].should_not be_nil
-        @plugin[:linode][:private_ip].should == "5.6.7.8"
+        @ohai._require_plugin("linode")
+        @ohai[:linode][:private_ip].should_not be_nil
+        @ohai[:linode][:private_ip].should == "5.6.7.8"
       end
     end
 
@@ -122,10 +121,10 @@ describe Ohai::System, "plugin linode" do
 
   describe "with linode cloud file" do
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(true)
-      File.stub(:read).with(hint_path_nix).and_return('')
-      File.stub(:exist?).with(hint_path_win).and_return(true)
-      File.stub(:read).with(hint_path_win).and_return('')
+      File.stub!(:exist?).with(hint_path_nix).and_return(true)
+      File.stub!(:read).with(hint_path_nix).and_return('')
+      File.stub!(:exist?).with(hint_path_win).and_return(true)
+      File.stub!(:read).with(hint_path_win).and_return('')
     end
 
     it_should_behave_like "linode"
@@ -133,25 +132,22 @@ describe Ohai::System, "plugin linode" do
 
   describe "without cloud file" do
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(false)
-      File.stub(:exist?).with(hint_path_win).and_return(false)
+      File.stub!(:exist?).with(hint_path_nix).and_return(false)
+      File.stub!(:exist?).with(hint_path_win).and_return(false)
     end
 
     it_should_behave_like "!linode"
   end
 
   context "with ec2 cloud file" do
-    let(:ec2_hint_path_nix) { '/etc/chef/ohai/hints/ec2.json' }
-    let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
+    let(:hint_path_nix) { '/etc/chef/ohai/hints/ec2.json' }
+    let(:hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
 
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(false)
-      File.stub(:exist?).with(hint_path_win).and_return(false)
-
-      File.stub(:exist?).with(ec2_hint_path_nix).and_return(true)
-      File.stub(:read).with(ec2_hint_path_nix).and_return('')
-      File.stub(:exist?).with(ec2_hint_path_win).and_return(true)
-      File.stub(:read).with(ec2_hint_path_win).and_return('')
+      File.stub!(:exist?).with(hint_path_nix).and_return(true)
+      File.stub!(:read).with(hint_path_nix).and_return('')
+      File.stub!(:exist?).with(hint_path_win).and_return(true)
+      File.stub!(:read).with(hint_path_win).and_return('')
     end
 
     it_should_behave_like "!linode"

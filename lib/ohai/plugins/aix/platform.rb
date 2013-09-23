@@ -1,6 +1,6 @@
 #
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Copyright:: Copyright (c) 2013, Opscode, Inc.
+# Author:: Doug MacEachern <dougm@vmware.com>
+# Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,4 @@
 # limitations under the License.
 #
 
-require_plugin "#{os}::kernel"
-
-provides "platform", "platform_version", "platform_family"
-
-platform kernel[:name]
-platform_version [kernel[:version], kernel[:release]].join(".")
-platform_family platform
+require_plugin "sigar::platform"

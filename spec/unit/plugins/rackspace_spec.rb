@@ -20,9 +20,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "rackspace.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:network] = {:interfaces => {:eth0 => {"addresses"=> {
       "1.2.3.4"=> {
         "broadcast"=> "67.23.20.255",
         "netmask"=> "255.255.255.0",
@@ -41,66 +40,64 @@ describe Ohai::System, "plugin rackspace" do
       "40:40:95:47:6E:ED"=> {
         "family"=> "lladdr"
       }
-      }}
-    }
-  }
+    }}}}
 
-  @plugin[:network][:interfaces][:eth1] = {:addresses => {
-    "fe80::4240:f5ff:feab:2836" => {
-      "scope"=> "Link",
-      "prefixlen"=> "64",
-      "family"=> "inet6"
-    },
-    "5.6.7.8"=> {
-      "broadcast"=> "10.176.191.255",
-      "netmask"=> "255.255.224.0",
-      "family"=> "inet"
-    },
-    "40:40:F5:AB:28:36" => {
-      "family"=> "lladdr"
-    }
+    @ohai[:network][:interfaces][:eth1] = {:addresses => {
+      "fe80::4240:f5ff:feab:2836" => {
+        "scope"=> "Link",
+        "prefixlen"=> "64",
+        "family"=> "inet6"
+      },
+      "5.6.7.8"=> {
+        "broadcast"=> "10.176.191.255",
+        "netmask"=> "255.255.224.0",
+        "family"=> "inet"
+      },
+      "40:40:F5:AB:28:36" => {
+        "family"=> "lladdr"
+      }
     }}
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
     # This is here to make #has_rackspace_kernel? fail until we remove that check
-    @plugin[:kernel] = { :release => "1.2.13-not-rackspace" }
+    @ohai[:kernel] = { :release => "1.2.13-not-rackspace" }
 
     # We need a generic stub here for the later stubs with arguments to work
     # Because, magic.
-    @plugin.stub(:run_command).and_return(false)
+    @ohai.stub(:run_command).and_return(false)
   end
 
   shared_examples_for "!rackspace"  do
     it "should NOT create rackspace" do
-      @plugin.run
-      @plugin[:rackspace].should be_nil
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace].should be_nil
     end
   end
 
   shared_examples_for "rackspace" do
 
     it "should create rackspace" do
-      @plugin.run
-      @plugin[:rackspace].should_not be_nil
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace].should_not be_nil
     end
 
     it "should have all required attributes" do
-      @plugin.run
-      @plugin[:rackspace][:public_ip].should_not be_nil
-      @plugin[:rackspace][:private_ip].should_not be_nil
-      @plugin[:rackspace][:public_ipv4].should_not be_nil
-      @plugin[:rackspace][:local_ipv4].should_not be_nil
-      @plugin[:rackspace][:public_ipv6].should_not be_nil
-      @plugin[:rackspace][:local_ipv6].should be_nil
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace][:public_ip].should_not be_nil
+      @ohai[:rackspace][:private_ip].should_not be_nil
+      @ohai[:rackspace][:public_ipv4].should_not be_nil
+      @ohai[:rackspace][:local_ipv4].should_not be_nil
+      @ohai[:rackspace][:public_ipv6].should_not be_nil
+      @ohai[:rackspace][:local_ipv6].should be_nil
     end
 
     it "should have correct values for all attributes" do
-      @plugin.run
-      @plugin[:rackspace][:public_ip].should == "1.2.3.4"
-      @plugin[:rackspace][:private_ip].should == "5.6.7.8"
-      @plugin[:rackspace][:public_ipv4].should == "1.2.3.4"
-      @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
-      @plugin[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace][:public_ip].should == "1.2.3.4"
+      @ohai[:rackspace][:private_ip].should == "5.6.7.8"
+      @ohai[:rackspace][:public_ipv4].should == "1.2.3.4"
+      @ohai[:rackspace][:local_ipv4].should == "5.6.7.8"
+      @ohai[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
     end
 
     it "should capture region information" do
@@ -111,9 +108,9 @@ server_id = "21301000"
 created_at = "2012-12-06T22:08:16Z"
 region = "dfw"
 OUT
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ 0, provider_data, ""])
-      @plugin.run
-      @plugin[:rackspace][:region].should == "dfw"
+      @ohai.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-ls vm-data/provider_data"}).and_return([ 0, provider_data, ""])
+      @ohai._require_plugin("rackspace")
+      @ohai[:rackspace][:region].should == "dfw"
     end
   end
 
@@ -121,10 +118,10 @@ OUT
     it_should_behave_like "rackspace"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
   end
 
@@ -132,8 +129,8 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      File.stub!(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
   
@@ -141,13 +138,10 @@ OUT
     it_should_behave_like "!rackspace"
   
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
-
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 
@@ -158,7 +152,7 @@ OUT
       stderr = StringIO.new
       stdout = "Rackspace\n"
       status = 0
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 
@@ -169,7 +163,7 @@ OUT
       stderr = StringIO.new
       stdout = "cumulonimbus\n"
       status = 0
-      @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
+      @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"xenstore-read vm-data/provider_data/provider"}).and_return([ status, stdout, stderr ])
     end
   end
 end

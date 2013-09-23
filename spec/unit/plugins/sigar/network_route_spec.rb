@@ -33,7 +33,6 @@ describe Ohai::System, "Sigar network route plugin" do
 
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("sigar/network_route_spec.rb", PLUGIN_PATH))
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",
@@ -118,29 +117,29 @@ describe Ohai::System, "Sigar network route plugin" do
       @sigar.should_receive(:net_interface_stat).with("eth0").and_return(net_stat)
       @sigar.should_receive(:arp_list).once.and_return([net_arp])
 
-      # Since we double net_route_list here, flags never gets called
+      # Since we mock net_route_list here, flags never gets called
       @sigar.should_receive(:net_route_list).once.and_return([net_route])
       Sigar.should_receive(:new).at_least(2).times.and_return(@sigar)
-      @plugin.require_plugin("os")
-      @plugin[:os]="sigar"
+      @ohai.require_plugin("os")
+      @ohai[:os]="sigar"
       Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
-      @plugin.require_plugin("network")
-      @plugin.require_plugin("sigar::network_route")
+      @ohai.require_plugin("network")
+      @ohai.require_plugin("sigar::network_route")
     end
 
     it "should set the routes" do
-      @plugin[:network][:interfaces][:eth0].should have_key(:route)
+      @ohai[:network][:interfaces][:eth0].should have_key(:route)
     end
 
     it "should set the route details" do
       @net_route_conf.each_pair do |k,v|
-        # Work around the above doubleing of net_route_list skipping the call to flags()
+        # Work around the above mocking of net_route_list skipping the call to flags()
         if k == :flags
           v="U"
-          @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"][k] = v
+          @ohai[:network][:interfaces][:eth0][:route]["192.168.1.0"][k] = v
         end
-        @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"].should have_key(k)
-        @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"][k].should eql(v)
+        @ohai[:network][:interfaces][:eth0][:route]["192.168.1.0"].should have_key(k)
+        @ohai[:network][:interfaces][:eth0][:route]["192.168.1.0"][k].should eql(v)
       end
     end
 

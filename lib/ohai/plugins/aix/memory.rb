@@ -1,6 +1,6 @@
 #
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Copyright:: Copyright (c) 2013, Opscode, Inc.
+# Author:: Doug MacEachern <dougm@vmware.com>
+# Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,4 @@
 # limitations under the License.
 #
 
-provides "memory"
-
-memory = Mash.new
-
-meminfo = from("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'")
-memory[:total], u, memory[:free] = meminfo.split
+require_plugin "sigar::memory"

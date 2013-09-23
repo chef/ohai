@@ -23,12 +23,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin ohai" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "ohai.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
+    @ohai.stub!(:require_plugin).and_return(true)
   end
   
   it "should set [:chef_packages][:ohai][:version] to the current version" do
-    @plugin.run
-    @plugin[:chef_packages][:ohai][:version].should == Ohai::VERSION
+    @ohai._require_plugin("ohai")
+    @ohai[:chef_packages][:ohai][:version].should == Ohai::VERSION
   end
 end

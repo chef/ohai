@@ -21,19 +21,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "FreeBSD kernel plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("freebsd/kernel.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin.stub(:from).with("uname -i").and_return("foo")
-    @plugin.stub(:from_with_regex).with("sysctl kern.securelevel", /kern.securelevel: (.+)$/).and_return("kern.securelevel: 1")
-    @plugin.stub(:popen4).with("/sbin/kldstat").and_yield(0, StringIO.new, StringIO.new, StringIO.new)
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:name] = "freebsd"
+    @ohai = Ohai::System.new    
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai.stub!(:from).with("uname -i").and_return("foo")
+    @ohai.stub!(:from_with_regex).with("sysctl kern.securelevel").and_return("kern.securelevel: 1")
+    @ohai[:kernel] = Mash.new
+    @ohai[:kernel][:name] = "freebsd"
   end
 
   it "should set the kernel_os to the kernel_name value" do
-    @plugin.run
-    @plugin[:kernel][:os].should == @plugin[:kernel][:name]
+    @ohai._require_plugin("freebsd::kernel")
+    @ohai[:kernel][:os].should == @ohai[:kernel][:name]
   end
 
 end

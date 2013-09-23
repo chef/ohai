@@ -22,11 +22,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("freebsd/hostname.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:os] = "freebsd"
-    @plugin.stub(:from).with("hostname -s").and_return("katie")
-    @plugin.stub(:from).with("hostname -f").and_return("katie.bethell")
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:os] = "freebsd"
+    @ohai.stub!(:from).with("hostname -s").and_return("katie")
+    @ohai.stub!(:from).with("hostname -f").and_return("katie.bethell")
   end
   
   it_should_check_from("freebsd::hostname", "hostname", "hostname -s", "katie")

@@ -25,7 +25,7 @@ popen4("/usr/sbin/sysctl kern.boottime") do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ /kern.boottime:\D+(\d+)/
       uptime_seconds Time.new.to_i - $1.to_i
-      uptime seconds_to_human(uptime_seconds)
+      uptime self._seconds_to_human(uptime_seconds)
     end
   end
 end

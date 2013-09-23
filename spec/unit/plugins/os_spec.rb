@@ -24,12 +24,11 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, "plugin os" do
   before(:each) do
     @ohai = Ohai::System.new    
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "os.rb"))
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:languages] = Mash.new
-    @plugin[:languages][:ruby] = Mash.new
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:release] = "kings of leon"
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:languages] = Mash.new
+    @ohai[:languages][:ruby] = Mash.new
+    @ohai[:kernel] = Mash.new
+    @ohai[:kernel][:release] = "kings of leon"
   end
   
   after do
@@ -37,8 +36,8 @@ describe Ohai::System, "plugin os" do
   end
 
   it "should set os_version to kernel_release" do
-    @plugin.run
-    @plugin[:os_version].should == @plugin[:kernel][:release]
+    @ohai._require_plugin("os")
+    @ohai[:os_version].should == @ohai[:kernel][:release]
   end
   
   describe "on linux" do
@@ -47,8 +46,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "should set the os to linux" do
-      @plugin.run
-      @plugin[:os].should == "linux"
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "linux"
     end
   end
   
@@ -58,8 +57,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "should set the os to darwin" do
-      @plugin.run
-      @plugin[:os].should == "darwin"
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "darwin"
     end
   end
   
@@ -69,8 +68,8 @@ describe Ohai::System, "plugin os" do
     end
     
     it "sets the os to solaris2" do
-      @plugin.run
-      @plugin[:os].should == "solaris2"
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "solaris2"
     end
   end
 
@@ -80,8 +79,8 @@ describe Ohai::System, "plugin os" do
     end
 
     it "sets the os to the ruby 'host_os'" do
-      @plugin.run
-      @plugin[:os].should == "tron"
+      @ohai._require_plugin("os")
+      @ohai[:os].should == "tron"
     end
   end
 end

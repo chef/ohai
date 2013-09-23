@@ -21,9 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin perl" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "perl.rb"))
-    @plugin[:languages] = Mash.new
-    @plugin.stub(:require_plugin).and_return(true)
+    @ohai[:languages] = Mash.new
+    @ohai.stub!(:require_plugin).and_return(true)
     @pid = 2342
     @stderr = StringIO.new
     @stdout = StringIO.new(<<-OUT)
@@ -32,7 +31,7 @@ archname='darwin-thread-multi-2level';
 OUT
     @stdin = StringIO.new
     @status = 0
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr
@@ -40,44 +39,44 @@ OUT
   end
 
   it "should run perl -V:version -V:archname" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return(true)
-    @plugin.run
+    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return(true)
+    @ohai._require_plugin("perl")
   end
 
   it "should iterate over each line of perl command's stdout" do
     @stdout.should_receive(:each_line).and_return(true)
-    @plugin.run
+    @ohai._require_plugin("perl")
   end
 
   it "should set languages[:perl][:version]" do
-    @plugin.run
-    @plugin.languages[:perl][:version].should eql("5.8.8")
+    @ohai._require_plugin("perl")
+    @ohai.languages[:perl][:version].should eql("5.8.8")
   end
 
   it "should set languages[:perl][:archname]" do
-    @plugin.run
-    @plugin.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
+    @ohai._require_plugin("perl")
+    @ohai.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
   end
 
   it "should set languages[:perl] if perl command succeeds" do
     @status = 0
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr
     ])
-    @plugin.run
-    @plugin.languages.should have_key(:perl)
+    @ohai._require_plugin("perl")
+    @ohai.languages.should have_key(:perl)
   end
 
   it "should not set languages[:perl] if perl command fails" do
      @status = 1
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
+    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
       @status,
       @stdout,
       @stderr
      ])
-     @plugin.run
-     @plugin.languages.should_not have_key(:perl)
+     @ohai._require_plugin("perl")
+     @ohai.languages.should_not have_key(:perl)
   end
 end

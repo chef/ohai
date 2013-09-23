@@ -16,69 +16,68 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'open-uri'
+require 'ohai/mixin/gce_metadata'
 
 describe Ohai::System, "plugin gce" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.join(PLUGIN_PATH, "gce.rb"))
-    @plugin.stub(:require_plugin)
+    @ohai.stub!(:require_plugin).and_return(true)
   end
 
   shared_examples_for "!gce" do
     it "should NOT attempt to fetch the gce metadata" do
-      @plugin.should_not_receive(:http_client)
-      @plugin.run
+      Ohai::Mixin::GCEMetadata.should_not_receive(:http_client)
+      @ohai._require_plugin("gce")
     end
   end
 
   shared_examples_for "gce" do
     before(:each) do
-      @http_client = double("Net::HTTP client")
-      @plugin.stub(:http_client).and_return(@http_client)
-      IO.stub(:select).and_return([[],[1],[]])
-      t = double("connection")
-      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub(:new).and_return(t)
-      Socket.stub(:pack_sockaddr_in).and_return(nil)
+      @http_client = mock("Net::HTTP client")
+      Ohai::Mixin::GCEMetadata.stub(:http_client).and_return(@http_client)
+      IO.stub!(:select).and_return([[],[1],[]])
+      t = mock("connection")
+      t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      Socket.stub!(:new).and_return(t)
+      Socket.stub!(:pack_sockaddr_in).and_return(nil)
     end
 
     it "should recursively fetch metadata" do
       @http_client.should_receive(:get).
         with("/0.1/meta-data/").
-        and_return(double("Net::HTTPOK",
+        and_return(mock("Net::HTTPOK",
                          :body => "domain\nhostname\ndescription", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/domain").
-        and_return(double("Net::HTTPOK", :body => "test-domain", :code=>"200"))
+        and_return(mock("Net::HTTPOK", :body => "test-domain", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/hostname").
-        and_return(double("Net::HTTPOK", :body => "test-host", :code=>"200"))
+        and_return(mock("Net::HTTPOK", :body => "test-host", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/description").
-        and_return(double("Net::HTTPOK", :body => "test-description", :code=>"200"))
+        and_return(mock("Net::HTTPOK", :body => "test-description", :code=>"200"))
 
-      @plugin.run
+      @ohai._require_plugin("gce")
 
-      @plugin[:gce].should_not be_nil
-      @plugin[:gce]['hostname'].should == "test-host"
-      @plugin[:gce]['domain'].should == "test-domain"
-      @plugin[:gce]['description'].should  == "test-description"
+      @ohai[:gce].should_not be_nil
+      @ohai[:gce]['hostname'].should == "test-host"
+      @ohai[:gce]['domain'].should == "test-domain"
+      @ohai[:gce]['description'].should  == "test-description"
     end
 
     it "should properly parse json metadata" do
       @http_client.should_receive(:get).
         with("/0.1/meta-data/").
-        and_return(double("Net::HTTP Response", :body => "attached-disks\n", :code=>"200"))
+        and_return(mock("Net::HTTP Response", :body => "attached-disks\n", :code=>"200"))
       @http_client.should_receive(:get).
         with("/0.1/meta-data/attached-disks").
-        and_return(double("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
+        and_return(mock("Net::HTTP Response", :body => '{"disks":[{"deviceName":"boot",
                     "index":0,"mode":"READ_WRITE","type":"EPHEMERAL"}]}', :code=>"200"))
 
-      @plugin.run
+      @ohai._require_plugin("gce")
 
-      @plugin[:gce].should_not be_nil
-      @plugin[:gce]['attached_disks'].should eq({"disks"=>[{"deviceName"=>"boot",
+      @ohai[:gce].should_not be_nil
+      @ohai[:gce]['attached_disks'].should eq({"disks"=>[{"deviceName"=>"boot",
                                               "index"=>0,"mode"=>"READ_WRITE",
                                               "type"=>"EPHEMERAL"}]})
     end
@@ -102,10 +101,10 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "gce"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
     end
   end
 
@@ -113,10 +112,8 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
+      File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
     end
   end
   
@@ -124,15 +121,10 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
   
     before(:each) do
-      File.should_receive(:read).with('/sys/firmware/dmi/entries/1-0/raw').and_return('Test')
-
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
-
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 end

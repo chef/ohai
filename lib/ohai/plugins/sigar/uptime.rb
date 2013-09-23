@@ -24,4 +24,4 @@ provides "uptime", "uptime_seconds"
 
 uptime = sigar.uptime.uptime
 uptime_seconds uptime.to_i * 1000
-uptime seconds_to_human(uptime.to_i)
+uptime self._seconds_to_human(uptime.to_i)

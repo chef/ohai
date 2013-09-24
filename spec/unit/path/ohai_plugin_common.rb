@@ -22,6 +22,8 @@ require 'ohai'
 require 'yaml'
 
 module OhaiPluginCommon
+  FAKE_SEP = "___"
+
   def fake_command(data, platform, arch, env)
 
     # If the platform or architecture aren't set, take the first one
@@ -121,8 +123,22 @@ eos
   end
 
   def create_exe(cmd, path, platform, arch, env)
-    cmd_path = File.join( path, cmd )
+
+    # Create a list of directories needed to be created before the file is created.
+    # Assume that the #{path} directory exists, but that any directories included in #{cmd} may or may not.
+    dir_list = cmd.split(/\//).inject( [] ) do | acc, ele |
+      if acc == []
+        acc << ele
+      else
+        acc << File.join( acc.last, ele )
+      end
+    end.reject { | e | e == "" }
+    dir_list = dir_list.map { |e| File.join( path, e )}
+    cmd_path = dir_list.pop
     bat_path = cmd_path + ".bat"
+
+    # Ensure the directories in #{cmd} get created - this is for absolute path support
+    dir_list.each { | e | Dir.mkdir( e ) unless Dir.exists?( e )}
 
     #fake exe
     file = <<-eof
@@ -131,7 +147,7 @@ eos
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'
 
-OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd}' ), '#{platform}', '#{arch}', #{Yajl::Encoder.encode( env )}
+OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd.gsub( /\//, OhaiPluginCommon::FAKE_SEP )}' ), '#{platform}', '#{arch}', #{Yajl::Encoder.encode( env )}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
 
@@ -145,7 +161,15 @@ eof
     Mixlib::ShellOut.new("chmod 755 #{cmd_path}").run_command
   end
 
-  module_function( :fake_command, :data_path, :get_path, :read_output,
+  # delete all files and folders in path except those that match
+  # the specified regex
+  def clean_path( path, regex )
+    Dir.glob( File.join( path, "*" ))
+      .reject { | e | e =~ regex }
+      .each { | e | Mixlib::ShellOut.new( "rm -rf #{ e }" ).run_command }
+  end
+
+  module_function( :fake_command, :data_path, :get_path, :read_output, :clean_path,
                    :to_fake_exe_format, :data_to_string, :create_exe, :plugin_path )
 end
 
@@ -165,7 +189,7 @@ def test_plugin(plugin_names, cmd_list)
   require 'rspec'
 
   # clean the path directory, in case a previous test was interrupted
-  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
+  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
 
   l = lambda do | platforms, archs, envs, ohai |
     platforms.each do |platform|
@@ -182,29 +206,40 @@ def test_plugin(plugin_names, cmd_list)
                   old_path = ENV[ 'PATH' ]
                 
                   # create fake executables
-                  cmd_list.each do |c|
-                    data = OhaiPluginCommon.read_output c
+                  cmd_list.each do | c |
+                    data = OhaiPluginCommon.read_output( c.gsub( /\//, OhaiPluginCommon::FAKE_SEP ))
                     
                     data = data[platform][arch].select { |f| f[:env] == env }
-                    if data.all? { |f| ( /command not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
+                    if data.all? { |f| ( /not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
                       cmd_not_found.add c
                     else
                       OhaiPluginCommon.create_exe c, path, platform, arch, env
                     end
                   end
                   
+                  # capture all executions in path dir
                   ENV['PATH'] = path
+                  Ohai.instance_eval do
+                    def self.abs_path( abs_path )
+                      File.join( OhaiPluginCommon.get_path, abs_path )
+                    end
+                  end
                   
                   @ohai = Ohai::System.new
                 
                   plugin_names.each do | plugin_name |
                     @loader = Ohai::Loader.new( @ohai )
-                    @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ) )
+                    @plugin = @loader.load_plugin( File.join( OhaiPluginCommon.plugin_path, plugin_name + ".rb" ))
                     @plugin.safe_run
                   end
                 ensure
+                  Ohai.instance_eval do
+                    def self.abs_path( abs_path )
+                      abs_path
+                    end
+                  end
                   ENV['PATH'] = old_path
-                  FileUtils.rm( Dir.glob( File.join( OhaiPluginCommon.get_path, "*" )).reject { |e| e =~ /^.*\.rb$/ })
+                  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
                 end
                 
                 enc = Yajl::Encoder

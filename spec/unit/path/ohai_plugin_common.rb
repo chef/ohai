@@ -191,7 +191,7 @@ def test_plugin(plugin_names, cmd_list)
   # clean the path directory, in case a previous test was interrupted
   OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
 
-  l = lambda do | platforms, archs, envs, ohai |
+  l = lambda do | platforms, archs, envs, ohai, pending_status = nil |
     platforms.each do |platform|
       describe "when the platform is #{platform}" do
         archs.each do |arch|
@@ -251,6 +251,7 @@ def test_plugin(plugin_names, cmd_list)
                     txt = "should set #{path_txt} to #{enc.encode( test )}"
                   end
                   it txt do
+                    pending(pending_status) if !pending_status.nil?
                     source.should eq( test )
                   end
                 end

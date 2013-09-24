@@ -138,7 +138,16 @@ eos
     bat_path = cmd_path + ".bat"
 
     # Ensure the directories in #{cmd} get created - this is for absolute path support
-    dir_list.each { | e | Dir.mkdir( e ) unless Dir.exists?( e )}
+    # This is a workaround: Dir.exists? doesn't exist in 1.8.7
+    dir_list.each do | e |
+      exists = false
+      begin
+        Dir.new e
+        exists = true
+      rescue Errno::ENOENT
+      end
+      Dir.mkdir( e ) unless exists
+    end
 
     #fake exe
     file = <<-eof
@@ -164,9 +173,9 @@ eof
   # delete all files and folders in path except those that match
   # the specified regex
   def clean_path( path, regex )
-    Dir.glob( File.join( path, "*" ))
-      .reject { | e | e =~ regex }
-      .each { | e | Mixlib::ShellOut.new( "rm -rf #{ e }" ).run_command }
+    Dir.glob( File.join( path, "*" )).
+      reject { | e | e =~ regex }.
+      each { | e | Mixlib::ShellOut.new( "rm -rf #{ e }" ).run_command }
   end
 
   module_function( :fake_command, :data_path, :get_path, :read_output, :clean_path,
@@ -191,7 +200,12 @@ def test_plugin(plugin_names, cmd_list)
   # clean the path directory, in case a previous test was interrupted
   OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
 
-  l = lambda do | platforms, archs, envs, ohai, pending_status = nil |
+  l = lambda do | *args |
+    platforms = args[0]
+    archs = args[1]
+    envs = args[2]
+    ohai = args[3]
+    pending_status = args[4] || nil
     platforms.each do |platform|
       describe "when the platform is #{platform}" do
         archs.each do |arch|

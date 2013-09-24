@@ -17,7 +17,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "AIX filesystem plugin" do
-  before do
+  before(:each) do
     @df_P = <<-DF_P
 Filesystem    512-blocks      Used Available Capacity Mounted on
 /dev/hd4          786432    495632    290800      64% /
@@ -46,71 +46,65 @@ DF_P
 MOUNT
 
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("aix/filesystem.rb", PLUGIN_PATH))
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin[:filesystem] = Mash.new
-    @plugin.stub(:popen4).with("df -P").and_yield(nil, StringIO.new, StringIO.new(@df_P), nil)
-    @plugin.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new(@mount), nil)
+    @ohai.stub(:require_plugin).and_return(true)
+    @ohai[:filesystem] = Mash.new
+    @ohai.stub(:popen4).with("df -P").and_yield(nil, StringIO.new, StringIO.new(@df_P), nil)
+    @ohai.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new(@mount), nil)
+    @ohai._require_plugin("aix::filesystem")
   end
 
   describe "df -P" do
-    before do
-      @plugin.run
-    end
 
     it "returns the filesystem block size" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_size'].should == "786432"
+      @ohai[:filesystem]["/dev/hd4"]['kb_size'].should == "786432"
     end
 
     it "returns the filesystem used space in kb" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_used'].should == "495632"
+      @ohai[:filesystem]["/dev/hd4"]['kb_used'].should == "495632"
     end
 
     it "returns the filesystem available space in kb" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_available'].should == "290800"
+      @ohai[:filesystem]["/dev/hd4"]['kb_available'].should == "290800"
     end
 
     it "returns the filesystem capacity in percentage" do
-      @plugin[:filesystem]["/dev/hd4"]['percent_used'].should == "64%"
+      @ohai[:filesystem]["/dev/hd4"]['percent_used'].should == "64%"
     end
 
     it "returns the filesystem mounted location" do
-      @plugin[:filesystem]["/dev/hd4"]['mount'].should == "/"
+      @ohai[:filesystem]["/dev/hd4"]['mount'].should == "/"
     end
   end
 
   describe "mount" do
-    before do
-      @plugin.run
-    end
 
     it "returns the filesystem mount location" do
-      @plugin[:filesystem]["/dev/hd4"]['mount'].should == "/"
+      @ohai[:filesystem]["/dev/hd4"]['mount'].should == "/"
     end
 
     it "returns the filesystem type" do
-      @plugin[:filesystem]["/dev/hd4"]['fs_type'].should == "jfs2"
+      @ohai[:filesystem]["/dev/hd4"]['fs_type'].should == "jfs2"
     end
 
     it "returns the filesystem mount options" do
-      @plugin[:filesystem]["/dev/hd4"]['mount_options'].should == "rw,log=/dev/hd8"
+      @ohai[:filesystem]["/dev/hd4"]['mount_options'].should == "rw,log=/dev/hd8"
     end
 
     # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
     context "having node values" do
       before do
-        @plugin.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new("192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys"), nil)
+        @ohai.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new("192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys"), nil)
       end
       it "returns the filesystem mount location" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount'].should == "/stage/middleware"
+        @ohai[:filesystem]["192.168.1.11:/stage/middleware"]['mount'].should == "/stage/middleware"
       end
 
       it "returns the filesystem type" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type'].should == "nfs3"
+        @ohai[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type'].should == "nfs3"
       end
 
       it "returns the filesystem mount options" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options'].should == "ro,bg,hard,intr,sec=sys"
+        @ohai[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options'].should == "ro,bg,hard,intr,sec=sys"
       end
     end
   end

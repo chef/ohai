@@ -20,24 +20,23 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Aix plugin platform" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("aix/platform.rb", PLUGIN_PATH))
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:name] = "aix"
-    @plugin[:kernel][:version] = "1"
-    @plugin[:kernel][:release] = "0"
-    @plugin.stub(:require_plugin).and_return(true)
-    @plugin.run
+    @ohai[:kernel] = Mash.new
+    @ohai[:kernel][:name] = "aix"
+    @ohai[:kernel][:version] = "1"
+    @ohai[:kernel][:release] = "0"
+    @ohai.stub(:require_plugin).and_return(true)
+    @ohai._require_plugin("aix::platform")    
   end
 
   it "should set platform to aix" do
-    @plugin[:platform].should == "aix"
+    @ohai[:platform].should == "aix"
   end
 
   it "should set the platform_version" do
-    @plugin[:platform_version].should == "1.0"
+    @ohai[:platform_version].should == "1.0"
   end
 
   it "should set platform_family" do
-    @plugin[:platform_family].should == @plugin[:platform]
+    @ohai[:platform_family].should == @ohai[:platform]
   end
 end

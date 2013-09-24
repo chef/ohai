@@ -20,8 +20,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Aix hostname plugin" do
   before(:each) do
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("aix/hostname.rb", PLUGIN_PATH))
-    @plugin.stub(:from).with("hostname").and_return("aix_admin")
+    @ohai.stub(:from).with("hostname").and_return("aix_admin")
+    @ohai._require_plugin("aix::hostname")
   end
 
   it_should_check_from("aix::hostname", "hostname", "hostname", "aix_admin")

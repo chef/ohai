@@ -18,7 +18,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "AIX cpu plugin" do
-  before do
+  before(:each) do
     @lsdev_Cc_processor = <<-LSDEV_CC_PROCESSOR
 proc0 Available 00-00 Processor
 proc4 Defined   00-04 Processor
@@ -32,47 +32,50 @@ state       enable         Processor state       False
 type        PowerPC_POWER5 Processor type        False
 LSATTR_EL
     @ohai = Ohai::System.new
-    @plugin = Ohai::DSL::Plugin.new(@ohai, File.expand_path("aix/cpu.rb", PLUGIN_PATH))
-    @plugin.stub(:from).with("lsdev -Cc processor").and_return(@lsdev_Cc_processor)
-    @plugin.stub(:from).with("lsattr -El proc0").and_return(@lsattr_El_proc0)
-    @plugin.run
+    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai[:os] = "aix"
+
+    @ohai.stub(:from).with("lsdev -Cc processor").and_return(@lsdev_Cc_processor)
+    @ohai.stub(:from).with("lsattr -El proc0").and_return(@lsattr_El_proc0)
+    @ohai._require_plugin("aix::cpu")    
   end
 
+
   it "sets the vendor id to IBM" do
-    @plugin[:cpu][:vendor_id].should == "IBM"
+    @ohai[:cpu][:vendor_id].should == "IBM"
   end
 
   it "sets the available attribute" do
-    @plugin[:cpu][:available].should == 1
+    @ohai[:cpu][:available].should == 1
   end
 
   it "sets the total number of devices" do
-    @plugin[:cpu][:total].should == 2
+    @ohai[:cpu][:total].should == 2
   end
 
   it "detects the model" do
-    @plugin[:cpu][:model].should == "PowerPC_POWER5"
+    @ohai[:cpu][:model].should == "PowerPC_POWER5"
   end
 
   it "detects the mhz" do
-    @plugin[:cpu][:mhz].should == 1615570
+    @ohai[:cpu][:mhz].should == 1615570
   end
 
   it "detects the status of the device" do
-    @plugin[:cpu][:proc0][:status].should == "Available"
+    @ohai[:cpu][:proc0][:status].should == "Available"
   end
 
   it "detects the location of the device" do
-    @plugin[:cpu][:proc0][:location].should == "00-00"
+    @ohai[:cpu][:proc0][:location].should == "00-00"
   end
 
   context "lsattr -El device_name" do
     it "detects all the attributes of the device" do
-      @plugin[:cpu][:proc0][:frequency].should == "1654344000"
-      @plugin[:cpu][:proc0][:smt_enabled].should == "true"
-      @plugin[:cpu][:proc0][:smt_threads].should == "2"
-      @plugin[:cpu][:proc0][:state].should == "enable"
-      @plugin[:cpu][:proc0][:type].should == "PowerPC_POWER5"
+      @ohai[:cpu][:proc0][:frequency].should == "1654344000"
+      @ohai[:cpu][:proc0][:smt_enabled].should == "true"
+      @ohai[:cpu][:proc0][:smt_threads].should == "2"
+      @ohai[:cpu][:proc0][:state].should == "enable"
+      @ohai[:cpu][:proc0][:type].should == "PowerPC_POWER5"
     end
   end
 end

@@ -20,6 +20,8 @@
 
 # @todo: move os to mixin
 require 'ohai/os'
+require 'ohai/mixin/command'
+require 'ohai/mixin/seconds_to_human'
 
 module Ohai
 
@@ -166,7 +168,7 @@ module Ohai
             if data_collector.has_key?(plat)
               Ohai::Log.warn("Already defined collect_data on platform #{plat}")
             else
-              collector[plat] = block
+              data_collector[plat] = block
             end
           end
         end

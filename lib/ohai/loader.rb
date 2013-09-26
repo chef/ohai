@@ -30,7 +30,7 @@ module Ohai
 
     # @note: plugin_name is used only by version 6 plugins and is the
     # unique part of the file name from Ohai::Config[:plugin_path]
-    def load_plugin(plugin_path, plugin_name)
+    def load_plugin(plugin_path, plugin_name=nil)
       plugin = nil
 
       contents = ""

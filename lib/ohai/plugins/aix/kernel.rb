@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Joshua Timberman <joshua@opscode.com>
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,12 @@
 # limitations under the License.
 #
 
-provides "hostname"
+provides "kernel"
 
-hostname from("hostname")
+kernel Mash.new
+
+kernel[:name] = from("uname -s").downcase
+kernel[:release] = from("uname -r")
+kernel[:version] = from("uname -v")
+kernel[:machine] = from("uname -p")
+kernel[:modules] = Mash.new

@@ -21,10 +21,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux hostname plugin" do
   before(:each) do
-    @plugin = get_plugin("linux/hostname")
-    @plugin[:os] = "linux"
+    @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
     @plugin.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Hostname)
+      Ohai::NamedPlugin.send(:remove_const, :Hostname)
+    end
   end
 
   it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")

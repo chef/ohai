@@ -22,6 +22,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:default)
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Hostname)
+      Ohai::NamedPlugin.send(:remove_const, :Hostname)
+    end
   end
 
   it "should set the domain to everything after the first dot of the fqdn" do

@@ -1,0 +1,135 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "cc: couldn't run 'x86_64-redhat-linux-gcc--flags': No such file or directory\n"
+exit_status 1
+
+platform "centos-6.2"
+arch "x86"
+env []
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'x86_64-redhat-linux-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-V -flags"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: couldn't run 'x86_64-redhat-linux-gcc--flags': No such file or directory\n"
+exit_status 1
+
+platform "centos-6.2"
+arch "x86"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x64"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'x86_64-redhat-linux-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'i486-linux-gnu-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error trying to exec 'x86_64-linux-gnu-gcc--flags': execvp: No such file or directory\n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error: unrecognized option '-V'\ncc: fatal error: no input files\ncompilation terminated.\n"
+exit_status 4
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["gcc"]
+params "-V -flags"
+stdout ""
+stderr "cc: error: unrecognized option '-V'\ncc: fatal error: no input files\ncompilation terminated.\n"
+exit_status 4

@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,5 +15,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'date'
 
-require_plugin "sigar::uptime"
+provides "uptime", "uptime_seconds"
+
+# Example output:
+# $ who -b
+#   .       system boot  Jul  9 17:51
+popen4('who -b') do |pid, stdin, stdout, stderr|
+  stdin.close
+  stdout.each do |line|
+    if line =~ /.* boot (.+)/
+      uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
+      uptime self._seconds_to_human(uptime_seconds)
+      break
+    end
+  end
+end

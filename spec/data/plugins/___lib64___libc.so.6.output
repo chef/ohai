@@ -1,0 +1,135 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params ""
+stdout "GNU C Library stable release version 2.5, by Roland McGrath et al.\nCopyright (C) 2006 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.1.2 20080704 (Red Hat 4.1.2-46).\nCompiled on a Linux 2.6.9 system on 2010-03-31.\nAvailable extensions:\n\tThe C stubs add-on version 2.1.2.\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tGNU libio by Per Bothner\n\tNIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\n\tRT using linux kernel aio\nThread-local storage support included.\nFor bug reporting instructions, please see:\n<http://www.gnu.org/software/libc/bugs.html>.\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.2"
+arch "x86"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env []
+params ""
+stdout "GNU C Library stable release version 2.12, by Roland McGrath et al.\nCopyright (C) 2010 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.4.6 20110731 (Red Hat 4.4.6-3).\nCompiled on a Linux 2.6.32 system on 2011-12-06.\nAvailable extensions:\n\tThe C stubs add-on version 2.1.2.\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\n\tRT using linux kernel aio\nlibc ABIs: UNIQUE IFUNC\nFor bug reporting instructions, please see:\n<http://www.gnu.org/software/libc/bugs.html>.\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params ""
+stdout "GNU C Library (Ubuntu EGLIBC 2.11.1-0ubuntu7.12) stable release version 2.11.1, by Roland McGrath et al.\nCopyright (C) 2009 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.4.3.\nCompiled on a Linux >>3.2.0-23-generic<< system on 2012-11-15.\nAvailable extensions:\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\nFor bug reporting instructions, please see:\n<http://www.debian.org/Bugs/>.\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["gcc"]
+params ""
+stdout "GNU C Library stable release version 2.5, by Roland McGrath et al.\nCopyright (C) 2006 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.1.2 20080704 (Red Hat 4.1.2-46).\nCompiled on a Linux 2.6.9 system on 2010-03-31.\nAvailable extensions:\n\tThe C stubs add-on version 2.1.2.\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tGNU libio by Per Bothner\n\tNIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\n\tRT using linux kernel aio\nThread-local storage support included.\nFor bug reporting instructions, please see:\n<http://www.gnu.org/software/libc/bugs.html>.\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.2"
+arch "x86"
+env ["gcc"]
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env ["gcc"]
+params ""
+stdout "GNU C Library stable release version 2.12, by Roland McGrath et al.\nCopyright (C) 2010 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.4.6 20110731 (Red Hat 4.4.6-3).\nCompiled on a Linux 2.6.32 system on 2011-12-06.\nAvailable extensions:\n\tThe C stubs add-on version 2.1.2.\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\n\tRT using linux kernel aio\nlibc ABIs: UNIQUE IFUNC\nFor bug reporting instructions, please see:\n<http://www.gnu.org/software/libc/bugs.html>.\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["gcc"]
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["gcc"]
+params ""
+stdout "GNU C Library (Ubuntu EGLIBC 2.11.1-0ubuntu7.12) stable release version 2.11.1, by Roland McGrath et al.\nCopyright (C) 2009 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A\nPARTICULAR PURPOSE.\nCompiled by GNU CC version 4.4.3.\nCompiled on a Linux >>3.2.0-23-generic<< system on 2012-11-15.\nAvailable extensions:\n\tcrypt add-on version 2.1 by Michael Glad and others\n\tGNU Libidn by Simon Josefsson\n\tNative POSIX Threads Library by Ulrich Drepper et al\n\tBIND-8.2.3-T5B\nFor bug reporting instructions, please see:\n<http://www.debian.org/Bugs/>.\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["gcc"]
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["gcc"]
+params ""
+stdout ""
+stderr "command not found"
+exit_status 127

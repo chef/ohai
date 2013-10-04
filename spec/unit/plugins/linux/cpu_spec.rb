@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux cpu plugin" do
   before(:each) do
     @plugin = get_plugin("linux/cpu")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @double_file = double("/proc/cpuinfo")
     @double_file.stub(:each).
       and_yield("processor     : 0").
@@ -45,6 +45,12 @@ describe Ohai::System, "Linux cpu plugin" do
       and_yield("bogomips      : 2575.86").
       and_yield("clflush size  : 32")
     File.stub(:open).with("/proc/cpuinfo").and_return(@double_file)
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :CPU)
+      Ohai::NamedPlugin.send(:remove_const, :CPU)
+    end
   end
   
   it "should set cpu[:total] to 1" do

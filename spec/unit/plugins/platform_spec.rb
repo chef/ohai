@@ -22,8 +22,15 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin platform" do
   before(:each) do
     @plugin = get_plugin("platform")
+    @plugin.stub(:collect_os).and_return(:default)
     @plugin[:os] = 'monkey'
     @plugin[:os_version] = 'poop'
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
+      Ohai::NamedPlugin.send(:remove_const, :Platform)
+    end
   end
 
   it "should set the platform and platform family to the os if it was not set earlier" do

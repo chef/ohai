@@ -29,6 +29,13 @@ end
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
     @plugin = get_plugin("darwin/system_profiler")
+    @plugin.stub(:collect_os).and_return(:darwin)
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :SystemProfile)
+      Ohai::NamedPlugin.send(:remove_const, :SystemProfile)
+    end
   end
   
   it "should return the right serial number" do

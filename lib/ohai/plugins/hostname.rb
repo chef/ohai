@@ -1,6 +1,14 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Benjamin Black (<nostromo@gmail.com>)
+# Author:: Bryan McLellan (<btm@loftninjas.org>)
+# Author:: Daniel DeLeo (<dan@kallistec.com>)
+# Author:: Doug MacEachern (<dougm@vmware.com>)
+# Author:: James Gartrell (<jgartrel@gmail.com>)
+# Copyright:: Copyright (c) 2008, 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2009 Bryan McLellan
+# Copyright:: Copyright (c) 2009 Daniel DeLeo
+# Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

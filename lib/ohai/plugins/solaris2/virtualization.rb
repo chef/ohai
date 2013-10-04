@@ -18,10 +18,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:solaris2) do
     virtualization Mash.new
 
     # Detect KVM/QEMU from cpuinfo, report as KVM

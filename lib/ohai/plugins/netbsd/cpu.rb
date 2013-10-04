@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides 'cpu'
 
-  collect_data do
+  collect_data(:netbsd) do
     cpuinfo = Mash.new
 
     # NetBSD provides some cpu information via sysctl, and a little via dmesg.boot

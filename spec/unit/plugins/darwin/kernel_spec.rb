@@ -21,10 +21,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
-    @plugin = get_plugin("darwin/kernel")
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:name] = "darwin"
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:darwin)
+    @plugin.stub(:init_kernel).and_return({})
     @plugin.should_receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
+      Ohai::NamedPlugin.send(:remove_const, :Kernel)
+    end
   end
 
   it "should not set kernel_machine to x86_64" do

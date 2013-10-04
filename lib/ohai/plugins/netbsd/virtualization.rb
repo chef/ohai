@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:netbsd) do
     virtualization Mash.new
 
     # KVM Host support for FreeBSD is in development

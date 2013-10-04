@@ -16,13 +16,14 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "platform", "platform_version"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_family"
 
-  collect_data do
+  collect_data(:openbsd) do
     so = shell_out("uname -s")
     platform so.stdout.split($/)[0].downcase
     so = shell_out("uname -r")
     platform_version so.stdout.split($/)[0]
+    platform_family "openbsd"
   end
 end

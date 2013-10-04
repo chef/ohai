@@ -134,11 +134,19 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   TOOMUCH
 
   before(:each) do
-    @plugin = get_plugin("solaris2/kernel")
-    @plugin[:kernel] = Mash.new
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin.stub(:init_kernel).and_return({})
     @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
     @plugin.stub(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
   end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
+      Ohai::NamedPlugin.send(:remove_const, :Kernel)
+    end
+  end
+
 
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])
 

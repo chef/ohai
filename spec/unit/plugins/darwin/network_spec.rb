@@ -413,6 +413,7 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @plugin = get_plugin("darwin/network")
+    @plugin.stub(:collect_os).and_return(:darwin)
 
     # @stdin_ifconfig = StringIO.new
     # @stdin_arp = StringIO.new
@@ -426,14 +427,11 @@ net.smb.fs.tcprcvbuf: 261120
 
     @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
     @plugin.stub(:shell_out).with("netstat -i -d -l -b -n")
+  end
 
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-
-    %w{ darwin/hostname hostname network }.each do |plgn|
-      p = get_plugin(plgn)
-      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-      p.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
-      p.run
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Network)
+      Ohai::NamedPlugin.send(:remove_const, :Network)
     end
   end
 

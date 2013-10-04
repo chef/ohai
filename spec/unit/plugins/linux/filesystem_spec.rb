@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux filesystem plugin" do
   before(:each) do
     @plugin = get_plugin("linux/filesystem")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin.extend(SimpleFromFile)
 
     @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
@@ -31,6 +31,12 @@ describe Ohai::System, "Linux filesystem plugin" do
     @plugin.stub(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, "", ""))
 
     File.stub(:exists?).with("/proc/mounts").and_return(false)
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Filesystem)
+      Ohai::NamedPlugin.send(:remove_const, :Filesystem)
+    end
   end
 
   describe "when gathering filesystem usage data from df" do

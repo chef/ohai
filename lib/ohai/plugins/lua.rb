@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Lua) do
   provides "languages/lua"
 
   depends "languages"

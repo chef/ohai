@@ -16,12 +16,12 @@
 # limitations under the License.
 #
 
-require 'ruby-wmi'
-
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides "cpu"
 
-  collect_data do
+  collect_data(:windows) do
+    require 'ruby-wmi'
+
     cpuinfo = Mash.new
     cpu_number = 0
     index = 0

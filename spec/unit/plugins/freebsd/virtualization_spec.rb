@@ -22,11 +22,18 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
     @plugin = get_plugin("freebsd/virtualization")
-    @plugin[:os] = "freebsd"
+    @plugin.stub(:collect_os).and_return(:freebsd)
+    @plugin.extend(SimpleFromFile)
     @plugin.stub(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
     @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("jls -n").and_return(mock_shell_out(0, "",""))
     @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Virtualization)
+      Ohai::NamedPlugin.send(:remove_const, :Virtualization)
+    end
   end
 
   context "jails" do

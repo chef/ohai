@@ -33,7 +33,8 @@ describe Ohai::System, "Sigar network route plugin" do
 
     before(:each) do
       @ohai = Ohai::System.new
-      @plugin = get_plugin("sigar/network_route", @ohai)
+      @plugin = get_plugin("sigar/network", @ohai)
+      @plugin.stub(:collect_os).and_return(:sigar)
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",
@@ -112,7 +113,7 @@ describe Ohai::System, "Sigar network route plugin" do
         net_arp.stub(k).and_return(v)
       end
       @sigar.stub(:fqdn).and_return("localhost.localdomain")
-      @sigar.should_receive(:net_info).at_least(2).times.and_return(net_info)
+      @sigar.should_receive(:net_info).once.times.and_return(net_info)
       @sigar.should_receive(:net_interface_list).once.and_return(["eth0"])
       @sigar.should_receive(:net_interface_config).with("eth0").and_return(net_conf)
       @sigar.should_receive(:net_interface_stat).with("eth0").and_return(net_stat)
@@ -120,19 +121,15 @@ describe Ohai::System, "Sigar network route plugin" do
 
       # Since we double net_route_list here, flags never gets called
       @sigar.should_receive(:net_route_list).once.and_return([net_route])
-      Sigar.should_receive(:new).at_least(2).times.and_return(@sigar)
-
-      %w{ languages ruby kernel os }.each do |plgn|
-        get_plugin(plgn, @ohai).run
-      end
-      @plugin.data[:os]="sigar"
-      
-      #Ohai::Log.should_receive(:warn).with(/unable to detect ip6address/).once
-      %w{ sigar/hostname hostname sigar/network network }.each do |plgn|
-        get_plugin(plgn, @ohai).run
-      end
+      Sigar.should_receive(:new).once.and_return(@sigar)
 
       @plugin.run
+    end
+
+    after(:each) do
+      if Ohai::NamedPlugin.send(:const_defined?, :Network)
+        Ohai::NamedPlugin.send(:remove_const, :Network)
+      end
     end
 
     it "should set the routes" do

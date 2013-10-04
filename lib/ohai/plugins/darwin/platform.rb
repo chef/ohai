@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
-  collect_data do
+  collect_data(:darwin) do
     so = shell_out("#{ Ohai.abs_path( "/usr/bin/sw_vers" )}")
     so.stdout.lines do |line|
       case line

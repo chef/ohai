@@ -22,14 +22,18 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin kernel" do
   before(:each) do
     @plugin = get_plugin("kernel")
-
-    @plugin[:languages] = Mash.new
-    @plugin[:languages][:ruby] = Mash.new
+    @plugin.stub(:collect_os).and_return(:default) # for debugging
     @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "Darwin\n", ""))
     @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "9.5.0\n", ""))
     @plugin.stub(:shell_out).with("uname -v").and_return(mock_shell_out(0, "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386\n", ""))
     @plugin.stub(:shell_out).with("uname -m").and_return(mock_shell_out(0, "i386\n", ""))
     @plugin.stub(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux\n", ""))
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
+      Ohai::NamedPlugin.send(:remove_const, :Kernel)
+    end
   end
 
   it_should_check_from_mash("kernel", "name", "uname -s", [0, "Darwin\n", ""])

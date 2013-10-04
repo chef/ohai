@@ -18,7 +18,7 @@
 
 require 'ohai/os'
 
-Ohai.plugin do
+Ohai.plugin(:OS) do
   provides "os", "os_version"
   depends 'kernel'
 

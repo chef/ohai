@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Erlang) do
   provides "languages/erlang"
 
   depends "languages"

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data do
+  collect_data(:darwin) do
     fs = Mash.new
 
     block_size = 0

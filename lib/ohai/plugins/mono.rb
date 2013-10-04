@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Mono) do
   provides "languages/mono"
 
   depends "languages"

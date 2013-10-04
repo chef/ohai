@@ -16,9 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "network", "counters/network"
-  
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
+
   collect_data do
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data do
+  collect_data(:linux) do
     fs = Mash.new
 
     # Grab filesystem data from df

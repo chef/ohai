@@ -24,14 +24,15 @@ ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
 describe Ohai::System, "plugin os" do
   before(:each) do
     @plugin = get_plugin("os")
-    @plugin[:languages] = Mash.new
-    @plugin[:languages][:ruby] = Mash.new
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:release] = "kings of leon"
   end
   
   after do
     ::RbConfig::CONFIG['host_os'] = ORIGINAL_CONFIG_HOST_OS
+    if Ohai::NamedPlugin.send(:const_defined?, :OS)
+      Ohai::NamedPlugin.send(:remove_const, :OS)
+    end
   end
 
   it "should set os_version to kernel_release" do

@@ -21,24 +21,24 @@ require 'ohai/mixin/gce_metadata'
 describe Ohai::System, "plugin gce" do
   before(:each) do
     @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
+    @ohai.stub(:require_plugin).and_return(true)
   end
 
   shared_examples_for "!gce" do
     it 'should not behave like gce' do
-      @plugin[:gce].should be_nil
+      @ohai[:gce].should be_nil
     end
   end
 
   shared_examples_for "gce" do
     before(:each) do
-      @http_client = mock("Net::HTTP client")
+      @http_client = double("Net::HTTP client")
       Ohai::Mixin::GCEMetadata.stub(:http_client).and_return(@http_client)
-      IO.stub!(:select).and_return([[],[1],[]])
-      t = mock("connection")
-      t.stub!(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub!(:new).and_return(t)
-      Socket.stub!(:pack_sockaddr_in).and_return(nil)
+      IO.stub(:select).and_return([[],[1],[]])
+      t = double("connection")
+      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      Socket.stub(:new).and_return(t)
+      Socket.stub(:pack_sockaddr_in).and_return(nil)
     end
 
     it "should recursively fetch and properly parse json metadata" do
@@ -57,10 +57,10 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "gce"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
     end
   end
 
@@ -68,8 +68,8 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
 
     before(:each) do
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
-      File.stub!(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
+      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
     end
   end
   
@@ -80,10 +80,10 @@ describe Ohai::System, "plugin gce" do
       File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
       
-      File.stub!(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub!(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub!(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub!(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 

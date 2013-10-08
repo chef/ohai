@@ -25,12 +25,6 @@ describe Ohai::System, "hostname plugin" do
     @plugin.stub(:collect_os).and_return(:default)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Hostname)
-      Ohai::NamedPlugin.send(:remove_const, :Hostname)
-    end
-  end
-
   it "should set the domain to everything after the first dot of the fqdn" do
     @plugin[:fqdn] = "katie.bethell"
     @plugin.run

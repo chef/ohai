@@ -31,12 +31,6 @@ describe Ohai::System, "plugin ruby" do
     @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
   end
 
-  after(:all) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Ruby)
-      Ohai::NamedPlugin.send(:remove_const, :Ruby)
-    end
-  end
-
   before(:each) do
     @ruby_ohai_data = @ruby_ohai_data_pristine.dup
   end

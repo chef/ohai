@@ -120,12 +120,6 @@ ROUTE_GET
     @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Network)
-      Ohai::NamedPlugin.send(:remove_const, :Network)
-    end
-  end
-
   describe "gathering IP layer address info" do
     before do
       @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)

@@ -27,17 +27,6 @@ describe Ohai::System, "OpenBSD plugin platform" do
     @plugin.stub(:collect_os).and_return(:openbsd)
   end
   
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
-  
-  it "should set platform to lowercased lsb[:id]" do
-    @plugin.run
-    @plugin[:platform].should == "openbsd"
-  end
-  
   it "should set platform_version to lsb[:release]" do
     @plugin.run
     @plugin[:platform_version].should == "4.5"

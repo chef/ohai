@@ -26,13 +26,7 @@ describe Ohai::System, "Darwin plugin platform" do
     @stdout = "ProductName:	Mac OS X\nProductVersion:	10.5.5\nBuildVersion:	9F33"
     @plugin.stub(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
   end
-  
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
- 
+
   it "should run sw_vers" do
     @plugin.should_receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

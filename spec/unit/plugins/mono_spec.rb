@@ -28,12 +28,6 @@ describe Ohai::System, "plugin mono" do
     @plugin.stub(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Mono)
-      Ohai::NamedPlugin.send(:remove_const, :Mono)
-    end
-  end
-
   it "should get the mono version from running mono -V" do
     @plugin.should_receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

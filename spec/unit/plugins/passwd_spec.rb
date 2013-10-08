@@ -5,12 +5,6 @@ describe Ohai::System, "plugin etc" do
     @plugin = get_plugin("passwd")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Passwd)
-      Ohai::NamedPlugin.send(:remove_const, :Passwd)
-    end
-  end
-
   PasswdEntry = Struct.new(:name, :uid, :gid, :dir, :shell, :gecos)
   GroupEntry = Struct.new(:name, :gid, :mem)
 

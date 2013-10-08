@@ -27,12 +27,6 @@ describe Ohai::System, "plugin perl" do
     @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Perl)
-      Ohai::NamedPlugin.send(:remove_const, :Perl)
-    end
-  end
-
   it "should run perl -V:version -V:archname" do
     @plugin.should_receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

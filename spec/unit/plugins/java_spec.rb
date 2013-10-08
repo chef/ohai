@@ -27,12 +27,6 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     @plugin.stub(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Java)
-      Ohai::NamedPlugin.send(:remove_const, :Java)
-    end
-  end
-
   it "should run java -version" do
     @plugin.should_receive(:shell_out).with("java -version").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run

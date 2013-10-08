@@ -25,12 +25,6 @@ describe Ohai::System, 'root_group' do
     @plugin = get_plugin("root_group")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :RootGroup)
-      Ohai::NamedPlugin.send(:remove_const, :RootGroup)
-    end
-  end
-
   describe 'unix platform', :unix_only do
     before(:each) do
       # this is deeply intertwingled. unfortunately, the law of demeter

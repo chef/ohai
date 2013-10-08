@@ -69,12 +69,6 @@ describe Ohai::System, "plugin rackspace" do
     @plugin.stub(:shell_out).and_return(mock_shell_out(1, "", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Rackspace)
-      Ohai::NamedPlugin.send(:remove_const, :Rackspace)
-    end
-  end
-
   shared_examples_for "!rackspace"  do
     it "should NOT create rackspace" do
       @plugin.run

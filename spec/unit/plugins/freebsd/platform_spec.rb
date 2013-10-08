@@ -26,13 +26,7 @@ describe Ohai::System, "FreeBSD plugin platform" do
     @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "7.1\n", ""))
     @plugin.stub(:collect_os).and_return(:freebsd)
   end
-  
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
-  
+
   it "should set platform to lowercased lsb[:id]" do
     @plugin.run        
     @plugin[:platform].should == "freebsd"

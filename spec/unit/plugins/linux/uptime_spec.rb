@@ -26,12 +26,6 @@ describe Ohai::System, "Linux plugin uptime" do
     @double_file = double("/proc/uptime", { :gets => "18423 989" })
     File.stub(:open).with("/proc/uptime").and_return(@double_file)
   end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Uptime)
-      Ohai::NamedPlugin.send(:remove_const, :Uptime)
-    end
-  end
  
   it "should set uptime_seconds to uptime" do
     @plugin.run

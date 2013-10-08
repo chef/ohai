@@ -30,12 +30,6 @@ describe Ohai::System, "FreeBSD virtualization plugin" do
     @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Virtualization)
-      Ohai::NamedPlugin.send(:remove_const, :Virtualization)
-    end
-  end
-
   context "jails" do
     it "detects we are in a jail" do
       @plugin.stub(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "1", ""))

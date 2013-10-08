@@ -290,12 +290,6 @@ describe Ohai::System, "Network Plugin" do
       @plugin["network"] = basic_data["linux"]["network"]
     end
 
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :NetworkAddresses)
-        Ohai::NamedPlugin.send(:remove_const, :NetworkAddresses)
-      end
-    end
-
     describe "when the linux::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
       describe "simple setup" do
         it_does_not_fail

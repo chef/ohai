@@ -26,12 +26,6 @@ describe Ohai::System, "Solaris plugin platform" do
     @plugin.stub(:shell_out).with("/sbin/uname -X")
   end
   
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
-  
   describe "on SmartOS" do
     before(:each) do
       @uname_x = <<-UNAME_X

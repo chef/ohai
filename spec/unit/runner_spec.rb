@@ -34,12 +34,6 @@ describe Ohai::Runner, "run_plugin" do
       @plugin = klass.new(@ohai, "/tmp/plugins/thing.rb")
     end
 
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :Test)
-        Ohai::NamedPlugin.send(:remove_const, :Test)
-      end
-    end
-
     it "should not find dependencies" do
       @runner.should_receive(:fetch_providers).with([]).and_return([])
       @runner.run_plugin(@plugin)
@@ -75,12 +69,6 @@ describe Ohai::Runner, "run_plugin" do
         @plugin = klass.new(@ohai, "/tmp/plugins/thing.rb")
       end
 
-      after(:each) do
-        if Ohai::NamedPlugin.send(:const_defined?, :Test)
-          Ohai::NamedPlugin.send(:remove_const, :Test)
-        end
-      end
-
       it "should raise a NoAttributeError" do
         expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::NoAttributeError)
       end
@@ -112,14 +100,6 @@ describe Ohai::Runner, "run_plugin" do
           @plugins << klass.new(@ohai, "/tmp/plugins/source_dont_matter.rb")
         end
         @plugin1, @plugin2 = @plugins
-      end
-
-      after(:each) do
-        [:Thing, :Other].each do |plugin_name|
-          if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-            Ohai::NamedPlugin.send(:remove_const, plugin_name)
-          end
-        end
       end
 
       it "should locate the provider" do
@@ -165,14 +145,6 @@ describe Ohai::Runner, "run_plugin" do
           @plugins << klass.new(@ohai, "/tmp/plugins/whateva.rb")
         end
         @plugin1, @plugin2, @plugin3 = @plugins
-      end
-
-      after(:each) do
-        [:Thing, :Other].each do |plugin_name|
-          if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-            Ohai::NamedPlugin.send(:remove_const, plugin_name)
-          end
-        end
       end
 
       it "should locate each provider" do
@@ -229,14 +201,6 @@ describe Ohai::Runner, "run_plugin" do
       @plugin1, @plugin2, @plugin3 = @plugins
     end
 
-    after(:each) do
-      [:One, :Two, :Three].each do |plugin_name|
-        if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-          Ohai::NamedPlugin.send(:remove_const, plugin_name)
-        end
-      end
-    end
-
     it "should locate each provider" do
       @ohai.attributes[:one] = Mash.new
       @ohai.attributes[:one][:providers] = [@plugin1]
@@ -287,14 +251,6 @@ describe Ohai::Runner, "run_plugin" do
       @plugin1, @plugin2 = @plugins
     end
 
-    after(:each) do
-      [:Thing, :Other].each do |plugin_name|
-        if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-          Ohai::NamedPlugin.send(:remove_const, plugin_name)
-        end
-      end
-    end
-
     it "should raise a DependencyCycleError" do
       @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1])
       @runner.stub(:fetch_providers).with(["other"]).and_return([@plugin2])
@@ -337,14 +293,6 @@ describe Ohai::Runner, "run_plugin" do
       
       @runner.stub(:fetch_providers).with(["C"]).and_return([@pluginC])
       @runner.stub(:fetch_providers).with([]).and_return([])
-    end
-
-    after(:each) do
-      [:A, :B, :C].each do |plugin_name|
-        if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-          Ohai::NamedPlugin.send(:remove_const, plugin_name)
-        end
-      end
     end
 
     it "should not detect a cycle when B is the first provider returned" do
@@ -475,14 +423,6 @@ describe Ohai::Runner, "#get_cycle" do
       plugins << klass.new(@ohai, "/tmp/plugins/plugin#{idx}.rb")
     end
     @plugin1, @plugin2, @plugin3 = plugins
-  end
-
-  after(:each) do
-    [:One, :Two, :Three].each do |plugin_name|
-      if Ohai::NamedPlugin.send(:const_defined?, plugin_name)
-        Ohai::NamedPlugin.send(:remove_const, plugin_name)
-      end
-    end
   end
 
   it "should return the sources for the plugins in the cycle, when given an exact cycle" do

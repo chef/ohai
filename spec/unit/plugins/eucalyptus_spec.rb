@@ -25,12 +25,6 @@ describe Ohai::System, "plugin eucalyptus" do
     @plugin = get_plugin("eucalyptus")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Eucalyptus)
-      Ohai::NamedPlugin.send(:remove_const, :Eucalyptus)
-    end
-  end
-
   shared_examples_for "!eucalyptus" do
     it "should NOT attempt to fetch the eucalyptus metadata" do
       OpenURI.should_not_receive(:open)

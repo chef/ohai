@@ -41,12 +41,6 @@ ENV_LSMOD
     @plugin.run
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
-      Ohai::NamedPlugin.send(:remove_const, :Kernel)
-    end
-  end
-
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", [0, "Linux", ""])
 
   test_plugin([ "kernel" ], [ "uname", "env" ]) do | p |

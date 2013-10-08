@@ -28,12 +28,6 @@ describe Ohai::System, "plugin python" do
     @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
     @plugin.stub(:shell_out).with("python -c \"import sys; print sys.version\"").and_return(mock_shell_out(0, @stdout, ""))
   end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Python)
-      Ohai::NamedPlugin.send(:remove_const, :Python)
-    end
-  end
   
   it "should get the python version from printing sys.version and sys.platform" do
     @plugin.should_receive(:shell_out).with("python -c \"import sys; print sys.version\"").and_return(mock_shell_out(0, @stdout, ""))

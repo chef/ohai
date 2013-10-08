@@ -126,12 +126,6 @@ describe Ohai::System, "Sigar network route plugin" do
       @plugin.run
     end
 
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :Network)
-        Ohai::NamedPlugin.send(:remove_const, :Network)
-      end
-    end
-
     it "should set the routes" do
       @plugin[:network][:interfaces][:eth0].should have_key(:route)
     end

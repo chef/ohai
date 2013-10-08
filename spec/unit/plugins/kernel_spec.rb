@@ -30,12 +30,6 @@ describe Ohai::System, "plugin kernel" do
     @plugin.stub(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux\n", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
-      Ohai::NamedPlugin.send(:remove_const, :Kernel)
-    end
-  end
-
   it_should_check_from_mash("kernel", "name", "uname -s", [0, "Darwin\n", ""])
   it_should_check_from_mash("kernel", "release", "uname -r", [0, "9.5.0\n", ""])
   it_should_check_from_mash("kernel", "version", "uname -v", [0, "Darwin Kernel Version 9.5.0: Wed Sep  3 11:29:43 PDT 2008; root:xnu-1228.7.58~1\/RELEASE_I386\n", ""])

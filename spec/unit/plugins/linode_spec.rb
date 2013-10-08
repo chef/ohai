@@ -46,12 +46,6 @@ describe Ohai::System, "plugin linode" do
     }
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Linode)
-      Ohai::NamedPlugin.send(:remove_const, :Linode)
-    end
-  end
-
   shared_examples_for "!linode"  do
     it "does not create the linode mash" do
       @plugin.run

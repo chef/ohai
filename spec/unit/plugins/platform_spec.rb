@@ -27,12 +27,6 @@ describe Ohai::System, "plugin platform" do
     @plugin[:os_version] = 'poop'
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
-
   it "should set the platform and platform family to the os if it was not set earlier" do
     @plugin.run
     @plugin[:platform].should eql("monkey")

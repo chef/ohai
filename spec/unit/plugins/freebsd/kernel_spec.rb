@@ -29,12 +29,6 @@ describe Ohai::System, "FreeBSD kernel plugin" do
     @plugin.stub(:shell_out).with( Ohai.abs_path( "/sbin/kldstat" )).and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
-      Ohai::NamedPlugin.send(:remove_const, :Kernel)
-    end
-  end
-
   it "should set the kernel_os to the kernel_name value" do
     @plugin.run
     @plugin[:kernel][:os].should == @plugin[:kernel][:name]

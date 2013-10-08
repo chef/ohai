@@ -259,12 +259,6 @@ IP_ROUTE_SCOPE
     @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Network)
-      Ohai::NamedPlugin.send(:remove_const, :Network)
-    end
-  end
-
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do

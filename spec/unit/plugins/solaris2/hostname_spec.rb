@@ -26,12 +26,6 @@ describe Ohai::System, "Solaris2.X hostname plugin" do
     Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Hostname)
-      Ohai::NamedPlugin.send(:remove_const, :Hostname)
-    end
-  end
-  
   it_should_check_from("solaris2::hostname", "hostname", "hostname", "kitteh")
   
   it "should get the fqdn value from socket getaddrinfo" do

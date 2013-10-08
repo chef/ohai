@@ -14,6 +14,38 @@ Ohai::Config[:log_level] = :error
 PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
 SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
 
+RSpec.configure do |config|
+  config.before(:each) { @object_pristine = Object.clone }
+  config.after(:each) { remove_constants }
+end
+
+def remove_constants
+  new_object_constants = Object.constants - @object_pristine.constants
+  new_object_constants.each do |constant|
+    Object.send(:remove_const, constant) unless Object.const_get(constant).is_a?(Module)
+  end
+
+  recursive_remove_constants(Ohai::NamedPlugin)
+end
+
+def recursive_remove_constants(object)
+  if object.respond_to?(:constants)
+    object.constants.each do |const|
+      next unless strict_const_defined?(object, const)
+      recursive_remove_constants(object.const_get(const))
+      object.send(:remove_const, const)
+    end
+  end
+end
+
+def strict_const_defined?(object, const)
+  if object.method(:const_defined?).arity == 1
+    object.const_defned?(const)
+  else
+    object.const_defined?(const, false)
+  end
+end
+
 if Ohai::OS.collect_os == /mswin|mingw32|windows/
   ENV["PATH"] = ""
 end

@@ -47,12 +47,6 @@ describe Ohai::System, "ssh_host_key plugin" do
     IO.stub(:read).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(@ecdsa_key)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :SSHHostKey)
-      Ohai::NamedPlugin.send(:remove_const, :SSHHostKey)
-    end
-  end
-
   shared_examples "loads keys" do
     it "reads the key and sets the dsa attribute correctly" do
       @plugin.run

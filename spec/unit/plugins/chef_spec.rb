@@ -28,12 +28,6 @@ begin
       @plugin = get_plugin("chef")
     end
 
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :Chef)
-        Ohai::NamedPlugin.send(:remove_const, :Chef)
-      end
-    end
-    
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
       @plugin.run
       @plugin[:chef_packages][:chef][:version].should == Chef::VERSION

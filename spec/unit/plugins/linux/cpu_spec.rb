@@ -46,12 +46,6 @@ describe Ohai::System, "Linux cpu plugin" do
       and_yield("clflush size  : 32")
     File.stub(:open).with("/proc/cpuinfo").and_return(@double_file)
   end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :CPU)
-      Ohai::NamedPlugin.send(:remove_const, :CPU)
-    end
-  end
   
   it "should set cpu[:total] to 1" do
     @plugin.run

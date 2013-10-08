@@ -38,12 +38,6 @@ PSRINFO_PV
     @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Virtualization)
-      Ohai::NamedPlugin.send(:remove_const, :Virtualization)
-    end
-  end
-
   describe "when we are checking for kvm" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/psrinfo").and_return(true)

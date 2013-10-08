@@ -27,12 +27,6 @@ describe Ohai::System, "NetBSD hostname plugin" do
     @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Hostname)
-      Ohai::NamedPlugin.send(:remove_const, :Hostname)
-    end
-  end
-
   it_should_check_from("netbsd::hostname", "hostname", "hostname -s", "katie")
 
   it_should_check_from("netbsd::hostname", "fqdn", "hostname", "katie.bethell")

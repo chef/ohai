@@ -81,12 +81,6 @@ describe Ohai::DSL::Plugin::VersionVII do
     @name = :Test
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, @name)
-      Ohai::NamedPlugin.send(:remove_const, @name)
-    end
-  end
-
   it "should log a warning when a version 6 plugin with the same name exists" do
     name_str = @name.to_s.downcase
     Ohai.v6plugin(name_str) { }
@@ -235,12 +229,6 @@ describe Ohai::DSL::Plugin::VersionVI do
   before(:each) do
     @name = "test"
     @name_sym = :Test
-  end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, @name_sym)
-      Ohai::NamedPlugin.send(:remove_const, @name_sym)
-    end
   end
 
   it "should log to debug if a plugin with the same name has been defined" do

@@ -41,12 +41,6 @@ describe Ohai::Loader do
       @loader.stub(:collect_provides).and_return({})
     end
 
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, @name)
-        Ohai::NamedPlugin.send(:remove_const, @name)
-      end
-    end
-
     it "should log a warning if a plugin cannot be loaded" do
       Ohai::Log.should_receive(:warn).with(/Unable to open or read plugin/)
       IO.stub(:read).with(anything()).and_raise(IOError)
@@ -91,12 +85,6 @@ EOF
       @name = :Test
       @path = "test.rb"
       @loader = Ohai::Loader.new(@ohai)
-    end
-
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, @name)
-        Ohai::NamedPlugin.send(:remove_const, @name)
-      end
     end
 
     it "should add provided attributes to Ohai" do

@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin Network Plugin" do
-  before do
+  before(:each) do
     @darwin_ifconfig = <<-DARWIN_IFCONFIG
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
         options=3<RXCSUM,TXCSUM>
@@ -429,14 +429,8 @@ net.smb.fs.tcprcvbuf: 261120
     @plugin.stub(:shell_out).with("netstat -i -d -l -b -n")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Network)
-      Ohai::NamedPlugin.send(:remove_const, :Network)
-    end
-  end
-
   describe "gathering IP layer address info" do
-    before do
+    before(:each) do
       @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
       @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
       @plugin.stub(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))

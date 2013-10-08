@@ -33,12 +33,6 @@ describe Ohai::System, "Linux filesystem plugin" do
     File.stub(:exists?).with("/proc/mounts").and_return(false)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Filesystem)
-      Ohai::NamedPlugin.send(:remove_const, :Filesystem)
-    end
-  end
-
   describe "when gathering filesystem usage data from df" do
     before(:each) do
       @stdout = <<-DF

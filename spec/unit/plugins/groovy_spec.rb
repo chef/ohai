@@ -29,12 +29,6 @@ describe Ohai::System, "plugin groovy" do
     @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Groovy)
-      Ohai::NamedPlugin.send(:remove_const, :Groovy)
-    end
-  end
-
   it "should get the groovy version from running groovy -v" do
     @plugin.should_receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

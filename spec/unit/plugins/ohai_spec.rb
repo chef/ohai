@@ -24,12 +24,6 @@ describe Ohai::System, "plugin ohai" do
   before(:each) do
     @plugin = get_plugin("ohai")
   end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Ohai)
-      Ohai::NamedPlugin.send(:remove_const, :Ohai)
-    end
-  end
   
   it "should set [:chef_packages][:ohai][:version] to the current version" do
     @plugin.run

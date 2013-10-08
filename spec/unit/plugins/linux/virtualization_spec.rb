@@ -35,12 +35,6 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/vz").and_return(false)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Virtualization)
-      Ohai::NamedPlugin.send(:remove_const, :Virtualization)
-    end
-  end
-
   describe "when we are checking for xen" do
     it "should set xen guest if /proc/xen exists but /proc/xen/capabilities does not" do
       File.should_receive(:exists?).with("/proc/xen").and_return(true)

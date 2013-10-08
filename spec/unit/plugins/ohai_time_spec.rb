@@ -23,12 +23,6 @@ describe Ohai::System, "plugin ohai_time" do
   before(:each) do
     @plugin = get_plugin("ohai_time")
   end
-
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :OhaiTime)
-      Ohai::NamedPlugin.send(:remove_const, :OhaiTime)
-    end
-  end
   
   it "should get the current time" do
     Time.should_receive(:now)

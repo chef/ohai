@@ -28,12 +28,6 @@ describe Ohai::System, "Linux lsb plugin" do
     @plugin.extend(SimpleFromFile)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :LSB)
-      Ohai::NamedPlugin.send(:remove_const, :LSB)
-    end
-  end
-
   describe "on systems with /etc/lsb-release" do
     before(:each) do
       @double_file = double("/etc/lsb-release")

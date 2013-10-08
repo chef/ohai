@@ -30,12 +30,6 @@ describe Ohai::System, "plugin lua" do
     @plugin.stub(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Lua)
-      Ohai::NamedPlugin.send(:remove_const, :Lua)
-    end
-  end
-
   it "should get the lua version from running lua -v" do
     @plugin.should_receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run

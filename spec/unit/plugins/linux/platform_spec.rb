@@ -37,13 +37,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub(:exists?).with("/etc/oracle-release").and_return(false)
     File.stub(:exists?).with("/usr/bin/raspi-config").and_return(false)
   end
-  
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
-      Ohai::NamedPlugin.send(:remove_const, :Platform)
-    end
-  end
-  
+
   describe "on lsb compliant distributions" do
     before(:each) do
       @plugin[:lsb][:id] = "Ubuntu"

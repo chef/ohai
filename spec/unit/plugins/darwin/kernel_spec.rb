@@ -27,12 +27,6 @@ describe Ohai::System, "Darwin kernel plugin" do
     @plugin.should_receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
-      Ohai::NamedPlugin.send(:remove_const, :Kernel)
-    end
-  end
-
   it "should not set kernel_machine to x86_64" do
     @plugin.stub(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     @plugin.run

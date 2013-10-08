@@ -27,12 +27,6 @@ describe Ohai::System, "Darwin cpu plugin" do
     @plugin.stub(:shell_out).with("sysctl -n hw.logicalcpu").and_return(mock_shell_out(0, "2", ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :CPU)
-      Ohai::NamedPlugin.send(:remove_const, :CPU)
-    end
-  end
-
   it "should set cpu[:total] to 2" do
     @plugin.run
     @plugin[:cpu][:total].should == 2

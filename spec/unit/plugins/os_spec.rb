@@ -30,9 +30,6 @@ describe Ohai::System, "plugin os" do
   
   after do
     ::RbConfig::CONFIG['host_os'] = ORIGINAL_CONFIG_HOST_OS
-    if Ohai::NamedPlugin.send(:const_defined?, :OS)
-      Ohai::NamedPlugin.send(:remove_const, :OS)
-    end
   end
 
   it "should set os_version to kernel_release" do

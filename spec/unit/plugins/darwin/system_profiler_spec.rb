@@ -32,12 +32,6 @@ describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
     @plugin.stub(:collect_os).and_return(:darwin)
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :SystemProfile)
-      Ohai::NamedPlugin.send(:remove_const, :SystemProfile)
-    end
-  end
-  
   it "should return the right serial number" do
     mini_cmd = "system_profiler -xml -detailLevel mini SPParallelATAData SPAudioData SPBluetoothData"
     mini_cmd += " SPCardReaderData SPDiagnosticsData SPDiscBurningData SPEthernetData SPFibreChannelData"

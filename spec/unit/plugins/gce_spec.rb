@@ -23,12 +23,6 @@ describe Ohai::System, "plugin gce" do
     @plugin = get_plugin("gce")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :GCE)
-      Ohai::NamedPlugin.send(:remove_const, :GCE)
-    end
-  end
-
   shared_examples_for "!gce" do
     it "should NOT attempt to fetch the gce metadata" do
       @plugin.should_not_receive(:http_client)

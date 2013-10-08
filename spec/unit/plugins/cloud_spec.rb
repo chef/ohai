@@ -22,12 +22,6 @@ describe Ohai::System, "plugin cloud" do
     @plugin = get_plugin("cloud")
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Cloud)
-      Ohai::NamedPlugin.send(:remove_const, :Cloud)
-    end
-  end
-
   describe "with no cloud mashes" do
     it "doesn't populate the cloud data" do
       @plugin[:ec2] = nil

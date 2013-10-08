@@ -98,12 +98,6 @@ describe Ohai::System, "plugin dmi" do
     @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :DMI)
-      Ohai::NamedPlugin.send(:remove_const, :DMI)
-    end
-  end
-
   it "should run dmidecode" do
     @plugin.should_receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

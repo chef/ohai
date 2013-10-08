@@ -51,10 +51,6 @@ describe "Ohai::System" do
       loader.stub(:load_plugin).with("/tmp/plugins/empty.rb", anything()).and_return(plugin)
     end
 
-    after(:each) do
-      Ohai::NamedPlugin.send(:remove_const, :Test)
-    end
-
     it "should load plugins when plugin_path has a trailing slash" do
       Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
       Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
@@ -103,12 +99,6 @@ describe "Ohai::System" do
       end
 
       after(:each) do
-        @names.each do |name|
-          name_sym = name.capitalize.to_sym
-          if Ohai::NamedPlugin.send(:const_defined?, name_sym)
-            Ohai::NamedPlugin.send(:remove_const, name_sym)
-          end
-        end
         @ohai.v6_dependency_solver.clear
       end
 
@@ -139,12 +129,6 @@ describe "Ohai::System" do
           klass = Ohai.plugin(:Empty) { }
           plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
           @ohai.stub(:collect_providers).and_return([plugin])
-        end
-
-        after(:each) do
-          if Ohai::NamedPlugin.send(:const_defined?, :Empty)
-            Ohai::NamedPlugin.send(:remove_const, :Empty)
-          end
         end
 
         describe "when a NoAttributeError is received" do
@@ -182,14 +166,6 @@ describe "Ohai::System" do
         end
 
         @ohai.stub(:collect_providers).and_return(@plugins)
-      end
-
-      after(:each) do
-        @names.each do |name|
-          if Ohai::NamedPlugin.send(:const_defined?, name)
-            Ohai::NamedPlugin.send(:remove_const, name)
-          end
-        end
       end
 
       it "should run each plugin once from Ohai::System" do
@@ -244,14 +220,6 @@ EOF
         end
       end
 
-      after(:each) do
-        @names.each do |name|
-          if Ohai::NamedPlugin.send(:const_defined?, name)
-            Ohai::NamedPlugin.send(:remove_const, name)
-          end
-        end
-      end
-
       it "should run each plugin" do
         @ohai.run_plugins(true)
         @plugins.each { |plugin| plugin.has_run?.should be_true }
@@ -285,14 +253,6 @@ EOF
       end
     end
 
-    after(:each) do
-      @names.each do |name|
-        if Ohai::NamedPlugin.send(:const_defined?, name)
-          Ohai::NamedPlugin.send(:remove_const, name)
-        end
-      end
-    end
-
     it "should find all the plugins providing attributes" do
       a = @ohai.attributes
       a[:zero] = Mash.new
@@ -323,13 +283,6 @@ EOF
       @plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
 
       @ohai.stub(:plugin_for).with("empty").and_return(@plugin)
-    end
-
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :Empty)
-        Ohai::NamedPlugin.send(:remove_const, :Empty)
-      end
-      Ohai::Config[:plugin_path] = @plugin_path
     end
 
     it "should immediately return if force is false and the plugin has already run" do
@@ -405,14 +358,6 @@ EOF
         @ohai.attributes[:message][:providers] = [@v7plugin]
       end
 
-      after(:each) do
-        [:V6plugin, :V7plugin].each do |name|
-          if Ohai::NamedPlugin.send(:const_defined?, name)
-            Ohai::NamedPlugin.send(:remove_const, name)
-          end
-        end
-      end
-
       it "should run the plugin it requires" do
         @ohai.require_plugin('v6plugin')
         @v7plugin.has_run?.should be_true
@@ -462,14 +407,6 @@ EOF
         a[:other][:providers] = [@other]
       end
 
-      after(:each) do
-        [:V6plugin, :V7plugin, :Other].each do |name|
-          if Ohai::NamedPlugin.send(:const_defined?, name)
-            Ohai::NamedPlugin.send(:remove_const, name)
-          end
-        end
-      end
-
       it "should resolve the v7 plugin dependencies" do
         @ohai.require_plugin('v6plugin')
         [@v6plugin, @v7plugin, @other].each do |plugin|
@@ -499,12 +436,6 @@ EOF
 
       @ohai = Ohai::System.new
       @klass = Ohai.v6plugin('empty') { }
-    end
-
-    after(:each) do
-      if Ohai::NamedPlugin.send(:const_defined?, :Empty)
-        Ohai::NamedPlugin.send(:remove_const, :Empty)
-      end
     end
 
     it "should find a plugin with a simple name" do

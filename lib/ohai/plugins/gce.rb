@@ -18,11 +18,10 @@ require 'ohai/mixin/gce_metadata'
 
 Ohai.plugin(:GCE) do
   include Ohai::Mixin::GCEMetadata
+  GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
 
   provides "gce"
-  
-  GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
-  
+
   #https://developers.google.com/compute/docs/instances#dmi
   def has_google_dmi?
     ::File.read(GOOGLE_SYSFS_DMI).include?('Google')

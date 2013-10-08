@@ -31,12 +31,6 @@ describe Ohai::System, "plugin php" do
     @plugin.stub(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :PHP)
-      Ohai::NamedPlugin.send(:remove_const, :PHP)
-    end
-  end
-
   it "should get the php version from running php -V" do
     @plugin.should_receive(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

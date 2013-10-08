@@ -29,12 +29,6 @@ describe Ohai::System, "plugin nodejs" do
     @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  after(:each) do
-    if Ohai::NamedPlugin.send(:const_defined?, :Nodejs)
-      Ohai::NamedPlugin.send(:remove_const, :Nodejs)
-    end
-  end
-
   it "should get the nodejs version from running node -v" do
     @plugin.should_receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

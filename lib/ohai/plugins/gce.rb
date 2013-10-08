@@ -16,7 +16,7 @@
 
 require 'ohai/mixin/gce_metadata'
 
-Ohai.plugin do
+Ohai.plugin(:GCE) do
   include Ohai::Mixin::GCEMetadata
 
   provides "gce"

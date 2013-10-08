@@ -21,13 +21,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "NetBSD kernel plugin" do
   before(:each) do
-    @plugin = get_plugin("netbsd/kernel")
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:netbsd)
+    @plugin.stub(:init_kernel).and_return({})
     @plugin.stub(:shell_out).with("uname -i").and_return(mock_shell_out(0, "foo", ""))
     @plugin.stub(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1\n", ""))
     @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/usr/bin/modstat" )}").and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:name] = "netbsd"
   end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
+      Ohai::NamedPlugin.send(:remove_const, :Kernel)
+    end
+  end
+
 
   it "should set the kernel_os to the kernel_name value" do
     @plugin.run

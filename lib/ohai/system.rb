@@ -62,7 +62,7 @@ module Ohai
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")
             unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = @loader.load_plugin(file)
+              plugin = @loader.load_plugin(file, plugin_name)
               @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{file}")
@@ -178,7 +178,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = @loader.load_plugin(check_path)
+          plugin = @loader.load_plugin(check_path, plugin_name)
           @v6_dependency_solver[plugin_name] = plugin
           break
         else

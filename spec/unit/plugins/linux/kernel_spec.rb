@@ -20,7 +20,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../../path/ohai_plugin_common.rb')
 
-
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
     @env_lsmod = <<-ENV_LSMOD
@@ -33,17 +32,24 @@ serio_raw              13031  0
 virtio_balloon         13168  0
 floppy                 55441  0
 ENV_LSMOD
-    @plugin = get_plugin("linux/kernel")
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:linux)
+    @plugin.stub(:init_kernel).and_return({})
     @plugin.stub(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
     @plugin.stub(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
     @plugin.should_receive(:shell_out).with("env lsmod").at_least(1).times
-    @plugin[:kernel] = {}
     @plugin.run
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Kernel)
+      Ohai::NamedPlugin.send(:remove_const, :Kernel)
+    end
   end
 
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", [0, "Linux", ""])
 
-  test_plugin([ "kernel", "linux/kernel" ], [ "uname", "env" ]) do | p |
+  test_plugin([ "kernel" ], [ "uname", "env" ]) do | p |
     p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
            { "kernel" => { "os" => "GNU/Linux" }})
     p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],

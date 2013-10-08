@@ -22,8 +22,14 @@ describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
     @plugin = get_plugin("solaris2/platform")
     @plugin.extend(SimpleFromFile)
-    @plugin[:os] = "solaris2"
+    @plugin.stub(:collect_os).and_return(:solaris2)
     @plugin.stub(:shell_out).with("/sbin/uname -X")
+  end
+  
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Platform)
+      Ohai::NamedPlugin.send(:remove_const, :Platform)
+    end
   end
   
   describe "on SmartOS" do

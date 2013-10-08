@@ -112,11 +112,18 @@ ROUTE_GET
     @ifconfig_lines = @solaris_ifconfig.split("\n")
 
     @plugin = get_plugin("solaris2/network")
+    @plugin.stub(:collect_os).and_return(:solaris2)
     @plugin[:network] = Mash.new
 
     @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))
     @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @solaris_arp_rn, ""))
     @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Network)
+      Ohai::NamedPlugin.send(:remove_const, :Network)
+    end
   end
 
   describe "gathering IP layer address info" do

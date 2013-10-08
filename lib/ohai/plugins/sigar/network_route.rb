@@ -19,8 +19,6 @@
 require "sigar"
 
 Ohai.plugin do
-  depends "network"
-
   provides "network"
 
   def flags(flags)
@@ -40,12 +38,9 @@ Ohai.plugin do
   # From sigar: include/sigar.h sigar_net_route_t
   SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
 
-  collect_data do
-    sigar=Sigar.new
-    network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
-    counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+  collect_data(:sigar) do
+    require "sigar"
+    sigar = Sigar.new
 
     sigar.net_route_list.each do |route|
       next unless network[:interfaces][route.ifname] # this should never happen

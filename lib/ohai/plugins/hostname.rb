@@ -1,6 +1,14 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Benjamin Black (<nostromo@gmail.com>)
+# Author:: Bryan McLellan (<btm@loftninjas.org>)
+# Author:: Daniel DeLeo (<dan@kallistec.com>)
+# Author:: Doug MacEachern (<dougm@vmware.com>)
+# Author:: James Gartrell (<jgartrel@gmail.com>)
+# Copyright:: Copyright (c) 2008, 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2009 Bryan McLellan
+# Copyright:: Copyright (c) 2009 Daniel DeLeo
+# Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +24,92 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "fqdn", "domain"
+Ohai.plugin(:Hostname) do
+  provides "domain", "hostname", "fqdn"
 
-  depends_os "hostname"
+  def from_cmd(cmd)
+    so = shell_out(cmd)
+    so.stdout.split($/)[0]
+  end
 
-  collect_data do
+  def collect_domain
     # Domain is everything after the first dot
     if fqdn
       fqdn =~ /.+?\.(.*)/
-      domain $1 
+      domain $1
     end
   end
+  
+  collect_data(:default) do
+    domain collect_domain
+  end
+
+  collect_data(:aix, :hpux, :sigar) do
+    require 'sigar'
+    sigar = Sigar.new
+    hostname sigar.net_info.host_name
+    fqdn sigar.fqdn
+    domain collect_domain
+  end
+
+  collect_data(:darwin, :netbsd, :openbsd) do
+    hostname from_cmd("hostname -s")
+    fqdn from_cmd("hostname")
+    domain collect_domain
+  end
+
+  collect_data(:freebsd) do
+    hostname from_cmd("hostname -s")
+    fqdn from_cmd("hostname -f")
+    domain collect_domain
+  end
+
+  collect_data(:linux) do
+    hostname from_cmd("hostname -s")
+    begin
+      fqdn from_cmd("hostname --fqdn")
+    rescue
+      Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+    end
+    domain collect_domain
+  end
+
+  collect_data(:solaris2) do
+    require 'socket'
+
+    hostname from_cmd("hostname")
+    fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+    if fqdn_lookup.split('.').length > 1
+      # we recieved an fqdn
+      fqdn fqdn_lookup
+    else
+      # default to assembling one
+      so = shell_out("hostname")
+      h = so.stdout.split($/)[0]
+      so = shell_out("domainname")
+      d = so.stdout.split($/)[0]
+
+      fqdn("#{h}.#{d}")
+    end
+    domain collect_domain
+  end
+
+  collect_data(:windows) do
+    require 'ruby-wmi'
+    require 'socket'
+
+    host = WMI::Win32_ComputerSystem.find(:first)
+    hostname "#{host.Name}"
+
+    info = Socket.gethostbyname(Socket.gethostname)
+    if info.first =~ /.+?\.(.*)/
+      fqdn info.first
+    else
+      #host is not in dns. optionally use:
+      #C:\WINDOWS\system32\drivers\etc\hosts
+      fqdn Socket.gethostbyaddr(info.last).first
+    end
+    domain collect_domain
+  end
 end
+

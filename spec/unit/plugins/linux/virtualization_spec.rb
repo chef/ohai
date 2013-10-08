@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux virtualization platform" do
   before(:each) do
     @plugin = get_plugin("linux/virtualization")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
@@ -33,6 +33,12 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/self/status").and_return(false)
     File.stub(:exists?).with("/proc/bc/0").and_return(false)
     File.stub(:exists?).with("/proc/vz").and_return(false)
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Virtualization)
+      Ohai::NamedPlugin.send(:remove_const, :Virtualization)
+    end
   end
 
   describe "when we are checking for xen" do

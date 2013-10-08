@@ -15,11 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin do
+Ohai.plugin(:IpScopes) do
   provides "network_ip_scope", "privateaddress"
 
-  depends "domain", "fqdn"
-  depends "network", "counters/network"
+  depends "network/interfaces"
 
   collect_data do
     begin

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides 'cpu'
 
-  collect_data do
+  collect_data(:openbsd) do
     cpuinfo = Mash.new
 
     # OpenBSD provides most cpu information via sysctl, the only thing we need to 

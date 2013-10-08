@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides "cpu"
 
-  collect_data do
+  collect_data(:darwin) do
     cpu Mash.new
     so = shell_out("sysctl -n hw.physicalcpu")
     cpu[:real] = so.stdout.to_i

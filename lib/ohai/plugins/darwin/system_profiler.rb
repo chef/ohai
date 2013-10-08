@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:SystemProfile) do
   provides "system_profile"
 
-  collect_data do
+  collect_data(:darwin) do
     begin
       require 'plist'
 

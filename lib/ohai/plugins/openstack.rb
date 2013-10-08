@@ -18,7 +18,7 @@
 require 'ohai/mixin/ec2_metadata'
 extend Ohai::Mixin::Ec2Metadata
 
-Ohai.plugin do
+Ohai.plugin(:Openstack) do
   provides "openstack"
 
   # does it matter that it's not hitting latest?

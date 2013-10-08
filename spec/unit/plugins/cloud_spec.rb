@@ -18,8 +18,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin cloud" do
-  before do
+  before(:each) do
     @plugin = get_plugin("cloud")
+  end
+
+  after(:each) do
+    if Ohai::NamedPlugin.send(:const_defined?, :Cloud)
+      Ohai::NamedPlugin.send(:remove_const, :Cloud)
+    end
   end
 
   describe "with no cloud mashes" do

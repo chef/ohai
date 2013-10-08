@@ -443,7 +443,7 @@ describe Ohai::Runner, "fetch_providers" do
   end
 end
 
-describe Ohai::Runner, "#cycle_sources" do
+describe Ohai::Runner, "#get_cycle" do
   before(:each) do
     @ohai = Ohai::System.new
     @runner = Ohai::Runner.new(@ohai, true)
@@ -489,15 +489,15 @@ describe Ohai::Runner, "#cycle_sources" do
     cycle = [@plugin1, @plugin2]
     cycle_start = @plugin1
 
-    sources = @runner.cycle_sources(cycle, cycle_start)
-    sources.should eql([@plugin1.source, @plugin2.source])
+    cycle_names = @runner.get_cycle(cycle, cycle_start)
+    cycle_names.should eql([@plugin1.name, @plugin2.name])
   end
 
   it "should return the sources for only the plugins in the cycle, when there are plugins before the cycle begins" do
     cycle = [@plugin3, @plugin1, @plugin2]
     cycle_start = @plugin1
 
-    sources = @runner.cycle_sources(cycle, cycle_start)
-    sources.should eql([@plugin1.source, @plugin2.source])
+    cycle_names = @runner.get_cycle(cycle, cycle_start)
+    cycle_names.should eql([@plugin1.name, @plugin2.name])
   end
 end

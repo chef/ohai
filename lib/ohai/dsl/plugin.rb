@@ -135,6 +135,10 @@ module Ohai
           @version = :version7
         end
 
+        def name
+          self.class.name.split("Ohai::NamedPlugin::")[1]
+        end
+
         def self.version
           :version7
         end
@@ -186,7 +190,7 @@ module Ohai
           elsif collector.has_key?(:default)
             self.instance_eval(&collector[:default])
           else
-            Ohai::Log.debug("No data to collect for plugin #{self.class.name}. Continuing...")
+            Ohai::Log.debug("No data to collect for plugin #{self.name}. Continuing...")
           end
         end
 
@@ -208,6 +212,10 @@ module Ohai
         def initialize(controller, source)
           super(controller, source)
           @version = :version6
+        end
+
+        def name
+          self.class.name.split("Ohai::NamedPlugin::")[1]
         end
 
         def self.version
@@ -324,7 +332,7 @@ module Ohai
         begin
           self.run
         rescue => e
-          Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
+          Ohai::Log.error("Plugin #{self.name} threw #{e.inspect}")
           e.backtrace.each { |line| Ohai::Log.debug( line )}
         end
       end

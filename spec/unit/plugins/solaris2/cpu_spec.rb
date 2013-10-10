@@ -16,7 +16,6 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
-#    @plugin.stub(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1", ""))
 describe Ohai::System, "Solaris2.X cpu plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/cpu")

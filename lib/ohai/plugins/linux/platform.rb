@@ -38,13 +38,10 @@ elsif File.exists?("/etc/enterprise-release")
   platform "oracle"
   platform_version get_redhatish_version(contents)
 elsif File.exists?("/etc/debian_version")
-  # Ubuntu, GCEL and Debian both have /etc/debian_version
-  # Ubuntu, GCEL should always have a working lsb, debian does not by default
+  # Ubuntu and Debian both have /etc/debian_version
+  # Ubuntu should always have a working lsb, debian does not by default
   if lsb[:id] =~ /Ubuntu/i
     platform "ubuntu"
-    platform_version lsb[:release]
-  elsif lsb[:id] =~ /gcel/i
-    platform "gcel"
     platform_version lsb[:release]
   elsif lsb[:id] =~ /LinuxMint/i
     platform "linuxmint"
@@ -99,7 +96,7 @@ end
 
 
 case platform
-  when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /gcel/
+  when /debian/, /ubuntu/, /linuxmint/, /raspbian/
     platform_family "debian"
   when /fedora/
     platform_family "fedora"

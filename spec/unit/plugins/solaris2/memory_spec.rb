@@ -20,7 +20,7 @@ describe Ohai::System, "Solaris2.X memory plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/memory")
     @plugin[:os] = "solaris2"
-    @plugin.stub(:from).with("prtconf -m").and_return("8194")
+    @plugin.stub(:shell_out).with("prtconf -m").and_return(mock_shell_out(0, "8194\n", ""))
   end
 
   it "should get the total memory" do

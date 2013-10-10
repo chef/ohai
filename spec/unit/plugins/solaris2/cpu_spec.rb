@@ -16,19 +16,21 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
+#    @plugin.stub(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1", ""))
 describe Ohai::System, "Solaris2.X cpu plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/cpu")
     @plugin[:os] = "solaris2"
-    @plugin.stub(:from).with("psrinfo | wc -l").and_return("32")
-    @plugin.stub(:from).with("psrinfo -p").and_return("4")
+    @plugin.stub(:shell_out).with("psrinfo | wc -l").and_return(mock_shell_out(0, "32\n", ""))
+    @plugin.stub(:shell_out).with("psrinfo -p").and_return(mock_shell_out(0, "4\n", ""))
 
-    @plugin.stub(:from).with('psrinfo -v -p | grep Hz').and_return(<<-END.strip)
+    psrinfo_output = <<-END.strip
     x86 (GenuineIntel 206D7 family 6 model 45 step 7 clock 2600 MHz)
       Intel(r) Xeon(r) CPU E5-2670 0 @ 2.60GHz
     x86 (CrazyTown 206D7 family 12 model 93 step 9 clock 2900 MHz)
       Intel(r) Xeon(r) CPU E5-2690 0 @ 2.90GHz
 END
+    @plugin.stub(:shell_out).with('psrinfo -v -p | grep Hz').and_return(mock_shell_out(0, psrinfo_output, ""))
   end
   
   it "should get the total virtual processor count" do

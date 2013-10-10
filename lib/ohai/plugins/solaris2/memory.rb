@@ -19,6 +19,6 @@ Ohai.plugin do
 
   collect_data do
     memory Mash.new
-    memory[:total] = from("prtconf -m").to_i
+    memory[:total] = shell_out("prtconf -m").stdout.to_i
   end
 end

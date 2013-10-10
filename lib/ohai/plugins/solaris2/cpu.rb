@@ -19,10 +19,10 @@ Ohai.plugin do
 
   collect_data do
     cpu Mash.new
-    cpu[:total] = from("psrinfo | wc -l").to_i
-    cpu[:real] = from("psrinfo -p").to_i
+    cpu[:total] = shell_out("psrinfo | wc -l").stdout.to_i
+    cpu[:real] = shell_out("psrinfo -p").stdout.to_i
 
-    processor_info = from("psrinfo -v -p | grep Hz")
+    processor_info = shell_out("psrinfo -v -p | grep Hz").stdout
     processors = processor_info.split(/^    [^\s]/)
     processors.each_with_index do |processor, i|
       cpu_info, model_name = processor.split("\n      ")

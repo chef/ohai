@@ -24,7 +24,7 @@ module Ohai
       extend self
 
       GCE_METADATA_ADDR = "metadata.google.internal" unless defined?(GCE_METADATA_ADDR)
-      GCE_METADATA_URL = "/0.1/meta-data" unless defined?(GCE_METADATA_URL)
+      GCE_METADATA_URL = "/computeMetadata/v1beta1/?recursive=true" unless defined?(GCE_METADATA_URL)
 
       def can_metadata_connect?(addr, port, timeout=2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)

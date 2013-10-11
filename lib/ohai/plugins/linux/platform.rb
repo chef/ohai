@@ -19,7 +19,7 @@
 Ohai.plugin do
   provides "platform", "platform_version", "platform_family"
 
-  depends 'linux::lsb'
+  depends 'lsb'
 
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase

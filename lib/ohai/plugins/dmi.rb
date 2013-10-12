@@ -16,14 +16,13 @@
 # limitations under the License.
 #
 
-require 'ohai/common/dmi'
-
 Ohai.plugin(:DMI) do
   provides "dmi"
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
   collect_data do
+    require 'ohai/common/dmi'
     dmi Mash.new
 
     # all output lines should fall within one of these patterns

@@ -19,11 +19,11 @@
 require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/mash'
-require 'ohai/os'
 require 'ohai/runner'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
+require 'ohai/mixin/os'
 require 'ohai/mixin/string'
 require 'mixlib/shellout'
 

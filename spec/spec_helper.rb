@@ -40,7 +40,7 @@ end
 
 def strict_const_defined?(object, const)
   if object.method(:const_defined?).arity == 1
-    object.const_defned?(const)
+    object.const_defined?(const)
   else
     object.const_defined?(const, false)
   end

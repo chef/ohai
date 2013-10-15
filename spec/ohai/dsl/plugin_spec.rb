@@ -281,7 +281,7 @@ describe Ohai::DSL::Plugin::VersionVI do
         plugins << p
       end
 
-      @ohai.attributes[:attribute][:providers].should eql(plugins)
+      @ohai.attributes[:attribute][:_providers].should eql(plugins)
     end
   end
 

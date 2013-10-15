@@ -112,7 +112,7 @@ EOF
       end
 
       plugins.each { |plugin| @loader.collect_provides(plugin) }
-      @ohai.attributes[:attr][:providers].should eql(plugins)
+      @ohai.attributes[:attr][:_providers].should eql(plugins)
     end
   end
 end

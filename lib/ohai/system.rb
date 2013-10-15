@@ -103,7 +103,7 @@ module Ohai
       plugins = []
       if providers.is_a?(Mash)
         providers.keys.each do |provider|
-          if provider.eql?("providers")
+          if provider.eql?("_providers")
             plugins << providers[provider]
           else
             plugins << collect_providers(providers[provider])

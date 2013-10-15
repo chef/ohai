@@ -256,14 +256,14 @@ EOF
     it "should find all the plugins providing attributes" do
       a = @ohai.attributes
       a[:zero] = Mash.new
-      a[:zero][:providers] = [@plugins[0]]
+      a[:zero][:_providers] = [@plugins[0]]
       a[:one] = Mash.new
-      a[:one][:providers] = [@plugins[1]]
+      a[:one][:_providers] = [@plugins[1]]
       a[:one][:two] = Mash.new
-      a[:one][:two][:providers] = [@plugins[2]]
+      a[:one][:two][:_providers] = [@plugins[2]]
       a[:stub] = Mash.new
       a[:stub][:three] = Mash.new
-      a[:stub][:three][:providers] = [@plugins[3]]
+      a[:stub][:three][:_providers] = [@plugins[3]]
 
       providers = @ohai.collect_providers(@ohai.attributes)
       providers.size.should eql(@plugins.size)
@@ -355,7 +355,7 @@ EOF
         @ohai.v6_dependency_solver['v6plugin'] = @v6plugin
         @ohai.v6_dependency_solver['v7plugin'] = @v7plugin
         @ohai.attributes[:message] = Mash.new
-        @ohai.attributes[:message][:providers] = [@v7plugin]
+        @ohai.attributes[:message][:_providers] = [@v7plugin]
       end
 
       it "should run the plugin it requires" do
@@ -402,9 +402,9 @@ EOF
 
         a = @ohai.attributes
         a[:message] = Mash.new
-        a[:message][:providers] = [@v7plugin]
+        a[:message][:_providers] = [@v7plugin]
         a[:other] = Mash.new
-        a[:other][:providers] = [@other]
+        a[:other][:_providers] = [@other]
       end
 
       it "should resolve the v7 plugin dependencies" do

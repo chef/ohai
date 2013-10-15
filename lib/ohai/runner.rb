@@ -70,7 +70,7 @@ module Ohai
           raise NoAttributeError, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
           attrs = attrs[part]
         end
-        providers << attrs[:providers]
+        providers << attrs[:_providers]
         providers.flatten!
       end
       providers.uniq!

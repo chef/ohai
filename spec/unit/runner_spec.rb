@@ -104,9 +104,9 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should locate the provider" do
         @ohai.attributes[:thing] = Mash.new
-        @ohai.attributes[:thing][:providers] = [@plugin1]
+        @ohai.attributes[:thing][:_providers] = [@plugin1]
         @ohai.attributes[:other] = Mash.new
-        @ohai.attributes[:other][:providers] = [@plugin2]
+        @ohai.attributes[:other][:_providers] = [@plugin2]
 
         @runner.should_receive(:fetch_providers).twice.with(["thing"]).and_return([@plugin1])
         @runner.should_receive(:fetch_providers).with([]).and_return([])
@@ -149,9 +149,9 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should locate each provider" do
         @ohai.attributes[:thing] = Mash.new
-        @ohai.attributes[:thing][:providers] = [@plugin1, @plugin2]
+        @ohai.attributes[:thing][:_providers] = [@plugin1, @plugin2]
         @ohai.attributes[:other] = Mash.new
-        @ohai.attributes[:other][:providers] = [@plugin3]
+        @ohai.attributes[:other][:_providers] = [@plugin3]
 
         @runner.should_receive(:fetch_providers).exactly(3).times.with(["thing"]).and_return([@plugin1, @plugin2])
         @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
@@ -203,11 +203,11 @@ describe Ohai::Runner, "run_plugin" do
 
     it "should locate each provider" do
       @ohai.attributes[:one] = Mash.new
-      @ohai.attributes[:one][:providers] = [@plugin1]
+      @ohai.attributes[:one][:_providers] = [@plugin1]
       @ohai.attributes[:two] = Mash.new
-      @ohai.attributes[:two][:providers] = [@plugin2]
+      @ohai.attributes[:two][:_providers] = [@plugin2]
       @ohai.attributes[:three] = Mash.new
-      @ohai.attributes[:three][:providers] = [@plugin3]
+      @ohai.attributes[:three][:_providers] = [@plugin3]
 
       @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
       @runner.should_receive(:fetch_providers).exactly(3).times.with(["one", "two"]).and_return([@plugin1, @plugin2])
@@ -285,11 +285,11 @@ describe Ohai::Runner, "run_plugin" do
       @pluginA, @pluginB, @pluginC = @plugins
 
       @ohai.attributes[:A] = Mash.new
-      @ohai.attributes[:A][:providers] = [@pluginA]
+      @ohai.attributes[:A][:_providers] = [@pluginA]
       @ohai.attributes[:B] = Mash.new
-      @ohai.attributes[:B][:providers] = [@pluginB]
+      @ohai.attributes[:B][:_providers] = [@pluginB]
       @ohai.attributes[:C] = Mash.new
-      @ohai.attributes[:C][:providers] = [@pluginC]
+      @ohai.attributes[:C][:_providers] = [@pluginC]
       
       @runner.stub(:fetch_providers).with(["C"]).and_return([@pluginC])
       @runner.stub(:fetch_providers).with([]).and_return([])
@@ -328,7 +328,7 @@ describe Ohai::Runner, "fetch_providers" do
       it "should return the provider" do
         plugin = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:single] = Mash.new
-        @ohai.attributes[:single][:providers] = [plugin]
+        @ohai.attributes[:single][:_providers] = [plugin]
 
         dependency_providers = @runner.fetch_providers(["single"])
         dependency_providers.should eql([plugin])
@@ -340,7 +340,7 @@ describe Ohai::Runner, "fetch_providers" do
         plugin1 = Ohai::DSL::Plugin.new(@ohai, "")
         plugin2 = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:single] = Mash.new
-        @ohai.attributes[:single][:providers] = [plugin1, plugin2]
+        @ohai.attributes[:single][:_providers] = [plugin1, plugin2]
 
         dependency_providers = @runner.fetch_providers(["single"])
         dependency_providers.should eql([plugin1, plugin2])
@@ -354,9 +354,9 @@ describe Ohai::Runner, "fetch_providers" do
         plugin1 = Ohai::DSL::Plugin.new(@ohai, "")
         plugin2 = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:one] = Mash.new
-        @ohai.attributes[:one][:providers] = [plugin1]
+        @ohai.attributes[:one][:_providers] = [plugin1]
         @ohai.attributes[:two] = Mash.new
-        @ohai.attributes[:two][:providers] = [plugin2]
+        @ohai.attributes[:two][:_providers] = [plugin2]
 
         dependency_providers = @runner.fetch_providers(["one", "two"])
         dependency_providers.should eql([plugin1, plugin2])
@@ -367,9 +367,9 @@ describe Ohai::Runner, "fetch_providers" do
       it "should return unique providers" do
         plugin = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:one] = Mash.new
-        @ohai.attributes[:one][:providers] = [plugin]
+        @ohai.attributes[:one][:_providers] = [plugin]
         @ohai.attributes[:two] = Mash.new
-        @ohai.attributes[:two][:providers] = [plugin]
+        @ohai.attributes[:two][:_providers] = [plugin]
 
         dependency_providers = @runner.fetch_providers(["one", "two"])
         dependency_providers.should eql([plugin])
@@ -383,7 +383,7 @@ describe Ohai::Runner, "fetch_providers" do
       @ohai.attributes[:top] = Mash.new
       @ohai.attributes[:top][:middle] = Mash.new
       @ohai.attributes[:top][:middle][:bottom] = Mash.new
-      @ohai.attributes[:top][:middle][:bottom][:providers] = [plugin]
+      @ohai.attributes[:top][:middle][:bottom][:_providers] = [plugin]
 
       dependency_providers = @runner.fetch_providers(["top/middle/bottom"])
       dependency_providers.should eql([plugin])

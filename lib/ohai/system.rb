@@ -55,7 +55,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         [
          Dir[File.join(path, '*')],
-         Dir[File.join(path, Ohai::OS.collect_os, '**', '*')]
+         Dir[File.join(path, Ohai::Mixin::OS.collect_os, '**', '*')]
         ].flatten.each do |file|
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)

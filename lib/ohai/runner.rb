@@ -66,7 +66,7 @@ module Ohai
         attrs = @attributes
         parts = attribute.split('/')
         parts.each do |part|
-          next if part == Ohai::OS.collect_os
+          next if part == Ohai::Mixin::OS.collect_os
           raise NoAttributeError, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
           attrs = attrs[part]
         end

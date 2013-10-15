@@ -99,7 +99,7 @@ module Ohai
 
   module DSL
     class Plugin
-      include Ohai::OS
+      include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
 

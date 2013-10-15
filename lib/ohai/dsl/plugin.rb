@@ -18,7 +18,6 @@
 # limitations under the License.
 #
 
-# @todo: move os to mixin
 require 'ohai/mixin/os'
 require 'ohai/mixin/command'
 require 'ohai/mixin/seconds_to_human'

@@ -37,6 +37,26 @@ describe Ohai::Mixin::Command, "popen4" do
   end
 
   if defined?(::Encoding) && "".respond_to?(:force_encoding) #i.e., ruby 1.9
+    context "when external commands return UTF-8 strings and we are running under LANG=C encoding" do
+      before do
+        @saved_default_external = Encoding.default_external
+        @saved_default_internal = Encoding.default_internal
+        Encoding.default_external = Encoding::US_ASCII
+        Encoding.default_internal = Encoding::US_ASCII
+      end
+
+      after do
+        Encoding.default_external = @saved_default_external
+        Encoding.default_internal = @saved_default_internal
+      end
+
+      it "should force encode the string to US_ASCII" do
+        extend Ohai::Mixin::Command
+        snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
+        snowy.encoding.should == Encoding::US_ASCII
+      end
+    end
+
     it "[OHAI-275] should mark strings as in the default external encoding" do
       extend Ohai::Mixin::Command
       snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]

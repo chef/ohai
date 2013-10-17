@@ -40,7 +40,7 @@ describe "Ohai::System" do
 
   describe "#load_plugins" do
     before(:each) do
-      Ohai::OS.stub(:collect_os).and_return("ubuntu")
+      Ohai::Mixin::OS.stub(:collect_os).and_return("ubuntu")
 
       loader = double('@loader')
       Ohai::Loader.stub(:new) { loader }
@@ -70,7 +70,7 @@ describe "Ohai::System" do
 
     it "should add loaded plugins to @v6_dependency_solver" do
       Ohai::Config[:plugin_path] = ["/tmp/plugins"]
-      Ohai::OS.stub(:collect_os).and_return("ubuntu")
+      Ohai::Mixin::OS.stub(:collect_os).and_return("ubuntu")
       Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
       Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
       File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")

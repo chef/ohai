@@ -46,7 +46,7 @@ def strict_const_defined?(object, const)
   end
 end
 
-if Ohai::OS.collect_os == /mswin|mingw32|windows/
+if Ohai::Mixin::OS.collect_os == /mswin|mingw32|windows/
   ENV["PATH"] = ""
 end
 

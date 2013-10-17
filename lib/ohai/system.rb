@@ -51,6 +51,14 @@ module Ohai
       @data[key]
     end
 
+    #=============================================
+    #  Version 7 system commands
+    #=============================================
+    def all_plugins
+      load_plugins
+      run_plugins(true)
+    end
+
     def load_plugins
       Ohai::Config[:plugin_path].each do |path|
         [
@@ -94,11 +102,6 @@ module Ohai
       true
     end
 
-    def all_plugins
-      load_plugins
-      run_plugins(true)
-    end
-
     def collect_plugins(plugins)
       collected = []
       if plugins.is_a?(Mash)
@@ -115,34 +118,9 @@ module Ohai
       collected.flatten.uniq
     end
 
-    # todo: fixup for running w/ new internals
-    def refresh_plugins(path = '/')
-      parts = path.split('/')
-      if parts.length == 0
-        h = @metadata
-      else
-        parts.shift if parts[0].length == 0
-        h = @metadata
-        parts.each do |part|
-          break unless h.has_key?(part)
-          h = h[part]
-        end
-      end
-
-      refreshments = collect_plugins(h)
-      Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
-      
-      # remove the hints cache
-      @hints = Hash.new
-
-      refreshments.each do |r|
-        @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
-      end
-      refreshments.each do |r|
-        require_plugin(r) unless @seen_plugins.has_key?(r)
-      end
-    end
-
+    #=============================================
+    # Version 6 system commands
+    #=============================================
     def require_plugin(plugin_name, force=false)
       unless force
         plugin = @v6_dependency_solver[plugin_name]
@@ -188,6 +166,38 @@ module Ohai
       plugin
     end
 
+    # todo: fix for running w/new internals
+    # add updated function to v7?
+    def refresh_plugins(path = '/')
+      parts = path.split('/')
+      if parts.length == 0
+        h = @metadata
+      else
+        parts.shift if parts[0].length == 0
+        h = @metadata
+        parts.each do |part|
+          break unless h.has_key?(part)
+          h = h[part]
+        end
+      end
+
+      refreshments = collect_plugins(h)
+      Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
+      
+      # remove the hints cache
+      @hints = Hash.new
+
+      refreshments.each do |r|
+        @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
+      end
+      refreshments.each do |r|
+        require_plugin(r) unless @seen_plugins.has_key?(r)
+      end
+    end
+
+    #=============================================
+    # For outputting an Ohai::System object
+    #=============================================
     # Serialize this object as a hash
     def to_json
       Yajl::Encoder.new.encode(@data)

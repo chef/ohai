@@ -84,7 +84,7 @@ module Ohai
       end
 
       # collect and run version 7 plugins
-      plugins = collect_providers(@attributes)
+      plugins = collect_plugins(@attributes)
       begin
         plugins.each { |plugin| @runner.run_plugin(plugin, force) }
       rescue DependencyCycleError, NoAttributeError => e
@@ -99,20 +99,20 @@ module Ohai
       run_plugins(true)
     end
 
-    def collect_providers(providers)
-      plugins = []
-      if providers.is_a?(Mash)
-        providers.keys.each do |provider|
-          if provider.eql?("_providers")
-            plugins << providers[provider]
+    def collect_plugins(plugins)
+      collected = []
+      if plugins.is_a?(Mash)
+        plugins.keys.each do |plugin|
+          if plugin.eql?("_plugins")
+            collected << plugins[plugin]
           else
-            plugins << collect_providers(providers[provider])
+            collected << collect_plugins(plugins[plugin])
           end
         end
       else
-        plugins << providers
+        collected << plugins
       end
-      plugins.flatten.uniq
+      collected.flatten.uniq
     end
 
     # todo: fixup for running w/ new internals
@@ -129,7 +129,7 @@ module Ohai
         end
       end
 
-      refreshments = collect_providers(h)
+      refreshments = collect_plugins(h)
       Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
       
       # remove the hints cache

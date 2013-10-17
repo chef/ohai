@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin Network Plugin" do
-  before do
+  before(:each) do
     @darwin_ifconfig = <<-DARWIN_IFCONFIG
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
         options=3<RXCSUM,TXCSUM>
@@ -413,6 +413,7 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @plugin = get_plugin("darwin/network")
+    @plugin.stub(:collect_os).and_return(:darwin)
 
     # @stdin_ifconfig = StringIO.new
     # @stdin_arp = StringIO.new
@@ -426,19 +427,10 @@ net.smb.fs.tcprcvbuf: 261120
 
     @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
     @plugin.stub(:shell_out).with("netstat -i -d -l -b -n")
-
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-
-    %w{ darwin/hostname hostname network }.each do |plgn|
-      p = get_plugin(plgn)
-      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-      p.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
-      p.run
-    end
   end
 
   describe "gathering IP layer address info" do
-    before do
+    before(:each) do
       @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
       @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
       @plugin.stub(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))

@@ -27,7 +27,7 @@ begin
     before(:each) do
       @plugin = get_plugin("chef")
     end
-    
+
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
       @plugin.run
       @plugin[:chef_packages][:chef][:version].should == Chef::VERSION

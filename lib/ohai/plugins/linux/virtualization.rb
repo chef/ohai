@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:linux) do
     virtualization Mash.new
 
     # if it is possible to detect paravirt vs hardware virt, it should be put in

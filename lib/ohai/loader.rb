@@ -28,7 +28,9 @@ module Ohai
       @attributes = controller.attributes
     end
 
-    def load_plugin(plugin_path)
+    # @note: plugin_name is used only by version 6 plugins and is the
+    # unique part of the file name from Ohai::Config[:plugin_path]
+    def load_plugin(plugin_path, plugin_name=nil)
       plugin = nil
 
       contents = ""
@@ -54,8 +56,8 @@ module Ohai
         return plugin if plugin.nil?
         collect_provides(plugin)
       else
-        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. Version 6 plugins will not be supported in future releases of Ohai. Please upgrage your plugin to version 7 plugin syntax. For more information visit here: XXX")
-        klass = Ohai.v6plugin { collect_contents(contents) }
+        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. Version 6 plugins will not be supported in future releases of Ohai. Please upgrage your plugin to version 7 plugin syntax. For more information visit here: docs.opscode.com/ohai_custom.html")
+        klass = Ohai.v6plugin(plugin_name) { collect_contents(contents) }
         plugin = klass.new(@controller, plugin_path)
       end
 
@@ -76,8 +78,8 @@ module Ohai
           end
         end
 
-        a[:providers] ||= []
-        a[:providers] << plugin
+        a[:_providers] ||= []
+        a[:_providers] << plugin
       end
     end
 

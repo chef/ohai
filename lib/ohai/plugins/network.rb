@@ -18,12 +18,10 @@
 
 require 'ipaddress'
 
-Ohai.plugin do
-  provides "network", "counters/network"
+Ohai.plugin(:NetworkAddresses) do
   provides "ipaddress", "ip6address", "macaddress"
 
-  depends "hostname"
-  depends_os "network"
+  depends "network/interfaces"
 
   FAMILIES = {
     "inet" => "default",

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Java) do
   provides "languages/java"
 
   depends "languages"

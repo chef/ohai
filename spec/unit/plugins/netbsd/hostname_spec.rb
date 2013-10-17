@@ -21,8 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "NetBSD hostname plugin" do
   before(:each) do
-    @plugin = get_plugin("netbsd/hostname")
-    @plugin[:os] = "netbsd"
+    @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:netbsd)
     @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie\n", ""))
     @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
   end

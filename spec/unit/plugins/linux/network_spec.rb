@@ -257,14 +257,6 @@ IP_ROUTE_SCOPE
     @plugin = get_plugin("linux/network")
     @plugin.stub(:shell_out).with("ifconfig -a").and_return([0, @linux_ifconfig, ""])
     @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-
-    %w{ linux/hostname hostname network }.each do |plgn|
-      p = get_plugin(plgn)
-      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-      p.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
-      p.run
-    end
   end
 
   ["ifconfig","iproute2"].each do |network_method|

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "memory"
+Ohai.plugin(:Memory) do
+  provides "memory", "memory/swap"
 
-  collect_data do
+  collect_data(:freebsd) do
     memory Mash.new
     memory[:swap] = Mash.new
 

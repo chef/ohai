@@ -94,6 +94,7 @@ Ohai.plugin(:Rackspace) do
   end
 
   collect_data do
+    require "resolv"
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new
@@ -104,7 +105,11 @@ Ohai.plugin(:Rackspace) do
       rackspace[:public_ipv4] = rackspace[:public_ip]
       get_global_ipv6_address(:public_ipv6, :eth0)
       unless rackspace[:public_ip].nil?
-        rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
+        rackspace[:public_hostname] = begin
+                                        Resolv.getname(rackspace[:public_ip])
+                                      rescue SocketError
+                                        rackspace[:public_ip]
+                                      end
       end
       rackspace[:local_ipv4] = rackspace[:private_ip]
       get_global_ipv6_address(:local_ipv6, :eth1)

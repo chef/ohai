@@ -16,14 +16,13 @@
 # limitations under the License.
 #
 
-require "ohai/plugins/dmi_common"
-
-Ohai.plugin do
+Ohai.plugin(:DMI) do
   provides "dmi"
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
   collect_data do
+    require 'ohai/common/dmi'
     dmi Mash.new
 
     # all output lines should fall within one of these patterns
@@ -75,9 +74,9 @@ Ohai.plugin do
 
       elsif handle = handle_line.match(line)
         # Don't overcapture for now (OHAI-260)
-        next unless DMI::IdToCapture.include?(handle[2].to_i)
+        next unless Ohai::Common::DMI::IdToCapture.include?(handle[2].to_i)
 
-        dmi_record = {:type => DMI.id_lookup(handle[2])}
+        dmi_record = {:type => Ohai::Common::DMI.id_lookup(handle[2])}
 
         dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
         dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
@@ -121,6 +120,6 @@ Ohai.plugin do
       end
     end
 
-    DMI.convenience_keys(dmi)
+    Ohai::Common::DMI.convenience_keys(dmi)
   end
 end

@@ -19,14 +19,12 @@
 
 require 'ohai/mixin/ec2_metadata'
 
-Ohai.plugin do
+Ohai.plugin(:Eucalyptus) do
   include Ohai::Mixin::Ec2Metadata
 
   provides "eucalyptus"
 
-  depends "fqdn", "domain"
-  depends "kernel"
-  depends "network"
+  depends "network/interfaces"
 
   def get_mac_address(addresses)
     detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }

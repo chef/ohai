@@ -24,12 +24,7 @@ describe Ohai::System, "OpenBSD plugin platform" do
     @plugin = get_plugin("openbsd/platform")
     @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "OpenBSD\n", ""))
     @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
-    @plugin[:os] = "openbsd"
-  end
-  
-  it "should set platform to lowercased lsb[:id]" do
-    @plugin.run
-    @plugin[:platform].should == "openbsd"
+    @plugin.stub(:collect_os).and_return(:openbsd)
   end
   
   it "should set platform_version to lsb[:release]" do

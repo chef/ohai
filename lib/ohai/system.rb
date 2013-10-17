@@ -19,11 +19,11 @@
 require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/mash'
-require 'ohai/os'
 require 'ohai/runner'
 require 'ohai/dsl/plugin'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
+require 'ohai/mixin/os'
 require 'ohai/mixin/string'
 require 'mixlib/shellout'
 
@@ -55,14 +55,14 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         [
          Dir[File.join(path, '*')],
-         Dir[File.join(path, Ohai::OS.collect_os, '**', '*')]
+         Dir[File.join(path, Ohai::Mixin::OS.collect_os, '**', '*')]
         ].flatten.each do |file|
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
             plugin_name = md[1].gsub(File::SEPARATOR, "::")
             unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = @loader.load_plugin(file)
+              plugin = @loader.load_plugin(file, plugin_name)
               @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
             else
               Ohai::Log.debug("Already loaded plugin at #{file}")
@@ -103,7 +103,7 @@ module Ohai
       plugins = []
       if providers.is_a?(Mash)
         providers.keys.each do |provider|
-          if provider.eql?("providers")
+          if provider.eql?("_providers")
             plugins << providers[provider]
           else
             plugins << collect_providers(providers[provider])
@@ -178,7 +178,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = @loader.load_plugin(check_path)
+          plugin = @loader.load_plugin(check_path, plugin_name)
           @v6_dependency_solver[plugin_name] = plugin
           break
         else

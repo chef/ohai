@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Zpools) do
   provides "zpools"
 
-  collect_data do
+  collect_data(:solaris2) do
     pools = Mash.new
 
     # Grab ZFS zpools overall health and attributes

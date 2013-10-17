@@ -16,10 +16,9 @@
 # limitations under the License.
 #
 
-require 'scanf'
-
-Ohai.plugin do
-  provides "network", "counters/network"
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
   def parse_media(media_string)
     media = Hash.new
@@ -84,7 +83,9 @@ Ohai.plugin do
     nil
   end
 
-  collect_data do
+  collect_data(:darwin) do
+    require 'scanf'
+
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]
     counters Mash.new unless counters

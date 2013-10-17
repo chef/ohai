@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:LSB) do
   provides "lsb"
 
-  collect_data do
+  collect_data(:linux) do
     lsb Mash.new
 
     if File.exists?("/etc/lsb-release")

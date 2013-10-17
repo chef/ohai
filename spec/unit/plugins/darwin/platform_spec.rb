@@ -22,12 +22,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Darwin plugin platform" do
   before(:each) do
     @plugin = get_plugin("darwin/platform")
-
-    @plugin[:os] = "darwin"
+    @plugin.stub(:collect_os).and_return(:darwin)
     @stdout = "ProductName:	Mac OS X\nProductVersion:	10.5.5\nBuildVersion:	9F33"
     @plugin.stub(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
   end
- 
+
   it "should run sw_vers" do
     @plugin.should_receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run

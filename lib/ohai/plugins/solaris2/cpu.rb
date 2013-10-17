@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides "cpu"
 
-  collect_data do
+  collect_data(:solaris2) do
     cpu Mash.new
     cpu[:total] = shell_out("psrinfo | wc -l").stdout.to_i
     cpu[:real] = shell_out("psrinfo -p").stdout.to_i

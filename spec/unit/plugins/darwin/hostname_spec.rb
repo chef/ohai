@@ -21,12 +21,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin hostname plugin" do
   before(:each) do
-    @plugin = get_plugin("darwin/hostname")
-    @plugin[:os] = "darwin"
+    @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:darwin)
     @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
     @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.bethell", ""))
   end
-  
+
   it_should_check_from("darwin::hostname", "hostname", "hostname -s", "katie")
   
   it_should_check_from("darwin::hostname", "fqdn", "hostname", "katie.bethell")

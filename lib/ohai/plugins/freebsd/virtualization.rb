@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:freebsd) do
     virtualization Mash.new
 
     so = shell_out("sysctl -n security.jail.jailed")

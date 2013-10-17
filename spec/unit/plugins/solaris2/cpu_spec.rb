@@ -19,7 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris2.X cpu plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/cpu")
-    @plugin[:os] = "solaris2"
+    @plugin.stub(:collect_os).and_return("solaris2")
     @plugin.stub(:shell_out).with("psrinfo | wc -l").and_return(mock_shell_out(0, "32\n", ""))
     @plugin.stub(:shell_out).with("psrinfo -p").and_return(mock_shell_out(0, "4\n", ""))
 

@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Memory) do
   provides "memory"
 
-  collect_data do
+  collect_data(:solaris2) do
     memory Mash.new
     memory[:total] = shell_out("prtconf -m").stdout.to_i
   end

@@ -128,12 +128,12 @@ module Ohai
       #
       # Thanks Ara!
       def popen4(cmd, args={}, &b)
-	
+
 	## Disable garbage collection to work around possible bug in MRI
   # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
   # See OHAI-330 / CHEF-2916 / CHEF-1305
 	GC.disable
-	
+
         # Waitlast - this is magic.
         #
         # Do we wait for the child process to die before we yield
@@ -329,9 +329,10 @@ module Ohai
               # have encoding methods.
               if "".respond_to?(:force_encoding) && defined?(Encoding)
                 o.string.force_encoding(Encoding.default_external)
+                o.string.encode!('UTF-8', :invalid => :replace, :undef => :replace, :replace => '?')
                 e.string.force_encoding(Encoding.default_external)
+                e.string.encode!('UTF-8', :invalid => :replace, :undef => :replace, :replace => '?')
               end
-
               b[cid, pi[0], o, e]
               results.last
             end

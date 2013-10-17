@@ -50,17 +50,17 @@ describe Ohai::Mixin::Command, "popen4" do
         Encoding.default_internal = @saved_default_internal
       end
 
-      it "should force encode the string to US_ASCII" do
+      it "should force encode the string to UTF-8" do
         extend Ohai::Mixin::Command
         snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
-        snowy.encoding.should == Encoding::US_ASCII
+        snowy.encoding.should == Encoding::UTF_8
       end
     end
 
-    it "[OHAI-275] should mark strings as in the default external encoding" do
+    it "should force encode the string to UTF-8" do
       extend Ohai::Mixin::Command
       snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
-      snowy.encoding.should == Encoding.default_external
+      snowy.encoding.should == Encoding::UTF_8
     end
   end
 

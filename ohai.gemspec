@@ -12,15 +12,7 @@ spec = Gem::Specification.new do |s|
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
-  # This only helps with bundler because otherwise we make a dependency based
-  # on what platform we are building a gem on, not what platform we are
-  # installing it on.
-  if RUBY_PLATFORM =~ /mswin|mingw|windows/
-    s.add_dependency "systemu", "~> 2.2.0"
-  else
-    s.add_dependency "systemu"
-  end
-
+  s.add_dependency "systemu", "~> 2.5.2"
   s.add_dependency "yajl-ruby"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config"

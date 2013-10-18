@@ -99,6 +99,7 @@ module Ohai
 
   module DSL
     class Plugin
+
       include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
@@ -169,7 +170,7 @@ module Ohai
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
             if data_collector.has_key?(plat)
-              Ohai::Log.warn("Already defined collect_data on platform #{plat}")
+              raise Exception, "collect_data already defined on platform #{plat}"
             else
               data_collector[plat] = block
             end

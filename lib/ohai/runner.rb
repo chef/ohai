@@ -48,8 +48,8 @@ module Ohai
           raise DependencyCycleError, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, p).join(", ") }"
         end
 
-        dependency_providers = fetch_providers(p.dependencies)
-        dependency_providers.delete_if { |provider| (!force && provider.has_run?) || provider.eql?(p) }
+        dependency_providers = fetch_plugins(p.dependencies)
+        dependency_providers.delete_if { |plugin| (!force && plugin.has_run?) || plugin.eql?(p) }
 
         if dependency_providers.empty?
           @safe_run ? p.safe_run : p.run
@@ -60,21 +60,19 @@ module Ohai
     end
 
     # returns a list of plugins which provide the given attributes
-    def fetch_providers(attributes)
-      providers = []
+    def fetch_plugins(attributes)
+      plugins = []
       attributes.each do |attribute|
         attrs = @attributes
         parts = attribute.split('/')
         parts.each do |part|
-          next if part == Ohai::Mixin::OS.collect_os
           raise NoAttributeError, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
           attrs = attrs[part]
         end
-        providers << attrs[:_providers]
-        providers.flatten!
+        plugins << attrs[:_plugins]
+        plugins.flatten!
       end
-      providers.uniq!
-      providers
+      plugins.uniq
     end
 
     # given a list of plugins and the first plugin in the cycle,

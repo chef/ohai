@@ -236,8 +236,8 @@ module Ohai
                 a = a[part]
               end
             end
-            a[:_providers] ||= []
-            a[:_providers] << self
+            a[:_plugins] ||= []
+            a[:_plugins] << self
           end
         end
 

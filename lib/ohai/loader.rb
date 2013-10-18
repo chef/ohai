@@ -78,8 +78,8 @@ module Ohai
           end
         end
 
-        a[:_providers] ||= []
-        a[:_providers] << plugin
+        a[:_plugins] ||= []
+        a[:_plugins] << plugin
       end
     end
 

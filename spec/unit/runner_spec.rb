@@ -35,7 +35,7 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not find dependencies" do
-      @runner.should_receive(:fetch_providers).with([]).and_return([])
+      @runner.should_receive(:fetch_plugins).with([]).and_return([])
       @runner.run_plugin(@plugin)
     end
 
@@ -104,18 +104,18 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should locate the provider" do
         @ohai.attributes[:thing] = Mash.new
-        @ohai.attributes[:thing][:_providers] = [@plugin1]
+        @ohai.attributes[:thing][:_plugins] = [@plugin1]
         @ohai.attributes[:other] = Mash.new
-        @ohai.attributes[:other][:_providers] = [@plugin2]
+        @ohai.attributes[:other][:_plugins] = [@plugin2]
 
-        @runner.should_receive(:fetch_providers).twice.with(["thing"]).and_return([@plugin1])
-        @runner.should_receive(:fetch_providers).with([]).and_return([])
+        @runner.should_receive(:fetch_plugins).twice.with(["thing"]).and_return([@plugin1])
+        @runner.should_receive(:fetch_plugins).with([]).and_return([])
         @runner.run_plugin(@plugin2)
       end
 
       it "should run the plugins" do
-        @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1])
-        @runner.stub(:fetch_providers).with([]).and_return([])
+        @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
+        @runner.stub(:fetch_plugins).with([]).and_return([])
 
         @runner.run_plugin(@plugin2)
         @plugins.each do |plugin|
@@ -149,18 +149,18 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should locate each provider" do
         @ohai.attributes[:thing] = Mash.new
-        @ohai.attributes[:thing][:_providers] = [@plugin1, @plugin2]
+        @ohai.attributes[:thing][:_plugins] = [@plugin1, @plugin2]
         @ohai.attributes[:other] = Mash.new
-        @ohai.attributes[:other][:_providers] = [@plugin3]
+        @ohai.attributes[:other][:_plugins] = [@plugin3]
 
-        @runner.should_receive(:fetch_providers).exactly(3).times.with(["thing"]).and_return([@plugin1, @plugin2])
-        @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
+        @runner.should_receive(:fetch_plugins).exactly(3).times.with(["thing"]).and_return([@plugin1, @plugin2])
+        @runner.should_receive(:fetch_plugins).twice.with([]).and_return([])
         @runner.run_plugin(@plugin3)
       end
 
       it "should run the plugins" do
-        @runner.stub(:fetch_providers).with([]).and_return([])
-        @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1, @plugin2])
+        @runner.stub(:fetch_plugins).with([]).and_return([])
+        @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1, @plugin2])
         @runner.run_plugin(@plugin3)
         @plugins.each do |plugin|
           plugin.has_run?.should be_true
@@ -203,20 +203,20 @@ describe Ohai::Runner, "run_plugin" do
 
     it "should locate each provider" do
       @ohai.attributes[:one] = Mash.new
-      @ohai.attributes[:one][:_providers] = [@plugin1]
+      @ohai.attributes[:one][:_plugins] = [@plugin1]
       @ohai.attributes[:two] = Mash.new
-      @ohai.attributes[:two][:_providers] = [@plugin2]
+      @ohai.attributes[:two][:_plugins] = [@plugin2]
       @ohai.attributes[:three] = Mash.new
-      @ohai.attributes[:three][:_providers] = [@plugin3]
+      @ohai.attributes[:three][:_plugins] = [@plugin3]
 
-      @runner.should_receive(:fetch_providers).twice.with([]).and_return([])
-      @runner.should_receive(:fetch_providers).exactly(3).times.with(["one", "two"]).and_return([@plugin1, @plugin2])
+      @runner.should_receive(:fetch_plugins).twice.with([]).and_return([])
+      @runner.should_receive(:fetch_plugins).exactly(3).times.with(["one", "two"]).and_return([@plugin1, @plugin2])
       @runner.run_plugin(@plugin3)
     end
 
     it "should run the plugins" do
-      @runner.stub(:fetch_providers).with([]).and_return([])
-      @runner.stub(:fetch_providers).with(["one", "two"]).and_return([@plugin1, @plugin2])
+      @runner.stub(:fetch_plugins).with([]).and_return([])
+      @runner.stub(:fetch_plugins).with(["one", "two"]).and_return([@plugin1, @plugin2])
       @runner.run_plugin(@plugin3)
       @plugins.each do |plugin|
         plugin.has_run?.should be_true
@@ -252,8 +252,8 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should raise a DependencyCycleError" do
-      @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1])
-      @runner.stub(:fetch_providers).with(["other"]).and_return([@plugin2])
+      @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
+      @runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
       expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::DependencyCycleError)
     end
   end
@@ -285,18 +285,18 @@ describe Ohai::Runner, "run_plugin" do
       @pluginA, @pluginB, @pluginC = @plugins
 
       @ohai.attributes[:A] = Mash.new
-      @ohai.attributes[:A][:_providers] = [@pluginA]
+      @ohai.attributes[:A][:_plugins] = [@pluginA]
       @ohai.attributes[:B] = Mash.new
-      @ohai.attributes[:B][:_providers] = [@pluginB]
+      @ohai.attributes[:B][:_plugins] = [@pluginB]
       @ohai.attributes[:C] = Mash.new
-      @ohai.attributes[:C][:_providers] = [@pluginC]
+      @ohai.attributes[:C][:_plugins] = [@pluginC]
       
-      @runner.stub(:fetch_providers).with(["C"]).and_return([@pluginC])
-      @runner.stub(:fetch_providers).with([]).and_return([])
+      @runner.stub(:fetch_plugins).with(["C"]).and_return([@pluginC])
+      @runner.stub(:fetch_plugins).with([]).and_return([])
     end
 
     it "should not detect a cycle when B is the first provider returned" do
-      @runner.stub(:fetch_providers).with(["B", "C"]).and_return([@pluginB, @pluginC])
+      @runner.stub(:fetch_plugins).with(["B", "C"]).and_return([@pluginB, @pluginC])
       Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
 
@@ -306,7 +306,7 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when C is the first provider returned" do
-      @runner.stub(:fetch_providers).with(["B", "C"]).and_return([@pluginC, @pluginB])
+      @runner.stub(:fetch_plugins).with(["B", "C"]).and_return([@pluginC, @pluginB])
       Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
 
@@ -317,7 +317,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 end
 
-describe Ohai::Runner, "fetch_providers" do
+describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @ohai = Ohai::System.new
     @runner = Ohai::Runner.new(@ohai, true)
@@ -328,9 +328,9 @@ describe Ohai::Runner, "fetch_providers" do
       it "should return the provider" do
         plugin = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:single] = Mash.new
-        @ohai.attributes[:single][:_providers] = [plugin]
+        @ohai.attributes[:single][:_plugins] = [plugin]
 
-        dependency_providers = @runner.fetch_providers(["single"])
+        dependency_providers = @runner.fetch_plugins(["single"])
         dependency_providers.should eql([plugin])
       end
     end
@@ -340,9 +340,9 @@ describe Ohai::Runner, "fetch_providers" do
         plugin1 = Ohai::DSL::Plugin.new(@ohai, "")
         plugin2 = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:single] = Mash.new
-        @ohai.attributes[:single][:_providers] = [plugin1, plugin2]
+        @ohai.attributes[:single][:_plugins] = [plugin1, plugin2]
 
-        dependency_providers = @runner.fetch_providers(["single"])
+        dependency_providers = @runner.fetch_plugins(["single"])
         dependency_providers.should eql([plugin1, plugin2])
       end
     end
@@ -354,11 +354,11 @@ describe Ohai::Runner, "fetch_providers" do
         plugin1 = Ohai::DSL::Plugin.new(@ohai, "")
         plugin2 = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:one] = Mash.new
-        @ohai.attributes[:one][:_providers] = [plugin1]
+        @ohai.attributes[:one][:_plugins] = [plugin1]
         @ohai.attributes[:two] = Mash.new
-        @ohai.attributes[:two][:_providers] = [plugin2]
+        @ohai.attributes[:two][:_plugins] = [plugin2]
 
-        dependency_providers = @runner.fetch_providers(["one", "two"])
+        dependency_providers = @runner.fetch_plugins(["one", "two"])
         dependency_providers.should eql([plugin1, plugin2])
       end
     end
@@ -367,11 +367,11 @@ describe Ohai::Runner, "fetch_providers" do
       it "should return unique providers" do
         plugin = Ohai::DSL::Plugin.new(@ohai, "")
         @ohai.attributes[:one] = Mash.new
-        @ohai.attributes[:one][:_providers] = [plugin]
+        @ohai.attributes[:one][:_plugins] = [plugin]
         @ohai.attributes[:two] = Mash.new
-        @ohai.attributes[:two][:_providers] = [plugin]
+        @ohai.attributes[:two][:_plugins] = [plugin]
 
-        dependency_providers = @runner.fetch_providers(["one", "two"])
+        dependency_providers = @runner.fetch_plugins(["one", "two"])
         dependency_providers.should eql([plugin])
       end
     end
@@ -383,9 +383,9 @@ describe Ohai::Runner, "fetch_providers" do
       @ohai.attributes[:top] = Mash.new
       @ohai.attributes[:top][:middle] = Mash.new
       @ohai.attributes[:top][:middle][:bottom] = Mash.new
-      @ohai.attributes[:top][:middle][:bottom][:_providers] = [plugin]
+      @ohai.attributes[:top][:middle][:bottom][:_plugins] = [plugin]
 
-      dependency_providers = @runner.fetch_providers(["top/middle/bottom"])
+      dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
       dependency_providers.should eql([plugin])
     end
   end

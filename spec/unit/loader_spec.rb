@@ -68,7 +68,7 @@ EOF
       plugin.version.should eql(:version7)
     end
 
-    it "should log a warning from PluginDefinitionError when plugin poorly defined" do
+    it "should log a warning when plugin poorly defined" do
       contents = <<EOF
 Ohai.plugin(:#{@name}) do
   collect_data(:darwin) do

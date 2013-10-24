@@ -47,8 +47,8 @@ module Ohai
           plugin = klass.new(@controller, plugin_path) unless klass.nil?
         rescue SystemExit, Interrupt
           raise
-        rescue PluginDefinitionError => e
-          Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.message}") 
+        rescue Ohai::Exceptions::IllegalPluginDefinition => e
+          Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}") 
         rescue NoMethodError => e
           Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
         rescue Exception, Errno::ENOENT => e

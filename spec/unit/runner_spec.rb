@@ -69,12 +69,12 @@ describe Ohai::Runner, "run_plugin" do
         @plugin = klass.new(@ohai, "/tmp/plugins/thing.rb")
       end
 
-      it "should raise a NoAttributeError" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::NoAttributeError)
+      it "should raise Ohai::Excpetions::AttributeNotFound" do
+        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
       it "should not run the plugin" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::NoAttributeError)
+        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
         @plugin.has_run?.should be_false
       end
     end
@@ -251,10 +251,10 @@ describe Ohai::Runner, "run_plugin" do
       @plugin1, @plugin2 = @plugins
     end
 
-    it "should raise a DependencyCycleError" do
-      @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
-      @runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
-      expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::DependencyCycleError)
+    it "should raise Ohai::Exceptions::DependencyCycle" do
+      @runner.stub(:fetch_providers).with(["thing"]).and_return([@plugin1])
+      @runner.stub(:fetch_providers).with(["other"]).and_return([@plugin2])
+      expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle)
     end
   end
 

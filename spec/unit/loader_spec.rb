@@ -68,6 +68,20 @@ EOF
       plugin.version.should eql(:version7)
     end
 
+    it "should log a warning from PluginDefinitionError when plugin poorly defined" do
+      contents = <<EOF
+Ohai.plugin(:#{@name}) do
+  collect_data(:darwin) do
+  end
+  collect_data(:darwin) do
+  end
+end
+EOF
+      IO.stub(:read).with(@path).and_return(contents)
+      Ohai::Log.should_receive(:warn).with(/is not properly defined/)
+      @loader.load_plugin(@path)
+    end
+
     it "should log a warning from NoMethodError when plugin uses a non dsl command" do
       contents = <<EOF
 Ohai.plugin(:#{@name}) do

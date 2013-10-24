@@ -38,6 +38,9 @@ module Ohai
     end
   end
 
+  class PluginDefinitionError < Exception
+  end
+
   def self.plugin(name, &block)
     plugin = nil
     if NamedPlugin.strict_const_defined?(name)
@@ -170,7 +173,7 @@ module Ohai
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
             if data_collector.has_key?(plat)
-              raise Exception, "collect_data already defined on platform #{plat}"
+              raise Ohai::PluginDefinitionError, "collect_data already defined on platform #{plat}"
             else
               data_collector[plat] = block
             end

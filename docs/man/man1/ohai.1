@@ -73,11 +73,17 @@ The directory in which Ohai plugins are located. For example: \fB/etc/ohai/plugi
 .B \fB\-f FILE_NAME\fP, \fB\-\-file FILE_NAME\fP
 The file against which Ohai will run.
 .TP
-.B \fB\-l LEVEL\fP, \fB\-\-log_level LEVEL\fP
-The level of logging that will be stored in a log file: \fBdebug\fP, \fBinfo\fP, \fBwarn\fP, \fBerror\fP, or \fBfatal\fP.
-.TP
 .B \fB\-h\fP, \fB\-\-help\fP
 Shows help for the command.
+.TP
+.B \fB\-l LEVEL\fP, \fB\-\-log\-level LEVEL\fP
+The level of logging that will be stored in a log file: \fBdebug\fP, \fBinfo\fP, \fBwarn\fP, \fBerror\fP, or \fBfatal\fP.
+.TP
+.B \fB\-L LOGLOCATION\fP, \fB\-\-logfile c\fP
+The location in which log file output files will be saved. If this location is set to something other than \fBSTDOUT\fP, standard output logging will still be performed (otherwise there would be no output other than to a file).
+.TP
+.B \fB\-v\fP, \fB\-\-version\fP
+The version of the chef\-client.
 .UNINDENT
 .SH AUTHOR
 Opscode

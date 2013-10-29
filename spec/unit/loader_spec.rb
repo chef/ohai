@@ -78,7 +78,7 @@ Ohai.plugin(:#{@name}) do
 end
 EOF
       IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/is not properly defined/)
+      Ohai::Log.should_receive(:warn).with(/collect_data already defined on platform/)
       @loader.load_plugin(@path)
     end
 

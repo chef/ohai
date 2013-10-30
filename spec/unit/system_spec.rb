@@ -131,11 +131,11 @@ describe "Ohai::System" do
           @ohai.stub(:collect_plugins).and_return([plugin])
         end
 
-        describe "when a NoAttributeError is received" do
+        describe "when AttributeNotFound is received" do
           it "should write an error to Ohai::Log" do
-            @runner.stub(:run_plugin).and_raise(Ohai::NoAttributeError)
-            Ohai::Log.should_receive(:error).with(/NoAttributeError/)
-            expect { @ohai.run_plugins }.to raise_error(Ohai::NoAttributeError)
+            @runner.stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
+            Ohai::Log.should_receive(:error).with(/Ohai::Exceptions::AttributeNotFound/)
+            expect { @ohai.run_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
           end
         end
       end

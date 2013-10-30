@@ -95,7 +95,7 @@ module Ohai
       plugins = collect_plugins(@attributes)
       begin
         plugins.each { |plugin| @runner.run_plugin(plugin, force) }
-      rescue DependencyCycleError, NoAttributeError => e
+      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end

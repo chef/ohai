@@ -12,6 +12,8 @@ Gem::Specification.new do |s|
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"
 
+  s.add_dependency "mime-types", "~> 1.16"
+  
   s.add_dependency "yajl-ruby"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config", "~> 2.0"

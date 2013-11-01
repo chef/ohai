@@ -48,6 +48,6 @@ end
 # Setup linode mash if it is a linode system
 if looks_like_linode?
   linode Mash.new
-  get_ip_address(:public_ip, :eth0)
-  get_ip_address(:private_ip, "eth0:1")
+  get_ip_address(:public_ipv4, :eth0)
+  get_ip_address(:private_ipv4, "eth0:1")
 end

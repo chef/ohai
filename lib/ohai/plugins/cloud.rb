@@ -144,12 +144,12 @@ end
 
 # Fill cloud hash with linode values
 def get_linode_values
-  cloud[:public_ips] << linode['public_ip']
-  cloud[:private_ips] << linode['private_ip']
-  cloud[:public_ipv4] = linode['public_ip']
-  cloud[:public_hostname] = nil
-  cloud[:local_ipv4] = linode['private_ip']
-  cloud[:local_hostname] = nil
+  cloud[:public_ips] << linode['public_ipv4']
+  cloud[:private_ips] << linode['private_ipv4']
+  cloud[:public_ipv4] = linode['public_ipv4']
+  cloud[:public_hostname] = fqdn
+  cloud[:local_ipv4] = linode['private_ipv4']
+  cloud[:local_hostname] = fqdn
   cloud[:provider] = "linode"
 end
 

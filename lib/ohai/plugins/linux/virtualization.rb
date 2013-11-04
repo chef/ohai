@@ -56,9 +56,6 @@ Ohai.plugin(:Virtualization) do
       elsif modules =~ /^vboxdrv/
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
-      elsif modules =~ /^vboxguest/
-        virtualization[:system] = "vbox"
-        virtualization[:role] = "guest"
       end
     end
 
@@ -101,6 +98,11 @@ Ohai.plugin(:Virtualization) do
       when /Manufacturer: Xen/
         if so.stdout =~ /Product Name: HVM domU/
           virtualization[:system] = "xen"
+          virtualization[:role] = "guest"
+        end
+      when /Manufacturer: Oracle Corporation/
+        if so.stdout =~ /Product Name: VirtualBox/
+          virtualization[:system] = "vbox"
           virtualization[:role] = "guest"
         end
       else

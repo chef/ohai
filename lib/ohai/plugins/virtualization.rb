@@ -21,8 +21,6 @@ Ohai.plugin(:VirtualizationInfo) do
     provides "virtualization/#{info}"
   end
 
-  depends "virtualization"
-
   collect_data do
     unless virtualization.nil? || !(virtualization[:role].eql?("host"))
       begin

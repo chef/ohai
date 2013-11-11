@@ -68,27 +68,30 @@ module Ohai
           file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
           md = file_regex.match(file)
           if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = @loader.load_plugin(file, plugin_name)
-              @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
-            else
-              Ohai::Log.debug("Already loaded plugin at #{file}")
+            # we found a plugin file, load it
+            plugin = @loader.load_plugin(file)
+            if (plugin.version.eql?(:version6))
+              # we loaded a v6 plugin, check if a previous plugin path
+              # already defined this plugin
+              plugin_name = md[1].gsub(File::SEPARATOR, "::")
+              unless @v6_dependency_solver.has_key?(plugin_name)
+                # this plugin has not been defined before, save it
+                @v6_dependency_solver[plugin_name] = plugin
+              else
+                # this plugin has already been defined, ignore it
+                Ohai::Log.debug("Already loaded plugin #{plugin_name}")
+              end
             end
           end
+          true
         end
       end
-      true
     end
 
-    def run_plugins(safe = false, force = false)
-      # collect and run version 6 plugins
-      v6plugins = []
-      @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
-      v6plugins.each do |v6plugin|
-        if !v6plugin.has_run? || force
-          safe ? v6plugin.safe_run : v6plugin.run
-        end
+    def run_plugins(safe = true, force = false)
+      # run version 6 plugins
+      @v6_dependency_solver.each do |v6name, |
+        require_plugin(v6name, force)
       end
 
       # collect and run version 7 plugins
@@ -121,9 +124,27 @@ module Ohai
     #=============================================
     # Version 6 system commands
     #=============================================
-    def require_plugin(plugin_name, force=false)
+    def require_plugin(plugin_name, force = false)
+      # check if plugin_name is a v6 plugin, if not then we'll search
+      # for a matching v7 plugin
+      unless plugin = @v6_dependency_solver[plugin_name]
+        v7name = ""
+        parts = plugin_name.split("::")
+        parts.each do |part|
+          next if part.empty?
+          next if part.eql?(Ohai::Mixin::OS.collect_os)
+          v7name << part.capitalize
+        end
+
+        if Ohai::NamedPlugin.strict_const_defined?(v7name.to_sym)
+          plugin = Ohai::NamedPlugin.const_get(v7name.to_sym)
+        else
+          # could not find a suitable v7 plugin, try to load the plugin
+          plugin = plugin_for(plugin_name)
+        end
+      end
+
       unless force
-        plugin = @v6_dependency_solver[plugin_name]
         return true if plugin && plugin.has_run?
       end
 
@@ -132,20 +153,37 @@ module Ohai
         return false
       end
 
-      if plugin = @v6_dependency_solver[plugin_name] or plugin = plugin_for(plugin_name)
-        begin
-          plugin.version.eql?(:version7) ? @runner.run_plugin(plugin, force) : plugin.safe_run
-          true
-        rescue SystemExit, Interrupt
-          raise
-        rescue DependencyCycleError, NoAttributeError => e
-          Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
-          raise
-        rescue Exception,Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+      unless plugin
+        Ohai::Log.debug("No #{plugin_name} found in #{Ohai::Config[:plugin_path].join(", ")}")
+        return false
+      end
+
+      begin
+        if plugin.version.eql?(:version7)
+          @runner.run_plugin(plugin, force)
+          
+          # to emulate v6 plugin behavior, we follow the commonly-used
+          # pattern of running the platform-specific plugin block and
+          # following up with the default-behavior block. if a
+          # platform-specific block exists, Ohai::Runner will have run
+          # it above + resolved any dependencies. we'll inspect the
+          # plugin to see if a :default block also exists and run it
+          collector = plugin.class.data_collector
+          if collector.has_key?(:default) && collector.has_key?(Ohai::Mixin::OS.collect_os)
+            plugin.instance_eval(&collector[:default])
+          end
+        else
+          # v6 plugins run in safe-mode
+          plugin.safe_run
         end
-      else
-        Ohai::Log.debug("No #{plugin_name} found in #{Ohai::Config[:plugin_path]}")
+        true
+      rescue SystemExit, Interrupt
+        raise
+      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
+        Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+        raise
+      rescue Exception,Errno::ENOENT => e
+        Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end
     end
 
@@ -156,11 +194,20 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = @loader.load_plugin(check_path, plugin_name)
-          @v6_dependency_solver[plugin_name] = plugin
+          Ohai::Log.debug("Loading plugin #{check_path}")
+          plugin = @loader.load_plugin(check_path)
+          if (plugin.version.eql?(:version6))
+            # we loaded a v6 plugin, check if a previous plugin path
+            # already defined this plugin
+            unless @v6_dependency_solver.has_key?(plugin_name)
+              # this plugin has not been defined before, save it
+              @v6_dependency_solver[plugin_name] = plugin
+            else
+              # this plugin has already been defined, ignore it
+              Ohai::Log.debug("Already loaded plugin #{plugin_name}")
+            end
+          end
           break
-        else
-          next
         end
       end
       plugin

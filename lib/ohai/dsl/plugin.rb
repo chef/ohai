@@ -42,11 +42,7 @@ module Ohai
     plugin = nil
     if NamedPlugin.strict_const_defined?(name)
       plugin = NamedPlugin.const_get(name)
-      if plugin.version.eql?(:version6)
-        Ohai::Log.warn("Already loaded version 6 plugin #{name}")
-      else
-        plugin.class_eval(&block)
-      end
+      plugin.class_eval(&block)
     else
       klass = Class.new(DSL::Plugin::VersionVII, &block)
       plugin = NamedPlugin.const_set(name, klass)
@@ -54,32 +50,8 @@ module Ohai
     plugin
   end
 
-  def self.v6plugin(name_str, &block)
-    plugin = nil
-    name = nameify(name_str)
-    if NamedPlugin.strict_const_defined?(name)
-      # log @ debug-level mimics OHAI-6
-      Ohai::Log.debug("Already loaded plugin #{name}")
-      plugin = NamedPlugin.const_get(name)
-    else
-      klass = Class.new(DSL::Plugin::VersionVI, &block)
-      plugin = NamedPlugin.const_set(name, klass)
-    end
-    plugin
-  end
-
-  def self.nameify(name_str)
-    return name_str if name_str.is_a?(Symbol)
-
-    parts = name_str.split(/[^a-zA-Z0-9]/)
-    name = ""
-    parts.each do |part|
-      next if part.eql?("")
-      name << part.capitalize
-    end
-
-    raise ArgumentError, "Invalid plugin name: #{name_str}" if name.eql?("")
-    name.to_sym
+  def self.v6plugin(&block)
+    Class.new(DSL::Plugin::VersionVI, &block)
   end
 
   # cross platform /dev/null
@@ -198,8 +170,8 @@ module Ohai
           Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
         end
 
-        def require_plugin(*args)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+        def require_plugin(plugin_name)
+          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin #{plugin_name}")
         end
       end
 
@@ -229,21 +201,19 @@ module Ohai
         def provides(*paths)
           paths.each do |path|
             parts = path.split("/")
-            a = @attributes
+            d = @data
             unless parts.length == 0
               parts.shift if parts[0].length == 0
               parts.each do |part|
-                a[part] ||= Mash.new
-                a = a[part]
+                d[part] ||= Mash.new
+                d = d[part]
               end
             end
-            a[:_plugins] ||= []
-            a[:_plugins] << self
           end
         end
 
-        def require_plugin(*args)
-          @controller.require_plugin(*args)
+        def require_plugin(plugin_name)
+          @controller.require_plugin(plugin_name)
         end
 
       end

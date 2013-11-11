@@ -96,13 +96,6 @@ describe Ohai::DSL::Plugin::VersionVII do
     @name = :Test
   end
 
-  it "should log a warning when a version 6 plugin with the same name exists" do
-    name_str = @name.to_s.downcase
-    Ohai.v6plugin(name_str) { }
-    Ohai::Log.should_receive(:warn).with(/Already loaded version 6 plugin #{@name}/)
-    Ohai.plugin(@name) { }
-  end
-
   describe "#version" do
     it "should save the plugin version as :version7" do
       plugin = Ohai.plugin(@name) { }
@@ -250,15 +243,9 @@ describe Ohai::DSL::Plugin::VersionVI do
     @name_sym = :Test
   end
 
-  it "should log to debug if a plugin with the same name has been defined" do
-    Ohai.plugin(@name_sym) { }
-    Ohai::Log.should_receive(:debug).with(/Already loaded plugin #{@name_sym}/)
-    Ohai.v6plugin(@name) { }
-  end
-
   describe "#version" do
     it "should save the plugin version as :version6" do
-      plugin = Ohai.v6plugin(@name) { }
+      plugin = Ohai.v6plugin { }
       plugin.version.should eql(:version6)
     end
   end
@@ -272,7 +259,7 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attribute")
 
-      @ohai.attributes.should have_key(:attribute)
+      @ohai.data.should have_key(:attribute)
     end
 
     it "should collect a list of attributes" do
@@ -280,7 +267,7 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin.provides("attr1", "attr2", "attr3")
 
       [:attr1, :attr2, :attr3].each do |attr|
-        @ohai.attributes.should have_key(attr)
+        @ohai.data.should have_key(attr)
       end
     end
 
@@ -288,19 +275,8 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attr/subattr")
 
-      @ohai.attributes.should have_key(:attr)
-      @ohai.attributes[:attr].should have_key(:subattr)
-    end
-
-    it "should collect all unique providers for an attribute" do
-      plugins = []
-      3.times do
-        p = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
-        p.provides("attribute")
-        plugins << p
-      end
-
-      @ohai.attributes[:attribute][:_plugins].should eql(plugins)
+      @ohai.data.should have_key(:attr)
+      @ohai.data[:attr].should have_key(:subattr)
     end
   end
 

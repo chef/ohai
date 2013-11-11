@@ -43,8 +43,7 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 
   context "when accessing data via method_missing" do
-    it "should take a missing method and store the method name as a key, with its arguments as value\
-s" do
+    it "should take a missing method and store the method name as a key, with its arguments as values" do
       plugin.guns_n_roses("chinese democracy")
       plugin.data["guns_n_roses"].should eql("chinese democracy")
     end
@@ -223,7 +222,7 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#provides (deprecated)" do
     it "should log a warning" do
       plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
-      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
   end
@@ -231,16 +230,16 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#require_plugin (deprecated)" do
     it "should log a warning" do
       plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
-      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:source) { "path/plugin.rb" }
-    let (:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai, source) }
-    let (:version) { :version7 }
+    let(:ohai) { Ohai::System.new }
+    let(:source) { "path/plugin.rb" }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai, source) }
+    let(:version) { :version7 }
   end
 end
 
@@ -305,9 +304,9 @@ describe Ohai::DSL::Plugin::VersionVI do
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:source) { "path/plugin.rb" }
-    let (:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, source) }
-    let (:version) { :version6 }
+    let(:ohai) { Ohai::System.new }
+    let(:source) { "path/plugin.rb" }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, source) }
+    let(:version) { :version6 }
   end
 end

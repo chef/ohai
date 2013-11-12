@@ -18,7 +18,7 @@
 
 #http://github.com/mdkent/ohai/commit/92f51aa18b6add9682510a87dcf94835ea72b04d
 
-Ohai.plugin(:Network) do
+Ohai.plugin(:NetworkInterfaces) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 

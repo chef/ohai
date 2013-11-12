@@ -16,7 +16,7 @@
 
 require 'ohai/mixin/gce_metadata'
 
-Ohai.plugin(:GCE) do
+Ohai.plugin(:Gce) do
   include Ohai::Mixin::GCEMetadata
   GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
 

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DMI) do
+Ohai.plugin(:Dmi) do
   provides "dmi"
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)

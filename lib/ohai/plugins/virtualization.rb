@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:VirtualizationInfo) do
+Ohai.plugin(:Virtualization) do
   %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
     provides "virtualization/#{info}"
   end

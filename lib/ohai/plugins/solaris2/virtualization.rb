@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Virtualization) do
+Ohai.plugin(:VirtualizationSystem) do
   provides "virtualization"
 
   collect_data(:solaris2) do

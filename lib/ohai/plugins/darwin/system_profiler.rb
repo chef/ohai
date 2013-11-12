@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:SystemProfile) do
+Ohai.plugin(:SystemProfiler) do
   provides "system_profile"
 
   collect_data(:darwin) do

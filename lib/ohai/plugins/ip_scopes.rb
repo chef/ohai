@@ -27,10 +27,12 @@ Ohai.plugin(:IpScopes) do
       network['interfaces'].keys.each do |ifName|
         next if network['interfaces'][ifName]['addresses'].nil?
 
-        network['interfaces'][ifName]['addresses'].each do |address,attrs|
+        interface = network['interfaces'][ifName]
+        interface['addresses'].each do |address,attrs|
           begin
             attrs.merge! 'ip_scope' => address.to_ip.scope
-            privateaddress address if address.to_ip.scope =~ /PRIVATE/
+            next unless address.to_ip.scope =~ /PRIVATE/
+            privateaddress(address) if (privateaddress.nil? || interface['type'] != 'ppp')
           rescue ArgumentError
             # Just silently fail if we can't create an IP from the string.
           end

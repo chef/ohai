@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:linux) do
     virtualization Mash.new
 
     # if it is possible to detect paravirt vs hardware virt, it should be put in
@@ -56,9 +56,6 @@ Ohai.plugin do
       elsif modules =~ /^vboxdrv/
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
-      elsif modules =~ /^vboxguest/
-        virtualization[:system] = "vbox"
-        virtualization[:role] = "guest"
       end
     end
 
@@ -86,29 +83,30 @@ Ohai.plugin do
 
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
     if File.exists?("/usr/sbin/dmidecode")
-      popen4("dmidecode") do |pid, stdin, stdout, stderr|
-        stdin.close
-        dmi_info = stdout.read
-        case dmi_info
-        when /Manufacturer: Microsoft/
-          if dmi_info =~ /Product Name: Virtual Machine/
-            virtualization[:system] = "virtualpc"
-            virtualization[:role] = "guest"
-          end
-        when /Manufacturer: VMware/
-          if dmi_info =~ /Product Name: VMware Virtual Platform/
-            virtualization[:system] = "vmware"
-            virtualization[:role] = "guest"
-          end
-        when /Manufacturer: Xen/
-          if dmi_info =~ /Product Name: HVM domU/
-            virtualization[:system] = "xen"
-            virtualization[:role] = "guest"
-          end
-        else
-          nil
+      so = shell_out("dmidecode")
+      case so.stdout
+      when /Manufacturer: Microsoft/
+        if so.stdout =~ /Product Name: Virtual Machine/
+          virtualization[:system] = "virtualpc"
+          virtualization[:role] = "guest"
         end
-
+      when /Manufacturer: VMware/
+        if so.stdout =~ /Product Name: VMware Virtual Platform/
+          virtualization[:system] = "vmware"
+          virtualization[:role] = "guest"
+        end
+      when /Manufacturer: Xen/
+        if so.stdout =~ /Product Name: HVM domU/
+          virtualization[:system] = "xen"
+          virtualization[:role] = "guest"
+        end
+      when /Manufacturer: Oracle Corporation/
+        if so.stdout =~ /Product Name: VirtualBox/
+          virtualization[:system] = "vbox"
+          virtualization[:role] = "guest"
+        end
+      else
+        nil
       end
     end
 

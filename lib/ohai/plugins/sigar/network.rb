@@ -18,10 +18,9 @@
 
 #http://github.com/mdkent/ohai/commit/92f51aa18b6add9682510a87dcf94835ea72b04d
 
-require "sigar"
-
-Ohai.plugin do
-  provides "network", "counters/network"
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
   def encaps_lookup(encap)
     return "Loopback" if encap.eql?("Local Loopback")
@@ -33,31 +32,21 @@ Ohai.plugin do
     encap
   end
 
-  collect_data do
-    sigar = Sigar.new
-    network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
-    counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
-
-    ninfo = sigar.net_info
-
-    network[:default_interface] = ninfo.default_gateway_interface
-
-    network[:default_gateway] = ninfo.default_gateway
-
+  def fetch_interfaces(sigar)
     iface = Mash.new
-
     net_counters = Mash.new
 
     sigar.net_interface_list.each do |cint|
       iface[cint] = Mash.new
+
       if cint =~ /^(\w+)(\d+.*)/
         iface[cint][:type] = $1
         iface[cint][:number] = $2
       end
+
       ifconfig = sigar.net_interface_config(cint)
       iface[cint][:encapsulation] = encaps_lookup(ifconfig.type)
+
       iface[cint][:addresses] = Mash.new
       # Backwards compat: loopback has no hwaddr
       if (ifconfig.flags & Sigar::IFF_LOOPBACK) == 0
@@ -72,14 +61,17 @@ Ohai.plugin do
         end
         iface[cint][:addresses][ifconfig.address]["netmask"] = ifconfig.netmask
       end
-      iface[cint][:flags] = Sigar.net_interface_flags_to_s(ifconfig.flags).split(' ')
-      iface[cint][:mtu] = ifconfig.mtu.to_s
-      iface[cint][:queuelen] = ifconfig.tx_queue_len.to_s
+
       if ifconfig.prefix6_length != 0
         iface[cint][:addresses][ifconfig.address6] = { "family" => "inet6" }
         iface[cint][:addresses][ifconfig.address6]["prefixlen"] = ifconfig.prefix6_length.to_s
         iface[cint][:addresses][ifconfig.address6]["scope"] = Sigar.net_scope_to_s(ifconfig.scope6)
       end
+
+      iface[cint][:flags] = Sigar.net_interface_flags_to_s(ifconfig.flags).split(' ')
+      iface[cint][:mtu] = ifconfig.mtu.to_s
+      iface[cint][:queuelen] = ifconfig.tx_queue_len.to_s
+
       net_counters[cint] = Mash.new unless net_counters[cint]
       if (!cint.include?(":"))
         ifstat = sigar.net_interface_stat(cint)
@@ -103,8 +95,75 @@ Ohai.plugin do
       #64-bit AIX for example requires 64-bit caller
     end
 
-    counters[:network][:interfaces] = net_counters
+    [iface, net_counters]
+  end
 
+  # sigar-only, from network_route plugin
+  def flags(flags)
+    f = ""
+    if (flags & Sigar::RTF_UP) != 0
+      f += "U"
+    end
+    if (flags & Sigar::RTF_GATEWAY) != 0
+      f += "G"
+    end
+    if (flags & Sigar::RTF_HOST) != 0
+      f += "H"
+    end
+    f
+  end
+
+  # From sigar: include/sigar.h sigar_net_route_t
+  SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
+  
+  collect_data(:aix, :hpux) do
+    require "sigar"
+    sigar = Sigar.new
+
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
+    ninfo = sigar.net_info
+    network[:default_interface] = ninfo.default_gateway_interface
+    network[:default_gateway] = ninfo.default_gateway
+
+    iface, net_counters = fetch_interfaces(sigar)
+    counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
+  end
+
+  collect_data(:sigar) do
+    require "sigar"
+    sigar = Sigar.new
+
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
+    ninfo = sigar.net_info
+    network[:default_interface] = ninfo.default_gateway_interface
+    network[:default_gateway] = ninfo.default_gateway
+
+    iface, net_counters = fetch_interfaces(sigar)
+    counters[:network][:interfaces] = net_counters
+    network[:interfaces] = iface
+
+    sigar.net_route_list.each do |route|
+      next unless network[:interfaces][route.ifname] # this
+      # should never happen
+      network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
+      route_data={}
+      SIGAR_ROUTE_METHODS.each do |m|
+        if(m == :flags)
+          route_data[m]=flags(route.send(m))
+        else
+          route_data[m]=route.send(m)
+        end
+      end
+      network[:interfaces][route.ifname][:route][route.destination] = route_data
+    end
   end
 end

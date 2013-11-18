@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require 'ohai/os'
+require 'ohai/mixin/os'
 
-Ohai.plugin do
+Ohai.plugin(:OS) do
   provides "os", "os_version"
   depends 'kernel'
 

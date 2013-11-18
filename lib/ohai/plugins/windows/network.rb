@@ -16,17 +16,18 @@
 # limitations under the License.
 #
 
-require 'ruby-wmi'
-
-Ohai.plugin do
-  provides "network"
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
   def encaps_lookup(encap)
     return "Ethernet" if encap.eql?("Ethernet 802.3")
     encap
   end
 
-  collect_data do
+  collect_data(:windows) do
+    require 'ruby-wmi'
+
     iface = Mash.new
     iface_config = Mash.new
     iface_instance = Mash.new
@@ -103,9 +104,9 @@ Ohai.plugin do
     end
 
     cint=nil
-    status, stdout, stderr = run_command(:command => "arp -a")
-    if status == 0
-      stdout.split("\n").each do |line|
+    so = shell_out("arp -a")
+    if so.exitstatus == 0
+      so.stdout.lines do |line|
         if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
           cint = $2.downcase
         end

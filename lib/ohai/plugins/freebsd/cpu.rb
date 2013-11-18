@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides "cpu"
 
-  collect_data do
+  collect_data(:freebsd) do
     # all dmesg output for smp I can find only provides info about a single processor
     # identical processors is probably a hardware requirement so we'll duplicate data for each cpu
     # old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
@@ -51,6 +51,7 @@ Ohai.plugin do
     end
 
     cpu cpuinfo
-    cpu[:total] = from("sysctl -n hw.ncpu")
+    so = shell_out("sysctl -n hw.ncpu")
+    cpu[:total] = so.stdout.split($/)[0]
   end
 end

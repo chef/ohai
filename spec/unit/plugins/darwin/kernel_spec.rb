@@ -21,26 +21,26 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
-    @plugin = get_plugin("darwin/kernel")
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:name] = "darwin"
-    @plugin.should_receive(:popen4).with("kextstat -k -l").and_yield(1, StringIO.new, StringIO.new, StringIO.new)
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:darwin)
+    @plugin.stub(:init_kernel).and_return({})
+    @plugin.should_receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
   end
 
   it "should not set kernel_machine to x86_64" do
-    @plugin.stub(:from).with("sysctl -n hw.optional.x86_64").and_return("0")
+    @plugin.stub(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     @plugin.run
     @plugin[:kernel][:machine].should_not == 'x86_64'
   end
 
   it "should set kernel_machine to x86_64" do
-    @plugin.stub(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
+    @plugin.stub(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     @plugin.run
     @plugin[:kernel][:machine].should == 'x86_64'
   end
 
   it "should set the kernel_os to the kernel_name value" do
-    @plugin.stub(:from).with("sysctl -n hw.optional.x86_64").and_return("1")
+    @plugin.stub(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     @plugin.run
     @plugin[:kernel][:os].should == @plugin[:kernel][:name]
   end

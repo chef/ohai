@@ -24,7 +24,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @plugin = get_plugin("linux/lsb")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin.extend(SimpleFromFile)
   end
 
@@ -76,14 +76,14 @@ describe Ohai::System, "Linux lsb plugin" do
     
     describe "on Centos 5.4 correctly" do
       before(:each) do
-        @stdout.stub(:each).
-          and_yield("LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch").
-          and_yield("Distributor ID: CentOS").
-          and_yield("Description:  CentOS release 5.4 (Final)").
-          and_yield("Release:  5.4").
-          and_yield("Codename: Final")
-  
-        @plugin.stub(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @stdout = <<-LSB_RELEASE
+LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch
+Distributor ID: CentOS
+Description:  CentOS release 5.4 (Final)
+Release:  5.4
+Codename: Final
+LSB_RELEASE
+        @plugin.stub(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
       it "should set lsb[:id]" do
@@ -109,14 +109,14 @@ describe Ohai::System, "Linux lsb plugin" do
 
     describe "on Fedora 14 correctly" do
       before(:each) do
-        @stdout.stub(:each).
-          and_yield("LSB Version:    :core-4.0-ia32:core-4.0-noarch").
-          and_yield("Distributor ID: Fedora").
-          and_yield("Description:    Fedora release 14 (Laughlin)").
-          and_yield("Release:        14").
-          and_yield("Codename:       Laughlin")
-  
-        @plugin.stub(:popen4).with("lsb_release -a").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+        @stdout = <<-LSB_RELEASE
+LSB Version:    :core-4.0-ia32:core-4.0-noarch
+Distributor ID: Fedora
+Description:    Fedora release 14 (Laughlin)
+Release:        14
+Codename:       Laughlin
+LSB_RELEASE
+        @plugin.stub(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
   
       it "should set lsb[:id]" do

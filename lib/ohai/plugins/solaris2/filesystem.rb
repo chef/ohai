@@ -16,71 +16,64 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data do
+  collect_data(:solaris2) do
     fs = Mash.new
 
     # Grab filesystem data from df
-    popen4("df -Pka") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        case line
-        when /^Filesystem\s+kbytes/
-          next
-        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-          filesystem = $1
-          fs[filesystem] = Mash.new
-          fs[filesystem][:kb_size] = $2
-          fs[filesystem][:kb_used] = $3
-          fs[filesystem][:kb_available] = $4
-          fs[filesystem][:percent_used] = $5
-          fs[filesystem][:mount] = $6
-        end
+    so = shell_out("df -Pka")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem\s+kbytes/
+        next
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+        filesystem = $1
+        fs[filesystem] = Mash.new
+        fs[filesystem][:kb_size] = $2
+        fs[filesystem][:kb_used] = $3
+        fs[filesystem][:kb_available] = $4
+        fs[filesystem][:percent_used] = $5
+        fs[filesystem][:mount] = $6
       end
     end
 
     # Grab file system type from df (must be done separately)
-    popen4("df -na") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        next unless (line =~ /^(.+?)\s*: (\S+)\s*$/)
-        mount = $1
-        fs.each { |filesystem,fs_attributes|
-          next unless (fs_attributes[:mount] == mount)
-          fs[filesystem][:fs_type] = $2
-        }
-      end
+    so = shell_out("df -na")
+    so.stdout.lines do |line|
+      next unless (line =~ /^(.+?)\s*: (\S+)\s*$/)
+      mount = $1
+      fs.each { |filesystem,fs_attributes|
+        next unless (fs_attributes[:mount] == mount)
+        fs[filesystem][:fs_type] = $2
+      }
     end
 
     # Grab mount information from /bin/mount
-    popen4("mount") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        next unless (line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/)
-        filesystem = $2
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:mount] = $1
-        fs[filesystem][:mount_time] = $4 # $4 must come before "split", else it becomes nil
-        fs[filesystem][:mount_options] = $3.split("/")
-      end
+    so = shell+out("mount")
+    so.stdout.lines do |line|
+      next unless (line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/)
+      filesystem = $2
+      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem][:mount] = $1
+      fs[filesystem][:mount_time] = $4 # $4 must come before "split", else it becomes nil
+      fs[filesystem][:mount_options] = $3.split("/")
     end
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    popen4("zfs get -p -H all") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        next unless (line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/)
-        filesystem = $1
-        zfs[filesystem] = Mash.new unless zfs.has_key?(filesystem)
-        zfs[filesystem][:values] = Mash.new unless zfs[filesystem].has_key?('values')
-        zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].has_key?('sources')
-        zfs[filesystem][:values][$2] = $3
-        zfs[filesystem][:sources][$2] = $4.chomp
-      end
+    so = shell_out("sfs get -p -H all")
+    so.stdout.lines do |line|
+      next unless (line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/)
+      filesystem = $1
+      zfs[filesystem] = Mash.new unless zfs.has_key?(filesystem)
+      zfs[filesystem][:values] = Mash.new unless zfs[filesystem].has_key?('values')
+      zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].has_key?('sources')
+      zfs[filesystem][:values][$2] = $3
+      zfs[filesystem][:sources][$2] = $4.chomp
     end
+
     zfs.each { |filesystem, attributes|
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:fs_type] = 'zfs'

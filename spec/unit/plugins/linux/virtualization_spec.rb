@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux virtualization platform" do
   before(:each) do
     @plugin = get_plugin("linux/virtualization")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
@@ -102,14 +102,6 @@ describe Ohai::System, "Linux virtualization platform" do
       @plugin[:virtualization][:role].should == "host"
     end
 
-    it "should set vbox guest if /proc/modules contains vboxguest" do
-      File.should_receive(:exists?).with("/proc/modules").and_return(true)
-      File.stub(:read).with("/proc/modules").and_return("vboxguest 177749 2 vboxsf")
-      @plugin.run
-      @plugin[:virtualization][:system].should == "vbox"
-      @plugin[:virtualization][:role].should == "guest"
-    end
-
     it "should not set virtualization if vbox isn't there" do
       File.should_receive(:exists?).at_least(:once).and_return(false)
       @plugin.run
@@ -120,16 +112,6 @@ describe Ohai::System, "Linux virtualization platform" do
   describe "when we are parsing dmidecode" do
     before(:each) do
       File.should_receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
-      @stdin = double("STDIN", { :close => true })
-      @pid = 10
-      @stderr = double("STDERR")
-      @stdout = double("STDOUT")
-      @status = 0
-    end
-
-    it "should run dmidecode" do
-      @plugin.should_receive(:popen4).with("dmidecode").and_return(true)
-      @plugin.run
     end
 
     it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
@@ -142,9 +124,7 @@ System Information
 	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
 	Wake-up Type: Power Switch
 MSVPC
-      @stdout.stub(:read).and_return(ms_vpc_dmidecode)
-
-      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vpc_dmidecode, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "virtualpc"
       @plugin[:virtualization][:role].should == "guest"
@@ -162,15 +142,34 @@ System Information
 	SKU Number: Not Specified
 	Family: Not Specified
 VMWARE
-      @stdout.stub(:read).and_return(vmware_dmidecode)
-      @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vmware_dmidecode, ""))
       @plugin.run
       @plugin[:virtualization][:system].should == "vmware"
       @plugin[:virtualization][:role].should == "guest"
     end
 
+    it "should set vbox guest if dmidecode detects Oracle Corporation" do
+      vbox_dmidecode=<<-VBOX
+Base Board Information
+  Manufacturer: Oracle Corporation
+  Product Name: VirtualBox
+  Version: 1.2
+  Serial Number: 0
+  Asset Tag: Not Specified
+  Features:
+        Board is a hosting board
+  Location In Chasis: Not Specified
+  Type: Motherboard
+  Contained Object Handles: 0
+VBOX
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vbox_dmidecode, ""))
+      @plugin.run
+      @plugin[:virtualization][:system].should == "vbox"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
-      @plugin.should_receive(:popen4).with("dmidecode").and_return(true)
+      @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       @plugin.run
       @plugin[:virtualization].should == {}
     end

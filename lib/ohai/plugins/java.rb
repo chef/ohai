@@ -16,25 +16,20 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Java) do
   provides "languages/java"
 
   depends "languages"
 
   collect_data do
+    get_java_info if has_real_java?
+  end
+
+  def get_java_info
     java = Mash.new
-
-    status, stdout, stderr = nil
-    if RUBY_PLATFORM.downcase.include?("darwin") 
-      if system("#{ Ohai.abs_path( "/usr/libexec/java_home" )} 2>&1 >#{ Ohai.dev_null }")
-        status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
-      end
-    else
-      status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
-    end
-
-    if status == 0
-      stderr.split("\n").each do |line|
+    so = shell_out("java -version")
+    if so.exitstatus == 0
+      so.stderr.split(/\r?\n/).each do |line|
         case line
         when /java version \"([0-9\.\_]+)\"/
           java[:version] = $1
@@ -48,4 +43,31 @@ Ohai.plugin do
       languages[:java] = java if java[:version]
     end
   end
+
+  # On Mac OS X, the development tools include "stubs" for JVM executables that
+  # prompt the user to install the JVM if they desire. In our case we simply
+  # wish to detect if the JVM is there and do not want to trigger a popup
+  # window. As a workaround, we can run the java_home executable and check its
+  # exit status to determine if the `java` executable is the real one or the OS
+  # X stub. In the terminal, it looks like this:
+  #
+  #   $ /usr/libexec/java_home
+  #   Unable to find any JVMs matching version "(null)".
+  #   No Java runtime present, try --request to install.
+  #
+  #   $ echo $?
+  #   1
+  #
+  # This check always returns true when not on darwin because it is just a
+  # workaround for this particular annoyance.
+  def has_real_java?
+    return true unless on_darwin?
+    shell_out("/usr/libexec/java_home").status.success?
+  end
+
+  def on_darwin?
+    RUBY_PLATFORM.downcase.include?("darwin")
+  end
+
+
 end

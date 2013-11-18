@@ -14,11 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin do
+Ohai.plugin(:Rackspace) do
   provides "rackspace"
 
-  depends "kernel"
-  depends "network", "counters/network"
+  depends "kernel", "network/interfaces"
 
   # Checks for matching rackspace kernel name
   #
@@ -35,9 +34,9 @@ Ohai.plugin do
   # true:: If rackspace provider attribute found
   # false:: Otherwise
   def has_rackspace_metadata?
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "xenstore-read vm-data/provider_data/provider")
-    if status == 0
-      stdout.strip.downcase == 'rackspace'
+    so = shell_out("xenstore-read vm-data/provider_data/provider")
+    if so.exitstatus == 0
+      so.stdout.strip.downcase == 'rackspace'
     end
   rescue Ohai::Exceptions::Exec
     false
@@ -84,9 +83,9 @@ Ohai.plugin do
   # Get the rackspace region
   #
   def get_region()
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "xenstore-ls vm-data/provider_data")
-    if status == 0
-      stdout.split("\n").each do |line|
+    so = shell_out("xenstore-ls vm-data/provider_data")
+    if so.exitstatus == 0
+      so.stdout.split("\n").each do |line|
         rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
       end
     end
@@ -104,7 +103,9 @@ Ohai.plugin do
       # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
       rackspace[:public_ipv4] = rackspace[:public_ip]
       get_global_ipv6_address(:public_ipv6, :eth0)
-      rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
+      unless rackspace[:public_ip].nil?
+        rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
+      end
       rackspace[:local_ipv4] = rackspace[:private_ip]
       get_global_ipv6_address(:local_ipv6, :eth1)
       rackspace[:local_hostname] = hostname

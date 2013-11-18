@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides 'cpu'
 
-  collect_data do
+  collect_data(:netbsd) do
     cpuinfo = Mash.new
 
     # NetBSD provides some cpu information via sysctl, and a little via dmesg.boot
@@ -36,12 +36,10 @@ Ohai.plugin do
     end
 
     flags = []
-    popen4("dmidecode") do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout.each do |line|
-        if line =~ /^\s+([A-Z\d-]+)\s+\([\w\s-]+\)$/
-          flags << $1.downcase
-        end
+    so = shell_out("dmidecode")
+    so.stdout.lines do |line|
+      if line =~ /^\s+([A-Z\d-]+)\s+\([\w\s-]+\)$/
+        flags << $1.downcase
       end
     end
 

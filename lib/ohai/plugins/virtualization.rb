@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "virtualization"
-
-  depends_os "virtualization"
+Ohai.plugin(:VirtualizationInfo) do
+  %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
+    provides "virtualization/#{info}"
+  end
 
   collect_data do
     unless virtualization.nil? || !(virtualization[:role].eql?("host"))

@@ -22,11 +22,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD plugin platform" do
   before(:each) do
     @plugin = get_plugin("freebsd/platform")
-    @plugin.stub(:from).with("uname -s").and_return("FreeBSD")
-    @plugin.stub(:from).with("uname -r").and_return("7.1")
-    @plugin[:os] = "freebsd"
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "FreeBSD\n", ""))
+    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "7.1\n", ""))
+    @plugin.stub(:collect_os).and_return(:freebsd)
   end
-  
+
   it "should set platform to lowercased lsb[:id]" do
     @plugin.run        
     @plugin[:platform].should == "freebsd"

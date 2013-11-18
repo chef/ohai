@@ -24,7 +24,7 @@ describe Ohai::System, "Linux plugin platform" do
   before(:each) do
     @plugin = get_plugin("linux/platform")
     @plugin.extend(SimpleFromFile)
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @plugin[:lsb] = Mash.new
     File.stub(:exists?).with("/etc/debian_version").and_return(false)
     File.stub(:exists?).with("/etc/redhat-release").and_return(false)
@@ -37,7 +37,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub(:exists?).with("/etc/oracle-release").and_return(false)
     File.stub(:exists?).with("/usr/bin/raspi-config").and_return(false)
   end
-  
+
   describe "on lsb compliant distributions" do
     before(:each) do
       @plugin[:lsb][:id] = "Ubuntu"

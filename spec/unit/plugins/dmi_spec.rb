@@ -94,17 +94,12 @@ EOS
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @plugin = get_plugin("dmi")
-
-    @stdin = double("STDIN", { :close => true })
-    @pid = 10
-    @stderr = double("STDERR")
-    @stdout = StringIO.new(DMI_OUT)
-    @status = 0
-    @plugin.stub(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @stdout = DMI_OUT
+    @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run dmidecode" do
-    @plugin.should_receive(:popen4).with("dmidecode").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+    @plugin.should_receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:DMI) do
   depends "dmi"
 
-  collect_data do
+  collect_data(:solaris2) do
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
     if (dmi.class.to_s == 'Mash') and (dmi.keys.length > 1) 
@@ -94,84 +94,81 @@ Ohai.plugin do
     dmi_record = nil
     field = nil
 
-    popen4("smbios") do |pid, stdin, stdout, stderr|
-      stdin.close
-      
-      # ==== EXAMPLE: ====
-      # ID    SIZE TYPE
-      # 0     40   SMB_TYPE_BIOS (BIOS information)
-      # 
-      #   Vendor: HP
-      #   Version String: 2.16  
-      # ... similar lines trimmed
-      #   Characteristics: 0x7fc9da80
-      #         SMB_BIOSFL_PCI (PCI is supported)
-      # ... similar lines trimmed
-      # note the second level of indentation is via a *tab*
-      stdout.each do |raw_line|
-        next if header_type_line.match(raw_line)
-        next if blank_line.match(raw_line)
+    so = shell_out("smbios")
+    # ==== EXAMPLE: ====
+    # ID    SIZE TYPE
+    # 0     40   SMB_TYPE_BIOS (BIOS information)
+    # 
+    #   Vendor: HP
+    #   Version String: 2.16  
+    # ... similar lines trimmed
+    #   Characteristics: 0x7fc9da80
+    #         SMB_BIOSFL_PCI (PCI is supported)
+    # ... similar lines trimmed
+    # note the second level of indentation is via a *tab*
+    so.stdout.lines do |raw_line|
+      next if header_type_line.match(raw_line)
+      next if blank_line.match(raw_line)
 
-        # remove/replace any characters that don't fall inside permissible ASCII range, or whitespace
-        line = raw_line.gsub(/[^\x20-\x7E\n\t\r]/, '.')
-        if (line != raw_line)
-          Ohai::Log.debug("converted characters from line:\n#{raw_line}")
-        end
+      # remove/replace any characters that don't fall inside permissible ASCII range, or whitespace
+      line = raw_line.gsub(/[^\x20-\x7E\n\t\r]/, '.')
+      if (line != raw_line)
+        Ohai::Log.debug("converted characters from line:\n#{raw_line}")
+      end
 
-        if header_information = header_information_line.match(line)
-          dmi_record = {}
+      if header_information = header_information_line.match(line)
+        dmi_record = {}
 
-          # look up SMB ID
-          if smb_to_id.has_key?(header_information[3])
-            dmi_record[:type] = DMI.id_lookup(smb_to_id[header_information[3]])
-
-          else
-            dmi_record[:type] = header_information[3].downcase
-            Ohai::Log.debug("unrecognized header type; falling back to #{dmi_record[:type]}")
-          end
-
-          dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
-          dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
-          dmi_record[:position] = dmi[dmi_record[:type]][:all_records].length
-          dmi[dmi_record[:type]][:all_records].push(Mash.new)
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:record_id] = header_information[1]
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:size] = header_information[2]
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = header_information[4]
-          field = nil
-          
-        elsif data = data_key_value_line.match(line)
-          if dmi_record == nil
-            Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
-            next
-          end
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
-          field = data[1]
-          
-        elsif data = data_key_only_line.match(line)
-          if dmi_record == nil
-            Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
-            next
-          end
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ''
-          field = data[1]
-          
-        elsif extended_data = extended_data_line.match(line)
-          if dmi_record == nil
-            Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
-            next
-          end
-          if field == nil
-            Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
-            next
-          end
-          # overwrite "raw" value with a new Mash
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == 'Mash'
-          dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
+        # look up SMB ID
+        if smb_to_id.has_key?(header_information[3])
+          dmi_record[:type] = DMI.id_lookup(smb_to_id[header_information[3]])
 
         else
-          Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
-
+          dmi_record[:type] = header_information[3].downcase
+          Ohai::Log.debug("unrecognized header type; falling back to #{dmi_record[:type]}")
         end
+
+        dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
+        dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
+        dmi_record[:position] = dmi[dmi_record[:type]][:all_records].length
+        dmi[dmi_record[:type]][:all_records].push(Mash.new)
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:record_id] = header_information[1]
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:size] = header_information[2]
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = header_information[4]
+        field = nil
+
+      elsif data = data_key_value_line.match(line)
+        if dmi_record == nil
+          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          next
+        end
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
+        field = data[1]
+
+      elsif data = data_key_only_line.match(line)
+        if dmi_record == nil
+          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          next
+        end
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ''
+        field = data[1]
+
+      elsif extended_data = extended_data_line.match(line)
+        if dmi_record == nil
+          Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
+          next
+        end
+        if field == nil
+          Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
+          next
+        end
+        # overwrite "raw" value with a new Mash
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == 'Mash'
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
+
+      else
+        Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
+
       end
     end
 

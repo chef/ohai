@@ -134,15 +134,14 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   TOOMUCH
 
   before(:each) do
-    @plugin = get_plugin("solaris2/kernel")
-    @plugin[:kernel] = Mash.new
-    @plugin.stub(:from).with("uname -s").and_return("SunOS")
-    stdin = StringIO.new
-    @modinfo_stdout = StringIO.new(MODINFO)
-    @plugin.stub(:popen4).with("modinfo").and_yield(nil, stdin, @modinfo_stdout, nil)
+    @plugin = get_plugin("kernel")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin.stub(:init_kernel).and_return({})
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
+    @plugin.stub(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
   end
 
-  it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", "SunOS")
+  it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])
 
   it "gives excruciating detail about kernel modules" do
     @plugin.run

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
-  depends 'linux::lsb'
+  depends "lsb"
 
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
@@ -29,7 +29,7 @@ Ohai.plugin do
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
   end
 
-  collect_data do
+  collect_data(:linux) do
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching 
     if File.exists?("/etc/oracle-release")
       contents = File.read("/etc/oracle-release").chomp
@@ -98,7 +98,6 @@ Ohai.plugin do
       platform lsb[:id].downcase
       platform_version lsb[:release]
     end
-
 
     case platform
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /gcel/

@@ -26,14 +26,12 @@ describe Ohai::System, "plugin erlang" do
   before(:each) do
     @plugin = get_plugin("erlang")
     @plugin[:languages] = Mash.new
-    @status = 0
-    @stdin = ""
     @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
   end
   
   it "should get the erlang version from erl +V" do
-    @plugin.should_receive(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([0, "", "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"])
+    @plugin.should_receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
   end
 
@@ -56,7 +54,7 @@ describe Ohai::System, "plugin erlang" do
     @status = 1
     @stdin = ""
     @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    @plugin.stub(:run_command).with({:no_status_check => true, :command => "erl +V"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("erl +V").and_return(mock_shell_out(1, "", @stderr))
     @plugin.run
     @plugin.languages.should_not have_key(:erlang)
   end

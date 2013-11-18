@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Erlang) do
   provides "languages/erlang"
 
   depends "languages"
@@ -25,10 +25,9 @@ Ohai.plugin do
     output = nil
 
     erlang = Mash.new
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "erl +V")
-
-    if status == 0
-      output = stderr.split
+    so = shell_out("erl +V")
+    if so.exitstatus == 0
+      output = so.stderr.split
       if output.length >= 6
         options = output[1]
         options.gsub!(/(\(|\))/, '')

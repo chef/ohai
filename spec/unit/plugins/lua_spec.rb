@@ -26,14 +26,12 @@ describe Ohai::System, "plugin lua" do
   before(:each) do
     @plugin = get_plugin("lua")
     @plugin[:languages] = Mash.new
-    @status = 0
-    @stdout = ""
     @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"lua -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
   end
 
   it "should get the lua version from running lua -v" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"lua -v"}).and_return([0, "", "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"])
+    @plugin.should_receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
   end
 
@@ -43,10 +41,8 @@ describe Ohai::System, "plugin lua" do
   end
 
   it "should not set the languages[:lua] tree up if lua command fails" do
-    @status = 1
-    @stdout = ""
     @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"lua -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("lua -v").and_return(mock_shell_out(1, "", @stderr))
     @plugin.run
     @plugin.languages.should_not have_key(:lua)
   end

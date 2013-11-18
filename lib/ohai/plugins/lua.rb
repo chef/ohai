@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Lua) do
   provides "languages/lua"
 
   depends "languages"
@@ -26,9 +26,9 @@ Ohai.plugin do
 
     lua = Mash.new
 
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "lua -v")
-    if status == 0
-      output = stderr.split
+    so = shell_out("lua -v")
+    if so.exitstatus == 0
+      output = so.stderr.split
       if output.length >= 1
         lua[:version] = output[1]
       end

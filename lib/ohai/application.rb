@@ -56,7 +56,7 @@ class Ohai::Application
   option :version,
     :short        => "-v",
     :long         => "--version",
-    :description  => "Show chef version",
+    :description  => "Show Ohai version",
     :boolean      => true,
     :proc         => lambda {|v| puts "Ohai: #{::Ohai::VERSION}"},
     :exit         => 0

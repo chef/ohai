@@ -16,15 +16,15 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Ruby) do
   provides "languages/ruby"
 
   depends "languages"
 
   def run_ruby(command)
     cmd = "ruby -e \"require 'rbconfig'; #{command}\""
-    status, stdout, stderr = run_command(:no_status_check => true, :command => cmd)
-    stdout.strip
+    so = shell_out(cmd)
+    so.stdout.strip
   end
 
   collect_data do

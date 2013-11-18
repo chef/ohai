@@ -22,13 +22,13 @@ describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
     @plugin = get_plugin("solaris2/platform")
     @plugin.extend(SimpleFromFile)
-    @plugin[:os] = "solaris2"
-    @plugin.stub(:popen4).with("/sbin/uname -X")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin.stub(:shell_out).with("/sbin/uname -X")
   end
   
   describe "on SmartOS" do
     before(:each) do
-      uname_x = <<-UNAME_X
+      @uname_x = <<-UNAME_X
 System = SunOS
 Node = node.example.com
 Release = 5.11
@@ -41,15 +41,9 @@ OEM# = 0
 Origin# = 1
 NumCPU = 16
 UNAME_X
-      @stdin = double("STDIN", { :close => true })
-      @pid = 10
-      @stderr = double("STDERR")
-      @status = 0
-
-      @uname_x_lines = uname_x.split("\n")
 
       File.stub(:exists?).with("/sbin/uname").and_return(true)
-      @plugin.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
+      @plugin.stub(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
       File.stub(:open).with("/etc/release").and_yield(@release)

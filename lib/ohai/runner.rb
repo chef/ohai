@@ -20,12 +20,6 @@
 require 'ohai/dsl/plugin'
 
 module Ohai
-  class NoAttributeError < Exception
-  end
-
-  class DependencyCycleError < Exception
-  end
-
   class Runner
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
@@ -41,52 +35,49 @@ module Ohai
       visited = [plugin]
       while !visited.empty?
         p = visited.pop
-        unless force
-          next if p.has_run?
-        end
+
+        next if p.has_run? unless force
 
         if visited.include?(p)
-          raise DependencyCycleError, "Dependency cycle detected. Please examine the following plugin files: #{cycle_sources(visited, p).join(", ")}"
+          raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, p).join(", ") }"
         end
 
-        dependency_providers = fetch_providers(p.dependencies)
-        dependency_providers.delete_if { |provider| (!force && provider.has_run?) || provider.eql?(p) }
+        dependency_providers = fetch_plugins(p.dependencies)
+        dependency_providers.delete_if { |plugin| (!force && plugin.has_run?) || plugin.eql?(p) }
 
         if dependency_providers.empty?
           @safe_run ? p.safe_run : p.run
         else
-          visited << p << dependency_providers
-          visited.flatten!
+          visited << p << dependency_providers.first
         end
       end
     end
 
     # returns a list of plugins which provide the given attributes
-    def fetch_providers(attributes)
-      providers = []
+    def fetch_plugins(attributes)
+      plugins = []
       attributes.each do |attribute|
         attrs = @attributes
         parts = attribute.split('/')
         parts.each do |part|
-          next if part == Ohai::OS.collect_os
-          raise NoAttributeError, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
+          next if part == Ohai::Mixin::OS.collect_os
+          raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
           attrs = attrs[part]
         end
-        providers << attrs[:providers]
-        providers.flatten!
+        plugins << attrs[:_plugins]
+        plugins.flatten!
       end
-      providers.uniq!
-      providers
+      plugins.uniq
     end
 
     # given a list of plugins and the first plugin in the cycle,
     # returns the list of plugin source files responsible for the
     # cycle. does not include plugins that aren't a part of the cycle
-    def cycle_sources(plugins, cycle_start)
+    def get_cycle(plugins, cycle_start)
       cycle = plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
-      sources = []
-      cycle.each { |plugin| sources << plugin.source }
-      sources
+      names = []
+      cycle.each { |plugin| names << plugin.name }
+      names
     end
 
   end

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:BlockDevice) do
   provides "block_device"
 
-  collect_data do
+  collect_data(:linux) do
     if File.exists?("/sys/block")
       block = Mash.new
       Dir["/sys/block/*"].each do |block_device_dir|

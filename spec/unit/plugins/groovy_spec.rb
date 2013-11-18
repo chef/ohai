@@ -18,20 +18,19 @@
 
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin groovy" do
 
   before(:each) do
     @plugin = get_plugin("groovy")
     @plugin[:languages] = Mash.new
-    @status = 0
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the groovy version from running groovy -v" do
-    @plugin.should_receive(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([0, "Groovy Version: 1.6.3 JVM: 1.6.0_0\n", ""])
+    @plugin.should_receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -41,12 +40,25 @@ describe Ohai::System, "plugin groovy" do
   end
 
   it "should not set the languages[:groovy] tree up if groovy command fails" do
-    @status = 1
-    @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
     @plugin.languages.should_not have_key(:groovy)
   end
 
+  test_plugin([ "languages", "groovy" ], [ "groovy" ]) do | p |
+    p.test([ "centos-5.5", "ubuntu-12.10" ], [ "x64" ], [[]],
+           { "languages" => { "groovy" => nil }})
+    p.test([ "centos-6.2", "ubuntu-12.04", "ubuntu-13.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "groovy" => nil }})
+    p.test([ "centos-5.5" ], [ "x64" ], [[ "java", "groovy" ]],
+           { "languages" => { "groovy" => { "version" => "2.1.7" }}})
+    p.test([ "centos-6.2" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
+           { "languages" => { "groovy" => { "version" => "2.1.7" }}})
+    p.test([ "ubuntu-10.04" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
+           { "languages" => { "groovy" => { "version" => "1.6.4" }}})
+    p.test([ "ubuntu-12.04", "ubuntu-13.04" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
+           { "languages" => { "groovy" => { "version" => "1.8.6" }}})
+    p.test([ "ubuntu-12.10" ], [ "x64" ], [[ "java", "groovy" ]],
+           { "languages" => { "groovy" => { "version" => "1.8.6" }}})
+  end
 end

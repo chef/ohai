@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
-  collect_data do
+  collect_data(:openbsd) do
     virtualization Mash.new
 
     # KVM Host support for FreeBSD is in development
@@ -27,44 +27,42 @@ Ohai.plugin do
 
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
-    if from("sysctl -n hw.model") =~ /QEMU Virtual CPU/
+    so = shell_out("sysctl -n hw.model")
+    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
     end
 
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
     if File.exists?("/usr/local/sbin/dmidecode")
-      popen4("dmidecode") do |pid, stdin, stdout, stderr|
-        stdin.close
-        found_virt_manufacturer = nil
-        found_virt_product = nil
-        stdout.each do |line|
-          case line
-          when /Manufacturer: Microsoft/
-            found_virt_manufacturer = "microsoft"
-          when /Product Name: Virtual Machine/
-            found_virt_product = "microsoft"
-          when /Version: 5.0/
-            if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-              virtualization[:system] = "virtualpc"
-              virtualization[:role] = "guest"
-            end
-          when /Version: VS2005R2/
-            if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-              virtualization[:system] = "virtualserver"
-              virtualization[:role] = "guest"
-            end
-          when /Manufacturer: VMware/
-            found_virt_manufacturer = "vmware"
-          when /Product Name: VMware Virtual Platform/
-            if found_virt_manufacturer == "vmware" 
-              virtualization[:system] = "vmware"
-              virtualization[:role] = "guest"
-            end
+      so = shell_out("dmidecode")
+      found_virt_manufacturer = nil
+      found_virt_product = nil
+      so.stdout.lines do |line|
+        case line
+        when /Manufacturer: Microsoft/
+          found_virt_manufacturer = "microsoft"
+        when /Product Name: Virtual Machine/
+          found_virt_product = "microsoft"
+        when /Version: 5.0/
+          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
+            virtualization[:system] = "virtualpc"
+            virtualization[:role] = "guest"
+          end
+        when /Version: VS2005R2/
+          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
+            virtualization[:system] = "virtualserver"
+            virtualization[:role] = "guest"
+          end
+        when /Manufacturer: VMware/
+          found_virt_manufacturer = "vmware"
+        when /Product Name: VMware Virtual Platform/
+          if found_virt_manufacturer == "vmware" 
+            virtualization[:system] = "vmware"
+            virtualization[:role] = "guest"
           end
         end
       end
     end
   end
 end
-

@@ -49,10 +49,8 @@ describe Ohai::System, "plugin php" do
   end
 
   it "should parse builddate even if it's suhosin patched" do
-    @status = 0
     @stdout = "PHP 5.3.27 with Suhosin-Patch (cli) (built: Aug 30 2013 04:30:30) \nCopyright (c) 1997-2013 The PHP Group\nZend Engine v2.3.0, Copyright (c) 1998-2013 Zend Technologies"
-    @stderr = ""
-    @plugin.stub(:run_command).with({:no_status_check=>true, :command=>"php -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
     @plugin.languages[:php][:builddate].should eql("Aug 30 2013 04:30:30")
     @plugin.languages[:php][:version].should eql("5.3.27")

@@ -65,7 +65,7 @@ Ohai.plugin(:Virtualization) do
     # It would be great if we could read pv_info in the kernel
     # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
     if File.exists?("/proc/cpuinfo")
-      if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU/
+      if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
       end

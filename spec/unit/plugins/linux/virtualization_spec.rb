@@ -86,6 +86,22 @@ describe Ohai::System, "Linux virtualization platform" do
       @plugin[:virtualization][:role].should == "guest"
     end
 
+    it "should set kvm guest if /proc/cpuinfo contains Common KVM processor" do
+      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      File.stub(:read).with("/proc/cpuinfo").and_return("Common KVM processor")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "kvm"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set kvm guest if /proc/cpuinfo contains Common 32-bit KVM processor" do
+      File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      File.stub(:read).with("/proc/cpuinfo").and_return("Common 32-bit KVM processor")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "kvm"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
     it "should not set virtualization if kvm isn't there" do
       File.should_receive(:exists?).at_least(:once).and_return(false)
       @plugin.run

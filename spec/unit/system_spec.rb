@@ -423,38 +423,30 @@ EOF
     end
 
     context "when a v6 plugin requires a v7 plugin" do
-      before(:each) do
-        v6string = <<EOF
-provides 'v6attr'
-require_plugin 'v7plugin'
-v6attr message
-EOF
-        v6klass = Ohai.v6plugin { collect_contents(v6string) }
-        v7klass = Ohai.plugin(:V7plugin) {
-          provides("message")
-          collect_data { message("hey.") }
-        }
-        @v6plugin = v6klass.new(@ohai, "/tmp/plugins/v6plugin.rb")
-        @v7plugin = v7klass.new(@ohai, "/tmp/plugins/v7plugin.rb")
+      it "should look for a suitable plugin" do
+        plugin = Ohai::DSL::Plugin::VersionVII.new(@ohai, "PLACEHOLDER.rb")
+        plugin.stub(:run).and_return(true)
+        klass = Ohai::DSL::Plugin::VersionVII
+        klass.stub(:new).with(@ohai, "PLACEHOLDER.rb").and_return(plugin)
 
-        @ohai.v6_dependency_solver['v6plugin'] = @v6plugin
-        @ohai.v6_dependency_solver['v7plugin'] = @v7plugin
-        @ohai.attributes[:message] = Mash.new
-        @ohai.attributes[:message][:_plugins] = [@v7plugin]
+        @ohai.v6_dependency_solver.should_receive(:[]).with("test").and_return(nil)
+        @ohai.should_receive(:get_v7_name).with("test").and_return("Test")
+        Ohai::NamedPlugin.should_receive(:strict_const_defined?).with(:Test).and_return(true)
+        Ohai::NamedPlugin.should_receive(:const_get).with(:Test).and_return(klass)
+
+        @ohai.require_plugin("test")
       end
 
-      it "should run the plugin it requires" do
-        @ohai.require_plugin('v6plugin')
-        @v7plugin.has_run?.should be_true
-        @v6plugin.has_run?.should be_true
-      end
+      it "should try to reload the plugin, if a suitable plugin is not found" do
+        plugin = Ohai::DSL::Plugin::VersionVII.new(@ohai, "")
+        plugin.stub(:run).and_return(true)
 
-      it "should be able to access the data set by the v7 plugin" do
-        @ohai.require_plugin('v6plugin')
-        @ohai.data.should have_key(:message)
-        @ohai.data[:message].should eql("hey.")
-        @ohai.data.should have_key(:v6attr)
-        @ohai.data[:v6attr].should eql("hey.")
+        @ohai.v6_dependency_solver.should_receive(:[]).with("test").and_return(nil)
+        @ohai.should_receive(:get_v7_name).with("test").and_return("Test")
+        Ohai::NamedPlugin.should_receive(:strict_const_defined?).with(:Test).and_return(false)
+        @ohai.should_receive(:plugin_for).with("test").and_return(plugin)
+
+        @ohai.require_plugin("test")
       end
     end
 
@@ -509,6 +501,24 @@ EOF
           d[attr].should eql("o hai")
         end
       end
+    end
+  end
+
+  describe "#get_v7_name" do
+    before(:each) do
+      @ohai = Ohai::System.new
+    end
+
+    it "should return the empty string if the name includes ::" do
+      expect(@ohai.get_v7_name("linux::network")).to eql("")
+    end
+
+    it "should capitalize the name" do
+      expect(@ohai.get_v7_name("test")).to eql("Test")
+    end
+
+    it "should capitalize each part of the name following an underscore" do
+      expect(@ohai.get_v7_name("this_test_plugin")).to eql("ThisTestPlugin")
     end
   end
 

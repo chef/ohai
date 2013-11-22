@@ -128,16 +128,9 @@ module Ohai
       # check if plugin_name is a v6 plugin, if not then we'll search
       # for a matching v7 plugin
       unless plugin = @v6_dependency_solver[plugin_name]
-        v7name = ""
-        parts = plugin_name.split("::")
-        parts.each do |part|
-          next if part.empty?
-          next if part.eql?(Ohai::Mixin::OS.collect_os)
-          v7name << part.capitalize
-        end
-
-        if Ohai::NamedPlugin.strict_const_defined?(v7name.to_sym)
-          plugin = Ohai::NamedPlugin.const_get(v7name.to_sym)
+        v7name = get_v7_name(plugin_name)
+        if !v7name.empty? && Ohai::NamedPlugin.strict_const_defined?(v7name.to_sym)
+          plugin = Ohai::NamedPlugin.const_get(v7name.to_sym).new(self, "PLACEHOLDER.rb")
         else
           # could not find a suitable v7 plugin, try to load the plugin
           plugin = plugin_for(plugin_name)
@@ -185,6 +178,25 @@ module Ohai
       rescue Exception,Errno::ENOENT => e
         Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end
+    end
+
+    def get_v7_name(plugin_name)
+      # In version 6, the plugin name for a platform-specific plugin
+      # has the form <platform>::<name>. Since version 7 loads all
+      # plugins, we aren't guaranteed to only load those plugins with
+      # <platform> matching the platform we're running on.
+      if plugin_name.include?("::")
+        return ""
+      end
+
+      v7name = ""
+      parts = plugin_name.split("_")
+      parts.each do |part|
+        next if part.empty?
+        v7name << part.capitalize
+      end
+
+      v7name
     end
 
     def plugin_for(plugin_name)

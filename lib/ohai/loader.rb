@@ -68,21 +68,7 @@ module Ohai
 
     def collect_provides(plugin)
       plugin_provides = plugin.class.provides_attrs
-      
-      plugin_provides.each do |attr|
-        parts = attr.split('/')
-        a = @attributes
-        unless parts.length == 0
-          parts.shift if parts[0].length == 0
-          parts.each do |part|
-            a[part] ||= Mash.new
-            a = a[part]
-          end
-        end
-
-        a[:_plugins] ||= []
-        a[:_plugins] << plugin
-      end
+      @attributes.set_providers_for(plugin, plugin_provides)
     end
 
   end

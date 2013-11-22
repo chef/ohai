@@ -29,8 +29,8 @@ describe "Ohai::System" do
       @ohai.should be_a_kind_of(Ohai::System)
     end
 
-    it "should set @attributes to a Mash" do
-      @ohai.attributes.should be_a_kind_of(Mash)
+    it "should set @attributes to a ProvidesMap" do
+      @ohai.attributes.should be_a_kind_of(Ohai::ProvidesMap)
     end
 
     it "should set @v6_dependency_solver to a Hash" do
@@ -128,7 +128,7 @@ describe "Ohai::System" do
           @ohai = Ohai::System.new
           klass = Ohai.plugin(:Empty) { }
           plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
-          @ohai.stub(:collect_plugins).and_return([plugin])
+          @ohai.attributes.should_receive(:all_plugins).and_return([plugin])
         end
 
         describe "when AttributeNotFound is received" do
@@ -165,7 +165,7 @@ describe "Ohai::System" do
           @plugins << klass.new(@ohai, "")
         end
 
-        @ohai.stub(:collect_plugins).and_return(@plugins)
+        @ohai.attributes.should_receive(:all_plugins).and_return(@plugins)
       end
 
       it "should run each plugin once from Ohai::System" do
@@ -253,19 +253,20 @@ EOF
       end
     end
 
+    # TODO: Tests ProvidesMap not System
     it "should find all the plugins providing attributes" do
-      a = @ohai.attributes
-      a[:zero] = Mash.new
-      a[:zero][:_plugins] = [@plugins[0]]
-      a[:one] = Mash.new
-      a[:one][:_plugins] = [@plugins[1]]
-      a[:one][:two] = Mash.new
-      a[:one][:two][:_plugins] = [@plugins[2]]
-      a[:stub] = Mash.new
-      a[:stub][:three] = Mash.new
-      a[:stub][:three][:_plugins] = [@plugins[3]]
+      provides_map = @ohai.attributes
+      provides_map[:zero] = Mash.new
+      provides_map[:zero][:_plugins] = [@plugins[0]]
+      provides_map[:one] = Mash.new
+      provides_map[:one][:_plugins] = [@plugins[1]]
+      provides_map[:one][:two] = Mash.new
+      provides_map[:one][:two][:_plugins] = [@plugins[2]]
+      provides_map[:stub] = Mash.new
+      provides_map[:stub][:three] = Mash.new
+      provides_map[:stub][:three][:_plugins] = [@plugins[3]]
 
-      providers = @ohai.collect_plugins(@ohai.attributes)
+      providers = provides_map.all_plugins
       providers.size.should eql(@plugins.size)
       @plugins.each do |plugin|
         providers.include?(plugin).should be_true
@@ -400,11 +401,11 @@ EOF
         vds['v7plugin'] = @v7plugin
         vds['other'] = @other
 
-        a = @ohai.attributes
-        a[:message] = Mash.new
-        a[:message][:_plugins] = [@v7plugin]
-        a[:other] = Mash.new
-        a[:other][:_plugins] = [@other]
+        dependency_map = @ohai.attributes
+        dependency_map[:message] = Mash.new
+        dependency_map[:message][:_plugins] = [@v7plugin]
+        dependency_map[:other] = Mash.new
+        dependency_map[:other][:_plugins] = [@other]
       end
 
       it "should resolve the v7 plugin dependencies" do

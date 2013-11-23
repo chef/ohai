@@ -31,8 +31,10 @@ Ohai.plugin(:IpScopes) do
         interface['addresses'].each do |address,attrs|
           begin
             attrs.merge! 'ip_scope' => address.to_ip.scope
-            next unless address.to_ip.scope =~ /PRIVATE/
-            privateaddress(address) if (privateaddress.nil? || interface['type'] != 'ppp')
+
+            if private_addr?(address) && !tunnel_iface?(interface)
+              privateaddress(address)
+            end
           rescue ArgumentError
             # Just silently fail if we can't create an IP from the string.
           end
@@ -43,5 +45,13 @@ Ohai.plugin(:IpScopes) do
       # our favourite gem is not installed. Boohoo.
       Ohai::Log.debug("ip_scopes: cannot load gem, plugin disabled: #{e}")
     end
+  end
+
+  def private_addr?(address)
+    address.to_ip.scope =~ /PRIVATE/
+  end
+
+  def tunnel_iface?(interface)
+    interface['type'] == 'ppp'
   end
 end

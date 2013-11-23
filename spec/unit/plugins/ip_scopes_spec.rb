@@ -29,44 +29,46 @@ describe Ohai::System, "plugin ip_scopes" do
       let(:addresses1) { Hash[ip1, {}] }
       let(:addresses2) { Hash[ip2, {}, ip3, {}] }
 
-      it 'adds ip_scope to each address' do
+      it "adds ip_scope to each address's information hash" do
         plugin.run
         expect(plugin[:network][:interfaces][:eth0][:addresses]['10.0.0.1'][:ip_scope]).to eq('RFC1918 PRIVATE')
         expect(plugin[:network][:interfaces][:eth1][:addresses]['1.2.3.4'][:ip_scope]).to eq('GLOBAL UNICAST')
         expect(plugin[:network][:interfaces][:eth1][:addresses]['fe80::8638:35ff:fe4e:dc74'][:ip_scope]).to eq('LINK LOCAL UNICAST')
       end
 
-      describe 'privateaddress' do
+      describe 'privateaddress attribute' do
         before { plugin.run }
 
-        context 'host has multiple RFC1918 ethernet addresses' do
+        context 'when host has multiple RFC1918 ethernet addresses' do
           let(:ip1) { '10.0.0.1' }
           let(:ip2) { '192.168.1.1' }
           let(:interface1_type) { 'eth' }
           let(:interface2_type) { 'eth' }
 
-          it 'picks the last address' do
+          it 'picks the last RFC1918 address' do
             expect(plugin[:privateaddress]).to eq('192.168.1.1')
           end
         end
 
-        context 'host has PPP and ethernet RFC1918 addresses' do
+        context 'when host has virtual and ethernet RFC1918 addresses' do
           let(:ip1) { '10.0.0.1' }
           let(:ip2) { '192.168.1.1' }
           let(:interface1_type) { 'eth' }
           let(:interface2_type) { 'ppp' }
 
-          it 'prefers the eth address' do
+          it 'picks the non-virtual address' do
             expect(plugin[:privateaddress]).to eq('10.0.0.1')
           end
         end
 
-        context 'host only has ppp RFC1918 address' do
+        context 'when host only has virtual RFC1918 addresses' do
           let(:ip1) { '10.0.0.1' }
+          let(:ip2) { '192.168.1.1' }
           let(:interface1_type) { 'ppp' }
+          let(:interface2_type) { 'ppp' }
 
-          it 'uses it' do
-            expect(plugin[:privateaddress]).to eq('10.0.0.1')
+          it 'ignores them' do
+            expect(plugin[:privateaddress]).to be nil
           end
         end
       end
@@ -83,11 +85,11 @@ describe Ohai::System, "plugin ip_scopes" do
         plugin.run
       end
 
-      it 'does not add ip_scope to address' do
+      it 'does not add ip_scope to addresses' do
         expect(plugin[:network][:interfaces][:eth0][:addresses]['10.0.0.1'][:ip_scope]).to be nil
       end
 
-      it 'does not add a privateaddress key' do
+      it 'does not add a privateaddress attribute' do
         expect(plugin[:privateaddress]).to be nil
       end
     end

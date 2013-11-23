@@ -24,7 +24,7 @@ Ohai.plugin(:IpScopes) do
     begin
       require 'ipaddr_extensions'
 
-      network['interfaces'].keys.each do |ifName|
+      network['interfaces'].keys.sort.each do |ifName|
         next if network['interfaces'][ifName]['addresses'].nil?
 
         interface = network['interfaces'][ifName]

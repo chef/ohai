@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Network) do
+Ohai.plugin(:NetworkInterfaces) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 

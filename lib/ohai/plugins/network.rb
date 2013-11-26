@@ -18,7 +18,7 @@
 
 require 'ipaddress'
 
-Ohai.plugin(:NetworkAddresses) do
+Ohai.plugin(:Network) do
   provides "ipaddress", "ip6address", "macaddress"
 
   depends "network/interfaces"

@@ -18,7 +18,7 @@
 
 require "sigar"
 
-Ohai.plugin do
+Ohai.plugin(:NetworkRoute) do
   provides "network"
 
   def flags(flags)

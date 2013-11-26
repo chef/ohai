@@ -54,7 +54,7 @@ test Mash.new
 EOF
       IO.stub(:read).with(@path).and_return(contents)
       Ohai::Log.should_receive(:warn).with(/[DEPRECATION]/)
-      plugin = @loader.load_plugin(@path, @v6name)
+      plugin = @loader.load_plugin(@path)
       plugin.version.should eql(:version6)
     end
 

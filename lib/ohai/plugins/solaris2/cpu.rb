@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:CPU) do
+Ohai.plugin(:Cpu) do
   provides "cpu"
 
   collect_data(:solaris2) do

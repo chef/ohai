@@ -53,7 +53,7 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
-Ohai.plugin(:Network) do
+Ohai.plugin(:NetworkInterfaces) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 

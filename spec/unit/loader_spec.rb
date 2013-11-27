@@ -53,7 +53,7 @@ provides "test"
 test Mash.new
 EOF
       IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/[DEPRECATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
       plugin = @loader.load_plugin(@path, @v6name)
       plugin.version.should eql(:version6)
     end
@@ -89,7 +89,7 @@ Ohai.plugin(:#{@name}) do
 end
 EOF
       IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       @loader.load_plugin(@path)
     end
   end
@@ -105,15 +105,14 @@ EOF
       klass = Ohai.plugin(@name) { provides("attr") }
       plugin = klass.new(@ohai, @path)
       @loader.collect_provides(plugin)
-      @ohai.attributes.should have_key(:attr)
+      @ohai.attributes.find_providers_for(["attr"]).should eq([plugin])
     end
 
     it "should add provided subattributes to Ohai" do
       klass = Ohai.plugin(@name) { provides("attr/sub") }
       plugin = klass.new(@ohai, @plath)
       @loader.collect_provides(plugin)
-      @ohai.attributes.should have_key(:attr)
-      @ohai.attributes[:attr].should have_key(:sub)
+      @ohai.attributes.find_providers_for([ "attr/sub" ]).should include(plugin)
     end
 
     it "should collect the unique providers for an attribute" do
@@ -126,7 +125,7 @@ EOF
       end
 
       plugins.each { |plugin| @loader.collect_provides(plugin) }
-      @ohai.attributes[:attr][:_plugins].should eql(plugins)
+      @ohai.attributes.find_providers_for(["attr"]).should =~ plugins
     end
   end
 end

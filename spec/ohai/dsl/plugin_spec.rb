@@ -271,15 +271,16 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attribute")
 
-      @ohai.attributes.should have_key(:attribute)
+      #@ohai.attributes.should have_key(:attribute)
+      @ohai.attributes.find_providers_for(["attribute"]).should eq([plugin])
     end
 
     it "should collect a list of attributes" do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attr1", "attr2", "attr3")
 
-      [:attr1, :attr2, :attr3].each do |attr|
-        @ohai.attributes.should have_key(attr)
+      %w[attr1 attr2 attr3].each do |attr|
+        @ohai.attributes.find_providers_for([attr]).should eq([plugin])
       end
     end
 
@@ -287,8 +288,7 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attr/subattr")
 
-      @ohai.attributes.should have_key(:attr)
-      @ohai.attributes[:attr].should have_key(:subattr)
+      @ohai.attributes.find_providers_for(["attr/subattr"]).should eq([plugin])
     end
 
     it "should collect all unique providers for an attribute" do
@@ -299,7 +299,7 @@ describe Ohai::DSL::Plugin::VersionVI do
         plugins << p
       end
 
-      @ohai.attributes[:attribute][:_plugins].should eql(plugins)
+      @ohai.attributes.find_providers_for(["attribute"]).should =~ plugins
     end
   end
 

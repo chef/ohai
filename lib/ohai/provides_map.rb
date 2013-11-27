@@ -73,21 +73,6 @@ module Ohai
       collect_plugins_in(map, collected).uniq
     end
 
-    # TODO: change this to has_provider? or something domain specific.
-    def has_key?(key)
-      @map.has_key?(key)
-    end
-
-    # TODO: refactor out direct access to the map (mostly only occurs in test code)
-    def [](key)
-      @map[key]
-    end
-
-    # TODO: refactor out direct access to the map (mostly only occurs in test code)
-    def []=(key, value)
-      @map[key] = value
-    end
-
     private
 
     def collect_plugins_in(provides_map, collected)

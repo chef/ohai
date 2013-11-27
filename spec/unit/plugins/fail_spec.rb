@@ -55,7 +55,8 @@ shared_examples "a v7 loading failure" do
 
   it "should not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.attributes.should_not have_key("fail")
+    #@ohai.attributes.should_not have_key("fail")
+    lambda { @ohai.attributes.find_providers_for(["fail"]) }.should raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
   it "should not have source key" do

@@ -21,6 +21,7 @@ require 'ohai/dsl/plugin'
 
 module Ohai
   class Runner
+
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)

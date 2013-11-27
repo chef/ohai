@@ -253,18 +253,12 @@ EOF
       end
     end
 
-    # TODO: Tests ProvidesMap not System
     it "should find all the plugins providing attributes" do
       provides_map = @ohai.attributes
-      provides_map[:zero] = Mash.new
-      provides_map[:zero][:_plugins] = [@plugins[0]]
-      provides_map[:one] = Mash.new
-      provides_map[:one][:_plugins] = [@plugins[1]]
-      provides_map[:one][:two] = Mash.new
-      provides_map[:one][:two][:_plugins] = [@plugins[2]]
-      provides_map[:stub] = Mash.new
-      provides_map[:stub][:three] = Mash.new
-      provides_map[:stub][:three][:_plugins] = [@plugins[3]]
+      provides_map.set_providers_for(@plugins[0], ["zero"])
+      provides_map.set_providers_for(@plugins[1], ["one"])
+      provides_map.set_providers_for(@plugins[2], ["two"])
+      provides_map.set_providers_for(@plugins[3], ["stub/three"])
 
       providers = provides_map.all_plugins
       providers.size.should eql(@plugins.size)
@@ -355,8 +349,7 @@ EOF
 
         @ohai.v6_dependency_solver['v6plugin'] = @v6plugin
         @ohai.v6_dependency_solver['v7plugin'] = @v7plugin
-        @ohai.attributes[:message] = Mash.new
-        @ohai.attributes[:message][:_plugins] = [@v7plugin]
+        @ohai.attributes.set_providers_for(@v7plugin, ["message"])
       end
 
       it "should run the plugin it requires" do
@@ -402,10 +395,10 @@ EOF
         vds['other'] = @other
 
         dependency_map = @ohai.attributes
-        dependency_map[:message] = Mash.new
-        dependency_map[:message][:_plugins] = [@v7plugin]
-        dependency_map[:other] = Mash.new
-        dependency_map[:other][:_plugins] = [@other]
+        #dependency_map[:message][:_plugins] = [@v7plugin]
+        dependency_map.set_providers_for(@v7plugin, ["message"])
+        #dependency_map[:other][:_plugins] = [@other]
+        dependency_map.set_providers_for(@other, ["other"])
       end
 
       it "should resolve the v7 plugin dependencies" do

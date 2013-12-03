@@ -278,7 +278,6 @@ describe Ohai::Runner, "run_plugin" do
   end
 end
 
-# TODO: behavior is delegated to ProvidesMap. Rewrite tests to reflect this.
 describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @ohai = Ohai::System.new

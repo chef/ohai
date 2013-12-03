@@ -105,14 +105,14 @@ EOF
       klass = Ohai.plugin(@name) { provides("attr") }
       plugin = klass.new(@ohai, @path)
       @loader.collect_provides(plugin)
-      @ohai.attributes.find_providers_for(["attr"]).should eq([plugin])
+      @ohai.provides_map.find_providers_for(["attr"]).should eq([plugin])
     end
 
     it "should add provided subattributes to Ohai" do
       klass = Ohai.plugin(@name) { provides("attr/sub") }
       plugin = klass.new(@ohai, @plath)
       @loader.collect_provides(plugin)
-      @ohai.attributes.find_providers_for([ "attr/sub" ]).should include(plugin)
+      @ohai.provides_map.find_providers_for([ "attr/sub" ]).should include(plugin)
     end
 
     it "should collect the unique providers for an attribute" do
@@ -125,7 +125,7 @@ EOF
       end
 
       plugins.each { |plugin| @loader.collect_provides(plugin) }
-      @ohai.attributes.find_providers_for(["attr"]).should =~ plugins
+      @ohai.provides_map.find_providers_for(["attr"]).should =~ plugins
     end
   end
 end

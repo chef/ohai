@@ -34,13 +34,13 @@ module Ohai
 
   class System
     attr_accessor :data
-    attr_reader :attributes
+    attr_reader :provides_map
     attr_reader :hints
     attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
-      @attributes = ProvidesMap.new
+      @provides_map = ProvidesMap.new
 
       @hints = Hash.new
       @v6_dependency_solver = Hash.new
@@ -95,7 +95,7 @@ module Ohai
       end
 
       # collect and run version 7 plugins
-      plugins = @attributes.all_plugins
+      plugins = @provides_map.all_plugins
 
       begin
         plugins.each { |plugin| @runner.run_plugin(plugin, force) }

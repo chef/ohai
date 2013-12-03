@@ -25,7 +25,10 @@ module Ohai
 
     def initialize(controller)
       @controller = controller
-      @attributes = controller.attributes
+    end
+
+    def provides_map
+      @controller.provides_map
     end
 
     # @note: plugin_name is used only by version 6 plugins and is the
@@ -68,7 +71,7 @@ module Ohai
 
     def collect_provides(plugin)
       plugin_provides = plugin.class.provides_attrs
-      @attributes.set_providers_for(plugin, plugin_provides)
+      provides_map.set_providers_for(plugin, plugin_provides)
     end
 
   end

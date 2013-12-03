@@ -114,9 +114,8 @@ module Ohai
         @has_run = false
       end
 
-      # TODO: rename
-      def attributes
-        @controller.attributes
+      def provides_map
+        @controller.provides_map
       end
 
       def run
@@ -231,7 +230,7 @@ module Ohai
         end
 
         def provides(*paths)
-          attributes.set_providers_for(self, paths)
+          provides_map.set_providers_for(self, paths)
         end
 
         def require_plugin(*args)

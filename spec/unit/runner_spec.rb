@@ -101,7 +101,7 @@ describe Ohai::Runner, "run_plugin" do
         end
         @plugin1, @plugin2 = @plugins
 
-        @ohai.attributes.set_providers_for(@plugin1, ["thing"])
+        @ohai.provides_map.set_providers_for(@plugin1, ["thing"])
       end
 
       it "should run the plugins" do
@@ -134,8 +134,8 @@ describe Ohai::Runner, "run_plugin" do
         end
         @plugin1, @plugin2, @plugin3 = @plugins
 
-        @ohai.attributes.set_providers_for(@plugin1, ["thing"])
-        @ohai.attributes.set_providers_for(@plugin2, ["thing"])
+        @ohai.provides_map.set_providers_for(@plugin1, ["thing"])
+        @ohai.provides_map.set_providers_for(@plugin2, ["thing"])
       end
 
       it "should run the plugins" do
@@ -177,8 +177,8 @@ describe Ohai::Runner, "run_plugin" do
         @plugins << klass.new(@ohai, "/tmp/plugins/number.rb")
       end
       @plugin1, @plugin2, @plugin3 = @plugins
-      @ohai.attributes.set_providers_for(@plugin1, ["one", "two"])
-      @ohai.attributes.set_providers_for(@plugin2, ["one", "two"])
+      @ohai.provides_map.set_providers_for(@plugin1, ["one", "two"])
+      @ohai.provides_map.set_providers_for(@plugin2, ["one", "two"])
     end
 
     it "should run the plugins" do
@@ -251,9 +251,9 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when B is the first provider returned" do
-      @ohai.attributes.set_providers_for(@pluginA, ["A"])
-      @ohai.attributes.set_providers_for(@pluginB, ["B"])
-      @ohai.attributes.set_providers_for(@pluginC, ["C"])
+      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
+      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
+      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
 
       Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
@@ -264,9 +264,9 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when C is the first provider returned" do
-      @ohai.attributes.set_providers_for(@pluginA, ["A"])
-      @ohai.attributes.set_providers_for(@pluginC, ["C"])
-      @ohai.attributes.set_providers_for(@pluginB, ["B"])
+      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
+      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
+      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
 
       Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
@@ -287,7 +287,7 @@ describe Ohai::Runner, "fetch_plugins" do
 
   it "should collect the provider" do
     plugin = Ohai::DSL::Plugin.new(@ohai, "")
-    @ohai.attributes.set_providers_for(plugin, ["top/middle/bottom"])
+    @ohai.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
     dependency_providers.should eql([plugin])

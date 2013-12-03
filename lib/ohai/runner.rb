@@ -25,7 +25,7 @@ module Ohai
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
-      @attributes = controller.attributes
+      @provides_map = controller.provides_map
       @safe_run = safe_run
     end
 
@@ -59,7 +59,7 @@ module Ohai
 
     # returns a list of plugins which provide the given attributes
     def fetch_plugins(attributes)
-      @attributes.find_providers_for(attributes)
+      @provides_map.find_providers_for(attributes)
     end
 
     # given a list of plugins and the first plugin in the cycle,

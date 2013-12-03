@@ -30,7 +30,7 @@ describe "Ohai::System" do
     end
 
     it "should set @attributes to a ProvidesMap" do
-      @ohai.attributes.should be_a_kind_of(Ohai::ProvidesMap)
+      @ohai.provides_map.should be_a_kind_of(Ohai::ProvidesMap)
     end
 
     it "should set @v6_dependency_solver to a Hash" do
@@ -128,7 +128,7 @@ describe "Ohai::System" do
           @ohai = Ohai::System.new
           klass = Ohai.plugin(:Empty) { }
           plugin = klass.new(@ohai, "/tmp/plugins/empty.rb")
-          @ohai.attributes.should_receive(:all_plugins).and_return([plugin])
+          @ohai.provides_map.should_receive(:all_plugins).and_return([plugin])
         end
 
         describe "when AttributeNotFound is received" do
@@ -165,7 +165,7 @@ describe "Ohai::System" do
           @plugins << klass.new(@ohai, "")
         end
 
-        @ohai.attributes.should_receive(:all_plugins).and_return(@plugins)
+        @ohai.provides_map.should_receive(:all_plugins).and_return(@plugins)
       end
 
       it "should run each plugin once from Ohai::System" do
@@ -254,7 +254,7 @@ EOF
     end
 
     it "should find all the plugins providing attributes" do
-      provides_map = @ohai.attributes
+      provides_map = @ohai.provides_map
       provides_map.set_providers_for(@plugins[0], ["zero"])
       provides_map.set_providers_for(@plugins[1], ["one"])
       provides_map.set_providers_for(@plugins[2], ["two"])
@@ -349,7 +349,7 @@ EOF
 
         @ohai.v6_dependency_solver['v6plugin'] = @v6plugin
         @ohai.v6_dependency_solver['v7plugin'] = @v7plugin
-        @ohai.attributes.set_providers_for(@v7plugin, ["message"])
+        @ohai.provides_map.set_providers_for(@v7plugin, ["message"])
       end
 
       it "should run the plugin it requires" do
@@ -394,7 +394,7 @@ EOF
         vds['v7plugin'] = @v7plugin
         vds['other'] = @other
 
-        dependency_map = @ohai.attributes
+        dependency_map = @ohai.provides_map
         #dependency_map[:message][:_plugins] = [@v7plugin]
         dependency_map.set_providers_for(@v7plugin, ["message"])
         #dependency_map[:other][:_plugins] = [@other]

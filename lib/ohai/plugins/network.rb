@@ -158,7 +158,7 @@ Ohai.plugin(:NetworkAddresses) do
         end
       elsif family == "inet6" and ip6address.nil?
         if r["ip"].nil?
-          Ohai::Log.warn("unable to detect ip6address")
+          Ohai::Log.debug("unable to detect ip6address")
         else
           ip6address r["ip"]
           if r["mac"] and macaddress.nil? and ipaddress.nil?

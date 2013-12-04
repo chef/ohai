@@ -419,7 +419,7 @@ describe Ohai::System, "Network Plugin" do
             Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
             Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
             Ohai::Log.should_receive(:warn).with(/^\[inet\] no ip address on eth0/).once
-            Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+            Ohai::Log.should_receive(:debug).with(/^unable to detect ip6address/).once
             Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ip address on eth0/).once
             @plugin.run
           end
@@ -449,7 +449,7 @@ describe Ohai::System, "Network Plugin" do
           it "should warn about it" do
             Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
             Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
-            Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+            Ohai::Log.should_receive(:debug).with(/^unable to detect ip6address/).once
             @plugin.run
           end
         end

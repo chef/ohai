@@ -18,6 +18,7 @@
 
 provides "fqdn", "domain"
 
+require_plugin "os"
 require_plugin "#{os}::hostname"
 
 # Domain is everything after the first dot

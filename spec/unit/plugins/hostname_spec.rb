@@ -35,5 +35,15 @@ describe Ohai::System, "hostname plugin" do
     @ohai._require_plugin("hostname")
     @ohai.domain.should == nil
   end
-    
+
+  it "should require the os plugin" do
+    @ohai.should_receive(:require_plugin).with("os").and_return(true)
+    @ohai._require_plugin("hostname")
+  end
+
+  it "should load a platform specific hostname plugin" do
+    @ohai[:os] = "linux"
+    @ohai.should_receive(:require_plugin).with("linux::hostname").and_return(true)
+    @ohai._require_plugin("hostname")
+  end
 end

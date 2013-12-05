@@ -43,8 +43,7 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 
   context "when accessing data via method_missing" do
-    it "should take a missing method and store the method name as a key, with its arguments as value\
-s" do
+    it "should take a missing method and store the method name as a key, with its arguments as values" do
       plugin.guns_n_roses("chinese democracy")
       plugin.data["guns_n_roses"].should eql("chinese democracy")
     end
@@ -223,7 +222,7 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#provides (deprecated)" do
     it "should log a warning" do
       plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
-      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
   end
@@ -231,16 +230,16 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#require_plugin (deprecated)" do
     it "should log a warning" do
       plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
-      Ohai::Log.should_receive(:warn).with(/[UNSUPPORTED OPERATION]/)
+      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:source) { "path/plugin.rb" }
-    let (:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai, source) }
-    let (:version) { :version7 }
+    let(:ohai) { Ohai::System.new }
+    let(:source) { "path/plugin.rb" }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai, source) }
+    let(:version) { :version7 }
   end
 end
 
@@ -272,15 +271,15 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attribute")
 
-      @ohai.attributes.should have_key(:attribute)
+      @ohai.provides_map.find_providers_for(["attribute"]).should eq([plugin])
     end
 
     it "should collect a list of attributes" do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attr1", "attr2", "attr3")
 
-      [:attr1, :attr2, :attr3].each do |attr|
-        @ohai.attributes.should have_key(attr)
+      %w[attr1 attr2 attr3].each do |attr|
+        @ohai.provides_map.find_providers_for([attr]).should eq([plugin])
       end
     end
 
@@ -288,8 +287,7 @@ describe Ohai::DSL::Plugin::VersionVI do
       plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
       plugin.provides("attr/subattr")
 
-      @ohai.attributes.should have_key(:attr)
-      @ohai.attributes[:attr].should have_key(:subattr)
+      @ohai.provides_map.find_providers_for(["attr/subattr"]).should eq([plugin])
     end
 
     it "should collect all unique providers for an attribute" do
@@ -300,14 +298,14 @@ describe Ohai::DSL::Plugin::VersionVI do
         plugins << p
       end
 
-      @ohai.attributes[:attribute][:_plugins].should eql(plugins)
+      @ohai.provides_map.find_providers_for(["attribute"]).should =~ plugins
     end
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
-    let (:ohai) { Ohai::System.new }
-    let (:source) { "path/plugin.rb" }
-    let (:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, source) }
-    let (:version) { :version6 }
+    let(:ohai) { Ohai::System.new }
+    let(:source) { "path/plugin.rb" }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, source) }
+    let(:version) { :version6 }
   end
 end

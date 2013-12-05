@@ -21,10 +21,11 @@ require 'ohai/dsl/plugin'
 
 module Ohai
   class Runner
+
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
-      @attributes = controller.attributes
+      @provides_map = controller.provides_map
       @safe_run = safe_run
     end
 
@@ -32,42 +33,33 @@ module Ohai
     # true, then this plugin and its dependencies will be run even if
     # they have been run before.
     def run_plugin(plugin, force = false)
+      unless plugin.kind_of?(Ohai::DSL::Plugin)
+        raise ArgumentError, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
+      end
       visited = [plugin]
       while !visited.empty?
-        p = visited.pop
+        next_plugin = visited.pop
 
-        next if p.has_run? unless force
+        next if next_plugin.has_run? unless force
 
-        if visited.include?(p)
+        if visited.include?(next_plugin)
           raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, p).join(", ") }"
         end
 
-        dependency_providers = fetch_plugins(p.dependencies)
-        dependency_providers.delete_if { |plugin| (!force && plugin.has_run?) || plugin.eql?(p) }
+        dependency_providers = fetch_plugins(next_plugin.dependencies)
+        dependency_providers.delete_if { |dep_plugin| (!force && dep_plugin.has_run?) || dep_plugin.eql?(next_plugin) }
 
         if dependency_providers.empty?
-          @safe_run ? p.safe_run : p.run
+          @safe_run ? next_plugin.safe_run : next_plugin.run
         else
-          visited << p << dependency_providers.first
+          visited << next_plugin << dependency_providers.first
         end
       end
     end
 
     # returns a list of plugins which provide the given attributes
     def fetch_plugins(attributes)
-      plugins = []
-      attributes.each do |attribute|
-        attrs = @attributes
-        parts = attribute.split('/')
-        parts.each do |part|
-          next if part == Ohai::Mixin::OS.collect_os
-          raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
-          attrs = attrs[part]
-        end
-        plugins << attrs[:_plugins]
-        plugins.flatten!
-      end
-      plugins.uniq
+      @provides_map.find_providers_for(attributes)
     end
 
     # given a list of plugins and the first plugin in the cycle,

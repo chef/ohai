@@ -25,20 +25,23 @@ require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/os'
 require 'ohai/mixin/string'
+require 'ohai/provides_map'
 require 'mixlib/shellout'
 
 require 'yajl'
 
 module Ohai
+
   class System
     attr_accessor :data
-    attr_reader :attributes
+    attr_reader :provides_map
     attr_reader :hints
     attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
-      @attributes = Mash.new
+      @provides_map = ProvidesMap.new
+
       @hints = Hash.new
       @v6_dependency_solver = Hash.new
       @plugin_path = ""
@@ -92,7 +95,8 @@ module Ohai
       end
 
       # collect and run version 7 plugins
-      plugins = collect_plugins(@attributes)
+      plugins = @provides_map.all_plugins
+
       begin
         plugins.each { |plugin| @runner.run_plugin(plugin, force) }
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
@@ -105,6 +109,7 @@ module Ohai
     def collect_plugins(plugins)
       collected = []
       if plugins.is_a?(Mash)
+        # TODO: remove this branch
         plugins.keys.each do |plugin|
           if plugin.eql?("_plugins")
             collected << plugins[plugin]

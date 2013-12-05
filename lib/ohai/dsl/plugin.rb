@@ -109,10 +109,13 @@ module Ohai
 
       def initialize(controller, source)
         @controller = controller
-        @attributes = controller.attributes
         @data = controller.data
         @source = source
         @has_run = false
+      end
+
+      def provides_map
+        @controller.provides_map
       end
 
       def run
@@ -227,19 +230,7 @@ module Ohai
         end
 
         def provides(*paths)
-          paths.each do |path|
-            parts = path.split("/")
-            a = @attributes
-            unless parts.length == 0
-              parts.shift if parts[0].length == 0
-              parts.each do |part|
-                a[part] ||= Mash.new
-                a = a[part]
-              end
-            end
-            a[:_plugins] ||= []
-            a[:_plugins] << self
-          end
+          provides_map.set_providers_for(self, paths)
         end
 
         def require_plugin(*args)

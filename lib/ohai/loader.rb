@@ -25,7 +25,10 @@ module Ohai
 
     def initialize(controller)
       @controller = controller
-      @attributes = controller.attributes
+    end
+
+    def provides_map
+      @controller.provides_map
     end
 
     # @note: plugin_name is used only by version 6 plugins and is the
@@ -68,21 +71,7 @@ module Ohai
 
     def collect_provides(plugin)
       plugin_provides = plugin.class.provides_attrs
-      
-      plugin_provides.each do |attr|
-        parts = attr.split('/')
-        a = @attributes
-        unless parts.length == 0
-          parts.shift if parts[0].length == 0
-          parts.each do |part|
-            a[part] ||= Mash.new
-            a = a[part]
-          end
-        end
-
-        a[:_plugins] ||= []
-        a[:_plugins] << plugin
-      end
+      provides_map.set_providers_for(plugin, plugin_provides)
     end
 
   end

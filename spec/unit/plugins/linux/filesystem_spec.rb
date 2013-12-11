@@ -25,6 +25,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     @plugin.extend(SimpleFromFile)
 
     @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
+    @plugin.stub(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, "", ""))
@@ -49,10 +50,21 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/md0                960492     36388    875312       4% /boot
 DF
       @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      
+      @inode_stdout = <<-DFi
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+/dev/xvda1     1310720 107407 1203313    9% /
+/dev/mapper/sys.vg-special.lv            124865    380  124485    1% /special
+tmpfs           126922    273  126649    1% /run
+none            126922      1  126921    1% /run/lock
+none            126922      1  126921    1% /run/shm
+DFi
+      @plugin.stub(:shell_out).with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
-    it "should run df -P" do
-      @plugin.should_receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+    it "should run df -P and df -i" do
+      @plugin.should_receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      @plugin.should_receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
       @plugin.run
     end
 
@@ -79,6 +91,21 @@ DF
     it "should set mount to value from df -P" do
       @plugin.run
       @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+    end
+    
+    it "should set total_inodes to value from df -i" do
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes].should be == "124865"
+    end
+    
+    it "should set inodes_used to value from df -i" do
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used].should be == "380"
+    end
+    
+    it "should set inodes_available to value from df -i" do
+      @plugin.run
+      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available].should be == "124485"
     end
   end
 

@@ -17,7 +17,7 @@
 # limitations under the License
 #
 
-require 'ohai/dsl/plugin'
+require 'ohai/dsl'
 
 module Ohai
   class Runner

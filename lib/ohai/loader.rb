@@ -18,7 +18,7 @@
 
 require 'ohai/log'
 require 'ohai/mash'
-require 'ohai/dsl/plugin'
+require 'ohai/dsl'
 
 module Ohai
   class Loader

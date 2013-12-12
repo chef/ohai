@@ -23,13 +23,17 @@ module Ohai
       class VersionVI < Plugin
         attr_reader :version
 
-        def initialize(controller, source)
-          super(controller, source)
+        def initialize(controller, plugin_path)
+          super(controller.data)
+          @controller = controller
           @version = :version6
+          @plugin_path = plugin_path
         end
 
         def name
-          self.class.name.split("Ohai::NamedPlugin::")[1]
+          # Ohai V6 doesn't have any name specification for plugins. 
+          # So we are using the full path to the plugin as the name of the plugin.
+          @plugin_path
         end
 
         def self.version
@@ -41,11 +45,11 @@ module Ohai
         end
 
         def provides(*paths)
-          provides_map.set_providers_for(self, paths)
+          Ohai::Log.debug("Skipping provides '#{paths.join(",")}' for plugin '#{name}'")
         end
 
-        def require_plugin(*args)
-          @controller.require_plugin(*args)
+        def require_plugin(plugin_ref)
+          @controller.require_plugin(plugin_ref)
         end
 
       end

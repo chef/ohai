@@ -24,7 +24,7 @@ require 'ohai/mixin/seconds_to_human'
 
 module Ohai
 
-  # for plugin namespacing
+  # For plugin namespacing
   module NamedPlugin
     # dealing with ruby 1.8
     if Module.method(:const_defined?).arity == 1
@@ -40,49 +40,19 @@ module Ohai
 
   def self.plugin(name, &block)
     plugin = nil
+
     if NamedPlugin.strict_const_defined?(name)
       plugin = NamedPlugin.const_get(name)
-      if plugin.version.eql?(:version6)
-        Ohai::Log.warn("Already loaded version 6 plugin #{name}")
-      else
-        plugin.class_eval(&block)
-      end
+      plugin.class_eval(&block)
     else
       klass = Class.new(DSL::Plugin::VersionVII, &block)
       plugin = NamedPlugin.const_set(name, klass)
     end
+
     plugin
   end
 
-  def self.v6plugin(name_str, &block)
-    plugin = nil
-    name = nameify(name_str)
-    if NamedPlugin.strict_const_defined?(name)
-      # log @ debug-level mimics OHAI-6
-      Ohai::Log.debug("Already loaded plugin #{name}")
-      plugin = NamedPlugin.const_get(name)
-    else
-      klass = Class.new(DSL::Plugin::VersionVI, &block)
-      plugin = NamedPlugin.const_set(name, klass)
-    end
-    plugin
-  end
-
-  def self.nameify(name_str)
-    return name_str if name_str.is_a?(Symbol)
-
-    parts = name_str.split(/[^a-zA-Z0-9]/)
-    name = ""
-    parts.each do |part|
-      next if part.eql?("")
-      name << part.capitalize
-    end
-
-    raise ArgumentError, "Invalid plugin name: #{name_str}" if name.eql?("")
-    name.to_sym
-  end
-
-  # cross platform /dev/null
+  # Cross platform /dev/null to support testability
   def self.dev_null
     if RUBY_PLATFORM =~ /mswin|mingw|windows/
       "NUL"
@@ -91,7 +61,8 @@ module Ohai
     end
   end
 
-  # this methods gets overridden at test time, to force the shell to check
+  # Extracted abs_path to support testability:
+  # This method gets overridden at test time, to force the shell to check
   # ohai/spec/unit/path/original/absolute/path/to/exe
   def self.abs_path( abs_path )
     abs_path
@@ -107,15 +78,9 @@ module Ohai
       attr_reader :data
       attr_reader :source
 
-      def initialize(controller, source)
-        @controller = controller
-        @data = controller.data
-        @source = source
+      def initialize(data)
+        @data = data
         @has_run = false
-      end
-
-      def provides_map
-        @controller.provides_map
       end
 
       def run

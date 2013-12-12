@@ -27,15 +27,10 @@ module Ohai
       @controller = controller
     end
 
-    def provides_map
-      @controller.provides_map
-    end
-
-    # @note: plugin_name is used only by version 6 plugins and is the
-    # unique part of the file name from Ohai::Config[:plugin_path]
-    def load_plugin(plugin_path, plugin_name=nil)
+    def load_plugin(plugin_path)
       plugin = nil
 
+      # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
         contents << IO.read(plugin_path)
@@ -44,34 +39,52 @@ module Ohai
         return plugin
       end
 
+      # We assume that a plugin is a V7 plugin if it contains Ohai.plugin in its contents.
       if contents.include?("Ohai.plugin")
-        begin
-          klass = eval(contents, TOPLEVEL_BINDING)
-          plugin = klass.new(@controller, plugin_path) unless klass.nil?
-        rescue SystemExit, Interrupt
-          raise
-        rescue Ohai::Exceptions::IllegalPluginDefinition => e
-          Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}") 
-        rescue NoMethodError => e
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
-        rescue Exception, Errno::ENOENT => e
-          Ohai::Log.warn("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
-        end
-
-        return plugin if plugin.nil?
-        collect_provides(plugin)
+        plugin = load_v7_plugin(contents, plugin_path)
       else
-        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. Version 6 plugins will not be supported in future releases of Ohai. Please upgrage your plugin to version 7 plugin syntax. For more information visit here: docs.opscode.com/ohai_custom.html")
-        klass = Ohai.v6plugin(plugin_name) { collect_contents(contents) }
-        plugin = klass.new(@controller, plugin_path)
+        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. \
+Version 6 plugins will not be supported in future releases of Ohai. \
+Please upgrade your plugin to version 7 plugin syntax. \
+For more information visit here: docs.opscode.com/ohai_custom.html")
+
+        plugin = load_v6_plugin(contents, plugin_path)
       end
 
       plugin
     end
 
+    private
+
     def collect_provides(plugin)
       plugin_provides = plugin.class.provides_attrs
-      provides_map.set_providers_for(plugin, plugin_provides)
+      @controller.provides_map.set_providers_for(plugin, plugin_provides)
+    end
+
+    def load_v6_plugin(contents, plugin_path)
+      klass = Class.new(Ohai::DSL::Plugin::VersionVI) { collect_contents(contents) }
+      klass.new(@controller, plugin_path)
+    end
+
+    def load_v7_plugin(contents, plugin_path)
+      plugin = nil
+
+      begin
+        klass = eval(contents, TOPLEVEL_BINDING)
+        plugin = klass.new(@controller.data) unless klass.nil?
+      rescue SystemExit, Interrupt
+        raise
+      rescue Ohai::Exceptions::IllegalPluginDefinition => e
+        Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}")
+      rescue NoMethodError => e
+        Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
+      rescue Exception, Errno::ENOENT => e
+        Ohai::Log.warn("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+      end
+
+      collect_provides(plugin) unless plugin.nil?
+
+      plugin
     end
 
   end

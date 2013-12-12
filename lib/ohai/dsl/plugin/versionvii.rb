@@ -23,8 +23,8 @@ module Ohai
       class VersionVII < Plugin
         attr_reader :version
 
-        def initialize(controller, source)
-          super(controller, source)
+        def initialize(data)
+          super(data)
           @version = :version7
         end
 

@@ -31,7 +31,7 @@ describe Ohai::Runner, "run_plugin" do
           thing(Mash.new)
         }
       }
-      @plugin = klass.new(@ohai, "/tmp/plugins/thing.rb")
+      @plugin = klass.new(@ohai.data)
     end
 
     it "should not find dependencies" do
@@ -66,7 +66,7 @@ describe Ohai::Runner, "run_plugin" do
             thing(other_thing)
           }
         }
-        @plugin = klass.new(@ohai, "/tmp/plugins/thing.rb")
+        @plugin = klass.new(@ohai.data)
       end
 
       it "should raise Ohai::Excpetions::AttributeNotFound" do
@@ -97,7 +97,7 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai, "/tmp/plugins/source_dont_matter.rb")
+          @plugins << klass.new(@ohai.data)
         end
         @plugin1, @plugin2 = @plugins
 
@@ -130,7 +130,7 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai, "/tmp/plugins/whateva.rb")
+          @plugins << klass.new(@ohai.data)
         end
         @plugin1, @plugin2, @plugin3 = @plugins
 
@@ -174,7 +174,7 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klass1, klass2, klass3].each do |klass|
-        @plugins << klass.new(@ohai, "/tmp/plugins/number.rb")
+        @plugins << klass.new(@ohai.data)
       end
       @plugin1, @plugin2, @plugin3 = @plugins
       @ohai.provides_map.set_providers_for(@plugin1, ["one", "two"])
@@ -211,7 +211,7 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klass1, klass2].each_with_index do |klass, idx|
-        @plugins << klass.new(@ohai, "/tmp/plugins/plugin#{idx}.rb")
+        @plugins << klass.new(@ohai.data)
       end
       @plugin1, @plugin2 = @plugins
     end
@@ -245,7 +245,7 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klassA, klassB, klassC].each do |klass|
-        @plugins << klass.new(@ohai, "")
+        @plugins << klass.new(@ohai.data)
       end
       @pluginA, @pluginB, @pluginC = @plugins
     end
@@ -285,7 +285,7 @@ describe Ohai::Runner, "fetch_plugins" do
   end
 
   it "should collect the provider" do
-    plugin = Ohai::DSL::Plugin.new(@ohai, "")
+    plugin = Ohai::DSL::Plugin.new(@ohai.data)
     @ohai.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
@@ -322,7 +322,7 @@ describe Ohai::Runner, "#get_cycle" do
 
     plugins = []
     [klass1, klass2, klass3].each_with_index do |klass, idx|
-      plugins << klass.new(@ohai, "/tmp/plugins/plugin#{idx}.rb")
+      plugins << klass.new(@ohai.data)
     end
     @plugin1, @plugin2, @plugin3 = plugins
   end

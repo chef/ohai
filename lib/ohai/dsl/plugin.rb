@@ -21,6 +21,7 @@
 require 'ohai/mixin/os'
 require 'ohai/mixin/command'
 require 'ohai/mixin/seconds_to_human'
+require 'ohai/hints'
 
 module Ohai
 
@@ -92,10 +93,6 @@ module Ohai
         @has_run
       end
 
-      def hints
-        @controller.hints
-      end
-
       def [](key)
         @data[key]
       end
@@ -147,25 +144,7 @@ module Ohai
       end
 
       def hint?(name)
-        @json_parser ||= Yajl::Parser.new
-
-        return hints[name] if hints[name]
-
-        Ohai::Config[:hints_path].each do |path|
-          filename = File.join(path, "#{name}.json")
-          if File.exist?(filename)
-            begin
-              hash = @json_parser.parse(File.read(filename))
-              hints[name] = hash || Hash.new # hint
-              # should exist because the file did, even if it didn't
-              # contain anything
-            rescue Yajl::ParseError => e
-              Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
-            end
-          end
-        end
-
-        hints[name]
+        Ohai::Hints.hint?(name)
       end
 
       # emulates the old plugin loading behavior

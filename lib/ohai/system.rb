@@ -26,6 +26,7 @@ require 'ohai/mixin/command'
 require 'ohai/mixin/os'
 require 'ohai/mixin/string'
 require 'ohai/provides_map'
+require 'ohai/hints'
 require 'mixlib/shellout'
 
 require 'yajl'
@@ -35,19 +36,19 @@ module Ohai
   class System
     attr_accessor :data
     attr_reader :provides_map
-    attr_reader :hints
     attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
       @provides_map = ProvidesMap.new
 
-      @hints = Hash.new
       @v6_dependency_solver = Hash.new
       @plugin_path = ""
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
+
+      Ohai::Hints.refresh_hints()
     end
 
     def [](key)
@@ -71,7 +72,7 @@ module Ohai
           if plugin && plugin.version == :version6
             # Capture the plugin in @v6_dependency_solver if it is a V6 plugin
             # to be able to resolve V6 dependencies later on.
-            partial_path = Pathname.new(plugin_file_path).relative_path_from(path).to_s
+            partial_path = Pathname.new(plugin_file_path).relative_path_from(Pathname.new(path)).to_s
             dep_solver_key = nameify_v6_plugin(partial_path)
 
             unless @v6_dependency_solver.has_key?(dep_solver_key)
@@ -174,6 +175,8 @@ module Ohai
     # todo: fix for running w/new internals
     # add updated function to v7?
     def refresh_plugins(path = '/')
+      Ohai::Hints.refresh_hints()
+
       parts = path.split('/')
       if parts.length == 0
         h = @metadata
@@ -188,9 +191,6 @@ module Ohai
 
       refreshments = collect_plugins(h)
       Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
-
-      # remove the hints cache
-      @hints = Hash.new
 
       refreshments.each do |r|
         @seen_plugins.delete(r) if @seen_plugins.has_key?(r)

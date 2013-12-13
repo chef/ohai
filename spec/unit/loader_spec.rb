@@ -67,7 +67,7 @@ EOF
       end
     end
   end
-  
+
   when_plugins_directory "contains invalid plugins" do
     with_plugin("no_method.rb", <<EOF)
 Ohai.plugin(:Zoo) do

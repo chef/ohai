@@ -7,9 +7,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,10 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
-require 'pry'
 
 describe "Ohai::System" do
+  extend IntegrationSupport
+
   describe "#initialize" do
     before(:each) do
       @ohai = Ohai::System.new
@@ -39,46 +40,72 @@ describe "Ohai::System" do
     end
   end
 
-  # describe "#load_plugins" do
-  #   before(:each) do
-  #     Ohai::Mixin::OS.stub(:collect_os).and_return("ubuntu")
+  when_plugins_directory "contains v6 and v7 plugins" do
+    with_plugin("zoo.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'seals'
+end
+EOF
 
-  #     loader = double('@loader')
-  #     Ohai::Loader.stub(:new) { loader }
+    with_plugin("lake.rb", <<EOF)
+provides 'fish'
+EOF
 
-  #     @ohai = Ohai::System.new
-  #     klass = Ohai.plugin(:Test) { }
-  #     plugin = klass.new(@ohai.data)
-  #     loader.stub(:load_plugin).with("/tmp/plugins/empty.rb").and_return(plugin)
-  #   end
+    before do
+      @ohai = Ohai::System.new
+      @original_config = Ohai::Config[:plugin_path]
+      Ohai::Config[:plugin_path] = [ path_to(".") ]
+    end
 
-  #   it "should load plugins when plugin_path has a trailing slash" do
-  #     Ohai::Config[:plugin_path] = ["/tmp/plugins/"]
-  #     Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
-  #     Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
-  #     File.stub(:expand_path).with("/tmp/plugins/").and_return("/tmp/plugins")
-  #     @ohai.load_plugins
-  #   end
+    it "load_plugins() should load all the plugins" do
+      @ohai.load_plugins
+      @ohai.provides_map.map.keys.should include("seals")
+      @ohai.v6_dependency_solver.keys.should include("lake")
+      Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
+    end
+  end
 
-  #   it "should log debug message for already loaded plugin" do
-  #     Ohai::Config[:plugin_path] = ["/tmp/plugins","/tmp/plugins"]
-  #     Dir.should_receive(:[]).with("/tmp/plugins/*").twice.and_return(["/tmp/plugins/empty.rb"])
-  #     Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").twice.and_return([])
-  #     File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
-  #     Ohai::Log.should_receive(:debug).with(/Already loaded plugin at/)
-  #     @ohai.load_plugins
-  #   end
+  when_plugins_directory "contains directories inside" do
+    with_plugin("repo1/zoo.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'seals'
+end
+EOF
 
-  #   it "should add loaded plugins to @v6_dependency_solver" do
-  #     Ohai::Config[:plugin_path] = ["/tmp/plugins"]
-  #     Ohai::Mixin::OS.stub(:collect_os).and_return("ubuntu")
-  #     Dir.should_receive(:[]).with("/tmp/plugins/*").and_return(["/tmp/plugins/empty.rb"])
-  #     Dir.should_receive(:[]).with("/tmp/plugins/ubuntu/**/*").and_return([])
-  #     File.stub(:expand_path).with("/tmp/plugins").and_return("/tmp/plugins")
-  #     @ohai.load_plugins
-  #     @ohai.v6_dependency_solver.should have_key("empty")
-  #   end
-  # end
+    with_plugin("repo1/lake.rb", <<EOF)
+provides 'fish'
+EOF
+
+    with_plugin("repo2/nature.rb", <<EOF)
+Ohai.plugin(:Nature) do
+  provides 'crabs'
+end
+EOF
+
+    with_plugin("repo2/mountain.rb", <<EOF)
+provides 'bear'
+EOF
+
+    before do
+      @ohai = Ohai::System.new
+      @original_config = Ohai::Config[:plugin_path]
+      Ohai::Config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
+    end
+
+    after do
+      Ohai::Config[:plugin_path] = @original_config
+    end
+
+    it "load_plugins() should load all the plugins" do
+      @ohai.load_plugins
+      @ohai.provides_map.map.keys.should include("seals")
+      @ohai.provides_map.map.keys.should include("crabs")
+      @ohai.v6_dependency_solver.keys.should include("lake")
+      @ohai.v6_dependency_solver.keys.should include("mountain")
+      Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
+      Ohai::NamedPlugin.const_get(:Nature).should == Ohai::NamedPlugin::Nature
+    end
+  end
 
   describe "#run_plugins" do
     describe "with v6 plugins only" do
@@ -181,6 +208,8 @@ describe "Ohai::System" do
       before(:each) do
         @ohai = Ohai::System.new
         loader = Ohai::Loader.new(@ohai)
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ "/tmp" ]
 
         messages = <<EOF
 require_plugin 'v6message'
@@ -212,10 +241,15 @@ EOF
          [v7message, :V7message]
         ].each do |contents, name|
           IO.stub(:read).with("/tmp/#{name.to_s.downcase}.rb").and_return(contents)
+          File.stub(:exists?).with("/tmp/#{name.to_s.downcase}.rb").and_return(true)
           plugin = loader.load_plugin("/tmp/#{name.to_s.downcase}.rb")
           @plugins << plugin
           @ohai.v6_dependency_solver[name.to_s.downcase] = plugin if plugin.version == :version6
         end
+      end
+
+      after(:each) do
+         Ohai::Config[:plugin_path] = @original_config
       end
 
       it "should run each plugin" do

@@ -1,6 +1,5 @@
 require 'rspec'
 
-# require 'pry'
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 

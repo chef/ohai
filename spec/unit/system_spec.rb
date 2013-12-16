@@ -167,6 +167,83 @@ EOF
           end
         end
       end
+
+      describe "when running in whitelist mode" do
+        let(:ohai_system) { Ohai::System.new }
+
+        let(:primary_plugin_class) do
+          Ohai.plugin(:Primary) do
+            provides "primary"
+            depends "dependency/one"
+            depends "dependency/two"
+            collect_data {}
+          end
+        end
+
+        let(:dependency_plugin_one_class) do
+          Ohai.plugin(:DependencyOne) do
+            provides "dependency/one"
+            collect_data {}
+          end
+        end
+
+        let(:dependency_plugin_two_class) do
+          Ohai.plugin(:DependencyTwo) do
+            provides "dependency/two"
+            collect_data {}
+          end
+        end
+
+        let(:unrelated_plugin_class) do
+          Ohai.plugin(:Unrelated) do
+            provides "whatever"
+            collect_data {}
+          end
+        end
+
+        let(:v6_plugin_class) do
+          Class.new(Ohai::DSL::Plugin::VersionVI) { collect_contents("v6_key('v6_data')") }
+        end
+
+        let(:primary_plugin) { primary_plugin_class.new(ohai_system) }
+        let(:dependency_plugin_one) { dependency_plugin_one_class.new(ohai_system) }
+        let(:dependency_plugin_two) { dependency_plugin_two_class.new(ohai_system) }
+        let(:unrelated_plugin) { unrelated_plugin_class.new(ohai_system) }
+        let(:v6_plugin) { v6_plugin_class.new(ohai_system, "/v6_plugin.rb") }
+
+        before do
+          ohai_system.stub(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
+          [ primary_plugin, dependency_plugin_one, dependency_plugin_two, unrelated_plugin].each do |plugin|
+            plugin_provides = plugin.class.provides_attrs
+            ohai_system.provides_map.set_providers_for(plugin, plugin_provides)
+          end
+
+          ohai_system.v6_dependency_solver["v6_plugin"] = v6_plugin
+
+          ohai_system.all_plugins("primary")
+        end
+
+        # This behavior choice is somewhat arbitrary, based on what creates the
+        # least code complexity in legacy v6 plugin format support. Once we
+        # ship 7.0, though, we need to stick to the same behavior.
+        it "runs v6 plugins" do
+          expect(v6_plugin.has_run?).to be_true
+        end
+
+        it "runs plugins that provide the requested attributes" do
+          expect(primary_plugin.has_run?).to be_true
+        end
+
+        it "runs dependencies of plugins that provide requested attributes" do
+          expect(dependency_plugin_one.has_run?).to be_true
+          expect(dependency_plugin_two.has_run?).to be_true
+        end
+
+        it "does not run plugins that are irrelevant to the requested attributes" do
+          expect(unrelated_plugin.has_run?).to be_false
+        end
+
+      end
     end
 
     describe "when running all loaded plugins" do

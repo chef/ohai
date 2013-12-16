@@ -61,20 +61,27 @@ module Ohai
           raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
           attrs = attrs[part]
         end
-        plugins << attrs[:_plugins]
-        plugins.flatten!
+        plugins += collect_plugins_in(attrs, [])
       end
       plugins.uniq
     end
 
 
-    def all_plugins
-      collected = []
-      collect_plugins_in(map, collected).uniq
+    def all_plugins(attribute_filter=nil)
+      if attribute_filter.nil?
+        collected = []
+        collect_plugins_in(map, collected).uniq
+      else
+        find_providers_for(Array(attribute_filter))
+      end
     end
 
     private
 
+    # Takes a section of the map, recursively searches for a `_plugins` key
+    # to find all the plugins in that section of the map. If given the whole
+    # map, it will find all of the plugins that have at least one provided
+    # attribute.
     def collect_plugins_in(provides_map, collected)
       provides_map.keys.each do |plugin|
         if plugin.eql?("_plugins")

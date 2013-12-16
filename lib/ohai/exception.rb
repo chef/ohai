@@ -22,5 +22,6 @@ module Ohai
     class IllegalPluginDefinition < Exception; end
     class AttributeNotFound < Exception; end
     class DependencyCycle < Exception; end
+    class DependencyNotFound < Exception; end
   end
 end

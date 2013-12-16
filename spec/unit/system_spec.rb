@@ -390,5 +390,28 @@ EOF
       end
     end
 
+    when_plugins_directory "a v6 plugin that requires non-existing v7 plugin" do
+      with_plugin("message.rb", <<EOF)
+provides 'message'
+
+require_plugin 'v7message'
+
+message v7message
+EOF
+
+      before do
+        @ohai = Ohai::System.new
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+      end
+
+      after do
+         Ohai::Config[:plugin_path] = @original_config
+      end
+
+      it "should raise DependencyNotFound" do
+        lambda { @ohai.all_plugins }.should raise_error(Ohai::Exceptions::DependencyNotFound)
+      end
+    end
   end
 end

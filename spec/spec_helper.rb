@@ -1,6 +1,6 @@
 require 'rspec'
 
-# require 'pry-debugger'
+require 'pry-debugger'
 # require 'pry-stack_explorer'
 
 $:.unshift(File.expand_path("../..", __FILE__))

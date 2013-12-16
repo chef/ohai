@@ -120,11 +120,16 @@ module Ohai
       else
         # While looking up V7 plugins we need to convert the plugin_ref to an attribute.
         attribute = plugin_ref.gsub("::", "/")
-        plugins = @provides_map.find_providers_for([attribute])
+        begin
+          plugins = @provides_map.find_providers_for([attribute])
+        rescue Ohai::Exceptions::AttributeNotFound
+          Ohai::Log.debug("Can not find any v7 plugin that provides #{attribute}")
+          plugins = [ ]
+        end
       end
 
       if plugins.empty?
-        raise DependencyNotFound, "Can not find a plugin for dependency #{plugin_ref}"
+        raise Ohai::Exceptions::DependencyNotFound, "Can not find a plugin for dependency #{plugin_ref}"
       else
         plugins.each do |plugin|
           begin

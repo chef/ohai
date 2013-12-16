@@ -29,6 +29,16 @@ describe Ohai::ProvidesMap do
   let(:plugin_4) { Ohai::DSL::Plugin.new(ohai_system.data) }
 
   describe "when looking up providing plugins for a single attribute" do
+    describe "when no plugin provides the attribute" do
+      it "should raise Ohai::Exceptions::AttributeNotFound error, with inherit = false" do
+        expect{ provides_map.find_providers_for(["single"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'single'")
+      end
+
+      it "should raise Ohai::Exceptions::AttributeNotFound error, with inherit = true" do
+        expect{ provides_map.find_providers_for(["single"], true) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'single'")
+      end
+    end
+
     describe "when only one plugin provides the attribute" do
       before do
         provides_map.set_providers_for(plugin_1, ["single"])
@@ -78,12 +88,45 @@ describe Ohai::ProvidesMap do
   end
 
   describe "when looking up providers for multi-level attributes" do
-    before do
-      provides_map.set_providers_for(plugin_1, ["top/middle/bottom"])
+    describe "when the full attribute exists in the map" do
+      before do
+        provides_map.set_providers_for(plugin_1, ["top/middle/bottom"])
+      end
+
+      it "should collect the provider" do
+        expect(provides_map.find_providers_for(["top/middle/bottom"])).to eq([plugin_1])
+      end
     end
 
-    it "should collect the provider" do
-      expect(provides_map.find_providers_for(["top/middle/bottom"])).to eq([plugin_1])
+    describe "when the full attribute doesn't exist in the map" do
+      context "and inherit = false" do
+        before do
+          provides_map.set_providers_for(plugin_1, ["top/middle"])
+        end
+
+        it "should raise Ohai::Exceptions::AttributeNotFound error" do
+          expect{ provides_map.find_providers_for(["top/middle/bottom"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'top/middle/bottom'")
+        end
+      end
+
+      context "and inherit = true" do
+        before do
+          provides_map.set_providers_for(plugin_1, ["top"])
+          provides_map.set_providers_for(plugin_2, ["top/middle"])
+        end
+
+        it "should not raise error" do
+          expect{ provides_map.find_providers_for(["top/middle/bottom"], true) }.not_to raise_error
+        end
+
+        it "should return the most specific parent provider" do
+          expect(provides_map.find_providers_for(["top/middle/bottom"], true)).to eq([plugin_2])
+        end
+
+        it "should raise Ohai::Exceptions::AttributeNotFound error if no parent exists" do
+          expect{ provides_map.find_providers_for(["one/two/three"], true) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'one/two/three'")
+        end
+      end
     end
 
     it "should collect the provider" do
@@ -100,7 +143,6 @@ describe Ohai::ProvidesMap do
     end
 
     it "should find all the plugins providing attributes" do
-
       all_plugins = provides_map.all_plugins
       expect(all_plugins).to have(4).plugins
       expect(all_plugins).to include(plugin_1)

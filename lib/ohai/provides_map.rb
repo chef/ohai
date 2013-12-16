@@ -51,21 +51,32 @@ module Ohai
       end
     end
 
-    def find_providers_for(attributes)
+    # inherit = false => only look up providers for a listed
+    # attribute, don't look for parent providers
+    # inherit = true => looks up parent attribute providers if no
+    # providers for a listed attribute are found first
+    def find_providers_for(attributes, inherit = false)
       plugins = []
       attributes.each do |attribute|
         attrs = map
         parts = attribute.split('/')
         parts.each do |part|
+          # TODO: pretty sure we can remove this line, below
           next if part == Ohai::Mixin::OS.collect_os
-          raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
+          unless attrs[part]
+            # this attribute does not exist in the map.
+            # raise an error if inherit == false (we aren't looking up
+            # parent providers) or attrs[parts[0]] doesn't exist (in
+            # that case, no parents to look for)
+            raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless inherit && attrs != map
+            break # otherwise (inherit == true and we have the deepest parent of this attribute)
+          end
           attrs = attrs[part]
         end
         plugins += collect_plugins_in(attrs, [])
       end
       plugins.uniq
     end
-
 
     def all_plugins(attribute_filter=nil)
       if attribute_filter.nil?

@@ -85,45 +85,8 @@ module Ohai
       end
     end
 
-    # returns a list of plugins which provide the given attributes
     def fetch_plugins(attributes)
-      plugins = []
-      # subattribute_regex matches the lowest subattribute of any
-      # given attribute. if the attribute is 'attr/sub1/sub2', then
-      # subattribute_regex matches '/sub2'. if the attribute is 'attr'
-      # then subattribute_regex matches nothing.
-      subattribute_regex = Regexp.new("/[^/]+$")
-      attributes.each do |attribute|
-        partial_attribute = attribute
-        # look for providers until 1) we find some, or 2) we've
-        # exhaused our search (the highest-level of the attribute
-        # doesn't return any results
-        while (found_providers = safe_find_providers_for(partial_attribute)).empty?
-          md = subattribute_regex.match(partial_attribute)
-          # since md doesn't match the highest-level attribute, if md
-          # is nil, then we can't look any higher. this attribute
-          # really does not exist.
-          raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing #{attribute}" unless md
-          # remove the lowest-level subattribute and look again
-          # don't use chomp! affects attribute, too.
-          partial_attribute = partial_attribute.chomp(md[0])
-        end
-        plugins << found_providers
-        plugins.flatten!
-      end
-      plugins.uniq
-    end
-
-    # "safely" finds providers for a single attribute. by "safe", if
-    # there are no plugins providing the attribute, return an empty
-    # array to indicate this (don't raise
-    # Ohai::Exceptions::AttributeNotFound error)
-    def safe_find_providers_for(attribute)
-      begin
-        @provides_map.find_providers_for([attribute])
-      rescue Ohai::Exceptions::AttributeNotFound
-        return []
-      end
+      @provides_map.find_providers_for(attributes, true)
     end
 
     # Given a list of plugins and the first plugin in the cycle,

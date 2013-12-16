@@ -381,31 +381,6 @@ describe Ohai::Runner, "run_plugin" do
   end
 end
 
-describe Ohai::Runner, "safe_find_providers_for" do
-  before(:each) do
-    @provides_map = Ohai::ProvidesMap.new
-    @data = Mash.new
-    @ohai = double('Ohai::System', :data => @data, :provides_map => @provides_map)
-    @runner = Ohai::Runner.new(@ohai, true)
-  end
-
-  it "should return an empty array if there are no providers for an attribute" do
-    # nothing in the provides map
-    @runner.safe_find_providers_for("false/attribute").should be_empty
-  end
-
-  it "should not raise an error if there are no providers for an attribute" do
-    # nothing in the provides map
-    expect{ @runner.safe_find_providers_for("false/attribute") }.not_to raise_error
-  end
-
-  it "should return the providers for an attribute that exists" do
-    plugin = Ohai::DSL::Plugin.new(@ohai, "tmp/plugins/real.rb")
-    @provides_map.set_providers_for(plugin, ["real/attribute"])
-    @runner.safe_find_providers_for("real/attribute").should eql([plugin]) 
-  end
-end
-
 describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @provides_map = Ohai::ProvidesMap.new
@@ -425,7 +400,7 @@ describe Ohai::Runner, "fetch_plugins" do
   describe "when the attribute is not provided by any plugin" do
     describe "and some parent attribute has providers" do
       it "should return the providers for the parent" do
-        plugin = Ohai::DSL::Plugin.new(@ohai, "tmp/plugins/test.rb")
+        plugin = Ohai::DSL::Plugin.new(@ohai.data)
         @provides_map.set_providers_for(plugin, ["test/attribute"])
         @runner.fetch_plugins(["test/attribute/too_far"]).should eql([plugin])
       end
@@ -434,13 +409,13 @@ describe Ohai::Runner, "fetch_plugins" do
     describe "and no parent attribute has providers" do
       it "should raise Ohai::Exceptions::AttributeNotFound exception" do
         # provides map is empty
-        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing false/attribute")
+        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'false/attribute'")
       end
     end
   end
 
   it "should return unique providers" do
-    plugin = Ohai::DSL::Plugin.new(@ohai, "tmp/plugins/test.rb")
+    plugin = Ohai::DSL::Plugin.new(@ohai.data)
     @provides_map.set_providers_for(plugin, ["test", "test/too_far/way_too_far"])
     @runner.fetch_plugins(["test", "test/too_far/way_too_far"]).should eql([plugin])
   end

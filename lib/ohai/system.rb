@@ -58,9 +58,9 @@ module Ohai
     #=============================================
     #  Version 7 system commands
     #=============================================
-    def all_plugins
+    def all_plugins(attribute_filter=nil)
       load_plugins
-      run_plugins(true)
+      run_plugins(true, false, attribute_filter)
     end
 
     def load_plugins
@@ -84,8 +84,8 @@ module Ohai
         end
       end
     end
-    
-    def run_plugins(safe = false, force = false)
+
+    def run_plugins(safe = false, force = false, attribute_filter = nil)
       # collect and run version 6 plugins
       v6plugins = []
       @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
@@ -96,7 +96,7 @@ module Ohai
       end
 
       # collect and run version 7 plugins
-      plugins = @provides_map.all_plugins
+      plugins = @provides_map.all_plugins(attribute_filter)
 
       begin
         plugins.each { |plugin| @runner.run_plugin(plugin, force) }

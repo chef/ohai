@@ -85,6 +85,10 @@ describe Ohai::ProvidesMap do
     it "should collect the provider" do
       expect(provides_map.find_providers_for(["top/middle/bottom"])).to eq([plugin_1])
     end
+
+    it "should collect the provider" do
+      expect(provides_map.find_providers_for(["top/middle"])).to eq([plugin_1])
+    end
   end
 
   describe "when listing all plugins" do
@@ -103,6 +107,21 @@ describe Ohai::ProvidesMap do
       expect(all_plugins).to include(plugin_2)
       expect(all_plugins).to include(plugin_3)
       expect(all_plugins).to include(plugin_4)
+    end
+
+    describe "with an attribute filter" do
+      it "finds plugins with a single level of attribute" do
+        expect(provides_map.all_plugins("one")).to eq([plugin_1])
+      end
+
+      it "finds plugins with an exact match for multiple levels of attribute" do
+        expect(provides_map.all_plugins("stub/three")).to eq([plugin_3])
+      end
+
+      it "finds plugins that provide subattributes of the requested path" do
+        expect(provides_map.all_plugins("stub")).to eq([plugin_3])
+        expect(provides_map.all_plugins("foo/bar")).to eq([plugin_4])
+      end
     end
   end
 

@@ -1,6 +1,5 @@
 require 'rspec'
 
-# require 'pry'
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 
@@ -8,6 +7,7 @@ $:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'spec/support/platform_helpers'
+require 'spec/support/integration_helper'
 require 'ohai'
 Ohai::Config[:log_level] = :error
 

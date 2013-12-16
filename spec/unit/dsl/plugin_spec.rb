@@ -21,10 +21,6 @@ require File.expand_path("../../../spec_helper.rb", __FILE__)
 
 shared_examples "Ohai::DSL::Plugin" do
   context "#initialize" do
-    it "should save the plugin source file" do
-      plugin.source.should eql(source)
-    end
-
     it "should set has_run? to false" do
       plugin.has_run?.should be_false
     end
@@ -93,13 +89,6 @@ end
 describe Ohai::DSL::Plugin::VersionVII do
   before(:each) do
     @name = :Test
-  end
-
-  it "should log a warning when a version 6 plugin with the same name exists" do
-    name_str = @name.to_s.downcase
-    Ohai.v6plugin(name_str) { }
-    Ohai::Log.should_receive(:warn).with(/Already loaded version 6 plugin #{@name}/)
-    Ohai.plugin(@name) { }
   end
 
   describe "#version" do
@@ -221,7 +210,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#provides (deprecated)" do
     it "should log a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
+      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
       Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
@@ -229,7 +218,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#require_plugin (deprecated)" do
     it "should log a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Ohai::System.new, "")
+      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
       Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
@@ -237,27 +226,15 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:source) { "path/plugin.rb" }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai, source) }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai.data) }
     let(:version) { :version7 }
   end
 end
 
 describe Ohai::DSL::Plugin::VersionVI do
-  before(:each) do
-    @name = "test"
-    @name_sym = :Test
-  end
-
-  it "should log to debug if a plugin with the same name has been defined" do
-    Ohai.plugin(@name_sym) { }
-    Ohai::Log.should_receive(:debug).with(/Already loaded plugin #{@name_sym}/)
-    Ohai.v6plugin(@name) { }
-  end
-
   describe "#version" do
     it "should save the plugin version as :version6" do
-      plugin = Ohai.v6plugin(@name) { }
+      plugin = Class.new(Ohai::DSL::Plugin::VersionVI) { }
       plugin.version.should eql(:version6)
     end
   end
@@ -267,45 +244,23 @@ describe Ohai::DSL::Plugin::VersionVI do
       @ohai = Ohai::System.new
     end
 
-    it "should collect a single attribute" do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
+    it "should log a debug message when provides is used" do
+      Ohai::Log.should_receive(:debug).with(/Skipping provides/)
+      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "some/plugin/path.rb")
       plugin.provides("attribute")
-
-      @ohai.provides_map.find_providers_for(["attribute"]).should eq([plugin])
     end
 
-    it "should collect a list of attributes" do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
-      plugin.provides("attr1", "attr2", "attr3")
-
-      %w[attr1 attr2 attr3].each do |attr|
-        @ohai.provides_map.find_providers_for([attr]).should eq([plugin])
-      end
+    it "should not update the provides map for version 6 plugins." do
+      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "some/plugin/path.rb")
+      plugin.provides("attribute")
+      @ohai.provides_map.map.should be_empty
     end
 
-    it "should collect subattributes of an attribute" do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
-      plugin.provides("attr/subattr")
-
-      @ohai.provides_map.find_providers_for(["attr/subattr"]).should eq([plugin])
-    end
-
-    it "should collect all unique providers for an attribute" do
-      plugins = []
-      3.times do
-        p = Ohai::DSL::Plugin::VersionVI.new(@ohai, "")
-        p.provides("attribute")
-        plugins << p
-      end
-
-      @ohai.provides_map.find_providers_for(["attribute"]).should =~ plugins
-    end
   end
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:source) { "path/plugin.rb" }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, source) }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "some/plugin/path.rb") }
     let(:version) { :version6 }
   end
 end

@@ -20,7 +20,7 @@
 require 'ohai/mash'
 require 'ohai/exception'
 require 'ohai/mixin/os'
-require 'ohai/dsl/plugin'
+require 'ohai/dsl'
 
 module Ohai
   class ProvidesMap

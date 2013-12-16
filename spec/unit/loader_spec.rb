@@ -20,8 +20,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
 describe Ohai::Loader do
+  extend IntegrationSupport
+
   before(:each) do
-    @ohai = Ohai::System.new
+    @plugin_data = Mash.new
+    @provides_map = Ohai::ProvidesMap.new
+
+    @ohai = double('Ohai::System', :data => @plugin_data, :provides_map => @provides_map)
+    @loader = Ohai::Loader.new(@ohai)
   end
 
   describe "#initialize" do
@@ -31,101 +37,79 @@ describe Ohai::Loader do
     end
   end
 
-  describe "#load_plugin" do
-    before(:each) do
-      @name = :Test
-      @v6name = "test"
-      @path = "test.rb"
-
-      @loader = Ohai::Loader.new(@ohai)
-      @loader.stub(:collect_provides).and_return({})
-    end
-
-    it "should log a warning if a plugin cannot be loaded" do
-      Ohai::Log.should_receive(:warn).with(/Unable to open or read plugin/)
-      IO.stub(:read).with(anything()).and_raise(IOError)
-      @loader.load_plugin("")
-    end
-
-    it "should detect a version 6 plugin and emit deprecation message" do
-      contents = <<EOF
-provides "test"
-test Mash.new
-EOF
-      IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
-      plugin = @loader.load_plugin(@path, @v6name)
-      plugin.version.should eql(:version6)
-    end
-
-    it "should detect a version 7 plugin" do
-      contents = <<EOF
-Ohai.plugin(:#{@name}) do
+  when_plugins_directory "contains both V6 & V7 plugins" do
+    with_plugin("zoo.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'seals'
 end
 EOF
-      IO.stub(:read).with(@path).and_return(contents)
-      plugin = @loader.load_plugin(@path)
-      plugin.version.should eql(:version7)
-    end
 
-    it "should log a warning when plugin poorly defined" do
-      contents = <<EOF
-Ohai.plugin(:#{@name}) do
-  collect_data(:darwin) do
-  end
-  collect_data(:darwin) do
-  end
-end
+    with_plugin("lake.rb", <<EOF)
+provides 'fish'
 EOF
-      IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/collect_data already defined on platform/)
-      @loader.load_plugin(@path)
-    end
 
-    it "should log a warning from NoMethodError when plugin uses a non dsl command" do
-      contents = <<EOF
-Ohai.plugin(:#{@name}) do
-  requires "test"
-end
-EOF
-      IO.stub(:read).with(@path).and_return(contents)
-      Ohai::Log.should_receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
-      @loader.load_plugin(@path)
-    end
-  end
-
-  describe "#collect_provides" do
-    before(:each) do
-      @name = :Test
-      @path = "test.rb"
-      @loader = Ohai::Loader.new(@ohai)
-    end
-
-    it "should add provided attributes to Ohai" do
-      klass = Ohai.plugin(@name) { provides("attr") }
-      plugin = klass.new(@ohai, @path)
-      @loader.collect_provides(plugin)
-      @ohai.provides_map.find_providers_for(["attr"]).should eq([plugin])
-    end
-
-    it "should add provided subattributes to Ohai" do
-      klass = Ohai.plugin(@name) { provides("attr/sub") }
-      plugin = klass.new(@ohai, @plath)
-      @loader.collect_provides(plugin)
-      @ohai.provides_map.find_providers_for([ "attr/sub" ]).should include(plugin)
-    end
-
-    it "should collect the unique providers for an attribute" do
-      n = 3
-      klass = Ohai.plugin(@name) { provides("attr") }
-
-      plugins = []
-      n.times do
-        plugins << klass.new(@ohai, @path)
+    describe "load_plugin() method" do
+      it "should load the v7 plugin correctly" do
+        @loader.load_plugin(path_to("zoo.rb"))
+        @provides_map.map.keys.should include("seals")
       end
 
-      plugins.each { |plugin| @loader.collect_provides(plugin) }
-      @ohai.provides_map.find_providers_for(["attr"]).should =~ plugins
+      it "should load the v6 plugin correctly with a depreceation message" do
+        Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
+        @loader.load_plugin(path_to("lake.rb"))
+        @provides_map.map.should be_empty
+      end
+
+      it "should log a warning if a plugin doesn't exist" do
+        Ohai::Log.should_receive(:warn).with(/Unable to open or read plugin/)
+        @loader.load_plugin(path_to("rainier.rb"))
+        @provides_map.map.should be_empty
+      end
     end
   end
+
+  when_plugins_directory "contains invalid plugins" do
+    with_plugin("no_method.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'seals'
+end
+
+Ohai.blah(:Nasty) do
+  provides 'seals'
+end
+EOF
+
+    with_plugin("illegal_def.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  collect_data(:darwin) do
+  end
+  collect_data(:darwin) do
+  end
+end
+EOF
+
+    with_plugin("unexpected_error.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  raise "You aren't expecting this."
+end
+EOF
+
+    describe "load_plugin() method" do
+      it "should log a warning when plugin tries to call an unexisting method" do
+        Ohai::Log.should_receive(:warn).with(/used unsupported operation/)
+        lambda { @loader.load_plugin(path_to("no_method.rb")) }.should_not raise_error
+      end
+
+      it "should log a warning for illegal plugins" do
+        Ohai::Log.should_receive(:warn).with(/not properly defined/)
+        lambda { @loader.load_plugin(path_to("illegal_def.rb")) }.should_not raise_error
+      end
+
+      it "should not raise an error during an unexpected exception" do
+        Ohai::Log.should_receive(:warn).with(/threw exception/)
+        lambda { @loader.load_plugin(path_to("unexpected_error.rb")) }.should_not raise_error
+      end
+    end
+  end
+
 end

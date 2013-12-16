@@ -20,12 +20,13 @@ require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/mash'
 require 'ohai/runner'
-require 'ohai/dsl/plugin'
+require 'ohai/dsl'
 require 'ohai/mixin/from_file'
 require 'ohai/mixin/command'
 require 'ohai/mixin/os'
 require 'ohai/mixin/string'
 require 'ohai/provides_map'
+require 'ohai/hints'
 require 'mixlib/shellout'
 
 require 'yajl'
@@ -35,19 +36,19 @@ module Ohai
   class System
     attr_accessor :data
     attr_reader :provides_map
-    attr_reader :hints
     attr_reader :v6_dependency_solver
 
     def initialize
       @data = Mash.new
       @provides_map = ProvidesMap.new
 
-      @hints = Hash.new
       @v6_dependency_solver = Hash.new
       @plugin_path = ""
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
+
+      Ohai::Hints.refresh_hints()
     end
 
     def [](key)
@@ -64,26 +65,26 @@ module Ohai
 
     def load_plugins
       Ohai::Config[:plugin_path].each do |path|
-        [
-         Dir[File.join(path, '*')],
-         Dir[File.join(path, Ohai::Mixin::OS.collect_os, '**', '*')]
-        ].flatten.each do |file|
-          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
-          md = file_regex.match(file)
-          if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = @loader.load_plugin(file, plugin_name)
-              @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
+        Dir[File.join(path, '**', '*.rb')].each do |plugin_file_path|
+          # Load all the *.rb files under the configured paths in :plugin_path
+          plugin = @loader.load_plugin(plugin_file_path)
+
+          if plugin && plugin.version == :version6
+            # Capture the plugin in @v6_dependency_solver if it is a V6 plugin
+            # to be able to resolve V6 dependencies later on.
+            partial_path = Pathname.new(plugin_file_path).relative_path_from(Pathname.new(path)).to_s
+            dep_solver_key = nameify_v6_plugin(partial_path)
+
+            unless @v6_dependency_solver.has_key?(dep_solver_key)
+              @v6_dependency_solver[dep_solver_key] = plugin
             else
-              Ohai::Log.debug("Already loaded plugin at #{file}")
+              Ohai::Log.debug("Plugin '#{plugin_file_path}' is already loaded.")
             end
           end
         end
       end
-      true
     end
-
+    
     def run_plugins(safe = false, force = false)
       # collect and run version 6 plugins
       v6plugins = []
@@ -161,7 +162,7 @@ module Ohai
       Ohai::Config[:plugin_path].each do |path|
         check_path = File.expand_path(File.join(path, filename))
         if File.exist?(check_path)
-          plugin = @loader.load_plugin(check_path, plugin_name)
+          plugin = @loader.load_plugin(check_path)
           @v6_dependency_solver[plugin_name] = plugin
           break
         else
@@ -174,6 +175,8 @@ module Ohai
     # todo: fix for running w/new internals
     # add updated function to v7?
     def refresh_plugins(path = '/')
+      Ohai::Hints.refresh_hints()
+
       parts = path.split('/')
       if parts.length == 0
         h = @metadata
@@ -188,9 +191,6 @@ module Ohai
 
       refreshments = collect_plugins(h)
       Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
-      
-      # remove the hints cache
-      @hints = Hash.new
 
       refreshments.each do |r|
         @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
@@ -231,6 +231,11 @@ module Ohai
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
+    end
+
+    def nameify_v6_plugin(partial_path)
+      md = Regexp.new("(.+).rb$").match(partial_path)
+      md[1].gsub(File::SEPARATOR, "::")
     end
 
   end

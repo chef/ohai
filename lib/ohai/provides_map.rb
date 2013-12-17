@@ -35,47 +35,33 @@ module Ohai
       unless plugin.kind_of?(Ohai::DSL::Plugin)
         raise ArgumentError, "set_providers_for only accepts Ohai Plugin classes (got: #{plugin})"
       end
-      provided_attributes.each do |attr|
-        parts = attr.split('/')
-        a = map
-        unless parts.length == 0
-          parts.shift if parts[0].length == 0
-          parts.each do |part|
-            a[part] ||= Mash.new
-            a = a[part]
-          end
-        end
 
-        a[:_plugins] ||= []
-        a[:_plugins] << plugin
+      provided_attributes.each do |attribute|
+        attrs = @map
+        parts = attribute.split('/')
+        parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'
+        unless parts.length == 0
+          parts.each do |part|
+            raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if part.length == 0
+            attrs[part] ||= Mash.new
+            attrs = attrs[part]
+          end
+          attrs[:_plugins] ||= []
+          attrs[:_plugins] << plugin
+        end
       end
     end
 
-    # inherit = false => only look up providers for a listed
-    # attribute, don't look for parent providers
-    # inherit = true => looks up parent attribute providers if no
-    # providers for a listed attribute are found first
-    def find_providers_for(attributes, inherit = false)
-      plugins = []
-      attributes.each do |attribute|
-        attrs = map
-        parts = attribute.split('/')
-        parts.each do |part|
-          # TODO: pretty sure we can remove this line, below
-          next if part == Ohai::Mixin::OS.collect_os
-          unless attrs[part]
-            # this attribute does not exist in the map.
-            # raise an error if inherit == false (we aren't looking up
-            # parent providers) or attrs[parts[0]] doesn't exist (in
-            # that case, no parents to look for)
-            raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless inherit && attrs != map
-            break # otherwise (inherit == true and we have the deepest parent of this attribute)
-          end
-          attrs = attrs[part]
-        end
-        plugins += collect_plugins_in(attrs, [])
-      end
-      plugins.uniq
+    def find_providers_for(attributes)
+      find_with_search_type(attributes, :strict)
+    end
+
+    def deep_find_providers_for(attributes)
+      find_with_search_type(attributes, :deep)
+    end
+
+    def find_closest_providers_for(attributes)
+      find_with_search_type(attributes, :closest)
     end
 
     def all_plugins(attribute_filter=nil)
@@ -83,11 +69,49 @@ module Ohai
         collected = []
         collect_plugins_in(map, collected).uniq
       else
-        find_providers_for(Array(attribute_filter))
+        deep_find_providers_for(Array(attribute_filter))
       end
     end
 
     private
+
+    # Finds providers for each listed attribute using the given search
+    # type. Search types behave as follows:
+    #   1. :strict  => Returns a list of unique plugins explicitly
+    #                  providing one or more of the listed attributes.
+    #                  Raises Ohai::Exceptions::AttributeNotFound
+    #                  error if at least one attribute does not exists
+    #                  in the map. 
+    #   2. :deep    => For each listed attribute, gathers all the
+    #                  unique plugins providing that attribute and any
+    #                  of its subattributes.
+    #                  Raises Ohai::Exceptions::AttributeNotFound
+    #                  error if at least one attribute does not exists
+    #                  in the map.
+    #   3. :closest => For each listed attribute, gathers the
+    #                  providers for the most specific parent. If the
+    #                  attribute exists in the mapping, its providers
+    #                  are gathered. If the least specific parent does
+    #                  not exist in the map an
+    #                  Ohai::Exceptions::AttributeNotFound error is
+    #                  raised. 
+    def find_with_search_type(attributes, search_type=:strict)
+      plugins = []
+      attributes.each do |attribute|
+        attrs = @map
+        parts = attribute.split('/')
+        parts.shift if parts.length != 0 && parts[0].length == 0
+        parts.each do |part|
+          unless attrs[part]
+            break if search_type.eql?(:closest) && part != parts[0]
+            raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'"
+          end
+          attrs = attrs[part]
+        end
+        search_type.eql?(:deep) ? plugins += collect_plugins_in(attrs, []) : plugins += attrs[:_plugins]
+      end
+      plugins.uniq
+    end
 
     # Takes a section of the map, recursively searches for a `_plugins` key
     # to find all the plugins in that section of the map. If given the whole
@@ -105,4 +129,3 @@ module Ohai
     end
   end
 end
-

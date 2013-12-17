@@ -33,10 +33,6 @@ describe Ohai::ProvidesMap do
       it "should raise Ohai::Exceptions::AttributeNotFound error, with inherit = false" do
         expect{ provides_map.find_providers_for(["single"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'single'")
       end
-
-      it "should raise Ohai::Exceptions::AttributeNotFound error, with inherit = true" do
-        expect{ provides_map.find_providers_for(["single"], true) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'single'")
-      end
     end
 
     describe "when only one plugin provides the attribute" do
@@ -97,40 +93,52 @@ describe Ohai::ProvidesMap do
         expect(provides_map.find_providers_for(["top/middle/bottom"])).to eq([plugin_1])
       end
     end
+  end
 
-    describe "when the full attribute doesn't exist in the map" do
-      context "and inherit = false" do
-        before do
-          provides_map.set_providers_for(plugin_1, ["top/middle"])
-        end
+  describe "when looking for attribute and subattribute providers" do
+    before do
+      provides_map.set_providers_for(plugin_1, ["cat/whiskers"])
+      provides_map.set_providers_for(plugin_2, ["cat/paws", "cat/paws/toes"])
+      provides_map.set_providers_for(plugin_3, ["cat/mouth/teeth"])
+    end
 
-        it "should raise Ohai::Exceptions::AttributeNotFound error" do
-          expect{ provides_map.find_providers_for(["top/middle/bottom"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'top/middle/bottom'")
-        end
+    it "should find providers for subattributes even when the attribute doesn't have a provider" do
+      providers = provides_map.deep_find_providers_for(["cat"])
+      expect(providers).to have(3).plugins
+      expect(providers).to include(plugin_1)
+      expect(providers).to include(plugin_2)
+      expect(providers).to include(plugin_3)
+    end
+  end
+
+  describe "when looking for the closest providers" do
+    describe "and the full attribute is provided" do
+      before do
+        provides_map.set_providers_for(plugin_1, ["do/not/eat/metal"])
       end
 
-      context "and inherit = true" do
-        before do
-          provides_map.set_providers_for(plugin_1, ["top"])
-          provides_map.set_providers_for(plugin_2, ["top/middle"])
-        end
-
-        it "should not raise error" do
-          expect{ provides_map.find_providers_for(["top/middle/bottom"], true) }.not_to raise_error
-        end
-
-        it "should return the most specific parent provider" do
-          expect(provides_map.find_providers_for(["top/middle/bottom"], true)).to eq([plugin_2])
-        end
-
-        it "should raise Ohai::Exceptions::AttributeNotFound error if no parent exists" do
-          expect{ provides_map.find_providers_for(["one/two/three"], true) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'one/two/three'")
-        end
+      it "should return the provider of the full attribute" do
+        expect(provides_map.find_closest_providers_for(["do/not/eat/metal"])).to eql([plugin_1])
       end
     end
 
-    it "should collect the provider" do
-      expect(provides_map.find_providers_for(["top/middle"])).to eq([plugin_1])
+    describe "and the full attribute is not provided" do
+      before do
+        provides_map.set_providers_for(plugin_1, ["do/not/eat"])
+      end
+
+      it "should not raise error if a parent attribute is provided" do
+        expect{ provides_map.find_closest_providers_for(["do/not/eat/plastic"]) }.not_to raise_error
+      end
+
+      it "should return the providers of the closest parent attribute" do
+        provides_map.set_providers_for(plugin_2, ["do/not"]) # set a less-specific parent
+        expect(provides_map.find_closest_providers_for(["do/not/eat/glass"])).to eql([plugin_1])
+      end
+
+      it "should raise error if the least-specific parent is not provided" do
+        expect{ provides_map.find_closest_providers_for(["please/eat/your/vegetables"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'please/eat/your/vegetables'")
+      end
     end
   end
 
@@ -168,4 +176,3 @@ describe Ohai::ProvidesMap do
   end
 
 end
-

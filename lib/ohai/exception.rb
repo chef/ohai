@@ -23,5 +23,6 @@ module Ohai
     class AttributeNotFound < Exception; end
     class DependencyCycle < Exception; end
     class DependencyNotFound < Exception; end
+    class AttributeSyntaxError < Exception; end
   end
 end

@@ -20,43 +20,146 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
 
 describe Ohai::Runner, "run_plugin" do
-  describe "when running a plugin with no dependencies, Ohai::Runner" do
-    before(:each) do
-      @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+  let(:safe_run) { true }
 
+  before(:each) do
+    @ohai = Ohai::System.new
+    @runner = Ohai::Runner.new(@ohai, safe_run)
+  end
+
+  describe "when running an invalid plugin" do
+    it "should raise error" do
+      lambda { @runner.run_plugin(double("Ohai::NotPlugin")) }.should raise_error(ArgumentError)
+    end
+  end
+
+  describe "when running a plugin" do
+    let(:plugin) { double("Ohai::DSL::Plugin", :kind_of? => true, :version => version, :name => "Test", :has_run? => has_run, :dependencies => [ ]) }
+    let(:version) { :version7 }
+    let(:has_run) { false }
+
+    describe "version 7" do
+      it "should call run_v7_plugin" do
+        @runner.should_receive(:run_v7_plugin)
+        @runner.run_plugin(plugin)
+      end
+
+      describe "if the plugin has run before" do
+        let(:has_run) { true }
+
+        it "plugin should not run when run_plugin is not forced" do
+          plugin.should_not_receive(:safe_run)
+          @runner.run_plugin(plugin)
+        end
+
+        it "plugin should run when run_plugin is not forced" do
+          plugin.should_receive(:safe_run)
+          @runner.run_plugin(plugin, true)
+        end
+
+        describe "if the plugin is disabled" do
+          it "should not run the plugin" do
+            Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
+            @runner.should_not_receive(:run_v7_plugin)
+            @runner.run_plugin(plugin)
+          end
+        end
+      end
+    end
+
+    describe "version 6" do
+      let(:version) { :version6 }
+
+      it "should call run_v6_plugin" do
+        @runner.should_receive(:run_v6_plugin)
+        @runner.run_plugin(plugin)
+      end
+
+      describe "if the plugin has not run before" do
+        describe "if safe_run is not set" do
+          it "safe_run should be called" do
+            plugin.should_receive(:safe_run)
+            @runner.run_plugin(plugin)
+          end
+        end
+
+        describe "if safe_run is set" do
+          let(:safe_run) { false }
+
+          it "run should be called" do
+            plugin.should_receive(:run)
+            @runner.run_plugin(plugin)
+          end
+        end
+      end
+
+      describe "if the plugin has run before" do
+        let(:has_run) { true }
+
+        it "plugin should not run when run_plugin is not forced" do
+          plugin.should_not_receive(:safe_run)
+          @runner.run_plugin(plugin)
+        end
+
+        it "plugin should run when run_plugin is not forced" do
+          plugin.should_receive(:safe_run)
+          @runner.run_plugin(plugin, true)
+        end
+      end
+
+      describe "if the plugin is disabled" do
+        it "should not run the plugin" do
+          Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
+          @runner.should_not_receive(:run_v7_plugin)
+            @runner.run_plugin(plugin)
+        end
+      end
+    end
+
+    describe "invalid version" do
+      let(:version) { :versionBla }
+
+      it "should raise error" do
+        lambda { @runner.run_plugin(plugin) }.should raise_error(ArgumentError)
+      end
+    end
+
+    describe "when plugin is disabled" do
+      before do
+        Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
+      end
+
+      it "should not run the plugin" do
+        @runner.should_not_receive(:run_v7_plugin)
+        @runner.run_plugin(plugin)
+      end
+    end
+  end
+
+  describe "when running a plugin with no dependencies, Ohai::Runner" do
+    let(:plugin) {
       klass = Ohai.plugin(:Test) {
         provides("thing")
         collect_data {
           thing(Mash.new)
         }
       }
-      @plugin = klass.new(@ohai.data)
-    end
-
-    it "should not find dependencies" do
-      @runner.should_receive(:fetch_plugins).with([]).and_return([])
-      @runner.run_plugin(@plugin)
-    end
+      klass.new(@ohai.data)
+    }
 
     it "should run the plugin" do
-      @runner.run_plugin(@plugin)
-      @plugin.has_run?.should be_true
+      @runner.run_plugin(plugin)
+      plugin.has_run?.should be_true
     end
 
     it "should add plugin data to Ohai::System.data" do
-      @runner.run_plugin(@plugin)
+      @runner.run_plugin(plugin)
       @ohai.data.should have_key(:thing)
       @ohai.data[:thing].should eql({})
     end
   end
 
   describe "when running a plugin with one dependency" do
-    before(:each) do
-      @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
-    end
-
     describe "when the dependency does not exist" do
       before(:each) do
         klass = Ohai.plugin(:Test) {
@@ -146,7 +249,7 @@ describe Ohai::Runner, "run_plugin" do
       end
     end
   end
-  
+
   describe "when running a plugin with many dependencies" do
     before(:each) do
       @ohai = Ohai::System.new

@@ -29,14 +29,37 @@ module Ohai
       @safe_run = safe_run
     end
 
-    # runs this plugin and any un-run dependencies. if force is set to
-    # true, then this plugin and its dependencies will be run even if
-    # they have been run before.
+    # Runs plugins and any un-run dependencies.
+    # If force is set to true, then this plugin and its dependencies
+    # will be run even if they have been run before.
     def run_plugin(plugin, force = false)
       unless plugin.kind_of?(Ohai::DSL::Plugin)
         raise ArgumentError, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
-      visited = [plugin]
+
+      if Ohai::Config[:disabled_plugins].include?(plugin.name)
+        Ohai::Log.debug("Skipping disabled plugin #{plugin.name}")
+        return false
+      end
+
+      case plugin.version
+      when :version7
+        run_v7_plugin(plugin, force)
+      when :version6
+        run_v6_plugin(plugin, force)
+      else
+        raise ArgumentError, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+      end
+    end
+
+    def run_v6_plugin(plugin, force)
+      return true if plugin.has_run? && !force
+
+      @safe_run ? plugin.safe_run : plugin.run
+    end
+
+    def run_v7_plugin(plugin, force)
+      visited = [ plugin ]
       while !visited.empty?
         next_plugin = visited.pop
 
@@ -47,7 +70,12 @@ module Ohai
         end
 
         dependency_providers = fetch_plugins(next_plugin.dependencies)
-        dependency_providers.delete_if { |dep_plugin| (!force && dep_plugin.has_run?) || dep_plugin.eql?(next_plugin) }
+
+        # Remove the already ran plugins from dependencies if force is not set
+        # Also remove the plugin that we are about to run from dependencies as well.
+        dependency_providers.delete_if { |dep_plugin|
+          (!force && dep_plugin.has_run?) || dep_plugin.eql?(next_plugin)
+        }
 
         if dependency_providers.empty?
           @safe_run ? next_plugin.safe_run : next_plugin.run
@@ -62,9 +90,9 @@ module Ohai
       @provides_map.find_providers_for(attributes)
     end
 
-    # given a list of plugins and the first plugin in the cycle,
+    # Given a list of plugins and the first plugin in the cycle,
     # returns the list of plugin source files responsible for the
-    # cycle. does not include plugins that aren't a part of the cycle
+    # cycle. Does not include plugins that aren't a part of the cycle
     def get_cycle(plugins, cycle_start)
       cycle = plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
       names = []

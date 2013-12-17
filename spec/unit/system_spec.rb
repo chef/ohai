@@ -18,6 +18,7 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
+require 'ohai/mixin/os'
 
 describe "Ohai::System" do
   extend IntegrationSupport
@@ -213,6 +214,28 @@ EOF
           expect(unrelated_plugin.has_run?).to be_false
         end
 
+      end
+    end
+
+    when_plugins_directory "contains a v7 plugins with :default and platform specific blocks" do
+      with_plugin("message.rb", <<EOF)
+Ohai.plugin(:Message) do
+  provides 'message'
+
+  collect_data(:default) do
+    message("default")
+  end
+
+  collect_data(:#{Ohai::Mixin::OS.collect_os}) do
+    message("platform_specific_message")
+  end
+end
+EOF
+
+      it "should collect platform specific" do
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        @ohai.all_plugins
+        @ohai.data[:message].should == "platform_specific_message"
       end
     end
 

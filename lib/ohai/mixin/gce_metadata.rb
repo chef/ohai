@@ -1,5 +1,5 @@
 #
-# Author:: Ranjib Dey (<dey.ranjib@gmail.com>)
+# Author:: Paul Rossman (<paulrossman@google.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'net/http'
-require 'socket'
 
 module Ohai
   module Mixin
@@ -23,42 +22,27 @@ module Ohai
 
       extend self
 
-      GCE_METADATA_ADDR = "metadata.google.internal" unless defined?(GCE_METADATA_ADDR)
-      GCE_METADATA_URL = "/computeMetadata/v1beta1/?recursive=true" unless defined?(GCE_METADATA_URL)
-
-      def can_metadata_connect?(addr, port, timeout=2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        saddr = Socket.pack_sockaddr_in(port, addr)
-        connected = false
-
-        begin
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          r,w,e = IO::select(nil,[t],nil,timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
-        rescue SystemCallError
-        end
-        Ohai::Log.debug("can_metadata_connect? == #{connected}")
-        connected
-      end
+      GCE_METADATA_ADDR = "metadata" unless defined?(GCE_METADATA_ADDR)
+      GCE_METADATA_URL = "/computeMetadata/v1/?recursive=true" unless defined?(GCE_METADATA_URL)
+      GCE_METADATA_HEADERS = {'X-Google-Metadata-Request' => 'True'} unless defined?(GCE_METADATA_HEADERS)
 
       def http_client
         Net::HTTP.start(GCE_METADATA_ADDR).tap {|h| h.read_timeout = 600}
       end
 
+      def can_metadata_connect?
+        connected = false
+        response = http_client.get("#{GCE_METADATA_URL}/", GCE_METADATA_HEADERS)
+        if response.code == "200"
+          connected = true
+        end
+        Ohai::Log.debug("can_metadata_connect? == #{connected}")
+        connected
+      end
+
       def fetch_metadata(id='')
         uri = "#{GCE_METADATA_URL}/#{id}"
-        response = http_client.get(uri)
+        response = http_client.get(uri, GCE_METADATA_HEADERS)
         return nil unless response.code == "200"
         
         if json?(response.body)
@@ -87,10 +71,6 @@ module Ohai
         end
       end
     
-      def multiline?(data)
-        data.lines.to_a.size > 1
-      end
-
       def has_trailing_slash?(data)
         !! ( data =~ %r{/$} )
       end

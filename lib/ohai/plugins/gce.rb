@@ -1,5 +1,5 @@
 #
-# Author:: Ranjib Dey (<dey.ranjib@google.com>)
+# Author:: Paul Rossman (<paulrossman@google.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,9 +24,8 @@ require 'ohai/mixin/gce_metadata'
 # === Return
 # true:: If gce dmi matches
 # false:: Otherwise
-GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
 def has_google_dmi?
- ::File.read(GOOGLE_SYSFS_DMI).include?('Google')
+  `dmidecode -s bios-vendor`.include?('Google')
 end
 
 # Checks for gce metadata server
@@ -35,7 +34,7 @@ end
 # true:: If gce metadata server found
 # false:: Otherwise
 def has_gce_metadata?
-  Ohai::Mixin::GCEMetadata.can_metadata_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR,80)
+  Ohai::Mixin::GCEMetadata.can_metadata_connect?
 end
 
 # Identifies gce

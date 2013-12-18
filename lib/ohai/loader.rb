@@ -74,6 +74,8 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
         plugin = klass.new(@controller.data) unless klass.nil?
       rescue SystemExit, Interrupt
         raise
+      rescue Ohai::Exceptions::InvalidPluginName => e
+        Ohai::Log.warn("Invalid name for plugin at #{plugin_path}: #{e.message}")
       rescue Ohai::Exceptions::IllegalPluginDefinition => e 
         Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}")
       rescue NoMethodError => e

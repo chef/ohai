@@ -102,6 +102,19 @@ Ohai.plugin(:1nval!d) do
 end
 EOF
 
+    with_plugin("no_end.rb", <<EOF)
+Ohai.plugin(:NoEnd) do
+  provides "fish_oil"
+  collect_data do
+end
+EOF
+
+    with_plugin("bad_name.rb", <<EOF)
+Ohai.plugin(:you_give_plugins_a_bad_name) do
+  provides "that/one/song"
+end
+EOF
+
     describe "load_plugin() method" do
       describe "when the plugin uses Ohai.plugin instead of Ohai.plugins" do
         it "should log an unsupported operation warning" do
@@ -166,6 +179,17 @@ EOF
 
         it "should not raise an error" do
           expect{ @loader.load_plugin(path_to("no_end.rb")) }.not_to raise_error
+        end
+      end
+
+      describe "when the plugin has an invalid name" do
+        it "should log an invalid plugin name warning" do
+          Ohai::Log.should_receive(:warn).with(/Invalid name for plugin/)
+          @loader.load_plugin(path_to("bad_name.rb"))
+        end
+
+        it "should not raise an error" do
+          expect{ @loader.load_plugin(path_to("bad_name.rb")) }.not_to raise_error
         end
       end
     end

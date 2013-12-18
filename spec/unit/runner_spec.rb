@@ -409,7 +409,7 @@ describe Ohai::Runner, "fetch_plugins" do
     describe "and no parent attribute has providers" do
       it "should raise Ohai::Exceptions::AttributeNotFound exception" do
         # provides map is empty
-        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'false/attribute'")
+        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
       end
     end
   end

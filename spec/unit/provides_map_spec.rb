@@ -29,9 +29,16 @@ describe Ohai::ProvidesMap do
   let(:plugin_4) { Ohai::DSL::Plugin.new(ohai_system.data) }
 
   describe "when looking up providing plugins for a single attribute" do
-    describe "when no plugin provides the attribute" do
-      it "should raise Ohai::Exceptions::AttributeNotFound error, with inherit = false" do
-        expect{ provides_map.find_providers_for(["single"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'single'")
+    describe "when the attribute does not exist" do
+      it "should raise Ohai::Exceptions::AttributeNotFound error" do
+        expect{ provides_map.find_providers_for(["single"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'single'")
+      end
+    end
+
+    describe "when the attribute does not have a provider" do
+      it "should raise Ohai::Exceptions::ProviderNotFound error" do
+        provides_map.set_providers_for(plugin_1, ["first/second"])
+        expect{ provides_map.find_providers_for(["first"]) }.to raise_error(Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: 'first'")
       end
     end
 
@@ -95,6 +102,20 @@ describe Ohai::ProvidesMap do
     end
   end
 
+  describe "when setting multi-level attributes" do
+    describe "when the attribute contains //" do
+      it "should raise an Ohai::Exceptions::AttributeSyntaxError" do
+        expect{ provides_map.set_providers_for(plugin_1, ["this/plugin//is/bad"]) }.to raise_error(Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: this/plugin//is/bad")
+      end
+    end
+
+    describe "when the attribute has a trailing slash" do
+      it "should raise an Ohai::Exceptions::AttributeSyntaxError" do
+        expect{ provides_map.set_providers_for(plugin_1, ["this/plugin/is/bad/"]) }.to raise_error(Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': this/plugin/is/bad/")
+      end
+    end
+  end
+
   describe "when looking for attribute and subattribute providers" do
     before do
       provides_map.set_providers_for(plugin_1, ["cat/whiskers"])
@@ -136,8 +157,12 @@ describe Ohai::ProvidesMap do
         expect(provides_map.find_closest_providers_for(["do/not/eat/glass"])).to eql([plugin_1])
       end
 
-      it "should raise error if the least-specific parent is not provided" do
-        expect{ provides_map.find_closest_providers_for(["please/eat/your/vegetables"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute 'please/eat/your/vegetables'")
+      it "should raise error if the least-specific parent is not an attribute" do
+        expect{ provides_map.find_closest_providers_for(["please/eat/your/vegetables"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'please/eat/your/vegetables'")
+      end
+
+      it "should raise error if no parent attribute has a provider" do
+        expect{ provides_map.find_closest_providers_for(["do/not"]) }.to raise_error(Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: 'do/not'")
       end
     end
   end

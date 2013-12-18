@@ -21,6 +21,7 @@ module Ohai
     class Exec < RuntimeError; end
     class IllegalPluginDefinition < Exception; end
     class AttributeNotFound < Exception; end
+    class ProviderNotFound < Exception; end
     class DependencyCycle < Exception; end
     class DependencyNotFound < Exception; end
     class AttributeSyntaxError < Exception; end

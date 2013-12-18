@@ -17,7 +17,6 @@
 #
 
 Ohai.plugin(:DMI) do
-  depends "dmi"
 
   collect_data(:solaris2) do
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios

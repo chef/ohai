@@ -74,10 +74,17 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
         plugin = klass.new(@controller.data) unless klass.nil?
       rescue SystemExit, Interrupt
         raise
-      rescue Ohai::Exceptions::IllegalPluginDefinition => e
+      rescue Ohai::Exceptions::IllegalPluginDefinition => e 
         Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}")
       rescue NoMethodError => e
         Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
+      rescue SyntaxError => e
+        # grab the part of the error message that follows "<main>:line#: syntax error"
+        # example: "<main>:3: syntax error, unexpected $end, expecting keyword_end" 
+        # regex will grab ", unexpected $end, expecting keyword_end"
+        message_regex = /(,[^,]+)+$/
+        message = message_regex.match(e.message)[0]
+        Ohai::Log.warn("Plugin at #{plugin_path} threw syntax error#{message}")
       rescue Exception, Errno::ENOENT => e
         Ohai::Log.warn("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end

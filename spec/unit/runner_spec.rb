@@ -173,11 +173,11 @@ describe Ohai::Runner, "run_plugin" do
       end
 
       it "should raise Ohai::Excpetions::AttributeNotFound" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect{ @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
       it "should not run the plugin" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect{ @runner.run_plugin(@plugin) }.to raise_error
         @plugin.has_run?.should be_false
       end
     end
@@ -383,7 +383,9 @@ end
 
 describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
-    @ohai = Ohai::System.new
+    @provides_map = Ohai::ProvidesMap.new
+    @data = Mash.new
+    @ohai = double('Ohai::System', :data => @data, :provides_map => @provides_map)
     @runner = Ohai::Runner.new(@ohai, true)
   end
 
@@ -393,6 +395,29 @@ describe Ohai::Runner, "fetch_plugins" do
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
     dependency_providers.should eql([plugin])
+  end
+
+  describe "when the attribute is not provided by any plugin" do
+    describe "and some parent attribute has providers" do
+      it "should return the providers for the parent" do
+        plugin = Ohai::DSL::Plugin.new(@ohai.data)
+        @provides_map.set_providers_for(plugin, ["test/attribute"])
+        @runner.fetch_plugins(["test/attribute/too_far"]).should eql([plugin])
+      end
+    end
+
+    describe "and no parent attribute has providers" do
+      it "should raise Ohai::Exceptions::AttributeNotFound exception" do
+        # provides map is empty
+        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
+      end
+    end
+  end
+
+  it "should return unique providers" do
+    plugin = Ohai::DSL::Plugin.new(@ohai.data)
+    @provides_map.set_providers_for(plugin, ["test", "test/too_far/way_too_far"])
+    @runner.fetch_plugins(["test", "test/too_far/way_too_far"]).should eql([plugin])
   end
 end
 

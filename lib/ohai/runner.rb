@@ -85,9 +85,8 @@ module Ohai
       end
     end
 
-    # returns a list of plugins which provide the given attributes
     def fetch_plugins(attributes)
-      @provides_map.find_providers_for(attributes)
+      @provides_map.find_closest_providers_for(attributes)
     end
 
     # Given a list of plugins and the first plugin in the cycle,

@@ -35,48 +35,120 @@ module Ohai
       unless plugin.kind_of?(Ohai::DSL::Plugin)
         raise ArgumentError, "set_providers_for only accepts Ohai Plugin classes (got: #{plugin})"
       end
-      provided_attributes.each do |attr|
-        parts = attr.split('/')
-        a = map
-        unless parts.length == 0
-          parts.shift if parts[0].length == 0
-          parts.each do |part|
-            a[part] ||= Mash.new
-            a = a[part]
-          end
-        end
 
-        a[:_plugins] ||= []
-        a[:_plugins] << plugin
+      provided_attributes.each do |attribute|
+        attrs = @map
+        parts = normalize_and_validate(attribute)
+        parts.each do |part|
+          attrs[part] ||= Mash.new
+          attrs = attrs[part]
+        end
+        attrs[:_plugins] ||= []
+        attrs[:_plugins] << plugin
       end
     end
 
+    # gather plugins providing exactly the attributes listed
     def find_providers_for(attributes)
       plugins = []
       attributes.each do |attribute|
-        attrs = map
-        parts = attribute.split('/')
-        parts.each do |part|
-          next if part == Ohai::Mixin::OS.collect_os
-          raise Ohai::Exceptions::AttributeNotFound, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
-          attrs = attrs[part]
-        end
-        plugins += collect_plugins_in(attrs, [])
+        attrs = select_subtree(@map, attribute)
+        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
+        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs[:_plugins]
+        plugins += attrs[:_plugins]
       end
       plugins.uniq
     end
 
+    # gather plugins providing each of the attributes listed along
+    # with providers of subattributes
+    def deep_find_providers_for(attributes)
+      plugins = []
+      attributes.each do |attribute|
+        attrs = select_subtree(@map, attribute)
+        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
+        collect_plugins_in(attrs, plugins)
+      end
+      plugins.uniq
+    end
+
+    # gather plugins providing each of the attributes listed, or the
+    # plugins providing the closest parent attribute
+    def find_closest_providers_for(attributes)
+      plugins = []
+      attributes.each do |attribute|
+        parts = normalize_and_validate(attribute)
+        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless @map[parts[0]]
+        attrs = select_closest_subtree(@map, attribute)
+        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs
+        plugins += attrs[:_plugins]
+      end
+      plugins.uniq
+    end
 
     def all_plugins(attribute_filter=nil)
       if attribute_filter.nil?
         collected = []
         collect_plugins_in(map, collected).uniq
       else
-        find_providers_for(Array(attribute_filter))
+        deep_find_providers_for(Array(attribute_filter))
       end
     end
 
     private
+
+    def normalize_and_validate(attribute)
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute.match(/\/\/+/)
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute.match(/\/$/)
+
+      parts = attribute.split('/')
+      parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'
+      parts
+    end
+
+    def select_subtree(provides_map, attribute)
+      subtree = provides_map
+      parts = normalize_and_validate(attribute)
+      parts.each do |part|
+        return nil unless subtree[part]
+        subtree = subtree[part]
+      end
+      subtree
+    end
+
+    def select_closest_subtree(provides_map, attribute)
+      attr, *rest = normalize_and_validate(attribute)
+
+      # return nil if the top-level part of the attribute is not a
+      # top-level key in the provides_map (can't search any lower, and
+      # no information to return from this level of the search)
+      return nil unless provides_map[attr]
+
+      # attr is a key in the provides_map, search for the sub
+      # attribute under attr (if attribute = attr/sub1/sub2 then we
+      # search provides_map[attr] for sub1/sub2)
+      unless rest.empty?
+        subtree = select_closest_subtree(provides_map[attr], rest.join('/'))
+      end
+
+      if subtree.nil?
+        # no subtree of provides_map[attr] either 1) has a
+        # subattribute, 2) has a plugin providing a subattribute.
+        unless provides_map[attr][:_plugins]
+          # no providers for this attribute, this subtree won't do.
+          return nil # no providers for this attribute
+        else
+          # there are providers for this attribute, return its subtree
+          # to indicate this is the closest subtree
+          return provides_map[attr]
+        end
+      end
+
+      # we've already found a closest subtree or we've search all
+      # parent attributes of the original attribute and found no
+      # providers (subtree is nil in this case)
+      subtree
+    end
 
     # Takes a section of the map, recursively searches for a `_plugins` key
     # to find all the plugins in that section of the map. If given the whole
@@ -94,4 +166,3 @@ module Ohai
     end
   end
 end
-

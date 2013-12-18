@@ -77,6 +77,7 @@ class Ohai::Application
 
   def configure_ohai
     @attributes = parse_options
+    @attributes = nil if @attributes.empty?
 
     Ohai::Config.merge!(config)
     if Ohai::Config[:directory]
@@ -94,9 +95,9 @@ class Ohai::Application
     if Ohai::Config[:file]
       ohai.from_file(Ohai::Config[:file])
     else
-      ohai.all_plugins
+      ohai.all_plugins(@attributes)
     end
-    if @attributes.length > 0
+    if @attributes
       @attributes.each do |a|
         puts ohai.attributes_print(a)
       end

@@ -106,6 +106,7 @@ EOF
       Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
       Ohai::NamedPlugin.const_get(:Nature).should == Ohai::NamedPlugin::Nature
     end
+
   end
 
   describe "when running plugins" do
@@ -137,6 +138,23 @@ EOF
         @ohai.all_plugins
         @ohai.data[:zoo].should == "animals"
         @ohai.data[:park].should == "plants"
+      end
+
+      describe "when using :disabled_plugins" do
+        before do
+          Ohai::Config[:disabled_plugins] = [ "zoo" ]
+        end
+
+        after do
+          Ohai::Config[:disabled_plugins] = [ ]
+        end
+
+        it "shouldn't run disabled version 6 plugins" do
+          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          @ohai.all_plugins
+          @ohai.data[:zoo].should be_nil
+          @ohai.data[:park].should == "plants"
+        end
       end
 
       describe "when running in whitelist mode" do
@@ -180,7 +198,7 @@ EOF
         let(:dependency_plugin_one) { dependency_plugin_one_class.new(ohai_system) }
         let(:dependency_plugin_two) { dependency_plugin_two_class.new(ohai_system) }
         let(:unrelated_plugin) { unrelated_plugin_class.new(ohai_system) }
-        let(:v6_plugin) { v6_plugin_class.new(ohai_system, "/v6_plugin.rb") }
+        let(:v6_plugin) { v6_plugin_class.new(ohai_system, "/v6_plugin.rb", "/") }
 
         before do
           ohai_system.stub(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
@@ -271,6 +289,74 @@ EOF
         @ohai.instance_variable_get("@runner").stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
         Ohai::Log.should_receive(:error).with(/Encountered error while running plugins/)
         expect { @ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+      end
+
+      describe "when using :disabled_plugins" do
+        before do
+          Ohai::Config[:disabled_plugins] = [ :Zoo ]
+        end
+
+        after do
+          Ohai::Config[:disabled_plugins] = [ ]
+        end
+
+        it "shouldn't run disabled plugins" do
+          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          @ohai.all_plugins
+          @ohai.data[:zoo].should be_nil
+          @ohai.data[:park].should == "plants"
+        end
+      end
+    end
+
+    when_plugins_directory "contains v6 & v7 plugins in different directories" do
+      with_plugin("my_plugins/zoo.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'zoo'
+
+  collect_data(:default) do
+    zoo("animals")
+  end
+end
+EOF
+
+      with_plugin("my_plugins/nature.rb", <<EOF)
+Ohai.plugin(:Nature) do
+  provides 'nature'
+
+  collect_data(:default) do
+    nature("cougars")
+  end
+end
+EOF
+
+      with_plugin("my_plugins/park.rb", <<EOF)
+provides 'park'
+park("plants")
+EOF
+
+      with_plugin("my_plugins/home.rb", <<EOF)
+provides 'home'
+home("dog")
+EOF
+
+      describe "when using :disabled_plugins" do
+        before do
+          Ohai::Config[:disabled_plugins] = [ :Zoo, 'my_plugins::park' ]
+        end
+
+        after do
+          Ohai::Config[:disabled_plugins] = [ ]
+        end
+
+        it "shouldn't run disabled plugins" do
+          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          @ohai.all_plugins
+          @ohai.data[:zoo].should be_nil
+          @ohai.data[:nature].should == "cougars"
+          @ohai.data[:park].should be_nil
+          @ohai.data[:home].should == "dog"
+        end
       end
     end
 

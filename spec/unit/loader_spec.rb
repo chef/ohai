@@ -77,7 +77,7 @@ EOF
       describe "when loading a v6 plugin" do
         before(:each) do
           Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
-          @plugin = @loader.load_plugin(path_to("lake.rb"))
+          @plugin = @loader.load_plugin(path_to("lake.rb"), path_to("."))
         end
 
         it "should not add this plugin's provided attributes to the provides map" do
@@ -91,7 +91,7 @@ EOF
 
       it "should log a warning if a plugin doesn't exist" do
         Ohai::Log.should_receive(:warn).with(/Unable to open or read plugin/)
-        @loader.load_plugin(path_to("rainier.rb"))
+        @loader.load_plugin(path_to("rainier.rb"), path_to("."))
         @provides_map.map.should be_empty
       end
     end

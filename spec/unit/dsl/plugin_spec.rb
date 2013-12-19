@@ -266,12 +266,12 @@ describe Ohai::DSL::Plugin::VersionVI do
 
     it "should log a debug message when provides is used" do
       Ohai::Log.should_receive(:debug).with(/Skipping provides/)
-      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "some/plugin/path.rb")
+      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
     end
 
     it "should not update the provides map for version 6 plugins." do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "some/plugin/path.rb")
+      plugin = Ohai::DSL::Plugin::VersionVI.new(@ohai, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
       @ohai.provides_map.map.should be_empty
     end
@@ -280,7 +280,7 @@ describe Ohai::DSL::Plugin::VersionVI do
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "some/plugin/path.rb") }
+    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin") }
     let(:version) { :version6 }
   end
 end

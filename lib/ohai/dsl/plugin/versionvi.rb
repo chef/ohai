@@ -24,17 +24,19 @@ module Ohai
         attr_reader :version
         attr_reader :source
 
-        def initialize(controller, plugin_path)
+        def initialize(controller, plugin_path, plugin_dir_path)
           super(controller.data)
           @controller = controller
           @version = :version6
           @source = plugin_path
+          @plugin_dir_path = plugin_dir_path
         end
 
         def name
           # Ohai V6 doesn't have any name specification for plugins. 
-          # So we are using the full path to the plugin as the name of the plugin.
-          @source
+          # So we are using the partial path to infer the name of the plugin
+          partial_path = Pathname.new(@source).relative_path_from(Pathname.new(@plugin_dir_path)).to_s
+          partial_path.chomp(".rb").gsub("/", "::")
         end
 
         def self.version

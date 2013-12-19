@@ -322,7 +322,8 @@ describe Ohai::Runner, "run_plugin" do
     it "should raise Ohai::Exceptions::DependencyCycle" do
       @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
       @runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
-      expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle)
+      expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
+      expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle, expected_error_string)
     end
   end
 

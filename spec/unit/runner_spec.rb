@@ -293,37 +293,60 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when a cycle is detected" do
-    before(:each) do
-      @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+    let(:ohai) { Ohai::System.new }
+    let(:runner) { Ohai::Runner.new(ohai, true) }
 
-      klass1 = Ohai.plugin(:Thing) {
-        provides("thing")
-        depends("other")
-        collect_data {
-          thing(other)
-        }
-      }
-      klass2 = Ohai.plugin(:Other) {
-        provides("other")
-        depends("thing")
-        collect_data {
-          other(thing)
-        }
-      }
-
-      @plugins = []
-      [klass1, klass2].each_with_index do |klass, idx|
-        @plugins << klass.new(@ohai.data)
+    context "when there are no edges in the cycle (A->A)" do
+      let(:plugin_class) do
+        klass1 = Ohai.plugin(:Thing) do
+          provides("thing")
+          depends("thing")
+          collect_data do
+            thing(other)
+          end
+        end
       end
-      @plugin1, @plugin2 = @plugins
+      let(:plugin) { plugin_class.new(ohai.data) }
+
+      it "ignores the cycle" do
+        ohai.provides_map.set_providers_for(plugin, ["thing"])
+
+        expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
+        runner.run_plugin(plugin) # should not raise
+      end
+
     end
 
-    it "should raise Ohai::Exceptions::DependencyCycle" do
-      @runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
-      @runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
-      expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
-      expect { @runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle, expected_error_string)
+    context "when there is one edge in the cycle (A->B and B->A)" do
+      before(:each) do
+        klass1 = Ohai.plugin(:Thing) {
+          provides("thing")
+          depends("other")
+          collect_data {
+            thing(other)
+          }
+        }
+        klass2 = Ohai.plugin(:Other) {
+          provides("other")
+          depends("thing")
+          collect_data {
+            other(thing)
+          }
+        }
+
+        @plugins = []
+        [klass1, klass2].each_with_index do |klass, idx|
+          @plugins << klass.new(ohai.data)
+        end
+        @plugin1, @plugin2 = @plugins
+      end
+
+      it "should raise Ohai::Exceptions::DependencyCycle" do
+        runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
+        runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
+        expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
+        expect { runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle, expected_error_string)
+      end
     end
   end
 

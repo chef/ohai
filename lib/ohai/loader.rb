@@ -75,26 +75,29 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
       rescue SystemExit, Interrupt
         raise
       rescue Ohai::Exceptions::InvalidPluginName => e
-        Ohai::Log.warn("Invalid name for plugin at #{plugin_path}: #{e.message}")
-      rescue Ohai::Exceptions::IllegalPluginDefinition => e 
-        Ohai::Log.warn("Plugin at #{plugin_path} is not properly defined: #{e.inspect}")
+        Ohai::Log.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")
+      rescue Ohai::Exceptions::IllegalPluginDefinition => e
+        Ohai::Log.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
       rescue NoMethodError => e
-        Ohai::Log.warn("[UNSUPPORTED OPERATION] Plugin at #{plugin_path} used unsupported operation \'#{e.name.to_s}\'")
+        Ohai::Log.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
       rescue SyntaxError => e
-        # grab the part of the error message that follows "<main>:line#: syntax error"
-        # example: "<main>:3: syntax error, unexpected $end, expecting keyword_end" 
-        # regex will grab ", unexpected $end, expecting keyword_end"
-        message_regex = /(,[^,]+)+$/
-        message = message_regex.match(e.message)[0]
-        Ohai::Log.warn("Plugin at #{plugin_path} threw syntax error#{message}")
+        # split on occurrences of
+        #    <env>: syntax error,
+        #    <env>:##: syntax error,
+        # to remove from error message
+        parts = e.message.split(/<.*>[:[0-9]+]*: syntax error, /)
+        parts.each do |part|
+          next if part.length == 0
+          Ohai::Log.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
+        end
       rescue Exception, Errno::ENOENT => e
-        Ohai::Log.warn("Plugin at #{plugin_path} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+        Ohai::Log.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
+        Ohai::Log.debug("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
       end
 
       collect_provides(plugin) unless plugin.nil?
 
       plugin
     end
-
   end
 end

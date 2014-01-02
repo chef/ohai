@@ -86,7 +86,7 @@ Ohai.plugin(:Kernel) do
     so = shell_out("kextstat -k -l")
     so.stdout.lines do |line|
       if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/
-        kext[$4] = { :version => $5, :size => $3.hex, :index => $1, :refcount => $2 }
+        modules[$4] = { :version => $5, :size => $3.hex, :index => $1, :refcount => $2 }
       end
     end
 

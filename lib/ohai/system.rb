@@ -61,25 +61,7 @@ module Ohai
     end
 
     def load_plugins
-      Ohai::Config[:plugin_path].each do |path|
-        Dir[File.join(path, '**', '*.rb')].each do |plugin_file_path|
-          # Load all the *.rb files under the configured paths in :plugin_path
-          plugin = @loader.load_plugin(plugin_file_path)
-
-          if plugin && plugin.version == :version6
-            # Capture the plugin in @v6_dependency_solver if it is a V6 plugin
-            # to be able to resolve V6 dependencies later on.
-            # We are using the partial path in the dep solver as a key.
-            partial_path = Pathname.new(plugin_file_path).relative_path_from(Pathname.new(path)).to_s
-
-            unless @v6_dependency_solver.has_key?(partial_path)
-              @v6_dependency_solver[partial_path] = plugin
-            else
-              Ohai::Log.debug("Plugin '#{plugin_file_path}' is already loaded.")
-            end
-          end
-        end
-      end
+      @loader.load_all
     end
 
     def run_plugins(safe = false, force = false, attribute_filter = nil)

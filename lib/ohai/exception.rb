@@ -19,6 +19,7 @@
 module Ohai
   module Exceptions
     class Exec < RuntimeError; end
+    class InvalidPluginName < Exception; end
     class IllegalPluginDefinition < Exception; end
     class AttributeNotFound < Exception; end
     class ProviderNotFound < Exception; end

@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-require 'sigar'
-
 Ohai.plugin(:NetworkListeners) do
   provides "network/listeners"
 

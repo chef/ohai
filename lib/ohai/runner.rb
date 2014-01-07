@@ -42,13 +42,17 @@ module Ohai
         return false
       end
 
-      case plugin.version
-      when :version7
-        run_v7_plugin(plugin, force)
-      when :version6
-        run_v6_plugin(plugin, force)
-      else
-        raise ArgumentError, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+      begin
+        case plugin.version
+        when :version7
+          run_v7_plugin(plugin, force)
+        when :version6
+          run_v6_plugin(plugin, force)
+        else
+          raise ArgumentError, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+        end
+      rescue Exception,Errno::ENOENT => e
+        Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end
     end
 

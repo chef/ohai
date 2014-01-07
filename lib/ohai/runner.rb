@@ -51,6 +51,8 @@ module Ohai
         else
           raise ArgumentError, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
         end
+      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle
+        raise
       rescue Exception,Errno::ENOENT => e
         Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end

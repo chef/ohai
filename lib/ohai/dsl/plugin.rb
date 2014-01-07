@@ -83,7 +83,6 @@ module Ohai
       include Ohai::Mixin::SecondsToHuman
 
       attr_reader :data
-      attr_reader :source
 
       def initialize(data)
         @data = data

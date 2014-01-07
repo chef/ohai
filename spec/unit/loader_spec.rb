@@ -44,20 +44,49 @@ Ohai.plugin(:Zoo) do
 end
 EOF
 
+    with_plugin("zoo_too.rb", <<EOF)
+Ohai.plugin(:Zoo) do
+  provides 'elephants'
+end
+EOF
+
     with_plugin("lake.rb", <<EOF)
 provides 'fish'
 EOF
 
     describe "load_plugin() method" do
-      it "should load the v7 plugin correctly" do
-        @loader.load_plugin(path_to("zoo.rb"))
-        @provides_map.map.keys.should include("seals")
+      describe "when loading a v7 plugin" do
+        before(:each) do
+          @plugin = @loader.load_plugin(path_to("zoo.rb"))
+        end          
+
+        it "should save the plugin according to its attribute" do          
+          @provides_map.map.keys.should include("seals")
+        end
+
+        it "should save a single plugin source" do
+          @plugin.source.should eql([path_to("zoo.rb")])
+        end
+
+        it "should save all plugin sources" do
+          @loader.load_plugin(path_to("zoo_too.rb"))
+          @plugin.source.should eql([path_to("zoo.rb"), path_to("zoo_too.rb")])
+        end
       end
 
-      it "should load the v6 plugin correctly with a depreceation message" do
-        Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
-        @loader.load_plugin(path_to("lake.rb"))
-        @provides_map.map.should be_empty
+      describe "when loading a v6 plugin" do
+        before(:each) do
+          Ohai::Log.should_receive(:warn).with(/\[DEPRECATION\]/)
+          @plugin = @loader.load_plugin(path_to("lake.rb"))
+        end
+
+        it "should not add this plugin's provided attributes to the provides map" do
+          @provides_map.map.should be_empty
+        end
+
+        it "should save the plugin's source" do
+          @plugin.source.should eql(path_to("lake.rb"))
+        end
       end
 
       it "should log a warning if a plugin doesn't exist" do

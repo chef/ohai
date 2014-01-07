@@ -22,9 +22,11 @@ module Ohai
     class Plugin
       class VersionVII < Plugin
         attr_reader :version
+        attr_reader :source
 
         def initialize(data)
           super(data)
+          @source = self.class.sources
           @version = :version7
         end
 
@@ -34,6 +36,10 @@ module Ohai
 
         def self.version
           :version7
+        end
+
+        def self.sources
+          @source_list ||= []
         end
 
         def self.provides_attrs

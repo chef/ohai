@@ -22,18 +22,19 @@ module Ohai
     class Plugin
       class VersionVI < Plugin
         attr_reader :version
+        attr_reader :source
 
         def initialize(controller, plugin_path)
           super(controller.data)
           @controller = controller
           @version = :version6
-          @plugin_path = plugin_path
+          @source = plugin_path
         end
 
         def name
           # Ohai V6 doesn't have any name specification for plugins. 
           # So we are using the full path to the plugin as the name of the plugin.
-          @plugin_path
+          @source
         end
 
         def self.version

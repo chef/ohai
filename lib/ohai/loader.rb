@@ -168,6 +168,7 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
       unless plugin_class.kind_of?(Class) and plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
+      plugin_class.sources << plugin_path
       @v7_plugin_classes << plugin_class unless @v7_plugin_classes.include?(plugin_class)
       plugin_class
     rescue SystemExit, Interrupt

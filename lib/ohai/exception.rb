@@ -19,7 +19,7 @@
 module Ohai
   module Exceptions
     class Exec < RuntimeError; end
-    class Error < Exception; end
+    class Error < StandardError; end
     class InvalidPlugin < Error; end
     class InvalidPluginName < Error; end
     class IllegalPluginDefinition < Error; end

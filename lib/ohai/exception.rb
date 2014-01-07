@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,12 +19,14 @@
 module Ohai
   module Exceptions
     class Exec < RuntimeError; end
-    class InvalidPluginName < Exception; end
-    class IllegalPluginDefinition < Exception; end
-    class AttributeNotFound < Exception; end
-    class ProviderNotFound < Exception; end
-    class DependencyCycle < Exception; end
-    class DependencyNotFound < Exception; end
-    class AttributeSyntaxError < Exception; end
+    class Error < Exception; end
+    class InvalidPlugin < Error; end
+    class InvalidPluginName < Error; end
+    class IllegalPluginDefinition < Error; end
+    class AttributeNotFound < Error; end
+    class ProviderNotFound < Error; end
+    class DependencyCycle < Error; end
+    class DependencyNotFound < Error; end
+    class AttributeSyntaxError < Error; end
   end
 end

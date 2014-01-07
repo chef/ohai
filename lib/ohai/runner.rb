@@ -34,7 +34,7 @@ module Ohai
     # will be run even if they have been run before.
     def run_plugin(plugin, force = false)
       unless plugin.kind_of?(Ohai::DSL::Plugin)
-        raise ArgumentError, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
+        raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
 
       if Ohai::Config[:disabled_plugins].include?(plugin.name)
@@ -49,9 +49,9 @@ module Ohai
         when :version6
           run_v6_plugin(plugin, force)
         else
-          raise ArgumentError, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
         end
-      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle
+      rescue Ohai::Exceptions::Error
         raise
       rescue Exception,Errno::ENOENT => e
         Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")

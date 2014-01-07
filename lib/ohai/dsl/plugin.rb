@@ -98,6 +98,10 @@ module Ohai
         @has_run
       end
 
+      def reset!
+        @has_run = false
+      end
+
       def [](key)
         @data[key]
       end

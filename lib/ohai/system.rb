@@ -127,32 +127,21 @@ module Ohai
       end
     end
 
-    # TODO: fix for running w/new internals
-    # add updated function to v7?
-    def refresh_plugins(path = '/')
+    # Re-runs plugins that provide the attributes specified by
+    # +attribute_filter+. If +attribute_filter+ is not given, re-runs all
+    # plugins.
+    #
+    # Note that dependencies will not be re-run, so you must specify all of the
+    # attributes you want refreshed in the +attribute_filter+
+    #
+    # This method takes a naive approach to v6 plugins: it simply re-runs all
+    # of them whenever called.
+    def refresh_plugins(attribute_filter=nil)
       Ohai::Hints.refresh_hints()
-
-      parts = path.split('/')
-      if parts.length == 0
-        h = @metadata
-      else
-        parts.shift if parts[0].length == 0
-        h = @metadata
-        parts.each do |part|
-          break unless h.has_key?(part)
-          h = h[part]
-        end
+      @provides_map.all_plugins(Array(attribute_filter)).each do |plugin|
+        plugin.reset!
       end
-
-      refreshments = collect_plugins(h)
-      Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
-
-      refreshments.each do |r|
-        @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
-      end
-      refreshments.each do |r|
-        require_plugin(r) unless @seen_plugins.has_key?(r)
-      end
+      run_plugins(true, false, Array(attribute_filter))
     end
 
     #

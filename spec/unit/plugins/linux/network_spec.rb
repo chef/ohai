@@ -26,6 +26,7 @@ rescue LoadError => e
 end
 
 def do_stubs
+  @plugin.stub(:collect_os).and_return(:linux)
   @plugin.stub(:shell_out).with("ip addr").and_return(mock_shell_out(0, @linux_ip_addr, ""))
   @plugin.stub(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, @linux_ip_link_s_d, ""))
   @plugin.stub(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, @linux_ip_neighbor_show, ""))

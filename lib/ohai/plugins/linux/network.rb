@@ -32,7 +32,7 @@ Ohai.plugin(:Network) do
     encap
   end
 
-  collect_data do
+  collect_data(:linux) do
     require 'ipaddr'
 
     iface = Mash.new

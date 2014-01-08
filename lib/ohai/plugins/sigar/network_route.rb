@@ -38,7 +38,7 @@ Ohai.plugin do
   # From sigar: include/sigar.h sigar_net_route_t
   SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
 
-  collect_data(:sigar) do
+  collect_data(:default) do
     require "sigar"
     sigar = Sigar.new
 

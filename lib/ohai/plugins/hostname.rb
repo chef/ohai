@@ -14,9 +14,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,15 @@
 #
 
 Ohai.plugin(:Hostname) do
-  provides "domain", "hostname", "fqdn"
+  provides "domain", "hostname", "fqdn", "machinename"
+
+  # hostname : short hostname
+  # machinename : output of hostname command (might be short on solaris)
+  # fqdn : result of canonicalizing hostname using DNS or /etc/hosts
+  # domain : domain part of FQDN
+  #
+  # hostname and machinename should always exist
+  # fqdn and domain may be broken if DNS is broken on the host
 
   def from_cmd(cmd)
     so = shell_out(cmd)
@@ -39,33 +47,52 @@ Ohai.plugin(:Hostname) do
       domain $1
     end
   end
-  
-  collect_data(:default) do
-    domain collect_domain
+
+  def collect_hostname
+    # Hostname is everything before the first dot
+    if machinename
+      machinename =~ /(.+?)\./
+      hostname $1
+    elsif fqdn
+      fqdn =~ /(.+?)\./
+      hostname $1
+    end
   end
 
-  collect_data(:aix, :hpux, :sigar) do
+  def get_fqdn_from_sigar
     require 'sigar'
     sigar = Sigar.new
-    hostname sigar.net_info.host_name
-    fqdn sigar.fqdn
-    domain collect_domain
+    sigar.fqdn
+  end
+
+  collect_data(:default) do
+    machinename from_cmd("hostname")
+    begin
+      fqdn get_fqdn_from_sigar
+    rescue LoadError
+      fqdn from_cmd("hostname")  # XXX: can we roll a pure ruby hostname -f equivalent?
+    end
+    collect_hostname
+    collect_domain
   end
 
   collect_data(:darwin, :netbsd, :openbsd) do
     hostname from_cmd("hostname -s")
-    fqdn from_cmd("hostname")
-    domain collect_domain
+    fqdn from_cmd("hostname") # XXX: is there a hostname -f equivalent or can we roll one?
+    machinename from_cmd("hostname")
+    collect_domain
   end
 
   collect_data(:freebsd) do
     hostname from_cmd("hostname -s")
+    machinename from_cmd("hostname")
     fqdn from_cmd("hostname -f")
-    domain collect_domain
+    collect_domain
   end
 
   collect_data(:linux) do
     hostname from_cmd("hostname -s")
+    machinename from_cmd("hostname")
     begin
       fqdn from_cmd("hostname --fqdn")
     rescue
@@ -77,6 +104,7 @@ Ohai.plugin(:Hostname) do
   collect_data(:solaris2) do
     require 'socket'
 
+    machinename from_cmd("hostname")
     hostname from_cmd("hostname")
     fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
     if fqdn_lookup.split('.').length > 1
@@ -100,6 +128,7 @@ Ohai.plugin(:Hostname) do
 
     host = WMI::Win32_ComputerSystem.find(:first)
     hostname "#{host.Name}"
+    machinename "#{host.Name}"
 
     info = Socket.gethostbyname(Socket.gethostname)
     if info.first =~ /.+?\.(.*)/

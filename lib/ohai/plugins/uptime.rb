@@ -42,7 +42,7 @@ Ohai.plugin(:Uptime) do
     return [nil, nil]
   end
 
-  collect_data(:aix, :hpux, :sigar) do
+  collect_data(:aix, :hpux, :default) do
     require 'sigar'
 
     sigar = Sigar.new
@@ -73,8 +73,7 @@ Ohai.plugin(:Uptime) do
 
   collect_data(:openbsd) do
     # kern.boottime=Tue Nov  1 14:45:52 2011
-        so = shell_out("#{ Ohai.abs_path( "/sbin/sysctl" )}
-         #kern.boottime")
+    so = shell_out("#{ Ohai.abs_path( "/sbin/sysctl" )} #kern.boottime")
     so.stdout.lines do |line|
       if line =~ /kern.boottime=(.+)/
         uptime_seconds Time.new.to_i - Time.parse($1).to_i
@@ -84,17 +83,12 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:solaris2) do
-    require 'date'
-
-    # Example output:
-    # $ who -b
-    #   .       system boot  Jul  9 17:51
-    so = shell_out("who -b")
+    so = shell_out("kstat -p unix:0:system_misc:boot_time")
+    # unix:0:system_misc:boot_time    1343860543
     so.stdout.lines do |line|
-      if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
+      if line =~ /unix:0:system_misc:boot_time\s+(\d+)/
+        uptime_Seconds Time.new.to_i - $1.to_i
         uptime seconds_to_human(uptime_seconds)
-        break
       end
     end
   end

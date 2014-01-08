@@ -21,7 +21,7 @@ Ohai.plugin(:NetworkListeners) do
 
   depends "network", "counters/network"
 
-  collect_data(:aix, :hpux, :sigar) do
+  collect_data do
     require 'sigar'
     flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
 

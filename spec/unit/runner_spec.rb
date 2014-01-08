@@ -29,7 +29,7 @@ describe Ohai::Runner, "run_plugin" do
 
   describe "when running an invalid plugin" do
     it "should raise error" do
-      lambda { @runner.run_plugin(double("Ohai::NotPlugin")) }.should raise_error(ArgumentError)
+      lambda { @runner.run_plugin(double("Ohai::NotPlugin")) }.should raise_error(Ohai::Exceptions::InvalidPlugin)
     end
   end
 
@@ -120,7 +120,7 @@ describe Ohai::Runner, "run_plugin" do
       let(:version) { :versionBla }
 
       it "should raise error" do
-        lambda { @runner.run_plugin(plugin) }.should raise_error(ArgumentError)
+        lambda { @runner.run_plugin(plugin) }.should raise_error(Ohai::Exceptions::InvalidPlugin)
       end
     end
 

@@ -65,7 +65,7 @@ Ohai.plugin(:Hostname) do
     sigar.fqdn
   end
 
-  collect_data(:default) do
+  collect_data(:aix, :hpux, :default) do
     machinename from_cmd("hostname")
     begin
       fqdn get_fqdn_from_sigar

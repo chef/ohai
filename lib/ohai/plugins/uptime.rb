@@ -42,7 +42,7 @@ Ohai.plugin(:Uptime) do
     return [nil, nil]
   end
 
-  collect_data(:default) do
+  collect_data(:aix, :hpux, :default) do
     require 'sigar'
 
     sigar = Sigar.new

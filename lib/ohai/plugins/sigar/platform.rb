@@ -19,7 +19,7 @@
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
-  collect_data(:aix, :hpux, :sigar) do
+  collect_data(:aix, :hpux, :default) do
     require "sigar"
     sys = Sigar.new.sys_info
 

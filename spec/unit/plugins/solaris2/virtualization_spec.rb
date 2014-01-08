@@ -28,7 +28,6 @@ PSRINFO_PV
 
     @plugin = get_plugin("solaris2/virtualization")
     @plugin.stub(:collect_os).and_return(:solaris2)
-    @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
     File.stub(:exists?).with("/usr/sbin/psrinfo").and_return(false)

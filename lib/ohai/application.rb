@@ -27,11 +27,6 @@ class Ohai::Application
     :long        => "--directory DIRECTORY",
     :description => "A directory to add to the Ohai search path"
 
-  option :file,
-    :short       => "-f FILE",
-    :long        => "--file FILE",
-    :description => "A file to run Ohai against"
-
   option :log_level,
     :short        => "-l LEVEL",
     :long         => "--log_level LEVEL",
@@ -92,11 +87,8 @@ class Ohai::Application
 
   def run_application
     ohai = Ohai::System.new
-    if Ohai::Config[:file]
-      ohai.from_file(Ohai::Config[:file])
-    else
-      ohai.all_plugins(@attributes)
-    end
+    ohai.all_plugins(@attributes)
+
     if @attributes
       @attributes.each do |a|
         puts ohai.attributes_print(a)

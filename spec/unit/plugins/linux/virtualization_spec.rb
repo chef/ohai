@@ -22,7 +22,6 @@ describe Ohai::System, "Linux virtualization platform" do
   before(:each) do
     @plugin = get_plugin("linux/virtualization")
     @plugin.stub(:collect_os).and_return(:linux)
-    @plugin.extend(SimpleFromFile)
 
     # default to all requested Files not existing
     File.stub(:exists?).with("/proc/xen").and_return(false)

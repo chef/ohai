@@ -21,7 +21,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
     @plugin = get_plugin("solaris2/platform")
-    @plugin.extend(SimpleFromFile)
     @plugin.stub(:collect_os).and_return(:solaris2)
     @plugin.stub(:shell_out).with("/sbin/uname -X")
   end

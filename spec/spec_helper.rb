@@ -108,12 +108,6 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   end
 end
 
-module SimpleFromFile
-  def from_file(filename)
-    self.instance_eval(IO.read(filename), filename, 1)
-  end
-end
-
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 

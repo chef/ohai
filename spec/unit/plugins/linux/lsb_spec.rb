@@ -25,7 +25,6 @@ describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @plugin = get_plugin("linux/lsb")
     @plugin.stub(:collect_os).and_return(:linux)
-    @plugin.extend(SimpleFromFile)
   end
 
   describe "on systems with /etc/lsb-release" do

@@ -24,12 +24,12 @@ describe Ohai::System, "hostname plugin" do
     @plugin = get_plugin("hostname")
     @plugin.stub(:collect_os).and_return(:default)
     @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
-    @plugin.stub(:get_fqdn_from_sigar).and_raise(LoadError)
   end
 
   context "when sigar is not installed" do
     before(:each) do
-      @plugin.stub(:get_fqdn_from_sigar).and_raise(LoadError)
+      @plugin.stub(:sigar_is_available?).and_return(false)
+      @plugin.should_not_receive(:get_fqdn_from_sigar)
       @plugin.stub(:resolve_fqdn).and_return("katie.bethell")
     end
     it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
@@ -52,6 +52,7 @@ describe Ohai::System, "hostname plugin" do
 
   context "when sigar is installed" do
     before(:each) do
+      @plugin.stub(:sigar_is_available?).and_return(true)
       @plugin.stub(:get_fqdn_from_sigar).and_return("katie.bethell")
     end
     it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")

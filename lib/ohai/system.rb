@@ -56,23 +56,23 @@ module Ohai
 
     def all_plugins(attribute_filter=nil)
       load_plugins
-      run_plugins(true, false, attribute_filter)
+      run_plugins(true, attribute_filter)
     end
 
     def load_plugins
       @loader.load_all
     end
 
-    def run_plugins(safe = false, force = false, attribute_filter = nil)
+    def run_plugins(safe = false, attribute_filter = nil)
       # First run all the version 6 plugins
       @v6_dependency_solver.values.each do |v6plugin|
-        @runner.run_plugin(v6plugin, force)
+        @runner.run_plugin(v6plugin)
       end
 
       # Then run all the version 7 plugins
       begin
         @provides_map.all_plugins(attribute_filter).each { |plugin|
-          @runner.run_plugin(plugin, force)
+          @runner.run_plugin(plugin)
         }
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
@@ -114,7 +114,7 @@ module Ohai
       else
         plugins.each do |plugin|
           begin
-            @runner.run_plugin(plugin, force)
+            @runner.run_plugin(plugin)
           rescue SystemExit, Interrupt
             raise
           rescue Ohai::Exceptions::DependencyCycle, Ohai::Exceptions::AttributeNotFound => e
@@ -141,7 +141,7 @@ module Ohai
       @provides_map.all_plugins(Array(attribute_filter)).each do |plugin|
         plugin.reset!
       end
-      run_plugins(true, false, Array(attribute_filter))
+      run_plugins(true, Array(attribute_filter))
     end
 
     #

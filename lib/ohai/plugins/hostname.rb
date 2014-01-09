@@ -24,6 +24,9 @@
 # limitations under the License.
 #
 
+require 'socket'
+require 'ipaddr'
+
 Ohai.plugin(:Hostname) do
   provides "domain", "hostname", "fqdn", "machinename"
 
@@ -38,6 +41,19 @@ Ohai.plugin(:Hostname) do
   def from_cmd(cmd)
     so = shell_out(cmd)
     so.stdout.split($/)[0]
+  end
+
+  # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
+  # this is ipv6-safe, works on ruby 1.8.7+
+  def resolve_fqdn
+    begin
+      hostname = from_cmd("hostname")
+      addrinfo = Socket.getaddrinfo(hostname, nil).first
+      iaddr = IPAddr.new(addrinfo[3])
+      Socket.gethostbyaddr(iaddr.hton)[0]
+    rescue
+      nil
+    end
   end
 
   def collect_domain
@@ -70,7 +86,7 @@ Ohai.plugin(:Hostname) do
     begin
       fqdn get_fqdn_from_sigar
     rescue LoadError
-      fqdn from_cmd("hostname")  # XXX: can we roll a pure ruby hostname -f equivalent?
+      fqdn resolve_fqdn
     end
     collect_hostname
     collect_domain
@@ -78,7 +94,7 @@ Ohai.plugin(:Hostname) do
 
   collect_data(:darwin, :netbsd, :openbsd) do
     hostname from_cmd("hostname -s")
-    fqdn from_cmd("hostname") # XXX: is there a hostname -f equivalent or can we roll one?
+    fqdn resolve_fqdn
     machinename from_cmd("hostname")
     collect_domain
   end
@@ -102,15 +118,9 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:solaris2) do
-    require 'socket'
-
     machinename from_cmd("hostname")
     hostname from_cmd("hostname")
-    fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
-    if fqdn_lookup.split('.').length > 1
-      # we recieved an fqdn
-      fqdn fqdn_lookup
-    end
+    fqdn resolve_fqdn
     domain collect_domain
   end
 

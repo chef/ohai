@@ -30,13 +30,18 @@ describe Ohai::System, "hostname plugin" do
   context "when sigar is not installed" do
     before(:each) do
       @plugin.stub(:get_fqdn_from_sigar).and_raise(LoadError)
+      @plugin.stub(:resolve_fqdn).and_return("katie.bethell")
     end
     it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
-    it_should_check_from("linux::hostname", "fqdn", "hostname", "katie.local")
+
+    it "should use #resolve_fqdn to find the fqdn" do
+      @plugin.run
+      @plugin[:fqdn].should == "katie.bethell"
+    end
 
     it "should set the domain to everything after the first dot of the fqdn" do
       @plugin.run
-      @plugin[:domain].should == "local"
+      @plugin[:domain].should == "bethell"
     end
 
     it "should set the [short] hostname to everything before the first dot of the fqdn" do

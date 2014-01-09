@@ -74,12 +74,13 @@ module Ohai
     # Load a specified file as an ohai plugin and creates an instance of it.
     # Not used by ohai itself, but can be used to load a plugin for testing
     # purposes.
-    def load_plugin(plugin_path)
-      plugin_class = load_plugin_class(plugin_path)
+    # plugin_dir_path is required when loading a v6 plugin.
+    def load_plugin(plugin_path, plugin_dir_path = nil)
+      plugin_class = load_plugin_class(plugin_path, plugin_dir_path)
       return nil unless plugin_class.kind_of?(Class)
       case
       when plugin_class < Ohai::DSL::Plugin::VersionVI
-        load_v6_plugin(plugin_class, plugin_path)
+        load_v6_plugin(plugin_class, plugin_path, plugin_dir_path)
       when plugin_class < Ohai::DSL::Plugin::VersionVII
         load_v7_plugin(plugin_class)
       else
@@ -129,7 +130,7 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
 
     def collect_v6_plugins
       @v6_plugin_classes.each do |plugin_spec|
-        plugin = load_v6_plugin(plugin_spec.plugin_class, plugin_spec.plugin_path)
+        plugin = load_v6_plugin(plugin_spec.plugin_class, plugin_spec.plugin_path, plugin_spec.plugin_dir_path)
         loaded_v6_plugin(plugin, plugin_spec.plugin_path, plugin_spec.plugin_dir_path)
       end
     end
@@ -146,8 +147,8 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
       plugin_class
     end
 
-    def load_v6_plugin(plugin_class, plugin_path)
-      plugin_class.new(@controller, plugin_path)
+    def load_v6_plugin(plugin_class, plugin_path, plugin_dir_path)
+      plugin_class.new(@controller, plugin_path, plugin_dir_path)
     end
 
     # Capture the plugin in @v6_dependency_solver if it is a V6 plugin

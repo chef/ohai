@@ -1,5 +1,5 @@
 #
-# Author:: Ranjib Dey (dey.ranjib@gmail.com)
+# Author:: Paul Rossman (<paulrossman@google.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,75 +16,63 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'ohai/mixin/gce_metadata'
 
 describe Ohai::System, "plugin gce" do
-  before(:each) do
+
+  let(:hint_path_nix) { '/etc/chef/ohai/hints/gce.json' }
+  let(:hint_path_win) { 'C:\chef\ohai\hints/gce.json' }
+
+  before do
     @ohai = Ohai::System.new
     @ohai.stub(:require_plugin).and_return(true)
   end
 
-  shared_examples_for "!gce" do
-    it 'should not behave like gce' do
+  shared_examples_for "!gce"  do
+    it "should not create the gce mash" do
+      @ohai._require_plugin("gce")
       @ohai[:gce].should be_nil
     end
   end
 
   shared_examples_for "gce" do
-    before(:each) do
-      @http_client = double("Net::HTTP client")
-      Ohai::Mixin::GCEMetadata.stub(:http_client).and_return(@http_client)
-      IO.stub(:select).and_return([[],[1],[]])
-      t = double("connection")
-      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub(:new).and_return(t)
-      Socket.stub(:pack_sockaddr_in).and_return(nil)
-    end
-
-    it "should recursively fetch and properly parse json metadata" do
-      @http_client.should_receive(:get).
-        with("/computeMetadata/v1beta1/?recursive=true/").
-        and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code=>"200"))
-
+    it "should create the gce mash" do
       @ohai._require_plugin("gce")
-
       @ohai[:gce].should_not be_nil
-      @ohai[:gce]['instance'].should eq("hostname"=>"test-host")
+    end
+    it "should have the instance attribute" do
+      @ohai._require_plugin("gce")
+      @ohai[:gce][:instance].should.should_not be_nil
     end
   end
 
-  describe "with hint file" do
+  context "with gce hint file" do
+    before do
+      File.stub(:exist?).with(hint_path_nix).and_return(true)
+      File.stub(:read).with(hint_path_nix).and_return('')
+      File.stub(:exist?).with(hint_path_win).and_return(true)
+      File.stub(:read).with(hint_path_win).and_return('')
+    end
     it_should_behave_like "gce"
-
-    before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
-    end
   end
 
-  describe "without hint file" do
-    it_should_behave_like "!gce"
-
-    before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+  context "without hint file" do
+    before do
+      File.stub(:exist?).with(hint_path_nix).and_return(false)
+      File.stub(:exist?).with(hint_path_win).and_return(false)
     end
+    it_should_behave_like "!gce"
   end
-  
-  describe "with ec2 cloud file" do
-    it_should_behave_like "!gce"
-  
-    before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
-      
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+
+  context "with ec2 hint file" do
+    let(:hint_path_nix) { '/etc/chef/ohai/hints/ec2.json' }
+    let(:hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
+    before do
+      File.stub(:exist?).with(hint_path_nix).and_return(true)
+      File.stub(:read).with(hint_path_nix).and_return('')
+      File.stub(:exist?).with(hint_path_win).and_return(true)
+      File.stub(:read).with(hint_path_win).and_return('')
     end
+    it_should_behave_like "!gce"
   end
 
 end

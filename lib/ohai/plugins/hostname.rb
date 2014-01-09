@@ -110,14 +110,6 @@ Ohai.plugin(:Hostname) do
     if fqdn_lookup.split('.').length > 1
       # we recieved an fqdn
       fqdn fqdn_lookup
-    else
-      # default to assembling one
-      so = shell_out("hostname")
-      h = so.stdout.split($/)[0]
-      so = shell_out("domainname")
-      d = so.stdout.split($/)[0]
-
-      fqdn("#{h}.#{d}")
     end
     domain collect_domain
   end
@@ -141,4 +133,3 @@ Ohai.plugin(:Hostname) do
     domain collect_domain
   end
 end
-

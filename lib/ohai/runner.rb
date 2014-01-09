@@ -32,7 +32,7 @@ module Ohai
     # Runs plugins and any un-run dependencies.
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
-    def run_plugin(plugin, force = false)
+    def run_plugin(plugin)
       unless plugin.kind_of?(Ohai::DSL::Plugin)
         raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
@@ -45,9 +45,9 @@ module Ohai
       begin
         case plugin.version
         when :version7
-          run_v7_plugin(plugin, force)
+          run_v7_plugin(plugin)
         when :version6
-          run_v6_plugin(plugin, force)
+          run_v6_plugin(plugin)
         else
           raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
         end
@@ -58,18 +58,18 @@ module Ohai
       end
     end
 
-    def run_v6_plugin(plugin, force)
-      return true if plugin.has_run? && !force
+    def run_v6_plugin(plugin)
+      return true if plugin.has_run?
 
       @safe_run ? plugin.safe_run : plugin.run
     end
 
-    def run_v7_plugin(plugin, force)
+    def run_v7_plugin(plugin)
       visited = [ plugin ]
       while !visited.empty?
         next_plugin = visited.pop
 
-        next if next_plugin.has_run? unless force
+        next if next_plugin.has_run?
 
         if visited.include?(next_plugin)
           raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ") }"
@@ -80,7 +80,7 @@ module Ohai
         # Remove the already ran plugins from dependencies if force is not set
         # Also remove the plugin that we are about to run from dependencies as well.
         dependency_providers.delete_if { |dep_plugin|
-          (!force && dep_plugin.has_run?) || dep_plugin.eql?(next_plugin)
+          dep_plugin.has_run? || dep_plugin.eql?(next_plugin)
         }
 
         if dependency_providers.empty?

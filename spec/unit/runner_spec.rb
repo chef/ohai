@@ -47,14 +47,9 @@ describe Ohai::Runner, "run_plugin" do
       describe "if the plugin has run before" do
         let(:has_run) { true }
 
-        it "plugin should not run when run_plugin is not forced" do
+        it "should not run the plugin" do
           plugin.should_not_receive(:safe_run)
           @runner.run_plugin(plugin)
-        end
-
-        it "plugin should run when run_plugin is not forced" do
-          plugin.should_receive(:safe_run)
-          @runner.run_plugin(plugin, true)
         end
 
         describe "if the plugin is disabled" do
@@ -96,15 +91,11 @@ describe Ohai::Runner, "run_plugin" do
       describe "if the plugin has run before" do
         let(:has_run) { true }
 
-        it "plugin should not run when run_plugin is not forced" do
+        it "should not run" do
           plugin.should_not_receive(:safe_run)
           @runner.run_plugin(plugin)
         end
 
-        it "plugin should run when run_plugin is not forced" do
-          plugin.should_receive(:safe_run)
-          @runner.run_plugin(plugin, true)
-        end
       end
 
       describe "if the plugin is disabled" do

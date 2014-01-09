@@ -19,31 +19,17 @@
 #
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
 
 describe Ohai::System, "plugin nodejs" do
-
-  before(:each) do
-    @plugin = get_plugin("nodejs")
-    @plugin[:languages] = Mash.new
-    @stdout = "v0.8.11\n"
-    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
+  test_plugin([ "languages", "nodejs" ], [ "node" ]) do | p |
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "nodejs" => nil }})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
+           { "languages" => { "nodejs" => nil }})
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "nodejs" ]],
+           { "languages" => { "nodejs" => { "version" => "0.10.2" }}})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "nodejs" ]],
+           { "languages" => { "nodejs" => { "version" => "0.10.2" }}})
   end
-
-  it "should get the nodejs version from running node -v" do
-    @plugin.should_receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
-  end
-
-  it "should set languages[:nodejs][:version]" do
-    @plugin.run
-    @plugin.languages[:nodejs][:version].should eql("0.8.11")
-  end
-
-  it "should not set the languages[:nodejs] tree up if node command fails" do
-    @stdout = "v0.8.11\n"
-    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(1, @stdout, ""))
-    @plugin.run
-    @plugin.languages.should_not have_key(:nodejs)
-  end
-
 end

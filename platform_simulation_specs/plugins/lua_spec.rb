@@ -20,31 +20,19 @@
 
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
 
 describe Ohai::System, "plugin lua" do
-
-  before(:each) do
-    @plugin = get_plugin("lua")
-    @plugin[:languages] = Mash.new
-    @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    @plugin.stub(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
+  test_plugin([ "languages", "lua" ], [ "lua" ]) do | p |
+    p.test([ "centos-6.4" ], ["x86", "x64"], [[], ["lua"]],
+           { "languages" => { "lua" => { "version" => "5.1.4" }}})
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
+           { "languages" => { "lua" => nil }})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
+           { "languages" => { "lua" => nil }})
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "lua" ]],
+           { "languages" => { "lua" => { "version" => "5.1.4" }}})
+    p.test([ "ubuntu-13.04" ], [ "x64" ], [["lua"]],
+           { "languages" => { "lua" => { "version" => "5.1.5" }}})
   end
-
-  it "should get the lua version from running lua -v" do
-    @plugin.should_receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
-    @plugin.run
-  end
-
-  it "should set languages[:lua][:version]" do
-    @plugin.run
-    @plugin.languages[:lua][:version].should eql("5.1.2")
-  end
-
-  it "should not set the languages[:lua] tree up if lua command fails" do
-    @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    @plugin.stub(:shell_out).with("lua -v").and_return(mock_shell_out(1, "", @stderr))
-    @plugin.run
-    @plugin.languages.should_not have_key(:lua)
-  end
-
 end

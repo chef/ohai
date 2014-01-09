@@ -46,20 +46,4 @@ describe Ohai::System, "plugin python" do
     @plugin.languages.should_not have_key(:python)
   end
 
-  ##########
-
-  require File.expand_path(File.dirname(__FILE__) + '/../path/ohai_plugin_common.rb')
-
-  test_plugin([ "languages", "python" ], [ "python" ]) do | p |
-    p.test([ "centos-5.9" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.4.3" }}})
-    p.test([ "centos-6.4" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.6.6" }}})
-    p.test([ "ubuntu-10.04" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.6.5" }}})
-    p.test([ "ubuntu-12.04" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.7.3"}}})
-    p.test([ "ubuntu-13.04" ], ["x64"], [[], ["python"]],
-           { "languages" => { "python" => { "version" => "2.7.4"}}})
-  end
 end

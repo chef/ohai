@@ -19,7 +19,6 @@
 
 require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin erlang" do
 
@@ -59,21 +58,4 @@ describe Ohai::System, "plugin erlang" do
     @plugin.languages.should_not have_key(:erlang)
   end
 
-
-  ##########
-
-  test_plugin([ "languages", "erlang" ], [ "erl" ]) do | p |
-    p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "erlang" => nil }})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "languages" => { "erlang" => nil }})
-    p.test([ "centos-5.9", "centos-6.4" ], [ "x86", "x64" ], [[ "erlang" ]],
-           { "languages" => { "erlang" => { "version" => "5.8.5", "options" => [ "ASYNC_THREADS" ], "emulator" => "BEAM" }}})
-    p.test([ "ubuntu-10.04" ], [ "x86", "x64" ], [[ "erlang" ]],
-           { "languages" => { "erlang" => { "version" => "5.7.4", "options" => [ "ASYNC_THREADS", "HIPE" ], "emulator" => "BEAM" }}})
-    p.test([ "ubuntu-12.04" ], [ "x86", "x64" ], [[ "erlang" ]],
-           { "languages" => { "erlang" => { "version" => "5.8.5", "options" => [ "ASYNC_THREADS" ], "emulator" => "BEAM" }}})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "erlang" ]],
-           { "languages" => { "erlang" => { "version" => "5.9.1", "options" => [ "ASYNC_THREADS" ], "emulator" => "BEAM" }}})
-  end
 end

@@ -18,7 +18,6 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
-require File.expand_path(File.dirname(__FILE__) + '/../../path/ohai_plugin_common.rb')
 
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
@@ -43,10 +42,4 @@ ENV_LSMOD
 
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", [0, "Linux", ""])
 
-  test_plugin([ "kernel" ], [ "uname", "env" ]) do | p |
-    p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "kernel" => { "os" => "GNU/Linux" }})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "kernel" => { "os" => "GNU/Linux" }})
-  end
 end

@@ -30,25 +30,25 @@ module OhaiPluginCommon
     # platform = ENV['OHAI_TEST_PLATFORM']
     # arch = ENV['OHAI_TEST_ARCH']
     # env = ENV['OHAI_TEST_ENVIRONMENT']
-    
+
     # env = JSON.load(env)
-    
+
     argv = ARGV.map { |arg| if /\ / =~ arg then "\"" + arg + "\"" else arg end }.join ' '
     match = data[platform][arch].select{ |v| v[:params] == argv && v[:env] == env }
-    
+
     raise "No canned output for these settings." if match.empty?
     raise "More than one set of data matches these parameters." if match.size > 1
     match = match[0]
-    
+
     $stdout.puts match[:stdout] if match[:stdout] != ''
     $stderr.puts match[:stderr] if match[:stderr] != ''
     exit match[:exit_status]
   end
-  
+
   def data_path
     File.expand_path(File.dirname(__FILE__) + '../../../data/plugins')
   end
-  
+
   def get_path(path = '')
     File.expand_path(File.dirname(__FILE__) + path)
   end
@@ -64,7 +64,7 @@ module OhaiPluginCommon
     @data = Class.new do
       @instances
 
-      #DSL - make a list of hashes with 
+      #DSL - make a list of hashes with
       def push(param, value)
         @instances ||= []
         @instances[0] ||= {}
@@ -112,9 +112,9 @@ eos
 
   # prep fake executable data for writing to a file
   def data_to_string(data)
-    a = data.map do |platform,v| 
-      v.map do |arch,v| 
-        v.map do |e| 
+    a = data.map do |platform,v|
+      v.map do |arch,v|
+        v.map do |e|
           to_fake_exe_format platform, arch, e[:env], e[:params], e[:stdout], e[:stderr], e[:exit_status]
         end
       end
@@ -165,7 +165,7 @@ eof
 @#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )} #{cmd_path} %1 %2 %3 %4 %5 %6 %7 %8 %9
 eof
     File.open(bat_path, "w") { |f| f.puts bat }
- 
+
     # sleep 0.01 until File.exists? cmd_path
     Mixlib::ShellOut.new("chmod 755 #{cmd_path}").run_command
   end
@@ -195,10 +195,11 @@ end
 
 # test that a plugin conforms populates ohai with the correct data
 def test_plugin(plugin_names, cmd_list)
-  puts "Functional testing is temporary disabled until plugin reloading is resolved."
+  #
+  # Current platform simulation tests are disabled. Remove the line below
+  # in order to enable the platform simulation tests.
+  #
   return
-
-  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
 
   # clean the path directory, in case a previous test was interrupted
   OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
@@ -217,15 +218,15 @@ def test_plugin(plugin_names, cmd_list)
               describe "and the environment is #{env}" do
                 path = OhaiPluginCommon.get_path
                 cmd_not_found = Set.new
-                
+
                 begin
                   # preserve the path
                   old_path = ENV[ 'PATH' ]
-                
+
                   # create fake executables
                   cmd_list.each do | c |
                     data = OhaiPluginCommon.read_output( c.gsub( /\//, OhaiPluginCommon::FAKE_SEP ))
-                    
+
                     data = data[platform][arch].select { |f| f[:env] == env }
                     if data.all? { |f| ( /not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
                       cmd_not_found.add c
@@ -233,7 +234,7 @@ def test_plugin(plugin_names, cmd_list)
                       OhaiPluginCommon.create_exe c, path, platform, arch, env
                     end
                   end
-                  
+
                   # capture all executions in path dir
                   ENV['PATH'] = path
                   Ohai.instance_eval do
@@ -241,10 +242,11 @@ def test_plugin(plugin_names, cmd_list)
                       File.join( OhaiPluginCommon.get_path, abs_path )
                     end
                   end
-                  
+
                   @ohai = Ohai::System.new
                   plugin_names.each do | plugin_name |
                     @plugin = get_plugin(plugin_name, @ohai, OhaiPluginCommon.plugin_path)
+                    raise "Can not find plugin #{plugin_name}" if @plugin.nil?
                     @plugin.safe_run
                   end
                 ensure
@@ -256,7 +258,7 @@ def test_plugin(plugin_names, cmd_list)
                   ENV['PATH'] = old_path
                   OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
                 end
-                
+
                 enc = Yajl::Encoder
                 subsumes?( @ohai.data, ohai ) do | path, source, test |
                   path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join

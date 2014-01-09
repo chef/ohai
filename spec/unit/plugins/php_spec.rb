@@ -20,7 +20,6 @@
 
 require 'json'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', 'ohai_plugin_common.rb'))
 
 describe Ohai::System, "plugin php" do
 
@@ -55,20 +54,4 @@ describe Ohai::System, "plugin php" do
     @plugin.languages[:php][:builddate].should eql("Aug 30 2013 04:30:30")
   end
 
-  #########
-
-  test_plugin([ "languages", "php" ], [ "php" ]) do | p |
-    p.test([ "centos-5.9", "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "php" => nil }})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "languages" => { "php" => nil }})
-    p.test([ "centos-5.9", "centos-6.4" ], [ "x86", "x64" ], [[ "php" ]],
-           { "languages" => { "php" => { "version" => "5.3.3" }}})
-    p.test([ "ubuntu-10.04" ], ["x86", "x64"], [[ "php" ]],
-           { "languages" => { "php" => { "version" => "5.3.2-1ubuntu4.20" }}})
-    p.test([ "ubuntu-12.04" ], [ "x86", "x64" ], [[ "php" ]],
-           { "languages" => { "php" => { "version" => "5.3.10-1ubuntu3.7" }}})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "php" ]],
-           { "languages" => { "php" => { "version" => "5.4.9-4ubuntu2.2" }}})
-  end
 end

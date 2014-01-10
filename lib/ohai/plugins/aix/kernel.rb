@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Joshua Timberman <joshua@opscode.com>
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,16 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+Ohai.plugin(:Kernel) do
+  provides "kernel", "kernel/modules"
 
-  collect_data(:hpux, :default) do
-    require "sigar"
-    sys = Sigar.new.sys_info
+  collect_data(:aix) do
+    kernel Mash.new
 
-    platform sys.name.downcase
-    platform_version sys.version
-    platform_family platform
+    kernel[:name] = from("uname -s").downcase
+    kernel[:release] = from("uname -r")
+    kernel[:version] = from("uname -v")
+    kernel[:machine] = from("uname -p")
+    kernel[:modules] = Mash.new
   end
 end

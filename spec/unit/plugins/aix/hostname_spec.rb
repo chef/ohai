@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
+# Copyright:: Copyright (c) 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
-  collect_data(:hpux, :default) do
-    require "sigar"
-    sys = Sigar.new.sys_info
-
-    platform sys.name.downcase
-    platform_version sys.version
-    platform_family platform
+describe Ohai::System, "Aix hostname plugin" do
+  before(:each) do
+    @ohai = Ohai::System.new
+    @ohai.stub(:from).with("hostname").and_return("aix_admin")
+    @ohai._require_plugin("aix::hostname")
   end
+
+  it_should_check_from("aix::hostname", "hostname", "hostname", "aix_admin")
 end

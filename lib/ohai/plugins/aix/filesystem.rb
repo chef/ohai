@@ -55,7 +55,6 @@ Ohai.plugin(:Filesystem) do
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:mount] = fields[1]
         fs[filesystem][:fs_type] = fields[2]
-        #fs[filesystem][:mount_options] = fields[6]
         fs[filesystem][:mount_options] = fields[6]
       else
         fields = line.split

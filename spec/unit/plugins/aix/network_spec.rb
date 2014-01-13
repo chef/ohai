@@ -71,68 +71,78 @@ bucket:    0     contains:    0 entries
 There are 6 entries in the arp table.
 ARP_AN
 
-    @ohai = Ohai::System.new
-    @ohai.stub(:require_plugin).and_return(true)
-    @ohai[:network] = Mash.new
-    @ohai.stub(:popen4).with("route -n get 0").and_yield(nil, StringIO.new, StringIO.new(@route_n_get_0), nil)
-    @ohai.stub(:popen4).with("lsdev -Cc if").and_yield(nil, StringIO.new, StringIO.new(@lsdev_Cc_if), nil)
-    @ohai.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new(@ifconfig_en0), nil)
-    @ohai.stub(:popen4).with("entstat -d en0 | grep \"Hardware Address\"").and_yield(nil, StringIO.new, StringIO.new("Hardware Address: be:42:80:00:b0:05"), nil)
-    @ohai.stub(:popen4).with("netstat -nrf inet").and_yield(nil, StringIO.new, StringIO.new(@netstat_nrf_inet), nil)
-    @ohai.stub(:popen4).with("netstat -nrf inet6").and_yield(nil, StringIO.new, StringIO.new("::1%1  ::1%1  UH 1 109392 en0  -  -"), nil)
-    @ohai.stub(:popen4).with("arp -an").and_yield(nil, StringIO.new, StringIO.new(@aix_arp_an), nil)
-    @ohai._require_plugin("aix::network")    
+    @plugin = get_plugin("aix/network")
+    @plugin.stub(:collect_os).and_return(:aix)
+    @plugin[:network] = Mash.new
+    @plugin.stub(:popen4).with("route -n get 0").and_yield(nil, StringIO.new, StringIO.new(@route_n_get_0), nil)
+    @plugin.stub(:popen4).with("lsdev -Cc if").and_yield(nil, StringIO.new, StringIO.new(@lsdev_Cc_if), nil)
+    @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new(@ifconfig_en0), nil)
+    @plugin.stub(:popen4).with("entstat -d en0 | grep \"Hardware Address\"").and_yield(nil, StringIO.new, StringIO.new("Hardware Address: be:42:80:00:b0:05"), nil)
+    @plugin.stub(:popen4).with("netstat -nrf inet").and_yield(nil, StringIO.new, StringIO.new(@netstat_nrf_inet), nil)
+    @plugin.stub(:popen4).with("netstat -nrf inet6").and_yield(nil, StringIO.new, StringIO.new("::1%1  ::1%1  UH 1 109392 en0  -  -"), nil)
+    @plugin.stub(:popen4).with("arp -an").and_yield(nil, StringIO.new, StringIO.new(@aix_arp_an), nil)
   end
 
   describe "run" do
+    before do
+      @plugin.run
+    end
 
     it "detects network information" do
-      @ohai['network'].should_not be_nil
+      @plugin['network'].should_not be_nil
     end
 
     it "detects the interfaces" do
-      @ohai['network']['interfaces'].keys.sort.should == ["en0"]
+      @plugin['network']['interfaces'].keys.sort.should == ["en0"]
     end
 
     it "detects the ip addresses of the interfaces" do
-      @ohai['network']['interfaces']['en0']['addresses'].keys.should include('172.29.174.58')
+      @plugin['network']['interfaces']['en0']['addresses'].keys.should include('172.29.174.58')
     end
   end
 
   describe "route -n get 0" do
+    before do
+      @plugin.run
+    end
 
     it "returns the default gateway of the system's network" do
-      @ohai[:network][:default_gateway].should == '172.29.128.13'
+      @plugin[:network][:default_gateway].should == '172.29.128.13'
     end
 
     it "returns the default interface of the system's network" do
-      @ohai[:network][:default_interface].should == 'en0'
+      @plugin[:network][:default_interface].should == 'en0'
     end
   end
 
   describe "lsdev -Cc if" do
-
     it "detects the state of the interfaces in the system" do
-      @ohai['network']['interfaces']['en0'][:state].should == "up"
+      @plugin.run
+      @plugin['network']['interfaces']['en0'][:state].should == "up"
     end
 
     it "detects the description of the interfaces in the system" do
-      @ohai['network']['interfaces']['en0'][:description].should == "Standard Ethernet Network Interface"
+      @plugin.run
+      @plugin['network']['interfaces']['en0'][:description].should == "Standard Ethernet Network Interface"
     end
 
     describe "ifconfig interface" do
       it "detects the CHAIN network flag" do
-        @ohai['network']['interfaces']['en0'][:flags].should include('CHAIN')
+        @plugin.run
+        @plugin['network']['interfaces']['en0'][:flags].should include('CHAIN')
       end
 
       it "detects the metric network flag" do
-        @ohai['network']['interfaces']['en0'][:metric].should == '1'
+        @plugin.run
+        @plugin['network']['interfaces']['en0'][:metric].should == '1'
       end
 
       context "inet entries" do
         before do
-          @inet_entry = @ohai['network']['interfaces']['en0'][:addresses]["172.29.174.58"]
+          @plugin.run
+          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.58"]
         end
+
         it "detects the family" do
           @inet_entry[:family].should == 'inet'
         end
@@ -146,23 +156,24 @@ ARP_AN
         end
 
         it "detects all key-values" do
-          @ohai['network']['interfaces']['en0'][:tcp_sendspace].should == "262144"
-          @ohai['network']['interfaces']['en0'][:tcp_recvspace].should == "262144"
-          @ohai['network']['interfaces']['en0'][:rfc1323].should == "1"
+          @plugin['network']['interfaces']['en0'][:tcp_sendspace].should == "262144"
+          @plugin['network']['interfaces']['en0'][:tcp_recvspace].should == "262144"
+          @plugin['network']['interfaces']['en0'][:rfc1323].should == "1"
         end
 
         # For an output with no netmask like inet 172.29.174.59 broadcast 172.29.191.255
         context "with no netmask in the output" do
           before do
-            @inet_entry = @ohai['network']['interfaces']['en0'][:addresses]["172.29.174.59"]
-            @ohai.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet 172.29.174.59 broadcast 172.29.191.255"), nil)
+            @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet 172.29.174.59 broadcast 172.29.191.255"), nil)
           end
 
           it "detects the default prefixlen" do
+            @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.59"]
             @inet_entry[:prefixlen].should == '32'
           end
 
           it "detects the default netmask" do
+            @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.59"]
             @inet_entry[:netmask].should == '255.255.255.255'
           end
         end
@@ -170,8 +181,9 @@ ARP_AN
 
       context "inet6 entries" do
         before do
-          @inet_entry = @ohai['network']['interfaces']['en0'][:addresses]["::1%1"]
-          @ohai.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet6 ::1%1/0"), nil)
+          @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet6 ::1%1/0"), nil)
+          @plugin.run
+          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1%1"]
         end
 
         it "detects the prefixlen" do
@@ -186,7 +198,8 @@ ARP_AN
 
     context "entstat -d interface" do
       before do
-        @inet_interface_addresses = @ohai['network']['interfaces']['en0'][:addresses]["BE:42:80:00:B0:05"]
+        @plugin.run
+        @inet_interface_addresses = @plugin['network']['interfaces']['en0'][:addresses]["BE:42:80:00:B0:05"]
       end
       it "detects the family" do
         @inet_interface_addresses[:family].should == 'lladdr'
@@ -195,64 +208,72 @@ ARP_AN
   end
 
   describe "netstat -nrf family" do
-    context "inet" do
+    before do
+      @plugin.run
+    end
 
+    context "inet" do
       it "detects the route destinations" do
-        @ohai['network']['interfaces']['en0'][:routes][0][:destination].should == "default"
-        @ohai['network']['interfaces']['en0'][:routes][1][:destination].should == "172.29.128.0"
+        @plugin['network']['interfaces']['en0'][:routes][0][:destination].should == "default"
+        @plugin['network']['interfaces']['en0'][:routes][1][:destination].should == "172.29.128.0"
       end
 
       it "detects the route family" do
-        @ohai['network']['interfaces']['en0'][:routes][0][:family].should == "inet"
+        @plugin['network']['interfaces']['en0'][:routes][0][:family].should == "inet"
       end
 
       it "detects the route gateway" do
-        @ohai['network']['interfaces']['en0'][:routes][0][:via].should == "172.29.128.13"
+        @plugin['network']['interfaces']['en0'][:routes][0][:via].should == "172.29.128.13"
       end
 
       it "detects the route flags" do
-        @ohai['network']['interfaces']['en0'][:routes][0][:flags].should == "UG"
+        @plugin['network']['interfaces']['en0'][:routes][0][:flags].should == "UG"
       end
     end
 
     context "inet6" do
 
       it "detects the route destinations" do
-        @ohai['network']['interfaces']['en0'][:routes][4][:destination].should == "::1%1"
+        @plugin['network']['interfaces']['en0'][:routes][4][:destination].should == "::1%1"
       end
 
       it "detects the route family" do
-        @ohai['network']['interfaces']['en0'][:routes][4][:family].should == "inet6"
+        @plugin['network']['interfaces']['en0'][:routes][4][:family].should == "inet6"
       end
 
       it "detects the route gateway" do
-        @ohai['network']['interfaces']['en0'][:routes][4][:via].should == "::1%1"
+        @plugin['network']['interfaces']['en0'][:routes][4][:via].should == "::1%1"
       end
 
       it "detects the route flags" do
-        @ohai['network']['interfaces']['en0'][:routes][4][:flags].should == "UH"
+        @plugin['network']['interfaces']['en0'][:routes][4][:flags].should == "UH"
       end
     end
   end
 
   describe "arp -an" do
-
+    before do
+      @plugin.run
+    end
     it "supresses the hostname entries" do
-      @ohai['network']['arp'][0][:remote_host].should == "?"
+      @plugin['network']['arp'][0][:remote_host].should == "?"
     end
 
     it "detects the remote ip entry" do
-      @ohai['network']['arp'][0][:remote_ip].should == "172.29.131.16"
+      @plugin['network']['arp'][0][:remote_ip].should == "172.29.131.16"
     end
 
     it "detects the remote mac entry" do
-      @ohai['network']['arp'][0][:remote_mac].should == "6e:87:70:0:40:3"
+      @plugin['network']['arp'][0][:remote_mac].should == "6e:87:70:0:40:3"
     end
   end
 
   describe "hex_to_dec_netmask method" do
+    before do
+      @plugin.run
+    end
     it "converts a netmask from hexadecimal form to decimal form" do
-      @ohai.hex_to_dec_netmask('0xffff0000').should == "255.255.0.0"
+      @plugin.hex_to_dec_netmask('0xffff0000').should == "255.255.0.0"
     end
   end
 end

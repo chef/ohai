@@ -19,33 +19,34 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "AIX kernel plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.stub(:from).with("uname -s").and_return("AIX")
-    @ohai.stub(:from).with("uname -r").and_return(1)
-    @ohai.stub(:from).with("uname -v").and_return(6)
-    @ohai.stub(:from).with("uname -p").and_return("powerpc")
+    @plugin = get_plugin("aix/kernel")
+    @plugin.stub(:collect_os).and_return(:aix)
+    @plugin.stub(:from).with("uname -s").and_return("AIX")
+    @plugin.stub(:from).with("uname -r").and_return(1)
+    @plugin.stub(:from).with("uname -v").and_return(6)
+    @plugin.stub(:from).with("uname -p").and_return("powerpc")
     @modules = Mash.new
-    @ohai[:kernel].stub(:modules).and_return(@modules)
-    @ohai._require_plugin("aix::kernel")
+    @plugin.stub(:modules).and_return(@modules)
+    @plugin.run
   end
 
   it "uname -s detects the name" do
-    @ohai[:kernel][:name].should == "aix"
+    @plugin[:kernel][:name].should == "aix"
   end
 
   it "uname -r detects the release" do
-    @ohai[:kernel][:release].should == 1
+    @plugin[:kernel][:release].should == 1
   end
 
   it "uname -v detects the version" do
-    @ohai[:kernel][:version].should == 6
+    @plugin[:kernel][:version].should == 6
   end
 
   it "uname -p detects the machine" do
-    @ohai[:kernel][:machine].should == "powerpc"
+    @plugin[:kernel][:machine].should == "powerpc"
   end
 
   it "detects the modules" do
-    @ohai[:kernel][:modules].should == @modules
+    @plugin[:kernel][:modules].should == @modules
   end
 end

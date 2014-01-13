@@ -20,21 +20,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Aix plugin uptime" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:os] = "aix"
-    @ohai._require_plugin("uptime")    
-    @ohai.stub(:popen4).with("who -b").and_yield(nil, StringIO.new, StringIO.new(" .  system boot  Jul  9 17:51"), nil)
-
+    @plugin = get_plugin("aix/uptime")
+    @plugin.stub(:collect_os).and_return(:aix)
     Time.stub_chain(:now, :to_i).and_return(1374258600)
     DateTime.stub_chain(:parse, :strftime, :to_i).and_return(1373392260)
-    @ohai._require_plugin("aix::uptime")                    
+    @plugin.stub(:popen4).with("who -b").and_yield(nil, StringIO.new, StringIO.new(" .  system boot  Jul  9 17:51"), nil)
+
+    @plugin.run              
   end
 
   it "should set uptime_seconds to uptime" do
-    @ohai[:uptime_seconds].should == 866340
+    @plugin[:uptime_seconds].should == 866340
   end
 
   it "should set uptime to a human readable date" do
-    @ohai[:uptime].should == "10 days 00 hours 39 minutes 00 seconds"
+    @plugin[:uptime].should == "10 days 00 hours 39 minutes 00 seconds"
   end
 end

@@ -31,51 +31,50 @@ smt_threads 2              Processor SMT threads False
 state       enable         Processor state       False
 type        PowerPC_POWER5 Processor type        False
 LSATTR_EL
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = "aix"
+    @plugin = get_plugin("aix/cpu")
+    @plugin.stub(:collect_os).and_return(:aix)
 
-    @ohai.stub(:from).with("lsdev -Cc processor").and_return(@lsdev_Cc_processor)
-    @ohai.stub(:from).with("lsattr -El proc0").and_return(@lsattr_El_proc0)
-    @ohai._require_plugin("aix::cpu")    
+    @plugin.stub(:from).with("lsdev -Cc processor").and_return(@lsdev_Cc_processor)
+    @plugin.stub(:from).with("lsattr -El proc0").and_return(@lsattr_El_proc0)
+    @plugin.run
   end
 
 
   it "sets the vendor id to IBM" do
-    @ohai[:cpu][:vendor_id].should == "IBM"
+    @plugin[:cpu][:vendor_id].should == "IBM"
   end
 
   it "sets the available attribute" do
-    @ohai[:cpu][:available].should == 1
+    @plugin[:cpu][:available].should == 1
   end
 
   it "sets the total number of devices" do
-    @ohai[:cpu][:total].should == 2
+    @plugin[:cpu][:total].should == 2
   end
 
   it "detects the model" do
-    @ohai[:cpu][:model].should == "PowerPC_POWER5"
+    @plugin[:cpu][:model].should == "PowerPC_POWER5"
   end
 
   it "detects the mhz" do
-    @ohai[:cpu][:mhz].should == 1615570
+    @plugin[:cpu][:mhz].should == 1615570
   end
 
   it "detects the status of the device" do
-    @ohai[:cpu][:proc0][:status].should == "Available"
+    @plugin[:cpu][:proc0][:status].should == "Available"
   end
 
   it "detects the location of the device" do
-    @ohai[:cpu][:proc0][:location].should == "00-00"
+    @plugin[:cpu][:proc0][:location].should == "00-00"
   end
 
   context "lsattr -El device_name" do
     it "detects all the attributes of the device" do
-      @ohai[:cpu][:proc0][:frequency].should == "1654344000"
-      @ohai[:cpu][:proc0][:smt_enabled].should == "true"
-      @ohai[:cpu][:proc0][:smt_threads].should == "2"
-      @ohai[:cpu][:proc0][:state].should == "enable"
-      @ohai[:cpu][:proc0][:type].should == "PowerPC_POWER5"
+      @plugin[:cpu][:proc0][:frequency].should == "1654344000"
+      @plugin[:cpu][:proc0][:smt_enabled].should == "true"
+      @plugin[:cpu][:proc0][:smt_threads].should == "2"
+      @plugin[:cpu][:proc0][:state].should == "enable"
+      @plugin[:cpu][:proc0][:type].should == "PowerPC_POWER5"
     end
   end
 end

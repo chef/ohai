@@ -19,10 +19,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Aix hostname plugin" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.stub(:from).with("hostname").and_return("aix_admin")
-    @ohai._require_plugin("aix::hostname")
+    @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:aix)
+    @plugin.stub(:from_cmd).with("hostname").and_return("aix_admin")
+    @plugin.run
   end
 
-  it_should_check_from("aix::hostname", "hostname", "hostname", "aix_admin")
+  it "should set the machinename" do
+    @plugin[:machinename].should eql("aix_admin")
+  end
 end
+

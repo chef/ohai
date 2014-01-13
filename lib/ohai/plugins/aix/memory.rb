@@ -22,7 +22,7 @@ Ohai.plugin(:Memory) do
   collect_data(:aix) do
     memory = Mash.new
 
-    meminfo = from("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'")
+    meminfo = shell_out("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").stdout
     memory[:total], u, memory[:free] = meminfo.split
   end
 end

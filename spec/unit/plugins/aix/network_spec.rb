@@ -74,13 +74,13 @@ ARP_AN
     @plugin = get_plugin("aix/network")
     @plugin.stub(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
-    @plugin.stub(:popen4).with("route -n get 0").and_yield(nil, StringIO.new, StringIO.new(@route_n_get_0), nil)
-    @plugin.stub(:popen4).with("lsdev -Cc if").and_yield(nil, StringIO.new, StringIO.new(@lsdev_Cc_if), nil)
-    @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new(@ifconfig_en0), nil)
-    @plugin.stub(:popen4).with("entstat -d en0 | grep \"Hardware Address\"").and_yield(nil, StringIO.new, StringIO.new("Hardware Address: be:42:80:00:b0:05"), nil)
-    @plugin.stub(:popen4).with("netstat -nrf inet").and_yield(nil, StringIO.new, StringIO.new(@netstat_nrf_inet), nil)
-    @plugin.stub(:popen4).with("netstat -nrf inet6").and_yield(nil, StringIO.new, StringIO.new("::1%1  ::1%1  UH 1 109392 en0  -  -"), nil)
-    @plugin.stub(:popen4).with("arp -an").and_yield(nil, StringIO.new, StringIO.new(@aix_arp_an), nil)
+    @plugin.stub(:shell_out).with("route -n get 0").and_return(mock_shell_out(0, @route_n_get_0, nil))
+    @plugin.stub(:shell_out).with("lsdev -Cc if").and_return(mock_shell_out(0, @lsdev_Cc_if, nil))
+    @plugin.stub(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, @ifconfig_en0, nil))
+    @plugin.stub(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
+    @plugin.stub(:shell_out).with("netstat -nrf inet").and_return(mock_shell_out(0, @netstat_nrf_inet, nil))
+    @plugin.stub(:shell_out).with("netstat -nrf inet6").and_return(mock_shell_out(0, "::1%1  ::1%1  UH 1 109392 en0  -  -", nil))
+    @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @aix_arp_an, nil))
   end
 
   describe "run" do
@@ -164,7 +164,7 @@ ARP_AN
         # For an output with no netmask like inet 172.29.174.59 broadcast 172.29.191.255
         context "with no netmask in the output" do
           before do
-            @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet 172.29.174.59 broadcast 172.29.191.255"), nil)
+            @plugin.stub(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, "inet 172.29.174.59 broadcast 172.29.191.255", nil))
           end
 
           it "detects the default prefixlen" do
@@ -181,7 +181,7 @@ ARP_AN
 
       context "inet6 entries" do
         before do
-          @plugin.stub(:popen4).with("ifconfig en0").and_yield(nil, StringIO.new, StringIO.new("inet6 ::1%1/0"), nil)
+          @plugin.stub(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, "inet6 ::1%1/0", nil))
           @plugin.run
           @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1%1"]
         end

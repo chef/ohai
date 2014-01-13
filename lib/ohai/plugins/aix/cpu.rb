@@ -29,7 +29,7 @@ Ohai.plugin(:CPU) do
     cpu[:available] = 0
     cpu[:total] = 0
 
-    cpudevs = from("lsdev -Cc processor").lines
+    cpudevs = shell_out("lsdev -Cc processor").stdout.lines
     cpudevs.each do |c|
       cpu[:total] += 1
       name, status, location = c.split
@@ -38,7 +38,7 @@ Ohai.plugin(:CPU) do
       cpu[name][:location] = location
       if status =~ /Available/
   	cpu[:available] += 1
-  	lsattr = from("lsattr -El #{name}").lines
+  	lsattr = shell_out("lsattr -El #{name}").stdout.lines
   	lsattr.each do |attribute|
           attrib, value = attribute.split
           cpu[name][attrib] = value

@@ -34,8 +34,8 @@ LSATTR_EL
     @plugin = get_plugin("aix/cpu")
     @plugin.stub(:collect_os).and_return(:aix)
 
-    @plugin.stub(:from).with("lsdev -Cc processor").and_return(@lsdev_Cc_processor)
-    @plugin.stub(:from).with("lsattr -El proc0").and_return(@lsattr_El_proc0)
+    @plugin.stub(:shell_out).with("lsdev -Cc processor").and_return(mock_shell_out(0, @lsdev_Cc_processor, nil))
+    @plugin.stub(:shell_out).with("lsattr -El proc0").and_return(mock_shell_out(0, @lsattr_El_proc0, nil))
     @plugin.run
   end
 

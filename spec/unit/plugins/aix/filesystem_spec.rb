@@ -48,8 +48,9 @@ MOUNT
     @plugin = get_plugin("aix/filesystem")
     @plugin.stub(:collect_os).and_return(:aix)
     @plugin[:filesystem] = Mash.new
-    @plugin.stub(:popen4).with("df -P").and_yield(nil, StringIO.new, StringIO.new(@df_P), nil)
-    @plugin.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new(@mount), nil)
+    @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, @df_P, nil))
+    @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, @mount, nil))
+
     @plugin.run
   end
 
@@ -93,8 +94,9 @@ MOUNT
     # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
     context "having node values" do
       before do
-        @plugin.stub(:popen4).with("mount").and_yield(nil, StringIO.new, StringIO.new("192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys"), nil)
+        @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys", nil))
       end
+
       it "returns the filesystem mount location" do
         @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount'].should == "/stage/middleware"
       end

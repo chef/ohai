@@ -22,10 +22,10 @@ Ohai.plugin(:Kernel) do
   collect_data(:aix) do
     kernel Mash.new
 
-    kernel[:name] = from("uname -s").downcase
-    kernel[:release] = from("uname -r")
-    kernel[:version] = from("uname -v")
-    kernel[:machine] = from("uname -p")
+    kernel[:name] = shell_out("uname -s").stdout.downcase
+    kernel[:release] = shell_out("uname -r").stdout
+    kernel[:version] = shell_out("uname -v").stdout
+    kernel[:machine] = shell_out("uname -p").stdout
     kernel[:modules] = Mash.new
   end
 end

@@ -24,7 +24,7 @@ describe Ohai::System, "Aix plugin uptime" do
     @plugin.stub(:collect_os).and_return(:aix)
     Time.stub_chain(:now, :to_i).and_return(1374258600)
     DateTime.stub_chain(:parse, :strftime, :to_i).and_return(1373392260)
-    @plugin.stub(:popen4).with("who -b").and_yield(nil, StringIO.new, StringIO.new(" .  system boot  Jul  9 17:51"), nil)
+    @plugin.stub(:shell_out).with("who -b").and_return(mock_shell_out(0, " .  system boot  Jul  9 17:51", nil))
 
     @plugin.run              
   end

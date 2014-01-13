@@ -21,10 +21,10 @@ describe Ohai::System, "AIX kernel plugin" do
   before(:each) do
     @plugin = get_plugin("aix/kernel")
     @plugin.stub(:collect_os).and_return(:aix)
-    @plugin.stub(:from).with("uname -s").and_return("AIX")
-    @plugin.stub(:from).with("uname -r").and_return(1)
-    @plugin.stub(:from).with("uname -v").and_return(6)
-    @plugin.stub(:from).with("uname -p").and_return("powerpc")
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "AIX", nil))
+    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "1", nil))
+    @plugin.stub(:shell_out).with("uname -v").and_return(mock_shell_out(0, "6", nil))
+    @plugin.stub(:shell_out).with("uname -p").and_return(mock_shell_out(0, "powerpc", nil))
     @modules = Mash.new
     @plugin.stub(:modules).and_return(@modules)
     @plugin.run
@@ -35,11 +35,11 @@ describe Ohai::System, "AIX kernel plugin" do
   end
 
   it "uname -r detects the release" do
-    @plugin[:kernel][:release].should == 1
+    @plugin[:kernel][:release].should == "1"
   end
 
   it "uname -v detects the version" do
-    @plugin[:kernel][:version].should == 6
+    @plugin[:kernel][:version].should == "6"
   end
 
   it "uname -p detects the machine" do

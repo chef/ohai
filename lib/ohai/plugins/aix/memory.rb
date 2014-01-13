@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Joshua Timberman <joshua@opscode.com>
+# Copyright:: Copyright (c) 2013, Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,13 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+Ohai.plugin(:Memory) do
+  provides "memory"
 
-  collect_data(:hpux, :default) do
-    require "sigar"
-    sys = Sigar.new.sys_info
+  collect_data(:aix) do
+    memory = Mash.new
 
-    platform sys.name.downcase
-    platform_version sys.version
-    platform_family platform
+    meminfo = shell_out("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").stdout
+    memory[:total], u, memory[:free] = meminfo.split
   end
 end

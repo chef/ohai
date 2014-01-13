@@ -65,12 +65,6 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:platform].should == "linuxmint"
       @plugin[:platform_family].should == "debian"
     end
-    it "should set platform to gcel and platform_family to debian [:lsb][:id] contains GCEL" do
-      @plugin[:lsb][:id] = "GCEL"
-      @plugin.run
-      @plugin[:platform].should == "gcel"
-      @plugin[:platform_family].should == "debian"
-    end
     it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
       @plugin[:lsb][:id] = "Debian"
       @plugin.run

@@ -1,6 +1,6 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Author:: Joshua Timberman <joshua@opscode.com>
+# Copyright:: Copyright (c) 2013, Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,11 @@
 
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
+  depends "kernel"
 
-  collect_data(:hpux, :default) do
-    require "sigar"
-    sys = Sigar.new.sys_info
-
-    platform sys.name.downcase
-    platform_version sys.version
+  collect_data(:aix) do
+    platform kernel[:name]
+    platform_version [kernel[:version], kernel[:release]].join(".")
     platform_family platform
   end
 end

@@ -45,6 +45,7 @@ module Ohai
         end
         attrs[:_plugins] ||= []
         attrs[:_plugins] << plugin
+        attrs[:_plugins].uniq!
       end
     end
 

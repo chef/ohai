@@ -25,7 +25,7 @@
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
-  collect_data (:windows)do
+  collect_data(:windows) do
     platform os
     platform_version kernel['release']
     platform_family "windows"

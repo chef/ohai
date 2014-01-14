@@ -209,7 +209,9 @@ EOF
 
           ohai_system.v6_dependency_solver["v6_plugin"] = v6_plugin
 
-          ohai_system.all_plugins("primary")
+          # Instead of calling all plugins we call load and run directly so that the information we setup is not cleared by all_plugins
+          ohai_system.load_plugins
+          ohai_system.run_plugins(true, "primary")
         end
 
         # This behavior choice is somewhat arbitrary, based on what creates the
@@ -286,6 +288,8 @@ EOF
 
       it "should write an error to Ohai::Log" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
+        # Make sure the stubbing of runner is not overriden with reset_system during test
+        @ohai.stub(:reset_system)
         @ohai.instance_variable_get("@runner").stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
         Ohai::Log.should_receive(:error).with(/Encountered error while running plugins/)
         expect { @ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
@@ -521,6 +525,39 @@ EOF
       it "should raise DependencyNotFound" do
         lambda { @ohai.all_plugins }.should raise_error(Ohai::Exceptions::DependencyNotFound)
       end
+    end
+  end
+
+  describe "when Chef OHAI resource executes :reload action" do
+    when_plugins_directory "contains a random plugin" do
+      with_plugin("random.rb", <<-E)
+        Ohai.plugin(:Random) do
+          provides 'random'
+
+          collect_data do
+            random rand(100)
+          end
+        end
+      E
+
+      before do
+        @ohai = Ohai::System.new
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+      end
+
+      after do
+        Ohai::Config[:plugin_path] = @original_config
+      end
+
+      it "should rerun the plugin providing the desired attributes", :focus => true do
+        @ohai.all_plugins
+        initial_value = @ohai.data["random"]
+        @ohai.all_plugins
+        updated_value = @ohai.data["random"]
+        initial_value.should_not == updated_value
+      end
+
     end
   end
 

@@ -38,16 +38,23 @@ module Ohai
     attr_reader :v6_dependency_solver
 
     def initialize
+      @plugin_path = ""
+      reset_system
+    end
+
+    def reset_system
       @data = Mash.new
       @provides_map = ProvidesMap.new
 
       @v6_dependency_solver = Hash.new
-      @plugin_path = ""
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
 
       Ohai::Hints.refresh_hints()
+
+      # Remove the previously defined plugins
+      recursive_remove_constants(Ohai::NamedPlugin)
     end
 
     def [](key)
@@ -55,6 +62,11 @@ module Ohai
     end
 
     def all_plugins(attribute_filter=nil)
+      # Reset the system when all_plugins is called since this function
+      # can be run multiple times in order to pick up any changes in the
+      # config or plugins with Chef.
+      reset_system
+
       load_plugins
       run_plugins(true, attribute_filter)
     end
@@ -138,10 +150,10 @@ module Ohai
     # of them whenever called.
     def refresh_plugins(attribute_filter=nil)
       Ohai::Hints.refresh_hints()
-      @provides_map.all_plugins(Array(attribute_filter)).each do |plugin|
+      @provides_map.all_plugins(attribute_filter).each do |plugin|
         plugin.reset!
       end
-      run_plugins(true, Array(attribute_filter))
+      run_plugins(true, attribute_filter)
     end
 
     #
@@ -178,5 +190,23 @@ module Ohai
       end
     end
 
+    private
+    def recursive_remove_constants(object)
+      if object.respond_to?(:constants)
+        object.constants.each do |const|
+          next unless strict_const_defined?(object, const)
+          recursive_remove_constants(object.const_get(const))
+          object.send(:remove_const, const)
+        end
+      end
+    end
+
+    def strict_const_defined?(object, const)
+      if object.method(:const_defined?).arity == 1
+        object.const_defined?(const)
+      else
+        object.const_defined?(const, false)
+      end
+    end
   end
 end

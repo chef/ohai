@@ -550,7 +550,7 @@ EOF
         Ohai::Config[:plugin_path] = @original_config
       end
 
-      it "should rerun the plugin providing the desired attributes", :focus => true do
+      it "should rerun the plugin providing the desired attributes" do
         @ohai.all_plugins
         initial_value = @ohai.data["random"]
         @ohai.all_plugins

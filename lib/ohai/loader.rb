@@ -165,7 +165,7 @@ For more information visit here: docs.opscode.com/ohai_custom.html")
     end
 
     def load_v7_plugin_class(contents, plugin_path)
-      plugin_class = eval(contents, TOPLEVEL_BINDING)
+      plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path)
       unless plugin_class.kind_of?(Class) and plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end

@@ -535,7 +535,7 @@ EOF
           provides 'random'
 
           collect_data do
-            random rand(100)
+            random rand(1 << 32)
           end
         end
       E

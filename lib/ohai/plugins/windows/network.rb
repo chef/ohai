@@ -20,7 +20,7 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
-  def encaps_lookup(encap)
+  def windows_encaps_lookup(encap)
     return "Ethernet" if encap.eql?("Ethernet 802.3")
     encap
   end
@@ -95,7 +95,7 @@ Ohai.plugin(:Network) do
         iface[cint][:mtu] = iface[cint][:configuration][:mtu]
         iface[cint][:type] = iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
-        iface[cint][:encapsulation] = encaps_lookup(iface[cint][:instance][:adapter_type])
+        iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type])
         if iface[cint][:configuration][:default_ip_gateway] != nil and iface[cint][:configuration][:default_ip_gateway].size > 0
           network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
           network[:default_interface] = cint

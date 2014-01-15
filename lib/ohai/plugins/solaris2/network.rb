@@ -57,7 +57,7 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
-  def encaps_lookup(ifname)
+  def solaris_encaps_lookup(ifname)
     return "Ethernet" if ifname.eql?("e1000g")
     return "Ethernet" if ifname.eql?("eri")
     return "Ethernet" if ifname.eql?("net")
@@ -100,7 +100,7 @@ Ohai.plugin(:Network) do
         if cint =~ /^(\w+)(\d+.*)/
           iface[cint][:type] = $1
           iface[cint][:number] = $2
-          iface[cint][:encapsulation] = encaps_lookup($1)
+          iface[cint][:encapsulation] = solaris_encaps_lookup($1)
         end
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/

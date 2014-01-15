@@ -22,7 +22,7 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
-  def encaps_lookup(encap)
+  def sigar_encaps_lookup(encap)
     return "Loopback" if encap.eql?("Local Loopback")
     return "PPP" if encap.eql?("Point-to-Point Protocol")
     return "SLIP" if encap.eql?("Serial Line IP")
@@ -45,7 +45,7 @@ Ohai.plugin(:Network) do
       end
 
       ifconfig = sigar.net_interface_config(cint)
-      iface[cint][:encapsulation] = encaps_lookup(ifconfig.type)
+      iface[cint][:encapsulation] = sigar_encaps_lookup(ifconfig.type)
 
       iface[cint][:addresses] = Mash.new
       # Backwards compat: loopback has no hwaddr

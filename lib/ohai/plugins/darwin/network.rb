@@ -34,7 +34,7 @@ Ohai.plugin(:Network) do
               media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
             end
           else
-            media[line_array[i]]["options"] = $1.split(",") 
+            media[line_array[i]]["options"] = $1.split(",")
           end
         else
           if line_array[i].eql?("autoselect")
@@ -50,7 +50,7 @@ Ohai.plugin(:Network) do
     media
   end
 
-  def encaps_lookup(ifname)
+  def darwin_encaps_lookup(ifname)
     return "Loopback" if ifname.eql?("lo")
     return "1394" if ifname.eql?("fw")
     return "IPIP" if ifname.eql?("gif")
@@ -79,7 +79,7 @@ Ohai.plugin(:Network) do
         return ifc if addr.eql? mac
       end
     end
-    
+
     nil
   end
 
@@ -90,7 +90,7 @@ Ohai.plugin(:Network) do
     network[:interfaces] = Mash.new unless network[:interfaces]
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
-    
+
     so = shell_out("route -n get default")
     so.stdout.lines do |line|
       if line =~ /(\w+): ([\w\.]+)/
@@ -102,7 +102,7 @@ Ohai.plugin(:Network) do
         end
       end
     end
-    
+
     iface = Mash.new
     so = shell_out("ifconfig -a")
     cint = nil
@@ -120,7 +120,7 @@ Ohai.plugin(:Network) do
         if cint =~ /^(\w+)(\d+.*)/
           iface[cint][:type] = $1
           iface[cint][:number] = $2
-          iface[cint][:encapsulation] = encaps_lookup($1)
+          iface[cint][:encapsulation] = darwin_encaps_lookup($1)
         end
       end
       if line =~ /^\s+ether ([0-9a-f\:]+)/

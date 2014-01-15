@@ -21,7 +21,7 @@ Ohai.plugin(:Network) do
   provides "counters/network", "counters/network/interfaces"
   provides "ipaddress", "ip6address", "macaddress"
 
-  def encaps_lookup(encap)
+  def linux_encaps_lookup(encap)
     return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
     return "PPP" if encap.eql?("Point-to-Point Protocol")
     return "SLIP" if encap.eql?("Serial Line IP")
@@ -44,7 +44,7 @@ Ohai.plugin(:Network) do
     counters[:network] = Mash.new unless counters[:network]
 
     # Match the lead line for an interface from iproute2
-    # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+    # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
     IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/
 
@@ -84,7 +84,7 @@ Ohai.plugin(:Network) do
           end
         end
         if line =~ /link\/(\w+) ([\da-f\:]+) /
-          iface[cint][:encapsulation] = encaps_lookup($1)
+          iface[cint][:encapsulation] = linux_encaps_lookup($1)
           unless $2 == "00:00:00:00:00:00"
             iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
             iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
@@ -160,7 +160,7 @@ Ohai.plugin(:Network) do
           net_counters[tmp_int][:tx] = Mash.new unless net_counters[tmp_int][:tx]
           net_counters[tmp_int][:tx][:queuelen] = $1
         end
-          
+
         if line =~ /vlan id (\d+)/
           tmp_id = $1
           iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
@@ -324,7 +324,7 @@ Ohai.plugin(:Network) do
       cint = nil
       so.stdout.lines do |line|
         tmp_addr = nil
-        # dev_valid_name in the kernel only excludes slashes, nulls, spaces 
+        # dev_valid_name in the kernel only excludes slashes, nulls, spaces
         # http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=blob;f=net/core/dev.c#l851
         if line =~ /^([0-9a-zA-Z@\.\:\-_]+)\s+/
           cint = $1
@@ -335,7 +335,7 @@ Ohai.plugin(:Network) do
           end
         end
         if line =~ /Link encap:(Local Loopback)/ || line =~ /Link encap:(.+?)\s/
-          iface[cint][:encapsulation] = encaps_lookup($1)
+          iface[cint][:encapsulation] = linux_encaps_lookup($1)
         end
         if line =~ /HWaddr (.+?)\s/
           iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]

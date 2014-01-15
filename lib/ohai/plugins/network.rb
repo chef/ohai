@@ -17,16 +17,14 @@
 #
 
 require 'ipaddress'
+require 'ohai/mixin/network_constants'
 
 Ohai.plugin(:NetworkAddresses) do
+  include Ohai::Mixin::NetworkConstants
+
   provides "ipaddress", "ip6address", "macaddress"
 
   depends "network/interfaces"
-
-  FAMILIES = {
-    "inet" => "default",
-    "inet6" => "default_inet6"
-  }
 
   def sorted_ips(family = "inet")
     raise "bad family #{family}" unless [ "inet", "inet6" ].include? family
@@ -65,8 +63,8 @@ Ohai.plugin(:NetworkAddresses) do
     return [ nil, nil ] if ips.empty?
 
     # shortcuts to access default #{family} interface and gateway
-    int_attr = FAMILIES[family] +"_interface"
-    gw_attr = FAMILIES[family] + "_gateway"
+    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] +"_interface"
+    gw_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
 
     # If we have a default interface that has addresses,
     # populate the short-cut attributes ipaddress, ip6address and macaddress
@@ -141,7 +139,7 @@ Ohai.plugin(:NetworkAddresses) do
     counters[:network] = Mash.new unless counters[:network]
 
     # inet family is treated before inet6
-    FAMILIES.keys.sort.each do |family|
+    Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
       r = {}
       ( r["ip"], r["iface"] ) = find_ip(family)
       r["mac"] = find_mac_from_iface(r["iface"]) unless r["iface"].nil?

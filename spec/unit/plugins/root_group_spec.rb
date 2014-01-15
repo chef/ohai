@@ -18,8 +18,6 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
-ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
-
 describe Ohai::System, 'root_group' do
   before(:each) do
     @plugin = get_plugin("root_group")

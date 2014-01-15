@@ -24,6 +24,7 @@ require 'ohai/dsl'
 require 'ohai/mixin/command'
 require 'ohai/mixin/os'
 require 'ohai/mixin/string'
+require 'ohai/mixin/constant_helper'
 require 'ohai/provides_map'
 require 'ohai/hints'
 require 'mixlib/shellout'
@@ -31,23 +32,31 @@ require 'mixlib/shellout'
 require 'yajl'
 
 module Ohai
-
   class System
+    include Ohai::Mixin::ConstantHelper
+
     attr_accessor :data
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
     def initialize
+      @plugin_path = ""
+      reset_system
+    end
+
+    def reset_system
       @data = Mash.new
       @provides_map = ProvidesMap.new
 
       @v6_dependency_solver = Hash.new
-      @plugin_path = ""
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
 
       Ohai::Hints.refresh_hints()
+
+      # Remove the previously defined plugins
+      recursive_remove_constants(Ohai::NamedPlugin)
     end
 
     def [](key)
@@ -55,6 +64,11 @@ module Ohai
     end
 
     def all_plugins(attribute_filter=nil)
+      # Reset the system when all_plugins is called since this function
+      # can be run multiple times in order to pick up any changes in the
+      # config or plugins with Chef.
+      reset_system
+
       load_plugins
       run_plugins(true, attribute_filter)
     end
@@ -138,10 +152,10 @@ module Ohai
     # of them whenever called.
     def refresh_plugins(attribute_filter=nil)
       Ohai::Hints.refresh_hints()
-      @provides_map.all_plugins(Array(attribute_filter)).each do |plugin|
+      @provides_map.all_plugins(attribute_filter).each do |plugin|
         plugin.reset!
       end
-      run_plugins(true, Array(attribute_filter))
+      run_plugins(true, attribute_filter)
     end
 
     #
@@ -177,6 +191,5 @@ module Ohai
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
     end
-
   end
 end

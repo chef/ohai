@@ -23,21 +23,19 @@ require 'ohai/mixin/os'
 describe "Ohai::System" do
   extend IntegrationSupport
 
-  describe "#initialize" do
-    before(:each) do
-      @ohai = Ohai::System.new
-    end
+  let(:ohai) { Ohai::System.new }
 
+  describe "#initialize" do
     it "should return an Ohai::System object" do
-      @ohai.should be_a_kind_of(Ohai::System)
+      ohai.should be_a_kind_of(Ohai::System)
     end
 
     it "should set @attributes to a ProvidesMap" do
-      @ohai.provides_map.should be_a_kind_of(Ohai::ProvidesMap)
+      ohai.provides_map.should be_a_kind_of(Ohai::ProvidesMap)
     end
 
     it "should set @v6_dependency_solver to a Hash" do
-      @ohai.v6_dependency_solver.should be_a_kind_of(Hash)
+      ohai.v6_dependency_solver.should be_a_kind_of(Hash)
     end
   end
 
@@ -53,15 +51,14 @@ provides 'fish'
 EOF
 
     before do
-      @ohai = Ohai::System.new
       @original_config = Ohai::Config[:plugin_path]
       Ohai::Config[:plugin_path] = [ path_to(".") ]
     end
 
     it "load_plugins() should load all the plugins" do
-      @ohai.load_plugins
-      @ohai.provides_map.map.keys.should include("seals")
-      @ohai.v6_dependency_solver.keys.should include("lake.rb")
+      ohai.load_plugins
+      ohai.provides_map.map.keys.should include("seals")
+      ohai.v6_dependency_solver.keys.should include("lake.rb")
       Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
     end
   end
@@ -88,7 +85,6 @@ provides 'bear'
 EOF
 
     before do
-      @ohai = Ohai::System.new
       @original_config = Ohai::Config[:plugin_path]
       Ohai::Config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
     end
@@ -98,11 +94,11 @@ EOF
     end
 
     it "load_plugins() should load all the plugins" do
-      @ohai.load_plugins
-      @ohai.provides_map.map.keys.should include("seals")
-      @ohai.provides_map.map.keys.should include("crabs")
-      @ohai.v6_dependency_solver.keys.should include("lake.rb")
-      @ohai.v6_dependency_solver.keys.should include("mountain.rb")
+      ohai.load_plugins
+      ohai.provides_map.map.keys.should include("seals")
+      ohai.provides_map.map.keys.should include("crabs")
+      ohai.v6_dependency_solver.keys.should include("lake.rb")
+      ohai.v6_dependency_solver.keys.should include("mountain.rb")
       Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
       Ohai::NamedPlugin.const_get(:Nature).should == Ohai::NamedPlugin::Nature
     end
@@ -118,10 +114,6 @@ EOF
       Ohai::Config[:plugin_path] = @original_config
     end
 
-    before(:each) do
-      @ohai = Ohai::System.new
-    end
-
     when_plugins_directory "contains v6 plugins only" do
       with_plugin("zoo.rb", <<EOF)
 provides 'zoo'
@@ -135,9 +127,9 @@ EOF
 
       it "should collect data from all the plugins" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
-        @ohai.all_plugins
-        @ohai.data[:zoo].should == "animals"
-        @ohai.data[:park].should == "plants"
+        ohai.all_plugins
+        ohai.data[:zoo].should == "animals"
+        ohai.data[:park].should == "plants"
       end
 
       describe "when using :disabled_plugins" do
@@ -151,9 +143,9 @@ EOF
 
         it "shouldn't run disabled version 6 plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
-          @ohai.all_plugins
-          @ohai.data[:zoo].should be_nil
-          @ohai.data[:park].should == "plants"
+          ohai.all_plugins
+          ohai.data[:zoo].should be_nil
+          ohai.data[:park].should == "plants"
         end
       end
 
@@ -209,7 +201,9 @@ EOF
 
           ohai_system.v6_dependency_solver["v6_plugin"] = v6_plugin
 
-          ohai_system.all_plugins("primary")
+          # Instead of calling all plugins we call load and run directly so that the information we setup is not cleared by all_plugins
+          ohai_system.load_plugins
+          ohai_system.run_plugins(true, "primary")
         end
 
         # This behavior choice is somewhat arbitrary, based on what creates the
@@ -252,8 +246,8 @@ EOF
 
       it "should collect platform specific" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
-        @ohai.all_plugins
-        @ohai.data[:message].should == "platform_specific_message"
+        ohai.all_plugins
+        ohai.data[:message].should == "platform_specific_message"
       end
     end
 
@@ -279,16 +273,18 @@ EOF
 
       it "should collect data from all the plugins" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
-        @ohai.all_plugins
-        @ohai.data[:zoo].should == "animals"
-        @ohai.data[:park].should == "plants"
+        ohai.all_plugins
+        ohai.data[:zoo].should == "animals"
+        ohai.data[:park].should == "plants"
       end
 
       it "should write an error to Ohai::Log" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
-        @ohai.instance_variable_get("@runner").stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
+        # Make sure the stubbing of runner is not overriden with reset_system during test
+        ohai.stub(:reset_system)
+        ohai.instance_variable_get("@runner").stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
         Ohai::Log.should_receive(:error).with(/Encountered error while running plugins/)
-        expect { @ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
       describe "when using :disabled_plugins" do
@@ -302,9 +298,9 @@ EOF
 
         it "shouldn't run disabled plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
-          @ohai.all_plugins
-          @ohai.data[:zoo].should be_nil
-          @ohai.data[:park].should == "plants"
+          ohai.all_plugins
+          ohai.data[:zoo].should be_nil
+          ohai.data[:park].should == "plants"
         end
       end
     end
@@ -351,11 +347,11 @@ EOF
 
         it "shouldn't run disabled plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
-          @ohai.all_plugins
-          @ohai.data[:zoo].should be_nil
-          @ohai.data[:nature].should == "cougars"
-          @ohai.data[:park].should be_nil
-          @ohai.data[:home].should == "dog"
+          ohai.all_plugins
+          ohai.data[:zoo].should be_nil
+          ohai.data[:nature].should == "cougars"
+          ohai.data[:park].should be_nil
+          ohai.data[:home].should == "dog"
         end
       end
     end
@@ -388,7 +384,6 @@ end
 EOF
 
       before do
-        @ohai = Ohai::System.new
         @original_config = Ohai::Config[:plugin_path]
         Ohai::Config[:plugin_path] = [ path_to(".") ]
       end
@@ -398,16 +393,16 @@ EOF
       end
 
       it "should collect all data" do
-        @ohai.all_plugins
+        ohai.all_plugins
         [:v6message, :v7message, :messages].each do |attribute|
-          @ohai.data.should have_key(attribute)
+          ohai.data.should have_key(attribute)
         end
 
-        @ohai.data[:v6message].should eql("update me!")
-        @ohai.data[:v7message].should eql("v7 plugins are awesome!")
+        ohai.data[:v6message].should eql("update me!")
+        ohai.data[:v7message].should eql("v7 plugins are awesome!")
         [:v6message, :v7message].each do |subattr|
-          @ohai.data[:messages].should have_key(subattr)
-          @ohai.data[:messages][subattr].should eql(@ohai.data[subattr])
+          ohai.data[:messages].should have_key(subattr)
+          ohai.data[:messages][subattr].should eql(ohai.data[subattr])
         end
       end
     end
@@ -432,7 +427,6 @@ end
 EOF
 
       before do
-        @ohai = Ohai::System.new
         @original_config = Ohai::Config[:plugin_path]
         Ohai::Config[:plugin_path] = [ path_to(".") ]
       end
@@ -442,9 +436,9 @@ EOF
       end
 
       it "version 6 should run" do
-        @ohai.load_plugins
-        @ohai.require_plugin("message")
-        @ohai.data[:message].should eql("From Version 6")
+        ohai.load_plugins
+        ohai.require_plugin("message")
+        ohai.data[:message].should eql("From Version 6")
       end
     end
 
@@ -481,7 +475,6 @@ end
 EOF
 
       before do
-        @ohai = Ohai::System.new
         @original_config = Ohai::Config[:plugin_path]
         Ohai::Config[:plugin_path] = [ path_to(".") ]
       end
@@ -491,11 +484,11 @@ EOF
       end
 
       it "should collect all the data properly" do
-        @ohai.all_plugins
-        @ohai.data[:v7message].should == "Hellos from 7: animals"
-        @ohai.data[:zoo].should == "animals"
-        @ohai.data[:message][:v6message].should == "Hellos from 6"
-        @ohai.data[:message][:copy_message].should == "Hellos from 7: animals"
+        ohai.all_plugins
+        ohai.data[:v7message].should == "Hellos from 7: animals"
+        ohai.data[:zoo].should == "animals"
+        ohai.data[:message][:v6message].should == "Hellos from 6"
+        ohai.data[:message][:copy_message].should == "Hellos from 7: animals"
       end
     end
 
@@ -509,7 +502,6 @@ message v7message
 EOF
 
       before do
-        @ohai = Ohai::System.new
         @original_config = Ohai::Config[:plugin_path]
         Ohai::Config[:plugin_path] = [ path_to(".") ]
       end
@@ -519,8 +511,40 @@ EOF
       end
 
       it "should raise DependencyNotFound" do
-        lambda { @ohai.all_plugins }.should raise_error(Ohai::Exceptions::DependencyNotFound)
+        lambda { ohai.all_plugins }.should raise_error(Ohai::Exceptions::DependencyNotFound)
       end
+    end
+  end
+
+  describe "when Chef OHAI resource executes :reload action" do
+    when_plugins_directory "contains a random plugin" do
+      with_plugin("random.rb", <<-E)
+        Ohai.plugin(:Random) do
+          provides 'random'
+
+          collect_data do
+            random rand(1 << 32)
+          end
+        end
+      E
+
+      before do
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+      end
+
+      after do
+        Ohai::Config[:plugin_path] = @original_config
+      end
+
+      it "should rerun the plugin providing the desired attributes" do
+        ohai.all_plugins
+        initial_value = ohai.data["random"]
+        ohai.all_plugins
+        updated_value = ohai.data["random"]
+        initial_value.should_not == updated_value
+      end
+
     end
   end
 
@@ -564,12 +588,11 @@ EOF
       E
 
       before do
-        @ohai = Ohai::System.new
         @original_config = Ohai::Config[:plugin_path]
         Ohai::Config[:plugin_path] = [ path_to(".") ]
         Ohai::Log.init(STDOUT)
         Ohai::Log.level = :debug
-        @ohai.all_plugins
+        ohai.all_plugins
       end
 
       after do
@@ -577,21 +600,21 @@ EOF
       end
 
       it "should rerun the plugin providing the desired attributes" do
-        @ohai.data[:desired_attr_count].should == 1
-        @ohai.refresh_plugins("desired_attr")
-        @ohai.data[:desired_attr_count].should == 2
+        ohai.data[:desired_attr_count].should == 1
+        ohai.refresh_plugins("desired_attr")
+        ohai.data[:desired_attr_count].should == 2
       end
 
       it "should not re-run dependencies of the plugin providing the desired attributes" do
-        @ohai.data[:depended_attr_count].should == 1
-        @ohai.refresh_plugins("desired_attr")
-        @ohai.data[:depended_attr_count].should == 1
+        ohai.data[:depended_attr_count].should == 1
+        ohai.refresh_plugins("desired_attr")
+        ohai.data[:depended_attr_count].should == 1
       end
 
       it "should not re-run plugins unrelated to the plugin providing the desired attributes" do
-        @ohai.data[:other_attr_count].should == 1
-        @ohai.refresh_plugins("desired_attr")
-        @ohai.data[:other_attr_count].should == 1
+        ohai.data[:other_attr_count].should == 1
+        ohai.refresh_plugins("desired_attr")
+        ohai.data[:other_attr_count].should == 1
       end
 
     end

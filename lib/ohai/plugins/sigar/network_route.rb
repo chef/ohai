@@ -16,10 +16,13 @@
 # limitations under the License.
 #
 
-require "sigar"
+require 'ohai/mixin/network_constants'
 
-Ohai.plugin do
-  provides "network"
+Ohai.plugin(:NetworkRoutes) do
+  include Ohai::Mixin::NetworkConstants
+
+  provides "network/interfaces/adapters/route"
+  depends "network/interfaces"
 
   def flags(flags)
     f = ""
@@ -35,9 +38,6 @@ Ohai.plugin do
     f
   end
 
-  # From sigar: include/sigar.h sigar_net_route_t
-  SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, :refcnt, :use, :metric, :mtu, :window, :irtt, :ifname]
-
   collect_data(:default) do
     require "sigar"
     sigar = Sigar.new
@@ -46,7 +46,7 @@ Ohai.plugin do
       next unless network[:interfaces][route.ifname] # this should never happen
       network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
       route_data={}
-      SIGAR_ROUTE_METHODS.each do |m|
+      Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
         if(m == :flags)
           route_data[m]=flags(route.send(m))
         else

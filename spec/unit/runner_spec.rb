@@ -284,8 +284,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when a cycle is detected" do
-    let(:ohai) { Ohai::System.new }
-    let(:runner) { Ohai::Runner.new(ohai, true) }
+    let(:runner) { Ohai::Runner.new(@ohai, true) }
 
     context "when there are no edges in the cycle (A->A)" do
       let(:plugin_class) do
@@ -297,10 +296,10 @@ describe Ohai::Runner, "run_plugin" do
           end
         end
       end
-      let(:plugin) { plugin_class.new(ohai.data) }
+      let(:plugin) { plugin_class.new(@ohai.data) }
 
       it "ignores the cycle" do
-        ohai.provides_map.set_providers_for(plugin, ["thing"])
+        @ohai.provides_map.set_providers_for(plugin, ["thing"])
 
         expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
         runner.run_plugin(plugin) # should not raise
@@ -327,8 +326,9 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each_with_index do |klass, idx|
-          @plugins << klass.new(ohai.data)
+          @plugins << klass.new(@ohai.data)
         end
+
         @plugin1, @plugin2 = @plugins
       end
 

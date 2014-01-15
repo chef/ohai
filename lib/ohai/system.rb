@@ -24,6 +24,7 @@ require 'ohai/dsl'
 require 'ohai/mixin/command'
 require 'ohai/mixin/os'
 require 'ohai/mixin/string'
+require 'ohai/mixin/constant_helper'
 require 'ohai/provides_map'
 require 'ohai/hints'
 require 'mixlib/shellout'
@@ -31,8 +32,9 @@ require 'mixlib/shellout'
 require 'yajl'
 
 module Ohai
-
   class System
+    include Ohai::Mixin::ConstantHelper
+
     attr_accessor :data
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
@@ -187,25 +189,6 @@ module Ohai
         end
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
-      end
-    end
-
-    private
-    def recursive_remove_constants(object)
-      if object.respond_to?(:constants)
-        object.constants.each do |const|
-          next unless strict_const_defined?(object, const)
-          recursive_remove_constants(object.const_get(const))
-          object.send(:remove_const, const)
-        end
-      end
-    end
-
-    def strict_const_defined?(object, const)
-      if object.method(:const_defined?).arity == 1
-        object.const_defined?(const)
-      else
-        object.const_defined?(const, false)
       end
     end
   end

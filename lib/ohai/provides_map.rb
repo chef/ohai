@@ -60,19 +60,35 @@ module Ohai
       plugins.uniq
     end
 
-    # gather plugins providing each of the attributes listed along
-    # with providers of subattributes
+    # This function is used to fetch the plugins for the attributes specified
+    # in the CLI options to Ohai.
+    # It first attempts to find the plugins for the attributes
+    # or the sub attributes given.
+    # If it can't find any, it looks for plugins that might
+    # provide the parents of a given attribute and returns the
+    # first parent found.
     def deep_find_providers_for(attributes)
       plugins = []
       attributes.each do |attribute|
         attrs = select_subtree(@map, attribute)
-        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
+
+        unless attrs
+          attrs = select_closest_subtree(@map, attribute)
+
+          unless attrs
+            raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'"
+          end
+        end
+
         collect_plugins_in(attrs, plugins)
       end
+
       plugins.uniq
     end
 
-    # gather plugins providing each of the attributes listed, or the
+    # This function is used to fetch the plugins from
+    # 'depends "languages"' statements in plugins.
+    # It gathers plugins providing each of the attributes listed, or the
     # plugins providing the closest parent attribute
     def find_closest_providers_for(attributes)
       plugins = []

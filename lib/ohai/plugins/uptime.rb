@@ -87,7 +87,7 @@ Ohai.plugin(:Uptime) do
     # unix:0:system_misc:boot_time    1343860543
     so.stdout.lines do |line|
       if line =~ /unix:0:system_misc:boot_time\s+(\d+)/
-        uptime_Seconds Time.new.to_i - $1.to_i
+        uptime_seconds Time.new.to_i - $1.to_i
         uptime seconds_to_human(uptime_seconds)
       end
     end

@@ -619,4 +619,73 @@ EOF
 
     end
   end
+
+  describe "when running ohai for specific attributes" do
+    when_plugins_directory "contains v7 plugins" do
+      with_plugin("languages.rb", <<-E)
+        Ohai.plugin(:Languages) do
+          provides 'languages'
+
+          collect_data do
+            languages Mash.new
+          end
+        end
+      E
+
+      with_plugin("english.rb", <<-E)
+        Ohai.plugin(:English) do
+          provides 'languages/english'
+
+          depends 'languages'
+
+          collect_data do
+            languages[:english] = Mash.new
+            languages[:english][:version] = 2014
+          end
+        end
+      E
+
+      with_plugin("french.rb", <<-E)
+        Ohai.plugin(:French) do
+          provides 'languages/french'
+
+          depends 'languages'
+
+          collect_data do
+            languages[:french] = Mash.new
+            languages[:french][:version] = 2012
+          end
+        end
+      E
+
+      before do
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+      end
+
+      after do
+        Ohai::Config[:plugin_path] = @original_config
+      end
+
+      it "should run all the plugins when a top level attribute is specified" do
+        ohai.all_plugins("languages")
+        ohai.data[:languages][:english][:version].should == 2014
+        ohai.data[:languages][:french][:version].should == 2012
+      end
+
+      it "should run the first parent when a non-existent child is specified" do
+        ohai.all_plugins("languages/english/version")
+        ohai.data[:languages][:english][:version].should == 2014
+        ohai.data[:languages][:french].should be_nil
+      end
+
+      it "should be able to run multiple plugins" do
+        ohai.all_plugins(["languages/english", "languages/french"])
+        ohai.data[:languages][:english][:version].should == 2014
+        ohai.data[:languages][:french][:version].should == 2012
+      end
+
+    end
+  end
+
 end

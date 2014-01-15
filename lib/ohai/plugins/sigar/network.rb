@@ -16,9 +16,11 @@
 # limitations under the License.
 #
 
-#http://github.com/mdkent/ohai/commit/92f51aa18b6add9682510a87dcf94835ea72b04d
+require 'ohai/mixin/network_constants'
 
 Ohai.plugin(:Network) do
+  include Ohai::Mixin::NetworkConstants
+
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
@@ -153,7 +155,7 @@ Ohai.plugin(:Network) do
       # should never happen
       network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
       route_data={}
-      Ohai::Mixin::NetworkConstants.SIGAR_ROUTE_METHODS.each do |m|
+      Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
         if(m == :flags)
           route_data[m]=flags(route.send(m))
         else

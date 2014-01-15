@@ -56,13 +56,13 @@ module Ohai
 
         def self.provides(*attrs)
           attrs.each do |attr|
-            provides_attrs << attr
+            provides_attrs << attr unless provides_attrs.include?(attr)
           end
         end
 
         def self.depends(*attrs)
           attrs.each do |attr|
-            depends_attrs << attr
+            depends_attrs << attr unless depends_attrs.include?(attr)
           end
         end
 

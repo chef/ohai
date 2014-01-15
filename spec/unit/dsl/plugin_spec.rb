@@ -143,6 +143,12 @@ describe Ohai::DSL::Plugin::VersionVII do
       plugin = Ohai.plugin(@name) { provides("two", "three") }
       plugin.provides_attrs.should eql(["one", "two", "three"])
     end
+
+    it "should collect unique attributes" do
+      plugin = Ohai.plugin(@name) { provides("one") }
+      plugin = Ohai.plugin(@name) { provides("one", "two") }
+      plugin.provides_attrs.should eql(["one", "two"])
+    end
   end
 
   describe "#depends" do
@@ -169,6 +175,12 @@ describe Ohai::DSL::Plugin::VersionVII do
       plugin = Ohai.plugin(@name) { depends("one") }
       plugin = Ohai.plugin(@name) { depends("two", "three") }
       plugin.depends_attrs.should eql(["one", "two", "three"])
+    end
+
+    it "should collect unique attributes" do
+      plugin = Ohai.plugin(@name) { depends("one") }
+      plugin = Ohai.plugin(@name) { depends("one", "two") }
+      plugin.depends_attrs.should eql(["one", "two"])
     end
   end
 

@@ -116,19 +116,24 @@ describe Ohai::ProvidesMap do
     end
   end
 
-  describe "when looking for attribute and subattribute providers" do
+  describe "when looking for providers of attributes specified in CLI" do
     before do
       provides_map.set_providers_for(plugin_1, ["cat/whiskers"])
       provides_map.set_providers_for(plugin_2, ["cat/paws", "cat/paws/toes"])
       provides_map.set_providers_for(plugin_3, ["cat/mouth/teeth"])
     end
 
-    it "should find providers for subattributes even when the attribute doesn't have a provider" do
+    it "should find providers for subattributes if any exists when the attribute doesn't have a provider" do
       providers = provides_map.deep_find_providers_for(["cat"])
       expect(providers).to have(3).plugins
       expect(providers).to include(plugin_1)
       expect(providers).to include(plugin_2)
       expect(providers).to include(plugin_3)
+    end
+
+    it "should find providers for the first parent attribute when the attribute or any subattributes doesn't have a provider" do
+      providers = provides_map.deep_find_providers_for(["cat/paws/front"])
+      expect(providers).to eq([plugin_2])
     end
   end
 

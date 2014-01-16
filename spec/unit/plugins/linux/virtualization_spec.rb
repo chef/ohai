@@ -117,6 +117,14 @@ describe Ohai::System, "Linux virtualization platform" do
       @plugin[:virtualization][:role].should == "host"
     end
 
+    it "should set vbox gues if /proc/modules contains vboxguest" do
+      File.should_receive(:exists?).with("/proc/modules").and_return(true)
+      File.stub(:read).with("/proc/modules").and_return("vboxguest 214901 2 vboxsf, Live 0xffffffffa00db000 (OF)")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "vbox"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
     it "should not set virtualization if vbox isn't there" do
       File.should_receive(:exists?).at_least(:once).and_return(false)
       @plugin.run
@@ -132,12 +140,12 @@ describe Ohai::System, "Linux virtualization platform" do
     it "should set virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
       ms_vpc_dmidecode=<<-MSVPC
 System Information
-	Manufacturer: Microsoft Corporation
-	Product Name: Virtual Machine
-	Version: VS2005R2
-	Serial Number: 1688-7189-5337-7903-2297-1012-52
-	UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
-	Wake-up Type: Power Switch
+  Manufacturer: Microsoft Corporation
+  Product Name: Virtual Machine
+  Version: VS2005R2
+  Serial Number: 1688-7189-5337-7903-2297-1012-52
+  UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+  Wake-up Type: Power Switch
 MSVPC
       @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vpc_dmidecode, ""))
       @plugin.run
@@ -148,14 +156,14 @@ MSVPC
     it "should set vmware guest if dmidecode detects VMware Virtual Platform" do
       vmware_dmidecode=<<-VMWARE
 System Information
-	Manufacturer: VMware, Inc.
-	Product Name: VMware Virtual Platform
-	Version: None
-	Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
-	UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
-	Wake-up Type: Power Switch
-	SKU Number: Not Specified
-	Family: Not Specified
+  Manufacturer: VMware, Inc.
+  Product Name: VMware Virtual Platform
+  Version: None
+  Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
+  UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
+  Wake-up Type: Power Switch
+  SKU Number: Not Specified
+  Family: Not Specified
 VMWARE
       @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vmware_dmidecode, ""))
       @plugin.run
@@ -229,34 +237,33 @@ VBOX
       @plugin[:virtualization].should == {}
     end
   end
-	describe "when we are checking for openvz" do
-		it "should set openvz host if /proc/bc/0 exists" do
-			File.should_receive(:exists?).with("/proc/bc/0").and_return(true)
-			@plugin.run
-			@plugin[:virtualization][:system].should == "openvz"
-			@plugin[:virtualization][:role].should == "host"
-		end
 
-		it "should set openvz guest if /proc/bc/0 doesn't exist and /proc/vz exists" do
-			File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
-			File.should_receive(:exists?).with("/proc/vz").and_return(true)
-			@plugin.run
-			@plugin[:virtualization][:system].should == "openvz"
-			@plugin[:virtualization][:role].should == "guest"
-		end
+  describe "when we are checking for openvz" do
+    it "should set openvz host if /proc/bc/0 exists" do
+      File.should_receive(:exists?).with("/proc/bc/0").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "openvz"
+      @plugin[:virtualization][:role].should == "host"
+    end
 
-		it "should not set virtualization if openvz isn't there" do
-			File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
-			File.should_receive(:exists?).with("/proc/vz").and_return(false)
-			@plugin.run
-			@plugin[:virtualization].should == {}
-		end
-	end
+    it "should set openvz guest if /proc/bc/0 doesn't exist and /proc/vz exists" do
+      File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
+      File.should_receive(:exists?).with("/proc/vz").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "openvz"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if openvz isn't there" do
+      File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
+      File.should_receive(:exists?).with("/proc/vz").and_return(false)
+      @plugin.run
+      @plugin[:virtualization].should == {}
+    end
+  end
 
   it "should not set virtualization if no tests match" do
     @plugin.run
     @plugin[:virtualization].should == {}
   end
 end
-
-

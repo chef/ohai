@@ -56,6 +56,9 @@ Ohai.plugin(:Virtualization) do
       elsif modules =~ /^vboxdrv/
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
+      elsif modules =~ /^vboxguest/
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "guest"
       end
     end
 

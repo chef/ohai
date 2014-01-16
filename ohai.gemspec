@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config", "~> 2.0"
   s.add_dependency "mixlib-log"
-  s.add_dependency "mixlib-shellout"
+  s.add_dependency "mixlib-shellout", "~> 1.2"
   s.add_dependency "ipaddress"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec-core"

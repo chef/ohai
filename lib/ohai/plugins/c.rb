@@ -62,7 +62,7 @@ Ohai.plugin(:C) do
     begin
       so = shell_out("cl /?")
       if so.exitstatus == 0
-        description = so.stderr.split($/).first
+        description = so.stderr.lines.first.chomp
         if description =~ /Compiler Version ([\d\.]+)/
           c[:cl] = Mash.new
           c[:cl][:version] = $1

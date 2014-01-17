@@ -158,7 +158,7 @@ Ohai.plugin(:Kernel) do
     require 'ruby-wmi'
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
-    kernel = Mash.new
+    kernel Mash.new
 
     host = WMI::Win32_OperatingSystem.find(:first)
     kernel[:os_info] = Mash.new
@@ -168,9 +168,7 @@ Ohai.plugin(:Kernel) do
 
     kernel[:name] = "#{kernel[:os_info][:caption]}"
     kernel[:release] = "#{kernel[:os_info][:version]}"
-    kernel[:version] = "#{kernel[:os_info][:version]}
-                            ##{kernel[:os_info][:csd_version]} Build
-                            ###{kernel[:os_info][:build_number]}"
+    kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
     host = WMI::Win32_ComputerSystem.find(:first)

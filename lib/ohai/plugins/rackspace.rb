@@ -96,16 +96,19 @@ Ohai.plugin(:Rackspace) do
   # Get the rackspace private networks
   #
   def get_private_networks()
-    status, stdout, stderr = run_command(:no_status_check => true, :command => 'xenstore-ls vm-data/networking')
-    if status == 0
-      stdout.split("\n").map{|l| l.split('=').first.strip }.map do |item|
-        _status, _stdout, _stderr = run_command(:no_status_check => true, :command => "xenstore-read vm-data/networking/#{item}")
-        if status == 0
-          Yajl::Parser.new.parse(_stdout)
+    so = shell_out('xenstore-ls vm-data/networking')
+    if so.exitstatus == 0
+      networks = []
+      so.stdout.split("\n").map{|l| l.split('=').first.strip }.map do |item|
+        _so = shell_out("xenstore-read vm-data/networking/#{item}")
+        if _so.exitstatus == 0
+          networks.push(Yajl::Parser.new.parse(_so.stdout))
         else
           raise Ohai::Exceptions::Exec
         end
       end
+      networks.delete_if { |hash| hash['label'] == 'private' }
+      networks.delete_if { |hash| hash['label'] == 'public' }
     end
   rescue Ohai::Exceptions::Exec
     Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
@@ -127,7 +130,8 @@ Ohai.plugin(:Rackspace) do
       rackspace[:local_ipv4] = rackspace[:private_ip]
       get_global_ipv6_address(:local_ipv6, :eth1)
       rackspace[:local_hostname] = hostname
-      rackspace[:networks] = get_private_networks
+      private_networks = get_private_networks
+      rackspace[:private_networks] = private_networks if private_networks
     end
   end
 

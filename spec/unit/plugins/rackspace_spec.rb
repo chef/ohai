@@ -58,7 +58,7 @@ describe Ohai::System, "plugin rackspace" do
     "40:40:F5:AB:28:36" => {
       "family"=> "lladdr"
     }
-    }}
+  }}
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
     # This is here to make #has_rackspace_kernel? fail until we remove that check
@@ -133,7 +133,7 @@ OUT
     describe 'with no public interfaces (empty eth0)' do
       before do
         # unset public (eth0) addresses
-        @plugin[:network][:interfaces][:eth0]['addresses'] = {} 
+        @plugin[:network][:interfaces][:eth0]['addresses'] = {}
       end
 
       it "should have all required attributes" do
@@ -149,7 +149,7 @@ OUT
         @plugin[:rackspace][:local_ipv6].should be_nil
         @plugin[:rackspace][:local_hostname].should_not be_nil
       end
-  
+
       it "should have correct values for all attributes" do
         @plugin.run
         @plugin[:rackspace][:private_ip].should == "5.6.7.8"
@@ -161,16 +161,16 @@ OUT
 
   describe "without cloud file" do
     it_should_behave_like "!rackspace"
-  
+
     before(:each) do
       File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
-  
+
   describe "with ec2 cloud file" do
     it_should_behave_like "!rackspace"
-  
+
     before(:each) do
       File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
       File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
@@ -199,4 +199,68 @@ OUT
       @plugin.stub(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
+
+  describe "does not have private networks" do
+    before do
+      stdout = 'BC764E20422B = "{"label": "public"}"\n'
+      @plugin.stub(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
+      stdout = '{"label": "public", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
+      @plugin.stub(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
+
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+    end
+
+    it "should not have private_networks object" do
+      @plugin.run
+      @plugin[:rackspace][:private_networks].should == []
+    end
+  end
+
+  describe "has private networks" do
+    before do
+      @plugin[:network][:interfaces][:eth2] = {:addresses => {
+        "fe80::be76:4eff:fe20:422b" => {
+          "scope"=> "Link",
+          "prefixlen"=> "64",
+          "family"=> "inet6"
+       },
+        "9.10.11.12"=> {
+          "broadcast"=> "9.10.11.255",
+          "netmask"=> "255.255.255.0",
+          "family"=> "inet"
+        },
+        "BC:76:4E:20:42:2B" => {
+          "family"=> "lladdr"
+        }
+      }}
+      stdout = 'BC764E20422B = "{"label": "private-network"}"\n'
+      @plugin.stub(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
+      stdout = '{"label": "private-network", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
+      @plugin.stub(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
+
+      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+    end
+
+    it "should private_networks object" do
+      @plugin.run
+      @plugin[:rackspace][:private_networks].should_not be_nil
+    end
+
+    it "should have correct values for all attributes" do
+      @plugin.run
+      @plugin[:rackspace][:private_networks][0][:label].should == "private-network"
+      @plugin[:rackspace][:private_networks][0][:broadcast].should == "9.10.11.255"
+      @plugin[:rackspace][:private_networks][0][:mac].should == "BC:76:4E:20:42:2B"
+    end
+
+  end
+
+
+
 end

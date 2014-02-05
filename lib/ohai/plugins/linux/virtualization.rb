@@ -74,6 +74,14 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
+    # Detect KVM guest from demsg
+    if File.exists?("/bin/dmesg")
+      if `/bin/dmesg`.scan(/Booting paravirtualized kernel on KVM/)
+        virtualization[:system] = "kvm"
+        virtualization[:role] = "guest"
+      end
+    end
+
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
     if File.exists?("/proc/bc/0")

@@ -32,6 +32,7 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/self/status").and_return(false)
     File.stub(:exists?).with("/proc/bc/0").and_return(false)
     File.stub(:exists?).with("/proc/vz").and_return(false)
+    File.stub(:exists?).with("/bin/dmesg").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -96,6 +97,16 @@ describe Ohai::System, "Linux virtualization platform" do
     it "should set kvm guest if /proc/cpuinfo contains Common 32-bit KVM processor" do
       File.should_receive(:exists?).with("/proc/cpuinfo").and_return(true)
       File.stub(:read).with("/proc/cpuinfo").and_return("Common 32-bit KVM processor")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "kvm"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set kvm guest if dmesg contains Booting paravirtualized kernel on KVM" do
+      File.should_receive(:exists?).with("/bin/dmesg").and_return(true)
+      @plugin.stub(:shell_out).with("dmesg").and_return(
+        mock_shell_out(0, "[    0.000000] Booting paravirtualized kernel on KVM", "")
+      )
       @plugin.run
       @plugin[:virtualization][:system].should == "kvm"
       @plugin[:virtualization][:role].should == "guest"

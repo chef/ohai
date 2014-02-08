@@ -126,5 +126,13 @@ Ohai.plugin(:Virtualization) do
         end
       end
     end
+
+    # Detect LXC/Docker
+    if File.exists?("/proc/1/cgroup")
+      if File.read("/proc/1/cgroup") =~ %r{\d+:.+:/lxc/}i
+        virtualization[:system] = "lxc"
+        virtualization[:role] = "guest"
+      end
+    end
   end
 end

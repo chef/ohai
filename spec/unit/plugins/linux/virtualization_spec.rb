@@ -32,6 +32,7 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/self/status").and_return(false)
     File.stub(:exists?).with("/proc/bc/0").and_return(false)
     File.stub(:exists?).with("/proc/vz").and_return(false)
+    File.stub(:exists?).with("/proc/1/cgroup").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -257,6 +258,29 @@ VBOX
     it "should not set virtualization if openvz isn't there" do
       File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
       File.should_receive(:exists?).with("/proc/vz").and_return(false)
+      @plugin.run
+      @plugin[:virtualization].should == {}
+    end
+  end
+
+  describe "when we are checking for lxc" do
+    it "should set lxc guest if /proc/1/cgroup exist and there are /lxc/ mounts" do
+      File.should_receive(:exists?).with("/proc/1/cgroup").and_return(true)
+      File.stub(:read).with("/proc/1/cgroup").and_return("3:cpuset:/lxc/")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should not set virtualization if /proc/1/cgroup has / mounts" do
+      File.should_receive(:exists?).with("/proc/1/cgroup").and_return(true)
+      File.stub(:read).with("/proc/1/cgroup").and_return("3:cpuset:/")
+      @plugin.run
+      @plugin[:virtualization].should == {}
+    end
+
+    it "should not set virtualization if /proc/1/cgroup isn't there" do
+      File.should_receive(:exists?).with("/proc/1/cgroup").and_return(false)
       @plugin.run
       @plugin[:virtualization].should == {}
     end

@@ -22,7 +22,7 @@ Ohai.plugin(:Java) do
 
   def get_java_info
     java = Mash.new
-    so = shell_out("java -mx16m -version")
+    so = shell_out("java -mx64m -version")
     if so.exitstatus == 0
       so.stderr.split(/\r?\n/).each do |line|
         case line

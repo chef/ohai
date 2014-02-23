@@ -90,7 +90,7 @@ Ohai.plugin(:NetworkAddresses) do
           end.first
           if r.nil?
             r = gw_if_ips.first
-            Ohai::Log.warn("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking one anyway")
+            Ohai::Log.debug("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
           else
             Ohai::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
           end

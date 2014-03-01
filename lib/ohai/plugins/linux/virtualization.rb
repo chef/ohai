@@ -128,8 +128,13 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect LXC/Docker
-    if File.exists?("/proc/1/cgroup")
-      if File.read("/proc/1/cgroup") =~ %r{\d+:.+:/lxc/}i
+    # Pattern will vary by platform, and init system.
+    # Generally, it will look like this inside a container:
+    # <index #>:<component>:<path>/lxc/<hexadecimal container id>
+    # Full notes, https://tickets.opscode.com/browse/OHAI-551
+    # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
+    if File.exists?("/proc/self/cgroup")
+      if File.read("/proc/self/cgroup") =~ %r{\d+:.+:/lxc/[\w\d]+}
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
       end

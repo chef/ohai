@@ -135,12 +135,19 @@ Ohai.plugin(:Virtualization) do
     # Cgroup name, could be arbitrary and named 'Charlie', instead of 'lxc' however.
     # <index #>:<subsystem>:/<cgroup name>/<hexadecimal container id>
     #
+    # A host which supports cgroups, and has capacity to host lxc containers,
+    # will show the subsystems and root (/) namespace.
+    # <index #>:<subsystem>:/
+    #
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exists?("/proc/self/cgroup")
-      if File.read("/proc/self/cgroup") =~ %r{\d+:.+:/\w+/[\w\d]+}
+      if File.read("/proc/self/cgroup") =~ %r{^\d+:.+:/\w+/[\w\d]+$}
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
+      elsif File.read("/proc/self/cgroup") =~ %r{\d:.+:/$}
+        virtualization[:system] = "lxc"
+        virtualization[:role] = "host"
       end
     end
   end

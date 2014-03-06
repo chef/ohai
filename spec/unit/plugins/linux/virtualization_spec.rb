@@ -264,7 +264,7 @@ VBOX
   end
 
   describe "when we are checking for lxc" do
-    it "should set lxc guest if /proc/self/cgroup exist and there are /lxc/ mounts" do
+    it "should set lxc guest if /proc/self/cgroup exist and there are /lxc/<hexadecimal> mounts" do
       self_cgroup=<<-CGROUP
 8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 7:net_cls:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
@@ -282,22 +282,39 @@ CGROUP
       @plugin[:virtualization][:role].should == "guest"
     end
 
-    it "should set lxc guest if /proc/self/cgroup exist and the cgroup is named Charlie" do
+    it "should set lxc guest if /proc/self/cgroup exist and there are /lxc/<name> mounts" do
       self_cgroup=<<-CGROUP
-8:blkio:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-7:net_cls:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-6:freezer:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-5:devices:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-4:memory:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-3:cpuacct:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-2:cpu:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-1:cpuset:/
+8:blkio:/lxc/vanilla
+7:net_cls:/lxc/vanilla
+6:freezer:/lxc/vanilla
+5:devices:/lxc/vanilla
+4:memory:/lxc/vanilla
+3:cpuacct:/lxc/vanilla
+2:cpu:/lxc/vanilla
+1:cpuset:/lxc/vanilla
 CGROUP
       File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
       File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       @plugin.run
       @plugin[:virtualization][:system].should == "lxc"
       @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set not set anyting if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
+      self_cgroup=<<-CGROUP
+8:blkio:/Charlie
+7:net_cls:/Charlie
+6:freezer:/Charlie
+5:devices:/Charlie
+4:memory:/Charlie
+3:cpuacct:/Charlie
+2:cpu:/Charlie
+1:cpuset:/Charlie
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization].should == {}
     end
 
     it "should set lxc host if /proc/self/cgroup only has / mounts" do

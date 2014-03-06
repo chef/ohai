@@ -282,6 +282,24 @@ CGROUP
       @plugin[:virtualization][:role].should == "guest"
     end
 
+    it "should set lxc guest if /proc/self/cgroup exist and the cgroup is named Charlie" do
+      self_cgroup=<<-CGROUP
+8:blkio:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+7:net_cls:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+6:freezer:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+5:devices:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+4:memory:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+3:cpuacct:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+2:cpu:/Charlie/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+1:cpuset:/
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
     it "should not set virtualization if /proc/self/cgroup only has / mounts" do
       self_cgroup=<<-CGROUP
 8:blkio:/

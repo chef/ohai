@@ -128,12 +128,16 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect LXC/Docker
-    # Pattern will vary by platform, and init system.
-    # Generally, it will look like this inside a container:
+    #
+    # /proc/self/cgroup will look like this inside a docker container:
     # <index #>:<subsystem>:/lxc/<hexadecimal container id>
     #
-    # Cgroup name, could be arbitrary and named 'Charlie', instead of 'lxc' however.
-    # <index #>:<subsystem>:/<cgroup name>/<hexadecimal container id>
+    # /proc/self/cgroup could have a name including alpha/digit/dashes
+    # <index #>:<subsystem>:/lxc/<named container id>
+    #
+    # /proc/self/cgroup could have a non-lxc cgroup name indicating other uses 
+    # of cgroups.  This is probably not LXC/Docker.
+    # <index #>:<subsystem>:/Charlie
     #
     # A host which supports cgroups, and has capacity to host lxc containers,
     # will show the subsystems and root (/) namespace.
@@ -142,7 +146,7 @@ Ohai.plugin(:Virtualization) do
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exists?("/proc/self/cgroup")
-      if File.read("/proc/self/cgroup") =~ %r{^\d+:.+:/.+/[\w\d]+$}
+      if File.read("/proc/self/cgroup") =~ %r{^\d+:.+:/lxc/.+$}
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
       elsif File.read("/proc/self/cgroup") =~ %r{\d:.+:/$}

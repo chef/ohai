@@ -300,7 +300,7 @@ CGROUP
       @plugin[:virtualization][:role].should == "guest"
     end
 
-    it "should not set virtualization if /proc/self/cgroup only has / mounts" do
+    it "should set lxc host if /proc/self/cgroup only has / mounts" do
       self_cgroup=<<-CGROUP
 8:blkio:/
 7:net_cls:/
@@ -314,7 +314,8 @@ CGROUP
       File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
       File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       @plugin.run
-      @plugin[:virtualization].should == {}
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "host"
     end
 
     it "should not set virtualization if /proc/self/cgroup isn't there" do

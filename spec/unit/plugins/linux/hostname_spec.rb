@@ -45,8 +45,17 @@ describe Ohai::System, "Linux hostname plugin" do
       @ohai._require_plugin("linux::hostname")
       @ohai.fqdn.should == nil
     end
-
   end
-    
+
+  describe "when hostname --fqdn is emtpy" do
+    before(:each) do
+      @ohai.stub!(:from).with("hostname --fqdn").
+        and_return("", "katie.bethell")
+    end
+    it "should call it twice" do
+      @ohai._require_plugin("linux::hostname")
+      @ohai.fqdn.should == "katie.bethell"
+    end
+  end 
 end
 

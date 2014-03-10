@@ -115,9 +115,24 @@ Ohai.plugin(:Hostname) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
     begin
-      fqdn from_cmd("hostname --fqdn")
+      ourfqdn = from_cmd("hostname --fqdn")
+      # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
+      # returns a blank string. WTF.
+      if ourfqdn.nil? || ourfqdn.empty?
+        Ohai::Log.debug("hostname --fqdn returned an empty string, retrying " +
+                        "once.")
+        ourfqdn = from_cmd("hostname --fqdn")
+      end
+
+      if ourfqdn.nil? || ourfqdn.empty?
+        Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
+                        "will not be set.")
+      else
+        fqdn ourfqdn
+      end
     rescue
-      Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+      Ohai::Log.debug(
+        "hostname --fqdn returned an error, probably no domain set")
     end
     domain collect_domain
   end

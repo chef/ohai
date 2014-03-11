@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+  provides "platform", "platform_version", "platform_family", "os_version"
 
   collect_data(:freebsd) do
     so = shell_out("uname -s")
@@ -25,5 +25,8 @@ Ohai.plugin(:Platform) do
     so = shell_out("uname -r")
     platform_version so.stdout.split($/)[0]
     platform_family "freebsd"
+    # This is __FreeBSD_version. See sys/param.h.
+    so = shell_out("sysctl -n kern.osreldate")
+    os_version so.stdout.split($/)[0]
   end
 end

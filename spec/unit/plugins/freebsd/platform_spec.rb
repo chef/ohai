@@ -24,6 +24,7 @@ describe Ohai::System, "FreeBSD plugin platform" do
     @plugin = get_plugin("freebsd/platform")
     @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "FreeBSD\n", ""))
     @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "7.1\n", ""))
+    @plugin.stub(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
     @plugin.stub(:collect_os).and_return(:freebsd)
   end
 
@@ -35,5 +36,10 @@ describe Ohai::System, "FreeBSD plugin platform" do
   it "should set platform_version to lsb[:release]" do
     @plugin.run
     @plugin[:platform_version].should == "7.1"
+  end
+
+  it "should set os_version to __FreeBSD_version" do
+    @plugin.run
+    @plugin[:os_version].should == "902001"
   end
 end  

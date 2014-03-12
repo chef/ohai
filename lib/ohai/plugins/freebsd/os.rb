@@ -1,6 +1,8 @@
 #
-# Author:: Bryan McLellan (btm@loftninjas.org)
-# Copyright:: Copyright (c) 2009 Bryan McLellan
+# Authors:: Adam Jacob (<adam@opscode.com>)
+#           Richard Manyanza (<liseki@nyikacraftsmen.com>)
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +18,16 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+require 'ohai/mixin/os'
+
+Ohai.plugin(:OS) do
+  provides "os", "os_version"
 
   collect_data(:freebsd) do
-    so = shell_out("uname -s")
-    platform so.stdout.split($/)[0].downcase
-    so = shell_out("uname -r")
-    platform_version so.stdout.split($/)[0]
-    platform_family "freebsd"
+    os collect_os
+
+    # This is __FreeBSD_version. See sys/param.h or 
+    # http://www.freebsd.org/doc/en/books/porters-handbook/freebsd-versions.html.
+    os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
   end
 end

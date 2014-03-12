@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
+# Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +19,15 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
-describe Ohai::System, "FreeBSD plugin platform" do
+describe Ohai::System, "FreeBSD plugin os" do
   before(:each) do
-    @plugin = get_plugin("freebsd/platform")
-    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "FreeBSD\n", ""))
-    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "7.1\n", ""))
+    @plugin = get_plugin("freebsd/os")
+    @plugin.stub(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
     @plugin.stub(:collect_os).and_return(:freebsd)
   end
 
-  it "should set platform to lowercased lsb[:id]" do
-    @plugin.run        
-    @plugin[:platform].should == "freebsd"
-  end
-  
-  it "should set platform_version to lsb[:release]" do
+  it "should set os_version to __FreeBSD_version" do
     @plugin.run
-    @plugin[:platform_version].should == "7.1"
+    @plugin[:os_version].should == "902001"
   end
 end  

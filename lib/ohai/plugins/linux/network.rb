@@ -200,8 +200,11 @@ Ohai.plugin(:Network) do
         #    the routing table source field.
         # 3) and since we're at it, let's populate some :routes attributes
         # (going to do that for both inet and inet6 addresses)
-        so = shell_out("ip -f #{family[:name]} route show")
-        so.stdout.lines do |line|
+        #
+        # NOTE: in the v6 world we can have many duplicate routes, so we
+        # slurp them in and then uniqify them.
+        so = shell_out("ip -f #{family[:name]} route show").stdout
+        so.split("\n").sort.uniq do |line|
           if line =~ /^([^\s]+)\s(.*)$/
             route_dest = $1
             route_ending = $2

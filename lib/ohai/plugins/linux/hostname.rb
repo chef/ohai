@@ -20,7 +20,21 @@ provides "hostname", "fqdn"
 
 hostname from("hostname -s")
 begin
-  fqdn from("hostname --fqdn")
+  ourfqdn = from("hostname --fqdn")
+  # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
+  # returns a blank string. WTF.
+  if ourfqdn.nil? || ourfqdn.empty?
+    Ohai::Log.debug("hostname --fqdn returned an empty string, retrying " +
+                    "once.")
+    ourfqdn = from("hostname --fqdn")
+  end
+
+  if ourfqdn.nil? || ourfqdn.empty?
+    Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
+                    "will not be set.")
+  else
+    fqdn ourfqdn
+  end
 rescue
-  Ohai::Log.debug("hostname -f returned an error, probably no domain is set")
+  Ohai::Log.debug("hostname --fqdn returned an error, probably no domain set")
 end

@@ -5,3 +5,4 @@ Example Contribution:
 * **kalistec**: Improved file resource greatly.
 -->
 # OHAI Contributions:
+* **jaymzh**: Work around libc bug in `hostname --fqdn`

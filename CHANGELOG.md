@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-*
+* Work around libc bug in `hostname --fqdn`
 
 ## Last Release: 7.0.0.rc.0 (01/20/2014)
 

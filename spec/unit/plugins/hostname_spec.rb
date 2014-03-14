@@ -71,4 +71,34 @@ describe Ohai::System, "hostname plugin" do
       @plugin[:hostname].should == "katie"
     end
   end
+
+  context "hostname --fqdn when it returns empty string" do
+    before(:each) do
+      @plugin.stub(:collect_os).and_return(:linux)
+      @plugin.stub(:shell_out).with("hostname -s").and_return(
+        mock_shell_out(0, "katie", ""))
+      @plugin.stub(:shell_out).with("hostname --fqdn").and_return(
+        mock_shell_out(0, "", ""), mock_shell_out(0, "katie.local", ""))
+    end
+
+    it "should be called twice" do
+      @plugin.run
+      @plugin[:fqdn].should == "katie.local"
+    end
+  end
+
+  context "hostname --fqdn when it works" do
+    before(:each) do
+      @plugin.stub(:collect_os).and_return(:linux)
+      @plugin.stub(:shell_out).with("hostname -s").and_return(
+        mock_shell_out(0, "katie", ""))
+      @plugin.stub(:shell_out).with("hostname --fqdn").and_return(
+        mock_shell_out(0, "katie.local", ""))
+    end
+
+    it "should be not be called twice" do
+      @plugin.run
+      @plugin[:fqdn].should == "katie.local"
+    end
+  end
 end

@@ -10,3 +10,4 @@ Example Contribution:
 * **tas50**: Added additional cpu information to darwin platform.
 * **mpasternacki**: Removed fe80:: link-local address from reported ip6addresses.
 * **paulczar**: Added private network information for Rackspace nodes.
+* **ctennis**: Added init_package plugin which reports the init mechanism of the system on linux.

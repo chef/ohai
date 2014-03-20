@@ -79,7 +79,7 @@ Ohai.plugin(:NetworkAddresses) do
       elsif network[gw_attr] and
           network["interfaces"][network[int_attr]] and
           network["interfaces"][network[int_attr]]["addresses"]
-        if [ "0.0.0.0", "::" ].include? network[gw_attr]
+        if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
           Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
           r = gw_if_ips.first

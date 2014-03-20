@@ -652,6 +652,19 @@ describe Ohai::System, "Network Plugin" do
           end
         end
 
+        describe "fe80::1 as a default gateway" do
+          before do
+            @plugin["network"]["default_inet6_gateway"] = "fe80::1"
+          end
+
+          it_does_not_fail
+
+          it "picks {ip,mac,ip6}address from the default interface" do
+            @plugin.run
+            @plugin["ip6address"].should == "3ffe:1111:2222::33"
+          end
+        end
+
         describe "can choose from addresses with different scopes" do
           before do
             @plugin["network"]["default_gateway"] = "0.0.0.0"

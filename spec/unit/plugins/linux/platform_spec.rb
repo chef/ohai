@@ -403,7 +403,7 @@ describe Ohai::System, "Linux plugin platform" do
       it "[OHAI-272] should read the version as 11.3" do
         File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
         @plugin.run
-        @plugin[:platform].should == "suse"
+        @plugin[:platform].should == "opensuse"
         @plugin[:platform_version].should == "11.3"
         @plugin[:platform_family].should == "suse"
       end
@@ -419,7 +419,7 @@ describe Ohai::System, "Linux plugin platform" do
       it "[OHAI-272] should read the version as 11.4" do
         File.should_receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
         @plugin.run
-        @plugin[:platform].should == "suse"
+        @plugin[:platform].should == "opensuse"
         @plugin[:platform_version].should == "11.4"
         @plugin[:platform_family].should == "suse"
       end

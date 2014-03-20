@@ -16,12 +16,16 @@
 # limitations under the License.
 #
 
-provides "init_package"
+Ohai.plugin(:InitPackage) do
+  provides "init_package"
 
-package_name = nil
+  collect_data(:linux) do
+    package_name = nil
 
-if File.exists?("/proc/1/comm")
-  package_name = File.open("/proc/1/comm").gets.chomp
+    if File.exists?("/proc/1/comm")
+      package_name = File.open("/proc/1/comm").gets.chomp
+    end
+
+    init_package package_name
+  end
 end
-
-init_package package_name

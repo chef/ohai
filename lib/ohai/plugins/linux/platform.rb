@@ -29,7 +29,7 @@ Ohai.plugin(:Platform) do
   end
 
   collect_data(:linux) do
-    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching 
+    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
     if File.exists?("/etc/oracle-release")
       contents = File.read("/etc/oracle-release").chomp
       platform "oracle"
@@ -47,7 +47,7 @@ Ohai.plugin(:Platform) do
       elsif lsb[:id] =~ /LinuxMint/i
         platform "linuxmint"
         platform_version lsb[:release]
-      else 
+      else
         if File.exists?("/usr/bin/raspi-config")
           platform "raspbian"
         else
@@ -67,10 +67,15 @@ Ohai.plugin(:Platform) do
       platform "gentoo"
       platform_version File.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
     elsif File.exists?('/etc/SuSE-release')
-      platform "suse"
       suse_release = File.read("/etc/SuSE-release")
-      platform_version suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
-      platform_version suse_release.scan(/VERSION = ([\d\.]{2,})/).flatten.join(".") if platform_version == ""
+      suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
+      suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
+      platform_version suse_version
+      if suse_release =~ /^openSUSE/
+        platform "opensuse"
+      else
+        platform "suse"
+      end
     elsif File.exists?('/etc/slackware-version')
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
@@ -90,7 +95,7 @@ Ohai.plugin(:Platform) do
     elsif lsb[:id] =~ /XenServer/i
       platform "xenserver"
       platform_version lsb[:release]
-    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties 
+    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
       platform lsb[:id].downcase
       platform_version lsb[:release]
     end
@@ -108,8 +113,8 @@ Ohai.plugin(:Platform) do
       platform_family "gentoo"
     when /slackware/
       platform_family "slackware"
-    when /arch/ 
-      platform_family "arch" 
+    when /arch/
+      platform_family "arch"
     end
   end
 end

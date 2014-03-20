@@ -6,3 +6,4 @@ Example Contribution:
 -->
 # OHAI Contributions:
 * **jaymzh**: Work around libc bug in `hostname --fqdn`
+* **mvidner**: (Long time ago) Added differentiation for suse & opensuse in the :platform attribute.

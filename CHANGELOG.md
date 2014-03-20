@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Work around libc bug in `hostname --fqdn`
+* Report Suse and OpenSuse seperately in the :platform attribute.
 
 ## Last Release: 7.0.0.rc.0 (01/20/2014)
 

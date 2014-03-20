@@ -29,7 +29,7 @@ Ohai.plugin(:Platform) do
   end
 
   collect_data(:linux) do
-    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching 
+    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
     if File.exists?("/etc/oracle-release")
       contents = File.read("/etc/oracle-release").chomp
       platform "oracle"
@@ -47,7 +47,7 @@ Ohai.plugin(:Platform) do
       elsif lsb[:id] =~ /LinuxMint/i
         platform "linuxmint"
         platform_version lsb[:release]
-      else 
+      else
         if File.exists?("/usr/bin/raspi-config")
           platform "raspbian"
         else
@@ -90,7 +90,7 @@ Ohai.plugin(:Platform) do
     elsif lsb[:id] =~ /XenServer/i
       platform "xenserver"
       platform_version lsb[:release]
-    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties 
+    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
       platform lsb[:id].downcase
       platform_version lsb[:release]
     end
@@ -108,8 +108,8 @@ Ohai.plugin(:Platform) do
       platform_family "gentoo"
     when /slackware/
       platform_family "slackware"
-    when /arch/ 
-      platform_family "arch" 
+    when /arch/
+      platform_family "arch"
     end
   end
 end

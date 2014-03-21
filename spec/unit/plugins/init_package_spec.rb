@@ -19,24 +19,32 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
 
 describe Ohai::System, "Init package" do
-  before(:each) do
-    @plugin = get_plugin("init_package")
-    @plugin.stub(:collect_os).and_return("linux")
+  let(:plugin) {
+    p = get_plugin("init_package")
+    p.stub(:collect_os).and_return("linux")
+    p
+  }
 
-    @mock_file = double("/proc/1/comm")
-    @mock_file.stub(:gets).and_return("init\n")
-    File.stub(:exists?).with("/proc/1/comm").and_return(true)
-    File.stub(:open).with("/proc/1/comm").and_return(@mock_file)
+  let(:proc1_content) { "init\n" }
+  let(:proc_1_file_path) { "/proc/1/comm" }
+  let(:proc_1_file) { double(proc_1_file_path, :gets => proc1_content) }
+
+  before(:each) do
+    File.stub(:exists?).with(proc_1_file_path).and_return(true)
+    File.stub(:open).with(proc_1_file_path).and_return(proc_1_file)
   end
 
   it "should set init_package to init" do
-    @plugin.run
-    @plugin[:init_package].should == "init"
+    plugin.run
+    plugin[:init_package].should == "init"
   end
 
-  it "should set init_package to systemd" do
-    @mock_file.stub(:gets).and_return("systemd\n")
-    @plugin.run
-    @plugin[:init_package].should == "systemd"
+  describe "when init_package is systemd" do
+    let(:proc1_content) { "systemd\n" }
+
+    it "should set init_package to systemd" do
+      plugin.run
+      plugin[:init_package].should == "systemd"
+    end
   end
 end

@@ -146,7 +146,7 @@ Ohai.plugin(:Virtualization) do
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exists?("/proc/self/cgroup")
-      if File.read("/proc/self/cgroup") =~ %r{^\d+:.+:/lxc/.+$}
+      if File.read("/proc/self/cgroup") =~ %r{^\d+:.+:/(lxc|docker)/.+$}
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
       elsif File.read("/proc/self/cgroup") =~ %r{\d:.+:/$}

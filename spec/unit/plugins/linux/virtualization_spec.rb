@@ -300,7 +300,27 @@ CGROUP
       @plugin[:virtualization][:role].should == "guest"
     end
 
-    it "should set not set anyting if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
+    it "should set lxc guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
+      self_cgroup=<<-CGROUP
+11:hugetlb:/
+10:perf_event:/
+9:blkio:/
+8:net_cls:/
+7:freezer:/
+6:devices:/
+5:memory:/
+4:cpuacct,cpu:/docker/9c2adaa4c391ec0d3bf994fbd91ff30c3d317694d179e5b1dc7e1e4c8ed56b61
+3:cpuset:/
+2:name=systemd:/system.slice/docker.service
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
       self_cgroup=<<-CGROUP
 8:blkio:/Charlie
 7:net_cls:/Charlie

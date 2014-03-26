@@ -20,7 +20,10 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-log"
   s.add_dependency "mixlib-shellout", "~> 1.2"
   s.add_dependency "ipaddress"
-  s.add_development_dependency "rake"
+
+  # Rake 10.2 drops Ruby 1.8 support, so stick to 10.1.x until chef also drops
+  # 1.8.
+  s.add_development_dependency "rake", "~> 10.1.0"
   s.add_development_dependency "rspec-core"
   s.add_development_dependency "rspec-expectations"
   s.add_development_dependency "rspec-mocks"

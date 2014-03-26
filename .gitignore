@@ -4,3 +4,4 @@ pkg/
 tmp/
 coverage/
 .DS_Store
+.bundle

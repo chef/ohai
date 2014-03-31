@@ -32,6 +32,7 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/self/status").and_return(false)
     File.stub(:exists?).with("/proc/bc/0").and_return(false)
     File.stub(:exists?).with("/proc/vz").and_return(false)
+    File.stub(:exists?).with("/proc/self/cgroup").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -257,6 +258,105 @@ VBOX
     it "should not set virtualization if openvz isn't there" do
       File.should_receive(:exists?).with("/proc/bc/0").and_return(false)
       File.should_receive(:exists?).with("/proc/vz").and_return(false)
+      @plugin.run
+      @plugin[:virtualization].should == {}
+    end
+  end
+
+  describe "when we are checking for lxc" do
+    it "should set lxc guest if /proc/self/cgroup exist and there are /lxc/<hexadecimal> mounts" do
+      self_cgroup=<<-CGROUP
+8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+7:net_cls:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+6:freezer:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+5:devices:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+4:memory:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+3:cpuacct:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+2:cpu:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+1:cpuset:/
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set lxc guest if /proc/self/cgroup exist and there are /lxc/<name> mounts" do
+      self_cgroup=<<-CGROUP
+8:blkio:/lxc/vanilla
+7:net_cls:/lxc/vanilla
+6:freezer:/lxc/vanilla
+5:devices:/lxc/vanilla
+4:memory:/lxc/vanilla
+3:cpuacct:/lxc/vanilla
+2:cpu:/lxc/vanilla
+1:cpuset:/lxc/vanilla
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set lxc guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
+      self_cgroup=<<-CGROUP
+11:hugetlb:/
+10:perf_event:/
+9:blkio:/
+8:net_cls:/
+7:freezer:/
+6:devices:/
+5:memory:/
+4:cpuacct,cpu:/docker/9c2adaa4c391ec0d3bf994fbd91ff30c3d317694d179e5b1dc7e1e4c8ed56b61
+3:cpuset:/
+2:name=systemd:/system.slice/docker.service
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "guest"
+    end
+
+    it "should set not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
+      self_cgroup=<<-CGROUP
+8:blkio:/Charlie
+7:net_cls:/Charlie
+6:freezer:/Charlie
+5:devices:/Charlie
+4:memory:/Charlie
+3:cpuacct:/Charlie
+2:cpu:/Charlie
+1:cpuset:/Charlie
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization].should == {}
+    end
+
+    it "should set lxc host if /proc/self/cgroup only has / mounts" do
+      self_cgroup=<<-CGROUP
+8:blkio:/
+7:net_cls:/
+6:freezer:/
+5:devices:/
+4:memory:/
+3:cpuacct:/
+2:cpu:/
+1:cpuset:/
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "lxc"
+      @plugin[:virtualization][:role].should == "host"
+    end
+
+    it "should not set virtualization if /proc/self/cgroup isn't there" do
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(false)
       @plugin.run
       @plugin[:virtualization].should == {}
     end

@@ -21,35 +21,34 @@ provides "filesystem"
 fs = Mash.new
 
 # Grab filesystem data from df
-popen4("df -P") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    case line
-    when /^Filesystem\s+1024-blocks/
-      next
-    when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-      filesystem = $1
-      fs[filesystem] = Mash.new
-      fs[filesystem][:kb_size] = $2
-      fs[filesystem][:kb_used] = $3
-      fs[filesystem][:kb_available] = $4
-      fs[filesystem][:percent_used] = $5
-      fs[filesystem][:mount] = $6
-    end
+# df often returns non-zero even when it has useful output, accept it.
+status, stdout, stderr = run_command(:command => "df -P",
+                                     :timeout => 120,
+                                     :no_status_check => true)
+stdout.each_line do |line|
+  case line
+  when /^Filesystem\s+1024-blocks/
+    next
+  when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+    filesystem = $1
+    fs[filesystem] = Mash.new
+    fs[filesystem][:kb_size] = $2
+    fs[filesystem][:kb_used] = $3
+    fs[filesystem][:kb_available] = $4
+    fs[filesystem][:percent_used] = $5
+    fs[filesystem][:mount] = $6
   end
 end
 
 # Grab mount information from /bin/mount
-popen4("mount") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
-      filesystem = $1
-      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:mount] = $2
-      fs[filesystem][:fs_type] = $3
-      fs[filesystem][:mount_options] = $4.split(",")
-    end
+status, stdout, stderr = run_command(:command => "mount", :timeout => 120)
+stdout.each_line do |line|
+  if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
+    filesystem = $1
+    fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+    fs[filesystem][:mount] = $2
+    fs[filesystem][:fs_type] = $3
+    fs[filesystem][:mount_options] = $4.split(",")
   end
 end
 

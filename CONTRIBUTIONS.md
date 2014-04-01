@@ -6,3 +6,4 @@ Example Contribution:
 -->
 # OHAI Contributions:
 * **jaymzh**: Work around libc bug in `hostname --fqdn`
+* **jaymzh**: Add timeouts to 'df' and 'mount' commands

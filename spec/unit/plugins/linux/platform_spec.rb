@@ -233,6 +233,12 @@ describe Ohai::System, "Linux plugin platform" do
         @plugin.run
         @plugin[:platform_family].should == "rhel"
       end
+
+      it "should set the platform_family to redhat if the LSB name is ibm-ish" do
+        @plugin[:lsb][:id] = "IBM_PowerKVM"
+        @plugin.run
+	@plugin[:platform_family].should == "rhel"
+      end
     end
 
     describe "without lsb_release results" do

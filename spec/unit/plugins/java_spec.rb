@@ -26,11 +26,11 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     @status = 0
     @stdout = ""
     @stderr = "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"
-    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([@status, @stdout, @stderr])
   end
 
-  it "should run java -version" do
-    @ohai.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"])
+  it "should run java -mx64m -version" do
+    @ohai.should_receive(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([0, "", "java version \"1.5.0_16\"\nJava(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_16-b06-284)\nJava HotSpot(TM) Client VM (build 1.5.0_16-133, mixed mode, sharing)"])
     @ohai._require_plugin("java")
   end
 
@@ -63,7 +63,7 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     @status = 1
     @stdout = ""
     @stderr = "Some error output here"
-    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([@status, @stdout, @stderr])
     @ohai._require_plugin("java")
     @ohai.languages.should_not have_key(:java)
   end
@@ -77,11 +77,11 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
     @status = 0
     @stdout = ""
     @stderr = "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"
-    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([@status, @stdout, @stderr])
   end
 
-  it "should run java -version" do
-    @ohai.should_receive(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([0, "", "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"])
+  it "should run java -mx64m -version" do
+    @ohai.should_receive(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([0, "", "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"])
     @ohai._require_plugin("java")
   end
 
@@ -114,7 +114,7 @@ describe Ohai::System, "plugin java (Java6 Server VM)" do
     @status = 1
     @stdout = ""
     @stderr = "Some error output here"
-    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -version"}).and_return([@status, @stdout, @stderr])
+    @ohai.stub!(:run_command).with({:no_status_check => true, :command => "java -mx64m -version"}).and_return([@status, @stdout, @stderr])
     @ohai._require_plugin("java")
     @ohai.languages.should_not have_key(:java)
   end

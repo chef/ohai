@@ -24,10 +24,10 @@ java = Mash.new
 status, stdout, stderr = nil
 if RUBY_PLATFORM.downcase.include?("darwin")
   if system("/usr/libexec/java_home >/dev/null 2>&1")
-    status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+    status, stdout, stderr = run_command(:no_status_check => true, :command => "java -mx64m -version")
   end
 else
-  status, stdout, stderr = run_command(:no_status_check => true, :command => "java -version")
+  status, stdout, stderr = run_command(:no_status_check => true, :command => "java -mx64m -version")
 end
 
 if status == 0

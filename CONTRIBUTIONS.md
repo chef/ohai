@@ -5,3 +5,4 @@ Example Contribution:
 * **kalistec**: Improved file resource greatly.
 -->
 # OHAI Contributions:
+* **lbragstad**: Added platform_family support for ibm_powerkvm

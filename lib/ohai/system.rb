@@ -83,6 +83,13 @@ module Ohai
         @runner.run_plugin(v6plugin)
       end
 
+      # Users who are migrating from ohai 6 may give one or more Ohai 6 plugin
+      # names as the +attribute_filter+. In this case we return early because
+      # the v7 plugin provides map will not have an entry for this plugin.
+      if attribute_filter and Array(attribute_filter).all? {|filter_item| have_v6_plugin?(filter_item) }
+        return true
+      end
+
       # Then run all the version 7 plugins
       begin
         @provides_map.all_plugins(attribute_filter).each { |plugin|
@@ -92,6 +99,10 @@ module Ohai
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
+    end
+
+    def have_v6_plugin?(name)
+      @v6_dependency_solver.values.any? {|v6plugin| v6plugin.name == name }
     end
 
     def pathify_v6_plugin(plugin_name)

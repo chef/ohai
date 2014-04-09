@@ -1,6 +1,11 @@
 # Ohai Changelog
 
-## Unreleased
+## Unreleased: 7.0.2
+
+* Skip v7 plugins when refreshing a v6 plugin. Fixes
+  `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
+
+## Last Release: 7.0.0 (04/08/2014)
 
 * Work around libc bug in `hostname --fqdn`
 * Report Suse and OpenSuse seperately in the :platform attribute.
@@ -15,6 +20,5 @@
 * Normalize cloud attributes for Azure (OHAI-554)
 * Capture FreeBSD osreldate for comparison purposes (OHAI-557)
 
-## Last Release: 7.0.0.rc.0 (01/20/2014)
-
 http://www.getchef.com/blog/2014/01/20/ohai-7-0-release-candidate/
+http://www.getchef.com/blog/2014/04/08/release-chef-client-11-12-0-10-32-2/

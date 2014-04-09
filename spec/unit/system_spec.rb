@@ -517,6 +517,29 @@ EOF
   end
 
   describe "when Chef OHAI resource executes :reload action" do
+
+    when_plugins_directory "contains a v6 plugin" do
+      with_plugin("a_v6plugin.rb", <<-E)
+        plugin_data Mash.new
+        plugin_data[:foo] = :bar
+      E
+
+      before do
+        @original_config = Ohai::Config[:plugin_path]
+        Ohai::Config[:plugin_path] = [ path_to(".") ]
+      end
+
+      after do
+        Ohai::Config[:plugin_path] = @original_config
+      end
+
+      it "reloads only the v6 plugin when given a specific plugin to load" do
+        ohai.all_plugins
+        lambda { ohai.all_plugins("a_v6plugin") }.should_not raise_error
+      end
+
+    end
+
     when_plugins_directory "contains a random plugin" do
       with_plugin("random.rb", <<-E)
         Ohai.plugin(:Random) do

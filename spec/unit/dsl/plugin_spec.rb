@@ -87,8 +87,9 @@ shared_examples "Ohai::DSL::Plugin" do
 end
 
 describe Ohai::DSL::Plugin::VersionVII do
-  before(:each) do
-    @name = :Test
+  it "should not modify the plugin name when the plugin is named correctly" do
+    plugin = Ohai.plugin(:FunkyVALIDpluginName) { }.new({ })
+    plugin.name.should eql(:FunkyVALIDpluginName)
   end
 
   describe "when the plugin is named incorrectly" do
@@ -113,24 +114,24 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#version" do
     it "should save the plugin version as :version7" do
-      plugin = Ohai.plugin(@name) { }
+      plugin = Ohai.plugin(:Test) { }
       plugin.version.should eql(:version7)
     end
   end
 
   describe "#provides" do
     it "should collect a single attribute" do
-      plugin = Ohai.plugin(@name) { provides("one") }
+      plugin = Ohai.plugin(:Test) { provides("one") }
       plugin.provides_attrs.should eql(["one"])
     end
 
     it "should collect a list of attributes" do
-      plugin = Ohai.plugin(@name) { provides("one", "two", "three") }
+      plugin = Ohai.plugin(:Test) { provides("one", "two", "three") }
       plugin.provides_attrs.should eql(["one", "two", "three"])
     end
 
     it "should collect from multiple provides statements" do
-      plugin = Ohai.plugin(@name) {
+      plugin = Ohai.plugin(:Test) {
         provides("one")
         provides("two", "three")
         provides("four")
@@ -139,31 +140,31 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "should collect attributes across multiple plugin files" do
-      plugin = Ohai.plugin(@name) { provides("one") }
-      plugin = Ohai.plugin(@name) { provides("two", "three") }
+      plugin = Ohai.plugin(:Test) { provides("one") }
+      plugin = Ohai.plugin(:Test) { provides("two", "three") }
       plugin.provides_attrs.should eql(["one", "two", "three"])
     end
 
     it "should collect unique attributes" do
-      plugin = Ohai.plugin(@name) { provides("one") }
-      plugin = Ohai.plugin(@name) { provides("one", "two") }
+      plugin = Ohai.plugin(:Test) { provides("one") }
+      plugin = Ohai.plugin(:Test) { provides("one", "two") }
       plugin.provides_attrs.should eql(["one", "two"])
     end
   end
 
   describe "#depends" do
     it "should collect a single dependency" do
-      plugin = Ohai.plugin(@name) { depends("one") }
+      plugin = Ohai.plugin(:Test) { depends("one") }
       plugin.depends_attrs.should eql(["one"])
     end
 
     it "should collect a list of dependencies" do
-      plugin = Ohai.plugin(@name) { depends("one", "two", "three") }
+      plugin = Ohai.plugin(:Test) { depends("one", "two", "three") }
       plugin.depends_attrs.should eql(["one", "two", "three"])
     end
 
     it "should collect from multiple depends statements" do
-      plugin = Ohai.plugin(@name) {
+      plugin = Ohai.plugin(:Test) {
         depends("one")
         depends("two", "three")
         depends("four")
@@ -172,38 +173,38 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "should collect dependencies across multiple plugin files" do
-      plugin = Ohai.plugin(@name) { depends("one") }
-      plugin = Ohai.plugin(@name) { depends("two", "three") }
+      plugin = Ohai.plugin(:Test) { depends("one") }
+      plugin = Ohai.plugin(:Test) { depends("two", "three") }
       plugin.depends_attrs.should eql(["one", "two", "three"])
     end
 
     it "should collect unique attributes" do
-      plugin = Ohai.plugin(@name) { depends("one") }
-      plugin = Ohai.plugin(@name) { depends("one", "two") }
+      plugin = Ohai.plugin(:Test) { depends("one") }
+      plugin = Ohai.plugin(:Test) { depends("one", "two") }
       plugin.depends_attrs.should eql(["one", "two"])
     end
   end
 
   describe "#collect_data" do
     it "should save as :default if no platform is given" do
-      plugin = Ohai.plugin(@name) { collect_data { } }
+      plugin = Ohai.plugin(:Test) { collect_data { } }
       plugin.data_collector.should have_key(:default)
     end
 
     it "should save a single given platform" do
-      plugin = Ohai.plugin(@name) { collect_data(:ubuntu) { } }
+      plugin = Ohai.plugin(:Test) { collect_data(:ubuntu) { } }
       plugin.data_collector.should have_key(:ubuntu)
     end
 
     it "should save a list of platforms" do
-      plugin = Ohai.plugin(@name) { collect_data(:freebsd, :netbsd, :openbsd) { } }
+      plugin = Ohai.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) { } }
       [:freebsd, :netbsd, :openbsd].each do |platform|
         plugin.data_collector.should have_key(platform)
       end
     end
 
     it "should save multiple collect_data blocks" do
-      plugin = Ohai.plugin(@name) {
+      plugin = Ohai.plugin(:Test) {
         collect_data { }
         collect_data(:windows) { }
         collect_data(:darwin) { }
@@ -214,8 +215,8 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "should save platforms across multiple plugins" do
-      plugin = Ohai.plugin(@name) { collect_data { } }
-      plugin = Ohai.plugin(@name) { collect_data(:aix, :sigar) { } }
+      plugin = Ohai.plugin(:Test) { collect_data { } }
+      plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) { } }
       [:aix, :default, :sigar].each do |platform|
         plugin.data_collector.should have_key(platform)
       end
@@ -223,7 +224,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "should fail a platform has already been defined in the same plugin" do
       expect {
-        Ohai.plugin(@name) {
+        Ohai.plugin(:Test) {
           collect_data { }
           collect_data { }
         }
@@ -231,9 +232,9 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "should fail if a platform has already been defined in another plugin file" do
-      Ohai.plugin(@name) { collect_data { } }
+      Ohai.plugin(:Test) { collect_data { } }
       expect {
-        Ohai.plugin(@name) {
+        Ohai.plugin(:Test) {
           collect_data { }
         }
       }.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)

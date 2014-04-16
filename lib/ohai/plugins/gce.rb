@@ -17,10 +17,9 @@
 
 provides "gce"
 
-require 'ohai/mixin/dmi_signature'
-require 'ohai/mixin/metadata_server'
+require_plugin "dmi"
 
-extend Ohai::Mixin::DmiSignature
+require 'ohai/mixin/metadata_server'
 extend Ohai::Mixin::MetadataServer
 
 GCE_METADATA_HOSTNAME = "metadata" unless defined?(GCE_METADATA_HOSTNAME)
@@ -36,7 +35,7 @@ GCE_METADATA_URL = "/computeMetadata/v1/?recursive=true" unless defined?(GCE_MET
 # true:: If gce dmi matches
 # false:: Otherwise
 def has_dmi?
-  has_signature?('Google')
+  dmi[:bios][:vendor] == "Google"
 end
 
 # Checks for gce metadata server

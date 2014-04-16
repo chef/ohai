@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'net/http'
-require 'stringio'
 require 'yajl'
 
 module Ohai
@@ -28,7 +27,7 @@ module Ohai
         http.read_timeout = 2
         response = http.get("/", headers)
         response.code == "200"
-      rescue StandardError => se
+      rescue StandardError,Timeout::Error => se
         Ohai::Log.error("http open/read error #{se.inspect}")
         false
       end
@@ -36,32 +35,25 @@ module Ohai
       def get_metadata(addr, port, headers, url)
         http = Net::HTTP.new(addr, port)
         http.open_timeout = 10
-        http.read_timeout = 10
+        http.read_timeout = 60
         begin
           response = http.get(url, headers)
-        rescue StandardError => se
+        rescue StandardError,Timeout::Error => se
           Ohai::Log.error("http open/read error #{se.inspect}")
           return nil
         end
         return nil unless response.code == "200"
-        if is_json?(response.body)
-          data = StringIO.new(response.body)
-          parser = Yajl::Parser.new
-          parser.parse(data)
-        else
-          Ohai::Log.error("response body was not json")
-          return nil
-        end
+        data = safe_json_parse(response.body)
+        Ohai::Log.error("response body was not json") if data.nil?
+        data
       end
 
-      def is_json?(data)
-        data = StringIO.new(data)
+      def safe_json_parse(data)
         parser = Yajl::Parser.new
         begin
           parser.parse(data)
-          true
         rescue Yajl::ParseError
-          false
+          nil
         end
       end
     

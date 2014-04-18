@@ -53,8 +53,8 @@ Ohai.plugin(:Virtualization) do
 
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
-    so = shell_out("sysctl -n hw.model")
-    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU/
+    so = shell_out("/sbin/sysctl -n hw.model")
+    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
     end

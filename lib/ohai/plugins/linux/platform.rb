@@ -83,6 +83,12 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
+    elsif File.exists?('/etc/os-release')
+      if File.read('/etc/os-release').match(/ID="exherbo"/)
+        platform "exherbo"
+        # no way to determine platform_version in a rolling release distribution
+        # kernel release will be used - ex. 3.13
+      end
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]
@@ -115,6 +121,8 @@ Ohai.plugin(:Platform) do
       platform_family "slackware"
     when /arch/
       platform_family "arch"
+    when /exherbo/
+      platform_family "exherbo"
     end
   end
 end

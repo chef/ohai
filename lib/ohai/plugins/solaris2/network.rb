@@ -1,6 +1,8 @@
 #
 # Author:: Benjamin Black (<nostromo@gmail.com>)
+# Author:: Jacques Marneweck (<jaques@powertrip.co.za>)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Copyright:: Copyright (c) 2012-2014 Jacques Marneweck
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -117,9 +119,31 @@ Ohai.plugin(:Network) do
       end
     end
 
-    so = shell_out("arp -an")
+    # [root@defiant /opt/chef/lib/ruby/gems/1.9.1/gems/ohai-6.20.0/lib/ohai/plugins/solaris2]# arp -na
+    # Net to Media Table: IPv4
+    # Device   IP Address               Mask      Flags      Phys Addr
+    # ------ -------------------- --------------- -------- ---------------
+    # net0   37.153.96.85         255.255.255.255          90:b8:d0:2a:0a:23
+    # net1   10.224.0.34          255.255.255.255 SPLA     90:b8:d0:6c:08:fa
+    # net0   37.153.96.1          255.255.255.255          00:00:5e:00:01:01
+    # net0   37.153.96.57         255.255.255.255          90:b8:d0:9d:d6:63
+    # net1   10.224.0.1           255.255.255.255          00:00:5e:00:01:01
+    # net0   37.153.96.33         255.255.255.255 SPLA     90:b8:d0:3e:81:c9
+
+    # [root@challenger /var/tmp/ohai/lib/ohai/plugins/solaris2]# arp -na
+    # Net to Media Table: IPv4
+    # Device   IP Address               Mask      Flags      Phys Addr
+    # ------ -------------------- --------------- -------- ---------------
+    # net1   10.10.0.31           255.255.255.255 SPLA     62:eb:6d:68:72:36
+    # net0   23.105.43.31         255.255.255.255 SPLA     92:14:77:92:7c:93
+    # net0   23.105.43.30         255.255.255.255          c2:88:e7:11:3e:86
+    # net0   23.105.43.1          255.255.255.255          00:1b:ed:b2:08:00
+    # net0   23.105.43.3          255.255.255.255          92:0f:02:82:82:1a
+    # net0   23.105.43.2          255.255.255.255          32:3b:65:9c:81:ae
+
+    so = shell_out("/usr/sbin/arp -an")
     so.stdout.lines do |line|
-      if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
+      if line =~ /^([0-9a-zA-Z\.\:\-]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([SPLA]+)?\s+([a-fA-F0-9\:]+)/
         next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
         iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
         iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5

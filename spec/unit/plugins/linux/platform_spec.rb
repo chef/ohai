@@ -28,6 +28,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub(:exists?).with("/etc/debian_version").and_return(false)
     File.stub(:exists?).with("/etc/redhat-release").and_return(false)
     File.stub(:exists?).with("/etc/gentoo-release").and_return(false)
+    File.stub(:exists?).with("/etc/os-release").and_return(false)
     File.stub(:exists?).with("/etc/SuSE-release").and_return(false)
     File.stub(:exists?).with("/etc/arch-release").and_return(false)
     File.stub(:exists?).with("/etc/system-release").and_return(false)
@@ -181,6 +182,19 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin.run
       @plugin[:platform].should == "gentoo"
       @plugin[:platform_family].should == "gentoo"
+    end
+  end
+
+  describe "on exherbo" do
+    before(:each) do
+      @plugin.lsb = nil
+      File.should_receive(:exists?).with("/etc/os-release").and_return(true)
+    end
+
+    it "should set platform and platform_family to exherbo" do
+      @plugin.run
+      @plugin[:platform].should == "exherbo"
+      @plugin[:platform_family].should == "exherbo"
     end
   end
 

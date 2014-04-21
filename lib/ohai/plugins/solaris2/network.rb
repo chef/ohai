@@ -117,9 +117,19 @@ Ohai.plugin(:Network) do
       end
     end
 
+    # [root@defiant /opt/chef/lib/ruby/gems/1.9.1/gems/ohai-6.20.0/lib/ohai/plugins/solaris2]# arp -na
+    # Net to Media Table: IPv4
+    # Device   IP Address               Mask      Flags      Phys Addr
+    # ------ -------------------- --------------- -------- ---------------
+    # net0   37.153.96.85         255.255.255.255          90:b8:d0:2a:0a:23
+    # net1   10.224.0.34          255.255.255.255 SPLA     90:b8:d0:6c:08:fa
+    # net0   37.153.96.1          255.255.255.255          00:00:5e:00:01:01
+    # net0   37.153.96.57         255.255.255.255          90:b8:d0:9d:d6:63
+    # net1   10.224.0.1           255.255.255.255          00:00:5e:00:01:01
+    # net0   37.153.96.33         255.255.255.255 SPLA     90:b8:d0:3e:81:c9
     so = shell_out("arp -an")
     so.stdout.lines do |line|
-      if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
+      if line =~ /^([0-9a-zA-Z\.\:\-]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([SPLA]+)?\s+([a-fA-F0-9\:]+)/
         next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
         iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
         iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5

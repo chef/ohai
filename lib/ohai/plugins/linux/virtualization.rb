@@ -74,16 +74,6 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # Detect OpenVZ / Virtuozzo.
-    # http://wiki.openvz.org/BC_proc_entries
-    if File.exists?("/proc/bc/0")
-      virtualization[:system] = "openvz"
-      virtualization[:role] = "host"
-    elsif File.exists?("/proc/vz")
-      virtualization[:system] = "openvz"
-      virtualization[:role] = "guest"
-    end
-
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
     if File.exists?("/usr/sbin/dmidecode")
       so = shell_out("dmidecode")
@@ -153,6 +143,17 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "lxc"
         virtualization[:role] = "host"
       end
+    end
+    
+    # Since OpenVZ kernels also contain cgroup support, we detect this after lxc to improve detection
+    # Detect OpenVZ / Virtuozzo.
+    # http://wiki.openvz.org/BC_proc_entries
+    if File.exists?("/proc/bc/0")
+      virtualization[:system] = "openvz"
+      virtualization[:role] = "host"
+    elsif File.exists?("/proc/vz")
+      virtualization[:system] = "openvz"
+      virtualization[:role] = "guest"
     end
   end
 end

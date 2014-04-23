@@ -42,7 +42,7 @@ class Ohai::Application
   option :help,
     :short        => "-h",
     :long         => "--help",
-    :description  => "Show this message",
+    :description  => "Show this message\n\n[attributes] is a space-separated list of top-level attributes to display (JSON).",
     :on           => :tail,
     :boolean      => true,
     :show_options => true,

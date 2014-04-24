@@ -31,7 +31,7 @@ module Ohai
         end
 
         def name
-          self.class.name.split("Ohai::NamedPlugin::")[1].capitalize.to_sym
+          self.class.name.split("Ohai::NamedPlugin::")[1].to_sym
         end
 
         def self.version

@@ -59,18 +59,21 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:platform].should == "ubuntu"
       @plugin[:platform_family].should == "debian"
     end
+
     it "should set platform to linuxmint and platform_family to debian [:lsb][:id] contains LinuxMint" do
       @plugin[:lsb][:id] = "LinuxMint"
       @plugin.run
       @plugin[:platform].should == "linuxmint"
       @plugin[:platform_family].should == "debian"
     end
+
     it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
       @plugin[:lsb][:id] = "Debian"
       @plugin.run
       @plugin[:platform].should == "debian"
       @plugin[:platform_family].should == "debian"
     end
+
     it "should set platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
       @plugin[:lsb][:id] = "RedHatEnterpriseServer"
       @plugin[:lsb][:release] = "5.7"
@@ -92,6 +95,14 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:lsb][:release] = "5.7"
       @plugin.run
       @plugin[:platform].should == "scientific"
+    end
+
+    it "should set platform to ibm_powerkvm and platform_family to rhel when [:lsb][:id] contains IBM_PowerKVM" do
+      @plugin[:lsb][:id] = "IBM_PowerKVM"
+      @plugin[:lsb][:release] = "2.1"
+      @plugin.run
+      @plugin[:platform].should == "ibm_powerkvm"
+      @plugin[:platform_family].should == "rhel"
     end
   end
 
@@ -181,7 +192,7 @@ describe Ohai::System, "Linux plugin platform" do
         @plugin.run
         @plugin[:platform].should == "redhat"
         @plugin[:platform_version].should == "6.1"
-	@plugin[:platform_family].should == "rhel"
+        @plugin[:platform_family].should == "rhel"
       end
 
       it "should set the platform to centos and platform_family to rhel" do
@@ -190,33 +201,37 @@ describe Ohai::System, "Linux plugin platform" do
         @plugin.run
         @plugin[:platform].should == "centos"
         @plugin[:platform_version].should == "5.4"
-	@plugin[:platform_family].should == "rhel"
-
+        @plugin[:platform_family].should == "rhel"
       end
-
 
       it "should set the platform_family to rhel if the LSB name is oracle-ish" do
         @plugin[:lsb][:id] = "EnterpriseEnterpriseServer"
         @plugin.run
-	@plugin[:platform_family].should == "rhel"
+        @plugin[:platform_family].should == "rhel"
       end
 
       it "should set the platform_family to rhel if the LSB name is amazon-ish" do
         @plugin[:lsb][:id] = "Amazon"
         @plugin.run
-	@plugin[:platform_family].should == "rhel"
+        @plugin[:platform_family].should == "rhel"
       end
 
       it "should set the platform_family to fedora if the LSB name is fedora-ish" do
         @plugin[:lsb][:id] = "Fedora"
         @plugin.run
-	@plugin[:platform_family].should == "fedora"
+        @plugin[:platform_family].should == "fedora"
       end
 
       it "should set the platform_family to redhat if the LSB name is scientific-ish" do
         @plugin[:lsb][:id] = "Scientific"
         @plugin.run
-	@plugin[:platform_family].should == "rhel"
+        @plugin[:platform_family].should == "rhel"
+      end
+
+      it "should set the platform_family to redhat if the LSB name is ibm-ish" do
+        @plugin[:lsb][:id] = "IBM_PowerKVM"
+        @plugin.run
+        @plugin[:platform_family].should == "rhel"
       end
     end
 
@@ -432,5 +447,4 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
   end
-
 end

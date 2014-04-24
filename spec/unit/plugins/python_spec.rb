@@ -28,7 +28,7 @@ describe Ohai::System, "plugin python" do
   let(:plugin) do
     plugin = get_plugin("python")
     plugin[:languages] = Mash.new
-    plugin.should_receive(:shell_out).with("python -c \"import sys; print (sys.version)\"").and_return(mock_shell_out(retval, stdout, ""))
+    expect(plugin).to receive(:shell_out).with("python -c \"import sys; print (sys.version)\"").and_return(mock_shell_out(retval, stdout, ""))
     plugin
   end
 
@@ -41,7 +41,7 @@ describe Ohai::System, "plugin python" do
 
   it "should set languages[:python][:version]" do
     plugin.run
-    plugin.languages[:python][:version].should eql("2.5.2")
+    expect(plugin.languages[:python][:version]).to eql("2.5.2")
   end
 
   context "when the python command fails" do
@@ -49,7 +49,7 @@ describe Ohai::System, "plugin python" do
 
     it "should not set the languages[:python] tree up" do
       plugin.run
-      plugin.languages.should_not have_key(:python)
+      expect(plugin.languages).not_to have_key(:python)
     end
   end
 end

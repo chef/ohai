@@ -34,7 +34,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when running a plugin" do
-    let(:plugin) { double("Ohai::DSL::Plugin", :kind_of? => true, :version => version, :name => "Test", :has_run? => has_run, :dependencies => [ ]) }
+    let(:plugin) { double("Ohai::DSL::Plugin", :kind_of? => true, :version => version, :name => :Test, :has_run? => has_run, :dependencies => [ ]) }
     let(:version) { :version7 }
     let(:has_run) { false }
 
@@ -53,9 +53,22 @@ describe Ohai::Runner, "run_plugin" do
         end
 
         describe "if the plugin is disabled" do
+          before(:each) do
+            @disabled = Ohai::Config[:disabled_plugins]
+            Ohai::Config[:disabled_plugins] = [:Test]
+          end
+
+          after(:each) do
+            Ohai::Config[:disabled_plugins] = @disabled
+          end
+
           it "should not run the plugin" do
-            Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
             @runner.should_not_receive(:run_v7_plugin)
+            @runner.run_plugin(plugin)
+          end
+
+          it "should log a message to debug" do
+            Ohai::Log.should_receive(:debug).with(/Skipping disabled plugin Test/)
             @runner.run_plugin(plugin)
           end
         end

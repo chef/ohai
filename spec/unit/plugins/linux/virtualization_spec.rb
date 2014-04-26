@@ -261,6 +261,37 @@ VBOX
       @plugin.run
       @plugin[:virtualization].should == {}
     end
+
+    it "set openvz host if both /proc/bc/0 and /proc/self/cgroup exist" do
+            self_cgroup=<<-CGROUP
+8:blkio:/
+7:net_cls:/
+6:freezer:/
+5:devices:/
+4:memory:/
+3:cpuacct:/
+2:cpu:/
+1:cpuset:/
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      File.should_receive(:exists?).with("/proc/bc/0").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == 'openvz'
+      @plugin[:virtualization][:role].should   == 'host'
+    end
+
+    it "set openvz guest if both /proc/vz and /proc/self/cgroup exist" do
+            self_cgroup=<<-CGROUP
+8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      File.should_receive(:exists?).with("/proc/bc/0").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == 'openvz'
+      @plugin[:virtualization][:role].should   == 'host'
+    end
   end
 
   describe "when we are checking for lxc" do

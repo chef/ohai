@@ -83,8 +83,16 @@ Ohai.plugin(:Virtualization) do
         when /Manufacturer: VMware/
           found_virt_manufacturer = "vmware"
         when /Product Name: VMware Virtual Platform/
-          if found_virt_manufacturer == "vmware" 
+          if found_virt_manufacturer == "vmware"
             virtualization[:system] = "vmware"
+            virtualization[:role] = "guest"
+          end
+        end
+        when /Manufacturer: Oracle Corporation/
+          found_virt_manufacturer = "virtualbox"
+        when /Product Name: VirtualBox/
+          if found_virt_manufacturer == "virtualbox"
+            virtualization[:system] = "vbox"
             virtualization[:role] = "guest"
           end
         end

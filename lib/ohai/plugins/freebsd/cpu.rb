@@ -39,9 +39,9 @@ Ohai.plugin(:CPU) do
       when /Origin = "(.+)"\s+Id = (.+)\s+Stepping = (.+)/
         cpuinfo["vendor_id"] = $1
         cpuinfo["stepping"] = $3
-        # These _should_ match /AMD Features2?/ lines as well 
+        # These _should_ match /AMD Features2?/ lines as well
       when /Features=.+<(.+)>/
-        cpuinfo["flags"] = $1.downcase.split(',')
+        cpuinfo["flags"].concat($1.downcase.split(','))
         # Features2=0x80000001<SSE3,<b31>>
       when /Features2=[a-f\dx]+<(.+)>/
         cpuinfo["flags"].concat($1.downcase.split(','))

@@ -37,11 +37,6 @@ module Ohai
         raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
 
-      if Ohai::Config[:disabled_plugins].include?(plugin.name)
-        Ohai::Log.debug("Skipping disabled plugin #{plugin.name}")
-        return false
-      end
-
       begin
         case plugin.version
         when :version7

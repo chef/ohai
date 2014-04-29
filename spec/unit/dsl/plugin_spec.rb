@@ -31,10 +31,46 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 
   context "#run" do
-    it "should set has_run? to true" do
+    before do
       plugin.stub(:run_plugin).and_return(true)
-      plugin.run
-      plugin.has_run?.should be_true
+      plugin.stub(:name).and_return(:TestPlugin)
+    end
+
+    describe "when plugin is enabled" do
+      before do
+        Ohai::Config.stub(:[]).with(:disabled_plugins).and_return([ ])
+      end
+
+      it "should run the plugin" do
+        plugin.should_receive(:run_plugin)
+        plugin.run
+      end
+
+      it "should set has_run? to true" do
+        plugin.run
+        plugin.has_run?.should be_true
+      end
+    end
+
+    describe "if the plugin is disabled" do
+      before do
+        Ohai::Config.stub(:[]).with(:disabled_plugins).and_return([ :TestPlugin ])
+      end
+
+      it "should not run the plugin" do
+        plugin.should_not_receive(:run_plugin)
+        plugin.run
+      end
+
+      it "should log a message to debug" do
+        Ohai::Log.should_receive(:debug).with(/Skipping disabled plugin TestPlugin/)
+        plugin.run
+      end
+
+      it "should set has_run? to true" do
+        plugin.run
+        plugin.has_run?.should be_true
+      end
     end
   end
 

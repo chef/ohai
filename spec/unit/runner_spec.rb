@@ -51,27 +51,6 @@ describe Ohai::Runner, "run_plugin" do
           plugin.should_not_receive(:safe_run)
           @runner.run_plugin(plugin)
         end
-
-        describe "if the plugin is disabled" do
-          before(:each) do
-            @disabled = Ohai::Config[:disabled_plugins]
-            Ohai::Config[:disabled_plugins] = [:Test]
-          end
-
-          after(:each) do
-            Ohai::Config[:disabled_plugins] = @disabled
-          end
-
-          it "should not run the plugin" do
-            @runner.should_not_receive(:run_v7_plugin)
-            @runner.run_plugin(plugin)
-          end
-
-          it "should log a message to debug" do
-            Ohai::Log.should_receive(:debug).with(/Skipping disabled plugin Test/)
-            @runner.run_plugin(plugin)
-          end
-        end
       end
     end
 
@@ -110,14 +89,6 @@ describe Ohai::Runner, "run_plugin" do
         end
 
       end
-
-      describe "if the plugin is disabled" do
-        it "should not run the plugin" do
-          Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
-          @runner.should_not_receive(:run_v7_plugin)
-            @runner.run_plugin(plugin)
-        end
-      end
     end
 
     describe "invalid version" do
@@ -125,17 +96,6 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should raise error" do
         lambda { @runner.run_plugin(plugin) }.should raise_error(Ohai::Exceptions::InvalidPlugin)
-      end
-    end
-
-    describe "when plugin is disabled" do
-      before do
-        Ohai::Config.should_receive(:[]).with(:disabled_plugins).and_return(["Test"])
-      end
-
-      it "should not run the plugin" do
-        @runner.should_not_receive(:run_v7_plugin)
-        @runner.run_plugin(plugin)
       end
     end
   end

@@ -24,12 +24,15 @@ Ohai.plugin(:CPU) do
     # identical processors is probably a hardware requirement so we'll duplicate data for each cpu
     # old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
     cpuinfo = Mash.new
+    cpuinfo["flags"] = []
 
     # /var/run/dmesg.boot
-    #CPU: QEMU Virtual CPU version 0.9.1 (1862.02-MHz 686-class CPU)
-    #  Origin = "GenuineIntel"  Id = 0x623  Stepping = 3
-    #  Features=0x78bfbfd<FPU,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,CLFLUSH,MMX,FXSR,SSE,SSE2>
-    #  Features2=0x80000001<SSE3,<b31>>
+    # CPU: Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz (3516.61-MHz K8-class CPU)
+    # Origin = "GenuineIntel"  Id = 0x306a9  Family = 6  Model = 3a  Stepping = 9
+    # Features=0x783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2>
+    # Features2=0x209<SSE3,MON,SSSE3>
+    # AMD Features=0x28100800<SYSCALL,NX,RDTSCP,LM>
+    # AMD Features2=0x1<LAHF>
 
     File.open("/var/run/dmesg.boot").each do |line|
       case line

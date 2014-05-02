@@ -26,7 +26,6 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:windows) do
-    require 'ruby-wmi'
 
     iface = Mash.new
     iface_config = Mash.new
@@ -37,22 +36,28 @@ Ohai.plugin(:Network) do
     counters[:network] = Mash.new unless counters[:network]
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
-    adapters = WMI::Win32_NetworkAdapterConfiguration.find(:all)
+    wmi = WmiRepository.new
+
+    adapters = wmi.instances_of('Win32_NetworkAdapterConfiguration')
+
     adapters.each do |adapter|
-      i = adapter.Index
+
+      i = adapter['index']
       iface_config[i] = Mash.new
-      adapter.properties_.each do |p|
-        iface_config[i][p.name.wmi_underscore.to_sym] = adapter.invoke(p.name)
+      adapter[:wmi_object].properties_.each do |p|
+        iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394216(v=vs.85).aspx
-    adapters = WMI::Win32_NetworkAdapter.find(:all)
+
+    adapters = wmi.instances_of('Win32_NetworkAdapter')
+
     adapters.each do |adapter|
-      i = adapter.Index
+      i = adapter['index']
       iface_instance[i] = Mash.new
-      adapter.properties_.each do |p|
-        iface_instance[i][p.name.wmi_underscore.to_sym] = adapter.invoke(p.name)
+      adapter[:wmi_object].properties_.each do |p|
+        iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
 

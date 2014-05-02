@@ -5,6 +5,8 @@
 * Skip v7 plugins when refreshing a v6 plugin. Fixes
   `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Added platform_family support for ibm_powerkvm (OHAI-558)
+* EC2 metadata errors are unhelpful (OHAI-566)
+
 
 ## Last Release: 7.0.0 (04/01/2014)
 

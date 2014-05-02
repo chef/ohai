@@ -5,4 +5,5 @@ Example Contribution:
 * **kalistec**: Improved file resource greatly.
 -->
 # OHAI Contributions:
-* **lbragstad**: Added platform_family support for ibm_powerkvm
+* **lbragstad**: Added platform\_family support for ibm\_powerkvm
+* **pcarrier**: ec2\_metadata: specify path in exception

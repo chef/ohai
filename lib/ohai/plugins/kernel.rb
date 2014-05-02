@@ -155,15 +155,16 @@ Ohai.plugin(:Kernel) do
   end
 
   collect_data(:windows) do
-    require 'ruby-wmi'
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
+
+    wmi = WmiRepository.new
 
     kernel Mash.new
 
-    host = WMI::Win32_OperatingSystem.find(:first)
+    host = wmi.first_of('Win32_OperatingSystem')
     kernel[:os_info] = Mash.new
-    host.properties_.each do |p|
-      kernel[:os_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+    host[:wmi_object].properties_.each do |p|
+      kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
     kernel[:name] = "#{kernel[:os_info][:caption]}"
@@ -171,10 +172,10 @@ Ohai.plugin(:Kernel) do
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
-    host = WMI::Win32_ComputerSystem.find(:first)
+    host = wmi.first_of('Win32_ComputerSystem')
     kernel[:cs_info] = Mash.new
-    host.properties_.each do |p|
-      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host.send(p.name)
+    host[:wmi_object].properties_.each do |p|
+      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
     kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
@@ -182,16 +183,16 @@ Ohai.plugin(:Kernel) do
     kext = Mash.new
     pnp_drivers = Mash.new
 
-    drivers = WMI::Win32_PnPSignedDriver.find(:all)
+    drivers = wmi.instances_of('Win32_PnPSignedDriver')
     drivers.each do |driver|
-      pnp_drivers[driver.DeviceID] = Mash.new
-      driver.properties_.each do |p|
-        pnp_drivers[driver.DeviceID][p.name.wmi_underscore.to_sym] = driver.send(p.name)
+      pnp_drivers[driver['deviceid']] = Mash.new
+      driver[:wmi_object].properties_.each do |p|
+        pnp_drivers[driver['deviceid']][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
       end
-      if driver.DeviceName
-        kext[driver.DeviceName] = pnp_drivers[driver.DeviceID]
-        kext[driver.DeviceName][:version] = pnp_drivers[driver.DeviceID][:driver_version]
-        kext[driver.DeviceName][:date] = pnp_drivers[driver.DeviceID][:driver_date] ? pnp_drivers[driver.DeviceID][:driver_date].to_s[0..7] : nil
+      if driver['devicename']
+        kext[driver['devicename']] = pnp_drivers[driver['deviceid']]
+        kext[driver['devicename']][:version] = pnp_drivers[driver['deviceid']][:driver_version]
+        kext[driver['devicename']][:date] = pnp_drivers[driver['deviceid']][:driver_date] ? pnp_drivers[driver['deviceid']][:driver_date].to_s[0..7] : nil
       end
     end
 

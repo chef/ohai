@@ -145,12 +145,14 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require 'ruby-wmi'
+    require 'ohai/wmi'
     require 'socket'
 
-    host = WMI::Win32_ComputerSystem.find(:first)
-    hostname "#{host.Name}"
-    machinename "#{host.Name}"
+    wmi = WmiRepository.new
+    host = wmi.first_of('Win32_ComputerSystem')
+
+    hostname "#{host['name']}"
+    machinename "#{host['name']}"
 
     info = Socket.gethostbyname(Socket.gethostname)
     if info.first =~ /.+?\.(.*)/

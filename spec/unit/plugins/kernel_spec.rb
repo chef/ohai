@@ -37,7 +37,7 @@ describe Ohai::System, "plugin kernel" do
 
   describe "when running on windows", :windows_only do
     before do
-      require 'ruby-wmi'
+      require 'lib/ohai/wmi'
 
       @ohai_system = Ohai::System.new
       @plugin = get_plugin("kernel", @ohai_system)
@@ -56,14 +56,29 @@ describe Ohai::System, "plugin kernel" do
                      :BuildNumber => "7601",
                      :CsdVersion => "Service Pack 1",
                      :OsType => 18)
-      WMI::Win32_OperatingSystem.should_receive(:find).with(:first).and_return(os)
+
+      os_wmi =  {
+        'caption' => os.caption,
+        'version' => os.version,
+        'buildnumber' => os.BuildNumber,
+        'csdversion' => os.CsdVersion,
+        'ostype' => os.OsType,
+        :wmi_object => os }
+
+      WmiRepository.any_instance.should_receive(:first_of).with('Win32_OperatingSystem').and_return(os_wmi)
 
       cs = double("WIN32OLE",
                   :properties_ => [ double("WIN32OLE", :name => "SystemType") ],
-                  :SystemType => "x64-based PC")
-      WMI::Win32_ComputerSystem.should_receive(:find).with(:first).and_return(cs)
+                  :SystemType => "x64-based PC",
+                  )
 
-      WMI::Win32_PnPSignedDriver.should_receive(:find).with(:all).and_return([ ])
+
+      cs_wmi = {
+        'systemtype' => cs.SystemType,
+        :wmi_object => cs }
+      WmiRepository.any_instance.should_receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
+
+      WmiRepository.any_instance.should_receive(:instances_of).with('Win32_PnPSignedDriver').and_return([])
 
       @plugin.run
     end

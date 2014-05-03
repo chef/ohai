@@ -22,6 +22,9 @@
 # limitations under the License.
 #
 
+require 'win32ole'
+require 'ohai/wmi'
+
 Ohai.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 

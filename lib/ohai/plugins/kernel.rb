@@ -22,9 +22,6 @@
 # limitations under the License.
 #
 
-require 'win32ole'
-require 'ohai/wmi'
-
 Ohai.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 
@@ -158,6 +155,9 @@ Ohai.plugin(:Kernel) do
   end
 
   collect_data(:windows) do
+    require 'win32ole'
+    require 'ohai/wmi'
+
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
     wmi = WmiRepository.new

@@ -80,33 +80,14 @@ OUT
     end
   end
 
-  context "when on a QEMU guest with QEMU Virtual CPU" do
+  context "when on a QEMU guest" do
     it "detects we are a guest" do
-      @qemu_guest = 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)'
-      @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, @qemu_guest, ""))
-      @plugin.run
-      @plugin[:virtualization][:system].should == "kvm"
-      @plugin[:virtualization][:role].should == "guest"
-    end
-  end
-
-  context "when on a QEMU guest with Common KVM processor" do
-    it "detects we are a guest" do
-      @qemu_guest = 'Common KVM processor'
-      @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, @qemu_guest, ""))
-      @plugin.run
-      @plugin[:virtualization][:system].should == "kvm"
-      @plugin[:virtualization][:role].should == "guest"
-    end
-  end
-
-  context "when on a QEMU guest with Common 32-bit KVM processor" do
-    it "detects we are a guest" do
-      @qemu_guest = 'Common 32-bit KVM processor'
-      @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, @qemu_guest, ""))
-      @plugin.run
-      @plugin[:virtualization][:system].should == "kvm"
-      @plugin[:virtualization][:role].should == "guest"
+      [ 'Common KVM processor', 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)', 'Common 32-bit KVM processor'].each do |kvm_string|
+        @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, kvm_string, ""))
+        @plugin.run
+        @plugin[:virtualization][:system].should == "kvm"
+        @plugin[:virtualization][:role].should == "guest"
+      end
     end
   end
 

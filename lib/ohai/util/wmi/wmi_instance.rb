@@ -24,7 +24,7 @@ module Ohai
 
         def initialize(wmi_ole_object)
           @wmi_ole_object = wmi_ole_object
-          @property_map = wmi_ole_object_to_hash(wmi_ole_object)
+          @property_map = self.class.wmi_ole_object_to_hash(wmi_ole_object)
         end
 
         def [](key)
@@ -33,7 +33,7 @@ module Ohai
 
         private
 
-        def wmi_ole_object_to_hash(wmi_object)
+        def self.wmi_ole_object_to_hash(wmi_object)
           property_map = {}
           wmi_object.properties_.each do |property|
             property_map[property.name.downcase] = wmi_object.invoke(property.name)
@@ -43,6 +43,7 @@ module Ohai
 
           property_map.freeze
         end
+
       end
     end
   end

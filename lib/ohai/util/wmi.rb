@@ -23,8 +23,12 @@ module Ohai
   module Util
     class Wmi
 
-      def self.query(wql_query, namespace = nil)
-        results = start_query(namespace, wql_query)
+      def initialize(namespace = nil)
+        @connection = new_connection(namespace)
+      end
+
+      def query(wql_query)
+        results = start_query(wql_query)
         
         result_set = []
 
@@ -35,12 +39,12 @@ module Ohai
         result_set
       end
 
-      def self.instances_of(wmi_class, namespace = nil)
+      def instances_of(wmi_class)
         query("select * from #{wmi_class}")
       end
 
-      def self.first_of(wmi_class, namespace = nil)
-        query_result = start_query(namespace, "select * from #{wmi_class}")
+      def first_of(wmi_class)
+        query_result = start_query("select * from #{wmi_class}")
         first_result = nil
         query_result.each do | record |
           first_result = record
@@ -51,25 +55,13 @@ module Ohai
 
       private
 
-      def self.start_query(namespace, wql_query)
-        connection = new_connection(namespace)
-        connection.ExecQuery(wql_query)
+      def start_query(wql_query)
+        @connection.ExecQuery(wql_query)
       end
 
-      def self.new_connection(namespace)
+      def new_connection(namespace)
         locator = WIN32OLE.new("WbemScripting.SWbemLocator")
         locator.ConnectServer('.', namespace.nil? ? 'root/cimv2' : namespace)
-      end
-
-      def self.wmi_result_to_hash(wmi_object)
-        property_map = {}
-        wmi_object.properties_.each do |property|
-          property_map[property.name.downcase] = wmi_object.invoke(property.name)
-        end
-
-        property_map[:wmi_object] = wmi_object
-
-        property_map
       end
     end
   end

@@ -19,9 +19,9 @@ for Ohai, see the docs:
 # DEVELOPMENT:
 
 Before working on the code, if you plan to contribute your changes, you
-need to read the Opscode Contributing document:
+should read the contributing guidelines:
 
-* http://docs.opscode.com/community_contributions.html
+* https://github.com/opscode/ohai/blob/master/CONTRIBUTING.md
 
 The basic process for contributing is:
 

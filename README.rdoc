@@ -20,7 +20,7 @@ You will also need to set up the repository with the appropriate branches. We do
 
 * http://wiki.opscode.com/display/chef/Working+with+git
 
-(Substitude 'ohai' for 'chef')
+(Substitute 'ohai' for 'chef')
 
 Once your repository is set up, you can start working on the code. We do use BDD/TDD with RSpec, and soon Cucumber for integration/feature testing, so you'll need to get those installed.
 

@@ -9,7 +9,7 @@ Ohai will print out a JSON data blob for all the known data about your
 system. When used with Chef, that data is reported back via node
 attributes.
 
-Opscode distributes ohai as a RubyGem. This README is for developers who
+Chef distributes ohai as a RubyGem. This README is for developers who
 want to modify the Ohai source code. For users who want to write plugins
 for Ohai, see the docs:
 
@@ -76,8 +76,8 @@ Tickets/Issues:
 
 Ohai - system information application
 
-Author:: Adam Jacob (<adam@opscode.com>)
-Copyright:: Copyright (c) 2008 Opscode, Inc.
+Author:: Adam Jacob (<adam@getchef.com>)
+Copyright:: Copyright (c) 2008-2014 Chef Software, Inc.
 License:: Apache License, Version 2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");

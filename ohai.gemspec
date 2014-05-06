@@ -33,5 +33,5 @@ Gem::Specification.new do |s|
   s.executables = %w(ohai)
 
   s.require_path = 'lib'
-  s.files = %w(LICENSE README.rdoc Rakefile) + Dir.glob("{docs,lib,spec}/**/*")
+  s.files = %w(LICENSE README.md Rakefile) + Dir.glob("{docs,lib,spec}/**/*")
 end

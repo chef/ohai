@@ -73,7 +73,7 @@ MD
 
     it "should detect raid level" do
       @plugin.run
-      @plugin[:mdadm][:md0][:level].should be 10
+      @plugin[:mdadm][:md0][:level].should == 10
     end
 
     it "should detect raid state" do
@@ -83,19 +83,19 @@ MD
 
     it "should detect raid size" do
       @plugin.run
-      @plugin[:mdadm][:md0][:size].should be 2794.16
+      @plugin[:mdadm][:md0][:size].should == 2794.16
     end
 
     it "should detect raid metadata level" do
       @plugin.run
-      @plugin[:mdadm][:md0][:version].should be 1.2
+      @plugin[:mdadm][:md0][:version].should == 1.2
     end
 
     device_counts = { :raid => 6, :total => 6, :active => 6, :working => 6, :failed => 0, :spare => 0 }
     device_counts.each_pair do |item, expected_value|
       it "should detect device count of \"#{item}\"" do
         @plugin.run
-        @plugin[:mdadm][:md0][:device_counts][item].should be expected_value
+        @plugin[:mdadm][:md0][:device_counts][item].should == expected_value
       end
     end
 

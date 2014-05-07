@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin Memory Plugin" do
-  before do
+  before(:each) do
     darwin_memsize = <<-DARWIN_MEMSIZE
 17179869184
     DARWIN_MEMSIZE
@@ -39,29 +39,26 @@ Pageouts:                                0.
 Object cache: 12 hits of 139872 lookups (0% hit rate)
     DARWIN_VM_STAT
 
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-
-    @ohai.stub(:from).with("sysctl -n hw.memsize").and_return(darwin_memsize)
-    @ohai.stub(:from).with("vm_stat").and_return(darwin_vm_stat)
-
-    @ohai._require_plugin("memory")
+    @plugin = get_plugin("darwin/memory")
+    @plugin.stub(:collect_os).and_return(:darwin)
+    @plugin.stub(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, darwin_memsize, ""))
+    @plugin.stub(:shell_out).with("vm_stat").and_return(mock_shell_out(0, darwin_vm_stat, ""))
+    @plugin.run
   end
 
-  describe "gathering memory info" do
-    before do
-      @ohai._require_plugin("darwin::memory")
-    end
+  it "should set memory[:total] to 16384MB" do
+    @plugin[:memory][:total].should == '16384MB'
+  end
 
-    it "completes the run" do
-      @ohai['memory'].should_not be_nil
-    end
+  it "should set memory[:active] to 5140MB" do
+    @plugin[:memory][:active].should == '5140MB'
+  end
 
-    it "detects the correct memory levels" do
-      @ohai['memory']['total'].should == '16384MB'
-      @ohai['memory']['active'].should == '5140MB'
-      @ohai['memory']['inactive'].should == '738MB'
-      @ohai['memory']['free'].should == '10504MB'
-    end
+  it "should set memory[:inactive] to 738MB" do
+    @plugin[:memory][:inactive].should == '738MB'
+  end
+
+  it "should set memory[:free] to 10504MB" do
+    @plugin[:memory][:free].should == '10504MB'
   end
 end

@@ -8,5 +8,7 @@ Details about the thing that changed that needs to get included in the Release N
 -->
 # Ohai Release Notes:
 
+Chained virtualization systems, such as containers running on virtual machines, can now be tracked in
+node[:virtualization][:systems].
 
 # Ohai Breaking Changes:

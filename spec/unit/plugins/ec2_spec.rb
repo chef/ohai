@@ -157,6 +157,26 @@ describe Ohai::System, "plugin ec2" do
 
       @plugin[:ec2].should_not be_nil
     end
+
+    it "should complete the run despite unavailable metadata" do
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/").
+        and_return(double("Net::HTTP Response", :body => "metrics/", :code => "200"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/metrics/").
+        and_return(double("Net::HTTP Response", :body => "vhostmd", :code => "200"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/meta-data/metrics/vhostmd").
+        and_return(double("Net::HTTP Response", :body => "", :code => "404"))
+      @http_client.should_receive(:get).
+        with("/2012-01-12/user-data/").
+        and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+
+      @plugin.run
+
+      @plugin[:ec2].should_not be_nil
+      @plugin[:ec2]['metrics_vhostmd'].should eql ""
+    end
   end
 
   describe "with ec2 mac and metadata address connected" do

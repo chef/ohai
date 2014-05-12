@@ -101,10 +101,17 @@ module Ohai
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
         response = http_client.get(path)
-        unless response.code == '200'
+        case response.code
+        when '200'
+          response
+        when '404'
+          # On certain instance types, traversing the provided metadata path
+          # produces a 404 for some unknown reason.
+          Ohai::Log.debug("Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
+          response
+        else
           raise "Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
         end
-        response
       end
 
       def fetch_metadata(id='', api_version=nil)

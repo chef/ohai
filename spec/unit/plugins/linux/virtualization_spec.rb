@@ -358,8 +358,9 @@ CGROUP
       @plugin[:virtualization].should == {'systems' => {}}
     end
 
-    it "should set lxc host if /proc/self/cgroup only has / mounts" do
-      self_cgroup=<<-CGROUP
+    context "/proc/self/cgroup only has / mounts" do
+      before(:each) do
+        self_cgroup=<<-CGROUP
 8:blkio:/
 7:net_cls:/
 6:freezer:/
@@ -369,12 +370,36 @@ CGROUP
 2:cpu:/
 1:cpuset:/
 CGROUP
-      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
-      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
-      @plugin.run
-      @plugin[:virtualization][:system].should == "lxc"
-      @plugin[:virtualization][:role].should == "host"
-      @plugin[:virtualization][:systems][:lxc].should == "host"
+        File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+        File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      end
+    
+      it "sets lxc host if lxc-version exists" do
+        @plugin.stub(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
+        @plugin.run
+        @plugin[:virtualization][:system].should == "lxc"
+        @plugin[:virtualization][:role].should == "host"
+        @plugin[:virtualization][:systems][:lxc].should == "host"
+      end
+
+      it "does not set the old virtualization attributes if they are already set" do
+        @plugin.stub(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
+        @plugin[:virtualization] = Mash.new
+        @plugin[:virtualization][:system] = "the cloud"
+        @plugin[:virtualization][:role] = "cumulonimbus"
+        @plugin.run
+        @plugin[:virtualization][:system].should_not == "lxc"
+        @plugin[:virtualization][:role].should_not == "host"
+      end
+
+      it "does not set lxc host if lxc-version does not exist" do
+        @plugin.stub(:lxc_version_exists?).and_return(false)
+        @plugin.run
+        @plugin[:virtualization][:system].should be_nil
+        @plugin[:virtualization][:role].should be_nil
+        @plugin[:virtualization].should == {'systems' => {}}
+      end
+
     end
 
     it "should not set virtualization if /proc/self/cgroup isn't there" do

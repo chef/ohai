@@ -16,12 +16,20 @@
 # limitations under the License.
 #
 
+require 'ohai/util/file_helper'
+
+include Ohai::Util::FileHelper
+
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
+  def lxc_version_exists?
+    which('lxc-version')
+  end
+
   collect_data(:linux) do
-    virtualization Mash.new
-    virtualization[:systems] = Mash.new
+    virtualization Mash.new unless virtualization
+    virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     # if it is possible to detect paravirt vs hardware virt, it should be put in
     # virtualization[:mechanism]
@@ -165,9 +173,18 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
-      elsif File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
-        virtualization[:system] = "lxc"
-        virtualization[:role] = "host"
+      elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
+        # lxc-version shouldn't be installed by default
+        # Even so, it is likely we are on an LXC capable host that is not being used as such
+        # So we're cautious here to not overwrite other existing values (OHAI-573)
+        unless virtualization[:system] && virtualization[:role]
+          virtualization[:system] = "lxc"
+          virtualization[:role] = "host"
+        end
+
+        # In general, the 'systems' framework from OHAI-182 is less susceptible to conflicts
+        # But, this could overwrite virtualization[:systems][:lxc] = "guest"
+        # If so, we may need to look further for a differentiator (OHAI-573)
         virtualization[:systems][:lxc] = "host"
       end
     end

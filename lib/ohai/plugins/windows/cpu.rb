@@ -20,13 +20,13 @@ Ohai.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:windows) do
-    require 'ohai/wmi'
+    require 'wmi-lite/wmi'
 
     cpuinfo = Mash.new
     cpu_number = 0
     index = 0
 
-    wmi = WmiRepository.new
+    wmi = WmiLite::Wmi.new
     processors = wmi.instances_of('Win32_Processor')
 
     processors.find(:all).each do |processor|

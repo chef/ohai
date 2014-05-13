@@ -27,6 +27,8 @@ Ohai.plugin(:Network) do
 
   collect_data(:windows) do
 
+    require 'wmi-lite/wmi'
+
     iface = Mash.new
     iface_config = Mash.new
     iface_instance = Mash.new
@@ -36,7 +38,7 @@ Ohai.plugin(:Network) do
     counters[:network] = Mash.new unless counters[:network]
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
-    wmi = WmiRepository.new
+    wmi = WmiLite::Wmi.new
 
     adapters = wmi.instances_of('Win32_NetworkAdapterConfiguration')
 

@@ -21,10 +21,12 @@ Ohai.plugin(:Filesystem) do
 
   collect_data(:windows) do
 
+    require 'wmi-lite/wmi'
+
     fs = Mash.new
     ld_info = Mash.new
 
-    wmi = WmiRepository.new
+    wmi = WmiLite::Wmi.new
 
     # Grab filesystem data from WMI
     # Note: we should really be parsing Win32_Volume and Win32_Mapped drive

@@ -94,8 +94,8 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:windows) do
-    require 'ohai/wmi'
-    wmi = WmiRepository.new
+    require 'wmi-lite/wmi'
+    wmi = WmiLite::Wmi.new
     uptime_seconds wmi.first_of('Win32_PerfFormattedData_PerfOS_System')['systemuptime'].to_i
     uptime seconds_to_human(uptime_seconds)
   end

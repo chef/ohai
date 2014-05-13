@@ -145,10 +145,10 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require 'ohai/wmi'
+    require 'wmi-lite/wmi'
     require 'socket'
 
-    wmi = WmiRepository.new
+    wmi = WmiLite::Wmi.new
     host = wmi.first_of('Win32_ComputerSystem')
 
     hostname "#{host['name']}"

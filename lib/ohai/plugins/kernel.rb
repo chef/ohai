@@ -156,11 +156,11 @@ Ohai.plugin(:Kernel) do
 
   collect_data(:windows) do
     require 'win32ole'
-    require 'ohai/wmi'
+    require 'wmi-lite/wmi'
 
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
-    wmi = WmiRepository.new
+    wmi = WmiLite::Wmi.new
 
     kernel Mash.new
 

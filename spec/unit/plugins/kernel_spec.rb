@@ -37,7 +37,7 @@ describe Ohai::System, "plugin kernel" do
 
   describe "when running on windows", :windows_only do
     before do
-      require 'lib/ohai/wmi'
+      require 'wmi-lite/wmi'
 
       @ohai_system = Ohai::System.new
       @plugin = get_plugin("kernel", @ohai_system)
@@ -65,7 +65,7 @@ describe Ohai::System, "plugin kernel" do
         'ostype' => os.OsType,
         :wmi_object => os }
 
-      WmiRepository.any_instance.should_receive(:first_of).with('Win32_OperatingSystem').and_return(os_wmi)
+      WmiLite::Wmi.any_instance.should_receive(:first_of).with('Win32_OperatingSystem').and_return(os_wmi)
 
       cs = double("WIN32OLE",
                   :properties_ => [ double("WIN32OLE", :name => "SystemType") ],
@@ -76,9 +76,9 @@ describe Ohai::System, "plugin kernel" do
       cs_wmi = {
         'systemtype' => cs.SystemType,
         :wmi_object => cs }
-      WmiRepository.any_instance.should_receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
+      WmiLite::Wmi.any_instance.should_receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
 
-      WmiRepository.any_instance.should_receive(:instances_of).with('Win32_PnPSignedDriver').and_return([])
+      WmiLite::Wmi.any_instance.should_receive(:instances_of).with('Win32_PnPSignedDriver').and_return([])
 
       @plugin.run
     end

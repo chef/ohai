@@ -5,6 +5,8 @@ Example Contribution:
 * **kalistec**: Improved file resource greatly.
 -->
 # OHAI Contributions:
+
 * **lbragstad**: Added platform\_family support for ibm\_powerkvm
 * **pcarrier**: ec2\_metadata: specify path in exception
 * **glensc**: Support deep virtualization systems
+* **swalberg**: Fixed :Passwd plugin to ignore duplicate users. (OHAI-561)

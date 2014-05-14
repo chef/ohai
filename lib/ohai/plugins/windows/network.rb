@@ -46,7 +46,7 @@ Ohai.plugin(:Network) do
 
       i = adapter['index']
       iface_config[i] = Mash.new
-      adapter[:wmi_object].properties_.each do |p|
+      adapter.wmi_ole_object.properties_.each do |p|
         iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
@@ -58,7 +58,7 @@ Ohai.plugin(:Network) do
     adapters.each do |adapter|
       i = adapter['index']
       iface_instance[i] = Mash.new
-      adapter[:wmi_object].properties_.each do |p|
+      adapter.wmi_ole_object.properties_.each do |p|
         iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end

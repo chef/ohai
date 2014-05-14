@@ -42,42 +42,38 @@ describe Ohai::System, "plugin kernel" do
       @ohai_system = Ohai::System.new
       @plugin = get_plugin("kernel", @ohai_system)
 
-      caption = double("WIN32OLE", :name => "caption")
-      version = double("WIN32OLE", :name => "version")
+      # Mock a Win32_OperatingSystem OLE32 WMI object
+      caption = double("WIN32OLE", :name => "Caption")
+      version = double("WIN32OLE", :name => "Version")
       build_number = double("WIN32OLE", :name => "BuildNumber")
       csd_version  = double("WIN32OLE", :name => "CsdVersion")
       os_type = double("WIN32OLE", :name => "OsType")
       os_properties = [ caption, version, build_number, csd_version, os_type ]
 
-      os =  double("WIN32OLE",
-                     :properties_ => os_properties,
-                     :caption => "Microsoft Windows 7 Ultimate",
-                     :version => "6.1.7601",
-                     :BuildNumber => "7601",
-                     :CsdVersion => "Service Pack 1",
-                     :OsType => 18)
+      os =  double( "WIN32OLE",
+                    :properties_ => os_properties)
 
-      os_wmi =  {
-        'caption' => os.caption,
-        'version' => os.version,
-        'buildnumber' => os.BuildNumber,
-        'csdversion' => os.CsdVersion,
-        'ostype' => os.OsType,
-        :wmi_object => os }
+      os.stub(:invoke).with(build_number.name).and_return('7601')
+      os.stub(:invoke).with(csd_version.name).and_return('Service Pack 1')
+      os.stub(:invoke).with(os_type.name).and_return(18)
+      os.stub(:invoke).with(caption.name).and_return('Microsoft Windows 7 Ultimate')
+      os.stub(:invoke).with(version.name).and_return('6.1.7601')
+
+      os_wmi = WmiLite::Wmi::Instance.new(os)
 
       WmiLite::Wmi.any_instance.should_receive(:first_of).with('Win32_OperatingSystem').and_return(os_wmi)
 
+      # Mock a Win32_ComputerSystem OLE32 WMI object
+      x64_system_type = 'x64-based PC'
+
       cs = double("WIN32OLE",
-                  :properties_ => [ double("WIN32OLE", :name => "SystemType") ],
-                  :SystemType => "x64-based PC",
-                  )
+                  :properties_ => [ double("WIN32OLE", :name => "SystemType") ])
 
+      cs.stub(:invoke).with('SystemType').and_return(x64_system_type)
 
-      cs_wmi = {
-        'systemtype' => cs.SystemType,
-        :wmi_object => cs }
+      cs_wmi = WmiLite::Wmi::Instance.new(cs)
+
       WmiLite::Wmi.any_instance.should_receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
-
       WmiLite::Wmi.any_instance.should_receive(:instances_of).with('Win32_PnPSignedDriver').and_return([])
 
       @plugin.run

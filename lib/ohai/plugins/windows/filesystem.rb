@@ -36,7 +36,7 @@ Ohai.plugin(:Filesystem) do
       filesystem = disk['deviceid']
       fs[filesystem] = Mash.new
       ld_info[filesystem] = Mash.new
-      disk[:wmi_object].properties_.each do |p|
+      disk.wmi_ole_object.properties_.each do |p|
         ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk[p.name.downcase]
       end
       fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000

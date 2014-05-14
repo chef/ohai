@@ -166,7 +166,7 @@ Ohai.plugin(:Kernel) do
 
     host = wmi.first_of('Win32_OperatingSystem')
     kernel[:os_info] = Mash.new
-    host[:wmi_object].properties_.each do |p|
+    host.wmi_ole_object.properties_.each do |p|
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
@@ -177,7 +177,7 @@ Ohai.plugin(:Kernel) do
 
     host = wmi.first_of('Win32_ComputerSystem')
     kernel[:cs_info] = Mash.new
-    host[:wmi_object].properties_.each do |p|
+    host.wmi_ole_object.properties_.each do |p|
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
@@ -189,7 +189,7 @@ Ohai.plugin(:Kernel) do
     drivers = wmi.instances_of('Win32_PnPSignedDriver')
     drivers.each do |driver|
       pnp_drivers[driver['deviceid']] = Mash.new
-      driver[:wmi_object].properties_.each do |p|
+      driver.wmi_ole_object.properties_.each do |p|
         pnp_drivers[driver['deviceid']][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
       end
       if driver['devicename']

@@ -10,6 +10,9 @@
 * :Passwd plugin now ignores duplicate users. (OHAI-561)
 * Be reluctant to call something an LXC host (OHAI-573)
 * Fix warning message about constants already defined (OHAI-572)
+* Present all CPU flags on FreeBSD (OHAI-568)
+* Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
+* Ohai should expose mdadm raid information on Linux systems (OHAI-578)
 
 ## Last Release: 7.0.0 (04/01/2014)
 

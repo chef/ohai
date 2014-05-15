@@ -11,3 +11,6 @@ Example Contribution:
 * **glensc**: Support deep virtualization systems
 * **swalberg**: Fixed :Passwd plugin to ignore duplicate users. (OHAI-561)
 * **viyh**: Fix warning message about constants already defined (OHAI-572)
+* **tas50**: Present all CPU flags on FreeBSD (OHAI-568)
+* **tas50**: Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
+* **tas50**: Ohai should expose mdadm raid information on Linux systems (OHAI-578)

@@ -10,3 +10,4 @@ Example Contribution:
 * **pcarrier**: ec2\_metadata: specify path in exception
 * **glensc**: Support deep virtualization systems
 * **swalberg**: Fixed :Passwd plugin to ignore duplicate users. (OHAI-561)
+* **viyh**: Fix warning message about constants already defined (OHAI-572)

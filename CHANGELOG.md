@@ -8,6 +8,7 @@
 * EC2 metadata errors are unhelpful (OHAI-566)
 * Support deep virtualization systems in node[:virtualization][:systems] (OHAI-182)
 * :Passwd plugin now ignores duplicate users. (OHAI-561)
+* Be reluctant to call something an LXC host (OHAI-573)
 
 ## Last Release: 7.0.0 (04/01/2014)
 

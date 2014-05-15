@@ -14,3 +14,5 @@ Example Contribution:
 * **tas50**: Present all CPU flags on FreeBSD (OHAI-568)
 * **tas50**: Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
 * **tas50**: Ohai should expose mdadm raid information on Linux systems (OHAI-578)
+* **ccope**: relax regex to match newer Oracle Solaris releases (OHAI-563)
+* **vtolstov**: add exherbo support (OHAI-570)

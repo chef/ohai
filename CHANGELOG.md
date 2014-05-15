@@ -13,6 +13,8 @@
 * Present all CPU flags on FreeBSD (OHAI-568)
 * Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
 * Ohai should expose mdadm raid information on Linux systems (OHAI-578)
+* relax regex to match newer Oracle Solaris releases (OHAI-563)
+* add exherbo support (OHAI-570)
 
 ## Last Release: 7.0.0 (04/01/2014)
 

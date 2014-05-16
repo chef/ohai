@@ -98,17 +98,22 @@ module Ohai
         Net::HTTP.start(EC2_METADATA_ADDR).tap {|h| h.read_timeout = 600}
       end
 
+      # Get metadata for a given path and API version
+      #
+      # @details
+      #   Typically, a 200 response is expected for valid metadata.
+      #   On certain instance types, traversing the provided metadata path
+      #   produces a 404 for some unknown reason. In that event, return
+      #   `nil` and continue the run instead of failing it.
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
         response = http_client.get(path)
         case response.code
         when '200'
-          response
+          response.body
         when '404'
-          # On certain instance types, traversing the provided metadata path
-          # produces a 404 for some unknown reason.
           Ohai::Log.debug("Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
-          response
+          nil
         else
           raise "Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
         end
@@ -118,57 +123,66 @@ module Ohai
         api_version ||= best_api_version
         return Hash.new if api_version.nil?
         metadata = Hash.new
-        metadata_get(id, api_version).body.split("\n").each do |o|
-          key = expand_path("#{id}#{o}")
-          if key[-1..-1] != '/'
-            metadata[metadata_key(key)] =
-              if EC2_ARRAY_VALUES.include? key
-                metadata_get(key, api_version).body.split("\n")
+        retrieved_metadata = metadata_get(id, api_version)
+        if retrieved_metadata
+          retrieved_metadata.split("\n").each do |o|
+            key = expand_path("#{id}#{o}")
+            if key[-1..-1] != '/'
+              metadata[metadata_key(key)] =
+                if EC2_ARRAY_VALUES.include? key
+                  metadata_get(key, api_version).split("\n")
+                else
+                  metadata_get(key, api_version)
+                end
+            elsif not key.eql?(id) and not key.eql?('/')
+              name = key[0..-2]
+              sym = metadata_key(name)
+              if EC2_ARRAY_DIR.include?(name)
+                metadata[sym] = fetch_dir_metadata(key, api_version)
+              elsif EC2_JSON_DIR.include?(name)
+                metadata[sym] = fetch_json_dir_metadata(key, api_version)
               else
-                metadata_get(key, api_version).body
+                fetch_metadata(key, api_version).each{|k,v| metadata[k] = v}
               end
-          elsif not key.eql?(id) and not key.eql?('/')
-            name = key[0..-2]
-            sym = metadata_key(name)
-            if EC2_ARRAY_DIR.include?(name)
-              metadata[sym] = fetch_dir_metadata(key, api_version)
-            elsif EC2_JSON_DIR.include?(name)
-              metadata[sym] = fetch_json_dir_metadata(key, api_version)
-            else
-              fetch_metadata(key, api_version).each{|k,v| metadata[k] = v}
             end
           end
+          metadata
         end
-        metadata
       end
 
       def fetch_dir_metadata(id, api_version)
         metadata = Hash.new
-          metadata_get(id, api_version).body.split("\n").each do |o|
-          key = expand_path(o)
-          if key[-1..-1] != '/'
-            metadata[metadata_key(key)] = metadata_get("#{id}#{key}", api_version).body
-          elsif not key.eql?('/')
-            metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
+        retrieved_metadata = metadata_get(id, api_version)
+        if retrieved_metadata
+          retrieved_metadata.split("\n").each do |o|
+            key = expand_path(o)
+            if key[-1..-1] != '/'
+              metadata[metadata_key(key)] = metadata_get("#{id}#{key}", api_version)
+            elsif not key.eql?('/')
+              metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
+            end
           end
+          metadata
         end
-        metadata
       end
 
       def fetch_json_dir_metadata(id, api_version)
         metadata = Hash.new
-        metadata_get(id, api_version).body.split("\n").each do |o|
-          key = expand_path(o)
-          if key[-1..-1] != '/'
-            data = metadata_get("#{id}#{key}", api_version).body
-            json = StringIO.new(data)
-            parser = Yajl::Parser.new
-            metadata[metadata_key(key)] = parser.parse(json)
-          elsif not key.eql?('/')
-            metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)
+        retrieved_metadata = metadata_get(id, api_version)
+        if retrieved_metadata
+          retrieved_metadata.split("\n").each do |o|
+            key = expand_path(o)
+            if key[-1..-1] != '/'
+              data = metadata_get("#{id}#{key}", api_version)
+              json = StringIO.new(data)
+              parser = Yajl::Parser.new
+              metadata[metadata_key(key)] = parser.parse(json)
+            elsif not key.eql?('/')
+              metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)
+            end
           end
+          metadata
         end
-        metadata
       end
 
       def fetch_userdata()

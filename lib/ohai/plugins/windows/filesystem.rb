@@ -20,20 +20,22 @@ Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
   collect_data(:windows) do
-    require 'ruby-wmi'
 
     fs = Mash.new
     ld_info = Mash.new
 
+    wmi = WmiRepository.new
+
     # Grab filesystem data from WMI
     # Note: we should really be parsing Win32_Volume and Win32_Mapped drive
-    disks = WMI::Win32_LogicalDisk.find(:all)
+    disks = wmi.instances_of('Win32_LogicalDisk')
+
     disks.each do |disk|
-      filesystem = disk.DeviceID
+      filesystem = disk['deviceid']
       fs[filesystem] = Mash.new
       ld_info[filesystem] = Mash.new
-      disk.properties_.each do |p|
-        ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk.send(p.name)
+      disk[:wmi_object].properties_.each do |p|
+        ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk[p.name.downcase]
       end
       fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
       fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000

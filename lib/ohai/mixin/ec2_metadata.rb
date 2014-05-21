@@ -119,7 +119,7 @@ module Ohai
                 metadata_get(key, api_version).body.split("\n")
               else
                 metadata_get(key, api_version).body
-              end
+              end rescue nil
           elsif not key.eql?(id) and not key.eql?('/')
             name = key[0..-2]
             sym = metadata_key(name)

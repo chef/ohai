@@ -46,8 +46,12 @@ Ohai.plugin(:Joyent) do
   end
 
   def collect_pkgsrc
-    sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
-    sm_pkgsrc[1].chomp
+    if File.exist?('/opt/local/etc/pkg_install.conf')
+      sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
+      sm_pkgsrc[1].chomp
+    else
+      nil
+    end
   end
 
   def is_smartos?
@@ -82,9 +86,7 @@ Ohai.plugin(:Joyent) do
       end
 
       ## retrieve pkgsrc
-      if File.exist?('/opt/local/etc/pkg_install.conf')
-        joyent[:sm_pkgsrc] = collect_pkgsrc
-      end
+      joyent[:sm_pkgsrc] = collect_pkgsrc if collect_pkgsrc
     end
   end
 end

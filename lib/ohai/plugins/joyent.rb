@@ -1,6 +1,6 @@
-# 
+#
 # Author: sawanoboriyu@higanworks.com
-# Copyright (C) 2013 HiganWorks LLC
+# Copyright (C) 2014 HiganWorks LLC
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,40 +19,56 @@
 
 # Reference from: sm-summary command
 
-provides "joyent"
-require_plugin "os"
-require_plugin "platform"
+Ohai.plugin(:Joyent) do
+  provides 'joyent'
+  provides 'virtualization/guest_id'
+  depends 'os', 'platform', 'virtualization'
 
-if platform == "smartos" then
-  joyent Mash.new
 
-  # get uuid
-  status, stdout, stderr  = run_command(:no_status_check => true, :command => "/usr/bin/zonename")
-  joyent[:sm_uuid] = stdout.chomp
+  def collect_solaris_guestid
+    command = '/usr/sbin/zoneadm list -p'
+    so = shell_out(command)
+    so.stdout.split(':').first
+  end
 
-  # get zone id unless globalzone
-  status, stdout, stderr  = run_command(:no_status_check => true, :command => "/usr/sbin/zoneadm list -p | awk -F: '{ print $1 }'")
-  joyent[:sm_id] = stdout.chomp unless joyent[:sm_uuid] == "global"
-  
-  # retrieve image name and pkgsrc
-  if ::File.exists?("/etc/product") then
-    ::File.open("/etc/product") do |file|
-      while line = file.gets
-        case line
-        when /^Image/
-          sm_image = line.split(" ") 
-          joyent[:sm_image_id] = sm_image[1]
-          joyent[:sm_image_ver] = sm_image[2]
-        when /^Base Image/
-          sm_baseimage = line.split(" ")
-          joyent[:sm_baseimage_id] = sm_baseimage[2]
-          joyent[:sm_baseimage_ver] = sm_baseimage[3]
+  def is_smartos?
+    platform == 'smartos'
+  end
+
+  collect_data do
+    if is_smartos?
+      joyent Mash.new
+
+      # copy uuid
+      joyent[:sm_uuid] = virtualization[:guest_uuid]
+
+      # get zone id unless globalzone
+      unless joyent[:sm_uuid] == "global"
+        virtualization[:guest_id] = collect_solaris_guestid
+        joyent[:sm_id]            = virtualization[:guest_id]
+      end
+
+      # retrieve image name and pkgsrc
+      if ::File.exists?("/etc/product") then
+        ::File.open("/etc/product") do |file|
+          while line = file.gets
+            case line
+            when /^Image/
+              sm_image = line.split(" ") 
+              joyent[:sm_image_id] = sm_image[1]
+              joyent[:sm_image_ver] = sm_image[2]
+            when /^Base Image/
+              sm_baseimage = line.split(" ")
+              joyent[:sm_baseimage_id] = sm_baseimage[2]
+              joyent[:sm_baseimage_ver] = sm_baseimage[3]
+            end
+          end
         end
       end
-    end
 
-    ## retrieve pkgsrc
-    sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
-    joyent[:sm_pkgsrc] = sm_pkgsrc[1].chomp
+      ## retrieve pkgsrc
+      sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
+      joyent[:sm_pkgsrc] = sm_pkgsrc[1].chomp
+    end
   end
 end

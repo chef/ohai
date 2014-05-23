@@ -46,7 +46,7 @@ describe Ohai::System, "plugin joyent" do
     describe "under smartmachine" do
       before(:each) do
         @plugin[:virtualization][:guest_uuid] = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx'
-        @plugin.stub(:collect_solaris_guestid).and_return('30')
+        @plugin[:virtualization][:guest_id] = '30'
         @plugin.stub(:collect_product_file).and_return(["Name: Joyent Instance", "Image: base64 13.4.2", "Documentation: http://wiki.joyent.com/jpc2/SmartMachine+Base"])
         @plugin.stub(:collect_pkgsrc).and_return('http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All')
         @plugin.run

@@ -1,0 +1,135 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: x86_64-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-libgcj-multifile --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --enable-plugin --with-java-home=/usr/lib/jvm/java-1.4.2-gcj-1.4.2.0/jre --with-cpu=generic --host=x86_64-redhat-linux\nThread model: posix\ngcc version 4.1.2 20080704 (Red Hat 4.1.2-48)\n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: i686-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch=i686 --build=i686-redhat-linux\nThread model: posix\ngcc version 4.4.6 20110731 (Red Hat 4.4.6-3) (GCC) \n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: x86_64-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch_32=i686 --build=x86_64-redhat-linux\nThread model: posix\ngcc version 4.4.6 20110731 (Red Hat 4.4.6-3) (GCC) \n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-v"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: x86_64-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-libgcj-multifile --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --disable-plugin --with-java-home=/usr/lib/jvm/java-1.4.2-gcj-1.4.2.0/jre --with-cpu=generic --host=x86_64-redhat-linux\nThread model: posix\ngcc version 4.1.2 20080704 (Red Hat 4.1.2-54)\n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x86"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: i686-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch=i686 --build=i686-redhat-linux\nThread model: posix\ngcc version 4.4.7 20120313 (Red Hat 4.4.7-3) (GCC) \n"
+exit_status 0
+
+platform "centos-6.2"
+arch "x64"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: x86_64-redhat-linux\nConfigured with: ../configure --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=http://bugzilla.redhat.com/bugzilla --enable-bootstrap --enable-shared --enable-threads=posix --enable-checking=release --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-languages=c,c++,objc,obj-c++,java,fortran,ada --enable-java-awt=gtk --disable-dssi --with-java-home=/usr/lib/jvm/java-1.5.0-gcj-1.5.0.0/jre --enable-libgcj-multifile --enable-java-maintainer-mode --with-ecj-jar=/usr/share/java/eclipse-ecj.jar --disable-libjava-multilib --with-ppl --with-cloog --with-tune=generic --with-arch_32=i686 --build=x86_64-redhat-linux\nThread model: posix\ngcc version 4.4.7 20120313 (Red Hat 4.4.7-3) (GCC) \n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: i486-linux-gnu\nConfigured with: ../src/configure -v --with-pkgversion='Ubuntu 4.4.3-4ubuntu5.1' --with-bugurl=file:///usr/share/doc/gcc-4.4/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --enable-shared --enable-multiarch --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.4 --program-suffix=-4.4 --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-plugin --enable-objc-gc --enable-targets=all --disable-werror --with-arch-32=i486 --with-tune=generic --enable-checking=release --build=i486-linux-gnu --host=i486-linux-gnu --target=i486-linux-gnu\nThread model: posix\ngcc version 4.4.3 (Ubuntu 4.4.3-4ubuntu5.1) \n"
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nTarget: x86_64-linux-gnu\nConfigured with: ../src/configure -v --with-pkgversion='Ubuntu 4.4.3-4ubuntu5.1' --with-bugurl=file:///usr/share/doc/gcc-4.4/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --enable-shared --enable-multiarch --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.4 --program-suffix=-4.4 --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-plugin --enable-objc-gc --disable-werror --with-arch-32=i486 --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu\nThread model: posix\ngcc version 4.4.3 (Ubuntu 4.4.3-4ubuntu5.1) \n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nCOLLECT_GCC=gcc\nCOLLECT_LTO_WRAPPER=/usr/lib/gcc/i686-linux-gnu/4.6/lto-wrapper\nTarget: i686-linux-gnu\nConfigured with: ../src/configure -v --with-pkgversion='Ubuntu/Linaro 4.6.3-1ubuntu5' --with-bugurl=file:///usr/share/doc/gcc-4.6/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --program-suffix=-4.6 --enable-shared --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.6 --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-gnu-unique-object --enable-plugin --enable-objc-gc --enable-targets=all --disable-werror --with-arch-32=i686 --with-tune=generic --enable-checking=release --build=i686-linux-gnu --host=i686-linux-gnu --target=i686-linux-gnu\nThread model: posix\ngcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) \n"
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["gcc"]
+params "-v"
+stdout ""
+stderr "Using built-in specs.\nCOLLECT_GCC=gcc\nCOLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.6/lto-wrapper\nTarget: x86_64-linux-gnu\nConfigured with: ../src/configure -v --with-pkgversion='Ubuntu/Linaro 4.6.3-1ubuntu5' --with-bugurl=file:///usr/share/doc/gcc-4.6/README.Bugs --enable-languages=c,c++,fortran,objc,obj-c++ --prefix=/usr --program-suffix=-4.6 --enable-shared --enable-linker-build-id --with-system-zlib --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --with-gxx-include-dir=/usr/include/c++/4.6 --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-gnu-unique-object --enable-plugin --enable-objc-gc --disable-werror --with-arch-32=i686 --with-tune=generic --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu\nThread model: posix\ngcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) \n"
+exit_status 0

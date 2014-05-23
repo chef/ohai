@@ -16,25 +16,23 @@
 # limitations under the License.
 #
 
-
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "NetBSD plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.stub!(:from).with("uname -s").and_return("NetBSD")
-    @ohai.stub!(:from).with("uname -r").and_return("4.5")
-    @ohai[:os] = "netbsd"
+    @plugin = get_plugin("netbsd/platform")
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "NetBSD\n", ""))
+    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
+    @plugin.stub(:collect_os).and_return(:netbsd)
   end
 
   it "should set platform to lowercased lsb[:id]" do
-    @ohai._require_plugin("netbsd::platform")
-    @ohai[:platform].should == "netbsd"
+    @plugin.run
+    @plugin[:platform].should == "netbsd"
   end
 
   it "should set platform_version to lsb[:release]" do
-    @ohai._require_plugin("netbsd::platform")
-    @ohai[:platform_version].should == "4.5"
+    @plugin.run
+    @plugin[:platform_version].should == "4.5"
   end
 end

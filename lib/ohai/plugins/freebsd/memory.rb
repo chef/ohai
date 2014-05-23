@@ -16,34 +16,44 @@
 # limitations under the License.
 #
 
-provides "memory"
+Ohai.plugin(:Memory) do
+  provides "memory", "memory/swap"
 
-memory Mash.new
-memory[:swap] = Mash.new
+  collect_data(:freebsd) do
+    memory Mash.new
+    memory[:swap] = Mash.new
 
-# /usr/src/sys/sys/vmmeter.h
-memory[:page_size] = from("sysctl -n vm.stats.vm.v_page_size")
-memory[:page_count] = from("sysctl -n vm.stats.vm.v_page_count")
-memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
-memory[:free] = memory[:page_size].to_i * from("sysctl -n vm.stats.vm.v_free_count").to_i
-memory[:active] = memory[:page_size].to_i * from("sysctl -n vm.stats.vm.v_active_count").to_i
-memory[:inactive] = memory[:page_size].to_i * from("sysctl -n vm.stats.vm.v_inactive_count").to_i
-memory[:cache] = memory[:page_size].to_i * from("sysctl -n vm.stats.vm.v_cache_count").to_i
-memory[:wired] = memory[:page_size].to_i * from("sysctl -n vm.stats.vm.v_wire_count").to_i
-memory[:buffers] = from("sysctl -n vfs.bufspace")
+    # /usr/src/sys/sys/vmmeter.h
+    so = shell_out("sysctl -n vm.stats.vm.v_page_size")
+    memory[:page_size] = so.stdout.split($/)[0]
+    so = shell_out("sysctl -n vm.stats.vm.v_page_count")
+    memory[:page_count] = so.stdout.split($/)[0]
+    memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
+    so = shell_out("sysctl -n vm.stats.vm.v_free_count")
+    memory[:free] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    so = shell_out("sysctl -n vm.status.vm.v_active_count")
+    memory[:active] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    so = shell_out("sysctl -n vm.status.vm.v_inactive_count")
+    memory[:inactive] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    so = shell_out("sysctl -n vm.stats.vm.v_cache_count")
+    memory[:cache] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    so = shell_out("sysctl -n vm.stats.vm.v_wire_count")
+    memory[:wired] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    so = shell_out("sysctl -n vfs.bufspace")
+    memory[:buffers] = so.stdout.split($/)[0]
 
-popen4("swapinfo") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    # Device          1K-blocks     Used    Avail Capacity
-    # /dev/ad0s1b        253648        0   253648     0%
-    if line =~ /^([\d\w\/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)/
-      mdev = $1
-      memory[:swap][mdev] = Mash.new
-      memory[:swap][mdev][:total] = $2
-      memory[:swap][mdev][:used] = $3
-      memory[:swap][mdev][:free] = $4
-      memory[:swap][mdev][:percent_free] = $5
+    so = shell_out("swapinfo")
+    so.stdout.lines do |line|
+      # Device          1K-blocks     Used    Avail Capacity
+      # /dev/ad0s1b        253648        0   253648     0%
+      if line =~ /^([\d\w\/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)/
+        mdev = $1
+        memory[:swap][mdev] = Mash.new
+        memory[:swap][mdev][:total] = $2
+        memory[:swap][mdev][:used] = $3
+        memory[:swap][mdev][:free] = $4
+        memory[:swap][mdev][:percent_free] = $5
+      end
     end
   end
 end

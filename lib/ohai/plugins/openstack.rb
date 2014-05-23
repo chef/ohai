@@ -15,32 +15,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provides "openstack"
-
 require 'ohai/mixin/ec2_metadata'
 
-extend Ohai::Mixin::Ec2Metadata
+Ohai.plugin(:Openstack) do
+  provides "openstack"
 
-# does it matter that it's not hitting latest?
-#Ec2Metadata::EC2_METADATA_URL = "/latest/meta-data"
+  include Ohai::Mixin::Ec2Metadata
 
-# Adds openstack Mash
-if hint?('openstack') || hint?('hp')
-  Ohai::Log.debug("ohai openstack")
-  openstack Mash.new
-  #for now, use the metadata service
-  if can_metadata_connect?(EC2_METADATA_ADDR,80)
-    Ohai::Log.debug("connecting to the OpenStack metadata service")
-    self.fetch_metadata.each {|k, v| openstack[k] = v }
-    case
-    when hint?('hp')
-      openstack['provider'] = 'hp'
+  collect_data do
+    # Adds openstack Mash
+    if hint?('openstack') || hint?('hp')
+      Ohai::Log.debug("ohai openstack")
+
+      if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
+        openstack Mash.new
+        Ohai::Log.debug("connecting to the OpenStack metadata service")
+        fetch_metadata.each {|k, v| openstack[k] = v }
+
+        if hint?('hp')
+          openstack['provider'] = 'hp'
+        else
+          openstack['provider'] = 'openstack'
+        end
+
+      else
+        Ohai::Log.debug("unable to connect to the OpenStack metadata service")
+      end
     else
-      openstack['provider'] = 'openstack'
+      Ohai::Log.debug("NOT ohai openstack")
     end
-  else
-    Ohai::Log.debug("unable to connect to the OpenStack metadata service")
   end
-else
-  Ohai::Log.debug("NOT ohai openstack")
 end

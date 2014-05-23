@@ -18,93 +18,118 @@
 
 require 'rbconfig'
 
-provides "languages/c"
+Ohai.plugin(:C) do
+  provides "languages/c"
 
-require_plugin "languages"
+  depends "languages"
 
-c = Mash.new
+  collect_data do
+    c = Mash.new
 
-#gcc
-status, stdout, stderr = run_command(:no_status_check => true, :command => "gcc -v")
-if status == 0
-  description = stderr.split($/).last
-  output = description.split
-  if output.length >= 3
-    c[:gcc] = Mash.new
-    c[:gcc][:version] = output[2]
-    c[:gcc][:description] = description
-  end
-end
-
-#glibc
-["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-  status, stdout, stderr = run_command(:no_status_check => true, :command => glibc)
-  if status == 0
-    description = stdout.split($/).first
-    if description =~ /(\d+\.\d+\.?\d*)/
-      c[:glibc] = Mash.new
-      c[:glibc][:version] = $1
-      c[:glibc][:description] = description
+    #gcc
+    begin
+      so = shell_out("gcc -v")
+      if so.exitstatus == 0
+        description = so.stderr.split($/).last
+        output = description.split
+        if output.length >= 3
+          c[:gcc] = Mash.new
+          c[:gcc][:version] = output[2]
+          c[:gcc][:description] = description
+        end
+      end
+    rescue Errno::ENOENT
     end
-    break
+
+    #glibc
+    ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
+      begin
+        so = shell_out( Ohai.abs_path( glibc ))
+        if so.exitstatus == 0
+          description = so.stdout.split($/).first
+          if description =~ /(\d+\.\d+\.?\d*)/
+            c[:glibc] = Mash.new
+            c[:glibc][:version] = $1
+            c[:glibc][:description] = description
+          end
+          break
+        end
+      rescue Errno::ENOENT
+      end
+    end
+
+    #ms cl
+    begin
+      so = shell_out("cl /?")
+      if so.exitstatus == 0
+        description = so.stderr.lines.first.chomp
+        if description =~ /Compiler Version ([\d\.]+)/
+          c[:cl] = Mash.new
+          c[:cl][:version] = $1
+          c[:cl][:description] = description
+        end
+      end
+    rescue Errno::ENOENT
+    end
+
+    #ms vs
+    begin
+      so = shell_out("devenv.com /?")
+      if so.exitstatus == 0
+        lines = so.stdout.split($/)
+        description = lines[0].length == 0 ? lines[1] : lines[0]
+        if description =~ /Visual Studio Version ([\d\.]+)/
+          c[:vs] = Mash.new
+          c[:vs][:version] = $1.chop
+          c[:vs][:description] = description
+        end
+      end
+    rescue Errno::ENOENT
+    end
+
+    #ibm xlc
+    begin
+      so = shell_out("xlc -qversion")
+      if so.exitstatus == 0 or (so.exitstatus >> 8) == 249
+        description = so.stdout.split($/).first
+        if description =~ /V(\d+\.\d+)/
+          c[:xlc] = Mash.new
+          c[:xlc][:version] = $1
+          c[:xlc][:description] = description.strip
+        end
+      end
+    rescue Errno::ENOENT
+    end
+
+    #sun pro
+    begin
+      so = shell_out("cc -V -flags")
+      if so.exitstatus == 0
+        output = so.stderr.split
+        if so.stderr =~ /^cc: Sun C/ && output.size >= 4
+          c[:sunpro] = Mash.new
+          c[:sunpro][:version] = output[3]
+          c[:sunpro][:description] = so.stderr.chomp
+        end
+      end
+    rescue Errno::ENOENT
+    end
+
+    #hpux cc
+    begin
+      so = shell_out("what /opt/ansic/bin/cc")
+      if so.exitstatus == 0
+        description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
+        if description
+          output = description.split
+          c[:hpcc] = Mash.new
+          c[:hpcc][:version] = output[1] if output.size >= 1
+          c[:hpcc][:description] = description.strip
+        end
+      end
+    rescue Errno::ENOENT
+    end
+
+    languages[:c] = c if c.keys.length > 0
   end
 end
-
-#ms cl
-status, stdout, stderr = run_command(:no_status_check => true, :command => "cl /?")
-if status == 0
-  description = stderr.split($/).first
-  if description =~ /Compiler Version ([\d\.]+)/
-    c[:cl] = Mash.new
-    c[:cl][:version] = $1
-    c[:cl][:description] = description
-  end
-end
-
-#ms vs
-status, stdout, stderr = run_command(:no_status_check => true, :command => "devenv.com /?")
-if status == 0
-  lines = stdout.split($/)
-  description = lines[0].length == 0 ? lines[1] : lines[0]
-  if description =~ /Visual Studio Version ([\d\.]+)/
-    c[:vs] = Mash.new
-    c[:vs][:version] = $1.chop
-    c[:vs][:description] = description
-  end
-end
-
-#ibm xlc
-status, stdout, stderr = run_command(:no_status_check => true, :command => "xlc -qversion")
-if status == 0 or (status >> 8) == 249
-  description = stdout.split($/).first
-  if description =~ /V(\d+\.\d+)/
-    c[:xlc] = Mash.new
-    c[:xlc][:version] = $1
-    c[:xlc][:description] = description.strip
-  end
-end
-
-#sun pro
-status, stdout, stderr = run_command(:no_status_check => true, :command => "cc -V -flags")
-if status == 0
-  output = stderr.split
-  if stderr =~ /^cc: Sun C/ && output.size >= 4
-    c[:sunpro] = Mash.new
-    c[:sunpro][:version] = output[3]
-    c[:sunpro][:description] = stderr.chomp
-  end
-end
-
-#hpux cc
-status, stdout, stderr = run_command(:no_status_check => true, :command => "what /opt/ansic/bin/cc")
-if status == 0
-  description = stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
-  if description
-    output = description.split
-    c[:hpcc] = Mash.new
-    c[:hpcc][:version] = output[1] if output.size >= 1
-    c[:hpcc][:description] = description.strip
-  end
-end
-
-languages[:c] = c if c.keys.length > 0

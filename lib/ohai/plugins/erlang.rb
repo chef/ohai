@@ -16,25 +16,28 @@
 # limitations under the License.
 #
 
-provides "languages/erlang"
+Ohai.plugin(:Erlang) do
+  provides "languages/erlang"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-erlang = Mash.new
-status, stdout, stderr = run_command(:no_status_check => true, :command => "erl +V")
-
-if status == 0
-  output = stderr.split
-  if output.length >= 6
-    options = output[1]
-    options.gsub!(/(\(|\))/, '')
-    erlang[:version] = output[5]
-    erlang[:options] = options.split(',')
-    erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
-    if erlang[:version] and erlang[:options] and erlang[:emulator]
-      languages[:erlang] = erlang
+    erlang = Mash.new
+    so = shell_out("erl +V")
+    if so.exitstatus == 0
+      output = so.stderr.split
+      if output.length >= 6
+        options = output[1]
+        options.gsub!(/(\(|\))/, '')
+        erlang[:version] = output[5]
+        erlang[:options] = options.split(',')
+        erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
+        if erlang[:version] and erlang[:options] and erlang[:emulator]
+          languages[:erlang] = erlang
+        end
+      end
     end
   end
 end

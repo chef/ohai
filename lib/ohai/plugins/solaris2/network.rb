@@ -53,108 +53,113 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
-provides "network"
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
-require 'scanf'
-
-def encaps_lookup(ifname)
-  return "Ethernet" if ifname.eql?("e1000g")
-  return "Ethernet" if ifname.eql?("eri")
-  return "Ethernet" if ifname.eql?("net")
-  return "Loopback" if ifname.eql?("lo")
-  "Unknown"
-end
-
-def arpname_to_ifname(iface, arpname)
-  iface.keys.each do |ifn|
-    return ifn if ifn.split(':')[0].eql?(arpname)
+  def solaris_encaps_lookup(ifname)
+    return "Ethernet" if ifname.eql?("e1000g")
+    return "Ethernet" if ifname.eql?("eri")
+    return "Ethernet" if ifname.eql?("net")
+    return "Loopback" if ifname.eql?("lo")
+    "Unknown"
   end
 
-  nil
-end
+  def arpname_to_ifname(iface, arpname)
+    iface.keys.each do |ifn|
+      return ifn if ifn.split(':')[0].eql?(arpname)
+    end
 
-iface = Mash.new
-popen4("ifconfig -a") do |pid, stdin, stdout, stderr|
-  stdin.close
-  cint = nil
-  stdout.each do |line|
-    if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
-      cint = $1
-      iface[cint] = Mash.new unless iface[cint]
-      iface[cint][:mtu] = $2
-      iface[cint][:index] = $3
-      if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
-        flags = $1.split(',')
-      else
-        flags = Array.new
-      end
-      iface[cint][:flags] = flags.flatten
-      if cint =~ /^(\w+)(\d+.*)/
-        iface[cint][:type] = $1
-        iface[cint][:number] = $2
-        iface[cint][:encapsulation] = encaps_lookup($1)
-      end
-    end
-    if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
-    end
-    if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
-    end
-    if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
-    end
+    nil
   end
-end
 
-popen4("arp -an") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
-      next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
-      iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
-      iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
-    end
-  end
-end
+  collect_data(:solaris2) do
+    require 'scanf'
 
-iface.keys.each do |ifn|
-  iaddr = nil
-  if iface[ifn][:encapsulation].eql?("Ethernet")
-    iface[ifn][:addresses].keys.each do |addr|
-      if iface[ifn][:addresses][addr]["family"].eql?("inet")
-        iaddr = addr
-        break
+    iface = Mash.new
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+    counters Mash.new unless counters
+    counters[:network] = Mash.new unless counters[:network]
+
+    so = shell_out("ifconfig -a")
+    cint = nil
+
+    so.stdout.lines do |line|
+      if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
+        cint = $1
+        iface[cint] = Mash.new unless iface[cint]
+        iface[cint][:mtu] = $2
+        iface[cint][:index] = $3
+        if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
+          flags = $1.split(',')
+        else
+          flags = Array.new
+        end
+        iface[cint][:flags] = flags.flatten
+        if cint =~ /^(\w+)(\d+.*)/
+          iface[cint][:type] = $1
+          iface[cint][:number] = $2
+          iface[cint][:encapsulation] = solaris_encaps_lookup($1)
+        end
+      end
+      if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
+      end
+      if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
+      end
+      if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
       end
     end
-    if iface[ifn][:arp]
-      iface[ifn][:arp].keys.each do |addr|
-        if addr.eql?(iaddr)
-          iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
-          break
+
+    so = shell_out("arp -an")
+    so.stdout.lines do |line|
+      if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
+        next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
+        iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
+        iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
+      end
+    end
+
+    iface.keys.each do |ifn|
+      iaddr = nil
+      if iface[ifn][:encapsulation].eql?("Ethernet")
+        iface[ifn][:addresses].keys.each do |addr|
+          if iface[ifn][:addresses][addr]["family"].eql?("inet")
+            iaddr = addr
+            break
+          end
+        end
+        if iface[ifn][:arp]
+          iface[ifn][:arp].keys.each do |addr|
+            if addr.eql?(iaddr)
+              iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
+              break
+            end
+          end
         end
       end
     end
+
+    network[:interfaces] = iface
+
+    so = shell_out("route -n get default")
+    so.stdout.lines do |line|
+      matches = /interface: (\S+)/.match(line)
+      if matches
+        Ohai::Log.debug("found gateway device: #{$1}")
+        network[:default_interface] = matches[1]
+      end
+      matches = /gateway: (\S+)/.match(line)
+      if matches
+        Ohai::Log.debug("found gateway: #{$1}")
+        network[:default_gateway] = matches[1]
+      end
+    end
   end
 end
-
-network[:interfaces] = iface
-
-popen4("route -n get default") do |pid, stdin, stdout, stderr|
-  stdin.close
-  route_get = stdout.read
-  matches = /interface: (\S+)/.match(route_get)
-  if matches
-    Ohai::Log.debug("found gateway device: #{$1}")
-    network[:default_interface] = matches[1]
-  end
-  matches = /gateway: (\S+)/.match(route_get)
-  if matches
-    Ohai::Log.debug("found gateway: #{$1}")
-    network[:default_gateway] = matches[1]
-  end
-end
-

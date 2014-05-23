@@ -15,56 +15,59 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-provides "system_profile"
 
-begin
-  require 'plist'
+Ohai.plugin(:SystemProfile) do
+  provides "system_profile"
 
-  system_profile Array.new
-  items Array.new
-  detail_level = {
-    'mini' => [
-      "SPParallelATAData",
-      "SPAudioData",
-      "SPBluetoothData",
-      "SPCardReaderData",
-      "SPDiagnosticsData",
-      "SPDiscBurningData",
-      "SPEthernetData",
-      "SPFibreChannelData",
-      "SPFireWireData",
-      "SPDisplaysData",
-      "SPHardwareRAIDData",
-      "SPMemoryData",
-      "SPModemData",
-      "SPNetworkData",
-      "SPPCIData",
-      "SPParallelSCSIData",
-      "SPPrintersSoftwareData",
-      "SPPrintersData",
-      "SPSASData",
-      "SPSerialATAData",
-      "SPSoftwareData",
-      "SPThunderboltData",
-      "SPUSBData",
-      "SPWWANData",
-      "SPAirPortData"
-    ],
-    'full' => [
-      "SPHardwareDataType"
-    ]
-  }
+  collect_data(:darwin) do
+    begin
+      require 'plist'
 
-  detail_level.each do |level, data_types|
-    popen4("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}") do |pid, stdin, stdout, stderr|
-      stdin.close
-      Plist::parse_xml(stdout.read).each do |e|
-        items << e
+      system_profile Array.new
+      items =  Array.new
+      detail_level = {
+        'mini' => [
+                   "SPParallelATAData",
+                   "SPAudioData",
+                   "SPBluetoothData",
+                   "SPCardReaderData",
+                   "SPDiagnosticsData",
+                   "SPDiscBurningData",
+                   "SPEthernetData",
+                   "SPFibreChannelData",
+                   "SPFireWireData",
+                   "SPDisplaysData",
+                   "SPHardwareRAIDData",
+                   "SPMemoryData",
+                   "SPModemData",
+                   "SPNetworkData",
+                   "SPPCIData",
+                   "SPParallelSCSIData",
+                   "SPPrintersSoftwareData",
+                   "SPPrintersData",
+                   "SPSASData",
+                   "SPSerialATAData",
+                   "SPSoftwareData",
+                   "SPThunderboltData",
+                   "SPUSBData",
+                   "SPWWANData",
+                   "SPAirPortData"
+                  ],
+        'full' => [
+                   "SPHardwareDataType"
+                  ]
+      }
+
+      detail_level.each do |level, data_types|
+        so = shell_out("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}")
+        Plist::parse_xml(so.stdout).each do |e|
+          items << e
+        end
       end
+
+      system_profile items.sort_by { |h| h['_dataType'] }
+    rescue LoadError => e
+      Ohai::Log.debug("Can't load gem: #{e})")
     end
   end
-
-  system_profile items.sort_by { |h| h['_dataType'] }
-rescue LoadError => e
-  Ohai::Log.debug("Can't load gem: #{e})")
 end

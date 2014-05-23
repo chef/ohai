@@ -1,6 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
+# Copyright:: Copyright (c) 2008-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,32 +23,27 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "plugin python" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @status = 0
+    @plugin = get_plugin("python")
+    @plugin[:languages] = Mash.new
     @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("python -c \"import sys; print sys.version\"").and_return(mock_shell_out(0, @stdout, ""))
   end
   
   it "should get the python version from printing sys.version and sys.platform" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([0, "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n", ""])
-    @ohai._require_plugin("python")
+    @plugin.should_receive(:shell_out).with("python -c \"import sys; print sys.version\"").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
   end
 
   it "should set languages[:python][:version]" do
-    @ohai._require_plugin("python")
-    @ohai.languages[:python][:version].should eql("2.5.2")
+    @plugin.run
+    @plugin.languages[:python][:version].should eql("2.5.2")
   end
   
   it "should not set the languages[:python] tree up if python command fails" do
-    @status = 1
     @stdout = "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"python -c \"import sys; print sys.version\""}).and_return([@status, @stdout, @stderr])
-    @ohai._require_plugin("python")
-    @ohai.languages.should_not have_key(:python)
+    @plugin.stub(:shell_out).with("python -c \"import sys; print sys.version\"").and_return(mock_shell_out(1, @stdout, ""))
+    @plugin.run
+    @plugin.languages.should_not have_key(:python)
   end
-  
+
 end

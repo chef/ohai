@@ -22,32 +22,27 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin mono" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @status = 0
+    @plugin = get_plugin("mono")
+    @plugin[:languages] = Mash.new
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the mono version from running mono -V" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([0, "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n", ""])
-    @ohai._require_plugin("mono")
+    @plugin.should_receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
   end
 
   it "should set languages[:mono][:version]" do
-    @ohai._require_plugin("mono")
-    @ohai.languages[:mono][:version].should eql("1.2.6")
+    @plugin.run
+    @plugin.languages[:mono][:version].should eql("1.2.6")
   end
 
   it "should not set the languages[:mono] tree up if mono command fails" do
-    @status = 1
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"mono -V"}).and_return([@status, @stdout, @stderr])
-    @ohai._require_plugin("mono")
-    @ohai.languages.should_not have_key(:mono)
+    @plugin.stub(:shell_out).with("mono -V").and_return(mock_shell_out(1, @stdout, ""))
+    @plugin.run
+    @plugin.languages.should_not have_key(:mono)
   end
 
 end

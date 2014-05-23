@@ -20,16 +20,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.extend(SimpleFromFile)
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:os] = "solaris2"
-    @ohai.stub!(:popen4).with("/sbin/uname -X")
+    @plugin = get_plugin("solaris2/platform")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin.stub(:shell_out).with("/sbin/uname -X")
   end
   
   describe "on SmartOS" do
     before(:each) do
-      uname_x = <<-UNAME_X
+      @uname_x = <<-UNAME_X
 System = SunOS
 Node = node.example.com
 Release = 5.11
@@ -42,34 +40,67 @@ OEM# = 0
 Origin# = 1
 NumCPU = 16
 UNAME_X
-      @stdin = mock("STDIN", { :close => true })
-      @pid = 10
-      @stderr = mock("STDERR")
-      @status = 0
 
-      @uname_x_lines = uname_x.split("\n")
-
-      File.stub!(:exists?).with("/sbin/uname").and_return(true)
-      @ohai.stub(:popen4).with("/sbin/uname -X").and_yield(@pid, @stdin, @uname_x_lines, @stderr).and_return(@status)
+      File.stub(:exists?).with("/sbin/uname").and_return(true)
+      @plugin.stub(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
-      @mock_file.stub!(:close).and_return(0)
-      File.stub!(:open).with("/etc/release").and_yield(@release)
+      File.stub(:open).with("/etc/release").and_yield(@release)
     end
 
     it "should run uname and set platform and build" do 
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform_build].should == "joyent_20120130T201844Z"
+      @plugin.run
+      @plugin[:platform_build].should == "joyent_20120130T201844Z"
     end
 
     it "should set the platform" do
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform].should == "smartos"
+      @plugin.run
+      @plugin[:platform].should == "smartos"
     end
     
     it "should set the platform_version" do
-      @ohai._require_plugin("solaris2::platform")
-      @ohai[:platform_version].should == "5.11"
+      @plugin.run
+      @plugin[:platform_version].should == "5.11"
+    end
+
+  end
+
+  describe "on Solaris 11" do
+    before(:each) do
+      @uname_x = <<-UNAME_X
+System = SunOS
+Node = node.example.com
+Release = 5.11
+KernelID = 11.1
+Machine = i86pc
+BusType = <unknown>
+Serial = <unknown>
+Users = <unknown>
+OEM# = 0
+Origin# = 1
+NumCPU = 1
+UNAME_X
+
+      File.stub(:exists?).with("/sbin/uname").and_return(true)
+      @plugin.stub(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+
+      @release = StringIO.new("                             Oracle Solaris 11.1 X86\n")
+      File.stub(:open).with("/etc/release").and_yield(@release)
+    end
+
+    it "should run uname and set platform and build" do
+      @plugin.run
+      @plugin[:platform_build].should == "11.1"
+    end
+
+    it "should set the platform" do
+      @plugin.run
+      @plugin[:platform].should == "solaris2"
+    end
+
+    it "should set the platform_version" do
+      @plugin.run
+      @plugin[:platform_version].should == "5.11"
     end
 
   end

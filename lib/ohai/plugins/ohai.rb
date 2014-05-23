@@ -16,10 +16,15 @@
 # limitations under the License.
 #
 
-require "ohai"
-provides "ohai"
+Ohai.plugin(:Ohai) do
+  provides "chef_packages/ohai"
 
-self[:chef_packages] = Mash.new unless self[:chef_packages]
-self[:chef_packages][:ohai] = Mash.new
-self[:chef_packages][:ohai][:version] = Ohai::VERSION
-self[:chef_packages][:ohai][:ohai_root] = Ohai::OHAI_ROOT
+  collect_data do
+    require 'ohai'
+
+    chef_packages Mash.new unless chef_packages
+    chef_packages[:ohai] = Mash.new
+    chef_packages[:ohai][:version] = Ohai::VERSION
+    chef_packages[:ohai][:ohai_root] = Ohai::OHAI_ROOT
+  end
+end

@@ -1,6 +1,7 @@
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Author:: Claire McQuin (claire@opscode.com)
+# Copyright:: Copyright (c) 2011, 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,43 +21,295 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 
 tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
 
-describe Ohai::System, "plugin fail" do
-  
+shared_examples "a v7 loading failure" do
   before(:all) do
     begin
       Dir.mkdir("#{tmp}/plugins")
     rescue Errno::EEXIST
-      # Ignore it
+      # ignore
     end
-    fail_plugin=File.open("#{tmp}/plugins/fail.rb","w+")
-    fail_plugin.write("provides \"fail\"require 'thiswillblowupinyourface'\nk=MissingClassName.new\nfail \"ohnoes\"")
-    fail_plugin.close
-    real_plugin=File.open("#{tmp}/plugins/real.rb","w+")
-    real_plugin.write("provides \"real\"\nreal \"useful\"\n")
-    real_plugin.close
-    @plugin_path=Ohai::Config[:plugin_path]
   end
-  
+
   before(:each) do
-    Ohai::Config[:plugin_path]=["#{tmp}/plugins"]
-    @ohai=Ohai::System.new
+    fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
+    fail_file.write(failstr)
+    fail_file.close
   end
-  
-  after(:all) do
+
+  after(:each) do
     File.delete("#{tmp}/plugins/fail.rb")
-    File.delete("#{tmp}/plugins/real.rb")
+  end
+
+  after(:all) do
     begin
       Dir.delete("#{tmp}/plugins")
     rescue
-      # Don't care if it fails
+      # ignore
     end
-    Ohai::Config[:plugin_path]=@plugin_path
   end
-  
-  it "should continue gracefully if plugin loading fails" do
-    @ohai.require_plugin("fail")
-    @ohai.require_plugin("real")
-    @ohai.data[:real].should eql("useful")
-    @ohai.data.should_not have_key("fail")
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    @loader = Ohai::Loader.new(@ohai)
+  end
+
+  it "should not have attribute keys" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    #@ohai.attributes.should_not have_key("fail")
+    lambda { @ohai.provides_map.find_providers_for(["fail"]) }.should raise_error(Ohai::Exceptions::AttributeNotFound)
+  end
+
+  it "should not have source key" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    @ohai.v6_dependency_solver.should_not have_key("#{tmp}/plugins/fail.rb")
+  end
+
+  it "should write to Ohai::Log" do
+    Ohai::Log.should_receive(:warn).once
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
+
+shared_examples "a v7 loading success" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ignore
+    end
+  end
+
+  before(:each) do
+    fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
+    fail_file.write(failstr)
+    fail_file.close
+  end
+
+  after(:each) do
+    File.delete("#{tmp}/plugins/fail.rb")
+  end
+
+  after(:all) do
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    @loader = Ohai::Loader.new(@ohai)
+  end
+
+  it "should have attribute keys" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    @ohai.provides_map.should have_key("fail")
+  end
+
+  it "should have source key" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    @ohai.v6_dependency_solver.should have_key("#{tmp}/plugins/fail.rb")
+  end
+
+  it "should not write to Ohai::Log" do
+    Ohai::Log.should_not_receive(:warn)
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+  end
+end
+
+shared_examples "a v7 run failure" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ignore
+    end
+  end
+
+  before(:each) do
+    fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
+    fail_file.write(failstr)
+    fail_file.close
+  end
+
+  after(:each) do
+    File.delete("#{tmp}/plugins/fail.rb")
+  end
+
+  after(:all) do
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    @loader = Ohai::Loader.new(@ohai)
+  end
+
+  it "should not have new attribute keys" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
+    @ohai.provides_map.should_not have_key("other")
+  end
+
+  it "should write to Ohai::Log" do
+    Ohai::Log.should_receive(:warn).once
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
+  end
+end
+
+=begin
+shared_examples "a v6 run failure" do
+  before(:all) do
+    begin
+      Dir.mkdir("#{tmp}/plugins")
+    rescue Errno::EEXIST
+      # ignore
+    end
+  end
+
+  before(:each) do
+    fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
+    fail_file.write(failstr)
+    fail_file.close
+  end
+
+  after(:each) do
+    File.delete("#{tmp}/plugins/fail.rb")
+  end
+
+  after(:all) do
+    begin
+      Dir.delete("#{tmp}/plugins")
+    rescue
+      # ignore
+    end
+  end
+
+  before(:each) do
+    @ohai = Ohai::System.new
+    @loader = Ohai::Loader.new(@ohai)
+  end
+
+  it "should not add data keys" do
+    @loader.load_plugin("#{tmp}/plugins/fail.rb")
+    @ohai.data.should_not have_key("fail")
+  end
+
+  it "should write to Ohai::Log" do
+    Ohai::Log.should_receive(:warn).once
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
+  end
+end
+=end
+
+describe "when using DSL commands outside Ohai.plugin block" do
+  failstr1 = <<EOF
+provides "fail"
+Ohai.plugin do
+end
+EOF
+
+  failstr2 = <<EOF
+depends "fail"
+Ohai.plugin do
+end
+EOF
+
+  failstr3 = <<EOF
+collect_data do
+end
+Ohai.plugin do
+end
+EOF
+
+  it_behaves_like "a v7 loading failure" do
+    let(:failstr) { failstr1 }
+  end
+
+  it_behaves_like "a v7 loading failure" do
+    let(:failstr) { failstr2 }
+  end
+
+  it_behaves_like "a v7 loading failure" do
+    let(:failstr) { failstr3 }
+  end
+end
+
+describe "when using nonexistent DSL commands in Ohai.plugin block" do
+  failstr = "Ohai.plugin do\n\tcreates \"fail\"\nend\n"
+  
+  it_behaves_like "a v7 loading failure" do
+    let(:failstr) { failstr }
+  end
+end
+
+=begin
+describe "when using DSL commands in collect_data block" do
+  failstr1 = <<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    provides "other"
+  end
+end
+EOF
+
+  failstr2 =<<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    provides "other"
+  end
+end
+EOF
+  
+  it_behaves_like "a v7 loading success" do
+    let(:failstr) { failstr1 }
+  end
+
+  it_behaves_like "a v7 run failure" do
+    let(:failstr) { failstr1 }
+  end
+
+  it_behaves_like "a v7 loading success" do
+    let(:failstr) { failstr2 }
+  end
+
+  it_behaves_like "a v7 run failure" do
+    let(:failstr) { failstr2 }
+  end
+end
+
+describe "when setting undeclared attribute in collect_data block" do
+  failstr = <<EOF
+Ohai.plugin do
+  provides "fail"
+  collect_data do
+    creates "other"
+  end
+end
+EOF
+  it_behaves_like "a v7 loading success" do
+    let(:failstr) { failstr }
+  end
+
+  it_behaves_like "a v7 run failure" do
+    let(:failstr) { failstr }
+  end
+end
+
+describe "when setting undeclared attribute" do
+  failstr = <<EOF
+provides "fail"
+other "attribute"
+EOF
+
+  it_behaves_like "a v6 run failure" do
+    let(:failstr) { failstr }
+  end
+end
+=end

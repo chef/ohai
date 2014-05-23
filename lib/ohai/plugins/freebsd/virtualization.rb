@@ -16,78 +16,79 @@
 # limitations under the License.
 #
 
-provides "virtualization"
+Ohai.plugin(:Virtualization) do
+  provides "virtualization"
 
-virtualization Mash.new
+  collect_data(:freebsd) do
+    virtualization Mash.new
 
-if from("sysctl -n security.jail.jailed").to_i == 1
-  virtualization[:system] = "jail"
-  virtualization[:role] = "guest"
-end
-
-# detect from modules
-popen4("/sbin/kldstat") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    case line
-    when /vboxdrv/
-      virtualization[:system] = "vbox"
-      virtualization[:role] = "host"
-    when /vboxguest/
-      virtualization[:system] = "vbox"
+    so = shell_out("sysctl -n security.jail.jailed")
+    if so.stdout.split($/)[0].to_i == 1
+      virtualization[:system] = "jail"
       virtualization[:role] = "guest"
     end
-  end
-end
 
-
-# XXX doesn't work when jail is there but not running (ezjail-admin stop)
-if from("jls -n \| wc -l").to_i >= 1
-    virtualization[:system] = "jail"
-    virtualization[:role] = "host"
-end
-
-# KVM Host support for FreeBSD is in development
-# http://feanor.sssup.it/~fabio/freebsd/lkvm/
-
-# Detect KVM/QEMU from cpu, report as KVM
-# hw.model: QEMU Virtual CPU version 0.9.1
-if from("sysctl -n hw.model") =~ /QEMU Virtual CPU/
-  virtualization[:system] = "kvm"
-  virtualization[:role] = "guest"
-end
-
-# http://www.dmo.ca/blog/detecting-virtualization-on-linux
-if File.exists?("/usr/local/sbin/dmidecode")
-  popen4("dmidecode") do |pid, stdin, stdout, stderr|
-    stdin.close
-    found_virt_manufacturer = nil
-    found_virt_product = nil
-    stdout.each do |line|
+    # detect from modules
+    so = shell_out("#{ Ohai.abs_path( "/sbin/kldstat" )}")
+    so.stdout.lines do |line|
       case line
-      when /Manufacturer: Microsoft/
-        found_virt_manufacturer = "microsoft"
-      when /Product Name: Virtual Machine/
-        found_virt_product = "microsoft"
-      when /Version: 5.0/
-        if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-          virtualization[:system] = "virtualpc"
-          virtualization[:role] = "guest"
-        end
-      when /Version: VS2005R2/
-        if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-          virtualization[:system] = "virtualserver"
-          virtualization[:role] = "guest"
-        end
-      when /Manufacturer: VMware/
-        found_virt_manufacturer = "vmware"
-      when /Product Name: VMware Virtual Platform/
-        if found_virt_manufacturer == "vmware" 
-          virtualization[:system] = "vmware"
-          virtualization[:role] = "guest"
+      when /vboxdrv/
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "host"
+      when /vboxguest/
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "guest"
+      end
+    end
+
+    # XXX doesn't work when jail is there but not running (ezjail-admin stop)
+    so = shell_out("jls -n")
+    if ( so.stdout || "" ).lines.count >= 1
+      virtualization[:system] = "jail"
+      virtualization[:role] = "host"
+    end
+
+    # KVM Host support for FreeBSD is in development
+    # http://feanor.sssup.it/~fabio/freebsd/lkvm/
+
+    # Detect KVM/QEMU from cpu, report as KVM
+    # hw.model: QEMU Virtual CPU version 0.9.1
+    so = shell_out("sysctl -n hw.model")
+    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+    end
+
+    # http://www.dmo.ca/blog/detecting-virtualization-on-linux
+    if File.exists?("/usr/local/sbin/dmidecode")
+      so = shell_out("dmidecode")
+      found_virt_manufacturer = nil
+      found_virt_product = nil
+      so.stdout.lines do |line|
+        case line
+        when /Manufacturer: Microsoft/
+          found_virt_manufacturer = "microsoft"
+        when /Product Name: Virtual Machine/
+          found_virt_product = "microsoft"
+        when /Version: 5.0/
+          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
+            virtualization[:system] = "virtualpc"
+            virtualization[:role] = "guest"
+          end
+        when /Version: VS2005R2/
+          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
+            virtualization[:system] = "virtualserver"
+            virtualization[:role] = "guest"
+          end
+        when /Manufacturer: VMware/
+          found_virt_manufacturer = "vmware"
+        when /Product Name: VMware Virtual Platform/
+          if found_virt_manufacturer == "vmware"
+            virtualization[:system] = "vmware"
+            virtualization[:role] = "guest"
+          end
         end
       end
     end
   end
 end
-

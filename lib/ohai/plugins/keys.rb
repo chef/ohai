@@ -17,6 +17,10 @@
 # limitations under the License.
 #
 
-provides "keys"
+Ohai.plugin(:Keys) do
+  provides "keys"
 
-keys Mash.new
+  collect_data do
+    keys Mash.new
+  end
+end

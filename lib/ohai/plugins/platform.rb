@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version", "platform_family"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_family"
+  depends "os", "os_version"
 
-require_plugin "#{os}::platform"
-
-platform os unless attribute?("platform")
-
-platform_version os_version unless attribute?("platform_version")
-
-platform_family platform unless attribute?("platform_family")
-
+  collect_data(:default) do
+    platform os unless attribute?("platform")
+    platform_version os_version unless attribute?("platform_version")
+    platform_family platform unless attribute?("platform_family")
+  end
+end

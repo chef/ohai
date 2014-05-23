@@ -16,21 +16,24 @@
 # limitations under the License.
 #
 
-require "sigar"
+Ohai.plugin(:Memory) do
+  provides "memory"
 
-sigar = Sigar.new
+  collect_data(:hpux, :default) do
+    require "sigar"
+    sigar = Sigar.new
 
-provides "memory"
+    memory Mash.new
+    memory[:swap] = Mash.new
 
-memory Mash.new
-memory[:swap] = Mash.new
+    mem = sigar.mem
+    swap = sigar.swap
 
-mem = sigar.mem
-swap = sigar.swap
-
-memory[:total] = (mem.total / 1024).to_s + "kB"
-memory[:free] = (mem.free / 1024).to_s + "kB"
-memory[:used] = (mem.used / 1024).to_s + "kB"
-memory[:swap][:total] = (swap.total / 1024).to_s + "kB"
-memory[:swap][:free] = (swap.free / 1024).to_s + "kB"
-memory[:swap][:used] = (swap.used / 1024).to_s + "kB"
+    memory[:total] = (mem.total / 1024).to_s + "kB"
+    memory[:free] = (mem.free / 1024).to_s + "kB"
+    memory[:used] = (mem.used / 1024).to_s + "kB"
+    memory[:swap][:total] = (swap.total / 1024).to_s + "kB"
+    memory[:swap][:free] = (swap.free / 1024).to_s + "kB"
+    memory[:swap][:used] = (swap.used / 1024).to_s + "kB"
+  end
+end

@@ -16,42 +16,42 @@
 # limitations under the License.
 #
 
-provides "filesystem"
+Ohai.plugin(:Filesystem) do
+  provides "filesystem"
 
-fs = Mash.new
+  collect_data(:darwin) do
+    fs = Mash.new
 
-block_size = 0
-popen4("df") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    case line
-    when /^Filesystem\s+(\d+)-/
-      block_size = $1.to_i
-      next
-    when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-      filesystem = $1
-      fs[filesystem] = Mash.new
-      fs[filesystem][:block_size] = block_size
-      fs[filesystem][:kb_size] = $2.to_i / (1024 / block_size)
-      fs[filesystem][:kb_used] = $3.to_i / (1024 / block_size)
-      fs[filesystem][:kb_available] = $4.to_i / (1024 / block_size)
-      fs[filesystem][:percent_used] = $5
-      fs[filesystem][:mount] = $6
+    block_size = 0
+    so = shell_out("df")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem\s+(\d+)-/
+        block_size = $1.to_i
+        next
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+        filesystem = $1
+        fs[filesystem] = Mash.new
+        fs[filesystem][:block_size] = block_size
+        fs[filesystem][:kb_size] = $2.to_i / (1024 / block_size)
+        fs[filesystem][:kb_used] = $3.to_i / (1024 / block_size)
+        fs[filesystem][:kb_available] = $4.to_i / (1024 / block_size)
+        fs[filesystem][:percent_used] = $5
+        fs[filesystem][:mount] = $6
+      end
     end
+
+    so = shell_out("mount")
+    so.stdout.lines do |line|
+      if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
+        filesystem = $1
+        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+        fs[filesystem][:mount] = $2
+        fs[filesystem][:fs_type] = $3
+        fs[filesystem][:mount_options] = $4.split(/,\s*/)
+      end
+    end
+
+    filesystem fs
   end
 end
-
-popen4("mount") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
-      filesystem = $1
-      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:mount] = $2
-      fs[filesystem][:fs_type] = $3
-      fs[filesystem][:mount_options] = $4.split(/,\s*/)
-    end
-  end
-end
-
-filesystem fs

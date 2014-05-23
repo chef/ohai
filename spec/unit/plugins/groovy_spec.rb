@@ -22,32 +22,26 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "plugin groovy" do
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @status = 0
+    @plugin = get_plugin("groovy")
+    @plugin[:languages] = Mash.new
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
+    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the groovy version from running groovy -v" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([0, "Groovy Version: 1.6.3 JVM: 1.6.0_0\n", ""])
-    @ohai._require_plugin("groovy")
+    @plugin.should_receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
   end
 
   it "should set languages[:groovy][:version]" do
-    @ohai._require_plugin("groovy")
-    @ohai.languages[:groovy][:version].should eql("1.6.3")
+    @plugin.run
+    @plugin.languages[:groovy][:version].should eql("1.6.3")
   end
 
   it "should not set the languages[:groovy] tree up if groovy command fails" do
-    @status = 1
-    @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
-    @stderr = ""
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"groovy -v"}).and_return([@status, @stdout, @stderr])
-    @ohai._require_plugin("groovy")
-    @ohai.languages.should_not have_key(:groovy)
+    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(1, @stdout, ""))
+    @plugin.run
+    @plugin.languages.should_not have_key(:groovy)
   end
 
 end

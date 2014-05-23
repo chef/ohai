@@ -23,11 +23,18 @@ require 'stringio'
 require 'tmpdir'
 require 'fcntl'
 require 'etc'
-require 'systemu'
+require 'mixlib/shellout'
 
 module Ohai
   module Mixin
     module Command
+      def shell_out(cmd)
+        m = Mixlib::ShellOut.new(cmd)
+        m.run_command
+        m
+      end
+
+      module_function :shell_out
 
       def run_command(args={})
         if args.has_key?(:creates)
@@ -48,11 +55,6 @@ module Ohai
         status = nil
         Dir.chdir(args[:cwd]) do
           status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
-          # systemu returns 42 when it hits unexpected errors
-          if status.exitstatus == 42 and stderr_string == ""
-            stderr_string = "Failed to run: #{args[:command]}, assuming command not found"
-            Ohai::Log.debug(stderr_string)
-          end
 
           if stdout_string
             Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
@@ -101,18 +103,12 @@ module Ohai
       end
 
       def run_command_windows(command, timeout)
-        if timeout
-          begin
-            systemu(command)
-          rescue SystemExit => e
-            raise
-          rescue Timeout::Error => e
-            Ohai::Log.error("#{command} exceeded timeout #{timeout}")
-            raise(e)
-          end
-        else
-          systemu(command)
-        end
+        shellout_opts = {}
+        shellout_opts[:timeout] = timeout if timeout
+
+        m = Mixlib::ShellOut.new(command, shellout_opts)
+        m.run_command
+        [m.status, m.stdout, m.stderr]
       end
 
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/
@@ -128,12 +124,12 @@ module Ohai
       #
       # Thanks Ara!
       def popen4(cmd, args={}, &b)
-	
+
 	## Disable garbage collection to work around possible bug in MRI
   # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
   # See OHAI-330 / CHEF-2916 / CHEF-1305
 	GC.disable
-	
+
         # Waitlast - this is magic.
         #
         # Do we wait for the child process to die before we yield
@@ -224,6 +220,10 @@ module Ohai
 
         begin
           e = Marshal.load ps.first
+          pw.last.close
+          pr.first.close
+          pe.first.close
+          Process.wait(cid)
           raise(Exception === e ? e : "unknown failure!")
         rescue EOFError # If we get an EOF error, then the exec was successful
           42
@@ -325,9 +325,10 @@ module Ohai
               # have encoding methods.
               if "".respond_to?(:force_encoding) && defined?(Encoding)
                 o.string.force_encoding(Encoding.default_external)
+                o.string.encode!('UTF-8', :invalid => :replace, :undef => :replace, :replace => '?')
                 e.string.force_encoding(Encoding.default_external)
+                e.string.encode!('UTF-8', :invalid => :replace, :undef => :replace, :replace => '?')
               end
-
               b[cid, pi[0], o, e]
               results.last
             end

@@ -16,6 +16,10 @@
 # limitations under the License.
 #
 
-provides "languages"
+Ohai.plugin(:Languages) do
+  provides "languages"
 
-languages Mash.new
+  collect_data do
+    languages Mash.new
+  end
+end

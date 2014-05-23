@@ -21,7 +21,29 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris2.X network plugin" do
 
   before do
-    solaris_ifconfig = <<-ENDIFCONFIG
+    @solaris_arp_rn = <<-ARP_RN
+Net to Media Table: IPv4
+Device   IP Address               Mask      Flags   Phys Addr
+------ -------------------- --------------- ----- ---------------
+rtls0  172.31.4.1           255.255.255.255       00:14:69:81:0b:c0
+rtls0  172.31.4.44          255.255.255.255       00:0c:29:c4:9a:11
+rtls0  172.31.5.16          255.255.255.255       de:ad:be:ef:3b:ba
+rtls0  172.31.4.16          255.255.255.255       d8:d3:85:65:39:40
+rtls0  172.31.4.12          255.255.255.255       d8:d3:85:bb:43:b0
+rtls0  172.31.4.115         255.255.255.255       52:54:00:0d:b7:5b
+rtls0  172.31.4.126         255.255.255.255       52:54:00:2d:93:0c
+rtls0  172.31.4.125         255.255.255.255       02:08:20:2e:29:8d
+rtls0  172.31.4.121         255.255.255.255       52:54:00:25:8a:3f
+rtls0  172.31.4.103         255.255.255.255 SP    52:54:00:7f:22:e7
+rtls0  172.31.4.102         255.255.255.255       02:08:20:88:38:18
+rtls0  172.31.4.106         255.255.255.255       02:08:20:6d:cc:aa
+rtls0  172.31.4.83          255.255.255.255       02:08:20:05:8e:75
+rtls0  172.31.4.82          255.255.255.255       52:54:00:2d:93:0c
+rtls0  172.31.4.81          255.255.255.255       02:08:20:37:80:87
+rtls0  224.0.0.0            240.0.0.0       SM    01:00:5e:00:00:00
+ARP_RN
+
+    @solaris_ifconfig = <<-ENDIFCONFIG
 lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
         inet 127.0.0.1 netmask ff000000
 e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 3
@@ -61,7 +83,7 @@ vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 0
  inet6 fe80::203:baff:fe17:4444/128
 ENDIFCONFIG
 
-    solaris_netstat_rn = <<-NETSTAT_RN
+    @solaris_netstat_rn = <<-NETSTAT_RN
 Routing Table: IPv4
   Destination           Gateway           Flags  Ref     Use     Interface
 -------------------- -------------------- ----- ----- ---------- ---------
@@ -87,41 +109,43 @@ destination: default
        0         0         0         0         0         0      1500         0
 ROUTE_GET
 
-    @stdin = StringIO.new
-    @ifconfig_lines = solaris_ifconfig.split("\n")
+    @ifconfig_lines = @solaris_ifconfig.split("\n")
 
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai[:network] = Mash.new
+    @plugin = get_plugin("solaris2/network")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin[:network] = Mash.new
 
-    @ohai.stub(:popen4).with("ifconfig -a")
-    @ohai.stub(:popen4).with("arp -an")
+    @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))
+    @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @solaris_arp_rn, ""))
+    @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
   end
 
   describe "gathering IP layer address info" do
     before do
-      @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin, @ifconfig_lines, nil)
-      @ohai._require_plugin("solaris2::network")
+      @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
+      @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_ifconfig, ""))
+      @plugin.run
     end
 
     it "completes the run" do
-      @ohai['network'].should_not be_nil
+      @plugin['network'].should_not be_nil
     end
 
     it "detects the interfaces" do
-      @ohai['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "qfe1"]
+      @plugin['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3","net0", "qfe1"]
     end
 
     it "detects the ip addresses of the interfaces" do
-      @ohai['network']['interfaces']['e1000g0:3']['addresses'].keys.should include('72.2.115.28')
+      @plugin['network']['interfaces']['e1000g0:3']['addresses'].keys.should include('72.2.115.28')
     end
 
     it "detects the encapsulation type of the interfaces" do
-      @ohai['network']['interfaces']['e1000g0:3']['encapsulation'].should == 'Ethernet'
+      @plugin['network']['interfaces']['e1000g0:3']['encapsulation'].should == 'Ethernet'
     end
     
     it "detects the L3PROTECT network flag" do
-      @ohai['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
+      @plugin['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
     end
   end
 
@@ -129,13 +153,13 @@ ROUTE_GET
 
   describe "setting the node's default IP address attribute" do
     before do
-      @stdout = mock("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @ohai.stub!(:popen4).with("route -n get default").and_yield(nil,@stdin, @stdout, nil)
-      @ohai._require_plugin("solaris2::network")
+      @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
+      @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      @plugin.run
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @ohai[:network][:default_interface].should == 'e1000g0'
+      @plugin[:network][:default_interface].should == 'e1000g0'
     end
   end
 end

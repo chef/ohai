@@ -28,11 +28,10 @@ end
 
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
-    @ohai = Ohai::System.new
-
-    @ohai.stub!(:require_plugin).and_return(true)
+    @plugin = get_plugin("darwin/system_profiler")
+    @plugin.stub(:collect_os).and_return(:darwin)
   end
-  
+
   it "should return the right serial number" do
     mini_cmd = "system_profiler -xml -detailLevel mini SPParallelATAData SPAudioData SPBluetoothData"
     mini_cmd += " SPCardReaderData SPDiagnosticsData SPDiscBurningData SPEthernetData SPFibreChannelData"
@@ -40,9 +39,9 @@ describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
     mini_cmd += " SPPCIData SPParallelSCSIData SPPrintersSoftwareData SPPrintersData SPSASData SPSerialATAData"
     mini_cmd += " SPSoftwareData SPThunderboltData SPUSBData SPWWANData SPAirPortData"
     full_cmd = "system_profiler -xml -detailLevel full SPHardwareDataType"
-    @ohai.stub!(:popen4).with(full_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Full), nil)
-    @ohai.stub!(:popen4).with(mini_cmd).and_yield(nil, StringIO.new, StringIO.new(SystemProfilerOutput::Mini), nil)
-    @ohai._require_plugin("darwin::system_profiler")
-    @ohai['system_profile'][18]["_items"][0]["serial_number"].should == 'ABCDEFG12345'
+    @plugin.stub(:shell_out).with(full_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Full, ""))
+    @plugin.stub(:shell_out).with(mini_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Mini, ""))
+    @plugin.run
+    @plugin['system_profile'][18]["_items"][0]["serial_number"].should == 'ABCDEFG12345'
   end
 end

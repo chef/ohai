@@ -16,38 +16,14 @@
 # limitations under the License.
 #
 
-provides "os", "os_version"
+require 'ohai/mixin/os'
 
-require 'rbconfig'
+Ohai.plugin(:OS) do
+  provides "os", "os_version"
+  depends 'kernel'
 
-require_plugin 'kernel'
-
-case ::RbConfig::CONFIG['host_os']
-when /aix(.+)$/
-  os "aix"
-when /darwin(.+)$/
-  os "darwin"
-when /hpux(.+)$/
-  os "hpux"
-when /linux/
-  os "linux"
-when /freebsd(.+)$/
-  os "freebsd"
-when /openbsd(.+)$/
-  os "openbsd"
-when /netbsd(.*)$/
-  os "netbsd"
-when /solaris2/
-  os "solaris2"
-when /mswin|mingw32|windows/
-  # After long discussion in IRC the "powers that be" have come to a concensus
-  # that there is no other Windows platforms exist that were not based on the
-  # Windows_NT kernel, so we herby decree that "windows" will refer to all
-  # platforms built upon the Windows_NT kernel and have access to win32 or win64
-  # subsystems.
-  os "windows"
-else
-  os ::RbConfig::CONFIG['host_os']
+  collect_data do
+    os collect_os
+    os_version kernel[:release]
+  end
 end
-
-os_version kernel[:release]

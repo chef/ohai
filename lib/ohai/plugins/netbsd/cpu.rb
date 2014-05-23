@@ -16,33 +16,35 @@
 # limitations under the License.
 #
 
-provides 'cpu'
+Ohai.plugin(:CPU) do
+  provides 'cpu'
 
-cpuinfo = Mash.new
+  collect_data(:netbsd) do
+    cpuinfo = Mash.new
 
-# NetBSD provides some cpu information via sysctl, and a little via dmesg.boot
-# unlike OpenBSD and FreeBSD, NetBSD does not provide information about the
-# available instruction set
-# cpu0 at mainbus0 apid 0: Intel 686-class, 2134MHz, id 0x6f6
+    # NetBSD provides some cpu information via sysctl, and a little via dmesg.boot
+    # unlike OpenBSD and FreeBSD, NetBSD does not provide information about the
+    # available instruction set
+    # cpu0 at mainbus0 apid 0: Intel 686-class, 2134MHz, id 0x6f6
 
-File.open("/var/run/dmesg.boot").each do |line|
-  case line
-    when /cpu[\d\w\s]+:\s([\w\s\-]+),\s+(\w+),/
-      cpuinfo[:model_name] = $1
-      cpuinfo[:mhz] = $2.gsub(/mhz/i, "")
-  end
-end
-
-flags = []
-popen4("dmidecode") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    if line =~ /^\s+([A-Z\d-]+)\s+\([\w\s-]+\)$/
-      flags << $1.downcase
+    File.open("/var/run/dmesg.boot").each do |line|
+      case line
+      when /cpu[\d\w\s]+:\s([\w\s\-]+),\s+(\w+),/
+        cpuinfo[:model_name] = $1
+        cpuinfo[:mhz] = $2.gsub(/mhz/i, "")
+      end
     end
+
+    flags = []
+    so = shell_out("dmidecode")
+    so.stdout.lines do |line|
+      if line =~ /^\s+([A-Z\d-]+)\s+\([\w\s-]+\)$/
+        flags << $1.downcase
+      end
+    end
+
+    cpuinfo[:flags] = flags unless flags.empty?
+
+    cpu cpuinfo
   end
 end
-
-cpuinfo[:flags] = flags unless flags.empty?
-
-cpu cpuinfo

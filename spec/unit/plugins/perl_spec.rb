@@ -1,6 +1,7 @@
 #
 # Author:: Joshua Timberman(<joshua@opscode.com>)
-# Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Author:: Theodore Nordsieck (<theo@opscode.com>)
+# Copyright:: Copyright (c) 2009-2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,63 +21,38 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin perl" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai[:languages] = Mash.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    @pid = 2342
-    @stderr = StringIO.new
-    @stdout = StringIO.new(<<-OUT)
-version='5.8.8';
-archname='darwin-thread-multi-2level';
-OUT
-    @stdin = StringIO.new
-    @status = 0
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-      @status,
-      @stdout,
-      @stderr
-    ])
+    @plugin = get_plugin("perl")
+    @plugin[:languages] = Mash.new
+    @stdout = "version='5.8.8';#{$/}archname='darwin-thread-multi-2level';"
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run perl -V:version -V:archname" do
-    @ohai.should_receive(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return(true)
-    @ohai._require_plugin("perl")
-  end
-
-  it "should iterate over each line of perl command's stdout" do
-    @stdout.should_receive(:each_line).and_return(true)
-    @ohai._require_plugin("perl")
+    @plugin.should_receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
   end
 
   it "should set languages[:perl][:version]" do
-    @ohai._require_plugin("perl")
-    @ohai.languages[:perl][:version].should eql("5.8.8")
+    @plugin.run
+    @plugin.languages[:perl][:version].should eql("5.8.8")
   end
 
   it "should set languages[:perl][:archname]" do
-    @ohai._require_plugin("perl")
-    @ohai.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
+    @plugin.run
+    @plugin.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
   end
 
   it "should set languages[:perl] if perl command succeeds" do
-    @status = 0
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-      @status,
-      @stdout,
-      @stderr
-    ])
-    @ohai._require_plugin("perl")
-    @ohai.languages.should have_key(:perl)
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
+    @plugin.languages.should have_key(:perl)
   end
 
   it "should not set languages[:perl] if perl command fails" do
-     @status = 1
-    @ohai.stub!(:run_command).with({:no_status_check=>true, :command=>"perl -V:version -V:archname"}).and_return([
-      @status,
-      @stdout,
-      @stderr
-     ])
-     @ohai._require_plugin("perl")
-     @ohai.languages.should_not have_key(:perl)
+    @status = 1
+    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, @stdout, ""))
+    @plugin.run
+    @plugin.languages.should_not have_key(:perl)
   end
+
 end

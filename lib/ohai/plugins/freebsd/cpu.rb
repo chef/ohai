@@ -16,37 +16,45 @@
 # limitations under the License.
 #
 
-provides "cpu"
+Ohai.plugin(:CPU) do
+  provides "cpu"
 
-# all dmesg output for smp I can find only provides info about a single processor
-# identical processors is probably a hardware requirement so we'll duplicate data for each cpu
-# old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
-cpuinfo = Mash.new
+  collect_data(:freebsd) do
+    # all dmesg output for smp I can find only provides info about a single processor
+    # identical processors is probably a hardware requirement so we'll duplicate data for each cpu
+    # old examples: http://www.bnv-bamberg.de/home/ba3294/smp/rbuild/index.htm
+    cpuinfo = Mash.new
+    cpuinfo["flags"] = []
 
-# /var/run/dmesg.boot
-#CPU: QEMU Virtual CPU version 0.9.1 (1862.02-MHz 686-class CPU)
-#  Origin = "GenuineIntel"  Id = 0x623  Stepping = 3
-#  Features=0x78bfbfd<FPU,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,CLFLUSH,MMX,FXSR,SSE,SSE2>
-#  Features2=0x80000001<SSE3,<b31>>
+    # /var/run/dmesg.boot
+    # CPU: Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz (3516.61-MHz K8-class CPU)
+    # Origin = "GenuineIntel"  Id = 0x306a9  Family = 6  Model = 3a  Stepping = 9
+    # Features=0x783fbff<FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2>
+    # Features2=0x209<SSE3,MON,SSSE3>
+    # AMD Features=0x28100800<SYSCALL,NX,RDTSCP,LM>
+    # AMD Features2=0x1<LAHF>
 
-File.open("/var/run/dmesg.boot").each do |line|
-  case line
-  when /CPU:\s+(.+) \(([\d.]+).+\)/
-    cpuinfo["model_name"] = $1
-    cpuinfo["mhz"] = $2
-  when /Origin = "(.+)"\s+Id = (.+)\s+Stepping = (.+)/
-    cpuinfo["vendor_id"] = $1
-    cpuinfo["stepping"] = $3
-  # These _should_ match /AMD Features2?/ lines as well 
-  when /Features=.+<(.+)>/
-    cpuinfo["flags"] = $1.downcase.split(',')
-  # Features2=0x80000001<SSE3,<b31>>
-  when /Features2=[a-f\dx]+<(.+)>/
-    cpuinfo["flags"].concat($1.downcase.split(','))
-  when /Logical CPUs per core: (\d+)/
-    cpuinfo["cores"] = $1
+    File.open("/var/run/dmesg.boot").each do |line|
+      case line
+      when /CPU:\s+(.+) \(([\d.]+).+\)/
+        cpuinfo["model_name"] = $1
+        cpuinfo["mhz"] = $2
+      when /Origin = "(.+)"\s+Id = (.+)\s+Stepping = (.+)/
+        cpuinfo["vendor_id"] = $1
+        cpuinfo["stepping"] = $3
+        # These _should_ match /AMD Features2?/ lines as well
+      when /Features=.+<(.+)>/
+        cpuinfo["flags"].concat($1.downcase.split(','))
+        # Features2=0x80000001<SSE3,<b31>>
+      when /Features2=[a-f\dx]+<(.+)>/
+        cpuinfo["flags"].concat($1.downcase.split(','))
+      when /Logical CPUs per core: (\d+)/
+        cpuinfo["cores"] = $1
+      end
+    end
+
+    cpu cpuinfo
+    so = shell_out("sysctl -n hw.ncpu")
+    cpu[:total] = so.stdout.split($/)[0]
   end
 end
-
-cpu cpuinfo
-cpu[:total] = from("sysctl -n hw.ncpu")

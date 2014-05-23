@@ -16,23 +16,25 @@
 # limitations under the License.
 #
 
-provides "platform", "platform_version", "platform_build", "platform_family"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_build", "platform_family"
 
-popen4("/usr/bin/sw_vers") do |pid, stdin, stdout, stderr|
-  stdin.close
-  stdout.each do |line|
-    case line
-    when /^ProductName:\s+(.+)$/
-      macname = $1
-      macname.downcase!
-      macname.gsub!(" ", "_")
-      platform macname
-    when /^ProductVersion:\s+(.+)$/
-      platform_version $1
-    when /^BuildVersion:\s+(.+)$/
-      platform_build $1
+  collect_data(:darwin) do
+    so = shell_out("#{ Ohai.abs_path( "/usr/bin/sw_vers" )}")
+    so.stdout.lines do |line|
+      case line
+      when /^ProductName:\s+(.+)$/
+        macname = $1
+        macname.downcase!
+        macname.gsub!(" ", "_")
+        platform macname
+      when /^ProductVersion:\s+(.+)$/
+        platform_version $1
+      when /^BuildVersion:\s+(.+)$/
+        platform_build $1
+      end
     end
+
+    platform_family "mac_os_x"
   end
 end
-
-platform_family "mac_os_x"

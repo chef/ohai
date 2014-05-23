@@ -16,22 +16,26 @@
 # limitations under the License.
 #
 
-provides "languages/mono"
+Ohai.plugin(:Mono) do
+  provides "languages/mono"
 
-require_plugin "languages"
+  depends "languages"
 
-output = nil
+  collect_data do
+    output = nil
 
-mono = Mash.new
+    mono = Mash.new
 
-status, stdout, stderr = run_command(:no_status_check => true, :command => "mono -V")
-if status == 0
-  output = stdout.split
-  if output.length >= 4
-    mono[:version] = output[4]
+    so = shell_out("mono -V")
+    if so.exitstatus == 0
+      output = so.stdout.split
+      if output.length >= 4
+        mono[:version] = output[4]
+      end
+      if output.length >= 11
+        mono[:builddate] = "%s %s %s %s" % [output[6],output[7],output[8],output[11].gsub!(/\)/,'')]
+      end
+      languages[:mono] = mono if mono[:version]
+    end
   end
-  if output.length >= 11
-    mono[:builddate] = "%s %s %s %s" % [output[6],output[7],output[8],output[11].gsub!(/\)/,'')]
-  end
-  languages[:mono] = mono if mono[:version]
 end

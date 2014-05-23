@@ -16,24 +16,29 @@
 # limitations under the License.
 #
 
-provides "languages/perl"
+Ohai.plugin(:Perl) do
+  provides "languages/perl"
 
-require_plugin "languages"
-output = nil
+  depends "languages"
 
-perl = Mash.new
-status, stdout, stderr = run_command(:no_status_check => true, :command => "perl -V:version -V:archname")
-if status == 0
-  stdout.each_line do |line|
-    case line
-    when /^version=\'(.+)\';$/
-      perl[:version] = $1
-    when /^archname=\'(.+)\';$/
-      perl[:archname] = $1
+  collect_data do
+    output = nil
+
+    perl = Mash.new
+    so = shell_out("perl -V:version -V:archname")
+    if so.exitstatus == 0
+      so.stdout.split(/\r?\n/).each do |line|
+        case line
+        when /^version=\'(.+)\';$/
+          perl[:version] = $1
+        when /^archname=\'(.+)\';$/
+          perl[:archname] = $1
+        end
+      end
+    end
+
+    if so.exitstatus == 0
+      languages[:perl] = perl 
     end
   end
-end
-
-if status == 0
-  languages[:perl] = perl 
 end

@@ -21,20 +21,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "FreeBSD plugin platform" do
   before(:each) do
-    @ohai = Ohai::System.new    
-    @ohai.stub!(:require_plugin).and_return(true)
-    @ohai.stub!(:from).with("uname -s").and_return("FreeBSD")
-    @ohai.stub!(:from).with("uname -r").and_return("7.1")
-    @ohai[:os] = "freebsd"
+    @plugin = get_plugin("freebsd/platform")
+    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "FreeBSD\n", ""))
+    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "7.1\n", ""))
+    @plugin.stub(:collect_os).and_return(:freebsd)
   end
-  
+
   it "should set platform to lowercased lsb[:id]" do
-    @ohai._require_plugin("freebsd::platform")        
-    @ohai[:platform].should == "freebsd"
+    @plugin.run        
+    @plugin[:platform].should == "freebsd"
   end
   
   it "should set platform_version to lsb[:release]" do
-    @ohai._require_plugin("freebsd::platform")
-    @ohai[:platform_version].should == "7.1"
+    @plugin.run
+    @plugin[:platform_version].should == "7.1"
   end
 end  

@@ -16,32 +16,36 @@
 # limitations under the License.
 #
 
-require 'sigar'
+Ohai.plugin(:NetworkListeners) do
+  provides "network/listeners"
 
-provides "network/listeners"
+  depends "network", "counters/network"
 
-require_plugin "network"
+  collect_data do
+    require 'sigar'
+    flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
 
-flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
+    network Mash.new unless network
+    listeners = Mash.new
 
-listeners = Mash.new
+    sigar = Sigar.new
+    sigar.net_connection_list(flags).each do |conn|
+      port = conn.local_port
+      addr = conn.local_address.to_s
+      if addr == "0.0.0.0" || addr == "::"
+        addr = "*"
+      end
+      listeners[port] = Mash.new
+      listeners[port][:address] = addr
+      begin
+        pid = sigar.proc_port(conn.type, port)
+        listeners[port][:pid] = pid
+        listeners[port][:name] = sigar.proc_state(pid).name
+      rescue
+      end
+    end
 
-sigar = Sigar.new
-sigar.net_connection_list(flags).each do |conn|
-  port = conn.local_port
-  addr = conn.local_address.to_s
-  if addr == "0.0.0.0" || addr == "::"
-    addr = "*"
-  end
-  listeners[port] = Mash.new
-  listeners[port][:address] = addr
-  begin
-    pid = sigar.proc_port(conn.type, port)
-    listeners[port][:pid] = pid
-    listeners[port][:name] = sigar.proc_state(pid).name
-    rescue
+    network[:listeners] = Mash.new
+    network[:listeners][:tcp] = listeners
   end
 end
-
-network[:listeners] = Mash.new
-network[:listeners][:tcp] = listeners

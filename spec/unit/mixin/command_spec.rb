@@ -37,11 +37,53 @@ describe Ohai::Mixin::Command, "popen4" do
   end
 
   if defined?(::Encoding) && "".respond_to?(:force_encoding) #i.e., ruby 1.9
-    it "[OHAI-275] should mark strings as in the default external encoding" do
+    context "when external commands return UTF-8 strings and we are running under LANG=C encoding" do
+      before do
+        @saved_default_external = Encoding.default_external
+        @saved_default_internal = Encoding.default_internal
+        Encoding.default_external = Encoding::US_ASCII
+        Encoding.default_internal = Encoding::US_ASCII
+      end
+
+      after do
+        Encoding.default_external = @saved_default_external
+        Encoding.default_internal = @saved_default_internal
+      end
+
+      it "should force encode the string to UTF-8" do
+        extend Ohai::Mixin::Command
+        snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
+        snowy.encoding.should == Encoding::UTF_8
+      end
+    end
+
+    it "should force encode the string to UTF-8" do
       extend Ohai::Mixin::Command
       snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
-      snowy.encoding.should == Encoding.default_external
+      snowy.encoding.should == Encoding::UTF_8
     end
+  end
+
+  it "reaps zombie processes after exec fails [OHAI-455]" do
+    # NOTE: depending on ulimit settings, GC, etc., before the OHAI-455 patch,
+    # ohai could also exhaust the available file descriptors when creating this
+    # many zombie processes. A regression _could_ cause Errno::EMFILE but this
+    # probably won't be consistent on different environments.
+    created_procs = 0
+    100.times do
+      begin
+        Ohai::Mixin::Command.popen4("/bin/this-is-not-a-real-command") {|p,i,o,e| nil }
+      rescue Ohai::Exceptions::Exec
+        created_procs += 1
+      end
+    end
+    created_procs.should == 100
+    reaped_procs = 0
+    begin
+      loop { Process.wait(-1); reaped_procs += 1 }
+    rescue Errno::ECHILD
+    end
+    reaped_procs.should == 0
   end
 
 end

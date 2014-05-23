@@ -1,0 +1,71 @@
+platform "centos-5.9"
+arch "x86"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "centos-5.9"
+arch "x64"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x86"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "centos-6.4"
+arch "x64"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "-o"
+stdout "GNU/Linux\n"
+stderr ""
+exit_status 0

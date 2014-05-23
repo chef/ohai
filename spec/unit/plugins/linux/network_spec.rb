@@ -25,28 +25,17 @@ rescue LoadError => e
   raise e
 end
 
-def prepare_data
-  @ifconfig_lines = @linux_ifconfig.split("\n")
-  @route_lines = @linux_route_n.split("\n")
-  @arp_lines = @linux_arp_an.split("\n")
-  @ipaddr_lines = @linux_ip_addr.split("\n")
-  @iplink_lines = @linux_ip_link_s_d.split("\n")
-  @ipneighbor_lines = @linux_ip_neighbor_show.split("\n")
-  @ipneighbor_lines_inet6 = @linux_ip_inet6_neighbor_show.split("\n")
-  @ip_route_lines = @linux_ip_route.split("\n")
-  @ip_route_inet6_lines = @linux_ip_route_inet6.split("\n")
-end
-
 def do_stubs
-  @ohai.stub!(:from).with("route -n \| grep -m 1 ^0.0.0.0").and_return(@route_lines.last)
-  @ohai.stub!(:popen4).with("ifconfig -a").and_yield(nil, @stdin_ifconfig, @ifconfig_lines, nil)
-  @ohai.stub!(:popen4).with("arp -an").and_yield(nil, @stdin_arp, @arp_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet neigh show").and_yield(nil, @stdin_ipneighbor, @ipneighbor_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
-  @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
-  @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+  @plugin.stub(:collect_os).and_return(:linux)
+  @plugin.stub(:shell_out).with("ip addr").and_return(mock_shell_out(0, @linux_ip_addr, ""))
+  @plugin.stub(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, @linux_ip_link_s_d, ""))
+  @plugin.stub(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, @linux_ip_neighbor_show, ""))
+  @plugin.stub(:shell_out).with("ip -f inet6 neigh show").and_return(mock_shell_out(0, @linux_ip_inet6_neighbor_show, ""))
+  @plugin.stub(:shell_out).with("ip -f inet route show").and_return(mock_shell_out(0, @linux_ip_route, ""))
+  @plugin.stub(:shell_out).with("ip -f inet6 route show").and_return(mock_shell_out(0, @linux_ip_route_inet6, ""))
+  @plugin.stub(:shell_out).with("route -n").and_return(mock_shell_out(0, @linux_route_n, ""))
+  @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @linux_ifconfig, ""))
+  @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @linux_arp_an, ""))
 end
 
 describe Ohai::System, "Linux Network Plugin" do
@@ -266,208 +255,192 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
-    @stdin_ifconfig = StringIO.new
-    @stdin_arp = StringIO.new
-    @stdin_ipaddr = StringIO.new
-    @stdin_iplink = StringIO.new
-    @stdin_ipneighbor = StringIO.new
-    @stdin_ipneighbor_inet6 = StringIO.new
-    @stdin_ip_route = StringIO.new
-    @stdin_ip_route_inet6 = StringIO.new
-
-    prepare_data
-    
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-
-    @ohai.stub(:popen4).with("ifconfig -a")
-    @ohai.stub(:popen4).with("arp -an")
-    
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-    @ohai._require_plugin("network")
+    @plugin = get_plugin("linux/network")
+    @plugin.stub(:shell_out).with("ifconfig -a").and_return([0, @linux_ifconfig, ""])
+    @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
   end
 
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
       end
 
       it "completes the run" do
         Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-        @ohai._require_plugin("linux::network")
-        @ohai['network'].should_not be_nil
+        @plugin.run
+        @plugin['network'].should_not be_nil
       end
 
       it "detects the interfaces" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo", "tun0", "venet0", "venet0:0"]
+        @plugin.run
+        @plugin['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo", "tun0", "venet0", "venet0:0"]
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('10.116.201.76')
-        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask'].should == '255.255.255.0'
-        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast'].should == '10.116.201.255'
-        @ohai['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family'].should == 'inet'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('10.116.201.76')
+        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask'].should == '255.255.255.0'
+        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast'].should == '10.116.201.255'
+        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family'].should == 'inet'
       end
 
       it "detects the ipv4 addresses of an ethernet subinterface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0.11']['addresses'].keys.should include('192.168.0.16')
-        @ohai['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['netmask'].should == '255.255.255.0'
-        @ohai['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['broadcast'].should == '192.168.0.255'
-        @ohai['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['family'].should == 'inet'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0.11']['addresses'].keys.should include('192.168.0.16')
+        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['netmask'].should == '255.255.255.0'
+        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['broadcast'].should == '192.168.0.255'
+        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['family'].should == 'inet'
       end
 
       it "detects the ipv6 addresses of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('fe80::1031:3dff:fe02:bea2')
-        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
-        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
-        @ohai['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('fe80::1031:3dff:fe02:bea2')
+        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
+        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
+        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        @ohai._require_plugin("linux::network")
+        @plugin.run
         %w[ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 ].each  do |addr|
-          @ohai['network']['interfaces']['eth0.11']['addresses'].keys.should include(addr)
-          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['scope'].should == 'Global'
-          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen'].should == '64'
-          @ohai['network']['interfaces']['eth0.11']['addresses'][addr]['family'].should == 'inet6'
+          @plugin['network']['interfaces']['eth0.11']['addresses'].keys.should include(addr)
+          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['scope'].should == 'Global'
+          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen'].should == '64'
+          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['family'].should == 'inet6'
         end
       end
 
       it "detects the mac addresses of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['addresses'].keys.should include('12:31:3D:02:BE:A2')
-        @ohai['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family'].should == 'lladdr'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('12:31:3D:02:BE:A2')
+        @plugin['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family'].should == 'lladdr'
       end
 
       it "detects the encapsulation type of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['encapsulation'].should == 'Ethernet'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['encapsulation'].should == 'Ethernet'
       end
 
       it "detects the flags of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
+        @plugin.run
         if network_method == "ifconfig"
-          @ohai['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','MULTICAST','RUNNING','UP']
+          @plugin['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','MULTICAST','RUNNING','UP']
         else
-          @ohai['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','LOWER_UP','MULTICAST','UP']
+          @plugin['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','LOWER_UP','MULTICAST','UP']
         end
       end
 
       it "detects the number of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['number'].should == "0"
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['number'].should == "0"
       end
 
       it "detects the mtu of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['mtu'].should == "1500"
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['mtu'].should == "1500"
       end
     
       it "detects the ipv4 addresses of the loopback interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['lo']['addresses'].keys.should include('127.0.0.1')
-        @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
-        @ohai['network']['interfaces']['lo']['addresses']['127.0.0.1']['family'].should == 'inet'
+        @plugin.run
+        @plugin['network']['interfaces']['lo']['addresses'].keys.should include('127.0.0.1')
+        @plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
+        @plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['family'].should == 'inet'
       end
 
       it "detects the ipv6 addresses of the loopback interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['lo']['addresses'].keys.should include('::1')
-        @ohai['network']['interfaces']['lo']['addresses']['::1']['scope'].should == 'Node'
-        @ohai['network']['interfaces']['lo']['addresses']['::1']['prefixlen'].should == '128'
-        @ohai['network']['interfaces']['lo']['addresses']['::1']['family'].should == 'inet6'
+        @plugin.run
+        @plugin['network']['interfaces']['lo']['addresses'].keys.should include('::1')
+        @plugin['network']['interfaces']['lo']['addresses']['::1']['scope'].should == 'Node'
+        @plugin['network']['interfaces']['lo']['addresses']['::1']['prefixlen'].should == '128'
+        @plugin['network']['interfaces']['lo']['addresses']['::1']['family'].should == 'inet6'
       end
 
       it "detects the encapsulation type of the loopback interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['lo']['encapsulation'].should == 'Loopback'
+        @plugin.run
+        @plugin['network']['interfaces']['lo']['encapsulation'].should == 'Loopback'
       end
 
       it "detects the flags of the ethernet interface" do
-        @ohai._require_plugin("linux::network")
+        @plugin.run
         if network_method == "ifconfig"
-          @ohai['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','RUNNING','UP']
+          @plugin['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','RUNNING','UP']
         else
-          @ohai['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','LOWER_UP','UP']
+          @plugin['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','LOWER_UP','UP']
         end
       end
 
 
       it "detects the mtu of the loopback interface" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['lo']['mtu'].should == "16436"
+        @plugin.run
+        @plugin['network']['interfaces']['lo']['mtu'].should == "16436"
       end
 
       it "detects the arp entries" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['arp']['10.116.201.1'].should == 'fe:ff:ff:ff:ff:ff'
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['arp']['10.116.201.1'].should == 'fe:ff:ff:ff:ff:ff'
       end
 
     end
   
     describe "gathering interface counters via #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
-        @ohai._require_plugin("linux::network")
+        @plugin.run
       end
 
       it "detects the ethernet counters" do
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['bytes'].should == "691785313"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['packets'].should == "1919690"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['collisions'].should == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['queuelen'].should == "1000"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['errors'].should == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['carrier'].should == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['tx']['drop'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['bytes'].should == "691785313"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['packets'].should == "1919690"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['collisions'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['queuelen'].should == "1000"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['errors'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['carrier'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['tx']['drop'].should == "0"
 
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['bytes'].should == "1392844460"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['packets'].should == "2659966"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['errors'].should == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['overrun'].should == "0"
-        @ohai['counters']['network']['interfaces']['eth0']['rx']['drop'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['rx']['bytes'].should == "1392844460"
+        @plugin['counters']['network']['interfaces']['eth0']['rx']['packets'].should == "2659966"
+        @plugin['counters']['network']['interfaces']['eth0']['rx']['errors'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['rx']['overrun'].should == "0"
+        @plugin['counters']['network']['interfaces']['eth0']['rx']['drop'].should == "0"
       end
 
       it "detects the loopback counters" do
-        @ohai['counters']['network']['interfaces']['lo']['tx']['bytes'].should == "35224"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['packets'].should == "524"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['collisions'].should == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['errors'].should == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['carrier'].should == "0"
-        @ohai['counters']['network']['interfaces']['lo']['tx']['drop'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['bytes'].should == "35224"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['packets'].should == "524"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['collisions'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['errors'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['carrier'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['tx']['drop'].should == "0"
 
-        @ohai['counters']['network']['interfaces']['lo']['rx']['bytes'].should == "35224"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['packets'].should == "524"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['errors'].should == "0"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['overrun'].should == "0"
-        @ohai['counters']['network']['interfaces']['lo']['rx']['drop'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['rx']['bytes'].should == "35224"
+        @plugin['counters']['network']['interfaces']['lo']['rx']['packets'].should == "524"
+        @plugin['counters']['network']['interfaces']['lo']['rx']['errors'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['rx']['overrun'].should == "0"
+        @plugin['counters']['network']['interfaces']['lo']['rx']['drop'].should == "0"
       end
     end
 
     describe "setting the node's default IP address attribute with #{network_method}" do
       before do
-        File.stub!(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
         do_stubs
       end
 
       describe "without a subinterface" do
         before do
-          @ohai._require_plugin("linux::network")
+          @plugin.run
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network']['default_interface'].should == 'eth0'
+          @plugin['network']['default_interface'].should == 'eth0'
         end
   
         it "finds the default gateway by asking which iface has the default route" do
-          @ohai['network']['default_gateway'].should == '10.116.201.1'
+          @plugin['network']['default_gateway'].should == '10.116.201.1'
         end
       end
   
@@ -483,18 +456,17 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
 ROUTE_N
-          prepare_data
           do_stubs
 
-          @ohai._require_plugin("linux::network")
+          @plugin.run
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network']['default_interface'].should == 'eth0'
+          @plugin['network']['default_interface'].should == 'eth0'
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network']['default_gateway'].should == '0.0.0.0'
+          @plugin['network']['default_gateway'].should == '0.0.0.0'
         end
       end
 
@@ -511,18 +483,17 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
 ROUTE_N
 
-          prepare_data
           do_stubs
 
-          @ohai._require_plugin("linux::network")
+          @plugin.run
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network']["default_interface"].should == 'eth0.11'
+          @plugin['network']["default_interface"].should == 'eth0.11'
         end
   
         it "finds the default interface by asking which iface has the default route" do
-          @ohai['network']["default_gateway"].should == '192.168.0.15'
+          @plugin['network']["default_gateway"].should == '192.168.0.15'
         end
       end
     end
@@ -530,80 +501,80 @@ ROUTE_N
 
   describe "for newer network features using iproute2 only" do
     before do
-      File.stub!(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      File.stub(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
       do_stubs
     end
 
     it "completes the run" do
       Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-      @ohai._require_plugin("linux::network")
-      @ohai['network'].should_not be_nil
+      @plugin.run
+      @plugin['network'].should_not be_nil
     end
 
     it "finds the default inet6 interface if there's a inet6 default route" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['default_inet6_interface'].should == 'eth0.11'
+      @plugin.run
+      @plugin['network']['default_inet6_interface'].should == 'eth0.11'
     end
 
     it "finds the default inet6 gateway if there's a inet6 default route" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::1'
+      @plugin.run
+      @plugin['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::1'
     end
 
     it "finds inet6 neighbours" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1'].should == '00:1c:0e:12:34:56'
+      @plugin.run
+      @plugin['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1'].should == '00:1c:0e:12:34:56'
     end
 
     it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
-      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
-      @ohai['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
+      @plugin.run
+      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
+      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
+      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['eth0:5']['addresses'].keys.should include('192.168.5.1')
-      @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
-      @ohai['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
+      @plugin.run
+      @plugin['network']['interfaces']['eth0:5']['addresses'].keys.should include('192.168.5.1')
+      @plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
+      @plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
     end
 
     it "adds the vlan information of an interface" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['eth0.11']['vlan']['id'].should == '11'
-      @ohai['network']['interfaces']['eth0.11']['vlan']['flags'].should == [ 'REORDER_HDR' ]
+      @plugin.run
+      @plugin['network']['interfaces']['eth0.11']['vlan']['id'].should == '11'
+      @plugin['network']['interfaces']['eth0.11']['vlan']['flags'].should == [ 'REORDER_HDR' ]
     end
 
     it "adds the state of an interface" do
-      @ohai._require_plugin("linux::network")
-      @ohai['network']['interfaces']['eth0.11']['state'].should == 'up'
+      @plugin.run
+      @plugin['network']['interfaces']['eth0.11']['state'].should == 'up'
     end
 
     describe "when dealing with routes" do
       it "adds routes" do
-        @ohai._require_plugin("linux::network")
-        @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
-        @ohai['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
-        @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
-        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
-        @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
+        @plugin.run
+        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
+        @plugin['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
+        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
+        @plugin['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
+        @plugin['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
       describe "when there isn't a source field in route entries " do
         it "doesn't set ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should be nil
+          @plugin.run
+          @plugin['ipaddress'].should be nil
         end
 
         it "doesn't set macaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['macaddress'].should be nil
+          @plugin.run
+          @plugin['macaddress'].should be nil
         end
 
         it "doesn't set ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should be nil
+          @plugin.run
+          @plugin['ip6address'].should be nil
         end
       end
 
@@ -625,24 +596,23 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "sets ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should == "10.116.201.76"
+          @plugin.run
+          @plugin['ipaddress'].should == "10.116.201.76"
         end
 
         it "sets ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should == "1111:2222:3333:4444::3"
+          @plugin.run
+          @plugin['ip6address'].should == "1111:2222:3333:4444::3"
         end
       end
 
@@ -666,26 +636,25 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "sets default ipv4 interface and gateway" do
-          @ohai._require_plugin("linux::network")
-          @ohai['network']['default_interface'].should == 'eth0'
-          @ohai['network']['default_gateway'].should == '10.116.201.254'
+          @plugin.run
+          @plugin['network']['default_interface'].should == 'eth0'
+          @plugin['network']['default_gateway'].should == '10.116.201.254'
         end
 
         it "sets default ipv6 interface and gateway" do
-          @ohai._require_plugin("linux::network")
-          @ohai['network']['default_inet6_interface'].should == 'eth0.11'
-          @ohai['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::ffff'
+          @plugin.run
+          @plugin['network']['default_inet6_interface'].should == 'eth0.11'
+          @plugin['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::ffff'
         end
       end
 
@@ -709,24 +678,23 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "sets ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai["ipaddress"].should == "10.116.201.74"
+          @plugin.run
+          @plugin["ipaddress"].should == "10.116.201.74"
         end
 
         it "sets ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai["ip6address"].should == "1111:2222:3333:4444::2"
+          @plugin.run
+          @plugin["ip6address"].should == "1111:2222:3333:4444::2"
         end
       end
 
@@ -748,25 +716,24 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "sets ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should == "10.116.201.76"
+          @plugin.run
+          @plugin['ipaddress'].should == "10.116.201.76"
         end
 
         describe "when about to set macaddress" do
           it "sets macaddress" do
-            @ohai._require_plugin("linux::network")
-            @ohai['macaddress'].should == "12:31:3D:02:BE:A2"
+            @plugin.run
+            @plugin['macaddress'].should == "12:31:3D:02:BE:A2"
           end
 
           describe "when then interface has the NOARP flag" do
@@ -776,26 +743,25 @@ IP_ROUTE_SCOPE
 default via 172.16.19.1 dev tun0
 IP_ROUTE
 
-              prepare_data
               do_stubs
             end
 
             it "completes the run" do
               Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-              @ohai._require_plugin("linux::network")
-              @ohai['network'].should_not be_nil
+              @plugin.run
+              @plugin['network'].should_not be_nil
             end
 
             it "doesn't set macaddress" do
-              @ohai._require_plugin("linux::network")
-              @ohai['macaddress'].should be_nil
+              @plugin.run
+              @plugin['macaddress'].should be_nil
             end
           end
         end
 
         it "sets ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should == "1111:2222:3333:4444::3"
+          @plugin.run
+          @plugin['ip6address'].should == "1111:2222:3333:4444::3"
         end
       end
 
@@ -805,19 +771,18 @@ IP_ROUTE
 default dev venet0 scope link
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "doesn't set ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should be_nil
+          @plugin.run
+          @plugin['ipaddress'].should be_nil
         end
       end
 
@@ -828,19 +793,18 @@ fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
 IP_ROUTE_SCOPE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "doesn't set ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should be_nil
+          @plugin.run
+          @plugin['ip6address'].should be_nil
         end
 
       end
@@ -861,24 +825,23 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "doesn't set ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should be_nil
+          @plugin.run
+          @plugin['ipaddress'].should be_nil
         end
 
         it "doesn't set ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should be_nil
+          @plugin.run
+          @plugin['ip6address'].should be_nil
         end
       end
 
@@ -899,31 +862,30 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 IP_ROUTE
 
-          prepare_data
           do_stubs
         end
 
         it "completes the run" do
           Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @ohai._require_plugin("linux::network")
-          @ohai['network'].should_not be_nil
+          @plugin.run
+          @plugin['network'].should_not be_nil
         end
 
         it "doesn't add bogus routes" do
-          @ohai._require_plugin("linux::network")
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
-          @ohai['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
+          @plugin.run
+          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
+          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
+          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
         end
 
         it "doesn't set ipaddress" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ipaddress'].should be_nil
+          @plugin.run
+          @plugin['ipaddress'].should be_nil
         end
 
         it "doesn't set ip6address" do
-          @ohai._require_plugin("linux::network")
-          @ohai['ip6address'].should be_nil
+          @plugin.run
+          @plugin['ip6address'].should be_nil
         end
       end
 
@@ -933,14 +895,13 @@ IP_ROUTE
           @linux_ip_route = <<-IP_ROUTE
 192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
 IP_ROUTE
-          prepare_data
           do_stubs
         end
         
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
           Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
-          Ohai::Log.should_receive(:debug).any_number_of_times # Catches the 'Loading plugin network' type messages
-          @ohai._require_plugin("linux::network")
+          Ohai::Log.stub(:debug) # Catches the 'Loading plugin network' type messages
+          @plugin.run
         end
       end
     end

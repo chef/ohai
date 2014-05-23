@@ -26,13 +26,6 @@ Ohai.plugin(:Joyent) do
   provides 'virtualization/guest_id'
   depends 'os', 'platform', 'virtualization'
 
-
-  def collect_solaris_guestid
-    command = '/usr/sbin/zoneadm list -p'
-    so = shell_out(command)
-    so.stdout.split(':').first
-  end
-
   def collect_product_file
     lines = []
     if ::File.exists?("/etc/product")
@@ -67,7 +60,6 @@ Ohai.plugin(:Joyent) do
 
       # get zone id unless globalzone
       unless joyent[:sm_uuid] == "global"
-        virtualization[:guest_id] = collect_solaris_guestid
         joyent[:sm_id]            = virtualization[:guest_id]
       end
 

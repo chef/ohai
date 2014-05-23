@@ -4,11 +4,6 @@ require 'spec_helper'
 describe Ohai::System, "plugin joyent" do
   before(:each) do
     @plugin = get_plugin('joyent')
-#     @plugin.stub(:is_smartos?).and_return(true)
-#    @plugin.stub(:collect_solaris_guestid).and_return('30')
-#    @plugin.stub(:collect_product_file).and_return(["Name: Joyent Instance", "Image: base64 13.4.2", "Documentation: http://wiki.joyent.com/jpc2/SmartMachine+Base"])
-#    @plugin[:virtualization] = Mash.new
-#    @plugin[:virtualization][:guest_uuid] = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
   end
 
   describe "without joyent" do

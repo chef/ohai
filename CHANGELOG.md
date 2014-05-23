@@ -1,20 +1,30 @@
 # Ohai Changelog
 
-## Unreleased: 7.0.2
+## Unreleased: 7.2.0
 
-* Skip v7 plugins when refreshing a v6 plugin. Fixes
-  `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
-* Added platform_family support for ibm_powerkvm (OHAI-558)
-* EC2 metadata errors are unhelpful (OHAI-566)
-* Support deep virtualization systems in node[:virtualization][:systems] (OHAI-182)
-* :Passwd plugin now ignores duplicate users. (OHAI-561)
+* [**Lance Bragstad**:](https://github.com/lbragstad)
+  Added platform_family support for ibm_powerkvm (OHAI-558)
+* [**Pierre Carrier**:](https://github.com/pcarrier)
+  EC2 metadata errors are unhelpful (OHAI-566)
+* [**Elan Ruusamae**:](https://github.com/glensc)
+  Support deep virtualization systems in node[:virtualization][:systems] (OHAI-182)
+* [**Sean Walberg**:](https://github.com/swalberg)
+  :Passwd plugin now ignores duplicate users. (OHAI-561)
+* [**Joe Richards**:](https://github.com/viyh)
+  Fix warning message about constants already defined (OHAI-572)
+* [**Tim Smith**:](https://github.com/tas50)
+  Present all CPU flags on FreeBSD (OHAI-568)
+* [**Tim Smith**:](https://github.com/tas50)
+  Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
+* [**Tim Smith**:](https://github.com/tas50)
+  Ohai should expose mdadm raid information on Linux systems (OHAI-578)
+* [**Cam Cope**:](https://github.com/ccope)
+  relax regex to match newer Oracle Solaris releases (OHAI-563)
+* [**Vasiliy Tolstov**:](https://github.com/vtolstov)
+  add exherbo support (OHAI-570)
+
+* `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)
-* Fix warning message about constants already defined (OHAI-572)
-* Present all CPU flags on FreeBSD (OHAI-568)
-* Ohai doesn't detect all KVM processor types as KVM on FreeBSD (OHAI-575)
-* Ohai should expose mdadm raid information on Linux systems (OHAI-578)
-* relax regex to match newer Oracle Solaris releases (OHAI-563)
-* add exherbo support (OHAI-570)
 
 ## Last Release: 7.0.0 (04/01/2014)
 

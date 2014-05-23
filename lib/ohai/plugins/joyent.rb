@@ -33,6 +33,18 @@ Ohai.plugin(:Joyent) do
     so.stdout.split(':').first
   end
 
+  def collect_product_file
+    lines = []
+    if ::File.exists?("/etc/product")
+      ::File.open("/etc/product") do |file|
+        while line = file.gets
+          lines << line
+        end
+      end
+    end
+    lines
+  end
+
   def is_smartos?
     platform == 'smartos'
   end
@@ -51,20 +63,16 @@ Ohai.plugin(:Joyent) do
       end
 
       # retrieve image name and pkgsrc
-      if ::File.exists?("/etc/product") then
-        ::File.open("/etc/product") do |file|
-          while line = file.gets
-            case line
-            when /^Image/
-              sm_image = line.split(" ") 
-              joyent[:sm_image_id] = sm_image[1]
-              joyent[:sm_image_ver] = sm_image[2]
-            when /^Base Image/
-              sm_baseimage = line.split(" ")
-              joyent[:sm_baseimage_id] = sm_baseimage[2]
-              joyent[:sm_baseimage_ver] = sm_baseimage[3]
-            end
-          end
+      collect_product_file.each do |line|
+        case line
+        when /^Image/
+          sm_image = line.split(" ") 
+          joyent[:sm_image_id] = sm_image[1]
+          joyent[:sm_image_ver] = sm_image[2]
+        when /^Base Image/
+          sm_baseimage = line.split(" ")
+          joyent[:sm_baseimage_id] = sm_baseimage[2]
+          joyent[:sm_baseimage_ver] = sm_baseimage[3]
         end
       end
 

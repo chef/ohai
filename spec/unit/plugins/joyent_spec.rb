@@ -3,83 +3,72 @@ require 'spec_helper'
 
 describe Ohai::System, "plugin joyent" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @ohai.stub!(:require_plugin).and_return(true)
-    #@ohai[:platform] = "smartos"
+    @plugin = get_plugin('joyent')
   end
 
   describe "without joyent" do
     before(:each) do
-      @ohai[:platform] = "otheros"
+      @plugin.stub(:is_smartos?).and_return(false)
     end
 
     it "should NOT create joyent" do
-      @ohai._require_plugin("joyent")
-      @ohai[:joyent].should be_nil
+      @plugin.run
+      @plugin[:joyent].should be_nil
     end
   end
 
   describe "with joyent" do
     before(:each) do
-      @ohai[:platform] = "smartos"
+      @plugin.stub(:is_smartos?).and_return(true)
+      @plugin[:virtualization] = Mash.new
+      @plugin[:virtualization][:guest_uuid] = "global"
     end
 
     it "should create joyent" do
-      @ohai._require_plugin("joyent")
-      @ohai[:joyent].should_not be_nil
+      @plugin.run
+      @plugin[:joyent].should_not be_nil
     end
 
     describe "under global zone" do
       before(:each) do
-        @status = 0
-        @stdout = "global\n"
-        @stderr = ""
-        @ohai.stub!(:run_command).with(:no_status_check => true, :command => "/usr/bin/zonename").and_return([@status, @stdout, @stderr])
-        @ohai._require_plugin("joyent")
+        @plugin.run
       end
 
       it "should ditect global zone" do
-        @ohai[:joyent][:sm_uuid].should == "global"
+        @plugin[:joyent][:sm_uuid].should eql 'global'
       end
 
       it "should NOT create sm_id" do
-        @ohai[:joyent][:sm_id].should be_nil
+        @plugin[:joyent][:sm_id].should be_nil
       end
     end
 
     describe "under smartmachine" do
       before(:each) do
-        # stub zonename
-        status = 0
-        stdout = "xxxxx-xxxxx-xxxxx\n"
-        stderr = ""
-        @ohai.stub!(:run_command).with(:no_status_check => true, :command => "/usr/bin/zonename").and_return([status, stdout, stderr])
-
-        #stub zoneadm
-        status = 0
-        stdout = "99\n"
-        stderr = ""
-        @ohai.stub!(:run_command).with(:no_status_check => true, :command => "/usr/sbin/zoneadm list -p | awk -F: '{ print $1 }'").and_return([status, stdout, stderr])
+        @plugin[:virtualization][:guest_uuid] = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx'
+        @plugin.stub(:collect_solaris_guestid).and_return('30')
+        @plugin.stub(:collect_product_file).and_return(["Name: Joyent Instance", "Image: base64 13.4.2", "Documentation: http://wiki.joyent.com/jpc2/SmartMachine+Base"])
+        @plugin.stub(:collect_pkgsrc).and_return('http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All')
+        @plugin.run
       end
 
       it "should retrive zone uuid" do
-        @ohai._require_plugin("joyent")
-        @ohai[:joyent][:sm_uuid].should == "xxxxx-xxxxx-xxxxx"
+        @plugin[:joyent][:sm_uuid].should eql 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx'
       end
 
-      it "should create sm_id" do
-        @ohai._require_plugin("joyent")
-        @ohai[:joyent][:sm_id].should == "99"
+      it "should collect sm_id" do
+        @plugin[:joyent][:sm_id].should eql '30'
       end
 
-#       it "should retrive pkgsrc" do
-#         # file stub /opt/local/etc/pkg_install.conf
-#         file = mock
-#         ::File.stub!(:read).with("/opt/local/etc/pkg_install.conf").and_return("PKG_PATH=http://pkgsrc.joyent.com/packages/SmartOS/2012Q4/x86_64/All\n")
-# 
-#         @ohai._require_plugin("joyent")
-#         @ohai[:joyent][:sm_pkgsrc].should == "http://pkgsrc.joyent.com/packages/SmartOS/2012Q4/x86_64/All"
-#       end
+      it "should collect images" do
+        @plugin[:joyent][:sm_image].should_not nil
+        @plugin[:joyent][:sm_image_id].should_not nil
+        @plugin[:joyent][:sm_image_ver].should_not nil
+      end
+
+      it "should collect pkgsrc" do
+        @plugin[:joyent][:sm_pkgsrc].should eql 'http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All'
+      end
     end
   end
 end

@@ -130,7 +130,8 @@ module Ohai
             if key[-1..-1] != '/'
               metadata[metadata_key(key)] =
                 if EC2_ARRAY_VALUES.include? key
-                  metadata_get(key, api_version).split("\n")
+                  retr_meta = metadata_get(key, api_version)
+                  retr_meta ? retr_meta.split("\n") : retr_meta
                 else
                   metadata_get(key, api_version)
                 end
@@ -157,7 +158,8 @@ module Ohai
           retrieved_metadata.split("\n").each do |o|
             key = expand_path(o)
             if key[-1..-1] != '/'
-              metadata[metadata_key(key)] = metadata_get("#{id}#{key}", api_version)
+              retr_meta = metadata_get("#{id}#{key}", api_version)
+              metadata[metadata_key(key)] = retr_meta ? retr_meta : ''
             elsif not key.eql?('/')
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
@@ -173,7 +175,8 @@ module Ohai
           retrieved_metadata.split("\n").each do |o|
             key = expand_path(o)
             if key[-1..-1] != '/'
-              data = metadata_get("#{id}#{key}", api_version)
+              retr_meta = metadata_get("#{id}#{key}", api_version)
+              data = retr_meta ? retr_meta : ''
               json = StringIO.new(data)
               parser = Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)

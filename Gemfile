@@ -2,9 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-platforms :mswin, :mingw do
-  gem "rdp-ruby-wmi", "0.3.1"
-end
+gem 'wmi-lite', :git => 'https://github.com/opscode/wmi-lite.git', :branch => 'master'
 
 group :development do
 

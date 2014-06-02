@@ -20,9 +20,7 @@
 # Reference from: sm-summary command
 
 Ohai.plugin(:Joyent) do
-  %w{ sm_uuid sm_id sm_image sm_image_id sm_image_ver sm_baseimage sm_baseimage_id sm_baseimage_ver sm_pkgsrc }.each do |info|
-    provides "joyent/#{info}"
-  end
+  provides 'joyent'
   provides 'virtualization/guest_id'
   depends 'os', 'platform', 'virtualization'
 

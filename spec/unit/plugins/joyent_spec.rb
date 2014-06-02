@@ -61,9 +61,8 @@ describe Ohai::System, "plugin joyent" do
       end
 
       it "should collect images" do
-        @plugin[:joyent][:sm_image].should_not nil
-        @plugin[:joyent][:sm_image_id].should_not nil
-        @plugin[:joyent][:sm_image_ver].should_not nil
+        @plugin[:joyent][:sm_image_id].should_not be_nil
+        @plugin[:joyent][:sm_image_ver].should_not be_nil
       end
 
       it "should collect pkgsrc" do

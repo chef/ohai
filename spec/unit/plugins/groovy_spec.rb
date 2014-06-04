@@ -43,4 +43,5 @@ describe Ohai::System, "plugin groovy" do
     @plugin.run
     @plugin.languages.should_not have_key(:groovy)
   end
+
 end

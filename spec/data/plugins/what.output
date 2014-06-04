@@ -1,0 +1,135 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x86"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x86"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["gcc"]
+params "/opt/ansic/bin/cc"
+stdout ""
+stderr "command not found"
+exit_status 127

@@ -22,10 +22,10 @@
 # platforms built upon the Windows_NT kernel and have access to win32 or win64
 # subsystems.
 
-Ohai.plugin do
-  provides "platform"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_family"
 
-  collect_data do
+  collect_data(:windows) do
     platform os
     platform_version kernel['release']
     platform_family "windows"

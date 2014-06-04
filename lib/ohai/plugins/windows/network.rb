@@ -16,17 +16,19 @@
 # limitations under the License.
 #
 
-require 'ruby-wmi'
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
-Ohai.plugin do
-  provides "network"
-
-  def encaps_lookup(encap)
+  def windows_encaps_lookup(encap)
     return "Ethernet" if encap.eql?("Ethernet 802.3")
     encap
   end
 
-  collect_data do
+  collect_data(:windows) do
+
+    require 'wmi-lite/wmi'
+
     iface = Mash.new
     iface_config = Mash.new
     iface_instance = Mash.new
@@ -36,22 +38,28 @@ Ohai.plugin do
     counters[:network] = Mash.new unless counters[:network]
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
-    adapters = WMI::Win32_NetworkAdapterConfiguration.find(:all)
+    wmi = WmiLite::Wmi.new
+
+    adapters = wmi.instances_of('Win32_NetworkAdapterConfiguration')
+
     adapters.each do |adapter|
-      i = adapter.Index
+
+      i = adapter['index']
       iface_config[i] = Mash.new
-      adapter.properties_.each do |p|
-        iface_config[i][p.name.wmi_underscore.to_sym] = adapter.invoke(p.name)
+      adapter.wmi_ole_object.properties_.each do |p|
+        iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394216(v=vs.85).aspx
-    adapters = WMI::Win32_NetworkAdapter.find(:all)
+
+    adapters = wmi.instances_of('Win32_NetworkAdapter')
+
     adapters.each do |adapter|
-      i = adapter.Index
+      i = adapter['index']
       iface_instance[i] = Mash.new
-      adapter.properties_.each do |p|
-        iface_instance[i][p.name.wmi_underscore.to_sym] = adapter.invoke(p.name)
+      adapter.wmi_ole_object.properties_.each do |p|
+        iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
 
@@ -94,7 +102,7 @@ Ohai.plugin do
         iface[cint][:mtu] = iface[cint][:configuration][:mtu]
         iface[cint][:type] = iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
-        iface[cint][:encapsulation] = encaps_lookup(iface[cint][:instance][:adapter_type])
+        iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type])
         if iface[cint][:configuration][:default_ip_gateway] != nil and iface[cint][:configuration][:default_ip_gateway].size > 0
           network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
           network[:default_interface] = cint

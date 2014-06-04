@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  provides "platform", "platform_version", "platform_build"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_build", "platform_family"
 
-  collect_data do
+  collect_data(:solaris2) do
     if File.exists?("/sbin/uname")
       uname_exec = "/sbin/uname"
     else
@@ -50,7 +50,7 @@ Ohai.plugin do
         when /^\s*(OpenSolaris).*snv_(\d+).*$/
           platform "opensolaris"
           platform_version $2
-        when /^\s*(Oracle Solaris) (\d+)\s.*$/
+        when /^\s*(Oracle Solaris)/
           platform "solaris2"
         when /^\s*(Solaris)\s.*$/
           platform "solaris2"
@@ -59,5 +59,7 @@ Ohai.plugin do
         end
       end
     end
+
+    platform_family platform
   end
 end

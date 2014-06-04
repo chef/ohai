@@ -419,7 +419,7 @@ describe Ohai::System, "Network Plugin" do
             Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
             Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
             Ohai::Log.should_receive(:warn).with(/^\[inet\] no ip address on eth0/).once
-            Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+            Ohai::Log.should_receive(:debug).with(/^unable to detect ip6address/).once
             Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ip address on eth0/).once
             @plugin.run
           end
@@ -449,7 +449,7 @@ describe Ohai::System, "Network Plugin" do
           it "should warn about it" do
             Ohai::Log.should_receive(:warn).with(/^unable to detect ipaddress/).once
             Ohai::Log.should_receive(:warn).with(/^unable to detect macaddress/).once
-            Ohai::Log.should_receive(:warn).with(/^unable to detect ip6address/).once
+            Ohai::Log.should_receive(:debug).with(/^unable to detect ip6address/).once
             @plugin.run
           end
         end
@@ -649,6 +649,19 @@ describe Ohai::System, "Network Plugin" do
             @plugin["ipaddress"].should == "192.168.99.11"
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
             @plugin["ip6address"].should == "3ffe:1111:3333::1"
+          end
+        end
+
+        describe "fe80::1 as a default gateway" do
+          before do
+            @plugin["network"]["default_inet6_gateway"] = "fe80::1"
+          end
+
+          it_does_not_fail
+
+          it "picks {ip,mac,ip6}address from the default interface" do
+            @plugin.run
+            @plugin["ip6address"].should == "3ffe:1111:2222::33"
           end
         end
 

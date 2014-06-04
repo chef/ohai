@@ -16,10 +16,9 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
-  depends "dmi"
+Ohai.plugin(:DMI) do
 
-  collect_data do
+  collect_data(:solaris2) do
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
     if (dmi.class.to_s == 'Mash') and (dmi.keys.length > 1) 

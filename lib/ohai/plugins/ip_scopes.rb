@@ -15,23 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin do
+Ohai.plugin(:IpScopes) do
   provides "network_ip_scope", "privateaddress"
 
-  depends "domain", "fqdn"
-  depends "network", "counters/network"
+  depends "network/interfaces"
 
   collect_data do
     begin
       require 'ipaddr_extensions'
 
-      network['interfaces'].keys.each do |ifName|
+      network['interfaces'].keys.sort.each do |ifName|
         next if network['interfaces'][ifName]['addresses'].nil?
 
-        network['interfaces'][ifName]['addresses'].each do |address,attrs|
+        interface = network['interfaces'][ifName]
+        interface['addresses'].each do |address,attrs|
           begin
             attrs.merge! 'ip_scope' => address.to_ip.scope
-            privateaddress address if address.to_ip.scope =~ /PRIVATE/
+
+            if private_addr?(address) && !tunnel_iface?(interface)
+              privateaddress(address)
+            end
           rescue ArgumentError
             # Just silently fail if we can't create an IP from the string.
           end
@@ -42,5 +45,13 @@ Ohai.plugin do
       # our favourite gem is not installed. Boohoo.
       Ohai::Log.debug("ip_scopes: cannot load gem, plugin disabled: #{e}")
     end
+  end
+
+  def private_addr?(address)
+    address.to_ip.scope =~ /PRIVATE/
+  end
+
+  def tunnel_iface?(interface)
+    interface['type'] == 'ppp'
   end
 end

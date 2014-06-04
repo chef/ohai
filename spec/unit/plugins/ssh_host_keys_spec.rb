@@ -24,9 +24,6 @@ describe Ohai::System, "ssh_host_key plugin" do
     @plugin = get_plugin("ssh_host_key")
     @plugin[:keys] = Mash.new
 
-    # Avoid using the real from_file to load the plugin => less stubbing required
-    @plugin.extend(SimpleFromFile)
-
     File.stub(:exists?).with("/etc/ssh/sshd_config").and_return(true)
     File.stub(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
     File.stub(:exists?).and_return(true)

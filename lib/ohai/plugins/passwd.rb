@@ -1,7 +1,7 @@
 
 require 'etc'
 
-Ohai.plugin do
+Ohai.plugin(:Passwd) do
   provides 'etc', 'current_user'
 
   def fix_encoding(str)
@@ -19,7 +19,8 @@ Ohai.plugin do
       Etc.passwd do |entry|
         user_passwd_entry = Mash.new(:dir => entry.dir, :gid => entry.gid, :uid => entry.uid, :shell => entry.shell, :gecos => entry.gecos)
         user_passwd_entry.each_value {|v| fix_encoding(v)}
-        etc[:passwd][fix_encoding(entry.name)] = user_passwd_entry
+        entry_name = fix_encoding(entry.name)
+        etc[:passwd][entry_name] = user_passwd_entry unless etc[:passwd].has_key?(entry_name)
       end
 
       Etc.group do |entry|

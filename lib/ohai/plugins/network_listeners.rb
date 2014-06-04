@@ -16,16 +16,15 @@
 # limitations under the License.
 #
 
-require 'sigar'
-
-Ohai.plugin do
+Ohai.plugin(:NetworkListeners) do
   provides "network/listeners"
 
   depends "network", "counters/network"
 
-  flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
-
   collect_data do
+    require 'sigar'
+    flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
+
     network Mash.new unless network
     listeners = Mash.new
 

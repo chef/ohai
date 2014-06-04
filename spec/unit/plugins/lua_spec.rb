@@ -47,18 +47,4 @@ describe Ohai::System, "plugin lua" do
     @plugin.languages.should_not have_key(:lua)
   end
 
-  require File.expand_path(File.join(File.dirname(__FILE__), '..', 'path', '/ohai_plugin_common.rb'))
-
-  test_plugin([ "languages", "lua" ], [ "lua" ]) do | p |
-    p.test([ "centos-6.4" ], ["x86", "x64"], [[], ["lua"]],
-           { "languages" => { "lua" => { "version" => "5.1.4" }}})
-    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "lua" => nil }})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "languages" => { "lua" => nil }})
-    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "lua" ]],
-           { "languages" => { "lua" => { "version" => "5.1.4" }}})
-    p.test([ "ubuntu-13.04" ], [ "x64" ], [["lua"]],
-           { "languages" => { "lua" => { "version" => "5.1.5" }}})
-  end
 end

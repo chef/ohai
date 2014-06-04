@@ -18,7 +18,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin cloud" do
-  before do
+  before(:each) do
     @plugin = get_plugin("cloud")
   end
 
@@ -165,6 +165,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:azure]['public_ip'] = "174.129.150.8"
       @plugin.run
       @plugin[:cloud][:public_ips][0].should == @plugin[:azure]['public_ip']
+      @plugin[:cloud][:public_ipv4].should == @plugin[:azure]['public_ip']
     end
 
     it "populates cloud vm_name" do
@@ -177,6 +178,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:azure]['public_fqdn'] = "linux-vm-svc.cloudapp.net"
       @plugin.run
       @plugin[:cloud][:public_fqdn].should == @plugin[:azure]['public_fqdn']
+      @plugin[:cloud][:public_hostname].should == @plugin[:azure]['public_fqdn']
     end
 
     it "populates cloud public_ssh_port" do

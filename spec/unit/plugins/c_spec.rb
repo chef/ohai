@@ -304,4 +304,5 @@ describe Ohai::System, "plugin c" do
     @plugin.run
     @plugin[:languages][:c].should_not have_key(:hpcc) if @plugin[:languages][:c]
   end
+
 end

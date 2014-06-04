@@ -16,12 +16,11 @@
 # limitations under the License.
 #
 
-require "sigar"
-
-Ohai.plugin do
+Ohai.plugin(:Memory) do
   provides "memory"
 
-  collect_data do
+  collect_data(:hpux, :default) do
+    require "sigar"
     sigar = Sigar.new
 
     memory Mash.new

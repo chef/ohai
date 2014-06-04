@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux cpu plugin" do
   before(:each) do
     @plugin = get_plugin("linux/cpu")
-    @plugin[:os] = "linux"
+    @plugin.stub(:collect_os).and_return(:linux)
     @double_file = double("/proc/cpuinfo")
     @double_file.stub(:each).
       and_yield("processor     : 0").

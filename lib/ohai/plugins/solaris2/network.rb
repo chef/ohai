@@ -53,12 +53,11 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
-require 'scanf'
+Ohai.plugin(:Network) do
+  provides "network", "network/interfaces"
+  provides "counters/network", "counters/network/interfaces"
 
-Ohai.plugin do
-  provides "network"
-
-  def encaps_lookup(ifname)
+  def solaris_encaps_lookup(ifname)
     return "Ethernet" if ifname.eql?("e1000g")
     return "Ethernet" if ifname.eql?("eri")
     return "Ethernet" if ifname.eql?("net")
@@ -74,7 +73,9 @@ Ohai.plugin do
     nil
   end
 
-  collect_data do
+  collect_data(:solaris2) do
+    require 'scanf'
+
     iface = Mash.new
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]
@@ -99,7 +100,7 @@ Ohai.plugin do
         if cint =~ /^(\w+)(\d+.*)/
           iface[cint][:type] = $1
           iface[cint][:number] = $2
-          iface[cint][:encapsulation] = encaps_lookup($1)
+          iface[cint][:encapsulation] = solaris_encaps_lookup($1)
         end
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/

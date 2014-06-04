@@ -1,6 +1,5 @@
 require 'rspec'
 
-# require 'pry'
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 
@@ -8,13 +7,21 @@ $:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'spec/support/platform_helpers'
+require 'spec/support/integration_helper'
 require 'ohai'
 Ohai::Config[:log_level] = :error
 
 PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
 SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
 
-if Ohai::OS.collect_os == /mswin|mingw32|windows/
+RSpec.configure do |config|
+  config.before(:each) { @object_pristine = Object.clone }
+  config.after(:each) { remove_constants }
+end
+
+include Ohai::Mixin::ConstantHelper
+
+if Ohai::Mixin::OS.collect_os == /mswin|mingw32|windows/
   ENV["PATH"] = ""
 end
 
@@ -76,14 +83,10 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   end
 end
 
-module SimpleFromFile
-  def from_file(filename)
-    self.instance_eval(IO.read(filename), filename, 1)
-  end
-end
-
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  config.filter_run :focus => true
 
   config.filter_run_excluding :windows_only => true unless windows?
   config.filter_run_excluding :unix_only => true unless unix?
@@ -91,6 +94,8 @@ RSpec.configure do |config|
   config.filter_run_excluding :ruby_19_only => true unless ruby_19?
   config.filter_run_excluding :requires_root => true unless ENV['USER'] == 'root'
   config.filter_run_excluding :requires_unprivileged_user => true if ENV['USER'] == 'root'
+
+  config.run_all_when_everything_filtered = true
 
   config.before :each do
     Ohai::Config.reset

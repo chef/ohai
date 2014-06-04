@@ -112,6 +112,7 @@ ROUTE_GET
     @ifconfig_lines = @solaris_ifconfig.split("\n")
 
     @plugin = get_plugin("solaris2/network")
+    @plugin.stub(:collect_os).and_return(:solaris2)
     @plugin[:network] = Mash.new
 
     @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:CPU) do
   provides "cpu"
 
-  collect_data do
+  collect_data(:linux) do
     cpuinfo = Mash.new
     real_cpu = Mash.new
     cpu_number = 0

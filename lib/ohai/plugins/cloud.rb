@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin do
+Ohai.plugin(:Cloud) do
   provides "cloud"
 
   depends "ec2"
@@ -36,20 +36,27 @@ Ohai.plugin do
   # Google Compute Engine (gce)
   #--------------------------------------
 
+  # Is current cloud gce?
+  #
+  # === Return
+  # true:: If gce Hash is defined
+  # false:: Otherwise
   def on_gce?
     gce != nil
   end
+
+  # Fill cloud hash with gce values
   def get_gce_values
     cloud[:public_ipv4] = []
     cloud[:local_ipv4] = []
 
-    public_ips = gce['network']["networkInterface"].collect do |interface|
-      if interface.has_key?('accessConfiguration')
-        interface['accessConfiguration'].collect{|ac| ac['externalIp']}
+    public_ips = gce['instance']["networkInterfaces"].collect do |interface|
+      if interface.has_key?('accessConfigs')
+        interface['accessConfigs'].collect{|ac| ac['externalIp']}
       end
     end.flatten.compact
 
-    private_ips = gce['network']["networkInterface"].collect do |interface|
+    private_ips = gce['instance']["networkInterfaces"].collect do |interface|
       interface['ip']
     end.compact
     
@@ -58,7 +65,7 @@ Ohai.plugin do
     cloud[:public_ipv4] +=  public_ips
     cloud[:public_hostname] = nil
     cloud[:local_ipv4] += private_ips
-    cloud[:local_hostname] = gce['hostname']
+    cloud[:local_hostname] = gce['instance']['hostname']
     cloud[:provider] = "gce"
   end
 
@@ -200,7 +207,9 @@ Ohai.plugin do
   def get_azure_values
     cloud[:vm_name] = azure["vm_name"]
     cloud[:public_ips] << azure['public_ip']
+    cloud[:public_ipv4] = azure['public_ip']
     cloud[:public_fqdn] = azure['public_fqdn']
+    cloud[:public_hostname] = azure['public_fqdn']
     cloud[:public_ssh_port] = azure['public_ssh_port'] if azure['public_ssh_port']
     cloud[:public_winrm_port] = azure['public_winrm_port'] if azure['public_winrm_port']
     cloud[:provider] = "azure"

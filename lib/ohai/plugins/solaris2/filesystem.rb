@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data do
+  collect_data(:solaris2) do
     fs = Mash.new
 
     # Grab filesystem data from df
@@ -51,7 +51,7 @@ Ohai.plugin do
     end
 
     # Grab mount information from /bin/mount
-    so = shell+out("mount")
+    so = shell_out("mount")
     so.stdout.lines do |line|
       next unless (line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/)
       filesystem = $2
@@ -63,7 +63,7 @@ Ohai.plugin do
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    so = shell_out("sfs get -p -H all")
+    so = shell_out("zfs get -p -H all")
     so.stdout.lines do |line|
       next unless (line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/)
       filesystem = $1

@@ -17,74 +17,87 @@
 # limitations under the License
 #
 
-require 'ohai/dsl/plugin'
+require 'ohai/dsl'
 
 module Ohai
-  class NoAttributeError < Exception
-  end
-
-  class DependencyCycleError < Exception
-  end
-
   class Runner
+
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
-      @attributes = controller.attributes
+      @provides_map = controller.provides_map
       @safe_run = safe_run
     end
 
-    # runs this plugin and any un-run dependencies. if force is set to
-    # true, then this plugin and its dependencies will be run even if
-    # they have been run before.
-    def run_plugin(plugin, force = false)
-      visited = [plugin]
+    # Runs plugins and any un-run dependencies.
+    # If force is set to true, then this plugin and its dependencies
+    # will be run even if they have been run before.
+    def run_plugin(plugin)
+      unless plugin.kind_of?(Ohai::DSL::Plugin)
+        raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
+      end
+
+      begin
+        case plugin.version
+        when :version7
+          run_v7_plugin(plugin)
+        when :version6
+          run_v6_plugin(plugin)
+        else
+          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+        end
+      rescue Ohai::Exceptions::Error
+        raise
+      rescue Exception,Errno::ENOENT => e
+        Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+      end
+    end
+
+    def run_v6_plugin(plugin)
+      return true if plugin.has_run?
+
+      @safe_run ? plugin.safe_run : plugin.run
+    end
+
+    def run_v7_plugin(plugin)
+      visited = [ plugin ]
       while !visited.empty?
-        p = visited.pop
+        next_plugin = visited.pop
 
-        next if p.has_run? unless force
+        next if next_plugin.has_run?
 
-        if visited.include?(p)
-          raise DependencyCycleError, "Dependency cycle detected. Please refer to the following plugin files: #{cycle_sources(visited, p).join(", ") }"
+        if visited.include?(next_plugin)
+          raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ") }"
         end
 
-        dependency_providers = fetch_providers(p.dependencies)
-        dependency_providers.delete_if { |provider| (!force && provider.has_run?) || provider.eql?(p) }
+        dependency_providers = fetch_plugins(next_plugin.dependencies)
+
+        # Remove the already ran plugins from dependencies if force is not set
+        # Also remove the plugin that we are about to run from dependencies as well.
+        dependency_providers.delete_if { |dep_plugin|
+          dep_plugin.has_run? || dep_plugin.eql?(next_plugin)
+        }
 
         if dependency_providers.empty?
-          @safe_run ? p.safe_run : p.run
+          @safe_run ? next_plugin.safe_run : next_plugin.run
         else
-          visited << p << dependency_providers.first
+          visited << next_plugin << dependency_providers.first
         end
       end
     end
 
-    # returns a list of plugins which provide the given attributes
-    def fetch_providers(attributes)
-      providers = []
-      attributes.each do |attribute|
-        attrs = @attributes
-        parts = attribute.split('/')
-        parts.each do |part|
-          next if part == Ohai::OS.collect_os
-          raise NoAttributeError, "Cannot find plugin providing attribute \'#{attribute}\'" unless attrs[part]
-          attrs = attrs[part]
-        end
-        providers << attrs[:providers]
-        providers.flatten!
-      end
-      providers.uniq!
-      providers
+    def fetch_plugins(attributes)
+      @provides_map.find_closest_providers_for(attributes)
     end
 
-    # given a list of plugins and the first plugin in the cycle,
+    # Given a list of plugins and the first plugin in the cycle,
     # returns the list of plugin source files responsible for the
-    # cycle. does not include plugins that aren't a part of the cycle
-    def cycle_sources(plugins, cycle_start)
+    # cycle. Does not include plugins that aren't a part of the cycle
+    def get_cycle(plugins, cycle_start)
       cycle = plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
-      sources = []
-      cycle.each { |plugin| sources << plugin.source }
-      sources
+      names = []
+      cycle.each { |plugin| names << plugin.name }
+      names
     end
 
   end

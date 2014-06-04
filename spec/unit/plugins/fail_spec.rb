@@ -55,7 +55,8 @@ shared_examples "a v7 loading failure" do
 
   it "should not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.attributes.should_not have_key("fail")
+    #@ohai.attributes.should_not have_key("fail")
+    lambda { @ohai.provides_map.find_providers_for(["fail"]) }.should raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
   it "should not have source key" do
@@ -103,7 +104,7 @@ shared_examples "a v7 loading success" do
 
   it "should have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.attributes.should have_key("fail")
+    @ohai.provides_map.should have_key("fail")
   end
 
   it "should have source key" do
@@ -151,7 +152,7 @@ shared_examples "a v7 run failure" do
 
   it "should not have new attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
-    @ohai.attributes.should_not have_key("other")
+    @ohai.provides_map.should_not have_key("other")
   end
 
   it "should write to Ohai::Log" do

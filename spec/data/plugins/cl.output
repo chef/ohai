@@ -1,0 +1,135 @@
+platform "centos-5.5"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "centos-6.2"
+arch "x86"
+env []
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env []
+params "/?"
+stdout ""
+stderr "sh: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env []
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-12.10"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x86"
+env []
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-13.04"
+arch "x64"
+env []
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "centos-5.5"
+arch "x64"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "centos-6.2"
+arch "x86"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "centos-6.2"
+arch "x64"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: cl: command not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x86"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-10.04"
+arch "x64"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x86"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127
+
+platform "ubuntu-12.04"
+arch "x64"
+env ["gcc"]
+params "/?"
+stdout ""
+stderr "sh: 1: cl: not found\n"
+exit_status 127

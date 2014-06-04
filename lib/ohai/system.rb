@@ -19,181 +19,166 @@
 require 'ohai/loader'
 require 'ohai/log'
 require 'ohai/mash'
-require 'ohai/os'
 require 'ohai/runner'
-require 'ohai/dsl/plugin'
-require 'ohai/mixin/from_file'
+require 'ohai/dsl'
 require 'ohai/mixin/command'
+require 'ohai/mixin/os'
 require 'ohai/mixin/string'
+require 'ohai/mixin/constant_helper'
+require 'ohai/provides_map'
+require 'ohai/hints'
 require 'mixlib/shellout'
 
 require 'yajl'
 
 module Ohai
   class System
+    include Ohai::Mixin::ConstantHelper
+
     attr_accessor :data
-    attr_reader :attributes
-    attr_reader :hints
+    attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
     def initialize
-      @data = Mash.new
-      @attributes = Mash.new
-      @hints = Hash.new
-      @v6_dependency_solver = Hash.new
       @plugin_path = ""
+      reset_system
+    end
+
+    def reset_system
+      @data = Mash.new
+      @provides_map = ProvidesMap.new
+
+      @v6_dependency_solver = Hash.new
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
+
+      Ohai::Hints.refresh_hints()
+
+      # Remove the previously defined plugins
+      recursive_remove_constants(Ohai::NamedPlugin)
     end
 
     def [](key)
       @data[key]
     end
 
-    def load_plugins
-      Ohai::Config[:plugin_path].each do |path|
-        [
-         Dir[File.join(path, '*')],
-         Dir[File.join(path, Ohai::OS.collect_os, '**', '*')]
-        ].flatten.each do |file|
-          file_regex = Regexp.new("#{File.expand_path(path)}#{File::SEPARATOR}(.+).rb$")
-          md = file_regex.match(file)
-          if md
-            plugin_name = md[1].gsub(File::SEPARATOR, "::")
-            unless @v6_dependency_solver.has_key?(plugin_name)
-              plugin = @loader.load_plugin(file)
-              @v6_dependency_solver[plugin_name] = plugin unless plugin.nil?
-            else
-              Ohai::Log.debug("Already loaded plugin at #{file}")
-            end
-          end
-        end
-      end
-      true
+    def all_plugins(attribute_filter=nil)
+      # Reset the system when all_plugins is called since this function
+      # can be run multiple times in order to pick up any changes in the
+      # config or plugins with Chef.
+      reset_system
+
+      load_plugins
+      run_plugins(true, attribute_filter)
     end
 
-    def run_plugins(safe = false, force = false)
-      # collect and run version 6 plugins
-      v6plugins = []
-      @v6_dependency_solver.each { |plugin_name, plugin| v6plugins << plugin if plugin.version.eql?(:version6) }
-      v6plugins.each do |v6plugin|
-        if !v6plugin.has_run? || force
-          safe ? v6plugin.safe_run : v6plugin.run
-        end
+    def load_plugins
+      @loader.load_all
+    end
+
+    def run_plugins(safe = false, attribute_filter = nil)
+      # First run all the version 6 plugins
+      @v6_dependency_solver.values.each do |v6plugin|
+        @runner.run_plugin(v6plugin)
       end
 
-      # collect and run version 7 plugins
-      plugins = collect_providers(@attributes)
+      # Users who are migrating from ohai 6 may give one or more Ohai 6 plugin
+      # names as the +attribute_filter+. In this case we return early because
+      # the v7 plugin provides map will not have an entry for this plugin.
+      if attribute_filter and Array(attribute_filter).all? {|filter_item| have_v6_plugin?(filter_item) }
+        return true
+      end
+
+      # Then run all the version 7 plugins
       begin
-        plugins.each { |plugin| @runner.run_plugin(plugin, force) }
-      rescue DependencyCycleError, NoAttributeError => e
+        @provides_map.all_plugins(attribute_filter).each { |plugin|
+          @runner.run_plugin(plugin)
+        }
+      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
-      true
     end
 
-    def all_plugins
-      load_plugins
-      run_plugins(true)
+    def have_v6_plugin?(name)
+      @v6_dependency_solver.values.any? {|v6plugin| v6plugin.name == name }
     end
 
-    def collect_providers(providers)
-      plugins = []
-      if providers.is_a?(Mash)
-        providers.keys.each do |provider|
-          if provider.eql?("providers")
-            plugins << providers[provider]
-          else
-            plugins << collect_providers(providers[provider])
+    def pathify_v6_plugin(plugin_name)
+      path_components = plugin_name.split("::")
+      File.join(path_components) + ".rb"
+    end
+
+    #
+    # Below APIs are from V6.
+    # Make sure that you are not breaking backwards compatibility
+    # if you are changing any of the APIs below.
+    #
+    def require_plugin(plugin_ref, force=false)
+      plugins = [ ]
+      # This method is only callable by version 6 plugins.
+      # First we check if there exists a v6 plugin that fulfills the dependency.
+      if @v6_dependency_solver.has_key? pathify_v6_plugin(plugin_ref)
+        # Note that: partial_path looks like Plugin::Name
+        # keys for @v6_dependency_solver are in form 'plugin/name.rb'
+        plugins << @v6_dependency_solver[pathify_v6_plugin(plugin_ref)]
+      else
+        # While looking up V7 plugins we need to convert the plugin_ref to an attribute.
+        attribute = plugin_ref.gsub("::", "/")
+        begin
+          plugins = @provides_map.find_providers_for([attribute])
+        rescue Ohai::Exceptions::AttributeNotFound
+          Ohai::Log.debug("Can not find any v7 plugin that provides #{attribute}")
+          plugins = [ ]
+        end
+      end
+
+      if plugins.empty?
+        raise Ohai::Exceptions::DependencyNotFound, "Can not find a plugin for dependency #{plugin_ref}"
+      else
+        plugins.each do |plugin|
+          begin
+            @runner.run_plugin(plugin)
+          rescue SystemExit, Interrupt
+            raise
+          rescue Ohai::Exceptions::DependencyCycle, Ohai::Exceptions::AttributeNotFound => e
+            Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+            raise
+          rescue Exception,Errno::ENOENT => e
+            Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
           end
         end
-      else
-        plugins << providers
-      end
-      plugins.flatten.uniq
-    end
-
-    # todo: fixup for running w/ new internals
-    def refresh_plugins(path = '/')
-      parts = path.split('/')
-      if parts.length == 0
-        h = @metadata
-      else
-        parts.shift if parts[0].length == 0
-        h = @metadata
-        parts.each do |part|
-          break unless h.has_key?(part)
-          h = h[part]
-        end
-      end
-
-      refreshments = collect_providers(h)
-      Ohai::Log.debug("Refreshing plugins: #{refreshments.join(", ")}")
-      
-      # remove the hints cache
-      @hints = Hash.new
-
-      refreshments.each do |r|
-        @seen_plugins.delete(r) if @seen_plugins.has_key?(r)
-      end
-      refreshments.each do |r|
-        require_plugin(r) unless @seen_plugins.has_key?(r)
       end
     end
 
-    def require_plugin(plugin_name, force=false)
-      unless force
-        plugin = @v6_dependency_solver[plugin_name]
-        return true if plugin && plugin.has_run?
+    # Re-runs plugins that provide the attributes specified by
+    # +attribute_filter+. If +attribute_filter+ is not given, re-runs all
+    # plugins.
+    #
+    # Note that dependencies will not be re-run, so you must specify all of the
+    # attributes you want refreshed in the +attribute_filter+
+    #
+    # This method takes a naive approach to v6 plugins: it simply re-runs all
+    # of them whenever called.
+    def refresh_plugins(attribute_filter=nil)
+      Ohai::Hints.refresh_hints()
+      @provides_map.all_plugins(attribute_filter).each do |plugin|
+        plugin.reset!
       end
-
-      if Ohai::Config[:disabled_plugins].include?(plugin_name)
-        Ohai::Log.debug("Skipping disabled plugin #{plugin_name}")
-        return false
-      end
-
-      if plugin = @v6_dependency_solver[plugin_name] or plugin = plugin_for(plugin_name)
-        begin
-          plugin.version.eql?(:version7) ? @runner.run_plugin(plugin, force) : plugin.safe_run
-          true
-        rescue SystemExit, Interrupt
-          raise
-        rescue DependencyCycleError, NoAttributeError => e
-          Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
-          raise
-        rescue Exception,Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{plugin_name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
-        end
-      else
-        Ohai::Log.debug("No #{plugin_name} found in #{Ohai::Config[:plugin_path]}")
-      end
+      run_plugins(true, attribute_filter)
     end
 
-    def plugin_for(plugin_name)
-      filename = "#{plugin_name.gsub("::", File::SEPARATOR)}.rb"
-
-      plugin = nil
-      Ohai::Config[:plugin_path].each do |path|
-        check_path = File.expand_path(File.join(path, filename))
-        if File.exist?(check_path)
-          plugin = @loader.load_plugin(check_path)
-          @v6_dependency_solver[plugin_name] = plugin
-          break
-        else
-          next
-        end
-      end
-      plugin
-    end
-
+    #
     # Serialize this object as a hash
+    #
     def to_json
       Yajl::Encoder.new.encode(@data)
     end
 
+    #
     # Pretty Print this object as JSON
+    #
     def json_pretty_print(item=nil)
       Yajl::Encoder.new(:pretty => true).encode(item || @data)
     end
@@ -217,6 +202,5 @@ module Ohai
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
     end
-
   end
 end

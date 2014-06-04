@@ -20,18 +20,18 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Solaris2.X hostname plugin" do
   before(:each) do
-    @plugin = get_plugin("solaris2/hostname")
-    @plugin[:os] = "solaris2"
+    @plugin = get_plugin("hostname")
+    @plugin.stub(:collect_os).and_return(:solaris2)
+    @plugin.stub(:resolve_fqdn).and_return("kitteh.inurfridge.eatinurfoodz")
     @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "kitteh\n", ""))
-    Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
+#    Socket.stub(:getaddrinfo).and_return( [["AF_INET", 0, "kitteh.inurfridge.eatinurfoodz", "10.1.2.3", 2, 0, 0]] );
   end
-  
+
   it_should_check_from("solaris2::hostname", "hostname", "hostname", "kitteh")
-  
-  it "should get the fqdn value from socket getaddrinfo" do
-    Socket.should_receive(:getaddrinfo)
+
+  it "should get the fqdn value from #resolve_fqdn" do
     @plugin.run
     @plugin["fqdn"].should == "kitteh.inurfridge.eatinurfoodz"
   end
-  
+
 end

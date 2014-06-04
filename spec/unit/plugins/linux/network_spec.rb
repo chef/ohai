@@ -26,6 +26,7 @@ rescue LoadError => e
 end
 
 def do_stubs
+  @plugin.stub(:collect_os).and_return(:linux)
   @plugin.stub(:shell_out).with("ip addr").and_return(mock_shell_out(0, @linux_ip_addr, ""))
   @plugin.stub(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, @linux_ip_link_s_d, ""))
   @plugin.stub(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, @linux_ip_neighbor_show, ""))
@@ -257,14 +258,6 @@ IP_ROUTE_SCOPE
     @plugin = get_plugin("linux/network")
     @plugin.stub(:shell_out).with("ifconfig -a").and_return([0, @linux_ifconfig, ""])
     @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
-    Ohai::Log.should_receive(:warn).with(/unable to detect/).exactly(3).times
-
-    %w{ linux/hostname hostname network }.each do |plgn|
-      p = get_plugin(plgn)
-      p.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-      p.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
-      p.run
-    end
   end
 
   ["ifconfig","iproute2"].each do |network_method|

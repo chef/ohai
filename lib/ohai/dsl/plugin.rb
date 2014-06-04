@@ -1,6 +1,7 @@
 #
+# Author:: Adam Jacob (<adam@opscode.com>)
 # Author:: Claire McQuin (<claire@opscode.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Copyright:: Copyright (c) 2008, 2013 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,20 +18,48 @@
 # limitations under the License.
 #
 
-require 'ohai/os'
+require 'ohai/mixin/os'
 require 'ohai/mixin/command'
 require 'ohai/mixin/seconds_to_human'
+require 'ohai/hints'
 
 module Ohai
-  def self.plugin(&block)
-    Class.new(DSL::Plugin::VersionVII, &block)
+
+  # For plugin namespacing
+  module NamedPlugin
+    def self.valid_name?(name)
+      name.is_a?(Symbol) && name.to_s.match(/^[^A-Z]|_/).nil?
+    end
+
+    # dealing with ruby 1.8
+    if Module.method(:const_defined?).arity == 1
+      def self.strict_const_defined?(const)
+        const_defined?(const)
+      end
+    else
+      def self.strict_const_defined?(const)
+        const_defined?(const, false)
+      end
+    end
   end
 
-  def self.v6plugin(&block)
-    Class.new(DSL::Plugin::VersionVI, &block)
+  def self.plugin(name, &block)
+    raise Ohai::Exceptions::InvalidPluginName, "#{name} is not a valid plugin name. A valid plugin name is a symbol which begins with a capital letter and contains no underscores" unless NamedPlugin.valid_name?(name)
+
+    plugin = nil
+
+    if NamedPlugin.strict_const_defined?(name)
+      plugin = NamedPlugin.const_get(name)
+      plugin.class_eval(&block)
+    else
+      klass = Class.new(DSL::Plugin::VersionVII, &block)
+      plugin = NamedPlugin.const_set(name, klass)
+    end
+
+    plugin
   end
 
-  # cross platform /dev/null
+  # Cross platform /dev/null to support testability
   def self.dev_null
     if RUBY_PLATFORM =~ /mswin|mingw|windows/
       "NUL"
@@ -39,7 +68,8 @@ module Ohai
     end
   end
 
-  # this methods gets overridden at test time, to force the shell to check
+  # Extracted abs_path to support testability:
+  # This method gets overridden at test time, to force the shell to check
   # ohai/spec/unit/path/original/absolute/path/to/exe
   def self.abs_path( abs_path )
     abs_path
@@ -47,127 +77,34 @@ module Ohai
 
   module DSL
     class Plugin
-      include Ohai::OS
+
+      include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
 
       attr_reader :data
-      attr_reader :source
 
-      def initialize(controller, source)
-        @controller = controller
-        @attributes = controller.attributes
-        @data = controller.data
-        @source = source
+      def initialize(data)
+        @data = data
         @has_run = false
       end
 
       def run
         @has_run = true
-        run_plugin
+
+        if Ohai::Config[:disabled_plugins].include?(name)
+          Ohai::Log.debug("Skipping disabled plugin #{name}")
+        else
+          run_plugin
+        end
       end
 
       def has_run?
         @has_run
       end
 
-      #=====================================================
-      # version 7 plugin class
-      #=====================================================
-      class VersionVII < Plugin
-        def initialize(controller, source)
-          super(controller, source)
-        end
-
-        def version
-          :version7
-        end
-
-        def dependencies
-          self.class.depends_attrs
-        end
-
-        def provides(*paths)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
-        end
-
-        def require_plugin(*args)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
-        end
-
-        def self.provides_attrs
-          @provides_attrs ||= []
-        end
-
-        def self.depends_attrs
-          @depends_attrs ||= []
-        end
-
-        def self.provides(*attrs)
-          attrs.each do |attr|
-            provides_attrs << attr
-          end
-        end
-
-        def self.depends(*attrs)
-          attrs.each do |attr|
-            depends_attrs << attr
-          end
-        end
-
-        def self.depends_os(*attrs)
-          attrs.each do |attr|
-            depends_attrs << "#{Ohai::OS.collect_os}/#{attr}"
-          end
-        end
-
-        def self.collect_data(&block)
-          define_method(:run_plugin, &block)
-        end
-      end
-
-      #=====================================================
-      # version 6 plugin class
-      #=====================================================
-      class VersionVI < Plugin
-        def initialize(controller, source)
-          super(controller, source)
-        end
-
-        def version
-          :version6
-        end
-
-        def provides(*paths)
-          paths.each do |path|
-            parts = path.split("/")
-            a = @attributes
-            unless parts.length == 0
-              parts.shift if parts[0].length == 0
-              parts.each do |part|
-                a[part] ||= Mash.new
-                a = a[part]
-              end
-            end
-            a[:providers] ||= []
-            a[:providers] << self
-          end
-        end
-
-        def require_plugin(*args)
-          @controller.require_plugin(*args)
-        end
-
-        def self.collect_contents(contents)
-          define_method(:run_plugin) { self.instance_eval(contents) }
-        end
-      end
-
-      #=====================================================
-      # plugin DSL methods
-      #=====================================================
-      def hints
-        @controller.hints
+      def reset!
+        @has_run = false
       end
 
       def [](key)
@@ -221,33 +158,17 @@ module Ohai
       end
 
       def hint?(name)
-        @json_parser ||= Yajl::Parser.new
-
-        return hints[name] if hints[name]
-
-        Ohai::Config[:hints_path].each do |path|
-          filename = File.join(path, "#{name}.json")
-          if File.exist?(filename)
-            begin
-              hash = @json_parser.parse(File.read(filename))
-              hints[name] = hash || Hash.new # hint
-              # should exist because the file did, even if it didn't
-              # contain anything
-            rescue Yajl::ParseError => e
-              Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
-            end
-          end
-        end
-
-        hints[name]
+        Ohai::Hints.hint?(name)
       end
 
       # emulates the old plugin loading behavior
       def safe_run
         begin
           self.run
+        rescue Ohai::Exceptions::Error => e
+          raise e
         rescue => e
-          Ohai::Log.error("Plugin #{self.class.name} threw #{e.inspect}")
+          Ohai::Log.debug("Plugin #{self.name} threw #{e.inspect}")
           e.backtrace.each { |line| Ohai::Log.debug( line )}
         end
       end

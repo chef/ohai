@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,12 @@
 # limitations under the License.
 #
 
-
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "FreeBSD virtualization plugin" do
   before(:each) do
     @plugin = get_plugin("freebsd/virtualization")
-    @plugin[:os] = "freebsd"
+    @plugin.stub(:collect_os).and_return(:freebsd)
     @plugin.stub(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
     @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("jls -n").and_return(mock_shell_out(0, "",""))
@@ -47,7 +46,6 @@ describe Ohai::System, "FreeBSD virtualization plugin" do
     end
   end
 
-
   context "when on a virtualbox guest" do
     before do
       @vbox_guest = <<-OUT
@@ -55,7 +53,7 @@ Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxguest.ko
 OUT
-      @plugin.stub(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, @vbox_guest, ""))
+      @plugin.stub(:shell_out).with("#{ Ohai.abs_path("/sbin/kldstat")}").and_return(mock_shell_out(0, @vbox_guest, ""))
     end
 
     it "detects we are a guest" do
@@ -84,16 +82,14 @@ OUT
 
   context "when on a QEMU guest" do
     it "detects we are a guest" do
-      @qemu_guest = 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)'
-      @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, @qemu_guest, ""))
-      @plugin.run
-      @plugin[:virtualization][:system].should == "kvm"
-      @plugin[:virtualization][:role].should == "guest"
+      [ 'Common KVM processor', 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)', 'Common 32-bit KVM processor'].each do |kvm_string|
+        @plugin.stub(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, kvm_string, ""))
+        @plugin.run
+        @plugin[:virtualization][:system].should == "kvm"
+        @plugin[:virtualization][:role].should == "guest"
+      end
     end
   end
 
   # TODO upfactor tests from linux virtualization plugin for dmidecode
 end
-
-
-

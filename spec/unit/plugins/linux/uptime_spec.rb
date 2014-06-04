@@ -21,8 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux plugin uptime" do
   before(:each) do
-    @plugin = get_plugin("linux/uptime")
-    @plugin[:os] = "linux"
+    @plugin = get_plugin("uptime")
+    @plugin.stub(:collect_os).and_return(:linux)
     @double_file = double("/proc/uptime", { :gets => "18423 989" })
     File.stub(:open).with("/proc/uptime").and_return(@double_file)
   end

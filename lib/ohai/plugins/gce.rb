@@ -16,20 +16,27 @@
 
 require 'ohai/mixin/gce_metadata'
 
-Ohai.plugin do
+Ohai.plugin(:GCE) do
   include Ohai::Mixin::GCEMetadata
 
   provides "gce"
-  
-  GOOGLE_SYSFS_DMI = '/sys/firmware/dmi/entries/1-0/raw'
-  
-  #https://developers.google.com/compute/docs/instances#dmi
-  def has_google_dmi?
-    ::File.read(GOOGLE_SYSFS_DMI).include?('Google')
+
+  # Checks for gce metadata server
+  #
+  # === Return
+  # true:: If gce metadata server found
+  # false:: Otherwise
+  def has_gce_metadata?
+    can_metadata_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR,80)
   end
 
+  # Identifies gce
+  #
+  # === Return
+  # true:: If gce can be identified
+  # false:: Otherwise
   def looks_like_gce?
-    hint?('gce') || has_google_dmi? && can_metadata_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR,80)
+    hint?('gce') || has_gce_metadata?
   end
 
   collect_data do

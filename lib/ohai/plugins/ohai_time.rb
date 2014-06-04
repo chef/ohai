@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin do
+Ohai.plugin(:OhaiTime) do
   provides "ohai_time"
 
   collect_data do

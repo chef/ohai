@@ -17,18 +17,14 @@
 #
 
 require 'ipaddress'
+require 'ohai/mixin/network_constants'
 
-Ohai.plugin do
-  provides "network", "counters/network"
+Ohai.plugin(:NetworkAddresses) do
+  include Ohai::Mixin::NetworkConstants
+
   provides "ipaddress", "ip6address", "macaddress"
 
-  depends "hostname"
-  depends_os "network"
-
-  FAMILIES = {
-    "inet" => "default",
-    "inet6" => "default_inet6"
-  }
+  depends "network/interfaces"
 
   def sorted_ips(family = "inet")
     raise "bad family #{family}" unless [ "inet", "inet6" ].include? family
@@ -67,8 +63,8 @@ Ohai.plugin do
     return [ nil, nil ] if ips.empty?
 
     # shortcuts to access default #{family} interface and gateway
-    int_attr = FAMILIES[family] +"_interface"
-    gw_attr = FAMILIES[family] + "_gateway"
+    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] +"_interface"
+    gw_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
 
     # If we have a default interface that has addresses,
     # populate the short-cut attributes ipaddress, ip6address and macaddress
@@ -83,7 +79,7 @@ Ohai.plugin do
       elsif network[gw_attr] and
           network["interfaces"][network[int_attr]] and
           network["interfaces"][network[int_attr]]["addresses"]
-        if [ "0.0.0.0", "::" ].include? network[gw_attr]
+        if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
           Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
           r = gw_if_ips.first
@@ -143,7 +139,7 @@ Ohai.plugin do
     counters[:network] = Mash.new unless counters[:network]
 
     # inet family is treated before inet6
-    FAMILIES.keys.sort.each do |family|
+    Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
       r = {}
       ( r["ip"], r["iface"] ) = find_ip(family)
       r["mac"] = find_mac_from_iface(r["iface"]) unless r["iface"].nil?
@@ -160,7 +156,7 @@ Ohai.plugin do
         end
       elsif family == "inet6" and ip6address.nil?
         if r["ip"].nil?
-          Ohai::Log.warn("unable to detect ip6address")
+          Ohai::Log.debug("unable to detect ip6address")
         else
           ip6address r["ip"]
           if r["mac"] and macaddress.nil? and ipaddress.nil?

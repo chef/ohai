@@ -16,15 +16,15 @@
 # limitations under the License.
 #
 
-require "sigar"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_family"
 
-Ohai.plugin do
-  provides "platform", "platform_version"
-
-  collect_data do
+  collect_data(:hpux) do
+    require "sigar"
     sys = Sigar.new.sys_info
 
     platform sys.name.downcase
     platform_version sys.version
+    platform_family platform
   end
 end

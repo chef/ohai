@@ -16,15 +16,14 @@
 # limitations under the License.
 #
 
-require "sigar"
-
-Ohai.plugin do
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data do
-    fs = Mash.new
-
+  collect_data(:hpux, :default) do
+    require "sigar"
     sigar = Sigar.new
+
+    fs = Mash.new
 
     sigar.file_system_list.each do |fsys|
       filesystem = fsys.dev_name

@@ -22,7 +22,7 @@ require File.expand_path("../../../spec_helper.rb", __FILE__)
 shared_examples "Ohai::DSL::Plugin" do
   context "#initialize" do
     it "should set has_run? to false" do
-      plugin.has_run?.should be_false
+      plugin.has_run?.should be false
     end
 
     it "should set the correct plugin version" do
@@ -48,7 +48,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
       it "should set has_run? to true" do
         plugin.run
-        plugin.has_run?.should be_true
+        plugin.has_run?.should be true
       end
     end
 
@@ -69,7 +69,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
       it "should set has_run? to true" do
         plugin.run
-        plugin.has_run?.should be_true
+        plugin.has_run?.should be true
       end
     end
   end

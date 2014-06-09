@@ -25,9 +25,10 @@ Gem::Specification.new do |s|
   # Rake 10.2 drops Ruby 1.8 support, so stick to 10.1.x until chef also drops
   # 1.8.
   s.add_development_dependency "rake", "~> 10.1.0"
-  s.add_development_dependency "rspec-core"
-  s.add_development_dependency "rspec-expectations"
-  s.add_development_dependency "rspec-mocks"
+  s.add_development_dependency "rspec-core", "~> 3.0"
+  s.add_development_dependency "rspec-expectations", "~> 3.0"
+  s.add_development_dependency "rspec-mocks", "~> 3.0"
+  s.add_development_dependency "rspec-collection_matchers", "~> 1.0"
   s.add_development_dependency "rspec_junit_formatter"
   s.add_development_dependency "chef"
   s.bindir = "bin"

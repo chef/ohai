@@ -39,7 +39,7 @@ describe "Ohai::Util::FileHelper" do
     end
 
     it "returns false if the executable is not in the path" do
-      expect(file_helper.which('the_cake')).to be_false
+      expect(file_helper.which('the_cake')).to be false
     end
   end
 end

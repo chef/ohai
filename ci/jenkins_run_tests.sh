@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH=$PATH:/usr/local/bin
 
@@ -9,7 +9,7 @@ bundle install --binstubs --without docgen --path vendor/bundle || ( rm Gemfile.
 # preserve the environment and $PATH of the `jenkins` user
 sudo -E bash -c "export PATH=$PATH && bin/rspec -r rspec_junit_formatter -f RspecJunitFormatter -o test.xml -f documentation spec"
 # Ensure Jenkins can clean this file up
-sudo chown $USER test.xml
+sudo chown ${USER-`whoami`} test.xml
 
 RSPEC_RETURNCODE=$?
 

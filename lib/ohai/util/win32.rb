@@ -18,7 +18,9 @@
 
 module Ohai
   module Util
-    if RUBY_PLATFORM =~ /msin|mingw|windows/
+    module Win32
+    end
+    if RUBY_PLATFORM =~ /mswin|mingw|windows/
 
       require 'ffi'
 

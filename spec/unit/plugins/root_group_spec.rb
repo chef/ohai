@@ -17,6 +17,7 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../../../lib/ohai/util/win32/group_helper.rb')
 
 describe Ohai::System, 'root_group' do
   before(:each) do
@@ -76,13 +77,11 @@ describe Ohai::System, 'root_group' do
     end
   end
 
-  describe 'windows', :windows_only do
-
-    # TODO: Not implemented on windows.
-    # See also:
-    #
-    # http://tickets.opscode.com/browse/OHAI-490
-    # http://tickets.opscode.com/browse/OHAI-491
-
+  describe 'windows platform' do
+    it 'should return the group administrators' do
+      Ohai::Util::Win32::GroupHelper.should_receive(:windows_root_group_name).and_return('administrators')
+      @plugin.run
+      @plugin[:root_group].should == 'administrators'
+    end
   end
 end

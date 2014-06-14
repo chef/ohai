@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-shellout", "~> 1.2"
   s.add_dependency "ipaddress"
   s.add_dependency "wmi-lite", "~> 1.0"
-  s.add_dependency "ffi", "1.5.0" if RUBY_PLATFORM =~ /msin|mingw|windows/
+  s.add_dependency "ffi", "1.5.0" if RUBY_PLATFORM =~ /mswin|mingw|windows/
 
   # Rake 10.2 drops Ruby 1.8 support, so stick to 10.1.x until chef also drops
   # 1.8.

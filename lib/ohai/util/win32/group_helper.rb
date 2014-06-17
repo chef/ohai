@@ -55,12 +55,12 @@ module Ohai
                                                            domain_name_length_buffer,
                                                            sid_use_result)
 
-          if lookup_boolean_result != 0
-            administrators_group_name_result = administrators_group_name_buffer.strip
-          else
+          if lookup_boolean_result == 0
             raise "ERROR: failed to find root group (i.e. builtin\\administrators) for sid #{BUILTIN_ADMINISTRATORS_SID} because Win32 API function LookupAccountSid returned #{Win32.get_last_error}."
           end
-          free_result = Win32.local_free(administrators_sid_result.read_pointer)
+
+          administrators_group_name_result = administrators_group_name_buffer.strip
+          Win32.local_free(administrators_sid_result.read_pointer)
         end
         administrators_group_name_result
       end

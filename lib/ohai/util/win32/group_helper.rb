@@ -31,7 +31,7 @@ module Ohai
       def self.windows_root_group_name
         administrators_group_name_result = nil
 
-        administrators_sid_result = FFI::MemoryPointer.new(:int32, 1)
+        administrators_sid_result = FFI::MemoryPointer.new(:pointer)
         convert_result = Win32.convert_string_sid_to_sid(BUILTIN_ADMINISTRATORS_SID, administrators_sid_result)
 
         if convert_result != 0

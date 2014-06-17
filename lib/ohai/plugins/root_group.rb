@@ -22,7 +22,6 @@ Ohai.plugin(:RootGroup) do
     case ::RbConfig::CONFIG['host_os']
     when /mswin|mingw32|windows/
       require 'ohai/util/win32/group_helper'
-      include Ohai::Util
       
       group = Ohai::Util::Win32::GroupHelper.windows_root_group_name
       root_group group

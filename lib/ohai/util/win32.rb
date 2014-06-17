@@ -19,35 +19,25 @@
 module Ohai
   module Util
     module Win32
-    end
-    if RUBY_PLATFORM =~ /mswin|mingw|windows/
+      if RUBY_PLATFORM =~ /mswin|mingw|windows/
 
-      require 'ffi'
+        require 'ffi'
 
-      module Win32
         extend FFI::Library
         ffi_lib 'advapi32'
+
         attach_function :lookup_account_sid,
         :LookupAccountSidA,[ :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer ], :long
-      end
 
-      module Win32
-        extend FFI::Library
-        ffi_lib 'advapi32'
         attach_function :convert_string_sid_to_sid,
         :ConvertStringSidToSidA,[ :pointer, :pointer ], :long
-      end
 
-      module Win32
         extend FFI::Library
         ffi_lib 'kernel32'
+
         attach_function :local_free,
         :LocalFree, [ :pointer ], :long
-      end
 
-      module Win32
-        extend FFI::Library
-        ffi_lib 'kernel32'
         attach_function :get_last_error,
         :GetLastError, [], :long
       end

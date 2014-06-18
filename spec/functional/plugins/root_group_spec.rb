@@ -21,22 +21,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, 'root_group plugin' do
-  before(:each) do
-    @plugin = get_plugin("root_group")
-  end
+  let(:plugin) { get_plugin("root_group") }
 
   describe 'windows platform', :windows_only do
     let (:wmi) {  wmi = WmiLite::Wmi.new }
 
     it 'should return the system\'s administrators (root) group' do
-      # This query may be slow on domain-joined systems if there are connectivity
-      # issues to the domain controller or there are a lot of groups since the
-      # provider for Win32_Group attempts to read groups from Active Directory
+      # Notethat the Win32_Group WMI provider can be slow if your
+      # system is domain-joined and has hundreds of thousands of
+      # groups in Active Directory -- not a typical test scenario, but
+      # something to watch if you run this test in such an environment.
       groups = wmi.query("select * from Win32_Group where sid = 'S-1-5-32-544'")
       groups.length.should == 1
       administrators_group = groups[0]['name'].downcase
-      @plugin.run
-      @plugin[:root_group].downcase.should == administrators_group
+      plugin.run
+      expect(plugin[:root_group].downcase).to be == administrators_group
     end
   end
 end

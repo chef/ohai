@@ -393,10 +393,10 @@ describe Ohai::System, "Network Plugin" do
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
             @plugin["ip6address"].should == "3ffe:1111:3333::1"
           end
-
+          
           it "warns about this conflict" do
-            Ohai::Log.should_receive(:warn).with(/^\[inet\] no ipaddress\/mask on eth1/).once
-            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet\] no ipaddress\/mask on eth1/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
             @plugin.run
           end
         end

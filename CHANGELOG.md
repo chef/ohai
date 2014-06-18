@@ -25,9 +25,12 @@
 * [**jasonpgignac**](https://github.com/jasonpgignac)
   Add inode information to the Linux Filesystem plugin. (OHAI-539)
 * [**Benedikt Böhm**](https://github.com/hollow)
-  Change log-level from warn to debug for missing gateway IPs. 
+  Change log-level from warn to debug for missing gateway IPs.
 * [**sawanoboly**](https://github.com/sawanoboly)
   Include Joyent SmartOS specific attributes in Ohai. (OHAI-458)
+* [**Mike Fiedler**](https://github.com/miketheman)
+  Collect ec2 metadata even if one of the resources returns a 404. (OHAI-541)
+
 
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)

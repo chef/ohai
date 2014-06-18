@@ -38,6 +38,23 @@ Ohai.plugin(:Filesystem) do
         fs[filesystem][:mount] = $6
       end
     end
+    
+    # Grab filesystem inode data from df
+    so = shell_out("df -i")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem\s+Inodes/
+        next
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+        filesystem = $1
+        fs[filesystem] ||= Mash.new
+        fs[filesystem][:total_inodes] = $2
+        fs[filesystem][:inodes_used] = $3
+        fs[filesystem][:inodes_available] = $4
+        fs[filesystem][:inodes_percent_used] = $5
+        fs[filesystem][:mount] = $6
+      end
+    end
 
     # Grab mount information from /bin/mount
     so = shell_out("mount")

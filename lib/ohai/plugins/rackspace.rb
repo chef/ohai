@@ -105,14 +105,15 @@ Ohai.plugin(:Rackspace) do
         if _so.exitstatus == 0
           networks.push(Yajl::Parser.new.parse(_so.stdout))
         else
-          raise Ohai::Exceptions::Exec
+          Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
+          return false
         end
       end
       # these networks are already known to ohai, and are not 'private networks'
       networks.delete_if { |hash| hash['label'] == 'private' }
       networks.delete_if { |hash| hash['label'] == 'public' }
     end
-  rescue Ohai::Exceptions::Exec, Errno::ENOENT
+  rescue Errno::ENOENT
     Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
     nil
   end

@@ -38,7 +38,7 @@ Ohai.plugin(:Rackspace) do
     if so.exitstatus == 0
       so.stdout.strip.downcase == 'rackspace'
     end
-  rescue Ohai::Exceptions::Exec
+  rescue Errno::ENOENT
     false
   end
 
@@ -89,8 +89,9 @@ Ohai.plugin(:Rackspace) do
         rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
       end
     end
-  rescue Ohai::Exceptions::Exec
+  rescue Errno::ENOENT
     Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
+    nil
   end
 
   # Get the rackspace private networks
@@ -104,15 +105,17 @@ Ohai.plugin(:Rackspace) do
         if _so.exitstatus == 0
           networks.push(Yajl::Parser.new.parse(_so.stdout))
         else
-          raise Ohai::Exceptions::Exec
+          Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
+          return false
         end
       end
       # these networks are already known to ohai, and are not 'private networks'
       networks.delete_if { |hash| hash['label'] == 'private' }
       networks.delete_if { |hash| hash['label'] == 'public' }
     end
-  rescue Ohai::Exceptions::Exec
+  rescue Errno::ENOENT
     Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
+    nil
   end
 
   collect_data do

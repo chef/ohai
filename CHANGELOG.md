@@ -32,7 +32,9 @@
   Collect ec2 metadata even if one of the resources returns a 404. (OHAI-541)
 * [**Pat Collins**](https://github.com/patcoll)
   Provide basic memory information for Mac OS X. (OHAI-431)
-
+* [**Jerry Chen**](https://github.com/jcsalterego):
+  Rackspace plugin rescues Errno::ENOENT if xenstor-* utils are not found (OHAI-587)
+  
 
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)

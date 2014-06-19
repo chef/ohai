@@ -30,6 +30,8 @@
   Include Joyent SmartOS specific attributes in Ohai. (OHAI-458)
 * [**Mike Fiedler**](https://github.com/miketheman)
   Collect ec2 metadata even if one of the resources returns a 404. (OHAI-541)
+* [**Pat Collins**](https://github.com/patcoll)
+  Provide basic memory information for Mac OS X. (OHAI-431)
 
 
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource

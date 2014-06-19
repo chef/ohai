@@ -38,7 +38,7 @@ Ohai.plugin(:Rackspace) do
     if so.exitstatus == 0
       so.stdout.strip.downcase == 'rackspace'
     end
-  rescue Ohai::Exceptions::Exec, Errno::ENOENT
+  rescue Errno::ENOENT
     false
   end
 
@@ -89,7 +89,7 @@ Ohai.plugin(:Rackspace) do
         rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
       end
     end
-  rescue Ohai::Exceptions::Exec, Errno::ENOENT
+  rescue Errno::ENOENT
     Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
     nil
   end

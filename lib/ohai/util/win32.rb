@@ -24,6 +24,7 @@ module Ohai
         require 'ffi'
 
         extend FFI::Library
+
         ffi_lib 'advapi32'
 
         attach_function :lookup_account_sid,
@@ -32,7 +33,6 @@ module Ohai
         attach_function :convert_string_sid_to_sid,
         :ConvertStringSidToSidA,[ :pointer, :pointer ], :long
 
-        extend FFI::Library
         ffi_lib 'kernel32'
 
         attach_function :local_free,

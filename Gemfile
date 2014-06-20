@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gemspec :name => "ohai"
+gemspec
 
 # https://github.com/sj26/rspec_junit_formatter/pull/14
 # rspec_junit_formatter isn't compatible with RSpec3 yet, but is fixed in

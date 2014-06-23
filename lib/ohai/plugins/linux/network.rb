@@ -137,6 +137,7 @@ Ohai.plugin(:Network) do
       so.stdout.lines do |line|
         if line =~ IPROUTE_INT_REGEX
           tmp_int = $2
+          iface[tmp_int] = Mash.new unless iface[tmp_int]
           net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
         end
 

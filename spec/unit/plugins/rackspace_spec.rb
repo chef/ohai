@@ -95,6 +95,12 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:public_hostname].should_not be_nil
     end
 
+    it "should resolve hostname if reverse dns is set" do
+      Resolv.stub(:getname).and_return("1234.resolved.com")
+      @plugin.run
+      @plugin[:rackspace][:public_hostname].should == "1234.resolved.com"
+    end
+
     it "should have correct values for all attributes" do
       @plugin.run
       @plugin[:rackspace][:public_ip].should == "1.2.3.4"
@@ -103,7 +109,7 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
       @plugin[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @plugin[:rackspace][:local_hostname].should == 'katie'
-      @plugin[:rackspace][:public_hostname].should == "1-2-3-4.static.cloud-ips.com"
+      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
     end
 
     it "should capture region information" do
@@ -128,6 +134,8 @@ OUT
       File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
       File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
       File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      File.stub(:exist?).with('/etc/resolv.conf').and_return(true)
+      File.stub(:read).with('/etc/resolv.conf').and_return('')
     end
 
     describe 'with no public interfaces (empty eth0)' do

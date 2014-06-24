@@ -72,7 +72,7 @@ describe Ohai::System, "plugin gce" do
       File.stub(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
       File.stub(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
 
-      # Raise Errno::ENOENT to simulate the scenario in which metadata server 
+      # Raise Errno::ENOENT to simulate the scenario in which metadata server
       # can not be connected
       t = double("connection")
       t.stub(:connect_nonblock).and_raise(Errno::ENOENT)

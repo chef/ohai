@@ -17,7 +17,7 @@
 #
 
 require 'rubygems'
-require 'yajl'
+require 'ffi_yajl'
 require 'ohai'
 require 'yaml'
 
@@ -98,7 +98,7 @@ module OhaiPluginCommon
 
   # output a fake executable case in the DSL
   def to_fake_exe_format(platform, arch, env, params, stdout, stderr, exit_status)
-    e = Yajl::Encoder.new
+    e = FFI_Yajl::Encoder.new
     <<-eos
 platform "#{platform}"
 arch "#{arch}"
@@ -156,7 +156,7 @@ eos
 require 'yaml'
 require '#{path}/ohai_plugin_common.rb'
 
-OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd.gsub( /\//, OhaiPluginCommon::FAKE_SEP )}' ), '#{platform}', '#{arch}', #{Yajl::Encoder.encode( env )}
+OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd.gsub( /\//, OhaiPluginCommon::FAKE_SEP )}' ), '#{platform}', '#{arch}', #{FFI_Yajl::Encoder.encode( env )}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
 
@@ -259,7 +259,7 @@ def test_plugin(plugin_names, cmd_list)
                   OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
                 end
 
-                enc = Yajl::Encoder
+                enc = FFI_Yajl::Encoder
                 subsumes?( @ohai.data, ohai ) do | path, source, test |
                   path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
                   if test.nil?

@@ -58,10 +58,10 @@ module Ohai
         uri = "#{GCE_METADATA_URL}/#{id}"
         response = http_client.get(uri)
         return nil unless response.code == "200"
-        
+
         if json?(response.body)
           data = StringIO.new(response.body)
-          parser = Yajl::Parser.new
+          parser = FFI_Yajl::Parser.new
           parser.parse(data)
         elsif  has_trailing_slash?(id) or (id == '')
           temp={}
@@ -76,15 +76,15 @@ module Ohai
 
       def json?(data)
         data = StringIO.new(data)
-        parser = Yajl::Parser.new
+        parser = FFI_Yajl::Parser.new
         begin
           parser.parse(data)
           true
-        rescue Yajl::ParseError
+        rescue FFI_Yajl::ParseError
           false
         end
       end
-    
+
       def multiline?(data)
         data.lines.to_a.size > 1
       end

@@ -178,7 +178,7 @@ module Ohai
               retr_meta = metadata_get("#{id}#{key}", api_version)
               data = retr_meta ? retr_meta : ''
               json = StringIO.new(data)
-              parser = Yajl::Parser.new
+              parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)
             elsif not key.eql?('/')
               metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)

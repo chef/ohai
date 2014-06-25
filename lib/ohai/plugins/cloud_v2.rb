@@ -24,6 +24,7 @@ Ohai.plugin(:CloudV2) do
   depends "linode"
   depends "openstack"
   depends "azure"
+  depends "digital_ocean"
 
   # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
   #
@@ -270,6 +271,31 @@ Ohai.plugin(:CloudV2) do
     @cloud_attr_obj.provider = "azure"
   end
 
+
+  # ----------------------------------------
+  # digital_ocean
+  # ----------------------------------------
+
+  # Is current cloud digital_ocean?
+  #
+  # === Return
+  # true:: If digital_ocean Mash is defined
+  # false:: Otherwise
+  def on_digital_ocean?
+    digital_ocean != nil
+  end
+
+  # Fill cloud hash with digital_ocean values
+  def get_digital_ocean_values
+    digital_ocean['ip_addresses'].each do |accessibility, ips|
+      ips.each do |type, ip_list|
+        ip_list.each {|ip| @cloud_attr_obj.send("add_#{type}_addr", ip, accessibility.to_sym)}
+      end
+    end
+    @cloud_attr_obj.public_hostname = digital_ocean['name']
+    @cloud_attr_obj.provider = "digital_ocean"
+  end
+
   collect_data do
     require "ipaddr"
 
@@ -282,6 +308,7 @@ Ohai.plugin(:CloudV2) do
     get_eucalyptus_values if on_eucalyptus?
     get_openstack_values if on_openstack?
     get_azure_values if on_azure?
+    get_digital_ocean_values if on_digital_ocean?
 
     # set node[:cloud] hash here
     cloud_v2 @cloud_attr_obj.cloud_mash

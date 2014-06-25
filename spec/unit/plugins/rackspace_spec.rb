@@ -101,6 +101,16 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:public_hostname].should == "1234.resolved.com"
     end
 
+    it "should return ip address when reverse dns does not resolve" do
+      Resolv.stub(:getname).and_raise(Resolv::ResolvError)
+      @plugin.run
+      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+
+      Resolv.stub(:getname).and_raise(Resolv::ResolvTimeout)
+      @plugin.run
+      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+    end
+
     it "should have correct values for all attributes" do
       @plugin.run
       @plugin[:rackspace][:public_ip].should == "1.2.3.4"
@@ -130,6 +140,7 @@ OUT
     it_should_behave_like "rackspace"
 
     before(:each) do
+      Resolv.stub(:getname).and_raise(Resolv::ResolvError)
       File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
       File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
       File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)

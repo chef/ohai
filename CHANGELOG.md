@@ -1,6 +1,9 @@
 # Ohai Changelog
 
-## Unreleased: 7.2.0
+## Unreleased:
+
+
+## Last Release: 7.2.0
 
 * [**Lance Bragstad**:](https://github.com/lbragstad)
   Added platform_family support for ibm_powerkvm (OHAI-558)
@@ -34,12 +37,30 @@
   Provide basic memory information for Mac OS X. (OHAI-431)
 * [**Jerry Chen**](https://github.com/jcsalterego):
   Rackspace plugin rescues Errno::ENOENT if xenstor-* utils are not found (OHAI-587)
-  
+
 
 * root_group provider not implemented for Windows (OHAI-491)
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)
 
-## Last Release: 7.0.0 (04/01/2014)
 
-http://www.getchef.com/blog/2014/04/08/release-chef-client-11-12-0-10-32-2/
+## Previous Release: 7.0.4
+
+* Added platform_family support for ibm_powerkvm (OHAI-558)
+* cannot disable Lsb plugin (OHAI-565)
+* Skip v7 plugins when refreshing a v6 plugin. Fixes (OHAI-562)
+  `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
+* Work around libc bug in `hostname --fqdn`
+* Report Suse and OpenSuse seperately in the :platform attribute.
+* CPU information matching linux is now available on darwin.
+* ip6address detection failure logging is turned down to :debug.
+* fe80:: link-local address is not reported as ip6addresses anymore.
+* Private network information is now available as [:rackspace][:private_networks] on Rackspace nodes.
+* System init mechanism is now reported at [:init_package] on linux.
+* Define cloud plugin interface (OHAI-542)
+* java -version wastes memory (OHAI-550)
+* Ohai cannot detect running in an lxc container (OHAI-551)
+* Normalize cloud attributes for Azure (OHAI-554)
+* Capture FreeBSD osreldate for comparison purposes (OHAI-557)
+
+http://www.getchef.com/blog/2014/04/09/release-chef-client-11-12-2/

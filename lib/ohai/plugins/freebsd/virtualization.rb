@@ -54,7 +54,7 @@ Ohai.plugin(:Virtualization) do
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out("sysctl -n hw.model")
-    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU/
+    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
     end
@@ -83,7 +83,7 @@ Ohai.plugin(:Virtualization) do
         when /Manufacturer: VMware/
           found_virt_manufacturer = "vmware"
         when /Product Name: VMware Virtual Platform/
-          if found_virt_manufacturer == "vmware" 
+          if found_virt_manufacturer == "vmware"
             virtualization[:system] = "vmware"
             virtualization[:role] = "guest"
           end

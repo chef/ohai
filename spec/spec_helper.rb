@@ -1,4 +1,5 @@
 require 'rspec'
+require 'rspec/collection_matchers'
 
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
@@ -8,6 +9,7 @@ $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'spec/support/platform_helpers'
 require 'spec/support/integration_helper'
+require 'wmi-lite'
 require 'ohai'
 Ohai::Config[:log_level] = :error
 
@@ -84,7 +86,17 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
 end
 
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  config.raise_errors_for_deprecations!
+
+  # `expect` should be preferred for new tests or when refactoring old tests,
+  # but we're not going to do a "big bang" change at this time.
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+  config.mock_with :rspec do |c|
+    c.syntax = [:expect, :should]
+  end
 
   config.filter_run :focus => true
 

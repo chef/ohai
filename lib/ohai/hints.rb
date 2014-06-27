@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+require 'ffi_yajl'
+
 module Ohai
   module Hints
     def self.refresh_hints
@@ -31,12 +33,12 @@ module Ohai
         filename = File.join(path, "#{name}.json")
         if File.exist?(filename)
           begin
-            json_parser = Yajl::Parser.new
+            json_parser = FFI_Yajl::Parser.new
             hash = json_parser.parse(File.read(filename))
             @hints[name] = hash || Hash.new # hint
             # should exist because the file did, even if it didn't
             # contain anything
-          rescue Yajl::ParseError => e
+          rescue FFI_Yajl::ParseError => e
             Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
           end
         end

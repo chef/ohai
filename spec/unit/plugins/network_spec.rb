@@ -18,15 +18,32 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
-def it_does_not_fail
-  it "doesn't fail" do
+def it_doesnt_fail
+  it "doesnt fail" do
     Ohai::Log.stub(:warn)
     Ohai::Log.should_not_receive(:debug).with(/^Plugin network threw exception/)
     @plugin.run
-    %w{ ipaddress macaddress ip6address }.each do |attribute|
-      @plugin.should have_key(attribute)
+  end
+end
+
+def it_populates_ipaddress_attributes
+
+  source = caller[0]
+
+  it "populates ipaddress, macaddress and ip6address" do
+    begin
+      Ohai::Log.stub(:warn)
+      Ohai::Log.should_not_receive(:debug).with(/^Plugin network threw exception/)
+      @plugin.run
+      %w{ ipaddress macaddress ip6address }.each do |attribute|
+        @plugin.should have_key(attribute)
+      end
+    rescue Exception
+      puts "RSpec context: #{source}"
+      raise
     end
   end
+
 end
 
 describe Ohai::System, "Network Plugin" do
@@ -292,7 +309,7 @@ describe Ohai::System, "Network Plugin" do
 
     describe "when the linux::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
       describe "simple setup" do
-        it_does_not_fail
+        it_populates_ipaddress_attributes
 
         it "detects {ip,ip6,mac}address" do
           @plugin.run
@@ -309,7 +326,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "detects {ip,ip6}address" do
             @plugin.run
@@ -338,7 +355,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "detects {ip,ip6}address" do
             @plugin.run
@@ -367,7 +384,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "picks {ip,ip6,mac}address" do
             Ohai::Log.stub(:warn)
@@ -376,10 +393,10 @@ describe Ohai::System, "Network Plugin" do
             @plugin["macaddress"].should == "00:16:3E:2F:36:80"
             @plugin["ip6address"].should == "3ffe:1111:3333::1"
           end
-
+          
           it "warns about this conflict" do
-            Ohai::Log.should_receive(:warn).with(/^\[inet\] no ipaddress\/mask on eth1/).once
-            Ohai::Log.should_receive(:warn).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet\] no ipaddress\/mask on eth1/).once
+            Ohai::Log.should_receive(:debug).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
             @plugin.run
           end
         end
@@ -405,7 +422,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
           end
 
-          it_does_not_fail
+          it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
             Ohai::Log.stub(:warn)
@@ -436,7 +453,7 @@ describe Ohai::System, "Network Plugin" do
             end
           end
 
-          it_does_not_fail
+          it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
             Ohai::Log.stub(:warn)
@@ -484,7 +501,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
             @plugin.run
@@ -510,7 +527,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
             @plugin.run
@@ -548,7 +565,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
             @plugin.run
@@ -574,7 +591,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
             @plugin.run
@@ -596,7 +613,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the first interface" do
             Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
@@ -619,7 +636,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["interfaces"]["eth0"]["addresses"].each{|k,v| v[:scope]="lInK" if %w[inet inet6].include? v["family"]}
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
             Ohai::Log.should_receive(:debug).with(/^\[inet\] no default interface/).once
@@ -642,7 +659,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
             @plugin.run
@@ -657,7 +674,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_gateway"] = "fe80::1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
             @plugin.run
@@ -679,7 +696,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
             @plugin.run
@@ -723,7 +740,7 @@ describe Ohai::System, "Network Plugin" do
           @plugin["network"]["default_inet6_interface"] = "eth2"
         end
 
-        it_does_not_fail
+        it_populates_ipaddress_attributes
 
         it "picks {ip,mac,ip6}address from the default interface" do
           @plugin.run
@@ -742,7 +759,7 @@ describe Ohai::System, "Network Plugin" do
           end
         end
 
-        it_does_not_fail
+        it_doesnt_fail
 
         it "can't detect ipaddress" do
           Ohai::Log.stub(:warn)
@@ -795,7 +812,7 @@ describe Ohai::System, "Network Plugin" do
             }
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "detects ip6address" do
             @plugin.run
@@ -829,7 +846,7 @@ describe Ohai::System, "Network Plugin" do
               }
             end
 
-            it_does_not_fail
+            it_populates_ipaddress_attributes
 
             it "detects {ip,mac}address" do
               @plugin.run
@@ -855,7 +872,7 @@ describe Ohai::System, "Network Plugin" do
               @plugin["ip6address"] = "3ffe:8888:9999::1"
             end
 
-            it_does_not_fail
+            it_doesnt_fail
 
             it "can't detect ipaddress (ipv4)" do
               Ohai::Log.stub(:warn)
@@ -904,7 +921,7 @@ describe Ohai::System, "Network Plugin" do
               }
             end
 
-            it_does_not_fail
+            it_populates_ipaddress_attributes
 
             it "detects ipaddress and overwrite macaddress" do
               @plugin.run
@@ -931,7 +948,7 @@ describe Ohai::System, "Network Plugin" do
               @plugin["ip6address"] = "3ffe:8888:9999::1"
             end
 
-            it_does_not_fail
+            it_doesnt_fail
 
             it "can't set ipaddress" do
               Ohai::Log.stub(:warn)
@@ -955,7 +972,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["ip6address"] = "3ffe:8888:9999::1"
           end
 
-          it_does_not_fail
+          it_populates_ipaddress_attributes
 
           it "doesn't overwrite {ip,mac,ip6}address" do
             @plugin.run
@@ -971,7 +988,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["ip6address"] = "3ffe:8888:9999::1"
           end
 
-          it_does_not_fail
+          it_doesnt_fail
 
           it "doesn't overwrite {ip,mac,ip6}address" do
             @plugin.run

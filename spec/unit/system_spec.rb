@@ -210,20 +210,20 @@ EOF
         # least code complexity in legacy v6 plugin format support. Once we
         # ship 7.0, though, we need to stick to the same behavior.
         it "runs v6 plugins" do
-          expect(v6_plugin.has_run?).to be_true
+          expect(v6_plugin.has_run?).to be true
         end
 
         it "runs plugins that provide the requested attributes" do
-          expect(primary_plugin.has_run?).to be_true
+          expect(primary_plugin.has_run?).to be true
         end
 
         it "runs dependencies of plugins that provide requested attributes" do
-          expect(dependency_plugin_one.has_run?).to be_true
-          expect(dependency_plugin_two.has_run?).to be_true
+          expect(dependency_plugin_one.has_run?).to be true
+          expect(dependency_plugin_two.has_run?).to be true
         end
 
         it "does not run plugins that are irrelevant to the requested attributes" do
-          expect(unrelated_plugin.has_run?).to be_false
+          expect(unrelated_plugin.has_run?).to be false
         end
 
       end

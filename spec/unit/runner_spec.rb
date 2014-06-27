@@ -113,7 +113,7 @@ describe Ohai::Runner, "run_plugin" do
 
     it "should run the plugin" do
       @runner.run_plugin(plugin)
-      plugin.has_run?.should be_true
+      plugin.has_run?.should be true
     end
 
     it "should add plugin data to Ohai::System.data" do
@@ -142,7 +142,7 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should not run the plugin" do
         expect{ @runner.run_plugin(@plugin) }.to raise_error
-        @plugin.has_run?.should be_false
+        @plugin.has_run?.should be false
       end
     end
 
@@ -174,7 +174,7 @@ describe Ohai::Runner, "run_plugin" do
       it "should run the plugins" do
         @runner.run_plugin(@plugin2)
         @plugins.each do |plugin|
-          plugin.has_run?.should be_true
+          plugin.has_run?.should be true
         end
       end
     end
@@ -208,7 +208,7 @@ describe Ohai::Runner, "run_plugin" do
       it "should run the plugins" do
         @runner.run_plugin(@plugin3)
         @plugins.each do |plugin|
-          plugin.has_run?.should be_true
+          plugin.has_run?.should be true
         end
       end
     end
@@ -251,7 +251,7 @@ describe Ohai::Runner, "run_plugin" do
     it "should run the plugins" do
       @runner.run_plugin(@plugin3)
       @plugins.each do |plugin|
-        plugin.has_run?.should be_true
+        plugin.has_run?.should be true
       end
     end
   end
@@ -350,7 +350,7 @@ describe Ohai::Runner, "run_plugin" do
       @runner.run_plugin(@pluginA)
 
       @plugins.each do |plugin|
-        plugin.has_run?.should be_true
+        plugin.has_run?.should be true
       end
     end
 
@@ -363,7 +363,7 @@ describe Ohai::Runner, "run_plugin" do
       @runner.run_plugin(@pluginA)
 
       @plugins.each do |plugin|
-        plugin.has_run?.should be_true
+        plugin.has_run?.should be true
       end
     end
   end

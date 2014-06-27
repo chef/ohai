@@ -18,13 +18,13 @@
 Ohai.plugin(:RootGroup) do
   provides 'root_group'
 
+  require 'ohai/util/win32/group_helper' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+
   collect_data do
     case ::RbConfig::CONFIG['host_os']
     when /mswin|mingw32|windows/
-      # TODO: OHAI-491
-      # http://tickets.opscode.com/browse/OHAI-491
-      # The windows implementation of this plugin has been removed because of
-      # performance considerations (see: OHAI-490).
+      group = Ohai::Util::Win32::GroupHelper.windows_root_group_name
+      root_group group
     else
       root_group Etc.getgrgid(Etc.getpwnam('root').gid).name
     end

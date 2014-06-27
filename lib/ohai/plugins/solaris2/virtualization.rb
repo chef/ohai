@@ -21,6 +21,12 @@
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
+  def collect_solaris_guestid
+    command = '/usr/sbin/zoneadm list -p'
+    so = shell_out(command)
+    so.stdout.split(':').first
+  end
+
   collect_data(:solaris2) do
     virtualization Mash.new
 
@@ -75,6 +81,7 @@ Ohai.plugin(:Virtualization) do
           virtualization[:system] = 'zone'
           virtualization[:role] = 'guest'
           virtualization[:guest_uuid] = zones[first_zone]['uuid']
+          virtualization[:guest_id] = collect_solaris_guestid
         end
       elsif (zones.length > 1)
         virtualization[:system] = 'zone'

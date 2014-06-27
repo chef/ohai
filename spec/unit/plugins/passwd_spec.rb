@@ -16,6 +16,13 @@ describe Ohai::System, "plugin etc" do
     @plugin[:etc][:passwd]['www'].should == Mash.new(:shell => '/bin/false', :gecos => 'Serving the web since 1970', :gid => 800, :uid => 800, :dir => '/var/www')
   end
 
+  it "should ignore duplicate users" do
+    Etc.should_receive(:passwd).and_yield(PasswdEntry.new("root", 1, 1, '/root', '/bin/zsh', 'BOFH')).
+      and_yield(PasswdEntry.new('root', 1, 1, '/', '/bin/false', 'I do not belong'))
+    @plugin.run
+    @plugin[:etc][:passwd]['root'].should == Mash.new(:shell => '/bin/zsh', :gecos => 'BOFH', :gid => 1, :uid => 1, :dir => '/root')
+  end
+
   it "should set the current user" do
     Etc.should_receive(:getlogin).and_return('chef')
     @plugin.run

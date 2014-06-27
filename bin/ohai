@@ -39,13 +39,4 @@ rescue LoadError
   raise
 end
 
-if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  begin
-    require 'ruby-wmi'
-  rescue LoadError
-    STDERR.puts "ruby-wmi failed to load - is it installed?"
-    raise
-  end
-end
-
 Ohai::Application.new.run

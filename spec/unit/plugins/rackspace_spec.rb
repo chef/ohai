@@ -101,14 +101,12 @@ describe Ohai::System, "plugin rackspace" do
       @plugin[:rackspace][:public_hostname].should == "1234.resolved.com"
     end
 
-    it "should return ip address when reverse dns does not resolve" do
-      Resolv.stub(:getname).and_raise(Resolv::ResolvError)
-      @plugin.run
-      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
-
-      Resolv.stub(:getname).and_raise(Resolv::ResolvTimeout)
-      @plugin.run
-      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+    [Resolv::ResolvError, Resolv::ResolvTimeout].each do |exception|
+      it "should return ip address when reverse dns returns exception: #{exception}" do
+        Resolv.stub(:getname).and_raise(exception)
+        @plugin.run
+        @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+      end
     end
 
     it "should have correct values for all attributes" do

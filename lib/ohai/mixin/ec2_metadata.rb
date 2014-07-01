@@ -48,12 +48,6 @@ module Ohai
       EC2_ARRAY_DIR    = %w(network/interfaces/macs)
       EC2_JSON_DIR     = %w(iam)
 
-      EC2_SECURITY_CREDENTIALS     = %w(iam/security-credentials/)
-
-      def collect_security_credentials(value = nil)
-        @value ||= value
-      end
-
       def can_metadata_connect?(addr, port, timeout=2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         saddr = Socket.pack_sockaddr_in(port, addr)
@@ -112,8 +106,6 @@ module Ohai
       #   produces a 404 for some unknown reason. In that event, return
       #   `nil` and continue the run instead of failing it.
       def metadata_get(id, api_version)
-        return nil unless fetch?(id)
-
         path = "/#{api_version}/meta-data/#{id}"
         response = http_client.get(path)
         case response.code
@@ -216,20 +208,6 @@ module Ohai
 
       def metadata_key(key)
         key.gsub(/\-|\//, '_')
-      end
-
-      # Should return true only if we have the permission to collect the metadata
-      # from this id.
-      def fetch?(id)
-        if credentials?(id)
-          collect_security_credentials
-        else
-          true
-        end
-      end
-
-      def credentials?(id)
-        EC2_SECURITY_CREDENTIALS.include?(id)
       end
 
     end

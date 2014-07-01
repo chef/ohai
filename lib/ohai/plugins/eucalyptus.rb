@@ -47,7 +47,7 @@ Ohai.plugin(:Eucalyptus) do
   end
 
   def looks_like_euca?
-    # Try non-blocking connect so we don't "block" if 
+    # Try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
     hint?('eucalyptus') || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
@@ -56,7 +56,17 @@ Ohai.plugin(:Eucalyptus) do
     if looks_like_euca?
       Ohai::Log.debug("looks_like_euca? == true")
       eucalyptus Mash.new
-      self.fetch_metadata.each {|k, v| eucalyptus[k] = v }
+      self.fetch_metadata.each do |k, v|
+        # Eucalyptus 3.4+ supports IAM roles and Instance Profiles much like AWS
+        # https://www.eucalyptus.com/blog/2013/10/15/iam-roles-and-instance-profiles-eucalyptus-34
+        #
+        # fetch_metadata returns IAM security credentials, including the IAM user's
+        # secret access key. We'd rather not have ohai send this information
+        # to the server.
+        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
+        next if k == 'iam' && !hint?('iam')
+        eucalyptus[k] = v
+      end
       eucalyptus[:userdata] = self.fetch_userdata
     else
       Ohai::Log.debug("looks_like_euca? == false")

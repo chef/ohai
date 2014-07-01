@@ -48,16 +48,15 @@ Ohai.plugin(:EC2) do
   collect_data do
     if looks_like_ec2?
       Ohai::Log.debug("looks_like_ec2? == true")
-
-      if hint?('ec2_iam')
-        Ohai::Log.debug("collecting iam security credentials")
-        collect_security_credentials(true)
-      else
-        collect_security_credentials(false)
-      end
-
       ec2 Mash.new
-      fetch_metadata.each {|k, v| ec2[k] = v }
+      fetch_metadata.each do |k, v|
+        # fetch_metadata returns IAM security credentials, including the IAM user's
+        # secret access key. We'd rather not have ohai send this information
+        # to the server.
+        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
+        next if k == 'iam' && !hint?('iam')
+        ec2[k] = v
+      end
       ec2[:userdata] = self.fetch_userdata
     else
       Ohai::Log.debug("looks_like_ec2? == false")

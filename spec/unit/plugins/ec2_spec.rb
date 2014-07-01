@@ -104,11 +104,11 @@ describe Ohai::System, "plugin ec2" do
     context "with ec2_iam cloud file" do
       before do
         if windows?
-          File.stub(:exist?).with('C:\chef\ohai\hints/ec2_iam.json').and_return(true)
-          File.stub(:read).with('C:\chef\ohai\hints/ec2_iam.json').and_return('')
+          File.stub(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(true)
+          File.stub(:read).with('C:\chef\ohai\hints/iam.json').and_return('')
         else
-          File.stub(:exist?).with('/etc/chef/ohai/hints/ec2_iam.json').and_return(true)
-          File.stub(:read).with('/etc/chef/ohai/hints/ec2_iam.json').and_return('')
+          File.stub(:exist?).with('/etc/chef/ohai/hints/iam.json').and_return(true)
+          File.stub(:read).with('/etc/chef/ohai/hints/iam.json').and_return('')
         end
       end
 
@@ -140,9 +140,9 @@ describe Ohai::System, "plugin ec2" do
     context "without ec2_iam cloud file" do
       before do
         if windows?
-          File.stub(:exist?).with('C:\chef\ohai\hints/ec2_iam.json').and_return(false)
+          File.stub(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(false)
         else
-          File.stub(:exist?).with('/etc/chef/ohai/hints/ec2_iam.json').and_return(false)
+          File.stub(:exist?).with('/etc/chef/ohai/hints/iam.json').and_return(false)
         end
       end
 
@@ -153,8 +153,12 @@ describe Ohai::System, "plugin ec2" do
         @http_client.should_receive(:get).
           with("/2012-01-12/meta-data/iam/").
           and_return(double("Net::HTTP Response", :body => "security-credentials/", :code => "200"))
-        @http_client.should_not_receive(:get).
-          with("/2012-01-12/meta-data/iam/security-credentials/")
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/").
+          and_return(double("Net::HTTP Response", :body => "MyRole", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/MyRole").
+          and_return(double("Net::HTTP Response", :body => "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", :code => "200"))
         @http_client.should_receive(:get).
           with("/2012-01-12/user-data/").
           and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
@@ -162,7 +166,7 @@ describe Ohai::System, "plugin ec2" do
         @plugin.run
 
         @plugin[:ec2].should_not be_nil
-        @plugin[:ec2]['iam']['security-credentials'].should be_nil
+        @plugin[:ec2]['iam'].should be_nil
       end
     end
 

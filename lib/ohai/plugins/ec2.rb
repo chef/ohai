@@ -40,7 +40,7 @@ Ohai.plugin(:EC2) do
   end
 
   def looks_like_ec2?
-    # Try non-blocking connect so we don't "block" if 
+    # Try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
     hint?('ec2') || has_ec2_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
@@ -48,6 +48,14 @@ Ohai.plugin(:EC2) do
   collect_data do
     if looks_like_ec2?
       Ohai::Log.debug("looks_like_ec2? == true")
+
+      if hint?('ec2_iam')
+        Ohai::Log.debug("collecting iam security credentials")
+        collect_security_credentials(true)
+      else
+        collect_security_credentials(false)
+      end
+
       ec2 Mash.new
       fetch_metadata.each {|k, v| ec2[k] = v }
       ec2[:userdata] = self.fetch_userdata

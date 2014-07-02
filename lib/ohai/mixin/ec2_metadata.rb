@@ -122,6 +122,7 @@ module Ohai
       def fetch_metadata(id='', api_version=nil)
         api_version ||= best_api_version
         return Hash.new if api_version.nil?
+
         metadata = Hash.new
         retrieved_metadata = metadata_get(id, api_version)
         if retrieved_metadata

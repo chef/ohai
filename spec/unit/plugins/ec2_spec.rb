@@ -44,6 +44,7 @@ describe Ohai::System, "plugin ec2" do
       @http_client.should_receive(:get).
         with("/").twice.
         and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
+      File.stub(:exist?).and_return(false)
     end
 
     it "should recursively fetch all the ec2 metadata" do
@@ -64,6 +65,7 @@ describe Ohai::System, "plugin ec2" do
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
       @plugin.run
+
       @plugin[:ec2].should_not be_nil
       @plugin[:ec2]['instance_type'].should == "c1.medium"
       @plugin[:ec2]['ami_id'].should == "ami-5d2dc934"
@@ -92,33 +94,80 @@ describe Ohai::System, "plugin ec2" do
       @http_client.should_receive(:get).
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+
       @plugin.run
 
       @plugin[:ec2].should_not be_nil
       @plugin[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname'].should eql('server17.opscode.com')
     end
 
-    it "should parse ec2 iam/ directory and its JSON files properly" do
-      @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/").
-        and_return(double("Net::HTTP Response", :body => "iam/", :code => "200"))
-      @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/iam/").
-        and_return(double("Net::HTTP Response", :body => "security-credentials/", :code => "200"))
-      @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/iam/security-credentials/").
-        and_return(double("Net::HTTP Response", :body => "MyRole", :code => "200"))
-      @http_client.should_receive(:get).
-        with("/2012-01-12/meta-data/iam/security-credentials/MyRole").
-        and_return(double("Net::HTTP Response", :body => "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", :code => "200"))
-      @http_client.should_receive(:get).
-        with("/2012-01-12/user-data/").
-        and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
-      @plugin.run
+    context "with ec2_iam cloud file" do
+      before do
+        if windows?
+          File.stub(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(true)
+          File.stub(:read).with('C:\chef\ohai\hints/iam.json').and_return('')
+        else
+          File.stub(:exist?).with('/etc/chef/ohai/hints/iam.json').and_return(true)
+          File.stub(:read).with('/etc/chef/ohai/hints/iam.json').and_return('')
+        end
+      end
 
-      @plugin[:ec2].should_not be_nil
-      @plugin[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
-      @plugin[:ec2]['iam']['security-credentials']['MyRole']['Token'].should eql '12345678'
+      it "should parse ec2 iam/ directory and collect iam/security-credentials/" do
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/").
+          and_return(double("Net::HTTP Response", :body => "iam/", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/").
+          and_return(double("Net::HTTP Response", :body => "security-credentials/", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/").
+          and_return(double("Net::HTTP Response", :body => "MyRole", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/MyRole").
+          and_return(double("Net::HTTP Response", :body => "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+
+        @plugin.run
+
+        @plugin[:ec2].should_not be_nil
+        @plugin[:ec2]['iam']['security-credentials']['MyRole']['Code'].should eql 'Success'
+        @plugin[:ec2]['iam']['security-credentials']['MyRole']['Token'].should eql '12345678'
+      end
+    end
+
+    context "without ec2_iam cloud file" do
+      before do
+        if windows?
+          File.stub(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(false)
+        else
+          File.stub(:exist?).with('/etc/chef/ohai/hints/iam.json').and_return(false)
+        end
+      end
+
+      it "should parse ec2 iam/ directory and NOT collect iam/security-credentials/" do
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/").
+          and_return(double("Net::HTTP Response", :body => "iam/", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/").
+          and_return(double("Net::HTTP Response", :body => "security-credentials/", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/").
+          and_return(double("Net::HTTP Response", :body => "MyRole", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/meta-data/iam/security-credentials/MyRole").
+          and_return(double("Net::HTTP Response", :body => "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", :code => "200"))
+        @http_client.should_receive(:get).
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+
+        @plugin.run
+
+        @plugin[:ec2].should_not be_nil
+        @plugin[:ec2]['iam'].should be_nil
+      end
     end
 
     it "should ignore \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
@@ -201,10 +250,13 @@ describe Ohai::System, "plugin ec2" do
     it_should_behave_like "ec2"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      if windows?
+        File.should_receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+        File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      else
+        File.should_receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+        File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      end
     end
   end
 

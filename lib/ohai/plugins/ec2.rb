@@ -40,7 +40,7 @@ Ohai.plugin(:EC2) do
   end
 
   def looks_like_ec2?
-    # Try non-blocking connect so we don't "block" if 
+    # Try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
     hint?('ec2') || has_ec2_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
@@ -49,7 +49,14 @@ Ohai.plugin(:EC2) do
     if looks_like_ec2?
       Ohai::Log.debug("looks_like_ec2? == true")
       ec2 Mash.new
-      fetch_metadata.each {|k, v| ec2[k] = v }
+      fetch_metadata.each do |k, v|
+        # fetch_metadata returns IAM security credentials, including the IAM user's
+        # secret access key. We'd rather not have ohai send this information
+        # to the server.
+        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
+        next if k == 'iam' && !hint?('iam')
+        ec2[k] = v
+      end
       ec2[:userdata] = self.fetch_userdata
     else
       Ohai::Log.debug("looks_like_ec2? == false")

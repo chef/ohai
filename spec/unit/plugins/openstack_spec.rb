@@ -240,25 +240,25 @@ EOM
 
       context 'Retreive openStack specific metadata' do
         it "reads the availability_zone from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['availability_zone']).to eq('nova')
+          expect(ohai_data['openstack']['metadata']['availability_zone']).to eq('nova')
         end
         it "reads the hostname from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['hostname']).to eq('ohai.novalocal')
+          expect(ohai_data['openstack']['metadata']['hostname']).to eq('ohai.novalocal')
         end
         it "reads the launch_index from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['launch_index']).to eq(0)
+          expect(ohai_data['openstack']['metadata']['launch_index']).to eq(0)
         end
         it "reads the meta from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['meta']).to eq({ "priority" => "low", "role" => "ohaiserver"})
+          expect(ohai_data['openstack']['metadata']['meta']).to eq({ "priority" => "low", "role" => "ohaiserver"})
         end
         it "reads the name from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['name']).to eq('ohai_spec')
+          expect(ohai_data['openstack']['metadata']['name']).to eq('ohai_spec')
         end
         it "reads the public_keys from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['public_keys']).to eq({"mykey" => "SSH KEY DATA"})
+          expect(ohai_data['openstack']['metadata']['public_keys']).to eq({"mykey" => "SSH KEY DATA"})
         end
         it "reads the uuid from the openstack metadata service" do
-          expect(ohai_data['openstack']['openstack_metadata']['uuid']).to eq('00000000-0000-0000-0000-100000000000')
+          expect(ohai_data['openstack']['metadata']['uuid']).to eq('00000000-0000-0000-0000-100000000000')
         end
       end
     end

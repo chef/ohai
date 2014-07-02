@@ -22,7 +22,7 @@ Ohai.plugin(:Openstack) do
 
   include Ohai::Mixin::Ec2Metadata
 
-  def fetch_openstack_metadata(addr = '169.254.169.254', api_version = '2013-04-04')
+  def collect_openstack_metadata(addr = Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, api_version = '2013-04-04')
     require 'json'
     path = "/openstack/#{api_version}/meta_data.json"
     uri = "http://#{addr}#{path}"
@@ -58,7 +58,7 @@ Ohai.plugin(:Openstack) do
         else
           openstack['provider'] = 'openstack'
           Ohai::Log.debug("connecting to the OpenStack specific metadata service")
-          openstack['openstack_metadata'] = fetch_openstack_metadata
+          openstack['metadata'] = collect_openstack_metadata
         end
 
       else

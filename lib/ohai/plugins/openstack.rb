@@ -22,6 +22,27 @@ Ohai.plugin(:Openstack) do
 
   include Ohai::Mixin::Ec2Metadata
 
+  def fetch_openstack_metadata(addr = '169.254.169.254', api_version = '2013-04-04')
+    require 'json'
+    path = "/openstack/#{api_version}/meta_data.json"
+    uri = "http://#{addr}#{path}"
+    begin
+      response = Net::HTTP.get_response(URI.parse(uri),nil,nil)
+      case response.code
+      when '200'
+        JSON.parse(response.body)
+      when '404'
+        Ohai::Log.debug("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
+        nil
+      else
+        raise "Encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)"
+      end
+    rescue => e
+      Ohai::Log.debug("Encountered error retrieving OpenStack specific metadata (#{uri}), due to #{e.class}")
+      nil
+    end
+  end
+
   collect_data do
     # Adds openstack Mash
     if hint?('openstack') || hint?('hp')
@@ -36,6 +57,8 @@ Ohai.plugin(:Openstack) do
           openstack['provider'] = 'hp'
         else
           openstack['provider'] = 'openstack'
+          Ohai::Log.debug("connecting to the OpenStack specific metadata service")
+          openstack['openstack_metadata'] = fetch_openstack_metadata
         end
 
       else

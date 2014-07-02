@@ -118,11 +118,37 @@ EOM
         }
       end
 
+      let(:openstack_metadata_version) { "2013-04-04" }
+      let(:openstack_metadata_endpoint) { "http://169.254.169.254/openstack/" }
+
+      let(:openstack_metadata_values) do
+        '{
+            "availability_zone" : "nova",
+            "hostname" : "ohai.novalocal",
+            "launch_index" : 0,
+            "meta" : {
+                "priority" : "low",
+                "role" : "ohaiserver"
+            },
+            "name" : "ohai_spec",
+            "public_keys" : {
+                "mykey" : "SSH KEY DATA"
+            },
+            "uuid" : "00000000-0000-0000-0000-100000000000"
+        }'
+      end
+
       let(:http_client) { double("Net::HTTP", :read_timeout= => nil) }
 
       def expect_get(url, response_body)
         http_client.should_receive(:get).
           with(url).
+          and_return(double("HTTP Response", :code => "200", :body => response_body))
+      end
+
+      def expect_get_response(url, response_body)
+        Net::HTTP.should_receive(:get_response).
+          with(url,nil,nil).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
@@ -142,6 +168,11 @@ EOM
         metadata_values.each do |md_id, md_value|
           expect_get("/#{metadata_version}/meta-data/#{md_id}", md_value)
         end
+
+        expect_get_response(
+          URI.parse("#{openstack_metadata_endpoint}#{openstack_metadata_version}/meta_data.json"),
+          openstack_metadata_values
+        )
 
         openstack_plugin.run
       end
@@ -205,6 +236,30 @@ EOM
       end
       it "reads the provider from the metadata service" do
         expect(ohai_data['openstack']['provider']).to eq("openstack")
+      end
+
+      context 'Retreive openStack specific metadata' do
+        it "reads the availability_zone from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['availability_zone']).to eq('nova')
+        end
+        it "reads the hostname from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['hostname']).to eq('ohai.novalocal')
+        end
+        it "reads the launch_index from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['launch_index']).to eq(0)
+        end
+        it "reads the meta from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['meta']).to eq({ "priority" => "low", "role" => "ohaiserver"})
+        end
+        it "reads the name from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['name']).to eq('ohai_spec')
+        end
+        it "reads the public_keys from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['public_keys']).to eq({"mykey" => "SSH KEY DATA"})
+        end
+        it "reads the uuid from the openstack metadata service" do
+          expect(ohai_data['openstack']['openstack_metadata']['uuid']).to eq('00000000-0000-0000-0000-100000000000')
+        end
       end
     end
 

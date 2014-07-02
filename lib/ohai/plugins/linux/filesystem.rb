@@ -52,11 +52,21 @@ stdout.each_line do |line|
   end
 end
 
-# Gather more filesystem types via libuuid, even devices that's aren't mounted
-popen4("blkid -s TYPE") do |pid, stdin, stdout, stderr|
+have_lsblk = File.exists?('/bin/lsblk')
+
+# Gather more filesystem types via libuuid/libblkid even devices that
+# aren't mounted
+if have_lsblk
+  cmd = 'lsblk -r -o NAME,FSTYPE -n'
+  regex = /^(\S+) (\S+)/
+else
+  cmd = 'blkid -s TYPE'
+  regex = /^(\S+): TYPE="(\S+)"/
+end
+popen4(cmd) do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /^(\S+): TYPE="(\S+)"/
+    if line =~ regex
       filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:fs_type] = $2
@@ -64,11 +74,18 @@ popen4("blkid -s TYPE") do |pid, stdin, stdout, stderr|
   end
 end
 
-# Gather device UUIDs via libuuid
-popen4("blkid -s UUID") do |pid, stdin, stdout, stderr|
+if have_lsblk
+  cmd = 'lsblk -r -o NAME,UUID -n'
+  regex = /^(\S+) (\S+)/
+else
+  cmd = 'blkid -s UUID'
+  regex = /^(\S+): UUID="(\S+)"/
+end
+
+popen4(cmd) do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /^(\S+): UUID="(\S+)"/
+    if line =~ regex
       filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:uuid] = $2
@@ -76,11 +93,18 @@ popen4("blkid -s UUID") do |pid, stdin, stdout, stderr|
   end
 end
 
-# Gather device labels via libuuid
-popen4("blkid -s LABEL") do |pid, stdin, stdout, stderr|
+if have_lsblk
+  cmd = 'lsblk -r -o NAME,LABEL -n'
+  regex = /^(\S+) (\S+)/
+else
+  cmd = 'blkid -s LABEL'
+  regex = /^(\S+): LABEL="(\S+)"/
+end
+
+popen4(cmd) do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
-    if line =~ /^(\S+): LABEL="(\S+)"/
+    if line =~ regex
       filesystem = $1
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:label] = $2

@@ -29,6 +29,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:eucalyptus] = nil
       @plugin[:linode] = nil
       @plugin[:azure] = nil
+      @plugin[:cloudstack] = nil
       @plugin.run
       @plugin[:cloud].should be_nil
     end
@@ -204,5 +205,35 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:cloud][:provider].should == "azure"
     end
   end
+
+  describe "with cloudstack mash" do
+    before do
+      @plugin[:cloudstack] = Mash.new()
+    end
+
+    it "populates cloud public ip" do
+      @plugin[:cloudstack]['public_ipv4'] = "174.129.150.8"
+      @plugin.run
+      @plugin[:cloud][:public_ips][0].should == @plugin[:cloudstack]['public_ipv4']
+    end
+
+    it "populates cloud private ip" do
+      @plugin[:cloudstack]['local_ipv4'] = "10.252.42.149"
+      @plugin.run
+      @plugin[:cloud][:private_ips][0].should == @plugin[:cloudstack]['local_ipv4']
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      @plugin[:cloud][:provider].should == "cloudstack"
+    end
+
+    it "populates vm id" do
+      @plugin[:cloudstack]['vm_id'] = "8983fb85-fb7f-46d6-8af1-c1b6666fec39"
+      @plugin.run
+      @plugin[:cloud][:vm_id].should == @plugin[:cloudstack]['vm_id']
+    end
+  end
+
 
 end

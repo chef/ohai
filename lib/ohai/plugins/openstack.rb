@@ -27,7 +27,7 @@ Ohai.plugin(:Openstack) do
     path = "/openstack/#{api_version}/meta_data.json"
     uri = "http://#{addr}#{path}"
     begin
-      response = Net::HTTP.get_response(URI.parse(uri),nil,nil)
+      response = http_client.get_response(URI.parse(uri),nil,nil)
       case response.code
       when '200'
         JSON.parse(response.body)

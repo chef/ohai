@@ -147,7 +147,7 @@ EOM
       end
 
       def expect_get_response(url, response_body)
-        Net::HTTP.should_receive(:get_response).
+        http_client.should_receive(:get_response).
           with(url,nil,nil).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end

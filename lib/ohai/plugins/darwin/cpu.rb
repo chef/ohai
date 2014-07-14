@@ -29,9 +29,9 @@ Ohai.plugin(:CPU) do
     so = shell_out("sysctl -n hw.cpufrequency")
     cpu[:mhz] = so.stdout.to_i / 1000000
     so = shell_out("sysctl -n machdep.cpu.vendor")
-    cpu[:vendor_id] = so.stdout
+    cpu[:vendor_id] = so.stdout.chomp
     so = shell_out("sysctl -n machdep.cpu.brand_string")
-    cpu[:model_name] = so.stdout
+    cpu[:model_name] = so.stdout.chomp
     so = shell_out("sysctl -n machdep.cpu.model")
     cpu[:model] = so.stdout.to_i
     so = shell_out("sysctl -n machdep.cpu.family")

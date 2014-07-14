@@ -26,7 +26,7 @@ Ohai.plugin(:Zpools) do
     so = shell_out("zpool list -H -o name,size,alloc,free,cap,dedup,health,version")
     so.stdout.lines do |line|
       case line
-      when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+)$/
+      when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
         pools[$1] = Mash.new
         pools[$1][:pool_size] = $2
         pools[$1][:pool_allocated] = $3

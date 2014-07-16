@@ -19,8 +19,22 @@
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
+  def get_blk_cmd(attr, have_lsblk)
+    if have_lsblk
+      attr = 'FSTYPE' if attr == 'TYPE'
+      "lsblk -r -n -o NAME,#{attr}"
+    else
+      "blkid -s #{attr}"
+    end
+  end
+
+  def get_blk_regex(attr, have_lsblk)
+    have_lsblk ? /^(\S+) (\S+)/ : /^(\S+): #{attr}="(\S+)"/
+  end
+
   collect_data(:linux) do
     fs = Mash.new
+    have_lsblk = File.executable?('/bin/lsblk')
 
     # Grab filesystem data from df
     so = shell_out("df -P")
@@ -68,10 +82,14 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
+    have_lsblk = File.exists?('/bin/lsblk')
+
     # Gather more filesystem types via libuuid, even devices that's aren't mounted
-    so = shell_out("blkid -s TYPE")
+    cmd = get_blk_cmd('TYPE', have_lsblk)
+    regex = get_blk_regex('TYPE', have_lsblk)
+    so = shell_out(cmd)
     so.stdout.lines do |line|
-      if line =~ /^(\S+): TYPE="(\S+)"/
+      if line =~ regex
         filesystem = $1
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:fs_type] = $2
@@ -79,9 +97,11 @@ Ohai.plugin(:Filesystem) do
     end
 
     # Gather device UUIDs via libuuid
-    so = shell_out("blkid -s UUID")
+    cmd = get_blk_cmd('UUID', have_lsblk)
+    regex = get_blk_regex('UUID', have_lsblk)
+    so = shell_out(cmd)
     so.stdout.lines do |line|
-      if line =~ /^(\S+): UUID="(\S+)"/
+      if line =~ regex
         filesystem = $1
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:uuid] = $2
@@ -89,9 +109,11 @@ Ohai.plugin(:Filesystem) do
     end
 
     # Gather device labels via libuuid
-    so = shell_out("blkid -s LABEL")
+    cmd = get_blk_cmd('LABEL', have_lsblk)
+    regex = get_blk_regex('LABEL', have_lsblk)
+    so = shell_out(cmd)
     so.stdout.lines do |line|
-      if line =~ /^(\S+): LABEL="(\S+)"/
+      if line =~ regex
         filesystem = $1
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:label] = $2

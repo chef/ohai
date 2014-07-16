@@ -68,6 +68,14 @@ describe Ohai::Mixin::Ec2Metadata do
         lambda { mixin.best_api_version}.should raise_error
       end
     end
+
+    context "when the response is from eucalyptus" do
+      let(:response) { double("Net::HTTP Response", :body => "<?xml version=\"1.0\"?><Response><Errors><Error><Code>404 Not Found</Code><Message>unknown</Message></Error></Errors><RequestID>unknown</RequestID></Response>", :code => "404") }
+
+      it "returns 'latest' as the version" do
+        mixin.best_api_version.should == 'latest'
+      end
+    end
   end
 
   context "#metadata_get" do

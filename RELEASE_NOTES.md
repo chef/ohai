@@ -27,5 +27,6 @@ populate the old system (role & system) with LXC if there are no other virtualiz
 ### Miscellaneous
 
 * Ohai now collects mdadm RAID information.
+* Ohai know uses lsblk, if available, instead of blkid
 
 # Ohai Breaking Changes:

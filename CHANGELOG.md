@@ -1,5 +1,11 @@
 # Ohai Changelog
 
+## 7.4.0:
+
+* [**Phil Dibowitz**:](https://github.com/jaymzh)
+  Use lsblk instead of blkid if available.
+
+
 ## Last Release: 7.2.0
 
 * [**Lance Bragstad**:](https://github.com/lbragstad)

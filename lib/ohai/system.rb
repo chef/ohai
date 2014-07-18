@@ -29,7 +29,7 @@ require 'ohai/provides_map'
 require 'ohai/hints'
 require 'mixlib/shellout'
 
-require 'ffi_yajl'
+require 'ffi_yajl/json_gem'
 
 module Ohai
   class System

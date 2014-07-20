@@ -35,6 +35,7 @@ describe Ohai::System, "Linux plugin platform" do
     File.stub(:exists?).with("/etc/slackware-version").and_return(false)
     File.stub(:exists?).with("/etc/enterprise-release").and_return(false)
     File.stub(:exists?).with("/etc/oracle-release").and_return(false)
+    File.stub(:exists?).with("/etc/parallels-release").and_return(false)
     File.stub(:exists?).with("/usr/bin/raspi-config").and_return(false)
   end
 
@@ -294,6 +295,41 @@ describe Ohai::System, "Linux plugin platform" do
         @plugin.run
         @plugin[:platform].should == "fedora"
         @plugin[:platform_version].to_i.should == 13
+      end
+
+    end
+  end
+
+  describe "on pcs linux" do
+    describe "with lsb_result" do
+      it "should read the platform as parallels and version as 6.0.5" do
+        @plugin[:lsb][:id] = "CloudLinuxServer"
+        @plugin[:lsb][:release] = "6.5"
+        File.stub(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub(:read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
+        File.should_receive(:exists?).with("/etc/parallels-release").and_return(true)
+        File.should_receive(:read).with("/etc/parallels-release").and_return("Parallels Cloud Server 6.0.5 (20007)")
+        @plugin.run
+        @plugin[:platform].should == "parallels"
+        @plugin[:platform_version].should == "6.0.5"
+        @plugin[:platform_family].should == "rhel"
+      end
+    end
+
+    describe "without lsb_results" do
+      before(:each) do
+        @plugin.lsb = nil
+      end
+
+      it "should read the platform as parallels and version as 6.0.5" do
+        File.stub(:exists?).with("/etc/redhat-release").and_return(true)
+        File.stub(:read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
+        File.should_receive(:exists?).with("/etc/parallels-release").and_return(true)
+        File.should_receive(:read).with("/etc/parallels-release").and_return("Parallels Cloud Server 6.0.5 (20007)")
+        @plugin.run
+        @plugin[:platform].should == "parallels"
+        @plugin[:platform_version].should == "6.0.5"
+        @plugin[:platform_family].should == "rhel"
       end
     end
   end

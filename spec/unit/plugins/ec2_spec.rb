@@ -24,6 +24,8 @@ describe Ohai::System, "plugin ec2" do
   before(:each) do
     @plugin = get_plugin("ec2")
     @plugin[:network] = {:interfaces => {:eth0 => {} } }
+    File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
+    File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
   end
 
   shared_examples_for "!ec2" do

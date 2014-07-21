@@ -115,6 +115,29 @@ lo        Link encap:Local Loopback
           TX packets:524 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0
           RX bytes:35224 (34.3 KiB)  TX bytes:35224 (34.3 KiB)
+
+eth3      Link encap:Ethernet  HWaddr E8:39:35:C5:C8:54
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:13395101 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9492909 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1325650573 (1.2 GiB)  TX bytes:1666310189 (1.5 GiB)
+          Interrupt:36 Memory:f4800000-f4ffffff
+
+ovs-system Link encap:Ethernet  HWaddr 7A:7A:80:80:6C:24
+          BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+
+xapi1     Link encap:Ethernet  HWaddr E8:39:35:C5:C8:50
+          inet addr:192.168.13.34  Bcast:192.168.13.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:160275 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:21515031 (20.5 MiB)  TX bytes:2052 (2.0 KiB)
 '
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
@@ -198,6 +221,10 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
     link/void
     inet 127.0.0.2/32 scope host venet0
     inet 172.16.19.48/32 scope global venet0:0
+12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
+    link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
+       valid_lft forever preferred_lft forever
 '
   }
 
@@ -233,6 +260,24 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
     1392844460 2659966  0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     691785313  1919690  0       0       0       0
+10: eth3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master ovs-system state UP mode DEFAULT qlen 1000
+    link/ether e8:39:35:c5:c8:54 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    1321907045 13357087 0       0       0       3126613
+    TX: bytes  packets  errors  dropped carrier collsns
+    1661526184 9467091  0       0       0       0
+11: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+    link/ether 7a:7a:80:80:6c:24 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    0          0        0       0       0       0
+12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
+    link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast
+    21468183   159866   0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    2052       6        0       0       0       0
 '
   }
 
@@ -282,7 +327,7 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
       end
 
       it "detects the interfaces" do
-        expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo", "tun0", "venet0", "venet0:0"])
+        expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system",  "tun0", "venet0", "venet0:0", "xapi1"])
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do

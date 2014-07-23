@@ -4,7 +4,7 @@ call bundle check
 
 if %ERRORLEVEL% NEQ 0 (
    call rm Gemfile.lock
-   call bundle install --without docgen --path vendor/bundle
+   call bundle install --without docgen
 )
 
 bundle exec rspec -r rspec_junit_formatter -f RspecJunitFormatter -o test.xml -f documentation spec

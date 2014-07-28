@@ -42,6 +42,9 @@ Ohai.plugin(:Network) do
 
     iface = Mash.new
 
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+
     # :default_interface, :default_gateway - route -n get 0
     so = shell_out("route -n get 0")
     so.stdout.lines.each do |line|

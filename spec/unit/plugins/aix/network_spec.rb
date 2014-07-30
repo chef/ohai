@@ -183,7 +183,7 @@ ARP_AN
         before do
           @plugin.stub(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, "inet6 ::1%1/0", nil))
           @plugin.run
-          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1%1"]
+          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1"]
         end
 
         it "detects the prefixlen" do

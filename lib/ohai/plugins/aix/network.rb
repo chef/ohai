@@ -42,6 +42,9 @@ Ohai.plugin(:Network) do
 
     iface = Mash.new
 
+    network Mash.new unless network
+    network[:interfaces] = Mash.new unless network[:interfaces]
+
     # :default_interface, :default_gateway - route -n get 0
     so = shell_out("route -n get 0")
     so.stdout.lines.each do |line|
@@ -90,10 +93,10 @@ Ohai.plugin(:Network) do
               if line =~ /broadcast\s(\S+)\s/
                 iface[interface][:addresses][tmp_addr][:broadcast] = $1
               end
-            elsif line =~ /inet6 ([a-f0-9\:%]+)\/(\d+)/
+            elsif line =~ /inet6 ([a-f0-9\:]+)%?([\d]*)\/?(\d*)/
               # TODO do we have more properties on inet6 in aix? broadcast
               iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
-              iface[interface][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2 }
+              iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
             else
               # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
               properties = line.split

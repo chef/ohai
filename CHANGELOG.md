@@ -4,6 +4,8 @@
 
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   Use lsblk instead of blkid if available.
+* [**Phil Dibowitz**:](https://github.com/jaymzh)
+  linux::filesystem now reads all of /proc/mounts instead of just 4K
 
 ## Last Release: 7.2.0
 

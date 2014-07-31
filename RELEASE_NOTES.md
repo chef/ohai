@@ -28,5 +28,6 @@ populate the old system (role & system) with LXC if there are no other virtualiz
 
 * Ohai now collects mdadm RAID information.
 * Ohai know uses lsblk, if available, instead of blkid
+* linux::filesystem now reads all of /proc/mounts instead of just 4K
 
 # Ohai Breaking Changes:

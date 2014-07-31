@@ -350,7 +350,7 @@ BLKID_LABEL
     before(:each) do
       File.stub(:exists?).with("/proc/mounts").and_return(true)
       @double_file = double("/proc/mounts")
-      @double_file.stub(:read).and_return(@double_file)
+      @double_file.stub(:read_nonblock).and_return(@double_file)
       @double_file.stub(:each_line).
         and_yield("rootfs / rootfs rw 0 0").
         and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").

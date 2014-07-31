@@ -122,7 +122,7 @@ Ohai.plugin(:Filesystem) do
 
     # Grab any missing mount information from /proc/mounts
     if File.exists?('/proc/mounts')
-      File.open('/proc/mounts').read_nonblock(4096).each_line do |line|
+      File.open('/proc/mounts').read.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           filesystem = $1
           next if fs.has_key?(filesystem)

@@ -264,7 +264,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     before(:each) do
       File.stub!(:exists?).with("/proc/mounts").and_return(true)
       @mock_file = mock("/proc/mounts")
-      @mock_file.stub!(:read_nonblock).and_return(@mock_file)
+      @mock_file.stub!(:read).and_return(@mock_file)
       @mock_file.stub!(:each_line).
         and_yield("rootfs / rootfs rw 0 0").
         and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").

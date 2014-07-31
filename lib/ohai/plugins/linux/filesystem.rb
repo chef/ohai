@@ -90,7 +90,24 @@ end
 
 # Grab any missing mount information from /proc/mounts
 if File.exists?('/proc/mounts')
-  File.open('/proc/mounts').read_nonblock(4096).each_line do |line|
+  mounts = ''
+  # Due to https://tickets.opscode.com/browse/OHAI-196
+  # we have to non-block read dev files. Ew.
+  f = File.open('/proc/mounts')
+  loop do
+    begin
+      data = f.read_nonblock(4096)
+      mounts << data
+    # We should just catch EOFError, but the kernel had a period of
+    # bugginess with reading virtual files, so we're being extra
+    # cautious here, catching all exceptions, and then we'll read
+    # whatever data we might have
+    rescue Exception
+      break
+    end
+  end
+  f.close
+  mounts.each_line do |line|
     if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
       filesystem = $1
       next if fs.has_key?(filesystem)

@@ -20,31 +20,33 @@ require 'spec_helper'
 describe Ohai::System, "AIX virtualization plugin" do
 
   context "inside an LPAR" do
-    before(:each) do
-      @plugin = get_plugin("aix/virtualization")
-      @plugin.stub(:collect_os).and_return(:aix)
-      @plugin.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
-      @plugin.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
-      @plugin.run
+    let(:plugin) do
+      p = get_plugin("aix/virtualization")
+      p.stub(:collect_os).and_return(:aix)
+      p.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
+      p.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
+      p.run
+      p
     end
 
     it "uname -L detects the LPAR number and name" do
-      @plugin[:virtualization][:lpar_no].should == "29"
-      @plugin[:virtualization][:lpar_name].should == "l273pp027"
+      plugin[:virtualization][:lpar_no].should == "29"
+      plugin[:virtualization][:lpar_name].should == "l273pp027"
     end
   end
 
   context "inside a WPAR" do
-    before(:each) do
-      @plugin = get_plugin("aix/virtualization")
-      @plugin.stub(:collect_os).and_return(:aix)
-      @plugin.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "43 l33t", nil))
-      @plugin.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "42", nil))
-      @plugin.run
+    let(:plugin) do
+      p = get_plugin("aix/virtualization")
+      p.stub(:collect_os).and_return(:aix)
+      p.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "43 l33t", nil))
+      p.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "42", nil))
+      p.run
+      p
     end
 
     it "uname -W detects the WPAR number" do
-      @plugin[:virtualization][:wpar_no].should == "42"
+      plugin[:virtualization][:wpar_no].should == "42"
     end
   end
 

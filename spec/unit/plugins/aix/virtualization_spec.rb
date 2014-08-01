@@ -22,9 +22,9 @@ describe Ohai::System, "AIX virtualization plugin" do
   context "inside an LPAR" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
-      p.stub(:collect_os).and_return(:aix)
-      p.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
-      p.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
+      allow(p).to receive(:collect_os).and_return(:aix)
+      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
+      allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
       p.run
       p
     end
@@ -38,9 +38,9 @@ describe Ohai::System, "AIX virtualization plugin" do
   context "inside a WPAR" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
-      p.stub(:collect_os).and_return(:aix)
-      p.stub(:shell_out).with("uname -L").and_return(mock_shell_out(0, "43 l33t", nil))
-      p.stub(:shell_out).with("uname -W").and_return(mock_shell_out(0, "42", nil))
+      allow(p).to receive(:collect_os).and_return(:aix)
+      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "43 l33t", nil))
+      allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "42", nil))
       p.run
       p
     end

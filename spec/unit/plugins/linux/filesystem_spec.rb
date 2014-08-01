@@ -265,23 +265,31 @@ describe Ohai::System, "Linux filesystem plugin" do
       File.stub!(:exists?).with("/proc/mounts").and_return(true)
       @mock_file = mock("/proc/mounts")
       @mock_file.stub!(:read_nonblock).and_return(@mock_file)
-      @mock_file.stub!(:each_line).
-        and_yield("rootfs / rootfs rw 0 0").
-        and_yield("none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0").
-        and_yield("none /proc proc rw,nosuid,nodev,noexec,relatime 0 0").
-        and_yield("none /dev devtmpfs rw,relatime,size=2025576k,nr_inodes=506394,mode=755 0 0").
-        and_yield("none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0").
-        and_yield("/dev/mapper/sys.vg-root.lv / ext4 rw,noatime,errors=remount-ro,barrier=1,data=ordered 0 0").
-        and_yield("tmpfs /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0").
-        and_yield("tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0").
-        and_yield("/dev/mapper/sys.vg-home.lv /home xfs rw,noatime,attr2,noquota 0 0").
-        and_yield("/dev/mapper/sys.vg-special.lv /special xfs ro,noatime,attr2,noquota 0 0").
-        and_yield("/dev/mapper/sys.vg-tmp.lv /tmp ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/mapper/sys.vg-usr.lv /usr ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/mapper/sys.vg-var.lv /var ext4 rw,noatime,barrier=1,data=ordered 0 0").
-        and_yield("/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0").
-        and_yield("fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0").
-        and_yield("binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0")
+      @mounts = <<-MOUNTS
+rootfs / rootfs rw 0 0
+none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+none /dev devtmpfs rw,relatime,size=2025576k,nr_inodes=506394,mode=755 0 0
+none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+/dev/mapper/sys.vg-root.lv / ext4 rw,noatime,errors=remount-ro,barrier=1,data=ordered 0 0
+tmpfs /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0
+tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
+/dev/mapper/sys.vg-home.lv /home xfs rw,noatime,attr2,noquota 0 0
+/dev/mapper/sys.vg-special.lv /special xfs ro,noatime,attr2,noquota 0 0
+/dev/mapper/sys.vg-tmp.lv /tmp ext4 rw,noatime,barrier=1,data=ordered 0 0
+/dev/mapper/sys.vg-usr.lv /usr ext4 rw,noatime,barrier=1,data=ordered 0 0
+/dev/mapper/sys.vg-var.lv /var ext4 rw,noatime,barrier=1,data=ordered 0 0
+/dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0
+fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
+binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
+MOUNTS
+      @counter = 0
+      @mock_file.stub(:read_nonblock) do
+        @counter += 1
+        raise EOFError if @counter == 2
+        @mounts
+      end
+      @mock_file.stub(:close)
       File.stub!(:open).with("/proc/mounts").and_return(@mock_file)
     end
 

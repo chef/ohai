@@ -1,13 +1,9 @@
 # Ohai Changelog
 
-## Release: 6.22.0
+## Unreleased Changes
 
 * [**Phil Dibowitz**](https://github.com/jaymzh):
-  Work around libc bug in `hostname --fqdn`
-* [**Phil Dibowitz**](https://github.com/jaymzh):
-  Add timeouts to 'df' and 'mount' commands
-
-* java -version wastes memory (OHAI-550)
+  linux::filesystem now reads all of /proc/mounts instead of just 4K
 
 ## Last Release: 6.20.0
 

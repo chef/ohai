@@ -7,6 +7,6 @@ Example Note:
 Details about the thing that changed that needs to get included in the Release Notes in markdown.
 -->
 # Ohai Release Notes:
-
+* linux::filesystem now reads all of /proc/mounts instead of just 4K
 
 # Ohai Breaking Changes:

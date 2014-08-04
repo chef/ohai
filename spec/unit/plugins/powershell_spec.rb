@@ -18,6 +18,9 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
 
 describe Ohai::System, "plugin powershell" do
+  before do
+    stub_const('::RbConfig::CONFIG', {'host_os' => 'windows'})
+  end
 
   before(:each) do
     @plugin = get_plugin("powershell")

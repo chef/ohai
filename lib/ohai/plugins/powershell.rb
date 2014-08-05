@@ -47,7 +47,6 @@ Ohai.plugin(:Powershell) do
       powershell[:build_version] = version_info['BuildVersion']
       powershell[:compatible_versions] = parse_compatible_versions(version_info['PSCompatibleVersions'])
       powershell[:remoting_protocol_version] = version_info['PSRemotingProtocolVersion']
-      powershell[:garbage] = nil
       languages[:powershell] = powershell if powershell[:version]
     end
   end

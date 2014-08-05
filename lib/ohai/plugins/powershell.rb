@@ -41,7 +41,23 @@ Ohai.plugin(:Powershell) do
         version_info[kv[0]] = kv[1] if kv.length == 2
       end
       powershell[:version] = version_info['PSVersion']
+      powershell[:ws_man_stack_version] = version_info['WSManStackVersion']
+      powershell[:serialization_version] = version_info['SerializationVersion']
+      powershell[:clr_version] = version_info['CLRVersion']
+      powershell[:build_version] = version_info['BuildVersion']
+      powershell[:compatible_versions] = parse_compatible_versions(version_info['PSCompatibleVersions'])
+      powershell[:remoting_protocol_version] = version_info['PSRemotingProtocolVersion']
+      powershell[:garbage] = nil
       languages[:powershell] = powershell if powershell[:version]
+    end
+  end
+
+  def parse_compatible_versions(versions_str)
+    if versions_str
+      if versions_str.strip.start_with?('{') && versions_str.end_with?('}')
+        versions = versions_str.gsub(/[{}\s]+/,'').split(',')
+        versions if versions.length
+      end
     end
   end
 end

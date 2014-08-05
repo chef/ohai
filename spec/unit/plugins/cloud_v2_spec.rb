@@ -86,6 +86,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:linode] = nil
       @plugin[:azure] = nil
       @plugin[:gce] = nil
+      @plugin[:digital_ocean] = nil
       @plugin.run
       @plugin[:cloud_v2].should be_nil
     end
@@ -286,6 +287,64 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @plugin.run
       @plugin[:cloud_v2][:provider].should == "azure"
+    end
+  end
+
+  describe "with digital_ocean mash" do
+    before do
+      @plugin[:digital_ocean] = Mash.new
+      @plugin[:digital_ocean][:name] = "public.example.com"
+      @plugin[:digital_ocean][:ip_addresses] = Mash.new
+      @plugin[:digital_ocean][:ip_addresses][:public] = {"ipv4"=>["174.129.150.8"], "ipv6"=>["fe80::4240:95ff:fe47:6eed"]}
+      @plugin[:digital_ocean][:ip_addresses][:private] = {"ipv4"=>["10.252.42.149"], "ipv6"=>["fe80::4240:95ff:fe47:6eee"]}
+    end
+
+    before(:each) do
+      @plugin.run
+    end
+
+    it "populates cloud public hostname" do
+      @plugin[:cloud_v2][:public_hostname].should == "public.example.com"
+    end
+
+    it "populates cloud local hostname" do
+      @plugin[:cloud_v2][:local_hostname].should be_nil
+    end
+
+    it "populates cloud public_ipv4_addrs" do
+      @plugin[:cloud_v2][:public_ipv4_addrs].should == @plugin[:digital_ocean][:ip_addresses][:public][:ipv4]
+    end
+
+    it "populates cloud local_ipv4_addrs" do
+      @plugin[:cloud_v2][:local_ipv4_addrs].should == @plugin[:digital_ocean][:ip_addresses][:private][:ipv4]
+    end
+
+    it "populates cloud public_ipv4" do
+      @plugin[:cloud_v2][:public_ipv4].should == @plugin[:digital_ocean][:ip_addresses][:public][:ipv4].first
+    end
+
+    it "populates cloud local_ipv4" do
+      @plugin[:cloud_v2][:local_ipv4].should == @plugin[:digital_ocean][:ip_addresses][:private][:ipv4].first
+    end
+
+    it "populates cloud public_ipv6_addrs" do
+      @plugin[:cloud_v2][:public_ipv6_addrs].should == @plugin[:digital_ocean][:ip_addresses][:public][:ipv6]
+    end
+
+    it "populates cloud local_ipv6_addrs" do
+      @plugin[:cloud_v2][:local_ipv6_addrs].should == @plugin[:digital_ocean][:ip_addresses][:private][:ipv6]
+    end
+
+    it "populates cloud public_ipv6" do
+      @plugin[:cloud_v2][:public_ipv6].should == @plugin[:digital_ocean][:ip_addresses][:public][:ipv6].first
+    end
+
+    it "populates cloud local_ipv6" do
+      @plugin[:cloud_v2][:local_ipv6].should == @plugin[:digital_ocean][:ip_addresses][:private][:ipv6].first
+    end
+
+    it "populates cloud provider" do
+      @plugin[:cloud_v2][:provider].should == "digital_ocean"
     end
   end
 

@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, 'languages plugin' do
   VERSION_MATCHING_REGEX = /^(?:[\d]+\.)+[\d]+$/
-  describe 'powershell plugin' do
+  describe 'powershell plugin', :windows_only do
     RSpec.shared_examples "a version looking thing" do
       it 'should be present' do
         subject.should_not be_nil

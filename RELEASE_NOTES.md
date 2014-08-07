@@ -8,5 +8,7 @@ Details about the thing that changed that needs to get included in the Release N
 -->
 # Ohai Release Notes:
 
+* Use lsblk instead of blkid if available.
+
 
 # Ohai Breaking Changes:

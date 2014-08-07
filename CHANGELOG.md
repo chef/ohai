@@ -3,11 +3,7 @@
 ## Unreleased
 
 * [**Phil Dibowitz**](https://github.com/jaymzh):
-  Work around libc bug in `hostname --fqdn`
-* [**Phil Dibowitz**](https://github.com/jaymzh):
-  Add timeouts to 'df' and 'mount' commands
-
-* java -version wastes memory (OHAI-550)
+  Use lsblk instead of blkid if available.
 
 ## Last Release: 6.20.0 (01/20/2014)
 

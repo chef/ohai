@@ -6,6 +6,16 @@
   Use lsblk instead of blkid if available.
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   linux::filesystem now reads all of /proc/mounts instead of just 4K
+* [**sawanoboly**](https://github.com/sawanoboly)
+  Retrieve OpenStack-specific metadata.
+* [**Olle Lundberg**](https://github.com/lndbrg)
+  Add Cloudstack support.
+* [**Tim Smith**](https://github.com/tas50)
+  Remove newlines in CPU strings on Darwin.
+* [**Nathan Huff**](https://github.com/nhuff)
+  Match zpool output for OmniOS 151006.
+* [**Pavel Yudin**](https://github.com/Kasen)
+  Add Parallels Cloud Server (PCS) platform support.
 
 ## Last Release: 7.2.0
 

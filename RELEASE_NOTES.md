@@ -8,5 +8,7 @@ Details about the thing that changed that needs to get included in the Release N
 -->
 # Ohai Release Notes:
 * linux::filesystem now reads all of /proc/mounts instead of just 4K
+* Use lsblk instead of blkid if available.
+
 
 # Ohai Breaking Changes:

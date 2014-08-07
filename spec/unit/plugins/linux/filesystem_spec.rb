@@ -42,9 +42,14 @@ describe Ohai::System, "Linux filesystem plugin" do
 
     @ohai.stub!(:run_command).with(@df_cmd).and_return([0,stdout,stderr])
     @ohai.stub!(:run_command).with(@mount_cmd).and_return([0,stdout,stderr])
+    File.stub!(:exists?).with("/bin/lsblk").and_return(false)
     @ohai.stub!(:popen4).with("blkid -s TYPE").and_return(false)
     @ohai.stub!(:popen4).with("blkid -s UUID").and_return(false)
     @ohai.stub!(:popen4).with("blkid -s LABEL").and_return(false)
+
+    @ohai.stub!(:popen4).with("lsblk -r -o NAME,FSTYPE -n").and_return(false)
+    @ohai.stub!(:popen4).with("lsblk -r -o NAME,UUID -n").and_return(false)
+    @ohai.stub!(:popen4).with("lsblk -r -o NAME,LABEL -n").and_return(false)
 
     File.stub!(:exists?).with("/proc/mounts").and_return(false)
   end
@@ -192,6 +197,37 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
   end
 
+  describe "when gathering filesystem type data from lsblk" do
+    before(:each) do
+      File.stub!(:exists?).with('/bin/lsblk').and_return(true)
+      @stdin = mock("STDIN", { :close => true })
+      @pid = 10
+      @stderr = mock("STDERR")
+      @stdout = mock("STDOUT")
+      @status = 0
+
+      @stdout.stub!(:each).
+        and_yield("/dev/sdb1 linux_raid_member").
+        and_yield("/dev/sdb2 linux_raid_member").
+        and_yield("/dev/sda1 linux_raid_member").
+        and_yield("/dev/sda2 linux_raid_member").
+        and_yield("/dev/md0 ext3").
+        and_yield("/dev/md1 LVM2_member").
+        and_yield("/dev/mapper/sys.vg-root.lv ext4").
+        and_yield("/dev/mapper/sys.vg-swap.lv swap").
+        and_yield("/dev/mapper/sys.vg-tmp.lv ext4").
+        and_yield("/dev/mapper/sys.vg-usr.lv ext4").
+        and_yield("/dev/mapper/sys.vg-var.lv ext4").
+        and_yield("/dev/mapper/sys.vg-home.lv xfs")
+    end
+
+    it "should run lsblk -r -o NAME,FSTYPE -n" do
+      @ohai.should_receive(:popen4).with("lsblk -r -o NAME,FSTYPE -n").
+        and_return(true)
+      @ohai._require_plugin("linux::filesystem")
+    end
+  end
+
   describe "when gathering filesystem uuid data from blkid" do
     before(:each) do
       @stdin = mock("STDIN", { :close => true })
@@ -222,6 +258,44 @@ describe Ohai::System, "Linux filesystem plugin" do
 
     it "should set kb_size to value from blkid -s UUID" do
       @ohai.stub!(:popen4).with("blkid -s UUID").and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @ohai._require_plugin("linux::filesystem")
+      @ohai[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+    end
+  end
+
+  describe "when gathering filesystem uuid data from lsblk" do
+    before(:each) do
+      File.stub!(:exists?).with('/bin/lsblk').and_return(true)
+      @stdin = mock("STDIN", { :close => true })
+      @pid = 10
+      @stderr = mock("STDERR")
+      @stdout = mock("STDOUT")
+      @status = 0
+
+      @stdout.stub!(:each).
+        and_yield("/dev/sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5").
+        and_yield("/dev/sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
+        and_yield("/dev/sda1 bd1197e0-6997-1f3a-e27e-7801388308b5").
+        and_yield("/dev/sda2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
+        and_yield("/dev/md0 37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32").
+        and_yield("/dev/md1 YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK").
+        and_yield("/dev/mapper/sys.vg-root.lv 7742d14b-80a3-4e97-9a32-478be9ea9aea").
+        and_yield("/dev/mapper/sys.vg-swap.lv 9bc2e515-8ddc-41c3-9f63-4eaebde9ce96").
+        and_yield("/dev/mapper/sys.vg-tmp.lv 74cf7eb9-428f-479e-9a4a-9943401e81e5").
+        and_yield("/dev/mapper/sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc").
+        and_yield("/dev/mapper/sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3").
+        and_yield("/dev/mapper/sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e")
+    end
+
+    it "should run lsblk -r -o NAME,UUID -n" do
+      @ohai.should_receive(:popen4).with("lsblk -r -o NAME,UUID -n").
+        and_return(true)
+      @ohai._require_plugin("linux::filesystem")
+    end
+
+    it "should set kb_size to value from lsblk -r -o NAME,UUID -n" do
+      @ohai.stub!(:popen4).with("lsblk -r -o NAME,UUID -n").
+        and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
       @ohai._require_plugin("linux::filesystem")
       @ohai[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
     end
@@ -259,6 +333,43 @@ describe Ohai::System, "Linux filesystem plugin" do
       @ohai[:filesystem]["/dev/md0"][:label].should be == "/boot"
     end
   end
+
+  describe "when gathering filesystem label data from lsblk" do
+    before(:each) do
+      File.stub!(:exists?).with('/bin/lsblk').and_return(true)
+      @stdin = mock("STDIN", { :close => true })
+      @pid = 10
+      @stderr = mock("STDERR")
+      @stdout = mock("STDOUT")
+      @status = 0
+
+      @stdout.stub!(:each).
+        and_yield("/dev/sda1 fuego:0").
+        and_yield("/dev/sda2 fuego:1").
+        and_yield("/dev/sdb1 fuego:0").
+        and_yield("/dev/sdb2 fuego:1").
+        and_yield("/dev/md0 /boot").
+        and_yield("/dev/mapper/sys.vg-root.lv /").
+        and_yield("/dev/mapper/sys.vg-tmp.lv /tmp").
+        and_yield("/dev/mapper/sys.vg-usr.lv /usr").
+        and_yield("/dev/mapper/sys.vg-var.lv /var").
+        and_yield("/dev/mapper/sys.vg-home.lv /home")
+    end
+
+    it "should run lsblk -r -o NAME,LABEL -n" do
+      @ohai.should_receive(:popen4).with("lsblk -r -o NAME,LABEL -n").
+        and_return(true)
+      @ohai._require_plugin("linux::filesystem")
+    end
+
+    it "should set kb_size to value from lsblk -r -o NAME,LABEL -n" do
+      @ohai.stub!(:popen4).with("lsblk -r -o NAME,LABEL -n").
+        and_yield(@pid, @stdin, @stdout, @stderr).and_return(@status)
+      @ohai._require_plugin("linux::filesystem")
+      @ohai[:filesystem]["/dev/md0"][:label].should be == "/boot"
+    end
+  end
+
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
@@ -308,5 +419,4 @@ MOUNTS
       @ohai[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime", "attr2", "noquota" ]
     end
   end
-
 end

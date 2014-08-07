@@ -55,6 +55,10 @@ Ohai.plugin(:Platform) do
         end
         platform_version File.read("/etc/debian_version").chomp
       end
+    elsif File.exists?("/etc/parallels-release")
+      contents = File.read("/etc/parallels-release").chomp
+      platform get_redhatish_platform(contents)
+      platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exists?("/etc/redhat-release")
       contents = File.read("/etc/redhat-release").chomp
       platform get_redhatish_platform(contents)
@@ -109,7 +113,7 @@ Ohai.plugin(:Platform) do
       platform_family "debian"
     when /fedora/
       platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       platform_family "rhel"
     when /suse/
       platform_family "suse"

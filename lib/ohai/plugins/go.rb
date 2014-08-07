@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:go) do
+Ohai.plugin(:Go) do
   provides "languages/go"
   depends "languages"
 

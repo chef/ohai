@@ -16,5 +16,3 @@ group :development do
   # gem 'pry-debugger'
   # gem 'pry-stack_explorer'
 end
-
-

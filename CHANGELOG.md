@@ -16,6 +16,8 @@
   Match zpool output for OmniOS 151006.
 * [**Pavel Yudin**](https://github.com/Kasen)
   Add Parallels Cloud Server (PCS) platform support.
+* [**Christian Vozar**](https://github.com/christianvozar):
+  Add Go language plugin.
 
 ## Last Release: 7.2.0
 

@@ -101,6 +101,7 @@ RSpec.configure do |config|
   config.filter_run :focus => true
 
   config.filter_run_excluding :windows_only => true unless windows?
+  config.filter_run_excluding :windows_2008r2_or_later => true unless windows_2008r2_or_later?
   config.filter_run_excluding :unix_only => true unless unix?
   config.filter_run_excluding :ruby_18_only => true unless ruby_18?
   config.filter_run_excluding :ruby_19_only => true unless ruby_19?

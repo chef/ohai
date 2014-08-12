@@ -26,6 +26,20 @@ Ohai.plugin(:Kernel) do
     kernel[:release] = shell_out("uname -r").stdout.split($/)[0]
     kernel[:version] = shell_out("uname -v").stdout.split($/)[0]
     kernel[:machine] = shell_out("uname -p").stdout.split($/)[0]
-    kernel[:modules] = Mash.new
+
+    modules = Mash.new
+    so = shell_out("genkex -d")
+    #     Text address     Size     Data address     Size File
+    #
+    # f1000000c0338000    77000 f1000000c0390000    1ec8c /usr/lib/drivers/cluster
+    #          6390000    20000          63a0000      ba8 /usr/lib/drivers/if_en
+    # f1000000c0318000    20000 f1000000c0320000    17138 /usr/lib/drivers/random
+    so.stdout.lines do |line|
+      if line =~ /\s*([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([a-zA-Z0-9\/\._]+)/
+        modules[$5] = { :text => { :address => $1, :size => $2 }, :data => { :address => $3, :size => $4 } }
+      end
+    end
+
+    kernel[:modules] = modules
   end
 end

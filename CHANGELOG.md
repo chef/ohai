@@ -18,6 +18,8 @@
   Add Parallels Cloud Server (PCS) platform support.
 * [**Christian Vozar**](https://github.com/christianvozar):
   Add Go language plugin.
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  linux::network should handle ECMP routes
 
 ## Last Release: 7.2.0
 

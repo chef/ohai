@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## 7.4.0:
+## Last Release: 7.2.2
 
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   Use lsblk instead of blkid if available.
@@ -8,7 +8,7 @@
   linux::filesystem now reads all of /proc/mounts instead of just 4K
 
 
-## Last Release: 7.2.0
+## Release: 7.2.0
 
 * [**Lance Bragstad**:](https://github.com/lbragstad)
   Added platform_family support for ibm_powerkvm (OHAI-558)

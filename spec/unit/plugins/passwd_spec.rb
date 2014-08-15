@@ -24,7 +24,8 @@ describe Ohai::System, "plugin etc" do
   end
 
   it "should set the current user" do
-    Etc.should_receive(:getlogin).and_return('chef')
+    Process.should_receive(:euid).and_return('31337')
+    Etc.should_receive(:getpwuid).and_return(PasswdEntry.new('chef', 31337, 31337, '/home/chef', '/bin/ksh', 'Julia Child'))
     @plugin.run
     @plugin[:current_user].should == 'chef'
   end

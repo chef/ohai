@@ -6,6 +6,8 @@
   linux::filesystem now reads all of /proc/mounts instead of just 4K
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   Use lsblk instead of blkid if available.
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  linux::network should handle ECMP routes
 
 ## Last Release: 6.20.0
 

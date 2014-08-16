@@ -45,8 +45,8 @@ def do_stubs
   @ohai.stub!(:popen4).with("ip -f inet6 neigh show").and_yield(nil, @stdin_ipneighbor_inet6, @ipneighbor_lines_inet6, nil)
   @ohai.stub!(:popen4).with("ip addr").and_yield(nil, @stdin_ipaddr, @ipaddr_lines, nil)
   @ohai.stub!(:popen4).with("ip -d -s link").and_yield(nil, @stdin_iplink, @iplink_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
-  @ohai.stub!(:popen4).with("ip -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
+  @ohai.stub!(:popen4).with("ip -o -f inet route show").and_yield(nil, @stdin_ip_route, @ip_route_lines, nil)
+  @ohai.stub!(:popen4).with("ip -o -f inet6 route show").and_yield(nil, @stdin_ip_route_inet6, @ip_route_inet6_lines, nil)
 end
 
 describe Ohai::System, "Linux Network Plugin" do
@@ -256,6 +256,7 @@ NEIGHBOR_SHOW
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+10.5.4.0/24 \\        nexthop via 10.5.4.1 dev eth0 weight 1\\        nexthop via 10.5.4.2 dev eth0 weight 1
 default via 10.116.201.1 dev eth0
 IP_ROUTE_SCOPE
 
@@ -584,6 +585,8 @@ ROUTE_N
       it "adds routes" do
         @ohai._require_plugin("linux::network")
         @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
+        @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.1")
+        @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.2")
         @ohai['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
         @ohai['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
         @ohai['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )

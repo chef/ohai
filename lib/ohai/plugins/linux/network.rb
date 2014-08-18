@@ -200,12 +200,21 @@ Ohai.plugin(:Network) do
         #    the routing table source field.
         # 3) and since we're at it, let's populate some :routes attributes
         # (going to do that for both inet and inet6 addresses)
-        so = shell_out("ip -f #{family[:name]} route show")
+        so = shell_out("ip -o -f #{family[:name]} route show")
         so.stdout.lines do |line|
-          if line =~ /^([^\s]+)\s(.*)$/
+          line.strip!
+          Ohai::Log.debug("Parsing #{line}")
+          if line =~ /\\/
+            parts = line.split('\\')
+            route_dest = parts.shift.strip
+            route_endings = parts
+          elsif line =~ /^([^\s]+)\s(.*)$/
             route_dest = $1
-            route_ending = $2
-            #
+            route_endings = [$2]
+          else
+            next
+          end
+          route_endings.each do |route_ending|
             if route_ending =~ /\bdev\s+([^\s]+)\b/
               route_int = $1
             else

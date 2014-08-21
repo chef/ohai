@@ -20,6 +20,14 @@ provides "filesystem"
 
 fs = Mash.new
 
+def find_device(name)
+  %w{/dev /dev/mapper}.each do |dir|
+    path = File.join(dir, name)
+    return path if File.exist?(path)
+  end
+  name
+end
+
 # Grab filesystem data from df
 # df often returns non-zero even when it has useful output, accept it.
 status, stdout, stderr = run_command(:command => "df -P",
@@ -68,8 +76,10 @@ popen4(cmd) do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ regex
       filesystem = $1
+      type = $2
+      filesystem = find_device(filesystem) unless filesystem.start_with?('/')
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:fs_type] = $2
+      fs[filesystem][:fs_type] = type
     end
   end
 end
@@ -87,8 +97,10 @@ popen4(cmd) do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ regex
       filesystem = $1
+      uuid = $2
+      filesystem = find_device(filesystem) unless filesystem.start_with?('/')
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:uuid] = $2
+      fs[filesystem][:uuid] = uuid
     end
   end
 end
@@ -106,8 +118,10 @@ popen4(cmd) do |pid, stdin, stdout, stderr|
   stdout.each do |line|
     if line =~ regex
       filesystem = $1
+      label = $2
+      filesystem = find_device(filesystem) unless filesystem.start_with?('/')
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:label] = $2
+      fs[filesystem][:label] = label
     end
   end
 end

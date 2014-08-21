@@ -26,7 +26,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
-    File.stub(:exists?).with("/bin/lsblk").and_return(false)
+    File.stub(:exist?).with("/bin/lsblk").and_return(false)
     @plugin.stub(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, "", ""))
     @plugin.stub(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, "", ""))
@@ -38,7 +38,22 @@ describe Ohai::System, "Linux filesystem plugin" do
     @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,LABEL").
       and_return(mock_shell_out(0, "", ""))
 
-    File.stub(:exists?).with("/proc/mounts").and_return(false)
+    File.stub(:exist?).with("/proc/mounts").and_return(false)
+
+    %w{sdb1 sdb2 sda1 sda2 md0 md1 md2}.each do |name|
+      File.stub(:exist?).with("/dev/#{name}").and_return(true)
+    end
+    %w{
+       sys.vg-root.lv
+       sys.vg-swap.lv
+       sys.vg-tmp.lv
+       sys.vg-usr.lv
+       sys.vg-var.lv
+       sys.vg-home.lv
+    }.each do |name|
+      File.stub(:exist?).with("/dev/#{name}").and_return(false)
+      File.stub(:exist?).with("/dev/mapper/#{name}").and_return(true)
+    end
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -191,20 +206,20 @@ BLKID_TYPE
 
   describe "when gathering filesystem type data from lsblk" do
     before(:each) do
-      File.stub(:exists?).with("/bin/lsblk").and_return(true)
+      File.stub(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
-/dev/sdb1 linux_raid_member 
-/dev/sdb2 linux_raid_member 
-/dev/sda1 linux_raid_member 
-/dev/sda2 linux_raid_member 
-/dev/md0 ext3 
-/dev/md1 LVM2_member 
-/dev/mapper/sys.vg-root.lv ext4 
-/dev/mapper/sys.vg-swap.lv swap 
-/dev/mapper/sys.vg-tmp.lv ext4 
-/dev/mapper/sys.vg-usr.lv ext4 
-/dev/mapper/sys.vg-var.lv ext4 
-/dev/mapper/sys.vg-home.lv xfs 
+sdb1 linux_raid_member 
+sdb2 linux_raid_member 
+sda1 linux_raid_member 
+sda2 linux_raid_member 
+md0 ext3 
+md1 LVM2_member 
+sys.vg-root.lv ext4 
+sys.vg-swap.lv swap 
+sys.vg-tmp.lv ext4 
+sys.vg-usr.lv ext4 
+sys.vg-var.lv ext4 
+sys.vg-home.lv xfs 
 BLKID_TYPE
       @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -254,20 +269,20 @@ BLKID_UUID
 
   describe "when gathering filesystem uuid data from lsblk" do
     before(:each) do
-      File.stub(:exists?).with("/bin/lsblk").and_return(true)
+      File.stub(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_UUID
-/dev/sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5 
-/dev/sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa 
-/dev/sda1 bd1197e0-6997-1f3a-e27e-7801388308b5 
-/dev/sda2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa 
-/dev/md0 37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32 
-/dev/md1 YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK 
-/dev/mapper/sys.vg-root.lv 7742d14b-80a3-4e97-9a32-478be9ea9aea 
-/dev/mapper/sys.vg-swap.lv 9bc2e515-8ddc-41c3-9f63-4eaebde9ce96 
-/dev/mapper/sys.vg-tmp.lv 74cf7eb9-428f-479e-9a4a-9943401e81e5 
-/dev/mapper/sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc 
-/dev/mapper/sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3 
-/dev/mapper/sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e 
+sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5 
+sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa 
+sda1 bd1197e0-6997-1f3a-e27e-7801388308b5 
+sda2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa 
+md0 37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32 
+md1 YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK 
+sys.vg-root.lv 7742d14b-80a3-4e97-9a32-478be9ea9aea 
+sys.vg-swap.lv 9bc2e515-8ddc-41c3-9f63-4eaebde9ce96 
+sys.vg-tmp.lv 74cf7eb9-428f-479e-9a4a-9943401e81e5 
+sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc 
+sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3 
+sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e 
 BLKID_UUID
       @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -316,18 +331,18 @@ BLKID_LABEL
 
   describe "when gathering filesystem label data from lsblk" do
     before(:each) do
-      File.stub(:exists?).with("/bin/lsblk").and_return(true)
+      File.stub(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_LABEL
-/dev/sda1 fuego:0 
-/dev/sda2 fuego:1 
-/dev/sdb1 fuego:0 
-/dev/sdb2 fuego:1 
-/dev/md0 /boot 
-/dev/mapper/sys.vg-root.lv / 
-/dev/mapper/sys.vg-tmp.lv /tmp 
-/dev/mapper/sys.vg-usr.lv /usr 
-/dev/mapper/sys.vg-var.lv /var 
-/dev/mapper/sys.vg-home.lv /home 
+sda1 fuego:0 
+sda2 fuego:1 
+sdb1 fuego:0 
+sdb2 fuego:1 
+md0 /boot 
+sys.vg-root.lv / 
+sys.vg-tmp.lv /tmp 
+sys.vg-usr.lv /usr 
+sys.vg-var.lv /var 
+sys.vg-home.lv /home 
 BLKID_LABEL
       @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -348,7 +363,7 @@ BLKID_LABEL
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
-      File.stub(:exists?).with("/proc/mounts").and_return(true)
+      File.stub(:exist?).with("/proc/mounts").and_return(true)
       @double_file = double("/proc/mounts")
       @mounts = <<-MOUNTS
 rootfs / rootfs rw 0 0

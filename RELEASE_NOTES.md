@@ -25,10 +25,6 @@ Due to the requirements for being an LXC host being easily fulfilled, we only
 populate the old system (role & system) with LXC if there are no other virtualization systems detected.
 
 ### Miscellaneous
-
-* Ohai now collects mdadm RAID information.
-* Ohai know uses lsblk, if available, instead of blkid
-* linux::filesystem now reads all of /proc/mounts instead of just 4K
-* linux::network now handles ECMP routes
+* Fix 10.34.0 regression: qualify device names from lsblk
 
 # Ohai Breaking Changes:

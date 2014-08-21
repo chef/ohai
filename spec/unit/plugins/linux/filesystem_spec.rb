@@ -52,6 +52,21 @@ describe Ohai::System, "Linux filesystem plugin" do
     @ohai.stub!(:popen4).with("lsblk -r -o NAME,LABEL -n").and_return(false)
 
     File.stub!(:exists?).with("/proc/mounts").and_return(false)
+
+    %w{sdb1 sdb2 sda1 sda2 md0 md1 md2}.each do |name|
+      File.stub!(:exist?).with("/dev/#{name}").and_return(true)
+    end
+    %w{
+      sys.vg-root.lv
+      sys.vg-swap.lv
+      sys.vg-tmp.lv
+      sys.vg-usr.lv
+      sys.vg-var.lv
+      sys.vg-home.lv
+    }.each do |name|
+      File.stub!(:exist?).with("/dev/#{name}").and_return(false)
+      File.stub!(:exist?).with("/dev/mapper/#{name}").and_return(true)
+    end
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -207,18 +222,18 @@ describe Ohai::System, "Linux filesystem plugin" do
       @status = 0
 
       @stdout.stub!(:each).
-        and_yield("/dev/sdb1 linux_raid_member").
-        and_yield("/dev/sdb2 linux_raid_member").
-        and_yield("/dev/sda1 linux_raid_member").
-        and_yield("/dev/sda2 linux_raid_member").
-        and_yield("/dev/md0 ext3").
-        and_yield("/dev/md1 LVM2_member").
-        and_yield("/dev/mapper/sys.vg-root.lv ext4").
-        and_yield("/dev/mapper/sys.vg-swap.lv swap").
-        and_yield("/dev/mapper/sys.vg-tmp.lv ext4").
-        and_yield("/dev/mapper/sys.vg-usr.lv ext4").
-        and_yield("/dev/mapper/sys.vg-var.lv ext4").
-        and_yield("/dev/mapper/sys.vg-home.lv xfs")
+        and_yield("sdb1 linux_raid_member").
+        and_yield("sdb2 linux_raid_member").
+        and_yield("sda1 linux_raid_member").
+        and_yield("sda2 linux_raid_member").
+        and_yield("md0 ext3").
+        and_yield("md1 LVM2_member").
+        and_yield("sys.vg-root.lv ext4").
+        and_yield("sys.vg-swap.lv swap").
+        and_yield("sys.vg-tmp.lv ext4").
+        and_yield("sys.vg-usr.lv ext4").
+        and_yield("sys.vg-var.lv ext4").
+        and_yield("sys.vg-home.lv xfs")
     end
 
     it "should run lsblk -r -o NAME,FSTYPE -n" do
@@ -273,18 +288,18 @@ describe Ohai::System, "Linux filesystem plugin" do
       @status = 0
 
       @stdout.stub!(:each).
-        and_yield("/dev/sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5").
-        and_yield("/dev/sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
-        and_yield("/dev/sda1 bd1197e0-6997-1f3a-e27e-7801388308b5").
-        and_yield("/dev/sda2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
-        and_yield("/dev/md0 37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32").
-        and_yield("/dev/md1 YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK").
-        and_yield("/dev/mapper/sys.vg-root.lv 7742d14b-80a3-4e97-9a32-478be9ea9aea").
-        and_yield("/dev/mapper/sys.vg-swap.lv 9bc2e515-8ddc-41c3-9f63-4eaebde9ce96").
-        and_yield("/dev/mapper/sys.vg-tmp.lv 74cf7eb9-428f-479e-9a4a-9943401e81e5").
-        and_yield("/dev/mapper/sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc").
-        and_yield("/dev/mapper/sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3").
-        and_yield("/dev/mapper/sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e")
+        and_yield("sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5").
+        and_yield("sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
+        and_yield("sda1 bd1197e0-6997-1f3a-e27e-7801388308b5").
+        and_yield("sda2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa").
+        and_yield("md0 37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32").
+        and_yield("md1 YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK").
+        and_yield("sys.vg-root.lv 7742d14b-80a3-4e97-9a32-478be9ea9aea").
+        and_yield("sys.vg-swap.lv 9bc2e515-8ddc-41c3-9f63-4eaebde9ce96").
+        and_yield("sys.vg-tmp.lv 74cf7eb9-428f-479e-9a4a-9943401e81e5").
+        and_yield("sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc").
+        and_yield("sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3").
+        and_yield("sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e")
     end
 
     it "should run lsblk -r -o NAME,UUID -n" do
@@ -344,16 +359,16 @@ describe Ohai::System, "Linux filesystem plugin" do
       @status = 0
 
       @stdout.stub!(:each).
-        and_yield("/dev/sda1 fuego:0").
-        and_yield("/dev/sda2 fuego:1").
-        and_yield("/dev/sdb1 fuego:0").
-        and_yield("/dev/sdb2 fuego:1").
-        and_yield("/dev/md0 /boot").
-        and_yield("/dev/mapper/sys.vg-root.lv /").
-        and_yield("/dev/mapper/sys.vg-tmp.lv /tmp").
-        and_yield("/dev/mapper/sys.vg-usr.lv /usr").
-        and_yield("/dev/mapper/sys.vg-var.lv /var").
-        and_yield("/dev/mapper/sys.vg-home.lv /home")
+        and_yield("sda1 fuego:0").
+        and_yield("sda2 fuego:1").
+        and_yield("sdb1 fuego:0").
+        and_yield("sdb2 fuego:1").
+        and_yield("md0 /boot").
+        and_yield("sys.vg-root.lv /").
+        and_yield("sys.vg-tmp.lv /tmp").
+        and_yield("sys.vg-usr.lv /usr").
+        and_yield("sys.vg-var.lv /var").
+        and_yield("sys.vg-home.lv /home")
     end
 
     it "should run lsblk -r -o NAME,LABEL -n" do

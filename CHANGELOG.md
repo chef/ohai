@@ -20,7 +20,9 @@
   Add Go language plugin.
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   linux::network should handle ECMP routes
-
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  regression: qualify device names from lsblk
+  
 ## Last Release: 7.2.0
 
 * [**Lance Bragstad**:](https://github.com/lbragstad)

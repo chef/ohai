@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin python" do
@@ -30,9 +29,6 @@ describe Ohai::System, "plugin python" do
     plugin[:languages] = Mash.new
     expect(plugin).to receive(:shell_out).with("python -c \"import sys; print (sys.version)\"").and_return(mock_shell_out(retval, stdout, ""))
     plugin
-  end
-
-  before(:each) do
   end
 
   it "should get the python version from printing sys.version and sys.platform" do

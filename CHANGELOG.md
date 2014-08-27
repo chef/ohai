@@ -3,6 +3,11 @@
 ## Unreleased:
 
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
+  Fix 10.34.0 regression: qualify device names from lsblk
+
+## Last Release: 7.2.4
+
+* [**Phil Dibowitz**:](https://github.com/jaymzh)
   Use lsblk instead of blkid if available.
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   linux::filesystem now reads all of /proc/mounts instead of just 4K

@@ -30,6 +30,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:linode] = nil
       @plugin[:azure] = nil
       @plugin[:cloudstack] = nil
+      @plugin[:digital_ocean] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
     end
@@ -235,5 +236,58 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe "with digital_ocean mash" do
+    before do
+      @plugin[:digital_ocean] = Mash.new
+      @plugin[:digital_ocean][:name] = "public.example.com"
+      @plugin[:digital_ocean][:networks] = Mash.new
+      @plugin[:digital_ocean][:networks][:v4] = [{"ip_address" => "1.2.3.4", "type" => "public"},
+                                                 {"ip_address" => "5.6.7.8", "type" => "private"}]
+      @plugin[:digital_ocean][:networks][:v6] = [{"ip_address" => "fe80::4240:95ff:fe47:6eee", "type" => "public"},
+                                                 {"ip_address" => "fdf8:f53b:82e4::53", "type" => "private"}]
+    end
+
+    before(:each) do
+      @plugin.run
+    end
+
+    it "populates cloud public hostname" do
+      @plugin[:cloud][:public_hostname].should == "public.example.com"
+    end
+
+    it "populates cloud local hostname" do
+      @plugin[:cloud][:local_hostname].should be_nil
+    end
+
+    it "populates cloud public ips" do
+      @plugin[:cloud][:public_ips].should == @plugin[:digital_ocean][:networks][:v4].select{|ip| ip['type'] == 'public'} +
+                                             @plugin[:digital_ocean][:networks][:v6].select{|ip| ip['type'] == 'public'}
+    end
+
+    it "populates cloud private ips" do
+      @plugin[:cloud][:private_ips].should == @plugin[:digital_ocean][:networks][:v4].select{|ip| ip['type'] == 'private'} +
+                                              @plugin[:digital_ocean][:networks][:v6].select{|ip| ip['type'] == 'private'}
+    end
+
+    it "populates cloud public_ipv4" do
+      @plugin[:cloud][:public_ipv4].should == @plugin[:digital_ocean][:networks][:v4].find{|ip| ip['type'] == 'public'}
+    end
+
+    it "populates cloud local_ipv4" do
+      @plugin[:cloud][:local_ipv4].should == @plugin[:digital_ocean][:networks][:v4].find{|ip| ip['type'] == 'private'}
+    end
+
+    it "populates cloud public_ipv6" do
+      @plugin[:cloud][:public_ipv6].should == @plugin[:digital_ocean][:networks][:v6].find{|ip| ip['type'] == 'public'}
+    end
+
+    it "populates cloud local_ipv6" do
+      @plugin[:cloud][:local_ipv6].should == @plugin[:digital_ocean][:networks][:v6].find{|ip| ip['type'] == 'private'}
+    end
+
+    it "populates cloud provider" do
+      @plugin[:cloud][:provider].should == "digital_ocean"
+    end
+  end
 
 end

@@ -23,14 +23,13 @@ Ohai.plugin(:Openstack) do
   include Ohai::Mixin::Ec2Metadata
 
   def collect_openstack_metadata(addr = Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, api_version = '2013-04-04')
-    require 'json'
     path = "/openstack/#{api_version}/meta_data.json"
     uri = "http://#{addr}#{path}"
     begin
       response = http_client.get_response(URI.parse(uri),nil,nil)
       case response.code
       when '200'
-        JSON.parse(response.body)
+        FFI_Yajl::Parser.parse(response.body)
       when '404'
         Ohai::Log.debug("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
         nil

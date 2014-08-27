@@ -25,6 +25,7 @@ Ohai.plugin(:Cloud) do
   depends "openstack"
   depends "azure"
   depends "cloudstack"
+  depends "digital_ocean"
 
   # Make top-level cloud hashes
   #
@@ -241,6 +242,35 @@ Ohai.plugin(:Cloud) do
     cloud[:provider] = "cloudstack"
   end
 
+  # ----------------------------------------
+  # digital_ocean
+  # ----------------------------------------
+
+  # Is current cloud digital_ocean?
+  #
+  # === Return
+  # true:: If digital_ocean Mash is defined
+  # false:: Otherwise
+  def on_digital_ocean?
+    digital_ocean != nil
+  end
+
+  # Fill cloud hash with linode values
+  def get_digital_ocean_values
+    public_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'public'}
+    private_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'private'}
+    public_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'public'}
+    private_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'private'}
+    cloud[:public_ips].concat public_ipv4+public_ipv6
+    cloud[:private_ips].concat private_ipv4+private_ipv6
+    cloud[:public_ipv4] = public_ipv4.first
+    cloud[:public_ipv6] = public_ipv6.first
+    cloud[:local_ipv4] = private_ipv4.first
+    cloud[:local_ipv6] = private_ipv6.first
+    cloud[:public_hostname] = digital_ocean['name']
+    cloud[:provider] = "digital_ocean"
+  end
+
   collect_data do    
     # setup gce cloud
     if on_gce?
@@ -287,6 +317,12 @@ Ohai.plugin(:Cloud) do
     if on_cloudstack?
       create_objects
       get_cloudstack_values
+    end
+
+    # setup digital_ocean cloud data
+    if on_digital_ocean?
+      create_objects
+      get_digital_ocean_values
     end
   end
 end

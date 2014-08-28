@@ -2,10 +2,6 @@
 
 ## Unreleased:
 
-* [**Phil Dibowitz**:](https://github.com/jaymzh)
-  Use lsblk instead of blkid if available.
-* [**Phil Dibowitz**:](https://github.com/jaymzh)
-  linux::filesystem now reads all of /proc/mounts instead of just 4K
 * [**sawanoboly**](https://github.com/sawanoboly)
   Retrieve OpenStack-specific metadata.
 * [**Olle Lundberg**](https://github.com/lndbrg)
@@ -19,11 +15,21 @@
 * [**Christian Vozar**](https://github.com/christianvozar):
   Add Go language plugin.
 * [**Phil Dibowitz**](https://github.com/jaymzh):
-  linux::network should handle ECMP routes
-* [**Phil Dibowitz**](https://github.com/jaymzh):
   regression: qualify device names from lsblk
-  
-## Last Release: 7.2.0
+
+## Release 7.2.4
+
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  linux::network should handle ECMP routes
+
+## Release 7.2.2
+
+* [**Phil Dibowitz**:](https://github.com/jaymzh)
+  Use lsblk instead of blkid if available.
+* [**Phil Dibowitz**:](https://github.com/jaymzh)
+  linux::filesystem now reads all of /proc/mounts instead of just 4K
+
+## Release: 7.2.0
 
 * [**Lance Bragstad**:](https://github.com/lbragstad)
   Added platform_family support for ibm_powerkvm (OHAI-558)
@@ -64,7 +70,7 @@
 * Be reluctant to call something an LXC host (OHAI-573)
 
 
-## Previous Release: 7.0.4
+## Release: 7.0.4
 
 * Added platform_family support for ibm_powerkvm (OHAI-558)
 * cannot disable Lsb plugin (OHAI-565)

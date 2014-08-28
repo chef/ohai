@@ -1,13 +1,20 @@
 # Ohai Changelog
 
-## Last Release: 7.2.2
+## Release: 7.6.0
+
+* Add Powershell plugin
+
+## Release: 7.2.4
+
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  linux::network should handle ECMP routes
+
+## Release: 7.2.2
 
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   Use lsblk instead of blkid if available.
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   linux::filesystem now reads all of /proc/mounts instead of just 4K
-* [**Phil Dibowitz**](https://github.com/jaymzh):
-  linux::network should handle ECMP routes
 
 ## Release: 7.2.0
 
@@ -49,8 +56,7 @@
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)
 
-
-## Previous Release: 7.0.4
+## Release: 7.0.4
 
 * Added platform_family support for ibm_powerkvm (OHAI-558)
 * cannot disable Lsb plugin (OHAI-565)

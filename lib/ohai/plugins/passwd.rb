@@ -35,4 +35,8 @@ Ohai.plugin(:Passwd) do
       current_user fix_encoding(Etc.getpwuid(Process.euid).name)
     end
   end
+
+  collect_data(:windows) do
+    # Etc returns nil on Windows
+  end
 end

@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
-describe Ohai::System, "plugin etc" do
+describe Ohai::System, "plugin etc", :unix_only do
   before(:each) do
     @plugin = get_plugin("passwd")
   end

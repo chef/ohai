@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = "Ohai profiles your system and emits JSON"
   s.description = s.summary
+  s.license = "Apache-2.0"
   s.author = "Adam Jacob"
   s.email = "adam@opscode.com"
   s.homepage = "http://wiki.opscode.com/display/chef/Ohai"

@@ -8,6 +8,9 @@ gemspec
 gem "rspec_junit_formatter", :git => 'https://github.com/sj26/rspec_junit_formatter.git',
                              :ref => "147836c41fab23ff7b92806f34122c8e5f2ddcad"
 
+# Rake 10.2 drops Ruby 1.8 support
+gem "rake", "~> 10.1.0"
+
 group :development do
 
   gem "sigar", :platform => "ruby"

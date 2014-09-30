@@ -62,7 +62,7 @@ describe Ohai::System, "FreeBSD cpu plugin" do
 
   it "detects all CPU total" do
     @plugin.run
-    @plugin[:cpu][:total].should == "2"
+    @plugin[:cpu][:total].should == 2
   end
 
 end

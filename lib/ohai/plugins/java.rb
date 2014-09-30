@@ -30,7 +30,7 @@ Ohai.plugin(:Java) do
           java[:version] = $1
         when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
           java[:runtime] = { "name" => $1, "build" => $3 }
-        when /^(.+ (Client|Server) VM) \(build (.+)\)$/
+        when /^(.+ (Client|Server) VM) \(build\s*(.+)\)$/
           java[:hotspot] = { "name" => $1, "build" => $3 }
         end
       end

@@ -27,7 +27,7 @@ Ohai.plugin(:Uptime) do
     so = shell_out('who -b')
     so.stdout.lines.each do |line|
       if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1).strftime('%s').to_i
+        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime('%s').to_i
         uptime seconds_to_human(uptime_seconds)
         break
       end

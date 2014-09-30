@@ -20,17 +20,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "AIX network plugin" do
 
   before(:each) do
-    @route_n_get_0 = <<-ROUTE_N_GET_0
-   route to: default
-destination: default
-       mask: default
-    gateway: 172.29.128.13
-  interface: en0
-interf addr: 172.29.174.58
-      flags: <UP,GATEWAY,DONE>
- recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
-       0         0         0         0         0         0         0       -79
-ROUTE_N_GET_0
+    @netstat_rn_grep_default = <<-NETSTAT_RN_GREP_DEFAULT
+default            172.31.8.1        UG        2    121789 en0      -      -
+NETSTAT_RN_GREP_DEFAULT
 
     @lsdev_Cc_if = <<-LSDEV_CC_IF
 en0 Available  Standard Ethernet Network Interface
@@ -74,7 +66,7 @@ ARP_AN
     @plugin = get_plugin("aix/network")
     @plugin.stub(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
-    @plugin.stub(:shell_out).with("route -n get 0").and_return(mock_shell_out(0, @route_n_get_0, nil))
+    @plugin.stub(:shell_out).with("netstat -rn |grep default").and_return(mock_shell_out(0, @netstat_rn_grep_default, nil))
     @plugin.stub(:shell_out).with("lsdev -Cc if").and_return(mock_shell_out(0, @lsdev_Cc_if, nil))
     @plugin.stub(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, @ifconfig_en0, nil))
     @plugin.stub(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
@@ -101,13 +93,13 @@ ARP_AN
     end
   end
 
-  describe "route -n get 0" do
+  describe "netstat -rn |grep default" do
     before do
       @plugin.run
     end
 
     it "returns the default gateway of the system's network" do
-      @plugin[:network][:default_gateway].should == '172.29.128.13'
+      @plugin[:network][:default_gateway].should == '172.31.8.1'
     end
 
     it "returns the default interface of the system's network" do

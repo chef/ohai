@@ -46,13 +46,12 @@ Ohai.plugin(:Network) do
     network[:interfaces] = Mash.new unless network[:interfaces]
 
     # :default_interface, :default_gateway - route -n get 0
-    so = shell_out("route -n get 0")
+    so = shell_out("netstat -rn |grep default")
     so.stdout.lines.each do |line|
-      case line
-      when /gateway: (\S+)/
-        network[:default_gateway] = $1
-      when /interface: (\S+)/
-        network[:default_interface] = $1
+      items = line.split(' ')
+      if items[0] == "default"
+        network[:default_gateway] = items[1]
+        network[:default_interface] = items[5]
       end
     end
 

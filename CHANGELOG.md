@@ -18,6 +18,8 @@
   regression: qualify device names from lsblk
 * [**Chris Read**](https://github.com/cread):
   Add support for ip version ss131122.
+* [**carck**](https://github.com/carck):
+  Reduce GCE metadata timeout to 6 seconds.
 
 ## Release 7.2.4
 

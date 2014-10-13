@@ -51,7 +51,7 @@ module Ohai
       end
 
       def http_client
-        Net::HTTP.start(GCE_METADATA_ADDR).tap {|h| h.read_timeout = 600}
+        Net::HTTP.start(GCE_METADATA_ADDR).tap {|h| h.read_timeout = 6}
       end
 
       def fetch_metadata(id='')

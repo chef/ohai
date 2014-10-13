@@ -24,6 +24,8 @@
   Add Pidora platform detection.
 * [**Ben Carpenter**](https://github.com/bcarpenter):
   Presume 'latest' API version on 404 from Eucalyptus metadata server.
+* [**Nabeel Shahzad**](https://github.com/nshahzad):
+  Look for any number of spaces between the VxID and the value.
 
 ## Release 7.2.4
 

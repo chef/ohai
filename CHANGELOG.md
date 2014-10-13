@@ -16,6 +16,8 @@
   Add Go language plugin.
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   regression: qualify device names from lsblk
+* [**Chris Read**](https://github.com/cread):
+  Add support for ip version ss131122.
 
 ## Release 7.2.4
 

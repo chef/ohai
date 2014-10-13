@@ -1,5 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@opscode.com>)
+# Author:: Chris Read <chris.read@gmail.com>
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -161,10 +162,16 @@ Ohai.plugin(:Network) do
           net_counters[tmp_int][:tx][:queuelen] = $1
         end
 
-        if line =~ /vlan id (\d+)/
-          tmp_id = $1
+        if line =~ /vlan id (\d+)/ or line =~ /vlan protocol ([\w\.]+) id (\d+)/
+          if $2
+            tmp_prot = $1
+            tmp_id = $2
+          else
+            tmp_id = $1
+          end
           iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
           iface[tmp_int][:vlan][:id] = tmp_id
+          iface[tmp_int][:vlan][:protocol] = tmp_prot if tmp_prot
 
           vlan_flags = line.scan(/(REORDER_HDR|GVRP|LOOSE_BINDING)/)
           if vlan_flags.length > 0

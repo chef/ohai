@@ -137,7 +137,7 @@ Ohai.plugin(:Virtualization) do
     # Detect Linux-VServer
     if File.exists?("/proc/self/status")
       proc_self_status = File.read("/proc/self/status")
-      vxid = proc_self_status.match(/^(s_context|VxID): (\d+)$/)
+      vxid = proc_self_status.match(/^(s_context|VxID): *(\d+)$/)
       if vxid and vxid[2]
         virtualization[:system] = "linux-vserver"
         if vxid[2] == "0"

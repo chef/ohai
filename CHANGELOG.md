@@ -20,6 +20,8 @@
   Add support for ip version ss131122.
 * [**carck**](https://github.com/carck):
   Reduce GCE metadata timeout to 6 seconds.
+* [**barnabear**](https://github.com/barnabear):
+  Add Pidora platform detection.
 
 ## Release 7.2.4
 

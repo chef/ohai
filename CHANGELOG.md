@@ -22,6 +22,8 @@
   Reduce GCE metadata timeout to 6 seconds.
 * [**barnabear**](https://github.com/barnabear):
   Add Pidora platform detection.
+* [**Ben Carpenter**](https://github.com/bcarpenter):
+  Presume 'latest' API version on 404 from Eucalyptus metadata server.
 
 ## Release 7.2.4
 

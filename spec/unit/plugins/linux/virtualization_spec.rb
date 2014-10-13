@@ -229,10 +229,19 @@ VBOX
       @plugin[:virtualization][:role].should == "host"
       @plugin[:virtualization][:systems]['linux-vserver'].should == "host"
     end
-    
+
     it "should set Linux-VServer host if /proc/self/status contains multiple space VxID:   0" do
       File.should_receive(:exists?).with("/proc/self/status").and_return(true)
       File.stub(:read).with("/proc/self/status").and_return("VxID:   0")
+      @plugin.run
+      @plugin[:virtualization][:system].should == "linux-vserver"
+      @plugin[:virtualization][:role].should == "host"
+      @plugin[:virtualization][:systems]['linux-vserver'].should == "host"
+    end
+
+    it "should set Linux-VServer host if /proc/self/status contains tabbed VxID:\t0" do
+      File.should_receive(:exists?).with("/proc/self/status").and_return(true)
+      File.stub(:read).with("/proc/self/status").and_return("VxID:\t0")
       @plugin.run
       @plugin[:virtualization][:system].should == "linux-vserver"
       @plugin[:virtualization][:role].should == "host"
@@ -382,7 +391,7 @@ CGROUP
         File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
         File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       end
-    
+
       it "sets lxc host if lxc-version exists" do
         @plugin.stub(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
         @plugin.run

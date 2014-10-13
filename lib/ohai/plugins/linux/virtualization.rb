@@ -137,7 +137,7 @@ Ohai.plugin(:Virtualization) do
     # Detect Linux-VServer
     if File.exists?("/proc/self/status")
       proc_self_status = File.read("/proc/self/status")
-      vxid = proc_self_status.match(/^(s_context|VxID): *(\d+)$/)
+      vxid = proc_self_status.match(/^(s_context|VxID):\s*(\d+)$/)
       if vxid and vxid[2]
         virtualization[:system] = "linux-vserver"
         if vxid[2] == "0"
@@ -158,7 +158,7 @@ Ohai.plugin(:Virtualization) do
     # /proc/self/cgroup could have a name including alpha/digit/dashes
     # <index #>:<subsystem>:/lxc/<named container id>
     #
-    # /proc/self/cgroup could have a non-lxc cgroup name indicating other uses 
+    # /proc/self/cgroup could have a non-lxc cgroup name indicating other uses
     # of cgroups.  This is probably not LXC/Docker.
     # <index #>:<subsystem>:/Charlie
     #

@@ -111,7 +111,7 @@ Ohai.plugin(:Platform) do
     case platform
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/
       platform_family "debian"
-    when /fedora/
+    when /fedora/, /pidora/
       platform_family "fedora"
     when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       platform_family "rhel"

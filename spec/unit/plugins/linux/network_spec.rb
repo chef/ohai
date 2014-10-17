@@ -313,11 +313,21 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
   end
 
+  describe "#iproute2_binary_available?" do
+    ["/sbin/ip", "/usr/bin/ip"].each do |path|
+      it "accepts #{path}" do
+        allow(File).to receive(:exist?).and_return(false)
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        expect(plugin.iproute2_binary_available?).to be_truthy
+      end
+    end
+  end
+
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
-        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         plugin.run
       end
 
@@ -423,7 +433,7 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
 
     describe "gathering interface counters via #{network_method}" do
       before(:each) do
-        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         plugin.run
       end
 
@@ -461,7 +471,7 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
 
     describe "setting the node's default IP address attribute with #{network_method}" do
       before(:each) do
-        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         plugin.run
       end
 

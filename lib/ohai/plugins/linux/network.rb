@@ -33,6 +33,10 @@ Ohai.plugin(:Network) do
     encap
   end
 
+  def iproute2_binary_available?
+    ["/sbin/ip", "/usr/bin/ip"].any? { |path| File.exist?(path) }
+  end
+
   collect_data(:linux) do
     require 'ipaddr'
 
@@ -49,8 +53,7 @@ Ohai.plugin(:Network) do
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
     IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/ unless defined? IPROUTE_INT_REGEX
 
-    if File.exist?("/sbin/ip")
-
+    if iproute2_binary_available?
       # families to get default routes from
       families = [{
                     :name => "inet",

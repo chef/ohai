@@ -116,31 +116,62 @@ describe Ohai::System, "plugin cloud" do
   end
 
   describe "with GCE mash" do
-    before do
-      @plugin[:gce] = Mash.new()
-      @plugin[:gce]['instance'] = Mash.new()
-      @plugin[:gce]['instance']['networkInterfaces'] = [
-        {
-          "accessConfigs" => [ {"externalIp" => "8.35.198.173", "type"=>"ONE_TO_ONE_NAT"} ],
-          "ip" => "10.240.0.102",
-          "network"=> "projects/foo/networks/default"
-        }
-      ]
+    describe "with a public IP" do
+      before do
+        @plugin[:gce] = Mash.new()
+        @plugin[:gce]['instance'] = Mash.new()
+        @plugin[:gce]['instance']['networkInterfaces'] = [
+          {
+            "accessConfigs" => [ {"externalIp" => "8.35.198.173", "type"=>"ONE_TO_ONE_NAT"} ],
+            "ip" => "10.240.0.102",
+            "network"=> "projects/foo/networks/default"
+          }
+        ]
+      end
+
+      it "populates cloud public ip" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:public_ipv4_addrs][0]).to eq("8.35.198.173")
+      end
+
+      it "populates cloud private ip" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:local_ipv4_addrs][0]).to eq("10.240.0.102")
+      end
+
+      it "populates cloud provider" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:provider]).to eq("gce")
+      end
     end
 
-    it "populates cloud public ip" do
-      @plugin.run
-      expect(@plugin[:cloud_v2][:public_ipv4_addrs][0]).to eq("8.35.198.173")
-    end
+    describe "with no public IP" do
+      before do
+        @plugin[:gce] = Mash.new()
+        @plugin[:gce]['instance'] = Mash.new()
+        @plugin[:gce]['instance']['networkInterfaces'] = [
+          {
+            "accessConfigs" => [ {"externalIp" => "", "type" => "ONE_TO_ONE_NAT"} ],
+            "ip" => "10.240.0.102",
+            "network" => "projects/foo/networks/default"
+          }
+        ]
+      end
 
-    it "populates cloud private ip" do
-      @plugin.run
-      expect(@plugin[:cloud_v2][:local_ipv4_addrs][0]).to eq("10.240.0.102")
-    end
+      it "does not populate cloud public ip" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:public_ipv4_addrs]).to be_nil
+      end
 
-    it "populates cloud provider" do
-      @plugin.run
-      expect(@plugin[:cloud_v2][:provider]).to eq("gce")
+      it "populates cloud private ip" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:local_ipv4_addrs][0]).to eq("10.240.0.102")
+      end
+
+      it "populates cloud provider" do
+        @plugin.run
+        expect(@plugin[:cloud_v2][:provider]).to eq("gce")
+      end
     end
   end
 

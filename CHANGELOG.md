@@ -27,6 +27,10 @@
 * [**Nabeel Shahzad**](https://github.com/nshahzad):
   Look for any number of spaces between the VxID and the value.
 
+## Release 7.4.0
+
+* Added Powershell plugin.
+
 ## Release 7.2.4
 
 * [**Phil Dibowitz**](https://github.com/jaymzh):

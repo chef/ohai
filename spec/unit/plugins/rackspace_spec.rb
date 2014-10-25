@@ -19,6 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
+    Resolv.stub(:getname).and_return("1.2.3.4")
     @plugin = get_plugin("rackspace")
     @plugin[:hostname] = "katie"
     @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {

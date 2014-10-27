@@ -1,5 +1,7 @@
 # Ohai Changelog
 
+## Unreleased
+
 ## Release: 7.6.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

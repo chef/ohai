@@ -26,6 +26,8 @@
   Presume 'latest' API version on 404 from Eucalyptus metadata server.
 * [**Nabeel Shahzad**](https://github.com/nshahzad):
   Look for any number of spaces between the VxID and the value.
+* [**Daniel Searles**](https://github.com/squaresurf):
+  Removed *.static.cloud-ips.com and fixed the DNS resolution on Rackspace hosts.
 
 ## Release 7.4.0
 

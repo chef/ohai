@@ -2,14 +2,43 @@
 
 ## Release: 7.6.0
 
-* Add Powershell plugin
+* [**sawanoboly**](https://github.com/sawanoboly)
+  Retrieve OpenStack-specific metadata.
+* [**Olle Lundberg**](https://github.com/lndbrg)
+  Add Cloudstack support.
+* [**Tim Smith**](https://github.com/tas50)
+  Remove newlines in CPU strings on Darwin.
+* [**Nathan Huff**](https://github.com/nhuff)
+  Match zpool output for OmniOS 151006.
+* [**Pavel Yudin**](https://github.com/Kasen)
+  Add Parallels Cloud Server (PCS) platform support.
+* [**Christian Vozar**](https://github.com/christianvozar):
+  Add Go language plugin.
+* [**Phil Dibowitz**](https://github.com/jaymzh):
+  regression: qualify device names from lsblk
+* [**Chris Read**](https://github.com/cread):
+  Add support for ip version ss131122.
+* [**carck**](https://github.com/carck):
+  Reduce GCE metadata timeout to 6 seconds.
+* [**barnabear**](https://github.com/barnabear):
+  Add Pidora platform detection.
+* [**Ben Carpenter**](https://github.com/bcarpenter):
+  Presume 'latest' API version on 404 from Eucalyptus metadata server.
+* [**Nabeel Shahzad**](https://github.com/nshahzad):
+  Look for any number of spaces between the VxID and the value.
+* [**Daniel Searles**](https://github.com/squaresurf):
+  Removed *.static.cloud-ips.com and fixed the DNS resolution on Rackspace hosts.
 
-## Release: 7.2.4
+## Release 7.4.0
+
+* Added Powershell plugin.
+
+## Release 7.2.4
 
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   linux::network should handle ECMP routes
 
-## Release: 7.2.2
+## Release 7.2.2
 
 * [**Phil Dibowitz**:](https://github.com/jaymzh)
   Use lsblk instead of blkid if available.
@@ -22,8 +51,8 @@
   Added platform_family support for ibm_powerkvm (OHAI-558)
 * [**Pierre Carrier**:](https://github.com/pcarrier)
   EC2 metadata errors are unhelpful (OHAI-566)
-* [**Elan Ruusamae**:](https://github.com/glensc)
-  Support deep virtualization systems in node[:virtualization][:systems] (OHAI-182)
+* [**Elan Ruusamäe**:](https://github.com/glensc)
+  Support deep virtualization systems in `node[:virtualization][:systems]` (OHAI-182)
 * [**Sean Walberg**:](https://github.com/swalberg)
   :Passwd plugin now ignores duplicate users. (OHAI-561)
 * [**Joe Richards**:](https://github.com/viyh)
@@ -55,6 +84,7 @@
 * root_group provider not implemented for Windows (OHAI-491)
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)
+* Assume 'latest' metadata versions on 404
 
 ## Release: 7.0.4
 

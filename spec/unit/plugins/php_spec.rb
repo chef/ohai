@@ -18,7 +18,6 @@
 # limitations under the License.
 #
 
-require 'json'
 require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
 
 describe Ohai::System, "plugin php" do

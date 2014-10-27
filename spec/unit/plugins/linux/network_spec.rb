@@ -1,5 +1,6 @@
 #
 #  Author:: Caleb Tennis <caleb.tennis@gmail.com>
+#  Author:: Chris Read <chris.read@gmail.com>
 #  Copyright:: Copyright (c) 2011 Opscode, Inc.
 #  License:: Apache License, Version 2.0
 #
@@ -25,38 +26,25 @@ rescue LoadError => e
   raise e
 end
 
-def do_stubs
-  @plugin.stub(:collect_os).and_return(:linux)
-  @plugin.stub(:shell_out).with("ip addr").and_return(mock_shell_out(0, @linux_ip_addr, ""))
-  @plugin.stub(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, @linux_ip_link_s_d, ""))
-  @plugin.stub(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, @linux_ip_neighbor_show, ""))
-  @plugin.stub(:shell_out).with("ip -f inet6 neigh show").and_return(mock_shell_out(0, @linux_ip_inet6_neighbor_show, ""))
-  @plugin.stub(:shell_out).with("ip -o -f inet route show").and_return(mock_shell_out(0, @linux_ip_route, ""))
-  @plugin.stub(:shell_out).with("ip -o -f inet6 route show").and_return(mock_shell_out(0, @linux_ip_route_inet6, ""))
-  @plugin.stub(:shell_out).with("route -n").and_return(mock_shell_out(0, @linux_route_n, ""))
-  @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @linux_ifconfig, ""))
-  @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @linux_arp_an, ""))
-end
-
 describe Ohai::System, "Linux Network Plugin" do
+  let(:plugin) { get_plugin("linux/network") }
 
-  before do
-    @linux_ifconfig = <<-ENDIFCONFIG
-eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2  
+  let(:linux_ifconfig) {
+'eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2
           inet addr:10.116.201.76  Bcast:10.116.201.255  Mask:255.255.255.0
           inet6 addr: fe80::1031:3dff:fe02:bea2/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:2659966 errors:0 dropped:0 overruns:0 frame:0
           TX packets:1919690 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000 
+          collisions:0 txqueuelen:1000
           RX bytes:1392844460 (1.2 GiB)  TX bytes:691785313 (659.7 MiB)
-          Interrupt:16 
+          Interrupt:16
 
-eth0:5    Link encap:Ethernet  HWaddr 00:0c:29:41:71:45  
+eth0:5    Link encap:Ethernet  HWaddr 00:0c:29:41:71:45
           inet addr:192.168.5.1  Bcast:192.168.5.255  Mask:255.255.255.0
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
 
-eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
+eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           inet addr:192.168.0.16  Bcast:192.168.0.255  Mask:255.255.255.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
           inet6 addr: 1111:2222:3333:4444::2/64 Scope:Global
@@ -64,78 +52,107 @@ eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:1208795008 errors:0 dropped:0 overruns:0 frame:0
           TX packets:3269635153 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:1751940374 (1.6 GiB)  TX bytes:2195567597 (2.0 GiB)
 
-eth0.151  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
+eth0.151  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           inet addr:10.151.0.16  Bcast:10.151.0.255  Mask:255.255.255.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:206553677 errors:0 dropped:0 overruns:0 frame:0
           TX packets:163901336 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:3190792261 (2.9 GiB)  TX bytes:755086548 (720.1 MiB)
 
-eth0.152  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
+eth0.152  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           inet addr:10.152.1.16  Bcast:10.152.3.255  Mask:255.255.252.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:14016741 errors:0 dropped:0 overruns:0 frame:0
           TX packets:55232 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:664957462 (634.1 MiB)  TX bytes:4876434 (4.6 MiB)
 
-eth0.153  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee  
+eth0.153  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
           inet addr:10.153.1.16  Bcast:10.153.3.255  Mask:255.255.252.0
           inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:2022667595 errors:0 dropped:0 overruns:0 frame:0
           TX packets:1798627472 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:4047036732 (3.7 GiB)  TX bytes:3451231474 (3.2 GiB)
 
-foo:veth0@eth0 Link encap:Ethernet  HWaddr ca:b3:73:8b:0c:e4  
+foo:veth0@eth0 Link encap:Ethernet  HWaddr ca:b3:73:8b:0c:e4
           BROADCAST MULTICAST  MTU:1500  Metric:1
 
-tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00  
+tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
           inet addr:172.16.19.39  P-t-P:172.16.19.1  Mask:255.255.255.255
           UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
           RX packets:57200 errors:0 dropped:0 overruns:0 frame:0
           TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:100 
+          collisions:0 txqueuelen:100
           RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
 
-venet0    Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00  
+venet0    Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
           UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
           RX packets:57200 errors:0 dropped:0 overruns:0 frame:0
           TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:100 
+          collisions:0 txqueuelen:100
           RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
 
-venet0:0  Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00  
+venet0:0  Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
           UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
           RX packets:57200 errors:0 dropped:0 overruns:0 frame:0
           TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:100 
+          collisions:0 txqueuelen:100
           RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
 
-lo        Link encap:Local Loopback  
+lo        Link encap:Local Loopback
           inet addr:127.0.0.1  Mask:255.0.0.0
           inet6 addr: ::1/128 Scope:Host
           UP LOOPBACK RUNNING  MTU:16436  Metric:1
           RX packets:524 errors:0 dropped:0 overruns:0 frame:0
           TX packets:524 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:0 
+          collisions:0 txqueuelen:0
           RX bytes:35224 (34.3 KiB)  TX bytes:35224 (34.3 KiB)
-ENDIFCONFIG
+'
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
+  }
 
-    @linux_ip_addr = <<-IP_ADDR
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+  let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
+192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
+192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
+172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
+192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+10.5.4.0/24 \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
+default via 10.116.201.1 dev eth0
+'
+  }
+
+  let(:linux_route_n) {
+'Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
+0.0.0.0         10.116.201.1    0.0.0.0         UG    0      0        0 eth0
+'
+  }
+
+  let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
+default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
+'
+  }
+
+  let(:linux_ip_addr) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
-    inet6 ::1/128 scope host 
+    inet6 ::1/128 scope host
        valid_lft forever preferred_lft forever
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
@@ -143,35 +160,35 @@ ENDIFCONFIG
     inet 10.116.201.75/32 scope global eth0
     inet 10.116.201.74/24 scope global secondary eth0
     inet 192.168.5.1/24 brd 192.168.5.255 scope global eth0:5
-    inet6 fe80::1031:3dff:fe02:bea2/64 scope link 
+    inet6 fe80::1031:3dff:fe02:bea2/64 scope link
        valid_lft forever preferred_lft forever
-   inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic 
+   inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
        valid_lft 6128sec preferred_lft 2526sec
-3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 192.168.0.16/24 brd 192.168.0.255 scope global eth0.11
-    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
     inet6 1111:2222:3333:4444::2/64 scope global
        valid_lft forever preferred_lft forever
     inet6 1111:2222:3333:4444::3/64 scope global
        valid_lft forever preferred_lft forever
-4: eth0.151@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+4: eth0.151@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 10.151.0.16/24 brd 10.151.0.255 scope global eth0.151
     inet 10.151.1.16/24 scope global eth0.151
-    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
        valid_lft forever preferred_lft forever
-5: eth0.152@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+5: eth0.152@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 10.152.1.16/22 brd 10.152.3.255 scope global eth0.152
-    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
        valid_lft forever preferred_lft forever
-6: eth0.153@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+6: eth0.153@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
     inet 10.153.1.16/22 brd 10.153.3.255 scope global eth0.153
-    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link 
+    inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
        valid_lft forever preferred_lft forever
-7: foo:veth0@eth0@veth0: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc noop state DOWN 
+7: foo:veth0@eth0@veth0: <BROADCAST,MULTICAST,M-DOWN> mtu 1500 qdisc noop state DOWN
     link/ether ca:b3:73:8b:0c:e4 brd ff:ff:ff:ff:ff:ff
     inet 192.168.212.2/24 scope global foo:veth0@eth0
 8: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
@@ -181,733 +198,724 @@ ENDIFCONFIG
     link/void
     inet 127.0.0.2/32 scope host venet0
     inet 172.16.19.48/32 scope global venet0:0
-IP_ADDR
+'
+  }
 
-    @linux_ip_link_s_d = <<-IP_LINK_S
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN 
+  let(:linux_ip_link_s_d) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    RX: bytes  packets  errors  dropped overrun mcast   
-    35224      524      0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    35224      524      0       0       0       0      
+    RX: bytes  packets  errors  dropped overrun mcast
+    35224      524      0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    35224      524      0       0       0       0
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
     link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped overrun mcast   
-    1392844460 2659966  0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    691785313  1919690  0       0       0       0      
-3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP 
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     link/ether 00:0c:29:41:71:45 brd ff:ff:ff:ff:ff:ff
-    vlan id 11 <REORDER_HDR> 
-    RX: bytes  packets  errors  dropped overrun mcast   
-    0          0        0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    0          0        0       0       0       0      
+    vlan id 11 <REORDER_HDR>
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    0          0        0       0       0       0
 4: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN qlen 100
-    link/none 
-    RX: bytes  packets  errors  dropped overrun mcast   
-    1392844460 2659966  0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    691785313  1919690  0       0       0       0      
+    link/none
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
 5: venet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
     link/void
-    RX: bytes  packets  errors  dropped overrun mcast   
-    1392844460 2659966  0       0       0       0      
-    TX: bytes  packets  errors  dropped carrier collsns 
-    691785313  1919690  0       0       0       0         
-IP_LINK_S
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
+'
+  }
 
-    @linux_route_n = <<-ROUTE_N
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
-169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
-0.0.0.0         10.116.201.1    0.0.0.0         UG    0      0        0 eth0
-ROUTE_N
+  let(:linux_arp_an) {
+'? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
+'
+  }
 
-    @linux_arp_an = <<-ARP_AN
-? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
-ARP_AN
+  let(:linux_ip_neighbor_show) {
+'10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
+'
+  }
 
-    @linux_ip_neighbor_show = <<-NEIGHBOR_SHOW
-10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
-NEIGHBOR_SHOW
-
-    @linux_ip_inet6_neighbor_show = <<-NEIGHBOR_SHOW
-1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
+  let(:linux_ip_inet6_neighbor_show) {
+'1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.11 lladdr 00:1c:0e:30:28:00 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
-NEIGHBOR_SHOW
+'
+  }
 
-    @linux_ip_route = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel
-192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
-192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
-172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
-192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-10.5.4.0/24 \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
-default via 10.116.201.1 dev eth0
-IP_ROUTE_SCOPE
+  before(:each) do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
 
-    @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
-fe80::/64 dev eth0.11  proto kernel  metric 256
-1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
-default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-IP_ROUTE_SCOPE
+    allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, linux_ip_addr, ""))
+    allow(plugin).to receive(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, linux_ip_link_s_d, ""))
+    allow(plugin).to receive(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, linux_ip_neighbor_show, ""))
+    allow(plugin).to receive(:shell_out).with("ip -f inet6 neigh show").and_return(mock_shell_out(0, linux_ip_inet6_neighbor_show, ""))
+    allow(plugin).to receive(:shell_out).with("ip -o -f inet route show").and_return(mock_shell_out(0, linux_ip_route, ""))
+    allow(plugin).to receive(:shell_out).with("ip -o -f inet6 route show").and_return(mock_shell_out(0, linux_ip_route_inet6, ""))
 
-    @plugin = get_plugin("linux/network")
-    @plugin.stub(:shell_out).with("ifconfig -a").and_return([0, @linux_ifconfig, ""])
-    @plugin.stub(:shell_out).with("arp -an").and_return([0, @linux_arp_an, ""])
+    allow(plugin).to receive(:shell_out).with("route -n").and_return(mock_shell_out(0, linux_route_n, ""))
+    allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
+    allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
   end
 
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
-      before do
-        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
-        do_stubs
+      before(:each) do
+        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        plugin.run
       end
 
       it "completes the run" do
-        Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-        @plugin.run
-        @plugin['network'].should_not be_nil
+        expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+        expect(plugin['network']).not_to be_nil
       end
 
       it "detects the interfaces" do
-        @plugin.run
-        @plugin['network']['interfaces'].keys.sort.should == ["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo", "tun0", "venet0", "venet0:0"]
+        expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "foo:veth0@eth0", "lo", "tun0", "venet0", "venet0:0"])
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('10.116.201.76')
-        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask'].should == '255.255.255.0'
-        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast'].should == '10.116.201.255'
-        @plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family'].should == 'inet'
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('10.116.201.76')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask']).to eq('255.255.255.0')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast']).to eq('10.116.201.255')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family']).to eq('inet')
       end
 
       it "detects the ipv4 addresses of an ethernet subinterface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0.11']['addresses'].keys.should include('192.168.0.16')
-        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['netmask'].should == '255.255.255.0'
-        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['broadcast'].should == '192.168.0.255'
-        @plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['family'].should == 'inet'
+        expect(plugin['network']['interfaces']['eth0.11']['addresses'].keys).to include('192.168.0.16')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['netmask']).to eq('255.255.255.0')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['broadcast']).to eq('192.168.0.255')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['family']).to eq('inet')
       end
 
       it "detects the ipv6 addresses of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('fe80::1031:3dff:fe02:bea2')
-        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope'].should == 'Link'
-        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen'].should == '64'
-        @plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family'].should == 'inet6'
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('fe80::1031:3dff:fe02:bea2')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope']).to eq('Link')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen']).to eq('64')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family']).to eq('inet6')
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        @plugin.run
         %w[ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 ].each  do |addr|
-          @plugin['network']['interfaces']['eth0.11']['addresses'].keys.should include(addr)
-          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['scope'].should == 'Global'
-          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen'].should == '64'
-          @plugin['network']['interfaces']['eth0.11']['addresses'][addr]['family'].should == 'inet6'
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'].keys).to include(addr)
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['scope']).to eq('Global')
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen']).to eq('64')
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['family']).to eq('inet6')
         end
       end
 
       it "detects the mac addresses of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['addresses'].keys.should include('12:31:3D:02:BE:A2')
-        @plugin['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family'].should == 'lladdr'
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('12:31:3D:02:BE:A2')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family']).to eq('lladdr')
       end
 
       it "detects the encapsulation type of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['encapsulation'].should == 'Ethernet'
+        expect(plugin['network']['interfaces']['eth0']['encapsulation']).to eq('Ethernet')
       end
 
       it "detects the flags of the ethernet interface" do
-        @plugin.run
         if network_method == "ifconfig"
-          @plugin['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','MULTICAST','RUNNING','UP']
+          expect(plugin['network']['interfaces']['eth0']['flags'].sort).to eq(['BROADCAST','MULTICAST','RUNNING','UP'])
         else
-          @plugin['network']['interfaces']['eth0']['flags'].sort.should == ['BROADCAST','LOWER_UP','MULTICAST','UP']
+          expect(plugin['network']['interfaces']['eth0']['flags'].sort).to eq(['BROADCAST','LOWER_UP','MULTICAST','UP'])
         end
       end
 
       it "detects the number of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['number'].should == "0"
+        expect(plugin['network']['interfaces']['eth0']['number']).to eq("0")
       end
 
       it "detects the mtu of the ethernet interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['mtu'].should == "1500"
+        expect(plugin['network']['interfaces']['eth0']['mtu']).to eq("1500")
       end
-    
+
       it "detects the ipv4 addresses of the loopback interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['lo']['addresses'].keys.should include('127.0.0.1')
-        @plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
-        @plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['family'].should == 'inet'
+        expect(plugin['network']['interfaces']['lo']['addresses'].keys).to include('127.0.0.1')
+        expect(plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask']).to eq('255.0.0.0')
+        expect(plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['family']).to eq('inet')
       end
 
       it "detects the ipv6 addresses of the loopback interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['lo']['addresses'].keys.should include('::1')
-        @plugin['network']['interfaces']['lo']['addresses']['::1']['scope'].should == 'Node'
-        @plugin['network']['interfaces']['lo']['addresses']['::1']['prefixlen'].should == '128'
-        @plugin['network']['interfaces']['lo']['addresses']['::1']['family'].should == 'inet6'
+        expect(plugin['network']['interfaces']['lo']['addresses'].keys).to include('::1')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['scope']).to eq('Node')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['prefixlen']).to eq('128')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['family']).to eq('inet6')
       end
 
       it "detects the encapsulation type of the loopback interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['lo']['encapsulation'].should == 'Loopback'
+        expect(plugin['network']['interfaces']['lo']['encapsulation']).to eq('Loopback')
       end
 
       it "detects the flags of the ethernet interface" do
-        @plugin.run
         if network_method == "ifconfig"
-          @plugin['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','RUNNING','UP']
+          expect(plugin['network']['interfaces']['lo']['flags'].sort).to eq(['LOOPBACK','RUNNING','UP'])
         else
-          @plugin['network']['interfaces']['lo']['flags'].sort.should == ['LOOPBACK','LOWER_UP','UP']
+          expect(plugin['network']['interfaces']['lo']['flags'].sort).to eq(['LOOPBACK','LOWER_UP','UP'])
         end
       end
 
 
       it "detects the mtu of the loopback interface" do
-        @plugin.run
-        @plugin['network']['interfaces']['lo']['mtu'].should == "16436"
+        expect(plugin['network']['interfaces']['lo']['mtu']).to eq("16436")
       end
 
       it "detects the arp entries" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['arp']['10.116.201.1'].should == 'fe:ff:ff:ff:ff:ff'
+        expect(plugin['network']['interfaces']['eth0']['arp']['10.116.201.1']).to eq('fe:ff:ff:ff:ff:ff')
       end
 
     end
-  
+
     describe "gathering interface counters via #{network_method}" do
-      before do
-        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
-        do_stubs
-        @plugin.run
+      before(:each) do
+        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        plugin.run
       end
 
       it "detects the ethernet counters" do
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['bytes'].should == "691785313"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['packets'].should == "1919690"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['collisions'].should == "0"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['queuelen'].should == "1000"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['errors'].should == "0"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['carrier'].should == "0"
-        @plugin['counters']['network']['interfaces']['eth0']['tx']['drop'].should == "0"
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['bytes']).to eq("691785313")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['packets']).to eq("1919690")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['collisions']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['queuelen']).to eq("1000")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['carrier']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['drop']).to eq("0")
 
-        @plugin['counters']['network']['interfaces']['eth0']['rx']['bytes'].should == "1392844460"
-        @plugin['counters']['network']['interfaces']['eth0']['rx']['packets'].should == "2659966"
-        @plugin['counters']['network']['interfaces']['eth0']['rx']['errors'].should == "0"
-        @plugin['counters']['network']['interfaces']['eth0']['rx']['overrun'].should == "0"
-        @plugin['counters']['network']['interfaces']['eth0']['rx']['drop'].should == "0"
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['bytes']).to eq("1392844460")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['packets']).to eq("2659966")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['overrun']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['drop']).to eq("0")
       end
 
       it "detects the loopback counters" do
-        @plugin['counters']['network']['interfaces']['lo']['tx']['bytes'].should == "35224"
-        @plugin['counters']['network']['interfaces']['lo']['tx']['packets'].should == "524"
-        @plugin['counters']['network']['interfaces']['lo']['tx']['collisions'].should == "0"
-        @plugin['counters']['network']['interfaces']['lo']['tx']['errors'].should == "0"
-        @plugin['counters']['network']['interfaces']['lo']['tx']['carrier'].should == "0"
-        @plugin['counters']['network']['interfaces']['lo']['tx']['drop'].should == "0"
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['bytes']).to eq("35224")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['packets']).to eq("524")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['collisions']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['carrier']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['drop']).to eq("0")
 
-        @plugin['counters']['network']['interfaces']['lo']['rx']['bytes'].should == "35224"
-        @plugin['counters']['network']['interfaces']['lo']['rx']['packets'].should == "524"
-        @plugin['counters']['network']['interfaces']['lo']['rx']['errors'].should == "0"
-        @plugin['counters']['network']['interfaces']['lo']['rx']['overrun'].should == "0"
-        @plugin['counters']['network']['interfaces']['lo']['rx']['drop'].should == "0"
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['bytes']).to eq("35224")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['packets']).to eq("524")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['overrun']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['drop']).to eq("0")
       end
     end
 
     describe "setting the node's default IP address attribute with #{network_method}" do
-      before do
-        File.stub(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
-        do_stubs
+      before(:each) do
+        allow(File).to receive(:exist?).with("/sbin/ip").and_return( network_method == "iproute2" )
+        plugin.run
       end
 
       describe "without a subinterface" do
-        before do
-          @plugin.run
-        end
-  
         it "finds the default interface by asking which iface has the default route" do
-          @plugin['network']['default_interface'].should == 'eth0'
+          expect(plugin['network']['default_interface']).to eq('eth0')
         end
-  
+
         it "finds the default gateway by asking which iface has the default route" do
-          @plugin['network']['default_gateway'].should == '10.116.201.1'
+          expect(plugin['network']['default_gateway']).to eq('10.116.201.1')
         end
       end
-  
+
       describe "with a link level default route" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-10.116.201.0/24 dev eth0  proto kernel
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
 default dev eth0 scope link
-IP_ROUTE
-          @linux_route_n = <<-ROUTE_N
-Kernel IP routing table
+'
+        }
+
+        let(:linux_route_n) {
+'Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
-ROUTE_N
-          do_stubs
+'
+        }
 
-          @plugin.run
+        before(:each) do
+          plugin.run
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          @plugin['network']['default_interface'].should == 'eth0'
+          expect(plugin['network']['default_interface']).to eq('eth0')
         end
-  
+
         it "finds the default interface by asking which iface has the default route" do
-          @plugin['network']['default_gateway'].should == '0.0.0.0'
+          expect(plugin['network']['default_gateway']).to eq('0.0.0.0')
         end
       end
 
       describe "with a subinterface" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
+        let(:linux_ip_route) {
+'192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
 default via 192.168.0.15 dev eth0.11
-IP_ROUTE
-          @linux_route_n = <<-ROUTE_N
-Kernel IP routing table
+'
+        }
+
+        let(:linux_route_n) {
+'Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.0.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0.11
 0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
-ROUTE_N
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
+        end
 
-          @plugin.run
-        end
-  
         it "finds the default interface by asking which iface has the default route" do
-          @plugin['network']["default_interface"].should == 'eth0.11'
+          expect(plugin['network']["default_interface"]).to eq('eth0.11')
         end
-  
+
         it "finds the default interface by asking which iface has the default route" do
-          @plugin['network']["default_gateway"].should == '192.168.0.15'
+          expect(plugin['network']["default_gateway"]).to eq('192.168.0.15')
         end
       end
     end
   end
 
   describe "for newer network features using iproute2 only" do
-    before do
-      File.stub(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
-      do_stubs
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      plugin.run
     end
 
     it "completes the run" do
-      Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-      @plugin.run
-      @plugin['network'].should_not be_nil
+      expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+      expect(plugin['network']).not_to be_nil
     end
 
     it "finds the default inet6 interface if there's a inet6 default route" do
-      @plugin.run
-      @plugin['network']['default_inet6_interface'].should == 'eth0.11'
+      expect(plugin['network']['default_inet6_interface']).to eq('eth0.11')
     end
 
     it "finds the default inet6 gateway if there's a inet6 default route" do
-      @plugin.run
-      @plugin['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::1'
+      expect(plugin['network']['default_inet6_gateway']).to eq('1111:2222:3333:4444::1')
     end
 
     it "finds inet6 neighbours" do
-      @plugin.run
-      @plugin['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1'].should == '00:1c:0e:12:34:56'
+      expect(plugin['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1']).to eq('00:1c:0e:12:34:56')
     end
 
     it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
-      @plugin.run
-      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses'].keys.should include('192.168.212.2')
-      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask'].should == '255.255.255.0'
-      @plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family'].should == 'inet'
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses'].keys).to include('192.168.212.2')
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask']).to eq('255.255.255.0')
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family']).to eq('inet')
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do
-      @plugin.run
-      @plugin['network']['interfaces']['eth0:5']['addresses'].keys.should include('192.168.5.1')
-      @plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask'].should == '255.255.255.0'
-      @plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family'].should == 'inet'
+      expect(plugin['network']['interfaces']['eth0:5']['addresses'].keys).to include('192.168.5.1')
+      expect(plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask']).to eq('255.255.255.0')
+      expect(plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family']).to eq('inet')
     end
 
     it "adds the vlan information of an interface" do
-      @plugin.run
-      @plugin['network']['interfaces']['eth0.11']['vlan']['id'].should == '11'
-      @plugin['network']['interfaces']['eth0.11']['vlan']['flags'].should == [ 'REORDER_HDR' ]
+      expect(plugin['network']['interfaces']['eth0.11']['vlan']['id']).to eq('11')
+      expect(plugin['network']['interfaces']['eth0.11']['vlan']['flags']).to eq([ 'REORDER_HDR' ])
     end
 
     it "adds the state of an interface" do
-      @plugin.run
-      @plugin['network']['interfaces']['eth0.11']['state'].should == 'up'
+      expect(plugin['network']['interfaces']['eth0.11']['state']).to eq('up')
     end
 
     describe "when dealing with routes" do
       it "adds routes" do
-        @plugin.run
-        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
-        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.1")
-        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.2")
-        @plugin['network']['interfaces']['foo:veth0@eth0']['routes'].should include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
-        @plugin['network']['interfaces']['eth0']['routes'].should include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
-        @plugin['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
-        @plugin['network']['interfaces']['eth0.11']['routes'].should include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
+        plugin.run
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.1")
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.2")
+        expect(plugin['network']['interfaces']['foo:veth0@eth0']['routes']).to include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
+        expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
+        expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
       describe "when there isn't a source field in route entries " do
+        before(:each) do
+          plugin.run
+        end
+
         it "doesn't set ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should be nil
+          expect(plugin['ipaddress']).to be nil
         end
 
         it "doesn't set macaddress" do
-          @plugin.run
-          @plugin['macaddress'].should be nil
+          expect(plugin['macaddress']).to be nil
         end
 
         it "doesn't set ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should be nil
+          expect(plugin['ip6address']).to be nil
         end
       end
 
       describe "when there's a source field in the default route entry" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0  src 10.116.201.76
-IP_ROUTE_SCOPE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-IP_ROUTE_SCOPE
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should == "10.116.201.76"
+          expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
         it "sets ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should == "1111:2222:3333:4444::3"
+          expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
         end
       end
 
       describe "when there're several default routes" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9
-IP_ROUTE_SCOPE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
-IP_ROUTE_SCOPE
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets default ipv4 interface and gateway" do
-          @plugin.run
-          @plugin['network']['default_interface'].should == 'eth0'
-          @plugin['network']['default_gateway'].should == '10.116.201.254'
+          expect(plugin['network']['default_interface']).to eq('eth0')
+          expect(plugin['network']['default_gateway']).to eq('10.116.201.254')
         end
 
         it "sets default ipv6 interface and gateway" do
-          @plugin.run
-          @plugin['network']['default_inet6_interface'].should == 'eth0.11'
-          @plugin['network']['default_inet6_gateway'].should == '1111:2222:3333:4444::ffff'
+          expect(plugin['network']['default_inet6_interface']).to eq('eth0.11')
+          expect(plugin['network']['default_inet6_gateway']).to eq('1111:2222:3333:4444::ffff')
         end
       end
 
       describe "when there're a mixed setup of routes that could be used to set ipaddress" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9 src 10.116.201.74
-IP_ROUTE_SCOPE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
-IP_ROUTE_SCOPE
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
-          @plugin.run
-          @plugin["ipaddress"].should == "10.116.201.74"
+          expect(plugin["ipaddress"]).to eq("10.116.201.74")
         end
 
         it "sets ip6address" do
-          @plugin.run
-          @plugin["ip6address"].should == "1111:2222:3333:4444::2"
+          expect(plugin["ip6address"]).to eq("1111:2222:3333:4444::2")
         end
       end
 
       describe "when there's a source field in a local route entry " do
-        before do
-          @linux_ip_route = <<-IP_ROUTE_SCOPE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0
-IP_ROUTE_SCOPE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-IP_ROUTE_SCOPE
-
-          do_stubs
-        end
+'
+        }
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          plugin.run
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should == "10.116.201.76"
+          plugin.run
+          expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
         describe "when about to set macaddress" do
           it "sets macaddress" do
-            @plugin.run
-            @plugin['macaddress'].should == "12:31:3D:02:BE:A2"
+            plugin.run
+            expect(plugin['macaddress']).to eq("12:31:3D:02:BE:A2")
           end
 
           describe "when then interface has the NOARP flag" do
-            before do
-              @linux_ip_route = <<-IP_ROUTE
-10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
+            let(:linux_ip_route) {
+'10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
-IP_ROUTE
-
-              do_stubs
-            end
+'
+            }
 
             it "completes the run" do
-              Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-              @plugin.run
-              @plugin['network'].should_not be_nil
+              expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+              plugin.run
+              expect(plugin['network']).not_to be_nil
             end
 
             it "doesn't set macaddress" do
-              @plugin.run
-              @plugin['macaddress'].should be_nil
+              plugin.run
+              expect(plugin['macaddress']).to be_nil
             end
           end
         end
 
         it "sets ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should == "1111:2222:3333:4444::3"
+          plugin.run
+          expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
         end
       end
 
       describe "with a link level default route" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-default dev venet0 scope link
-IP_ROUTE
+        let(:linux_ip_route) {
+'default dev venet0 scope link
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
       end
 
       describe "when not having a global scope ipv6 address" do
-        before do
-          @linux_ip_route_inet6 = <<-IP_ROUTE_SCOPE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
-IP_ROUTE_SCOPE
-
-          do_stubs
+'
+        }
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should be_nil
+          expect(plugin['ip6address']).to be_nil
         end
 
       end
 
       describe "with no default route" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-IP_ROUTE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-IP_ROUTE
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
 
         it "doesn't set ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should be_nil
+          expect(plugin['ip6address']).to be_nil
         end
       end
 
       describe "with irrelevant routes (container setups)" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
+        let(:linux_ip_route) {
+'10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
 10.116.201.0/26 dev if4 proto kernel  src 10.116.201.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
 10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
 default via 10.116.201.1 dev eth0  src 10.116.201.99
-IP_ROUTE
+'
+        }
 
-          @linux_ip_route_inet6 = <<-IP_ROUTE
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-IP_ROUTE
+'
+        }
 
-          do_stubs
+        before(:each) do
+          plugin.run
         end
 
         it "completes the run" do
-          Ohai::Log.should_not_receive(:debug).with(/Plugin linux::network threw exception/)
-          @plugin.run
-          @plugin['network'].should_not be_nil
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't add bogus routes" do
-          @plugin.run
-          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
-          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
-          @plugin['network']['interfaces']['eth0']['routes'].should_not include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
         end
 
         it "doesn't set ipaddress" do
-          @plugin.run
-          @plugin['ipaddress'].should be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
 
         it "doesn't set ip6address" do
-          @plugin.run
-          @plugin['ip6address'].should be_nil
+          expect(plugin['ip6address']).to be_nil
         end
       end
 
       # This should never happen in the real world.
       describe "when encountering a surprise interface" do
-        before do
-          @linux_ip_route = <<-IP_ROUTE
-192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
-IP_ROUTE
-          do_stubs
-        end
-        
+        let(:linux_ip_route) {
+'192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
+'
+        }
+
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
-          Ohai::Log.should_receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
-          Ohai::Log.stub(:debug) # Catches the 'Loading plugin network' type messages
-          @plugin.run
+          expect(Ohai::Log).to receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
+          allow(Ohai::Log).to receive(:debug) # Catches the 'Loading plugin network' type messages
+          plugin.run
+        end
+      end
+
+      describe "when running with ip version ss131122" do
+        let(:linux_ip_link_s_d) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    35224      524      0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    35224      524      0       0       0       0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
+3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default
+    link/ether 00:0c:29:41:71:45 brd ff:ff:ff:ff:ff:ff promiscuity 0
+    vlan protocol 802.1Q id 11 <REORDER_HDR>
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    0          0        0       0       0       0
+4: tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 100
+    link/none promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
+5: venet0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/void promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    1392844460 2659966  0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    691785313  1919690  0       0       0       0
+'
+        }
+
+        it "adds the vlan information of an interface" do
+          plugin.run
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['id']).to eq('11')
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['protocol']).to eq('802.1Q')
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['flags']).to eq([ 'REORDER_HDR' ])
         end
       end
     end
   end
-
 end

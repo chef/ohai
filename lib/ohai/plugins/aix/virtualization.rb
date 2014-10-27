@@ -1,6 +1,6 @@
 #
-# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Julian C. Dunn (<jdunn@getchef.com>)
+# Copyright:: Copyright (c) 2014 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +16,24 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
-  provides "uptime", "uptime_seconds"
+Ohai.plugin(:Virtualization) do
+  provides "virtualization"
 
   collect_data(:aix) do
-    require 'date'
-    # Example output:
-    # $ who -b
-    #   .       system boot  Jul  9 17:51
-    so = shell_out('who -b')
-    so.stdout.lines.each do |line|
-      if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime('%s').to_i
-        uptime seconds_to_human(uptime_seconds)
-        break
-      end
+    virtualization Mash.new
+
+    so = shell_out("uname -L")
+    lpar_no = so.stdout.split($/)[0].split(/\s/)[0]
+    lpar_name = so.stdout.split($/)[0].split(/\s/)[1]
+
+    unless lpar_no.to_i == -1 || (lpar_no.to_i == 1 && lpar_name == "NULL")
+      virtualization[:lpar_no] = lpar_no
+      virtualization[:lpar_name] = lpar_name
     end
+
+    so = shell_out("uname -W")
+    wpar_no = so.stdout.split($/)[0]
+    virtualization[:wpar_no] = wpar_no unless wpar_no.to_i == 0
+
   end
 end

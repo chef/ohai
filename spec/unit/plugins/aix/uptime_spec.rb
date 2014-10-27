@@ -22,18 +22,19 @@ describe Ohai::System, "Aix plugin uptime" do
   before(:each) do
     @plugin = get_plugin("aix/uptime")
     @plugin.stub(:collect_os).and_return(:aix)
-    Time.stub_chain(:now, :to_i).and_return(1374258600)
-    DateTime.stub_chain(:parse, :strftime, :to_i).and_return(1373392260)
-    @plugin.stub(:shell_out).with("who -b").and_return(mock_shell_out(0, " .  system boot  Jul  9 17:51", nil))
+    Time.stub_chain(:now, :to_i).and_return(1412072511)
+    Time.stub_chain(:now, :zone).and_return("IST")
+    DateTime.stub_chain(:parse, :strftime, :to_i).and_return(1411561320)
+    @plugin.stub(:shell_out).with("who -b").and_return(mock_shell_out(0, "   .        system boot Sep 24 17:52", nil))
 
-    @plugin.run              
+    @plugin.run
   end
 
   it "should set uptime_seconds to uptime" do
-    @plugin[:uptime_seconds].should == 866340
+    @plugin[:uptime_seconds].should == 511191
   end
 
   it "should set uptime to a human readable date" do
-    @plugin[:uptime].should == "10 days 00 hours 39 minutes 00 seconds"
+    @plugin[:uptime].should == "5 days 21 hours 59 minutes 51 seconds"
   end
 end

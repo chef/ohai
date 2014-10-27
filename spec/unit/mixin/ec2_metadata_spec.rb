@@ -53,11 +53,12 @@ describe Ohai::Mixin::Ec2Metadata do
       end
     end
 
+    # Presume 'latest' when we get a 404 for Eucalyptus back-compat
     context "when the response code is 404" do
-      let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "404") }
+      let(:response) { double("Net::HTTP Response", :code => "404") }
 
-      it "raises an error" do
-        lambda { mixin.best_api_version}.should raise_error
+      it "returns 'latest' as the version" do
+        mixin.best_api_version.should == 'latest'
       end
     end
 

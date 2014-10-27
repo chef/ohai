@@ -76,7 +76,10 @@ module Ohai
 
       def best_api_version
         response = http_client.get("/")
-        unless response.code == '200'
+        if response.code == '404'
+          Ohai::Log.debug("Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
+          return "latest"
+        elsif response.code != '200'
           raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
         end
         # Note: Sorting the list of versions may have unintended consequences in

@@ -72,6 +72,18 @@ describe Ohai::System, "hostname plugin" do
     end
   end
 
+  context "when a system has a bare hostname without a FQDN" do
+    before(:each) do
+      @plugin.stub(:collect_os).and_return(:default)
+      @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie", ""))
+    end
+
+    it "should correctly set the [short] hostname" do
+      @plugin.run
+      @plugin[:hostname].should == "katie"
+    end
+  end
+
   context "hostname --fqdn when it returns empty string" do
     before(:each) do
       @plugin.stub(:collect_os).and_return(:linux)

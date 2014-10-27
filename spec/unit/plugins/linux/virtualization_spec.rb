@@ -33,6 +33,8 @@ describe Ohai::System, "Linux virtualization platform" do
     File.stub(:exists?).with("/proc/bc/0").and_return(false)
     File.stub(:exists?).with("/proc/vz").and_return(false)
     File.stub(:exists?).with("/proc/self/cgroup").and_return(false)
+    File.stub(:exists?).with("/.dockerenv").and_return(false)
+    File.stub(:exists?).with("/.dockerinit").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -338,27 +340,6 @@ CGROUP
       @plugin[:virtualization][:systems][:lxc].should == "guest"
     end
 
-    it "should set lxc guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
-      self_cgroup=<<-CGROUP
-11:hugetlb:/
-10:perf_event:/
-9:blkio:/
-8:net_cls:/
-7:freezer:/
-6:devices:/
-5:memory:/
-4:cpuacct,cpu:/docker/9c2adaa4c391ec0d3bf994fbd91ff30c3d317694d179e5b1dc7e1e4c8ed56b61
-3:cpuset:/
-2:name=systemd:/system.slice/docker.service
-CGROUP
-      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
-      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
-      @plugin.run
-      @plugin[:virtualization][:system].should == "lxc"
-      @plugin[:virtualization][:role].should == "guest"
-      @plugin[:virtualization][:systems][:lxc].should == "guest"
-    end
-
     it "should set not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
       self_cgroup=<<-CGROUP
 8:blkio:/Charlie
@@ -427,8 +408,134 @@ CGROUP
     end
   end
 
+  describe "when we are checking for docker" do
+    it "should set docker guest if /proc/self/cgroup exist and there are /docker/<hexadecimal> mounts" do
+      self_cgroup=<<-CGROUP
+8:blkio:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+7:net_cls:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+6:freezer:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+5:devices:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+4:memory:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+3:cpuacct:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+2:cpu:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+1:cpuset:/
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "docker"
+      @plugin[:virtualization][:role].should == "guest"
+      @plugin[:virtualization][:systems][:docker].should == "guest"
+    end
+
+    it "should set docker guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
+      self_cgroup=<<-CGROUP
+8:blkio:/docker/vanilla
+7:net_cls:/docker/vanilla
+6:freezer:/docker/vanilla
+5:devices:/docker/vanilla
+4:memory:/docker/vanilla
+3:cpuacct:/docker/vanilla
+2:cpu:/docker/vanilla
+1:cpuset:/docker/vanilla
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "docker"
+      @plugin[:virtualization][:role].should == "guest"
+      @plugin[:virtualization][:systems][:docker].should == "guest"
+    end
+
+    it "should set not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
+      self_cgroup=<<-CGROUP
+8:blkio:/Charlie
+7:net_cls:/Charlie
+6:freezer:/Charlie
+5:devices:/Charlie
+4:memory:/Charlie
+3:cpuacct:/Charlie
+2:cpu:/Charlie
+1:cpuset:/Charlie
+CGROUP
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      @plugin.run
+      @plugin[:virtualization].should == {'systems' => {}}
+    end
+
+    context "/proc/self/cgroup only has / mounts" do
+      before(:each) do
+        self_cgroup=<<-CGROUP
+8:blkio:/
+7:net_cls:/
+6:freezer:/
+5:devices:/
+4:memory:/
+3:cpuacct:/
+2:cpu:/
+1:cpuset:/
+CGROUP
+        File.should_receive(:exists?).with("/proc/self/cgroup").and_return(true)
+        File.stub(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+        @plugin.run
+        @plugin[:virtualization].should == {'systems' => {}}
+      end
+
+    end
+
+    it "does not set the old virtualization attributes if they are already set" do
+      @plugin.stub(:docker_exists?).and_return("/usr/bin/docker")
+      @plugin[:virtualization] = Mash.new
+      @plugin[:virtualization][:system] = "the cloud"
+      @plugin[:virtualization][:role] = "cumulonimbus"
+      @plugin.run
+      @plugin[:virtualization][:system].should_not == "docker"
+      @plugin[:virtualization][:role].should_not == "host"
+    end
+
+    it "does not set docker host if docker does not exist" do
+      @plugin.stub(:docker_exists?).and_return(false)
+      @plugin.run
+      @plugin[:virtualization][:system].should be_nil
+      @plugin[:virtualization][:role].should be_nil
+      @plugin[:virtualization].should == {'systems' => {}}
+    end
+
+    it "should not set virtualization if /proc/self/cgroup isn't there" do
+      File.should_receive(:exists?).with("/proc/self/cgroup").and_return(false)
+      @plugin.run
+      @plugin[:virtualization].should == {'systems' => {}}
+    end
+
+    it "should set virtualization if /.dockerenv exists" do
+      File.should_receive(:exists?).with("/.dockerenv").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "docker"
+      @plugin[:virtualization][:role].should == "guest"
+      @plugin[:virtualization][:systems][:docker].should == "guest"
+    end
+
+    it "should set virtualization if /.dockerinit exists" do
+      File.should_receive(:exists?).with("/.dockerinit").and_return(true)
+      @plugin.run
+      @plugin[:virtualization][:system].should == "docker"
+      @plugin[:virtualization][:role].should == "guest"
+      @plugin[:virtualization][:systems][:docker].should == "guest"
+    end
+
+    it "should not set virtualization if /.dockerenv or /.dockerinit doesn't exists" do
+      File.should_receive(:exists?).with("/.dockerenv").and_return(false)
+      File.should_receive(:exists?).with("/.dockerinit").and_return(false)
+      @plugin.run
+      @plugin[:virtualization].should == {'systems' => {}}
+    end
+
+  end
+
   it "should not set virtualization if no tests match" do
     @plugin.run
     @plugin[:virtualization].should == {'systems' => {}}
   end
+
 end

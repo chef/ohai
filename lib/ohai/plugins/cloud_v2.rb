@@ -124,7 +124,7 @@ Ohai.plugin(:CloudV2) do
   def get_gce_values
     public_ips = gce['instance']['networkInterfaces'].collect do |interface|
       if interface.has_key?('accessConfigs')
-        interface['accessConfigs'].collect{|ac| ac['externalIp']}
+        interface['accessConfigs'].collect{|ac| ac['externalIp'] unless ac['externalIp'] == ''}
       end
     end.flatten.compact
 

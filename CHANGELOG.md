@@ -2,6 +2,9 @@
 
 ## Unreleased:
 
+
+## Release 7.6.0
+
 * [**sawanoboly**](https://github.com/sawanoboly)
   Retrieve OpenStack-specific metadata.
 * [**Olle Lundberg**](https://github.com/lndbrg)

@@ -24,6 +24,7 @@ Ohai.plugin(:Cloud) do
   depends "linode"
   depends "openstack"
   depends "azure"
+  depends "cloudstack"
 
   # Make top-level cloud hashes
   #
@@ -215,6 +216,31 @@ Ohai.plugin(:Cloud) do
     cloud[:provider] = "azure"
   end
 
+  # ----------------------------------------
+  # cloudstack
+  # ----------------------------------------
+
+  # Is current cloud cloudstack-based?
+  #
+  # === Return
+  # true:: If cloudstack Hash is defined
+  # false:: Otherwise
+  def on_cloudstack?
+    cloudstack != nil
+  end
+
+  # Fill cloud hash with cloudstack values
+  def get_cloudstack_values
+    cloud[:public_ips] << cloudstack['public_ipv4']
+    cloud[:private_ips] << cloudstack['local_ipv4']
+    cloud[:public_ipv4] = cloudstack['public_ipv4']
+    cloud[:public_hostname] = cloudstack['public_hostname']
+    cloud[:local_ipv4] = cloudstack['local_ipv4']
+    cloud[:local_hostname] = cloudstack['local_hostname']
+    cloud[:vm_id] = cloudstack['vm_id']
+    cloud[:provider] = "cloudstack"
+  end
+
   collect_data do    
     # setup gce cloud
     if on_gce?
@@ -255,6 +281,12 @@ Ohai.plugin(:Cloud) do
     if on_azure?
       create_objects
       get_azure_values
+    end
+
+    # setup cloudstack cloud
+    if on_cloudstack?
+      create_objects
+      get_cloudstack_values
     end
   end
 end

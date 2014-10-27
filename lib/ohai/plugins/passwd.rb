@@ -32,7 +32,11 @@ Ohai.plugin(:Passwd) do
     end
 
     unless current_user
-      current_user fix_encoding(Etc.getlogin)
+      current_user fix_encoding(Etc.getpwuid(Process.euid).name)
     end
+  end
+
+  collect_data(:windows) do
+    # Etc returns nil on Windows
   end
 end

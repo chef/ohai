@@ -32,6 +32,14 @@ Ohai.plugin(:Filesystem) do
     have_lsblk ? /^(\S+) (\S+)/ : /^(\S+): #{attr}="(\S+)"/
   end
 
+  def find_device(name)
+    %w{/dev /dev/mapper}.each do |dir|
+      path = File.join(dir, name)
+      return path if File.exist?(path)
+    end
+    name
+  end
+
   collect_data(:linux) do
     fs = Mash.new
     have_lsblk = File.executable?('/bin/lsblk')
@@ -82,7 +90,7 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    have_lsblk = File.exists?('/bin/lsblk')
+    have_lsblk = File.exist?('/bin/lsblk')
 
     # Gather more filesystem types via libuuid, even devices that's aren't mounted
     cmd = get_blk_cmd('TYPE', have_lsblk)
@@ -91,8 +99,10 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
+        type = $2
+        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:fs_type] = $2
+        fs[filesystem][:fs_type] = type
       end
     end
 
@@ -103,8 +113,10 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
+        uuid = $2
+        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:uuid] = $2
+        fs[filesystem][:uuid] = uuid
       end
     end
 
@@ -115,13 +127,15 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
+        label = $2
+        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:label] = $2
+        fs[filesystem][:label] = label
       end
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exists?('/proc/mounts')
+    if File.exist?('/proc/mounts')
       mounts = ''
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.

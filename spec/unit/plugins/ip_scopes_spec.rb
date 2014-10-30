@@ -81,7 +81,7 @@ describe Ohai::System, "plugin ip_scopes" do
 
       before do
         # standin for raising on `require 'ipaddr_extensions'`
-        plugin[:network][:interfaces].stub(:keys).and_raise(LoadError)
+        allow(plugin[:network][:interfaces]).to receive(:keys).and_raise(LoadError)
         plugin.run
       end
 

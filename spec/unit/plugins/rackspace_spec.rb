@@ -19,7 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
-    Resolv.stub(:getname).and_return("1.2.3.4")
+    allow(Resolv).to receive(:getname).and_return("1.2.3.4")
     @plugin = get_plugin("rackspace")
     @plugin[:hostname] = "katie"
     @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
@@ -67,13 +67,13 @@ describe Ohai::System, "plugin rackspace" do
 
     # We need a generic stub here for the later stubs with arguments to work
     # Because, magic.
-    @plugin.stub(:shell_out).and_return(mock_shell_out(1, "", ""))
+    allow(@plugin).to receive(:shell_out).and_return(mock_shell_out(1, "", ""))
   end
 
   shared_examples_for "!rackspace"  do
     it "should NOT create rackspace" do
       @plugin.run
-      @plugin[:rackspace].should be_nil
+      expect(@plugin[:rackspace]).to be_nil
     end
   end
 
@@ -81,44 +81,44 @@ describe Ohai::System, "plugin rackspace" do
 
     it "should create rackspace" do
       @plugin.run
-      @plugin[:rackspace].should_not be_nil
+      expect(@plugin[:rackspace]).not_to be_nil
     end
 
     it "should have all required attributes" do
       @plugin.run
-      @plugin[:rackspace][:public_ip].should_not be_nil
-      @plugin[:rackspace][:private_ip].should_not be_nil
-      @plugin[:rackspace][:public_ipv4].should_not be_nil
-      @plugin[:rackspace][:local_ipv4].should_not be_nil
-      @plugin[:rackspace][:public_ipv6].should_not be_nil
-      @plugin[:rackspace][:local_ipv6].should be_nil
-      @plugin[:rackspace][:local_hostname].should_not be_nil
-      @plugin[:rackspace][:public_hostname].should_not be_nil
+      expect(@plugin[:rackspace][:public_ip]).not_to be_nil
+      expect(@plugin[:rackspace][:private_ip]).not_to be_nil
+      expect(@plugin[:rackspace][:public_ipv4]).not_to be_nil
+      expect(@plugin[:rackspace][:local_ipv4]).not_to be_nil
+      expect(@plugin[:rackspace][:public_ipv6]).not_to be_nil
+      expect(@plugin[:rackspace][:local_ipv6]).to be_nil
+      expect(@plugin[:rackspace][:local_hostname]).not_to be_nil
+      expect(@plugin[:rackspace][:public_hostname]).not_to be_nil
     end
 
     it "should resolve hostname if reverse dns is set" do
-      Resolv.stub(:getname).and_return("1234.resolved.com")
+      allow(Resolv).to receive(:getname).and_return("1234.resolved.com")
       @plugin.run
-      @plugin[:rackspace][:public_hostname].should == "1234.resolved.com"
+      expect(@plugin[:rackspace][:public_hostname]).to eq("1234.resolved.com")
     end
 
     [Resolv::ResolvError, Resolv::ResolvTimeout].each do |exception|
       it "should return ip address when reverse dns returns exception: #{exception}" do
-        Resolv.stub(:getname).and_raise(exception)
+        allow(Resolv).to receive(:getname).and_raise(exception)
         @plugin.run
-        @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+        expect(@plugin[:rackspace][:public_hostname]).to eq("1.2.3.4")
       end
     end
 
     it "should have correct values for all attributes" do
       @plugin.run
-      @plugin[:rackspace][:public_ip].should == "1.2.3.4"
-      @plugin[:rackspace][:private_ip].should == "5.6.7.8"
-      @plugin[:rackspace][:public_ipv4].should == "1.2.3.4"
-      @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
-      @plugin[:rackspace][:public_ipv6].should == "2a00:1a48:7805:111:e875:efaf:ff08:75"
-      @plugin[:rackspace][:local_hostname].should == 'katie'
-      @plugin[:rackspace][:public_hostname].should == "1.2.3.4"
+      expect(@plugin[:rackspace][:public_ip]).to eq("1.2.3.4")
+      expect(@plugin[:rackspace][:private_ip]).to eq("5.6.7.8")
+      expect(@plugin[:rackspace][:public_ipv4]).to eq("1.2.3.4")
+      expect(@plugin[:rackspace][:local_ipv4]).to eq("5.6.7.8")
+      expect(@plugin[:rackspace][:public_ipv6]).to eq("2a00:1a48:7805:111:e875:efaf:ff08:75")
+      expect(@plugin[:rackspace][:local_hostname]).to eq('katie')
+      expect(@plugin[:rackspace][:public_hostname]).to eq("1.2.3.4")
     end
 
     it "should capture region information" do
@@ -129,9 +129,9 @@ server_id = "21301000"
 created_at = "2012-12-06T22:08:16Z"
 region = "dfw"
 OUT
-      @plugin.stub(:shell_out).with("xenstore-ls vm-data/provider_data").and_return(mock_shell_out(0, provider_data, ""))
+      allow(@plugin).to receive(:shell_out).with("xenstore-ls vm-data/provider_data").and_return(mock_shell_out(0, provider_data, ""))
       @plugin.run
-      @plugin[:rackspace][:region].should == "dfw"
+      expect(@plugin[:rackspace][:region]).to eq("dfw")
     end
   end
 
@@ -139,13 +139,13 @@ OUT
     it_should_behave_like "rackspace"
 
     before(:each) do
-      Resolv.stub(:getname).and_raise(Resolv::ResolvError)
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
-      File.stub(:exist?).with('/etc/resolv.conf').and_return(true)
-      File.stub(:read).with('/etc/resolv.conf').and_return('')
+      allow(Resolv).to receive(:getname).and_raise(Resolv::ResolvError)
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/resolv.conf').and_return(true)
+      allow(File).to receive(:read).with('/etc/resolv.conf').and_return('')
     end
 
     describe 'with no public interfaces (empty eth0)' do
@@ -157,22 +157,22 @@ OUT
       it "should have all required attributes" do
         @plugin.run
         # expliticly nil
-        @plugin[:rackspace][:public_ip].should be_nil
-        @plugin[:rackspace][:public_ipv4].should be_nil
-        @plugin[:rackspace][:public_ipv6].should be_nil
-        @plugin[:rackspace][:public_hostname].should be_nil
+        expect(@plugin[:rackspace][:public_ip]).to be_nil
+        expect(@plugin[:rackspace][:public_ipv4]).to be_nil
+        expect(@plugin[:rackspace][:public_ipv6]).to be_nil
+        expect(@plugin[:rackspace][:public_hostname]).to be_nil
         # per normal
-        @plugin[:rackspace][:private_ip].should_not be_nil
-        @plugin[:rackspace][:local_ipv4].should_not be_nil
-        @plugin[:rackspace][:local_ipv6].should be_nil
-        @plugin[:rackspace][:local_hostname].should_not be_nil
+        expect(@plugin[:rackspace][:private_ip]).not_to be_nil
+        expect(@plugin[:rackspace][:local_ipv4]).not_to be_nil
+        expect(@plugin[:rackspace][:local_ipv6]).to be_nil
+        expect(@plugin[:rackspace][:local_hostname]).not_to be_nil
       end
 
       it "should have correct values for all attributes" do
         @plugin.run
-        @plugin[:rackspace][:private_ip].should == "5.6.7.8"
-        @plugin[:rackspace][:local_ipv4].should == "5.6.7.8"
-        @plugin[:rackspace][:local_hostname].should == 'katie'
+        expect(@plugin[:rackspace][:private_ip]).to eq("5.6.7.8")
+        expect(@plugin[:rackspace][:local_ipv4]).to eq("5.6.7.8")
+        expect(@plugin[:rackspace][:local_hostname]).to eq('katie')
       end
     end
   end
@@ -181,8 +181,8 @@ OUT
     it_should_behave_like "!rackspace"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
 
@@ -190,13 +190,13 @@ OUT
     it_should_behave_like "!rackspace"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
 
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
 
@@ -205,7 +205,7 @@ OUT
 
     before(:each) do
       stdout = "Rackspace\n"
-      @plugin.stub(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
 
@@ -214,26 +214,26 @@ OUT
 
     before(:each) do
       stdout = "cumulonimbus\n"
-      @plugin.stub(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
 
   describe "does not have private networks" do
     before do
       stdout = 'BC764E20422B = "{"label": "public"}"\n'
-      @plugin.stub(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
       stdout = '{"label": "public", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
-      @plugin.stub(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
 
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
 
     it "should not have private_networks object" do
       @plugin.run
-      @plugin[:rackspace][:private_networks].should == []
+      expect(@plugin[:rackspace][:private_networks]).to eq([])
     end
   end
 
@@ -255,26 +255,26 @@ OUT
         }
       }}
       stdout = 'BC764E20422B = "{"label": "private-network"}"\n'
-      @plugin.stub(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
       stdout = '{"label": "private-network", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
-      @plugin.stub(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
+      allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
 
-      File.stub(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
     end
 
     it "should private_networks object" do
       @plugin.run
-      @plugin[:rackspace][:private_networks].should_not be_nil
+      expect(@plugin[:rackspace][:private_networks]).not_to be_nil
     end
 
     it "should have correct values for all attributes" do
       @plugin.run
-      @plugin[:rackspace][:private_networks][0][:label].should == "private-network"
-      @plugin[:rackspace][:private_networks][0][:broadcast].should == "9.10.11.255"
-      @plugin[:rackspace][:private_networks][0][:mac].should == "BC:76:4E:20:42:2B"
+      expect(@plugin[:rackspace][:private_networks][0][:label]).to eq("private-network")
+      expect(@plugin[:rackspace][:private_networks][0][:broadcast]).to eq("9.10.11.255")
+      expect(@plugin[:rackspace][:private_networks][0][:mac]).to eq("BC:76:4E:20:42:2B")
     end
 
   end

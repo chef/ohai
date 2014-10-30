@@ -18,7 +18,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris 2.x zpool plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/zpools")
-    @plugin.stub(:collect_os).and_return(:solaris2)
+    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
 
     @zpool_status_rpool = <<-EOSR
 pool: rpool
@@ -62,9 +62,9 @@ EOST
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
 EOZO
-    @plugin.stub(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
-    @plugin.stub(:shell_out).with("su adm -c \"zpool status rpool\"").and_return(mock_shell_out(0,@zpool_status_rpool,""))
-    @plugin.stub(:shell_out).with("su adm -c \"zpool status tank\"").and_return(mock_shell_out(0,@zpool_status_tank,""))
+    allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
+    allow(@plugin).to receive(:shell_out).with("su adm -c \"zpool status rpool\"").and_return(mock_shell_out(0,@zpool_status_rpool,""))
+    allow(@plugin).to receive(:shell_out).with("su adm -c \"zpool status tank\"").and_return(mock_shell_out(0,@zpool_status_tank,""))
   end
 
   describe "On Solaris2 Common" do
@@ -123,7 +123,7 @@ EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  -
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  -
 EOZO
-      @plugin.stub(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
+      allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
     end
 
     it "Won't have a version number" do
@@ -140,7 +140,7 @@ EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
 EOZO
-      @plugin.stub(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
+      allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0,@zpool_out,""))
     end
 
     it "Should have a version number" do

@@ -135,10 +135,10 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
 
   before(:each) do
     @plugin = get_plugin("kernel")
-    @plugin.stub(:collect_os).and_return(:solaris2)
-    @plugin.stub(:init_kernel).and_return({})
-    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
-    @plugin.stub(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
+    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(@plugin).to receive(:init_kernel).and_return({})
+    allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
+    allow(@plugin).to receive(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
   end
 
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])
@@ -146,15 +146,15 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   it "gives excruciating detail about kernel modules" do
     @plugin.run
 
-    @plugin[:kernel][:modules].should have(107).modules
+    expect(@plugin[:kernel][:modules]).to have(107).modules
 
     # Teh daterz
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
     teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" =>  17955, "description" => "filesystem for specfs"}
-    @plugin[:kernel][:modules].keys.should include("specfs")
-    @plugin[:kernel][:modules].keys.should_not include("Module")
-    @plugin[:kernel][:modules]["specfs"].should == teh_daterz
+    expect(@plugin[:kernel][:modules].keys).to include("specfs")
+    expect(@plugin[:kernel][:modules].keys).not_to include("Module")
+    expect(@plugin[:kernel][:modules]["specfs"]).to eq(teh_daterz)
   end
 
 end

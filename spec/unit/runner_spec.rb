@@ -29,7 +29,7 @@ describe Ohai::Runner, "run_plugin" do
 
   describe "when running an invalid plugin" do
     it "should raise error" do
-      lambda { @runner.run_plugin(double("Ohai::NotPlugin")) }.should raise_error(Ohai::Exceptions::InvalidPlugin)
+      expect { @runner.run_plugin(double("Ohai::NotPlugin")) }.to raise_error(Ohai::Exceptions::InvalidPlugin)
     end
   end
 
@@ -40,7 +40,7 @@ describe Ohai::Runner, "run_plugin" do
 
     describe "version 7" do
       it "should call run_v7_plugin" do
-        @runner.should_receive(:run_v7_plugin)
+        expect(@runner).to receive(:run_v7_plugin)
         @runner.run_plugin(plugin)
       end
 
@@ -48,7 +48,7 @@ describe Ohai::Runner, "run_plugin" do
         let(:has_run) { true }
 
         it "should not run the plugin" do
-          plugin.should_not_receive(:safe_run)
+          expect(plugin).not_to receive(:safe_run)
           @runner.run_plugin(plugin)
         end
       end
@@ -58,14 +58,14 @@ describe Ohai::Runner, "run_plugin" do
       let(:version) { :version6 }
 
       it "should call run_v6_plugin" do
-        @runner.should_receive(:run_v6_plugin)
+        expect(@runner).to receive(:run_v6_plugin)
         @runner.run_plugin(plugin)
       end
 
       describe "if the plugin has not run before" do
         describe "if safe_run is not set" do
           it "safe_run should be called" do
-            plugin.should_receive(:safe_run)
+            expect(plugin).to receive(:safe_run)
             @runner.run_plugin(plugin)
           end
         end
@@ -74,7 +74,7 @@ describe Ohai::Runner, "run_plugin" do
           let(:safe_run) { false }
 
           it "run should be called" do
-            plugin.should_receive(:run)
+            expect(plugin).to receive(:run)
             @runner.run_plugin(plugin)
           end
         end
@@ -84,7 +84,7 @@ describe Ohai::Runner, "run_plugin" do
         let(:has_run) { true }
 
         it "should not run" do
-          plugin.should_not_receive(:safe_run)
+          expect(plugin).not_to receive(:safe_run)
           @runner.run_plugin(plugin)
         end
 
@@ -95,7 +95,7 @@ describe Ohai::Runner, "run_plugin" do
       let(:version) { :versionBla }
 
       it "should raise error" do
-        lambda { @runner.run_plugin(plugin) }.should raise_error(Ohai::Exceptions::InvalidPlugin)
+        expect { @runner.run_plugin(plugin) }.to raise_error(Ohai::Exceptions::InvalidPlugin)
       end
     end
   end
@@ -113,13 +113,13 @@ describe Ohai::Runner, "run_plugin" do
 
     it "should run the plugin" do
       @runner.run_plugin(plugin)
-      plugin.has_run?.should be true
+      expect(plugin.has_run?).to be true
     end
 
     it "should add plugin data to Ohai::System.data" do
       @runner.run_plugin(plugin)
-      @ohai.data.should have_key(:thing)
-      @ohai.data[:thing].should eql({})
+      expect(@ohai.data).to have_key(:thing)
+      expect(@ohai.data[:thing]).to eql({})
     end
   end
 
@@ -142,7 +142,7 @@ describe Ohai::Runner, "run_plugin" do
 
       it "should not run the plugin" do
         expect{ @runner.run_plugin(@plugin) }.to raise_error
-        @plugin.has_run?.should be false
+        expect(@plugin.has_run?).to be false
       end
     end
 
@@ -174,7 +174,7 @@ describe Ohai::Runner, "run_plugin" do
       it "should run the plugins" do
         @runner.run_plugin(@plugin2)
         @plugins.each do |plugin|
-          plugin.has_run?.should be true
+          expect(plugin.has_run?).to be true
         end
       end
     end
@@ -208,7 +208,7 @@ describe Ohai::Runner, "run_plugin" do
       it "should run the plugins" do
         @runner.run_plugin(@plugin3)
         @plugins.each do |plugin|
-          plugin.has_run?.should be true
+          expect(plugin.has_run?).to be true
         end
       end
     end
@@ -251,7 +251,7 @@ describe Ohai::Runner, "run_plugin" do
     it "should run the plugins" do
       @runner.run_plugin(@plugin3)
       @plugins.each do |plugin|
-        plugin.has_run?.should be true
+        expect(plugin.has_run?).to be true
       end
     end
   end
@@ -306,8 +306,8 @@ describe Ohai::Runner, "run_plugin" do
       end
 
       it "should raise Ohai::Exceptions::DependencyCycle" do
-        runner.stub(:fetch_plugins).with(["thing"]).and_return([@plugin1])
-        runner.stub(:fetch_plugins).with(["other"]).and_return([@plugin2])
+        allow(runner).to receive(:fetch_plugins).with(["thing"]).and_return([@plugin1])
+        allow(runner).to receive(:fetch_plugins).with(["other"]).and_return([@plugin2])
         expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
         expect { runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle, expected_error_string)
       end
@@ -346,11 +346,11 @@ describe Ohai::Runner, "run_plugin" do
       @ohai.provides_map.set_providers_for(@pluginB, ["B"])
       @ohai.provides_map.set_providers_for(@pluginC, ["C"])
 
-      Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
+      expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
 
       @plugins.each do |plugin|
-        plugin.has_run?.should be true
+        expect(plugin.has_run?).to be true
       end
     end
 
@@ -359,11 +359,11 @@ describe Ohai::Runner, "run_plugin" do
       @ohai.provides_map.set_providers_for(@pluginC, ["C"])
       @ohai.provides_map.set_providers_for(@pluginB, ["B"])
 
-      Ohai::Log.should_not_receive(:error).with(/DependencyCycleError/)
+      expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@pluginA)
 
       @plugins.each do |plugin|
-        plugin.has_run?.should be true
+        expect(plugin.has_run?).to be true
       end
     end
   end
@@ -382,7 +382,7 @@ describe Ohai::Runner, "fetch_plugins" do
     @ohai.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
-    dependency_providers.should eql([plugin])
+    expect(dependency_providers).to eql([plugin])
   end
 
   describe "when the attribute is not provided by any plugin" do
@@ -390,7 +390,7 @@ describe Ohai::Runner, "fetch_plugins" do
       it "should return the providers for the parent" do
         plugin = Ohai::DSL::Plugin.new(@ohai.data)
         @provides_map.set_providers_for(plugin, ["test/attribute"])
-        @runner.fetch_plugins(["test/attribute/too_far"]).should eql([plugin])
+        expect(@runner.fetch_plugins(["test/attribute/too_far"])).to eql([plugin])
       end
     end
 
@@ -405,7 +405,7 @@ describe Ohai::Runner, "fetch_plugins" do
   it "should return unique providers" do
     plugin = Ohai::DSL::Plugin.new(@ohai.data)
     @provides_map.set_providers_for(plugin, ["test", "test/too_far/way_too_far"])
-    @runner.fetch_plugins(["test", "test/too_far/way_too_far"]).should eql([plugin])
+    expect(@runner.fetch_plugins(["test", "test/too_far/way_too_far"])).to eql([plugin])
   end
 end
 
@@ -448,7 +448,7 @@ describe Ohai::Runner, "#get_cycle" do
     cycle_start = @plugin1
 
     cycle_names = @runner.get_cycle(cycle, cycle_start)
-    cycle_names.should eql([@plugin1.name, @plugin2.name])
+    expect(cycle_names).to eql([@plugin1.name, @plugin2.name])
   end
 
   it "should return the sources for only the plugins in the cycle, when there are plugins before the cycle begins" do
@@ -456,6 +456,6 @@ describe Ohai::Runner, "#get_cycle" do
     cycle_start = @plugin1
 
     cycle_names = @runner.get_cycle(cycle, cycle_start)
-    cycle_names.should eql([@plugin1.name, @plugin2.name])
+    expect(cycle_names).to eql([@plugin1.name, @plugin2.name])
   end
 end

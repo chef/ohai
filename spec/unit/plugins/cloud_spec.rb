@@ -31,7 +31,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:azure] = nil
       @plugin[:cloudstack] = nil
       @plugin.run
-      @plugin[:cloud].should be_nil
+      expect(@plugin[:cloud]).to be_nil
     end
   end
 
@@ -43,18 +43,18 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:ec2]['public_ipv4'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips][0].should == @plugin[:ec2]['public_ipv4']
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:ec2]['public_ipv4'])
     end
 
     it "populates cloud private ip" do
       @plugin[:ec2]['local_ipv4'] = "10.252.42.149"
       @plugin.run
-      @plugin[:cloud][:private_ips][0].should == @plugin[:ec2]['local_ipv4']
+      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:ec2]['local_ipv4'])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "ec2"
+      expect(@plugin[:cloud][:provider]).to eq("ec2")
     end
   end
 
@@ -66,42 +66,42 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:rackspace][:public_ipv4] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ipv4].should == @plugin[:rackspace][:public_ipv4]
+      expect(@plugin[:cloud][:public_ipv4]).to eq(@plugin[:rackspace][:public_ipv4])
     end
     
     it "populates cloud public ipv6" do
       @plugin[:rackspace][:public_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @plugin.run
-      @plugin[:cloud][:public_ipv6].should == @plugin[:rackspace][:public_ipv6]
+      expect(@plugin[:cloud][:public_ipv6]).to eq(@plugin[:rackspace][:public_ipv6])
     end
     
     it "populates cloud private ip" do
       @plugin[:rackspace][:local_ipv4] = "10.252.42.149"
       @plugin.run
-      @plugin[:cloud][:local_ipv4].should == @plugin[:rackspace][:local_ipv4]
+      expect(@plugin[:cloud][:local_ipv4]).to eq(@plugin[:rackspace][:local_ipv4])
     end
     
     it "populates cloud private ipv6" do
       @plugin[:rackspace][:local_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @plugin.run
-      @plugin[:cloud][:local_ipv6].should == @plugin[:rackspace][:local_ipv6]
+      expect(@plugin[:cloud][:local_ipv6]).to eq(@plugin[:rackspace][:local_ipv6])
     end
     
     it "populates first cloud public ip" do
       @plugin[:rackspace][:public_ipv4] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips].first.should == @plugin[:rackspace][:public_ipv4]
+      expect(@plugin[:cloud][:public_ips].first).to eq(@plugin[:rackspace][:public_ipv4])
     end
     
     it "populates first cloud public ip" do
       @plugin[:rackspace][:local_ipv4] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:private_ips].first.should == @plugin[:rackspace][:local_ipv4]
+      expect(@plugin[:cloud][:private_ips].first).to eq(@plugin[:rackspace][:local_ipv4])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "rackspace"
+      expect(@plugin[:cloud][:provider]).to eq("rackspace")
     end
   end
 
@@ -113,24 +113,24 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:linode]['public_ip'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips][0].should == @plugin[:linode][:public_ip]
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:linode][:public_ip])
     end
 
     it "populates cloud private ip" do
       @plugin[:linode]['private_ip'] = "10.252.42.149"
       @plugin.run
-      @plugin[:cloud][:private_ips][0].should == @plugin[:linode][:private_ip]
+      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:linode][:private_ip])
     end
 
     it "populates first cloud public ip" do
       @plugin[:linode]['public_ip'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips].first.should == @plugin[:linode][:public_ip]
+      expect(@plugin[:cloud][:public_ips].first).to eq(@plugin[:linode][:public_ip])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "linode"
+      expect(@plugin[:cloud][:provider]).to eq("linode")
     end
   end
 
@@ -142,18 +142,18 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:eucalyptus]['public_ipv4'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips][0].should == @plugin[:eucalyptus]['public_ipv4']
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:eucalyptus]['public_ipv4'])
     end
 
     it "populates cloud private ip" do
       @plugin[:eucalyptus]['local_ipv4'] = "10.252.42.149"
       @plugin.run
-      @plugin[:cloud][:private_ips][0].should == @plugin[:eucalyptus]['local_ipv4']
+      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:eucalyptus]['local_ipv4'])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "eucalyptus"
+      expect(@plugin[:cloud][:provider]).to eq("eucalyptus")
     end
   end
 
@@ -165,44 +165,44 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:azure]['public_ip'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips][0].should == @plugin[:azure]['public_ip']
-      @plugin[:cloud][:public_ipv4].should == @plugin[:azure]['public_ip']
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:azure]['public_ip'])
+      expect(@plugin[:cloud][:public_ipv4]).to eq(@plugin[:azure]['public_ip'])
     end
 
     it "populates cloud vm_name" do
       @plugin[:azure]['vm_name'] = "linux-vm"
       @plugin.run
-      @plugin[:cloud][:vm_name].should == @plugin[:azure]['vm_name']
+      expect(@plugin[:cloud][:vm_name]).to eq(@plugin[:azure]['vm_name'])
     end
 
     it "populates cloud public_fqdn" do
       @plugin[:azure]['public_fqdn'] = "linux-vm-svc.cloudapp.net"
       @plugin.run
-      @plugin[:cloud][:public_fqdn].should == @plugin[:azure]['public_fqdn']
-      @plugin[:cloud][:public_hostname].should == @plugin[:azure]['public_fqdn']
+      expect(@plugin[:cloud][:public_fqdn]).to eq(@plugin[:azure]['public_fqdn'])
+      expect(@plugin[:cloud][:public_hostname]).to eq(@plugin[:azure]['public_fqdn'])
     end
 
     it "populates cloud public_ssh_port" do
       @plugin[:azure]['public_ssh_port'] = "22"
       @plugin.run
-      @plugin[:cloud][:public_ssh_port].should == @plugin[:azure]['public_ssh_port']
+      expect(@plugin[:cloud][:public_ssh_port]).to eq(@plugin[:azure]['public_ssh_port'])
     end
 
     it "should not populate cloud public_ssh_port when winrm is used" do
       @plugin[:azure]['public_winrm_port'] = "5985"
       @plugin.run
-      @plugin[:cloud][:public_ssh_port].should be_nil
+      expect(@plugin[:cloud][:public_ssh_port]).to be_nil
     end
 
     it "populates cloud public_winrm_port" do
       @plugin[:azure]['public_winrm_port'] = "5985"
       @plugin.run
-      @plugin[:cloud][:public_winrm_port].should == @plugin[:azure]['public_winrm_port']
+      expect(@plugin[:cloud][:public_winrm_port]).to eq(@plugin[:azure]['public_winrm_port'])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "azure"
+      expect(@plugin[:cloud][:provider]).to eq("azure")
     end
   end
 
@@ -214,24 +214,24 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud public ip" do
       @plugin[:cloudstack]['public_ipv4'] = "174.129.150.8"
       @plugin.run
-      @plugin[:cloud][:public_ips][0].should == @plugin[:cloudstack]['public_ipv4']
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:cloudstack]['public_ipv4'])
     end
 
     it "populates cloud private ip" do
       @plugin[:cloudstack]['local_ipv4'] = "10.252.42.149"
       @plugin.run
-      @plugin[:cloud][:private_ips][0].should == @plugin[:cloudstack]['local_ipv4']
+      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:cloudstack]['local_ipv4'])
     end
 
     it "populates cloud provider" do
       @plugin.run
-      @plugin[:cloud][:provider].should == "cloudstack"
+      expect(@plugin[:cloud][:provider]).to eq("cloudstack")
     end
 
     it "populates vm id" do
       @plugin[:cloudstack]['vm_id'] = "8983fb85-fb7f-46d6-8af1-c1b6666fec39"
       @plugin.run
-      @plugin[:cloud][:vm_id].should == @plugin[:cloudstack]['vm_id']
+      expect(@plugin[:cloud][:vm_id]).to eq(@plugin[:cloudstack]['vm_id'])
     end
   end
 

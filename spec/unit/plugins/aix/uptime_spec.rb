@@ -21,20 +21,20 @@ describe Ohai::System, "Aix plugin uptime" do
 
   before(:each) do
     @plugin = get_plugin("aix/uptime")
-    @plugin.stub(:collect_os).and_return(:aix)
-    Time.stub_chain(:now, :to_i).and_return(1412072511)
-    Time.stub_chain(:now, :zone).and_return("IST")
-    DateTime.stub_chain(:parse, :strftime, :to_i).and_return(1411561320)
-    @plugin.stub(:shell_out).with("who -b").and_return(mock_shell_out(0, "   .        system boot Sep 24 17:52", nil))
+    allow(@plugin).to receive(:collect_os).and_return(:aix)
+    allow(Time).to receive_message_chain(:now, :to_i).and_return(1412072511)
+    allow(Time).to receive_message_chain(:now, :zone).and_return("IST")
+    allow(DateTime).to receive_message_chain(:parse, :strftime, :to_i).and_return(1411561320)
+    allow(@plugin).to receive(:shell_out).with("who -b").and_return(mock_shell_out(0, "   .        system boot Sep 24 17:52", nil))
 
     @plugin.run
   end
 
   it "should set uptime_seconds to uptime" do
-    @plugin[:uptime_seconds].should == 511191
+    expect(@plugin[:uptime_seconds]).to eq(511191)
   end
 
   it "should set uptime to a human readable date" do
-    @plugin[:uptime].should == "5 days 21 hours 59 minutes 51 seconds"
+    expect(@plugin[:uptime]).to eq("5 days 21 hours 59 minutes 51 seconds")
   end
 end

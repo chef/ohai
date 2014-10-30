@@ -22,95 +22,95 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 describe Ohai::System, "hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
-    @plugin.stub(:collect_os).and_return(:default)
-    @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(@plugin).to receive(:collect_os).and_return(:default)
+    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
   context "when sigar is not installed" do
     before(:each) do
-      @plugin.stub(:sigar_is_available?).and_return(false)
-      @plugin.should_not_receive(:get_fqdn_from_sigar)
-      @plugin.stub(:resolve_fqdn).and_return("katie.bethell")
+      allow(@plugin).to receive(:sigar_is_available?).and_return(false)
+      expect(@plugin).not_to receive(:get_fqdn_from_sigar)
+      allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
     end
     it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
     it "should use #resolve_fqdn to find the fqdn" do
       @plugin.run
-      @plugin[:fqdn].should == "katie.bethell"
+      expect(@plugin[:fqdn]).to eq("katie.bethell")
     end
 
     it "should set the domain to everything after the first dot of the fqdn" do
       @plugin.run
-      @plugin[:domain].should == "bethell"
+      expect(@plugin[:domain]).to eq("bethell")
     end
 
     it "should set the [short] hostname to everything before the first dot of the fqdn" do
       @plugin.run
-      @plugin[:hostname].should == "katie"
+      expect(@plugin[:hostname]).to eq("katie")
     end
   end
 
   context "when sigar is installed" do
     before(:each) do
-      @plugin.stub(:sigar_is_available?).and_return(true)
-      @plugin.stub(:get_fqdn_from_sigar).and_return("katie.bethell")
+      allow(@plugin).to receive(:sigar_is_available?).and_return(true)
+      allow(@plugin).to receive(:get_fqdn_from_sigar).and_return("katie.bethell")
     end
     it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
     it "should set the fqdn to the returned value from sigar" do
       @plugin.run
-      @plugin[:fqdn].should == "katie.bethell"
+      expect(@plugin[:fqdn]).to eq("katie.bethell")
     end
 
     it "should set the domain to everything after the first dot of the fqdn" do
       @plugin.run
-      @plugin[:domain].should == "bethell"
+      expect(@plugin[:domain]).to eq("bethell")
     end
 
     it "should set the [short] hostname to everything before the first dot of the fqdn" do
       @plugin.run
-      @plugin[:hostname].should == "katie"
+      expect(@plugin[:hostname]).to eq("katie")
     end
   end
 
   context "when a system has a bare hostname without a FQDN" do
     before(:each) do
-      @plugin.stub(:collect_os).and_return(:default)
-      @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie", ""))
+      allow(@plugin).to receive(:collect_os).and_return(:default)
+      allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie", ""))
     end
 
     it "should correctly set the [short] hostname" do
       @plugin.run
-      @plugin[:hostname].should == "katie"
+      expect(@plugin[:hostname]).to eq("katie")
     end
   end
 
   context "hostname --fqdn when it returns empty string" do
     before(:each) do
-      @plugin.stub(:collect_os).and_return(:linux)
-      @plugin.stub(:shell_out).with("hostname -s").and_return(
+      allow(@plugin).to receive(:collect_os).and_return(:linux)
+      allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
         mock_shell_out(0, "katie", ""))
-      @plugin.stub(:shell_out).with("hostname --fqdn").and_return(
+      allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
         mock_shell_out(0, "", ""), mock_shell_out(0, "katie.local", ""))
     end
 
     it "should be called twice" do
       @plugin.run
-      @plugin[:fqdn].should == "katie.local"
+      expect(@plugin[:fqdn]).to eq("katie.local")
     end
   end
 
   context "hostname --fqdn when it works" do
     before(:each) do
-      @plugin.stub(:collect_os).and_return(:linux)
-      @plugin.stub(:shell_out).with("hostname -s").and_return(
+      allow(@plugin).to receive(:collect_os).and_return(:linux)
+      allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
         mock_shell_out(0, "katie", ""))
-      @plugin.stub(:shell_out).with("hostname --fqdn").and_return(
+      allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
         mock_shell_out(0, "katie.local", ""))
     end
 
     it "should be not be called twice" do
       @plugin.run
-      @plugin[:fqdn].should == "katie.local"
+      expect(@plugin[:fqdn]).to eq("katie.local")
     end
   end
 end

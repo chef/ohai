@@ -25,36 +25,36 @@ describe Ohai::System, "plugin erlang" do
     @plugin = get_plugin("erlang")
     @plugin[:languages] = Mash.new
     @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    @plugin.stub(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
+    allow(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
   end
 
   it "should get the erlang version from erl +V" do
-    @plugin.should_receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
+    expect(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
     @plugin.run
   end
 
   it "should set languages[:erlang][:version]" do
     @plugin.run
-    @plugin.languages[:erlang][:version].should eql("5.6.2")
+    expect(@plugin.languages[:erlang][:version]).to eql("5.6.2")
   end
 
   it "should set languages[:erlang][:options]" do
     @plugin.run
-    @plugin.languages[:erlang][:options].should eql(["ASYNC_THREADS", "SMP", "HIPE"])
+    expect(@plugin.languages[:erlang][:options]).to eql(["ASYNC_THREADS", "SMP", "HIPE"])
   end
 
   it "should set languages[:erlang][:emulator]" do
     @plugin.run
-    @plugin.languages[:erlang][:emulator].should eql("BEAM")
+    expect(@plugin.languages[:erlang][:emulator]).to eql("BEAM")
   end
 
   it "should not set the languages[:erlang] tree up if erlang command fails" do
     @status = 1
     @stdin = ""
     @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    @plugin.stub(:shell_out).with("erl +V").and_return(mock_shell_out(1, "", @stderr))
+    allow(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(1, "", @stderr))
     @plugin.run
-    @plugin.languages.should_not have_key(:erlang)
+    expect(@plugin.languages).not_to have_key(:erlang)
   end
 
 end

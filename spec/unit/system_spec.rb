@@ -27,15 +27,15 @@ describe "Ohai::System" do
 
   describe "#initialize" do
     it "should return an Ohai::System object" do
-      ohai.should be_a_kind_of(Ohai::System)
+      expect(ohai).to be_a_kind_of(Ohai::System)
     end
 
     it "should set @attributes to a ProvidesMap" do
-      ohai.provides_map.should be_a_kind_of(Ohai::ProvidesMap)
+      expect(ohai.provides_map).to be_a_kind_of(Ohai::ProvidesMap)
     end
 
     it "should set @v6_dependency_solver to a Hash" do
-      ohai.v6_dependency_solver.should be_a_kind_of(Hash)
+      expect(ohai.v6_dependency_solver).to be_a_kind_of(Hash)
     end
   end
 
@@ -57,9 +57,9 @@ EOF
 
     it "load_plugins() should load all the plugins" do
       ohai.load_plugins
-      ohai.provides_map.map.keys.should include("seals")
-      ohai.v6_dependency_solver.keys.should include("lake.rb")
-      Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
+      expect(ohai.provides_map.map.keys).to include("seals")
+      expect(ohai.v6_dependency_solver.keys).to include("lake.rb")
+      expect(Ohai::NamedPlugin.const_get(:Zoo)).to eq(Ohai::NamedPlugin::Zoo)
     end
   end
 
@@ -95,12 +95,12 @@ EOF
 
     it "load_plugins() should load all the plugins" do
       ohai.load_plugins
-      ohai.provides_map.map.keys.should include("seals")
-      ohai.provides_map.map.keys.should include("crabs")
-      ohai.v6_dependency_solver.keys.should include("lake.rb")
-      ohai.v6_dependency_solver.keys.should include("mountain.rb")
-      Ohai::NamedPlugin.const_get(:Zoo).should == Ohai::NamedPlugin::Zoo
-      Ohai::NamedPlugin.const_get(:Nature).should == Ohai::NamedPlugin::Nature
+      expect(ohai.provides_map.map.keys).to include("seals")
+      expect(ohai.provides_map.map.keys).to include("crabs")
+      expect(ohai.v6_dependency_solver.keys).to include("lake.rb")
+      expect(ohai.v6_dependency_solver.keys).to include("mountain.rb")
+      expect(Ohai::NamedPlugin.const_get(:Zoo)).to eq(Ohai::NamedPlugin::Zoo)
+      expect(Ohai::NamedPlugin.const_get(:Nature)).to eq(Ohai::NamedPlugin::Nature)
     end
 
   end
@@ -128,8 +128,8 @@ EOF
       it "should collect data from all the plugins" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
-        ohai.data[:zoo].should == "animals"
-        ohai.data[:park].should == "plants"
+        expect(ohai.data[:zoo]).to eq("animals")
+        expect(ohai.data[:park]).to eq("plants")
       end
 
       describe "when using :disabled_plugins" do
@@ -144,8 +144,8 @@ EOF
         it "shouldn't run disabled version 6 plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
-          ohai.data[:zoo].should be_nil
-          ohai.data[:park].should == "plants"
+          expect(ohai.data[:zoo]).to be_nil
+          expect(ohai.data[:park]).to eq("plants")
         end
       end
 
@@ -193,7 +193,7 @@ EOF
         let(:v6_plugin) { v6_plugin_class.new(ohai_system, "/v6_plugin.rb", "/") }
 
         before do
-          ohai_system.stub(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
+          allow(ohai_system).to receive(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
           [ primary_plugin, dependency_plugin_one, dependency_plugin_two, unrelated_plugin].each do |plugin|
             plugin_provides = plugin.class.provides_attrs
             ohai_system.provides_map.set_providers_for(plugin, plugin_provides)
@@ -247,7 +247,7 @@ EOF
       it "should collect platform specific" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
-        ohai.data[:message].should == "platform_specific_message"
+        expect(ohai.data[:message]).to eq("platform_specific_message")
       end
     end
 
@@ -274,16 +274,16 @@ EOF
       it "should collect data from all the plugins" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
-        ohai.data[:zoo].should == "animals"
-        ohai.data[:park].should == "plants"
+        expect(ohai.data[:zoo]).to eq("animals")
+        expect(ohai.data[:park]).to eq("plants")
       end
 
       it "should write an error to Ohai::Log" do
         Ohai::Config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
-        ohai.stub(:reset_system)
-        ohai.instance_variable_get("@runner").stub(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
-        Ohai::Log.should_receive(:error).with(/Encountered error while running plugins/)
+        allow(ohai).to receive(:reset_system)
+        allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
+        expect(Ohai::Log).to receive(:error).with(/Encountered error while running plugins/)
         expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
@@ -299,8 +299,8 @@ EOF
         it "shouldn't run disabled plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
-          ohai.data[:zoo].should be_nil
-          ohai.data[:park].should == "plants"
+          expect(ohai.data[:zoo]).to be_nil
+          expect(ohai.data[:park]).to eq("plants")
         end
       end
     end
@@ -348,10 +348,10 @@ EOF
         it "shouldn't run disabled plugins" do
           Ohai::Config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
-          ohai.data[:zoo].should be_nil
-          ohai.data[:nature].should == "cougars"
-          ohai.data[:park].should be_nil
-          ohai.data[:home].should == "dog"
+          expect(ohai.data[:zoo]).to be_nil
+          expect(ohai.data[:nature]).to eq("cougars")
+          expect(ohai.data[:park]).to be_nil
+          expect(ohai.data[:home]).to eq("dog")
         end
       end
     end
@@ -395,14 +395,14 @@ EOF
       it "should collect all data" do
         ohai.all_plugins
         [:v6message, :v7message, :messages].each do |attribute|
-          ohai.data.should have_key(attribute)
+          expect(ohai.data).to have_key(attribute)
         end
 
-        ohai.data[:v6message].should eql("update me!")
-        ohai.data[:v7message].should eql("v7 plugins are awesome!")
+        expect(ohai.data[:v6message]).to eql("update me!")
+        expect(ohai.data[:v7message]).to eql("v7 plugins are awesome!")
         [:v6message, :v7message].each do |subattr|
-          ohai.data[:messages].should have_key(subattr)
-          ohai.data[:messages][subattr].should eql(ohai.data[subattr])
+          expect(ohai.data[:messages]).to have_key(subattr)
+          expect(ohai.data[:messages][subattr]).to eql(ohai.data[subattr])
         end
       end
     end
@@ -438,7 +438,7 @@ EOF
       it "version 6 should run" do
         ohai.load_plugins
         ohai.require_plugin("message")
-        ohai.data[:message].should eql("From Version 6")
+        expect(ohai.data[:message]).to eql("From Version 6")
       end
     end
 
@@ -485,10 +485,10 @@ EOF
 
       it "should collect all the data properly" do
         ohai.all_plugins
-        ohai.data[:v7message].should == "Hellos from 7: animals"
-        ohai.data[:zoo].should == "animals"
-        ohai.data[:message][:v6message].should == "Hellos from 6"
-        ohai.data[:message][:copy_message].should == "Hellos from 7: animals"
+        expect(ohai.data[:v7message]).to eq("Hellos from 7: animals")
+        expect(ohai.data[:zoo]).to eq("animals")
+        expect(ohai.data[:message][:v6message]).to eq("Hellos from 6")
+        expect(ohai.data[:message][:copy_message]).to eq("Hellos from 7: animals")
       end
     end
 
@@ -511,7 +511,7 @@ EOF
       end
 
       it "should raise DependencyNotFound" do
-        lambda { ohai.all_plugins }.should raise_error(Ohai::Exceptions::DependencyNotFound)
+        expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::DependencyNotFound)
       end
     end
   end
@@ -535,7 +535,7 @@ EOF
 
       it "reloads only the v6 plugin when given a specific plugin to load" do
         ohai.all_plugins
-        lambda { ohai.all_plugins("a_v6plugin") }.should_not raise_error
+        expect { ohai.all_plugins("a_v6plugin") }.not_to raise_error
       end
 
     end
@@ -565,7 +565,7 @@ EOF
         initial_value = ohai.data["random"]
         ohai.all_plugins
         updated_value = ohai.data["random"]
-        initial_value.should_not == updated_value
+        expect(initial_value).not_to eq(updated_value)
       end
 
     end
@@ -623,21 +623,21 @@ EOF
       end
 
       it "should rerun the plugin providing the desired attributes" do
-        ohai.data[:desired_attr_count].should == 1
+        expect(ohai.data[:desired_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
-        ohai.data[:desired_attr_count].should == 2
+        expect(ohai.data[:desired_attr_count]).to eq(2)
       end
 
       it "should not re-run dependencies of the plugin providing the desired attributes" do
-        ohai.data[:depended_attr_count].should == 1
+        expect(ohai.data[:depended_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
-        ohai.data[:depended_attr_count].should == 1
+        expect(ohai.data[:depended_attr_count]).to eq(1)
       end
 
       it "should not re-run plugins unrelated to the plugin providing the desired attributes" do
-        ohai.data[:other_attr_count].should == 1
+        expect(ohai.data[:other_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
-        ohai.data[:other_attr_count].should == 1
+        expect(ohai.data[:other_attr_count]).to eq(1)
       end
 
     end
@@ -692,20 +692,20 @@ EOF
 
       it "should run all the plugins when a top level attribute is specified" do
         ohai.all_plugins("languages")
-        ohai.data[:languages][:english][:version].should == 2014
-        ohai.data[:languages][:french][:version].should == 2012
+        expect(ohai.data[:languages][:english][:version]).to eq(2014)
+        expect(ohai.data[:languages][:french][:version]).to eq(2012)
       end
 
       it "should run the first parent when a non-existent child is specified" do
         ohai.all_plugins("languages/english/version")
-        ohai.data[:languages][:english][:version].should == 2014
-        ohai.data[:languages][:french].should be_nil
+        expect(ohai.data[:languages][:english][:version]).to eq(2014)
+        expect(ohai.data[:languages][:french]).to be_nil
       end
 
       it "should be able to run multiple plugins" do
         ohai.all_plugins(["languages/english", "languages/french"])
-        ohai.data[:languages][:english][:version].should == 2014
-        ohai.data[:languages][:french][:version].should == 2012
+        expect(ohai.data[:languages][:english][:version]).to eq(2014)
+        expect(ohai.data[:languages][:french][:version]).to eq(2012)
       end
 
     end

@@ -27,6 +27,6 @@ describe Ohai::System, "plugin ohai" do
   
   it "should set [:chef_packages][:ohai][:version] to the current version" do
     @plugin.run
-    @plugin[:chef_packages][:ohai][:version].should == Ohai::VERSION
+    expect(@plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
   end
 end

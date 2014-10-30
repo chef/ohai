@@ -413,7 +413,7 @@ net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @plugin = get_plugin("darwin/network")
-    @plugin.stub(:collect_os).and_return(:darwin)
+    allow(@plugin).to receive(:collect_os).and_return(:darwin)
 
     # @stdin_ifconfig = StringIO.new
     # @stdin_arp = StringIO.new
@@ -425,426 +425,426 @@ net.smb.fs.tcprcvbuf: 261120
     # @netstat_lines = darwin_netstat.split("\n")
     # @sysctl_lines = darwin_sysctl.split("\n")
 
-    @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
-    @plugin.stub(:shell_out).with("netstat -i -d -l -b -n")
+    allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
+    allow(@plugin).to receive(:shell_out).with("netstat -i -d -l -b -n")
   end
 
   describe "gathering IP layer address info" do
     before(:each) do
-      @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
-      @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
-      @plugin.stub(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))
-      @plugin.stub(:shell_out).with("sysctl net").and_return(mock_shell_out(0, @darwin_sysctl, ""))
+      allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
+      allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
+      allow(@plugin).to receive(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))
+      allow(@plugin).to receive(:shell_out).with("sysctl net").and_return(mock_shell_out(0, @darwin_sysctl, ""))
       @plugin.run
     end
 
     it "completes the run" do
-      @plugin['network'].should_not be_nil
+      expect(@plugin['network']).not_to be_nil
     end
 
     it "detects the interfaces" do
-      @plugin['network']['interfaces'].keys.sort.should == ["en0", "en1", "fw0", "gif0", "lo0", "p2p0", "stf0", "utun0"]
+      expect(@plugin['network']['interfaces'].keys.sort).to eq(["en0", "en1", "fw0", "gif0", "lo0", "p2p0", "stf0", "utun0"])
     end
 
     it "detects the ipv4 addresses of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('10.20.10.144')
-      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['netmask'].should == '255.255.255.0'
-      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['broadcast'].should == '10.20.10.255'
-      @plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['family'].should == 'inet'
+      expect(@plugin['network']['interfaces']['en1']['addresses'].keys).to include('10.20.10.144')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['netmask']).to eq('255.255.255.0')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['broadcast']).to eq('10.20.10.255')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['10.20.10.144']['family']).to eq('inet')
     end
 
     it "detects the ipv6 addresses of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('fe80::ba8d:12ff:fe3a:32de')
-      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['scope'].should == 'Link'
-      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
-      @plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
+      expect(@plugin['network']['interfaces']['en1']['addresses'].keys).to include('fe80::ba8d:12ff:fe3a:32de')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['scope']).to eq('Link')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['prefixlen']).to eq('64')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['fe80::ba8d:12ff:fe3a:32de']['family']).to eq('inet6')
 
-      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('2001:44b8:4186:1100:ba8d:12ff:fe3a:32de')
-      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['scope'].should == 'Global'
-      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['prefixlen'].should == '64'
-      @plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['family'].should == 'inet6'
+      expect(@plugin['network']['interfaces']['en1']['addresses'].keys).to include('2001:44b8:4186:1100:ba8d:12ff:fe3a:32de')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['scope']).to eq('Global')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['prefixlen']).to eq('64')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['2001:44b8:4186:1100:ba8d:12ff:fe3a:32de']['family']).to eq('inet6')
     end
 
     it "detects the mac addresses of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['addresses'].keys.should include('b8:8d:12:3a:32:de')
-      @plugin['network']['interfaces']['en1']['addresses']['b8:8d:12:3a:32:de']['family'].should == 'lladdr'
+      expect(@plugin['network']['interfaces']['en1']['addresses'].keys).to include('b8:8d:12:3a:32:de')
+      expect(@plugin['network']['interfaces']['en1']['addresses']['b8:8d:12:3a:32:de']['family']).to eq('lladdr')
     end
 
     it "detects the encapsulation type of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['encapsulation'].should == 'Ethernet'
+      expect(@plugin['network']['interfaces']['en1']['encapsulation']).to eq('Ethernet')
     end
 
     it "detects the flags of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['flags'].sort.should == ["BROADCAST", "MULTICAST", "RUNNING", "SIMPLEX", "SMART", "UP"]
+      expect(@plugin['network']['interfaces']['en1']['flags'].sort).to eq(["BROADCAST", "MULTICAST", "RUNNING", "SIMPLEX", "SMART", "UP"])
     end
 
 
     it "detects the mtu of the ethernet interface" do
-      @plugin['network']['interfaces']['en1']['mtu'].should == "1500"
+      expect(@plugin['network']['interfaces']['en1']['mtu']).to eq("1500")
     end
 
     it "detects the ipv4 addresses of the loopback interface" do
-      @plugin['network']['interfaces']['lo0']['addresses'].keys.should include('127.0.0.1')
-      @plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['netmask'].should == '255.0.0.0'
-      @plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['family'].should == 'inet'
+      expect(@plugin['network']['interfaces']['lo0']['addresses'].keys).to include('127.0.0.1')
+      expect(@plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['netmask']).to eq('255.0.0.0')
+      expect(@plugin['network']['interfaces']['lo0']['addresses']['127.0.0.1']['family']).to eq('inet')
     end
 
     it "detects the ipv6 addresses of the loopback interface" do
-      @plugin['network']['interfaces']['lo0']['addresses'].keys.should include('::1')
-      @plugin['network']['interfaces']['lo0']['addresses']['::1']['scope'].should == 'Node'
-      @plugin['network']['interfaces']['lo0']['addresses']['::1']['prefixlen'].should == '128'
-      @plugin['network']['interfaces']['lo0']['addresses']['::1']['family'].should == 'inet6'
+      expect(@plugin['network']['interfaces']['lo0']['addresses'].keys).to include('::1')
+      expect(@plugin['network']['interfaces']['lo0']['addresses']['::1']['scope']).to eq('Node')
+      expect(@plugin['network']['interfaces']['lo0']['addresses']['::1']['prefixlen']).to eq('128')
+      expect(@plugin['network']['interfaces']['lo0']['addresses']['::1']['family']).to eq('inet6')
     end
 
     it "detects the encapsulation type of the loopback interface" do
-      @plugin['network']['interfaces']['lo0']['encapsulation'].should == 'Loopback'
+      expect(@plugin['network']['interfaces']['lo0']['encapsulation']).to eq('Loopback')
     end
 
     it "detects the flags of the ethernet interface" do
-      @plugin['network']['interfaces']['lo0']['flags'].sort.should == ["LOOPBACK", "MULTICAST", "RUNNING", "UP"]
+      expect(@plugin['network']['interfaces']['lo0']['flags'].sort).to eq(["LOOPBACK", "MULTICAST", "RUNNING", "UP"])
     end
 
     it "detects the mtu of the loopback interface" do
-      @plugin['network']['interfaces']['lo0']['mtu'].should == "16384"
+      expect(@plugin['network']['interfaces']['lo0']['mtu']).to eq("16384")
     end
 
     it "detects the arp entries" do
-      @plugin['network']['interfaces']['en1']['arp']['10.20.10.1'].should == '0:4:ed:de:41:bf'
+      expect(@plugin['network']['interfaces']['en1']['arp']['10.20.10.1']).to eq('0:4:ed:de:41:bf')
     end
 
     it "detects the ethernet counters" do
-      @plugin['counters']['network']['interfaces']['en1']['tx']['bytes'].should == "18228234970"
-      @plugin['counters']['network']['interfaces']['en1']['tx']['packets'].should == "14314573"
-      @plugin['counters']['network']['interfaces']['en1']['tx']['collisions'].should == "0"
-      @plugin['counters']['network']['interfaces']['en1']['tx']['errors'].should == "0"
-      @plugin['counters']['network']['interfaces']['en1']['tx']['carrier'].should == 0
-      @plugin['counters']['network']['interfaces']['en1']['tx']['drop'].should == 0
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['bytes']).to eq("18228234970")
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['packets']).to eq("14314573")
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['collisions']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['errors']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['carrier']).to eq(0)
+      expect(@plugin['counters']['network']['interfaces']['en1']['tx']['drop']).to eq(0)
 
-      @plugin['counters']['network']['interfaces']['en1']['rx']['bytes'].should == "2530556736"
-      @plugin['counters']['network']['interfaces']['en1']['rx']['packets'].should == "5921903"
-      @plugin['counters']['network']['interfaces']['en1']['rx']['errors'].should == "0"
-      @plugin['counters']['network']['interfaces']['en1']['rx']['overrun'].should == 0
-      @plugin['counters']['network']['interfaces']['en1']['rx']['drop'].should == 0
+      expect(@plugin['counters']['network']['interfaces']['en1']['rx']['bytes']).to eq("2530556736")
+      expect(@plugin['counters']['network']['interfaces']['en1']['rx']['packets']).to eq("5921903")
+      expect(@plugin['counters']['network']['interfaces']['en1']['rx']['errors']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['en1']['rx']['overrun']).to eq(0)
+      expect(@plugin['counters']['network']['interfaces']['en1']['rx']['drop']).to eq(0)
     end
 
     it "detects the loopback counters" do
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['bytes'].should == "25774844"
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['packets'].should == "174982"
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['collisions'].should == "0"
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['errors'].should == "0"
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['carrier'].should == 0
-      @plugin['counters']['network']['interfaces']['lo0']['tx']['drop'].should == 0
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['bytes']).to eq("25774844")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['packets']).to eq("174982")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['collisions']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['errors']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['carrier']).to eq(0)
+      expect(@plugin['counters']['network']['interfaces']['lo0']['tx']['drop']).to eq(0)
 
-      @plugin['counters']['network']['interfaces']['lo0']['rx']['bytes'].should == "25774844"
-      @plugin['counters']['network']['interfaces']['lo0']['rx']['packets'].should == "174982"
-      @plugin['counters']['network']['interfaces']['lo0']['rx']['errors'].should == "0"
-      @plugin['counters']['network']['interfaces']['lo0']['rx']['overrun'].should == 0
-      @plugin['counters']['network']['interfaces']['lo0']['rx']['drop'].should == 0
+      expect(@plugin['counters']['network']['interfaces']['lo0']['rx']['bytes']).to eq("25774844")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['rx']['packets']).to eq("174982")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['rx']['errors']).to eq("0")
+      expect(@plugin['counters']['network']['interfaces']['lo0']['rx']['overrun']).to eq(0)
+      expect(@plugin['counters']['network']['interfaces']['lo0']['rx']['drop']).to eq(0)
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @plugin['network'][:default_interface].should == 'en1'
+      expect(@plugin['network'][:default_interface]).to eq('en1')
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @plugin['network'][:default_gateway].should == '10.20.10.1'
+      expect(@plugin['network'][:default_gateway]).to eq('10.20.10.1')
     end
 
     it "should detect network settings" do
-      @plugin['network']['settings']['net.local.stream.sendspace'].should == '8192'
-      @plugin["network"]["settings"]['net.local.stream.recvspace'].should == '8192'
-      @plugin["network"]["settings"]['net.local.stream.tracemdns'].should == '0'
-      @plugin["network"]["settings"]['net.local.dgram.maxdgram'].should == '2048'
-      @plugin["network"]["settings"]['net.local.dgram.recvspace'].should == '4096'
-      @plugin["network"]["settings"]['net.local.inflight'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.lowfirst'].should == '1023'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.lowlast'].should == '600'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.first'].should == '49152'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.last'].should == '65535'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.hifirst'].should == '49152'
-      @plugin["network"]["settings"]['net.inet.ip.portrange.hilast'].should == '65535'
-      @plugin["network"]["settings"]['net.inet.ip.forwarding'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.redirect'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.ttl'].should == '64'
-      @plugin["network"]["settings"]['net.inet.ip.rtexpire'].should == '12'
-      @plugin["network"]["settings"]['net.inet.ip.rtminexpire'].should == '10'
-      @plugin["network"]["settings"]['net.inet.ip.rtmaxcache'].should == '128'
-      @plugin["network"]["settings"]['net.inet.ip.sourceroute'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.intr_queue_maxlen'].should == '50'
-      @plugin["network"]["settings"]['net.inet.ip.intr_queue_drops'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.accept_sourceroute'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.keepfaith'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.gifttl'].should == '30'
-      @plugin["network"]["settings"]['net.inet.ip.subnets_are_local'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.mcast.maxgrpsrc'].should == '512'
-      @plugin["network"]["settings"]['net.inet.ip.mcast.maxsocksrc'].should == '128'
-      @plugin["network"]["settings"]['net.inet.ip.mcast.loop'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.check_route_selfref'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.use_route_genid'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.hash_size'].should == '64'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.curr_time'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.ready_heap'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.extract_heap'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.searches'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.search_steps'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.expire'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.max_chain_len'].should == '16'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_lookup_depth'].should == '256'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_avg_pkt_size'].should == '512'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.red_max_pkt_size'].should == '1500'
-      @plugin["network"]["settings"]['net.inet.ip.dummynet.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.enable'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.fw.autoinc_step'].should == '100'
-      @plugin["network"]["settings"]['net.inet.ip.fw.one_pass'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.verbose'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.verbose_limit'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_buckets'].should == '256'
-      @plugin["network"]["settings"]['net.inet.ip.fw.curr_dyn_buckets'].should == '256'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_count'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_max'].should == '4096'
-      @plugin["network"]["settings"]['net.inet.ip.fw.static_count'].should == '2'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_ack_lifetime'].should == '300'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_syn_lifetime'].should == '20'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_fin_lifetime'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_rst_lifetime'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_udp_lifetime'].should == '10'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_short_lifetime'].should == '5'
-      @plugin["network"]["settings"]['net.inet.ip.fw.dyn_keepalive'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.maxfragpackets'].should == '1536'
-      @plugin["network"]["settings"]['net.inet.ip.maxfragsperpacket'].should == '128'
-      @plugin["network"]["settings"]['net.inet.ip.maxfrags'].should == '3072'
-      @plugin["network"]["settings"]['net.inet.ip.scopedroute'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.check_interface'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.linklocal.in.allowbadttl'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.random_id'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ip.maxchainsent'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ip.select_srcif_debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet.icmp.maskrepl'].should == '0'
-      @plugin["network"]["settings"]['net.inet.icmp.icmplim'].should == '250'
-      @plugin["network"]["settings"]['net.inet.icmp.timestamp'].should == '0'
-      @plugin["network"]["settings"]['net.inet.icmp.drop_redirect'].should == '0'
-      @plugin["network"]["settings"]['net.inet.icmp.log_redirect'].should == '0'
-      @plugin["network"]["settings"]['net.inet.icmp.bmcastecho'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.recvifkludge'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.sendra'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.sendlocal'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.v1enable'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.v2enable'].should == '1'
-      @plugin["network"]["settings"]['net.inet.igmp.legacysupp'].should == '0'
-      @plugin["network"]["settings"]['net.inet.igmp.default_version'].should == '3'
-      @plugin["network"]["settings"]['net.inet.igmp.gsrdelay'].should == '10'
-      @plugin["network"]["settings"]['net.inet.igmp.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.rfc1323'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.rfc1644'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.mssdflt'].should == '512'
-      @plugin["network"]["settings"]['net.inet.tcp.keepidle'].should == '7200000'
-      @plugin["network"]["settings"]['net.inet.tcp.keepintvl'].should == '75000'
-      @plugin["network"]["settings"]['net.inet.tcp.sendspace'].should == '65536'
-      @plugin["network"]["settings"]['net.inet.tcp.recvspace'].should == '65536'
-      @plugin["network"]["settings"]['net.inet.tcp.keepinit'].should == '75000'
-      @plugin["network"]["settings"]['net.inet.tcp.v6mssdflt'].should == '1024'
-      @plugin["network"]["settings"]['net.inet.tcp.log_in_vain'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.blackhole'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.delayed_ack'].should == '3'
-      @plugin["network"]["settings"]['net.inet.tcp.tcp_lq_overflow'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.recvbg'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.drop_synfin'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.reass.maxsegments'].should == '3072'
-      @plugin["network"]["settings"]['net.inet.tcp.reass.cursegments'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.reass.overflows'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.slowlink_wsize'].should == '8192'
-      @plugin["network"]["settings"]['net.inet.tcp.maxseg_unacked'].should == '8'
-      @plugin["network"]["settings"]['net.inet.tcp.rfc3465'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.rfc3465_lim2'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.rtt_samples_per_slot'].should == '20'
-      @plugin["network"]["settings"]['net.inet.tcp.recv_allowed_iaj'].should == '5'
-      @plugin["network"]["settings"]['net.inet.tcp.acc_iaj_high_thresh'].should == '100'
-      @plugin["network"]["settings"]['net.inet.tcp.rexmt_thresh'].should == '2'
-      @plugin["network"]["settings"]['net.inet.tcp.path_mtu_discovery'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.slowstart_flightsize'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.local_slowstart_flightsize'].should == '8'
-      @plugin["network"]["settings"]['net.inet.tcp.tso'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.ecn_initiate_out'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.ecn_negotiate_in'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.packetchain'].should == '50'
-      @plugin["network"]["settings"]['net.inet.tcp.socket_unlocked_on_output'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.rfc3390'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.min_iaj_win'].should == '4'
-      @plugin["network"]["settings"]['net.inet.tcp.acc_iaj_react_limit'].should == '200'
-      @plugin["network"]["settings"]['net.inet.tcp.sack'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.sack_maxholes'].should == '128'
-      @plugin["network"]["settings"]['net.inet.tcp.sack_globalmaxholes'].should == '65536'
-      @plugin["network"]["settings"]['net.inet.tcp.sack_globalholes'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.minmss'].should == '216'
-      @plugin["network"]["settings"]['net.inet.tcp.minmssoverload'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.do_tcpdrain'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.pcbcount'].should == '86'
-      @plugin["network"]["settings"]['net.inet.tcp.icmp_may_rst'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.strict_rfc1948'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.isn_reseed_interval'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.background_io_enabled'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.rtt_min'].should == '100'
-      @plugin["network"]["settings"]['net.inet.tcp.rexmt_slop'].should == '200'
-      @plugin["network"]["settings"]['net.inet.tcp.randomize_ports'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.newreno_sockets'].should == '81'
-      @plugin["network"]["settings"]['net.inet.tcp.background_sockets'].should == '-1'
-      @plugin["network"]["settings"]['net.inet.tcp.tcbhashsize'].should == '4096'
-      @plugin["network"]["settings"]['net.inet.tcp.background_io_trigger'].should == '5'
-      @plugin["network"]["settings"]['net.inet.tcp.msl'].should == '15000'
-      @plugin["network"]["settings"]['net.inet.tcp.max_persist_timeout'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.always_keepalive'].should == '0'
-      @plugin["network"]["settings"]['net.inet.tcp.timer_fastmode_idlemax'].should == '20'
-      @plugin["network"]["settings"]['net.inet.tcp.broken_peer_syn_rxmit_thres'].should == '7'
-      @plugin["network"]["settings"]['net.inet.tcp.tcp_timer_advanced'].should == '5'
-      @plugin["network"]["settings"]['net.inet.tcp.tcp_resched_timerlist'].should == '12209'
-      @plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_detection'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_mss'].should == '1200'
-      @plugin["network"]["settings"]['net.inet.tcp.timer_fastquantum'].should == '100'
-      @plugin["network"]["settings"]['net.inet.tcp.timer_slowquantum'].should == '500'
-      @plugin["network"]["settings"]['net.inet.tcp.win_scale_factor'].should == '3'
-      @plugin["network"]["settings"]['net.inet.tcp.sockthreshold'].should == '64'
-      @plugin["network"]["settings"]['net.inet.tcp.bg_target_qdelay'].should == '100'
-      @plugin["network"]["settings"]['net.inet.tcp.bg_allowed_increase'].should == '2'
-      @plugin["network"]["settings"]['net.inet.tcp.bg_tether_shift'].should == '1'
-      @plugin["network"]["settings"]['net.inet.tcp.bg_ss_fltsz'].should == '2'
-      @plugin["network"]["settings"]['net.inet.udp.checksum'].should == '1'
-      @plugin["network"]["settings"]['net.inet.udp.maxdgram'].should == '9216'
-      @plugin["network"]["settings"]['net.inet.udp.recvspace'].should == '42080'
-      @plugin["network"]["settings"]['net.inet.udp.log_in_vain'].should == '0'
-      @plugin["network"]["settings"]['net.inet.udp.blackhole'].should == '0'
-      @plugin["network"]["settings"]['net.inet.udp.pcbcount'].should == '72'
-      @plugin["network"]["settings"]['net.inet.udp.randomize_ports'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.def_policy'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.esp_trans_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.esp_net_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.ah_trans_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.ah_net_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.ah_cleartos'].should == '1'
-      @plugin["network"]["settings"]['net.inet.ipsec.ah_offsetmask'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ipsec.dfbit'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ipsec.ecn'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ipsec.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ipsec.esp_randpad'].should == '-1'
-      @plugin["network"]["settings"]['net.inet.ipsec.bypass'].should == '0'
-      @plugin["network"]["settings"]['net.inet.ipsec.esp_port'].should == '4500'
-      @plugin["network"]["settings"]['net.inet.raw.maxdgram'].should == '8192'
-      @plugin["network"]["settings"]['net.inet.raw.recvspace'].should == '8192'
-      @plugin["network"]["settings"]['net.link.generic.system.ifcount'].should == '10'
-      @plugin["network"]["settings"]['net.link.generic.system.dlil_verbose'].should == '0'
-      @plugin["network"]["settings"]['net.link.generic.system.multi_threaded_input'].should == '1'
-      @plugin["network"]["settings"]['net.link.generic.system.dlil_input_sanity_check'].should == '0'
-      @plugin["network"]["settings"]['net.link.ether.inet.prune_intvl'].should == '300'
-      @plugin["network"]["settings"]['net.link.ether.inet.max_age'].should == '1200'
-      @plugin["network"]["settings"]['net.link.ether.inet.host_down_time'].should == '20'
-      @plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_tx'].should == '1'
-      @plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_rx'].should == '1'
-      @plugin["network"]["settings"]['net.link.ether.inet.arp_llreach_base'].should == '30'
-      @plugin["network"]["settings"]['net.link.ether.inet.maxtries'].should == '5'
-      @plugin["network"]["settings"]['net.link.ether.inet.useloopback'].should == '1'
-      @plugin["network"]["settings"]['net.link.ether.inet.proxyall'].should == '0'
-      @plugin["network"]["settings"]['net.link.ether.inet.sendllconflict'].should == '0'
-      @plugin["network"]["settings"]['net.link.ether.inet.log_arp_warnings'].should == '0'
-      @plugin["network"]["settings"]['net.link.ether.inet.keep_announcements'].should == '1'
-      @plugin["network"]["settings"]['net.link.ether.inet.send_conflicting_probes'].should == '1'
-      @plugin["network"]["settings"]['net.link.bridge.log_stp'].should == '0'
-      @plugin["network"]["settings"]['net.link.bridge.debug'].should == '0'
-      @plugin["network"]["settings"]['net.key.debug'].should == '0'
-      @plugin["network"]["settings"]['net.key.spi_trycnt'].should == '1000'
-      @plugin["network"]["settings"]['net.key.spi_minval'].should == '256'
-      @plugin["network"]["settings"]['net.key.spi_maxval'].should == '268435455'
-      @plugin["network"]["settings"]['net.key.int_random'].should == '60'
-      @plugin["network"]["settings"]['net.key.larval_lifetime'].should == '30'
-      @plugin["network"]["settings"]['net.key.blockacq_count'].should == '10'
-      @plugin["network"]["settings"]['net.key.blockacq_lifetime'].should == '20'
-      @plugin["network"]["settings"]['net.key.esp_keymin'].should == '256'
-      @plugin["network"]["settings"]['net.key.esp_auth'].should == '0'
-      @plugin["network"]["settings"]['net.key.ah_keymin'].should == '128'
-      @plugin["network"]["settings"]['net.key.prefered_oldsa'].should == '0'
-      @plugin["network"]["settings"]['net.key.natt_keepalive_interval'].should == '20'
-      @plugin["network"]["settings"]['net.inet6.ip6.forwarding'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.redirect'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.hlim'].should == '64'
-      @plugin["network"]["settings"]['net.inet6.ip6.maxfragpackets'].should == '1536'
-      @plugin["network"]["settings"]['net.inet6.ip6.accept_rtadv'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.keepfaith'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.log_interval'].should == '5'
-      @plugin["network"]["settings"]['net.inet6.ip6.hdrnestlimit'].should == '15'
-      @plugin["network"]["settings"]['net.inet6.ip6.dad_count'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.auto_flowlabel'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.defmcasthlim'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.gifhlim'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.kame_version'].should == '2009/apple-darwin'
-      @plugin["network"]["settings"]['net.inet6.ip6.use_deprecated'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.rr_prune'].should == '5'
-      @plugin["network"]["settings"]['net.inet6.ip6.v6only'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.rtexpire'].should == '3600'
-      @plugin["network"]["settings"]['net.inet6.ip6.rtminexpire'].should == '10'
-      @plugin["network"]["settings"]['net.inet6.ip6.rtmaxcache'].should == '128'
-      @plugin["network"]["settings"]['net.inet6.ip6.use_tempaddr'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.temppltime'].should == '86400'
-      @plugin["network"]["settings"]['net.inet6.ip6.tempvltime'].should == '604800'
-      @plugin["network"]["settings"]['net.inet6.ip6.auto_linklocal'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.prefer_tempaddr'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.use_defaultzone'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.maxfrags'].should == '12288'
-      @plugin["network"]["settings"]['net.inet6.ip6.mcast_pmtu'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.neighborgcthresh'].should == '1024'
-      @plugin["network"]["settings"]['net.inet6.ip6.maxifprefixes'].should == '16'
-      @plugin["network"]["settings"]['net.inet6.ip6.maxifdefrouters'].should == '16'
-      @plugin["network"]["settings"]['net.inet6.ip6.maxdynroutes'].should == '1024'
-      @plugin["network"]["settings"]['net.inet6.ip6.fw.enable'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.fw.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.fw.verbose'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.fw.verbose_limit'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.scopedroute'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.select_srcif_debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ip6.mcast.maxgrpsrc'].should == '512'
-      @plugin["network"]["settings"]['net.inet6.ip6.mcast.maxsocksrc'].should == '128'
-      @plugin["network"]["settings"]['net.inet6.ip6.mcast.loop'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ip6.only_allow_rfc4193_prefixes'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.def_policy'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_trans_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_net_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.ah_trans_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.ah_net_deflev'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.ecn'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.ipsec6.esp_randpad'].should == '-1'
-      @plugin["network"]["settings"]['net.inet6.icmp6.rediraccept'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.icmp6.redirtimeout'].should == '600'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_prune'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_delay'].should == '5'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_umaxtries'].should == '3'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_mmaxtries'].should == '3'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_useloopback'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nodeinfo'].should == '3'
-      @plugin["network"]["settings"]['net.inet6.icmp6.errppslimit'].should == '500'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_maxnudhint'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_debug'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_accept_6to4'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_onlink_ns_rfc4861'].should == '0'
-      @plugin["network"]["settings"]['net.inet6.icmp6.nd6_llreach_base'].should == '30'
-      @plugin["network"]["settings"]['net.inet6.mld.gsrdelay'].should == '10'
-      @plugin["network"]["settings"]['net.inet6.mld.v1enable'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.mld.use_allow'].should == '1'
-      @plugin["network"]["settings"]['net.inet6.mld.debug'].should == '0'
-      @plugin["network"]["settings"]['net.idle.route.expire_timeout'].should == '30'
-      @plugin["network"]["settings"]['net.idle.route.drain_interval'].should == '10'
-      @plugin["network"]["settings"]['net.statistics'].should == '1'
-      @plugin["network"]["settings"]['net.alf.loglevel'].should == '55'
-      @plugin["network"]["settings"]['net.alf.perm'].should == '0'
-      @plugin["network"]["settings"]['net.alf.defaultaction'].should == '1'
-      @plugin["network"]["settings"]['net.alf.mqcount'].should == '0'
-      @plugin["network"]["settings"]['net.smb.fs.version'].should == '107000'
-      @plugin["network"]["settings"]['net.smb.fs.loglevel'].should == '0'
-      @plugin["network"]["settings"]['net.smb.fs.kern_ntlmssp'].should == '0'
-      @plugin["network"]["settings"]['net.smb.fs.kern_deprecatePreXPServers'].should == '1'
-      @plugin["network"]["settings"]['net.smb.fs.kern_deadtimer'].should == '60'
-      @plugin["network"]["settings"]['net.smb.fs.kern_hard_deadtimer'].should == '600'
-      @plugin["network"]["settings"]['net.smb.fs.kern_soft_deadtimer'].should == '30'
-      @plugin["network"]["settings"]['net.smb.fs.tcpsndbuf'].should == '261120'
-      @plugin["network"]["settings"]['net.smb.fs.tcprcvbuf'].should == '261120'
+      expect(@plugin['network']['settings']['net.local.stream.sendspace']).to eq('8192')
+      expect(@plugin["network"]["settings"]['net.local.stream.recvspace']).to eq('8192')
+      expect(@plugin["network"]["settings"]['net.local.stream.tracemdns']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.local.dgram.maxdgram']).to eq('2048')
+      expect(@plugin["network"]["settings"]['net.local.dgram.recvspace']).to eq('4096')
+      expect(@plugin["network"]["settings"]['net.local.inflight']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.lowfirst']).to eq('1023')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.lowlast']).to eq('600')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.first']).to eq('49152')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.last']).to eq('65535')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.hifirst']).to eq('49152')
+      expect(@plugin["network"]["settings"]['net.inet.ip.portrange.hilast']).to eq('65535')
+      expect(@plugin["network"]["settings"]['net.inet.ip.forwarding']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.redirect']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.ttl']).to eq('64')
+      expect(@plugin["network"]["settings"]['net.inet.ip.rtexpire']).to eq('12')
+      expect(@plugin["network"]["settings"]['net.inet.ip.rtminexpire']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.inet.ip.rtmaxcache']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet.ip.sourceroute']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.intr_queue_maxlen']).to eq('50')
+      expect(@plugin["network"]["settings"]['net.inet.ip.intr_queue_drops']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.accept_sourceroute']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.keepfaith']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.gifttl']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.inet.ip.subnets_are_local']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.mcast.maxgrpsrc']).to eq('512')
+      expect(@plugin["network"]["settings"]['net.inet.ip.mcast.maxsocksrc']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet.ip.mcast.loop']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.check_route_selfref']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.use_route_genid']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.hash_size']).to eq('64')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.curr_time']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.ready_heap']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.extract_heap']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.searches']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.search_steps']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.expire']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.max_chain_len']).to eq('16')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.red_lookup_depth']).to eq('256')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.red_avg_pkt_size']).to eq('512')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.red_max_pkt_size']).to eq('1500')
+      expect(@plugin["network"]["settings"]['net.inet.ip.dummynet.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.enable']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.autoinc_step']).to eq('100')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.one_pass']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.verbose']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.verbose_limit']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_buckets']).to eq('256')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.curr_dyn_buckets']).to eq('256')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_count']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_max']).to eq('4096')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.static_count']).to eq('2')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_ack_lifetime']).to eq('300')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_syn_lifetime']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_fin_lifetime']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_rst_lifetime']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_udp_lifetime']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_short_lifetime']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet.ip.fw.dyn_keepalive']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.maxfragpackets']).to eq('1536')
+      expect(@plugin["network"]["settings"]['net.inet.ip.maxfragsperpacket']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet.ip.maxfrags']).to eq('3072')
+      expect(@plugin["network"]["settings"]['net.inet.ip.scopedroute']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.check_interface']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.linklocal.in.allowbadttl']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.random_id']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ip.maxchainsent']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ip.select_srcif_debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.maskrepl']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.icmplim']).to eq('250')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.timestamp']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.drop_redirect']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.log_redirect']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.icmp.bmcastecho']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.recvifkludge']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.sendra']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.sendlocal']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.v1enable']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.v2enable']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.legacysupp']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.default_version']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.gsrdelay']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.inet.igmp.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rfc1323']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rfc1644']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.mssdflt']).to eq('512')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.keepidle']).to eq('7200000')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.keepintvl']).to eq('75000')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sendspace']).to eq('65536')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.recvspace']).to eq('65536')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.keepinit']).to eq('75000')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.v6mssdflt']).to eq('1024')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.log_in_vain']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.blackhole']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.delayed_ack']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.tcp_lq_overflow']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.recvbg']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.drop_synfin']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.reass.maxsegments']).to eq('3072')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.reass.cursegments']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.reass.overflows']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.slowlink_wsize']).to eq('8192')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.maxseg_unacked']).to eq('8')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rfc3465']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rfc3465_lim2']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rtt_samples_per_slot']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.recv_allowed_iaj']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.acc_iaj_high_thresh']).to eq('100')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rexmt_thresh']).to eq('2')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.path_mtu_discovery']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.slowstart_flightsize']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.local_slowstart_flightsize']).to eq('8')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.tso']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.ecn_initiate_out']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.ecn_negotiate_in']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.packetchain']).to eq('50')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.socket_unlocked_on_output']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rfc3390']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.min_iaj_win']).to eq('4')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.acc_iaj_react_limit']).to eq('200')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sack']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sack_maxholes']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sack_globalmaxholes']).to eq('65536')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sack_globalholes']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.minmss']).to eq('216')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.minmssoverload']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.do_tcpdrain']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.pcbcount']).to eq('86')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.icmp_may_rst']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.strict_rfc1948']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.isn_reseed_interval']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.background_io_enabled']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rtt_min']).to eq('100')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.rexmt_slop']).to eq('200')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.randomize_ports']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.newreno_sockets']).to eq('81')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.background_sockets']).to eq('-1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.tcbhashsize']).to eq('4096')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.background_io_trigger']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.msl']).to eq('15000')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.max_persist_timeout']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.always_keepalive']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.timer_fastmode_idlemax']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.broken_peer_syn_rxmit_thres']).to eq('7')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.tcp_timer_advanced']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.tcp_resched_timerlist']).to eq('12209')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_detection']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.pmtud_blackhole_mss']).to eq('1200')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.timer_fastquantum']).to eq('100')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.timer_slowquantum']).to eq('500')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.win_scale_factor']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.sockthreshold']).to eq('64')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.bg_target_qdelay']).to eq('100')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.bg_allowed_increase']).to eq('2')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.bg_tether_shift']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.tcp.bg_ss_fltsz']).to eq('2')
+      expect(@plugin["network"]["settings"]['net.inet.udp.checksum']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.udp.maxdgram']).to eq('9216')
+      expect(@plugin["network"]["settings"]['net.inet.udp.recvspace']).to eq('42080')
+      expect(@plugin["network"]["settings"]['net.inet.udp.log_in_vain']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.udp.blackhole']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.udp.pcbcount']).to eq('72')
+      expect(@plugin["network"]["settings"]['net.inet.udp.randomize_ports']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.def_policy']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.esp_trans_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.esp_net_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.ah_trans_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.ah_net_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.ah_cleartos']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.ah_offsetmask']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.dfbit']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.ecn']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.esp_randpad']).to eq('-1')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.bypass']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet.ipsec.esp_port']).to eq('4500')
+      expect(@plugin["network"]["settings"]['net.inet.raw.maxdgram']).to eq('8192')
+      expect(@plugin["network"]["settings"]['net.inet.raw.recvspace']).to eq('8192')
+      expect(@plugin["network"]["settings"]['net.link.generic.system.ifcount']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.link.generic.system.dlil_verbose']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.generic.system.multi_threaded_input']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.generic.system.dlil_input_sanity_check']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.prune_intvl']).to eq('300')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.max_age']).to eq('1200')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.host_down_time']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_tx']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.apple_hwcksum_rx']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.arp_llreach_base']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.maxtries']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.useloopback']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.proxyall']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.sendllconflict']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.log_arp_warnings']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.keep_announcements']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.ether.inet.send_conflicting_probes']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.link.bridge.log_stp']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.link.bridge.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.key.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.key.spi_trycnt']).to eq('1000')
+      expect(@plugin["network"]["settings"]['net.key.spi_minval']).to eq('256')
+      expect(@plugin["network"]["settings"]['net.key.spi_maxval']).to eq('268435455')
+      expect(@plugin["network"]["settings"]['net.key.int_random']).to eq('60')
+      expect(@plugin["network"]["settings"]['net.key.larval_lifetime']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.key.blockacq_count']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.key.blockacq_lifetime']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.key.esp_keymin']).to eq('256')
+      expect(@plugin["network"]["settings"]['net.key.esp_auth']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.key.ah_keymin']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.key.prefered_oldsa']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.key.natt_keepalive_interval']).to eq('20')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.forwarding']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.redirect']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.hlim']).to eq('64')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.maxfragpackets']).to eq('1536')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.accept_rtadv']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.keepfaith']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.log_interval']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.hdrnestlimit']).to eq('15')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.dad_count']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.auto_flowlabel']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.defmcasthlim']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.gifhlim']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.kame_version']).to eq('2009/apple-darwin')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.use_deprecated']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.rr_prune']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.v6only']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.rtexpire']).to eq('3600')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.rtminexpire']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.rtmaxcache']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.use_tempaddr']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.temppltime']).to eq('86400')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.tempvltime']).to eq('604800')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.auto_linklocal']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.prefer_tempaddr']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.use_defaultzone']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.maxfrags']).to eq('12288')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.mcast_pmtu']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.neighborgcthresh']).to eq('1024')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.maxifprefixes']).to eq('16')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.maxifdefrouters']).to eq('16')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.maxdynroutes']).to eq('1024')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.fw.enable']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.fw.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.fw.verbose']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.fw.verbose_limit']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.scopedroute']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.select_srcif_debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.mcast.maxgrpsrc']).to eq('512')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.mcast.maxsocksrc']).to eq('128')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.mcast.loop']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ip6.only_allow_rfc4193_prefixes']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.def_policy']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.esp_trans_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.esp_net_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.ah_trans_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.ah_net_deflev']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.ecn']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.ipsec6.esp_randpad']).to eq('-1')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.rediraccept']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.redirtimeout']).to eq('600')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_prune']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_delay']).to eq('5')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_umaxtries']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_mmaxtries']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_useloopback']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nodeinfo']).to eq('3')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.errppslimit']).to eq('500')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_maxnudhint']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_accept_6to4']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_onlink_ns_rfc4861']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.inet6.icmp6.nd6_llreach_base']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.inet6.mld.gsrdelay']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.inet6.mld.v1enable']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.mld.use_allow']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.inet6.mld.debug']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.idle.route.expire_timeout']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.idle.route.drain_interval']).to eq('10')
+      expect(@plugin["network"]["settings"]['net.statistics']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.alf.loglevel']).to eq('55')
+      expect(@plugin["network"]["settings"]['net.alf.perm']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.alf.defaultaction']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.alf.mqcount']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.smb.fs.version']).to eq('107000')
+      expect(@plugin["network"]["settings"]['net.smb.fs.loglevel']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.smb.fs.kern_ntlmssp']).to eq('0')
+      expect(@plugin["network"]["settings"]['net.smb.fs.kern_deprecatePreXPServers']).to eq('1')
+      expect(@plugin["network"]["settings"]['net.smb.fs.kern_deadtimer']).to eq('60')
+      expect(@plugin["network"]["settings"]['net.smb.fs.kern_hard_deadtimer']).to eq('600')
+      expect(@plugin["network"]["settings"]['net.smb.fs.kern_soft_deadtimer']).to eq('30')
+      expect(@plugin["network"]["settings"]['net.smb.fs.tcpsndbuf']).to eq('261120')
+      expect(@plugin["network"]["settings"]['net.smb.fs.tcprcvbuf']).to eq('261120')
     end
   end
 end

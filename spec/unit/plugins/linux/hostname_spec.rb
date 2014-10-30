@@ -22,10 +22,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
-    @plugin.stub(:collect_os).and_return(:linux)
-    @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    @plugin.stub(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
-    @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
+    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
   it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")
@@ -36,16 +36,16 @@ describe Ohai::System, "Linux hostname plugin" do
 
   describe "when domain name is unset" do
     before(:each) do
-      @plugin.should_receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
+      expect(@plugin).to receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
     end
 
     it "should not raise an error" do
-      lambda { @plugin.run }.should_not raise_error
+      expect { @plugin.run }.not_to raise_error
     end
 
     it "should not set fqdn" do
       @plugin.run
-      @plugin.fqdn.should == nil
+      expect(@plugin.fqdn).to eq(nil)
     end
 
   end

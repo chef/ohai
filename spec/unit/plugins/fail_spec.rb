@@ -56,16 +56,16 @@ shared_examples "a v7 loading failure" do
   it "should not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     #@ohai.attributes.should_not have_key("fail")
-    lambda { @ohai.provides_map.find_providers_for(["fail"]) }.should raise_error(Ohai::Exceptions::AttributeNotFound)
+    expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
   it "should not have source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.v6_dependency_solver.should_not have_key("#{tmp}/plugins/fail.rb")
+    expect(@ohai.v6_dependency_solver).not_to have_key("#{tmp}/plugins/fail.rb")
   end
 
   it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:warn).once
+    expect(Ohai::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -104,16 +104,16 @@ shared_examples "a v7 loading success" do
 
   it "should have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.provides_map.should have_key("fail")
+    expect(@ohai.provides_map).to have_key("fail")
   end
 
   it "should have source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.v6_dependency_solver.should have_key("#{tmp}/plugins/fail.rb")
+    expect(@ohai.v6_dependency_solver).to have_key("#{tmp}/plugins/fail.rb")
   end
 
   it "should not write to Ohai::Log" do
-    Ohai::Log.should_not_receive(:warn)
+    expect(Ohai::Log).not_to receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -152,11 +152,11 @@ shared_examples "a v7 run failure" do
 
   it "should not have new attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
-    @ohai.provides_map.should_not have_key("other")
+    expect(@ohai.provides_map).not_to have_key("other")
   end
 
   it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:warn).once
+    expect(Ohai::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end
 end

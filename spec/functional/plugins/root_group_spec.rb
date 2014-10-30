@@ -32,7 +32,7 @@ describe Ohai::System, 'root_group plugin' do
       # groups in Active Directory -- not a typical test scenario, but
       # something to watch if you run this test in such an environment.
       groups = wmi.query("select * from Win32_Group where sid = 'S-1-5-32-544'")
-      groups.length.should == 1
+      expect(groups.length).to eq(1)
       administrators_group = groups[0]['name'].downcase
       plugin.run
       expect(plugin[:root_group].downcase).to be == administrators_group

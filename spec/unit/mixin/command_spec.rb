@@ -25,14 +25,14 @@ describe Ohai::Mixin::Command, "popen4" do
   it "should default all commands to be run in the POSIX standard C locale" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL") do |pid, stdin, stdout, stderr|
       stdin.close
-      stdout.read.strip.should == "C"
+      expect(stdout.read.strip).to eq("C")
     end
   end
 
   it "should respect locale when specified explicitly" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL", :environment => {"LC_ALL" => "es"}) do |pid, stdin, stdout, stderr|
       stdin.close
-      stdout.read.strip.should == "es"
+      expect(stdout.read.strip).to eq("es")
     end
   end
 
@@ -53,14 +53,14 @@ describe Ohai::Mixin::Command, "popen4" do
       it "should force encode the string to UTF-8" do
         extend Ohai::Mixin::Command
         snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
-        snowy.encoding.should == Encoding::UTF_8
+        expect(snowy.encoding).to eq(Encoding::UTF_8)
       end
     end
 
     it "should force encode the string to UTF-8" do
       extend Ohai::Mixin::Command
       snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
-      snowy.encoding.should == Encoding::UTF_8
+      expect(snowy.encoding).to eq(Encoding::UTF_8)
     end
   end
 
@@ -77,13 +77,13 @@ describe Ohai::Mixin::Command, "popen4" do
         created_procs += 1
       end
     end
-    created_procs.should == 100
+    expect(created_procs).to eq(100)
     reaped_procs = 0
     begin
       loop { Process.wait(-1); reaped_procs += 1 }
     rescue Errno::ECHILD
     end
-    reaped_procs.should == 0
+    expect(reaped_procs).to eq(0)
   end
 
 end

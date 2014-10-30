@@ -25,21 +25,21 @@ describe Ohai::System, "plugin ohai_time" do
   end
   
   it "should get the current time" do
-    Time.should_receive(:now)
+    expect(Time).to receive(:now)
     @plugin.run
   end
   
   it "should turn the time into a floating point number" do
     time = Time.now
-    time.should_receive(:to_f)
-    Time.stub(:now).and_return(time)
+    expect(time).to receive(:to_f)
+    allow(Time).to receive(:now).and_return(time)
     @plugin.run
   end
   
   it "should set ohai_time to the current time" do
     time = Time.now
-    Time.stub(:now).and_return(time)
+    allow(Time).to receive(:now).and_return(time)
     @plugin.run
-    @plugin[:ohai_time].should == time.to_f    
+    expect(@plugin[:ohai_time]).to eq(time.to_f)    
   end
 end

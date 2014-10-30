@@ -22,12 +22,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "FreeBSD plugin os" do
   before(:each) do
     @plugin = get_plugin("freebsd/os")
-    @plugin.stub(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
-    @plugin.stub(:collect_os).and_return(:freebsd)
+    allow(@plugin).to receive(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
+    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
   end
 
   it "should set os_version to __FreeBSD_version" do
     @plugin.run
-    @plugin[:os_version].should == "902001"
+    expect(@plugin[:os_version]).to eq("902001")
   end
 end  

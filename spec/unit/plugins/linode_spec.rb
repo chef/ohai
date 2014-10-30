@@ -49,24 +49,24 @@ describe Ohai::System, "plugin linode" do
   shared_examples_for "!linode"  do
     it "does not create the linode mash" do
       @plugin.run
-      @plugin[:linode].should be_nil
+      expect(@plugin[:linode]).to be_nil
     end
   end
 
   shared_examples_for "linode" do
     it "creates a linode mash" do
       @plugin.run
-      @plugin[:linode].should_not be_nil
+      expect(@plugin[:linode]).not_to be_nil
     end
 
     it "has all required attributes" do
       @plugin.run
-      @plugin[:linode][:public_ip].should_not be_nil
+      expect(@plugin[:linode][:public_ip]).not_to be_nil
     end
 
     it "has correct values for all attributes" do
       @plugin.run
-      @plugin[:linode][:public_ip].should == "1.2.3.4"
+      expect(@plugin[:linode][:public_ip]).to eq("1.2.3.4")
     end
 
   end
@@ -111,8 +111,8 @@ describe Ohai::System, "plugin linode" do
 
       it "detects and sets the private ip" do
         @plugin.run
-        @plugin[:linode][:private_ip].should_not be_nil
-        @plugin[:linode][:private_ip].should == "5.6.7.8"
+        expect(@plugin[:linode][:private_ip]).not_to be_nil
+        expect(@plugin[:linode][:private_ip]).to eq("5.6.7.8")
       end
     end
 
@@ -120,10 +120,10 @@ describe Ohai::System, "plugin linode" do
 
   describe "with linode cloud file" do
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(true)
-      File.stub(:read).with(hint_path_nix).and_return('')
-      File.stub(:exist?).with(hint_path_win).and_return(true)
-      File.stub(:read).with(hint_path_win).and_return('')
+      allow(File).to receive(:exist?).with(hint_path_nix).and_return(true)
+      allow(File).to receive(:read).with(hint_path_nix).and_return('')
+      allow(File).to receive(:exist?).with(hint_path_win).and_return(true)
+      allow(File).to receive(:read).with(hint_path_win).and_return('')
     end
 
     it_should_behave_like "linode"
@@ -131,8 +131,8 @@ describe Ohai::System, "plugin linode" do
 
   describe "without cloud file" do
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(false)
-      File.stub(:exist?).with(hint_path_win).and_return(false)
+      allow(File).to receive(:exist?).with(hint_path_nix).and_return(false)
+      allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
     end
 
     it_should_behave_like "!linode"
@@ -143,13 +143,13 @@ describe Ohai::System, "plugin linode" do
     let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
 
     before do
-      File.stub(:exist?).with(hint_path_nix).and_return(false)
-      File.stub(:exist?).with(hint_path_win).and_return(false)
+      allow(File).to receive(:exist?).with(hint_path_nix).and_return(false)
+      allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
 
-      File.stub(:exist?).with(ec2_hint_path_nix).and_return(true)
-      File.stub(:read).with(ec2_hint_path_nix).and_return('')
-      File.stub(:exist?).with(ec2_hint_path_win).and_return(true)
-      File.stub(:read).with(ec2_hint_path_win).and_return('')
+      allow(File).to receive(:exist?).with(ec2_hint_path_nix).and_return(true)
+      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return('')
+      allow(File).to receive(:exist?).with(ec2_hint_path_win).and_return(true)
+      allow(File).to receive(:read).with(ec2_hint_path_win).and_return('')
     end
 
     it_should_behave_like "!linode"

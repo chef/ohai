@@ -22,10 +22,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Darwin hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
-    @plugin.stub(:collect_os).and_return(:darwin)
-    @plugin.stub(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    @plugin.stub(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
-    @plugin.stub(:resolve_fqdn).and_return("katie.bethell")
+    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
   end
 
   it_should_check_from("darwin::hostname", "hostname", "hostname -s", "katie")
@@ -34,12 +34,12 @@ describe Ohai::System, "Darwin hostname plugin" do
 
   it "should use #resolve_fqdn to find the fqdn" do
     @plugin.run
-    @plugin[:fqdn].should == "katie.bethell"
+    expect(@plugin[:fqdn]).to eq("katie.bethell")
   end
 
   it "should set the domain to everything after the first dot of the fqdn" do
     @plugin.run
-    @plugin[:domain].should == "bethell"
+    expect(@plugin[:domain]).to eq("bethell")
   end
 end
 

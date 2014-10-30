@@ -35,34 +35,34 @@ end
 def it_should_check_from(plugin, attribute, from, value)
   it "should set the #{attribute} to the value from '#{from}'" do
     @plugin.run
-    @plugin[attribute].should == value
+    expect(@plugin[attribute]).to eq(value)
   end
 end
 
 def it_should_check_from_mash(plugin, attribute, from, value)
   it "should get the #{plugin}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
+    expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
   it "should set the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    @plugin[plugin][attribute].should == value[1].split($/)[0]
+    expect(@plugin[plugin][attribute]).to eq(value[1].split($/)[0])
   end
 end
 
 def mock_shell_out(exitstatus, stdout, stderr)
   shell_out = double("mixlib_shell_out")
-  shell_out.stub(:exitstatus).and_return(exitstatus)
-  shell_out.stub(:stdout).and_return(stdout)
-  shell_out.stub(:stderr).and_return(stderr)
+  allow(shell_out).to receive(:exitstatus).and_return(exitstatus)
+  allow(shell_out).to receive(:stdout).and_return(stdout)
+  allow(shell_out).to receive(:stderr).and_return(stderr)
   shell_out
 end
 
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
-    @plugin.should_receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
+    expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
@@ -70,7 +70,7 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
     @plugin.run
     value = value[1].split($/)[0]
     if mash.is_a?(String)
-      @plugin[mash][attribute].should == value
+      expect(@plugin[mash][attribute]).to eq(value)
     elsif mash.is_a?(Array)
       if mash.length == 2
         @plugin[mash[0]][mash[1]][attribute].should == value

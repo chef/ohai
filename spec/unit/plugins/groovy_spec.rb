@@ -25,23 +25,23 @@ describe Ohai::System, "plugin groovy" do
     @plugin = get_plugin("groovy")
     @plugin[:languages] = Mash.new
     @stdout = "Groovy Version: 1.6.3 JVM: 1.6.0_0\n"
-    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the groovy version from running groovy -v" do
-    @plugin.should_receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("groovy -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
   it "should set languages[:groovy][:version]" do
     @plugin.run
-    @plugin.languages[:groovy][:version].should eql("1.6.3")
+    expect(@plugin.languages[:groovy][:version]).to eql("1.6.3")
   end
 
   it "should not set the languages[:groovy] tree up if groovy command fails" do
-    @plugin.stub(:shell_out).with("groovy -v").and_return(mock_shell_out(1, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("groovy -v").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:groovy)
+    expect(@plugin.languages).not_to have_key(:groovy)
   end
 
 end

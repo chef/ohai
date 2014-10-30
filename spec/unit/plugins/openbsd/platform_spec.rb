@@ -22,13 +22,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "OpenBSD plugin platform" do
   before(:each) do
     @plugin = get_plugin("openbsd/platform")
-    @plugin.stub(:shell_out).with("uname -s").and_return(mock_shell_out(0, "OpenBSD\n", ""))
-    @plugin.stub(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
-    @plugin.stub(:collect_os).and_return(:openbsd)
+    allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "OpenBSD\n", ""))
+    allow(@plugin).to receive(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
+    allow(@plugin).to receive(:collect_os).and_return(:openbsd)
   end
   
   it "should set platform_version to lsb[:release]" do
     @plugin.run
-    @plugin[:platform_version].should == "4.5"
+    expect(@plugin[:platform_version]).to eq("4.5")
   end
 end  

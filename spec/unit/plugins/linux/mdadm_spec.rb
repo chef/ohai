@@ -54,48 +54,48 @@ Working Devices : 6
        5       8      112        5      active sync   /dev/sdh
 MD
     @plugin = get_plugin("linux/mdadm")
-    @plugin.stub(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/mdstat")
-    @double_file.stub(:each).
+    allow(@double_file).to receive(:each).
     and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
     and_yield("md0 : active raid10 sdh[5] sdg[4] sdf[3] sde[2] sdd[1] sdc[0]").
     and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
-    File.stub(:open).with("/proc/mdstat").and_return(@double_file)
-    File.stub(:exist?).with("/proc/mdstat").and_return(true)
-    @plugin.stub(:shell_out).with("mdadm --detail /dev/md0").and_return(mock_shell_out(0, @md0, ""))
+    allow(File).to receive(:open).with("/proc/mdstat").and_return(@double_file)
+    allow(File).to receive(:exist?).with("/proc/mdstat").and_return(true)
+    allow(@plugin).to receive(:shell_out).with("mdadm --detail /dev/md0").and_return(mock_shell_out(0, @md0, ""))
   end
 
   describe "gathering Mdadm information via /proc/mdstat and mdadm" do
 
     it "should not raise an error" do
-      lambda { @plugin.run }.should_not raise_error
+      expect { @plugin.run }.not_to raise_error
     end
 
     it "should detect raid level" do
       @plugin.run
-      @plugin[:mdadm][:md0][:level].should == 10
+      expect(@plugin[:mdadm][:md0][:level]).to eq(10)
     end
 
     it "should detect raid state" do
       @plugin.run
-      @plugin[:mdadm][:md0][:state].should == "clean"
+      expect(@plugin[:mdadm][:md0][:state]).to eq("clean")
     end
 
     it "should detect raid size" do
       @plugin.run
-      @plugin[:mdadm][:md0][:size].should == 2794.16
+      expect(@plugin[:mdadm][:md0][:size]).to eq(2794.16)
     end
 
     it "should detect raid metadata level" do
       @plugin.run
-      @plugin[:mdadm][:md0][:version].should == 1.2
+      expect(@plugin[:mdadm][:md0][:version]).to eq(1.2)
     end
 
     device_counts = { :raid => 6, :total => 6, :active => 6, :working => 6, :failed => 0, :spare => 0 }
     device_counts.each_pair do |item, expected_value|
       it "should detect device count of \"#{item}\"" do
         @plugin.run
-        @plugin[:mdadm][:md0][:device_counts][item].should == expected_value
+        expect(@plugin[:mdadm][:md0][:device_counts][item]).to eq(expected_value)
       end
     end
 

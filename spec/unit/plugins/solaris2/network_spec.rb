@@ -112,40 +112,40 @@ ROUTE_GET
     @ifconfig_lines = @solaris_ifconfig.split("\n")
 
     @plugin = get_plugin("solaris2/network")
-    @plugin.stub(:collect_os).and_return(:solaris2)
+    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
     @plugin[:network] = Mash.new
 
-    @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))
-    @plugin.stub(:shell_out).with("arp -an").and_return(mock_shell_out(0, @solaris_arp_rn, ""))
-    @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
+    allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))
+    allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @solaris_arp_rn, ""))
+    allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
   end
 
   describe "gathering IP layer address info" do
     before do
       @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
-      @plugin.stub(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_ifconfig, ""))
+      allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_ifconfig, ""))
       @plugin.run
     end
 
     it "completes the run" do
-      @plugin['network'].should_not be_nil
+      expect(@plugin['network']).not_to be_nil
     end
 
     it "detects the interfaces" do
-      @plugin['network']['interfaces'].keys.sort.should == ["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3","net0", "qfe1"]
+      expect(@plugin['network']['interfaces'].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3","net0", "qfe1"])
     end
 
     it "detects the ip addresses of the interfaces" do
-      @plugin['network']['interfaces']['e1000g0:3']['addresses'].keys.should include('72.2.115.28')
+      expect(@plugin['network']['interfaces']['e1000g0:3']['addresses'].keys).to include('72.2.115.28')
     end
 
     it "detects the encapsulation type of the interfaces" do
-      @plugin['network']['interfaces']['e1000g0:3']['encapsulation'].should == 'Ethernet'
+      expect(@plugin['network']['interfaces']['e1000g0:3']['encapsulation']).to eq('Ethernet')
     end
     
     it "detects the L3PROTECT network flag" do
-      @plugin['network']['interfaces']['net0']['flags'].should include('L3PROTECT')
+      expect(@plugin['network']['interfaces']['net0']['flags']).to include('L3PROTECT')
     end
   end
 
@@ -154,12 +154,12 @@ ROUTE_GET
   describe "setting the node's default IP address attribute" do
     before do
       @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      @plugin.stub(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
       @plugin.run
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      @plugin[:network][:default_interface].should == 'e1000g0'
+      expect(@plugin[:network][:default_interface]).to eq('e1000g0')
     end
   end
 end

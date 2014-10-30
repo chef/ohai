@@ -27,7 +27,7 @@ describe Ohai::Mixin::CloudstackMetadata do
 
   context "#best_api_version" do
     it "returns the string latest" do
-      mixin.best_api_version.should == "latest"
+      expect(mixin.best_api_version).to eq("latest")
     end
   end
 end

@@ -73,9 +73,9 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
       expect(@plugin[mash][attribute]).to eq(value)
     elsif mash.is_a?(Array)
       if mash.length == 2
-        @plugin[mash[0]][mash[1]][attribute].should == value
+        expect(@plugin[mash[0]][mash[1]][attribute]).to eq value
       elsif mash.length == 3
-        @plugin[mash[0]][mash[1]][mash[2]][attribute].should == value
+        expect(@plugin[mash[0]][mash[1]][mash[2]][attribute]).to eq value
       else
         return nil
       end

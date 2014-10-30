@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-mocks", "~> 3.0"
   s.add_development_dependency "rspec-collection_matchers", "~> 1.0"
 #  s.add_development_dependency "rspec_junit_formatter"
-#  s.add_development_dependency "chef"
+  s.add_development_dependency "chef"
   s.bindir = "bin"
   s.executables = %w(ohai)
 

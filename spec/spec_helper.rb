@@ -92,10 +92,10 @@ RSpec.configure do |config|
   # `expect` should be preferred for new tests or when refactoring old tests,
   # but we're not going to do a "big bang" change at this time.
   config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
+    c.syntax = :expect
   end
   config.mock_with :rspec do |c|
-    c.syntax = [:expect, :should]
+    c.syntax = :expect
   end
 
   config.filter_run :focus => true

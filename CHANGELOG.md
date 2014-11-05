@@ -1,7 +1,7 @@
 # Ohai Changelog
 
 ## Unreleased:
-
+* Update specs to use RSpec 3 syntax
 
 ## Release 7.6.0
 

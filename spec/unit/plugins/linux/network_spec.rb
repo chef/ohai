@@ -578,8 +578,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
     end
 
     it "detects interfaces only visible via ip link" do
-      @plugin.run
-      @plugin['network']['interfaces']['eth3']['state'].should == 'up'
+      expect(plugin['network']['interfaces']['eth3']['state']).to eq('up')
     end
 
     describe "when dealing with routes" do

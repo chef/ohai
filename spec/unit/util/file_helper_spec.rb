@@ -28,12 +28,12 @@ describe "Ohai::Util::FileHelper" do
   let(:file_helper) { FileHelperMock.new }
 
   before(:each) do
-    File.stub(:executable?).and_return(false)
+    allow(File).to receive(:executable?).and_return(false)
   end
 
   describe "which" do
     it "returns the path to an executable that is in the path" do
-      File.stub(:executable?).with('/usr/bin/skyhawk').and_return(true)
+      allow(File).to receive(:executable?).with('/usr/bin/skyhawk').and_return(true)
 
       expect(file_helper.which('skyhawk')).to eql "/usr/bin/skyhawk"
     end

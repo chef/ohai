@@ -37,7 +37,7 @@ describe "Ohai::Hints" do
     end
 
     it "hint? should return nil" do
-      Ohai::Hints.hint?("cloud").should be_nil
+      expect(Ohai::Hints.hint?("cloud")).to be_nil
     end
   end
 
@@ -54,11 +54,11 @@ EOF
     end
 
     it "hint? should return the data for full hints" do
-      Ohai::Hints.hint?("cloud").should == {"name" => "circus"}
+      expect(Ohai::Hints.hint?("cloud")).to eq({"name" => "circus"})
     end
 
     it "hint? should return empty hash for empty hints" do
-      Ohai::Hints.hint?("cloud_empty").should == { }
+      expect(Ohai::Hints.hint?("cloud_empty")).to eq({ })
     end
   end
 

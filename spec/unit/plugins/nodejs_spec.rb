@@ -26,24 +26,24 @@ describe Ohai::System, "plugin nodejs" do
     @plugin = get_plugin("nodejs")
     @plugin[:languages] = Mash.new
     @stdout = "v0.8.11\n"
-    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the nodejs version from running node -v" do
-    @plugin.should_receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
   it "should set languages[:nodejs][:version]" do
     @plugin.run
-    @plugin.languages[:nodejs][:version].should eql("0.8.11")
+    expect(@plugin.languages[:nodejs][:version]).to eql("0.8.11")
   end
 
   it "should not set the languages[:nodejs] tree up if node command fails" do
     @stdout = "v0.8.11\n"
-    @plugin.stub(:shell_out).with("node -v").and_return(mock_shell_out(1, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:nodejs)
+    expect(@plugin.languages).not_to have_key(:nodejs)
   end
 
 end

@@ -40,25 +40,25 @@ Object cache: 12 hits of 139872 lookups (0% hit rate)
     DARWIN_VM_STAT
 
     @plugin = get_plugin("darwin/memory")
-    @plugin.stub(:collect_os).and_return(:darwin)
-    @plugin.stub(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, darwin_memsize, ""))
-    @plugin.stub(:shell_out).with("vm_stat").and_return(mock_shell_out(0, darwin_vm_stat, ""))
+    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, darwin_memsize, ""))
+    allow(@plugin).to receive(:shell_out).with("vm_stat").and_return(mock_shell_out(0, darwin_vm_stat, ""))
     @plugin.run
   end
 
   it "should set memory[:total] to 16384MB" do
-    @plugin[:memory][:total].should == '16384MB'
+    expect(@plugin[:memory][:total]).to eq('16384MB')
   end
 
   it "should set memory[:active] to 5140MB" do
-    @plugin[:memory][:active].should == '5140MB'
+    expect(@plugin[:memory][:active]).to eq('5140MB')
   end
 
   it "should set memory[:inactive] to 738MB" do
-    @plugin[:memory][:inactive].should == '738MB'
+    expect(@plugin[:memory][:inactive]).to eq('738MB')
   end
 
   it "should set memory[:free] to 10504MB" do
-    @plugin[:memory][:free].should == '10504MB'
+    expect(@plugin[:memory][:free]).to eq('10504MB')
   end
 end

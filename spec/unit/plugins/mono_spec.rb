@@ -25,24 +25,24 @@ describe Ohai::System, "plugin mono" do
     @plugin = get_plugin("mono")
     @plugin[:languages] = Mash.new
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
-    @plugin.stub(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the mono version from running mono -V" do
-    @plugin.should_receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
   it "should set languages[:mono][:version]" do
     @plugin.run
-    @plugin.languages[:mono][:version].should eql("1.2.6")
+    expect(@plugin.languages[:mono][:version]).to eql("1.2.6")
   end
 
   it "should not set the languages[:mono] tree up if mono command fails" do
     @stdout = "Mono JIT compiler version 1.2.6 (tarball)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n"
-    @plugin.stub(:shell_out).with("mono -V").and_return(mock_shell_out(1, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:mono)
+    expect(@plugin.languages).not_to have_key(:mono)
   end
 
 end

@@ -34,7 +34,7 @@ describe Ohai::System, "plugin os" do
 
   it "should set os_version to kernel_release" do
     @plugin.run
-    @plugin[:os_version].should == @plugin[:kernel][:release]
+    expect(@plugin[:os_version]).to eq(@plugin[:kernel][:release])
   end
   
   describe "on linux" do
@@ -44,7 +44,7 @@ describe Ohai::System, "plugin os" do
     
     it "should set the os to linux" do
       @plugin.run
-      @plugin[:os].should == "linux"
+      expect(@plugin[:os]).to eq("linux")
     end
   end
   
@@ -55,7 +55,7 @@ describe Ohai::System, "plugin os" do
     
     it "should set the os to darwin" do
       @plugin.run
-      @plugin[:os].should == "darwin"
+      expect(@plugin[:os]).to eq("darwin")
     end
   end
   
@@ -66,7 +66,7 @@ describe Ohai::System, "plugin os" do
     
     it "sets the os to solaris2" do
       @plugin.run
-      @plugin[:os].should == "solaris2"
+      expect(@plugin[:os]).to eq("solaris2")
     end
   end
 
@@ -77,7 +77,7 @@ describe Ohai::System, "plugin os" do
 
     it "sets the os to the ruby 'host_os'" do
       @plugin.run
-      @plugin[:os].should == "tron"
+      expect(@plugin[:os]).to eq("tron")
     end
   end
 end

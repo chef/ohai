@@ -28,7 +28,7 @@ describe "Cloudstack Plugin" do
 
   let(:cloudstack_plugin) do
     plugin = get_plugin("cloudstack", ohai_system)
-    plugin.stub(:hint?).with("cloudstack").and_return(cloudstack_hint)
+    allow(plugin).to receive(:hint?).with("cloudstack").and_return(cloudstack_hint)
     plugin
   end
 
@@ -51,7 +51,7 @@ describe "Cloudstack Plugin" do
     context "and the metadata service is not available" do
 
       before do
-        cloudstack_plugin.should_receive(:can_metadata_connect?).
+        expect(cloudstack_plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::CloudstackMetadata::CLOUDSTACK_METADATA_ADDR,80).
           and_return(false)
       end
@@ -97,21 +97,21 @@ EOM
       let(:http_client) { double("Net::HTTP", :read_timeout= => nil) }
 
       def expect_get(url, response_body)
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
           with(url).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
       before do
-        cloudstack_plugin.should_receive(:can_metadata_connect?).
+        expect(cloudstack_plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::CloudstackMetadata::CLOUDSTACK_METADATA_ADDR,80).
           and_return(true)
 
-        Net::HTTP.stub(:start).
+        allow(Net::HTTP).to receive(:start).
           with(Ohai::Mixin::CloudstackMetadata::CLOUDSTACK_METADATA_ADDR).
           and_return(http_client)
 
-        cloudstack_plugin.stub(:best_api_version).and_return(metadata_version)
+        allow(cloudstack_plugin).to receive(:best_api_version).and_return(metadata_version)
 
         expect_get("/#{metadata_version}/meta-data/", metadata_root)
 

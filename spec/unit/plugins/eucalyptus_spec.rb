@@ -27,7 +27,7 @@ describe Ohai::System, "plugin eucalyptus" do
 
   shared_examples_for "!eucalyptus" do
     it "should NOT attempt to fetch the eucalyptus metadata" do
-      OpenURI.should_not_receive(:open)
+      expect(OpenURI).not_to receive(:open)
       @plugin.run
     end
   end
@@ -35,38 +35,38 @@ describe Ohai::System, "plugin eucalyptus" do
   shared_examples_for "eucalyptus" do
     before(:each) do
       @http_client = double("Net::HTTP client")
-      @plugin.stub(:http_client).and_return(@http_client)
+      allow(@plugin).to receive(:http_client).and_return(@http_client)
 
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/").twice.
         and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/").
         and_return(double("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups", :code => "200"))
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/instance_type").
         and_return(double("Net::HTTP Response", :body => "c1.medium", :code => "200"))
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/ami_id").
         and_return(double("Net::HTTP Response", :body => "ami-5d2dc934", :code => "200"))
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/security-groups").
         and_return(double("Net::HTTP Response", :body => "group1\ngroup2", :code => "200"))
-      @http_client.should_receive(:get).
+      expect(@http_client).to receive(:get).
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
     end
 
     it "should recursively fetch all the eucalyptus metadata" do
-      IO.stub(:select).and_return([[],[1],[]])
+      allow(IO).to receive(:select).and_return([[],[1],[]])
       t = double("connection")
-      t.stub(:connect_nonblock).and_raise(Errno::EINPROGRESS)
-      Socket.stub(:new).and_return(t)
+      allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      allow(Socket).to receive(:new).and_return(t)
       @plugin.run
-      @plugin[:eucalyptus].should_not be_nil
-      @plugin[:eucalyptus]['instance_type'].should == "c1.medium"
-      @plugin[:eucalyptus]['ami_id'].should == "ami-5d2dc934"
-      @plugin[:eucalyptus]['security_groups'].should eql ['group1', 'group2']
+      expect(@plugin[:eucalyptus]).not_to be_nil
+      expect(@plugin[:eucalyptus]['instance_type']).to eq("c1.medium")
+      expect(@plugin[:eucalyptus]['ami_id']).to eq("ami-5d2dc934")
+      expect(@plugin[:eucalyptus]['security_groups']).to eql ['group1', 'group2']
     end
   end
 
@@ -74,7 +74,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      IO.stub(:select).and_return([[],[1],[]])
+      allow(IO).to receive(:select).and_return([[],[1],[]])
       @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
     end
   end
@@ -91,10 +91,10 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
-      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
-      File.stub(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
     end
   end
 
@@ -103,8 +103,8 @@ describe Ohai::System, "plugin eucalyptus" do
 
     before(:each) do
       @plugin[:network] = {:interfaces => {}}
-      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
     end
   end
 
@@ -114,12 +114,12 @@ describe Ohai::System, "plugin eucalyptus" do
     before(:each) do
       @plugin[:network] = {:interfaces => {}}
 
-      File.stub(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
-      File.stub(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      File.stub(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      File.stub(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      File.stub(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
+      allow(File).to receive(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
     end
   end
 

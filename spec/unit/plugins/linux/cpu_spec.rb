@@ -22,9 +22,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux cpu plugin" do
   before(:each) do
     @plugin = get_plugin("linux/cpu")
-    @plugin.stub(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/cpuinfo")
-    @double_file.stub(:each).
+    allow(@double_file).to receive(:each).
       and_yield("processor     : 0").
       and_yield("vendor_id     : GenuineIntel").
       and_yield("cpu family    : 6").
@@ -44,84 +44,84 @@ describe Ohai::System, "Linux cpu plugin" do
       and_yield("flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov").
       and_yield("bogomips      : 2575.86").
       and_yield("clflush size  : 32")
-    File.stub(:open).with("/proc/cpuinfo").and_return(@double_file)
+    allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
   end
   
   it "should set cpu[:total] to 1" do
     @plugin.run
-    @plugin[:cpu][:total].should == 1
+    expect(@plugin[:cpu][:total]).to eq(1)
   end
   
   it "should set cpu[:real] to 0" do
     @plugin.run
-    @plugin[:cpu][:real].should == 0
+    expect(@plugin[:cpu][:real]).to eq(0)
   end
   
   it "should have a cpu 0" do
     @plugin.run
-    @plugin[:cpu].should have_key("0")
+    expect(@plugin[:cpu]).to have_key("0")
   end
   
   it "should have a vendor_id for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("vendor_id")
-    @plugin[:cpu]["0"]["vendor_id"].should eql("GenuineIntel")
+    expect(@plugin[:cpu]["0"]).to have_key("vendor_id")
+    expect(@plugin[:cpu]["0"]["vendor_id"]).to eql("GenuineIntel")
   end
   
   it "should have a family for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("family")
-    @plugin[:cpu]["0"]["family"].should eql("6")
+    expect(@plugin[:cpu]["0"]).to have_key("family")
+    expect(@plugin[:cpu]["0"]["family"]).to eql("6")
   end
   
   it "should have a model for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("model")
-    @plugin[:cpu]["0"]["model"].should eql("23")
+    expect(@plugin[:cpu]["0"]).to have_key("model")
+    expect(@plugin[:cpu]["0"]["model"]).to eql("23")
   end
   
   it "should have a stepping for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("stepping")
-    @plugin[:cpu]["0"]["stepping"].should eql("6")
+    expect(@plugin[:cpu]["0"]).to have_key("stepping")
+    expect(@plugin[:cpu]["0"]["stepping"]).to eql("6")
   end
   
   it "should not have a phyiscal_id for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should_not have_key("physical_id")
+    expect(@plugin[:cpu]["0"]).not_to have_key("physical_id")
   end
   
   it "should not have a core_id for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should_not have_key("core_id")
+    expect(@plugin[:cpu]["0"]).not_to have_key("core_id")
   end
   
   it "should not have a cores for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should_not have_key("cores")
+    expect(@plugin[:cpu]["0"]).not_to have_key("cores")
   end
   
   it "should have a model name for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("model_name")
-    @plugin[:cpu]["0"]["model_name"].should eql("Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz")
+    expect(@plugin[:cpu]["0"]).to have_key("model_name")
+    expect(@plugin[:cpu]["0"]["model_name"]).to eql("Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz")
   end
   
   it "should have a mhz for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("mhz")
-    @plugin[:cpu]["0"]["mhz"].should eql("1968.770")
+    expect(@plugin[:cpu]["0"]).to have_key("mhz")
+    expect(@plugin[:cpu]["0"]["mhz"]).to eql("1968.770")
   end
   
   it "should have a cache_size for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("cache_size")
-    @plugin[:cpu]["0"]["cache_size"].should eql("64 KB")
+    expect(@plugin[:cpu]["0"]).to have_key("cache_size")
+    expect(@plugin[:cpu]["0"]["cache_size"]).to eql("64 KB")
   end
   
   it "should have flags for cpu 0" do
     @plugin.run
-    @plugin[:cpu]["0"].should have_key("flags")
-    @plugin[:cpu]["0"]["flags"].should == %w{fpu pse tsc msr mce cx8 sep mtrr pge cmov}
+    expect(@plugin[:cpu]["0"]).to have_key("flags")
+    expect(@plugin[:cpu]["0"]["flags"]).to eq(%w{fpu pse tsc msr mce cx8 sep mtrr pge cmov})
   end
 end

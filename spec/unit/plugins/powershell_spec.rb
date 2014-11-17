@@ -43,15 +43,15 @@ PSRemotingProtocolVersion      2.2
 
 END
 
-    @plugin.stub(:shell_out).with(anything()).and_return(mock_shell_out(0, v4_output, ""))
+    allow(@plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, v4_output, ""))
     @plugin.run
-    @plugin.languages[:powershell][:version].should eql("4.0")
-    @plugin.languages[:powershell][:ws_man_stack_version].should eql("3.0")
-    @plugin.languages[:powershell][:serialization_version].should eql("1.1.0.1")
-    @plugin.languages[:powershell][:clr_version].should eql("4.0.30319.34014")
-    @plugin.languages[:powershell][:build_version].should eql("6.3.9600.16394")
-    @plugin.languages[:powershell][:compatible_versions].should eql(['1.0', '2.0', '3.0', '4.0'])
-    @plugin.languages[:powershell][:remoting_protocol_version].should eql("2.2")
+    expect(@plugin.languages[:powershell][:version]).to eql("4.0")
+    expect(@plugin.languages[:powershell][:ws_man_stack_version]).to eql("3.0")
+    expect(@plugin.languages[:powershell][:serialization_version]).to eql("1.1.0.1")
+    expect(@plugin.languages[:powershell][:clr_version]).to eql("4.0.30319.34014")
+    expect(@plugin.languages[:powershell][:build_version]).to eql("6.3.9600.16394")
+    expect(@plugin.languages[:powershell][:compatible_versions]).to eql(['1.0', '2.0', '3.0', '4.0'])
+    expect(@plugin.languages[:powershell][:remoting_protocol_version]).to eql("2.2")
   end
 
   it "should not set the languages[:powershell] tree up if powershell command fails" do
@@ -60,9 +60,9 @@ END
 operable program or batch file.
 END
 
-    @plugin.stub(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))
+    allow(@plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:powershell)
+    expect(@plugin.languages).not_to have_key(:powershell)
   end
 
 end

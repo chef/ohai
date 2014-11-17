@@ -21,27 +21,27 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux filesystem plugin" do
   before(:each) do
     @plugin = get_plugin("linux/filesystem")
-    @plugin.stub(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
 
-    @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
-    File.stub(:exist?).with("/bin/lsblk").and_return(false)
-    @plugin.stub(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
+    allow(File).to receive(:exist?).with("/bin/lsblk").and_return(false)
+    allow(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, "", ""))
 
-    @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
+    allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
       and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,UUID").
+    allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,UUID").
       and_return(mock_shell_out(0, "", ""))
-    @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,LABEL").
+    allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,LABEL").
       and_return(mock_shell_out(0, "", ""))
 
-    File.stub(:exist?).with("/proc/mounts").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/mounts").and_return(false)
 
     %w{sdb1 sdb2 sda1 sda2 md0 md1 md2}.each do |name|
-      File.stub(:exist?).with("/dev/#{name}").and_return(true)
+      allow(File).to receive(:exist?).with("/dev/#{name}").and_return(true)
     end
     %w{
        sys.vg-root.lv
@@ -51,8 +51,8 @@ describe Ohai::System, "Linux filesystem plugin" do
        sys.vg-var.lv
        sys.vg-home.lv
     }.each do |name|
-      File.stub(:exist?).with("/dev/#{name}").and_return(false)
-      File.stub(:exist?).with("/dev/mapper/#{name}").and_return(true)
+      allow(File).to receive(:exist?).with("/dev/#{name}").and_return(false)
+      allow(File).to receive(:exist?).with("/dev/mapper/#{name}").and_return(true)
     end
   end
 
@@ -71,7 +71,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
 /dev/md0                960492     36388    875312       4% /boot
 DF
-      @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -81,53 +81,53 @@ tmpfs           126922    273  126649    1% /run
 none            126922      1  126921    1% /run/lock
 none            126922      1  126921    1% /run/shm
 DFi
-      @plugin.stub(:shell_out).with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
     it "should run df -P and df -i" do
-      @plugin.should_receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.should_receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
+      expect(@plugin).to receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      expect(@plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from df -P" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size].should be == "97605057"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size]).to eq("97605057")
     end
 
     it "should set kb_used to value from df -P" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used].should be == "53563253"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used]).to eq("53563253")
     end
 
     it "should set kb_available to value from df -P" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available].should be == "44041805"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available]).to eq("44041805")
     end
 
     it "should set percent_used to value from df -P" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used].should be == "56%"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used]).to eq("56%")
     end
 
     it "should set mount to value from df -P" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
     
     it "should set total_inodes to value from df -i" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes].should be == "124865"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes]).to eq("124865")
     end
     
     it "should set inodes_used to value from df -i" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used].should be == "380"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used]).to eq("380")
     end
     
     it "should set inodes_available to value from df -i" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available].should be == "124485"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available]).to eq("124485")
     end
   end
 
@@ -150,27 +150,27 @@ devpts on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=620)
 fusectl on /sys/fs/fuse/connections type fusectl (rw)
 binfmt_misc on /proc/sys/fs/binfmt_misc type binfmt_misc (rw,noexec,nosuid,nodev)
 MOUNT
-      @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run mount" do
-      @plugin.should_receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      expect(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set mount to value from mount" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
 
     it "should set fs_type to value from mount" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type]).to eq("xfs")
     end
 
     it "should set mount_options to an array of values from mount" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime" ]
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq([ "ro", "noatime" ])
     end
   end
 
@@ -190,23 +190,23 @@ MOUNT
 /dev/mapper/sys.vg-var.lv: TYPE=\"ext4\" 
 /dev/mapper/sys.vg-home.lv: TYPE=\"xfs\" 
 BLKID_TYPE
-      @plugin.stub(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid -s TYPE" do
-      @plugin.should_receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
+      expect(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from blkid -s TYPE" do
       @plugin.run
-      @plugin[:filesystem]["/dev/md1"][:fs_type].should be == "LVM2_member"
+      expect(@plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
   end
 
   describe "when gathering filesystem type data from lsblk" do
     before(:each) do
-      File.stub(:exist?).with("/bin/lsblk").and_return(true)
+      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
 sdb1 linux_raid_member 
 sdb2 linux_raid_member 
@@ -221,19 +221,19 @@ sys.vg-usr.lv ext4
 sys.vg-var.lv ext4 
 sys.vg-home.lv xfs 
 BLKID_TYPE
-      @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
+      allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run lsblk -r -n -o NAME,FSTYPE" do
-      @plugin.should_receive(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
+      expect(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from lsblk -r -n -o NAME,FSTYPE" do
       @plugin.run
-      @plugin[:filesystem]["/dev/md1"][:fs_type].should be == "LVM2_member"
+      expect(@plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
   end
 
@@ -253,23 +253,23 @@ BLKID_TYPE
 /dev/mapper/sys.vg-var.lv: UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" 
 /dev/mapper/sys.vg-home.lv: UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" 
 BLKID_UUID
-      @plugin.stub(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid -s UUID" do
-      @plugin.should_receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
+      expect(@plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from blkid -s UUID" do
       @plugin.run
-      @plugin[:filesystem]["/dev/sda2"][:uuid].should be == "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+      expect(@plugin[:filesystem]["/dev/sda2"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
     end
   end
 
   describe "when gathering filesystem uuid data from lsblk" do
     before(:each) do
-      File.stub(:exist?).with("/bin/lsblk").and_return(true)
+      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_UUID
 sdb1 bd1197e0-6997-1f3a-e27e-7801388308b5 
 sdb2 e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa 
@@ -284,20 +284,21 @@ sys.vg-usr.lv 26ec33c5-d00b-4f88-a550-492def013bbc
 sys.vg-var.lv 6b559c35-7847-4ae2-b512-c99012d3f5b3 
 sys.vg-home.lv d6efda02-1b73-453c-8c74-7d8dee78fa5e 
 BLKID_UUID
-      @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,UUID").
+      allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run lsblk -r -n -o NAME,UUID" do
-      @plugin.should_receive(:shell_out).with("lsblk -r -n -o NAME,UUID").
+      expect(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from lsblk -r -n -o NAME,UUID" do
       @plugin.run
-      @plugin[:filesystem]["/dev/sda2"][:uuid].should be ==
+      expect(@plugin[:filesystem]["/dev/sda2"][:uuid]).to eq(
         "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+      )
     end
   end
 
@@ -315,23 +316,23 @@ BLKID_UUID
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" 
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" 
 BLKID_LABEL
-      @plugin.stub(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid -s LABEL" do
-      @plugin.should_receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
+      expect(@plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from blkid -s LABEL" do
       @plugin.run
-      @plugin[:filesystem]["/dev/md0"][:label].should be == "/boot"
+      expect(@plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end
   end
 
   describe "when gathering filesystem label data from lsblk" do
     before(:each) do
-      File.stub(:exist?).with("/bin/lsblk").and_return(true)
+      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_LABEL
 sda1 fuego:0 
 sda2 fuego:1 
@@ -344,26 +345,26 @@ sys.vg-usr.lv /usr
 sys.vg-var.lv /var 
 sys.vg-home.lv /home 
 BLKID_LABEL
-      @plugin.stub(:shell_out).with("lsblk -r -n -o NAME,LABEL").
+      allow(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid -s LABEL" do
-      @plugin.should_receive(:shell_out).with("lsblk -r -n -o NAME,LABEL").
+      expect(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
     it "should set kb_size to value from blkid -s LABEL" do
       @plugin.run
-      @plugin[:filesystem]["/dev/md0"][:label].should be == "/boot"
+      expect(@plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end
   end
 
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
-      File.stub(:exist?).with("/proc/mounts").and_return(true)
+      allow(File).to receive(:exist?).with("/proc/mounts").and_return(true)
       @double_file = double("/proc/mounts")
       @mounts = <<-MOUNTS
 rootfs / rootfs rw 0 0
@@ -384,28 +385,28 @@ fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
 binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
 MOUNTS
       @counter = 0
-      @double_file.stub(:read_nonblock) do
+      allow(@double_file).to receive(:read_nonblock) do
         @counter += 1
         raise EOFError if @counter == 2
         @mounts
       end
-      @double_file.stub(:close)
-      File.stub(:open).with("/proc/mounts").and_return(@double_file)
+      allow(@double_file).to receive(:close)
+      allow(File).to receive(:open).with("/proc/mounts").and_return(@double_file)
     end
 
     it "should set mount to value from /proc/mounts" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount].should be == "/special"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
   
     it "should set fs_type to value from /proc/mounts" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type].should be == "xfs"
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type]).to eq("xfs")
     end
   
     it "should set mount_options to an array of values from /proc/mounts" do
       @plugin.run
-      @plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options].should be == [ "ro", "noatime", "attr2", "noquota" ]
+      expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
     end
   end
 

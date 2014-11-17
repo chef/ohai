@@ -21,7 +21,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_he
 describe Ohai::System, "Init package" do
   let(:plugin) {
     p = get_plugin("init_package")
-    p.stub(:collect_os).and_return("linux")
+    allow(p).to receive(:collect_os).and_return("linux")
     p
   }
 
@@ -30,13 +30,13 @@ describe Ohai::System, "Init package" do
   let(:proc_1_file) { double(proc_1_file_path, :gets => proc1_content) }
 
   before(:each) do
-    File.stub(:exists?).with(proc_1_file_path).and_return(true)
-    File.stub(:open).with(proc_1_file_path).and_return(proc_1_file)
+    allow(File).to receive(:exists?).with(proc_1_file_path).and_return(true)
+    allow(File).to receive(:open).with(proc_1_file_path).and_return(proc_1_file)
   end
 
   it "should set init_package to init" do
     plugin.run
-    plugin[:init_package].should == "init"
+    expect(plugin[:init_package]).to eq("init")
   end
 
   describe "when init_package is systemd" do
@@ -44,7 +44,7 @@ describe Ohai::System, "Init package" do
 
     it "should set init_package to systemd" do
       plugin.run
-      plugin[:init_package].should == "systemd"
+      expect(plugin[:init_package]).to eq("systemd")
     end
   end
 end

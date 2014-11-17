@@ -24,46 +24,46 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Linux lsb plugin" do
   before(:each) do
     @plugin = get_plugin("linux/lsb")
-    @plugin.stub(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
   end
 
   describe "on systems with /etc/lsb-release" do
     before(:each) do
       @double_file = double("/etc/lsb-release")
-      @double_file.stub(:each).
+      allow(@double_file).to receive(:each).
         and_yield("DISTRIB_ID=Ubuntu").
         and_yield("DISTRIB_RELEASE=8.04").
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-      File.stub(:open).with("/etc/lsb-release").and_return(@double_file) 
-      File.stub(:exists?).with("/etc/lsb-release").and_return(true)
+      allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file) 
+      allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
     it "should set lsb[:id]" do
       @plugin.run
-      @plugin[:lsb][:id].should == "Ubuntu"
+      expect(@plugin[:lsb][:id]).to eq("Ubuntu")
     end
   
     it "should set lsb[:release]" do
       @plugin.run
-      @plugin[:lsb][:release].should == "8.04"
+      expect(@plugin[:lsb][:release]).to eq("8.04")
     end
   
     it "should set lsb[:codename]" do
       @plugin.run
-      @plugin[:lsb][:codename].should == "hardy"
+      expect(@plugin[:lsb][:codename]).to eq("hardy")
     end
   
     it "should set lsb[:description]" do
       @plugin.run
-      @plugin[:lsb][:description].should == "Ubuntu 8.04"
+      expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
     end
   end
 
   describe "on systems with /usr/bin/lsb_release" do
     before(:each) do
-      File.stub(:exists?).with("/etc/lsb-release").and_return(false)
-      File.stub(:exists?).with("/usr/bin/lsb_release").and_return(true)
+      allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
+      allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(true)
   
       @stdin = double("STDIN", { :close => true })
       @pid = 10
@@ -82,27 +82,27 @@ Description:  CentOS release 5.4 (Final)
 Release:  5.4
 Codename: Final
 LSB_RELEASE
-        @plugin.stub(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
       it "should set lsb[:id]" do
         @plugin.run
-        @plugin[:lsb][:id].should == "CentOS"
+        expect(@plugin[:lsb][:id]).to eq("CentOS")
       end
     
       it "should set lsb[:release]" do
         @plugin.run
-        @plugin[:lsb][:release].should == "5.4"
+        expect(@plugin[:lsb][:release]).to eq("5.4")
       end
     
       it "should set lsb[:codename]" do
         @plugin.run
-        @plugin[:lsb][:codename].should == "Final"
+        expect(@plugin[:lsb][:codename]).to eq("Final")
       end
     
       it "should set lsb[:description]" do
         @plugin.run
-        @plugin[:lsb][:description].should == "CentOS release 5.4 (Final)"
+        expect(@plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
       end
     end
 
@@ -115,34 +115,34 @@ Description:    Fedora release 14 (Laughlin)
 Release:        14
 Codename:       Laughlin
 LSB_RELEASE
-        @plugin.stub(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
   
       it "should set lsb[:id]" do
         @plugin.run
-        @plugin[:lsb][:id].should == "Fedora"
+        expect(@plugin[:lsb][:id]).to eq("Fedora")
       end
     
       it "should set lsb[:release]" do
         @plugin.run
-        @plugin[:lsb][:release].should == "14"
+        expect(@plugin[:lsb][:release]).to eq("14")
       end
     
       it "should set lsb[:codename]" do
         @plugin.run
-        @plugin[:lsb][:codename].should == "Laughlin"
+        expect(@plugin[:lsb][:codename]).to eq("Laughlin")
       end
     
       it "should set lsb[:description]" do
         @plugin.run
-        @plugin[:lsb][:description].should == "Fedora release 14 (Laughlin)"
+        expect(@plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
       end
     end
   end
 
   it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
-    File.stub(:exists?).with("/etc/lsb-release").and_return(false)
-    File.stub(:exists?).with("/usr/bin/lsb_release").and_return(false)
-    @plugin.attribute?(:lsb).should be(false)
+    allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
+    allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
+    expect(@plugin.attribute?(:lsb)).to be(false)
   end
 end

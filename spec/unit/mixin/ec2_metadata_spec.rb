@@ -23,8 +23,8 @@ describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) {
     metadata_object = Object.new.extend(Ohai::Mixin::Ec2Metadata)
     http_client = double("Net::HTTP client")
-    http_client.stub(:get).and_return(response)
-    metadata_object.stub(:http_client).and_return(http_client)
+    allow(http_client).to receive(:get).and_return(response)
+    allow(metadata_object).to receive(:http_client).and_return(http_client)
     metadata_object
   }
 
@@ -33,7 +33,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "200") }
 
       it "returns the most recent version" do
-        mixin.best_api_version.should == "2012-01-12"
+        expect(mixin.best_api_version).to eq("2012-01-12")
       end
     end
 
@@ -41,7 +41,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2009-04-04\n2007-03-01\n2011-05-01\n2008-09-01\nUnsupported", :code => "200") }
 
       it "returns the most recent version (using string sort)" do
-        mixin.best_api_version.should == "2011-05-01"
+        expect(mixin.best_api_version).to eq("2011-05-01")
       end
     end
 
@@ -49,7 +49,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "2020-01-01\nUnsupported", :code => "200") }
 
       it "raises an error" do
-        lambda { mixin.best_api_version}.should raise_error
+        expect { mixin.best_api_version}.to raise_error
       end
     end
 
@@ -58,7 +58,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :code => "404") }
 
       it "returns 'latest' as the version" do
-        mixin.best_api_version.should == 'latest'
+        expect(mixin.best_api_version).to eq('latest')
       end
     end
 
@@ -66,7 +66,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "418") }
 
       it "raises an error" do
-        lambda { mixin.best_api_version}.should raise_error
+        expect { mixin.best_api_version}.to raise_error
       end
     end
   end
@@ -76,7 +76,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "", :code => "418") }
 
       it "raises an error" do
-        lambda { mixin.metadata_get('', '2012-01-12') }.should raise_error(RuntimeError)
+        expect { mixin.metadata_get('', '2012-01-12') }.to raise_error(RuntimeError)
       end
     end
   end

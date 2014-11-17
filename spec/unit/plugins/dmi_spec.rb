@@ -95,11 +95,11 @@ describe Ohai::System, "plugin dmi" do
   before(:each) do
     @plugin = get_plugin("dmi")
     @stdout = DMI_OUT
-    @plugin.stub(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run dmidecode" do
-    @plugin.should_receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -121,7 +121,7 @@ describe Ohai::System, "plugin dmi" do
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do
         @plugin.run
-        @plugin[:dmi][id][attribute].should eql(value)
+        expect(@plugin[:dmi][id][attribute]).to eql(value)
       end
     end
   end

@@ -21,24 +21,24 @@ describe Ohai::System, "plugin go" do
     @plugin = get_plugin("go")
     @plugin[:languages] = Mash.new
     @stdout = "go version go1.1.2 darwin/amd64\n"
-    @plugin.stub(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should get the go version" do
-    @plugin.should_receive(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
   it "should set languages[:go][:version]" do
     @plugin.run
-    @plugin.languages[:go][:version].should eql("1.1.2")
+    expect(@plugin.languages[:go][:version]).to eql("1.1.2")
   end
 
   it "should not set the languages[:go] tree up if go command fails" do
     @stdout = "go version go1.1.2 darwin/amd64\n"
-    @plugin.stub(:shell_out).with("go version").and_return(mock_shell_out(1, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:go)
+    expect(@plugin.languages).not_to have_key(:go)
   end
 
 end

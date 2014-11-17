@@ -23,10 +23,10 @@ describe Ohai::System, 'languages plugin' do
   describe 'powershell plugin', :windows_only do
     RSpec.shared_examples "a version looking thing" do
       it 'should be present' do
-        subject.should_not be_nil
+        expect(subject).not_to be_nil
       end
       it 'should look like a version' do
-        subject.should match(VERSION_MATCHING_REGEX)
+        expect(subject).to match(VERSION_MATCHING_REGEX)
       end
     end
     before(:all) do
@@ -38,7 +38,7 @@ describe Ohai::System, 'languages plugin' do
     subject { @plugin[:languages][:powershell] }
 
     it 'should have information about powershell' do
-      subject.should_not be_nil
+      expect(subject).not_to be_nil
     end
 
     describe :version do
@@ -74,7 +74,7 @@ describe Ohai::System, 'languages plugin' do
     describe :compatible_versions do
       it 'has compatible_versions that look like versions' do
         @plugin.languages[:powershell][described_class].each do |version|
-          version.should match(VERSION_MATCHING_REGEX)
+          expect(version).to match(VERSION_MATCHING_REGEX)
         end
       end
     end

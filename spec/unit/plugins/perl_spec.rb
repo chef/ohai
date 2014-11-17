@@ -24,35 +24,35 @@ describe Ohai::System, "plugin perl" do
     @plugin = get_plugin("perl")
     @plugin[:languages] = Mash.new
     @stdout = "version='5.8.8';#{$/}archname='darwin-thread-multi-2level';"
-    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run perl -V:version -V:archname" do
-    @plugin.should_receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
   it "should set languages[:perl][:version]" do
     @plugin.run
-    @plugin.languages[:perl][:version].should eql("5.8.8")
+    expect(@plugin.languages[:perl][:version]).to eql("5.8.8")
   end
 
   it "should set languages[:perl][:archname]" do
     @plugin.run
-    @plugin.languages[:perl][:archname].should eql("darwin-thread-multi-2level")
+    expect(@plugin.languages[:perl][:archname]).to eql("darwin-thread-multi-2level")
   end
 
   it "should set languages[:perl] if perl command succeeds" do
-    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
-    @plugin.languages.should have_key(:perl)
+    expect(@plugin.languages).to have_key(:perl)
   end
 
   it "should not set languages[:perl] if perl command fails" do
     @status = 1
-    @plugin.stub(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, @stdout, ""))
     @plugin.run
-    @plugin.languages.should_not have_key(:perl)
+    expect(@plugin.languages).not_to have_key(:perl)
   end
 
 end

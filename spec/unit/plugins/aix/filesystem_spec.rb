@@ -46,10 +46,10 @@ DF_P
 MOUNT
 
     @plugin = get_plugin("aix/filesystem")
-    @plugin.stub(:collect_os).and_return(:aix)
+    allow(@plugin).to receive(:collect_os).and_return(:aix)
     @plugin[:filesystem] = Mash.new
-    @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, @df_P, nil))
-    @plugin.stub(:shell_out).with("mount").and_return(mock_shell_out(0, @mount, nil))
+    allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @df_P, nil))
+    allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount, nil))
 
     @plugin.run
   end
@@ -57,56 +57,56 @@ MOUNT
   describe "df -P" do
 
     it "returns the filesystem block size" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_size'].should == "786432"
+      expect(@plugin[:filesystem]["/dev/hd4"]['kb_size']).to eq("786432")
     end
 
     it "returns the filesystem used space in kb" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_used'].should == "495632"
+      expect(@plugin[:filesystem]["/dev/hd4"]['kb_used']).to eq("495632")
     end
 
     it "returns the filesystem available space in kb" do
-      @plugin[:filesystem]["/dev/hd4"]['kb_available'].should == "290800"
+      expect(@plugin[:filesystem]["/dev/hd4"]['kb_available']).to eq("290800")
     end
 
     it "returns the filesystem capacity in percentage" do
-      @plugin[:filesystem]["/dev/hd4"]['percent_used'].should == "64%"
+      expect(@plugin[:filesystem]["/dev/hd4"]['percent_used']).to eq("64%")
     end
 
     it "returns the filesystem mounted location" do
-      @plugin[:filesystem]["/dev/hd4"]['mount'].should == "/"
+      expect(@plugin[:filesystem]["/dev/hd4"]['mount']).to eq("/")
     end
   end
 
   describe "mount" do
 
     it "returns the filesystem mount location" do
-      @plugin[:filesystem]["/dev/hd4"]['mount'].should == "/"
+      expect(@plugin[:filesystem]["/dev/hd4"]['mount']).to eq("/")
     end
 
     it "returns the filesystem type" do
-      @plugin[:filesystem]["/dev/hd4"]['fs_type'].should == "jfs2"
+      expect(@plugin[:filesystem]["/dev/hd4"]['fs_type']).to eq("jfs2")
     end
 
     it "returns the filesystem mount options" do
-      @plugin[:filesystem]["/dev/hd4"]['mount_options'].should == "rw,log=/dev/hd8"
+      expect(@plugin[:filesystem]["/dev/hd4"]['mount_options']).to eq("rw,log=/dev/hd8")
     end
 
     # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
     context "having node values" do
       before do
-        @plugin.stub(:shell_out).with("df -P").and_return(mock_shell_out(0, "192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys", nil))
+        allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys", nil))
       end
 
       it "returns the filesystem mount location" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount'].should == "/stage/middleware"
+        expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount']).to eq("/stage/middleware")
       end
 
       it "returns the filesystem type" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type'].should == "nfs3"
+        expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type']).to eq("nfs3")
       end
 
       it "returns the filesystem mount options" do
-        @plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options'].should == "ro,bg,hard,intr,sec=sys"
+        expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options']).to eq("ro,bg,hard,intr,sec=sys")
       end
     end
   end

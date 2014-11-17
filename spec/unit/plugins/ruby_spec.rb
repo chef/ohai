@@ -53,7 +53,7 @@ describe Ohai::System, "plugin ruby" do
     :ruby_bin => ruby_bin
   }.each do |attribute, value|
     it "should have #{attribute} set" do
-      @ruby_ohai_data[attribute].should eql(value)
+      expect(@ruby_ohai_data[attribute]).to eql(value)
     end
   end
   

@@ -30,7 +30,7 @@ begin
 
     it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
       @plugin.run
-      @plugin[:chef_packages][:chef][:version].should == Chef::VERSION
+      expect(@plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
     end
   
     pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)

@@ -29,8 +29,8 @@ describe "OpenStack Plugin" do
 
   let(:openstack_plugin) do
     plugin = get_plugin("openstack", ohai_system)
-    plugin.stub(:hint?).with("openstack").and_return(openstack_hint)
-    plugin.stub(:hint?).with("hp").and_return(hp_hint)
+    allow(plugin).to receive(:hint?).with("openstack").and_return(openstack_hint)
+    allow(plugin).to receive(:hint?).with("hp").and_return(hp_hint)
     plugin
   end
 
@@ -52,7 +52,7 @@ describe "OpenStack Plugin" do
     context "and the metadata service is not available" do
 
       before do
-        openstack_plugin.should_receive(:can_metadata_connect?).
+        expect(openstack_plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80).
           and_return(false)
       end
@@ -141,27 +141,27 @@ EOM
       let(:http_client) { double("Net::HTTP", :read_timeout= => nil) }
 
       def expect_get(url, response_body)
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
           with(url).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
       def expect_get_response(url, response_body)
-        http_client.should_receive(:get_response).
+        expect(http_client).to receive(:get_response).
           with(url,nil,nil).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
       before do
-        openstack_plugin.should_receive(:can_metadata_connect?).
+        expect(openstack_plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80).
           and_return(true)
 
-        Net::HTTP.stub(:start).
+        allow(Net::HTTP).to receive(:start).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR).
           and_return(http_client)
 
-        openstack_plugin.stub(:best_api_version).and_return(metadata_version)
+        allow(openstack_plugin).to receive(:best_api_version).and_return(metadata_version)
 
         expect_get("/#{metadata_version}/meta-data/", metadata_root)
 

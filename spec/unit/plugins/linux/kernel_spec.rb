@@ -32,11 +32,11 @@ virtio_balloon         13168  0
 floppy                 55441  0
 ENV_LSMOD
     @plugin = get_plugin("kernel")
-    @plugin.stub(:collect_os).and_return(:linux)
-    @plugin.stub(:init_kernel).and_return({})
-    @plugin.stub(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
-    @plugin.stub(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
-    @plugin.should_receive(:shell_out).with("env lsmod").at_least(1).times
+    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(@plugin).to receive(:init_kernel).and_return({})
+    allow(@plugin).to receive(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
+    allow(@plugin).to receive(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
+    expect(@plugin).to receive(:shell_out).with("env lsmod").at_least(1).times
     @plugin.run
   end
 

@@ -34,7 +34,7 @@ describe Ohai::System, "Sigar network route plugin" do
     before(:each) do
       @ohai = Ohai::System.new
       @plugin = get_plugin("sigar/network", @ohai)
-      @plugin.stub(:collect_os).and_return(:sigar)
+      allow(@plugin).to receive(:collect_os).and_return(:sigar)
       @sigar = double("Sigar")
       @net_info_conf={
         :default_gateway => "192.168.1.254",
@@ -45,7 +45,7 @@ describe Ohai::System, "Sigar network route plugin" do
       }
       net_info=double("Sigar::NetInfo")
       @net_info_conf.each_pair do |k,v|
-        net_info.stub(k).and_return(v)
+        allow(net_info).to receive(k).and_return(v)
       end
       @net_route_conf={
         :destination => "192.168.1.0",
@@ -62,7 +62,7 @@ describe Ohai::System, "Sigar network route plugin" do
       }
       net_route=double("Sigar::NetRoute")
       @net_route_conf.each_pair do |k,v|
-        net_route.stub(k).and_return(v)
+        allow(net_route).to receive(k).and_return(v)
       end
       @net_interface_conf={
         :flags => 2115,
@@ -79,7 +79,7 @@ describe Ohai::System, "Sigar network route plugin" do
       }
       net_conf=double("Sigar::NetConf")
       @net_interface_conf.each_pair do |k,v|
-        net_conf.stub(k).and_return(v)
+        allow(net_conf).to receive(k).and_return(v)
       end
       @net_interface_stat={
         :rx_bytes=>1369035618,
@@ -99,7 +99,7 @@ describe Ohai::System, "Sigar network route plugin" do
       }
       net_stat=double("Sigar::NetStat")
       @net_interface_stat.each_pair do |k,v|
-        net_stat.stub(k).and_return(v)
+        allow(net_stat).to receive(k).and_return(v)
       end
       @net_arp_conf={
         :address => "192.168.1.5",
@@ -110,24 +110,24 @@ describe Ohai::System, "Sigar network route plugin" do
       }
       net_arp=double("Sigar::NetArp")
       @net_arp_conf.each_pair do |k,v|
-        net_arp.stub(k).and_return(v)
+        allow(net_arp).to receive(k).and_return(v)
       end
-      @sigar.stub(:fqdn).and_return("localhost.localdomain")
-      @sigar.should_receive(:net_info).once.times.and_return(net_info)
-      @sigar.should_receive(:net_interface_list).once.and_return(["eth0"])
-      @sigar.should_receive(:net_interface_config).with("eth0").and_return(net_conf)
-      @sigar.should_receive(:net_interface_stat).with("eth0").and_return(net_stat)
-      @sigar.should_receive(:arp_list).once.and_return([net_arp])
+      allow(@sigar).to receive(:fqdn).and_return("localhost.localdomain")
+      expect(@sigar).to receive(:net_info).once.times.and_return(net_info)
+      expect(@sigar).to receive(:net_interface_list).once.and_return(["eth0"])
+      expect(@sigar).to receive(:net_interface_config).with("eth0").and_return(net_conf)
+      expect(@sigar).to receive(:net_interface_stat).with("eth0").and_return(net_stat)
+      expect(@sigar).to receive(:arp_list).once.and_return([net_arp])
 
       # Since we double net_route_list here, flags never gets called
-      @sigar.should_receive(:net_route_list).once.and_return([net_route])
-      Sigar.should_receive(:new).once.and_return(@sigar)
+      expect(@sigar).to receive(:net_route_list).once.and_return([net_route])
+      expect(Sigar).to receive(:new).once.and_return(@sigar)
 
       @plugin.run
     end
 
     it "should set the routes" do
-      @plugin[:network][:interfaces][:eth0].should have_key(:route)
+      expect(@plugin[:network][:interfaces][:eth0]).to have_key(:route)
     end
 
     it "should set the route details" do
@@ -137,8 +137,8 @@ describe Ohai::System, "Sigar network route plugin" do
           v="U"
           @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"][k] = v
         end
-        @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"].should have_key(k)
-        @plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"][k].should eql(v)
+        expect(@plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"]).to have_key(k)
+        expect(@plugin[:network][:interfaces][:eth0][:route]["192.168.1.0"][k]).to eql(v)
       end
     end
 

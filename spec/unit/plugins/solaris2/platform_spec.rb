@@ -21,8 +21,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 describe Ohai::System, "Solaris plugin platform" do
   before(:each) do
     @plugin = get_plugin("solaris2/platform")
-    @plugin.stub(:collect_os).and_return(:solaris2)
-    @plugin.stub(:shell_out).with("/sbin/uname -X")
+    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(@plugin).to receive(:shell_out).with("/sbin/uname -X")
   end
   
   describe "on SmartOS" do
@@ -41,26 +41,26 @@ Origin# = 1
 NumCPU = 16
 UNAME_X
 
-      File.stub(:exists?).with("/sbin/uname").and_return(true)
-      @plugin.stub(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+      allow(File).to receive(:exists?).with("/sbin/uname").and_return(true)
+      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
       
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
-      File.stub(:open).with("/etc/release").and_yield(@release)
+      allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
     it "should run uname and set platform and build" do 
       @plugin.run
-      @plugin[:platform_build].should == "joyent_20120130T201844Z"
+      expect(@plugin[:platform_build]).to eq("joyent_20120130T201844Z")
     end
 
     it "should set the platform" do
       @plugin.run
-      @plugin[:platform].should == "smartos"
+      expect(@plugin[:platform]).to eq("smartos")
     end
     
     it "should set the platform_version" do
       @plugin.run
-      @plugin[:platform_version].should == "5.11"
+      expect(@plugin[:platform_version]).to eq("5.11")
     end
 
   end
@@ -81,26 +81,26 @@ Origin# = 1
 NumCPU = 1
 UNAME_X
 
-      File.stub(:exists?).with("/sbin/uname").and_return(true)
-      @plugin.stub(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+      allow(File).to receive(:exists?).with("/sbin/uname").and_return(true)
+      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
 
       @release = StringIO.new("                             Oracle Solaris 11.1 X86\n")
-      File.stub(:open).with("/etc/release").and_yield(@release)
+      allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
     it "should run uname and set platform and build" do
       @plugin.run
-      @plugin[:platform_build].should == "11.1"
+      expect(@plugin[:platform_build]).to eq("11.1")
     end
 
     it "should set the platform" do
       @plugin.run
-      @plugin[:platform].should == "solaris2"
+      expect(@plugin[:platform]).to eq("solaris2")
     end
 
     it "should set the platform_version" do
       @plugin.run
-      @plugin[:platform_version].should == "5.11"
+      expect(@plugin[:platform_version]).to eq("5.11")
     end
 
   end

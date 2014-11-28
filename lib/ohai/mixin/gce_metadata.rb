@@ -26,25 +26,30 @@ module Ohai
 
       def can_metadata_connect?(addr, port, timeout=2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        saddr = Socket.pack_sockaddr_in(port, addr)
         connected = false
 
         begin
+          saddr = Socket.pack_sockaddr_in(port, addr)
           t.connect_nonblock(saddr)
         rescue Errno::EINPROGRESS
-          r,w,e = IO::select(nil,[t],nil,timeout)
-          if !w.nil?
-            connected = true
-          else
+          _, w, _ = IO.select(nil, [t], nil, timeout)
+          unless w.nil? # Timed out.
             begin
               t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
               connected = true
+            rescue Errno::EISCONN
+              connected = true
+            rescue Errno::EINPROGRESS, Errno::EALREADY, Errno::ECONNREFUSED
+              # Bad. Either we are still waiting for the connection,
+              # or the connection was refused (which is better).
             rescue SystemCallError
+            ensure
+              t.close if t
             end
           end
-        rescue SystemCallError
+        rescue SystemCallError, SocketError => e
+          # Check for DNS resolution failure and ignore, otherwise raise.
+          raise(e) if e.is_a?(SocketError) && !(e.to_s =~ /getaddrinfo/)
         end
         Ohai::Log.debug("can_metadata_connect? == #{connected}")
         connected

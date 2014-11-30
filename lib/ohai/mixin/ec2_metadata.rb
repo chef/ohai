@@ -20,6 +20,8 @@
 require 'net/http'
 require 'socket'
 
+require 'ohai/util/socket_helper'
+
 module Ohai
   module Mixin
     ##
@@ -39,6 +41,7 @@ module Ohai
     # If no compatible version is found, an empty hash is returned.
     #
     module Ec2Metadata
+      include Ohai::Util::SocketHelper
 
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
       EC2_SUPPORTED_VERSIONS = %w[ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
@@ -48,28 +51,8 @@ module Ohai
       EC2_ARRAY_DIR    = %w(network/interfaces/macs)
       EC2_JSON_DIR     = %w(iam)
 
-      def can_metadata_connect?(addr, port, timeout=2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        saddr = Socket.pack_sockaddr_in(port, addr)
-        connected = false
-
-        begin
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          r,w,e = IO::select(nil,[t],nil,timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
-        rescue SystemCallError
-        end
+      def can_metadata_connect?(host, port, timeout = 2)
+        connected = tcp_port_open?(host, port, timeout)
         Ohai::Log.debug("can_metadata_connect? == #{connected}")
         connected
       end

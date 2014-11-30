@@ -17,40 +17,18 @@
 require 'net/http'
 require 'socket'
 
+require 'ohai/util/socket_helper'
+
 module Ohai
   module Mixin
     module GCEMetadata
+      include Ohai::Util::SocketHelper
 
       GCE_METADATA_ADDR = "metadata.google.internal" unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/computeMetadata/v1beta1/?recursive=true" unless defined?(GCE_METADATA_URL)
 
-      def can_metadata_connect?(addr, port, timeout=2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        connected = false
-
-        begin
-          saddr = Socket.pack_sockaddr_in(port, addr)
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          _, w, _ = IO.select(nil, [t], nil, timeout)
-          unless w.nil? # Timed out.
-            begin
-              t.connect_nonblock(saddr)
-              connected = true
-            rescue Errno::EISCONN
-              connected = true
-            rescue Errno::EINPROGRESS, Errno::EALREADY, Errno::ECONNREFUSED
-              # Bad. Either we are still waiting for the connection,
-              # or the connection was refused (which is better).
-            rescue SystemCallError
-            ensure
-              t.close if t
-            end
-          end
-        rescue SystemCallError, SocketError => e
-          # Check for DNS resolution failure and ignore, otherwise raise.
-          raise(e) if e.is_a?(SocketError) && !(e.to_s =~ /getaddrinfo/)
-        end
+      def can_metadata_connect?(host, port, timeout = 2)
+        connected = tcp_port_open?(host, port, timeout)
         Ohai::Log.debug("can_metadata_connect? == #{connected}")
         connected
       end

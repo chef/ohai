@@ -53,4 +53,17 @@ describe Ohai::System, "plugin php" do
     expect(@plugin.languages[:php][:builddate]).to eql("Aug 30 2013 04:30:30")
   end
 
+  it "should not set zend_optcache_version if not compiled with opcache" do
+    @stdout = "PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)\nCopyright (c) 1997-2006 The PHP Group\nZend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies\n"
+    allow(@plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
+    expect(@plugin.languages[:php]).not_to have_key(:zend_opcache_version)
+  end
+
+  it "should parse zend_optcache_version if compiled with opcache" do
+    @stdout = "PHP 5.5.9-1ubuntu4.5 (cli) (built: Oct 29 2014 11:59:10) \nCopyright (c) 1997-2014 The PHP Group\nZend Engine v2.5.0, Copyright (c) 1998-2014 Zend Technologies\n    with Zend OPcache v7.0.3, Copyright (c) 1999-2014, by Zend Technologies\n"
+    allow(@plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
+    expect(@plugin.languages[:php][:zend_opcache_version]).to eql("7.0.3")
+  end
 end

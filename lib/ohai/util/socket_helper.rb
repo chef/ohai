@@ -20,24 +20,25 @@ module Ohai
   module Util
     module SocketHelper
       def tcp_port_open?(host, port, timeout = 2)
-        saved_lookup = Socket.do_not_reverse_lookup = Socket.do_not_reverse_lookup, true
         Timeout.timeout(timeout) do
           begin
+            Socket.do_not_reverse_lookup = true
             TCPSocket.new(host, port).close
             true
           rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH
             false
-          rescue SystemCallError, SocketError => e
-            # Check for DNS resolution failure and ignore,
-            # otherwise raise as it might be something serious.
-            raise(e) if e.is_a?(SocketError) && !(e.to_s =~ /getaddrinfo/)
+          rescue SystemCallError
+            false
+          rescue SocketError => e
+            # Check for DNS resolution failure and return false
+            # when we stumble upon such, otherwise raise as it
+            # might be something serious that needs attention.
+            raise(e) unless e.to_s =~ /getaddrinfo/
             false
           end
         end
       rescue Timeout::Error
         false
-      ensure
-        Socket.do_not_reverse_lookup = saved_lookup
       end
     end
   end

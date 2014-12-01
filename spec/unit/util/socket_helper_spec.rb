@@ -31,13 +31,11 @@ describe 'Ohai::Util::SocketHelper' do
     allow(@socket).to receive(:close).and_return(nil)
     allow(Socket).to receive(:do_not_reverse_lookup).and_call_original
     allow(TCPSocket).to receive(:new).and_return(@socket)
-
-    expect(Socket).to receive(:do_not_reverse_lookup).once
-    expect(Socket).to receive(:do_not_reverse_lookup=).twice
   end
 
   describe 'when remote node is accessible' do
     it 'should return true when connection is accepted' do
+      expect(Socket).to receive(:do_not_reverse_lookup=).once
       expect(TCPSocket).to receive(:new).with('chef.io', 42)
       expect(@socket).to receive(:close).once
       expect(socket_helper.tcp_port_open?('chef.io', 42)).to be true
@@ -48,6 +46,7 @@ describe 'Ohai::Util::SocketHelper' do
     it 'should return false when connection is refused' do
       allow(TCPSocket).to receive(:new).with('getchef.com', 80).and_raise(Errno::ECONNREFUSED)
 
+      expect(Socket).to receive(:do_not_reverse_lookup=).once
       expect(TCPSocket).to receive(:new).with('getchef.com', 80)
       expect(@socket).not_to receive(:close)
       expect(socket_helper.tcp_port_open?('getchef.com', 80)).to be false
@@ -56,6 +55,7 @@ describe 'Ohai::Util::SocketHelper' do
     it 'should return false when connection cannot be established' do
       allow(TCPSocket).to receive(:new).with('opscode.com', 443).and_raise(Errno::EHOSTUNREACH)
 
+      expect(Socket).to receive(:do_not_reverse_lookup=).once
       expect(TCPSocket).to receive(:new).with('opscode.com', 443)
       expect(@socket).not_to receive(:close)
       expect(socket_helper.tcp_port_open?('opscode.com', 443)).to be false
@@ -69,6 +69,7 @@ describe 'Ohai::Util::SocketHelper' do
       #   SocketError: getaddrinfo: Temporary failure in name resolution
       allow(TCPSocket).to receive(:new).with('acme.com', 8080).and_raise(SocketError, 'getaddrinfo: Name or service not known')
 
+      expect(Socket).to receive(:do_not_reverse_lookup=).once
       expect(TCPSocket).to receive(:new).with('acme.com', 8080)
       expect(@socket).not_to receive(:close)
       expect(socket_helper.tcp_port_open?('acme.com', 8080)).to be false
@@ -77,6 +78,7 @@ describe 'Ohai::Util::SocketHelper' do
     it 'should raise unknown SocketError exception' do
       allow(TCPSocket).to receive(:new).with('NCC-1701-D', 40759).and_raise(SocketError, 'the plasma conduit time-matter field appears to be removed')
 
+      expect(Socket).to receive(:do_not_reverse_lookup=).once
       expect(TCPSocket).to receive(:new).with('NCC-1701-D', 40759)
       expect(@socket).not_to receive(:close)
 
@@ -90,6 +92,7 @@ describe 'Ohai::Util::SocketHelper' do
     it 'should return false when a timeout occurs' do
       allow(Timeout).to receive(:timeout).with(3).and_raise(Timeout::Error)
 
+      expect(Socket).not_to receive(:do_not_reverse_lookup=)
       expect(TCPSocket).not_to receive(:new).with('slow.net', 22)
       expect(@socket).not_to receive(:close)
       expect(socket_helper.tcp_port_open?('slow.net', 22, 3)).to be false

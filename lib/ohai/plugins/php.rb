@@ -28,7 +28,7 @@ Ohai.plugin(:PHP) do
 
     so = shell_out("php -v")
     if so.exitstatus == 0
-      so.stdout.split(/\r?\n/).each do |line|
+      so.stdout.each_line do |line|
         case line
         when /PHP (\S+).+built: ([^)]+)/
           php[:version] = $1

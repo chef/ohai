@@ -2,6 +2,7 @@
 
 ## Unreleased:
 * Update specs to use RSpec 3 syntax
+* Update linux plugin cpu.rb and spec_cpu.rb to support S390
 
 ## Release 7.6.0
 

@@ -1,7 +1,6 @@
 # Ohai Changelog
 
 ## Unreleased:
-
 * [**Warren Bain**](https://github.com/thoughtcroft)
   Fix for removal of :Config in ruby 2.2
 * [**Chris Luciano**](https://github.com/cmluciano)
@@ -24,6 +23,8 @@
   Digital Ocean ohai/cloud support round
 * [**Sten Spans**](https://github.com/sspans)
   Fix network.rb for XenServer Creedence
+* [**Shuo Zhang**](https://github.com/zshuo)
+  Update linux plugin cpu.rb and spec_cpu.rb to support S390
 
 * Update mime-types dependency
 

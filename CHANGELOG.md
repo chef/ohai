@@ -1,9 +1,8 @@
 # Ohai Changelog
 
 ## Unreleased:
-* Update specs to use RSpec 3 syntax
 
-## Release 7.6.0
+## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)
   Retrieve OpenStack-specific metadata.
@@ -31,6 +30,13 @@
   Look for any number of spaces between the VxID and the value.
 * [**Daniel Searles**](https://github.com/squaresurf):
   Removed *.static.cloud-ips.com and fixed the DNS resolution on Rackspace hosts.
+
+* Update specs to use RSpec 3 syntax
+* Update mixlib-shellout pin to ~> 2.x
+
+## Release 7.6.0
+
+* This release was yanked due to mixlib-shellout 1.x/2.x issues
 
 ## Release 7.4.0
 

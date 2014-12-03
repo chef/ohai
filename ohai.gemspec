@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config", "~> 2.0"
   s.add_dependency "mixlib-log"
-  s.add_dependency "mixlib-shellout", ">= 2.0.0.rc.0", "< 3.0"
+  s.add_dependency "mixlib-shellout", "~> 2.0"
   s.add_dependency "net-dhcp"
   s.add_dependency "ipaddress"
   s.add_dependency "wmi-lite", "~> 1.0"

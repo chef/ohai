@@ -60,7 +60,7 @@ Ohai.plugin(:CPU) do
       when /flags\s+:\s(.+)/
         cpuinfo[current_cpu]["flags"] = $1.split(' ')
       when /bogomips per cpu:\s(.+)/
-        cpuinfo["bogomips per cpu"] = $1
+        cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/
         cpuinfo["features"] = $1.split(' ')
       when /processor\s(\d):\s(.+)/
@@ -76,7 +76,7 @@ Ohai.plugin(:CPU) do
         end
       end
     end
- 
+
     cpu cpuinfo
     cpu[:total] = cpu_number
     cpu[:real] = real_cpu.keys.length

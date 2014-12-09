@@ -76,7 +76,7 @@ Ohai.plugin(:CPU) do
         end
       end
     end
- 
+
     cpu cpuinfo
     cpu[:total] = cpu_number
     cpu[:real] = real_cpu.keys.length

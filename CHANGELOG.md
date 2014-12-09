@@ -2,6 +2,11 @@
 
 ## Unreleased:
 
+* Fix up incorrect cloudstack metadata:
+  https://cloudstack.apache.org/docs/en-US/Apache_CloudStack/4.0.2/html/Admin_Guide/user-data-and-meta-data.html
+  The public_ipv4 value for cloudstack is the router ip and no longer
+  really guaranteed to the be instance public ip, so don't use it
+
 ## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

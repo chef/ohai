@@ -61,38 +61,38 @@ describe Ohai::System, "plugin cloud" do
   describe "with rackspace" do
     before do
       @plugin[:rackspace] = Mash.new()
-    end  
-    
+    end
+
     it "populates cloud public ip" do
       @plugin[:rackspace][:public_ipv4] = "174.129.150.8"
       @plugin.run
       expect(@plugin[:cloud][:public_ipv4]).to eq(@plugin[:rackspace][:public_ipv4])
     end
-    
+
     it "populates cloud public ipv6" do
       @plugin[:rackspace][:public_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @plugin.run
       expect(@plugin[:cloud][:public_ipv6]).to eq(@plugin[:rackspace][:public_ipv6])
     end
-    
+
     it "populates cloud private ip" do
       @plugin[:rackspace][:local_ipv4] = "10.252.42.149"
       @plugin.run
       expect(@plugin[:cloud][:local_ipv4]).to eq(@plugin[:rackspace][:local_ipv4])
     end
-    
+
     it "populates cloud private ipv6" do
       @plugin[:rackspace][:local_ipv6] = "2a00:1a48:7805:111:e875:efaf:ff08:75"
       @plugin.run
       expect(@plugin[:cloud][:local_ipv6]).to eq(@plugin[:rackspace][:local_ipv6])
     end
-    
+
     it "populates first cloud public ip" do
       @plugin[:rackspace][:public_ipv4] = "174.129.150.8"
       @plugin.run
       expect(@plugin[:cloud][:public_ips].first).to eq(@plugin[:rackspace][:public_ipv4])
     end
-    
+
     it "populates first cloud public ip" do
       @plugin[:rackspace][:local_ipv4] = "174.129.150.8"
       @plugin.run
@@ -212,9 +212,9 @@ describe Ohai::System, "plugin cloud" do
     end
 
     it "populates cloud public ip" do
-      @plugin[:cloudstack]['public_ipv4'] = "174.129.150.8"
+      @plugin[:cloudstack]['local_ipv4'] = "174.129.150.8"
       @plugin.run
-      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:cloudstack]['public_ipv4'])
+      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:cloudstack]['local_ipv4'])
     end
 
     it "populates cloud private ip" do

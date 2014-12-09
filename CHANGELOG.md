@@ -25,6 +25,8 @@
   Fix network.rb for XenServer Creedence
 * [**Shuo Zhang**](https://github.com/zshuo)
   Update linux plugin cpu.rb and spec_cpu.rb to support S390
+* [**Alexey Karpik**](https://github.com/akarpik)
+  Fix up incorrect cloudstack metadata:
 
 * Update mime-types dependency
 

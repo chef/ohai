@@ -138,7 +138,7 @@ EOM
         expect(ohai_data['cloudstack']['service_offering']).to eq("2vCPU, 1GHz, 2GB RAM")
       end
      it "reads the public ipv4 from the metadata service" do
-        expect(ohai_data['cloudstack']['public_ipv4']).to eq("10.235.34.23")
+        expect(ohai_data['cloudstack']['router_ipv4']).to eq("10.235.34.23")
       end
      it "reads the vm id from the metadata service" do
         expect(ohai_data['cloudstack']['vm_id']).to eq("8983fb85-fb7f-46d6-8af1-c1b6666fec39")

@@ -230,16 +230,30 @@ Ohai.plugin(:Cloud) do
     cloudstack != nil
   end
 
-  # Fill cloud hash with cloudstack values
+  # Fill cloud hash with cloudstack values. Cloudstack is a bit different in that
+  # the local interface can be a public or private ip is using basic networking.
+  # When using advanced networking, the public_ipv4 passed in the metadata isn't
+  # usually going to be the public ip of the interface, so don't use that value. As
+  # per the Cloudstack documentation its actually the NAT router IP.
   def get_cloudstack_values
-    cloud[:public_ips] << cloudstack['public_ipv4']
-    cloud[:private_ips] << cloudstack['local_ipv4']
-    cloud[:public_ipv4] = cloudstack['public_ipv4']
-    cloud[:public_hostname] = cloudstack['public_hostname']
     cloud[:local_ipv4] = cloudstack['local_ipv4']
+
+    if cloudstack['local_ipv4']
+      # Private IPv4 address
+      if cloudstack['local_ipv4'] =~ /\A(10\.|192\.168\.|172\.1[6789]\.|172\.2.\.|172\.3[01]\.)/
+        cloud[:private_ips] << cloudstack['local_ipv4']
+        cloud[:public_ipv4] = nil
+      else
+        cloud[:public_ips] << cloudstack['local_ipv4']
+        # Yes, not a mistake, for basic networking this may be true
+        cloud[:public_ipv4] = cloudstack['local_ipv4']
+      end
+    end
+    cloud[:public_hostname] = cloudstack['public_hostname']
     cloud[:local_hostname] = cloudstack['local_hostname']
     cloud[:vm_id] = cloudstack['vm_id']
-    cloud[:provider] = "cloudstack"
+    cloud[:local_hostname] = cloudstack['local_hostname']
+    cloud[:provider] = 'cloudstack'
   end
 
   # ----------------------------------------

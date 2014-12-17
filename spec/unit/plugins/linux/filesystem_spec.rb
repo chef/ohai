@@ -24,7 +24,7 @@ describe Ohai::System, "Linux filesystem plugin" do
     allow(@plugin).to receive(:collect_os).and_return(:linux)
 
     allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     allow(File).to receive(:exist?).with("/bin/lsblk").and_return(false)
     allow(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, "", ""))
@@ -81,12 +81,12 @@ tmpfs           126922    273  126649    1% /run
 none            126922      1  126921    1% /run/lock
 none            126922      1  126921    1% /run/shm
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
-    it "should run df -P and df -i" do
+    it "should run df -P and df -iP" do
       expect(@plugin).to receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
-      expect(@plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @inode_stdout, ""))
+      expect(@plugin).to receive(:shell_out).ordered.with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
       @plugin.run
     end
 
@@ -115,17 +115,17 @@ DFi
       expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
     
-    it "should set total_inodes to value from df -i" do
+    it "should set total_inodes to value from df -iP" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes]).to eq("124865")
     end
     
-    it "should set inodes_used to value from df -i" do
+    it "should set inodes_used to value from df -iP" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used]).to eq("380")
     end
     
-    it "should set inodes_available to value from df -i" do
+    it "should set inodes_available to value from df -iP" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available]).to eq("124485")
     end

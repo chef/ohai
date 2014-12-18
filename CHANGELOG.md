@@ -2,6 +2,8 @@
 
 ## Unreleased:
 
+* Upadate Rackspace plugin to work on Windows platform.
+
 ## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

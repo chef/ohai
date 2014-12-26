@@ -22,7 +22,7 @@ Ohai.plugin(:Ruby) do
   depends "languages"
 
   def run_ruby(command)
-    cmd = "ruby -e \"require 'rbconfig'; #{command}\""
+    cmd = "ruby -e \"require 'rbconfig'; Object.const_set :Config, RbConfig; #{command}\""
     so = shell_out(cmd)
     so.stdout.strip
   end

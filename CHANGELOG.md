@@ -1,6 +1,10 @@
 # Ohai Changelog
 
-## Release: 7.6.0
+## Release: 7.4.1
+
+* Remove ffi_yajl monkeypatching
+
+## Release: 7.4.0
 
 * Add Powershell plugin
 

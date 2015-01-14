@@ -16,4 +16,7 @@ rvm:
   - 1.9.2
   - 1.9.3
 
+git:
+  depth: 200
+
 script: bundle exec rake spec

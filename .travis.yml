@@ -8,7 +8,7 @@
 #
 # This workaround should be removed when that fix is released.
 before_install:
-  - gem update --system 2.1.11
+  - gem update --system
   - gem --version
 
 rvm:

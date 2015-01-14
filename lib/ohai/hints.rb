@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'ffi_yajl/json_gem'
+require 'ffi_yajl'
 
 module Ohai
   module Hints

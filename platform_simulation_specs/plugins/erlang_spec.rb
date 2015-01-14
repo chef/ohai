@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-require 'json'
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
 

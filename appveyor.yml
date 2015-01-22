@@ -1,4 +1,4 @@
-version: "{build}"
+version: "8-stable-{build}"
 
 os: Windows Server 2012
 platform:

@@ -1,0 +1,32 @@
+version: "8-stable-{build}"
+
+os: Windows Server 2012
+platform:
+  - x64
+
+environment:
+  matrix:
+    - ruby_version: "200"
+
+clone_folder: c:\projects\ohai
+clone_depth: 1
+skip_tags: true
+branches:
+  only:
+    - master
+    - 8-stable
+    - 7.4-stable
+
+install:
+  - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - echo %PATH%
+  - ruby --version
+  - gem --version
+  - gem install bundler --quiet --no-ri --no-rdoc
+  - bundler --version
+
+build_script:
+  - bundle install
+
+test_script:
+  - bundle exec rspec

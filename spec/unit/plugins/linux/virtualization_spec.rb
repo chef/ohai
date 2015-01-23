@@ -204,6 +204,25 @@ VBOX
       expect(@plugin[:virtualization][:systems][:vbox]).to eq("guest")
     end
 
+    it "should set openstack guest if dmidecode detects OpenStack" do
+      openstack_dmidecode=<<-OPENSTACK
+System Information
+        Manufacturer: Red Hat Inc.
+        Product Name: OpenStack Nova
+        Version: 2014.1.2-1.el6
+        Serial Number: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+        UUID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+        Wake-up Type: Power Switch
+        SKU Number: Not Specified
+        Family: Red Hat Enterprise Linux
+OPENSTACK
+      allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, openstack_dmidecode, ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("openstack")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:openstack]).to eq("guest")
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       @plugin.run

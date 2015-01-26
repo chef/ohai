@@ -5,10 +5,12 @@
 # Author:: Daniel DeLeo (<dan@kallistec.com>)
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
+# Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
 # Copyright:: Copyright (c) 2008, 2009 Opscode, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2009 Daniel DeLeo
 # Copyright:: Copyright (c) 2010 VMware, Inc.
+# Copyright:: Copyright (c) 2014 Jacques Marneweck
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -139,8 +141,8 @@ Ohai.plugin(:Hostname) do
 
   collect_data(:solaris2) do
     machinename from_cmd("hostname")
-    hostname from_cmd("hostname")
-    fqdn resolve_fqdn
+    hostname from_cmd("hostname").split(".")[0]
+    fqdn from_cmd("hostname")
     domain collect_domain
   end
 

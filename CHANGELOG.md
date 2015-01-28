@@ -2,6 +2,19 @@
 
 ## Unreleased:
 
+* [**Warren Bain**](https://github.com/thoughtcroft)
+  Fix for removal of :Config in ruby 2.2
+* [**Chris Luciano**](https://github.com/cmluciano)
+  Add language elixir
+* [**Chris Luciano**](https://github.com/cmluciano)
+  Update WARNING for ohai 7 syntax docs page
+* [**Malte Swart**](https://github.com/mswart)
+  ssh_host_key: detect ed25519 host key
+* [**hirose31**](https://github.com/hirose31)
+  Detect OpenStack guest server using dmidecode
+* [**Chris Luciano**](https://github.com/cmluciano)
+  Add language rust.
+
 ## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

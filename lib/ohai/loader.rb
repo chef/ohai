@@ -111,7 +111,7 @@ module Ohai
         Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. \
 Version 6 plugins will not be supported in future releases of Ohai. \
 Please upgrade your plugin to version 7 plugin syntax. \
-For more information visit here: docs.opscode.com/ohai_custom.html")
+For more information visit here: docs.chef.io/ohai_custom.html")
 
         load_v6_plugin_class(contents, plugin_path, plugin_dir_path)
       end

@@ -129,6 +129,10 @@ Ohai.plugin(:Virtualization) do
           virtualization[:role] = "guest"
           virtualization[:systems][:vbox] = "guest"
         end
+      when /Product Name: OpenStack/
+        virtualization[:system] = "openstack"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:openstack] = "guest"
       else
         nil
       end

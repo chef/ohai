@@ -87,6 +87,7 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
+      platform_version File.read("/proc/version").scan(/Linux version (\d+\.+) /)
     elsif File.exists?('/etc/exherbo-release')
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution

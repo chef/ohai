@@ -87,10 +87,12 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
+      platform_version `uname -r`.strip
     elsif File.exists?('/etc/exherbo-release')
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
+      platform_version `uname -r`.strip
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

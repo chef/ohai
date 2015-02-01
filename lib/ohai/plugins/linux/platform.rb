@@ -16,9 +16,12 @@
 # limitations under the License.
 #
 
+#require 'ohai/plugin/kernel'
+
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
+  depends "kernel"
 
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
@@ -87,11 +90,12 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version File.read("/proc/version").scan(/Linux version (\d+\.+) /)
+      platform_version `uname -r`.strip
     elsif File.exists?('/etc/exherbo-release')
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
+      platform_version `uname -r`.strip
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

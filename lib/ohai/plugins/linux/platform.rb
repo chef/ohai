@@ -16,12 +16,9 @@
 # limitations under the License.
 #
 
-#require 'ohai/plugin/kernel'
-
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
-  depends "kernel"
 
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase

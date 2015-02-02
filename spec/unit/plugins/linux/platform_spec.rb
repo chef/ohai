@@ -170,6 +170,12 @@ describe Ohai::System, "Linux plugin platform" do
       expect(@plugin[:platform_family]).to eq("arch")
     end
 
+    it "should set platform_version to kernel release" do
+      expect(@plugin).to receive(:`).with('uname -r').and_return('3.18.2-2-ARCH')
+      @plugin.run
+      expect(@plugin[:platform_version]).to eq('3.18.2-2-ARCH')
+    end
+
   end
 
   describe "on gentoo" do

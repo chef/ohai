@@ -107,15 +107,15 @@ module Ohai
               next if field.to_s == 'record_id'
               translated = field.downcase.gsub(/[^a-z0-9]/, '_')
               if in_common.has_key?(translated)
-                in_common[translated] = nil unless in_common[translated] == value
+                in_common[translated] = nil unless in_common[translated] == value.strip
               else
-                in_common[translated] = value
+                in_common[translated] = value.strip
               end
             }
           }
           in_common.each{ |field, value|
             next if value == nil
-            dmi[type][field] = value
+            dmi[type][field] = value.strip
           }
         }
       end

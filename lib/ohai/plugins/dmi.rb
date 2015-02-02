@@ -57,6 +57,7 @@ Ohai.plugin(:DMI) do
     # ... similar lines trimmed
     so.stdout.lines do |line|
       next if blank_line.match(line)
+      line = line.encode(line.encoding, :universal_newline => true)
 
       if dmidecode_version = dmidecode_version_line.match(line)
         dmi[:dmidecode_version] = dmidecode_version[1]

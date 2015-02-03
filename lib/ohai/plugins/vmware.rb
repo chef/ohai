@@ -40,14 +40,14 @@ Ohai.plugin(:Vmware) do
 
   def get_vm_attributes(vmtools_path)
     if !File.exist?(vmtools_path)
-      Ohai::Log::info("#{vmtools_path} not found")
+      Ohai::Log.debug("#{vmtools_path} not found")
     else
       vmware Mash.new
       begin
         # vmware-toolbox-cmd stat <param> commands
         # Iterate through each parameter supported by the "vnware-toolbox-cmd stat" command, assign value
         # to attribute "vmware[:<parameter>]"
-        ["hosttime", "speed", "sessionid", "balloon", "swap", "memlimit", "memres", "cpures", "cpulimit"].each do |param|
+        [ "hosttime", "speed", "sessionid", "balloon", "swap", "memlimit", "memres", "cpures", "cpulimit" ].each do |param|
           vmware[:"#{param}"] = from_cmd("#{vmtools_path} stat #{param}")
           if vmware[:"#{param}"] =~ /UpdateInfo failed/
             vmware[:"#{param}"] = nil
@@ -56,11 +56,11 @@ Ohai.plugin(:Vmware) do
         # vmware-toolbox-cmd <param> status commands
         # Iterate through each parameter supported by the "vnware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
-        ["upgrade", "timesync"].each do |param|
+        [ "upgrade", "timesync" ].each do |param|
           vmware[:"#{param}"] = from_cmd("#{vmtools_path} #{param} status")
         end
       rescue
-        Ohai::Log::info("Error while collecting VMware guest attributes")
+        Ohai::Log.debug("Error while collecting VMware guest attributes")
       end
     end
   end
@@ -73,7 +73,4 @@ Ohai.plugin(:Vmware) do
     get_vm_attributes("/usr/bin/vmware-toolbox-cmd")
   end
 
-  collect_data(:windows) do
-    #get_vm_attributes("C:/Program Files/VMware/VMware Tools/VMwareToolboxCmd.exe")
-  end
 end

@@ -91,6 +91,10 @@ Chassis Information
 	Contained Elements: 0
 EOS
 
+def convert_window_output(stdout)
+  stdout.gsub("\n", "\r\n")
+end
+
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @plugin = get_plugin("dmi")
@@ -120,6 +124,12 @@ describe Ohai::System, "plugin dmi" do
   }.each do |id, data|
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do
+        @plugin.run
+        expect(@plugin[:dmi][id][attribute]).to eql(value)
+      end
+      it "should have [:dmi][:#{id}][:#{attribute}] set for windows output" do
+        @stdout = convert_window_output(DMI_OUT)
+        expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
         @plugin.run
         expect(@plugin[:dmi][id][attribute]).to eql(value)
       end

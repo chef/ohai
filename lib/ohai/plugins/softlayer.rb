@@ -31,13 +31,13 @@ Ohai.plugin(:Softlayer) do
   # true:: If the softlayer cloud can be identified
   # false:: Otherwise
   def looks_like_softlayer?
-    !!hint?('softlayer')
+    hint?('softlayer')
   end
 
   collect_data do
     # Adds softlayer Mash
     if looks_like_softlayer?
-      ::Ohai::Log.debug("looks_like_softlayer? == true ")
+      ::Ohai::Log.debug("looks_like_softlayer? == true")
       metadata = fetch_metadata
       softlayer Mash.new
       metadata.each { |k,v| softlayer[k] = v } if metadata

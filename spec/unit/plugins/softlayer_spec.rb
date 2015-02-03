@@ -20,44 +20,41 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, 'plugin softlayer' do
-
-  before(:each) do
-    @plugin = get_plugin("softlayer")
-  end
+  let(:plugin) { get_plugin("softlayer") }
 
   it "not create softlayer if hint file doesn't exists" do
     allow(@plugin).to receive(:hint?).with('softlayer').and_return(false)
-    @plugin.run
-    expect(@plugin[:softlayer]).to be_nil
+    plugin.run
+    expect(plugin[:softlayer]).to be_nil
   end
 
   it "do not create node if fetch_metadata raise an error" do
-    allow(@plugin).to receive(:hint?).with('softlayer').and_return(false)
-    allow(@plugin).to receive(:fetch_metadata).and_raise(Exception.new("TEST"))
-    @plugin.run
-    expect(@plugin[:softlayer]).to be_nil
+    allow(plugin).to receive(:hint?).with('softlayer').and_return(false)
+    allow(plugin).to receive(:fetch_metadata).and_raise(Exception.new("TEST"))
+    plugin.run
+    expect(plugin[:softlayer]).to be_nil
   end
 
   it "create empty node if fetch_metadata return empty hash" do
-    allow(@plugin).to receive(:hint?).with('softlayer').and_return(true)
-    allow(@plugin).to receive(:fetch_metadata).and_return({})
-    @plugin.run
-    expect(@plugin[:softlayer]).to eq({})
+    allow(plugin).to receive(:hint?).with('softlayer').and_return(true)
+    allow(plugin).to receive(:fetch_metadata).and_return({})
+    plugin.run
+    expect(plugin[:softlayer]).to eq({})
   end
 
   it "create empty node if fetch_metadata return hash with nil values" do
     metadata = { 'local_ipv4' => nil, 'public_ipv4' => nil, 'public_fqdn' => nil}
-    allow(@plugin).to receive(:hint?).with('softlayer').and_return(true)
-    allow(@plugin).to receive(:fetch_metadata).and_return(metadata)
-    @plugin.run
-    expect(@plugin[:softlayer]).to eq(metadata)
+    allow(plugin).to receive(:hint?).with('softlayer').and_return(true)
+    allow(plugin).to receive(:fetch_metadata).and_return(metadata)
+    plugin.run
+    expect(plugin[:softlayer]).to eq(metadata)
   end
 
   it 'populate softlayer node with required attributes' do
     metadata = { 'local_ipv4' => '192.168.0.1', 'public_ipv4' => '8.8.8.8', 'public_fqdn' => 'abc1234.public.com'}
-    allow(@plugin).to receive(:hint?).with('softlayer').and_return(true)
-    allow(@plugin).to receive(:fetch_metadata).and_return(metadata)
-    @plugin.run
-    expect(@plugin[:softlayer]).to eq(metadata)
+    allow(plugin).to receive(:hint?).with('softlayer').and_return(true)
+    allow(plugin).to receive(:fetch_metadata).and_return(metadata)
+    plugin.run
+    expect(plugin[:softlayer]).to eq(metadata)
   end
 end

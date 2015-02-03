@@ -32,8 +32,6 @@ module ::Ohai::Mixin::SoftlayerMetadata
       'region'        => fetch_metadata_item("getDatacenter.txt"),
       'instance_id'   => fetch_metadata_item("getId.txt")
     }
-
-    metadata
   end
 
   # Softlayer's metadata api is only available over HTTPS.
@@ -46,23 +44,21 @@ module ::Ohai::Mixin::SoftlayerMetadata
   end
 
   def fetch_metadata_item(item)
-    begin
-      full_url = "#{SOFTLAYER_API_QUERY_URL}/#{item}"
-      u = URI(full_url)
-      net = ::Net::HTTP.new(u.hostname, u.port)
-      net.ssl_version = "TLSv1"
-      net.use_ssl = true
-      net.ca_file = ca_file_location
-      res = net.get(u.request_uri)
-      if res.code.to_i.between?(200,299)
-        res.body
-      else
-        ::Ohai::Log.error("Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
-        nil
-      end
-    rescue Exception => e
-      ::Ohai::Log.error("Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
+    full_url = "#{SOFTLAYER_API_QUERY_URL}/#{item}"
+    u = URI(full_url)
+    net = ::Net::HTTP.new(u.hostname, u.port)
+    net.ssl_version = "TLSv1"
+    net.use_ssl = true
+    net.ca_file = ca_file_location
+    res = net.get(u.request_uri)
+    if res.code.to_i.between?(200,299)
+      res.body
+    else
+      ::Ohai::Log.error("Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
       nil
     end
+  rescue Exception => e
+    ::Ohai::Log.error("Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
+    nil
   end
 end

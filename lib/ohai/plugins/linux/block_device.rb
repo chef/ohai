@@ -40,6 +40,11 @@ Ohai.plugin(:BlockDevice) do
             File.open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
+        %w{name suspended uuid}.each do |check|
+          if File.exists?("/sys/block/#{dir}/dm/#{check}")
+            File.open?("/sys/block/#{dir}/dm/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          end
+        end
       end
       block_device block
     end

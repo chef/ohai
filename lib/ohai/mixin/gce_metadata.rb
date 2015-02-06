@@ -21,7 +21,8 @@ module Ohai
   module Mixin
     module GCEMetadata
 
-      GCE_METADATA_ADDR = "metadata.google.internal" unless defined?(GCE_METADATA_ADDR)
+      # Trailing dot to host is added to avoid DNS search path
+      GCE_METADATA_ADDR = "metadata.google.internal." unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/computeMetadata/v1beta1/?recursive=true" unless defined?(GCE_METADATA_URL)
 
       def can_metadata_connect?(addr, port, timeout=2)

@@ -35,10 +35,8 @@ Ohai.plugin(:Perl) do
           perl[:archname] = $1
         end
       end
-    end
-
-    if so.exitstatus == 0
       languages[:perl] = perl 
     end
+
   end
 end

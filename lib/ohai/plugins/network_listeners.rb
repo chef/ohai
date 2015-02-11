@@ -39,6 +39,11 @@ Ohai.plugin(:NetworkListeners) do
       listeners[port][:address] = addr
       begin
         pid = sigar.proc_port(conn.type, port)
+        # workaround for a failure of proc_state to throw
+        # after the first 0 has been supplied to it
+        #
+        # no longer required when hyperic/sigar#48 is fixed
+        throw ArgumentError.new("No such process") if pid == 0
         listeners[port][:pid] = pid
         listeners[port][:name] = sigar.proc_state(pid).name
       rescue

@@ -39,10 +39,19 @@ Ohai.plugin(:Filesystem) do
       disk.wmi_ole_object.properties_.each do |p|
         ld_info[filesystem][p.name.wmi_underscore.to_sym] = disk[p.name.downcase]
       end
-      fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
-      fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000
-      fs[filesystem][:kb_used] = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
-      fs[filesystem][:percent_used]  = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
+
+      # Convert to integers and calculate the needed values
+      kb_size = ld_info[filesystem][:size].to_i / 1000
+      kb_available = ld_info[filesystem][:free_space].to_i / 1000
+      kb_used = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
+      percent_used = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
+
+      # Convert the calculated values back to strings to be
+      # consistent with the Linux filesystem plugin
+      fs[filesystem][:kb_size] = kb_size.to_s
+      fs[filesystem][:kb_available] = kb_available.to_s
+      fs[filesystem][:kb_used] = kb_used.to_s
+      fs[filesystem][:percent_used]  = percent_used.to_s + "%"
       fs[filesystem][:mount] = ld_info[filesystem][:name]
       fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system] == nil
       fs[filesystem][:volume_name] = ld_info[filesystem][:volume_name]

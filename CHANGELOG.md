@@ -14,6 +14,8 @@
   Detect OpenStack guest server using dmidecode
 * [**Chris Luciano**](https://github.com/cmluciano)
   Add language rust.
+* [**Tim Smith**](https://github.com/tas50)
+  Add additional information on the PHP engine versions to PHP plugin
 
 ## Release 8.0.0
 

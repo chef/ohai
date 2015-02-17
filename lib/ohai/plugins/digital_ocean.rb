@@ -19,7 +19,7 @@ require 'ohai/util/ip_helper'
 Ohai.plugin(:DigitalOcean) do
   include Ohai::Util::IpHelper
 
-  DIGITALOCEAN_FILE = '/etc/digitalocean'
+  DIGITALOCEAN_FILE = '/etc/digitalocean' unless defined?(DIGITALOCEAN_FILE)
 
   provides "digital_ocean"
 

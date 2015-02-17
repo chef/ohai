@@ -1,6 +1,9 @@
 # Ohai Changelog
 
 ## Unreleased:
+
+## Release 8.1.0
+
 * [**Warren Bain**](https://github.com/thoughtcroft)
   Fix for removal of :Config in ruby 2.2
 * [**Chris Luciano**](https://github.com/cmluciano)

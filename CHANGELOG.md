@@ -26,7 +26,17 @@
 * [**Shuo Zhang**](https://github.com/zshuo)
   Update linux plugin cpu.rb and spec_cpu.rb to support S390
 * [**Alexey Karpik**](https://github.com/akarpik)
-  Fix up incorrect cloudstack metadata:
+  Fix up incorrect cloudstack metadata
+* [**Jeff Goldschrafe**](https://github.com/jgoldschrafe)
+  cloud_v2 fails to initialize on GCE hosts without external IP
+* [**Ryan Chipman**](https://github.com/rychipman)
+  Archlinux Version
+* [**Jose Luis Salas**](https://github.com/josacar)
+  Add a trailing dot to avoid using search option in resolv.conf
+* [**Eric G. Wolfe**](https://github.com/atomic-penguin)
+  block_device rotational key
+* [**Josh Blancett**](https://github.com/jblancett)
+  add extra metadata passed in from hints in knife-linode
 
 * Update mime-types dependency
 

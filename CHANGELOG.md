@@ -2,6 +2,9 @@
 
 ## Unreleased:
 
+## Release 8.1.1
+* Fix broken DigitalOcean plugin
+
 ## Release 8.1.0
 
 * [**Warren Bain**](https://github.com/thoughtcroft)

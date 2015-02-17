@@ -40,6 +40,9 @@
 
 * Update mime-types dependency
 
+* Update specs to use RSpec 3 syntax
+* Update linux plugin cpu.rb and spec_cpu.rb to support S390
+
 ## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

@@ -16,6 +16,16 @@
   Add language rust.
 * [**Tim Smith**](https://github.com/tas50)
   Add additional information on the PHP engine versions to PHP plugin
+* [**Paul Czarkowski**](https://github.com/paulczar)
+  detect if inside Docker container
+* [**Michael Schmidt**](https://github.com/BugRoger)
+  OHAI-339 Unable to detect IPAddress on CoreOS/Gentoo
+* [**Stafford Brunk**](https://github.com/wingrunr21)
+  Digital Ocean ohai/cloud support round
+* [**Sten Spans**](https://github.com/sspans)
+  Fix network.rb for XenServer Creedence
+
+* Update mime-types dependency
 
 ## Release 8.0.0
 

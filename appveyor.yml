@@ -30,3 +30,4 @@ build_script:
 
 test_script:
   - bundle exec rspec
+  - bundle exec ohai

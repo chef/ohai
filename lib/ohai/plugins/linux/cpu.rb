@@ -32,7 +32,12 @@ Ohai.plugin(:CPU) do
         current_cpu = $1
         cpu_number += 1
       when /vendor_id\s+:\s(.+)/
-        cpuinfo[current_cpu]["vendor_id"] = $1
+        vendor_id = $1
+        if vendor_id =~ (/IBM\/S390/)
+          cpuinfo["vendor_id"] = vendor_id
+        else
+          cpuinfo[current_cpu]["vendor_id"] = vendor_id
+        end
       when /cpu family\s+:\s(.+)/
         cpuinfo[current_cpu]["family"] = $1
       when /model\s+:\s(.+)/
@@ -54,6 +59,21 @@ Ohai.plugin(:CPU) do
         cpuinfo[current_cpu]["cache_size"] = $1
       when /flags\s+:\s(.+)/
         cpuinfo[current_cpu]["flags"] = $1.split(' ')
+      when /bogomips per cpu:\s(.+)/
+        cpuinfo["bogomips_per_cpu"] = $1
+      when /features\s+:\s(.+)/
+        cpuinfo["features"] = $1.split(' ')
+      when /processor\s(\d):\s(.+)/
+        current_cpu = $1
+        cpu_number += 1
+        cpuinfo[current_cpu] = Mash.new
+        current_cpu_info = $2.split(',')
+        for i in current_cpu_info
+          name_value = i.split('=')
+          name = name_value[0].strip
+          value = name_value[1].strip
+          cpuinfo[current_cpu][name] = value
+        end
       end
     end
 

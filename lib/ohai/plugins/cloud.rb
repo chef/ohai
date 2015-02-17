@@ -25,6 +25,7 @@ Ohai.plugin(:Cloud) do
   depends "openstack"
   depends "azure"
   depends "cloudstack"
+  depends "digital_ocean"
 
   # Make top-level cloud hashes
   #
@@ -229,16 +230,59 @@ Ohai.plugin(:Cloud) do
     cloudstack != nil
   end
 
-  # Fill cloud hash with cloudstack values
+  # Fill cloud hash with cloudstack values. Cloudstack is a bit different in that
+  # the local interface can be a public or private ip is using basic networking.
+  # When using advanced networking, the public_ipv4 passed in the metadata isn't
+  # usually going to be the public ip of the interface, so don't use that value. As
+  # per the Cloudstack documentation its actually the NAT router IP.
   def get_cloudstack_values
-    cloud[:public_ips] << cloudstack['public_ipv4']
-    cloud[:private_ips] << cloudstack['local_ipv4']
-    cloud[:public_ipv4] = cloudstack['public_ipv4']
-    cloud[:public_hostname] = cloudstack['public_hostname']
     cloud[:local_ipv4] = cloudstack['local_ipv4']
+
+    if cloudstack['local_ipv4']
+      # Private IPv4 address
+      if cloudstack['local_ipv4'] =~ /\A(10\.|192\.168\.|172\.1[6789]\.|172\.2.\.|172\.3[01]\.)/
+        cloud[:private_ips] << cloudstack['local_ipv4']
+        cloud[:public_ipv4] = nil
+      else
+        cloud[:public_ips] << cloudstack['local_ipv4']
+        # Yes, not a mistake, for basic networking this may be true
+        cloud[:public_ipv4] = cloudstack['local_ipv4']
+      end
+    end
+    cloud[:public_hostname] = cloudstack['public_hostname']
     cloud[:local_hostname] = cloudstack['local_hostname']
     cloud[:vm_id] = cloudstack['vm_id']
-    cloud[:provider] = "cloudstack"
+    cloud[:local_hostname] = cloudstack['local_hostname']
+    cloud[:provider] = 'cloudstack'
+  end
+
+  # ----------------------------------------
+  # digital_ocean
+  # ----------------------------------------
+
+  # Is current cloud digital_ocean?
+  #
+  # === Return
+  # true:: If digital_ocean Mash is defined
+  # false:: Otherwise
+  def on_digital_ocean?
+    digital_ocean != nil
+  end
+
+  # Fill cloud hash with linode values
+  def get_digital_ocean_values
+    public_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'public'}
+    private_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'private'}
+    public_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'public'}
+    private_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'private'}
+    cloud[:public_ips].concat public_ipv4+public_ipv6
+    cloud[:private_ips].concat private_ipv4+private_ipv6
+    cloud[:public_ipv4] = public_ipv4.first
+    cloud[:public_ipv6] = public_ipv6.first
+    cloud[:local_ipv4] = private_ipv4.first
+    cloud[:local_ipv6] = private_ipv6.first
+    cloud[:public_hostname] = digital_ocean['name']
+    cloud[:provider] = "digital_ocean"
   end
 
   collect_data do    
@@ -287,6 +331,12 @@ Ohai.plugin(:Cloud) do
     if on_cloudstack?
       create_objects
       get_cloudstack_values
+    end
+
+    # setup digital_ocean cloud data
+    if on_digital_ocean?
+      create_objects
+      get_digital_ocean_values
     end
   end
 end

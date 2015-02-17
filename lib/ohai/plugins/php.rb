@@ -1,6 +1,8 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
+# Author:: Tim Smith <tim@cozy.co>
 # Copyright:: Copyright (c) 2009 VMware, Inc.
+# Copyright:: Copyright (c) 2014 Cozy Services, Ltd.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,17 +24,22 @@ Ohai.plugin(:PHP) do
   depends "languages"
 
   collect_data do
-    output = nil
-
     php = Mash.new
 
     so = shell_out("php -v")
     if so.exitstatus == 0
-      output = /PHP (\S+).+built: ([^)]+)/.match(so.stdout)
-      if output
-        php[:version] = output[1]
-        php[:builddate] = output[2]
+      so.stdout.each_line do |line|
+        case line
+        when /PHP (\S+).+built: ([^)]+)/
+          php[:version] = $1
+          php[:builddate] = $2
+        when /Zend Engine v([^\s]+),/
+          php[:zend_engine_version] = $1
+        when /Zend OPcache v([^\s]+),/
+          php[:zend_opcache_version] = $1
+        end
       end
+
       languages[:php] = php if php[:version]
     end
   end

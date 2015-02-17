@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.0.0"
 
-  s.add_dependency "mime-types", "~> 1.16"
+  s.add_dependency "mime-types", "~> 2.0"
   s.add_dependency "systemu", "~> 2.6.4"
   s.add_dependency "ffi-yajl", "~> 1.1"
   s.add_dependency "mixlib-cli"

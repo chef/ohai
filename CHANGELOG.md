@@ -5,6 +5,7 @@
   Remove redundant if statement
 
 * Remove Cloudstack support due to GPL licensed library
+* Add support for Softlayer Cloud
 
 ## Release 8.1.1
 * Fix broken DigitalOcean plugin

@@ -1,4 +1,5 @@
 # ohai
+[![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=master)](https://travis-ci.org/chef/ohai)
 
 # DESCRIPTION:
 
@@ -57,7 +58,7 @@ Ohai has some Rake tasks for doing various things.
     rake package          # Build all the packages
     rake repackage        # Force a rebuild of the package files
     rake spec             # Run specs
-  
+
     ($VERSION is the current version, from the GemSpec in Rakefile)
 
 # LINKS:

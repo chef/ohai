@@ -11,7 +11,7 @@ gem "rspec_junit_formatter", :git => 'https://github.com/sj26/rspec_junit_format
 group :development do
   gem "chef", github: "opscode/chef", branch: "master"
 
-#  gem "sigar", :platform => "ruby"
+  gem "sigar", :platform => "ruby"
   gem 'plist'
 
   # gem 'pry-debugger'

@@ -40,7 +40,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
   context 'fetch_metadata' do
     it "creates empty softlayer hash on api query errors" do
       http_mock = double('http', {:ssl_version= => true, :use_ssl= => true, :ca_file= => true})
-      allow(http_mock).to receive(:get).and_raise(Exception.new("API return fake error"))
+      allow(http_mock).to receive(:get).and_raise(StandardError.new("API return fake error"))
       allow(::Net::HTTP).to receive(:new).with('api.service.softlayer.com', 443).and_return(http_mock)
 
       expect(::Ohai::Log).to receive(:error).at_least(:once)

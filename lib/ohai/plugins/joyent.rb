@@ -25,21 +25,18 @@ Ohai.plugin(:Joyent) do
   depends 'os', 'platform', 'virtualization'
 
   def collect_product_file
-    lines = []
-    if ::File.exists?("/etc/product")
-      ::File.open("/etc/product") do |file|
-        while line = file.gets
-          lines << line
-        end
-      end
+    data = ::File.read("/etc/product") rescue nil
+    if data
+      data.strip.split("\n")
+    else
+      nil
     end
-    lines
   end
 
   def collect_pkgsrc
-    if File.exist?('/opt/local/etc/pkg_install.conf')
-      sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
-      sm_pkgsrc[1].chomp
+    data = ::File.read("/opt/local/etc/pkg_install.conf") rescue nil
+    if data
+      data.strip.split("=", 2).last
     else
       nil
     end
@@ -58,14 +55,14 @@ Ohai.plugin(:Joyent) do
 
       # get zone id unless globalzone
       unless joyent[:sm_uuid] == "global"
-        joyent[:sm_id]            = virtualization[:guest_id]
+        joyent[:sm_id] = virtualization[:guest_id]
       end
 
       # retrieve image name and pkgsrc
       collect_product_file.each do |line|
         case line
         when /^Image/
-          sm_image = line.split(" ") 
+          sm_image = line.split(" ")
           joyent[:sm_image_id] = sm_image[1]
           joyent[:sm_image_ver] = sm_image[2]
         when /^Base Image/

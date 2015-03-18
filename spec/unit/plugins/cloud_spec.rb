@@ -29,7 +29,6 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:eucalyptus] = nil
       @plugin[:linode] = nil
       @plugin[:azure] = nil
-      @plugin[:cloudstack] = nil
       @plugin[:digital_ocean] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
@@ -207,35 +206,6 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
-  describe "with cloudstack mash" do
-    before do
-      @plugin[:cloudstack] = Mash.new()
-    end
-
-    it "populates cloud public ip" do
-      @plugin[:cloudstack]['local_ipv4'] = "174.129.150.8"
-      @plugin.run
-      expect(@plugin[:cloud][:public_ips][0]).to eq(@plugin[:cloudstack]['local_ipv4'])
-    end
-
-    it "populates cloud private ip" do
-      @plugin[:cloudstack]['local_ipv4'] = "10.252.42.149"
-      @plugin.run
-      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:cloudstack]['local_ipv4'])
-    end
-
-    it "populates cloud provider" do
-      @plugin.run
-      expect(@plugin[:cloud][:provider]).to eq("cloudstack")
-    end
-
-    it "populates vm id" do
-      @plugin[:cloudstack]['vm_id'] = "8983fb85-fb7f-46d6-8af1-c1b6666fec39"
-      @plugin.run
-      expect(@plugin[:cloud][:vm_id]).to eq(@plugin[:cloudstack]['vm_id'])
-    end
-  end
-
   describe "with digital_ocean mash" do
     before do
       @plugin[:digital_ocean] = Mash.new
@@ -289,5 +259,4 @@ describe Ohai::System, "plugin cloud" do
       expect(@plugin[:cloud][:provider]).to eq("digital_ocean")
     end
   end
-
 end

@@ -44,7 +44,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
       allow(::Net::HTTP).to receive(:new).with('api.service.softlayer.com', 443).and_return(http_mock)
 
       expect(::Ohai::Log).to receive(:error).at_least(:once)
-      expect(mixin.fetch_metadata).not_to be_nil
+      expect{mixin.fetch_metadata}.to raise_error(StandardError)
     end
 
     it "query api service" do

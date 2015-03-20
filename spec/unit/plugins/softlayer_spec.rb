@@ -30,7 +30,7 @@ describe Ohai::System, 'plugin softlayer' do
 
   it "do not create node if fetch_metadata raise an error" do
     allow(plugin).to receive(:hint?).with('softlayer').and_return(false)
-    allow(plugin).to receive(:fetch_metadata).and_raise(Exception.new("TEST"))
+    allow(plugin).to receive(:fetch_metadata).and_raise(StandardError.new("TEST"))
     plugin.run
     expect(plugin[:softlayer]).to be_nil
   end

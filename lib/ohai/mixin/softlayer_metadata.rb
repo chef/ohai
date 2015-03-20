@@ -59,6 +59,6 @@ module ::Ohai::Mixin::SoftlayerMetadata
     end
   rescue => e
     ::Ohai::Log.error("Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
-    nil
+    raise e
   end
 end

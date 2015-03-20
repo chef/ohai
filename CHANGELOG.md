@@ -50,6 +50,8 @@
 
 * Update mime-types dependency
 
+* Update Azure cloud plugin to query server for data instead of reading them form hint file
+
 ## Release 8.0.0
 
 * [**sawanoboly**](https://github.com/sawanoboly)

@@ -138,9 +138,23 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:solaris2) do
+    require 'socket'
+
     machinename from_cmd("hostname")
     hostname from_cmd("hostname")
-    fqdn resolve_fqdn
+    fqdn_lookup = Socket.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first[2]
+    if fqdn_lookup.split('.').length > 1
+      # we recieved an fqdn
+      fqdn fqdn_lookup
+    else
+      # default to assembling one
+      so = shell_out("hostname")
+      h = so.stdout.split($/)[0]
+      so = shell_out("domainname")
+      d = so.stdout.split($/)[0]
+
+      fqdn("#{h}.#{d}")
+    end
     domain collect_domain
   end
 

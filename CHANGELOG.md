@@ -1,6 +1,9 @@
 # Ohai Changelog
 
 ## Unreleased:
+
+## Release 8.2.0
+
 * [**Michael Glenney**](https://github.com/Maniacal)
   Remove redundant if statement
 

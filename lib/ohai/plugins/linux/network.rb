@@ -34,7 +34,7 @@ Ohai.plugin(:Network) do
   end
 
   def iproute2_binary_available?
-    ["/sbin/ip", "/usr/bin/ip"].any? { |path| File.exist?(path) }
+    ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].any? { |path| File.exist?(path) }
   end
 
   collect_data(:linux) do

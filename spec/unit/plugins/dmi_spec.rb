@@ -91,10 +91,6 @@ Chassis Information
 	Contained Elements: 0
 EOS
 
-def convert_window_output(stdout)
-  stdout.gsub("\n", "\r\n")
-end
-
 describe Ohai::System, "plugin dmi" do
   before(:each) do
     @plugin = get_plugin("dmi")

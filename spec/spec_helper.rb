@@ -32,6 +32,10 @@ def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
   loader.load_plugin(File.join(path, "#{plugin}.rb"))
 end
 
+def convert_window_output(stdout)
+    stdout.gsub("\n", "\r\n")
+end
+
 def it_should_check_from(plugin, attribute, from, value)
   it "should set the #{attribute} to the value from '#{from}'" do
     @plugin.run

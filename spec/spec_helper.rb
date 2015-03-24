@@ -32,7 +32,7 @@ def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
   loader.load_plugin(File.join(path, "#{plugin}.rb"))
 end
 
-def convert_window_output(stdout)
+def convert_windows_output(stdout)
     stdout.gsub("\n", "\r\n")
 end
 

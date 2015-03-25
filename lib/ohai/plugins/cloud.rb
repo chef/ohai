@@ -24,7 +24,6 @@ Ohai.plugin(:Cloud) do
   depends "linode"
   depends "openstack"
   depends "azure"
-  depends "cloudstack"
   depends "digital_ocean"
 
   # Make top-level cloud hashes
@@ -218,45 +217,6 @@ Ohai.plugin(:Cloud) do
   end
 
   # ----------------------------------------
-  # cloudstack
-  # ----------------------------------------
-
-  # Is current cloud cloudstack-based?
-  #
-  # === Return
-  # true:: If cloudstack Hash is defined
-  # false:: Otherwise
-  def on_cloudstack?
-    cloudstack != nil
-  end
-
-  # Fill cloud hash with cloudstack values. Cloudstack is a bit different in that
-  # the local interface can be a public or private ip is using basic networking.
-  # When using advanced networking, the public_ipv4 passed in the metadata isn't
-  # usually going to be the public ip of the interface, so don't use that value. As
-  # per the Cloudstack documentation its actually the NAT router IP.
-  def get_cloudstack_values
-    cloud[:local_ipv4] = cloudstack['local_ipv4']
-
-    if cloudstack['local_ipv4']
-      # Private IPv4 address
-      if cloudstack['local_ipv4'] =~ /\A(10\.|192\.168\.|172\.1[6789]\.|172\.2.\.|172\.3[01]\.)/
-        cloud[:private_ips] << cloudstack['local_ipv4']
-        cloud[:public_ipv4] = nil
-      else
-        cloud[:public_ips] << cloudstack['local_ipv4']
-        # Yes, not a mistake, for basic networking this may be true
-        cloud[:public_ipv4] = cloudstack['local_ipv4']
-      end
-    end
-    cloud[:public_hostname] = cloudstack['public_hostname']
-    cloud[:local_hostname] = cloudstack['local_hostname']
-    cloud[:vm_id] = cloudstack['vm_id']
-    cloud[:local_hostname] = cloudstack['local_hostname']
-    cloud[:provider] = 'cloudstack'
-  end
-
-  # ----------------------------------------
   # digital_ocean
   # ----------------------------------------
 
@@ -325,12 +285,6 @@ Ohai.plugin(:Cloud) do
     if on_azure?
       create_objects
       get_azure_values
-    end
-
-    # setup cloudstack cloud
-    if on_cloudstack?
-      create_objects
-      get_cloudstack_values
     end
 
     # setup digital_ocean cloud data

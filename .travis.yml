@@ -1,8 +1,11 @@
+language: ruby
+
+sudo: false
+
 before_install:
   - bundle --version
   - gem --version
 rvm:
-  - 1.9.3
   - 2.0.0
   - 2.1.2
 script: 

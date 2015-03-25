@@ -2,6 +2,13 @@
 
 ## Unreleased:
 
+## Release 8.2.0
+
+* [**Michael Glenney**](https://github.com/Maniacal)
+  Remove redundant if statement
+
+* Remove Cloudstack support due to GPL licensed library
+
 ## Release 8.1.1
 * Fix broken DigitalOcean plugin
 

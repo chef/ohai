@@ -2,6 +2,9 @@
 
 ## Unreleased:
 
+* [**Jeremy Mauro**](https://github.com/jmauro):
+  Removing trailing space and '\r' for windows #474
+
 ## Release 8.2.0
 
 * [**Michael Glenney**](https://github.com/Maniacal)

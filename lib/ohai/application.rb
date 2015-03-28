@@ -15,9 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ohai'
-require 'ohai/log'
 require 'mixlib/cli'
+require 'mixlib/shellout'
+require 'ohai'
+require 'ohai/kitten'
+require 'ohai/log'
 
 class Ohai::Application
   include Mixlib::CLI
@@ -38,6 +40,11 @@ class Ohai::Application
     :long         => "--logfile LOGLOCATION",
     :description  => "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     :proc         => nil
+
+  option :kitten,
+    :short        => "-k",
+    :long         => "--kitten",
+    :description  => "The kitten must live!"
 
   option :help,
     :short        => "-h",
@@ -86,6 +93,11 @@ class Ohai::Application
   end
 
   def run_application
+    if Ohai::Config[:kitten]
+      Ohai::Kitten.the_kitten_must_live
+      exit 0
+    end
+
     ohai = Ohai::System.new
     ohai.all_plugins(@attributes)
 

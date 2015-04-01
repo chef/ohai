@@ -26,6 +26,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     @plugin[:lsb] = Mash.new
     allow(File).to receive(:exists?).with("/etc/debian_version").and_return(false)
+    allow(File).to receive(:exists?).with("/etc/centos-release").and_return(false)
     allow(File).to receive(:exists?).with("/etc/redhat-release").and_return(false)
     allow(File).to receive(:exists?).with("/etc/gentoo-release").and_return(false)
     allow(File).to receive(:exists?).with("/etc/exherbo-release").and_return(false)

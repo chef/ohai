@@ -39,6 +39,12 @@ class Ohai::Application
     :description  => "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     :proc         => nil
 
+  option :extend_path,
+    :short        => "-I LIBLOCATION",
+    :long         => "--extendpath LIBLOCATION",
+    :description  => "Extends the $LOAD_PATH to allow custom classes during Ohai run",
+    :proc         => lambda { |p| $:.unshift p.gsub!('\\','/'); }
+
   option :help,
     :short        => "-h",
     :long         => "--help",
@@ -74,9 +80,19 @@ class Ohai::Application
     @attributes = parse_options
     @attributes = nil if @attributes.empty?
 
+    Ohai::Log.debug("$LOAD_PATH is #{$:}")
+
     Ohai::Config.merge!(config)
     if Ohai::Config[:directory]
       Ohai::Config[:plugin_path] << Ohai::Config[:directory]
+    end
+    #if Ohai::Config[:extend_path]
+    #  Ohai::Config[:extend_path].each do |path|
+    #    unless $LOAD_PATH.select { |p| p =~ /#{path}/ }.empty?
+    #      $LOAD_PATH.unshift path
+    #    end
+    #  end
+    #  Ohai::Log.debug("MODIFIED $LOAD_PATH is #{$:}")
     end
   end
 

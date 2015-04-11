@@ -39,5 +39,6 @@ module Ohai
     default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins'))]
     default :disabled_plugins, []
     default(:hints_path) { [ platform_specific_path('/etc/chef/ohai/hints') ] }
+    default :extend_path, []
   end
 end

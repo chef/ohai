@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Copyright:: Copyright (c) 2008-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,6 +59,15 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
+    elsif File.exists?('/etc/os-release')
+      # don't clobber existing os-release properties, point to a different cisco file
+      contents = {}
+      File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
+      if File.exists?(contents['CISCO_RELEASE_INFO'])
+        platform contents['ID']
+        platform_family contents['ID_LIKE']
+        platform_version contents['VERSION'] || ""
+      end
     elsif File.exists?("/etc/redhat-release")
       contents = File.read("/etc/redhat-release").chomp
       platform get_redhatish_platform(contents)

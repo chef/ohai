@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## Unreleased:
+## Release 8.3.0
 
 * [**Jeremy Mauro**](https://github.com/jmauro):
   Removing trailing space and '\r' for windows #474

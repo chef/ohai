@@ -74,11 +74,10 @@ describe Ohai::System, "plugin kernel" do
       cs_wmi = WmiLite::Wmi::Instance.new(cs)
 
       expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
-      expect_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with('Win32_PnPSignedDriver').and_return([])
 
       @plugin.run
     end
-    it "should set the corrent system information" do
+    it "should set the correct system information" do
       expect(@ohai_system.data[:kernel][:name]).to eq("Microsoft Windows 7 Ultimate")
       expect(@ohai_system.data[:kernel][:release]).to eq("6.1.7601")
       expect(@ohai_system.data[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")

@@ -4,6 +4,8 @@
 
 * [**Jeremy Mauro**](https://github.com/jmauro):
   Removing trailing space and '\r' for windows #474
+* [**Tim Smith**](https://github.com/tas50):
+  Ensure Gentoo based Linuxen get IP information
 
 ## Release 8.2.0
 

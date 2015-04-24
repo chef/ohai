@@ -314,7 +314,7 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
   end
 
   describe "#iproute2_binary_available?" do
-    ["/sbin/ip", "/usr/bin/ip"].each do |path|
+    ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].each do |path|
       it "accepts #{path}" do
         allow(File).to receive(:exist?).and_return(false)
         allow(File).to receive(:exist?).with(path).and_return(true)
@@ -546,6 +546,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
   describe "for newer network features using iproute2 only" do
     before(:each) do
       allow(File).to receive(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
       plugin.run
     end
 
@@ -589,6 +590,17 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 
     it "detects interfaces only visible via ip link" do
       expect(plugin['network']['interfaces']['eth3']['state']).to eq('up')
+    end
+
+    describe "when IPv6 is disabled" do
+      before :each do
+        allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(false)
+        plugin.run
+      end
+
+      it "doesn't set ip6address" do
+        expect(plugin['ip6address']).to be_nil
+      end
     end
 
     describe "when dealing with routes" do

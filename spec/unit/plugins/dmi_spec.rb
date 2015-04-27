@@ -123,6 +123,12 @@ describe Ohai::System, "plugin dmi" do
         @plugin.run
         expect(@plugin[:dmi][id][attribute]).to eql(value)
       end
+      it "should have [:dmi][:#{id}][:#{attribute}] set for windows output" do
+        @stdout = convert_windows_output(DMI_OUT)
+        expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
+        @plugin.run
+        expect(@plugin[:dmi][id][attribute]).to eql(value)
+      end
     end
   end
 end

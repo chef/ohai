@@ -33,8 +33,12 @@ Ohai.plugin(:Network) do
     encap
   end
 
+  def ipv6_enabled?
+    File.exist? "/proc/net/if_inet6"
+  end
+
   def iproute2_binary_available?
-    ["/sbin/ip", "/usr/bin/ip"].any? { |path| File.exist?(path) }
+    ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].any? { |path| File.exist?(path) }
   end
 
   collect_data(:linux) do
@@ -60,12 +64,14 @@ Ohai.plugin(:Network) do
                     :default_route => "0.0.0.0/0",
                     :default_prefix => :default,
                     :neighbour_attribute => :arp
-                  },{
+                  }]
+
+      families << {
                     :name => "inet6",
                     :default_route => "::/0",
                     :default_prefix => :default_inet6,
                     :neighbour_attribute => :neighbour_inet6
-                  }]
+                  } if ipv6_enabled?
 
       so = shell_out("ip addr")
       cint = nil

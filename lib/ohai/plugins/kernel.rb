@@ -183,23 +183,5 @@ Ohai.plugin(:Kernel) do
 
     kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
 
-    kext = Mash.new
-    pnp_drivers = Mash.new
-
-    drivers = wmi.instances_of('Win32_PnPSignedDriver')
-    drivers.each do |driver|
-      pnp_drivers[driver['deviceid']] = Mash.new
-      driver.wmi_ole_object.properties_.each do |p|
-        pnp_drivers[driver['deviceid']][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
-      end
-      if driver['devicename']
-        kext[driver['devicename']] = pnp_drivers[driver['deviceid']]
-        kext[driver['devicename']][:version] = pnp_drivers[driver['deviceid']][:driver_version]
-        kext[driver['devicename']][:date] = pnp_drivers[driver['deviceid']][:driver_date] ? pnp_drivers[driver['deviceid']][:driver_date].to_s[0..7] : nil
-      end
-    end
-
-    kernel[:pnp_drivers] = pnp_drivers
-    kernel[:modules] = kext
   end
 end

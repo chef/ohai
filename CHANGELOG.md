@@ -7,6 +7,9 @@
 * [**Tim Smith**](https://github.com/tas50):
   Ensure Gentoo based Linuxen get IP information
 
+* Work correctly when IPv6 is disabled on Linux
+* Move Windows drivers out of kernel plugin
+
 ## Release 8.2.0
 
 * [**Michael Glenney**](https://github.com/Maniacal)

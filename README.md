@@ -16,15 +16,15 @@ Chef distributes ohai as a RubyGem. This README is for developers who
 want to modify the Ohai source code. For users who want to write plugins
 for Ohai, see the docs:
 
-* General documentation: http://docs.opscode.com/ohai.html
-* Custom plugin documentation: http://docs.opscode.com/ohai_custom.html
+* General documentation: http://docs.chef.io/ohai.html
+* Custom plugin documentation: http://docs.chef.io/ohai_custom.html
 
 # DEVELOPMENT:
 
 Before working on the code, if you plan to contribute your changes, you
 should read the contributing guidelines:
 
-* https://github.com/opscode/ohai/blob/master/CONTRIBUTING.md
+* https://github.com/chef/ohai/blob/master/CONTRIBUTING.md
 
 The basic process for contributing is:
 
@@ -67,17 +67,17 @@ Ohai has some Rake tasks for doing various things.
 
 Source:
 
-* http://github.com/opscode/ohai/tree/master
+* http://github.com/chef/ohai/tree/master
 
 Issues:
 
-* https://github.com/opscode/ohai/issues
+* https://github.com/chef/ohai/issues
 
 # LICENSE:
 
 Ohai - system information application
 
-* Author:: Adam Jacob (<adam@getchef.com>)
+* Author:: Adam Jacob (<adam@chef.io>)
 * Copyright:: Copyright (c) 2008-2014 Chef Software, Inc.
 * License:: Apache License, Version 2.0
 

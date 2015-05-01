@@ -177,8 +177,13 @@ Ohai.plugin(:Kernel) do
 
     host = wmi.first_of('Win32_ComputerSystem')
     kernel[:cs_info] = Mash.new
+    cs_info_blacklist = [
+      'oem_logo_bitmap'
+    ]
     host.wmi_ole_object.properties_.each do |p|
-      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
+      if !cs_info_blacklist.include?(p.name.wmi_underscore)
+        kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
+      end
     end
 
     kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")

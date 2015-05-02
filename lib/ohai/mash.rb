@@ -56,7 +56,9 @@ class Mash < Hash
   # @details [Alternatives]
   #   If constructor is a Hash, a new mash will be created based on the keys of
   #   the hash and no default value will be set.
-  def initialize(constructor = {})
+  def initialize(constructor = {}, path=nil, &loader)
+    @path = path
+    @loader = loader
     if constructor.is_a?(Hash)
       super()
       update(constructor)
@@ -71,10 +73,27 @@ class Mash < Hash
   #   If key is a Symbol and it is a key in the mash, then the default value will
   #   be set to the value matching the key.
   def default(key = nil)
-    if key.is_a?(Symbol) && include?(key = key.to_s)
+    if key.is_a?(Symbol) 
+      key = key.to_s
+    end
+
+    if include?(key)
       self[key]
     else
-      super
+      if loader.nil?
+        super
+      else
+        begin
+          loader.call(path_to(key))
+        rescue
+          puts "Error"
+        end
+        if include?(key)
+          self[key]
+        else
+          super
+        end
+      end
     end
   end
 
@@ -88,7 +107,23 @@ class Mash < Hash
   # @see Mash#convert_key
   # @see Mash#convert_value
   def []=(key, value)
-    regular_writer(convert_key(key), convert_value(value))
+    regular_writer(convert_key(key), convert_value(key, value))
+  end
+
+  def path
+    @path
+  end
+
+  def path=(p)
+    @path = p
+  end
+
+  def loader
+    @loader
+  end
+
+  def loader=(l)
+    @loader = l
   end
 
   # @param other_hash<Hash>
@@ -97,7 +132,7 @@ class Mash < Hash
   #
   # @return [Mash] The updated mash.
   def update(other_hash)
-    other_hash.each_pair { |key, value| regular_writer(convert_key(key), convert_value(value)) }
+    other_hash.each_pair { |key, value| regular_writer(convert_key(key), convert_value(key, value)) }
     self
   end
 
@@ -174,7 +209,7 @@ class Mash < Hash
 
   # @return [Mash] Convert a Hash into a Mash
   # The input Hash's default value is maintained
-  def self.from_hash(hash)
+  def self.from_hash(key, hash)
     mash = Mash.new(hash)
     mash.default = hash.default
     mash
@@ -199,13 +234,26 @@ class Mash < Hash
   #   their Mash equivalents.
   #
   # @api private
-  def convert_value(value)
+  def convert_value(key=nil, value)
     if value.class == Hash
-      Mash.from_hash(value)
+      convert_value(key, Mash.from_hash(key, value))
+    elsif value.class == Mash
+      value.path = path_to(key)
+      value.loader = @loader
+      value
     elsif value.is_a?(Array)
       value.collect { |e| convert_value(e) }
     else
       value
     end
   end
+
+  def path_to(key)
+    if path.nil?
+      key
+    else
+      [path, key].join("/")
+    end
+  end
+
 end

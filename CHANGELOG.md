@@ -6,6 +6,8 @@
   Removing trailing space and '\r' for windows #474
 * [**Tim Smith**](https://github.com/tas50):
   Ensure Gentoo based Linuxen get IP information
+* [PR #534](https://github.com/chef/ohai/534)
+  Ignore OEM logo on Windows
 
 ## Release 8.2.0
 

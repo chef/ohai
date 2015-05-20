@@ -75,7 +75,10 @@ Ohai.plugin(:DMI) do
 
       elsif handle = handle_line.match(line)
         # Don't overcapture for now (OHAI-260)
-        next unless Ohai::Common::DMI::IdToCapture.include?(handle[2].to_i)
+        unless Ohai::Common::DMI::IdToCapture.include?(handle[2].to_i)
+          dmi_record = nil
+          next
+        end
 
         dmi_record = {:type => Ohai::Common::DMI.id_lookup(handle[2])}
 

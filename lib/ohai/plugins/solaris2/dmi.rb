@@ -17,8 +17,11 @@
 #
 
 Ohai.plugin(:DMI) do
+  provides "dmi"
 
   collect_data(:solaris2) do
+    require 'ohai/common/dmi'
+
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
     if (dmi.class.to_s == 'Mash') and (dmi.keys.length > 1) 
@@ -72,6 +75,9 @@ Ohai.plugin(:DMI) do
       'SMB_TYPE_MEMCHAN' =>      37, # memory channel
       'SMB_TYPE_IPMIDEV' =>      38, # IPMI device information
       'SMB_TYPE_POWERSUP' =>     39, # system power supply
+      'SMB_TYPE_ADDINFO' =>      40, # additional information
+      'SMB_TYPE_OBDEVEXT' =>     41, # on-board device extended info
+      'SMB_TYPE_MCHI' =>         42, # mgmt controller host interface
       'SMB_TYPE_INACTIVE' =>     126, # inactive table entry
       'SMB_TYPE_EOT' =>          127, # end of table
       'SMB_TYPE_OEM_LO' =>       128, # start of OEM-specific type range
@@ -120,11 +126,20 @@ Ohai.plugin(:DMI) do
 
         # look up SMB ID
         if smb_to_id.has_key?(header_information[3])
-          dmi_record[:type] = DMI.id_lookup(smb_to_id[header_information[3]])
+          id = smb_to_id[header_information[3]]
+
+          # Don't overcapture for now (OHAI-260)
+          unless Ohai::Common::DMI::IdToCapture.include?(id)
+            dmi_record = nil
+            next
+          end
+
+          dmi_record[:type] = Ohai::Common::DMI.id_lookup(id)
 
         else
-          dmi_record[:type] = header_information[3].downcase
-          Ohai::Log.debug("unrecognized header type; falling back to #{dmi_record[:type]}")
+          Ohai::Log.debug("unrecognized header type; skipping")
+          dmi_record = nil
+          next
         end
 
         dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
@@ -171,6 +186,6 @@ Ohai.plugin(:DMI) do
       end
     end
 
-    DMI.convenience_keys(dmi)
+    Ohai::Common::DMI.convenience_keys(dmi)
   end
 end

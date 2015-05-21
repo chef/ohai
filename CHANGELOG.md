@@ -1,5 +1,10 @@
 # Ohai Changelog
 
+## Release 8.4.0
+
+* Correctly skip unwanted DMI information
+* Collect DMI information on Solaris/x86
+
 ## Release 8.3.0
 
 * [**Jeremy Mauro**](https://github.com/jmauro):

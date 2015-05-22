@@ -59,19 +59,21 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif File.exists?('/etc/os-release')
-      # don't clobber existing os-release properties, point to a different cisco file
-      contents = {}
-      File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
-      if File.exists?(contents['CISCO_RELEASE_INFO'])
-        platform contents['ID']
-        platform_family contents['ID_LIKE']
-        platform_version contents['VERSION'] || ""
-      end
     elsif File.exists?("/etc/redhat-release")
-      contents = File.read("/etc/redhat-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version get_redhatish_version(contents)
+      if File.exists?('/etc/os-release') # check if Cisco
+      # don't clobber existing os-release properties, point to a different cisco file
+        contents = {}
+        File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
+        if File.exists?(contents['CISCO_RELEASE_INFO'])
+          platform contents['ID']
+          platform_family contents['ID_LIKE']
+          platform_version contents['VERSION'] || ""
+        end
+      else
+        contents = File.read("/etc/redhat-release").chomp
+        platform get_redhatish_platform(contents)
+        platform_version get_redhatish_version(contents)
+      end
     elsif File.exists?("/etc/system-release")
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)

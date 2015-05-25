@@ -53,11 +53,11 @@ describe "Ohai::Util::IpHelper" do
         end
       end
 
-      context 'that is a non RFC 4193 unique local address' do
+      context 'that is a RFC 4291 Link-Local unicast address' do
         let(:address) { 'FE80::0202:B3FF:FE1E:8329' }
 
-        it 'does not identify the address as a unique local address' do
-          expect(ip_helper.private_address?(address)).to be_falsey
+        it 'does identify the address as a link-local address' do
+          expect(ip_helper.private_address?(address)).to be_truthy
         end
       end
     end
@@ -65,7 +65,7 @@ describe "Ohai::Util::IpHelper" do
 
   describe 'private_address?' do
     include_examples 'ip address types'
-  end 
+  end
 
   describe 'unique_local_address?' do
     include_examples 'ip address types'

@@ -19,7 +19,8 @@ require 'ipaddress'
 module Ohai
   module Util
     module IpHelper
-      # Corresponding to RFC 4193
+      # Corresponding to RFC 4192 + RFC 4193
+      IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress('fe80::/10')
       IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress('fc00::/7')
 
       def private_address?(addr)
@@ -28,7 +29,7 @@ module Ohai
         if ip.respond_to? :private?
           ip.private?
         else
-          IPV6_PRIVATE_ADDRESS_BLOCK.include?(ip)
+          IPV6_LINK_LOCAL_UNICAST_BLOCK.include?(ip) || IPV6_PRIVATE_ADDRESS_BLOCK.include?(ip)
         end
       end
       alias :unique_local_address? :private_address?

@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "mime-types", "~> 2.0"
   s.add_dependency "systemu", "~> 2.6.4"
-  s.add_dependency "ffi-yajl", ">= 1.1", "< 3.0"
+  s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config", "~> 2.0"
   s.add_dependency "mixlib-log"

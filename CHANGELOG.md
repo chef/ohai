@@ -1,5 +1,10 @@
 # Ohai Changelog
 
+## Unreleased
+
+* [PR #548](https://github.com/chef/ohai/548):
+  Coerce non-UTF8 strings to UTF8 in output to suppress UTF8 encoding exceptions
+
 ## Release 8.4.0
 
 * Correctly skip unwanted DMI information

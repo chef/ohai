@@ -41,6 +41,14 @@ Ohai.plugin(:Network) do
     ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].any? { |path| File.exist?(path) }
   end
 
+  def is_openvz?
+    ::File.directory?('/proc/vz')
+  end
+
+  def is_openvz_host?
+    is_openvz? && ::File.directory?('/proc/bc')
+  end
+
   def extract_neighbours(family, iface, neigh_attr)
     so = shell_out("ip -f #{family[:name]} neigh show")
     so.stdout.lines do |line|
@@ -86,6 +94,7 @@ Ohai.plugin(:Network) do
           Ohai::Log.debug("Skipping route entry without a device: '#{line}'")
           next
         end
+        route_int = 'venet0:0' if is_openvz? && !is_openvz_host? && route_int == 'venet0' && iface['venet0:0']
 
         unless iface[route_int]
           Ohai::Log.debug("Skipping previously unseen interface from 'ip route show': #{route_int}")
@@ -108,6 +117,23 @@ Ohai.plugin(:Network) do
     end
     iface
   end
+
+  # now looking at the routes to set the default attributes
+  # for information, default routes can be of this form :
+  # - default via 10.0.2.4 dev br0
+  # - default dev br0  scope link
+  # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
+  # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
+
+  # using a temporary var to hold routes and their interface name
+  def parse_routes(family, iface)
+    iface.collect do |i, iv|
+      iv[:routes].collect do |r|
+        r.merge(:dev => i) if r[:family] == family[:name]
+      end.compact if iv[:routes]
+    end.compact.flatten
+  end
+
 
   def link_statistics(iface, net_counters)
     so = shell_out("ip -d -s link")
@@ -299,19 +325,7 @@ Ohai.plugin(:Network) do
 
         iface = check_routing_table(family, iface)
 
-        # now looking at the routes to set the default attributes
-        # for information, default routes can be of this form :
-        # - default via 10.0.2.4 dev br0
-        # - default dev br0  scope link
-        # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
-        # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
-
-        # using a temporary var to hold routes and their interface name
-        routes = iface.collect do |i,iv|
-          iv[:routes].collect do |r|
-            r.merge(:dev=>i) if r[:family] == family[:name]
-          end.compact if iv[:routes]
-        end.compact.flatten
+        routes = parse_routes(family, iface)
 
         # using a temporary var to hold the default route
         # in case there are more than 1 default route, sort it by its metric

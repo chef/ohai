@@ -178,7 +178,7 @@ module Ohai
     # Pretty Print this object as JSON
     #
     def json_pretty_print(item=nil)
-      FFI_Yajl::Encoder.new(:pretty => true).encode(item || @data)
+      FFI_Yajl::Encoder.new(pretty: true, validate_utf8: false).encode(item || @data)
     end
 
     def attributes_print(a)

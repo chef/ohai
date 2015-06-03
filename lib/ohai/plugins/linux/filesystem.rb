@@ -22,14 +22,19 @@ Ohai.plugin(:Filesystem) do
   def get_blk_cmd(attr, have_lsblk)
     if have_lsblk
       attr = 'FSTYPE' if attr == 'TYPE'
-      "lsblk -r -n -o NAME,#{attr}"
+      "lsblk -P -n -o NAME,#{attr}"
     else
       "blkid -s #{attr}"
     end
   end
 
   def get_blk_regex(attr, have_lsblk)
-    have_lsblk ? /^(\S+) (\S+)/ : /^(\S+): #{attr}="(\S+)"/
+    if have_lsblk
+      attr = 'FSTYPE' if attr == 'TYPE'
+      /^NAME="(\S+)" #{attr}="(\S+)"/
+    else
+      /^(\S+): #{attr}="(\S+)"/
+    end
   end
 
   def find_device(name)

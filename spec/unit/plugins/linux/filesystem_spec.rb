@@ -198,7 +198,7 @@ BLKID_TYPE
       @plugin.run
     end
 
-    it "should set kb_size to value from blkid -s TYPE" do
+    it "should set fs_type to value from blkid -s TYPE" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
@@ -231,7 +231,7 @@ BLKID_TYPE
       @plugin.run
     end
 
-    it "should set kb_size to value from lsblk -r -n -o NAME,FSTYPE" do
+    it "should set fs_type to value from lsblk -r -n -o NAME,FSTYPE" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
@@ -261,7 +261,7 @@ BLKID_UUID
       @plugin.run
     end
 
-    it "should set kb_size to value from blkid -s UUID" do
+    it "should set uuid to value from blkid -s UUID" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/sda2"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
     end
@@ -294,7 +294,7 @@ BLKID_UUID
       @plugin.run
     end
 
-    it "should set kb_size to value from lsblk -r -n -o NAME,UUID" do
+    it "should set uuid to value from lsblk -r -n -o NAME,UUID" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/sda2"][:uuid]).to eq(
         "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
@@ -324,7 +324,7 @@ BLKID_LABEL
       @plugin.run
     end
 
-    it "should set kb_size to value from blkid -s LABEL" do
+    it "should set label to value from blkid -s LABEL" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end
@@ -349,13 +349,13 @@ BLKID_LABEL
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run blkid -s LABEL" do
+    it "should run lsblk -r -n -o NAME,LABEL" do
       expect(@plugin).to receive(:shell_out).with("lsblk -r -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
       @plugin.run
     end
 
-    it "should set kb_size to value from blkid -s LABEL" do
+    it "should set label to value from lsblk -r -n -o NAME,LABEL" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end

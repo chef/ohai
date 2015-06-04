@@ -190,7 +190,7 @@ MOUNT
 /dev/mapper/sys.vg-usr.lv: TYPE=\"ext4\" 
 /dev/mapper/sys.vg-var.lv: TYPE=\"ext4\" 
 /dev/mapper/sys.vg-home.lv: TYPE=\"xfs\" 
-/dev/mapper/debian--7-root: TYPE="ext4" 
+/dev/mapper/debian--7-root: TYPE=\"ext4\" 
 BLKID_TYPE
       allow(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
     end

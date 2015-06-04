@@ -1,7 +1,8 @@
-
 #
 # Author:: "Dan Robinson" <drobinson@getchef.com>
+# Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Copyright:: Copyright (c) 2014 Chef Software, Inc.
+# Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +31,7 @@
 # get_vm_attributes("/usr/bin/vmware-toolbox-cmd")
 #
 
-Ohai.plugin(:Vmware) do
+Ohai.plugin(:VMware) do
   provides "vmware"
 
   def from_cmd(cmd)
@@ -48,25 +49,21 @@ Ohai.plugin(:Vmware) do
         # Iterate through each parameter supported by the "vwware-toolbox-cmd stat" command, assign value
         # to attribute "vmware[:<parameter>]"
         [ "hosttime", "speed", "sessionid", "balloon", "swap", "memlimit", "memres", "cpures", "cpulimit" ].each do |param|
-          vmware[param.to_sym] = from_cmd("#{vmtools_path} stat #{param}")
-          if vmware[param.to_sym] =~ /UpdateInfo failed/
-            vmware[param.to_sym] = nil
+          vmware[param] = from_cmd("#{vmtools_path} stat #{param}")
+          if vmware[param] =~ /UpdateInfo failed/
+            vmware[param] = nil
           end
         end
         # vmware-toolbox-cmd <param> status commands
         # Iterate through each parameter supported by the "vwware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
         [ "upgrade", "timesync" ].each do |param|
-          vmware[param.to_sym] = from_cmd("#{vmtools_path} #{param} status")
+          vmware[param] = from_cmd("#{vmtools_path} #{param} status")
         end
       rescue
         Ohai::Log.debug("Error while collecting VMware guest attributes")
       end
     end
-  end
-
-  collect_data(:default) do
-    get_vm_attributes("/usr/bin/vmware-toolbox-cmd")
   end
 
   collect_data(:linux) do

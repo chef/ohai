@@ -31,7 +31,7 @@ Ohai.plugin(:Filesystem) do
   def get_blk_regex(attr, have_lsblk)
     if have_lsblk
       attr = 'FSTYPE' if attr == 'TYPE'
-      /^NAME="(\S+)" #{attr}="(\S+)"/
+      /^NAME="(\S+).*?" #{attr}="(\S+)"/
     else
       /^(\S+): #{attr}="(\S+)"/
     end
@@ -65,7 +65,7 @@ Ohai.plugin(:Filesystem) do
         fs[filesystem][:mount] = $6
       end
     end
-    
+
     # Grab filesystem inode data from df
     so = shell_out("df -iP")
     so.stdout.lines do |line|

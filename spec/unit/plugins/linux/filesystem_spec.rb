@@ -50,6 +50,7 @@ describe Ohai::System, "Linux filesystem plugin" do
        sys.vg-usr.lv
        sys.vg-var.lv
        sys.vg-home.lv
+       debian--7-root
     }.each do |name|
       allow(File).to receive(:exist?).with("/dev/#{name}").and_return(false)
       allow(File).to receive(:exist?).with("/dev/mapper/#{name}").and_return(true)
@@ -189,6 +190,7 @@ MOUNT
 /dev/mapper/sys.vg-usr.lv: TYPE=\"ext4\" 
 /dev/mapper/sys.vg-var.lv: TYPE=\"ext4\" 
 /dev/mapper/sys.vg-home.lv: TYPE=\"xfs\" 
+/dev/mapper/debian--7-root: TYPE="ext4" 
 BLKID_TYPE
       allow(@plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -220,6 +222,7 @@ NAME="sys.vg-tmp.lv" FSTYPE="ext4"
 NAME="sys.vg-usr.lv" FSTYPE="ext4" 
 NAME="sys.vg-var.lv" FSTYPE="ext4" 
 NAME="sys.vg-home.lv" FSTYPE="xfs" 
+NAME="debian--7-root (dm-0)" FSTYPE="ext4" 
 BLKID_TYPE
       allow(@plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -234,6 +237,11 @@ BLKID_TYPE
     it "should set fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
+    end
+
+    it "should ignore extra info in name and set fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
+      @plugin.run
+      expect(@plugin[:filesystem]["/dev/mapper/debian--7-root"][:fs_type]).to eq("ext4")
     end
   end
 
@@ -252,6 +260,7 @@ BLKID_TYPE
 /dev/mapper/sys.vg-usr.lv: UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" 
 /dev/mapper/sys.vg-var.lv: UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" 
 /dev/mapper/sys.vg-home.lv: UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" 
+/dev/mapper/debian--7-root: UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" 
 BLKID_UUID
       allow(@plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -283,6 +292,7 @@ NAME="sys.vg-tmp.lv" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5"
 NAME="sys.vg-usr.lv" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" 
 NAME="sys.vg-var.lv" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" 
 NAME="sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" 
+NAME="debian--7-root (dm-0)" UUID="09187faa-3512-4505-81af-7e86d2ccb99a" 
 BLKID_UUID
       allow(@plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -300,6 +310,13 @@ BLKID_UUID
         "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
       )
     end
+
+    it "should ignore extra info in name and set uuid to value from lsblk -P -n -o NAME,UUID" do
+      @plugin.run
+      expect(@plugin[:filesystem]["/dev/mapper/debian--7-root"][:uuid]).to eq(
+        "09187faa-3512-4505-81af-7e86d2ccb99a"
+      )
+    end
   end
 
   describe "when gathering filesystem label data from blkid" do
@@ -315,6 +332,7 @@ BLKID_UUID
 /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" 
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" 
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" 
+/dev/mapper/debian--7-root: LABEL=\"root\" 
 BLKID_LABEL
       allow(@plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -344,6 +362,7 @@ NAME="sys.vg-tmp.lv" LABEL="/tmp"
 NAME="sys.vg-usr.lv" LABEL="/usr" 
 NAME="sys.vg-var.lv" LABEL="/var" 
 NAME="sys.vg-home.lv" LABEL="/home" 
+NAME="debian--7-root (dm-0)" LABEL="root" 
 BLKID_LABEL
       allow(@plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -358,6 +377,11 @@ BLKID_LABEL
     it "should set label to value from lsblk -P -n -o NAME,LABEL" do
       @plugin.run
       expect(@plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
+    end
+
+    it "should ignore extra info in name and set label to value from lsblk -P -n -o NAME,LABEL" do
+      @plugin.run
+      expect(@plugin[:filesystem]["/dev/mapper/debian--7-root"][:label]).to eq("root")
     end
   end
 

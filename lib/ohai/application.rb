@@ -56,6 +56,11 @@ class Ohai::Application
     :proc         => lambda {|v| puts "Ohai: #{::Ohai::VERSION}"},
     :exit         => 0
 
+  option :profiling,
+    :short        => "-p",
+    :long         => "--profiling",
+    :boolean      => true
+
   def initialize
     super
 
@@ -95,6 +100,9 @@ class Ohai::Application
       end
     else
       puts ohai.json_pretty_print
+    end
+    if Ohai::Config[:profiling]
+      puts ohai.json_pretty_print({ Profile: ohai.profile} )
     end
   end
 

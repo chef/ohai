@@ -59,6 +59,7 @@ class Ohai::Application
   option :profiling,
     :short        => "-p",
     :long         => "--profiling",
+    :description  => "Show elapsed time per plugin",
     :boolean      => true
 
   def initialize
@@ -102,7 +103,8 @@ class Ohai::Application
       puts ohai.json_pretty_print
     end
     if Ohai::Config[:profiling]
-      puts ohai.json_pretty_print({ Profile: ohai.profile} )
+      puts ohai.json_pretty_print(
+        { Elapsed_millisecs_by_plugin: ohai.profile} )
     end
   end
 

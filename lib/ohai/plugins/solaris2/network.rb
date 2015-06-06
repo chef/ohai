@@ -53,13 +53,19 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
+# Extracted from http://illumos.org/hcl/
+ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+                      dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
+                      iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
+                      nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
+                      rwn sfe tavor vr wpi xge yge}
+
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
   def solaris_encaps_lookup(ifname)
-    return "Ethernet" if ifname.eql?("e1000g")
-    return "Ethernet" if ifname.eql?("eri")
+    return "Ethernet" if ETHERNET_ENCAPS.include?(ifname)
     return "Ethernet" if ifname.eql?("net")
     return "Loopback" if ifname.eql?("lo")
     "Unknown"
@@ -117,9 +123,11 @@ Ohai.plugin(:Network) do
       end
     end
 
+    # Device   IP Address               Mask      Flags      Phys Addr
+    # bge1   172.16.0.129         255.255.255.255 SPLA     00:03:ba:xx:xx:xx
     so = shell_out("arp -an")
     so.stdout.lines do |line|
-      if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)\s+([a-zA-Z0-9\.\:\-]+)/
+      if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)?\s+([a-zA-Z0-9\.\:\-]+)/
         next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
         iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
         iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5

@@ -94,17 +94,15 @@ class Ohai::Application
   def run_application
     ohai = Ohai::System.new
     ohai.all_plugins(@attributes)
+    ohai.data['ohai'] = ohai.profile
 
     if @attributes
+      @attributes << 'ohai' if Ohai::Config[:profiling]
       @attributes.each do |a|
         puts ohai.attributes_print(a)
       end
     else
       puts ohai.json_pretty_print
-    end
-    if Ohai::Config[:profiling]
-      puts ohai.json_pretty_print(
-        { Elapsed_millisecs_by_plugin: ohai.profile} )
     end
   end
 

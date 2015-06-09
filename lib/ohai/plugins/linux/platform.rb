@@ -64,7 +64,7 @@ Ohai.plugin(:Platform) do
       # don't clobber existing os-release properties, point to a different cisco file
         contents = {}
         File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
-        if File.exists?(contents['CISCO_RELEASE_INFO'])
+        if contents['CISCO_RELEASE_INFO'] && File.exists?(contents['CISCO_RELEASE_INFO'])
           platform contents['ID']
           platform_family contents['ID_LIKE']
           platform_version contents['VERSION'] || ""

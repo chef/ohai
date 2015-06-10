@@ -1,13 +1,20 @@
 language: ruby
+cache: bundler
 
 sudo: false
+
+branches:
+  only:
+    - master
+    - 7.4-stable
 
 before_install:
   - bundle --version
   - gem --version
 rvm:
-  - 2.0.0
-  - 2.1.2
-script: 
+  - 2.1
+  - 2.2
+
+script:
   - bundle exec rake spec
   - bundle exec ohai

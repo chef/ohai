@@ -37,6 +37,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exists?).with("/etc/oracle-release").and_return(false)
     allow(File).to receive(:exists?).with("/etc/parallels-release").and_return(false)
     allow(File).to receive(:exists?).with("/usr/bin/raspi-config").and_return(false)
+    allow(File).to receive(:exists?).with("/etc/os-release").and_return(false)
   end
 
   describe "on lsb compliant distributions" do
@@ -175,7 +176,6 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin.run
       expect(@plugin[:platform_version]).to eq('3.18.2-2-ARCH')
     end
-
   end
 
   describe "on gentoo" do
@@ -508,6 +508,18 @@ describe Ohai::System, "Linux plugin platform" do
         expect(@plugin[:platform]).to eq("opensuse")
         expect(@plugin[:platform_family]).to eq("suse")
       end
+    end
+  end
+
+  describe "on Wind River Linux for Cisco Nexus" do
+    it "should set platform to nexus and platform_family to wrlinux" do
+      @plugin.lsb = nil
+      allow(File).to receive(:exists?).with("/etc/redhat-release").and_return(true)
+      allow(File).to receive(:exists?).with("/etc/os-release").and_return(true)
+      expect(File).to receive(:read).with("/etc/os-release").and_return("ID_LIKE=wrlinux\nID=nexus\nCISCO_RELEASE_INFO=/etc/os-release")
+      @plugin.run
+      expect(@plugin[:platform]).to eq("nexus")
+      expect(@plugin[:platform_family]).to eq("wrlinux")
     end
   end
 end

@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -60,9 +60,20 @@ Ohai.plugin(:Platform) do
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exists?("/etc/redhat-release")
-      contents = File.read("/etc/redhat-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version get_redhatish_version(contents)
+      if File.exists?('/etc/os-release') # check if Cisco
+      # don't clobber existing os-release properties, point to a different cisco file
+        contents = {}
+        File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
+        if contents['CISCO_RELEASE_INFO'] && File.exists?(contents['CISCO_RELEASE_INFO'])
+          platform contents['ID']
+          platform_family contents['ID_LIKE']
+          platform_version contents['VERSION'] || ""
+        end
+      else
+        contents = File.read("/etc/redhat-release").chomp
+        platform get_redhatish_platform(contents)
+        platform_version get_redhatish_version(contents)
+      end
     elsif File.exists?("/etc/system-release")
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)

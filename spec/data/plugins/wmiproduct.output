@@ -1,0 +1,34 @@
+[#<WmiLite::Wmi::Instance:0x27a7a00 @wmi_ole_object=#<WIN32OLE:0x27a7a18>, @property_map={"assignmenttype"=>0, "capti
+on"=>"NXLOG-CE", "description"=>"NXLOG-CE", "helplink"=>nil, "helptelephone"=>nil, "identifyingnumber"=>"{22FA28AB-3C1B-
+438B-A8B5-E23892C8B567}", "installdate"=>"20150511", "installdate2"=>nil, "installlocation"=>nil, "installsource"=>"C:\\
+chef\\cache\\", "installstate"=>5, "language"=>"1033", "localpackage"=>"C:\\Windows\\Installer\\30884.msi", "name"=>"NXL
+OG-CE", "packagecache"=>"C:\\Windows\\Installer\\30884.msi", "packagecode"=>"{EC3A13C4-4634-47FC-9662-DC293CB96F9F}", "p
+ackagename"=>"nexlog-ce-2.8.1248.msi", "productid"=>nil, "regcompany"=>nil, "regowner"=>nil, "skunumber"=>nil, "transfor
+ms"=>nil, "urlinfoabout"=>nil, "urlupdateinfo"=>nil, "vendor"=>"nxsec.com", "version"=>"2.8.1248", "wordcount"=>2}>, #<W
+miLite::Wmi::Instance:0x27a4910 @wmi_ole_object=#<WIN32OLE:0x27a4928>, @property_map={"assignmenttype"=>1, "caption"=>"M
+icrosoft .NET Framework 4.5.1 Multi-Targeting Pack", "description"=>"Microsoft .NET Framework 4.5.1 Multi-Targeting Pack
+", "helplink"=>nil, "helptelephone"=>nil, "identifyingnumber"=>"{6A0C6700-EA93-372C-8871-DCCF13D160A4}", "installdate"=>
+"20150512", "installdate2"=>nil, "installlocation"=>nil, "installsource"=>"C:\\ProgramData\\Package Cache\\{6A0C6700-EA9
+3-372C-8871-DCCF13D160A4}v4.5.50932\\packages\\netfx_451mtpack\\", "installstate"=>5, "language"=>"1033", "localpackage"
+=>"C:\\Windows\\Installer\\4853a5.msi", "name"=>"Microsoft .NET Framework 4.5.1 Multi-Targeting Pack", "packagecache"=>"
+C:\\Windows\\Installer\\4853a5.msi", "packagecode"=>"{D6098F6F-BA25-46AC-8358-CEBEA010E3BA}", "packagename"=>"netfx_451m
+tpack.msi", "productid"=>nil, "regcompany"=>nil, "regowner"=>nil, "skunumber"=>nil, "transforms"=>nil, "urlinfoabout"=>n
+il, "urlupdateinfo"=>nil, "vendor"=>"Microsoft Corporation", "version"=>"4.5.50932", "wordcount"=>2}>, #<WmiLite::Wmi::I
+nstance:0x278e4d0 @wmi_ole_object=#<WIN32OLE:0x278e4e8>, @property_map={"assignmenttype"=>1, "caption"=>"Microsoft SQL S
+erver Compact 4.0 SP1 x64 ENU", "description"=>"Microsoft SQL Server Compact 4.0 SP1 x64 ENU", "helplink"=>"http://go.mi
+crosoft.com/fwlink/?LinkId=81488", "helptelephone"=>nil, "identifyingnumber"=>"{78909610-D229-459C-A936-25D92283D3FD}",
+"installdate"=>"20150512", "installdate2"=>nil, "installlocation"=>"C:\\Program Files\\Microsoft SQL Server Compact Edit
+ion\\", "installsource"=>"C:\\Program Files (x86)\\Microsoft SQL Server Compact Edition\\Installer\\", "installstate"=>5
+, "language"=>"1033", "localpackage"=>"C:\\Windows\\Installer\\4854fb.msi", "name"=>"Microsoft SQL Server Compact 4.0 SP
+1 x64 ENU", "packagecache"=>"C:\\Windows\\Installer\\4854fb.msi", "packagecode"=>"{22846EBD-F1FF-4067-B118-A5D71D3E938B}
+", "packagename"=>"SSCERuntime_x64-ENU.msi", "productid"=>nil, "regcompany"=>nil, "regowner"=>nil, "skunumber"=>nil, "tr
+ansforms"=>nil, "urlinfoabout"=>nil, "urlupdateinfo"=>nil, "vendor"=>"Microsoft Corporation", "version"=>"4.0.8876.1", "
+wordcount"=>2}>, #<WmiLite::Wmi::Instance:0x278c538 @wmi_ole_object=#<WIN32OLE:0x278c550>, @property_map={"assignmenttyp
+e"=>1, "caption"=>"Strawberry Perl (64-bit)", "description"=>"Strawberry Perl (64-bit)", "helplink"=>"http://strawberryp
+erl.com/support.html", "helptelephone"=>nil, "identifyingnumber"=>"{843B6A60-6CF3-1014-B3E5-B42EDCB56166}", "installdate
+"=>"20150512", "installdate2"=>nil, "installlocation"=>"C:\\strawberry\\", "installsource"=>"C:\\Users\\ADMINI~1\\AppDat
+a\\Local\\Temp\\2\\chocolatey\\StrawberryPerl\\", "installstate"=>5, "language"=>"1033", "localpackage"=>"C:\\Windows\\I
+nstaller\\8bf25.msi", "name"=>"Strawberry Perl (64-bit)", "packagecache"=>"C:\\Windows\\Installer\\8bf25.msi", "packagec
+ode"=>"{BA2AE79C-7A4B-47FD-A032-D8950297EEB2}", "packagename"=>"StrawberryPerlInstall.MSI", "productid"=>nil, "regcompan
+y"=>nil, "regowner"=>nil, "skunumber"=>nil, "transforms"=>nil, "urlinfoabout"=>"http://strawberryperl.com/", "urlupdatei
+nfo"=>nil, "vendor"=>"strawberryperl.com project", "version"=>"5.16.3001", "wordcount"=>2}>]

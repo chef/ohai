@@ -43,7 +43,7 @@ Ohai.plugin(:Virtualization) do
 
     # Detect Parallels virtual machine from pci devices
     if ioreg_exists?
-      so = shell_out('ioreg -l')
+      so = shell_out("ioreg -l")
       if so.stdout =~ /pci1ab8,4000/
         virtualization[:system] = 'parallels'
         virtualization[:role] = 'guest'

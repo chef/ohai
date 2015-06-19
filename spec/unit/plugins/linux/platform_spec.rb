@@ -311,6 +311,26 @@ describe Ohai::System, "Linux plugin platform" do
       end
 
     end
+
+    ####
+    # TODO: This regression test won't work because we stub too much up front.
+    # need to refactor the tests first.
+    ## # https://github.com/chef/ohai/issues/560
+    ## # Issue is seen on EL7, so that's what we're testing.
+    ## context "on versions that have /etc/os-release" do
+
+    ##   before do
+    ##     allow(File).to receive(:exists?).with("/etc/os-release").and_return(true)
+    ##   end
+
+    ##   it "correctly detects EL7" do
+    ##     expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
+    ##     @plugin.run
+    ##     expect(@plugin[:platform]).to eq("centos")
+    ##     expect(@plugin[:platform_version]).to eq("7.1")
+    ##   end
+
+    ## end
   end
 
   describe "on pcs linux" do

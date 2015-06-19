@@ -28,6 +28,20 @@ Ohai.plugin(:Platform) do
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
   end
 
+  def os_release_file_is_cisco?
+    return false unless File.exists?('/etc/os-release')
+    os_release_info = File.read('/etc/os-release').split.inject({}) do |map, key_value_line|
+      key, _separator, value = key_value_line.partition('=')
+      map[key] = value
+      map
+    end
+    if os_release_info['CISCO_RELEASE_INFO'] && File.exists?(os_release_info['CISCO_RELEASE_INFO'])
+      os_release_info
+    else
+      false
+    end
+  end
+
   collect_data(:linux) do
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
     if File.exists?("/etc/oracle-release")
@@ -60,15 +74,10 @@ Ohai.plugin(:Platform) do
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exists?("/etc/redhat-release")
-      if File.exists?('/etc/os-release') # check if Cisco
-      # don't clobber existing os-release properties, point to a different cisco file
-        contents = {}
-        File.read('/etc/os-release').split.collect {|x| x.split('=')}.each {|x| contents[x[0]] = x[1]}
-        if contents['CISCO_RELEASE_INFO'] && File.exists?(contents['CISCO_RELEASE_INFO'])
-          platform contents['ID']
-          platform_family contents['ID_LIKE']
-          platform_version contents['VERSION'] || ""
-        end
+      if File.exists?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
+        platform os_release_info['ID']
+        platform_family os_release_info['ID_LIKE']
+        platform_version os_release_info['VERSION'] || ""
       else
         contents = File.read("/etc/redhat-release").chomp
         platform get_redhatish_platform(contents)

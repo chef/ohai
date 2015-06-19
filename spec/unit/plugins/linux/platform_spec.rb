@@ -53,6 +53,8 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exists?).with("/etc/parallels-release").and_return(have_parallels_release)
     allow(File).to receive(:exists?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
     allow(File).to receive(:exists?).with("/etc/os-release").and_return(have_os_release)
+
+    allow(File).to receive(:read).with("PLEASE STUB ALL File.read CALLS")
   end
 
   describe "on lsb compliant distributions" do
@@ -341,27 +343,43 @@ describe Ohai::System, "Linux plugin platform" do
         expect(@plugin[:platform_version].to_i).to eq(13)
       end
 
+      # https://github.com/chef/ohai/issues/560
+      # Issue is seen on EL7, so that's what we're testing.
+      context "on versions that have /etc/os-release" do
+
+        let(:have_os_release) { true }
+
+        let(:os_release_content) do
+          <<-OS_RELEASE
+NAME="CentOS Linux"
+VERSION="7 (Core)"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="7"
+PRETTY_NAME="CentOS Linux 7 (Core)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:7"
+HOME_URL="https://www.centos.org/"
+BUG_REPORT_URL="https://bugs.centos.org/"
+
+OS_RELEASE
+        end
+
+        before do
+          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
+          expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
+        end
+
+        it "correctly detects EL7" do
+          @plugin.run
+          expect(@plugin[:platform]).to eq("centos")
+          expect(@plugin[:platform_version]).to eq("7.1")
+        end
+
+      end
+
     end
 
-    ####
-    # TODO: This regression test won't work because we stub too much up front.
-    # need to refactor the tests first.
-    ## # https://github.com/chef/ohai/issues/560
-    ## # Issue is seen on EL7, so that's what we're testing.
-    ## context "on versions that have /etc/os-release" do
-
-    ##   before do
-    ##     allow(File).to receive(:exists?).with("/etc/os-release").and_return(true)
-    ##   end
-
-    ##   it "correctly detects EL7" do
-    ##     expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
-    ##     @plugin.run
-    ##     expect(@plugin[:platform]).to eq("centos")
-    ##     expect(@plugin[:platform_version]).to eq("7.1")
-    ##   end
-
-    ## end
   end
 
   describe "on pcs linux" do

@@ -47,12 +47,12 @@ describe Ohai::System, "plugin ruby" do
     :host_cpu => ::RbConfig::CONFIG['host_cpu'],
     :host_os => ::RbConfig::CONFIG['host_os'],
     :host_vendor => ::RbConfig::CONFIG['host_vendor'],
-    :gems_dir => %x{#{ruby_bin} #{::RbConfig::CONFIG['bindir']}/gem env gemdir}.chomp!,
+    :gems_dir => %x{#{ruby_bin} #{::RbConfig::CONFIG['bindir']}/gem env gemdir}.chomp,
     :gem_bin => [ ::Gem.default_exec_format % 'gem', 'gem' ].map{|bin| "#{::RbConfig::CONFIG['bindir']}/#{bin}"
       }.find{|bin| ::File.exists? bin},
     :ruby_bin => ruby_bin
   }.each do |attribute, value|
-    it "should have #{attribute} set" do
+    it "should have #{attribute} set to #{value.inspect}" do
       expect(@ruby_ohai_data[attribute]).to eql(value)
     end
   end

@@ -29,13 +29,13 @@ Ohai.plugin(:Platform) do
   end
 
   def os_release_file_is_cisco?
-    return false unless File.exists?('/etc/os-release')
+    return false unless File.exist?('/etc/os-release')
     os_release_info = File.read('/etc/os-release').split.inject({}) do |map, key_value_line|
       key, _separator, value = key_value_line.partition('=')
       map[key] = value
       map
     end
-    if os_release_info['CISCO_RELEASE_INFO'] && File.exists?(os_release_info['CISCO_RELEASE_INFO'])
+    if os_release_info['CISCO_RELEASE_INFO'] && File.exist?(os_release_info['CISCO_RELEASE_INFO'])
       os_release_info
     else
       false
@@ -44,15 +44,15 @@ Ohai.plugin(:Platform) do
 
   collect_data(:linux) do
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
-    if File.exists?("/etc/oracle-release")
+    if File.exist?("/etc/oracle-release")
       contents = File.read("/etc/oracle-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exists?("/etc/enterprise-release")
+    elsif File.exist?("/etc/enterprise-release")
       contents = File.read("/etc/enterprise-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exists?("/etc/debian_version")
+    elsif File.exist?("/etc/debian_version")
       # Ubuntu and Debian both have /etc/debian_version
       # Ubuntu should always have a working lsb, debian does not by default
       if lsb[:id] =~ /Ubuntu/i
@@ -62,19 +62,19 @@ Ohai.plugin(:Platform) do
         platform "linuxmint"
         platform_version lsb[:release]
       else
-        if File.exists?("/usr/bin/raspi-config")
+        if File.exist?("/usr/bin/raspi-config")
           platform "raspbian"
         else
           platform "debian"
         end
         platform_version File.read("/etc/debian_version").chomp
       end
-    elsif File.exists?("/etc/parallels-release")
+    elsif File.exist?("/etc/parallels-release")
       contents = File.read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif File.exists?("/etc/redhat-release")
-      if File.exists?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
+    elsif File.exist?("/etc/redhat-release")
+      if File.exist?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
         platform os_release_info['ID']
         platform_family os_release_info['ID_LIKE']
         platform_version os_release_info['VERSION'] || ""
@@ -83,14 +83,14 @@ Ohai.plugin(:Platform) do
         platform get_redhatish_platform(contents)
         platform_version get_redhatish_version(contents)
       end
-    elsif File.exists?("/etc/system-release")
+    elsif File.exist?("/etc/system-release")
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exists?('/etc/gentoo-release')
+    elsif File.exist?('/etc/gentoo-release')
       platform "gentoo"
       platform_version File.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
-    elsif File.exists?('/etc/SuSE-release')
+    elsif File.exist?('/etc/SuSE-release')
       suse_release = File.read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
@@ -100,15 +100,15 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif File.exists?('/etc/slackware-version')
+    elsif File.exist?('/etc/slackware-version')
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exists?('/etc/arch-release')
+    elsif File.exist?('/etc/arch-release')
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
       platform_version `uname -r`.strip
-    elsif File.exists?('/etc/exherbo-release')
+    elsif File.exist?('/etc/exherbo-release')
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13

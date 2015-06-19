@@ -52,22 +52,22 @@ describe "CloudAttrs object" do
 
   it "throws exception with a bad ipv4 address" do
     @cloud_attr_obj = ::CloudAttrs.new()
-    expect {  @cloud_attr_obj.add_ipv6_addr("somebogusstring", :public) }.to raise_error
+    expect {  @cloud_attr_obj.add_ipv6_addr("somebogusstring", :public) }.to raise_error(RuntimeError)
   end
 
   it "throws exception with a bad ipv6 address" do
     @cloud_attr_obj = ::CloudAttrs.new()
-    expect {  @cloud_attr_obj.add_ipv6_addr("FEED:B0B:DEAD:BEEF", :public)  }.to raise_error
+    expect {  @cloud_attr_obj.add_ipv6_addr("FEED:B0B:DEAD:BEEF", :public)  }.to raise_error(RuntimeError)
   end
 
   it "throws exception with ipv6 address passed to ipv4" do
     @cloud_attr_obj = ::CloudAttrs.new()
-    expect {  @cloud_attr_obj.add_ipv4_addr("3ffe:506:2::1", :public) }.to raise_error
+    expect {  @cloud_attr_obj.add_ipv4_addr("3ffe:506:2::1", :public) }.to raise_error(RuntimeError)
   end
 
   it "throws exception with ipv4 address passed to ipv6" do
     @cloud_attr_obj = ::CloudAttrs.new()
-    expect {  @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public) }.to raise_error
+    expect {  @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public) }.to raise_error(RuntimeError)
   end
 
 

@@ -141,7 +141,7 @@ describe Ohai::Runner, "run_plugin" do
       end
 
       it "should not run the plugin" do
-        expect{ @runner.run_plugin(@plugin) }.to raise_error
+        expect{ @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
         expect(@plugin.has_run?).to be false
       end
     end

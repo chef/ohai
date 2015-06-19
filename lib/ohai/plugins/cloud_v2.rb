@@ -62,7 +62,7 @@ Ohai.plugin(:CloudV2) do
         @cloud[:local_ipv4_addrs] ||= Array.new
         @cloud[:local_ipv4_addrs] << ipaddr.to_s
       else
-        raise "ERROR: in valid accessibility param of '#{accessibility}'. must be :public or :private."
+        raise "ERROR: invalid accessibility param of '#{accessibility}'. must be :public or :private."
       end
     end
 
@@ -79,7 +79,7 @@ Ohai.plugin(:CloudV2) do
         @cloud[:local_ipv6_addrs] ||= Array.new
         @cloud[:local_ipv6_addrs] << ipaddr.to_s
       else
-        raise "ERROR: in valid accessibility param of '#{accessibility}'. must be :public or :private."
+        raise "ERROR: invalid accessibility param of '#{accessibility}'. must be :public or :private."
       end
     end
 

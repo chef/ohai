@@ -49,7 +49,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "2020-01-01\nUnsupported", :code => "200") }
 
       it "raises an error" do
-        expect { mixin.best_api_version}.to raise_error
+        expect { mixin.best_api_version}.to raise_error(RuntimeError)
       end
     end
 
@@ -66,7 +66,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "418") }
 
       it "raises an error" do
-        expect { mixin.best_api_version}.to raise_error
+        expect { mixin.best_api_version}.to raise_error(RuntimeError)
       end
     end
   end

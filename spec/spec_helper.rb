@@ -33,7 +33,7 @@ def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
 end
 
 def convert_windows_output(stdout)
-    stdout.gsub("\n", "\r\n")
+  stdout.gsub("\n", "\r\n")
 end
 
 def it_should_check_from(plugin, attribute, from, value)
@@ -90,6 +90,10 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
 end
 
 RSpec.configure do |config|
+
+  # Not worth addressing warnings in Ohai until upstream ones in ffi-yajl are
+  # fixed.
+  # config.warnings = true
 
   config.raise_errors_for_deprecations!
 

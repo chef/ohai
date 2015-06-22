@@ -20,30 +20,28 @@ describe Ohai::System, "plugin vmware" do
 
   let(:plugin) { get_plugin("vmware") }
   let(:path) { "/usr/bin/vmware-toolbox-cmd" }
-  let(:param) { nil }
 
   context "vmware toolbox" do
 
     def setup_stubs
       allow(File).to receive(:exist?).and_return(true)
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat speed").and_return(mock_shell_out(0, "2000 MHz", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat hosttime").and_return(mock_shell_out(0, "04 Jun 2015 19:21:16", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat sessionid").and_return(mock_shell_out(0, "0x0000000000000000", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat balloon").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat swap").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat memlimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat memres").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat cpures").and_return(mock_shell_out(0, "0 MHz", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd stat cpulimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd upgrade status").and_return(mock_shell_out(0, "VMware Tools are up-to-date.", nil))
-      allow(plugin).to receive(:shell_out).with("/usr/bin/vmware-toolbox-cmd timesync status").and_return(mock_shell_out(0, "Disabled", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat speed").and_return(mock_shell_out(0, "2000 MHz", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat hosttime").and_return(mock_shell_out(0, "04 Jun 2015 19:21:16", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat sessionid").and_return(mock_shell_out(0, "0x0000000000000000", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat balloon").and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat swap").and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat memlimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat memres").and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat cpures").and_return(mock_shell_out(0, "0 MHz", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} stat cpulimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} upgrade status").and_return(mock_shell_out(0, "VMware Tools are up-to-date.", nil))
+      allow(plugin).to receive(:shell_out).with("#{path} timesync status").and_return(mock_shell_out(0, "Disabled", nil))
       plugin.run
     end
 
     before(:each) do
       setup_stubs
-      plugin.run
     end
 
     context "the vmware toolbox cmd" do

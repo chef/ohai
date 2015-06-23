@@ -6,6 +6,9 @@
 
 * [PR #548](https://github.com/chef/ohai/548):
   Coerce non-UTF8 strings to UTF8 in output to suppress UTF8 encoding exceptions
+* [**Phil Dibowitz**](https://github.com/jymzh):
+  Provide a new and improved filesystem plugin for Linux (filesystem2), to
+  support CentOS7, multiple virtual filesystes, etc.
 
 * [PR #544](https://github.com/chef/ohai/pull/544)
   add support for Wind River Linux and Cisco's Nexus platforms

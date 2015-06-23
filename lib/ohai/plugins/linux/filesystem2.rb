@@ -1,5 +1,7 @@
 #
 # Author:: Phil Dibowitz <phil@ipom.com>
+# Author:: Adam Jacob <adam@chef.io>
+# Copyright:: Copyright (c) 2008 Opscode, Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -85,7 +87,6 @@ Ohai.plugin(:Filesystem2) do
 
   collect_data(:linux) do
     fs = Mash.new
-    have_lsblk = File.executable?('/bin/lsblk')
 
     # Grab filesystem data from df
     so = shell_out("df -P")
@@ -137,10 +138,11 @@ Ohai.plugin(:Filesystem2) do
     end
 
     have_lsblk = File.exist?('/bin/lsblk')
-    if have_lsblk = File.exist?('/bin/lsblk')
+    if have_lsblk
       cmd = 'lsblk -n -P -o NAME,UUID,LABEL,FSTYPE'
     else
-      cmd = '"blkid'
+      # CentOS5 and other platforms don't have lsblk
+      cmd = 'blkid'
     end
 
     so = shell_out(cmd)

@@ -19,29 +19,30 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Darwin virtualization platform" do
+  let(:plugin) { get_plugin("darwin/virtualization")}
+
   before(:each) do
-    @plugin = get_plugin("darwin/virtualization")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:prlctl_exists?).and_return(false)
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:prlctl_exists?).and_return(false)
   end
 
   describe "when we are checking for parallels" do
     it "should set parallels host if /usr/bin/prlctl exists" do
-      allow(@plugin).to receive(:prlctl_exists?).and_return("/usr/bin/prlctl")
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("parallels")
-      expect(@plugin[:virtualization][:role]).to eq("host")
-      expect(@plugin[:virtualization][:systems][:parallels]).to eq("host")
+      allow(plugin).to receive(:prlctl_exists?).and_return("/usr/bin/prlctl")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("parallels")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:parallels]).to eq("host")
     end
 
     it "should not set parallels host if /usr/bin/prlctl not exist" do
-      allow(@plugin).to receive(:prlctl_exists?).and_return(false)
-      @plugin.run
-      expect(@plugin[:virtualization]).to eq({'systems' => {}})
+      allow(plugin).to receive(:prlctl_exists?).and_return(false)
+      plugin.run
+      expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
 
     it "should set parallels guest if /usr/sbin/ioreg exists and it's output contains pci1ab8,4000" do
-      allow(@plugin).to receive(:ioreg_exists?).and_return(true)
+      allow(plugin).to receive(:ioreg_exists?).and_return(true)
       ioreg=<<-IOREG
     | |   +-o pci1ab8,4000@3  <class IOPCIDevice, id 0x1000001d1, registered, matched, active, busy 0 (40 ms), retain 9>
     | |   | | {
@@ -67,15 +68,15 @@ describe Ohai::System, "Darwin virtualization platform" do
       IOREG
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg)
-      allow(@plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("parallels")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
-      expect(@plugin[:virtualization][:systems][:parallels]).to eq("guest")
+      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("parallels")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:parallels]).to eq("guest")
     end
 
     it "should not set parallels guest if /usr/sbin/ioreg exists and it's output not contain pci1ab8,4000" do
-      allow(@plugin).to receive(:ioreg_exists?).and_return(true)
+      allow(plugin).to receive(:ioreg_exists?).and_return(true)
       ioreg=<<-IOREG
     | |   +-o pci8086,2445@1F,4  <class IOPCIDevice, id 0x1000001d4, registered, matched, active, busy 0 (974 ms), retain 11>
     | |     | {
@@ -100,9 +101,9 @@ describe Ohai::System, "Darwin virtualization platform" do
       IOREG
       shellout = double("shellout")
       allow(shellout).to receive(:stdout).and_return(ioreg)
-      allow(@plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
-      @plugin.run
-      expect(@plugin[:virtualization]).to eq({'systems' => {}})
+      allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
+      plugin.run
+      expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
   end
 end

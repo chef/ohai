@@ -2,8 +2,13 @@
 
 ## Unreleased
 
+## Release 8.5.0
+
 * [PR #548](https://github.com/chef/ohai/548):
   Coerce non-UTF8 strings to UTF8 in output to suppress UTF8 encoding exceptions
+
+* [PR #544](https://github.com/chef/ohai/pull/544)
+  add support for Wind River Linux and Cisco's Nexus platforms
 
 ## Release 8.4.0
 

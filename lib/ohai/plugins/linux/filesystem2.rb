@@ -90,7 +90,7 @@ Ohai.plugin(:Filesystem2) do
 
     # Grab filesystem data from df
     so = shell_out("df -P")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       case line
       when /^Filesystem\s+1024-blocks/
         next
@@ -108,7 +108,7 @@ Ohai.plugin(:Filesystem2) do
     
     # Grab filesystem inode data from df
     so = shell_out("df -iP")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       case line
       when /^Filesystem\s+Inodes/
         next
@@ -126,7 +126,7 @@ Ohai.plugin(:Filesystem2) do
 
     # Grab mount information from /bin/mount
     so = shell_out("mount")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
         key = "#{$1},#{$2}"
         fs[key] = Mash.new unless fs.has_key?(key)
@@ -146,7 +146,7 @@ Ohai.plugin(:Filesystem2) do
     end
 
     so = shell_out(cmd)
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       parsed = parse_line(line, have_lsblk)
       next if parsed.nil?
       # lsblk lists each device once, so we need to update all entries

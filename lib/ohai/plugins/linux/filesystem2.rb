@@ -31,21 +31,21 @@ Ohai.plugin(:Filesystem2) do
 
   def parse_line(line, have_lsblk)
     if have_lsblk
-      re = /NAME="(\S+)" UUID="(\S*) LABEL="(\S*)" FSTYPE="(\S*)"/
+      regex = /NAME="(\S+)" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
       if line =~ regex
         dev = $1
         dev = find_device(dev) unless dev.start_with?('/')
         uuid = $2
         label = $3
         fs_type = $4
-        return {:dev => dev, :uuid => uuid, :label => label, :fs_type => fstype}
+        return {:dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type}
       end
     else
       bits = line.split
       dev = bits.shift.split(':')[0]
-      f = {}
-      dev.each do |keyval|
-        if dev =~ /(\S+)="(\S+)"/
+      f = {:dev => dev}
+      bits.each do |keyval|
+        if keyval =~ /(\S+)="(\S+)"/
           key = $1.downcase.to_sym
           key = :fs_type if key == :type
           f[key] = $2
@@ -153,13 +153,13 @@ Ohai.plugin(:Filesystem2) do
       # in the hash that are related to this device
       keys_to_update = []
       fs.each_key do |key|
-        keys_to_update << key if key.start_with?("#{dev},")
+        keys_to_update << key if key.start_with?("#{parsed[:dev]},")
       end
         
       if keys_to_update.empty?
-        key = "#{dev},"
+        key = "#{parsed[:dev]},"
         fs[key] = Mash.new
-        fs[key][:device] = dev
+        fs[key][:device] = parsed[:dev]
         keys_to_update << key
       end
 
@@ -193,7 +193,7 @@ Ohai.plugin(:Filesystem2) do
       f.close
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
-          key = "$1,$2"
+          key = "#{$1},#{$2}"
           next if fs.has_key?(key)
           fs[key] = Mash.new
           fs[key][:mount] = $2

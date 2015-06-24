@@ -151,7 +151,7 @@ Ohai.plugin(:Hostname) do
     wmi = WmiLite::Wmi.new
     host = wmi.first_of('Win32_ComputerSystem')
 
-    hostname "#{host['name']}"
+    hostname "#{host['dnshostname']}"
     machinename "#{host['name']}"
 
     info = Socket.gethostbyname(Socket.gethostname)

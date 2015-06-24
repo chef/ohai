@@ -8,6 +8,8 @@
   Linux filesystems plugin report wrong fs-type for logical volumes
 * [**involucelate**](https://github.com/involucelate)
   Fix windows 2008 hostname truncation #554
+* [**Pavel Yudin**](https://github.com/Kasen):
+  Detect Parallels host and guest virtualisation
 
 ## Release 8.5.0
 

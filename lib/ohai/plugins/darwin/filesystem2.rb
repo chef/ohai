@@ -1,6 +1,8 @@
 #
+# Author:: Phil Dibowitz (<phil@ipom.com>)
 # Author:: Benjamin Black (<bb@opscode.com>)
 # Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,8 +52,6 @@ Ohai.plugin(:Filesystem2) do
 
   collect_data(:darwin) do
     fs = Mash.new
-
-
     block_size = 0
     # on new versions of OSX, -i is default, on old versions it's not, so
     # specifying it gets consistent output

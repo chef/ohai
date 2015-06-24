@@ -10,6 +10,8 @@
   Fix windows 2008 hostname truncation #554
 * [**Pavel Yudin**](https://github.com/Kasen):
   Detect Parallels host and guest virtualisation
+* [**Phil Dibowitz**](https://github.com/jymzh):
+  Fix Darwin filesystem plugin on newer MacOSX
 
 ## Release 8.5.0
 

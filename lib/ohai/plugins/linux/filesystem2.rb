@@ -31,7 +31,7 @@ Ohai.plugin(:Filesystem2) do
 
   def parse_line(line, have_lsblk)
     if have_lsblk
-      regex = /NAME="(\S+)" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
+      regex = /NAME="(\S+).*?" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
       if line =~ regex
         dev = $1
         dev = find_device(dev) unless dev.start_with?('/')

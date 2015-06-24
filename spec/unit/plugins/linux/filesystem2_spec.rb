@@ -45,6 +45,7 @@ describe Ohai::System, "Linux filesystem plugin" do
        sys.vg-usr.lv
        sys.vg-var.lv
        sys.vg-home.lv
+       debian--7-root
     }.each do |name|
       allow(File).to receive(:exist?).with("/dev/#{name}").and_return(false)
       allow(File).to receive(:exist?).with("/dev/mapper/#{name}").and_return(true)
@@ -256,18 +257,19 @@ DFi
 
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
-NAME=\"/dev/sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-NAME=\"/dev/sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-NAME=\"/dev/sda1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-NAME=\"/dev/sda2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-NAME=\"/dev/md0\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" LABEL=\"/boot\" FSTYPE=\"ext3\"
-NAME=\"/dev/md1\" UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" LABEL=\"\" FSTYPE=\"LVM2_member\" 
-NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
-NAME=\"/dev/mapper/sys.vg-swap.lv\" UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" LABEL=\"\" FSTYPE=\"swap\"
-NAME=\"/dev/mapper/sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
-NAME=\"/dev/mapper/sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\" FSTYPE=\"ext4\"
-NAME=\"/dev/mapper/sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
-NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+NAME=\"sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
+NAME=\"sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
+NAME=\"sda1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
+NAME=\"sda2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
+NAME=\"md0\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" LABEL=\"/boot\" FSTYPE=\"ext3\"
+NAME=\"md1\" UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" LABEL=\"\" FSTYPE=\"LVM2_member\"
+NAME=\"sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-swap.lv\" UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" LABEL=\"\" FSTYPE=\"swap\"
+NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
         with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
@@ -284,6 +286,12 @@ BLKID_TYPE
       expect(plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
       expect(plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
     end
+
+    it "should ignore extra info in name and set label to value from lsblk  -n -P -o NAME,UUID,LABEL,FSTYPE" do
+      @plugin.run
+      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
+    end
+
   end
 
   describe "when gathering data from /proc/mounts" do

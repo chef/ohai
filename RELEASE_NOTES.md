@@ -27,7 +27,8 @@ populate the old system (role & system) with LXC if there are no other virtualiz
 
 ### Filesystem2
 
-There is a new plugin for filesystems in Linux. It solves several problems:
+There is a new plugin for filesystems in Linux & Darwin. It solves several
+problems:
 * Can handle multiple virtual FSes with the same "device" (eg, 'none')
 * Can handle a device mounted multiple places
 * Is resilient to mtab being a symlink to /proc/mounts

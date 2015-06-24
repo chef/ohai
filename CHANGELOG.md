@@ -2,7 +2,7 @@
 
 ## Unreleased
 * [**Phil Dibowitz**](https://github.com/jymzh):
-  Provide a new and improved filesystem plugin for Linux (filesystem2), to
+  Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
   support CentOS7, multiple virtual filesystes, etc.
 * [**Jonathan Amiez**](https://github.com/josqu4red):
   Linux filesystems plugin report wrong fs-type for logical volumes

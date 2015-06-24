@@ -105,6 +105,15 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:openvz] = "guest"
     end
 
+    # Detect Parallels virtual machine from pci devices
+    if File.exists?("/proc/bus/pci/devices")
+      if File.read("/proc/bus/pci/devices") =~ /1ab84000/
+        virtualization[:system] = "parallels"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:parallels] = "guest"
+      end
+    end
+
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
     if File.exists?("/usr/sbin/dmidecode")
       so = shell_out("dmidecode")

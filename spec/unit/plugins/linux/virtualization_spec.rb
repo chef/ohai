@@ -35,6 +35,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(false)
     allow(File).to receive(:exists?).with("/.dockerenv").and_return(false)
     allow(File).to receive(:exists?).with("/.dockerinit").and_return(false)
+    allow(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -315,6 +316,32 @@ OPENSTACK
     it "should not set virtualization if openvz isn't there" do
       expect(File).to receive(:exists?).with("/proc/bc/0").and_return(false)
       expect(File).to receive(:exists?).with("/proc/vz").and_return(false)
+      @plugin.run
+      expect(@plugin[:virtualization]).to eq({'systems' => {}})
+    end
+  end
+
+  describe "when we are checking for parallels" do
+    it "should set parallels guest if /proc/bus/pci/devices contains 1ab84000" do
+      devices=<<-DEVICES
+0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
+0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
+      DEVICES
+      expect(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(true)
+      allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("parallels")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:parallels]).to eq("guest")
+    end
+
+    it "should not set virtualization if /proc/bus/pci/devices not contains 1ab84000" do
+      devices=<<-DEVICES
+0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
+0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
+      DEVICES
+      expect(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(true)
+      allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       @plugin.run
       expect(@plugin[:virtualization]).to eq({'systems' => {}})
     end

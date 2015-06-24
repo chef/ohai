@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "darwin filesystem2 plugin" do
   before(:each) do
-    let(:plugin) { get_plugin("darwin/filesystem2") }
+    @plugin = get_plugin("darwin/filesystem2")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
 
     allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))

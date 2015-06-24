@@ -23,21 +23,27 @@ Ohai.plugin(:Filesystem) do
     fs = Mash.new
 
     block_size = 0
-    so = shell_out("df")
+    so = shell_out("df -i")
     so.stdout.lines do |line|
       case line
       when /^Filesystem\s+(\d+)-/
         block_size = $1.to_i
         next
-      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\d+)\s+(\d+)\s+(\d+%)\s+(.+)$/
         filesystem = $1
         fs[filesystem] = Mash.new
         fs[filesystem][:block_size] = block_size
+        # To match linux, these should be strings, but we don't want
+        # to break back compat so we'll leave them as they are. In filesystem2
+        # we make them consistent.
         fs[filesystem][:kb_size] = $2.to_i / (1024 / block_size)
         fs[filesystem][:kb_used] = $3.to_i / (1024 / block_size)
         fs[filesystem][:kb_available] = $4.to_i / (1024 / block_size)
         fs[filesystem][:percent_used] = $5
-        fs[filesystem][:mount] = $6
+        fs[filesystem][:inodes_used] = $6
+        fs[filesystem][:inodes_available] = $7
+        fs[filesystem][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[filesystem][:mount] = $9
       end
     end
 

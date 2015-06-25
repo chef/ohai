@@ -43,8 +43,12 @@ Ohai.plugin(:Filesystem2) do
       next unless entry[:mount]
       view[entry[:mount]] = Mash.new unless view[entry[:mount]]
       entry.each do |key, val|
-        next if key == 'mount'
+        next if ['mount', 'device'].include?(key)
         view[entry[:mount]][key] = val
+      end
+      if entry[:device]
+        view[entry[:mount]][:devices] = [] unless view[entry[:mount]][:devices]
+        view[entry[:mount]][:devices] << entry[:device]
       end
     end
     view

@@ -334,4 +334,96 @@ MOUNTS
     end
   end
 
+  describe "when gathering filesystem data with devices mounted more than once" do
+    before(:each) do
+      # there's a few different examples one can run into in this output:
+      # 1. A device physically mounted in more than one place: /home and /home2
+      # 2. A bind-mounted directory, which shows up as the same device in a
+      # subdir: / and /var/chroot
+      # 3. tmpfs in multiple places.
+      @dfstdout = <<-DF
+Filesystem         1024-blocks      Used Available Capacity Mounted on
+/dev/mapper/sys.vg-root.lv   4805760    378716   4182924       9% /
+tmpfs                  2030944         0   2030944       0% /lib/init/rw
+udev                   2025576       228   2025348       1% /dev
+tmpfs                  2030944      2960   2027984       1% /dev/shm
+/dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home
+/dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home2
+/dev/mapper/sys.vg-root.lv  4805760    378716   4182924       9% /var/chroot
+DF
+      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      
+      @inode_stdout = <<-DFi
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+/dev/mapper/sys.vg-root.lv     1310720 107407 1203313    9% /
+tmpfs           126922    273  126649    1% /lib/init/rw
+none            126922      1  126921    1% /dev/shm
+udev            126922      1  126921    1% /dev
+/dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home
+/dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home2
+/dev/mapper/sys.vg-root.lv  1310720 107407 1203313       9% /var/chroot
+DFi
+      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+
+      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
+      @stdout = <<-BLKID_TYPE
+NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
+NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+BLKID_TYPE
+      allow(@plugin).to receive(:shell_out).
+        with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        and_return(mock_shell_out(0, @stdout, ""))
+    end
+
+    it "should provide a devices view with all mountpoints" do
+      @plugin.run
+      expect(@plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(['/', '/var/chroot'])
+      expect(@plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(['/home', '/home2'])
+      expect(@plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(['/lib/init/rw', '/dev/shm'])
+    end
+  end
+
+  describe "when gathering filesystem data with double-mounts" do
+    before(:each) do
+      @dfstdout = <<-DF
+Filesystem         1024-blocks      Used Available Capacity Mounted on
+/dev/mapper/sys.vg-root.lv   4805760    378716   4182924       9% /
+tmpfs                  2030944         0   2030944       0% /lib/init/rw
+udev                   2025576       228   2025348       1% /dev
+tmpfs                  2030944      2960   2027984       1% /dev/shm
+/dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home
+/dev/sdb1              97605056  53563252  44041804      55% /mnt
+/dev/sdc1              4805760    378716   4182924       9% /mnt
+DF
+      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      
+      @inode_stdout = <<-DFi
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+/dev/mapper/sys.vg-root.lv     1310720 107407 1203313    9% /
+tmpfs           126922    273  126649    1% /lib/init/rw
+none            126922      1  126921    1% /dev/shm
+udev            126922      1  126921    1% /dev
+/dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home
+/dev/sdb1       60891136  4696030 56195106      8% /mnt
+/dev/sdc1       1310720 107407 1203313          9% /mnt
+DFi
+      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+
+      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
+      @stdout = <<-BLKID_TYPE
+NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
+NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
+NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
+NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+BLKID_TYPE
+      allow(@plugin).to receive(:shell_out).
+        with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        and_return(mock_shell_out(0, @stdout, ""))
+    end
+
+    it "should provide a mounts view with all devices" do
+      @plugin.run
+      expect(@plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/sdb1', '/dev/sdc1'])
+    end
+  end
 end

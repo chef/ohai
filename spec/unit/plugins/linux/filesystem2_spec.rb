@@ -19,17 +19,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "Linux filesystem plugin" do
+  let (:plugin) { get_plugin("linux/filesystem2") }
   before(:each) do
-    @plugin = get_plugin("linux/filesystem2")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
 
-    allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     allow(File).to receive(:exist?).with("/bin/lsblk").and_return(false)
-    allow(@plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, "", ""))
 
-    allow(@plugin).to receive(:shell_out).
+    allow(plugin).to receive(:shell_out).
       with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
       and_return(mock_shell_out(0, "", ""))
 
@@ -66,7 +66,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
 /dev/md0                960492     36388    875312       4% /boot
 DF
-      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -76,53 +76,53 @@ tmpfs           126922    273  126649    1% /run
 none            126922      1  126921    1% /run/lock
 none            126922      1  126921    1% /run/shm
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
     it "should run df -P and df -iP" do
-      expect(@plugin).to receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
-      expect(@plugin).to receive(:shell_out).ordered.with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
+      expect(plugin).to receive(:shell_out).ordered.with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      plugin.run
     end
 
     it "should set kb_size to value from df -P" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_size]).to eq("97605057")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_size]).to eq("97605057")
     end
 
     it "should set kb_used to value from df -P" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_used]).to eq("53563253")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_used]).to eq("53563253")
     end
 
     it "should set kb_available to value from df -P" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_available]).to eq("44041805")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_available]).to eq("44041805")
     end
 
     it "should set percent_used to value from df -P" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:percent_used]).to eq("56%")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:percent_used]).to eq("56%")
     end
 
     it "should set mount to value from df -P" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
     
     it "should set total_inodes to value from df -iP" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:total_inodes]).to eq("124865")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:total_inodes]).to eq("124865")
     end
     
     it "should set inodes_used to value from df -iP" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_used]).to eq("380")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_used]).to eq("380")
     end
     
     it "should set inodes_available to value from df -iP" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_available]).to eq("124485")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_available]).to eq("124485")
     end
   end
 
@@ -145,27 +145,27 @@ devpts on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=620)
 fusectl on /sys/fs/fuse/connections type fusectl (rw)
 binfmt_misc on /proc/sys/fs/binfmt_misc type binfmt_misc (rw,noexec,nosuid,nodev)
 MOUNT
-      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run mount" do
-      expect(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      plugin.run
     end
 
     it "should set mount to value from mount" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
 
     it "should set fs_type to value from mount" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
     end
 
     it "should set mount_options to an array of values from mount" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime" ])
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime" ])
     end
   end
 
@@ -186,7 +186,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
 /dev/md0                960492     36388    875312       4% /boot
 DF
-      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -196,7 +196,7 @@ tmpfs           126922    273  126649    1% /run
 none            126922      1  126921    1% /run/lock
 none            126922      1  126921    1% /run/shm
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       @stdout = <<-BLKID_TYPE
 /dev/sdb1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
@@ -212,18 +212,18 @@ DFi
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
 BLKID_TYPE
-      allow(@plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid" do
-      @plugin.run
+      plugin.run
     end
 
     it "should set kb_size to value from blkid" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
     end
   end
 
@@ -242,7 +242,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
 /dev/md0                960492     36388    875312       4% /boot
 DF
-      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -252,7 +252,7 @@ tmpfs           126922    273  126649    1% /run
 none            126922      1  126921    1% /run/lock
 none            126922      1  126921    1% /run/shm
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
@@ -269,20 +269,20 @@ NAME=\"/dev/mapper/sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\"
 NAME=\"/dev/mapper/sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
-      allow(@plugin).to receive(:shell_out).
+      allow(plugin).to receive(:shell_out).
         with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run lsblk -n -P -o NAME,UUID,LABEL,FSTYPE" do
-      @plugin.run
+      plugin.run
     end
 
     it "should set kb_size to value from lsblk -n -P -o NAME,UUID,LABEL,FSTYPE" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
     end
   end
 
@@ -319,18 +319,18 @@ MOUNTS
     end
 
     it "should set mount to value from /proc/mounts" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
   
     it "should set fs_type to value from /proc/mounts" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
     end
   
     it "should set mount_options to an array of values from /proc/mounts" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
     end
   end
 
@@ -351,7 +351,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home2
 /dev/mapper/sys.vg-root.lv  4805760    378716   4182924       9% /var/chroot
 DF
-      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -363,23 +363,23 @@ udev            126922      1  126921    1% /dev
 /dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home2
 /dev/mapper/sys.vg-root.lv  1310720 107407 1203313       9% /var/chroot
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
 NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
-      allow(@plugin).to receive(:shell_out).
+      allow(plugin).to receive(:shell_out).
         with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should provide a devices view with all mountpoints" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(['/', '/var/chroot'])
-      expect(@plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(['/home', '/home2'])
-      expect(@plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(['/lib/init/rw', '/dev/shm'])
+      plugin.run
+      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(['/', '/var/chroot'])
+      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(['/home', '/home2'])
+      expect(plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(['/lib/init/rw', '/dev/shm'])
     end
   end
 
@@ -395,7 +395,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/sdb1              97605056  53563252  44041804      55% /mnt
 /dev/sdc1              4805760    378716   4182924       9% /mnt
 DF
-      allow(@plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
       
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
@@ -407,7 +407,7 @@ udev            126922      1  126921    1% /dev
 /dev/sdb1       60891136  4696030 56195106      8% /mnt
 /dev/sdc1       1310720 107407 1203313          9% /mnt
 DFi
-      allow(@plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
@@ -416,14 +416,14 @@ NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" 
 NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
-      allow(@plugin).to receive(:shell_out).
+      allow(plugin).to receive(:shell_out).
         with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should provide a mounts view with all devices" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/sdb1', '/dev/sdc1'])
+      plugin.run
+      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/sdb1', '/dev/sdc1'])
     end
   end
 end

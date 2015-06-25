@@ -19,12 +19,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "darwin filesystem2 plugin" do
+  let (:plugin) { get_plugin("darwin/filesystem2") }
   before(:each) do
-    @plugin = get_plugin("darwin/filesystem2")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
 
-    allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -38,33 +38,33 @@ map -hosts                    0         0         0   100%        0        0  10
 map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
 deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
 DF
-      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run df -i" do
-      expect(@plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      plugin.run
     end
 
     it "should set size to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_size]).to eq("244277768")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_used]).to eq("156848224")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_available]).to eq("87173544")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:percent_used]).to eq("65%")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_size]).to eq("244277768")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_used]).to eq("156848224")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:kb_available]).to eq("87173544")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:percent_used]).to eq("65%")
     end
 
     it "should set device and mount to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:device]).to eq("/dev/disk0s2")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:device]).to eq("/dev/disk0s2")
     end
     
     it "should set inode info to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:total_inodes]).to eq("61069440")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:inodes_used]).to eq("39276054")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:inodes_available]).to eq("21793386")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:total_inodes]).to eq("61069440")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:inodes_used]).to eq("39276054")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:inodes_available]).to eq("21793386")
     end
   end
 
@@ -78,19 +78,19 @@ map -hosts on /net (autofs, nosuid, automounted, nobrowse)
 map -static on /mobile_symbol (autofs, automounted, nobrowse)
 deweyfs@osxfuse0 on /mnt/dewey (osxfusefs, synchronous, nobrowse)
 MOUNT
-      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run mount" do
-      expect(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      plugin.run
     end
 
     it "should set values from mount" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:fs_type]).to eq("hfs")
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount_options]).to eq([ "local", "journaled" ])
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:fs_type]).to eq("hfs")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount_options]).to eq([ "local", "journaled" ])
     end
   end
 
@@ -106,12 +106,12 @@ map -static                   0         0         0   100%        0        0  10
 deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
 /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
 DF
-      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 
     it "should provide a devices view with all mountpoints" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_device"]["/dev/disk0s2"][:mounts]).to eq(['/', '/another/mountpoint'])
+      plugin.run
+      expect(plugin[:filesystem2]["by_device"]["/dev/disk0s2"][:mounts]).to eq(['/', '/another/mountpoint'])
     end
   end
 
@@ -128,12 +128,12 @@ deweyfs@osxfuse0              0         0         0   100%        0        0  10
 /dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
 /dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
 DF
-      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 
     it "should provide a mounts view with all devices" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/disk0s3', '/dev/disk0s4'])
+      plugin.run
+      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/disk0s3', '/dev/disk0s4'])
     end
   end
 end

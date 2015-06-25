@@ -19,12 +19,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 describe Ohai::System, "darwin filesystem plugin" do
+  let (:plugin) { get_plugin("darwin/filesystem") }
   before(:each) do
-    @plugin = get_plugin("darwin/filesystem")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
 
-    allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -38,32 +38,32 @@ map -hosts                    0         0         0   100%        0        0  10
 map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
 deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
 DF
-      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run df -i" do
-      expect(@plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).ordered.with("df -i").and_return(mock_shell_out(0, @stdout, ""))
+      plugin.run
     end
 
     it "should set size to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:kb_size]).to eq(244277768)
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:kb_used]).to eq(156848224)
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:kb_available]).to eq(87173544)
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:percent_used]).to eq("65%")
+      plugin.run
+      expect(plugin[:filesystem]["/dev/disk0s2"][:kb_size]).to eq(244277768)
+      expect(plugin[:filesystem]["/dev/disk0s2"][:kb_used]).to eq(156848224)
+      expect(plugin[:filesystem]["/dev/disk0s2"][:kb_available]).to eq(87173544)
+      expect(plugin[:filesystem]["/dev/disk0s2"][:percent_used]).to eq("65%")
     end
 
     it "should set mount to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:mount]).to eq("/")
+      plugin.run
+      expect(plugin[:filesystem]["/dev/disk0s2"][:mount]).to eq("/")
     end
     
     it "should set inode info to value from df -i" do
-      @plugin.run
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:total_inodes]).to eq("61069440")
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:inodes_used]).to eq("39276054")
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:inodes_available]).to eq("21793386")
+      plugin.run
+      expect(plugin[:filesystem]["/dev/disk0s2"][:total_inodes]).to eq("61069440")
+      expect(plugin[:filesystem]["/dev/disk0s2"][:inodes_used]).to eq("39276054")
+      expect(plugin[:filesystem]["/dev/disk0s2"][:inodes_available]).to eq("21793386")
     end
   end
 
@@ -77,19 +77,19 @@ map -hosts on /net (autofs, nosuid, automounted, nobrowse)
 map -static on /mobile_symbol (autofs, automounted, nobrowse)
 deweyfs@osxfuse0 on /mnt/dewey (osxfusefs, synchronous, nobrowse)
 MOUNT
-      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run mount" do
-      expect(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
-      @plugin.run
+      expect(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
+      plugin.run
     end
 
     it "should set values from mount" do
-      @plugin.run
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:mount]).to eq("/")
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:fs_type]).to eq("hfs")
-      expect(@plugin[:filesystem]["/dev/disk0s2"][:mount_options]).to eq([ "local", "journaled" ])
+      plugin.run
+      expect(plugin[:filesystem]["/dev/disk0s2"][:mount]).to eq("/")
+      expect(plugin[:filesystem]["/dev/disk0s2"][:fs_type]).to eq("hfs")
+      expect(plugin[:filesystem]["/dev/disk0s2"][:mount_options]).to eq([ "local", "journaled" ])
     end
   end
 end

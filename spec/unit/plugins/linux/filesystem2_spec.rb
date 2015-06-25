@@ -288,8 +288,8 @@ BLKID_TYPE
     end
 
     it "should ignore extra info in name and set label to value from lsblk  -n -P -o NAME,UUID,LABEL,FSTYPE" do
-      @plugin.run
-      expect(@plugin[:filesystem2]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
+      plugin.run
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
     end
 
   end

@@ -47,7 +47,10 @@ Unlike the 'filesystem' plugin, it provides 3 views into the data:
   be a symlink to /proc/mounts it can still have data loss due to different
   mount options, or multiple virtualfs mounts with the same fake device name.
 * `by_mount` similar to the above but indexed by mountpoint. Won't include
-  unmounted filesystems, of course.
+  unmounted filesystems, of course. Instead of a 'device' entry it has a
+  'devices' entry that is an array. Similar to the 'by_device' view, this extra
+  feature can solve many problems of of the old filesystem plugin, but may still
+  have data loss on things like mount options.
 
 It is recommended to always use `by_pair` when iterating or wanting a full view
 of storage devices. The other two are provided for convenient lookup. Other

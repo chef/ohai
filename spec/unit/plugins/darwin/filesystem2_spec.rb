@@ -93,4 +93,47 @@ MOUNT
       expect(@plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount_options]).to eq([ "local", "journaled" ])
     end
   end
+
+  describe "when gathering filesystem data with devices mounted more than once" do
+    before(:each) do
+      @dfstdout = <<-DF
+Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
+/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
+devfs                       385       385         0   100%      666        0  100%   /dev
+map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
+map -hosts                    0         0         0   100%        0        0  100%   /net
+map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
+deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
+/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
+DF
+      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+    end
+
+    it "should provide a devices view with all mountpoints" do
+      @plugin.run
+      expect(@plugin[:filesystem2]["by_device"]["/dev/disk0s2"][:mounts]).to eq(['/', '/another/mountpoint'])
+    end
+  end
+
+  describe "when gathering filesystem data with double-mounts" do
+    before(:each) do
+      @dfstdout = <<-DF
+Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
+/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
+devfs                       385       385         0   100%      666        0  100%   /dev
+map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
+map -hosts                    0         0         0   100%        0        0  100%   /net
+map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
+deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
+/dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
+/dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
+DF
+      allow(@plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
+    end
+
+    it "should provide a mounts view with all devices" do
+      @plugin.run
+      expect(@plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/disk0s3', '/dev/disk0s4'])
+    end
+  end
 end

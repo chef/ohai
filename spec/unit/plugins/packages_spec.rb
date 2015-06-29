@@ -84,7 +84,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on windows" do
+  context "on windows", :windows_only do
 
     require 'wmi-lite'
 

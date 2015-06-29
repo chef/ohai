@@ -200,6 +200,7 @@ Ohai.plugin(:Filesystem2) do
           key = "#{$1},#{$2}"
           next if fs.has_key?(key)
           fs[key] = Mash.new
+          fs[key][:device] = $1
           fs[key][:mount] = $2
           fs[key][:fs_type] = $3
           fs[key][:mount_options] = $4.split(",")

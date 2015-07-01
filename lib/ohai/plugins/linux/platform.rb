@@ -75,7 +75,7 @@ Ohai.plugin(:Platform) do
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exist?("/etc/redhat-release")
       if File.exist?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
-        platform "wind_river"
+        platform "nexus"
         platform_family "fedora"
         platform_version os_release_info['VERSION'] || ""
       else

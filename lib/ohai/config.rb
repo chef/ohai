@@ -17,6 +17,7 @@
 #
 
 require 'mixlib/config'
+require 'ohai/log'
 
 module Ohai
   class Config
@@ -32,7 +33,6 @@ module Ohai
       end
       path
     end
-
 
     default :log_level, :info
     default :log_location, STDERR

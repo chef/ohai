@@ -64,8 +64,8 @@ Ohai.plugin(:Filesystem2) do
         next if ['device', 'mount'].include?(key)
         view[entry[:device]][key] = val
       end
+      view[entry[:device]][:mounts] ||= []
       if entry[:mount]
-        view[entry[:device]][:mounts] = [] unless view[entry[:device]][:mounts]
         view[entry[:device]][:mounts] << entry[:mount]
       end
     end
@@ -81,8 +81,8 @@ Ohai.plugin(:Filesystem2) do
         next if ['mount', 'device'].include?(key)
         view[entry[:mount]][key] = val
       end
+      view[entry[:mount]][:devices] ||= []
       if entry[:device]
-        view[entry[:mount]][:devices] = [] unless view[entry[:mount]][:devices]
         view[entry[:mount]][:devices] << entry[:device]
       end
     end

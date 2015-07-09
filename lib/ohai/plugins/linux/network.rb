@@ -303,14 +303,14 @@ Ohai.plugin(:Network) do
                     :name => "inet",
                     :default_route => "0.0.0.0/0",
                     :default_prefix => :default,
-                    :neighbor_attribute => :arp
+                    :neighbour_attribute => :arp
                   }]
 
       families << {
                     :name => "inet6",
                     :default_route => "::/0",
                     :default_prefix => :default_inet6,
-                    :neighbor_attribute => :neighbor_inet6
+                    :neighbour_attribute => :neighbour_inet6
                   } if ipv6_enabled?
 
       parse_ip_addr(iface)
@@ -318,7 +318,7 @@ Ohai.plugin(:Network) do
       iface = link_statistics(iface, net_counters)
 
       families.each do |family|
-        neigh_attr = family[:neighbor_attribute]
+        neigh_attr = family[:neighbour_attribute]
         default_prefix = family[:default_prefix]
 
         iface = extract_neighbors(family, iface, neigh_attr)

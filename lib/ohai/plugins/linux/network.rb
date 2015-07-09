@@ -49,13 +49,13 @@ Ohai.plugin(:Network) do
     is_openvz? && ::File.directory?('/proc/bc')
   end
 
-  def extract_neighbours(family, iface, neigh_attr)
+  def extract_neighbors(family, iface, neigh_attr)
     so = shell_out("ip -f #{family[:name]} neigh show")
     so.stdout.lines do |line|
       if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
         interface = iface[$2]
         unless interface
-          Ohai::Log.warn("neighbour list has entries for unknown interface #{interface}")
+          Ohai::Log.warn("neighbor list has entries for unknown interface #{interface}")
           next
         end
         interface[neigh_attr] = Mash.new unless interface[neigh_attr]
@@ -303,14 +303,14 @@ Ohai.plugin(:Network) do
                     :name => "inet",
                     :default_route => "0.0.0.0/0",
                     :default_prefix => :default,
-                    :neighbour_attribute => :arp
+                    :neighbor_attribute => :arp
                   }]
 
       families << {
                     :name => "inet6",
                     :default_route => "::/0",
                     :default_prefix => :default_inet6,
-                    :neighbour_attribute => :neighbour_inet6
+                    :neighbor_attribute => :neighbor_inet6
                   } if ipv6_enabled?
 
       parse_ip_addr(iface)
@@ -318,10 +318,10 @@ Ohai.plugin(:Network) do
       iface = link_statistics(iface, net_counters)
 
       families.each do |family|
-        neigh_attr = family[:neighbour_attribute]
+        neigh_attr = family[:neighbor_attribute]
         default_prefix = family[:default_prefix]
 
-        iface = extract_neighbours(family, iface, neigh_attr)
+        iface = extract_neighbors(family, iface, neigh_attr)
 
         iface = check_routing_table(family, iface)
 

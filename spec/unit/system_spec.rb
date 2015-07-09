@@ -51,8 +51,7 @@ provides 'fish'
 EOF
 
     before do
-      @original_config = Ohai::Config[:plugin_path]
-      Ohai::Config[:plugin_path] = [ path_to(".") ]
+      Ohai.config[:plugin_path] = [ path_to(".") ]
     end
 
     it "load_plugins() should load all the plugins" do
@@ -85,12 +84,7 @@ provides 'bear'
 EOF
 
     before do
-      @original_config = Ohai::Config[:plugin_path]
-      Ohai::Config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
-    end
-
-    after do
-      Ohai::Config[:plugin_path] = @original_config
+      Ohai.config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
     end
 
     it "load_plugins() should load all the plugins" do
@@ -106,14 +100,6 @@ EOF
   end
 
   describe "when running plugins" do
-    before do
-      @original_config = Ohai::Config[:plugin_path]
-    end
-
-    after do
-      Ohai::Config[:plugin_path] = @original_config
-    end
-
     when_plugins_directory "contains v6 plugins only" do
       with_plugin("zoo.rb", <<EOF)
 provides 'zoo'
@@ -126,7 +112,7 @@ park("plants")
 EOF
 
       it "should collect data from all the plugins" do
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
         expect(ohai.data[:park]).to eq("plants")
@@ -134,15 +120,15 @@ EOF
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai::Config[:disabled_plugins] = [ "zoo" ]
+          Ohai.config[:disabled_plugins] = [ "zoo" ]
         end
 
         after do
-          Ohai::Config[:disabled_plugins] = [ ]
+          Ohai.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled version 6 plugins" do
-          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
           expect(ohai.data[:park]).to eq("plants")
@@ -245,7 +231,7 @@ end
 EOF
 
       it "should collect platform specific" do
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:message]).to eq("platform_specific_message")
       end
@@ -272,14 +258,14 @@ end
 EOF
 
       it "should collect data from all the plugins" do
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
         expect(ohai.data[:park]).to eq("plants")
       end
 
       it "should write an error to Ohai::Log" do
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        Ohai.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
         allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
@@ -289,15 +275,15 @@ EOF
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai::Config[:disabled_plugins] = [ :Zoo ]
+          Ohai.config[:disabled_plugins] = [ :Zoo ]
         end
 
         after do
-          Ohai::Config[:disabled_plugins] = [ ]
+          Ohai.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled plugins" do
-          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
           expect(ohai.data[:park]).to eq("plants")
@@ -338,15 +324,15 @@ EOF
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai::Config[:disabled_plugins] = [ :Zoo, 'my_plugins::park' ]
+          Ohai.config[:disabled_plugins] = [ :Zoo, 'my_plugins::park' ]
         end
 
         after do
-          Ohai::Config[:disabled_plugins] = [ ]
+          Ohai.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled plugins" do
-          Ohai::Config[:plugin_path] = [ path_to(".") ]
+          Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
           expect(ohai.data[:nature]).to eq("cougars")
@@ -384,12 +370,7 @@ end
 EOF
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-         Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should collect all data" do
@@ -427,12 +408,7 @@ end
 EOF
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-         Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "version 6 should run" do
@@ -475,12 +451,7 @@ end
 EOF
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-         Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should collect all the data properly" do
@@ -502,12 +473,7 @@ message v7message
 EOF
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-         Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should raise DependencyNotFound" do
@@ -525,12 +491,7 @@ EOF
       E
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-        Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "reloads only the v6 plugin when given a specific plugin to load" do
@@ -552,12 +513,7 @@ EOF
       E
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-        Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should rerun the plugin providing the desired attributes" do
@@ -611,15 +567,10 @@ EOF
       E
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
+        Ohai.config[:plugin_path] = [ path_to(".") ]
         Ohai::Log.init(STDOUT)
         Ohai::Log.level = :debug
         ohai.all_plugins
-      end
-
-      after do
-        Ohai::Config[:plugin_path] = @original_config
       end
 
       it "should rerun the plugin providing the desired attributes" do
@@ -682,12 +633,7 @@ EOF
       E
 
       before do
-        @original_config = Ohai::Config[:plugin_path]
-        Ohai::Config[:plugin_path] = [ path_to(".") ]
-      end
-
-      after do
-        Ohai::Config[:plugin_path] = @original_config
+        Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should run all the plugins when a top level attribute is specified" do

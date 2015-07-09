@@ -29,7 +29,7 @@ module Ohai
       @hints ||= Hash.new
       return @hints[name] if @hints[name]
 
-      Ohai::Config[:hints_path].each do |path|
+      Ohai.config[:hints_path].each do |path|
         filename = File.join(path, "#{name}.json")
         if File.exist?(filename)
           begin

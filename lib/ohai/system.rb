@@ -49,8 +49,8 @@ module Ohai
       @v6_dependency_solver = Hash.new
 
       # configure logging
-      Ohai::Log.init(Ohai::Config[:log_location])
-      Ohai::Log.level = Ohai::Config[:log_level]
+      Ohai::Log.init(Ohai.config[:log_location])
+      Ohai::Log.level = Ohai.config[:log_level]
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)

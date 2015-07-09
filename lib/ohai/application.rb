@@ -82,8 +82,8 @@ class Ohai::Application
   end
 
   def configure_logging
-    Ohai::Log.init(Ohai::Config[:log_location])
-    Ohai::Log.level = Ohai::Config[:log_level]
+    Ohai::Log.init(Ohai.config[:log_location])
+    Ohai::Log.level = Ohai.config[:log_level]
   end
 
   def run_application
@@ -103,12 +103,12 @@ class Ohai::Application
     # Log a fatal error message to both STDERR and the Logger, exit the application
     def fatal!(msg, err = -1)
       STDERR.puts("FATAL: #{msg}")
-      Chef::Log.fatal(msg)
+      Ohai::Log.fatal(msg)
       Process.exit err
     end
 
     def exit!(msg, err = -1)
-      Chef::Log.debug(msg)
+      Ohai::Log.debug(msg)
       Process.exit err
     end
   end

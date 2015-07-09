@@ -38,7 +38,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
     describe "when plugin is enabled" do
       before do
-        allow(Ohai::Config).to receive(:[]).with(:disabled_plugins).and_return([ ])
+        allow(Ohai.config).to receive(:[]).with(:disabled_plugins).and_return([ ])
       end
 
       it "should run the plugin" do
@@ -54,7 +54,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
     describe "if the plugin is disabled" do
       before do
-        allow(Ohai::Config).to receive(:[]).with(:disabled_plugins).and_return([ :TestPlugin ])
+        allow(Ohai.config).to receive(:[]).with(:disabled_plugins).and_return([ :TestPlugin ])
       end
 
       it "should not run the plugin" do

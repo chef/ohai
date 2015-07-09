@@ -24,7 +24,7 @@ require 'pathname'
 module Ohai
 
   # Ohai plugin loader. Finds all the plugins in your
-  # `Ohai::Config[:plugin_path]` (supports a single or multiple path setting
+  # `Ohai.config[:plugin_path]` (supports a single or multiple path setting
   # here), evaluates them and returns plugin objects.
   class Loader
 
@@ -57,7 +57,7 @@ module Ohai
     # Searches all plugin paths and returns an Array of PluginFile objects
     # representing each plugin file.
     def plugin_files_by_dir
-      Array(Ohai::Config[:plugin_path]).inject([]) do |plugin_files, plugin_path|
+      Array(Ohai.config[:plugin_path]).inject([]) do |plugin_files, plugin_path|
         plugin_files + PluginFile.find_all_in(plugin_path)
       end
     end

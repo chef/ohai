@@ -146,6 +146,10 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "openstack"
         virtualization[:role] = "guest"
         virtualization[:systems][:openstack] = "guest"
+      when /Manufacturer: QEMU/
+        virtualization[:system] = "kvm"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:kvm] = "guest"
       else
         nil
       end

@@ -21,7 +21,7 @@ provides "filesystem"
 fs = Mash.new
 
 # Grab filesystem data from df
-popen4("df") do |pid, stdin, stdout, stderr|
+popen4("df -k") do |pid, stdin, stdout, stderr|
   stdin.close
   stdout.each do |line|
     case line

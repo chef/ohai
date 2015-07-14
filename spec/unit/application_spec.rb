@@ -34,10 +34,78 @@ RSpec.describe 'Ohai::Application' do
     ARGV.replace(@original_argv)
   end
 
+  def stub_fatal!(expected_message)
+    expect(STDERR).to receive(:puts).with(expected_message)
+    expect(Ohai::Log).to receive(:fatal).with(expected_message)
+  end
+
   describe '#configure_ohai' do
     it 'merges deprecated config settings into the ohai config context' do
       expect(Ohai::Config).to receive(:merge_deprecated_config)
       app.configure_ohai
+    end
+
+    describe 'loading configuration from a file' do
+      let(:config_file) { '/local/workstation/config' }
+      let(:config_loader) { instance_double('ChefConfig::WorkstationConfigLoader') }
+
+      context 'when specified on the command line' do
+        let(:argv) { [ '-c', config_file ] }
+
+        before(:each) do
+          if windows?
+            expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
+              with("C:#{config_file}", Ohai::Log).
+              and_return(config_loader)
+          else
+            expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
+              with(config_file, Ohai::Log).
+              and_return(config_loader)
+          end
+        end
+
+        it 'loads the configuration file' do
+          expect(config_loader).to receive(:path_exists?).
+            with(config_file).
+            and_return(true)
+          expect(config_loader).to receive(:config_location).
+            and_return(config_file)
+          expect(Ohai::Config).to receive(:from_file).
+            with(config_file)
+          app.configure_ohai
+        end
+
+        context 'when the configuration file does not exist' do
+          let(:expected_message) { Regexp.new("#{config_file} does not exist") }
+
+          it 'terminates the application' do
+            expect(config_loader).to receive(:path_exists?).
+              with(config_file).
+              and_return(false)
+            expect(Ohai::Application).to receive(:fatal!).
+              with(expected_message).
+              and_call_original
+            stub_fatal!(expected_message)
+            expect { app.configure_ohai }.to raise_error(SystemExit)
+          end
+        end
+      end
+
+      context 'when a local workstation config exists' do
+        before(:each) do
+          expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
+            with(nil, Ohai::Log).
+            and_return(config_loader)
+        end
+
+        it 'loads the configuration file' do
+          expect(config_loader).to receive(:config_location).
+            and_return(config_file)
+          expect(Ohai::Config).to receive(:from_file).
+            with(config_file)
+          app.configure_ohai
+        end
+      end
     end
 
     context 'when CLI options are provided' do

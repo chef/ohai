@@ -14,6 +14,8 @@
   Fix Darwin filesystem plugin on newer MacOSX
 * [**Claire McQuin**](https://github.com/mcquin):
   Deprecate Ohai::Config in favor of Ohai::Config.ohai.
+* [**Claire McQuin**](https://github.com/mcquin):
+  Load a configuration file while running as an application.
 
 ## Release 8.5.0
 

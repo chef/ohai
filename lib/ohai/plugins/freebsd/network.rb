@@ -102,7 +102,7 @@ popen4("netstat -ibdn") do |pid, stdin, stdout, stderr|
     # Name    Mtu Network       Address              Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
     # ed0    1500 <Link#1>      54:52:00:68:92:85   333604    26  151905886   175472     0   24897542     0  905 
     # $1                        $2                      $3    $4         $5       $6    $7         $8    $9  $10
-    if line =~ /^([\w\.\-\*]+)\s+\d+\s+<Link#?\d*>\s+([\w:]*|[\w.]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+    if line =~ /^([\w\.\-\/\*]+)\s+\d+\s+<Link#?\d*>\s+([\w:]*|[\w.]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
       net_counters[$1] = Mash.new unless net_counters[$1]
       net_counters[$1]["rx"] = Mash.new unless net_counters[$1]["rx"]
       net_counters[$1]["tx"] = Mash.new unless net_counters[$1]["tx"]

@@ -28,12 +28,14 @@ require 'ohai/mixin/constant_helper'
 require 'ohai/provides_map'
 require 'ohai/hints'
 require 'mixlib/shellout'
+require 'date'
 
 module Ohai
   class System
     include Ohai::Mixin::ConstantHelper
 
     attr_accessor :data
+    attr_accessor :profile
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
@@ -44,6 +46,7 @@ module Ohai
 
     def reset_system
       @data = Mash.new
+      @profile = Mash.new
       @provides_map = ProvidesMap.new
 
       @v6_dependency_solver = Hash.new
@@ -91,7 +94,11 @@ module Ohai
       # Then run all the version 7 plugins
       begin
         @provides_map.all_plugins(attribute_filter).each { |plugin|
+          start_time = DateTime.now.strftime('%Q').to_i
           @runner.run_plugin(plugin)
+          elapsed_time = DateTime.now.strftime('%Q').to_i - start_time
+          @profile[plugin.name] =
+            ( elapsed_time < 0 ) ? 0 : elapsed_time
         }
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")

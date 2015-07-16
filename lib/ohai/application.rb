@@ -56,6 +56,12 @@ class Ohai::Application
     :proc         => lambda {|v| puts "Ohai: #{::Ohai::VERSION}"},
     :exit         => 0
 
+  option :profiling,
+    :short        => "-p",
+    :long         => "--profiling",
+    :description  => "Show elapsed time per plugin",
+    :boolean      => true
+
   def initialize
     super
 
@@ -88,8 +94,10 @@ class Ohai::Application
   def run_application
     ohai = Ohai::System.new
     ohai.all_plugins(@attributes)
+    ohai.data['ohai'] = ohai.profile
 
     if @attributes
+      @attributes << 'ohai' if Ohai::Config[:profiling]
       @attributes.each do |a|
         puts ohai.attributes_print(a)
       end

@@ -12,6 +12,8 @@
   Detect Parallels host and guest virtualisation
 * [**Phil Dibowitz**](https://github.com/jymzh):
   Fix Darwin filesystem plugin on newer MacOSX
+* [**Claire McQuin**](https://github.com/mcquin):
+  Deprecate Ohai::Config in favor of Ohai::Config.ohai.
 
 ## Release 8.5.0
 

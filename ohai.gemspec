@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.description = s.summary
   s.license = "Apache-2.0"
   s.author = "Adam Jacob"
-  s.email = "adam@opscode.com"
-  s.homepage = "https://docs.getchef.com/ohai.html"
+  s.email = "adam@chef.io"
+  s.homepage = "https://docs.chef.io/ohai.html"
 
   s.required_ruby_version = ">= 2.0.0"
 
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-expectations", "~> 3.0"
   s.add_development_dependency "rspec-mocks", "~> 3.0"
   s.add_development_dependency "rspec-collection_matchers", "~> 1.0"
-#  s.add_development_dependency "rspec_junit_formatter"
+  s.add_development_dependency "rspec_junit_formatter"
   s.add_development_dependency "chef"
   s.bindir = "bin"
   s.executables = %w(ohai)

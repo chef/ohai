@@ -73,7 +73,6 @@ class Ohai::Application
 
   def run
     configure_ohai
-    configure_logging
     run_application
   end
 
@@ -82,20 +81,10 @@ class Ohai::Application
     @attributes = nil if @attributes.empty?
 
     load_workstation_config
-    Ohai::Config.merge_deprecated_config
-    Ohai.config.merge!(config)
-    if Ohai.config[:directory]
-      Ohai.config[:plugin_path] << Ohai.config[:directory]
-    end
-  end
-
-  def configure_logging
-    Ohai::Log.init(Ohai.config[:log_location])
-    Ohai::Log.level = Ohai.config[:log_level]
   end
 
   def run_application
-    ohai = Ohai::System.new
+    ohai = Ohai::System.new(config)
     ohai.all_plugins(@attributes)
 
     if @attributes

@@ -34,17 +34,7 @@ RSpec.describe 'Ohai::Application' do
     ARGV.replace(@original_argv)
   end
 
-  def stub_fatal!(expected_message)
-    expect(STDERR).to receive(:puts).with(expected_message)
-    expect(Ohai::Log).to receive(:fatal).with(expected_message)
-  end
-
   describe '#configure_ohai' do
-    it 'merges deprecated config settings into the ohai config context' do
-      expect(Ohai::Config).to receive(:merge_deprecated_config)
-      app.configure_ohai
-    end
-
     describe 'loading configuration from a file' do
       let(:config_file) { '/local/workstation/config' }
       let(:config_loader) { instance_double('ChefConfig::WorkstationConfigLoader') }
@@ -65,28 +55,15 @@ RSpec.describe 'Ohai::Application' do
         end
 
         it 'loads the configuration file' do
-          expect(config_loader).to receive(:path_exists?).
-            with(config_file).
-            and_return(true)
-          expect(config_loader).to receive(:config_location).
-            and_return(config_file)
-          expect(Ohai::Config).to receive(:from_file).
-            with(config_file)
+          expect(config_loader).to receive(:load)
           app.configure_ohai
         end
 
         context 'when the configuration file does not exist' do
-          let(:expected_message) { Regexp.new("#{config_file} does not exist") }
-
           it 'terminates the application' do
-            expect(config_loader).to receive(:path_exists?).
-              with(config_file).
-              and_return(false)
-            expect(Ohai::Application).to receive(:fatal!).
-              with(expected_message).
-              and_call_original
-            stub_fatal!(expected_message)
-            expect { app.configure_ohai }.to raise_error(SystemExit)
+            expect(config_loader).to receive(:load).and_raise(ChefConfig::ConfigurationError)
+            expect(Ohai::Application).to receive(:fatal!)
+            app.configure_ohai
           end
         end
       end
@@ -99,10 +76,7 @@ RSpec.describe 'Ohai::Application' do
         end
 
         it 'loads the configuration file' do
-          expect(config_loader).to receive(:config_location).
-            and_return(config_file)
-          expect(Ohai::Config).to receive(:from_file).
-            with(config_file)
+          expect(config_loader).to receive(:load)
           app.configure_ohai
         end
       end
@@ -117,40 +91,7 @@ RSpec.describe 'Ohai::Application' do
           with(/Ohai::Config\[:directory\] is deprecated/)
         app.configure_ohai
       end
-
-      it 'merges CLI options into the ohai config context' do
-        app.configure_ohai
-        expect(Ohai.config[:directory]).to eq(directory)
-      end
-    end
-
-    context 'when directory is configured' do
-      let(:directory) { '/some/fantastic/plugins' }
-
-      shared_examples_for 'directory' do
-        it 'adds directory to plugin_path' do
-          app.configure_ohai
-          expect(Ohai.config[:plugin_path]).to include(directory)
-        end
-      end
-
-      context 'in a configuration file' do
-        before do
-          allow(Ohai::Log).to receive(:warn).
-            with(/Ohai::Config\[:directory\] is deprecated/)
-          Ohai::Config[:directory] = directory
-        end
-
-        include_examples 'directory'
-      end
-
-      context 'as a command line option' do
-        let(:argv) { ['-d', directory] }
-
-        include_examples 'directory'
-      end
     end
 
   end
-
 end

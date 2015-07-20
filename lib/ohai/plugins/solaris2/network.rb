@@ -53,18 +53,19 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
+# Extracted from http://illumos.org/hcl/
+ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+                      dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
+                      iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
+                      nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
+                      rwn sfe tavor vr wpi xge yge} unless defined?(ETHERNET_ENCAPS)
+
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
   def solaris_encaps_lookup(ifname)
-    ethernet_encaps = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
-                          dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
-                          iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
-                          nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                          rwn sfe tavor vr wpi xge yge}.freeze
-
-    return "Ethernet" if ethernet_encaps.include?(ifname)
+    return "Ethernet" if ETHERNET_ENCAPS.include?(ifname)
     return "Ethernet" if ifname.eql?("net")
     return "Loopback" if ifname.eql?("lo")
     "Unknown"

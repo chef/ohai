@@ -112,23 +112,16 @@ CONFIG
 
       let(:plugin_path) { '/path/to/plugins' }
 
-      it 'logs warnings for deprecated options and merges with Ohai.config' do
+      it 'logs warnings for deprecated top-level options' do
         # deprecation warnings for options need to be stubbed in the order
         # they are received, in this case it's the order they appear in the
         # configuration file.
-        options = [ :log_location, :log_level, :disabled_plugins, :plugin_path ]
+        options = [ :log_location, :log_level, :disabled_plugins ]
         options.each do |option|
           expect(Ohai::Log).to receive(:warn).
             with(/Ohai::Config\[:#{option}\] is deprecated/)
         end
         app.configure_ohai
-        options.each do |option|
-          if option == :plugin_path
-            expect(Ohai.config[option]).to include(self.send(option))
-          else
-            expect(Ohai.config[option]).to eq(self.send(option))
-          end
-        end
       end
     end
 

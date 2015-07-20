@@ -34,23 +34,22 @@ module Ohai
     include Ohai::Mixin::ConstantHelper
 
     attr_accessor :data
+    attr_reader :config
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
-    def initialize
+    def initialize(config = {})
       @plugin_path = ""
+      @config = config
       reset_system
     end
 
     def reset_system
       @data = Mash.new
       @provides_map = ProvidesMap.new
-
       @v6_dependency_solver = Hash.new
 
-      # configure logging
-      Ohai::Log.init(Ohai.config[:log_location])
-      Ohai::Log.level = Ohai.config[:log_level]
+      configure_ohai
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
@@ -203,6 +202,20 @@ module Ohai
       else
         raise ArgumentError, "I can only generate JSON for Hashes, Mashes, Arrays and Strings. You fed me a #{data.class}!"
       end
+    end
+
+    private
+    def configure_ohai
+      Ohai::Config.merge_deprecated_config
+      Ohai.config.merge!(@config)
+
+      if Ohai.config[:directory] &&
+          !Ohai.config[:plugin_path].include?(Ohai::Config[:directory])
+        Ohai.config[:plugin_path] << Ohai.config[:directory]
+      end
+
+      Ohai::Log.init(Ohai.config[:log_location])
+      Ohai::Log.level = Ohai.config[:log_level]
     end
   end
 end

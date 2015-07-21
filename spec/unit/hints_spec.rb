@@ -24,16 +24,16 @@ describe "Ohai::Hints" do
   extend IntegrationSupport
 
   before do
-    @original_hints = Ohai::Config[:hints_path]
+    @original_hints = Ohai.config[:hints_path]
   end
 
   after do
-    Ohai::Config[:hints_path] = @original_hints
+    Ohai.config[:hints_path] = @original_hints
   end
 
   when_plugins_directory "doesn't contain any hints" do
     before do
-      Ohai::Config[:hints_path] = [ path_to(".") ]
+      Ohai.config[:hints_path] = [ path_to(".") ]
     end
 
     it "hint? should return nil" do
@@ -50,7 +50,7 @@ EOF
 EOF
 
     before do
-      Ohai::Config[:hints_path] = [ path_to(".") ]
+      Ohai.config[:hints_path] = [ path_to(".") ]
     end
 
     it "hint? should return the data for full hints" do

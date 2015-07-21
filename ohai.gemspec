@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ipaddress"
   s.add_dependency "wmi-lite", "~> 1.0"
   s.add_dependency "ffi", "~> 1.9"
+  s.add_dependency "chef-config", "~> 12.4"
 
   s.add_dependency "rake", "~> 10.1"
   s.add_development_dependency "rspec-core", "~> 3.0"

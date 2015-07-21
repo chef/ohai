@@ -74,15 +74,16 @@ class Ohai::Application
     @attributes = parse_options
     @attributes = nil if @attributes.empty?
 
-    Ohai::Config.merge!(config)
-    if Ohai::Config[:directory]
-      Ohai::Config[:plugin_path] << Ohai::Config[:directory]
+    Ohai::Config.merge_deprecated_config
+    Ohai.config.merge!(config)
+    if Ohai.config[:directory]
+      Ohai.config[:plugin_path] << Ohai.config[:directory]
     end
   end
 
   def configure_logging
-    Ohai::Log.init(Ohai::Config[:log_location])
-    Ohai::Log.level = Ohai::Config[:log_level]
+    Ohai::Log.init(Ohai.config[:log_location])
+    Ohai::Log.level = Ohai.config[:log_level]
   end
 
   def run_application
@@ -102,12 +103,12 @@ class Ohai::Application
     # Log a fatal error message to both STDERR and the Logger, exit the application
     def fatal!(msg, err = -1)
       STDERR.puts("FATAL: #{msg}")
-      Chef::Log.fatal(msg)
+      Ohai::Log.fatal(msg)
       Process.exit err
     end
 
     def exit!(msg, err = -1)
-      Chef::Log.debug(msg)
+      Ohai::Log.debug(msg)
       Process.exit err
     end
   end

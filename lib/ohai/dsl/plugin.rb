@@ -92,7 +92,7 @@ module Ohai
       def run
         @has_run = true
 
-        if Ohai::Config[:disabled_plugins].include?(name)
+        if Ohai.config[:disabled_plugins].include?(name)
           Ohai::Log.debug("Skipping disabled plugin #{name}")
         else
           run_plugin

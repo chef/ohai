@@ -35,9 +35,45 @@ RSpec.describe 'Ohai::Application' do
   end
 
   describe '#configure_ohai' do
-    it 'merges deprecated config settings into the ohai config context' do
-      expect(Ohai::Config).to receive(:merge_deprecated_config)
-      app.configure_ohai
+    describe 'loading configuration from a file' do
+      let(:config_file) { '/local/workstation/config' }
+      let(:config_loader) { instance_double('ChefConfig::WorkstationConfigLoader') }
+
+      context 'when specified on the command line' do
+        let(:argv) { [ '-c', config_file ] }
+
+        before(:each) do
+          expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
+            with(config_file, Ohai::Log).
+            and_return(config_loader)
+        end
+
+        it 'loads the configuration file' do
+          expect(config_loader).to receive(:load)
+          app.configure_ohai
+        end
+
+        context 'when the configuration file does not exist' do
+          it 'terminates the application' do
+            expect(config_loader).to receive(:load).and_raise(ChefConfig::ConfigurationError)
+            expect(Ohai::Application).to receive(:fatal!)
+            app.configure_ohai
+          end
+        end
+      end
+
+      context 'when a local workstation config exists' do
+        before(:each) do
+          expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
+            with(nil, Ohai::Log).
+            and_return(config_loader)
+        end
+
+        it 'loads the configuration file' do
+          expect(config_loader).to receive(:load)
+          app.configure_ohai
+        end
+      end
     end
 
     context 'when CLI options are provided' do
@@ -49,40 +85,7 @@ RSpec.describe 'Ohai::Application' do
           with(/Ohai::Config\[:directory\] is deprecated/)
         app.configure_ohai
       end
-
-      it 'merges CLI options into the ohai config context' do
-        app.configure_ohai
-        expect(Ohai.config[:directory]).to eq(directory)
-      end
-    end
-
-    context 'when directory is configured' do
-      let(:directory) { '/some/fantastic/plugins' }
-
-      shared_examples_for 'directory' do
-        it 'adds directory to plugin_path' do
-          app.configure_ohai
-          expect(Ohai.config[:plugin_path]).to include(directory)
-        end
-      end
-
-      context 'in a configuration file' do
-        before do
-          allow(Ohai::Log).to receive(:warn).
-            with(/Ohai::Config\[:directory\] is deprecated/)
-          Ohai::Config[:directory] = directory
-        end
-
-        include_examples 'directory'
-      end
-
-      context 'as a command line option' do
-        let(:argv) { ['-d', directory] }
-
-        include_examples 'directory'
-      end
     end
 
   end
-
 end

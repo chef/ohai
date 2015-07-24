@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   # version of chef-config that chef depends on is whatver version chef
   # happens to be on master. This will need to be updated again once work on
   # Chef 13 starts, otherwise builds will break.
-  s.add_dependency "chef-config", ">= 12.5.0.current.0", "< 13"
+  s.add_dependency "chef-config", ">= 12.5.0.alpha.1", "< 13"
 
   s.add_dependency "rake", "~> 10.1"
   s.add_development_dependency "rspec-core", "~> 3.0"

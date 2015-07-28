@@ -17,12 +17,8 @@
 # limitations under the License.
 #
 
-require 'ohai/log'
-require 'chef-config/logger'
-
-ChefConfig::Logger = Ohai::Log
-
 require 'chef-config/config'
+require 'ohai/log'
 
 module Ohai
   Config = ChefConfig::Config

@@ -28,16 +28,33 @@ Ohai.plugin(:Platform) do
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
   end
 
+  # Cisco's Nexus 3/9ks are based on Wind River Linux 5. They also have a
+  # guestshell based on CentOS 7. The file /etc/os-release is read to determine
+  # the platform_family and platform, it may point to another
+  # /etc/shared/os-release file if we are within the guestshell.
   def os_release_file_is_cisco?
     return false unless File.exist?('/etc/os-release')
+    # parse /etc/os-release into a hash
     os_release_info = File.read('/etc/os-release').split.inject({}) do |map, key_value_line|
       key, _separator, value = key_value_line.partition('=')
-      map[key] = value
+      map[key] = value.gsub(/\A"|"\Z/, '') # strip leading/trailing quotes
       map
     end
-    if os_release_info['CISCO_RELEASE_INFO'] && File.exist?(os_release_info['CISCO_RELEASE_INFO'])
-      os_release_info
+    # if it has a CISCO_RELEASE_INFO value, must be Cisco
+    cisco_release_info = os_release_info['CISCO_RELEASE_INFO']
+    if cisco_release_info && File.exist?(cisco_release_info)
+      if cisco_release_info == '/etc/os-release'
+        return os_release_info
+      end
+      # read /etc/shared/os-release to override /etc/os-release info.
+      cisco_release_info = File.read(cisco_release_info).split.inject({}) do |map, key_value_line|
+        key, _separator, value = key_value_line.partition('=')
+        map[key] = value.gsub(/\A"|"\Z/, '')
+        map
+      end
+      os_release_info.merge!(cisco_release_info)
     else
+      # has /etc/os-release, but not a Cisco box
       false
     end
   end
@@ -74,12 +91,11 @@ Ohai.plugin(:Platform) do
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exist?("/etc/redhat-release")
-      if File.exist?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
-        platform os_release_info['ID']
-        platform_family os_release_info['ID_LIKE']
-        platform_version os_release_info['VERSION'] || ""
+      contents = File.read("/etc/redhat-release").chomp
+      if (os_release_info = os_release_file_is_cisco? ) # Cisco guestshell
+        platform 'nexus_guestshell'
+        platform_version os_release_info['VERSION']
       else
-        contents = File.read("/etc/redhat-release").chomp
         platform get_redhatish_platform(contents)
         platform_version get_redhatish_version(contents)
       end
@@ -113,6 +129,11 @@ Ohai.plugin(:Platform) do
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
+    elsif (os_release_info = os_release_file_is_cisco?)
+      # Cisco platform not based on known distro above
+      platform 'nexus'
+      platform_family 'wrlinux'
+      platform_version os_release_info['VERSION']
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]
@@ -135,7 +156,7 @@ Ohai.plugin(:Platform) do
       platform_family "debian"
     when /fedora/, /pidora/
       platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_guestshell/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       platform_family "rhel"
     when /suse/
       platform_family "suse"

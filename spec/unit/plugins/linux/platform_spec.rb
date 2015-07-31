@@ -380,7 +380,7 @@ OS_RELEASE
 
       end
 
-      context "on Cisco 'guestshell' with /etc/os-release and overrides" do
+      context "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
 
         let(:have_os_release) { true }
 
@@ -428,7 +428,7 @@ CISCO_RELEASE
           expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
         end
 
-        it "correctly detects Nexus guestshell environment" do
+        it "should set platform to nexus_guestshell and platform_family to rhel" do
           @plugin.run
           expect(@plugin[:platform]).to start_with("nexus")
           expect(@plugin[:platform]).to eq("nexus_guestshell")
@@ -661,7 +661,7 @@ CISCO_RELEASE
       @plugin.run
       expect(@plugin[:platform]).to eq("nexus")
       expect(@plugin[:platform_family]).to eq("wrlinux")
-      expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.455)")
+      expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
     end
   end
 end

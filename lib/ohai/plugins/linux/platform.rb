@@ -92,7 +92,7 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/redhat-release")
       contents = File.read("/etc/redhat-release").chomp
       if os_release_file_is_cisco? # Cisco guestshell
-        platform 'nexus_guestshell'
+        platform 'nexus_centos'
         platform_version parse_os_release_for_cisco['VERSION']
       else
         platform get_redhatish_platform(contents)
@@ -129,10 +129,12 @@ Ohai.plugin(:Platform) do
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
     elsif os_release_file_is_cisco?
-      # Cisco platform not based on known distro above
-      platform 'nexus'
-      platform_family 'wrlinux'
-      platform_version parse_os_release_for_cisco['VERSION']
+      # Cisco platform not based on known distro above, normalize platform and
+      # platform_family between product lines
+      cisco_platform = parse_os_release_for_cisco
+      platform 'nexus' if cisco_platform['ID'].include?('nexus')
+      platform_family 'wrlinux' if cisco_platform['ID_LIKE'].include?('wrlinux')
+      platform_version cisco_platform['VERSION']
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]
@@ -155,7 +157,7 @@ Ohai.plugin(:Platform) do
       platform_family "debian"
     when /fedora/, /pidora/
       platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_guestshell/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       platform_family "rhel"
     when /suse/
       platform_family "suse"

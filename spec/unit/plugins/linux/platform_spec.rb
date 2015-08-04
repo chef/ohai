@@ -431,7 +431,7 @@ CISCO_RELEASE
         it "should set platform to nexus_guestshell and platform_family to rhel" do
           @plugin.run
           expect(@plugin[:platform]).to start_with("nexus")
-          expect(@plugin[:platform]).to eq("nexus_guestshell")
+          expect(@plugin[:platform]).to eq("nexus_centos")
           expect(@plugin[:platform_family]).to eq("rhel")
           expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
         end

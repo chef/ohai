@@ -424,7 +424,7 @@ CISCO_RELEASE
 
         before do
           expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
-          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
+          expect(File).to receive(:read).twice.with("/etc/os-release").and_return(os_release_content)
           expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
         end
 
@@ -657,7 +657,7 @@ CISCO_RELEASE
 
     it "should set platform to nexus and platform_family to wrlinux" do
       @plugin.lsb = nil
-      expect(File).to receive(:read).with("/etc/os-release").and_return("ID=nexus\nID_LIKE=wrlinux\nNAME=Nexus\nVERSION=\"7.0(3)I2(0.475E.6)\"\nVERSION_ID=\"7.0(3)I2\"\nPRETTY_NAME=\"Nexus 7.0(3)I2\"\nHOME_URL=http://www.cisco.com\nBUILD_ID=6\nCISCO_RELEASE_INFO=/etc/os-release")
+      expect(File).to receive(:read).twice.with("/etc/os-release").and_return("ID=nexus\nID_LIKE=wrlinux\nNAME=Nexus\nVERSION=\"7.0(3)I2(0.475E.6)\"\nVERSION_ID=\"7.0(3)I2\"\nPRETTY_NAME=\"Nexus 7.0(3)I2\"\nHOME_URL=http://www.cisco.com\nBUILD_ID=6\nCISCO_RELEASE_INFO=/etc/os-release")
       @plugin.run
       expect(@plugin[:platform]).to eq("nexus")
       expect(@plugin[:platform_family]).to eq("wrlinux")

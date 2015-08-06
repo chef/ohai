@@ -54,7 +54,7 @@ module Ohai
     # (e.g., Ohai::Config[:plugin_path] << some_path) in their config files.
     default :disabled_plugins, []
     default :hints_path, default_hints_path
-    default :log_level, :info
+    default :log_level, :auto
     default :log_location, STDERR
     default :plugin_path, default_plugin_path
 
@@ -91,7 +91,7 @@ module Ohai
     config_context :ohai do
       default :disabled_plugins, []
       default :hints_path, Ohai::Config.default_hints_path
-      default :log_level, :info
+      default :log_level, :auto
       default :log_location, STDERR
       default :plugin_path, Ohai::Config.default_plugin_path
     end

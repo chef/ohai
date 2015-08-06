@@ -226,6 +226,25 @@ OPENSTACK
       expect(@plugin[:virtualization][:systems][:openstack]).to eq("guest")
     end
 
+    it "sets kvm guest if dmidecode detects KVM" do
+      kvm_dmidecode=<<-KVM
+System Information
+  Manufacturer: Red Hat
+  Product Name: KVM
+  Version: RHEL 7.0.0 PC (i440FX + PIIX, 1996)
+  Serial Number: Not Specified
+  UUID: 6E56CFE2-2088-4A46-906A-FC49EDC4072C
+  Wake-up Type: Power Switch
+  SKU Number: Not Specified
+  Family: Red Hat Enterprise Linux
+KVM
+      allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("kvm")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       @plugin.run

@@ -50,6 +50,7 @@ module Ohai
       @v6_dependency_solver = Hash.new
 
       configure_ohai
+      configure_logging
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
@@ -213,9 +214,16 @@ module Ohai
           !Ohai.config[:plugin_path].include?(Ohai::Config[:directory])
         Ohai.config[:plugin_path] << Ohai.config[:directory]
       end
+    end
 
+    def configure_logging
       Ohai::Log.init(Ohai.config[:log_location])
-      Ohai::Log.level = Ohai.config[:log_level]
+
+      if Ohai.config[:log_level] == :auto
+        Ohai::Log.level = :info
+      else
+        Ohai::Log.level = Ohai.config[:log_level]
+      end
     end
   end
 end

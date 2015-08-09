@@ -604,7 +604,7 @@ OS_RELEASE
       expect(File).to receive(:read).with("/etc/os-release").and_return("ID_LIKE=wrlinux\nID=nexus\nCISCO_RELEASE_INFO=/etc/os-release")
       @plugin.run
       expect(@plugin[:platform]).to eq("nexus")
-      expect(@plugin[:platform_family]).to eq("wrlinux")
+      expect(@plugin[:platform_family]).to eq("fedora")
     end
   end
 end

@@ -529,9 +529,9 @@ CGROUP
       allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("docker")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
-      expect(@plugin[:virtualization][:systems][:docker]).to eq("guest")
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
     it "sets not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do

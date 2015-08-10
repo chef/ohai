@@ -513,7 +513,9 @@ CGROUP
       expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
-    it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts" do
+    # Relevant at least starting docker 1.6.2, kernel 4.0.5 & systemd 224-1.
+    # Doi not exactly know which software/version really matters here.
+    it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do
       self_cgroup=<<-CGROUP
 8:devices:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 7:cpuset:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope

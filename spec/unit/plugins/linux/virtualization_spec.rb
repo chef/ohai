@@ -526,7 +526,7 @@ CGROUP
 CGROUP
       allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
-      @plugin.run
+      plugin.run
       expect(@plugin[:virtualization][:system]).to eq("docker")
       expect(@plugin[:virtualization][:role]).to eq("guest")
       expect(@plugin[:virtualization][:systems][:docker]).to eq("guest")

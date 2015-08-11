@@ -113,7 +113,7 @@ describe Ohai::System, "plugin packages" do
     end
 
     context "on windows", :windows_only do
-      require "wmi-lite"
+      require "win32/registry"
 
       let(:plugin) do
         get_plugin("packages").tap do |plugin|
@@ -121,75 +121,80 @@ describe Ohai::System, "plugin packages" do
         end
       end
 
-      let(:win32_product_output) do
-        [{ "assignmenttype" => 0,
-           "caption" => "NXLOG-CE",
-           "description" => "NXLOG-CE",
-           "helplink" => nil,
-           "helptelephone" => nil,
-           "identifyingnumber" => "{22FA28AB-3C1B-438B-A8B5-E23892C8B567}",
-           "installdate" => "20150511",
-           "installdate2" => nil,
-           "installlocation" => nil,
-           "installsource" => 'C:\\chef\\cache\\',
-           "installstate" => 5,
-           "language" => "1033",
-           "localpackage" => 'C:\\Windows\\Installer\\30884.msi',
-           "name" => "NXLOG-CE",
-           "packagecache" => 'C:\\Windows\\Installer\\30884.msi',
-           "packagecode" => "{EC3A13C4-4634-47FC-9662-DC293CB96F9F}",
-           "packagename" => "nexlog-ce-2.8.1248.msi",
-           "productid" => nil,
-           "regcompany" => nil,
-           "regowner" => nil,
-           "skunumber" => nil,
-           "transforms" => nil,
-           "urlinfoabout" => nil,
-           "urlupdateinfo" => nil,
-           "vendor" => "nxsec.com",
-           "version" => "2.8.1248",
-           "wordcount" => 2 },
-           { "assignmenttype" => 1,
-             "caption" => "Chef Development Kit v0.7.0",
-             "description" => "Chef Development Kit v0.7.0",
-             "helplink" => "http://www.getchef.com/support/",
-             "helptelephone" => nil,
-             "identifyingnumber" => "{90754A33-404C-4172-8F3B-7F04CE98011C}",
-             "installdate" => "20150925", "installdate2" => nil,
-             "installlocation" => nil,
-             "installsource" => 'C:\\Users\\skhajamohid1\\Downloads\\',
-             "installstate" => 5, "language" => "1033",
-             "localpackage" => 'C:\\WINDOWS\\Installer\\d9e1ca7.msi',
-             "name" => "Chef Development Kit v0.7.0",
-             "packagecache" => 'C:\\WINDOWS\\Installer\\d9e1ca7.msi',
-             "packagecode" => "{9B82FB86-40AE-4CDF-9DE8-97574F9395B9}",
-             "packagename" => "chefdk-0.7.0-1 (2).msi",
-             "productid" => nil,
-             "regcompany" => nil,
-             "regowner" => nil,
-             "skunumber" => nil,
-             "transforms" => nil,
-             "urlinfoabout" => nil,
-             "urlupdateinfo" => nil,
-             "vendor" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
-             "version" => "0.7.0.1",
-             "wordcount" => 2 }]
+      let(:win_reg_double) do
+        instance_double("Win32::Registry")
+      end
+
+      let(:win_reg_keys) do
+        [ "{22FA28AB-3C1B-438B-A8B5-E23892C8B567}",
+          "{0D4BCDCD-6225-4BA5-91A3-54AFCECC281E}" ]
+      end
+
+      let(:i386_reg_type) do
+        Win32::Registry::KEY_READ | 0x100
+      end
+
+      let(:x86_64_reg_type) do
+        Win32::Registry::KEY_READ | 0x200
+      end
+
+      let(:win_reg_output) do
+        [{ "DisplayName" => "NXLOG-CE",
+           "DisplayVersion" => "2.8.1248",
+           "Publisher" => "nxsec.com",
+           "InstallDate" => "20150511"
+          },
+          { "DisplayName" => "Chef Development Kit v0.7.0",
+            "DisplayVersion" => "0.7.0.1",
+            "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
+            "InstallDate" => "20150925" }]
+      end
+
+      shared_examples "windows_package_plugin" do
+        it "gets package info" do
+          plugin.run
+          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:version]).to eq("0.7.0.1")
+          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:publisher]).to eq("\"Chef Software, Inc. <maintainers@chef.io>\"")
+          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:installdate]).to eq("20150925")
+
+          expect(plugin[:packages]["NXLOG-CE"][:version]).to eq("2.8.1248")
+          expect(plugin[:packages]["NXLOG-CE"][:publisher]).to eq("nxsec.com")
+          expect(plugin[:packages]["NXLOG-CE"][:installdate]).to eq("20150511")
+        end
       end
 
       before(:each) do
         allow(plugin).to receive(:collect_os).and_return(:windows)
-        expect_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_Product").and_return(win32_product_output)
-        plugin.run
+        allow(win_reg_double).to receive(:open).with(win_reg_keys[0]).and_return(win_reg_output[0])
+        allow(win_reg_double).to receive(:open).with(win_reg_keys[1]).and_return(win_reg_output[1])
+        allow(win_reg_double).to receive(:each_key).and_yield(win_reg_keys[0], 0).and_yield(win_reg_keys[1], 1)
       end
 
-      it "gets package info" do
-        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:version]).to eq("0.7.0.1")
-        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:vendor]).to eq("\"Chef Software, Inc. <maintainers@chef.io>\"")
-        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:installdate]).to eq("20150925")
+      describe "on 32 bit ruby" do
+        before do
+          stub_const("::RbConfig::CONFIG", { "target_cpu" => "i386" } )
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
+        end
+        it_behaves_like "windows_package_plugin"
+      end
 
-        expect(plugin[:packages]["NXLOG-CE"][:version]).to eq("2.8.1248")
-        expect(plugin[:packages]["NXLOG-CE"][:vendor]).to eq("nxsec.com")
-        expect(plugin[:packages]["NXLOG-CE"][:installdate]).to eq("20150511")
+      describe "on 64 bit ruby" do
+        before do
+          stub_const("::RbConfig::CONFIG", { "target_cpu" => "x86_64" } )
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
+        end
+        it_behaves_like "windows_package_plugin"
+      end
+
+      describe "on unknown ruby" do
+        before do
+          stub_const("::RbConfig::CONFIG", { "target_cpu" => nil } )
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
+          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
+        end
+        it_behaves_like "windows_package_plugin"
       end
     end
 

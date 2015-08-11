@@ -22,6 +22,12 @@ Ohai.plugin(:Packages) do
   provides "packages"
   depends "platform_family"
 
+  WINDOWS_ATTRIBUTE_ALIASES = {
+    "DisplayVersion" => "version",
+    "Publisher" => "publisher",
+    "InstallDate" => "installdate"
+  }
+
   collect_data(:linux) do
     if configuration(:enabled)
       packages Mash.new
@@ -48,21 +54,36 @@ Ohai.plugin(:Packages) do
     end
   end
 
-  collect_data(:windows) do
-    if configuration(:enabled)
-      packages Mash.new
-      require "wmi-lite"
-
-      wmi = WmiLite::Wmi.new
-      w32_product = wmi.instances_of("Win32_Product")
-
-      w32_product.find_all.each do |product|
-        name = product["name"]
+  def collect_programs_from_registry_key(key_path)
+    # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
+    if ::RbConfig::CONFIG["target_cpu"] == "i386"
+      reg_type = Win32::Registry::KEY_READ | 0x100
+    elsif ::RbConfig::CONFIG["target_cpu"] == "x86_64"
+      reg_type = Win32::Registry::KEY_READ | 0x200
+    else
+      reg_type = Win32::Registry::KEY_READ
+    end
+    Win32::Registry::HKEY_LOCAL_MACHINE.open(key_path, reg_type) do |reg|
+      reg.each_key do |key, _wtime|
+        pkg = reg.open(key)
+        name = pkg["DisplayName"] rescue nil
+        next if name.nil?
         package = packages[name] = Mash.new
-        %w{version vendor installdate}.each do |attr|
-          package[attr] = product[attr]
+        WINDOWS_ATTRIBUTE_ALIASES.each do |registry_attr, package_attr|
+          value = pkg[registry_attr] rescue nil
+          package[package_attr] = value unless value.nil?
         end
       end
+    end
+  end
+
+  collect_data(:windows) do
+    if configuration(:enabled)
+      require "win32/registry"
+      packages Mash.new
+      collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+      # on 64 bit systems, 32 bit programs are stored here
+      collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
     end
   end
 

@@ -424,7 +424,7 @@ CISCO_RELEASE
 
         before do
           expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
-          expect(File).to receive(:read).twice.with("/etc/os-release").and_return(os_release_content)
+          expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
           expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
         end
 

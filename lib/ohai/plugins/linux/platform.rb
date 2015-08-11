@@ -28,34 +28,48 @@ Ohai.plugin(:Platform) do
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
   end
 
-  # Cisco's Nexus 3/9ks have an additional CISCO_RELEASE_INFO line in
-  # their /etc/os-release files identifying them as such
-  def os_release_file_is_cisco?
-    return false unless File.exist?('/etc/os-release')
-    File.read('/etc/os-release').include?('CISCO_RELEASE_INFO')
-  end
-
-  # Cisco's Nexus 3/9ks are based on Wind River Linux 5. They also have a
-  # guestshell based on CentOS 7. The file /etc/os-release is read to determine
-  # the platform_family and platform, it may point to another
-  # /etc/shared/os-release file if we are within the guestshell.
-  def parse_os_release_for_cisco
-    os_release_info = File.read('/etc/os-release').split.inject({}) do |map, line|
+  #
+  # Reads an os-release-info file and parse it into a hash
+  #
+  # @param file [String] the filename to read (e.g. '/etc/os-release')
+  #
+  # @returns [Hash] the file parsed into a Hash or nil
+  #
+  def read_os_release_info(file)
+    return nil unless File.exist?(file)
+    File.read(file).split.inject({}) do |map, line|
       key, value = line.split('=')
-      map[key] = value.gsub(/\A"|"\Z/, '') if value # strip leading/trailing quotes
+      map[key] = value.gsub(/\A"|"\Z/, '') if value
       map
     end
-    cisco_release_info = os_release_info['CISCO_RELEASE_INFO']
-    if cisco_release_info && cisco_release_info != '/etc/os-release' && File.exist?(cisco_release_info)
-      # read /etc/shared/os-release to override /etc/os-release info.
-      cisco_release_info = File.read(cisco_release_info).split.inject({}) do |map, line|
-        key, value = line.split('=')
-        map[key] = value.gsub(/\A"|"\Z/, '') if value
-        map
+  end
+
+  #
+  # Cached /etc/os-release info Hash.  Also has logic for Cisco Nexus
+  # switches that pulls the chained CISCO_RELEASE_INFO file into the Hash (other
+  # distros can also reuse this method safely).
+  #
+  # @returns [Hash] the canonical, cached Hash of /etc/os-release info or nil
+  #
+  def os_release_info
+    @os_release_info ||=
+      begin
+        os_release_info = read_os_release_info('/etc/os-release')
+        cisco_release_info = os_release_info['CISCO_RELEASE_INFO'] if os_release_info
+        if cisco_release_info && File.exist?(cisco_release_info)
+          os_release_info.merge!(read_os_release_info(cisco_release_info))
+        end
+        os_release_info
       end
-      os_release_info.merge!(cisco_release_info)
-    end
-    os_release_info
+  end
+
+  #
+  # If /etc/os-release indicates we are Cisco based
+  #
+  # @returns [Boolean] if we are Cisco according to /etc/os-release
+  #
+  def os_release_file_is_cisco?
+    File.exist?('/etc/os-release') && os_release_info['CISCO_RELEASE_INFO']
   end
 
   collect_data(:linux) do
@@ -90,11 +104,11 @@ Ohai.plugin(:Platform) do
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exist?("/etc/redhat-release")
-      contents = File.read("/etc/redhat-release").chomp
       if os_release_file_is_cisco? # Cisco guestshell
         platform 'nexus_centos'
-        platform_version parse_os_release_for_cisco['VERSION']
+        platform_version os_release_info['VERSION']
       else
+        contents = File.read("/etc/redhat-release").chomp
         platform get_redhatish_platform(contents)
         platform_version get_redhatish_version(contents)
       end
@@ -129,12 +143,11 @@ Ohai.plugin(:Platform) do
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
     elsif os_release_file_is_cisco?
-      # Cisco platform not based on known distro above, normalize platform and
-      # platform_family between product lines
-      cisco_platform = parse_os_release_for_cisco
-      platform 'nexus' if cisco_platform['ID'].include?('nexus')
-      platform_family 'wrlinux' if cisco_platform['ID_LIKE'].include?('wrlinux')
-      platform_version cisco_platform['VERSION']
+      raise "unknown Cisco /etc/os-release ID field" unless os_release_info['ID'].include?('nexus')
+      raise "unknown Cisco /etc/os-release ID-LIKE field" unless os_release_info['ID_LIKE'].include?('wrlinux')
+      platform 'nexus'
+      platform_family 'wrlinux'
+      platform_version os_release_info['VERSION']
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

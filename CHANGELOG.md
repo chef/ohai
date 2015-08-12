@@ -16,6 +16,8 @@
   Deprecate Ohai::Config in favor of Ohai::Config.ohai.
 * [**Claire McQuin**](https://github.com/mcquin):
   Load a configuration file while running as an application.
+* [PR #597](https//github.com/chef/ohai/597):
+  Correct platform, platform_family and version detection on Cisco's Nexus platforms.
 
 ## Release 8.5.0
 

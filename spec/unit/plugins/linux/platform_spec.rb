@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Copyright:: Copyright (c) 2008-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_parallels_release) { false }
   let(:have_raspi_config) { false }
   let(:have_os_release) { false }
+  let(:have_cisco_release) { false }
 
   before(:each) do
     @plugin = get_plugin("linux/platform")
@@ -53,6 +54,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/etc/parallels-release").and_return(have_parallels_release)
     allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
     allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
+    allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
 
     allow(File).to receive(:read).with("PLEASE STUB ALL File.read CALLS")
   end
@@ -366,8 +368,8 @@ OS_RELEASE
         end
 
         before do
-          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
           expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
+          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
         end
 
         it "correctly detects EL7" do
@@ -378,6 +380,61 @@ OS_RELEASE
 
       end
 
+      context "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
+
+        let(:have_os_release) { true }
+
+        let(:os_release_content) do
+          <<-OS_RELEASE
+NAME="CentOS Linux"
+VERSION="7 (Core)"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="7"
+PRETTY_NAME="CentOS Linux 7 (Core)"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:7"
+HOME_URL="https://www.centos.org/"
+BUG_REPORT_URL="https://bugs.centos.org/"
+
+CENTOS_MANTISBT_PROJECT="CentOS-7"
+CENTOS_MANTISBT_PROJECT_VERSION="7"
+REDHAT_SUPPORT_PRODUCT="centos"
+REDHAT_SUPPORT_PRODUCT_VERSION="7"
+
+CISCO_RELEASE_INFO=/etc/shared/os-release
+OS_RELEASE
+        end
+
+        let(:have_cisco_release) { true }
+
+        let(:cisco_release_content) do
+          <<-CISCO_RELEASE
+ID=nexus
+ID_LIKE=wrlinux
+NAME=Nexus
+VERSION="7.0(3)I2(0.475E.6)"
+VERSION_ID="7.0(3)I2"
+PRETTY_NAME="Nexus 7.0(3)I2"
+HOME_URL=http://www.cisco.com
+BUILD_ID=6
+CISCO_RELEASE_INFO=/etc/os-release
+CISCO_RELEASE
+        end
+
+        before do
+          expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
+          expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
+        end
+
+        it "should set platform to nexus_guestshell and platform_family to rhel" do
+          @plugin.run
+          expect(@plugin[:platform]).to start_with("nexus")
+          expect(@plugin[:platform]).to eq("nexus_centos")
+          expect(@plugin[:platform_family]).to eq("rhel")
+          expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
+        end
+      end
     end
 
   end
@@ -595,16 +652,15 @@ OS_RELEASE
 
   describe "on Wind River Linux for Cisco Nexus" do
 
-    let(:have_redhat_release) { true }
-
     let(:have_os_release) { true }
 
     it "should set platform to nexus and platform_family to wrlinux" do
       @plugin.lsb = nil
-      expect(File).to receive(:read).with("/etc/os-release").and_return("ID_LIKE=wrlinux\nID=nexus\nCISCO_RELEASE_INFO=/etc/os-release")
+      expect(File).to receive(:read).twice.with("/etc/os-release").and_return("ID=nexus\nID_LIKE=wrlinux\nNAME=Nexus\nVERSION=\"7.0(3)I2(0.475E.6)\"\nVERSION_ID=\"7.0(3)I2\"\nPRETTY_NAME=\"Nexus 7.0(3)I2\"\nHOME_URL=http://www.cisco.com\nBUILD_ID=6\nCISCO_RELEASE_INFO=/etc/os-release")
       @plugin.run
       expect(@plugin[:platform]).to eq("nexus")
       expect(@plugin[:platform_family]).to eq("wrlinux")
+      expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
     end
   end
 end

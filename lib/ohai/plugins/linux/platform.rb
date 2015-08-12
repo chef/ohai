@@ -28,18 +28,48 @@ Ohai.plugin(:Platform) do
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
   end
 
-  def os_release_file_is_cisco?
-    return false unless File.exist?('/etc/os-release')
-    os_release_info = File.read('/etc/os-release').split.inject({}) do |map, key_value_line|
-      key, _separator, value = key_value_line.partition('=')
-      map[key] = value
+  #
+  # Reads an os-release-info file and parse it into a hash
+  #
+  # @param file [String] the filename to read (e.g. '/etc/os-release')
+  #
+  # @returns [Hash] the file parsed into a Hash or nil
+  #
+  def read_os_release_info(file)
+    return nil unless File.exist?(file)
+    File.read(file).split.inject({}) do |map, line|
+      key, value = line.split('=')
+      map[key] = value.gsub(/\A"|"\Z/, '') if value
       map
     end
-    if os_release_info['CISCO_RELEASE_INFO'] && File.exist?(os_release_info['CISCO_RELEASE_INFO'])
-      os_release_info
-    else
-      false
-    end
+  end
+
+  #
+  # Cached /etc/os-release info Hash.  Also has logic for Cisco Nexus
+  # switches that pulls the chained CISCO_RELEASE_INFO file into the Hash (other
+  # distros can also reuse this method safely).
+  #
+  # @returns [Hash] the canonical, cached Hash of /etc/os-release info or nil
+  #
+  def os_release_info
+    @os_release_info ||=
+      begin
+        os_release_info = read_os_release_info('/etc/os-release')
+        cisco_release_info = os_release_info['CISCO_RELEASE_INFO'] if os_release_info
+        if cisco_release_info && File.exist?(cisco_release_info)
+          os_release_info.merge!(read_os_release_info(cisco_release_info))
+        end
+        os_release_info
+      end
+  end
+
+  #
+  # If /etc/os-release indicates we are Cisco based
+  #
+  # @returns [Boolean] if we are Cisco according to /etc/os-release
+  #
+  def os_release_file_is_cisco?
+    File.exist?('/etc/os-release') && os_release_info['CISCO_RELEASE_INFO']
   end
 
   collect_data(:linux) do
@@ -74,10 +104,9 @@ Ohai.plugin(:Platform) do
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exist?("/etc/redhat-release")
-      if File.exist?('/etc/os-release') && (os_release_info = os_release_file_is_cisco? ) # check if Cisco
-        platform os_release_info['ID']
-        platform_family os_release_info['ID_LIKE']
-        platform_version os_release_info['VERSION'] || ""
+      if os_release_file_is_cisco? # Cisco guestshell
+        platform 'nexus_centos'
+        platform_version os_release_info['VERSION']
       else
         contents = File.read("/etc/redhat-release").chomp
         platform get_redhatish_platform(contents)
@@ -113,6 +142,12 @@ Ohai.plugin(:Platform) do
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
+    elsif os_release_file_is_cisco?
+      raise "unknown Cisco /etc/os-release ID field" unless os_release_info['ID'].include?('nexus')
+      raise "unknown Cisco /etc/os-release ID-LIKE field" unless os_release_info['ID_LIKE'].include?('wrlinux')
+      platform 'nexus'
+      platform_family 'wrlinux'
+      platform_version os_release_info['VERSION']
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]
@@ -135,7 +170,7 @@ Ohai.plugin(:Platform) do
       platform_family "debian"
     when /fedora/, /pidora/
       platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       platform_family "rhel"
     when /suse/
       platform_family "suse"

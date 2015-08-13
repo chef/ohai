@@ -20,7 +20,7 @@ describe Ohai::System, "Solaris2.X memory plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/memory")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
-    allow(@plugin).to receive(:shell_out).with("prtconf -m").and_return(mock_shell_out(0, "8194\n", ""))
+    allow(@plugin).to receive(:shell_out).with("prtconf | grep Memory").and_return(mock_shell_out(0, "Memory size: 8194 Megabytes\n", ""))
   end
 
   it "should get the total memory" do

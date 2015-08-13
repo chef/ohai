@@ -19,6 +19,7 @@ Ohai.plugin(:Memory) do
 
   collect_data(:solaris2) do
     memory Mash.new
-    memory[:total] = shell_out("prtconf -m").stdout.to_i
+    meminfo =  shell_out("prtconf | grep Memory").stdout
+    memory[:total] = meminfo.split[2].to_i
   end
 end

@@ -17,7 +17,13 @@
 * [**Claire McQuin**](https://github.com/mcquin):
   Load a configuration file while running as an application.
 * [PR #597](https//github.com/chef/ohai/597):
-  Correct platform, platform_family and version detection on Cisco's Nexus platforms.
+  Correct platform, platform\_family and version detection on Cisco's Nexus platforms.
+* [**cmluciano**](https://github.com/cmluciano):
+  add vmware plugin
+* [**Jean Baptiste Favre**](https://github.com/jbfavre):
+  Detect updated docker cgroup format
+* [**Shahul Khajamohideen**](https://github.com/sh9189):
+  Fix memory plugin output on solaris
 
 ## Release 8.5.0
 

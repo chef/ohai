@@ -56,7 +56,7 @@ Ohai.plugin(:Network) do
     end
 
     # List the interfaces in system.
-    so = shell_out("lsdev -Cc if")
+    so = shell_out("lsdev -Cc if | grep Available")
     so.stdout.lines.each do |line|
       if line =~ /(\S+) (\S+)\s+(.+)/
         interface = $1

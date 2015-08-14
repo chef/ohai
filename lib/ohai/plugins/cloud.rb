@@ -25,6 +25,7 @@ Ohai.plugin(:Cloud) do
   depends "openstack"
   depends "azure"
   depends "digital_ocean"
+  depends "softlayer"
 
   # Make top-level cloud hashes
   #
@@ -60,7 +61,7 @@ Ohai.plugin(:Cloud) do
     private_ips = gce['instance']["networkInterfaces"].collect do |interface|
       interface['ip']
     end.compact
-    
+
     cloud[:public_ips] += public_ips
     cloud[:private_ips] += private_ips
     cloud[:public_ipv4] +=  public_ips
@@ -108,7 +109,7 @@ Ohai.plugin(:Cloud) do
   end
 
   # Fill cloud hash with rackspace values
-  def get_rackspace_values 
+  def get_rackspace_values
     cloud[:public_ips] << rackspace['public_ipv4'] if rackspace['public_ipv4']
     cloud[:private_ips] << rackspace['local_ipv4'] if rackspace['local_ipv4']
     cloud[:public_ipv4] = rackspace['public_ipv4']
@@ -245,7 +246,31 @@ Ohai.plugin(:Cloud) do
     cloud[:provider] = "digital_ocean"
   end
 
-  collect_data do    
+  # ----------------------------------------
+  # softlayer
+  # ----------------------------------------
+
+  # Is current cloud softlayer?
+  #
+  # === Return
+  # true:: If softlayer Hash is defined
+  # false:: Otherwise
+  def on_softlayer?
+    softlayer != nil
+  end
+
+  # Fill cloud hash with softlayer values
+  def get_softlayer_values
+    cloud[:public_ipv4] = softlayer['public_ipv4']
+    cloud[:local_ipv4] = softlayer['local_ipv4']
+    cloud[:public_ips] << softlayer['public_ipv4'] if softlayer['public_ipv4']
+    cloud[:private_ips] << softlayer['local_ipv4'] if softlayer['local_ipv4']
+    cloud[:public_hostname] = softlayer['public_fqdn']
+    cloud[:provider] = 'softlayer'
+  end
+
+
+  collect_data do
     # setup gce cloud
     if on_gce?
       create_objects
@@ -291,6 +316,12 @@ Ohai.plugin(:Cloud) do
     if on_digital_ocean?
       create_objects
       get_digital_ocean_values
+    end
+
+    # setup softlayer cloud
+    if on_softlayer?
+      create_objects
+      get_softlayer_values
     end
   end
 end

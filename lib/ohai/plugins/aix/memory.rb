@@ -21,8 +21,13 @@ Ohai.plugin(:Memory) do
 
   collect_data(:aix) do
     memory Mash.new
+    memory[:swap] = Mash.new
 
     meminfo = shell_out("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").stdout
     memory[:total], u, memory[:free] = meminfo.split
+    
+    swapinfo = shell_out("swap -s").stdout.split #returns swap info in 4K blocks
+    memory[:swap]['total'] = (swapinfo[2].to_i / 1024.0) * 4
+    memory[:swap]['free'] = (swapinfo[10].to_i / 1024.0) * 4
   end
 end

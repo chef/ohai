@@ -1,17 +1,6 @@
-require 'rubygems'
-require 'rubygems/package_task'
-require 'rubygems/specification'
+require "bundler/gem_tasks"
 require 'date'
 require 'ohai/version'
-
-gemspec = eval(IO.read("ohai.gemspec"))
-
-Gem::PackageTask.new(gemspec).define
-
-desc "install the gem locally"
-task :install => [:package] do
-  sh %{gem install pkg/ohai-#{Ohai::VERSION}.gem}
-end
 
 begin
   require 'rspec/core/rake_task'

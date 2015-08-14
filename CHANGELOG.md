@@ -24,8 +24,9 @@
   Detect updated docker cgroup format
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
   Fix memory plugin output on Solaris
-  Add swap space attributes for solaris memory plugin
+  Add swap space attributes for Solaris memory plugin
   Add swap space attributes for AIX
+  Add support for SPARC based processors in Solaris cpu plugin
 * [**Sean Horn**](https://github.com/sean-horn):
   ec2 plugin should handle binary userdata too
 * [**Alexey Karpik**](https://github.com/akarpik):

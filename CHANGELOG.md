@@ -24,6 +24,8 @@
   Detect updated docker cgroup format
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
   Fix memory plugin output on solaris
+* [**Sean Horn**](https://github.com/sean-horn):
+  ec2 plugin should handle binary userdata too
 
 ## Release 8.5.0
 

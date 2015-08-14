@@ -33,13 +33,13 @@ problems:
 * Can handle a device mounted multiple places
 * Is resilient to mtab being a symlink to /proc/mounts
 * Provides multiple views for ease of use
-* Provides a mechanism that has gauranteed lack of overwritten data
+* Provides a mechanism that has guaranteed lack of overwritten data
 * Forks far fewer times than it's predecessor
 
 Unlike the 'filesystem' plugin, it provides 3 views into the data:
 
 * `by_pair` is the primary one and what most users are expected to use. It
-  gaurantees no loss of data from conflict and has an entry in the hash for each
+  guarantees no loss of data from conflict and has an entry in the hash for each
   pair of $device,$mountpoint (or "$device," for unmounted devices).
 * `by_device` a similar layout to the original filesystem plugin which is
   indexed by device, except that 'mount' entry is now 'mounts' and is an array.

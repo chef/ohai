@@ -3,13 +3,13 @@
 ## Unreleased
 * [**Phil Dibowitz**](https://github.com/jymzh):
   Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
-  support CentOS7, multiple virtual filesystes, etc.
+  support CentOS7, multiple virtual filesystems, etc.
 * [**Jonathan Amiez**](https://github.com/josqu4red):
   Linux filesystems plugin report wrong fs-type for logical volumes
 * [**involucelate**](https://github.com/involucelate)
   Fix windows 2008 hostname truncation #554
 * [**Pavel Yudin**](https://github.com/Kasen):
-  Detect Parallels host and guest virtualisation
+  Detect Parallels host and guest virtualization
 * [**Phil Dibowitz**](https://github.com/jymzh):
   Fix Darwin filesystem plugin on newer MacOSX
 * [**Claire McQuin**](https://github.com/mcquin):
@@ -23,7 +23,7 @@
 * [**Jean Baptiste Favre**](https://github.com/jbfavre):
   Detect updated docker cgroup format
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
-  Fix memory plugin output on solaris
+  Fix memory plugin output on Solaris
 
 ## Release 8.5.0
 
@@ -51,7 +51,7 @@
 * [**Michael Glenney**](https://github.com/Maniacal)
   Remove redundant if statement
 
-* Remove Cloudstack support due to GPL licensed library
+* Remove CloudStack support due to GPL licensed library
 
 ## Release 8.1.1
 * Fix broken DigitalOcean plugin
@@ -81,9 +81,9 @@
 * [**Sten Spans**](https://github.com/sspans)
   Fix network.rb for XenServer Creedence
 * [**Shuo Zhang**](https://github.com/zshuo)
-  Update linux plugin cpu.rb and spec_cpu.rb to support S390
+  Update Linux plugin cpu.rb and spec_cpu.rb to support S390
 * [**Alexey Karpik**](https://github.com/akarpik)
-  Fix up incorrect cloudstack metadata
+  Fix up incorrect CloudStack metadata
 * [**Jeff Goldschrafe**](https://github.com/jgoldschrafe)
   cloud_v2 fails to initialize on GCE hosts without external IP
 * [**Ryan Chipman**](https://github.com/rychipman)
@@ -102,7 +102,7 @@
 * [**sawanoboly**](https://github.com/sawanoboly)
   Retrieve OpenStack-specific metadata.
 * [**Olle Lundberg**](https://github.com/lndbrg)
-  Add Cloudstack support.
+  Add CloudStack support.
 * [**Tim Smith**](https://github.com/tas50)
   Remove newlines in CPU strings on Darwin.
 * [**Nathan Huff**](https://github.com/nhuff)
@@ -197,12 +197,12 @@
 * Skip v7 plugins when refreshing a v6 plugin. Fixes (OHAI-562)
   `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Work around libc bug in `hostname --fqdn`
-* Report Suse and OpenSuse seperately in the :platform attribute.
-* CPU information matching linux is now available on darwin.
+* Report Suse and OpenSuse separately in the :platform attribute.
+* CPU information matching Linux is now available on Darwin.
 * ip6address detection failure logging is turned down to :debug.
 * fe80:: link-local address is not reported as ip6addresses anymore.
 * Private network information is now available as [:rackspace][:private_networks] on Rackspace nodes.
-* System init mechanism is now reported at [:init_package] on linux.
+* System init mechanism is now reported at [:init_package] on Linux.
 * Define cloud plugin interface (OHAI-542)
 * java -version wastes memory (OHAI-550)
 * Ohai cannot detect running in an lxc container (OHAI-551)

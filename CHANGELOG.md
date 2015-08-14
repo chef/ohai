@@ -31,6 +31,8 @@
   Add swap space attributes for AIX
 * [**Alexey Karpik**](https://github.com/akarpik):
   Add support for SoftLayer cloud
+* [**MichaelSp**](https://github.com/MichaelSp):
+  return correct ipaddress for openvz guests
 
 ## Release 8.5.0
 

@@ -127,6 +127,11 @@ END
       @plugin.run
       expect(@plugin["cpu"]["real"]).to eql(4)
     end
+    
+    it "should get the total core count" do
+      @plugin.run
+      expect(@plugin["cpu"]["cores"]).to eql(16)
+    end
   
     describe "per-cpu information" do
       it "should include model name for processors" do

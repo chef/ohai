@@ -33,6 +33,8 @@
   Add support for SoftLayer cloud
 * [**MichaelSp**](https://github.com/MichaelSp):
   return correct ipaddress for openvz guests
+* [**Anthony Caiafa**](https://github.com/acaiafa):
+  Only run ifconfig against active interfaces
 
 ## Release 8.5.0
 

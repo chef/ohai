@@ -19,6 +19,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 require 'open-uri'
+require 'base64'
 
 describe Ohai::System, "plugin ec2" do
   before(:each) do
@@ -49,19 +50,20 @@ describe Ohai::System, "plugin ec2" do
       allow(File).to receive(:exist?).and_return(false)
     end
 
-    it "should recursively fetch all the ec2 metadata" do
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/").
-        and_return(double("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/instance_type").
-        and_return(double("Net::HTTP Response", :body => "c1.medium", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/ami_id").
-        and_return(double("Net::HTTP Response", :body => "ami-5d2dc934", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/security-groups").
-        and_return(double("Net::HTTP Response", :body => "group1\ngroup2", :code => "200"))
+context "with common metadata paths" do
+   let(:paths) do 
+     { "meta-data/" => "instance_type\nami_id\nsecurity-groups",
+       "meta-data/instance_type" => "c1.medium",
+       "meta-data/ami_id" => "ami-5d2dc934",
+       "meta-data/security-groups" => "group1\ngroup2"
+     }
+   end
+    it "recursively fetches all the ec2 metadata" do
+      paths.each do |name,body|
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/#{name}").
+          and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+      end
       expect(@http_client).to receive(:get).
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
@@ -73,6 +75,26 @@ describe Ohai::System, "plugin ec2" do
       expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
       expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
     end
+
+    it "fetches binary userdata opaquely" do
+      paths.each do |name,body|
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/#{name}").
+          and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+      end
+      expect(@http_client).to receive(:get).
+        with("/2012-01-12/user-data/").
+        and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
+
+      @plugin.run
+
+      expect(@plugin[:ec2]).not_to be_nil
+      expect(@plugin[:ec2]['instance_type']).to eq("c1.medium")
+      expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
+      expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
+      expect(@plugin[:ec2]['userdata']).to eq(Base64.decode64("Xl88OEI+XkheSDxDNz5VXkBeQ3NvbWV0aGluZ15AS1Q8Qzg+PEM5PiwpPEM5\nPklVKEktLkk8Q0I+PENDPkk8RTU+XkJeQF5RejxCRj48QjA+XlJeQF5AXkA="))
+    end
+end
 
     it "should parse ec2 network/ directory as a multi-level hash" do
       expect(@http_client).to receive(:get).

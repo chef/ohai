@@ -18,6 +18,7 @@
 # limitations under the License.
 
 require 'ohai/mixin/ec2_metadata'
+require 'base64'
 
 Ohai.plugin(:EC2) do
   include Ohai::Mixin::Ec2Metadata
@@ -58,6 +59,11 @@ Ohai.plugin(:EC2) do
         ec2[k] = v
       end
       ec2[:userdata] = self.fetch_userdata
+      #ASCII-8BIT is equivalent to BINARY in this case
+      if ec2[:userdata].encoding.to_s == "ASCII-8BIT"
+        Ohai::Log.debug("Binary UserData Found. Storing in base64")
+        ec2[:userdata] = Base64.encode64(ec2[:userdata])
+      end
     else
       Ohai::Log.debug("looks_like_ec2? == false")
       false

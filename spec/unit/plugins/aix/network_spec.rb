@@ -67,7 +67,7 @@ ARP_AN
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
     allow(@plugin).to receive(:shell_out).with("netstat -rn |grep default").and_return(mock_shell_out(0, @netstat_rn_grep_default, nil))
-    allow(@plugin).to receive(:shell_out).with("lsdev -Cc if").and_return(mock_shell_out(0, @lsdev_Cc_if, nil))
+    allow(@plugin).to receive(:shell_out).with("lsdev -Cc if | grep Available").and_return(mock_shell_out(0, @lsdev_Cc_if, nil))
     allow(@plugin).to receive(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, @ifconfig_en0, nil))
     allow(@plugin).to receive(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
     allow(@plugin).to receive(:shell_out).with("netstat -nrf inet").and_return(mock_shell_out(0, @netstat_nrf_inet, nil))

@@ -17,7 +17,7 @@
 Ohai.plugin(:CPU) do
   provides "cpu"
   
-  def get_x86_processor_info
+  def set_x86_processor_info
     processor_info = shell_out("psrinfo -v -p | grep Hz").stdout
     processors = processor_info.split(/^    [^\s]/)
     processors.each_with_index do |processor, i|
@@ -35,7 +35,7 @@ Ohai.plugin(:CPU) do
     end
   end
 
-  def get_sparc_processor_info
+  def set_sparc_processor_info
     i = 0
     cores = 0
     shell_out("psrinfo -v -p").stdout.lines.each do |line|
@@ -60,9 +60,9 @@ Ohai.plugin(:CPU) do
     
     processor_type = shell_out("uname -p").stdout.strip
     if processor_type == "sparc"
-        get_sparc_processor_info
+        set_sparc_processor_info
     else
-        get_x86_processor_info
+        set_x86_processor_info
     end
   end
 end

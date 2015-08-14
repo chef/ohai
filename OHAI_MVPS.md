@@ -4,7 +4,7 @@ Every release of Chef and Ohai we pick someone from the community to name as the
 
 #### Hall of Fame
 
-After receiving three MVP awards from Chef and Ohai releases, we add someone to the hall of fame. We want to express our gratitude to their continuing participation and give newer community members the opportunity to be reconignized.
+After receiving three MVP awards from Chef and Ohai releases, we add someone to the hall of fame. We want to express our gratitude to their continuing participation and give newer community members the opportunity to be recognized.
 
 The [MVP list](https://github.com/opscode/chef/blob/master/CHEF_MVPS.md) is kept in the Chef project.
 

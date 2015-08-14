@@ -888,6 +888,46 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
         end
       end
 
+      describe "with openvz setup" do
+        let(:linux_ip_route) {'default dev venet0  scope link' }
+        let(:linux_ip_addr) {'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: venet0: <BROADCAST,POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
+    link/void
+    inet 127.0.0.2/32 scope host venet0
+    inet 10.116.201.76/24 brd 10.116.201.255 scope global venet0:0
+    inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
+       valid_lft 6128sec preferred_lft 2526sec
+'}
+
+        before(:each) do
+          allow(plugin).to receive(:is_openvz?).and_return true
+          allow(plugin).to receive(:is_openvz_host?).and_return false
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
+        end
+
+        it "sets default ipv4 interface and gateway" do
+          expect(plugin['network']['default_interface']).to eq('venet0:0')
+          expect(plugin['network']['default_gateway']).to eq('0.0.0.0')
+        end
+
+        it "sets correct routing information" do
+          expect(plugin['network']['interfaces']['venet0:0']['routes']).to eq([Mash.new( :destination => "default", :family => "inet", :scope => "link" )])
+        end
+
+        it "sets correct address information" do
+          expect(plugin['network']['interfaces']['venet0:0']['addresses']).to eq("10.116.201.76" => Mash.new(:family => 'inet', :prefixlen => '24', :netmask =>'255.255.255.0', :broadcast => '10.116.201.255', :scope => "Global"))
+        end
+      end
+
       describe "with irrelevant routes (container setups)" do
         let(:linux_ip_route) {
 '10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39

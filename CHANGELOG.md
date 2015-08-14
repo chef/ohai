@@ -26,6 +26,11 @@
   Fix memory plugin output on solaris
 * [**Sean Horn**](https://github.com/sean-horn):
   ec2 plugin should handle binary userdata too
+* [**Shahul Khajamohideen**](https://github.com/sh9189):
+  Add swap space attributes for solaris memory plugin
+  Add swap space attributes for AIX
+* [**Alexey Karpik**](https://github.com/akarpik):
+  Add support for SoftLayer cloud
 
 ## Release 8.5.0
 

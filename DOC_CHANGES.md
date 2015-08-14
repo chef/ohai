@@ -30,3 +30,19 @@ application. For example, if your configuration file is located at
 When running ohai as an application and no configuration file is specified
 as a command line parameter, ohai will load a configuration file from your
 workstation (`config.rb` or `knife.rb`) if one is found.
+
+## The filesystem2 plugin
+The filesystem2 plugin is intended to eventually replace the filesystem
+plugin on Linux and OS X.
+* It provides 3 views:
+** `by_pair` is the primary one and what most users are expected to use. It
+   gaurantees no loss of data from conflict and has an entry in the hash for
+   each pair of $device,$mountpoint (or "$device," for unmounted devices).
+** `by_device` a similar layout to the original filesystem plugin which is
+   indexed by device, except that 'mount' entry is now 'mounts' and is an array.
+   While this solves many of the problems users can encounter by having
+   /etc/mtab be a symlink to /proc/mounts it can still have data loss due to
+   different mount options, or multiple virtualfs mounts with the same fake
+   device name.
+** `by_mount` similar to the above but indexed by mountpoint. Won't include
+   unmounted filesystems, of course.

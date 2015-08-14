@@ -1,7 +1,7 @@
 # Ohai Changelog
 
-## Unreleased
-* [**Phil Dibowitz**](https://github.com/jymzh):
+## Release 8.6.0
+* [**Phil Dibowitz**](https://github.com/jaymzh):
   Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
   support CentOS7, multiple virtual filesystems, etc.
 * [**Jonathan Amiez**](https://github.com/josqu4red):
@@ -10,7 +10,7 @@
   Fix windows 2008 hostname truncation #554
 * [**Pavel Yudin**](https://github.com/Kasen):
   Detect Parallels host and guest virtualization
-* [**Phil Dibowitz**](https://github.com/jymzh):
+* [**Phil Dibowitz**](https://github.com/jaymzh):
   Fix Darwin filesystem plugin on newer MacOSX
 * [**Claire McQuin**](https://github.com/mcquin):
   Deprecate Ohai::Config in favor of Ohai::Config.ohai.

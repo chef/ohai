@@ -22,32 +22,37 @@ Ohai.plugin(:CPU) do
 
   collect_data(:aix) do
     cpu Mash.new
-
-    # IBM is the only maker of CPUs for AIX systems.
-    cpu[:vendor_id] = "IBM"
+    
+    cpu[:total] = shell_out("pmcycles -m").stdout.lines.length
     # At least one CPU will be available, but we'll wait to increment this later.
     cpu[:available] = 0
-    cpu[:total] = 0
 
     cpudevs = shell_out("lsdev -Cc processor").stdout.lines
-    cpudevs.each do |c|
-      cpu[:total] += 1
+    #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
+    #on AIX number of cores and processors are considered same 
+    cpu[:real] = cpu[:cores] = cpudevs.length 
+    cpudevs.each.with_index do |c,i|
       name, status, location = c.split
-      cpu[name] = Mash.new
-      cpu[name][:status] = status
-      cpu[name][:location] = location
+      index = i.to_s
+      cpu[index] = Mash.new
+      cpu[index][:status] = status
+      cpu[index][:location] = location
       if status =~ /Available/
-  	cpu[:available] += 1
-  	lsattr = shell_out("lsattr -El #{name}").stdout.lines
-  	lsattr.each do |attribute|
+        cpu[:available] += 1
+        lsattr = shell_out("lsattr -El #{name}").stdout.lines
+        lsattr.each do |attribute|
           attrib, value = attribute.split
-          cpu[name][attrib] = value
-  	end
+          if attrib == "type"
+            cpu[index][:model_name] = value
+          elsif attrib == "frequency"
+            cpu[index][:mhz] = value.to_i / (1000 * 1000) #convert from hz to MHz
+          else
+            cpu[index][attrib] = value
+          end
+		end
+        # IBM is the only maker of CPUs for AIX systems.
+        cpu[index][:vendor_id] = "IBM"
       end
     end
-
-    # Every AIX system has proc0.
-    cpu[:model] = cpu[:proc0][:type]
-    cpu[:mhz] = cpu[:proc0][:frequency].to_i / 1024
   end
 end

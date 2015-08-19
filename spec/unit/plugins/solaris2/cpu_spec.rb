@@ -444,7 +444,7 @@ cpu_info:15:cpu_info15:vendor_id        GenuineIntel
 END
       allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
       @plugin.run
-   end
+    end
 
     it "should get the total virtual processor count" do
       expect(@plugin["cpu"]["total"]).to eql(16)
@@ -625,15 +625,13 @@ END
         expect(@plugin["cpu"]["2"]["state"]).to eql("off-line")
         expect(@plugin["cpu"]["0"]["state"]).to eql("off-line")
       end
-
-
     end
   end
   
   
   describe "on sparc processors" do
     before(:each) do
-        kstatinfo_output = <<-END
+      kstatinfo_output = <<-END
 cpu_info:0:cpu_info0:brand	SPARC-T3
 cpu_info:0:cpu_info0:chip_id	0
 cpu_info:0:cpu_info0:class	misc
@@ -2811,8 +2809,8 @@ cpu_info:127:cpu_info127:state	off-line
 cpu_info:127:cpu_info127:state_begin	1430258903
 cpu_info:127:cpu_info127:supported_frequencies_Hz	1648762500
 END
-        allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
-        @plugin.run
+      allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
+      @plugin.run
     end
     
     it "should get the total virtual processor count" do
@@ -2924,7 +2922,6 @@ END
         expect(@plugin["cpu"]["126"]["state"]).to eql("off-line")
         expect(@plugin["cpu"]["127"]["state"]).to eql("off-line")
      end
-
     end
   end
 end

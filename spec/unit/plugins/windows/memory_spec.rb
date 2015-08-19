@@ -31,22 +31,22 @@ describe Ohai::System, "Windows memory plugin", :windows_only do
 
   it "should get total memory" do
     @plugin.run
-    expect(@plugin["memory"]["total"]).to eql(10485760 / 1024.0)
+    expect(@plugin["memory"]["total"]).to eql("10485760kB")
   end
 
   it "should get free memory" do
     @plugin.run
-    expect(@plugin["memory"]["free"]).to eql(5242880 / 1024.0)
+    expect(@plugin["memory"]["free"]).to eql("5242880kB")
   end
 
   it "should get total swap" do
     @plugin.run
-    expect(@plugin["memory"]["swap"]["total"]).to eql(20971520 / 1024.0)
+    expect(@plugin["memory"]["swap"]["total"]).to eql("20971520kB")
   end
 
   it "should get free memory" do
     @plugin.run
-    expect(@plugin["memory"]["swap"]["free"]).to eql(15728640 / 1024.0)
+    expect(@plugin["memory"]["swap"]["free"]).to eql("15728640kB")
   end
 
 end

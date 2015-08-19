@@ -27,12 +27,12 @@ Ohai.plugin(:Memory) do
     os = wmi.first_of("Win32_OperatingSystem")
 
     # MemTotal
-    memory[:total] = os["TotalVisibleMemorySize"].to_i / 1024.0
+    memory[:total] = os["TotalVisibleMemorySize"] + "kB"
     # MemFree
-    memory[:free] = os["FreePhysicalMemory"].to_i / 1024.0
+    memory[:free] = os["FreePhysicalMemory"] + "kB"
     # SwapTotal
-    memory[:swap][:total] = os["SizeStoredInPagingFiles"].to_i / 1024.0
+    memory[:swap][:total] = os["SizeStoredInPagingFiles"] + "kB"
     # SwapFree
-    memory[:swap][:free] = os["FreeSpaceInPagingFiles"].to_i / 1024.0
+    memory[:swap][:free] = os["FreeSpaceInPagingFiles"] + "kB"
   end
 end

@@ -21,12 +21,12 @@ Ohai.plugin(:Memory) do
     memory Mash.new
     memory[:swap] = Mash.new
     meminfo =  shell_out("prtconf | grep Memory").stdout
-    memory[:total] = meminfo.split[2].to_i
+    memory[:total] = "#{meminfo.split[2].to_i * 1024}kB"
     
     tokens = shell_out("swap -s").stdout.strip.split
     used_swap = tokens[8][0..-1].to_i #strip k from end
     free_swap = tokens[10][0..-1].to_i #strip k from end
-    memory[:swap][:total] = (used_swap + free_swap )/ 1024.0 #convert to MB
-    memory[:swap][:free] = free_swap / 1024.0 #convert to MB
+    memory[:swap][:total] = "#{used_swap + free_swap}kB"
+    memory[:swap][:free] = "#{free_swap}kB"
   end
 end

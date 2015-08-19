@@ -27,21 +27,21 @@ describe Ohai::System, "AIX memory plugin" do
 
   it "should get total memory" do
     @plugin.run
-    expect(@plugin['memory']['total']).to eql("513280.00")
+    expect(@plugin['memory']['total']).to eql("#{513280 * 1024}kB")
   end
   
   it "should get free memory" do
     @plugin.run
-    expect(@plugin['memory']['free']).to eql("173245.83")
+    expect(@plugin['memory']['free']).to eql("#{173245.83.to_i * 1024}kB")
   end
   
   it "should get total swap" do
     @plugin.run
-    expect(@plugin['memory']['swap']['total']).to eql( (23887872 / 1024.0) * 4)
+    expect(@plugin['memory']['swap']['total']).to eql( "#{23887872 * 4}kB")
   end
   
   it "should get free swap" do
     @plugin.run
-    expect(@plugin['memory']['swap']['free']).to eql( (23598960 / 1024.0) * 4)
+    expect(@plugin['memory']['swap']['free']).to eql( "#{23598960 * 4}kB")
   end
 end 

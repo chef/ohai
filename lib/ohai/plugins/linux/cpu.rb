@@ -80,5 +80,6 @@ Ohai.plugin(:CPU) do
     cpu cpuinfo
     cpu[:total] = cpu_number
     cpu[:real] = real_cpu.keys.length
+    cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
   end
 end

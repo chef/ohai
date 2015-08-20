@@ -89,6 +89,11 @@ describe Ohai::System, "General Linux cpu plugin" do
   end
   
   it_behaves_like "Common cpu info", 1, 0
+  
+  it "gets total cores" do
+    @plugin.run
+    expect(@plugin[:cpu][:cores]).to eql(0)
+  end
 
   it "doesn't have a cpu 1" do
     @plugin.run

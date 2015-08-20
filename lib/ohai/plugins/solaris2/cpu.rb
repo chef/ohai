@@ -50,7 +50,7 @@ Ohai.plugin(:CPU) do
            cpu[instance]["mhz"] = value
         when /brand/
            cpu[instance]["model_name"] = value.sub(/\s+/," ")
-        when /state$/
+        when /^state$/
            cpu[instance]["state"] = value
            cpu["cpustates"][value] = 0 if cpu["cpustates"][value].nil?
            cpu["cpustates"][value] += 1 

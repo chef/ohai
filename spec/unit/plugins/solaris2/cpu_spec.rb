@@ -459,11 +459,11 @@ END
     end
 
     it "should get the total number of online cores" do
-      expect(@plugin["cpu"]["total_online"]).to eql (8)
+      expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql (8)
     end
    
     it "should get the total number of offline cores" do
-      expect(@plugin["cpu"]["total_offline"]).to eql (8)
+      expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql (8)
     end
  
     describe "per-cpu information" do
@@ -2830,11 +2830,11 @@ END
     end
 
     it "should get the total number of online cores" do
-      expect(@plugin["cpu"]["total_online"]).to eql(124)
+      expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql(124)
     end
    
     it "should get the total number of offline cores" do
-      expect(@plugin["cpu"]["total_offline"]).to eql(4)
+      expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql(4)
     end
      
     describe "per-cpu information" do

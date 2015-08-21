@@ -32,7 +32,7 @@ Ohai.plugin(:CPU) do
     cpusockets = Array.new
     processor_info.each_with_index do |processor, i|
       desc,instance,record,keyvalue = processor.split(":")
-      cpu[instance] = Mash.new if cpu[instance].nil?
+      cpu[instance] ||= Mash.new
       if (currentcpu !=  instance)
          cpu["total"] += 1
          currentcpu = instance
@@ -52,7 +52,7 @@ Ohai.plugin(:CPU) do
            cpu[instance]["model_name"] = value.sub(/\s+/," ")
         when /^state$/
            cpu[instance]["state"] = value
-           cpu["cpustates"][value] = 0 if cpu["cpustates"][value].nil?
+           cpu["cpustates"][value] ||= 0 
            cpu["cpustates"][value] += 1 
         when /core_id/
            cpu[instance]["core_id"] = value

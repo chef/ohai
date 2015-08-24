@@ -28,5 +28,6 @@ module Ohai
     class DependencyCycle < Error; end
     class DependencyNotFound < Error; end
     class AttributeSyntaxError < Error; end
+    class PluginConfigError < Error; end
   end
 end

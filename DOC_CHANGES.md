@@ -46,3 +46,51 @@ plugin on Linux and OS X.
    device name.
 ** `by_mount` similar to the above but indexed by mountpoint. Won't include
    unmounted filesystems, of course.
+
+## Configure plugins with ohai.plugin
+Add the `ohai.plugin` setting to [Ohai Settings](https://docs.chef.io/config_rb_client.html#ohai-settings):
+
+> Some plugins support configuration. Configure a plugin using the snake-case
+name of the plugin consuming the setting. The snake-case name and any
+configuration options are required to be Symbols.
+
+> Currently, the only way to detect whether or not a plugin supports
+configuration is to read the source. Ohai plugins which ship with Chef live in
+the plugin directory on [GitHub](https://github.com/chef/ohai/tree/master/lib/ohai).
+
+> Plugins access configuration options using the `configuration` DSL method.
+Each Symbol passed to `configuration` represents a level in that plugin's
+configuration Hash. If the `:Foo` plugin accesses `configuration(:bar)` you could add
+`ohai.plugin[:foo][:bar] = config_value` to your configuration file. If the `:Foo2`
+plugin accesses `configuration(:bar, :baz)`, you could configure it with `ohai.plugin[:foo_2][:bar] = { :baz => config_value }`.
+
+Add a snippet on plugin configuration to [Custom Plugins](https://docs.chef.io/ohai.html#custom-plugins):
+
+> ```ruby
+Ohai.plugin(:Name) do
+  # ...
+  collect_data do
+    if configuration(option, *options)
+      # ...
+    end
+    if configuration(option, *options) == value
+      # ...
+    end
+  end
+end
+```
+* `configuration(option, *options)` accesses this plugin's configuration settings.
+
+Add a subsection on plugin configuration to [Ohai DSL Methods](https://docs.chef.io/ohai.html#dsl-ohai-methods):
+
+> Access plugin configuration settings within a `collect_data` block using the
+`configuration` method. `configuration` takes one or more Symbols as the option
+or path to the option accessed.
+>
+> Examples:
+> * In the `collect_data` block of `:FooPlugin`, `configuration(:option)` accesses
+`Ohai.config[:plugin][:foo_plugin][:option]`, which can be set by `ohai.plugin[:foo_plugin][:option] = value` in a user's configuration file.
+> * In the `collect_data` block of `:FooPlugin`, `configuration(:option, :suboption)`
+accesses `Ohai.config[:plugin][:foo_plugin][:option][:suboption]`, which can be
+set by `ohai.plugin[:foo_plugin][:option] = { :suboption => value }` in a user's
+configuration file.

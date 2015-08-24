@@ -293,6 +293,79 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
   end
 
+  describe "#configuration" do
+    let(:plugin) do
+      klass = Ohai.plugin(camel_name) { }
+      klass.new({})
+    end
+
+    shared_examples_for "plugin config lookup" do
+      it "returns the configuration option value" do
+        Ohai.config[:plugin][snake_name][:foo] = true
+        expect(plugin.configuration(:foo)).to eq(true)
+      end
+    end
+
+    describe "a plugin named Abc" do
+      let(:camel_name) { :Abc }
+      let(:snake_name) { :abc }
+
+      it "returns nil when the plugin is not configured" do
+        expect(plugin.configuration(:foo)).to eq(nil)
+      end
+
+      it "does not auto-vivify an un-configured plugin" do
+        plugin.configuration(:foo)
+        expect(Ohai.config[:plugin]).to_not have_key(:test)
+      end
+
+      it "returns nil when the option is not configured" do
+        Ohai.config[:plugin][snake_name][:foo] = true
+        expect(plugin.configuration(:bar)).to eq(nil)
+      end
+
+      it "returns nil when the suboption is not configured" do
+        Ohai.config[:plugin][snake_name][:foo] = { }
+        expect(plugin.configuration(:foo, :bar)).to eq(nil)
+      end
+
+      include_examples "plugin config lookup"
+
+      it "returns the configuration sub-option value" do
+        Ohai.config[:plugin][snake_name][:foo] = { :bar => true }
+        expect(plugin.configuration(:foo, :bar)).to eq(true)
+      end
+    end
+
+    describe "a plugin named ABC" do
+      let(:camel_name) { :ABC }
+      let(:snake_name) { :abc }
+
+      include_examples "plugin config lookup"
+    end
+
+    describe "a plugin named Abc2" do
+      let(:camel_name) { :Abc2 }
+      let(:snake_name) { :abc_2 }
+
+      include_examples "plugin config lookup"
+    end
+
+    describe "a plugin named AbcAbc" do
+      let(:camel_name) { :AbcXyz }
+      let(:snake_name) { :abc_xyz }
+
+      include_examples "plugin config lookup"
+    end
+
+    describe "a plugin named ABCLmnoXyz" do
+      let(:camel_name) { :ABCLmnoXyz }
+      let(:snake_name) { :abc_lmno_xyz }
+
+      include_examples "plugin config lookup"
+    end
+  end
+
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
     let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai.data) }

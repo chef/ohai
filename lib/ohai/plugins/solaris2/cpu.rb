@@ -37,7 +37,7 @@ Ohai.plugin(:CPU) do
          cpu["total"] += 1
          currentcpu = instance
       end 
-      kv = keyvalue.gsub(/\s+/,"=").split(/=/)
+      kv = keyvalue.split(/\s+/)
       key = kv.shift
       value = kv.join(" ").chomp
       case key

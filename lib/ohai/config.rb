@@ -18,7 +18,9 @@
 #
 
 require 'chef-config/config'
+require 'ohai/exception'
 require 'ohai/log'
+require 'ohai/plugin_config'
 
 module Ohai
   Config = ChefConfig::Config
@@ -93,6 +95,7 @@ module Ohai
       default :hints_path, Ohai::Config.default_hints_path
       default :log_level, :auto
       default :log_location, STDERR
+      default :plugin, Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new }
       default :plugin_path, Ohai::Config.default_plugin_path
     end
 

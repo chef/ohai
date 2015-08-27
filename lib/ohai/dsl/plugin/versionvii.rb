@@ -100,6 +100,47 @@ module Ohai
         def require_plugin(*args)
           Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
         end
+
+        def configuration(option, *options)
+          return nil if plugin_config.nil? || !plugin_config.key?(option)
+          value = plugin_config[option]
+          options.each do |opt|
+            return nil unless value.key?(opt)
+            value = value[opt]
+          end
+          value
+        end
+
+        private
+        def plugin_config
+          @plugin_config ||= fetch_plugin_config
+        end
+
+        def fetch_plugin_config
+          # DMI => ["DMI"]
+          # Memory => ["", "Memory"]
+          # NetworkListeners => ["", "Network", "", "Listeners"]
+          # SSHHostKey => ["SSH", "Host", "", "Key"]
+          parts = self.name.to_s.split(/([A-Z][a-z]+)/)
+          # ["DMI"] => ["DMI"]
+          # ["", "Memory"] => ["Memory"]
+          # ["", "Network", "", "Listeners"] => ["Network", "Listeners"]
+          # ["SSH", "Host", "", "Key"] => ["SSH", "Host", "Key"]
+          parts.delete_if { |part| part.empty? }
+          # ["DMI"] => :dmi
+          # ["Memory"] => :memory
+          # ["Network", "Listeners"] => :network_listeners
+          # ["SSH", "Host", "Key"] => :ssh_host_key
+          snake_case_name = parts.map { |part| part.downcase }.join("_").to_sym
+
+          # Plugin names in config hashes are auto-vivified, so we check with
+          # key? to avoid falsely instantiating a configuration hash.
+          if Ohai.config[:plugin].key?(snake_case_name)
+            Ohai.config[:plugin][snake_case_name]
+          else
+            nil
+          end
+        end
       end
     end
   end

@@ -54,7 +54,9 @@ Ohai.plugin(:CPU) do
       cpu[current_cpu]["vendor_id"] = processor['manufacturer']
       cpu[current_cpu]["family"] = processor['family'].to_s
       cpu[current_cpu]["model"] = processor['revision'].to_s
-      cpu[current_cpu]["stepping"] = processor['stepping']
+      cpu[current_cpu]["stepping"] = processor['stepping'].nil? \
+                  ? processor['description'].match(/Stepping\s+(\d+)/)[1] \
+                  : processor['stepping']
       cpu[current_cpu]["physical_id"] = processor['deviceid']
       cpu[current_cpu]["model_name"] = processor['description']
       cpu[current_cpu]["mhz"] = processor['maxclockspeed'].to_s

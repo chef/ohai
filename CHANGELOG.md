@@ -2,43 +2,43 @@
 
 ## Release 8.6.0
 * [**Phil Dibowitz**](https://github.com/jaymzh):
-  Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
+  - Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
   support CentOS7, multiple virtual filesystems, etc.
-  Fix Darwin filesystem plugin on newer MacOSX
+  - Fix Darwin filesystem plugin on newer MacOSX
 * [**Jonathan Amiez**](https://github.com/josqu4red):
-  Linux filesystems plugin report wrong fs-type for logical volumes
+  - Linux filesystems plugin report wrong fs-type for logical volumes
 * [**involucelate**](https://github.com/involucelate)
-  Fix Windows 2008 hostname truncation #554
+  - Fix Windows 2008 hostname truncation #554
 * [**Pavel Yudin**](https://github.com/Kasen):
-  Detect Parallels host and guest virtualization
+  - Detect Parallels host and guest virtualization
 * [**Claire McQuin**](https://github.com/mcquin):
-  Deprecate Ohai::Config in favor of Ohai::Config.ohai.
-  Load a configuration file while running as an application.
+  - Deprecate Ohai::Config in favor of Ohai::Config.ohai.
+  - Load a configuration file while running as an application.
 * [PR #597](https//github.com/chef/ohai/597):
-  Correct platform, platform\_family and version detection on Cisco's Nexus platforms.
+  - Correct platform, platform\_family and version detection on Cisco's Nexus platforms.
 * [**cmluciano**](https://github.com/cmluciano):
-  add vmware plugin
+  - add vmware plugin
 * [**Jean Baptiste Favre**](https://github.com/jbfavre):
-  Detect updated docker cgroup format
+  - Detect updated docker cgroup format
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
-  Fix memory plugin output on Solaris
-  Add swap space attributes for Solaris memory plugin
-  Add swap space attributes for AIX
-  Add support for SPARC based processors in Solaris cpu plugin
-  Make AIX cpu plugin's output consistent with Solaris cpu plugin
-  Make AIX, Solaris memory output consistent to Linux
+  - Fix memory plugin output on Solaris
+  - Add swap space attributes for Solaris memory plugin
+  - Add swap space attributes for AIX
+  - Add support for SPARC based processors in Solaris cpu plugin
+  - Make AIX cpu plugin's output consistent with Solaris cpu plugin
+  - Make AIX, Solaris memory output consistent to Linux
 * [**Sean Horn**](https://github.com/sean-horn):
-  ec2 plugin should handle binary userdata too
+  - ec2 plugin should handle binary userdata too
 * [**Alexey Karpik**](https://github.com/akarpik):
-  Add support for SoftLayer cloud
+  - Add support for SoftLayer cloud
 * [**MichaelSp**](https://github.com/MichaelSp):
-  return correct ipaddress for openvz guests
+  - return correct ipaddress for openvz guests
 * [**Anthony Caiafa**](https://github.com/acaiafa):
-  Only run ifconfig against active interfaces
+  - Only run ifconfig against active interfaces
 * [**Shahul Khajamohideen**](https://github.com/sh9189) and [**Sean Escriva**](https://github.com/webframp):
-  Windows Memory plugin
+  - Windows Memory plugin
 * [**Chris Chambers**](https://github.com/cachamber):
-  Convert Solaris OHAI CPU detection to kstat from psrinfo
+  - Convert Solaris OHAI CPU detection to kstat from psrinfo
 
 ## Release 8.5.0
 

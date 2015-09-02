@@ -4,17 +4,15 @@
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to
   support CentOS7, multiple virtual filesystems, etc.
+  Fix Darwin filesystem plugin on newer MacOSX
 * [**Jonathan Amiez**](https://github.com/josqu4red):
   Linux filesystems plugin report wrong fs-type for logical volumes
 * [**involucelate**](https://github.com/involucelate)
-  Fix windows 2008 hostname truncation #554
+  Fix Windows 2008 hostname truncation #554
 * [**Pavel Yudin**](https://github.com/Kasen):
   Detect Parallels host and guest virtualization
-* [**Phil Dibowitz**](https://github.com/jaymzh):
-  Fix Darwin filesystem plugin on newer MacOSX
 * [**Claire McQuin**](https://github.com/mcquin):
   Deprecate Ohai::Config in favor of Ohai::Config.ohai.
-* [**Claire McQuin**](https://github.com/mcquin):
   Load a configuration file while running as an application.
 * [PR #597](https//github.com/chef/ohai/597):
   Correct platform, platform\_family and version detection on Cisco's Nexus platforms.
@@ -27,6 +25,8 @@
   Add swap space attributes for Solaris memory plugin
   Add swap space attributes for AIX
   Add support for SPARC based processors in Solaris cpu plugin
+  Make AIX cpu plugin's output consistent with Solaris cpu plugin
+  Make AIX, Solaris memory output consistent to Linux
 * [**Sean Horn**](https://github.com/sean-horn):
   ec2 plugin should handle binary userdata too
 * [**Alexey Karpik**](https://github.com/akarpik):
@@ -35,6 +35,10 @@
   return correct ipaddress for openvz guests
 * [**Anthony Caiafa**](https://github.com/acaiafa):
   Only run ifconfig against active interfaces
+* [**Shahul Khajamohideen**](https://github.com/sh9189) and [**Sean Escriva**](https://github.com/webframp):
+  Windows Memory plugin
+* [**Chris Chambers**](https://github.com/cachamber):
+  Convert Solaris OHAI CPU detection to kstat from psrinfo
 
 ## Release 8.5.0
 

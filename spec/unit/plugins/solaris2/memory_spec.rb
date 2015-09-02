@@ -27,17 +27,17 @@ describe Ohai::System, "Solaris2.X memory plugin" do
 
   it "should get the total memory" do
     @plugin.run
-    expect(@plugin['memory']['total']).to eql(8194)
+    expect(@plugin[:memory][:total]).to eql("#{8194 * 1024}kB")
   end
   
   it "should get total swap" do
     @plugin.run
-    expect(@plugin['memory']['swap']['total']).to eql((470096232 + 47057688) / 1024.0 )
+    expect(@plugin[:memory][:swap][:total]).to eql("#{(470096232 + 47057688)}kB" )
   end
   
   it "should get free swap" do
     @plugin.run
-    expect(@plugin['memory']['swap']['free']).to eql(47057688 / 1024.0 )
+    expect(@plugin[:memory][:swap][:free]).to eql("47057688kB")
   end
   
 end

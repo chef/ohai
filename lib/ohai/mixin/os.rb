@@ -39,6 +39,8 @@ module Ohai
           return "openbsd"
         when /netbsd(.*)$/
           return "netbsd"
+        when /dragonfly(.*)$/
+          return "dragonflybsd"
         when /solaris2/
           return "solaris2"
         when /mswin|mingw32|windows/

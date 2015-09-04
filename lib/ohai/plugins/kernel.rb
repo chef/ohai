@@ -132,6 +132,18 @@ Ohai.plugin(:Kernel) do
     kernel[:modules] = bsd_modules("/usr/bin/modstat")
   end
 
+  collect_data(:dragonflybsd) do
+    kernel init_kernel
+    kernel[:os] = kernel[:name]
+
+    so = shell_out("uname -i")
+    kernel[:ident] = so.stdout.split($/)[0]
+    so = shell_out("sysctl kern.securelevel")
+    kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel: (.+)$/ }
+
+    kernel[:modules] = bsd_modules("/sbin/kldstat")
+  end
+
   collect_data(:solaris2) do
     kernel init_kernel
 

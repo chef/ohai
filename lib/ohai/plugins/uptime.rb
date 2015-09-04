@@ -57,7 +57,7 @@ Ohai.plugin(:Uptime) do
     uptime data.last
   end
 
-  collect_data(:freebsd, :netbsd) do
+  collect_data(:freebsd, :netbsd, :dragonflybsd) do
     data = collect_uptime("/sbin/sysctl")
     uptime_seconds data.first
     uptime data.last

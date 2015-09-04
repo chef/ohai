@@ -29,6 +29,6 @@ Ohai.plugin(:PS) do
 
   collect_data(:freebsd, :netbsd, :openbsd) do
     # ps -e requires procfs
-    command[:ps] = 'ps -ax'
+    command[:ps] = 'ps -axww'
   end
 end

@@ -1,7 +1,8 @@
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2015 Chef, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,76 +46,78 @@ Ohai.plugin(:Network) do
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]
 
-    # :default_interface, :default_gateway - route -n get 0
-    so = shell_out("netstat -rn |grep default")
-    so.stdout.lines.each do |line|
-      items = line.split(' ')
-      if items[0] == "default"
-        network[:default_gateway] = items[1]
-        network[:default_interface] = items[5]
+    # We unfortunately have to do things a bit different here, if ohai is running
+    # within a WPAR. For instance, the WPAR isn't aware of some of its own networking
+    # minutia such as default gateway/route.
+    unless shell_out("uname -W").stdout.to_i > 0
+      # :default_interface, :default_gateway - route -n get 0
+      so = shell_out("netstat -rn |grep default")
+      so.stdout.lines.each do |line|
+        items = line.split(' ')
+        if items[0] == "default"
+          network[:default_gateway] = items[1]
+          network[:default_interface] = items[5]
+        end
       end
     end
 
-    # List the interfaces in system.
-    so = shell_out("lsdev -Cc if | grep Available")
-    so.stdout.lines.each do |line|
-      if line =~ /(\S+) (\S+)\s+(.+)/
-        interface = $1
-        iface[interface] = Mash.new unless iface[interface]
-        iface[interface][:state] = ($2 == 'Available' ? 'up' : 'down')
-        iface[interface][:description] = $3
-        
-        # Query the interface information
-        if_so = shell_out("ifconfig #{interface}")
-        if_so.stdout.lines.each do |line|
-          case line
-          when /^#{interface}:\sflags=\S+<(\S+)>/
-            iface[interface][:flags] = $1.split(',')
-            iface[interface][:metric] = $1 if line =~ /metric\s(\S+)/
-          else
-            # We have key value pairs.
-            if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
-              tmp_addr, tmp_prefix = $1, $3
-              if tmp_prefix.nil?
-                netmask = hex_to_dec_netmask($1) if line =~ /netmask\s(\S+)\s/
-                unless netmask
-                  tmp_prefix ||= "32"
-                  netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
-                end
-              else
+    # Splits the ifconfig output to 1 line per interface
+    if_so = shell_out("ifconfig -a")
+    if_so.stdout.gsub(/\n(\w+\d+)/, '___\1').split("___").each do |intraface|
+      splat = intraface.split(":")
+      interface = splat[0]
+      line = splat[1..-1][0]
+      iface[interface] = Mash.new
+      iface[interface][:state] = (line.include?("<UP,") ? 'up' : 'down')
+
+      intraface.lines.each do |lin|
+        case lin
+        when /flags=\S+<(\S+)>/
+          iface[interface][:flags] = $1.split(',')
+          iface[interface][:metric] = $1 if lin =~ /metric\s(\S+)/
+        else
+          # We have key value pairs.
+          if lin =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
+            tmp_addr, tmp_prefix = $1, $3
+            if tmp_prefix.nil?
+              netmask = hex_to_dec_netmask($1) if lin =~ /netmask\s(\S+)\s/
+              unless netmask
+                tmp_prefix ||= "32"
                 netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
               end
-              
-              iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
-              iface[interface][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
-              iface[interface][:addresses][tmp_addr][:netmask] = netmask
-              
-              if line =~ /broadcast\s(\S+)\s/
-                iface[interface][:addresses][tmp_addr][:broadcast] = $1
-              end
-            elsif line =~ /inet6 ([a-f0-9\:]+)%?([\d]*)\/?(\d*)/
-              # TODO do we have more properties on inet6 in aix? broadcast
-              iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
-              iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
             else
-              # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
-              properties = line.split
-              n = properties.length/2 - 1
-              (0..n).each do |i|
-                iface[interface][properties[i*2]] = properties[(i*2+1)]
-              end
+              netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
+            end
+
+            iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+            iface[interface][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
+            iface[interface][:addresses][tmp_addr][:netmask] = netmask
+
+            if lin =~ /broadcast\s(\S+)\s/
+              iface[interface][:addresses][tmp_addr][:broadcast] = $1
+            end
+          elsif lin =~ /inet6 ([a-f0-9\:]+)%?([\d]*)\/?(\d*)?/
+            # TODO do we have more properties on inet6 in aix? broadcast
+            iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+            iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
+          else
+            # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
+            properties = lin.split
+            n = properties.length/2 - 1
+            (0..n).each do |i|
+              iface[interface][properties[i*2]] = properties[(i*2+1)]
             end
           end
-        end #ifconfig stdout
-
-        # Query macaddress
-        e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
-        iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
-        e_so.stdout.lines.each do |line|
-          iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" } if line =~ /Hardware Address: (\S+)/
         end
-      end  #lsdev stdout
-    end
+      end
+
+      # Query macaddress
+      e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
+      iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+      e_so.stdout.lines.each do |line|
+        iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" } if line =~ /Hardware Address: (\S+)/
+      end
+    end  #ifconfig stdout
 
     # Query routes information
     %w{inet inet6}.each do |family|
@@ -124,7 +127,7 @@ Ohai.plugin(:Network) do
           interface = $6
           iface[interface][:routes] = Array.new unless iface[interface][:routes]
           iface[interface][:routes] << Mash.new( :destination => $1, :family => family,
-                                                 :via => $2, :flags => $3)
+           :via => $2, :flags => $3)
         end
       end
     end
@@ -142,7 +145,8 @@ Ohai.plugin(:Network) do
         count += 1
       end
     end
-    
+
     network["interfaces"] = iface
   end
 end
+

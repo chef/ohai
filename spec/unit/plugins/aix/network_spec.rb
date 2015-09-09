@@ -24,18 +24,21 @@ describe Ohai::System, "AIX network plugin" do
 default            172.31.8.1        UG        2    121789 en0      -      -
 NETSTAT_RN_GREP_DEFAULT
 
-    @lsdev_Cc_if = <<-LSDEV_CC_IF
-en0 Available  Standard Ethernet Network Interface
-LSDEV_CC_IF
-
-    @ifconfig_en0 = <<-IFCONFIG_EN0
+    @ifconfig = <<-IFCONFIG
 en0: flags=1e080863,480<UP,BROADCAST,NOTRAILERS,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,CHECKSUM_OFFLOAD(ACTIVE),CHAIN> metric 1
         inet 172.29.174.58 netmask 0xffffc000 broadcast 172.29.191.255
         inet 172.29.174.59 broadcast 172.29.191.255
         inet 172.29.174.60 netmask 0xffffc000 broadcast 172.29.191.255
         inet6 ::1%1/0
      tcp_sendspace 262144 tcp_recvspace 262144 rfc1323 1
-IFCONFIG_EN0
+en1: flags=1e084863,480<UP,BROADCAST,NOTRAILERS,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,CHECKSUM_OFFLOAD(ACTIVE),CHAIN>
+        inet 172.31.10.211 netmask 0xfffffc00 broadcast 172.31.11.255
+         tcp_sendspace 262144 tcp_recvspace 262144 rfc1323 1
+lo0: flags=e08084b,c0<UP,BROADCAST,LOOPBACK,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,LARGESEND,CHAIN>
+        inet 127.0.0.1 netmask 0xff000000 broadcast 127.255.255.255
+        inet6 ::1%1/0
+         tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1
+IFCONFIG
 
     @netstat_nrf_inet = <<-NETSTAT_NRF_INET
 Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
@@ -45,6 +48,13 @@ default            172.29.128.13     UG        0    587683 en0      -      -
 172.29.128/18      172.29.174.58     U         7   1035485 en0      -      -
 172.29.191.255     172.29.174.58     UHSb      0         1 en0      -      -
 NETSTAT_NRF_INET
+
+    @entstat_err = <<-ENSTAT_ERR
+
+
+entstat: 0909-002 Unable to open device en0, errno = 13
+grep: 0652-033 Cannot open Address".
+ENSTAT_ERR
 
     @aix_arp_an = <<-ARP_AN
   ? (172.29.131.16) at 6e:87:70:0:40:3 [ethernet] stored in bucket 16
@@ -66,10 +76,12 @@ ARP_AN
     @plugin = get_plugin("aix/network")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
+    allow(@plugin).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
     allow(@plugin).to receive(:shell_out).with("netstat -rn |grep default").and_return(mock_shell_out(0, @netstat_rn_grep_default, nil))
-    allow(@plugin).to receive(:shell_out).with("lsdev -Cc if | grep Available").and_return(mock_shell_out(0, @lsdev_Cc_if, nil))
-    allow(@plugin).to receive(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, @ifconfig_en0, nil))
+    allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @ifconfig, nil))
     allow(@plugin).to receive(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
+    allow(@plugin).to receive(:shell_out).with("entstat -d en1 | grep \"Hardware Address\"").and_return(mock_shell_out(0, @entstat_err, nil))
+    allow(@plugin).to receive(:shell_out).with("entstat -d lo0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, @entstat_err, nil))
     allow(@plugin).to receive(:shell_out).with("netstat -nrf inet").and_return(mock_shell_out(0, @netstat_nrf_inet, nil))
     allow(@plugin).to receive(:shell_out).with("netstat -nrf inet6").and_return(mock_shell_out(0, "::1%1  ::1%1  UH 1 109392 en0  -  -", nil))
     allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @aix_arp_an, nil))
@@ -85,7 +97,7 @@ ARP_AN
     end
 
     it "detects the interfaces" do
-      expect(@plugin['network']['interfaces'].keys.sort).to eq(["en0"])
+      expect(@plugin['network']['interfaces'].keys.sort).to eq(["en0", "en1", "lo0"])
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -93,17 +105,34 @@ ARP_AN
     end
   end
 
-  describe "netstat -rn |grep default" do
+  describe "when running on an LPAR" do
+    describe "netstat -rn |grep default" do
+      before do
+        @plugin.run
+      end
+
+      it "returns the default gateway of the system's network" do
+        expect(@plugin[:network][:default_gateway]).to eq('172.31.8.1')
+      end
+
+      it "returns the default interface of the system's network" do
+        expect(@plugin[:network][:default_interface]).to eq('en0')
+      end
+    end
+  end
+
+  describe "when running on a WPAR" do
     before do
+      allow(@plugin).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "6", nil))
       @plugin.run
     end
 
-    it "returns the default gateway of the system's network" do
-      expect(@plugin[:network][:default_gateway]).to eq('172.31.8.1')
+    it "avoids collecting routing information" do
+      expect(@plugin[:network][:default_gateway]).to be_nil
     end
 
-    it "returns the default interface of the system's network" do
-      expect(@plugin[:network][:default_interface]).to eq('en0')
+    it "avoids collecting default interface" do
+      expect(@plugin[:network][:default_gateway]).to be_nil
     end
   end
 
@@ -111,11 +140,6 @@ ARP_AN
     it "detects the state of the interfaces in the system" do
       @plugin.run
       expect(@plugin['network']['interfaces']['en0'][:state]).to eq("up")
-    end
-
-    it "detects the description of the interfaces in the system" do
-      @plugin.run
-      expect(@plugin['network']['interfaces']['en0'][:description]).to eq("Standard Ethernet Network Interface")
     end
 
     describe "ifconfig interface" do
@@ -173,7 +197,6 @@ ARP_AN
 
       context "inet6 entries" do
         before do
-          allow(@plugin).to receive(:shell_out).with("ifconfig en0").and_return(mock_shell_out(0, "inet6 ::1%1/0", nil))
           @plugin.run
           @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1"]
         end

@@ -143,7 +143,7 @@ Ohai.plugin(:Platform) do
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
     elsif os_release_file_is_cisco?
-      raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID-LIKE field' if
+      raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field' if
         os_release_info['ID_LIKE'].nil? || ! os_release_info['ID_LIKE'].include?('wrlinux')
 
       case os_release_info['ID']

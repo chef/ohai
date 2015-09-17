@@ -143,9 +143,18 @@ Ohai.plugin(:Platform) do
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
     elsif os_release_file_is_cisco?
-      raise "unknown Cisco /etc/os-release ID field" unless os_release_info['ID'].include?('nexus')
-      raise "unknown Cisco /etc/os-release ID-LIKE field" unless os_release_info['ID_LIKE'].include?('wrlinux')
-      platform 'nexus'
+      raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field' if
+        os_release_info['ID_LIKE'].nil? || ! os_release_info['ID_LIKE'].include?('wrlinux')
+
+      case os_release_info['ID']
+      when 'nexus'
+        platform 'nexus'
+      when 'ios_xr'
+        platform 'ios_xr'
+      else
+        raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID field'
+      end
+
       platform_family 'wrlinux'
       platform_version os_release_info['VERSION']
     elsif lsb[:id] =~ /RedHat/i

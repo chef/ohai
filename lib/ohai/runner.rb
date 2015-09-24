@@ -48,6 +48,8 @@ module Ohai
         end
       rescue Ohai::Exceptions::Error
         raise
+      rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
+        raise
       rescue Exception,Errno::ENOENT => e
         Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end

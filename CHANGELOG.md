@@ -1,5 +1,8 @@
 # Ohai Changelog
 
+## Unreleased
+* Fix behavior when abort called from plug-in (Ohai should exit with error code)
+
 ## Release 8.6.0
 * [**Phil Dibowitz**](https://github.com/jaymzh):
   - Provide a new and improved filesystem plugin for Linux & Mac (filesystem2), to

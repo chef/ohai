@@ -2,6 +2,8 @@
 
 ## Unreleased
 * Fix behavior when abort called from plug-in (Ohai should exit with error code)
+* [**Shahul Khajamohideen**](https://github.com/sh9189):
+  Add total cores to linux cpu plugin
 
 ## Release 8.6.0
 * [**Phil Dibowitz**](https://github.com/jaymzh):

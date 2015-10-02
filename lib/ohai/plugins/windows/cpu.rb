@@ -29,7 +29,7 @@ Ohai.plugin(:CPU) do
     wmi = WmiLite::Wmi.new
     processors = wmi.instances_of('Win32_Processor')
 
-    processors.find(:all).each do |processor|
+    processors.each do |processor|
       #
       # On Windows Server 2003 R2 (i.e. 5.2.*), numberofcores property 
       # doesn't exist on the Win32_Processor class unless the user has

@@ -70,6 +70,7 @@ describe Ohai::System, 'Windows cpu plugin' do
                      'manufacturer' => 'GenuineIntel',
                      'maxclockspeed' => 2793,
                      'numberofcores' => 1,
+                     'numberoflogicalprocessors' => 2,
                      'revision' => 17_921,
                      'stepping' => 9,
                      'l2cachesize' => 64 },
@@ -81,6 +82,7 @@ describe Ohai::System, 'Windows cpu plugin' do
                      'manufacturer' => 'GenuineIntel',
                      'maxclockspeed' => 2793,
                      'numberofcores' => 1,
+                     'numberoflogicalprocessors' => 2,
                      'revision' => 17_921,
                      'stepping' => 9,
                      'l2cachesize' => 64 }]
@@ -95,7 +97,7 @@ describe Ohai::System, 'Windows cpu plugin' do
   end
 
   it 'should set total cpu to 2' do
-    expect(@plugin[:cpu][:total]).to eq(2)
+    expect(@plugin[:cpu][:total]).to eq(4)
   end
 
   it 'should set real cpu to 2' do

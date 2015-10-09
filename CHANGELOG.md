@@ -1,6 +1,18 @@
 # Ohai Changelog
 
 ## Unreleased
+* [**Shahul Khajamohideen**](https://github.com/sh9189):
+  - Fixes Windows :CPU plugin inconsistencies with other platforms: modifies
+  `cpu[:total]` to return total number of logical processors, adds `cpu[:cores]`
+  to return total number of cores.
+* [**clewis**](https://github.com/clewis):
+  - Don't constrain the width of `ps` output.
+* [**George Gensure**](https://github.com/werkt):
+  - Prevents invalid memory access on subsequent failed calls to `proc_state`
+  on sigar by throwing exception on returned invalid PID.
+* Make collected zfs filesystem properties configurable on solaris2.
+
+## Release 8.7.0
 * Fix behavior when abort called from plug-in (Ohai should exit with error code)
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
   Add total cores to linux cpu plugin

@@ -63,7 +63,15 @@ Ohai.plugin(:Filesystem) do
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    so = shell_out("zfs get -p -H all")
+    # ohai.plugin[:filesystem][:zfs_properties] = 'used'
+    # ohai.plugin[:filesystem][:zfs_properties] = ['mountpoint', 'creation', 'available', 'used']
+    zfs_get = "zfs get -p -H "
+    if configuration(:zfs_properties).nil? || configuration(:zfs_properties).empty?
+      zfs_get << "all"
+    else
+      zfs_get << [configuration(:zfs_properties)].join(',')
+    end
+    so = shell_out(zfs_get)
     so.stdout.lines do |line|
       next unless (line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/)
       filesystem = $1

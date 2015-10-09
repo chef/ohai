@@ -69,7 +69,7 @@ Ohai.plugin(:Filesystem) do
     if configuration(:zfs_properties).nil? || configuration(:zfs_properties).empty?
       zfs_get << "all"
     else
-      zfs_get << configuration(:zfs_properties).join(',')
+      zfs_get << [configuration(:zfs_properties)].join(',')
     end
     so = shell_out(zfs_get)
     so.stdout.lines do |line|

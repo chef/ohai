@@ -49,19 +49,35 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
     end
 
     context "when 'zfs get' properties are configured" do
-      let(:plugin_config) do
-        {
-          :filesystem => {
-            :zfs_properties => ['mountpoint', 'creation', 'available', 'used']
+      shared_examples_for "configured zfs properties" do
+        let(:plugin_config) do
+          {
+            :filesystem => {
+              :zfs_properties => zfs_properties
+            }
           }
-        }
+        end
+
+        it "collects configured filesystem properties" do
+          expect(plugin).to receive(:shell_out).
+            with("zfs get -p -H #{expected_cmd}").
+            and_return(mock_shell_out(0, "", ""))
+          plugin.run
+        end
       end
 
-      it "collects configured filesystem properties" do
-        expect(plugin).to receive(:shell_out).
-          with("zfs get -p -H mountpoint,creation,available,used").
-          and_return(mock_shell_out(0, "", ""))
-        plugin.run
+      context "as a String" do
+        include_examples "configured zfs properties" do
+          let(:zfs_properties) { 'mountpoint,creation,available,used' }
+          let(:expected_cmd) { 'mountpoint,creation,available,used' }
+        end
+      end
+
+      context "as an Array" do
+        include_examples "configured zfs properties" do
+          let(:zfs_properties) { ['mountpoint', 'creation', 'available', 'used'] }
+          let(:expected_cmd) { 'mountpoint,creation,available,used' }
+        end
       end
     end
   end

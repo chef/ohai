@@ -21,27 +21,23 @@ Ohai.plugin(:Scala) do
 
   collect_data(:default) do
     # Check for scala
-    begin
-      output = nil
+    output = nil
 
-      scala = Mash.new
-      so = shell_out("scala -version")
-      if so.exitstatus == 0
-        output = so.stdout.split
-        scala[:version] = output[4]
-        languages[:scala] = scala if scala[:version]
-      end
+    scala = Mash.new
+    so = shell_out("scala -version")
+    if so.exitstatus == 0
+      output = so.stdout.split
+      scala[:version] = output[4]
+      languages[:scala] = scala if scala[:version]
     end
 
     # Check for sbt
-    begin
-      output = nil
+    output = nil
 
-      so = shell_out("sbt --version")
-      if so.exitstatus == 0
-        output = so.stdout.split
-        scala[:sbt] = output[3] if scala[:version]
-      end
+    so = shell_out("sbt --version")
+    if so.exitstatus == 0
+      output = so.stdout.split
+      scala[:sbt] = output[3] if scala[:version]
     end
   end
 end

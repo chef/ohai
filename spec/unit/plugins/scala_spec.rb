@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin scala" do
 
@@ -25,7 +25,7 @@ describe Ohai::System, "plugin scala" do
     end
   end
 
-  let(:scala_out) {"Scala code runner version 2.11.6 -- Copyright 2002-2013, LAMP/EPFL"}
+  let(:scala_out) { "Scala code runner version 2.11.6 -- Copyright 2002-2013, LAMP/EPFL" }
   let(:sbt_out) { "sbt launcher version 0.13.8" }
 
   def setup_plugin
@@ -55,7 +55,6 @@ describe Ohai::System, "plugin scala" do
       plugin.run
     end
 
-
     it "should set languages[:sbt][:version]" do
       expect(plugin.languages[:scala][:sbt]).to eql("0.13.8")
     end
@@ -66,19 +65,19 @@ describe Ohai::System, "plugin scala" do
     before(:each) do
       allow(plugin).to receive(:shell_out)
         .with("scala -version")
-        .and_return(mock_shell_out(1, scala_out, ""))
+        .and_raise( Errno::ENOENT)
+
       allow(plugin).to receive(:shell_out)
         .with("sbt --version")
-        .and_return(mock_shell_out(1, sbt_out, ""))
-      plugin.run
+        .and_raise( Errno::ENOENT)
     end
 
     it "should not set the languages[:scala] if scala command fails" do
       expect(plugin.languages).not_to have_key(:scala)
     end
 
-    it "should not set the languages[:scala] if scala command fails" do
-      expect(plugin.languages).not_to have_key(:scala)
+    it "should not set the languages[:scala][:sbt] if sbt command fails" do
+      expect(plugin.languages).not_to have_key(:sbt)
     end
   end
 end

@@ -66,19 +66,19 @@ describe Ohai::System, "plugin scala" do
     before(:each) do
       allow(plugin).to receive(:shell_out)
         .with("scala -version")
-        .and_return(mock_shell_out(1, scala_out, ""))
+        .and_raise( Errno::ENOENT)
+
       allow(plugin).to receive(:shell_out)
         .with("sbt --version")
-        .and_return(mock_shell_out(1, sbt_out, ""))
-      plugin.run
+        .and_raise( Errno::ENOENT)
     end
 
     it "should not set the languages[:scala] if scala command fails" do
       expect(plugin.languages).not_to have_key(:scala)
     end
 
-    it "should not set the languages[:scala] if scala command fails" do
-      expect(plugin.languages).not_to have_key(:scala)
+    it "should not set the languages[:scala][:sbt] if sbt command fails" do
+      expect(plugin.languages).not_to have_key(:sbt)
     end
   end
 end

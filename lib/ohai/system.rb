@@ -211,7 +211,7 @@ module Ohai
       Ohai.config.merge!(@config)
 
       if Ohai.config[:directory] &&
-          !Ohai.config[:plugin_path].include?(Ohai::Config[:directory])
+          !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
         Ohai.config[:plugin_path] << Ohai.config[:directory]
       end
     end

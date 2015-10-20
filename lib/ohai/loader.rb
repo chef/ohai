@@ -1,6 +1,6 @@
 #
-# Author:: Claire McQuin (<claire@opscode.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Claire McQuin (<claire@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+require 'chef-config/path_helper'
 require 'ohai/log'
 require 'ohai/mash'
 require 'ohai/dsl'
@@ -38,7 +39,7 @@ module Ohai
 
       # Finds all the *.rb files under the configured paths in :plugin_path
       def self.find_all_in(plugin_dir)
-        Dir[File.join(plugin_dir, "**", "*.rb")].map do |file|
+        Dir[File.join(ChefConfig::PathHelper.escape_glob(plugin_dir), "**", "*.rb")].map do |file|
           new(file, plugin_dir)
         end
       end

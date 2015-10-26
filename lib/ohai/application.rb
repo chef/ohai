@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'chef-config/path_helper'
 require 'chef-config/workstation_config_loader'
 require 'ohai'
 require 'ohai/log'
@@ -32,7 +33,8 @@ class Ohai::Application
   option :directory,
     :short       => "-d DIRECTORY",
     :long        => "--directory DIRECTORY",
-    :description => "A directory to add to the Ohai search path"
+    :description => "A directory to add to the Ohai search path",
+    :proc        => lambda { |path| Ohai::Config.platform_specific_path(path) }
 
   option :log_level,
     :short        => "-l LEVEL",

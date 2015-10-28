@@ -246,6 +246,25 @@ KVM
       expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
+    it "sets kvm guest if dmidecode detects RHEV" do
+      kvm_dmidecode=<<-RHEV
+System Information
+  Manufacturer: Red Hat
+  Product Name: RHEV Hypervisor
+  Version: 6.7-20150911.0.el6ev
+  Serial Number: 00000000-0000-0000-0000-000000000000
+  UUID: E7F1DC93-3DA1-4EC3-A6AB-F6904BA87985
+  Wake-up Type: Power Switch
+  SKU Number: Not Specified
+  Family: Red Hat Enterprise Linux
+RHEV
+      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run

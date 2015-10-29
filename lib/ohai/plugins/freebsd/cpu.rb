@@ -41,7 +41,7 @@ Ohai.plugin(:CPU) do
       when /CPU:\s+(.+) \(([\d.]+).+\)/
         cpuinfo["model_name"] = $1
         cpuinfo["mhz"] = $2
-      when /\s+Origin="(.*)"\s.*Family=(?:0x)?(\S+)\s.*Model=(?:0x)?(\S+)\s+Stepping=(?:0x)?(\S+)/
+      when /\s+Origin.*"(.*)".*Family.*0x(\S+).*Model.*0x(\S+).*Stepping.*(\S+)/
         cpuinfo["vendor_id"] = $1
         cpuinfo["family"] = $2
         cpuinfo["model"] = $3

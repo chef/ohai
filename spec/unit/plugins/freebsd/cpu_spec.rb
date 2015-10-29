@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
-describe Ohai::System, "FreeBSD cpu plugin" do
+describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do
     @plugin = get_plugin("freebsd/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
@@ -74,6 +74,40 @@ describe Ohai::System, "FreeBSD cpu plugin" do
   it "detects CPU total" do
     @plugin.run
     expect(@plugin[:cpu][:total]).to eq(2)
+  end
+
+end
+
+describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
+  before(:each) do
+    @plugin = get_plugin("freebsd/cpu")
+    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))
+    @double_file = double("/var/run/dmesg.boot")
+    allow(@double_file).to receive(:each).
+      and_yield('CPU: Intel(R) Atom(TM) CPU N270   @ 1.60GHz (1596.03-MHz 686-class CPU)').
+      and_yield('  Origin = "GenuineIntel"  Id = 0x106c2  Family = 0x6  Model = 0x1c  Stepping = 2')
+    allow(File).to receive(:open).with("/var/run/dmesg.boot").and_return(@double_file)
+  end
+
+  it "detects CPU vendor_id" do
+    @plugin.run
+    expect(@plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
+  end
+
+  it "detects CPU family" do
+    @plugin.run
+    expect(@plugin[:cpu][:family]).to eq("6")
+  end
+
+  it "detects CPU model" do
+    @plugin.run
+    expect(@plugin[:cpu][:model]).to eq("1c")
+  end
+
+  it "detects CPU stepping" do
+    @plugin.run
+    expect(@plugin[:cpu][:stepping]).to eq("2")
   end
 
 end

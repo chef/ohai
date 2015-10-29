@@ -26,7 +26,7 @@ Ohai.plugin(:OS) do
   collect_data(:freebsd) do
     os collect_os
 
-    # This is __FreeBSD_version. See sys/param.h or 
+    # This is __FreeBSD_version. See sys/param.h or
     # http://www.freebsd.org/doc/en/books/porters-handbook/freebsd-versions.html.
     os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
   end

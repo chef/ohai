@@ -1,6 +1,7 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
+# Copyright:: Copyright (c) 2008-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,6 +37,23 @@ Ohai.plugin(:Filesystem) do
         fs[filesystem][:kb_available] = $4
         fs[filesystem][:percent_used] = $5
         fs[filesystem][:mount] = $6
+      end
+    end
+
+    # Grab filesystem inode data from df
+    so = shell_out("df -iP")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem\s+Size/
+        next
+      when /^(.+?)\s.*\d+\%\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+        filesystem = $1
+        fs[filesystem] ||= Mash.new
+        fs[filesystem][:total_inodes] = ($2.to_i + $3.to_i).to_s
+        fs[filesystem][:inodes_used] = $2
+        fs[filesystem][:inodes_available] = $3
+        fs[filesystem][:inodes_percent_used] = $4
+        fs[filesystem][:mount] = $5
       end
     end
 

@@ -101,7 +101,7 @@ As a rule of thumb, changes are obvious fixes if they do not introduce any new f
 ```
 ------------------------------------------------------------------------
 commit 370adb3f82d55d912b0cf9c1d1e99b132a8ed3b5
-Author: danielsdeleo <dan@opscode.com>
+Author: danielsdeleo <dan@chef.io>
 Date:   Wed Sep 18 11:44:40 2013 -0700
 
   Fix typo in config file docs.
@@ -174,7 +174,7 @@ We frequently make `alpha` and `beta` releases with version numbers that look li
 We do a `Minor` release approximately every 3 months and `Patch` releases on a when-needed
   basis for regressions, significant bugs, and security issues.
 
-Announcements of releases are available on [Chef Blog](http://www.getchef.com/blog) when they are
+Announcements of releases are available on [Chef Blog](http://www.chef.io/blog) when they are
   available.
 
 ## Chef Community
@@ -187,6 +187,6 @@ Chef is made possible by a strong community of developers and system administrat
 
 Also here are some additional pointers to some awesome Chef content:
 
-* [Chef Docs](http://docs.opscode.com/)
-* [Learn Chef](https://learnchef.opscode.com/)
-* [Chef Inc](http://www.getchef.com/)
+* [Chef Docs](http://docs.chef.io/)
+* [Learn Chef](https://learnchef.chef.io/)
+* [Chef Inc](http://www.chef.io/)

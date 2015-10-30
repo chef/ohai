@@ -18,12 +18,12 @@
 # limitations under the License.
 #
 
-require 'wmi-lite/wmi'
-
 Ohai.plugin(:Virtualization) do
   provides 'virtualization'
 
   collect_data(:windows) do
+    require 'wmi-lite/wmi'
+
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 

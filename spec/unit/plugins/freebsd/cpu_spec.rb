@@ -63,7 +63,7 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
 
   it "detects CPU model" do
     @plugin.run
-    expect(@plugin[:cpu][:model]).to eq("46")
+    expect(@plugin[:cpu][:model]).to eq("70")
   end
 
   it "detects CPU stepping" do
@@ -102,7 +102,8 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
 
   it "detects CPU model" do
     @plugin.run
-    expect(@plugin[:cpu][:model]).to eq("1c")
+
+    expect(@plugin[:cpu][:model]).to eq("28")
   end
 
   it "detects CPU stepping" do

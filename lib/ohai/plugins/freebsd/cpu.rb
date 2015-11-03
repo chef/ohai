@@ -1,5 +1,6 @@
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
+# Author:: Tim Smith (tsmith@chef.io)
 # Copyright:: Copyright (c) 2008 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -43,8 +44,9 @@ Ohai.plugin(:CPU) do
         cpuinfo["mhz"] = $2
       when /Origin.*"(.*)".*Family.*0x(\S+).*Model.*0x(\S+).*Stepping.*(\S+)/
         cpuinfo["vendor_id"] = $1
-        cpuinfo["family"] = $2
-        cpuinfo["model"] = $3
+        # convert from hex value to int, but keep a string to match Linux ohai
+        cpuinfo["family"] = $2.to_i(16).to_s
+        cpuinfo["model"] = $3.to_i(16).to_s
         cpuinfo["stepping"] = $4
         # These _should_ match /AMD Features2?/ lines as well
       when /Features=.+<(.+)>/

@@ -16,8 +16,8 @@ Chef distributes ohai as a RubyGem. This README is for developers who
 want to modify the Ohai source code. For users who want to write plugins
 for Ohai, see the docs:
 
-* General documentation: http://docs.chef.io/ohai.html
-* Custom plugin documentation: http://docs.chef.io/ohai_custom.html
+* General documentation: https://docs.chef.io/ohai.html
+* Custom plugin documentation: https://docs.chef.io/ohai_custom.html
 
 # DEVELOPMENT:
 
@@ -67,7 +67,7 @@ Ohai has some Rake tasks for doing various things.
 
 Source:
 
-* http://github.com/chef/ohai/tree/master
+* https://github.com/chef/ohai/tree/master
 
 Issues:
 

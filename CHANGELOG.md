@@ -241,4 +241,4 @@
 * Normalize cloud attributes for Azure (OHAI-554)
 * Capture FreeBSD osreldate for comparison purposes (OHAI-557)
 
-http://www.getchef.com/blog/2014/04/09/release-chef-client-11-12-2/
+http://www.chef.io/blog/2014/04/09/release-chef-client-11-12-2/

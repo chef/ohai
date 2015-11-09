@@ -44,9 +44,9 @@ Ohai.plugin(:Filesystem) do
     so = shell_out("df -iP")
     so.stdout.lines do |line|
       case line
-      when /^Filesystem\s+Size/
+      when /^Filesystem/
         next
-      when /^(.+?)\s.*\d+\%\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+      when /^(\S+)\s.+%\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\S+)/
         filesystem = $1
         fs[filesystem] ||= Mash.new
         fs[filesystem][:total_inodes] = ($2.to_i + $3.to_i).to_s

@@ -40,20 +40,20 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    # Grab filesystem inode data from df
+    # inode parsing from 'df -iP'
     so = shell_out("df -iP")
     so.stdout.lines do |line|
       case line
-      when /^Filesystem/
+      when /^Filesystem/ # skip the header
         next
-      when /^(\S+)\s.+%\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\S+)/
-        filesystem = $1
+      when /^(.+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\%\s+(\d+)\s+(\d+)\s+(\d+)%(.+)$/
+        filesystem = $1.strip
         fs[filesystem] ||= Mash.new
-        fs[filesystem][:total_inodes] = ($2.to_i + $3.to_i).to_s
-        fs[filesystem][:inodes_used] = $2
-        fs[filesystem][:inodes_available] = $3
-        fs[filesystem][:inodes_percent_used] = $4
-        fs[filesystem][:mount] = $5
+        fs[filesystem][:inodes_used] = $6
+        fs[filesystem][:inodes_available] = $7
+        fs[filesystem][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[filesystem][:inodes_percent_used] = $8
+        fs[filesystem][:mount] = $9.strip
       end
     end
 

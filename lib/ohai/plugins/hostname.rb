@@ -97,7 +97,7 @@ Ohai.plugin(:Hostname) do
     collect_domain
   end
 
-  collect_data(:darwin, :netbsd, :openbsd) do
+  collect_data(:darwin, :netbsd, :openbsd, :dragonflybsd) do
     hostname from_cmd("hostname -s")
     fqdn resolve_fqdn
     machinename from_cmd("hostname")

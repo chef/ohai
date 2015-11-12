@@ -1,8 +1,8 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Author:: Bryan McLellan (<btm@loftninjas.org>)
+# Authors:: Adam Jacob (<adam@opscode.com>)
+#           Richard Manyanza (<liseki@nyikacraftsmen.com>)
 # Copyright:: Copyright (c) 2008 Opscode, Inc.
-# Copyright:: Copyright (c) 2009 Bryan McLellan
+# Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +13,20 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-# implied.
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
 
-Ohai.plugin(:PS) do
-  provides "command/ps"
-  depends "command"
+require 'ohai/mixin/os'
 
-  collect_data(:aix, :darwin, :hpux, :linux, :solaris2) do
-    command[:ps] = 'ps -ef'
-  end
+Ohai.plugin(:OS) do
+  provides "os", "os_version"
 
-  collect_data(:freebsd, :netbsd, :openbsd, :dragonflybsd) do
-    # ps -e requires procfs
-    command[:ps] = 'ps -axww'
+  collect_data(:dragonflybsd) do
+    os collect_os
+
+    # This is __DragonFly_version. See sys/param.h
+    os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
   end
 end

@@ -1,7 +1,5 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Author:: Bryan McLellan (<btm@loftninjas.org>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -13,22 +11,19 @@
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-# implied.
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
 
-Ohai.plugin(:PS) do
-  provides "command/ps"
-  depends "command"
+Ohai.plugin(:Platform) do
+  provides "platform", "platform_version", "platform_family"
 
-  collect_data(:aix, :darwin, :hpux, :linux, :solaris2) do
-    command[:ps] = 'ps -ef'
-  end
-
-  collect_data(:freebsd, :netbsd, :openbsd, :dragonflybsd) do
-    # ps -e requires procfs
-    command[:ps] = 'ps -axww'
+  collect_data(:dragonflybsd) do
+    so = shell_out("uname -s")
+    platform so.stdout.split($/)[0].downcase
+    so = shell_out("uname -r")
+    platform_version so.stdout.split($/)[0]
+    platform_family "dragonflybsd"
   end
 end

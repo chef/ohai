@@ -124,6 +124,11 @@ Ohai.plugin(:Hostname) do
         ourfqdn = from_cmd("hostname --fqdn")
       end
 
+      if ourfqdn.nil? || ourfqdn.empty?
+        Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
+                        "will not be set.")
+      end
+
       # Some IaaS providers (ie. DigitalOcean) don't set the server name in
       # /etc/hosts, and so 'hostname --fqdn` fails. However, `hostname
       # --all-fqdns` might still succeed.
@@ -133,15 +138,12 @@ Ohai.plugin(:Hostname) do
         ourfqdn = from_cmd("hostname --all-fqdns")
       end
 
-      if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
-                        "will not be set.")
-      else
-        fqdn ourfqdn
-      end
+      fqdn ourfqdn
     rescue
       Ohai::Log.debug(
         "hostname --fqdn returned an error, probably no domain set")
+
+      fqdn nil
     end
     domain collect_domain
   end

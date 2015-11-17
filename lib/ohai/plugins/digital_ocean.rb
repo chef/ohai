@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require 'ohai/util/ip_helper'
+require 'json'
 
 Ohai.plugin(:DigitalOcean) do
   include Ohai::Util::IpHelper
@@ -62,6 +63,10 @@ Ohai.plugin(:DigitalOcean) do
     hint?('digital_ocean') || File.exist?(DIGITALOCEAN_FILE)
   end
 
+  def extract_digitalocean_metadata
+    JSON.parse(Net::HTTP.get(URI.parse('http://169.254.169.254/metadata/v1.json')))
+  end
+
   collect_data do
     if looks_like_digital_ocean?
       digital_ocean Mash.new
@@ -73,6 +78,7 @@ Ohai.plugin(:DigitalOcean) do
       # Digital Ocean's v2 API structures things:
       # https://developers.digitalocean.com/#droplets
       digital_ocean[:networks] = extract_droplet_ip_addresses
+      digital_ocean[:metadata] = extract_digitalocean_metadata
     else
       Ohai::Log.debug("No hints present for digital_ocean.")
       false

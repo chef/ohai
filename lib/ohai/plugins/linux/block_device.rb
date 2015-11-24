@@ -30,7 +30,7 @@ Ohai.plugin(:BlockDevice) do
             File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
-        %w{model rev state timeout vendor}.each do |check|
+        %w{model rev state timeout vendor queue_depth}.each do |check|
           if File.exists?("/sys/block/#{dir}/device/#{check}")
             File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end

@@ -40,10 +40,14 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = 'parallels'
       virtualization[:role] = 'guest'
       virtualization[:systems][:parallels] = 'guest'
+    when 'Bochs'
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:kvm] = "guest"
     end
 
     # vmware fusion detection
-    if bios[0]['serialnumber'] == /VMware/
+    if bios[0]['serialnumber'] =~ /VMware/
       virtualization[:system] = 'vmware'
       virtualization[:role] = 'guest'
       virtualization[:systems][:vmware] = 'guest'

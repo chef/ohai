@@ -1,6 +1,8 @@
 # Ohai Changelog
 
 ## Unreleased
+* [**James Flemer, NDP LLC**](https://github.com/jflemer-ndp):
+  - Add detection for RHEV (on Linux guests) to virtualization plugin
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
   - Fixes Windows :CPU plugin inconsistencies with other platforms: modifies
   `cpu[:total]` to return total number of logical processors, adds `cpu[:cores]`

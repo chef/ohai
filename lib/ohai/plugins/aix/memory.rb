@@ -1,6 +1,7 @@
 #
 # Author:: Joshua Timberman <joshua@opscode.com>
-# Copyright:: Copyright (c) 2013, Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +28,7 @@ Ohai.plugin(:Memory) do
     total_in_mb, u, free_in_mb = meminfo.split
     memory[:total] = "#{total_in_mb.to_i * 1024}kB"
     memory[:free] = "#{free_in_mb.to_i * 1024}kB"
-    
+
     swapinfo = shell_out("swap -s").stdout.split #returns swap info in 4K blocks
     memory[:swap]['total'] = "#{(swapinfo[2].to_i) * 4}kB"
     memory[:swap]['free'] = "#{(swapinfo[10].to_i) * 4}kB"

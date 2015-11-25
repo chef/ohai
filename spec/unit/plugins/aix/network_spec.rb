@@ -1,6 +1,7 @@
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -106,6 +107,17 @@ ARP_AN
   end
 
   describe "when running on an LPAR" do
+
+    describe "sets the top-level attribute correctly" do
+      before do
+        @plugin.run
+      end
+
+      it 'for \'macaddress\'' do
+        expect(@plugin[:macaddress]).to eq("BE:42:80:00:B0:05")
+      end
+    end
+
     describe "netstat -rn |grep default" do
       before do
         @plugin.run
@@ -133,6 +145,10 @@ ARP_AN
 
     it "avoids collecting default interface" do
       expect(@plugin[:network][:default_gateway]).to be_nil
+    end
+
+    it "avoids collecting a macaddress" do
+      expect(@plugin[:macaddress]).to be_nil
     end
   end
 

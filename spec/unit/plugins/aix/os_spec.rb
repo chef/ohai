@@ -1,5 +1,4 @@
 #
-# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -15,23 +14,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-Ohai.plugin(:Uptime) do
-  provides "uptime", "uptime_seconds"
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
-  collect_data(:aix) do
-    require 'date'
-    # Example output:
-    # $ who -b
-    #   .       system boot  Jul  9 17:51
-    so = shell_out('who -b')
-    so.stdout.lines.each do |line|
-      if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime('%s').to_i
-        uptime seconds_to_human(uptime_seconds)
-        break
-      end
-    end
+describe Ohai::System, "AIX os plugin" do
+  before(:each) do
+    @plugin = get_plugin("aix/os")
+    kernel = Mash.new
+    kernel[:version] = "6"
+    kernel[:release] = "1"
+    allow(@plugin).to receive(:collect_os).and_return(:aix)
+    allow(@plugin).to receive(:kernel).and_return(kernel)
+    @plugin.run
+  end
+
+  it "should set the top-level os_level attribute" do
+    expect(@plugin[:os_version]).to eql("6")
   end
 end
+

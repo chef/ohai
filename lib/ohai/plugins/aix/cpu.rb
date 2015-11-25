@@ -1,7 +1,8 @@
 #
 # Author:: Joshua Timberman <joshua@opscode.com>
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013, Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,36 +23,41 @@ Ohai.plugin(:CPU) do
 
   collect_data(:aix) do
     cpu Mash.new
-    
-    cpu[:total] = shell_out("pmcycles -m").stdout.lines.length
-    # At least one CPU will be available, but we'll wait to increment this later.
-    cpu[:available] = 0
 
-    cpudevs = shell_out("lsdev -Cc processor").stdout.lines
-    #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
-    #on AIX number of cores and processors are considered same 
-    cpu[:real] = cpu[:cores] = cpudevs.length 
-    cpudevs.each.with_index do |c,i|
-      name, status, location = c.split
-      index = i.to_s
-      cpu[index] = Mash.new
-      cpu[index][:status] = status
-      cpu[index][:location] = location
-      if status =~ /Available/
-        cpu[:available] += 1
-        lsattr = shell_out("lsattr -El #{name}").stdout.lines
-        lsattr.each do |attribute|
-          attrib, value = attribute.split
-          if attrib == "type"
-            cpu[index][:model_name] = value
-          elsif attrib == "frequency"
-            cpu[index][:mhz] = value.to_i / (1000 * 1000) #convert from hz to MHz
-          else
-            cpu[index][attrib] = value
+    cpu[:total] = shell_out("pmcycles -m").stdout.lines.length
+
+    # The below is only relevent on an LPAR
+    if shell_out('uname -W').stdout.strip == "0"
+
+      # At least one CPU will be available, but we'll wait to increment this later.
+      cpu[:available] = 0
+
+      cpudevs = shell_out("lsdev -Cc processor").stdout.lines
+      #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
+      #on AIX number of cores and processors are considered same
+      cpu[:real] = cpu[:cores] = cpudevs.length
+      cpudevs.each.with_index do |c,i|
+        name, status, location = c.split
+        index = i.to_s
+        cpu[index] = Mash.new
+        cpu[index][:status] = status
+        cpu[index][:location] = location
+        if status =~ /Available/
+          cpu[:available] += 1
+          lsattr = shell_out("lsattr -El #{name}").stdout.lines
+          lsattr.each do |attribute|
+            attrib, value = attribute.split
+            if attrib == "type"
+              cpu[index][:model_name] = value
+            elsif attrib == "frequency"
+              cpu[index][:mhz] = value.to_i / (1000 * 1000) #convert from hz to MHz
+            else
+              cpu[index][attrib] = value
+            end
           end
-		end
-        # IBM is the only maker of CPUs for AIX systems.
-        cpu[index][:vendor_id] = "IBM"
+          # IBM is the only maker of CPUs for AIX systems.
+          cpu[index][:vendor_id] = "IBM"
+        end
       end
     end
   end

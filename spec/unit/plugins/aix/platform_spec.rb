@@ -1,6 +1,7 @@
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +24,8 @@ describe Ohai::System, "Aix plugin platform" do
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     kernel = Mash.new
     kernel[:name] = "aix"
-    kernel[:version] = "1"
-    kernel[:release] = "0"
+    kernel[:version] = "7"
+    kernel[:release] = "1"
     allow(@plugin).to receive(:kernel).and_return(kernel)
     @plugin.run
   end
@@ -34,7 +35,7 @@ describe Ohai::System, "Aix plugin platform" do
   end
 
   it "should set the platform_version" do
-    expect(@plugin[:platform_version]).to eq("1.0")
+    expect(@plugin[:platform_version]).to eq("7.1")
   end
 
   it "should set platform_family" do

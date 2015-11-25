@@ -1,7 +1,8 @@
 #
 # Author:: Deepali Jagtap (<deepali.jagtap@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,52 +22,69 @@
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data(:aix) do
-    fs = Mash.new
+  def parse_df_or_mount(shell_out)
+    oldie = Mash.new
 
-    # Grab filesystem data from df
-    so = shell_out("df -P")
-    so.stdout.lines.each do |line|
+    shell_out.lines.each do |line|
+      fields = line.split
       case line
-      when /^Filesystem\s+1024-blocks/
+      # headers and horizontal rules to skip
+      when /^\s*(node|---|^Filesystem\s+1024-blocks)/
         next
-      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-        filesystem = $1
-        fs[filesystem] = Mash.new
-        fs[filesystem][:kb_size] = $2
-        fs[filesystem][:kb_used] = $3
-        fs[filesystem][:kb_available] = $4
-        fs[filesystem][:percent_used] = $5
-        fs[filesystem][:mount] = $6
-      end
-    end
-
-    # Grab mount information from /bin/mount
-    so = shell_out("mount")
-    so.stdout.lines.each do |line|
-      case line
-      when /^\s*node/
-        next
-      when /^\s*---/
-        next
-      when /^\s*\/\w/
-        fields = line.split
-        filesystem = fields[0]
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:mount] = fields[1]
-        fs[filesystem][:fs_type] = fields[2]
-        fs[filesystem][:mount_options] = fields[6]
+      # strictly a df entry
+      when /^(.+?)\s+([0-9-]+)\s+([0-9-]+)\s+([0-9-]+)\s+([0-9-]+\%*)\s+(.+)$/
+        if $1 == "Global"
+          key = "#{$1}:#{$6}"
+        else
+          key = $1
+        end
+        oldie[key] ||= Mash.new
+        oldie[key][:kb_size] = $2
+        oldie[key][:kb_used] = $3
+        oldie[key][:kb_available] = $4
+        oldie[key][:percent_used] = $5
+        oldie[key][:mount] = $6
+      # an entry starting with 'G' or / (E.G. /tmp or /var)
+      when /^\s*(G.*?|\/\w)/
+        if fields[0] == "Global"
+          key = fields[0] + ":" + fields[1]
+        else
+          key = fields[0]
+        end
+        oldie[key] ||= Mash.new
+        oldie[key][:mount] = fields[1]
+        oldie[key][:fs_type] = fields[2]
+        oldie[key][:mount_options] = fields[6].split(',')
+      # entries occupying the 'Node' column parsed here
       else
-        fields = line.split
-        filesystem = fields[0] + ":" + fields[1]
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:mount] = fields[2]
-        fs[filesystem][:fs_type] = fields[3]
-        fs[filesystem][:mount_options] = fields[7]
+        key = fields[0] + ":" + fields[1]
+        oldie[key] ||= Mash.new
+        oldie[key][:mount] = fields[1]
+        oldie[key][:fs_type] = fields[3]
+        oldie[key][:mount_options] = fields[7].split(',')
       end
     end
+    oldie
+  end
 
-    # Set the filesystem data
-    filesystem fs
+  def collect_old_version(shell_outs)
+    mount_hash = parse_df_or_mount shell_outs[:mount]
+    df_hash    = parse_df_or_mount shell_outs[:df_Pk]
+
+    mount_hash.each do |key, hash|
+      df_hash[key].merge!(hash) if df_hash.has_key?(key)
+    end
+
+    mount_hash.merge(df_hash)
+  end
+
+  collect_data(:aix) do
+
+    # Cache the command output
+    shell_outs = Mash.new
+    shell_outs[:mount] = shell_out("mount").stdout
+    shell_outs[:df_Pk] = shell_out("df -Pk").stdout
+
+    filesystem collect_old_version(shell_outs)
   end
 end

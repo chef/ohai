@@ -1,6 +1,8 @@
 #
 # Author:: Pavel Yudin (<pyudin@parallels.com>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2015 Pavel Yudin
+# Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,29 +18,39 @@
 # limitations under the License.
 #
 
-require 'ohai/util/file_helper'
-
-include Ohai::Util::FileHelper
-
 Ohai.plugin(:Virtualization) do
-  provides "virtualization"
-
-  def powershell_exists?
-    which('powershell.exe')
-  end
+  provides 'virtualization'
 
   collect_data(:windows) do
+    require 'wmi-lite/wmi'
+
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
-    # Detect Parallels virtual machine from BIOS information
-    if powershell_exists?
-      so = shell_out('powershell.exe "Get-WmiObject -Class Win32_BIOS"')
-      if so.stdout =~ /Parallels Software International Inc./
-        virtualization[:system] = 'parallels'
-        virtualization[:role] = 'guest'
-        virtualization[:systems][:parallels] = 'guest'
-      end
+    # Grab BIOS data from WMI to determine vendor information
+    wmi = WmiLite::Wmi.new
+    bios = wmi.instances_of('Win32_BIOS')
+
+    case bios[0]['manufacturer']
+    when 'innotek GmbH'
+      virtualization[:system] = 'vbox'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:vbox] = 'guest'
+    when 'Parallels Software International Inc.'
+      virtualization[:system] = 'parallels'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:parallels] = 'guest'
+    when 'Bochs'
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:kvm] = "guest"
+    end
+
+    # vmware fusion detection
+    if bios[0]['serialnumber'] =~ /VMware/
+      virtualization[:system] = 'vmware'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:vmware] = 'guest'
     end
   end
 end

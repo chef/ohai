@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:Virtualization) do
-  provides "virtualization"
+  provides 'virtualization'
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
     virtualization Mash.new
@@ -29,23 +29,23 @@ Ohai.plugin(:Virtualization) do
     end
 
     # detect from modules
-    so = shell_out("#{ Ohai.abs_path( "/sbin/kldstat" )}")
+    so = shell_out("#{Ohai.abs_path('/sbin/kldstat')}")
     so.stdout.lines do |line|
       case line
       when /vboxdrv/
-        virtualization[:system] = "vbox"
-        virtualization[:role] = "host"
+        virtualization[:system] = 'vbox'
+        virtualization[:role] = 'host'
       when /vboxguest/
-        virtualization[:system] = "vbox"
-        virtualization[:role] = "guest"
+        virtualization[:system] = 'vbox'
+        virtualization[:role] = 'guest'
       end
     end
 
     # XXX doesn't work when jail is there but not running (ezjail-admin stop)
-    so = shell_out("jls -n")
-    if ( so.stdout || "" ).lines.count >= 1
-      virtualization[:system] = "jail"
-      virtualization[:role] = "host"
+    so = shell_out('jls -n')
+    if (so.stdout || '').lines.count >= 1
+      virtualization[:system] = 'jail'
+      virtualization[:role] = 'host'
     end
 
     # KVM Host support for FreeBSD is in development
@@ -53,41 +53,53 @@ Ohai.plugin(:Virtualization) do
 
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
-    so = shell_out("sysctl -n hw.model")
-    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
-      virtualization[:system] = "kvm"
-      virtualization[:role] = "guest"
+    so = shell_out('sysctl -n hw.model')
+    if so.stdout.split($INPUT_RECORD_SEPARATOR)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+      virtualization[:system] = 'kvm'
+      virtualization[:role] = 'guest'
     end
 
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
-    if File.exists?("/usr/local/sbin/dmidecode") || File.exists?("/usr/pkg/sbin/dmidecode")
-      so = shell_out("dmidecode")
-      found_virt_manufacturer = nil
-      found_virt_product = nil
-      so.stdout.lines do |line|
-        case line
-        when /Manufacturer: Microsoft/
-          found_virt_manufacturer = "microsoft"
-        when /Product Name: Virtual Machine/
-          found_virt_product = "microsoft"
-        when /Version: 5.0/
-          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-            virtualization[:system] = "virtualpc"
-            virtualization[:role] = "guest"
-          end
-        when /Version: VS2005R2/
-          if found_virt_manufacturer == "microsoft" && found_virt_product == "microsoft"
-            virtualization[:system] = "virtualserver"
-            virtualization[:role] = "guest"
-          end
-        when /Manufacturer: VMware/
-          found_virt_manufacturer = "vmware"
-        when /Product Name: VMware Virtual Platform/
-          if found_virt_manufacturer == "vmware"
-            virtualization[:system] = "vmware"
-            virtualization[:role] = "guest"
+    if File.exist?('/usr/local/sbin/dmidecode') || File.exist?('/usr/pkg/sbin/dmidecode')
+      so = shell_out('dmidecode')
+      case so.stdout
+      when /Manufacturer: Microsoft/
+        if so.stdout =~ /Product Name: Virtual Machine/
+          if so.stdout =~ /Version: VS2005R2/
+            virtualization[:system] = 'virtualserver'
+            virtualization[:role] = 'guest'
+          else
+            virtualization[:system] = 'virtualpc'
+            virtualization[:role] = 'guest'
+            virtualization[:systems][:virtualpc] = 'guest'
           end
         end
+      when /Manufacturer: VMware/
+        if so.stdout =~ /Product Name: VMware Virtual Platform/
+          virtualization[:system] = 'vmware'
+          virtualization[:role] = 'guest'
+          virtualization[:systems][:vmware] = 'guest'
+        end
+      when /Manufacturer: Xen/
+        if so.stdout =~ /Product Name: HVM domU/
+          virtualization[:system] = 'xen'
+          virtualization[:role] = 'guest'
+          virtualization[:systems][:xen] = 'guest'
+        end
+      when /Manufacturer: Oracle Corporation/
+        if so.stdout =~ /Product Name: VirtualBox/
+          virtualization[:system] = 'vbox'
+          virtualization[:role] = 'guest'
+          virtualization[:systems][:vbox] = 'guest'
+        end
+      when /Product Name: OpenStack/
+        virtualization[:system] = 'openstack'
+        virtualization[:role] = 'guest'
+        virtualization[:systems][:openstack] = 'guest'
+      when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
+        virtualization[:system] = 'kvm'
+        virtualization[:role] = 'guest'
+        virtualization[:systems][:kvm] = 'guest'
       end
     end
   end

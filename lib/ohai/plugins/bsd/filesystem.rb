@@ -1,6 +1,7 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
+# Copyright:: Copyright (c) 2008-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
-  collect_data(:dragonflybsd) do
+  collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
     fs = Mash.new
 
     # Grab filesystem data from df
@@ -39,8 +40,25 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
+    # inode parsing from 'df -iP'
+    so = shell_out("df -iP")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem/ # skip the header
+        next
+      when /^(.+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\%\s+(\d+)\s+(\d+)\s+(\d+)%(.+)$/
+        filesystem = $1.strip
+        fs[filesystem] ||= Mash.new
+        fs[filesystem][:inodes_used] = $6
+        fs[filesystem][:inodes_available] = $7
+        fs[filesystem][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[filesystem][:inodes_percent_used] = $8
+        fs[filesystem][:mount] = $9.strip
+      end
+    end
+
     # Grab mount information from mount
-    so = shell_out("mount")
+    so = shell_out("mount -l")
     so.stdout.lines do |line|
       if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
         filesystem = $1

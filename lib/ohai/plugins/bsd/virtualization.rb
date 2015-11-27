@@ -20,7 +20,8 @@ Ohai.plugin(:Virtualization) do
   provides 'virtualization'
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
-    virtualization Mash.new
+    virtualization Mash.new unless virtualization
+    virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     so = shell_out("sysctl -n security.jail.jailed")
     if so.stdout.split($/)[0].to_i == 1
@@ -35,9 +36,11 @@ Ohai.plugin(:Virtualization) do
       when /vboxdrv/
         virtualization[:system] = 'vbox'
         virtualization[:role] = 'host'
+        virtualization[:systems][:vbox] = 'host'
       when /vboxguest/
         virtualization[:system] = 'vbox'
         virtualization[:role] = 'guest'
+        virtualization[:systems][:vbox] = 'guest'
       end
     end
 
@@ -46,6 +49,7 @@ Ohai.plugin(:Virtualization) do
     if (so.stdout || '').lines.count >= 1
       virtualization[:system] = 'jail'
       virtualization[:role] = 'host'
+      virtualization[:systems][:jail] = 'host'
     end
 
     # KVM Host support for FreeBSD is in development
@@ -57,6 +61,7 @@ Ohai.plugin(:Virtualization) do
     if so.stdout.split($INPUT_RECORD_SEPARATOR)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
       virtualization[:system] = 'kvm'
       virtualization[:role] = 'guest'
+      virtualization[:systems][:kvm] = 'guest'
     end
 
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
@@ -68,6 +73,7 @@ Ohai.plugin(:Virtualization) do
           if so.stdout =~ /Version: VS2005R2/
             virtualization[:system] = 'virtualserver'
             virtualization[:role] = 'guest'
+            virtualization[:systems][:virtualserver] = 'guest'
           else
             virtualization[:system] = 'virtualpc'
             virtualization[:role] = 'guest'

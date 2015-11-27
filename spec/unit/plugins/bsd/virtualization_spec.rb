@@ -34,6 +34,7 @@ describe Ohai::System, "BSD virtualization plugin" do
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("jail")
       expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:jail]).to eq("guest")
     end
 
     it "detects we are hosting jails" do
@@ -43,6 +44,7 @@ describe Ohai::System, "BSD virtualization plugin" do
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("jail")
       expect(@plugin[:virtualization][:role]).to eq("host")
+      expect(@plugin[:virtualization][:systems][:jail]).to eq("host")
     end
   end
 
@@ -60,6 +62,7 @@ OUT
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("vbox")
       expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:vbox]).to eq("guest")
     end
   end
 
@@ -77,6 +80,7 @@ OUT
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("vbox")
       expect(@plugin[:virtualization][:role]).to eq("host")
+      expect(@plugin[:virtualization][:systems][:vbox]).to eq("host")
     end
   end
 
@@ -87,9 +91,8 @@ OUT
         @plugin.run
         expect(@plugin[:virtualization][:system]).to eq("kvm")
         expect(@plugin[:virtualization][:role]).to eq("guest")
+        expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
       end
     end
   end
-
-  # TODO upfactor tests from linux virtualization plugin for dmidecode
 end

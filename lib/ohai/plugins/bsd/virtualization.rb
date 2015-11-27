@@ -16,17 +16,31 @@
 # limitations under the License.
 #
 
+require 'ohai/mixin/dmi_decode'
+
+include Ohai::Mixin::DmiDecode
+
 Ohai.plugin(:Virtualization) do
   provides 'virtualization'
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
+
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
+    # detect when in a jail or when a jail is actively running (not in stopped state)
     so = shell_out("sysctl -n security.jail.jailed")
     if so.stdout.split($/)[0].to_i == 1
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
+      virtualization[:systems][:jail] = 'guest'
+    end
+
+    so = shell_out('jls -n')
+    if (so.stdout || '').lines.count >= 1
+      virtualization[:system] = 'jail'
+      virtualization[:role] = 'host'
+      virtualization[:systems][:jail] = 'host'
     end
 
     # detect from modules
@@ -44,68 +58,22 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # XXX doesn't work when jail is there but not running (ezjail-admin stop)
-    so = shell_out('jls -n')
-    if (so.stdout || '').lines.count >= 1
-      virtualization[:system] = 'jail'
-      virtualization[:role] = 'host'
-      virtualization[:systems][:jail] = 'host'
-    end
-
-    # KVM Host support for FreeBSD is in development
-    # http://feanor.sssup.it/~fabio/freebsd/lkvm/
-
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out('sysctl -n hw.model')
-    if so.stdout.split($INPUT_RECORD_SEPARATOR)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
       virtualization[:system] = 'kvm'
       virtualization[:role] = 'guest'
       virtualization[:systems][:kvm] = 'guest'
     end
 
-    # http://www.dmo.ca/blog/detecting-virtualization-on-linux
+    # parse dmidecode to discover various virtualization guests
     if File.exist?('/usr/local/sbin/dmidecode') || File.exist?('/usr/pkg/sbin/dmidecode')
-      so = shell_out('dmidecode')
-      case so.stdout
-      when /Manufacturer: Microsoft/
-        if so.stdout =~ /Product Name: Virtual Machine/
-          if so.stdout =~ /Version: VS2005R2/
-            virtualization[:system] = 'virtualserver'
-            virtualization[:role] = 'guest'
-            virtualization[:systems][:virtualserver] = 'guest'
-          else
-            virtualization[:system] = 'virtualpc'
-            virtualization[:role] = 'guest'
-            virtualization[:systems][:virtualpc] = 'guest'
-          end
-        end
-      when /Manufacturer: VMware/
-        if so.stdout =~ /Product Name: VMware Virtual Platform/
-          virtualization[:system] = 'vmware'
-          virtualization[:role] = 'guest'
-          virtualization[:systems][:vmware] = 'guest'
-        end
-      when /Manufacturer: Xen/
-        if so.stdout =~ /Product Name: HVM domU/
-          virtualization[:system] = 'xen'
-          virtualization[:role] = 'guest'
-          virtualization[:systems][:xen] = 'guest'
-        end
-      when /Manufacturer: Oracle Corporation/
-        if so.stdout =~ /Product Name: VirtualBox/
-          virtualization[:system] = 'vbox'
-          virtualization[:role] = 'guest'
-          virtualization[:systems][:vbox] = 'guest'
-        end
-      when /Product Name: OpenStack/
-        virtualization[:system] = 'openstack'
+      guest = determine_guest(shell_out('dmidecode').stdout)
+      if guest
+        virtualization[:system] = guest
         virtualization[:role] = 'guest'
-        virtualization[:systems][:openstack] = 'guest'
-      when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
-        virtualization[:system] = 'kvm'
-        virtualization[:role] = 'guest'
-        virtualization[:systems][:kvm] = 'guest'
+        virtualization[:systems][guest.to_sym] = 'guest'
       end
     end
   end

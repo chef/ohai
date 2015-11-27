@@ -168,7 +168,7 @@ MSVPC
       expect(plugin[:virtualization][:systems][:virtualpc]).to eq("guest")
     end
 
-    it "sets vmware guest if dmidecode detects VMware Virtual Platform" do
+    it "sets vmware guest if dmidecode detects VMware" do
       vmware_dmidecode=<<-VMWARE
 System Information
   Manufacturer: VMware, Inc.
@@ -187,7 +187,7 @@ VMWARE
       expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
     end
 
-    it "sets vbox guest if dmidecode detects Oracle Corporation" do
+    it "sets vbox guest if dmidecode detects VirtualBox" do
       vbox_dmidecode=<<-VBOX
 Base Board Information
   Manufacturer: Oracle Corporation
@@ -227,8 +227,8 @@ OPENSTACK
       expect(plugin[:virtualization][:systems][:openstack]).to eq("guest")
     end
 
-    it "sets kvm guest if dmidecode detects KVM" do
-      kvm_dmidecode=<<-KVM
+    it "sets kvm guest if dmidecode contains KVM" do
+      kvm_dmidecode=<<-RKVM
 System Information
   Manufacturer: Red Hat
   Product Name: KVM
@@ -238,7 +238,7 @@ System Information
   Wake-up Type: Power Switch
   SKU Number: Not Specified
   Family: Red Hat Enterprise Linux
-KVM
+RKVM
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")

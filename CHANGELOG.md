@@ -12,7 +12,15 @@
 * [**George Gensure**](https://github.com/werkt):
   - Prevents invalid memory access on subsequent failed calls to `proc_state`
   on sigar by throwing exception on returned invalid PID.
+* [**Hleb Valoshka**](https://github.com/375gnu):
+  - Add support for DragonFly BSD
 * Make collected zfs filesystem properties configurable on solaris2.
+* Add kernel bitness detection for AIX
+* Fix CPU detection on FreeBSD 10.2+, add additional CPU attributes, and convert values from hex to base 10
+* Add inode data for filesystems on FreeBSD
+* Detect vbox/vmware/kvm on Windows and speed up runs
+* Add a plugin for virtualbox to provide host / guest version information
+* Escape plugin directories to prevent failures on Windows
 
 ## Release 8.7.0
 * Fix behavior when abort called from plug-in (Ohai should exit with error code)

@@ -168,6 +168,40 @@ MSVPC
       expect(plugin[:virtualization][:systems][:virtualpc]).to eq("guest")
     end
 
+    it "sets hyperv guest if dmidecode detects Hyper-V or version 7.0" do
+      ms_hv_dmidecode=<<-MSHV
+System Information
+        Manufacturer: Microsoft Corporation
+        Product Name: Virtual Machine
+        Version: 7.0
+        Serial Number: 9242-2608-7031-8934-2088-5216-61
+        UUID: C2431A2D-D69C-244F-9DE8-CD5D09E0DA39
+        Wake-up Type: Power Switch
+MSHV
+      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_hv_dmidecode, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+    end
+
+    it "sets virtualserver guest if dmidecode detects version 5.0" do
+      ms_vs_dmidecode=<<-MSVS
+System Information
+  Manufacturer: Microsoft Corporation
+  Product Name: Virtual Machine
+  Version: 5.0
+  Serial Number: 1688-7189-5337-7903-2297-1012-52
+  UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+  Wake-up Type: Power Switch
+MSVS
+      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vs_dmidecode, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("virtualserver")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:virtualserver]).to eq("guest")
+    end
+
     it "sets vmware guest if dmidecode detects VMware" do
       vmware_dmidecode=<<-VMWARE
 System Information

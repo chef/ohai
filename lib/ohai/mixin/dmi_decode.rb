@@ -22,9 +22,11 @@ module ::Ohai::Mixin::DmiDecode
       case line
       when /Manufacturer: Microsoft/
         if dmi_data =~ /Product Name: Virtual Machine/
-          if dmi_data =~ /Version: VS2005R2/
+          if dmi_data =~ /Version: (VS2005R2|6.0)/
             return 'virtualpc'
-          else
+          elsif dmi_data =~ /Version: (7.0|Hyper-V)/
+            return 'hyperv'
+          elsif dmi_data =~ /Version: 5.0/
             return 'virtualserver'
           end
         end

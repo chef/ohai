@@ -4,7 +4,7 @@ gemspec
 
 group :development do
   gem "chef", github: "chef/chef", branch: "master"
-
+  gem 'github_changelog_generator'
   gem "sigar", :platform => "ruby"
   gem 'plist'
 

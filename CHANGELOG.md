@@ -18,9 +18,12 @@
 * Add kernel bitness detection for AIX
 * Fix CPU detection on FreeBSD 10.2+, add additional CPU attributes, and convert values from hex to base 10
 * Add inode data for filesystems on FreeBSD
-* Detect vbox/vmware/kvm on Windows and speed up runs
-* Add a plugin for virtualbox to provide host / guest version information
-* Escape plugin directories to prevent failures on Windows
+* Detect Virtualbox VMware and KVM on Windows guests and speed up Ohai runs
+* Add a plugin for Virtualbox to provide host / guest version information
+* Escape plugin directory path to prevent failures on Windows
+* Detect Microsoft Hyper-V Linux/BSD guests, which were previously detected as VirtualPC guests
+* Detect Microsoft VirtualPC Linux/BSD guests on additional releases of VirtualPC
+* Add KVM, VirtualBox, and Openstack guest detection to BSD platforms and add the node[:virtualization][:systems] syntax
 
 ## Release 8.7.0
 * Fix behavior when abort called from plug-in (Ohai should exit with error code)

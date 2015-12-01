@@ -17,8 +17,10 @@
 #
 
 require 'ohai/util/file_helper'
+require 'ohai/mixin/dmi_decode'
 
 include Ohai::Util::FileHelper
+include Ohai::Mixin::DmiDecode
 
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
@@ -114,44 +116,13 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # http://www.dmo.ca/blog/detecting-virtualization-on-linux
+    # parse dmidecode to discover various virtualization guests
     if File.exists?("/usr/sbin/dmidecode")
-      so = shell_out("dmidecode")
-      case so.stdout
-      when /Manufacturer: Microsoft/
-        if so.stdout =~ /Product Name: Virtual Machine/
-          virtualization[:system] = "virtualpc"
-          virtualization[:role] = "guest"
-          virtualization[:systems][:virtualpc] = "guest"
-        end
-      when /Manufacturer: VMware/
-        if so.stdout =~ /Product Name: VMware Virtual Platform/
-          virtualization[:system] = "vmware"
-          virtualization[:role] = "guest"
-          virtualization[:systems][:vmware] = "guest"
-        end
-      when /Manufacturer: Xen/
-        if so.stdout =~ /Product Name: HVM domU/
-          virtualization[:system] = "xen"
-          virtualization[:role] = "guest"
-          virtualization[:systems][:xen] = "guest"
-        end
-      when /Manufacturer: Oracle Corporation/
-        if so.stdout =~ /Product Name: VirtualBox/
-          virtualization[:system] = "vbox"
-          virtualization[:role] = "guest"
-          virtualization[:systems][:vbox] = "guest"
-        end
-      when /Product Name: OpenStack/
-        virtualization[:system] = "openstack"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:openstack] = "guest"
-      when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
-        virtualization[:system] = "kvm"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:kvm] = "guest"
-      else
-        nil
+      guest = determine_guest(shell_out('dmidecode').stdout)
+      if guest
+        virtualization[:system] = guest
+        virtualization[:role] = 'guest'
+        virtualization[:systems][guest.to_sym] = 'guest'
       end
     end
 

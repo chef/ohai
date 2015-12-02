@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## Unreleased
+## Release 8.8.0
 * [**James Flemer, NDP LLC**](https://github.com/jflemer-ndp):
   - Add detection for RHEV (on Linux guests) to virtualization plugin
 * [**Shahul Khajamohideen**](https://github.com/sh9189):

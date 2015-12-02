@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## Release 8.8.0
+## Unreleased
 * [**James Flemer, NDP LLC**](https://github.com/jflemer-ndp):
   - Add detection for RHEV (on Linux guests) to virtualization plugin
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
@@ -16,9 +16,9 @@
   - Add support for DragonFly BSD
 * Make collected zfs filesystem properties configurable on solaris2.
 * Add kernel bitness detection for AIX
-* Fix CPU detection on FreeBSD 10.2+, add additional CPU attributes, and convert values from hex to base 10
+* Fix CPU detection on FreeBSD 10.2+, add collection CPU family and model data.
 * Add inode data for filesystems on FreeBSD
-* Detect Virtualbox VMware and KVM on Windows guests and speed up Ohai runs
+* Detect Virtualbox, VMware, and KVM on Windows guests and speed up Ohai runs
 * Add a plugin for Virtualbox to provide host / guest version information
 * Escape plugin directory path to prevent failures on Windows
 * Detect Microsoft Hyper-V Linux/BSD guests, which were previously detected as VirtualPC guests

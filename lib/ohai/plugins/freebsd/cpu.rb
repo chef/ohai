@@ -36,6 +36,9 @@ Ohai.plugin(:CPU) do
     #   AMD Features2=0x21<LAHF,ABM>
     #   Structured Extended Features=0x2000<NFPUSG>
     #   TSC: P-state invariant
+    #   ...
+    #   FreeBSD/SMP: Multiprocessor System Detected: 8 CPUs
+    #   FreeBSD/SMP: 1 package(s) x 4 core(s) x 2 SMT threads
 
     File.open("/var/run/dmesg.boot").each do |line|
       case line
@@ -54,13 +57,14 @@ Ohai.plugin(:CPU) do
         # Features2=0x80000001<SSE3,<b31>>
       when /Features2=[a-f\dx]+<(.+)>/
         cpuinfo["flags"].concat($1.downcase.split(','))
-      when /Logical CPUs per core: (\d+)/
-        cpuinfo["cores"] = $1
+      when /FreeBSD\/SMP: Multiprocessor System Detected: (\d*) CPUs/
+        cpuinfo["total"] = $1.to_i
+      when /FreeBSD\/SMP: (\d*) package\(s\) x (\d*) core\(s\)/
+        cpuinfo["real"] = $1.to_i
+        cpuinfo["cores"] = $2.to_i
       end
     end
 
     cpu cpuinfo
-    so = shell_out("sysctl -n hw.ncpu")
-    cpu[:total] = so.stdout.split($/)[0].to_i
   end
 end

@@ -22,7 +22,6 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do
     @plugin = get_plugin("freebsd/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))
     @double_file = double("/var/run/dmesg.boot")
     allow(@double_file).to receive(:each).
       and_yield('CPU: Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz (2793.59-MHz K8-class CPU)').
@@ -32,7 +31,13 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
       and_yield('  AMD Features=0x28100800<SYSCALL,NX,RDTSCP,LM>').
       and_yield('  AMD Features2=0x21<LAHF,ABM>').
       and_yield('  Structured Extended Features=0x2000<NFPUSG>').
-      and_yield('  TSC: P-state invariant')
+      and_yield('  TSC: P-state invariant').
+      and_yield('real memory  = 1073676288 (1023 MB)').
+      and_yield('avail memory = 1010253824 (963 MB)').
+      and_yield('Event timer "LAPIC" quality 400').
+      and_yield('ACPI APIC Table: <VBOX   VBOXAPIC>').
+      and_yield('FreeBSD/SMP: Multiprocessor System Detected: 8 CPUs').
+      and_yield('FreeBSD/SMP: 1 package(s) x 4 core(s) x 2 SMT threads')
     allow(File).to receive(:open).with("/var/run/dmesg.boot").and_return(@double_file)
   end
 
@@ -71,9 +76,19 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
     expect(@plugin[:cpu][:stepping]).to eq("1")
   end
 
-  it "detects CPU total" do
+  it "detects real CPUs" do
     @plugin.run
-    expect(@plugin[:cpu][:total]).to eq(2)
+    expect(@plugin[:cpu][:real]).to eq(1)
+  end
+
+  it "detects total real CPU cores" do
+    @plugin.run
+    expect(@plugin[:cpu][:cores]).to eq(4)
+  end
+
+  it "detects total HT CPU cores" do
+    @plugin.run
+    expect(@plugin[:cpu][:total]).to eq(8)
   end
 
 end

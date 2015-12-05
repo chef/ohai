@@ -1,7 +1,7 @@
 #
 # Author:: Nathan L Smith (<nlloyds@gmail.com>)
-# Author:: Tim Smith (<tsmith@limelight.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Tim Smith (<tsmith@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +22,10 @@ Ohai.plugin(:CPU) do
 
   collect_data(:darwin) do
     cpu Mash.new
-    so = shell_out("sysctl -n hw.physicalcpu")
+    so = shell_out("sysctl -n hw.packages")
     cpu[:real] = so.stdout.to_i
+    so = shell_out("sysctl -n hw.physicalcpu")
+    cpu[:cores] = so.stdout.to_i
     so = shell_out("sysctl -n hw.logicalcpu")
     cpu[:total] = so.stdout.to_i
     so = shell_out("sysctl -n hw.cpufrequency")

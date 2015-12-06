@@ -54,13 +54,11 @@ You can run individual test files by running the rspec executable:
 Ohai has some Rake tasks for doing various things.
 
     rake -T
-    rake clobber_package  # Remove package products
-    rake gem              # Build the gem file ohai-$VERSION.gem
-    rake install          # install the gem locally
-    rake make_spec        # create a gemspec file
-    rake package          # Build all the packages
-    rake repackage        # Force a rebuild of the package files
-    rake spec             # Run specs
+    rake build          # Build the gem file ohai-$VERSION.gem
+    rake install        # install the gem locally
+    rake install:local  # install the gem locally without network access
+    rake release        # Create tag $VERSION, build gem, and push to Rubygems
+    rake spec           # Run RSpec tests
 
     ($VERSION is the current version, from the GemSpec in Rakefile)
 

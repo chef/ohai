@@ -40,17 +40,29 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = 'parallels'
       virtualization[:role] = 'guest'
       virtualization[:systems][:parallels] = 'guest'
-    when 'Bochs'
-      virtualization[:system] = "kvm"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:kvm] = "guest"
-    end
-
-    # vmware fusion detection
-    if bios[0]['serialnumber'] =~ /VMware/
+    when 'Bochs', 'QEMU'
+      virtualization[:system] = 'kvm'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:kvm] = 'guest'
+    when 'VMware'
       virtualization[:system] = 'vmware'
       virtualization[:role] = 'guest'
       virtualization[:systems][:vmware] = 'guest'
+    when 'Xen'
+      virtualization[:system] = 'xen'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:xen] = 'guest'
+    end
+
+    case bios[0]['product_name']
+    when 'OpenStack'
+      virtualization[:system] = 'openstack'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:openstack] = 'guest'
+    when 'KVM', 'RHEV'
+      virtualization[:system] = 'kvm'
+      virtualization[:role] = 'guest'
+      virtualization[:systems][:kvm] = 'guest'
     end
   end
 end

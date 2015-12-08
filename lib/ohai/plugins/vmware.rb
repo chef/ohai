@@ -1,7 +1,7 @@
 #
-# Author:: "Dan Robinson" <drobinson@getchef.com>
+# Author:: "Dan Robinson" <drobinson@chef.io>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
-# Copyright:: Copyright (c) 2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014-2015 Chef Software, Inc.
 # Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #
@@ -33,6 +33,7 @@
 
 Ohai.plugin(:VMware) do
   provides "vmware"
+  depends "virtualization"
 
   def from_cmd(cmd)
     so = shell_out(cmd)
@@ -67,7 +68,7 @@ Ohai.plugin(:VMware) do
   end
 
   collect_data(:linux) do
-    get_vm_attributes("/usr/bin/vmware-toolbox-cmd")
+    get_vm_attributes("/usr/bin/vmware-toolbox-cmd") if virtualization[:systems][:vmware]
   end
 
 end

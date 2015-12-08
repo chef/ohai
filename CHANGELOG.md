@@ -1,5 +1,9 @@
 # Ohai Changelog
 
+## Unreleased
+* Remove dependency on mime-types gem
+* Skip the VMware plugin if DMI data doesn't indicate we're on a VMware system
+
 ## Release 8.8.0
 * [**James Flemer, NDP LLC**](https://github.com/jflemer-ndp):
   - Add detection for RHEV (on Linux guests) to virtualization plugin
@@ -14,6 +18,8 @@
   on sigar by throwing exception on returned invalid PID.
 * [**Hleb Valoshka**](https://github.com/375gnu):
   - Add support for DragonFly BSD
+* [**Austin Ziegler**](https://github.com/halostatue):
+  - Bump mime-type dependency to 3.0
 * Make collected zfs filesystem properties configurable on solaris2.
 * Add kernel bitness detection for AIX
 * Fix CPU detection on FreeBSD 10.2+, add collection CPU family and model data.
@@ -26,9 +32,9 @@
 * Add KVM, VirtualBox, and Openstack guest detection to BSD platforms and add the node[:virtualization][:systems] syntax
 
 ## Release 8.7.0
-* Fix behavior when abort called from plug-in (Ohai should exit with error code)
 * [**Shahul Khajamohideen**](https://github.com/sh9189):
-  Add total cores to linux cpu plugin
+  - Add total cores to linux cpu plugin
+* Fix behavior when abort called from plug-in (Ohai should exit with error code)
 
 ## Release 8.6.0
 * [**Phil Dibowitz**](https://github.com/jaymzh):
@@ -44,7 +50,7 @@
 * [**Claire McQuin**](https://github.com/mcquin):
   - Deprecate Ohai::Config in favor of Ohai::Config.ohai.
   - Load a configuration file while running as an application.
-* [PR #597](https//github.com/chef/ohai/597):
+* [PR #597](https//github.com/chef/ohai/pull/597):
   - Correct platform, platform\_family and version detection on Cisco's Nexus platforms.
 * [**cmluciano**](https://github.com/cmluciano):
   - add vmware plugin
@@ -72,7 +78,7 @@
 
 ## Release 8.5.0
 
-* [PR #548](https://github.com/chef/ohai/548):
+* [PR #548](https://github.com/chef/ohai/pull/548):
   Coerce non-UTF8 strings to UTF8 in output to suppress UTF8 encoding exceptions
 * [PR #544](https://github.com/chef/ohai/pull/544)
   add support for Wind River Linux and Cisco's Nexus platforms
@@ -88,14 +94,13 @@
   Removing trailing space and '\r' for windows #474
 * [**Tim Smith**](https://github.com/tas50):
   Ensure Gentoo based Linuxen get IP information
-* [PR #534](https://github.com/chef/ohai/534)
+* [PR #534](https://github.com/chef/ohai/pull/534)
   Ignore OEM logo on Windows
 
 ## Release 8.2.0
 
 * [**Michael Glenney**](https://github.com/Maniacal)
   Remove redundant if statement
-
 * Remove CloudStack support due to GPL licensed library
 
 ## Release 8.1.1
@@ -139,7 +144,6 @@
   block_device rotational key
 * [**Josh Blancett**](https://github.com/jblancett)
   add extra metadata passed in from hints in knife-linode
-
 * Update mime-types dependency
 
 ## Release 8.0.0
@@ -170,7 +174,6 @@
   Look for any number of spaces between the VxID and the value.
 * [**Daniel Searles**](https://github.com/squaresurf):
   Removed *.static.cloud-ips.com and fixed the DNS resolution on Rackspace hosts.
-
 * Update specs to use RSpec 3 syntax
 * Update mixlib-shellout pin to ~> 2.x
 
@@ -228,8 +231,6 @@
   Provide basic memory information for Mac OS X. (OHAI-431)
 * [**Jerry Chen**](https://github.com/jcsalterego):
   Rackspace plugin rescues Errno::ENOENT if xenstor-* utils are not found (OHAI-587)
-
-
 * root_group provider not implemented for Windows (OHAI-491)
 * `Ohai::Exceptions::AttributeNotFound` errors in Chef's ohai resource
 * Be reluctant to call something an LXC host (OHAI-573)

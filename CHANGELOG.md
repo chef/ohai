@@ -1,7 +1,8 @@
 # Ohai Changelog
 
 ## Unreleased
-* Updated CPU plugin for Darwin (OS X) to properly report the number of real CPUs and added reporting of physical cores. The behavior now matches the output of the Linux plugin
+* CPU plugin for Darwin (OS X) now properly reports the number of real CPUs adds "cores" to match the CPU output on Linux
+* CPU plugin for FreeBSD now reports "real" and "core" values to match the CPU output on Linux
 
 ## Release 8.8.1
 * [pr#677](https://github.com/chef/ohai/pull/677) Remove dependency on mime-types gem

@@ -1,6 +1,6 @@
 #
 # Author:: Nathan L Smith (<nlloyds@gmail.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ describe Ohai::System, "Darwin cpu plugin" do
   before(:each) do
     @plugin = get_plugin("darwin/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.packages").and_return(mock_shell_out(0, "1", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.physicalcpu").and_return(mock_shell_out(0, "4", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.logicalcpu").and_return(mock_shell_out(0, "8", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.cpufrequency").and_return(mock_shell_out(0, "2300000000", ""))
@@ -35,12 +36,16 @@ describe Ohai::System, "Darwin cpu plugin" do
     @plugin.run
   end
 
+  it "should set cpu[:cores] to 4" do
+    expect(@plugin[:cpu][:cores]).to eq(4)
+  end
+
   it "should set cpu[:total] to 8" do
     expect(@plugin[:cpu][:total]).to eq(8)
   end
 
-  it "should set cpu[:real] to 4" do
-    expect(@plugin[:cpu][:real]).to eq(4)
+  it "should set cpu[:real] to 1" do
+    expect(@plugin[:cpu][:real]).to eq(1)
   end
 
   it "should set cpu[:mhz] to 2300" do

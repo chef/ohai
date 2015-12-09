@@ -10,5 +10,5 @@ Details about the thing that changed that needs to get included in the Release N
 # Ohai Release Notes:
 
 This is a patch release with the following fixes:
-1. Removed dependency on mime-types gem. This could cause failures in some scenarios.
-2. Skip loading the VMWare plug-in when we don't need it (e.g. on non-VMWare systems)
+* [pr#677](https://github.com/chef/ohai/pull/677) Removed dependency on mime-types gem. This could cause failures in some scenarios.
+* [pr#662](https://github.com/chef/ohai/pull/662) Skip loading the VMWare plug-in when we don't need it (e.g. on non-VMWare systems)

@@ -1,8 +1,8 @@
 # Ohai Changelog
 
-## Unreleased
-* Remove dependency on mime-types gem
-* Skip the VMware plugin if DMI data doesn't indicate we're on a VMware system
+## Release 8.8.1
+* [pr#677](https://github.com/chef/ohai/pull/677) Remove dependency on mime-types gem
+* [pr#662](https://github.com/chef/ohai/pull/662) Skip the VMware plugin if DMI data doesn't indicate we're on a VMware system
 
 ## Release 8.8.0
 * [**James Flemer, NDP LLC**](https://github.com/jflemer-ndp):

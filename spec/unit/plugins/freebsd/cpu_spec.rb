@@ -36,8 +36,8 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
       and_yield('avail memory = 1010253824 (963 MB)').
       and_yield('Event timer "LAPIC" quality 400').
       and_yield('ACPI APIC Table: <VBOX   VBOXAPIC>').
-      and_yield('FreeBSD/SMP: Multiprocessor System Detected: 8 CPUs').
-      and_yield('FreeBSD/SMP: 1 package(s) x 4 core(s) x 2 SMT threads')
+      and_yield('FreeBSD/SMP: Multiprocessor System Detected: 16 CPUs').
+      and_yield('FreeBSD/SMP: 2 package(s) x 4 core(s) x 2 SMT threads')
     allow(File).to receive(:open).with("/var/run/dmesg.boot").and_return(@double_file)
   end
 
@@ -78,17 +78,17 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
 
   it "detects real CPUs" do
     @plugin.run
-    expect(@plugin[:cpu][:real]).to eq(1)
+    expect(@plugin[:cpu][:real]).to eq(2)
   end
 
   it "detects total real CPU cores" do
     @plugin.run
-    expect(@plugin[:cpu][:cores]).to eq(4)
+    expect(@plugin[:cpu][:cores]).to eq(8)
   end
 
   it "detects total HT CPU cores" do
     @plugin.run
-    expect(@plugin[:cpu][:total]).to eq(8)
+    expect(@plugin[:cpu][:total]).to eq(16)
   end
 
 end

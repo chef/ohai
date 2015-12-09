@@ -37,8 +37,8 @@ Ohai.plugin(:CPU) do
     #   Structured Extended Features=0x2000<NFPUSG>
     #   TSC: P-state invariant
     #   ...
-    #   FreeBSD/SMP: Multiprocessor System Detected: 8 CPUs
-    #   FreeBSD/SMP: 1 package(s) x 4 core(s) x 2 SMT threads
+    #   FreeBSD/SMP: Multiprocessor System Detected: 16 CPUs
+    #   FreeBSD/SMP: 2 package(s) x 4 core(s) x 2 SMT threads
 
     File.open("/var/run/dmesg.boot").each do |line|
       case line
@@ -61,7 +61,7 @@ Ohai.plugin(:CPU) do
         cpuinfo["total"] = $1.to_i
       when /FreeBSD\/SMP: (\d*) package\(s\) x (\d*) core\(s\)/
         cpuinfo["real"] = $1.to_i
-        cpuinfo["cores"] = $2.to_i
+        cpuinfo["cores"] = $1.to_i * $2.to_i
       end
     end
 

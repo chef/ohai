@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## Unreleased
+## Release 8.8.1
 * Remove dependency on mime-types gem
 * Skip the VMware plugin if DMI data doesn't indicate we're on a VMware system
 

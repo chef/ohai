@@ -113,7 +113,15 @@ Ohai.plugin(:Network) do
 
         # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
         # don't report the route entry if the src address isn't set on the node
-        next if route_entry[:src] and not iface[route_int][:addresses].has_key? route_entry[:src]
+        # unless the interface has no addresses of this type at all
+        if route_entry[:src]
+          addr = iface[route_int][:addresses]
+          unless addr.nil? || addr.has_key?(route_entry[:src]) ||
+                 addr.values.all? { |a| a['family'] != family[:name] }
+            Ohai::Log.debug("Skipping route entry whose src does not match the interface IP")
+            next
+          end
+        end
 
         iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
         iface[route_int][:routes] << route_entry
@@ -126,6 +134,7 @@ Ohai.plugin(:Network) do
   # for information, default routes can be of this form :
   # - default via 10.0.2.4 dev br0
   # - default dev br0  scope link
+  # - default dev eth0  scope link src 1.1.1.1
   # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
   # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
 
@@ -310,7 +319,11 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
+<<<<<<< ac9f5a2ae4ada9f2e6e821418ed3a9039bda9a91
     interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:flags].include? "NOARP"
+=======
+    interfaces[interface][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
+>>>>>>> Report an ipaddress in a Linux corner case observed on Cisco IOS XR
   end
 
   # returns the default route with the lowest metric (unspecified metric is 0)
@@ -332,15 +345,22 @@ Ohai.plugin(:Network) do
         # using the source field when it's specified :
         # 1) in the default route
         # 2) in the route entry used to reach the default gateway
-        r[:src] and # it has a src field
-          iface[r[:dev]] and # the iface exists
-          iface[r[:dev]][:addresses].has_key? r[:src] and # the src ip is set on the node
-          iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" and # this isn't a link level addresse
-          ( r[:destination] == "default" or
-            ( default_route[:via] and # the default route has a gateway
-              IPAddress(r[:destination]).include? IPAddress(default_route[:via]) # the route matches the gateway
-              )
+        r[:src] && # it has a src field
+          iface[r[:dev]] && # the iface exists
+          (
+            iface[r[:dev]][:addresses].nil? || # this int has no addresses
+            iface[r[:dev]][:addresses].values.all? { |addr| addr['family'] != family[:name] } || # this int has no ip
+            (
+              iface[r[:dev]][:addresses].has_key?(r[:src]) && # the src ip is set on the node
+              iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" # this isn't a link level address
             )
+          ) && (
+            r[:destination] == "default" ||
+            (
+              default_route[:via] && # the default route has a gateway
+              IPAddress(r[:destination]).include?(IPAddress(default_route[:via])) # the route matches the gateway
+            )
+          )
       elsif family[:name] == "inet6"
         # selecting routes for ipv6
         iface[r[:dev]] and # the iface exists

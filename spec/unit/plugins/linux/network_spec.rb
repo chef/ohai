@@ -138,6 +138,14 @@ xapi1     Link encap:Ethernet  HWaddr E8:39:35:C5:C8:50
           TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0
           RX bytes:21515031 (20.5 MiB)  TX bytes:2052 (2.0 KiB)
+
+fwdintf   Link encap:Ethernet  HWaddr 00:00:00:00:00:0a
+          inet6 addr: fe80::200:ff:fe00:a/64 Scope:Link
+          UP RUNNING NOARP MULTICAST  MTU:1496  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2 errors:0 dropped:1 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
 EOM
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
@@ -225,6 +233,8 @@ EOM
     link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
     inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
        valid_lft forever preferred_lft forever
+13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN group default qlen 1000
+    link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff
 EOM
   }
 
@@ -278,6 +288,12 @@ EOM
     21468183   159866   0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     2052       6        0       0       0       0
+13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
+    link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    140        2        0       1       0       0
 EOM
   }
 
@@ -374,7 +390,7 @@ EOM
       end
 
       it "detects the interfaces" do
-        expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system",  "tun0", "venet0", "venet0:0", "xapi1"])
       end
 
       it "detects the layer one details of an ethernet interface" do
@@ -893,6 +909,54 @@ EOM
 
         it "doesn't set ipaddress" do
           expect(plugin["ipaddress"]).to be_nil
+        end
+      end
+
+      describe "with a link level default route to an unaddressed int" do
+        let(:linux_ip_route) {
+'default dev eth3 scope link
+'
+        }
+
+        before(:each) do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
+        end
+
+        it "sets default_interface" do
+          expect(plugin['network']['default_interface']).to eq('eth3')
+        end
+
+        it "doesn't set ipaddress" do
+          expect(plugin['ipaddress']).to be_nil
+        end
+      end
+
+      describe "with a link level default route with a source" do
+        let(:linux_ip_route) {
+'default dev fwdintf scope link src 2.2.2.2
+'
+        }
+
+        before(:each) do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin['network']).not_to be_nil
+        end
+
+        it "sets default_interface" do
+          expect(plugin['network']['default_interface']).to eq('fwdintf')
+        end
+
+        it "sets ipaddress" do
+          expect(plugin['ipaddress']).to eq('2.2.2.2')
         end
       end
 

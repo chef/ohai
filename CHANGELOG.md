@@ -1,8 +1,9 @@
 # Ohai Changelog
 
 ## Unreleased
-* CPU plugin for Darwin (OS X) now properly reports the number of real CPUs adds "cores" to match the CPU output on Linux
-* CPU plugin for FreeBSD now reports "real" and "core" values to match the CPU output on Linux
+* [pr#672](https://github.com/chef/ohai/pull/672) CPU plugin for Darwin (OS X) now properly reports the number of real CPUs adds "cores" to match the CPU output on Linux
+* [pr#674](https://github.com/chef/ohai/pull/674) CPU plugin for FreeBSD now reports "real" and "core" values to match the CPU output on Linux
+* [pr#654](https://github.com/chef/ohai/pull/654) Improvements to filesystem and wpar detection on AIX
 
 ## Release 8.8.1
 * [pr#677](https://github.com/chef/ohai/pull/677) Remove dependency on mime-types gem

@@ -2,7 +2,7 @@
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2015 Chef, Inc.
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@
 Ohai.plugin(:Network) do
   require 'ipaddr'
 
-  provides "network", "counters/network"
+  provides "network", "counters/network", "macaddress"
 
   # Helpers
   def hex_to_dec_netmask(netmask)
@@ -115,7 +115,10 @@ Ohai.plugin(:Network) do
       e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
       iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
       e_so.stdout.lines.each do |line|
-        iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" } if line =~ /Hardware Address: (\S+)/
+        if line =~ /Hardware Address: (\S+)/
+          iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" }
+          macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
+        end
       end
     end  #ifconfig stdout
 
@@ -145,7 +148,6 @@ Ohai.plugin(:Network) do
         count += 1
       end
     end
-
     network["interfaces"] = iface
   end
 end

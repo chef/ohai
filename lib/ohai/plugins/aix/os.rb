@@ -1,5 +1,5 @@
 #
-# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
+# Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
@@ -17,21 +17,14 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
-  provides "uptime", "uptime_seconds"
+require 'ohai/mixin/os'
+
+Ohai.plugin(:OS) do
+  provides "os", "os_version"
+  depends 'kernel'
 
   collect_data(:aix) do
-    require 'date'
-    # Example output:
-    # $ who -b
-    #   .       system boot  Jul  9 17:51
-    so = shell_out('who -b')
-    so.stdout.lines.each do |line|
-      if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime('%s').to_i
-        uptime seconds_to_human(uptime_seconds)
-        break
-      end
-    end
+    os collect_os
+    os_version kernel[:version]
   end
 end

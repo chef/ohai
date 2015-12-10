@@ -1,6 +1,7 @@
 #
 # Author:: Joshua Timberman <joshua@opscode.com>
-# Copyright:: Copyright (c) 2013, Opscode, Inc.
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2013-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

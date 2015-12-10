@@ -5,6 +5,8 @@
 # Author:: Daniel DeLeo (<dan@kallistec.com>)
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
+# Author:: Isa Farnik (<isa@chef.io>)
+# Copyright:: Copyright (c) 2015 Chef Software, Inc.
 # Copyright:: Copyright (c) 2008, 2009 Opscode, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2009 Daniel DeLeo
@@ -67,7 +69,7 @@ Ohai.plugin(:Hostname) do
   def collect_hostname
     # Hostname is everything before the first dot
     if machinename
-      machinename =~ /(\w+)\.?/
+      machinename =~ /([^.]+)\.?/
       hostname $1
     elsif fqdn
       fqdn =~ /(.+?)\./
@@ -90,9 +92,16 @@ Ohai.plugin(:Hostname) do
     end
   end
 
-  collect_data(:aix, :hpux, :default) do
+  collect_data(:hpux, :default) do
     machinename from_cmd("hostname")
     fqdn sigar_is_available? ? get_fqdn_from_sigar : resolve_fqdn
+    collect_hostname
+    collect_domain
+  end
+
+  collect_data(:aix) do
+    machinename from_cmd("hostname -s")
+    fqdn resolve_fqdn || from_cmd("hostname")
     collect_hostname
     collect_domain
   end

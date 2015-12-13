@@ -1,6 +1,6 @@
 #
 # Author:: Caleb Tennis (<caleb.tennis@gmail.com>)
-# Copyright:: Copyright (c) 2012 Opscode, Inc.
+# Copyright:: Copyright (c) 2012-2015 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,6 @@ Ohai.plugin(:InitPackage) do
   provides "init_package"
 
   collect_data(:linux) do
-    package_name = nil
-
-    if File.exists?("/proc/1/comm")
-      package_name = File.open("/proc/1/comm").gets.chomp
-    end
-
-    init_package package_name
+    init_package File.exists?("/proc/1/comm") ? File.open("/proc/1/comm").gets.chomp : 'init'
   end
 end

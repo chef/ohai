@@ -383,8 +383,8 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
         expect(plugin['network']['interfaces']['eth0']['duplex']).to eq('Full')
         expect(plugin['network']['interfaces']['eth0']['port']).to eq('FIBRE')
         expect(plugin['network']['interfaces']['eth0']['transceiver']).to eq('external')
-        expect(plugin['network']['interfaces']['eth0']['auto-negotiation']).to eq('on')
-        expect(plugin['network']['interfaces']['eth0']['mdi-x']).to be_nil
+        expect(plugin['network']['interfaces']['eth0']['auto_negotiation']).to eq('on')
+        expect(plugin['network']['interfaces']['eth0']['mdi_x']).to be_nil
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do

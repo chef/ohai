@@ -150,7 +150,7 @@ Ohai.plugin(:Network) do
         line.lstrip!
         k, v = line.split(': ')
         next unless keys.include? k
-        k.downcase!
+        k.downcase!.tr!('-', '_')
         if k == 'speed'
           k = 'link_speed'   # This is not necessarily the maximum speed the NIC supports
           v = v[/\d+/].to_i

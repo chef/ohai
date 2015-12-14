@@ -298,6 +298,31 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
 '
   }
 
+  let(:linux_ethtool) {
+'Settings for eth0:
+        Supported ports: [ FIBRE ]
+        Supported link modes:   1000baseT/Full
+                                10000baseT/Full
+        Supported pause frame use: No
+        Supports auto-negotiation: Yes
+        Advertised link modes:  1000baseT/Full
+                                10000baseT/Full
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Speed: 10000Mb/s
+        Duplex: Full
+        Port: FIBRE
+        PHYAD: 0
+        Transceiver: external
+        Auto-negotiation: on
+        Supports Wake-on: d
+        Wake-on: d
+        Current message level: 0x00000007 (7)
+                               drv probe link
+        Link detected: yes
+'
+  }
+
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -311,6 +336,7 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
     allow(plugin).to receive(:shell_out).with("route -n").and_return(mock_shell_out(0, linux_route_n, ""))
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
   describe "#iproute2_binary_available?" do
@@ -323,11 +349,23 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
     end
   end
 
+  describe "#find_ethtool_binary" do
+    ["/sbin/ethtool", "/usr/sbin/ethtool"].each do |path|
+      it "accepts #{path}" do
+        allow(File).to receive(:exist?).and_return(false)
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        expect(plugin.find_ethtool_binary).to end_with("/ethtool")
+      end
+    end
+  end
+
+
   ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:find_ethtool_binary).and_return( '/sbin/ethtool' )
         plugin.run
       end
 
@@ -338,6 +376,15 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
 
       it "detects the interfaces" do
         expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system",  "tun0", "venet0", "venet0:0", "xapi1"])
+      end
+
+      it "detects the layer one details of an ethernet interface" do
+        expect(plugin['network']['interfaces']['eth0']['link_speed']).to eq(10000)
+        expect(plugin['network']['interfaces']['eth0']['duplex']).to eq('Full')
+        expect(plugin['network']['interfaces']['eth0']['port']).to eq('FIBRE')
+        expect(plugin['network']['interfaces']['eth0']['transceiver']).to eq('external')
+        expect(plugin['network']['interfaces']['eth0']['auto_negotiation']).to eq('on')
+        expect(plugin['network']['interfaces']['eth0']['mdi_x']).to be_nil
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
@@ -547,6 +594,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
     before(:each) do
       allow(File).to receive(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
       allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
+      allow(File).to receive(:exist?).with("/sbin/ethtool").and_return(true) # ethtool is available
       plugin.run
     end
 

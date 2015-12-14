@@ -41,6 +41,10 @@ Ohai.plugin(:Network) do
     ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].any? { |path| File.exist?(path) }
   end
 
+  def find_ethtool_binary
+    ["/sbin/ethtool", "/usr/sbin/ethtool"].find { |path| File.exist?(path) }
+  end
+
   def is_openvz?
     ::File.directory?('/proc/vz')
   end
@@ -134,6 +138,28 @@ Ohai.plugin(:Network) do
     end.compact.flatten
   end
 
+  def ethernet_layer_one(iface)
+    return iface unless ethtool_binary = find_ethtool_binary
+    keys = %w[ Speed Duplex Port Transceiver Auto-negotiation MDI-X ]
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == 'Ethernet'
+      so = shell_out("#{ethtool_binary} #{tmp_int}")
+      so.stdout.lines do |line|
+        line.chomp!
+        Ohai::Log.debug("Parsing ethtool output: #{line}")
+        line.lstrip!
+        k, v = line.split(': ')
+        next unless keys.include? k
+        k.downcase!.tr!('-', '_')
+        if k == 'speed'
+          k = 'link_speed'   # This is not necessarily the maximum speed the NIC supports
+          v = v[/\d+/].to_i
+        end
+        iface[tmp_int][k] = v
+      end
+    end
+    iface
+  end
 
   def link_statistics(iface, net_counters)
     so = shell_out("ip -d -s link")
@@ -477,6 +503,8 @@ Ohai.plugin(:Network) do
         end
       end
     end
+
+    iface = ethernet_layer_one(iface)
     counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
   end

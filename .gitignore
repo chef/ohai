@@ -1,5 +1,6 @@
 *.sw?
 Gemfile.lock
+MAINTAINERS.md
 pkg/
 tmp/
 coverage/

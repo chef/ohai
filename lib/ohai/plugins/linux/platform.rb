@@ -144,7 +144,7 @@ Ohai.plugin(:Platform) do
       platform_version `uname -r`.strip
     elsif File.exist?('/etc/alpine-release')
       platform "alpine"
-      platform_version File.read("/etc/alpine-release")
+      platform_version File.read("/etc/alpine-release").strip()
     elsif os_release_file_is_cisco?
       raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field' if
         os_release_info['ID_LIKE'].nil? || ! os_release_info['ID_LIKE'].include?('wrlinux')

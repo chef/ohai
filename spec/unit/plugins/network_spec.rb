@@ -388,10 +388,10 @@ describe Ohai::System, "Network Plugin" do
             expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
-          it "doesn't set macaddress, ipv4 setup is valid and has precedence over ipv6" do
+          it "sets mac address to mac of eth1, skipping eth0 due to NOARP" do
             expect(Ohai::Log).not_to receive(:warn).with(/^unable to detect macaddress/)
             @plugin.run
-            expect(@plugin["macaddress"]).to be_nil
+            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
           end
 
           it "informs about this setup" do
@@ -827,13 +827,7 @@ describe Ohai::System, "Network Plugin" do
         it "can't detect ipaddress" do
           allow(Ohai::Log).to receive(:warn)
           @plugin.run
-          expect(@plugin["ipaddress"]).to be_nil
-        end
-
-        it "warns about not being able to set {ip,mac}address (ipv4)" do
-          expect(Ohai::Log).to receive(:warn).with(/^unable to detect ipaddress/).once
-          expect(Ohai::Log).to receive(:warn).with(/^unable to detect macaddress/).once
-          @plugin.run
+          expect(@plugin["ipaddress"]).to eq("127.0.0.1")
         end
 
         it "sets {ip6,mac}address" do

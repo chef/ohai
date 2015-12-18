@@ -138,6 +138,7 @@ Ohai.plugin(:Network) do
     end.compact.flatten
   end
 
+  # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
     return iface unless ethtool_binary = find_ethtool_binary
     keys = %w[ Speed Duplex Port Transceiver Auto-negotiation MDI-X ]
@@ -161,6 +162,7 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine link stats, vlans, queue length, and state for an interface using ip
   def link_statistics(iface, net_counters)
     so = shell_out("ip -d -s link")
     tmp_int = nil
@@ -251,7 +253,6 @@ Ohai.plugin(:Network) do
     end
   end
 
-
   def parse_ip_addr_link_line(cint, iface, line)
     if line =~ /link\/(\w+) ([\da-f\:]+) /
       iface[cint][:encapsulation] = linux_encaps_lookup($1)
@@ -293,7 +294,7 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses][tmp_addr][:scope] = ($1.eql?("host") ? "Node" : $1.capitalize)
       end
 
-      # If we found we were an an alias interface, restore cint to its original value
+      # If we found we were an alias interface, restore cint to its original value
       cint = original_int unless original_int.nil?
     end
     cint
@@ -364,7 +365,7 @@ Ohai.plugin(:Network) do
         end.first
 
         if default_route.nil? or default_route.empty?
-          Ohai::Log.debug("Unable to determine default #{family[:name]} interface")
+          Ohai::Log.debug("Unable to determine default_#{family[:name]}_interface as no default routes found")
         else
           network["#{default_prefix}_interface"] = default_route[:dev]
           Ohai::Log.debug("#{default_prefix}_interface set to #{default_route[:dev]}")
@@ -406,17 +407,19 @@ Ohai.plugin(:Network) do
             ]
           end.first
 
-          unless route.nil? or route.empty?
+
+          if route && !route.empty?
+            macaddress iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
             if family[:name] == "inet"
               ipaddress route[:src]
-              macaddress iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
             else
               ip6address route[:src]
             end
+          else
+            macaddress iface[default_route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[default_route[:dev]][:flags].include? "NOARP"
           end
         end
       end
-
     else
 
       begin

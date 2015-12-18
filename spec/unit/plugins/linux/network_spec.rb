@@ -663,7 +663,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
         expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
-      describe "when there isn't a source field in route entries " do
+      describe "when there isn't a source field in route entries" do
         before(:each) do
           plugin.run
         end

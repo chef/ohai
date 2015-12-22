@@ -26,8 +26,8 @@ def it_doesnt_fail
   end
 end
 
+# basic sanity check that is called in all describes below
 def it_populates_ipaddress_attributes
-
   source = caller[0]
 
   it "populates ipaddress, macaddress and ip6address" do
@@ -43,11 +43,11 @@ def it_populates_ipaddress_attributes
       raise
     end
   end
-
 end
 
 describe Ohai::System, "Network Plugin" do
 
+  # output of network plugins on particular platforms to mock plugin runs
   basic_data = {
     "freebsd" => {
       "network" => {
@@ -57,7 +57,9 @@ describe Ohai::System, "Network Plugin" do
             "number" => "0",
             "flags" => ["UP", "BROADCAST", "RUNNING", "SIMPLEX", "MULTICAST"],
             "addresses" => {
-              "00:00:24:c9:5e:b8" => {"family" => "lladdr"},
+              "00:00:24:c9:5e:b8" => {
+                "family" => "lladdr"
+              },
               "fe80::200:24ff:fec9:5eb8" => {
                 "family" => "inet6",
                 "zoneid" => "vr0",
@@ -80,7 +82,9 @@ describe Ohai::System, "Network Plugin" do
             "number" => "1",
             "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
             "addresses" => {
-              "00:00:24:c9:5e:b9" => {"family" => "lladdr"},
+              "00:00:24:c9:5e:b9" => {
+                "family" => "lladdr"
+              },
               "fe80::200:24ff:fec9:5eb9" => {
                 "family" => "inet6",
                 "zoneid" => "vr1",
@@ -94,7 +98,9 @@ describe Ohai::System, "Network Plugin" do
             "number" => "2",
             "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
             "addresses" => {
-              "00:00:24:c9:5e:ba" => {"family" => "lladdr"},
+              "00:00:24:c9:5e:ba" => {
+                "family" => "lladdr"
+              },
               "fe80::200:24ff:fec9:5eba" => {
                 "family" => "inet6",
                 "zoneid" => "vr2",
@@ -108,7 +114,9 @@ describe Ohai::System, "Network Plugin" do
             "number" => "3",
             "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
             "addresses" => {
-              "00:00:24:c9:5e:bb" => {"family" => "lladdr"},
+              "00:00:24:c9:5e:bb" => {
+                "family" => "lladdr"
+              },
               "fe80::200:24ff:fec9:5ebb" => {
                 "family" => "inet6",
                 "zoneid" => "vr3",
@@ -128,8 +136,14 @@ describe Ohai::System, "Network Plugin" do
             "number" => "0",
             "flags" => ["UP", "LOOPBACK", "RUNNING", "MULTICAST"],
             "addresses" => {
-              "127.0.0.1" => {"family" => "inet", "netmask" => "255.0.0.0"},
-              "::1" => {"family" => "inet6", "prefixlen" => "128"},
+              "127.0.0.1" => {
+                "family" => "inet",
+                "netmask" => "255.0.0.0"
+              },
+              "::1" => {
+                "family" => "inet6",
+                "prefixlen" => "128"
+              },
               "fe80::1" => {
                 "family" => "inet6",
                 "zoneid" => "lo0",
@@ -143,13 +157,18 @@ describe Ohai::System, "Network Plugin" do
             "number" => "0",
             "flags" => ["LEARNING", "DISCOVER", "AUTOEDGE", "AUTOPTP"],
             "addresses" => {
-              "02:20:6f:d2:c4:00" => {"family"=>"lladdr"},
+              "02:20:6f:d2:c4:00" => {
+                "family"=>"lladdr"
+              },
               "192.168.2.1" => {
                 "family" => "inet",
                 "netmask" => "255.255.255.0",
                 "broadcast" => "192.168.2.255"
               },
-              "2001:470:d:cb4::1" => {"family" => "inet6", "prefixlen" => "64"},
+              "2001:470:d:cb4::1" => {
+                "family" => "inet6",
+                "prefixlen" => "64"
+              },
               "fe80::cafe:babe:dead:beef" => {
                 "family" => "inet6",
                 "zoneid" => "bridge0",
@@ -188,7 +207,7 @@ describe Ohai::System, "Network Plugin" do
     },
     "linux" => {
       "network" => {
-        # pp Hash[node['network']] from  shef to get the network data
+        # pp Hash[node['network']] from chef-shell to get the network data
         # have just removed the neighbour and route entries by hand
         "interfaces" => {
           "lo" => {
@@ -207,7 +226,8 @@ describe Ohai::System, "Network Plugin" do
               }
             },
             "mtu" => "16436",
-            "encapsulation" => "Loopback"
+            "encapsulation" => "Loopback",
+            "state" => "unknown"
           },
           "eth0" => {
             "flags" => ["BROADCAST", "MULTICAST", "UP"],
@@ -218,7 +238,9 @@ describe Ohai::System, "Network Plugin" do
                 "prefixlen" => "64",
                 "family" => "inet6"
               },
-              "00:16:3E:2F:36:79" => {"family" => "lladdr"},
+              "00:16:3E:2F:36:79" => {
+                "family" => "lladdr"
+              },
               "192.168.66.33" => {
                 "scope" => "Global",
                 "netmask" => "255.255.255.0",
@@ -229,7 +251,8 @@ describe Ohai::System, "Network Plugin" do
               "3ffe:1111:2222::33" => {
                 "prefixlen" => "48",
                 "family" => "inet6",
-                "scope" => "Global"
+                "scope" => "Global",
+                "state" => "up"
               }
             },
             "mtu" => "1500",
@@ -245,7 +268,9 @@ describe Ohai::System, "Network Plugin" do
                 "prefixlen" => "64",
                 "family" => "inet6"
               },
-              "00:16:3E:2F:36:80" => {"family" => "lladdr"},
+              "00:16:3E:2F:36:80" => {
+                "family" => "lladdr"
+              },
               "192.168.99.11" => {
                 "scope" => "Global",
                 "netmask" => "255.255.255.0",
@@ -301,14 +326,14 @@ describe Ohai::System, "Network Plugin" do
     }
   }
 
-  describe "with linux" do
+  describe "on linux" do
     before(:each) do
       @plugin = get_plugin("network")
       @plugin["network"] = basic_data["linux"]["network"]
     end
 
     describe "when the linux::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
-      describe "simple setup" do
+      describe "simple network setup" do
         it_populates_ipaddress_attributes
 
         it "detects {ip,ip6,mac}address" do
@@ -393,7 +418,7 @@ describe Ohai::System, "Network Plugin" do
             expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
             expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
-          
+
           it "warns about this conflict" do
             expect(Ohai::Log).to receive(:debug).with(/^\[inet\] no ipaddress\/mask on eth1/).once
             expect(Ohai::Log).to receive(:debug).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
@@ -789,6 +814,7 @@ describe Ohai::System, "Network Plugin" do
 
     end
 
+    # specs using network plugin data for each mocked OS (freebsd,linux,windows)
     basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
         before(:each) do

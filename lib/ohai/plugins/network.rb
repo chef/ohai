@@ -26,10 +26,10 @@ Ohai.plugin(:NetworkAddresses) do
 
   depends "network/interfaces"
 
-  # from interf data create array of hashes with ipaddress, scope, and iface
-  # sorted by scope, prefixlen and then ip address where longest prefixes first
+  # from interface data create array of hashes with ipaddress, scope, and iface
+  # sorted by scope, prefixlen and then ipaddress where longest prefixes first
   def sorted_ips(family = "inet")
-    raise "bad family #{family}" unless [ "inet", "inet6" ].include? family
+    fail "bad family #{family}" unless %w(inet inet6).include? family
 
     # priority of ipv6 link scopes to sort by later
     scope_prio = [ "global", "site", "link", "host", "node", nil ]
@@ -59,7 +59,7 @@ Ohai.plugin(:NetworkAddresses) do
   end
 
   # finds ip address / interface for interface with default route based on
-  # passed in family.  returns [ipaddress, interface]  uses 1st ip if no default
+  # passed in family.  returns [ipaddress, interface] uses 1st ip if no default
   # route is found
   def find_ip(family = "inet")
     ips = sorted_ips(family)
@@ -120,10 +120,10 @@ Ohai.plugin(:NetworkAddresses) do
     r.nil? || r.first.nil? ? nil : r.first.first
   end
 
+  # address_to_match: String
+  # ipaddress: IPAddress
+  # iface: String
   def network_contains_address(address_to_match, ipaddress, iface)
-    # address_to_match: String
-    # ipaddress: IPAddress
-    # iface: String
     if peer = network["interfaces"][iface]["addresses"][ipaddress.to_s][:peer]
       IPAddress(peer) == IPAddress(address_to_match)
     else
@@ -135,7 +135,6 @@ Ohai.plugin(:NetworkAddresses) do
   # #{os}::network plugin. atm it is expected macaddress is set at the same
   # time as ipaddress. if ipaddress is set and macaddress is nil, that means
   # the interface ipaddress is bound to has the NOARP flag
-
   collect_data do
     results = {}
 
@@ -144,14 +143,14 @@ Ohai.plugin(:NetworkAddresses) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
-    # inet family is processed before inet6
+    # inet family is processed before inet6 to give ipv4 precedence
     Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
       r = {}
       # find the ip/interface with the default route for this family
-      ( r["ip"], r["iface"] ) = find_ip(family)
+      (r["ip"], r["iface"]) = find_ip(family)
       r["mac"] = find_mac_from_iface(r["iface"]) unless r["iface"].nil?
       # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
-      if family == "inet" and ipaddress.nil?
+      if (family == "inet") && ipaddress.nil?
         if r["ip"].nil?
           Ohai::Log.warn("unable to detect ipaddress")
           # i don't issue this warning if r["ip"] exists and r["mac"].nil?
@@ -161,14 +160,14 @@ Ohai.plugin(:NetworkAddresses) do
           ipaddress r["ip"]
           macaddress r["mac"]
         end
-      elsif family == "inet6" and ip6address.nil?
+      elsif (family == "inet6") && ip6address.nil?
         if r["ip"].nil?
           Ohai::Log.debug("unable to detect ip6address")
         else
           ip6address r["ip"]
           # don't overwrite macaddress set by "#{os}::network" plugin
-          # and also
-          if r["mac"] and macaddress.nil? and ( ipaddress.nil? || ipaddress == "127.0.0.1" )
+          # and also overwrite mac address from ipv4 loopback interface
+          if r["mac"] && macaddress.nil? && (ipaddress.nil? || ipaddress == "127.0.0.1")
             Ohai::Log.debug("macaddress set to #{r["mac"]} from the ipv6 setup")
             macaddress r["mac"]
           end
@@ -177,8 +176,8 @@ Ohai.plugin(:NetworkAddresses) do
       results[family] = r
     end
 
-    if results["inet"]["iface"] and results["inet6"]["iface"] and
-        results["inet"]["iface"] != results["inet6"]["iface"]
+    if results["inet"]["iface"] && results["inet6"]["iface"] &&
+        (results["inet"]["iface"] != results["inet6"]["iface"])
       Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]}), macaddress has been set using the ipaddress interface")
     end
   end

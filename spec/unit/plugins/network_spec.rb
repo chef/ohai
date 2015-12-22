@@ -388,10 +388,10 @@ describe Ohai::System, "Network Plugin" do
             expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
-          it "sets mac address to mac of eth1, skipping eth0 due to NOARP" do
+          it "doesn't set macaddress, ipv4 setup is valid and has precedence over ipv6" do
             expect(Ohai::Log).not_to receive(:warn).with(/^unable to detect macaddress/)
             @plugin.run
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(@plugin["macaddress"]).to be_nil
           end
 
           it "informs about this setup" do

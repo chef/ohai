@@ -1,7 +1,7 @@
 #
 #  Author:: Caleb Tennis <caleb.tennis@gmail.com>
 #  Author:: Chris Read <chris.read@gmail.com>
-#  Copyright:: Copyright (c) 2011 Opscode, Inc.
+#  Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -798,7 +798,7 @@ default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:333
         end
       end
 
-      describe "when there's a source field in a local route entry " do
+      describe "when there's a source field in a local route entry" do
         let(:linux_ip_route) {
 '10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1

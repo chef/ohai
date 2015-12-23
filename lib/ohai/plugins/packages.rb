@@ -1,6 +1,8 @@
 # Author:: "Christian Höltje" <choltje@us.ibm.com>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
+# Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
 # Copyright (C) 2015 IBM Corp.
+# Copyright (C) 2015 Bloomberg Finance L.P.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,9 +56,9 @@ Ohai.plugin(:Packages) do
     w32_product = wmi.instances_of('Win32_Product')
 
     w32_product.find_all.each do |product|
-      packagename = product['packagename']
-      package = packages[packagename] = Mash.new
-      %w(name version vendor installdate).each do |attr|
+      name = product['name']
+      package = packages[name] = Mash.new
+      %w(version vendor installdate).each do |attr|
         package[attr] = product[attr]
       end
     end

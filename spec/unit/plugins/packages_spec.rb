@@ -46,7 +46,7 @@ describe Ohai::System, 'plugin packages' do
       plugin.run
     end
 
-    it 'gets the packages and versions' do
+    it 'gets packages and versions' do
       expect(plugin[:packages]['vim-common'][:version]).to eq('2:7.4.052-1ubuntu3')
     end
   end
@@ -77,7 +77,7 @@ describe Ohai::System, 'plugin packages' do
       plugin.run
     end
 
-    it 'gets the packages and versions/release' do
+    it 'gets packages and versions/release' do
       expect(plugin[:packages]['vim-common'][:version]).to eq('7.2.411')
       expect(plugin[:packages]['vim-common'][:release]).to eq('1.8.el6')
     end
@@ -153,7 +153,7 @@ describe Ohai::System, 'plugin packages' do
       plugin.run
     end
 
-    it 'gets the package info' do
+    it 'gets package info' do
       expect(plugin[:packages]['Chef Development Kit v0.7.0'][:version]).to eq('0.7.0.1')
       expect(plugin[:packages]['Chef Development Kit v0.7.0'][:vendor]).to eq("\"Chef Software, Inc. <maintainers@chef.io>\"")
       expect(plugin[:packages]['Chef Development Kit v0.7.0'][:installdate]).to eq('20150925')
@@ -163,4 +163,73 @@ describe Ohai::System, 'plugin packages' do
       expect(plugin[:packages]['NXLOG-CE'][:installdate]).to eq('20150511')
     end
   end
+
+  context 'on aix' do
+    let(:plugin) { get_plugin('packages') }
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, 'lslpp.output'))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:aix)
+      allow(plugin).to receive(:shell_out).with('lslpp -L -q -c').and_return(mock_shell_out(0, stdout, ''))
+      plugin.run
+    end
+
+    it 'calls lslpp -L -q -c' do
+      expect(plugin).to receive(:shell_out)
+        .with('lslpp -L -q -c')
+        .and_return(mock_shell_out(0, stdout, ''))
+      plugin.run
+    end
+
+    it 'gets packages with version' do
+      expect(plugin[:packages]['chef'][:version]).to eq('12.5.1.1')
+    end
+  end
+
+  context 'on solaris2' do
+    let(:plugin) { get_plugin('packages') }
+
+    let(:pkglist_output) do
+      File.read(File.join(SPEC_PLUGIN_PATH, 'pkglist.output'))
+    end
+
+    let(:pkginfo_output) do
+      File.read(File.join(SPEC_PLUGIN_PATH, 'pkginfo.output'))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:solaris2)
+      allow(plugin).to receive(:shell_out).with('pkg list -H').and_return(mock_shell_out(0, pkglist_output, ''))
+      allow(plugin).to receive(:shell_out).with('pkginfo -l').and_return(mock_shell_out(0, pkginfo_output, ''))
+      plugin.run
+    end
+
+    it 'calls pkg list -H' do
+      expect(plugin).to receive(:shell_out)
+        .with('pkg list -H')
+        .and_return(mock_shell_out(0, pkglist_output, ''))
+      plugin.run
+    end
+
+    it 'calls pkginfo -l' do
+      expect(plugin).to receive(:shell_out)
+        .with('pkginfo -l')
+        .and_return(mock_shell_out(0, pkginfo_output, ''))
+      plugin.run
+    end
+
+    it 'gets packages with version' do
+      puts plugin[:packages]
+      expect(plugin[:packages]['chef'][:version]).to eq('12.5.1')
+    end
+
+    it 'gets packages with version and publisher' do
+      expect(plugin[:packages]['system/EMCpower'][:version]).to eq('6.0.0.1.0-3')
+      expect(plugin[:packages]['system/EMCpower'][:publisher]).to eq('emc.com')
+    end
+  end
+
 end

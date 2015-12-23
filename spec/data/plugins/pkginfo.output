@@ -1,0 +1,50 @@
+   PKGINST:  mqm
+      NAME:  WebSphere MQ Client for Sun Solaris
+  CATEGORY:  application
+      ARCH:  sparcv9
+   VERSION:  7.0.1.4
+   BASEDIR:  /
+    VENDOR:  IBM
+    PSTAMP:  src   (packaged: January 14, 2011 - 11:44:27 PM)
+  INSTDATE:  Dec 22 2015 17:10
+    VSTOCK:  5724-H72
+    STATUS:  completely installed
+     FILES:     3303 installed pathnames
+                  88 directories
+                 158 executables
+                  20 setuid/setgid executables
+              327903 blocks used (approx)
+
+   PKGINST:  vasclnt
+      NAME:  vasclnt 4.1.0.21853
+  CATEGORY:  application
+      ARCH:  sparcv9
+   VERSION:  4.1.0.21853
+   BASEDIR:  /
+    VENDOR:  Quest Software, Inc.
+      DESC:  Quest Authentication System (QAS) provides centralized user and
+    PSTAMP:  vassol8sparc20150701013812
+  INSTDATE:  Dec 22 2015 16:58
+    STATUS:  completely installed
+     FILES:      174 installed pathnames
+                   9 shared pathnames
+                  32 directories
+                 101 executables
+               60402 blocks used (approx)
+
+   PKGINST:  vasgp
+      NAME:  vasgp 4.1.0.21853
+  CATEGORY:  application
+      ARCH:  sparcv9
+   VERSION:  4.1.0.21853
+   BASEDIR:  /
+    VENDOR:  Quest Software, Inc.
+      DESC:  Quest Group Policy (QGP) provides Active Directory Group Policy
+    PSTAMP:  vassol8sparc20150701013859
+  INSTDATE:  Dec 22 2015 17:06
+    STATUS:  completely installed
+     FILES:       50 installed pathnames
+                   9 shared pathnames
+                  18 directories
+                  25 executables
+               11999 blocks used (approx)

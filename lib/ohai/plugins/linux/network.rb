@@ -308,6 +308,11 @@ Ohai.plugin(:Network) do
     end
   end
 
+  # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
+  def get_mac_for_interface(interfaces, interface)
+    interfaces[interface][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless interfaces[interface][:flags].include? "NOARP"
+  end
+
   collect_data(:linux) do
     require 'ipaddr'
 
@@ -407,16 +412,22 @@ Ohai.plugin(:Network) do
             ]
           end.first
 
-
           if route && !route.empty?
-            macaddress iface[route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[route[:dev]][:flags].include? "NOARP"
             if family[:name] == "inet"
               ipaddress route[:src]
+              m = get_mac_for_interface(iface, route[:dev])
+              Ohai::Log.debug("Overwriting macaddress #{macaddress} with #{m} from interface #{route[:dev]}") if macaddress
+              macaddress m
             else
               ip6address route[:src]
+              if macaddress
+                Ohai::Log.debug("Not setting macaddress from ipv6 interface #{route[:dev]} because macaddress is already set")
+              else
+                macaddress get_mac_for_interface(iface, route[:dev])
+              end
             end
           else
-            macaddress iface[default_route[:dev]][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless iface[default_route[:dev]][:flags].include? "NOARP"
+            Ohai::Log.debug("Unable to determine ideal default route, not setting ipaddress/ip6address/macaddress. Should have considered #{default_route[:dev]}?")
           end
         end
       end

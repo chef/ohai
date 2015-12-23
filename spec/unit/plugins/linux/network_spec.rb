@@ -834,12 +834,13 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
             expect(plugin['macaddress']).to eq("12:31:3D:02:BE:A2")
           end
 
-          describe "when then interface has the NOARP flag" do
+          context "when then ipv4 interface has the NOARP flag and no ipv6 routes exist" do
             let(:linux_ip_route) {
 '10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
 '
             }
+            let(:linux_ip_route_inet6) { '' }
 
             it "completes the run" do
               expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
@@ -857,6 +858,14 @@ default via 172.16.19.1 dev tun0
         it "sets ip6address" do
           plugin.run
           expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
+        end
+
+        context "with only ipv6 routes" do
+          let(:linux_ip_route) { '' }
+
+          it "sets macaddress to the mac address of the ip6 default interface" do
+            expect(plugin['macaddress']).to eq("00:AA:BB:CC:DD:EE")
+          end
         end
       end
 

@@ -16,14 +16,12 @@
 
 Ohai.plugin(:RootUser) do
   provides 'root_user'
-  depends 'os'
 
-  collect_data do
-    case os
-    when 'windows'
-      root_user 'SYSTEM'
-    else
-      root_user 'root'
-    end
+  collect_data(:windows) do
+    root_user 'SYSTEM'
+  end
+
+  collect_data(:default) do
+    root_user 'root'
   end
 end

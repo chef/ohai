@@ -221,15 +221,21 @@ describe Ohai::System, 'plugin packages' do
       plugin.run
     end
 
-    it 'gets packages with version' do
-      puts plugin[:packages]
+    it 'gets ips packages with version' do
       expect(plugin[:packages]['chef'][:version]).to eq('12.5.1')
     end
 
-    it 'gets packages with version and publisher' do
+    it 'gets ips packages with version and publisher' do
       expect(plugin[:packages]['system/EMCpower'][:version]).to eq('6.0.0.1.0-3')
       expect(plugin[:packages]['system/EMCpower'][:publisher]).to eq('emc.com')
     end
-  end
 
+    it 'gets sysv packages with version' do
+      expect(plugin[:packages]['chef'][:version]).to eq('12.5.1')
+    end
+
+    it 'gets sysv packages with version' do
+      expect(plugin[:packages]['mqm'][:version]).to eq('7.0.1.4')
+    end
+  end
 end

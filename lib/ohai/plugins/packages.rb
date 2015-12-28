@@ -30,7 +30,7 @@ Ohai.plugin(:Packages) do
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, version = pkg.split()
+        name, version = pkg.split
         packages[name] = { 'version' => version }
       end
 
@@ -41,7 +41,7 @@ Ohai.plugin(:Packages) do
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, version, release = pkg.split()
+        name, version, release = pkg.split
         packages[name] = { 'version' => version, 'release' => release }
       end
     end
@@ -78,20 +78,16 @@ Ohai.plugin(:Packages) do
     end
   end
 
-
   def collect_ips_packages
     so = shell_out('pkg list -H')
-    pkgs = so.stdout.lines
-
     # Output format is
     # NAME (PUBLISHER)    VERSION    IFO
-
-    pkgs.each do |pkg|
-      tokens = pkg.split()
+    so.stdout.lines.each do |pkg|
+      tokens = pkg.split
       if tokens.length == 3 # No publisher info
-        name, version, _ = tokens
+        name, version, = tokens
       else
-        name, publisher, version, _ = tokens
+        name, publisher, version, = tokens
         publisher = publisher[1..-2]
       end
       packages[name] = { 'version' => version }
@@ -102,20 +98,20 @@ Ohai.plugin(:Packages) do
   def collect_sysv_packages
     so = shell_out('pkginfo -l')
     # Each package info is separated by a blank line
-    so.stdout.lines.map { |line| line.strip }.chunk { |line|
+    chunked_lines = so.stdout.lines.map(&:strip).chunk do |line|
       !line.empty? || nil
-    }.each { |_, lines|
-      puts "Conunt is #{lines.count} lines is #{lines}"
+    end
+    chunked_lines.each do |_, lines|
       package = {}
       lines.each do |line|
-        puts "line is #{line}"
-        key, value = line.split(':')
-        package[key.strip] = value.strip
+        key, value = line.split(':', 2)
+        package[key.strip.downcase] = value.strip unless value.nil?
       end
-      packages[package['PKGINST']] = package.tap do |p|
-        p.delete['PKGINST']
+      # pkginst is the installed package name
+      packages[package['pkginst']] = package.tap do |p|
+        p.delete('pkginst')
       end
-    }
+    end
   end
 
   collect_data(:solaris2) do
@@ -123,6 +119,4 @@ Ohai.plugin(:Packages) do
     collect_ips_packages
     collect_sysv_packages
   end
-
-
 end

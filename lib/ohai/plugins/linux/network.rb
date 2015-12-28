@@ -447,6 +447,7 @@ Ohai.plugin(:Network) do
               Ohai::Log.debug("Overwriting macaddress #{macaddress} with #{m} from interface #{favored_route[:dev]}") if macaddress
               macaddress m
             elsif family[:name] == "inet6"
+              # FIXME: we're going to have to guess here when we don't have source
               ip6address favored_route[:src]
               if macaddress
                 Ohai::Log.debug("Not setting macaddress from ipv6 interface #{favored_route[:dev]} because macaddress is already set")

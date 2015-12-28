@@ -663,7 +663,14 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
         expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
-      describe "when there isn't a source field in route entries" do
+      describe "when there isn't a source field in route entries and no ipv6 default routes" do
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
+'
+        }
+
         before(:each) do
           plugin.run
         end
@@ -959,6 +966,9 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
     inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
        valid_lft 6128sec preferred_lft 2526sec
 '}
+        # We don't have the corresponding ipv6 data for these tests
+        let(:linux_ip_route_inet6) { '' }
+        let(:linux_ip_inet6_neighbor_show) { '' }
 
         before(:each) do
           allow(plugin).to receive(:is_openvz?).and_return true

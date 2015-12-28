@@ -22,13 +22,13 @@ describe Ohai::System, 'root_user' do
     @plugin.run
   end
 
-  describe 'with windows platform' do
+  describe 'on windows', :windows_only do
     it 'should return the user system' do
       expect(@plugin[:root_user]).to eq('SYSTEM')
     end
   end
 
-  describe 'with posix platform' do
+  describe 'on unix based platforms', :unix_only do
     it 'should return the user root' do
       expect(@plugin[:root_user]).to eq('root')
     end

@@ -16,10 +16,11 @@
 
 Ohai.plugin(:RootUser) do
   provides 'root_user'
+  depends 'os'
 
   collect_data do
-    case ::RbConfig::CONFIG['host_os']
-    when /mswin|mingw32|windows/
+    case os
+    when 'windows'
       root_user 'SYSTEM'
     else
       root_user 'root'

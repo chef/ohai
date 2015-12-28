@@ -17,20 +17,25 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, 'root_user' do
-  before(:each) do
-    @plugin = get_plugin('root_user')
-    @plugin.run
-  end
-
+  let(:plugin) { get_plugin('root_user') }
   describe 'on windows', :windows_only do
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:windows)
+      plugin.run
+    end
+
     it 'should return the user system' do
-      expect(@plugin[:root_user]).to eq('SYSTEM')
+      expect(plugin[:root_user]).to eq('SYSTEM')
     end
   end
 
-  describe 'on unix based platforms', :unix_only do
+  describe 'on unix based platforms' do
+    before(:each) do
+      plugin.run
+    end
+
     it 'should return the user root' do
-      expect(@plugin[:root_user]).to eq('root')
+      expect(plugin[:root_user]).to eq('root')
     end
   end
 end

@@ -163,9 +163,13 @@ Ohai.plugin(:NetworkAddresses) do
 
       # set the macaddress [only if we haven't already]. this allows the #{os}::network plugin to set macaddress
       # otherwise we set macaddress on a first-found basis (and we started with ipv4)
-      if macaddress.nil? && r["mac"]
-        Ohai::Log.debug("setting macaddress from interface '#{r["iface"]}'")
-        macaddress r["mac"]
+      if macaddress.nil?
+        if r["mac"]
+          Ohai::Log.debug("setting macaddress from interface '#{r["iface"]}' for family '#{family}'")
+          macaddress r["mac"]
+        else
+          Ohai::Log.debug("unable to detect macaddress for family '#{family}'")
+        end
       end
 
       results[family] = r

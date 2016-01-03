@@ -805,7 +805,7 @@ default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:333
         end
       end
 
-      describe "when there's a source field in a local route entry" do
+      describe "when there's a source field in a local route entry but it isnt in the default route" do
         let(:linux_ip_route) {
 '10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
@@ -835,6 +835,21 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
           expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
+        # without a source address on the default route we cannot pick the an ipv6 address from the interface
+        # In the future an RFC6724 compliant process should choose ip6address in the network plugin
+        it "does not set ip6address" do
+          plugin.run
+          expect(plugin['ip6address']).to eq(nil)
+        end
+
+        context "with only ipv6 routes" do
+          let(:linux_ip_route) { '' }
+
+          it "sets macaddress to the mac address of the ip6 default interface" do
+            expect(plugin['macaddress']).to eq("00:AA:BB:CC:DD:EE")
+          end
+        end
+
         describe "when about to set macaddress" do
           it "sets macaddress" do
             plugin.run
@@ -859,19 +874,6 @@ default via 172.16.19.1 dev tun0
               plugin.run
               expect(plugin['macaddress']).to be_nil
             end
-          end
-        end
-
-        it "sets ip6address" do
-          plugin.run
-          expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
-        end
-
-        context "with only ipv6 routes" do
-          let(:linux_ip_route) { '' }
-
-          it "sets macaddress to the mac address of the ip6 default interface" do
-            expect(plugin['macaddress']).to eq("00:AA:BB:CC:DD:EE")
           end
         end
       end

@@ -324,6 +324,7 @@ Ohai.plugin(:Network) do
 
   # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
   # this method attempts to deduce the route that is most important to the user, which is later used to deduce the favored values for {ip,mac,ip6}address
+  # we only consider routes that are default routes, or those routes that get us to the gateway for a default route
   def favored_default_route(routes, iface, default_route, family)
     routes.select do |r|
       if family[:name] == "inet"
@@ -438,6 +439,8 @@ Ohai.plugin(:Network) do
           # deduce the default route the user most likely cares about to pick {ip,mac,ip6}address below
           favored_route = favored_default_route(routes, iface, default_route, family)
 
+          # FIXME: This entire block should go away, and the network plugin should be the sole source of {ip,ip6,mac}address
+
           # since we're at it, let's populate {ip,mac,ip6}address with the best values
           # if we don't set these, the network plugin may set them afterwards
           if favored_route && !favored_route.empty?
@@ -447,7 +450,7 @@ Ohai.plugin(:Network) do
               Ohai::Log.debug("Overwriting macaddress #{macaddress} with #{m} from interface #{favored_route[:dev]}") if macaddress
               macaddress m
             elsif family[:name] == "inet6"
-              # FIXME: we're going to have to guess here when we don't have source
+              # this rarely does anything since we rarely have src for ipv6, so this usually falls back on the network plugin
               ip6address favored_route[:src]
               if macaddress
                 Ohai::Log.debug("Not setting macaddress from ipv6 interface #{favored_route[:dev]} because macaddress is already set")

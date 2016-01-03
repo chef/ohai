@@ -165,7 +165,7 @@ Ohai.plugin(:NetworkAddresses) do
       # otherwise we set macaddress on a first-found basis (and we started with ipv4)
       if macaddress.nil?
         if r["mac"]
-          Ohai::Log.debug("setting macaddress from interface '#{r["iface"]}' for family '#{family}'")
+          Ohai::Log.debug("setting macaddress to '#{r["mac"]}' from interface '#{r["iface"]}' for family '#{family}'")
           macaddress r["mac"]
         else
           Ohai::Log.debug("unable to detect macaddress for family '#{family}'")

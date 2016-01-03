@@ -202,7 +202,9 @@ describe Ohai::System, "Network Plugin" do
           }
         },
         "default_gateway" => "76.91.0.1",
-        "default_interface" => "vr0"
+        "default_interface" => "vr0",
+        "default_inet6_gateway" => "2001:470:d:cb4::2",
+        "default_inet6_interface" => "bridge0"
       }
     },
     "linux" => {
@@ -419,10 +421,9 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "warns about this conflict" do
-            pending("this test doesnt set default_gateway, cannot tell how it conflicts with default_interface")
-
             expect(Ohai::Log).to receive(:debug).with(/^\[inet\] no ipaddress\/mask on eth1/).once
             expect(Ohai::Log).to receive(:debug).with(/^\[inet6\] no ipaddress\/mask on eth1/).once
+            allow(Ohai::Log).to receive(:debug)
             @plugin.run
           end
         end
@@ -796,7 +797,7 @@ describe Ohai::System, "Network Plugin" do
         it "warns about not being able to set {ip,mac}address (ipv4)" do
           expect(Ohai::Log).to receive(:warn).with(/^unable to detect ipaddress/).once
           expect(Ohai::Log).to receive(:debug).with(/^unable to detect macaddress/) # for ipv4
-          expect(Ohai::Log).to receive(:debug).with(/^setting macaddress from interface 'eth0' for family 'inet6'/) # for ipv6
+          expect(Ohai::Log).to receive(:debug).with(/^setting macaddress to/) # for ipv6
           expect(Ohai::Log).to receive(:debug).with(/^\[inet6\] Using default interface eth0 and default gateway/) # for ipv6
           @plugin.run
         end
@@ -809,7 +810,7 @@ describe Ohai::System, "Network Plugin" do
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(Ohai::Log).to receive(:debug).with(/^macaddress set to 00:16:3E:2F:36:79 from the ipv6 setup/).once
+          expect(Ohai::Log).to receive(:debug).with(/^setting macaddress to '00:16:3E:2F:36:79'/)
           allow(Ohai::Log).to receive(:debug)
           @plugin.run
         end
@@ -841,7 +842,7 @@ describe Ohai::System, "Network Plugin" do
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(Ohai::Log).to receive(:debug).with(/^macaddress set to 00:16:3E:2F:36:79 from the ipv6 setup/).once
+          expect(Ohai::Log).to receive(:debug).with(/^setting macaddress to '00:16:3E:2F:36:79'/)
           allow(Ohai::Log).to receive(:debug)
           @plugin.run
         end
@@ -861,8 +862,8 @@ describe Ohai::System, "Network Plugin" do
             @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
             @expected_results = {
               "freebsd" => {
-                "ip6address" => "::1",
-                "macaddress" => "00:16:3E:2F:36:79"
+                "ip6address" => "2001:470:d:cb4::1",
+                "macaddress" => "02:20:6f:d2:c4:00"
               },
               "linux" => {
                 "ip6address" => "3ffe:1111:2222::33",
@@ -935,7 +936,7 @@ describe Ohai::System, "Network Plugin" do
               @plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
                 "freebsd" => {
-                  "macaddress" => "00:16:3E:2F:36:79"
+                  "macaddress" => "02:20:6f:d2:c4:00"
                 },
                 "linux" => {
                   "macaddress" => "00:16:3E:2F:36:79"

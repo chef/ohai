@@ -76,8 +76,8 @@ Ohai.plugin(:Network) do
   #    the routing table source field.
   # 3) and since we're at it, let's populate some :routes attributes
   # (going to do that for both inet and inet6 addresses)
-  def check_routing_table(family, iface)
-    so = shell_out("ip -o -f #{family[:name]} route show")
+  def check_routing_table(family, iface, default_route_table)
+    so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
     so.stdout.lines do |line|
       line.strip!
       Ohai::Log.debug("Parsing #{line}")
@@ -384,6 +384,14 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
+    # ohai.plugin[:network][:default_route_table] = 'default'
+    if configuration(:default_route_table).nil? || configuration(:default_route_table).empty?
+      default_route_table = 'main'
+    else
+      default_route_table = configuration(:default_route_table)
+    end
+    Ohai::Log.debug("default route table is '#{default_route_table}'")
+
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
@@ -415,7 +423,7 @@ Ohai.plugin(:Network) do
 
         iface = extract_neighbors(family, iface, neigh_attr)
 
-        iface = check_routing_table(family, iface)
+        iface = check_routing_table(family, iface, default_route_table)
 
         routes = parse_routes(family, iface)
 

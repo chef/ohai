@@ -29,7 +29,8 @@ Ohai.plugin(:Kernel) do
   def init_kernel
     kernel Mash.new
     [["uname -s", :name], ["uname -r", :release],
-     ["uname -v", :version], ["uname -m", :machine]].each do |cmd, property|
+     ["uname -v", :version], ["uname -m", :machine],
+     ["uname -p", :processor]].each do |cmd, property|
       so = shell_out(cmd)
       kernel[property] = so.stdout.split($/)[0]
     end

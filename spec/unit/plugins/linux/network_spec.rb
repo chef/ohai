@@ -1,7 +1,7 @@
 #
 #  Author:: Caleb Tennis <caleb.tennis@gmail.com>
 #  Author:: Chris Read <chris.read@gmail.com>
-#  Copyright:: Copyright (c) 2011 Opscode, Inc.
+#  Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -663,7 +663,14 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
         expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
-      describe "when there isn't a source field in route entries " do
+      describe "when there isn't a source field in route entries and no ipv6 default routes" do
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
+fe80::/64 dev eth0.11  proto kernel  metric 256
+1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
+'
+        }
+
         before(:each) do
           plugin.run
         end
@@ -798,7 +805,7 @@ default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:333
         end
       end
 
-      describe "when there's a source field in a local route entry " do
+      describe "when there's a source field in a local route entry but it isnt in the default route" do
         let(:linux_ip_route) {
 '10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
@@ -828,18 +835,34 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
           expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
+        # without a source address on the default route we cannot pick the an ipv6 address from the interface
+        # In the future an RFC6724 compliant process should choose ip6address in the network plugin
+        it "does not set ip6address" do
+          plugin.run
+          expect(plugin['ip6address']).to eq(nil)
+        end
+
+        context "with only ipv6 routes" do
+          let(:linux_ip_route) { '' }
+
+          it "sets macaddress to the mac address of the ip6 default interface" do
+            expect(plugin['macaddress']).to eq("00:AA:BB:CC:DD:EE")
+          end
+        end
+
         describe "when about to set macaddress" do
           it "sets macaddress" do
             plugin.run
             expect(plugin['macaddress']).to eq("12:31:3D:02:BE:A2")
           end
 
-          describe "when then interface has the NOARP flag" do
+          context "when then ipv4 interface has the NOARP flag and no ipv6 routes exist" do
             let(:linux_ip_route) {
 '10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
 '
             }
+            let(:linux_ip_route_inet6) { '' }
 
             it "completes the run" do
               expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
@@ -852,11 +875,6 @@ default via 172.16.19.1 dev tun0
               expect(plugin['macaddress']).to be_nil
             end
           end
-        end
-
-        it "sets ip6address" do
-          plugin.run
-          expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
         end
       end
 
@@ -950,6 +968,9 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
     inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
        valid_lft 6128sec preferred_lft 2526sec
 '}
+        # We don't have the corresponding ipv6 data for these tests
+        let(:linux_ip_route_inet6) { '' }
+        let(:linux_ip_inet6_neighbor_show) { '' }
 
         before(:each) do
           allow(plugin).to receive(:is_openvz?).and_return true

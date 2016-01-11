@@ -135,6 +135,13 @@ OUT
       @plugin.run
       expect(@plugin[:rackspace][:region]).to eq("dfw")
     end
+
+    it "should capture instance ID information" do
+      provider_data = "instance-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      allow(@plugin).to receive(:shell_out).with("xenstore-read name").and_return(mock_shell_out(0, provider_data, ""))
+      @plugin.run
+      expect(@plugin[:rackspace][:instance_id]).to eq("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+    end
   end
 
   describe "with rackspace cloud file" do

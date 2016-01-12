@@ -16,3 +16,9 @@ rescue LoadError
 end
 
 task :default => :spec
+
+require "chefstyle"
+require "rubocop/rake_task"
+RuboCop::RakeTask.new(:style) do |task|
+  task.options += ["--display-cop-names", "--no-color"]
+end

@@ -1,0 +1,6 @@
+AllCops:
+  Exclude:
+    - "spec/data/**/*"
+    - "vendor/**/*"
+    - "pkg/**/*"
+    - "spec/unit/plugins/darwin/system_profiler_output.rb"

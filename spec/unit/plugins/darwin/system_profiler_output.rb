@@ -1,4 +1,3 @@
-# encoding: utf-8
 
 module SystemProfilerOutput
 Mini = <<end_output

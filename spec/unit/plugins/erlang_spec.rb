@@ -1,7 +1,7 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Author:: Theodore Nordsieck (<theo@opscode.com>)
-# Copyright:: Copyright (c) 2008-2013 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Theodore Nordsieck (<theo@chef.io>)
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

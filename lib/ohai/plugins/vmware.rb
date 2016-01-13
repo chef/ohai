@@ -1,7 +1,7 @@
 #
 # Author:: "Dan Robinson" <drobinson@chef.io>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
-# Copyright:: Copyright (c) 2014-2015 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
 # Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #

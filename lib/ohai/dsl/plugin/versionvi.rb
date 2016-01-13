@@ -1,6 +1,6 @@
 #
-# Author:: Serdar Sutay (<serdar@opscode.com>)
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Serdar Sutay (<serdar@chef.io>)
+# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ module Ohai
         end
 
         def name
-          # Ohai V6 doesn't have any name specification for plugins. 
+          # Ohai V6 doesn't have any name specification for plugins.
           # So we are using the partial path to infer the name of the plugin
           partial_path = Pathname.new(@source).relative_path_from(Pathname.new(@plugin_dir_path)).to_s
           partial_path.chomp(".rb").gsub("/", "::")

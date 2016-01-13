@@ -1,14 +1,14 @@
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,7 +68,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/md0                960492     36388    875312       4% /boot
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/xvda1     1310720 107407 1203313    9% /
@@ -110,17 +110,17 @@ DFi
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
-    
+
     it "should set total_inodes to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:total_inodes]).to eq("124865")
     end
-    
+
     it "should set inodes_used to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_used]).to eq("380")
     end
-    
+
     it "should set inodes_available to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_available]).to eq("124485")
@@ -188,7 +188,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/md0                960492     36388    875312       4% /boot
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/xvda1     1310720 107407 1203313    9% /
@@ -205,7 +205,7 @@ DFi
 /dev/sda1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
 /dev/sda2: LABEL=\"fuego:1\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" TYPE=\"linux_raid_member\"
 /dev/md0: LABEL=\"/boot\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" TYPE=\"ext3\"
-/dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" TYPE=\"LVM2_member\" 
+/dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" TYPE=\"LVM2_member\"
 /dev/mapper/sys.vg-root.lv: LABEL=\"/\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" TYPE=\"ext4\"
 /dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
 /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
@@ -244,7 +244,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/md0                960492     36388    875312       4% /boot
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/xvda1     1310720 107407 1203313    9% /
@@ -330,12 +330,12 @@ MOUNTS
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
-  
+
     it "should set fs_type to value from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
     end
-  
+
     it "should set mount_options to an array of values from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
@@ -360,7 +360,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/mapper/sys.vg-root.lv  4805760    378716   4182924       9% /var/chroot
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/mapper/sys.vg-root.lv     1310720 107407 1203313    9% /
@@ -404,7 +404,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/sdc1              4805760    378716   4182924       9% /mnt
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/mapper/sys.vg-root.lv     1310720 107407 1203313    9% /

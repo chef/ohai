@@ -1,14 +1,14 @@
 #
-# Author:: Benjamin Black (<bb@opscode.com>)
-# Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Author:: Benjamin Black (<bb@chef.io>)
+# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ Ohai.plugin(:VirtualizationInfo) do
         virtualization[:capabilities] = Mash.new
         virtualization[:capabilities][:xml_desc] = (virtconn.capabilities.split("\n").collect {|line| line.strip}).join
         #xdoc = Hpricot virtualization[:capabilities][:xml_desc]
-        
+
         virtualization[:nodeinfo] = Mash.new
         ni = virtconn.node_get_info
         ['cores','cpus','memory','mhz','model','nodes','sockets','threads'].each {|a| virtualization[:nodeinfo][a] = ni.send(a)}
@@ -50,7 +50,7 @@ Ohai.plugin(:VirtualizationInfo) do
           ['os_type','uuid'].each {|a| virtualization[:domains][dv.name][a] = dv.send(a)}
           ['cpu_time','max_mem','memory','nr_virt_cpu','state'].each {|a| virtualization[:domains][dv.name][a] = dv.info.send(a)}
           #xdoc = Hpricot virtualization[:domains][dv.name][:xml_desc]
-          
+
         end
 
         virtualization[:networks] = Mash.new
@@ -60,7 +60,7 @@ Ohai.plugin(:VirtualizationInfo) do
           virtualization[:networks][n][:xml_desc] = (nv.xml_desc.split("\n").collect {|line| line.strip}).join
           ['bridge_name','uuid'].each {|a| virtualization[:networks][n][a] = nv.send(a)}
           #xdoc = Hpricot virtualization[:networks][n][:xml_desc]
-          
+
         end
 
         virtualization[:storage] = Mash.new

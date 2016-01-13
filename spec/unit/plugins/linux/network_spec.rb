@@ -1,7 +1,7 @@
 #
 #  Author:: Caleb Tennis <caleb.tennis@gmail.com>
 #  Author:: Chris Read <chris.read@gmail.com>
-#  Copyright:: Copyright (c) 2011-2015 Chef Software, Inc.
+#  Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");

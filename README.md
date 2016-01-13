@@ -77,7 +77,7 @@ Issues:
 Ohai - system information application
 
 * Author:: Adam Jacob (<adam@chef.io>)
-* Copyright:: Copyright (c) 2008-2014 Chef Software, Inc.
+* Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 * License:: Apache License, Version 2.0
 
 ```text

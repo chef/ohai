@@ -1,7 +1,7 @@
 #
 # Author:: Phil Dibowitz <phil@ipom.com>
 # Author:: Adam Jacob <adam@chef.io>
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -109,7 +109,7 @@ Ohai.plugin(:Filesystem2) do
         fs[key][:mount] = $6
       end
     end
-    
+
     # Grab filesystem inode data from df
     so = shell_out("df -iP")
     so.stdout.each_line do |line|
@@ -159,7 +159,7 @@ Ohai.plugin(:Filesystem2) do
       fs.each_key do |key|
         keys_to_update << key if key.start_with?("#{parsed[:dev]},")
       end
-        
+
       if keys_to_update.empty?
         key = "#{parsed[:dev]},"
         fs[key] = Mash.new

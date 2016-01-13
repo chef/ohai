@@ -1,4 +1,4 @@
-# Author:: Adam Edwards (<adamed@getchef.com>)
+# Author:: Adam Edwards (<adamed@chef.io>)
 #
 # Copyright:: Copyright (c) 2013-14 Chef Software, Inc.
 #

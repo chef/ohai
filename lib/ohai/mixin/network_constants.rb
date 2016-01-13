@@ -1,6 +1,6 @@
 #
 # Author:: Serdar Sutay (<serdar@chef.io>)
-# Copyright:: Copyright (c) 2014-2015 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,8 +26,8 @@ module Ohai
       }
 
       # From sigar: include/sigar.h sigar_net_route_t
-      SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags, 
-                             :refcnt, :use, :metric, :mtu, :window, 
+      SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags,
+                             :refcnt, :use, :metric, :mtu, :window,
                              :irtt, :ifname]
     end
   end

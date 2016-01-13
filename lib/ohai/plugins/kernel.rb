@@ -1,10 +1,10 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
+# Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Benjamin Black (<nostromo@gmail.com>)
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
-# Author:: Claire McQuin (<claire@opscode.com>)
+# Author:: Claire McQuin (<claire@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008, 2009, 2013 Opscode, Inc.
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #

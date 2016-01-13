@@ -1,11 +1,11 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
+# Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
-# Author:: Claire McQuin (<claire@opscode.com>)
+# Author:: Claire McQuin (<claire@chef.io>)
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Author:: Paul Mooring (<paul@opscode.com>)
-# Copyright:: Copyright (c) 2008, 2012, 2013 Opscode, Inc.
+# Author:: Paul Mooring (<paul@chef.io>)
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0

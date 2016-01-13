@@ -1,6 +1,6 @@
 #
-#  Author:: Daniel DeLeo <dan@opscode.com>
-#  Copyright:: Copyright (c) 2010 Opscode, Inc.
+#  Author:: Daniel DeLeo <dan@chef.io>
+#  Copyright:: Copyright (c) 2010-2016 Chef Software, Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -143,7 +143,7 @@ ROUTE_GET
     it "detects the encapsulation type of the interfaces" do
       expect(@plugin['network']['interfaces']['e1000g0:3']['encapsulation']).to eq('Ethernet')
     end
-    
+
     it "detects the L3PROTECT network flag" do
       expect(@plugin['network']['interfaces']['net0']['flags']).to include('L3PROTECT')
     end

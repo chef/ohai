@@ -1,6 +1,6 @@
 #
 # Author:: Jason J. W. Williams (williamsjj@digitar.com)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
+# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ Ohai.plugin(:Zpools) do
     # Grab individual health for devices in the zpools
     for pool in pools.keys
       pools[pool][:devices] = Mash.new
-      # Run "zpool status" as non-root user (adm) so that 
+      # Run "zpool status" as non-root user (adm) so that
       # the command won't try to open() each device which can
       # hang the command if any of the disks are bad.
       so = shell_out("su adm -c \"zpool status #{pool}\"")

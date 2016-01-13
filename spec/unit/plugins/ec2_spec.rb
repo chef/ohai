@@ -1,7 +1,7 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
-# Author:: Christopher Brown (cb@opscode.com)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Christopher Brown (cb@chef.io)
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,7 @@ describe Ohai::System, "plugin ec2" do
     end
 
 context "with common metadata paths" do
-   let(:paths) do 
+   let(:paths) do
      { "meta-data/" => "instance_type\nami_id\nsecurity-groups",
        "meta-data/instance_type" => "c1.medium",
        "meta-data/ami_id" => "ami-5d2dc934",

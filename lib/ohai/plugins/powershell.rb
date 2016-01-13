@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright (c) 2014 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ Ohai.plugin(:Powershell) do
     # BuildVersion                   6.3.9600.16394
     # PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
     # PSRemotingProtocolVersion      2.2
-    
+
     if so.exitstatus == 0
       version_info = {}
       so.stdout.strip.each_line do |line|

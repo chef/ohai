@@ -1,6 +1,6 @@
 
-# Author:: Theodore Nordsieck <theo@opscode.com>
-# Copyright:: Copyright (c) 2013 Opscode, Inc.
+# Author:: Theodore Nordsieck <theo@chef.io>
+# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec/unit/path/ohai_plugi
 #get options
 class MyCLI
   include Mixlib::CLI
-  
+
   option :command,
     :short => "-c CMD",
     :long => "--command CMD",
@@ -102,4 +102,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-puts OhaiPluginCommon.data_to_string data 
+puts OhaiPluginCommon.data_to_string data

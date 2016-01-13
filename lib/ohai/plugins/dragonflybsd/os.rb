@@ -1,7 +1,7 @@
 #
-# Authors:: Adam Jacob (<adam@opscode.com>)
+# Authors:: Adam Jacob (<adam@chef.io>)
 #           Richard Manyanza (<liseki@nyikacraftsmen.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #

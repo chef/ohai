@@ -1,7 +1,7 @@
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Copyright:: Copyright (c) 2009 Opscode, Inc.
+# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
 # Copyright:: Copyright (c) 2010 Kurt Yoder
 # License:: Apache License, Version 2.0
 #
@@ -46,12 +46,12 @@ Ohai.plugin(:Virtualization) do
       so = shell_out(smbios_path)
       case so.stdout
       when /Manufacturer: Microsoft/
-        if so.stdout =~ /Product: Virtual Machine/ 
+        if so.stdout =~ /Product: Virtual Machine/
           virtualization[:system] = "virtualpc"
           virtualization[:role] = "guest"
-        end 
+        end
       when /Manufacturer: VMware/
-        if so.stdout =~ /Product: VMware Virtual Platform/ 
+        if so.stdout =~ /Product: VMware Virtual Platform/
           virtualization[:system] = "vmware"
           virtualization[:role] = "guest"
         end
@@ -74,7 +74,7 @@ Ohai.plugin(:Virtualization) do
           'ip' => info[6],
         }
       end
-        
+
       if (zones.length == 1)
         first_zone = zones.keys[0]
         unless( first_zone == 'global')

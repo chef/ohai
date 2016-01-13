@@ -1,4 +1,4 @@
-# Author:: Lamont Granquist (<lamont@opscode.com>)
+# Author:: Lamont Granquist (<lamont@chef.io>)
 #
 # Copyright:: Copyright (c) 2013-14 Chef Software, Inc.
 #

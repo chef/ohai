@@ -1,14 +1,14 @@
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Copyright:: Copyright (c) 2008 Opscode, Inc.
+# Author:: Adam Jacob (<adam@chef.io>)
+# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ describe Ohai::System, "Linux lsb plugin" do
         and_yield("DISTRIB_RELEASE=8.04").
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-      allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file) 
+      allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file)
       allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
@@ -43,17 +43,17 @@ describe Ohai::System, "Linux lsb plugin" do
       @plugin.run
       expect(@plugin[:lsb][:id]).to eq("Ubuntu")
     end
-  
+
     it "should set lsb[:release]" do
       @plugin.run
       expect(@plugin[:lsb][:release]).to eq("8.04")
     end
-  
+
     it "should set lsb[:codename]" do
       @plugin.run
       expect(@plugin[:lsb][:codename]).to eq("hardy")
     end
-  
+
     it "should set lsb[:description]" do
       @plugin.run
       expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
@@ -64,7 +64,7 @@ describe Ohai::System, "Linux lsb plugin" do
     before(:each) do
       allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
       allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(true)
-  
+
       @stdin = double("STDIN", { :close => true })
       @pid = 10
       @stderr = double("STDERR")
@@ -72,7 +72,7 @@ describe Ohai::System, "Linux lsb plugin" do
       @status = 0
 
     end
-    
+
     describe "on Centos 5.4 correctly" do
       before(:each) do
         @stdout = <<-LSB_RELEASE
@@ -89,17 +89,17 @@ LSB_RELEASE
         @plugin.run
         expect(@plugin[:lsb][:id]).to eq("CentOS")
       end
-    
+
       it "should set lsb[:release]" do
         @plugin.run
         expect(@plugin[:lsb][:release]).to eq("5.4")
       end
-    
+
       it "should set lsb[:codename]" do
         @plugin.run
         expect(@plugin[:lsb][:codename]).to eq("Final")
       end
-    
+
       it "should set lsb[:description]" do
         @plugin.run
         expect(@plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
@@ -117,22 +117,22 @@ Codename:       Laughlin
 LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
-  
+
       it "should set lsb[:id]" do
         @plugin.run
         expect(@plugin[:lsb][:id]).to eq("Fedora")
       end
-    
+
       it "should set lsb[:release]" do
         @plugin.run
         expect(@plugin[:lsb][:release]).to eq("14")
       end
-    
+
       it "should set lsb[:codename]" do
         @plugin.run
         expect(@plugin[:lsb][:codename]).to eq("Laughlin")
       end
-    
+
       it "should set lsb[:description]" do
         @plugin.run
         expect(@plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")

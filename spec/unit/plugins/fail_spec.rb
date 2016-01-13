@@ -1,15 +1,15 @@
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
-# Author:: Claire McQuin (claire@opscode.com)
-# Copyright:: Copyright (c) 2011, 2013 Opscode, Inc.
+# Author:: Claire McQuin (claire@chef.io)
+# Copyright:: Copyright (c) 2011, 2013-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -241,7 +241,7 @@ end
 
 describe "when using nonexistent DSL commands in Ohai.plugin block" do
   failstr = "Ohai.plugin do\n\tcreates \"fail\"\nend\n"
-  
+
   it_behaves_like "a v7 loading failure" do
     let(:failstr) { failstr }
   end
@@ -266,7 +266,7 @@ Ohai.plugin do
   end
 end
 EOF
-  
+
   it_behaves_like "a v7 loading success" do
     let(:failstr) { failstr1 }
   end

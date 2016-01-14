@@ -2888,7 +2888,7 @@ END
         expect(@plugin["cpu"]["104"]["core_id"]).to eql("1117")
         expect(@plugin["cpu"]["112"]["core_id"]).to eql("1124")
         expect(@plugin["cpu"]["120"]["core_id"]).to eql("1131")
-     end
+      end
 
      it "should include processor architecture" do
         expect(@plugin["cpu"]["0"]["arch"]).to eql("sparcv9")

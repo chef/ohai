@@ -1,0 +1,24 @@
+chef                                              12.5.1                     i--
+compatibility/ucb                                 0.5.11-0.175.2.0.0.42.2    i--
+compress/bzip2                                    1.0.6-0.175.2.0.0.42.1     i--
+compress/gzip                                     1.5-0.175.2.4.0.3.0        i--
+compress/p7zip                                    9.20.1-0.175.2.0.0.42.1    i--
+compress/pbzip2                                   1.1.6-0.175.2.0.0.42.1     i--
+compress/pixz                                     1.0-0.175.2.0.0.42.1       i--
+compress/unzip                                    6.0-0.175.2.3.0.4.0        i--
+compress/xz                                       5.0.1-0.175.2.0.0.42.1     i--
+compress/zip                                      3.0-0.175.2.0.0.42.1       i--
+consolidation/SunVTS/SunVTS-incorporation         7.18.2-0.175.2.1.0.5.1     i--
+consolidation/X/X-incorporation                   0.5.11-0.175.2.1.0.3.1413  i--
+consolidation/admin/admin-incorporation           0.5.11-0.175.1.0.0.5.0     i--
+consolidation/cacao/cacao-incorporation           0.5.11-0.175.2.0.0.38.0    i--
+consolidation/cde/cde-incorporation               0.5.11-0.175.2.0.0.23.0    i--
+consolidation/cns/cns-incorporation               0.5.11-0.175.2.0.0.39.0    i--
+consolidation/dbtg/dbtg-incorporation             0.5.11-0.175.2.0.0.38.0    i--
+consolidation/ddt/ddt-incorporation               8.10.15.11.23              i--
+consolidation/desktop/desktop-incorporation       0.5.11-0.175.2.4.0.5.0     i--
+consolidation/desktop/gnome-incorporation         0.5.11-0.175.2.0.0.42.0    i--
+consolidation/gfx/gfx-incorporation               0.5.11-0.175.1.0.0.5.0     i--
+consolidation/ips/ips-incorporation               0.5.11-0.175.2.3.0.3.0     i--
+consolidation/java-7/java-7-incorporation         1.7.0.72.14-0              i--
+system/EMCpower (emc.com)                         6.0.0.1.0-3                i--

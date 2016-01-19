@@ -1,0 +1,49 @@
+bos.sysmgt:bos.sysmgt.smit:7.1.1.15: : :C:F:System Management Interface Tool (SMIT): : : : : : :0:0:/:1216
+bos.sysmgt:bos.sysmgt.sysbr:7.1.1.17: : :C:F:System Backup and BOS Install Utilities: : : : : : :0:0:/:1228
+bos.sysmgt:bos.sysmgt.trace:7.1.1.15: : :C:F:Software Trace Service Aids: : : : : : :0:1:/:1216
+bos.terminfo:bos.terminfo.ansi.data:7.1.0.0: : :C: :Amer National Stds Institute Terminal Defs: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.com.data:7.1.0.0: : :C: :Common Terminal Definitions: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.dec.data:7.1.0.0: : :C: :Digital Equipment Corp. Terminal Definitions: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.ibm.data:7.1.0.0: : :C: :IBM Terminal Definitions: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.pc.data:7.1.0.0: : :C: :Personal Computer Terminal Definitions: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.print.data:7.1.0.0: : :C: :Generic Line Printer Terminal Definitions: : : : : : :0:1:/:1036
+bos.terminfo:bos.terminfo.rte:7.1.0.0: : :C: :Run-time Environment for AIX Terminals: : : : : : :0:0:/:1036
+bos.terminfo:bos.terminfo.svprint.data:7.1.0.0: : :C: :System V Printer Terminal Definitions: : : : : : :0:0:/:1036
+bos.terminfo:bos.terminfo.televideo.data:7.1.0.0: : :C: :Televideo Terminal Definitions: : : : : : :0:0:/:1036
+bos.terminfo:bos.terminfo.wyse.data:7.1.0.0: : :C: :Wyse Terminal Definitions: : : : : : :0:0:/:1036
+bos.txt:bos.txt.hplj.fnt:7.1.0.0: : :C: :Fonts for Hewlett Packard Laser Jet Printers : : : : : : :0:0:/:1115
+bos.txt:bos.txt.ibm3812.fnt:7.1.0.0: : :C: :Fonts for IBM 3812 Printer : : : : : : :0:0:/:1115
+bos.txt:bos.txt.ibm3816.fnt:7.1.0.0: : :C: :Fonts for IBM 3816 Printer : : : : : : :0:0:/:1115
+bos.txt:bos.txt.spell:7.1.0.0: : :C: :Writer's Tools Commands : : : : : : :0:0:/:1115
+bos.txt:bos.txt.spell.data:7.1.0.0: : :C: :Writer's Tools Data: : : : : : :0:0:/:1036
+bos.txt:bos.txt.tfs:7.1.1.15: : :C:F:Text Formatting Services Commands: : : : : : :0:0:/:1216
+bos.txt:bos.txt.tfs.data:7.1.0.0: : :C: :Text Formatting Services Data: : : : : : :0:0:/:1036
+bos.wpars:bos.wpars:7.1.1.15: : :C:F:AIX Workload Partitions: : : : : : :0:0:/:1216
+cdrtools.base:cdrtools.base:1.9.0.9: : :C: :CD/DVD recorder: : : : : : :0:0:/:
+cdrtools.man.en_US:cdrtools.man.en_US:1.9.0.9: : :C: :CD/DVD recorder man page documentation: : : : : : :0:0:/:
+chef:chef:12.5.1.1: : :C: :The full stack of chef: : : : : : :0:0:/:
+clic.rte:clic.rte.kernext:4.7.0.1: : :C: :CryptoLite for C Kernel: : : : : : :0:0:/:
+clic.rte:clic.rte.lib:4.7.0.1: : :C: :CryptoLite for C Library: : : : : : :0:0:/:
+devices.artic960:devices.artic960.diag:7.1.0.0: : :C: :IBM ARTIC960 Adapter Diagnostics : : : : : : :0:0:/:1115
+devices.artic960:devices.artic960.rte:7.1.1.15: : :C:F:IBM ARTIC960 Runtime Support: : : : : : :0:0:/:1216
+devices.artic960:devices.artic960.ucode:7.1.0.0: : :C: :IBM ARTIC960 Adapter Software : : : : : : :0:0:/:1115
+devices.chrp.AT97SC3201_r:devices.chrp.AT97SC3201_r.rte:7.1.0.0: : :C: :Trusted Platform Module Device Software: : : : : : :0:0:/:1036
+devices.chrp.IBM.lhca:devices.chrp.IBM.lhca.rte:7.1.1.16: : :C:F:Infiniband Logical HCA Runtime Environment: : : : : : :0:0:/:1228
+devices.chrp.IBM.lhea:devices.chrp.IBM.lhea.diag:7.1.0.0: : :C: :Host Ethernet Adapter Diagnostics : : : : : : :0:0:/:1115
+devices.chrp.IBM.lhea:devices.chrp.IBM.lhea.rte:7.1.1.16: : :C:F:Host Ethernet Adapter (HEA) Runtime Environment: : : : : : :0:0:/:1228
+devices.chrp.base:devices.chrp.base.ServiceRM:1.5.1.0: : :C:F:RSCT Service Resource Manager: : : : : : :0:0:/:
+devices.chrp.base:devices.chrp.base.diag:7.1.1.15: : :C:F:RISC CHRP Base System Device Diagnostics: : : : : : :0:0:/:1216
+devices.chrp.base:devices.chrp.base.rte:7.1.1.16: : :C:F:RISC PC Base System Device Software (CHRP): : : : : : :0:0:/:1228
+devices.chrp.pci:devices.chrp.pci.rte:7.1.1.16: : :C:F:PCI Bus Software (CHRP): : : : : : :0:0:/:1228
+devices.chrp.pciex:devices.chrp.pciex.rte:7.1.0.0: : :C: :PCI Express Bus Software (CHRP): : : : : : :0:0:/:1036
+devices.chrp.vdevice:devices.chrp.vdevice.rte:7.1.1.16: : :C:F:Virtual I/O Bus Support: : : : : : :0:0:/:1228
+devices.chrp_lpar.base:devices.chrp_lpar.base.ras:7.1.0.15: : :C: :CHRP LPAR RAS Support : : : : : : :0:0:/:1115
+devices.common.IBM.async:devices.common.IBM.async.diag:7.1.0.0: : :C: :Common Serial Adapter Diagnostics: : : : : : :0:0:/:1036
+devices.common.IBM.atm:devices.common.IBM.atm.rte:7.1.1.16: : :C:F:Common ATM Software: : : : : : :0:0:/:1228
+devices.common.IBM.crypt:devices.common.IBM.crypt.rte:7.1.0.0: : :C: :Cryptographic Common Runtime Environment: : : : : : :0:0:/:1036
+devices.common.IBM.cx:devices.common.IBM.cx.rte:7.1.1.15: : :C:F:CX Common Adapter Software: : : : : : :0:0:/:1216
+devices.common.IBM.disk:devices.common.IBM.disk.rte:7.1.1.15: : :C:F:Common IBM Disk Software: : : : : : :0:0:/:1216
+devices.common.IBM.ethernet:devices.common.IBM.ethernet.rte:7.1.1.16: : :C:F:Common Ethernet Software: : : : : : :0:1:/:1228
+devices.common.IBM.fc:devices.common.IBM.fc.hba-api:7.1.1.16: : :C:F:Common HBA API Library: : : : : : :0:0:/:1228
+devices.common.IBM.fc:devices.common.IBM.fc.rte:7.1.1.16: : :C:F:Common IBM FC Software: : : : : : :0:0:/:1228
+devices.common.IBM.fda:devices.common.IBM.fda.diag:7.1.0.0: : :C: :Common Diskette Adapter and Device Diagnostics: : : : : : :0:0:/:1036

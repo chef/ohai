@@ -330,8 +330,8 @@ fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
     allow(plugin).to receive(:shell_out).with("ip -d -s link").and_return(mock_shell_out(0, linux_ip_link_s_d, ""))
     allow(plugin).to receive(:shell_out).with("ip -f inet neigh show").and_return(mock_shell_out(0, linux_ip_neighbor_show, ""))
     allow(plugin).to receive(:shell_out).with("ip -f inet6 neigh show").and_return(mock_shell_out(0, linux_ip_inet6_neighbor_show, ""))
-    allow(plugin).to receive(:shell_out).with("ip -o -f inet route show").and_return(mock_shell_out(0, linux_ip_route, ""))
-    allow(plugin).to receive(:shell_out).with("ip -o -f inet6 route show").and_return(mock_shell_out(0, linux_ip_route_inet6, ""))
+    allow(plugin).to receive(:shell_out).with("ip -o -f inet route show table main").and_return(mock_shell_out(0, linux_ip_route, ""))
+    allow(plugin).to receive(:shell_out).with("ip -o -f inet6 route show table main").and_return(mock_shell_out(0, linux_ip_route_inet6, ""))
 
     allow(plugin).to receive(:shell_out).with("route -n").and_return(mock_shell_out(0, linux_route_n, ""))
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))

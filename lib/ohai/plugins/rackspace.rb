@@ -14,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "resolv"
+require "ohai/mixin/rackspace_metadata"
 
 Ohai.plugin(:Rackspace) do
+  include ::Ohai::Mixin::RackspaceMetadata
+
   provides "rackspace"
 
   depends "kernel", "network/interfaces"
@@ -36,12 +38,12 @@ Ohai.plugin(:Rackspace) do
   # true:: If rackspace provider attribute found
   # false:: Otherwise
   def has_rackspace_metadata?
-    so = shell_out("xenstore-read vm-data/provider_data/provider")
-    if so.exitstatus == 0
-      so.stdout.strip.downcase == 'rackspace'
+    status, stdout, stderr = xenstore_command("read", "vm-data/provider_data/provider")
+    if status == 0
+      stdout.strip.downcase == 'rackspace'
+    else
+      false
     end
-  rescue Errno::ENOENT
-    false
   end
 
   # Identifies the rackspace cloud
@@ -53,96 +55,132 @@ Ohai.plugin(:Rackspace) do
     hint?('rackspace') || has_rackspace_metadata? || has_rackspace_kernel?
   end
 
-  # Names rackspace ip address
-  #
-  # === Parameters
-  # name<Symbol>:: Use :public_ip or :private_ip
-  # eth<Symbol>:: Interface name of public or private ip
-  def get_ip_address(name, eth)
-    network[:interfaces][eth][:addresses].each do |key, info|
-      if info['family'] == 'inet'
-        rackspace[name] = key
-        break # break when we found an address
+  # Grab a list of rackspace interfaces from the xenstore. The interface definitions
+  # are encoded using JSON.
+  # Example for a public interface given below
+  # {
+  #     "broadcast": "162.209.6.255",
+  #     "dns": [
+  #         "173.203.4.9",
+  #         "173.203.4.8"
+  #     ],
+  #     "gateway": "162.209.6.1",
+  #     "gateway_v6": "fe80::def",
+  #     "ip6s": [
+  #         {
+  #             "enabled": "1",
+  #             "gateway": "fe80::def",
+  #             "ip": "2001:4801:7819:74:be76:4eff:fe11:1553",
+  #             "netmask": 64
+  #         }
+  #     ],
+  #     "ips": [
+  #         {
+  #             "enabled": "1",
+  #             "gateway": "162.209.6.1",
+  #             "ip": "162.209.6.148",
+  #             "netmask": "255.255.255.0"
+  #         }
+  #     ],
+  #     "label": "public",
+  #     "mac": "BC:76:4E:11:15:53"
+  # }
+  # Example for a private interface given below:
+  # {
+  #     "broadcast": "10.178.127.255",
+  #     "dns": [
+  #         "173.203.4.9",
+  #         "173.203.4.8"
+  #     ],
+  #     "gateway": null,
+  #     "ips": [
+  #         {
+  #             "enabled": "1",
+  #             "gateway": null,
+  #             "ip": "10.178.6.80",
+  #             "netmask": "255.255.128.0"
+  #         }
+  #     ],
+  #     "label": "private",
+  #     "mac": "BC:76:4E:11:17:2E",
+  #     "routes": [
+  #         {
+  #             "gateway": "10.178.0.1",
+  #             "netmask": "255.240.0.0",
+  #             "route": "10.208.0.0"
+  #         },
+  #         {
+  #             "gateway": "10.178.0.1",
+  #             "netmask": "255.240.0.0",
+  #             "route": "10.176.0.0"
+  #         }
+  #     ]
+  # }
+  def get_rackspace_interfaces
+    return @rackspace_interfaces if @rackspace_interfaces
+    @rackspace_interfaces = []
+
+    status, stdout, stderr = xenstore_command("ls", "vm-data/networking")
+    if status == 0
+      stdout.split("\n").each do |line|
+        id = line.split.first
+        status, stdout, stderr = xenstore_command("read", "vm-data/networking/#{id}")
+        if status == 0
+          begin
+            interface = JSON.parse(stdout)
+            @rackspace_interfaces << interface
+          rescue Exception => e
+            Ohai::Log.debug("Unable to parse Rackspace interface definition for #{id}: #{e.message} on (#{stdout})")
+          end
+        else
+          Ohai::Log.debug("Unable to query xen-store for interface #{id}: #{status} (#{stderr})")
+        end
       end
+    else
+      Ohai::Log.debug("Unable to query xen-store for list of interfaces: #{status} (#{stderr})")
     end
+    @rackspace_interfaces
   end
 
-  # Names rackspace ipv6 address for interface
-  #
-  # === Parameters
-  # name<Symbol>:: Use :public_ip or :private_ip
-  # eth<Symbol>:: Interface name of public or private ip
-  def get_global_ipv6_address(name, eth)
-    network[:interfaces][eth][:addresses].each do |key, info|
-      # check if we got an ipv6 address and if its in global scope
-      if info['family'] == 'inet6' && info['scope'] == 'Global'
-        rackspace[name] = key
-        break # break when we found an address
-      end
-    end
+  def cull_ips(ips)
+    ips.map { |ip| ip["ip"] }
   end
 
   # Get the rackspace region
   #
   def get_region()
-    so = shell_out("xenstore-ls vm-data/provider_data")
-    if so.exitstatus == 0
-      so.stdout.split("\n").each do |line|
-        rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
-      end
+    status, stdout, stderr = xenstore_command("read", "vm-data/provider_data/region")
+    if status == 0
+      stdout.strip
+    else
+      Ohai::Log.debug("could not read region information for Rackspace cloud from xen-store")
+      nil
     end
-  rescue Errno::ENOENT
-    Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
-    nil
-  end
-
-  # Get the rackspace private networks
-  #
-  def get_private_networks()
-    so = shell_out('xenstore-ls vm-data/networking')
-    if so.exitstatus == 0
-      networks = []
-      so.stdout.split("\n").map{|l| l.split('=').first.strip }.map do |item|
-        _so = shell_out("xenstore-read vm-data/networking/#{item}")
-        if _so.exitstatus == 0
-          networks.push(FFI_Yajl::Parser.new.parse(_so.stdout))
-        else
-          Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
-          return false
-        end
-      end
-      # these networks are already known to ohai, and are not 'private networks'
-      networks.delete_if { |hash| hash['label'] == 'private' }
-      networks.delete_if { |hash| hash['label'] == 'public' }
-    end
-  rescue Errno::ENOENT
-    Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
-    nil
   end
 
   collect_data do
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new
-      get_ip_address(:public_ip, :eth0)
-      get_ip_address(:private_ip, :eth1)
-      get_region()
+      public_interfaces = get_rackspace_interfaces.select { |iface| iface["label"] == "public" }
+      private_interfaces = get_rackspace_interfaces.select { |iface| iface["label"] == "private" }
+      rackspace[:public_ips] = public_interfaces.map { |iface| cull_ips(iface["ips"]) }.flatten
+      rackspace[:private_ips] = private_interfaces.map { |iface| cull_ips(iface["ips"]) }.flatten
+      rackspace[:public_ipv6s] = public_interfaces.map { |iface| cull_ips(iface["ip6s"]) }.flatten
+
+      rackspace[:public_ip] = rackspace[:public_ips].first
+      rackspace[:private_ip] = rackspace[:private_ips].first
+      rackspace[:public_ipv4] = rackspace[:public_ips].first
+      rackspace[:public_ipv6] = rackspace[:public_ipv6s].first
+      rackspace[:local_ipv4] = rackspace[:private_ips].first
+
+      rackspace[:region] = get_region()
+
       # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
-      rackspace[:public_ipv4] = rackspace[:public_ip]
-      get_global_ipv6_address(:public_ipv6, :eth0)
-      unless rackspace[:public_ip].nil?
-        rackspace[:public_hostname] = begin
-                                        Resolv.getname(rackspace[:public_ip])
-                                      rescue Resolv::ResolvError, Resolv::ResolvTimeout
-                                        rackspace[:public_ip]
-                                      end
+      if rackspace[:public_ip]
+        rackspace[:public_hostname] = "#{rackspace[:public_ip].gsub('.','-')}.static.cloud-ips.com"
       end
-      rackspace[:local_ipv4] = rackspace[:private_ip]
-      get_global_ipv6_address(:local_ipv6, :eth1)
       rackspace[:local_hostname] = hostname
-      private_networks = get_private_networks
-      rackspace[:private_networks] = private_networks if private_networks
     end
   end
-
 end

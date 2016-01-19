@@ -96,6 +96,18 @@ Ohai.plugin(:Rackspace) do
     nil
   end
 
+  # Get the rackspace instance_id
+  #
+  def get_instance_id()
+    so = shell_out("xenstore-read name")
+    if so.exitstatus == 0
+      rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
+    end
+  rescue Errno::ENOENT
+    Ohai::Log.debug("Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")
+    nil
+  end
+
   # Get the rackspace private networks
   #
   def get_private_networks()
@@ -127,6 +139,7 @@ Ohai.plugin(:Rackspace) do
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, :eth1)
       get_region()
+      get_instance_id()
       # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
       rackspace[:public_ipv4] = rackspace[:public_ip]
       get_global_ipv6_address(:public_ipv6, :eth0)

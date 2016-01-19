@@ -142,6 +142,9 @@ Ohai.plugin(:Platform) do
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
+    elsif File.exist?('/etc/alpine-release')
+      platform "alpine"
+      platform_version File.read("/etc/alpine-release").strip()
     elsif os_release_file_is_cisco?
       raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field' if
         os_release_info['ID_LIKE'].nil? || ! os_release_info['ID_LIKE'].include?('wrlinux')
@@ -191,6 +194,8 @@ Ohai.plugin(:Platform) do
       platform_family "arch"
     when /exherbo/
       platform_family "exherbo"
+    when /alpine/
+      platform_family "alpine"
     end
   end
 end

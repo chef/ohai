@@ -3,11 +3,25 @@
 ## Unreleased
 * [**phreakocious**](https://github.com/phreakocious):
   - Collect layer 1 Ethernet information per NIC on Linux hosts
+* [**Mark Gibbons**](https://www.github.com/MarkGibbons):
+  - Add kernel[:processor] with output of uname -p output
+* [**Shahul Khajamohideen**](https://github.com/sh9189)
+  - Add packages plugin
+* [**electrolinux**](https://github.com/electrolinux)
+  - Add "alpine" platform and platform_family
+* [**Julien Berard**](https://github.com/jujugrrr)
+  - Add instance_id to rackspace plugin
+* [**Matt Whiteley**](https://github.com/whiteley)
+  - Allow route table override
+* [**JM Howard Brown**](https://github.com/jmhbrown)
+  - Add tests and queue_depth to block_device
 * [pr#672](https://github.com/chef/ohai/pull/672) CPU plugin for Darwin (OS X) now properly reports the number of real CPUs adds "cores" to match the CPU output on Linux
 * [pr#674](https://github.com/chef/ohai/pull/674) CPU plugin for FreeBSD now reports "real" and "core" values to match the CPU output on Linux
 * [pr#654](https://github.com/chef/ohai/pull/654) Improvements to filesystem and wpar detection on AIX
 * [pr#683](https://github.com/chef/ohai/pull/683) Properly detect the init package on older Linux kernels
 * [pr#684](https://github.com/chef/ohai/pull/684) Remove non-functional cucumber tests
+* [pr#695](https://github.com/chef/ohai/pull/695) Fix detection of mac address on IPv6 only systems
+* [pr#703](https://github.com/chef/ohai/pull/703) Enable ChefStyle per RFC 64
 
 ## Release 8.8.1
 * [pr#677](https://github.com/chef/ohai/pull/677) Remove dependency on mime-types gem

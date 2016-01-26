@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'ohai/mixin/ec2_metadata'
+
 Ohai.plugin(:Openstack) do
   provides "openstack"
 
@@ -22,7 +24,7 @@ Ohai.plugin(:Openstack) do
     require "net/http"
     require "json"
 
-    Timeout.timeout(5) do
+    Timeout.timeout(3) do
       path = "/openstack/#{api_version}/meta_data.json"
       uri = URI.parse("http://#{addr}/#{path}")
       http = Net::HTTP.new(uri.host, uri.port)
@@ -48,11 +50,22 @@ Ohai.plugin(:Openstack) do
   end
 
   collect_data(:default) do
-    openstack Mash.new
-    data =  collect_openstack_metadata('169.254.169.254', 'latest')
-    openstack[:metadata] = Mash.new
-    data.each do |k, v|
-      openstack[:metadata][k] = v
+    # Adds openstack Mash
+    if hint?('openstack') || hint?('hp')
+      Ohai::Log.debug("ohai openstack")
+      if can_metadata_connect?('169.254.169.254','80')
+        openstack Mash.new
+        if hint?('hp')
+          openstack['provider'] = 'hp'
+        else
+          openstack['provider'] = 'openstack'
+          data =  collect_openstack_metadata('169.254.169.254', 'latest')
+          openstack[:metadata] = Mash.new
+          data.each do |k, v|
+            openstack[:metadata][k] = v
+          end
+        end
+      end
     end
   end
 end

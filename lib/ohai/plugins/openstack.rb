@@ -53,7 +53,7 @@ Ohai.plugin(:Openstack) do
     # Adds openstack Mash
     if hint?('openstack') || hint?('hp')
       Ohai::Log.debug("ohai openstack")
-      if can_metadata_connect?('169.254.169.254','80')
+      if can_metadata_connect?('169.254.169.254',80)
         openstack Mash.new
         if hint?('hp')
           openstack['provider'] = 'hp'

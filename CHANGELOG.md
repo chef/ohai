@@ -1,6 +1,6 @@
 # Ohai Changelog
 
-## Unreleased
+## Release 8.9.0
 * [**phreakocious**](https://github.com/phreakocious):
   - Collect layer 1 Ethernet information per NIC on Linux hosts
 * [**Mark Gibbons**](https://www.github.com/MarkGibbons):

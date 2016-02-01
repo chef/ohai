@@ -60,7 +60,7 @@ Ohai.plugin(:EC2) do
       end
       ec2[:userdata] = self.fetch_userdata
       #ASCII-8BIT is equivalent to BINARY in this case
-      if ec2[:userdata].encoding.to_s == "ASCII-8BIT"
+      if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
         Ohai::Log.debug("Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end

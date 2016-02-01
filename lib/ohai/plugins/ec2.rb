@@ -26,7 +26,9 @@ Ohai.plugin(:EC2) do
   provides "ec2"
 
   depends "network/interfaces"
+  depends "dmi"
 
+  # look for arp address that non-VPC hosts will have
   def has_ec2_mac?
     network[:interfaces].values.each do |iface|
       unless iface[:arp].nil?
@@ -40,10 +42,24 @@ Ohai.plugin(:EC2) do
     false
   end
 
+  # look for amazon string in dmi bios data
+  def has_ec2_dmi?
+    begin
+      if dmi[:bios][:all_records][0][:Version] =~ /amazon/
+        Ohai::Log.debug("has_ec2_dmi? == true")
+        true
+      end
+    rescue NoMethodError
+      Ohai::Log.debug("has_ec2_dmi? == false")
+      false
+    end
+  end
+
+
   def looks_like_ec2?
     # Try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
-    hint?('ec2') || has_ec2_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
+    hint?('ec2') || ( has_ec2_dmi? || has_ec2_mac?) && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
 
   collect_data do

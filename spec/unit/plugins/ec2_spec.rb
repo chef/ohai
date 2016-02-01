@@ -270,6 +270,22 @@ end
     end
   end
 
+  describe "with ec2 dmi data" do
+    it_should_behave_like "ec2"
+
+    before(:each) do
+      @plugin[:dmi] = { :bios => { :all_records => [  { :Version => "4.2.amazon" } ] } }
+    end
+  end
+
+  describe "without ec2 dmi data" do
+    it_should_behave_like "!ec2"
+
+    before(:each) do
+      @plugin[:dmi] = nil
+    end
+  end
+
   describe "with ec2 cloud file" do
     it_should_behave_like "ec2"
 

@@ -22,21 +22,23 @@ Ohai.plugin(:Drivers) do
   collect_data(:windows) do
     require 'wmi-lite/wmi'
 
-    wmi = WmiLite::Wmi.new
-
     kext = Mash.new
     pnp_drivers = Mash.new
 
-    drivers = wmi.instances_of('Win32_PnPSignedDriver')
-    drivers.each do |driver|
-      pnp_drivers[driver['deviceid']] = Mash.new
-      driver.wmi_ole_object.properties_.each do |p|
-        pnp_drivers[driver['deviceid']][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
-      end
-      if driver['devicename']
-        kext[driver['devicename']] = pnp_drivers[driver['deviceid']]
-        kext[driver['devicename']][:version] = pnp_drivers[driver['deviceid']][:driver_version]
-        kext[driver['devicename']][:date] = pnp_drivers[driver['deviceid']][:driver_date] ? pnp_drivers[driver['deviceid']][:driver_date].to_s[0..7] : nil
+    if configuration(:enabled)
+      wmi = WmiLite::Wmi.new
+
+      drivers = wmi.instances_of('Win32_PnPSignedDriver')
+      drivers.each do |driver|
+        pnp_drivers[driver['deviceid']] = Mash.new
+        driver.wmi_ole_object.properties_.each do |p|
+          pnp_drivers[driver['deviceid']][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
+        end
+        if driver['devicename']
+          kext[driver['devicename']] = pnp_drivers[driver['deviceid']]
+          kext[driver['devicename']][:version] = pnp_drivers[driver['deviceid']][:driver_version]
+          kext[driver['devicename']][:date] = pnp_drivers[driver['deviceid']][:driver_date] ? pnp_drivers[driver['deviceid']][:driver_date].to_s[0..7] : nil
+        end
       end
     end
 

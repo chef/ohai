@@ -22,16 +22,20 @@ Ohai.plugin(:Lua) do
   depends "languages"
 
   collect_data do
-    so = shell_out("lua -v")
-    if so.exitstatus == 0
-      Ohai::Log.debug("Successfully ran lua -v")
-      lua = Mash.new
-      output = nil
-      output = so.stderr.split
-      if output.length >= 1
-        lua[:version] = output[1]
+    begin
+      so = shell_out("lua -v")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran lua -v")
+        lua = Mash.new
+        output = nil
+        output = so.stderr.split
+        if output.length >= 1
+          lua[:version] = output[1]
+        end
+        languages[:lua] = lua unless lua.empty?
       end
-      languages[:lua] = lua unless lua.empty?
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run lua -v: Errno::ENOENT")
     end
   end
 end

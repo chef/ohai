@@ -19,14 +19,18 @@ Ohai.plugin(:Elixir) do
   depends "languages"
 
   collect_data do
-    so = shell_out("elixir -v")
-    if so.exitstatus == 0
-      Ohai::Log.debug("Successfully ran elixir -v")
-      elixir = Mash.new
-      output = nil
-      output = so.stdout.split
-      elixir[:version] = output[1]
-      languages[:elixir] = elixir unless elixir.empty?
+    begin
+      so = shell_out("elixir -v")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran elixir -v")
+        elixir = Mash.new
+        output = nil
+        output = so.stdout.split
+        elixir[:version] = output[1]
+        languages[:elixir] = elixir unless elixir.empty?
+      end
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run elixir -v: Errno::ENOENT")
     end
   end
 end

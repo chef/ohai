@@ -22,20 +22,23 @@ Ohai.plugin(:Perl) do
   depends "languages"
 
   collect_data do
-    so = shell_out("perl -V:version -V:archname")
-    if so.exitstatus == 0
-      Ohai::Log.debug("Successfully ran perl -V:version -V:archname")
-      perl = Mash.new
-      so.stdout.split(/\r?\n/).each do |line|
-        case line
-        when /^version=\'(.+)\';$/
-          perl[:version] = $1
-        when /^archname=\'(.+)\';$/
-          perl[:archname] = $1
+    begin
+      so = shell_out("perl -V:version -V:archname")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran perl -V:version -V:archname")
+        perl = Mash.new
+        so.stdout.split(/\r?\n/).each do |line|
+          case line
+          when /^version=\'(.+)\';$/
+            perl[:version] = $1
+          when /^archname=\'(.+)\';$/
+            perl[:archname] = $1
+          end
         end
+        languages[:perl] = perl unless perl.empty?
       end
-      languages[:perl] = perl unless perl.empty?
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run perl -V:version -V:archname: Errno::ENOENT")
     end
-
   end
 end

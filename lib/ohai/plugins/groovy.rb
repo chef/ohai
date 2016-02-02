@@ -22,16 +22,20 @@ Ohai.plugin(:Groovy) do
   depends "languages"
 
   collect_data do
-    so = shell_out("groovy -v")
-    if so.exitstatus == 0
-      Ohai::Log.debug("Successfully ran groovy -v")
-      groovy = Mash.new
-      output = nil
-      output = so.stdout.split
-      if output.length >= 2
-        groovy[:version] = output[2]
+    begin
+      so = shell_out("groovy -v")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran groovy -v")
+        groovy = Mash.new
+        output = nil
+        output = so.stdout.split
+        if output.length >= 2
+          groovy[:version] = output[2]
+        end
+        languages[:groovy] = groovy unless groovy.empty?
       end
-      languages[:groovy] = groovy unless groovy.empty?
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run groovy -v: Errno::ENOENT")
     end
   end
 end

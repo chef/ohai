@@ -43,8 +43,10 @@ Ohai.plugin(:EC2) do
   end
 
   # look for amazon string in dmi bios data
+  # this only works on hvm instances as paravirt instances have no dmi data
   def has_ec2_dmi?
     begin
+      # detect a version of '4.2.amazon'
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
         Ohai::Log.debug("has_ec2_dmi? == true")
         true

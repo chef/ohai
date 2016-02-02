@@ -26,7 +26,9 @@ Ohai.plugin(:EC2) do
   provides "ec2"
 
   depends "network/interfaces"
+  depends "dmi"
 
+  # look for arp address that non-VPC hosts will have
   def has_ec2_mac?
     network[:interfaces].values.each do |iface|
       unless iface[:arp].nil?
@@ -40,10 +42,26 @@ Ohai.plugin(:EC2) do
     false
   end
 
+  # look for amazon string in dmi bios data
+  # this only works on hvm instances as paravirt instances have no dmi data
+  def has_ec2_dmi?
+    begin
+      # detect a version of '4.2.amazon'
+      if dmi[:bios][:all_records][0][:Version] =~ /amazon/
+        Ohai::Log.debug("has_ec2_dmi? == true")
+        true
+      end
+    rescue NoMethodError
+      Ohai::Log.debug("has_ec2_dmi? == false")
+      false
+    end
+  end
+
+
   def looks_like_ec2?
     # Try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
-    hint?('ec2') || has_ec2_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
+    hint?('ec2') || ( has_ec2_dmi? || has_ec2_mac?) && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
 
   collect_data do
@@ -60,7 +78,7 @@ Ohai.plugin(:EC2) do
       end
       ec2[:userdata] = self.fetch_userdata
       #ASCII-8BIT is equivalent to BINARY in this case
-      if ec2[:userdata].encoding.to_s == "ASCII-8BIT"
+      if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
         Ohai::Log.debug("Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end

@@ -20,6 +20,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
 
 describe Ohai::System, 'plugin packages' do
+  before do
+    Ohai.config[:plugin][:packages][:enabled] = true
+  end
+
   context 'on debian' do
     let(:plugin) do
       get_plugin('packages').tap do |plugin|

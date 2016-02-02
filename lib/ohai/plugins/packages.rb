@@ -23,58 +23,62 @@ Ohai.plugin(:Packages) do
   depends 'platform_family'
 
   collect_data(:linux) do
-    packages Mash.new
+    if configuration(:enabled)
+      packages Mash.new
+      if %w(debian).include? platform_family
+        so = shell_out('dpkg-query -W')
+        pkgs = so.stdout.lines
 
-    if %w(debian).include? platform_family
-      so = shell_out('dpkg-query -W')
-      pkgs = so.stdout.lines
+        pkgs.each do |pkg|
+          name, version = pkg.split
+          packages[name] = { 'version' => version }
+        end
 
-      pkgs.each do |pkg|
-        name, version = pkg.split
-        packages[name] = { 'version' => version }
-      end
+      elsif %w(rhel fedora suse).include? platform_family
+        require 'shellwords'
+        format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
+        so = shell_out("rpm -qa --queryformat #{format}")
+        pkgs = so.stdout.lines
 
-    elsif %w(rhel fedora suse).include? platform_family
-      require 'shellwords'
-      format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
-      so = shell_out("rpm -qa --queryformat #{format}")
-      pkgs = so.stdout.lines
-
-      pkgs.each do |pkg|
-        name, version, release = pkg.split
-        packages[name] = { 'version' => version, 'release' => release }
+        pkgs.each do |pkg|
+          name, version, release = pkg.split
+          packages[name] = { 'version' => version, 'release' => release }
+        end
       end
     end
   end
 
   collect_data(:windows) do
-    packages Mash.new
+    if configuration(:enabled)
+      packages Mash.new
+      require 'wmi-lite'
 
-    require 'wmi-lite'
+      wmi = WmiLite::Wmi.new
+      w32_product = wmi.instances_of('Win32_Product')
 
-    wmi = WmiLite::Wmi.new
-    w32_product = wmi.instances_of('Win32_Product')
-
-    w32_product.find_all.each do |product|
-      name = product['name']
-      package = packages[name] = Mash.new
-      %w(version vendor installdate).each do |attr|
-        package[attr] = product[attr]
+      w32_product.find_all.each do |product|
+        name = product['name']
+        package = packages[name] = Mash.new
+        %w(version vendor installdate).each do |attr|
+          package[attr] = product[attr]
+        end
       end
     end
   end
 
   collect_data(:aix) do
-    packages Mash.new
-    so = shell_out('lslpp -L -q -c')
-    pkgs = so.stdout.lines
+    if configuration(:enabled)
+      packages Mash.new
+      so = shell_out('lslpp -L -q -c')
+      pkgs = so.stdout.lines
 
-    # Output format is
-    # Package Name:Fileset:Level
-    # On aix, filesets are packages and levels are versions
-    pkgs.each do |pkg|
-      _, name, version = pkg.split(':')
-      packages[name] = { 'version' => version }
+      # Output format is
+      # Package Name:Fileset:Level
+      # On aix, filesets are packages and levels are versions
+      pkgs.each do |pkg|
+        _, name, version = pkg.split(':')
+        packages[name] = { 'version' => version }
+      end
     end
   end
 
@@ -115,8 +119,10 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:solaris2) do
-    packages Mash.new
-    collect_ips_packages
-    collect_sysv_packages
+    if configuration(:enabled)
+      packages Mash.new
+      collect_ips_packages
+      collect_sysv_packages
+    end
   end
 end

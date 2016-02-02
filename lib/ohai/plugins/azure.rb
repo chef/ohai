@@ -19,7 +19,7 @@ Ohai.plugin(:Azure) do
 
   collect_data do
     # The azure hints are populated by the knife plugin for Azure.
-    # The project is located at https://github.com/opscode/knife-azure
+    # The project is located at https://github.com/chef/knife-azure
     # Please see the lib/chef/knife/azure_server_create.rb file in that
     # project for details
     azure_metadata_from_hints = hint?('azure')
@@ -27,9 +27,28 @@ Ohai.plugin(:Azure) do
       Ohai::Log.debug("azure_metadata_from_hints is present.")
       azure Mash.new
       azure_metadata_from_hints.each {|k, v| azure[k] = v }
+    elsif looks_like_azure?
+      Ohai::Log.debug("No hints present, but system appears to be on azure.")
+      azure Mash.new
     else
-      Ohai::Log.debug("No hints present for azure.")
+      Ohai::Log.debug("No hints present for azure and doesn't appear to be azure.")
       false
+    end
+  end
+
+  # check for either the waagent or the unknown-245 DHCP option that Azure uses
+  # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
+  def looks_like_azure?
+    if ::File.exist?('/usr/sbin/waagent') || ::Dir.exist?('C:\WindowsAzure')
+      Ohai::Log.debug("Found waagent used by MS Azure.")
+      return true
+    elsif File.exist?('/var/lib/dhcp/dhclient.eth0.leases')
+      File.open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
+        if line =~ /unknown-245/
+          Ohai::Log.debug("Found unknown-245 DHCP option used by MS Azure.")
+          return true
+        end
+      end
     end
   end
 end

@@ -118,7 +118,7 @@ Ohai.plugin(:Virtualization) do
 
     # parse dmidecode to discover various virtualization guests
     if File.exists?("/usr/sbin/dmidecode")
-      guest = determine_guest(shell_out('dmidecode').stdout)
+      guest = guest_from_dmi(shell_out('dmidecode').stdout)
       if guest
         virtualization[:system] = guest
         virtualization[:role] = 'guest'

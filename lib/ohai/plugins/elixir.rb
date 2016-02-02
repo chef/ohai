@@ -19,14 +19,14 @@ Ohai.plugin(:Elixir) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    elixir = Mash.new
     so = shell_out("elixir -v")
     if so.exitstatus == 0
-      output =  so.stdout.split
+      Ohai::Log.debug("Successfully ran elixir -v")
+      elixir = Mash.new
+      output = nil
+      output = so.stdout.split
       elixir[:version] = output[1]
-      languages[:elixir] = elixir if elixir[:version]
+      languages[:elixir] = elixir unless elixir.empty?
     end
   end
 end

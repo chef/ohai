@@ -22,11 +22,11 @@ Ohai.plugin(:Erlang) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    erlang = Mash.new
     so = shell_out("erl +V")
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran erl +V")
+      erlang = Mash.new
+      output = nil
       output = so.stderr.split
       if output.length >= 6
         options = output[1]
@@ -34,9 +34,7 @@ Ohai.plugin(:Erlang) do
         erlang[:version] = output[5]
         erlang[:options] = options.split(',')
         erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
-        if erlang[:version] and erlang[:options] and erlang[:emulator]
-          languages[:erlang] = erlang
-        end
+        languages[:erlang] = erlang unless erlang.empty?
       end
     end
   end

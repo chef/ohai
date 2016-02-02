@@ -24,10 +24,10 @@ Ohai.plugin(:PHP) do
   depends "languages"
 
   collect_data do
-    php = Mash.new
-
     so = shell_out("php -v")
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran php -v")
+      php = Mash.new
       so.stdout.each_line do |line|
         case line
         when /PHP (\S+).+built: ([^)]+)/
@@ -40,7 +40,7 @@ Ohai.plugin(:PHP) do
         end
       end
 
-      languages[:php] = php if php[:version]
+      languages[:php] = php unless php.empty?
     end
   end
 end

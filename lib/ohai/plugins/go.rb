@@ -18,13 +18,14 @@ Ohai.plugin(:Go) do
   depends "languages"
 
   collect_data do
-    output = nil
-    go = Mash.new
     so = shell_out("go version")
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran go version")
+      go = Mash.new
+      output = nil
       output = so.stdout.split
       go[:version] = output[2].slice!(2..16)
-      languages[:go] = go if go[:version]
+      languages[:go] = go unless go.empty?
     end
   end
 end

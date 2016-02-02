@@ -20,7 +20,6 @@ Ohai.plugin(:Powershell) do
   depends "languages"
 
   collect_data(:windows) do
-    powershell = Mash.new
     so = shell_out("powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable")
     # Sample output:
     #
@@ -35,6 +34,8 @@ Ohai.plugin(:Powershell) do
     # PSRemotingProtocolVersion      2.2
 
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable")
+      powershell = Mash.new
       version_info = {}
       so.stdout.strip.each_line do |line|
         kv = line.strip.split(/\s+/, 2)
@@ -47,7 +48,7 @@ Ohai.plugin(:Powershell) do
       powershell[:build_version] = version_info['BuildVersion']
       powershell[:compatible_versions] = parse_compatible_versions(version_info['PSCompatibleVersions'])
       powershell[:remoting_protocol_version] = version_info['PSRemotingProtocolVersion']
-      languages[:powershell] = powershell if powershell[:version]
+      languages[:powershell] = powershell unless powershell.empty?
     end
   end
 

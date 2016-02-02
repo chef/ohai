@@ -22,17 +22,16 @@ Ohai.plugin(:Lua) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    lua = Mash.new
-
     so = shell_out("lua -v")
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran lua -v")
+      lua = Mash.new
+      output = nil
       output = so.stderr.split
       if output.length >= 1
         lua[:version] = output[1]
       end
-      languages[:lua] = lua if lua[:version]
+      languages[:lua] = lua unless lua.empty?
     end
   end
 end

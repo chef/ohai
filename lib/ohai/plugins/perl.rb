@@ -22,11 +22,10 @@ Ohai.plugin(:Perl) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    perl = Mash.new
     so = shell_out("perl -V:version -V:archname")
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran perl -V:version -V:archname")
+      perl = Mash.new
       so.stdout.split(/\r?\n/).each do |line|
         case line
         when /^version=\'(.+)\';$/
@@ -35,7 +34,7 @@ Ohai.plugin(:Perl) do
           perl[:archname] = $1
         end
       end
-      languages[:perl] = perl
+      languages[:perl] = perl unless perl.empty?
     end
 
   end

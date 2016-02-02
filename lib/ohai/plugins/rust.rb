@@ -19,14 +19,15 @@ Ohai.plugin(:Rust) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    rust = Mash.new
     so = shell_out("rustc --version")
+
     if so.exitstatus == 0
+      Ohai::Log.debug("Successfully ran rustc --version")
+      output = nil
+      rust = Mash.new
       output =  so.stdout.split
       rust[:version] = output[1]
-      languages[:rust] = rust if rust[:version]
+      languages[:rust] = rust unless rust.empty?
     end
   end
 end

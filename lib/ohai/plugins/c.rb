@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,6 +30,7 @@ Ohai.plugin(:C) do
     begin
       so = shell_out("gcc -v")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran gcc -v")
         description = so.stderr.split($/).last
         output = description.split
         if output.length >= 3
@@ -62,6 +63,7 @@ Ohai.plugin(:C) do
     begin
       so = shell_out("cl /?")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran cl /?")
         description = so.stderr.lines.first.chomp
         if description =~ /Compiler Version ([\d\.]+)/
           c[:cl] = Mash.new

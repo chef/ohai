@@ -1,5 +1,10 @@
 # Ohai Changelog
 
+## Release 8.10.0
+* [pr#720](https://github.com/chef/ohai/pull/720) Make pnp plugin opt-in via config
+* [pr#717](https://github.com/chef/ohai/pull/717) Don't enable packages plugin by default
+* [pr#711](https://github.com/chef/ohai/pull/711) Improve EC2 detection when hint isn't present
+
 ## Release 8.9.0
 * [**phreakocious**](https://github.com/phreakocious):
   - Collect layer 1 Ethernet information per NIC on Linux hosts

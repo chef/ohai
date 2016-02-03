@@ -28,17 +28,28 @@ Ohai.plugin(:EC2) do
   depends "network/interfaces"
   depends "dmi"
 
+  # look for ec2metadata which is included on paravirt / hvm AMIs
+  def has_ec2metadata_bin?
+    if File.exist?('/usr/bin/ec2metadata')
+      Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == true")
+      true
+    else
+      Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == false")
+      false
+    end
+  end
+
   # look for arp address that non-VPC hosts will have
-  def has_ec2_mac?
+  def has_xen_mac?
     network[:interfaces].values.each do |iface|
       unless iface[:arp].nil?
         if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
-          Ohai::Log.debug("has_ec2_mac? == true")
+          Ohai::Log.debug("ec2 plugin: has_xen_mac? == true")
           return true
         end
       end
     end
-    Ohai::Log.debug("has_ec2_mac? == false")
+    Ohai::Log.debug("ec2 plugin: has_xen_mac? == false")
     false
   end
 
@@ -48,25 +59,26 @@ Ohai.plugin(:EC2) do
     begin
       # detect a version of '4.2.amazon'
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
-        Ohai::Log.debug("has_ec2_dmi? == true")
+        Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == true")
         true
       end
     rescue NoMethodError
-      Ohai::Log.debug("has_ec2_dmi? == false")
+      Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
       false
     end
   end
 
-
   def looks_like_ec2?
-    # Try non-blocking connect so we don't "block" if
+    return true if hint?('ec2')
+
+    # if has ec2 mac try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
-    hint?('ec2') || ( has_ec2_dmi? || has_ec2_mac?) && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
+    return true if (has_ec2metadata_bin? || has_ec2_dmi?) || (has_xen_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80))
   end
 
   collect_data do
     if looks_like_ec2?
-      Ohai::Log.debug("looks_like_ec2? == true")
+      Ohai::Log.debug("ec2 plugin: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
@@ -77,13 +89,13 @@ Ohai.plugin(:EC2) do
         ec2[k] = v
       end
       ec2[:userdata] = self.fetch_userdata
-      #ASCII-8BIT is equivalent to BINARY in this case
+      # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
-        Ohai::Log.debug("Binary UserData Found. Storing in base64")
+        Ohai::Log.debug("ec2 plugin: Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end
     else
-      Ohai::Log.debug("looks_like_ec2? == false")
+      Ohai::Log.debug("ec2 plugin: looks_like_ec2? == false")
       false
     end
   end

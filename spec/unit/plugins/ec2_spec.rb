@@ -27,11 +27,13 @@ describe Ohai::System, "plugin ec2" do
     @plugin[:network] = {:interfaces => {:eth0 => {} } }
     allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+    allow(File).to receive(:exist?).with('/usr/bin/ec2metadata').and_return(false)
   end
 
   shared_examples_for "!ec2" do
-    it "should NOT attempt to fetch the ec2 metadata" do
+    it "should NOT attempt to fetch the ec2 metadata or set ec2 attribute" do
       expect(@plugin).not_to receive(:http_client)
+      expect(@plugin[:ec2]).to be_nil
       @plugin.run
     end
   end
@@ -47,7 +49,6 @@ describe Ohai::System, "plugin ec2" do
       expect(@http_client).to receive(:get).
         with("/").twice.
         and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
-      allow(File).to receive(:exist?).and_return(false)
     end
 
 context "with common metadata paths" do
@@ -125,7 +126,7 @@ end
       expect(@plugin[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname']).to eql('server17.opscode.com')
     end
 
-    context "with ec2_iam cloud file" do
+    context "with ec2_iam hint file" do
       before do
         if windows?
           allow(File).to receive(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(true)
@@ -161,7 +162,7 @@ end
       end
     end
 
-    context "without ec2_iam cloud file" do
+    context "without ec2_iam hint file" do
       before do
         if windows?
           allow(File).to receive(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(false)
@@ -253,7 +254,7 @@ end
     end
   end
 
-  describe "with ec2 mac and metadata address connected" do
+  describe "with xen mac and metadata address connected" do
     it_should_behave_like "ec2"
 
     before(:each) do
@@ -262,11 +263,11 @@ end
     end
   end
 
-  describe "without ec2 mac and metadata address connected" do
-    it_should_behave_like "!ec2"
+  describe "with ec2metadata binary" do
+    it_should_behave_like "ec2"
 
     before(:each) do
-      @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
+      allow(File).to receive(:exist?).with('/usr/bin/ec2metadata').and_return(true)
     end
   end
 
@@ -278,15 +279,7 @@ end
     end
   end
 
-  describe "without ec2 dmi data" do
-    it_should_behave_like "!ec2"
-
-    before(:each) do
-      @plugin[:dmi] = nil
-    end
-  end
-
-  describe "with ec2 cloud file" do
+  describe "with ec2 hint file" do
     it_should_behave_like "ec2"
 
     before(:each) do
@@ -300,26 +293,26 @@ end
     end
   end
 
-  describe "without cloud file" do
+  describe "with rackspace hint file" do
     it_should_behave_like "!ec2"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
-    end
-  end
-
-  describe "with rackspace cloud file" do
-    it_should_behave_like "!ec2"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
-
       allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
       allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
       allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+    end
+  end
+
+  describe "without hint file, mac address, dmi data, or ec2metadata binary" do
+    it_should_behave_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(false)
+      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+      allow(File).to receive(:exist?).with('/usr/bin/ec2metadata').and_return(false)
+      @plugin[:dmi] = nil
+      @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"00:50:56:c0:00:08"}
     end
   end
 

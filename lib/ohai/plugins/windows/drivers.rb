@@ -20,12 +20,13 @@ Ohai.plugin(:Drivers) do
   depends "kernel"
 
   collect_data(:windows) do
-    require 'wmi-lite/wmi'
-
-    kext = Mash.new
-    pnp_drivers = Mash.new
-
     if configuration(:enabled)
+
+      require 'wmi-lite/wmi'
+
+      kext = Mash.new
+      pnp_drivers = Mash.new
+
       wmi = WmiLite::Wmi.new
 
       drivers = wmi.instances_of('Win32_PnPSignedDriver')
@@ -40,10 +41,11 @@ Ohai.plugin(:Drivers) do
           kext[driver['devicename']][:date] = pnp_drivers[driver['deviceid']][:driver_date] ? pnp_drivers[driver['deviceid']][:driver_date].to_s[0..7] : nil
         end
       end
+
+      kernel[:pnp_drivers] = pnp_drivers
+      kernel[:modules] = kext
+
     end
-
-    kernel[:pnp_drivers] = pnp_drivers
-    kernel[:modules] = kext
-
   end
+
 end

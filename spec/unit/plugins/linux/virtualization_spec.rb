@@ -25,24 +25,24 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     # default to all requested Files not existing
-    allow(File).to receive(:exists?).with("/proc/xen").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/xen/capabilities").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/modules").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/cpuinfo").and_return(false)
-    allow(File).to receive(:exists?).with("/usr/sbin/dmidecode").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/self/status").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/bc/0").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/vz").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(false)
-    allow(File).to receive(:exists?).with("/.dockerenv").and_return(false)
-    allow(File).to receive(:exists?).with("/.dockerinit").and_return(false)
-    allow(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/xen").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/xen/capabilities").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/modules").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/cpuinfo").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/self/status").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/vz").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
+    allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
+    allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
   end
 
   describe "when we are checking for xen" do
     it "sets xen guest if /proc/xen exists but /proc/xen/capabilities does not" do
-      expect(File).to receive(:exists?).with("/proc/xen").and_return(true)
-      expect(File).to receive(:exists?).with("/proc/xen/capabilities").and_return(false)
+      expect(File).to receive(:exist?).with("/proc/xen").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/xen/capabilities").and_return(false)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("xen")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -50,8 +50,8 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets xen host if /proc/xen/capabilities contains control_d " do
-      expect(File).to receive(:exists?).with("/proc/xen").and_return(true)
-      expect(File).to receive(:exists?).with("/proc/xen/capabilities").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/xen").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/xen/capabilities").and_return(true)
       allow(File).to receive(:read).with("/proc/xen/capabilities").and_return("control_d")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("xen")
@@ -60,8 +60,8 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets xen guest if /proc/xen/capabilities exists but is empty" do
-      expect(File).to receive(:exists?).with("/proc/xen").and_return(true)
-      expect(File).to receive(:exists?).with("/proc/xen/capabilities").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/xen").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/xen/capabilities").and_return(true)
       allow(File).to receive(:read).with("/proc/xen/capabilities").and_return("")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("xen")
@@ -70,7 +70,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "does not set virtualization if xen isn't there" do
-      expect(File).to receive(:exists?).at_least(:once).and_return(false)
+      expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -78,7 +78,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for kvm" do
     it "sets kvm host if /proc/modules contains kvm" do
-      expect(File).to receive(:exists?).with("/proc/modules").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/modules").and_return(true)
       allow(File).to receive(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -87,7 +87,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do
-      expect(File).to receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/cpuinfo").and_return(true)
       allow(File).to receive(:read).with("/proc/cpuinfo").and_return("QEMU Virtual CPU")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -96,7 +96,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets kvm guest if /proc/cpuinfo contains Common KVM processor" do
-      expect(File).to receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/cpuinfo").and_return(true)
       allow(File).to receive(:read).with("/proc/cpuinfo").and_return("Common KVM processor")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -105,7 +105,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets kvm guest if /proc/cpuinfo contains Common 32-bit KVM processor" do
-      expect(File).to receive(:exists?).with("/proc/cpuinfo").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/cpuinfo").and_return(true)
       allow(File).to receive(:read).with("/proc/cpuinfo").and_return("Common 32-bit KVM processor")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -114,7 +114,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "does not set virtualization if kvm isn't there" do
-      expect(File).to receive(:exists?).at_least(:once).and_return(false)
+      expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -122,7 +122,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for VirtualBox" do
     it "sets vbox host if /proc/modules contains vboxdrv" do
-      expect(File).to receive(:exists?).with("/proc/modules").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/modules").and_return(true)
       allow(File).to receive(:read).with("/proc/modules").and_return("vboxdrv 268268 3 vboxnetadp,vboxnetflt")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vbox")
@@ -131,7 +131,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets vbox gues if /proc/modules contains vboxguest" do
-      expect(File).to receive(:exists?).with("/proc/modules").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/modules").and_return(true)
       allow(File).to receive(:read).with("/proc/modules").and_return("vboxguest 214901 2 vboxsf, Live 0xffffffffa00db000 (OF)")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vbox")
@@ -140,7 +140,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "does not set virtualization if vbox isn't there" do
-      expect(File).to receive(:exists?).at_least(:once).and_return(false)
+      expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -148,7 +148,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are parsing dmidecode" do
     before(:each) do
-      expect(File).to receive(:exists?).with("/usr/sbin/dmidecode").and_return(true)
+      expect(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(true)
     end
 
     it "sets virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
@@ -308,7 +308,7 @@ RHEV
 
   describe "when we are checking for Linux-VServer" do
     it "sets Linux-VServer host if /proc/self/status contains s_context: 0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("s_context: 0")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -317,7 +317,7 @@ RHEV
     end
 
     it "sets Linux-VServer host if /proc/self/status contains VxID: 0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("VxID: 0")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -326,7 +326,7 @@ RHEV
     end
 
     it "sets Linux-VServer host if /proc/self/status contains multiple space VxID:   0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("VxID:   0")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -335,7 +335,7 @@ RHEV
     end
 
     it "sets Linux-VServer host if /proc/self/status contains tabbed VxID:\t0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("VxID:\t0")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -344,7 +344,7 @@ RHEV
     end
 
     it "sets Linux-VServer guest if /proc/self/status contains s_context > 0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("s_context: 2")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -353,7 +353,7 @@ RHEV
     end
 
     it "sets Linux-VServer guest if /proc/self/status contains VxID > 0" do
-      expect(File).to receive(:exists?).with("/proc/self/status").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/status").and_return(true)
       allow(File).to receive(:read).with("/proc/self/status").and_return("VxID: 2")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
@@ -362,7 +362,7 @@ RHEV
     end
 
     it "does not set virtualization if Linux-VServer isn't there" do
-      expect(File).to receive(:exists?).at_least(:once).and_return(false)
+      expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -370,7 +370,7 @@ RHEV
 
   describe "when we are checking for openvz" do
     it "sets openvz host if /proc/bc/0 exists" do
-      expect(File).to receive(:exists?).with("/proc/bc/0").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/bc/0").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("openvz")
       expect(plugin[:virtualization][:role]).to eq("host")
@@ -378,8 +378,8 @@ RHEV
     end
 
     it "sets openvz guest if /proc/bc/0 does not exist and /proc/vz exists" do
-      expect(File).to receive(:exists?).with("/proc/bc/0").and_return(false)
-      expect(File).to receive(:exists?).with("/proc/vz").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
+      expect(File).to receive(:exist?).with("/proc/vz").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("openvz")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -387,8 +387,8 @@ RHEV
     end
 
     it "does not set virtualization if openvz isn't there" do
-      expect(File).to receive(:exists?).with("/proc/bc/0").and_return(false)
-      expect(File).to receive(:exists?).with("/proc/vz").and_return(false)
+      expect(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
+      expect(File).to receive(:exist?).with("/proc/vz").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -400,7 +400,7 @@ RHEV
 0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
 0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
       DEVICES
-      expect(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("parallels")
@@ -413,7 +413,7 @@ RHEV
 0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
 0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
       DEVICES
-      expect(File).to receive(:exists?).with("/proc/bus/pci/devices").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
@@ -432,7 +432,7 @@ RHEV
 2:cpu:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 1:cpuset:/
 CGROUP
-      expect(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("lxc")
@@ -451,7 +451,7 @@ CGROUP
 2:cpu:/lxc/vanilla
 1:cpuset:/lxc/vanilla
 CGROUP
-      expect(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("lxc")
@@ -470,7 +470,7 @@ CGROUP
 2:cpu:/Charlie
 1:cpuset:/Charlie
 CGROUP
-      expect(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
@@ -488,7 +488,7 @@ CGROUP
 2:cpu:/
 1:cpuset:/
 CGROUP
-        expect(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+        expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       end
 
@@ -521,7 +521,7 @@ CGROUP
     end
 
     it "does not set virtualization if /proc/self/cgroup isn't there" do
-      expect(File).to receive(:exists?).with("/proc/self/cgroup").and_return(false)
+      expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
@@ -539,7 +539,7 @@ CGROUP
 2:cpu:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 1:cpuset:/
 CGROUP
-      allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
@@ -558,7 +558,7 @@ CGROUP
 2:cpu:/docker/vanilla
 1:cpuset:/docker/vanilla
 CGROUP
-      allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
@@ -579,7 +579,7 @@ CGROUP
 2:cpu,cpuacct:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 1:name=systemd:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 CGROUP
-      allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
@@ -598,7 +598,7 @@ CGROUP
 2:cpu:/Charlie
 1:cpuset:/Charlie
 CGROUP
-      allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
@@ -616,7 +616,7 @@ CGROUP
 2:cpu:/
 1:cpuset:/
 CGROUP
-        allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(true)
+        allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
         plugin.run
         expect(plugin[:virtualization]).to eq({'systems' => {}})
@@ -643,13 +643,13 @@ CGROUP
     end
 
     it "does not set virtualization if /proc/self/cgroup isn't there" do
-      allow(File).to receive(:exists?).with("/proc/self/cgroup").and_return(false)
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end
 
     it "sets virtualization if /.dockerenv exists" do
-      allow(File).to receive(:exists?).with("/.dockerenv").and_return(true)
+      allow(File).to receive(:exist?).with("/.dockerenv").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -657,7 +657,7 @@ CGROUP
     end
 
     it "sets virtualization if /.dockerinit exists" do
-      allow(File).to receive(:exists?).with("/.dockerinit").and_return(true)
+      allow(File).to receive(:exist?).with("/.dockerinit").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
       expect(plugin[:virtualization][:role]).to eq("guest")
@@ -665,8 +665,8 @@ CGROUP
     end
 
     it "does not set virtualization if /.dockerenv or /.dockerinit does not exists" do
-      allow(File).to receive(:exists?).with("/.dockerenv").and_return(false)
-      allow(File).to receive(:exists?).with("/.dockerinit").and_return(false)
+      allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
+      allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({'systems' => {}})
     end

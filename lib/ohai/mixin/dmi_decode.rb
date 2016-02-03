@@ -17,7 +17,7 @@
 
 # http://www.dmo.ca/blog/detecting-virtualization-on-linux
 module ::Ohai::Mixin::DmiDecode
-  def determine_guest(dmi_data)
+  def guest_from_dmi(dmi_data)
     dmi_data.each_line do |line|
       case line
       when /Manufacturer: Microsoft/

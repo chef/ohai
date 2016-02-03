@@ -41,15 +41,15 @@ Ohai.plugin(:Virtualization) do
     # virtualization[:mechanism]
 
     ## Xen
-    # /proc/xen is an empty dir for EL6 + Linode Guests
-    if File.exists?("/proc/xen")
+    # /proc/xen is an empty dir for EL6 + Linode Guests + Paravirt EC2 instances
+    if File.exist?("/proc/xen")
       virtualization[:system] = "xen"
       # Assume guest
       virtualization[:role] = "guest"
       virtualization[:systems][:xen] = "guest"
 
       # This file should exist on most Xen systems, normally empty for guests
-      if File.exists?("/proc/xen/capabilities")
+      if File.exist?("/proc/xen/capabilities")
         if File.read("/proc/xen/capabilities") =~ /control_d/i
           virtualization[:role] = "host"
           virtualization[:systems][:xen] = "host"
@@ -65,7 +65,7 @@ Ohai.plugin(:Virtualization) do
     #   but rather be additive - btm
 
     # Detect from kernel module
-    if File.exists?("/proc/modules")
+    if File.exist?("/proc/modules")
       modules = File.read("/proc/modules")
       if modules =~ /^kvm/
         virtualization[:system] = "kvm"
@@ -87,7 +87,7 @@ Ohai.plugin(:Virtualization) do
     # 2.6.27-9-server (intrepid) has this / 2.6.18-6-amd64 (etch) does not
     # It would be great if we could read pv_info in the kernel
     # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
-    if File.exists?("/proc/cpuinfo")
+    if File.exist?("/proc/cpuinfo")
       if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
@@ -97,18 +97,18 @@ Ohai.plugin(:Virtualization) do
 
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
-    if File.exists?("/proc/bc/0")
+    if File.exist?("/proc/bc/0")
       virtualization[:system] = "openvz"
       virtualization[:role] = "host"
       virtualization[:systems][:openvz] = "host"
-    elsif File.exists?("/proc/vz")
+    elsif File.exist?("/proc/vz")
       virtualization[:system] = "openvz"
       virtualization[:role] = "guest"
       virtualization[:systems][:openvz] = "guest"
     end
 
     # Detect Parallels virtual machine from pci devices
-    if File.exists?("/proc/bus/pci/devices")
+    if File.exist?("/proc/bus/pci/devices")
       if File.read("/proc/bus/pci/devices") =~ /1ab84000/
         virtualization[:system] = "parallels"
         virtualization[:role] = "guest"
@@ -117,8 +117,8 @@ Ohai.plugin(:Virtualization) do
     end
 
     # parse dmidecode to discover various virtualization guests
-    if File.exists?("/usr/sbin/dmidecode")
-      guest = determine_guest(shell_out('dmidecode').stdout)
+    if File.exist?("/usr/sbin/dmidecode")
+      guest = guest_from_dmi(shell_out('dmidecode').stdout)
       if guest
         virtualization[:system] = guest
         virtualization[:role] = 'guest'
@@ -127,10 +127,10 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect Linux-VServer
-    if File.exists?("/proc/self/status")
+    if File.exist?("/proc/self/status")
       proc_self_status = File.read("/proc/self/status")
       vxid = proc_self_status.match(/^(s_context|VxID):\s*(\d+)$/)
-      if vxid and vxid[2]
+      if vxid && vxid[2]
         virtualization[:system] = "linux-vserver"
         if vxid[2] == "0"
           virtualization[:role] = "host"
@@ -160,7 +160,7 @@ Ohai.plugin(:Virtualization) do
     #
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
-    if File.exists?("/proc/self/cgroup")
+    if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
          cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-.+$}
@@ -180,10 +180,10 @@ Ohai.plugin(:Virtualization) do
         # If so, we may need to look further for a differentiator (OHAI-573)
         virtualization[:systems][:lxc] = "host"
       end
-    elsif File.exists?("/.dockerenv") || File.exists?("/.dockerinit")
-        virtualization[:system] = "docker"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:docker] = "guest"
+    elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")
+      virtualization[:system] = "docker"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:docker] = "guest"
     end
   end
 end

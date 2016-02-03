@@ -28,6 +28,7 @@ require 'ohai/mixin/constant_helper'
 require 'ohai/provides_map'
 require 'ohai/hints'
 require 'mixlib/shellout'
+require 'benchmark'
 
 module Ohai
   class System
@@ -94,9 +95,13 @@ module Ohai
 
       # Then run all the version 7 plugins
       begin
-        @provides_map.all_plugins(attribute_filter).each { |plugin|
-          @runner.run_plugin(plugin)
-        }
+        Benchmark.bm do |x|
+          @provides_map.all_plugins(attribute_filter).each { |plugin|
+            x.report(plugin.name) do
+              @runner.run_plugin(plugin)
+            end
+          }
+        end
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise

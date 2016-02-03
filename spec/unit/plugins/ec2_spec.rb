@@ -50,51 +50,52 @@ describe Ohai::System, "plugin ec2" do
       allow(File).to receive(:exist?).and_return(false)
     end
 
-context "with common metadata paths" do
-   let(:paths) do
-     { "meta-data/" => "instance_type\nami_id\nsecurity-groups",
-       "meta-data/instance_type" => "c1.medium",
-       "meta-data/ami_id" => "ami-5d2dc934",
-       "meta-data/security-groups" => "group1\ngroup2"
-     }
-   end
-    it "recursively fetches all the ec2 metadata" do
-      paths.each do |name,body|
-        expect(@http_client).to receive(:get).
-          with("/2012-01-12/#{name}").
-          and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+    context "with common metadata paths" do
+      let(:paths) do
+        { "meta-data/" => "instance_type\nami_id\nsecurity-groups",
+          "meta-data/instance_type" => "c1.medium",
+          "meta-data/ami_id" => "ami-5d2dc934",
+         "meta-data/security-groups" => "group1\ngroup2"
+        }
       end
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/user-data/").
-        and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
-
-      expect(@plugin[:ec2]).not_to be_nil
-      expect(@plugin[:ec2]['instance_type']).to eq("c1.medium")
-      expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
-      expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
-    end
-
-    it "fetches binary userdata opaquely" do
-      paths.each do |name,body|
+      it "recursively fetches all the ec2 metadata" do
+        paths.each do |name,body|
+          expect(@http_client).to receive(:get).
+            with("/2012-01-12/#{name}").
+            and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+        end
         expect(@http_client).to receive(:get).
-          with("/2012-01-12/#{name}").
-          and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+
+        @plugin.run
+
+        expect(@plugin[:ec2]).not_to be_nil
+        expect(@plugin[:ec2]['instance_type']).to eq("c1.medium")
+        expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
+        expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
       end
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/user-data/").
-        and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
 
-      @plugin.run
+      it "fetches binary userdata opaquely" do
+        paths.each do |name,body|
+          expect(@http_client).to receive(:get).
+            with("/2012-01-12/#{name}").
+            and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+        end
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
 
-      expect(@plugin[:ec2]).not_to be_nil
-      expect(@plugin[:ec2]['instance_type']).to eq("c1.medium")
-      expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
-      expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
-      expect(@plugin[:ec2]['userdata']).to eq(Base64.decode64("Xl88OEI+XkheSDxDNz5VXkBeQ3NvbWV0aGluZ15AS1Q8Qzg+PEM5PiwpPEM5\nPklVKEktLkk8Q0I+PENDPkk8RTU+XkJeQF5RejxCRj48QjA+XlJeQF5AXkA="))
+        @plugin.run
+
+        expect(@plugin[:ec2]).not_to be_nil
+        expect(@plugin[:ec2]['instance_type']).to eq("c1.medium")
+        expect(@plugin[:ec2]['ami_id']).to eq("ami-5d2dc934")
+        expect(@plugin[:ec2]['security_groups']).to eql ['group1', 'group2']
+        expect(@plugin[:ec2]['userdata']).to eq(Base64.decode64("Xl88OEI+XkheSDxDNz5VXkBeQ3NvbWV0aGluZ15AS1Q8Qzg+PEM5PiwpPEM5\nPklVKEktLkk8Q0I+PENDPkk8RTU+XkJeQF5RejxCRj48QjA+XlJeQF5AXkA="))
+      end
     end
-end
 
     it "should parse ec2 network/ directory as a multi-level hash" do
       expect(@http_client).to receive(:get).
@@ -123,7 +124,7 @@ end
 
       expect(@plugin[:ec2]).not_to be_nil
       expect(@plugin[:ec2]['network_interfaces_macs']['12:34:56:78:9a:bc']['public_hostname']).to eql('server17.opscode.com')
-    end
+    end # context with common metadata paths
 
     context "with ec2_iam cloud file" do
       before do
@@ -251,16 +252,22 @@ end
       expect(@plugin[:ec2]['metrics']).to be_nil
       expect(@plugin[:ec2]['metrics_vhostmd']).to be_nil
     end
-  end
+  end # shared examples for ec2
 
-  describe "with ec2 mac and metadata address connected" do
-    it_should_behave_like "ec2"
-
+  describe "without dmi, with xen mac, and metadata address connected" do
     before(:each) do
       allow(IO).to receive(:select).and_return([[],[1],[]])
       @plugin[:network][:interfaces][:eth0][:arp] = {"169.254.1.0"=>"fe:ff:ff:ff:ff:ff"}
     end
+
+    it_should_behave_like "ec2"
+
+    it "warns that the arp table method is deprecated" do
+      expect(Ohai::Log).to receive(:warn).with(/will be removed/)
+      @plugin.has_ec2_mac?
+    end
   end
+
 
   describe "without ec2 mac and metadata address connected" do
     it_should_behave_like "!ec2"

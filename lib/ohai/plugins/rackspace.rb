@@ -92,7 +92,7 @@ Ohai.plugin(:Rackspace) do
       end
     end
   rescue Errno::ENOENT
-    Ohai::Log.debug("Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
+    Ohai::Log.debug("rackspace plugin: Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
     nil
   end
 
@@ -104,7 +104,7 @@ Ohai.plugin(:Rackspace) do
       rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
     end
   rescue Errno::ENOENT
-    Ohai::Log.debug("Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")
+    Ohai::Log.debug("rackspace plugin: Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")
     nil
   end
 
@@ -119,7 +119,7 @@ Ohai.plugin(:Rackspace) do
         if _so.exitstatus == 0
           networks.push(FFI_Yajl::Parser.new.parse(_so.stdout))
         else
-          Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
+          Ohai::Log.debug('rackspace plugin: Unable to capture custom private networking information for Rackspace cloud')
           return false
         end
       end
@@ -128,7 +128,7 @@ Ohai.plugin(:Rackspace) do
       networks.delete_if { |hash| hash['label'] == 'public' }
     end
   rescue Errno::ENOENT
-    Ohai::Log.debug('Unable to capture custom private networking information for Rackspace cloud')
+    Ohai::Log.debug('rackspace plugin: Unable to capture custom private networking information for Rackspace cloud')
     nil
   end
 

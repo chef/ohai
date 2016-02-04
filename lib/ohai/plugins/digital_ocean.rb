@@ -22,7 +22,6 @@ Ohai.plugin(:DigitalOcean) do
   DIGITALOCEAN_FILE = '/etc/digitalocean' unless defined?(DIGITALOCEAN_FILE)
 
   provides "digital_ocean"
-
   depends "network/interfaces"
 
   def extract_droplet_ip_addresses
@@ -35,7 +34,7 @@ Ohai.plugin(:DigitalOcean) do
         type = digital_ocean_address_type(ip)
         address_hash = build_address_hash(ip, details)
         addresses[type] << address_hash
-      end 
+      end
     end
     addresses
   end
@@ -64,6 +63,7 @@ Ohai.plugin(:DigitalOcean) do
 
   collect_data do
     if looks_like_digital_ocean?
+      Ohai::Log.debug("digitalocean plugin: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
       hint = hint?('digital_ocean') || {}
       hint.each {|k, v| digital_ocean[k] = v unless k == 'ip_addresses'}
@@ -74,7 +74,7 @@ Ohai.plugin(:DigitalOcean) do
       # https://developers.digitalocean.com/#droplets
       digital_ocean[:networks] = extract_droplet_ip_addresses
     else
-      Ohai::Log.debug("No hints present for digital_ocean.")
+      Ohai::Log.debug("digitalocean plugin: No hints present for and doesn't look like digitalocean")
       false
     end
   end

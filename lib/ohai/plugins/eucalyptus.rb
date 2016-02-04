@@ -17,15 +17,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# eucalyptus metadata service is compatible with the ec2 service calls
 require 'ohai/mixin/ec2_metadata'
 
 Ohai.plugin(:Eucalyptus) do
   include Ohai::Mixin::Ec2Metadata
 
   provides "eucalyptus"
-
   depends "network/interfaces"
 
+  # returns the mac address from the collection of all address types
   def get_mac_address(addresses)
     detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }
     if detected_addresses
@@ -35,26 +36,29 @@ Ohai.plugin(:Eucalyptus) do
     end
   end
 
+  # detect if the mac address starts with d0:0d
   def has_euca_mac?
     network[:interfaces].values.each do |iface|
-      has_mac = (get_mac_address(iface[:addresses]) =~ /^[dD]0:0[dD]:/)
-      Ohai::Log.debug("has_euca_mac? == #{!!has_mac}")
-      return true if has_mac
+      mac = get_mac_address(iface[:addresses])
+      if mac =~ /^[dD]0:0[dD]:/
+        Ohai::Log.debug("eucalyptus plugin: has_euca_mac? == true (#{mac})")
+        return true
+      end
     end
 
-    Ohai::Log.debug("has_euca_mac? == false")
+    Ohai::Log.debug("eucalyptus plugin: has_euca_mac? == false")
     false
   end
 
   def looks_like_euca?
     # Try non-blocking connect so we don't "block" if
-    # the Xen environment is *not* EC2
+    # the metadata service doesn't respond
     hint?('eucalyptus') || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
   end
 
   collect_data do
     if looks_like_euca?
-      Ohai::Log.debug("looks_like_euca? == true")
+      Ohai::Log.debug("eucalyptus plugin: looks_like_euca? == true")
       eucalyptus Mash.new
       self.fetch_metadata.each do |k, v|
         # Eucalyptus 3.4+ supports IAM roles and Instance Profiles much like AWS
@@ -69,7 +73,7 @@ Ohai.plugin(:Eucalyptus) do
       end
       eucalyptus[:userdata] = self.fetch_userdata
     else
-      Ohai::Log.debug("looks_like_euca? == false")
+      Ohai::Log.debug("eucalyptus plugin: looks_like_euca? == false")
       false
     end
   end

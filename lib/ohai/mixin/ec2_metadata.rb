@@ -41,8 +41,9 @@ module Ohai
     module Ec2Metadata
 
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
-      EC2_SUPPORTED_VERSIONS = %w[ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
-                                   2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12 ]
+      EC2_SUPPORTED_VERSIONS = %w( 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
+                                   2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
+                                   2014-11-05 2014-02-25 )
 
       EC2_ARRAY_VALUES = %w(security-groups)
       EC2_ARRAY_DIR    = %w(network/interfaces/macs)
@@ -70,14 +71,14 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("can_metadata_connect? == #{connected}")
+        Ohai::Log.debug("ec2 metadata mixin: can_metadata_connect? == #{connected}")
         connected
       end
 
       def best_api_version
         response = http_client.get("/")
         if response.code == '404'
-          Ohai::Log.debug("Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
+          Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
           return "latest"
         elsif response.code != '200'
           raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
@@ -88,9 +89,9 @@ module Ohai
         versions = response.body.split("\n").sort
         until (versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)) do
           pv = versions.pop
-          Ohai::Log.debug("EC2 shows unsupported metadata version: #{pv}") unless pv == 'latest'
+          Ohai::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == 'latest'
         end
-        Ohai::Log.debug("EC2 metadata version: #{versions.last}")
+        Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
         if versions.empty?
           raise "Unable to determine EC2 metadata version (no supported entries found)"
         end
@@ -115,7 +116,7 @@ module Ohai
         when '200'
           response.body
         when '404'
-          Ohai::Log.debug("Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
+          Ohai::Log.debug("ec2 metadata mixin: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
           nil
         else
           raise "Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
@@ -124,9 +125,9 @@ module Ohai
 
       def fetch_metadata(id='', api_version=nil)
         api_version ||= best_api_version
-        return Hash.new if api_version.nil?
+        return {} if api_version.nil?
 
-        metadata = Hash.new
+        metadata = {}
         retrieved_metadata = metadata_get(id, api_version)
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
@@ -173,7 +174,7 @@ module Ohai
       end
 
       def fetch_json_dir_metadata(id, api_version)
-        metadata = Hash.new
+        metadata = {}
         retrieved_metadata = metadata_get(id, api_version)
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
@@ -192,7 +193,7 @@ module Ohai
         end
       end
 
-      def fetch_userdata()
+      def fetch_userdata
         api_version = best_api_version
         return nil if api_version.nil?
         response = http_client.get("/#{api_version}/user-data/")

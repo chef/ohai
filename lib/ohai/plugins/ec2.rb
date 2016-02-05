@@ -44,7 +44,13 @@ Ohai.plugin(:EC2) do
     network[:interfaces].values.each do |iface|
       unless iface[:arp].nil?
         if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
-          Ohai::Log.debug("ec2 plugin: has_xen_mac? == true")
+          # using MAC addresses from ARP is unreliable because they could time-out from the table
+          # fe:ff:ff:ff:ff:ff is actually a sign of Xen, not specifically EC2
+          deprecation_message <<-EOM
+ec2 plugin: Detected EC2 by the presence of fe:ff:ff:ff:ff:ff in the ARP table. This method is unreliable and will be removed in a future version of ohai. Bootstrap using knife-ec2 or create "/etc/chef/ohai/hints/ec2.json" instead.
+EOM
+          Ohai::Log.warn(deprecation_message)
+          Ohai::Log.debug("ec2 plugin: has_ec2_mac? == true")
           return true
         end
       end

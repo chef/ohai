@@ -113,6 +113,51 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
       expect(@plugin[:languages]).not_to have_key(:java)
     end
   end
+  
+  shared_examples_for "when the openjdk 1.8 is installed" do
+
+    before(:each) do
+      @stderr = "openjdk version \"1.8.0_71\"\nOpenJDK Runtime Environment (build 1.8.0_71-b15)\nOpenJDK 64-Bit Server VM (build 25.71-b15, mixed mode)"
+      allow(@plugin).to receive(:shell_out).with("java -mx64m -version").and_return(mock_shell_out(0, "", @stderr))
+    end
+
+    it "should run java -mx64m -version" do
+      expect(@plugin).to receive(:shell_out).with("java -mx64m -version").and_return(mock_shell_out(0, "", @stderr))
+      @plugin.run
+    end
+
+    it "should set java[:version]" do
+      @plugin.run
+      expect(@plugin[:languages][:java][:version]).to eql("1.8.0_71")
+    end
+
+    it "should set java[:runtime][:name] to runtime name" do
+      @plugin.run
+      expect(@plugin[:languages][:java][:runtime][:name]).to eql("OpenJDK Runtime Environment")
+    end
+
+    it "should set java[:runtime][:build] to runtime build" do
+      @plugin.run
+      expect(@plugin[:languages][:java][:runtime][:build]).to eql("1.8.0_71-b15")
+    end
+
+    it "should set java[:hotspot][:name] to hotspot name" do
+      @plugin.run
+      expect(@plugin[:languages][:java][:hotspot][:name]).to eql("OpenJDK 64-Bit Server VM")
+    end
+
+    it "should set java[:hotspot][:build] to hotspot build" do
+      @plugin.run
+      expect(@plugin[:languages][:java][:hotspot][:build]).to eql("25.71-b15, mixed mode")
+    end
+
+    it "should not set the languages[:java] tree up if java command fails" do
+      @stderr = "Some error output here"
+      allow(@plugin).to receive(:shell_out).with("java -mx64m -version").and_return(mock_shell_out(0, "", @stderr))
+      @plugin.run
+      expect(@plugin[:languages]).not_to have_key(:java)
+    end
+  end
 
   context "when not on Mac OS X" do
     before do
@@ -124,6 +169,9 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
     end
     context "and the server JRE is installed" do
       include_examples "when the Server JRE is installed"
+    end
+    context "and the openjdk 1.8 is installed" do
+      include_examples "when the openjdk 1.8 is installed"
     end
   end
 
@@ -148,6 +196,9 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
       end
       context "and the server JRE is installed" do
         include_examples "when the Server JRE is installed"
+      end
+      context "and the openjdk 1.8 is installed" do
+        include_examples "when the openjdk 1.8 is installed"
       end
     end
 

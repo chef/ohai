@@ -1,5 +1,11 @@
 # Ohai Changelog
 
+## UNRELEASED
+* [pr#724](https://github.com/chef/ohai/pull/724) Improved debug logging for cloud plugins
+* [pr#722](https://github.com/chef/ohai/pull/722) Detect paravirt amazon instances without hint files
+* [pr#714](https://github.com/chef/ohai/pull/714) Detect Azure using the Azure agent and DHCP options
+* [pr#724](https://github.com/chef/ohai/pull/725) Add support for the 2 latest EC2 metadata versions
+
 ## Release 8.10.0
 * [pr#720](https://github.com/chef/ohai/pull/720) Make Windows driver plugin opt-in via config
 * [pr#717](https://github.com/chef/ohai/pull/717) Don't enable packages plugin by default

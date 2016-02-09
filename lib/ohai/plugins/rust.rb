@@ -19,14 +19,19 @@ Ohai.plugin(:Rust) do
   depends "languages"
 
   collect_data do
-    output = nil
+    begin
+      so = shell_out("rustc --version")
 
-    rust = Mash.new
-    so = shell_out("rustc --version")
-    if so.exitstatus == 0
-      output =  so.stdout.split
-      rust[:version] = output[1]
-      languages[:rust] = rust if rust[:version]
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran rustc --version")
+        output = nil
+        rust = Mash.new
+        output =  so.stdout.split
+        rust[:version] = output[1]
+        languages[:rust] = rust unless rust.empty?
+      end
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run rustc --version: Errno::ENOENT")
     end
   end
 end

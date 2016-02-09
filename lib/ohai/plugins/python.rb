@@ -22,20 +22,23 @@ Ohai.plugin(:Python) do
   depends "languages"
 
   collect_data do
-    output = nil
+    begin
+      so = shell_out("python -c \"import sys; print (sys.version)\"")
 
-    python = Mash.new
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran python -c \"import sys; print (sys.version)\"")
+        python = Mash.new
+        output = nil
+        output = so.stdout.split
+        python[:version] = output[0]
+        if output.length >= 6
+          python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+        end
 
-    so = shell_out("python -c \"import sys; print (sys.version)\"")
-
-    if so.exitstatus == 0
-      output = so.stdout.split
-      python[:version] = output[0]
-      if output.length >= 6
-        python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+        languages[:python] = python unless python.empty?
       end
-
-      languages[:python] = python if python[:version] and python[:builddate]
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run python -c \"import sys; print (sys.version)\": Errno::ENOENT")
     end
   end
 end

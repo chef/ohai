@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,6 +30,7 @@ Ohai.plugin(:C) do
     begin
       so = shell_out("gcc -v")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran gcc -v")
         description = so.stderr.split($/).last
         output = description.split
         if output.length >= 3
@@ -39,6 +40,7 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run gcc -v: Errno::ENOENT")
     end
 
     #glibc
@@ -62,6 +64,7 @@ Ohai.plugin(:C) do
     begin
       so = shell_out("cl /?")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran cl /?")
         description = so.stderr.lines.first.chomp
         if description =~ /Compiler Version ([\d\.]+)/
           c[:cl] = Mash.new
@@ -70,12 +73,14 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run cl /?: Errno::ENOENT")
     end
 
     #ms vs
     begin
       so = shell_out("devenv.com /?")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran devenv.com /?")
         lines = so.stdout.split($/)
         description = lines[0].length == 0 ? lines[1] : lines[0]
         if description =~ /Visual Studio Version ([\d\.]+)/
@@ -85,12 +90,14 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run devenv.com /?: Errno::ENOENT")
     end
 
     #ibm xlc
     begin
       so = shell_out("xlc -qversion")
       if so.exitstatus == 0 or (so.exitstatus >> 8) == 249
+        Ohai::Log.debug("Successfully ran xlc -qversion")
         description = so.stdout.split($/).first
         if description =~ /V(\d+\.\d+)/
           c[:xlc] = Mash.new
@@ -99,12 +106,14 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run xlc -qversion: Errno::ENOENT")
     end
 
     #sun pro
     begin
       so = shell_out("cc -V -flags")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran cc -V -flags")
         output = so.stderr.split
         if so.stderr =~ /^cc: Sun C/ && output.size >= 4
           c[:sunpro] = Mash.new
@@ -113,12 +122,14 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run cc -V -flags: Errno::ENOENT")
     end
 
     #hpux cc
     begin
       so = shell_out("what /opt/ansic/bin/cc")
       if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran what /opt/ansic/bin/cc")
         description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
         if description
           output = description.split
@@ -128,8 +139,9 @@ Ohai.plugin(:C) do
         end
       end
     rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run what /opt/ansic/bin/cc: Errno::ENOENT")
     end
 
-    languages[:c] = c if c.keys.length > 0
+    languages[:c] = c unless c.empty?
   end
 end

@@ -22,20 +22,23 @@ Ohai.plugin(:Mono) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    mono = Mash.new
-
-    so = shell_out("mono -V")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      if output.length >= 4
-        mono[:version] = output[4]
+    begin
+      so = shell_out("mono -V")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran mono -V")
+        mono = Mash.new
+        output = nil
+        output = so.stdout.split
+        if output.length >= 4
+          mono[:version] = output[4]
+        end
+        if output.length >= 11
+          mono[:builddate] = "%s %s %s %s" % [output[6],output[7],output[8],output[11].gsub!(/\)/,'')]
+        end
+        languages[:mono] = mono unless mono.empty?
       end
-      if output.length >= 11
-        mono[:builddate] = "%s %s %s %s" % [output[6],output[7],output[8],output[11].gsub!(/\)/,'')]
-      end
-      languages[:mono] = mono if mono[:version]
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run mono -V: Errno::ENOENT")
     end
   end
 end

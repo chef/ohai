@@ -21,21 +21,26 @@ Ohai.plugin(:Java) do
   depends "languages"
 
   def get_java_info
-    java = Mash.new
-    so = shell_out("java -mx64m -version")
-    if so.exitstatus == 0
-      so.stderr.split(/\r?\n/).each do |line|
-        case line
-        when /java version \"([0-9\.\_]+)\"/
-          java[:version] = $1
-        when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
-          java[:runtime] = { "name" => $1, "build" => $3 }
-        when /^(.+ (Client|Server) VM) \(build\s*(.+)\)$/
-          java[:hotspot] = { "name" => $1, "build" => $3 }
+    begin
+      so = shell_out("java -mx64m -version")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran java -mx64m -version")
+        java = Mash.new
+        so.stderr.split(/\r?\n/).each do |line|
+          case line
+          when /java version \"([0-9\.\_]+)\"/
+            java[:version] = $1
+          when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
+            java[:runtime] = { "name" => $1, "build" => $3 }
+          when /^(.+ (Client|Server) VM) \(build\s*(.+)\)$/
+            java[:hotspot] = { "name" => $1, "build" => $3 }
+          end
         end
-      end
 
-      languages[:java] = java if java[:version]
+        languages[:java] = java unless java.empty?
+      end
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run java -mx64m -version: Errno::ENOENT")
     end
   end
 

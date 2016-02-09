@@ -22,17 +22,20 @@ Ohai.plugin(:Nodejs) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    nodejs = Mash.new
-
-    so = shell_out("node -v")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      if output.length >= 1
-        nodejs[:version] = output[0][1..output[0].length]
+    begin
+      so = shell_out("node -v")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran node -v")
+        nodejs = Mash.new
+        output = nil
+        output = so.stdout.split
+        if output.length >= 1
+          nodejs[:version] = output[0][1..output[0].length]
+        end
+        languages[:nodejs] = nodejs unless nodejs.empty?
       end
-      languages[:nodejs] = nodejs if nodejs[:version]
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run node -v: Errno::ENOENT")
     end
   end
 end

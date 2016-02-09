@@ -24,23 +24,27 @@ Ohai.plugin(:PHP) do
   depends "languages"
 
   collect_data do
-    php = Mash.new
-
-    so = shell_out("php -v")
-    if so.exitstatus == 0
-      so.stdout.each_line do |line|
-        case line
-        when /PHP (\S+).+built: ([^)]+)/
-          php[:version] = $1
-          php[:builddate] = $2
-        when /Zend Engine v([^\s]+),/
-          php[:zend_engine_version] = $1
-        when /Zend OPcache v([^\s]+),/
-          php[:zend_opcache_version] = $1
+    begin
+      so = shell_out("php -v")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran php -v")
+        php = Mash.new
+        so.stdout.each_line do |line|
+          case line
+          when /PHP (\S+).+built: ([^)]+)/
+            php[:version] = $1
+            php[:builddate] = $2
+          when /Zend Engine v([^\s]+),/
+            php[:zend_engine_version] = $1
+          when /Zend OPcache v([^\s]+),/
+            php[:zend_opcache_version] = $1
+          end
         end
-      end
 
-      languages[:php] = php if php[:version]
+        languages[:php] = php unless php.empty?
+      end
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run php -v: Errno::ENOENT")
     end
   end
 end

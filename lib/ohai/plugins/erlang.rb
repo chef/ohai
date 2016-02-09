@@ -22,22 +22,24 @@ Ohai.plugin(:Erlang) do
   depends "languages"
 
   collect_data do
-    output = nil
-
-    erlang = Mash.new
-    so = shell_out("erl +V")
-    if so.exitstatus == 0
-      output = so.stderr.split
-      if output.length >= 6
-        options = output[1]
-        options.gsub!(/(\(|\))/, '')
-        erlang[:version] = output[5]
-        erlang[:options] = options.split(',')
-        erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
-        if erlang[:version] and erlang[:options] and erlang[:emulator]
-          languages[:erlang] = erlang
+    begin
+      so = shell_out("erl +V")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Successfully ran erl +V")
+        erlang = Mash.new
+        output = nil
+        output = so.stderr.split
+        if output.length >= 6
+          options = output[1]
+          options.gsub!(/(\(|\))/, '')
+          erlang[:version] = output[5]
+          erlang[:options] = options.split(',')
+          erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
+          languages[:erlang] = erlang unless erlang.empty?
         end
       end
+    rescue Errno::ENOENT
+      Ohai::Log.debug("Could not run erl +V: Errno::ENOENT")
     end
   end
 end

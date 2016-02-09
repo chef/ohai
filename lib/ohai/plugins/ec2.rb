@@ -50,7 +50,7 @@ Ohai.plugin(:EC2) do
 ec2 plugin: Detected EC2 by the presence of fe:ff:ff:ff:ff:ff in the ARP table. This method is unreliable and will be removed in a future version of ohai. Bootstrap using knife-ec2 or create "/etc/chef/ohai/hints/ec2.json" instead.
 EOM
           Ohai::Log.warn(deprecation_message)
-          Ohai::Log.debug("ec2 plugin: has_ec2_mac? == true")
+          Ohai::Log.debug("ec2 plugin: has_xen_mac? == true")
           return true
         end
       end

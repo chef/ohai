@@ -265,7 +265,7 @@ describe Ohai::System, "plugin ec2" do
 
     it "warns that the arp table method is deprecated" do
       expect(Ohai::Log).to receive(:warn).with(/will be removed/)
-      @plugin.has_ec2_mac?
+      @plugin.has_xen_mac?
     end
   end
 

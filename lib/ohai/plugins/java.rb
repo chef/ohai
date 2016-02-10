@@ -26,7 +26,7 @@ Ohai.plugin(:Java) do
     if so.exitstatus == 0
       so.stderr.split(/\r?\n/).each do |line|
         case line
-        when /java version \"([0-9\.\_]+)\"/
+        when /(?:java|openjdk) version \"([0-9\.\_]+)\"/
           java[:version] = $1
         when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
           java[:runtime] = { "name" => $1, "build" => $3 }

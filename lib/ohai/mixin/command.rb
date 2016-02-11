@@ -30,8 +30,14 @@ module Ohai
     module Command
       def shell_out(cmd)
         m = Mixlib::ShellOut.new(cmd)
-        m.run_command
-        m
+        begin
+          m.run_command
+          Ohai::Log.debug("Plugin #{self.name} successfully ran command #{cmd}")
+          m
+        rescue Errno::ENOENT => e
+          Ohai::Log.debug("Plugin #{self.name} failed to run command #{cmd}")
+          raise
+        end
       end
 
       module_function :shell_out

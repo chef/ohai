@@ -1,0 +1,112 @@
+#
+# This file is structured to be consumed by both humans and computers.
+# To update the generated Markdown, run `bundle exec rake maintainers:generate`
+# It is a TOML document containing Markdown
+#
+[Preamble]
+  title = "Maintainers"
+  text = """
+This file lists how the Ohai project is maintained. When making changes to the system, this
+file tells you who needs to review your patch - you need a simple majority of maintainers
+for the relevant subsystems to provide a :+1: on your pull request. Additionally, you need
+to not receive a veto from a Lieutenant or the Project Lead.
+
+Check out [How Chef is Maintained](https://github.com/opscode/chef-rfc/blob/master/rfc030-maintenance-policy.md#how-the-project-is-maintained) for details on the process, how to become
+a maintainer, lieutenant, or the project lead.
+"""
+
+[Org]
+  [Org.Lead]
+    title = "Project Lead"
+    person = "adamhjk"
+
+  [Org.Components]
+    title = "Components"
+
+    [Org.Components.Core]
+      title = "Ohai"
+      team = "ohai-core"
+      text = """
+Maintainers of Ohai
+"""
+
+      lieutenant = "thommay"
+
+      maintainers = [
+        "btm",
+        "coderanger",
+        "danielsdeleo",
+        "fujin",
+        "jaymzh",
+        "jaym",
+        "jonlives",
+        "lamont-granquist",
+        "mcquin",
+        "smurawski",
+        "tyler-ball",
+        "ranjib",
+        "mwrock"
+      ]
+
+[people]
+  [people.adamhjk]
+    Name = "Adam Jacob"
+    GitHub = "adamhjk"
+
+  [people.btm]
+    Name = "Bryan McLellan"
+    GitHub = "btm"
+
+  [people.danielsdeleo]
+    Name = "Daniel DeLeo"
+    GitHub = "danielsdeleo"
+
+  [people.fujin]
+    Name = "AJ Christensen"
+    GitHub = "fujin"
+
+  [people.jaymzh]
+    Name = "Phil Dibowitz"
+    GitHub = "jaymzh"
+
+  [people.jaym]
+    Name = "Jay Mundrawala"
+    GitHub = "jaym"
+
+  [people.jonlives]
+    Name = "Jon Cowie"
+    GitHub = "jonlives"
+
+  [people.lamont-granquist]
+    Name = "Lamont Granquist"
+    GitHub = "lamont-granquist"
+
+  [people.mcquin]
+    Name = "Claire McQuin"
+    GitHub = "mcquin"
+
+  [people.ranjib]
+    Name = "Ranjib Dey"
+    GitHub = "ranjib"
+
+  [people.smurawski]
+    Name = "Steven Murawski"
+    GitHub = "smurawski"
+
+  [people.thommay]
+    Name = "Thom May"
+    GitHub = "thommay"
+    IRC = "thom"
+    Twitter = "thommay"
+
+  [people.tyler-ball]
+    Name = "Tyler Ball"
+    GitHub = "tyler-ball"
+
+  [people.coderanger]
+    Name = "Noah Kantrowitz"
+    GitHub = "coderanger"
+
+  [people.mwrock]
+    Name = "Matt Wrock"
+    GitHub = "mwrock"

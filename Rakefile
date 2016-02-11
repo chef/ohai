@@ -1,6 +1,7 @@
 require "bundler/gem_tasks"
 require 'date'
 require 'ohai/version'
+require_relative 'tasks/maintainers'
 
 begin
   require 'rspec/core/rake_task'

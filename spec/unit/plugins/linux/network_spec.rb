@@ -375,8 +375,163 @@ EOM
     end
   end
 
-  %w{ifconfig iproute2}.each do |network_method|
+  describe '#interface_has_no_addresses_in_family?' do
+    context 'when interface has no addresses' do
+      let(:iface) { {} }
 
+      it 'returns true' do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, 'inet')).to eq(true)
+      end
+    end
+
+    context 'when an interface has no addresses in family' do
+      let(:iface) { { addresses: { '1.2.3.4' => { 'family' => 'inet6' } } } }
+
+      it 'returns true' do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, 'inet')).to eq(true)
+      end
+    end
+
+    context 'when an interface has addresses in family' do
+      let(:iface) { { addresses: { '1.2.3.4' => { 'family' => 'inet' } } } }
+
+      it 'returns false' do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, 'inet')).to eq(false)
+      end
+    end
+  end
+
+  describe '#interface_have_address?' do
+    context 'when interface has no addresses' do
+      let(:iface) { {} }
+
+      it 'returns false' do
+        expect(plugin.interface_have_address?(iface, '1.2.3.4')).to eq(false)
+      end
+    end
+
+    context 'when interface has a matching address' do
+      let(:iface) { { addresses: { '1.2.3.4' => {} } } }
+
+      it 'returns true' do
+        expect(plugin.interface_have_address?(iface, '1.2.3.4')).to eq(true)
+      end
+    end
+
+    context 'when interface does not have a matching address' do
+      let(:iface) { { addresses: { '4.3.2.1' => { } } } }
+
+      it 'returns false' do
+        expect(plugin.interface_have_address?(iface, '1.2.3.4')).to eq(false)
+      end
+    end
+  end
+
+  describe '#interface_address_not_link_level?' do
+    context 'when the address scope is link' do
+      let(:iface) { { addresses: { '1.2.3.4' => { scope: 'Link' } } } }
+
+      it 'returns false' do
+        expect(plugin.interface_address_not_link_level?(iface, '1.2.3.4')).to eq(false)
+      end
+    end
+
+    context 'when the address scope is global' do
+      let(:iface) { { addresses: { '1.2.3.4' => { scope: 'Global' } } } }
+
+      it 'returns true' do
+        expect(plugin.interface_address_not_link_level?(iface, '1.2.3.4')).to eq(true)
+      end
+    end
+  end
+
+  describe '#interface_valid_for_route?' do
+    let(:iface)   { double('iface') }
+    let(:address) { '1.2.3.4'}
+    let(:family)  { 'inet' }
+
+    context 'when interface has no addresses' do
+      it 'returns true' do
+        expect(plugin).to receive(:interface_has_no_addresses_in_family?).with(iface, family).and_return(true)
+        expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(true)
+      end
+    end
+
+    context 'when interface has addresses' do
+      before do
+        expect(plugin).to receive(:interface_has_no_addresses_in_family?).with(iface, family).and_return(false)
+      end
+
+      context 'when interface contains the address' do
+        before do
+          expect(plugin).to receive(:interface_have_address?).with(iface, address).and_return(true)
+        end
+
+        context 'when interface address is not a link-level address' do
+          it 'returns true' do
+            expect(plugin).to receive(:interface_address_not_link_level?).with(iface, address).and_return(true)
+            expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(true)
+          end
+        end
+
+        context 'when the interface address is a link-level address' do
+          it 'returns false' do
+            expect(plugin).to receive(:interface_address_not_link_level?).with(iface, address).and_return(false)
+            expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(false)
+          end
+        end
+      end
+
+      context 'when interface does not contain the address' do
+        it 'returns false' do
+          expect(plugin).to receive(:interface_have_address?).with(iface, address).and_return(false)
+          expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe '#route_is_valid_default_route?' do
+    context 'when the route destination is default' do
+      let(:route)         { { destination: 'default' } }
+      let(:default_route) { double('default_route') }
+
+      it 'returns true' do
+        expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(true)
+      end
+    end
+
+    context 'when the route destination is not default' do
+      let(:route) { { destination: '10.0.0.0/24' } }
+
+      context 'when the default route does not have a gateway' do
+        let(:default_route) { {} }
+
+        it 'returns false' do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
+
+      context 'when the gateway is within the destination' do
+        let(:default_route) { { via: '10.0.0.1' } }
+
+        it 'returns true' do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(true)
+        end
+      end
+
+      context 'when the gateway is not within the destination' do
+        let(:default_route) { { via: '20.0.0.1' } }
+
+        it 'returns false' do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
+    end
+  end
+
+
+  %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )

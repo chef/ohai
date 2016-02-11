@@ -37,6 +37,7 @@ module Ohai
       module_function :shell_out
 
       def run_command(args = {})
+        Ohai::Log.warn('Ohai::Mixin::Command run_command is deprecated and will be removed in Ohai 9.0.0')
         if args.has_key?(:creates)
           if File.exists?(args[:creates])
             Ohai::Log.debug("Skipping #{args[:command]} - creates #{args[:creates]} exists.")
@@ -124,17 +125,19 @@ module Ohai
       #
       # Thanks Ara!
       def popen4(cmd, args = {}, &b)
-  ## Disable garbage collection to work around possible bug in MRI
-  # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
-  # See OHAI-330 / CHEF-2916 / CHEF-1305
+        Ohai::Log.warn('Ohai::Mixin::Command popen4 is deprecated and will be removed in Ohai 9.0.0')
+
+        # Disable garbage collection to work around possible bug in MRI
+        # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
+        # See OHAI-330 / CHEF-2916 / CHEF-1305
         GC.disable
 
-              # Waitlast - this is magic.
-              #
-              # Do we wait for the child process to die before we yield
-              # to the block, or after?  That is the magic of waitlast.
-              #
-              # By default, we are waiting before we yield the block.
+        # Waitlast - this is magic.
+        #
+        # Do we wait for the child process to die before we yield
+        # to the block, or after?  That is the magic of waitlast.
+        #
+        # By default, we are waiting before we yield the block.
         args[:waitlast] ||= false
 
         args[:user] ||= nil
@@ -147,9 +150,9 @@ module Ohai
         end
         args[:environment] ||= {}
 
-              # Default on C locale so parsing commands output can be done
-              # independently of the node's default locale.
-              # "LC_ALL" could be set to nil, in which case we also must ignore it.
+        # Default on C locale so parsing commands output can be done
+        # independently of the node's default locale.
+        # "LC_ALL" could be set to nil, in which case we also must ignore it.
         unless args[:environment].has_key?("LC_ALL")
           args[:environment]["LC_ALL"] = "C"
         end

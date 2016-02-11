@@ -32,11 +32,17 @@ module Ohai
         m = Mixlib::ShellOut.new(cmd)
         begin
           m.run_command
-          Ohai::Log.debug("Plugin #{self.name} successfully ran command #{cmd}")
+
+          if m.exitstatus == 0
+            Ohai::Log.debug("Plugin #{self.name} successfully ran command #{cmd}")
+          else
+            Ohai::Log.debug("Plugin #{self.name} command #{cmd} returned status #{m.exitstatus}")
+          end
+
           m
         rescue Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{self.name} failed to run command #{cmd}")
-          raise
+          raise Ohai::Exceptions::Exec, e
         end
       end
 

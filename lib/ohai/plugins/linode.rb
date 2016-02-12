@@ -25,7 +25,7 @@ Ohai.plugin(:Linode) do
   # Returns true or false
   def has_linode_kernel?
     if kernel_data = kernel
-      kernel_data[:release].split('-').last =~ /linode/
+      kernel_data[:release].split("-").last =~ /linode/
     end
   end
 
@@ -33,7 +33,7 @@ Ohai.plugin(:Linode) do
   #
   # Returns true or false
   def looks_like_linode?
-    hint?('linode') || has_linode_kernel?
+    hint?("linode") || has_linode_kernel?
   end
 
   # Names linode ip address
@@ -45,7 +45,7 @@ Ohai.plugin(:Linode) do
   def get_ip_address(name, eth)
     if eth_iface = network[:interfaces][eth]
       eth_iface[:addresses].each do |key, info|
-        linode[name] = key if info['family'] == 'inet'
+        linode[name] = key if info["family"] == "inet"
       end
     end
   end
@@ -57,7 +57,7 @@ Ohai.plugin(:Linode) do
       linode Mash.new
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, "eth0:1")
-      hint?('linode').each{|k,v| linode[k] = v } if hint?('linode').kind_of?(Hash)
+      hint?("linode").each { |k, v| linode[k] = v } if hint?("linode").kind_of?(Hash)
     else
       Ohai::Log.debug("linode plugin: looks_like_linode? == false")
     end

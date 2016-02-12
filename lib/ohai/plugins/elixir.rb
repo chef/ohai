@@ -24,7 +24,7 @@ Ohai.plugin(:Elixir) do
     elixir = Mash.new
     so = shell_out("elixir -v")
     if so.exitstatus == 0
-      output =  so.stdout.split
+      output = so.stdout.split
       elixir[:version] = output[1]
       languages[:elixir] = elixir if elixir[:version]
     end

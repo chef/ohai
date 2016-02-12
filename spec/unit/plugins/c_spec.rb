@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require 'rbconfig'
+require "rbconfig"
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 C_GCC = <<EOF
 Reading specs from /usr/lib/gcc/x86_64-redhat-linux/3.4.6/specs
@@ -42,7 +42,7 @@ Available extensions:
         The C stubs add-on version 2.1.2.
         BIND-8.2.3-T5B
         NIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk
-        Glibc-2.0 compatibility add-on by Cristian Gafton 
+        Glibc-2.0 compatibility add-on by Cristian Gafton
         GNU Libidn by Simon Josefsson
         libthread_db work sponsored by Alpha Processor Inc
 Thread-local storage support included.
@@ -59,14 +59,14 @@ PARTICULAR PURPOSE.
 Compiled by GNU CC version 4.1.2 20080704 (Red Hat 4.1.2-44).
 Compiled on a Linux 2.6.9 system on 2009-09-02.
 Available extensions:
-	The C stubs add-on version 2.1.2.
-	crypt add-on version 2.1 by Michael Glad and others
-	GNU Libidn by Simon Josefsson
-	GNU libio by Per Bothner
-	NIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk
-	Native POSIX Threads Library by Ulrich Drepper et al
-	BIND-8.2.3-T5B
-	RT using linux kernel aio
+  The C stubs add-on version 2.1.2.
+  crypt add-on version 2.1 by Michael Glad and others
+  GNU Libidn by Simon Josefsson
+  GNU libio by Per Bothner
+  NIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk
+  Native POSIX Threads Library by Ulrich Drepper et al
+  BIND-8.2.3-T5B
+  RT using linux kernel aio
 Thread-local storage support included.
 For bug reporting instructions, please see:
 <http://www.gnu.org/software/libc/bugs.html>.
@@ -97,7 +97,7 @@ C_HPUX = <<EOF
         $Revision: 92453-07 linker linker crt0.o B.11.47 051104 $
         LINT B.11.11.16 CXREF B.11.11.16
         HP92453-01 B.11.11.16 HP C Compiler
-         $ PATCH/11.00:PHCO_27774  Oct  3 2002 09:45:59 $ 
+         $ PATCH/11.00:PHCO_27774  Oct  3 2002 09:45:59 $
 EOF
 
 describe Ohai::System, "plugin c" do

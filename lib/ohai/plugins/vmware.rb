@@ -49,7 +49,7 @@ Ohai.plugin(:VMware) do
         # vmware-toolbox-cmd stat <param> commands
         # Iterate through each parameter supported by the "vwware-toolbox-cmd stat" command, assign value
         # to attribute "vmware[:<parameter>]"
-        [ "hosttime", "speed", "sessionid", "balloon", "swap", "memlimit", "memres", "cpures", "cpulimit" ].each do |param|
+        %w{hosttime speed sessionid balloon swap memlimit memres cpures cpulimit}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} stat #{param}")
           if vmware[param] =~ /UpdateInfo failed/
             vmware[param] = nil
@@ -58,7 +58,7 @@ Ohai.plugin(:VMware) do
         # vmware-toolbox-cmd <param> status commands
         # Iterate through each parameter supported by the "vwware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
-        [ "upgrade", "timesync" ].each do |param|
+        %w{upgrade timesync}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} #{param} status")
         end
       rescue

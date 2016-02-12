@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'ohai/util/file_helper'
+require "ohai/util/file_helper"
 
 include Ohai::Util::FileHelper
 
@@ -24,11 +24,11 @@ Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
   def prlctl_exists?
-    which('prlctl')
+    which("prlctl")
   end
 
   def ioreg_exists?
-    which('ioreg')
+    which("ioreg")
   end
 
   collect_data(:darwin) do
@@ -36,18 +36,18 @@ Ohai.plugin(:Virtualization) do
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     if prlctl_exists?
-      virtualization[:system] = 'parallels'
-      virtualization[:role] = 'host'
-      virtualization[:systems][:parallels] = 'host'
+      virtualization[:system] = "parallels"
+      virtualization[:role] = "host"
+      virtualization[:systems][:parallels] = "host"
     end
 
     # Detect Parallels virtual machine from pci devices
     if ioreg_exists?
       so = shell_out("ioreg -l")
       if so.stdout =~ /pci1ab8,4000/
-        virtualization[:system] = 'parallels'
-        virtualization[:role] = 'guest'
-        virtualization[:systems][:parallels] = 'guest'
+        virtualization[:system] = "parallels"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:parallels] = "guest"
       end
     end
   end

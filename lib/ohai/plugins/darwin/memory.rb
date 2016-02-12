@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:Memory) do
-  provides 'memory'
+  provides "memory"
 
   collect_data(:darwin) do
     memory Mash.new
@@ -37,17 +37,17 @@ Ohai.plugin(:Memory) do
                 end
 
     vm_stat.split("\n").each do |line|
-      ['wired down', 'active', 'inactive'].each do |match|
+      ["wired down", "active", "inactive"].each do |match|
         unless line.index("Pages #{match}:").nil?
           pages = line.split.last.to_i
           megabyte_val = (pages * page_size) / 1024 / 1024.0
           total_consumed += megabyte_val
           case match
-          when 'wired down'
+          when "wired down"
             active += megabyte_val.to_i
-          when 'active'
+          when "active"
             active += megabyte_val.to_i
-          when 'inactive'
+          when "inactive"
             inactive += megabyte_val.to_i
           end
         end
@@ -61,4 +61,3 @@ Ohai.plugin(:Memory) do
     memory[:free] = "#{free_memory.to_i}MB" if total_consumed > 0
   end
 end
-

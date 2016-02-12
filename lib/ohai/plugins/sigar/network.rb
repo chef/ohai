@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/network_constants'
+require "ohai/mixin/network_constants"
 
 Ohai.plugin(:Network) do
   include Ohai::Mixin::NetworkConstants
@@ -57,8 +57,8 @@ Ohai.plugin(:Network) do
       if ifconfig.address != "0.0.0.0"
         iface[cint][:addresses][ifconfig.address] = { "family" => "inet" }
         # Backwards compat: no broadcast on tunnel or loopback dev
-        if (((ifconfig.flags & Sigar::IFF_POINTOPOINT) == 0) &&
-            ((ifconfig.flags & Sigar::IFF_LOOPBACK) == 0))
+        if ((ifconfig.flags & Sigar::IFF_POINTOPOINT) == 0) &&
+           ((ifconfig.flags & Sigar::IFF_LOOPBACK) == 0)
           iface[cint][:addresses][ifconfig.address]["broadcast"] = ifconfig.broadcast
         end
         iface[cint][:addresses][ifconfig.address]["netmask"] = ifconfig.netmask
@@ -70,20 +70,20 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses][ifconfig.address6]["scope"] = Sigar.net_scope_to_s(ifconfig.scope6)
       end
 
-      iface[cint][:flags] = Sigar.net_interface_flags_to_s(ifconfig.flags).split(' ')
+      iface[cint][:flags] = Sigar.net_interface_flags_to_s(ifconfig.flags).split(" ")
       iface[cint][:mtu] = ifconfig.mtu.to_s
       iface[cint][:queuelen] = ifconfig.tx_queue_len.to_s
 
       net_counters[cint] = Mash.new unless net_counters[cint]
-      if (!cint.include?(":"))
+      if !cint.include?(":")
         ifstat = sigar.net_interface_stat(cint)
         net_counters[cint][:rx] = { "packets" => ifstat.rx_packets.to_s, "errors"     => ifstat.rx_errors.to_s,
-          "drop"    => ifstat.rx_dropped.to_s, "overrun"    => ifstat.rx_overruns.to_s,
-          "frame"   => ifstat.rx_frame.to_s,   "bytes"      => ifstat.rx_bytes.to_s }
+                                    "drop"    => ifstat.rx_dropped.to_s, "overrun"    => ifstat.rx_overruns.to_s,
+                                    "frame"   => ifstat.rx_frame.to_s,   "bytes"      => ifstat.rx_bytes.to_s }
         net_counters[cint][:tx] = { "packets" => ifstat.tx_packets.to_s, "errors"     => ifstat.tx_errors.to_s,
-          "drop"    => ifstat.tx_dropped.to_s, "overrun"    => ifstat.tx_overruns.to_s,
-          "carrier" => ifstat.tx_carrier.to_s, "collisions" => ifstat.tx_collisions.to_s,
-          "bytes"   => ifstat.tx_bytes.to_s }
+                                    "drop"    => ifstat.tx_dropped.to_s, "overrun"    => ifstat.tx_overruns.to_s,
+                                    "carrier" => ifstat.tx_carrier.to_s, "collisions" => ifstat.tx_collisions.to_s,
+                                    "bytes"   => ifstat.tx_bytes.to_s }
       end
     end
 
@@ -154,12 +154,12 @@ Ohai.plugin(:Network) do
       next unless network[:interfaces][route.ifname] # this
       # should never happen
       network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
-      route_data={}
+      route_data = {}
       Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
         if(m == :flags)
-          route_data[m]=flags(route.send(m))
+          route_data[m] = flags(route.send(m))
         else
-          route_data[m]=route.send(m)
+          route_data[m] = route.send(m)
         end
       end
       network[:interfaces][route.ifname][:route][route.destination] = route_data

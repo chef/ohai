@@ -42,10 +42,10 @@ Ohai.plugin(:Filesystem) do
     # Grab file system type from df (must be done separately)
     so = shell_out("df -na")
     so.stdout.lines do |line|
-      next unless (line =~ /^(.+?)\s*: (\S+)\s*$/)
+      next unless line =~ /^(.+?)\s*: (\S+)\s*$/
       mount = $1
-      fs.each { |filesystem,fs_attributes|
-        next unless (fs_attributes[:mount] == mount)
+      fs.each { |filesystem, fs_attributes|
+        next unless fs_attributes[:mount] == mount
         fs[filesystem][:fs_type] = $2
       }
     end
@@ -53,7 +53,7 @@ Ohai.plugin(:Filesystem) do
     # Grab mount information from /bin/mount
     so = shell_out("mount")
     so.stdout.lines do |line|
-      next unless (line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/)
+      next unless line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/
       filesystem = $2
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:mount] = $1
@@ -69,30 +69,30 @@ Ohai.plugin(:Filesystem) do
     if configuration(:zfs_properties).nil? || configuration(:zfs_properties).empty?
       zfs_get << "all"
     else
-      zfs_get << [configuration(:zfs_properties)].join(',')
+      zfs_get << [configuration(:zfs_properties)].join(",")
     end
     so = shell_out(zfs_get)
     so.stdout.lines do |line|
-      next unless (line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/)
+      next unless line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/
       filesystem = $1
       zfs[filesystem] = Mash.new unless zfs.has_key?(filesystem)
-      zfs[filesystem][:values] = Mash.new unless zfs[filesystem].has_key?('values')
-      zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].has_key?('sources')
+      zfs[filesystem][:values] = Mash.new unless zfs[filesystem].has_key?("values")
+      zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].has_key?("sources")
       zfs[filesystem][:values][$2] = $3
       zfs[filesystem][:sources][$2] = $4.chomp
     end
 
     zfs.each { |filesystem, attributes|
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-      fs[filesystem][:fs_type] = 'zfs'
-      fs[filesystem][:mount] = attributes[:values][:mountpoint] if attributes[:values].has_key?('mountpoint')
+      fs[filesystem][:fs_type] = "zfs"
+      fs[filesystem][:mount] = attributes[:values][:mountpoint] if attributes[:values].has_key?("mountpoint")
       fs[filesystem][:zfs_values] = attributes[:values]
       fs[filesystem][:zfs_sources] = attributes[:sources]
       # find all zfs parents
-      parents = filesystem.split('/')
+      parents = filesystem.split("/")
       zfs_parents = []
-      (0 .. parents.length - 1).to_a.each { |parent_indexes|
-        next_parent = parents[0 .. parent_indexes].join('/')
+      (0..parents.length - 1).to_a.each { |parent_indexes|
+        next_parent = parents[0..parent_indexes].join("/")
         zfs_parents.push(next_parent)
       }
       zfs_parents.pop

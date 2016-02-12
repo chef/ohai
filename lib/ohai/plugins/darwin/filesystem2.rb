@@ -26,7 +26,7 @@ Ohai.plugin(:Filesystem2) do
     fs.each_value do |entry|
       view[entry[:device]] = Mash.new unless view[entry[:device]]
       entry.each do |key, val|
-        next if ['device', 'mount'].include?(key)
+        next if %w{device mount}.include?(key)
         view[entry[:device]][key] = val
       end
       if entry[:mount]
@@ -43,7 +43,7 @@ Ohai.plugin(:Filesystem2) do
       next unless entry[:mount]
       view[entry[:mount]] = Mash.new unless view[entry[:mount]]
       entry.each do |key, val|
-        next if ['mount', 'device'].include?(key)
+        next if %w{mount device}.include?(key)
         view[entry[:mount]][key] = val
       end
       if entry[:device]
@@ -98,9 +98,9 @@ Ohai.plugin(:Filesystem2) do
     by_mountpoint = generate_mountpoint_view(fs)
 
     fs2 = Mash.new
-    fs2['by_device'] = by_device
-    fs2['by_mountpoint'] = by_mountpoint
-    fs2['by_pair'] = by_pair
+    fs2["by_device"] = by_device
+    fs2["by_mountpoint"] = by_mountpoint
+    fs2["by_pair"] = by_pair
 
     filesystem2 fs2
   end

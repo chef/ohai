@@ -20,6 +20,6 @@ Ohai.plugin(:InitPackage) do
   provides "init_package"
 
   collect_data(:linux) do
-    init_package File.exists?("/proc/1/comm") ? File.open("/proc/1/comm").gets.chomp : 'init'
+    init_package File.exists?("/proc/1/comm") ? File.open("/proc/1/comm").gets.chomp : "init"
   end
 end

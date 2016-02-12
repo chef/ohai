@@ -27,7 +27,7 @@ Ohai.plugin(:Network) do
 
   collect_data(:windows) do
 
-    require 'wmi-lite/wmi'
+    require "wmi-lite/wmi"
 
     iface = Mash.new
     iface_config = Mash.new
@@ -40,11 +40,11 @@ Ohai.plugin(:Network) do
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
     wmi = WmiLite::Wmi.new
 
-    adapters = wmi.instances_of('Win32_NetworkAdapterConfiguration')
+    adapters = wmi.instances_of("Win32_NetworkAdapterConfiguration")
 
     adapters.each do |adapter|
 
-      i = adapter['index']
+      i = adapter["index"]
       iface_config[i] = Mash.new
       adapter.wmi_ole_object.properties_.each do |p|
         iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
@@ -53,10 +53,10 @@ Ohai.plugin(:Network) do
 
     # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394216(v=vs.85).aspx
 
-    adapters = wmi.instances_of('Win32_NetworkAdapter')
+    adapters = wmi.instances_of("Win32_NetworkAdapter")
 
     adapters.each do |adapter|
-      i = adapter['index']
+      i = adapter["index"]
       iface_instance[i] = Mash.new
       adapter.wmi_ole_object.properties_.each do |p|
         iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
@@ -76,7 +76,7 @@ Ohai.plugin(:Network) do
           ip = iface[cint][:configuration][:ip_address][i]
           _ip = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
           iface[cint][:addresses][ip] = Mash.new(
-                                                 :prefixlen => _ip.prefix
+                                                 :prefixlen => _ip.prefix,
                                                  )
           if _ip.ipv6?
             # inet6 address
@@ -84,7 +84,7 @@ Ohai.plugin(:Network) do
             iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
           else
             # should be an inet4 address
-            iface[cint][:addresses][ip][:netmask] =  _ip.netmask.to_s
+            iface[cint][:addresses][ip][:netmask] = _ip.netmask.to_s
             if iface[cint][:configuration][:ip_use_zero_broadcast]
               iface[cint][:addresses][ip][:broadcast] = _ip.network.to_s
             else
@@ -110,7 +110,7 @@ Ohai.plugin(:Network) do
       end
     end
 
-    cint=nil
+    cint = nil
     so = shell_out("arp -a")
     if so.exitstatus == 0
       so.stdout.lines do |line|
@@ -119,7 +119,7 @@ Ohai.plugin(:Network) do
         end
         next unless iface[cint]
         if line =~ /^\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9\:-]+)/
-          iface[cint][:arp][$1] = $2.gsub("-",":").downcase
+          iface[cint][:arp][$1] = $2.gsub("-", ":").downcase
         end
       end
     end

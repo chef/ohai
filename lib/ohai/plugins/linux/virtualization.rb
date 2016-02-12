@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require 'ohai/util/file_helper'
-require 'ohai/mixin/dmi_decode'
+require "ohai/util/file_helper"
+require "ohai/mixin/dmi_decode"
 
 include Ohai::Util::FileHelper
 include Ohai::Mixin::DmiDecode
@@ -26,11 +26,11 @@ Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
   def lxc_version_exists?
-    which('lxc-version')
+    which("lxc-version")
   end
 
   def docker_exists?
-    which('docker')
+    which("docker")
   end
 
   collect_data(:linux) do
@@ -118,11 +118,11 @@ Ohai.plugin(:Virtualization) do
 
     # parse dmidecode to discover various virtualization guests
     if File.exist?("/usr/sbin/dmidecode")
-      guest = guest_from_dmi(shell_out('dmidecode').stdout)
+      guest = guest_from_dmi(shell_out("dmidecode").stdout)
       if guest
         virtualization[:system] = guest
-        virtualization[:role] = 'guest'
-        virtualization[:systems][guest.to_sym] = 'guest'
+        virtualization[:role] = "guest"
+        virtualization[:systems][guest.to_sym] = "guest"
       end
     end
 

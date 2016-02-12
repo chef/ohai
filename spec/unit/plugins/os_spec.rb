@@ -16,10 +16,9 @@
 # limitations under the License.
 #
 
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-
-ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG['host_os']
+ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG["host_os"]
 
 describe Ohai::System, "plugin os" do
   before(:each) do
@@ -29,7 +28,7 @@ describe Ohai::System, "plugin os" do
   end
 
   after do
-    ::RbConfig::CONFIG['host_os'] = ORIGINAL_CONFIG_HOST_OS
+    ::RbConfig::CONFIG["host_os"] = ORIGINAL_CONFIG_HOST_OS
   end
 
   it "should set os_version to kernel_release" do
@@ -39,7 +38,7 @@ describe Ohai::System, "plugin os" do
 
   describe "on linux" do
     before(:each) do
-      ::RbConfig::CONFIG['host_os'] = "linux"
+      ::RbConfig::CONFIG["host_os"] = "linux"
     end
 
     it "should set the os to linux" do
@@ -50,7 +49,7 @@ describe Ohai::System, "plugin os" do
 
   describe "on darwin" do
     before(:each) do
-      ::RbConfig::CONFIG['host_os'] = "darwin10.0"
+      ::RbConfig::CONFIG["host_os"] = "darwin10.0"
     end
 
     it "should set the os to darwin" do
@@ -61,7 +60,7 @@ describe Ohai::System, "plugin os" do
 
   describe "on solaris" do
     before do
-      ::RbConfig::CONFIG['host_os'] = "solaris2.42" #heh
+      ::RbConfig::CONFIG["host_os"] = "solaris2.42" #heh
     end
 
     it "sets the os to solaris2" do
@@ -72,7 +71,7 @@ describe Ohai::System, "plugin os" do
 
   describe "on something we have never seen before, but ruby has" do
     before do
-      ::RbConfig::CONFIG['host_os'] = "tron"
+      ::RbConfig::CONFIG["host_os"] = "tron"
     end
 
     it "sets the os to the ruby 'host_os'" do

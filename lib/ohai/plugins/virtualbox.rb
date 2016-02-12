@@ -17,10 +17,10 @@
 #
 
 Ohai.plugin(:Virtualbox) do
-  provides 'virtualbox'
+  provides "virtualbox"
 
   collect_data do
-    so = shell_out('VBoxControl guestproperty enumerate')
+    so = shell_out("VBoxControl guestproperty enumerate")
     if so.exitstatus == 0
       virtualbox Mash.new
       virtualbox[:host] = Mash.new

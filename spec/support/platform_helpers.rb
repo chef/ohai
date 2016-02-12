@@ -28,4 +28,4 @@ def freebsd?
   !!(RUBY_PLATFORM =~ /freebsd/)
 end
 
-DEV_NULL = windows? ? 'NUL' : '/dev/null'
+DEV_NULL = windows? ? "NUL" : "/dev/null"

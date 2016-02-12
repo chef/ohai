@@ -21,7 +21,7 @@ Ohai.plugin(:Chef) do
 
   collect_data do
     begin
-      require 'chef/version'
+      require "chef/version"
     rescue Gem::LoadError
       # this catches when you've done a major version bump of ohai, but
       # your chef gem is incompatible, so we can't load it in the same VM

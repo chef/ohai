@@ -30,10 +30,10 @@ Ohai.plugin(:Erlang) do
       output = so.stderr.split
       if output.length >= 6
         options = output[1]
-        options.gsub!(/(\(|\))/, '')
+        options.gsub!(/(\(|\))/, "")
         erlang[:version] = output[5]
-        erlang[:options] = options.split(',')
-        erlang[:emulator] = output[2].gsub!(/(\(|\))/, '')
+        erlang[:options] = options.split(",")
+        erlang[:emulator] = output[2].gsub!(/(\(|\))/, "")
         if erlang[:version] and erlang[:options] and erlang[:emulator]
           languages[:erlang] = erlang
         end

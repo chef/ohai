@@ -15,7 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX filesystem plugin" do
   before(:each) do
@@ -89,7 +89,7 @@ MOUNT
     @plugin[:filesystem] = Mash.new
   end
 
-  context 'when run within an LPAR' do
+  context "when run within an LPAR" do
     before do
       allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_Pk_LPAR, nil))
       allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_LPAR, nil))
@@ -99,59 +99,59 @@ MOUNT
     describe "df -Pk" do
 
       it "returns the filesystem block size" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['kb_size']).to eq("2097152")
+        expect(@plugin[:filesystem]["/dev/hd4"]["kb_size"]).to eq("2097152")
       end
 
       it "returns the filesystem used space in kb" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['kb_used']).to eq("219796")
+        expect(@plugin[:filesystem]["/dev/hd4"]["kb_used"]).to eq("219796")
       end
 
       it "returns the filesystem available space in kb" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['kb_available']).to eq("1877356")
+        expect(@plugin[:filesystem]["/dev/hd4"]["kb_available"]).to eq("1877356")
       end
 
       it "returns the filesystem capacity in percentage" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['percent_used']).to eq("11%")
+        expect(@plugin[:filesystem]["/dev/hd4"]["percent_used"]).to eq("11%")
       end
 
       it "returns the filesystem mounted location" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['mount']).to eq("/")
+        expect(@plugin[:filesystem]["/dev/hd4"]["mount"]).to eq("/")
       end
     end
 
     describe "mount" do
 
       it "returns the filesystem mount location" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['mount']).to eq("/")
+        expect(@plugin[:filesystem]["/dev/hd4"]["mount"]).to eq("/")
       end
 
       it "returns the filesystem type" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['fs_type']).to eq("jfs2")
+        expect(@plugin[:filesystem]["/dev/hd4"]["fs_type"]).to eq("jfs2")
       end
 
       it "returns the filesystem mount options" do
-        expect(@plugin[:filesystem]["/dev/hd4"]['mount_options']).to eq(["rw", "log=/dev/hd8"])
+        expect(@plugin[:filesystem]["/dev/hd4"]["mount_options"]).to eq(["rw", "log=/dev/hd8"])
       end
 
       # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
 
         it "returns the filesystem mount location" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount']).to eq("/stage/middleware")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount"]).to eq("/stage/middleware")
         end
 
         it "returns the filesystem type" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type']).to eq("nfs3")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["fs_type"]).to eq("nfs3")
         end
 
         it "returns the filesystem mount options" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options']).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
         end
       end
     end
   end
 
-  context 'when run within a WPAR' do
+  context "when run within a WPAR" do
     before do
       allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_Pk_WPAR, nil))
       allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_WPAR, nil))
@@ -161,53 +161,53 @@ MOUNT
     describe "df -Pk" do
 
       it "returns the filesystem block size" do
-        expect(@plugin[:filesystem]["Global:/"]['kb_size']).to eq("10485760")
+        expect(@plugin[:filesystem]["Global:/"]["kb_size"]).to eq("10485760")
       end
 
       it "returns the filesystem used space in kb" do
-        expect(@plugin[:filesystem]["Global:/"]['kb_used']).to eq("130872")
+        expect(@plugin[:filesystem]["Global:/"]["kb_used"]).to eq("130872")
       end
 
       it "returns the filesystem available space in kb" do
-        expect(@plugin[:filesystem]["Global:/"]['kb_available']).to eq("10354888")
+        expect(@plugin[:filesystem]["Global:/"]["kb_available"]).to eq("10354888")
       end
 
       it "returns the filesystem capacity in percentage" do
-        expect(@plugin[:filesystem]["Global:/"]['percent_used']).to eq("2%")
+        expect(@plugin[:filesystem]["Global:/"]["percent_used"]).to eq("2%")
       end
 
       it "returns the filesystem mounted location" do
-        expect(@plugin[:filesystem]["Global:/"]['mount']).to eq("/")
+        expect(@plugin[:filesystem]["Global:/"]["mount"]).to eq("/")
       end
     end
 
     describe "mount" do
 
       it "returns the filesystem mount location" do
-        expect(@plugin[:filesystem]["Global:/"]['mount']).to eq("/")
+        expect(@plugin[:filesystem]["Global:/"]["mount"]).to eq("/")
       end
 
       it "returns the filesystem type" do
-        expect(@plugin[:filesystem]["Global:/"]['fs_type']).to eq("jfs2")
+        expect(@plugin[:filesystem]["Global:/"]["fs_type"]).to eq("jfs2")
       end
 
       it "returns the filesystem mount options" do
-        expect(@plugin[:filesystem]["Global:/"]['mount_options']).to eq(["rw", "log=NULL"])
+        expect(@plugin[:filesystem]["Global:/"]["mount_options"]).to eq(["rw", "log=NULL"])
       end
 
       # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
 
         it "returns the filesystem mount location" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount']).to eq("/stage/middleware")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount"]).to eq("/stage/middleware")
         end
 
         it "returns the filesystem type" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['fs_type']).to eq("nfs3")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["fs_type"]).to eq("nfs3")
         end
 
         it "returns the filesystem mount options" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]['mount_options']).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
         end
       end
     end

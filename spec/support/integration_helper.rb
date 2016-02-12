@@ -1,11 +1,11 @@
-require 'tmpdir'
+require "tmpdir"
 
-module IntegrationSupport 
+module IntegrationSupport
   def when_plugins_directory(description, &block)
     context "When the plugins directory #{description}" do
 
       before(:each) do
-        @plugins_directory = Dir.mktmpdir('ohai-plugins')
+        @plugins_directory = Dir.mktmpdir("ohai-plugins")
       end
 
       after(:each) do
@@ -21,12 +21,12 @@ module IntegrationSupport
       def with_plugin(plugin_path, contents)
         filename = path_to(plugin_path)
         dir = File.dirname(filename)
-        FileUtils.mkdir_p(dir) unless dir == '.'
-        File.open(filename, 'w') do |file|
+        FileUtils.mkdir_p(dir) unless dir == "."
+        File.open(filename, "w") do |file|
           file.write(contents)
         end
       end
-      
+
       def path_to(plugin_path)
         File.expand_path(plugin_path, @plugins_directory)
       end
@@ -36,7 +36,7 @@ module IntegrationSupport
           with_plugin(plugin_path, contents)
         end
       end
-    
+
       instance_eval(&block)
     end
   end

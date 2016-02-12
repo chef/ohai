@@ -19,7 +19,7 @@
 #
 
 Ohai.plugin(:Network) do
-  require 'ipaddr'
+  require "ipaddr"
 
   provides "network", "counters/network", "macaddress"
 
@@ -27,7 +27,7 @@ Ohai.plugin(:Network) do
   def hex_to_dec_netmask(netmask)
     # example '0xffff0000' -> '255.255.0.0'
     dec = netmask[2..3].to_i(16).to_s(10)
-    [4,6,8].each { |n| dec = dec + "." + netmask[n..n+1].to_i(16).to_s(10) }
+    [4, 6, 8].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
     dec
   end
 
@@ -53,7 +53,7 @@ Ohai.plugin(:Network) do
       # :default_interface, :default_gateway - route -n get 0
       so = shell_out("netstat -rn |grep default")
       so.stdout.lines.each do |line|
-        items = line.split(' ')
+        items = line.split(" ")
         if items[0] == "default"
           network[:default_gateway] = items[1]
           network[:default_interface] = items[5]
@@ -68,12 +68,12 @@ Ohai.plugin(:Network) do
       interface = splat[0]
       line = splat[1..-1][0]
       iface[interface] = Mash.new
-      iface[interface][:state] = (line.include?("<UP,") ? 'up' : 'down')
+      iface[interface][:state] = (line.include?("<UP,") ? "up" : "down")
 
       intraface.lines.each do |lin|
         case lin
         when /flags=\S+<(\S+)>/
-          iface[interface][:flags] = $1.split(',')
+          iface[interface][:flags] = $1.split(",")
           iface[interface][:metric] = $1 if lin =~ /metric\s(\S+)/
         else
           # We have key value pairs.
@@ -103,9 +103,9 @@ Ohai.plugin(:Network) do
           else
             # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
             properties = lin.split
-            n = properties.length/2 - 1
+            n = properties.length / 2 - 1
             (0..n).each do |i|
-              iface[interface][properties[i*2]] = properties[(i*2+1)]
+              iface[interface][properties[i * 2]] = properties[(i * 2 + 1)]
             end
           end
         end
@@ -120,7 +120,7 @@ Ohai.plugin(:Network) do
           macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
         end
       end
-    end  #ifconfig stdout
+    end #ifconfig stdout
 
     # Query routes information
     %w{inet inet6}.each do |family|
@@ -130,7 +130,7 @@ Ohai.plugin(:Network) do
           interface = $6
           iface[interface][:routes] = Array.new unless iface[interface][:routes]
           iface[interface][:routes] << Mash.new( :destination => $1, :family => family,
-           :via => $2, :flags => $3)
+                                                 :via => $2, :flags => $3)
         end
       end
     end
@@ -151,4 +151,3 @@ Ohai.plugin(:Network) do
     network["interfaces"] = iface
   end
 end
-

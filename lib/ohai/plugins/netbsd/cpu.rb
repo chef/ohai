@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:CPU) do
-  provides 'cpu'
+  provides "cpu"
 
   collect_data(:netbsd) do
     cpuinfo = Mash.new

@@ -112,6 +112,7 @@ module Ohai
         end
 
         private
+
         def plugin_config
           @plugin_config ||= fetch_plugin_config
         end

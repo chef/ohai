@@ -16,11 +16,11 @@
 # limitations under the License.
 #
 
-require 'chef-config/path_helper'
-require 'ohai/log'
-require 'ohai/mash'
-require 'ohai/dsl'
-require 'pathname'
+require "chef-config/path_helper"
+require "ohai/log"
+require "ohai/mash"
+require "ohai/dsl"
+require "pathname"
 
 module Ohai
 
@@ -95,7 +95,7 @@ module Ohai
     # If `plugin_dir_path` is given, and the file at `plugin_path` is a v6
     # plugin, the 'relative path' of the plugin (used by `require_plugin()`) is
     # computed by finding the relative path from `plugin_dir_path` to `plugin_path`
-    def load_plugin_class(plugin_path, plugin_dir_path=nil)
+    def load_plugin_class(plugin_path, plugin_dir_path = nil)
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin

@@ -128,7 +128,7 @@ class Mash < Hash
   #
   # @return [Array] The values at each of the provided keys
   def values_at(*indices)
-    indices.collect {|key| self[convert_key(key)]}
+    indices.collect { |key| self[convert_key(key)] }
   end
 
   # @param hash<Hash> The hash to merge with the mash.
@@ -152,7 +152,7 @@ class Mash < Hash
   #   { :one => 1, :two => 2, :three => 3 }.except(:one)
   #     #=> { "two" => 2, "three" => 3 }
   def except(*keys)
-    super(*keys.map {|k| convert_key(k)})
+    super(*keys.map { |k| convert_key(k) })
   end
 
   # Used to provide the same interface as Hash.
@@ -181,6 +181,7 @@ class Mash < Hash
   end
 
   protected
+
   # @param key<Object> The key to convert.
   #
   # @param [Object]

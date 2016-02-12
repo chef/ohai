@@ -113,7 +113,6 @@ Ohai.plugin(:CloudV2) do
     end
   end
 
-
   #---------------------------------------
   # Google Compute Engine (gce)
   #--------------------------------------
@@ -123,19 +122,19 @@ Ohai.plugin(:CloudV2) do
   end
 
   def get_gce_values
-    public_ips = gce['instance']['networkInterfaces'].collect do |interface|
-      if interface.has_key?('accessConfigs')
-        interface['accessConfigs'].collect{|ac| ac['externalIp'] unless ac['externalIp'] == ''}
+    public_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+      if interface.has_key?("accessConfigs")
+        interface["accessConfigs"].collect { |ac| ac["externalIp"] unless ac["externalIp"] == "" }
       end
     end.flatten.compact
 
-    private_ips = gce['instance']['networkInterfaces'].collect do |interface|
-      interface['ip']
+    private_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+      interface["ip"]
     end.compact
 
-    public_ips.each { |ipaddr|  @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
-    private_ips.each { |ipaddr|  @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
-    @cloud_attr_obj.local_hostname = gce['instance']['hostname']
+    public_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
+    private_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
+    @cloud_attr_obj.local_hostname = gce["instance"]["hostname"]
     @cloud_attr_obj.provider = "gce"
   end
 
@@ -154,10 +153,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with ec2 values
   def get_ec2_values
-    @cloud_attr_obj.add_ipv4_addr(ec2['public_ipv4'], :public)
-    @cloud_attr_obj.add_ipv4_addr(ec2['local_ipv4'], :private)
-    @cloud_attr_obj.public_hostname = ec2['public_hostname']
-    @cloud_attr_obj.local_hostname = ec2['local_hostname']
+    @cloud_attr_obj.add_ipv4_addr(ec2["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(ec2["local_ipv4"], :private)
+    @cloud_attr_obj.public_hostname = ec2["public_hostname"]
+    @cloud_attr_obj.local_hostname = ec2["local_hostname"]
     @cloud_attr_obj.provider = "ec2"
   end
 
@@ -176,12 +175,12 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with rackspace values
   def get_rackspace_values
-    @cloud_attr_obj.add_ipv4_addr(rackspace['public_ipv4'], :public)
-    @cloud_attr_obj.add_ipv4_addr(rackspace['local_ipv4'], :private)
-    @cloud_attr_obj.add_ipv6_addr(rackspace['public_ipv6'], :public)
-    @cloud_attr_obj.add_ipv6_addr(rackspace['local_ipv6'], :private)
-    @cloud_attr_obj.public_hostname = rackspace['public_hostname']
-    @cloud_attr_obj.local_hostname = rackspace['local_hostname']
+    @cloud_attr_obj.add_ipv4_addr(rackspace["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(rackspace["local_ipv4"], :private)
+    @cloud_attr_obj.add_ipv6_addr(rackspace["public_ipv6"], :public)
+    @cloud_attr_obj.add_ipv6_addr(rackspace["local_ipv6"], :private)
+    @cloud_attr_obj.public_hostname = rackspace["public_hostname"]
+    @cloud_attr_obj.local_hostname = rackspace["local_hostname"]
     @cloud_attr_obj.provider = "rackspace"
   end
 
@@ -200,10 +199,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with linode values
   def get_linode_values
-    @cloud_attr_obj.add_ipv4_addr(linode['public_ip'], :public)
-    @cloud_attr_obj.add_ipv4_addr(linode['private_ip'], :private)
-    @cloud_attr_obj.public_hostname = linode['public_hostname']
-    @cloud_attr_obj.local_hostname = linode['local_hostname']
+    @cloud_attr_obj.add_ipv4_addr(linode["public_ip"], :public)
+    @cloud_attr_obj.add_ipv4_addr(linode["private_ip"], :private)
+    @cloud_attr_obj.public_hostname = linode["public_hostname"]
+    @cloud_attr_obj.local_hostname = linode["local_hostname"]
     @cloud_attr_obj.provider = "linode"
   end
 
@@ -221,10 +220,10 @@ Ohai.plugin(:CloudV2) do
   end
 
   def get_eucalyptus_values
-    @cloud_attr_obj.add_ipv4_addr(eucalyptus['public_ipv4'], :public)
-    @cloud_attr_obj.add_ipv4_addr(eucalyptus['local_ipv4'], :private)
-    @cloud_attr_obj.public_hostname = eucalyptus['public_hostname']
-    @cloud_attr_obj.local_hostname = eucalyptus['local_hostname']
+    @cloud_attr_obj.add_ipv4_addr(eucalyptus["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(eucalyptus["local_ipv4"], :private)
+    @cloud_attr_obj.public_hostname = eucalyptus["public_hostname"]
+    @cloud_attr_obj.local_hostname = eucalyptus["local_hostname"]
     @cloud_attr_obj.provider = "eucalyptus"
   end
 
@@ -243,10 +242,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with openstack values
   def get_openstack_values
-    @cloud_attr_obj.add_ipv4_addr(openstack['public_ipv4'], :public)
-    @cloud_attr_obj.add_ipv4_addr(openstack['local_ipv4'], :private)
-    @cloud_attr_obj.public_hostname = openstack['public_hostname']
-    @cloud_attr_obj.local_hostname = openstack['local_hostname']
+    @cloud_attr_obj.add_ipv4_addr(openstack["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(openstack["local_ipv4"], :private)
+    @cloud_attr_obj.public_hostname = openstack["public_hostname"]
+    @cloud_attr_obj.local_hostname = openstack["local_hostname"]
     @cloud_attr_obj.provider = "openstack"
   end
 
@@ -265,12 +264,11 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with azure values
   def get_azure_values
-    @cloud_attr_obj.add_ipv4_addr(azure['public_ip'], :public)
-    @cloud_attr_obj.add_ipv4_addr(azure['private_ip'], :private)
-    @cloud_attr_obj.public_hostname = azure['public_fqdn']
+    @cloud_attr_obj.add_ipv4_addr(azure["public_ip"], :public)
+    @cloud_attr_obj.add_ipv4_addr(azure["private_ip"], :private)
+    @cloud_attr_obj.public_hostname = azure["public_fqdn"]
     @cloud_attr_obj.provider = "azure"
   end
-
 
   # ----------------------------------------
   # digital_ocean
@@ -287,13 +285,13 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with digital_ocean values
   def get_digital_ocean_values
-    digital_ocean['networks'].each do |network, addresses|
-      type = network == 'v4' ? 'ipv4' : 'ipv6'
+    digital_ocean["networks"].each do |network, addresses|
+      type = network == "v4" ? "ipv4" : "ipv6"
       addresses.each do |address|
-        @cloud_attr_obj.send("add_#{type}_addr", address['ip_address'], address['type'].to_sym)
+        @cloud_attr_obj.send("add_#{type}_addr", address["ip_address"], address["type"].to_sym)
       end
     end
-    @cloud_attr_obj.public_hostname = digital_ocean['name']
+    @cloud_attr_obj.public_hostname = digital_ocean["name"]
     @cloud_attr_obj.provider = "digital_ocean"
   end
 

@@ -16,13 +16,13 @@
 
 Ohai.plugin(:CPU) do
   provides "cpu"
-  
+
   collect_data(:solaris2) do
     cpu Mash.new
     # This does assume that /usr/bin/kstat is in the path
     processor_info = shell_out("kstat -p cpu_info").stdout.lines
-    cpu["total"] = 0 
-    cpu["sockets"] = 0 
+    cpu["total"] = 0
+    cpu["sockets"] = 0
     cpu["cores"] = 0
     cpu["corethreads"] = 0
     cpu["cpustates"] = Mash.new
@@ -31,35 +31,35 @@ Ohai.plugin(:CPU) do
     cpucores = Array.new
     cpusockets = Array.new
     processor_info.each_with_index do |processor, i|
-      desc,instance,record,keyvalue = processor.split(":")
+      desc, instance, record, keyvalue = processor.split(":")
       cpu[instance] ||= Mash.new
-      if (currentcpu !=  instance)
-         cpu["total"] += 1
-         currentcpu = instance
-      end 
+      if (currentcpu != instance)
+        cpu["total"] += 1
+        currentcpu = instance
+      end
       kv = keyvalue.split(/\s+/)
       key = kv.shift
       value = kv.join(" ").chomp
       case key
         when /chip_id/
-           cpu[instance]["socket"] = value
-           cpusockets.push(value) if cpusockets.index(value).nil?
+          cpu[instance]["socket"] = value
+          cpusockets.push(value) if cpusockets.index(value).nil?
         when /cpu_type/
-           cpu[instance]["arch"] = value
+          cpu[instance]["arch"] = value
         when /clock_MHz/
-           cpu[instance]["mhz"] = value
+          cpu[instance]["mhz"] = value
         when /brand/
-           cpu[instance]["model_name"] = value.sub(/\s+/," ")
+          cpu[instance]["model_name"] = value.sub(/\s+/, " ")
         when /^state$/
-           cpu[instance]["state"] = value
-           cpu["cpustates"][value] ||= 0 
-           cpu["cpustates"][value] += 1 
+          cpu[instance]["state"] = value
+          cpu["cpustates"][value] ||= 0
+          cpu["cpustates"][value] += 1
         when /core_id/
-           cpu[instance]["core_id"] = value
+          cpu[instance]["core_id"] = value
            # Detect hyperthreading/multithreading
-           cpucores.push(value) if cpucores.index(value).nil?
+          cpucores.push(value) if cpucores.index(value).nil?
         when /family|fpu_type|model|stepping|vendor_id/
-           cpu[instance][key] = value
+          cpu[instance][key] = value
       end
     end
     cpu["cores"] = cpucores.size

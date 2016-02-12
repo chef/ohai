@@ -28,8 +28,8 @@ Ohai.plugin(:SSHHostKey) do
       [ "rsa", nil ]
     when /^ecdsa/
       [ "ecdsa", content[0] ]
-    when 'ssh-ed25519'
-      [ 'ed25519', nil ]
+    when "ssh-ed25519"
+      [ "ed25519", nil ]
     else
       [ nil, nil ]
     end

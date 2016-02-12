@@ -25,8 +25,8 @@
 # limitations under the License.
 #
 
-require 'socket'
-require 'ipaddr'
+require "socket"
+require "ipaddr"
 
 Ohai.plugin(:Hostname) do
   provides "domain", "hostname", "fqdn", "machinename"
@@ -77,14 +77,14 @@ Ohai.plugin(:Hostname) do
   end
 
   def get_fqdn_from_sigar
-    require 'sigar'
+    require "sigar"
     sigar = Sigar.new
     sigar.fqdn
   end
 
   def sigar_is_available?
     begin
-      require 'sigar'
+      require "sigar"
       true
     rescue LoadError
       false
@@ -153,11 +153,11 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require 'wmi-lite/wmi'
-    require 'socket'
+    require "wmi-lite/wmi"
+    require "socket"
 
     wmi = WmiLite::Wmi.new
-    host = wmi.first_of('Win32_ComputerSystem')
+    host = wmi.first_of("Win32_ComputerSystem")
 
     hostname "#{host['dnshostname']}"
     machinename "#{host['name']}"

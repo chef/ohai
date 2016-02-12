@@ -16,25 +16,24 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
-require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
 
 describe Ohai::System, "plugin groovy" do
-  test_plugin([ "languages", "groovy" ], [ "groovy" ]) do | p |
+  test_plugin(%w{languages groovy}, [ "groovy" ]) do |p|
     p.test([ "centos-5.5", "ubuntu-12.10" ], [ "x64" ], [[]],
-           { "languages" => { "groovy" => nil }})
-    p.test([ "centos-6.2", "ubuntu-12.04", "ubuntu-13.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "groovy" => nil }})
-    p.test([ "centos-5.5" ], [ "x64" ], [[ "java", "groovy" ]],
-           { "languages" => { "groovy" => { "version" => "2.1.7" }}})
-    p.test([ "centos-6.2" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
-           { "languages" => { "groovy" => { "version" => "2.1.7" }}})
-    p.test([ "ubuntu-10.04" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
-           { "languages" => { "groovy" => { "version" => "1.6.4" }}})
-    p.test([ "ubuntu-12.04", "ubuntu-13.04" ], [ "x86", "x64" ], [[ "java", "groovy" ]],
-           { "languages" => { "groovy" => { "version" => "1.8.6" }}})
-    p.test([ "ubuntu-12.10" ], [ "x64" ], [[ "java", "groovy" ]],
-           { "languages" => { "groovy" => { "version" => "1.8.6" }}})
+           { "languages" => { "groovy" => nil } })
+    p.test([ "centos-6.2", "ubuntu-12.04", "ubuntu-13.04" ], %w{x86 x64}, [[]],
+           { "languages" => { "groovy" => nil } })
+    p.test([ "centos-5.5" ], [ "x64" ], [%w{java groovy}],
+           { "languages" => { "groovy" => { "version" => "2.1.7" } } })
+    p.test([ "centos-6.2" ], %w{x86 x64}, [%w{java groovy}],
+           { "languages" => { "groovy" => { "version" => "2.1.7" } } })
+    p.test([ "ubuntu-10.04" ], %w{x86 x64}, [%w{java groovy}],
+           { "languages" => { "groovy" => { "version" => "1.6.4" } } })
+    p.test([ "ubuntu-12.04", "ubuntu-13.04" ], %w{x86 x64}, [%w{java groovy}],
+           { "languages" => { "groovy" => { "version" => "1.8.6" } } })
+    p.test([ "ubuntu-12.10" ], [ "x64" ], [%w{java groovy}],
+           { "languages" => { "groovy" => { "version" => "1.8.6" } } })
   end
 end

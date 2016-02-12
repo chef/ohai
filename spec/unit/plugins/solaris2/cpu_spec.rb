@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X cpu plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/cpu")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
   end
-  
+
   describe "on x86 processors" do
     before(:each) do
       kstatinfo_output = <<-END
@@ -91,7 +91,7 @@ cpu_info:2:cpu_info2:current_cstate     0
 cpu_info:2:cpu_info2:family     12
 cpu_info:2:cpu_info2:fpu_type   i387 compatible
 cpu_info:2:cpu_info2:implementation     x86 (chipid 0x1 GenuineIntel family 6 model 26 step 5 clock 2926 MHz)
-cpu_info:2:cpu_info2:model     93 
+cpu_info:2:cpu_info2:model     93
 cpu_info:2:cpu_info2:ncore_per_chip     4
 cpu_info:2:cpu_info2:ncpu_per_chip      8
 cpu_info:2:cpu_info2:pg_id      7
@@ -247,7 +247,7 @@ cpu_info:8:cpu_info8:current_cstate     1
 cpu_info:8:cpu_info8:family     12
 cpu_info:8:cpu_info8:fpu_type   i387 compatible
 cpu_info:8:cpu_info8:implementation     x86 (chipid 0x1 GenuineIntel family 6 model 26 step 5 clock 2926 MHz)
-cpu_info:8:cpu_info8:model     93 
+cpu_info:8:cpu_info8:model     93
 cpu_info:8:cpu_info8:ncore_per_chip     4
 cpu_info:8:cpu_info8:ncpu_per_chip      8
 cpu_info:8:cpu_info8:pg_id      1
@@ -461,14 +461,14 @@ END
     it "should get the total number of online cores" do
       expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql (8)
     end
-   
+
     it "should get the total number of offline cores" do
       expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql (8)
     end
- 
+
     describe "per-cpu information" do
       it "should include processor vendor_ids" do
-        # CPU Socket 0 
+        # CPU Socket 0
         expect(@plugin["cpu"]["15"]["vendor_id"]).to eql("GenuineIntel")
         expect(@plugin["cpu"]["13"]["vendor_id"]).to eql("GenuineIntel")
         expect(@plugin["cpu"]["11"]["vendor_id"]).to eql("GenuineIntel")
@@ -566,7 +566,7 @@ END
         expect(@plugin["cpu"]["4"]["stepping"]).to eql("9")
         expect(@plugin["cpu"]["2"]["stepping"]).to eql("9")
         expect(@plugin["cpu"]["0"]["stepping"]).to eql("9")
- 
+
       end
 
       it "should include processor model names" do
@@ -627,8 +627,7 @@ END
       end
     end
   end
-  
-  
+
   describe "on sparc processors" do
     before(:each) do
       kstatinfo_output = <<-END
@@ -2812,7 +2811,7 @@ END
       allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
       @plugin.run
     end
-    
+
     it "should get the total virtual processor count" do
       expect(@plugin["cpu"]["total"]).to eql(128)
     end
@@ -2820,11 +2819,11 @@ END
     it "should get the total processor count" do
       expect(@plugin["cpu"]["real"]).to eql(1)
     end
-    
+
     it "should get the total core count" do
       expect(@plugin["cpu"]["cores"]).to eql(16)
     end
-   
+
     it "should get the number of threads per core" do
       expect(@plugin["cpu"]["corethreads"]).to eql(8)
     end
@@ -2832,11 +2831,11 @@ END
     it "should get the total number of online cores" do
       expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql(124)
     end
-   
+
     it "should get the total number of offline cores" do
       expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql(4)
     end
-     
+
     describe "per-cpu information" do
       it "should include processor model names" do
         expect(@plugin["cpu"]["0"]["model_name"]).to eql("SPARC-T3")
@@ -2890,7 +2889,7 @@ END
         expect(@plugin["cpu"]["120"]["core_id"]).to eql("1131")
       end
 
-     it "should include processor architecture" do
+      it "should include processor architecture" do
         expect(@plugin["cpu"]["0"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["1"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["2"]["arch"]).to eql("sparcv9")
@@ -2899,9 +2898,9 @@ END
         expect(@plugin["cpu"]["125"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["126"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["127"]["arch"]).to eql("sparcv9")
-     end
+      end
 
-     it "should include processor FPU type" do
+      it "should include processor FPU type" do
         expect(@plugin["cpu"]["0"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["1"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["2"]["fpu_type"]).to eql("sparcv9")
@@ -2910,9 +2909,9 @@ END
         expect(@plugin["cpu"]["125"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["126"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["127"]["fpu_type"]).to eql("sparcv9")
-     end
+      end
 
-     it "should include processor state" do
+      it "should include processor state" do
         expect(@plugin["cpu"]["0"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["1"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["2"]["state"]).to eql("on-line")
@@ -2921,7 +2920,7 @@ END
         expect(@plugin["cpu"]["125"]["state"]).to eql("off-line")
         expect(@plugin["cpu"]["126"]["state"]).to eql("off-line")
         expect(@plugin["cpu"]["127"]["state"]).to eql("off-line")
-     end
+      end
     end
   end
 end

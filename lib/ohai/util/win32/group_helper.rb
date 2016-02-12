@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ohai/util/win32'
+require "ohai/util/win32"
 
 module Ohai
   module Util
@@ -26,7 +26,7 @@ module Ohai
       # internal name for the Administrators group, which lets us work
       # properly in environments with a renamed or localized name for the
       # Administrators group
-      BUILTIN_ADMINISTRATORS_SID = 'S-1-5-32-544'
+      BUILTIN_ADMINISTRATORS_SID = "S-1-5-32-544"
 
       def self.windows_root_group_name
         administrators_group_name_result = nil
@@ -40,8 +40,8 @@ module Ohai
         end
 
         administrators_group_name_buffer = 0.chr * 260
-        administrators_group_name_length = [administrators_group_name_buffer.length].pack('L')
-        domain_name_length_buffer = [260].pack('L')
+        administrators_group_name_length = [administrators_group_name_buffer.length].pack("L")
+        domain_name_length_buffer = [260].pack("L")
         sid_use_result = 0.chr * 4
 
         # Use LookupAccountSid rather than WMI's Win32_Group class because WMI will attempt
@@ -73,4 +73,3 @@ module Ohai
     end
   end
 end
-

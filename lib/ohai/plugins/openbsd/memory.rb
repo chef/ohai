@@ -71,13 +71,13 @@ Ohai.plugin(:Memory) do
         memory[:page_count] = $1
         memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
       when /(\d+) pages free/
-        memory[:free] = memory[:page_size].to_i * $1.to_i 
+        memory[:free] = memory[:page_size].to_i * $1.to_i
       when /(\d+) pages active/
-        memory[:active] = memory[:page_size].to_i * $1.to_i 
+        memory[:active] = memory[:page_size].to_i * $1.to_i
       when /(\d+) pages inactive/
-        memory[:inactive] = memory[:page_size].to_i * $1.to_i 
+        memory[:inactive] = memory[:page_size].to_i * $1.to_i
       when /(\d+) pages wired/
-        memory[:wired] = memory[:page_size].to_i * $1.to_i 
+        memory[:wired] = memory[:page_size].to_i * $1.to_i
       end
     end
 

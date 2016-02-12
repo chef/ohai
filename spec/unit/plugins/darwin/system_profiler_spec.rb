@@ -16,11 +16,11 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 require File.expand_path("#{File.dirname(__FILE__)}/system_profiler_output.rb")
 
 begin
-  require 'plist'
+  require "plist"
 rescue LoadError => e
   puts "The darwin systemprofile plugin spec tests will fail without the 'plist' library/gem.\n\n"
   raise e
@@ -42,6 +42,6 @@ describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
     allow(@plugin).to receive(:shell_out).with(full_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Full, ""))
     allow(@plugin).to receive(:shell_out).with(mini_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Mini, ""))
     @plugin.run
-    expect(@plugin['system_profile'][18]["_items"][0]["serial_number"]).to eq('ABCDEFG12345')
+    expect(@plugin["system_profile"][18]["_items"][0]["serial_number"]).to eq("ABCDEFG12345")
   end
 end

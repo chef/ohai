@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 vbox_output = <<EOF
 Oracle VM VirtualBox Guest Additions Command Line Management Interface Version 5.0.2
@@ -47,42 +47,42 @@ Name: /VirtualBox/GuestInfo/OS/Release, value: 3.19.0-31-generic, timestamp: 144
 Name: /VirtualBox/GuestInfo/OS/NoLoggedInUsers, value: false, timestamp: 1448390452251532000, flags: TRANSIENT, TRANSRESET
 EOF
 
-describe Ohai::System, 'plugin virtualbox' do
-  context 'when VBoxControl shellout fails' do
-    it 'should not set the virtualbox attribute' do
-      plugin = get_plugin('virtualbox')
-      allow(plugin).to receive(:shell_out).with('VBoxControl guestproperty enumerate').and_return(mock_shell_out(1, '', ''))
+describe Ohai::System, "plugin virtualbox" do
+  context "when VBoxControl shellout fails" do
+    it "should not set the virtualbox attribute" do
+      plugin = get_plugin("virtualbox")
+      allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin).not_to have_key(:virtualbox)
     end
   end
 
-  context 'when VBoxControl shellout succeeds' do
-    let(:plugin) { get_plugin('virtualbox') }
+  context "when VBoxControl shellout succeeds" do
+    let(:plugin) { get_plugin("virtualbox") }
 
     before(:each) do
-      allow(plugin).to receive(:shell_out).with('VBoxControl guestproperty enumerate').and_return(mock_shell_out(0, vbox_output, ''))
+      allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(0, vbox_output, ""))
       plugin.run
     end
 
-    it 'should set the host version' do
-      expect(plugin[:virtualbox][:host][:version]).to eql('5.0.10')
+    it "should set the host version" do
+      expect(plugin[:virtualbox][:host][:version]).to eql("5.0.10")
     end
 
-    it 'should set the host revision' do
-      expect(plugin[:virtualbox][:host][:revision]).to eql('104061')
+    it "should set the host revision" do
+      expect(plugin[:virtualbox][:host][:revision]).to eql("104061")
     end
 
-    it 'should set the host language' do
-      expect(plugin[:virtualbox][:host][:language]).to eql('en_US')
+    it "should set the host language" do
+      expect(plugin[:virtualbox][:host][:language]).to eql("en_US")
     end
 
-    it 'should set the guest additions version' do
-      expect(plugin[:virtualbox][:guest][:guest_additions_version]).to eql('5.0.2')
+    it "should set the guest additions version" do
+      expect(plugin[:virtualbox][:guest][:guest_additions_version]).to eql("5.0.2")
     end
 
-    it 'should set the guest additions revision' do
-      expect(plugin[:virtualbox][:guest][:guest_additions_revision]).to eql('102096')
+    it "should set the guest additions revision" do
+      expect(plugin[:virtualbox][:guest][:guest_additions_revision]).to eql("102096")
     end
   end
 end

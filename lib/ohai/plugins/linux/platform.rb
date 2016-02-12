@@ -38,8 +38,8 @@ Ohai.plugin(:Platform) do
   def read_os_release_info(file)
     return nil unless File.exist?(file)
     File.read(file).split.inject({}) do |map, line|
-      key, value = line.split('=')
-      map[key] = value.gsub(/\A"|"\Z/, '') if value
+      key, value = line.split("=")
+      map[key] = value.gsub(/\A"|"\Z/, "") if value
       map
     end
   end
@@ -54,8 +54,8 @@ Ohai.plugin(:Platform) do
   def os_release_info
     @os_release_info ||=
       begin
-        os_release_info = read_os_release_info('/etc/os-release')
-        cisco_release_info = os_release_info['CISCO_RELEASE_INFO'] if os_release_info
+        os_release_info = read_os_release_info("/etc/os-release")
+        cisco_release_info = os_release_info["CISCO_RELEASE_INFO"] if os_release_info
         if cisco_release_info && File.exist?(cisco_release_info)
           os_release_info.merge!(read_os_release_info(cisco_release_info))
         end
@@ -69,7 +69,7 @@ Ohai.plugin(:Platform) do
   # @returns [Boolean] if we are Cisco according to /etc/os-release
   #
   def os_release_file_is_cisco?
-    File.exist?('/etc/os-release') && os_release_info['CISCO_RELEASE_INFO']
+    File.exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
   end
 
   collect_data(:linux) do
@@ -105,8 +105,8 @@ Ohai.plugin(:Platform) do
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
     elsif File.exist?("/etc/redhat-release")
       if os_release_file_is_cisco? # Cisco guestshell
-        platform 'nexus_centos'
-        platform_version os_release_info['VERSION']
+        platform "nexus_centos"
+        platform_version os_release_info["VERSION"]
       else
         contents = File.read("/etc/redhat-release").chomp
         platform get_redhatish_platform(contents)
@@ -116,10 +116,10 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?('/etc/gentoo-release')
+    elsif File.exist?("/etc/gentoo-release")
       platform "gentoo"
-      platform_version File.read('/etc/gentoo-release').scan(/(\d+|\.+)/).join
-    elsif File.exist?('/etc/SuSE-release')
+      platform_version File.read("/etc/gentoo-release").scan(/(\d+|\.+)/).join
+    elsif File.exist?("/etc/SuSE-release")
       suse_release = File.read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
@@ -129,37 +129,37 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif File.exist?('/etc/slackware-version')
+    elsif File.exist?("/etc/slackware-version")
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?('/etc/arch-release')
+    elsif File.exist?("/etc/arch-release")
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
       platform_version `uname -r`.strip
-    elsif File.exist?('/etc/exherbo-release')
+    elsif File.exist?("/etc/exherbo-release")
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version `uname -r`.strip
-    elsif File.exist?('/etc/alpine-release')
+    elsif File.exist?("/etc/alpine-release")
       platform "alpine"
       platform_version File.read("/etc/alpine-release").strip()
     elsif os_release_file_is_cisco?
-      raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field' if
-        os_release_info['ID_LIKE'].nil? || ! os_release_info['ID_LIKE'].include?('wrlinux')
+      raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
+        os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")
 
-      case os_release_info['ID']
-      when 'nexus'
-        platform 'nexus'
-      when 'ios_xr'
-        platform 'ios_xr'
+      case os_release_info["ID"]
+      when "nexus"
+        platform "nexus"
+      when "ios_xr"
+        platform "ios_xr"
       else
-        raise 'unknown Cisco /etc/os-release or /etc/cisco-release ID field'
+        raise "unknown Cisco /etc/os-release or /etc/cisco-release ID field"
       end
 
-      platform_family 'wrlinux'
-      platform_version os_release_info['VERSION']
+      platform_family "wrlinux"
+      platform_version os_release_info["VERSION"]
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

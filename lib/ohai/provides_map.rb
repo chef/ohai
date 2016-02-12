@@ -17,10 +17,10 @@
 # limitations under the License.
 #
 
-require 'ohai/mash'
-require 'ohai/exception'
-require 'ohai/mixin/os'
-require 'ohai/dsl'
+require "ohai/mash"
+require "ohai/exception"
+require "ohai/mixin/os"
+require "ohai/dsl"
 
 module Ohai
   class ProvidesMap
@@ -102,7 +102,7 @@ module Ohai
       plugins.uniq
     end
 
-    def all_plugins(attribute_filter=nil)
+    def all_plugins(attribute_filter = nil)
       if attribute_filter.nil?
         collected = []
         collect_plugins_in(map, collected).uniq
@@ -117,7 +117,7 @@ module Ohai
       raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute.match(/\/\/+/)
       raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute.match(/\/$/)
 
-      parts = attribute.split('/')
+      parts = attribute.split("/")
       parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'
       parts
     end
@@ -144,7 +144,7 @@ module Ohai
       # attribute under attr (if attribute = attr/sub1/sub2 then we
       # search provides_map[attr] for sub1/sub2)
       unless rest.empty?
-        subtree = select_closest_subtree(provides_map[attr], rest.join('/'))
+        subtree = select_closest_subtree(provides_map[attr], rest.join("/"))
       end
 
       if subtree.nil?

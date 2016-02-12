@@ -18,14 +18,14 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin php" do
 
   before(:each) do
     @plugin = get_plugin("php")
     @plugin[:languages] = Mash.new
-    @stdout =  <<-OUT
+    @stdout = <<-OUT
 PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)
 Copyright (c) 1997-2006 The PHP Group
 Zend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies
@@ -55,7 +55,7 @@ OUT
   end
 
   it "should parse builddate even if it's suhosin patched" do
-    @stdout =  <<-OUT
+    @stdout = <<-OUT
 PHP 5.3.27 with Suhosin-Patch (cli) (built: Aug 30 2013 04:30:30)
 Copyright (c) 1997-2013 The PHP Group
 Zend Engine v2.3.0, Copyright (c) 1998-2013 Zend Technologies
@@ -66,7 +66,7 @@ OUT
   end
 
   it "should not set zend_optcache_version if not compiled with opcache" do
-    @stdout =  <<-OUT
+    @stdout = <<-OUT
 PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)
 Copyright (c) 1997-2006 The PHP Group
 Zend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies

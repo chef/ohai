@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin rust" do
-  let(:stdout) {"rustc 1.0.0-nightly (29bd9a06e 2015-01-20 23:03:09 +0000)"}
+  let(:stdout) { "rustc 1.0.0-nightly (29bd9a06e 2015-01-20 23:03:09 +0000)" }
   let (:plugin) do
     plugin = get_plugin("rust")
     plugin[:languages] = Mash.new

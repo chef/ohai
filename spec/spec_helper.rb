@@ -1,16 +1,16 @@
-require 'rspec'
-require 'rspec/collection_matchers'
+require "rspec"
+require "rspec/collection_matchers"
 
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 
 $:.unshift(File.expand_path("../..", __FILE__))
-$:.unshift(File.dirname(__FILE__) + '/../lib')
+$:.unshift(File.dirname(__FILE__) + "/../lib")
 
-require 'spec/support/platform_helpers'
-require 'spec/support/integration_helper'
-require 'wmi-lite'
-require 'ohai'
+require "spec/support/platform_helpers"
+require "spec/support/integration_helper"
+require "wmi-lite"
+require "ohai"
 Ohai.config[:log_level] = :error
 
 PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
@@ -112,8 +112,8 @@ RSpec.configure do |config|
   config.filter_run_excluding :unix_only => true unless unix?
   config.filter_run_excluding :ruby_18_only => true unless ruby_18?
   config.filter_run_excluding :ruby_19_only => true unless ruby_19?
-  config.filter_run_excluding :requires_root => true unless ENV['USER'] == 'root'
-  config.filter_run_excluding :requires_unprivileged_user => true if ENV['USER'] == 'root'
+  config.filter_run_excluding :requires_root => true unless ENV["USER"] == "root"
+  config.filter_run_excluding :requires_unprivileged_user => true if ENV["USER"] == "root"
 
   config.run_all_when_everything_filtered = true
 

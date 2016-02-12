@@ -18,7 +18,7 @@
 # limitations under the License.
 
 # eucalyptus metadata service is compatible with the ec2 service calls
-require 'ohai/mixin/ec2_metadata'
+require "ohai/mixin/ec2_metadata"
 
 Ohai.plugin(:Eucalyptus) do
   include Ohai::Mixin::Ec2Metadata
@@ -28,7 +28,7 @@ Ohai.plugin(:Eucalyptus) do
 
   # returns the mac address from the collection of all address types
   def get_mac_address(addresses)
-    detected_addresses = addresses.detect { |address, keypair| keypair == {"family"=>"lladdr"} }
+    detected_addresses = addresses.detect { |address, keypair| keypair == { "family" => "lladdr" } }
     if detected_addresses
       return detected_addresses.first
     else
@@ -53,7 +53,7 @@ Ohai.plugin(:Eucalyptus) do
   def looks_like_euca?
     # Try non-blocking connect so we don't "block" if
     # the metadata service doesn't respond
-    hint?('eucalyptus') || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80)
+    hint?("eucalyptus") || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
   end
 
   collect_data do
@@ -68,7 +68,7 @@ Ohai.plugin(:Eucalyptus) do
         # secret access key. We'd rather not have ohai send this information
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
-        next if k == 'iam' && !hint?('iam')
+        next if k == "iam" && !hint?("iam")
         eucalyptus[k] = v
       end
       eucalyptus[:userdata] = self.fetch_userdata

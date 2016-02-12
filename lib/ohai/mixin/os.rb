@@ -17,14 +17,14 @@
 # limitations under the License.
 #
 
-require 'rbconfig'
+require "rbconfig"
 
 module Ohai
   module Mixin
     module OS
 
       def collect_os
-        case ::RbConfig::CONFIG['host_os']
+        case ::RbConfig::CONFIG["host_os"]
         when /aix(.+)$/
           return "aix"
         when /darwin(.+)$/
@@ -51,7 +51,7 @@ module Ohai
           # subsystems.
           return "windows"
         else
-          return ::RbConfig::CONFIG['host_os']
+          return ::RbConfig::CONFIG["host_os"]
         end
       end
 

@@ -58,7 +58,7 @@ Ohai.plugin(:Network) do
       if line =~ /\s+inet ([\d.]+) netmask ([\da-fx]+)\s*\w*\s*([\d.]*)/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         # convert the netmask to decimal for consistency
-        netmask = "#{$2[2,2].hex}.#{$2[4,2].hex}.#{$2[6,2].hex}.#{$2[8,2].hex}"
+        netmask = "#{$2[2, 2].hex}.#{$2[4, 2].hex}.#{$2[6, 2].hex}.#{$2[8, 2].hex}"
         if $3.empty?
           iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => netmask }
         else
@@ -76,7 +76,7 @@ Ohai.plugin(:Network) do
         end
       end
       if line =~ /flags=\d+<(.+)>/
-        flags = $1.split(',')
+        flags = $1.split(",")
         iface[cint][:flags] = flags if flags.length > 0
       end
       if line =~ /metric: (\d+) mtu: (\d+)/
@@ -100,7 +100,7 @@ Ohai.plugin(:Network) do
     # From netstat(1), not sure of the implications:
     # Show the state of all network interfaces or a single interface
     # which have been auto-configured (interfaces statically configured
-    # into a system, but not located at boot time are not shown). 
+    # into a system, but not located at boot time are not shown).
     so = shell_out("netstat -idn")
     so.stdout.lines do |line|
       # Name    Mtu Network       Address              Ipkts Ierrs    Opkts Oerrs  Coll Drop

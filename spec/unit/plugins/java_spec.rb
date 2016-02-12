@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin java (Java5 Client VM)" do
   before(:each) do
@@ -113,7 +113,7 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
       expect(@plugin[:languages]).not_to have_key(:java)
     end
   end
-  
+
   shared_examples_for "when the openjdk 1.8 is installed" do
 
     before(:each) do

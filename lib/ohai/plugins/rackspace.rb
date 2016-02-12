@@ -27,7 +27,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If kernel name matches
   # false:: Otherwise
   def has_rackspace_kernel?
-    kernel[:release].split('-').last.eql?("rscloud")
+    kernel[:release].split("-").last.eql?("rscloud")
   end
 
   # Checks for rackspace provider attribute
@@ -38,7 +38,7 @@ Ohai.plugin(:Rackspace) do
   def has_rackspace_metadata?
     so = shell_out("xenstore-read vm-data/provider_data/provider")
     if so.exitstatus == 0
-      so.stdout.strip.downcase == 'rackspace'
+      so.stdout.strip.downcase == "rackspace"
     end
   rescue Errno::ENOENT
     false
@@ -50,7 +50,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def looks_like_rackspace?
-    hint?('rackspace') || has_rackspace_metadata? || has_rackspace_kernel?
+    hint?("rackspace") || has_rackspace_metadata? || has_rackspace_kernel?
   end
 
   # Names rackspace ip address
@@ -60,7 +60,7 @@ Ohai.plugin(:Rackspace) do
   # eth<Symbol>:: Interface name of public or private ip
   def get_ip_address(name, eth)
     network[:interfaces][eth][:addresses].each do |key, info|
-      if info['family'] == 'inet'
+      if info["family"] == "inet"
         rackspace[name] = key
         break # break when we found an address
       end
@@ -75,7 +75,7 @@ Ohai.plugin(:Rackspace) do
   def get_global_ipv6_address(name, eth)
     network[:interfaces][eth][:addresses].each do |key, info|
       # check if we got an ipv6 address and if its in global scope
-      if info['family'] == 'inet6' && info['scope'] == 'Global'
+      if info["family"] == "inet6" && info["scope"] == "Global"
         rackspace[name] = key
         break # break when we found an address
       end
@@ -111,24 +111,24 @@ Ohai.plugin(:Rackspace) do
   # Get the rackspace private networks
   #
   def get_private_networks()
-    so = shell_out('xenstore-ls vm-data/networking')
+    so = shell_out("xenstore-ls vm-data/networking")
     if so.exitstatus == 0
       networks = []
-      so.stdout.split("\n").map{|l| l.split('=').first.strip }.map do |item|
+      so.stdout.split("\n").map { |l| l.split("=").first.strip }.map do |item|
         _so = shell_out("xenstore-read vm-data/networking/#{item}")
         if _so.exitstatus == 0
           networks.push(FFI_Yajl::Parser.new.parse(_so.stdout))
         else
-          Ohai::Log.debug('rackspace plugin: Unable to capture custom private networking information for Rackspace cloud')
+          Ohai::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
           return false
         end
       end
       # these networks are already known to ohai, and are not 'private networks'
-      networks.delete_if { |hash| hash['label'] == 'private' }
-      networks.delete_if { |hash| hash['label'] == 'public' }
+      networks.delete_if { |hash| hash["label"] == "private" }
+      networks.delete_if { |hash| hash["label"] == "public" }
     end
   rescue Errno::ENOENT
-    Ohai::Log.debug('rackspace plugin: Unable to capture custom private networking information for Rackspace cloud')
+    Ohai::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
     nil
   end
 

@@ -52,22 +52,22 @@ Ohai.plugin(:Cloud) do
     cloud[:public_ipv4] = []
     cloud[:local_ipv4] = []
 
-    public_ips = gce['instance']["networkInterfaces"].collect do |interface|
-      if interface.has_key?('accessConfigs')
-        interface['accessConfigs'].collect{|ac| ac['externalIp']}
+    public_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+      if interface.has_key?("accessConfigs")
+        interface["accessConfigs"].collect { |ac| ac["externalIp"] }
       end
     end.flatten.compact
 
-    private_ips = gce['instance']["networkInterfaces"].collect do |interface|
-      interface['ip']
+    private_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+      interface["ip"]
     end.compact
 
     cloud[:public_ips] += public_ips
     cloud[:private_ips] += private_ips
-    cloud[:public_ipv4] +=  public_ips
+    cloud[:public_ipv4] += public_ips
     cloud[:public_hostname] = nil
     cloud[:local_ipv4] += private_ips
-    cloud[:local_hostname] = gce['instance']['hostname']
+    cloud[:local_hostname] = gce["instance"]["hostname"]
     cloud[:provider] = "gce"
   end
 
@@ -86,12 +86,12 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with ec2 values
   def get_ec2_values
-    cloud[:public_ips] << ec2['public_ipv4']
-    cloud[:private_ips] << ec2['local_ipv4']
-    cloud[:public_ipv4] = ec2['public_ipv4']
-    cloud[:public_hostname] = ec2['public_hostname']
-    cloud[:local_ipv4] = ec2['local_ipv4']
-    cloud[:local_hostname] = ec2['local_hostname']
+    cloud[:public_ips] << ec2["public_ipv4"]
+    cloud[:private_ips] << ec2["local_ipv4"]
+    cloud[:public_ipv4] = ec2["public_ipv4"]
+    cloud[:public_hostname] = ec2["public_hostname"]
+    cloud[:local_ipv4] = ec2["local_ipv4"]
+    cloud[:local_hostname] = ec2["local_hostname"]
     cloud[:provider] = "ec2"
   end
 
@@ -110,14 +110,14 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with rackspace values
   def get_rackspace_values
-    cloud[:public_ips] << rackspace['public_ipv4'] if rackspace['public_ipv4']
-    cloud[:private_ips] << rackspace['local_ipv4'] if rackspace['local_ipv4']
-    cloud[:public_ipv4] = rackspace['public_ipv4']
-    cloud[:public_ipv6] = rackspace['public_ipv6']
-    cloud[:public_hostname] = rackspace['public_hostname']
-    cloud[:local_ipv4] = rackspace['local_ipv4']
-    cloud[:local_ipv6] = rackspace['local_ipv6']
-    cloud[:local_hostname] = rackspace['local_hostname']
+    cloud[:public_ips] << rackspace["public_ipv4"] if rackspace["public_ipv4"]
+    cloud[:private_ips] << rackspace["local_ipv4"] if rackspace["local_ipv4"]
+    cloud[:public_ipv4] = rackspace["public_ipv4"]
+    cloud[:public_ipv6] = rackspace["public_ipv6"]
+    cloud[:public_hostname] = rackspace["public_hostname"]
+    cloud[:local_ipv4] = rackspace["local_ipv4"]
+    cloud[:local_ipv6] = rackspace["local_ipv6"]
+    cloud[:local_hostname] = rackspace["local_hostname"]
     cloud[:provider] = "rackspace"
   end
 
@@ -136,12 +136,12 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with linode values
   def get_linode_values
-    cloud[:public_ips] << linode['public_ip']
-    cloud[:private_ips] << linode['private_ip']
-    cloud[:public_ipv4] = linode['public_ipv4']
-    cloud[:public_hostname] = linode['public_hostname']
-    cloud[:local_ipv4] = linode['local_ipv4']
-    cloud[:local_hostname] = linode['local_hostname']
+    cloud[:public_ips] << linode["public_ip"]
+    cloud[:private_ips] << linode["private_ip"]
+    cloud[:public_ipv4] = linode["public_ipv4"]
+    cloud[:public_hostname] = linode["public_hostname"]
+    cloud[:local_ipv4] = linode["local_ipv4"]
+    cloud[:local_hostname] = linode["local_hostname"]
     cloud[:provider] = "linode"
   end
 
@@ -159,12 +159,12 @@ Ohai.plugin(:Cloud) do
   end
 
   def get_eucalyptus_values
-    cloud[:public_ips] << eucalyptus['public_ipv4']
-    cloud[:private_ips] << eucalyptus['local_ipv4']
-    cloud[:public_ipv4] = eucalyptus['public_ipv4']
-    cloud[:public_hostname] = eucalyptus['public_hostname']
-    cloud[:local_ipv4] = eucalyptus['local_ipv4']
-    cloud[:local_hostname] = eucalyptus['local_hostname']
+    cloud[:public_ips] << eucalyptus["public_ipv4"]
+    cloud[:private_ips] << eucalyptus["local_ipv4"]
+    cloud[:public_ipv4] = eucalyptus["public_ipv4"]
+    cloud[:public_hostname] = eucalyptus["public_hostname"]
+    cloud[:local_ipv4] = eucalyptus["local_ipv4"]
+    cloud[:local_hostname] = eucalyptus["local_hostname"]
     cloud[:provider] = "eucalyptus"
   end
 
@@ -183,13 +183,13 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with openstack values
   def get_openstack_values
-    cloud[:public_ips] << openstack['public_ipv4']
-    cloud[:private_ips] << openstack['local_ipv4']
-    cloud[:public_ipv4] = openstack['public_ipv4']
-    cloud[:public_hostname] = openstack['public_hostname']
-    cloud[:local_ipv4] = openstack['local_ipv4']
-    cloud[:local_hostname] = openstack['local_hostname']
-    cloud[:provider] = openstack['provider']
+    cloud[:public_ips] << openstack["public_ipv4"]
+    cloud[:private_ips] << openstack["local_ipv4"]
+    cloud[:public_ipv4] = openstack["public_ipv4"]
+    cloud[:public_hostname] = openstack["public_hostname"]
+    cloud[:local_ipv4] = openstack["local_ipv4"]
+    cloud[:local_hostname] = openstack["local_hostname"]
+    cloud[:provider] = openstack["provider"]
   end
 
   # ----------------------------------------
@@ -208,12 +208,12 @@ Ohai.plugin(:Cloud) do
   # Fill cloud hash with azure values
   def get_azure_values
     cloud[:vm_name] = azure["vm_name"]
-    cloud[:public_ips] << azure['public_ip']
-    cloud[:public_ipv4] = azure['public_ip']
-    cloud[:public_fqdn] = azure['public_fqdn']
-    cloud[:public_hostname] = azure['public_fqdn']
-    cloud[:public_ssh_port] = azure['public_ssh_port'] if azure['public_ssh_port']
-    cloud[:public_winrm_port] = azure['public_winrm_port'] if azure['public_winrm_port']
+    cloud[:public_ips] << azure["public_ip"]
+    cloud[:public_ipv4] = azure["public_ip"]
+    cloud[:public_fqdn] = azure["public_fqdn"]
+    cloud[:public_hostname] = azure["public_fqdn"]
+    cloud[:public_ssh_port] = azure["public_ssh_port"] if azure["public_ssh_port"]
+    cloud[:public_winrm_port] = azure["public_winrm_port"] if azure["public_winrm_port"]
     cloud[:provider] = "azure"
   end
 
@@ -232,17 +232,17 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with linode values
   def get_digital_ocean_values
-    public_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'public'}
-    private_ipv4 = digital_ocean['networks']['v4'].select {|address| address['type'] == 'private'}
-    public_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'public'}
-    private_ipv6 = digital_ocean['networks']['v6'].select {|address| address['type'] == 'private'}
-    cloud[:public_ips].concat public_ipv4+public_ipv6
-    cloud[:private_ips].concat private_ipv4+private_ipv6
+    public_ipv4 = digital_ocean["networks"]["v4"].select { |address| address["type"] == "public" }
+    private_ipv4 = digital_ocean["networks"]["v4"].select { |address| address["type"] == "private" }
+    public_ipv6 = digital_ocean["networks"]["v6"].select { |address| address["type"] == "public" }
+    private_ipv6 = digital_ocean["networks"]["v6"].select { |address| address["type"] == "private" }
+    cloud[:public_ips].concat public_ipv4 + public_ipv6
+    cloud[:private_ips].concat private_ipv4 + private_ipv6
     cloud[:public_ipv4] = public_ipv4.first
     cloud[:public_ipv6] = public_ipv6.first
     cloud[:local_ipv4] = private_ipv4.first
     cloud[:local_ipv6] = private_ipv6.first
-    cloud[:public_hostname] = digital_ocean['name']
+    cloud[:public_hostname] = digital_ocean["name"]
     cloud[:provider] = "digital_ocean"
   end
 
@@ -261,14 +261,13 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with softlayer values
   def get_softlayer_values
-    cloud[:public_ipv4] = softlayer['public_ipv4']
-    cloud[:local_ipv4] = softlayer['local_ipv4']
-    cloud[:public_ips] << softlayer['public_ipv4'] if softlayer['public_ipv4']
-    cloud[:private_ips] << softlayer['local_ipv4'] if softlayer['local_ipv4']
-    cloud[:public_hostname] = softlayer['public_fqdn']
-    cloud[:provider] = 'softlayer'
+    cloud[:public_ipv4] = softlayer["public_ipv4"]
+    cloud[:local_ipv4] = softlayer["local_ipv4"]
+    cloud[:public_ips] << softlayer["public_ipv4"] if softlayer["public_ipv4"]
+    cloud[:private_ips] << softlayer["local_ipv4"] if softlayer["local_ipv4"]
+    cloud[:public_hostname] = softlayer["public_fqdn"]
+    cloud[:provider] = "softlayer"
   end
-
 
   collect_data do
     # setup gce cloud

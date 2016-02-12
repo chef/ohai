@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "BSD virtualization plugin" do
   before(:each) do
@@ -24,7 +24,7 @@ describe Ohai::System, "BSD virtualization plugin" do
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("jls -n").and_return(mock_shell_out(0, "",""))
+    allow(@plugin).to receive(:shell_out).with("jls -n").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
   end
 
@@ -39,7 +39,7 @@ describe Ohai::System, "BSD virtualization plugin" do
 
     it "detects we are hosting jails" do
       # from http://www.freebsd.org/doc/handbook/jails-application.html
-    @jails = "JID  IP Address      Hostname                      Path\n     3  192.168.3.17    ns.example.org                /home/j/ns\n     2  192.168.3.18    mail.example.org              /home/j/mail\n     1  62.123.43.14    www.example.org               /home/j/www"
+      @jails = "JID  IP Address      Hostname                      Path\n     3  192.168.3.17    ns.example.org                /home/j/ns\n     2  192.168.3.18    mail.example.org              /home/j/mail\n     1  62.123.43.14    www.example.org               /home/j/www"
       allow(@plugin).to receive(:shell_out).with("jls -n").and_return(mock_shell_out(0, @jails, ""))
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("jail")
@@ -86,7 +86,7 @@ OUT
 
   context "when on a QEMU guest" do
     it "detects we are a guest" do
-      [ 'Common KVM processor', 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)', 'Common 32-bit KVM processor'].each do |kvm_string|
+      [ "Common KVM processor", 'QEMU Virtual CPU version (cpu64-rhel6) ("GenuineIntel" 686-class)', "Common 32-bit KVM processor"].each do |kvm_string|
         allow(@plugin).to receive(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, kvm_string, ""))
         @plugin.run
         expect(@plugin[:virtualization][:system]).to eq("kvm")

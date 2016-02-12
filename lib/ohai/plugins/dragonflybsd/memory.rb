@@ -57,4 +57,3 @@ Ohai.plugin(:Memory) do
     end
   end
 end
-

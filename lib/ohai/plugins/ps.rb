@@ -24,11 +24,11 @@ Ohai.plugin(:PS) do
   depends "command"
 
   collect_data(:aix, :darwin, :hpux, :linux, :solaris2) do
-    command[:ps] = 'ps -ef'
+    command[:ps] = "ps -ef"
   end
 
   collect_data(:freebsd, :netbsd, :openbsd, :dragonflybsd) do
     # ps -e requires procfs
-    command[:ps] = 'ps -axww'
+    command[:ps] = "ps -axww"
   end
 end

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require_relative '../../../spec_helper'
+require_relative "../../../spec_helper"
 
 describe Ohai::System, "Solaris2.X filesystem plugin" do
   let(:plugin) { get_plugin("solaris2/filesystem") }
@@ -68,15 +68,15 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
 
       context "as a String" do
         include_examples "configured zfs properties" do
-          let(:zfs_properties) { 'mountpoint,creation,available,used' }
-          let(:expected_cmd) { 'mountpoint,creation,available,used' }
+          let(:zfs_properties) { "mountpoint,creation,available,used" }
+          let(:expected_cmd) { "mountpoint,creation,available,used" }
         end
       end
 
       context "as an Array" do
         include_examples "configured zfs properties" do
-          let(:zfs_properties) { ['mountpoint', 'creation', 'available', 'used'] }
-          let(:expected_cmd) { 'mountpoint,creation,available,used' }
+          let(:zfs_properties) { %w{mountpoint creation available used} }
+          let(:expected_cmd) { "mountpoint,creation,available,used" }
         end
       end
     end

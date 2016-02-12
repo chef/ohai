@@ -13,18 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
-require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
 
 describe Ohai::System, "plugin go" do
-  test_plugin([ "languages", "go" ], [ "go" ]) do | p |
-    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "go" => nil }})
+  test_plugin(%w{languages go}, [ "go" ]) do |p|
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], %w{x86 x64}, [[]],
+           { "languages" => { "go" => nil } })
     p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "languages" => { "go" => nil }})
-    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "go" ]],
-           { "languages" => { "go" => { "version" => "0.10.2" }}})
+           { "languages" => { "go" => nil } })
+    p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], %w{x86 x64}, [[ "go" ]],
+           { "languages" => { "go" => { "version" => "0.10.2" } } })
     p.test([ "ubuntu-13.04" ], [ "x64" ], [[ "go" ]],
-           { "languages" => { "go" => { "version" => "0.10.2" }}})
+           { "languages" => { "go" => { "version" => "0.10.2" } } })
   end
 end

@@ -73,14 +73,14 @@ Ohai.plugin(:Network) do
 
   def arpname_to_ifname(iface, arpname)
     iface.keys.each do |ifn|
-      return ifn if ifn.split(':')[0].eql?(arpname)
+      return ifn if ifn.split(":")[0].eql?(arpname)
     end
 
     nil
   end
 
   collect_data(:solaris2) do
-    require 'scanf'
+    require "scanf"
 
     iface = Mash.new
     network Mash.new unless network
@@ -98,7 +98,7 @@ Ohai.plugin(:Network) do
         iface[cint][:mtu] = $2
         iface[cint][:index] = $3
         if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
-          flags = $1.split(',')
+          flags = $1.split(",")
         else
           flags = Array.new
         end
@@ -111,11 +111,11 @@ Ohai.plugin(:Network) do
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]

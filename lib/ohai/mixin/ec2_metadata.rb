@@ -17,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'net/http'
-require 'socket'
+require "net/http"
+require "socket"
 
 module Ohai
   module Mixin
@@ -41,15 +41,15 @@ module Ohai
     module Ec2Metadata
 
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
-      EC2_SUPPORTED_VERSIONS = %w( 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
+      EC2_SUPPORTED_VERSIONS = %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
-                                   2014-11-05 2014-02-25 )
+                                   2014-11-05 2014-02-25 }
 
-      EC2_ARRAY_VALUES = %w(security-groups)
-      EC2_ARRAY_DIR    = %w(network/interfaces/macs)
-      EC2_JSON_DIR     = %w(iam)
+      EC2_ARRAY_VALUES = %w{security-groups}
+      EC2_ARRAY_DIR    = %w{network/interfaces/macs}
+      EC2_JSON_DIR     = %w{iam}
 
-      def can_metadata_connect?(addr, port, timeout=2)
+      def can_metadata_connect?(addr, port, timeout = 2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         saddr = Socket.pack_sockaddr_in(port, addr)
         connected = false
@@ -57,7 +57,7 @@ module Ohai
         begin
           t.connect_nonblock(saddr)
         rescue Errno::EINPROGRESS
-          r,w,e = IO::select(nil,[t],nil,timeout)
+          r, w, e = IO.select(nil, [t], nil, timeout)
           if !w.nil?
             connected = true
           else
@@ -77,19 +77,19 @@ module Ohai
 
       def best_api_version
         response = http_client.get("/")
-        if response.code == '404'
+        if response.code == "404"
           Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
           return "latest"
-        elsif response.code != '200'
+        elsif response.code != "200"
           raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
         end
         # Note: Sorting the list of versions may have unintended consequences in
         # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
         versions = response.body.split("\n")
         versions = response.body.split("\n").sort
-        until (versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)) do
+        until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
           pv = versions.pop
-          Ohai::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == 'latest'
+          Ohai::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == "latest"
         end
         Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
         if versions.empty?
@@ -99,7 +99,7 @@ module Ohai
       end
 
       def http_client
-        Net::HTTP.start(EC2_METADATA_ADDR).tap {|h| h.read_timeout = 600}
+        Net::HTTP.start(EC2_METADATA_ADDR).tap { |h| h.read_timeout = 600 }
       end
 
       # Get metadata for a given path and API version
@@ -113,9 +113,9 @@ module Ohai
         path = "/#{api_version}/meta-data/#{id}"
         response = http_client.get(path)
         case response.code
-        when '200'
+        when "200"
           response.body
-        when '404'
+        when "404"
           Ohai::Log.debug("ec2 metadata mixin: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
           nil
         else
@@ -123,7 +123,7 @@ module Ohai
         end
       end
 
-      def fetch_metadata(id='', api_version=nil)
+      def fetch_metadata(id = "", api_version = nil)
         api_version ||= best_api_version
         return {} if api_version.nil?
 
@@ -132,7 +132,7 @@ module Ohai
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
             key = expand_path("#{id}#{o}")
-            if key[-1..-1] != '/'
+            if key[-1..-1] != "/"
               metadata[metadata_key(key)] =
                 if EC2_ARRAY_VALUES.include? key
                   retr_meta = metadata_get(key, api_version)
@@ -140,7 +140,7 @@ module Ohai
                 else
                   metadata_get(key, api_version)
                 end
-            elsif not key.eql?(id) and not key.eql?('/')
+            elsif not key.eql?(id) and not key.eql?("/")
               name = key[0..-2]
               sym = metadata_key(name)
               if EC2_ARRAY_DIR.include?(name)
@@ -148,7 +148,7 @@ module Ohai
               elsif EC2_JSON_DIR.include?(name)
                 metadata[sym] = fetch_json_dir_metadata(key, api_version)
               else
-                fetch_metadata(key, api_version).each{|k,v| metadata[k] = v}
+                fetch_metadata(key, api_version).each { |k, v| metadata[k] = v }
               end
             end
           end
@@ -162,10 +162,10 @@ module Ohai
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
             key = expand_path(o)
-            if key[-1..-1] != '/'
+            if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              metadata[metadata_key(key)] = retr_meta ? retr_meta : ''
-            elsif not key.eql?('/')
+              metadata[metadata_key(key)] = retr_meta ? retr_meta : ""
+            elsif not key.eql?("/")
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
           end
@@ -179,13 +179,13 @@ module Ohai
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
             key = expand_path(o)
-            if key[-1..-1] != '/'
+            if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              data = retr_meta ? retr_meta : ''
+              data = retr_meta ? retr_meta : ""
               json = StringIO.new(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)
-            elsif not key.eql?('/')
+            elsif not key.eql?("/")
               metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)
             end
           end
@@ -203,15 +203,15 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = file_name.gsub(/\=.*$/, '/')
+        path = file_name.gsub(/\=.*$/, "/")
         # ignore "./" and "../"
-        path.gsub(%r{/\.\.?(?:/|$)}, '/').
-          sub(%r{^\.\.?(?:/|$)}, '').
-          sub(%r{^$}, '/')
+        path.gsub(%r{/\.\.?(?:/|$)}, "/").
+          sub(%r{^\.\.?(?:/|$)}, "").
+          sub(%r{^$}, "/")
       end
 
       def metadata_key(key)
-        key.gsub(/\-|\//, '_')
+        key.gsub(/\-|\//, "_")
       end
 
     end

@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/os'
+require "ohai/mixin/os"
 
 Ohai.plugin(:OS) do
   provides "os", "os_version"

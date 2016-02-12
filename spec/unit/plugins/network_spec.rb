@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 def it_doesnt_fail
   it "doesnt fail" do
@@ -55,7 +55,7 @@ describe Ohai::System, "Network Plugin" do
           "vr0" => {
             "type" => "vr",
             "number" => "0",
-            "flags" => ["UP", "BROADCAST", "RUNNING", "SIMPLEX", "MULTICAST"],
+            "flags" => %w{UP BROADCAST RUNNING SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:b8" => {
                 "family" => "lladdr"
@@ -64,23 +64,23 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
                 "zoneid" => "vr0",
                 "prefixlen" => "64",
-                "scopeid" => "0x1"
+                "scopeid" => "0x1",
               },
               "76.91.1.255" => {
                 "family" => "inet",
                 "netmask" => "255.255.252.0",
-                "broadcast" => "255.255.255.255"
-              }
+                "broadcast" => "255.255.255.255",
+              },
             },
             "arp" => {
               "76.91.1.255" => "00:00:24:c9:5e:b8",
-              "76.91.0.1" => "00:01:5c:24:8c:01"
-            }
+              "76.91.0.1" => "00:01:5c:24:8c:01",
+            },
           },
           "vr1" => {
             "type" => "vr",
             "number" => "1",
-            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:b9" => {
                 "family" => "lladdr"
@@ -89,14 +89,14 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
                 "zoneid" => "vr1",
                 "prefixlen" => "64",
-                "scopeid" => "0x2"
-              }
-            }
+                "scopeid" => "0x2",
+              },
+            },
           },
           "vr2" => {
             "type" => "vr",
             "number" => "2",
-            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:ba" => {
                 "family" => "lladdr"
@@ -105,14 +105,14 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
                 "zoneid" => "vr2",
                 "prefixlen" => "64",
-                "scopeid" => "0x3"
-              }
-            }
+                "scopeid" => "0x3",
+              },
+            },
           },
           "vr3" => {
             "type" => "vr",
             "number" => "3",
-            "flags" => ["UP", "BROADCAST", "RUNNING", "PROMISC", "SIMPLEX", "MULTICAST"],
+            "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:bb" => {
                 "family" => "lladdr"
@@ -121,60 +121,60 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
                 "zoneid" => "vr3",
                 "prefixlen" => "64",
-                "scopeid" => "0x4"
-              }
-            }
+                "scopeid" => "0x4",
+              },
+            },
           },
           "ipfw0" => {
             # OHAI-492: Ensure network plugin works with interfaces without addresses.
             "type" => "ipfw",
             "number" => "0",
-            "flags" => ["UP", "SIMPLEX", "MULTICAST"]
+            "flags" => %w{UP SIMPLEX MULTICAST},
           },
           "lo0" => {
             "type" => "lo",
             "number" => "0",
-            "flags" => ["UP", "LOOPBACK", "RUNNING", "MULTICAST"],
+            "flags" => %w{UP LOOPBACK RUNNING MULTICAST},
             "addresses" => {
               "127.0.0.1" => {
                 "family" => "inet",
-                "netmask" => "255.0.0.0"
+                "netmask" => "255.0.0.0",
               },
               "::1" => {
                 "family" => "inet6",
-                "prefixlen" => "128"
+                "prefixlen" => "128",
               },
               "fe80::1" => {
                 "family" => "inet6",
                 "zoneid" => "lo0",
                 "prefixlen" => "64",
-                "scopeid" => "0x8"
-              }
-            }
+                "scopeid" => "0x8",
+              },
+            },
           },
           "bridge0" => {
             "type" => "bridge",
             "number" => "0",
-            "flags" => ["LEARNING", "DISCOVER", "AUTOEDGE", "AUTOPTP"],
+            "flags" => %w{LEARNING DISCOVER AUTOEDGE AUTOPTP},
             "addresses" => {
               "02:20:6f:d2:c4:00" => {
-                "family"=>"lladdr"
+                "family" => "lladdr"
               },
               "192.168.2.1" => {
                 "family" => "inet",
                 "netmask" => "255.255.255.0",
-                "broadcast" => "192.168.2.255"
+                "broadcast" => "192.168.2.255",
               },
               "2001:470:d:cb4::1" => {
                 "family" => "inet6",
-                "prefixlen" => "64"
+                "prefixlen" => "64",
               },
               "fe80::cafe:babe:dead:beef" => {
                 "family" => "inet6",
                 "zoneid" => "bridge0",
                 "prefixlen" => "64",
-                "scopeid" => "0x9"
-              }
+                "scopeid" => "0x9",
+              },
             },
             "arp" => {
               "192.168.2.142" => "60:67:20:75:a2:0c",
@@ -184,27 +184,27 @@ describe Ohai::System, "Network Plugin" do
               "192.168.2.135" => "f8:0c:f3:d7:c6:b6",
               "192.168.2.165" => "f8:8f:ca:24:49:ad",
               "192.168.2.158" => "48:5d:60:1f:ea:d1",
-              "192.168.2.150" => "60:a4:4c:60:b3:d9"
-            }
+              "192.168.2.150" => "60:a4:4c:60:b3:d9",
+            },
           },
           "gif0" => {
             "type" => "gif",
             "number" => "0",
-            "flags" => ["UP", "POINTOPOINT", "RUNNING", "MULTICAST"],
+            "flags" => %w{UP POINTOPOINT RUNNING MULTICAST},
             "addresses" => {
               "fe80::200:24ff:fec9:5eb8" => {
                 "family" => "inet6",
                 "zoneid" => "gif0",
                 "prefixlen" => "64",
-                "scopeid" => "0xa"
+                "scopeid" => "0xa",
               }
-            }
-          }
+            },
+          },
         },
         "default_gateway" => "76.91.0.1",
         "default_interface" => "vr0",
         "default_inet6_gateway" => "2001:470:d:cb4::2",
-        "default_inet6_interface" => "bridge0"
+        "default_inet6_interface" => "bridge0",
       }
     },
     "linux" => {
@@ -213,32 +213,32 @@ describe Ohai::System, "Network Plugin" do
         # have just removed the neighbour and route entries by hand
         "interfaces" => {
           "lo" => {
-            "flags" => ["LOOPBACK", "UP"],
+            "flags" => %w{LOOPBACK UP},
             "addresses" => {
               "::1" => {
                 "scope" => "Node",
                 "prefixlen" => "128",
-                "family" => "inet6"
+                "family" => "inet6",
               },
               "127.0.0.1" => {
                 "scope" => "Node",
                 "netmask" => "255.0.0.0",
                 "prefixlen" => "8",
-                "family" => "inet"
-              }
+                "family" => "inet",
+              },
             },
             "mtu" => "16436",
             "encapsulation" => "Loopback",
-            "state" => "unknown"
+            "state" => "unknown",
           },
           "eth0" => {
-            "flags" => ["BROADCAST", "MULTICAST", "UP"],
+            "flags" => %w{BROADCAST MULTICAST UP},
             "number" => "0",
             "addresses" => {
               "fe80::216:3eff:fe2f:3679" => {
                 "scope" => "Link",
                 "prefixlen" => "64",
-                "family" => "inet6"
+                "family" => "inet6",
               },
               "00:16:3E:2F:36:79" => {
                 "family" => "lladdr"
@@ -248,27 +248,27 @@ describe Ohai::System, "Network Plugin" do
                 "netmask" => "255.255.255.0",
                 "broadcast" => "192.168.66.255",
                 "prefixlen" => "24",
-                "family" => "inet"
+                "family" => "inet",
               },
               "3ffe:1111:2222::33" => {
                 "prefixlen" => "48",
                 "family" => "inet6",
                 "scope" => "Global",
-                "state" => "up"
-              }
+                "state" => "up",
+              },
             },
             "mtu" => "1500",
             "type" => "eth",
-            "encapsulation" => "Ethernet"
+            "encapsulation" => "Ethernet",
           },
           "eth1" => {
-            "flags" => ["BROADCAST", "MULTICAST", "UP"],
+            "flags" => %w{BROADCAST MULTICAST UP},
             "number" => "1",
             "addresses" => {
               "fe80::216:3eff:fe2f:3680" => {
                 "scope" => "Link",
                 "prefixlen" => "64",
-                "family" => "inet6"
+                "family" => "inet6",
               },
               "00:16:3E:2F:36:80" => {
                 "family" => "lladdr"
@@ -278,23 +278,23 @@ describe Ohai::System, "Network Plugin" do
                 "netmask" => "255.255.255.0",
                 "broadcast" => "192.168.99.255",
                 "prefixlen" => "24",
-                "family" => "inet"
+                "family" => "inet",
               },
               "3ffe:1111:3333::1" => {
                 "prefixlen" => "48",
                 "family" => "inet6",
-                "scope" => "Global"
-              }
+                "scope" => "Global",
+              },
             },
             "mtu" => "1500",
             "type" => "eth",
-            "encapsulation" => "Ethernet"
-          }
+            "encapsulation" => "Ethernet",
+          },
         },
         "default_gateway" => "192.168.66.15",
         "default_interface" => "eth0",
         "default_inet6_gateway" => "3ffe:1111:2222::",
-        "default_inet6_interface" => "eth0"
+        "default_inet6_interface" => "eth0",
       }
     },
     "windows" => {
@@ -306,26 +306,26 @@ describe Ohai::System, "Network Plugin" do
                 "prefixlen" => "24",
                 "netmask" => "255.255.255.0",
                 "broadcast" => "172.19.0.255",
-                "family" => "inet"
+                "family" => "inet",
               },
               "fe80::698d:3e37:7950:b28c" => {
                 "prefixlen" => "64",
                 "family" => "inet6",
-                "scope" => "Link"
+                "scope" => "Link",
               },
               "52:54:44:66:66:02" => {
                 "family" => "lladdr"
-              }
+              },
             },
             "mtu" => nil,
             "type" => "Ethernet 802.3",
-            "encapsulation" => "Ethernet"
+            "encapsulation" => "Ethernet",
           }
         },
         "default_gateway" => "172.19.0.1",
-        "default_interface" => "0xb"
+        "default_interface" => "0xb",
       }
-    }
+    },
   }
 
   describe "on linux" do
@@ -375,7 +375,7 @@ describe Ohai::System, "Network Plugin" do
 
         describe "ipv4 interface has no ARP" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,kv| kv["family"] == "lladdr" }
+            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, kv| kv["family"] == "lladdr" }
             # not really checked by this pluging
             @plugin["network"]["interfaces"]["eth0"]["flags"] << "NOARP"
             @plugin["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
@@ -446,7 +446,7 @@ describe Ohai::System, "Network Plugin" do
 
         describe "no ip address for the given default interface/gateway" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
+            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
           end
 
           it_doesnt_fail
@@ -475,8 +475,8 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_interface"] = nil
             @plugin["network"]["default_inet6_gateway"] = nil
             @plugin["network"]["default_inet6_interface"] = nil
-            @plugin["network"]["interfaces"].each do |i,iv|
-              iv["addresses"].delete_if{|k,kv| %w[inet inet6].include? kv["family"]}
+            @plugin["network"]["interfaces"].each do |i, iv|
+              iv["addresses"].delete_if { |k, kv| %w{inet inet6}.include? kv["family"] }
             end
           end
 
@@ -503,28 +503,28 @@ describe Ohai::System, "Network Plugin" do
         describe "bigger prefix not set on the default interface" do
           before do
             @plugin["network"]["interfaces"]["eth2"] = {
-              "flags" => ["BROADCAST", "MULTICAST", "UP"],
+              "flags" => %w{BROADCAST MULTICAST UP},
               "number" => "2",
               "addresses" => {
                 "fe80::216:3eff:fe2f:3681" => {
                   "scope" => "Link",
                   "prefixlen" => "64",
-                  "family" => "inet6"
+                  "family" => "inet6",
                 },
-                "00:16:3E:2F:36:81" => {"family" => "lladdr"},
+                "00:16:3E:2F:36:81" => { "family" => "lladdr" },
                 "192.168.66.99" => {
                   "scope" => "Global",
                   "netmask" => "255.255.255.128",
                   "broadcast" => "192.168.99.127",
                   "prefixlen" => "25",
-                  "family" => "inet"
+                  "family" => "inet",
                 },
                 "3ffe:1111:2222:0:4444::1" => {
                   "prefixlen" => "64",
                   "family" => "inet6",
-                  "scope" => "Global"
-                }
-              }
+                  "scope" => "Global",
+                },
+              },
             }
           end
 
@@ -545,12 +545,12 @@ describe Ohai::System, "Network Plugin" do
               "netmask" => "255.255.255.128",
               "broadcast" => "192.168.66.127",
               "prefixlen" => "25",
-              "family" => "inet"
+              "family" => "inet",
             }
             @plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222:0:4444::1"] = {
               "prefixlen" => "64",
               "family" => "inet6",
-              "scope" => "Global"
+              "scope" => "Global",
             }
           end
 
@@ -567,28 +567,28 @@ describe Ohai::System, "Network Plugin" do
         describe "smallest ip not set on the default_interface" do
           before do
             @plugin["network"]["interfaces"]["eth2"] = {
-              "flags" => ["BROADCAST", "MULTICAST", "UP"],
+              "flags" => %w{BROADCAST MULTICAST UP},
               "number" => "2",
               "addresses" => {
                 "fe80::216:3eff:fe2f:3681" => {
                   "scope" => "Link",
                   "prefixlen" => "64",
-                  "family" => "inet6"
+                  "family" => "inet6",
                 },
-                "00:16:3E:2F:36:81" => {"family" => "lladdr"},
+                "00:16:3E:2F:36:81" => { "family" => "lladdr" },
                 "192.168.66.32" => {
                   "scope" => "Global",
                   "netmask" => "255.255.255.0",
                   "broadcast" => "192.168.66.255",
                   "prefixlen" => "24",
-                  "family" => "inet"
+                  "family" => "inet",
                 },
                 "3ffe:1111:2222::32" => {
                   "prefixlen" => "48",
                   "family" => "inet6",
-                  "scope" => "Global"
-                }
-              }
+                  "scope" => "Global",
+                },
+              },
             }
           end
 
@@ -609,12 +609,12 @@ describe Ohai::System, "Network Plugin" do
               "netmask" => "255.255.255.0",
               "broadcast" => "192.168.66.255",
               "prefixlen" => "24",
-              "family" => "inet"
+              "family" => "inet",
             }
             @plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222::32"] = {
               "prefixlen" => "48",
               "family" => "inet6",
-              "scope" => "Global"
+              "scope" => "Global",
             }
           end
 
@@ -637,7 +637,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_gateway"] = nil
             @plugin["network"]["default_inet6_interface"] = nil
             # removing inet* addresses from eth0, to complicate things a bit
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if{|k,v| %w[inet inet6].include? v["family"]}
+            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
           end
 
           it_populates_ipaddress_attributes
@@ -660,7 +660,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_gateway"] = nil
             @plugin["network"]["default_inet6_interface"] = nil
             # just changing scopes to lInK for eth0 addresses
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].each{|k,v| v[:scope]="lInK" if %w[inet inet6].include? v["family"]}
+            @plugin["network"]["interfaces"]["eth0"]["addresses"].each { |k, v| v[:scope] = "lInK" if %w{inet inet6}.include? v["family"] }
           end
 
           it_populates_ipaddress_attributes
@@ -719,7 +719,7 @@ describe Ohai::System, "Network Plugin" do
               "scope" => "host",
               "netmask" => "255.255.255.255",
               "prefixlen" => "32",
-              "family" => "inet"
+              "family" => "inet",
             }
           end
 
@@ -737,29 +737,29 @@ describe Ohai::System, "Network Plugin" do
       describe "point to point address" do
         before do
           @plugin["network"]["interfaces"]["eth2"] = {
-            "flags" => ["POINTOPOINT", "BROADCAST", "MULTICAST", "UP"],
+            "flags" => %w{POINTOPOINT BROADCAST MULTICAST UP},
             "number" => "2",
             "addresses" => {
               "fe80::216:3eff:fe2f:3681" => {
                 "scope" => "Link",
                 "prefixlen" => "64",
-                "family" => "inet6"
+                "family" => "inet6",
               },
-              "00:16:3E:2F:36:81" => {"family" => "lladdr"},
+              "00:16:3E:2F:36:81" => { "family" => "lladdr" },
               "192.168.66.99" => {
                 "scope" => "Global",
                 "netmask" => "255.255.255.255",
                 "peer" => "192.168.99.126",
                 "prefixlen" => "32",
-                "family" => "inet"
+                "family" => "inet",
               },
               "3ffe:1111:2222:0:4444::1" => {
                 "prefixlen" => "128",
                 "peer" => "3ffe:1111:2222:0:4444::2",
                 "family" => "inet6",
-                "scope" => "Global"
-              }
-            }
+                "scope" => "Global",
+              },
+            },
           }
           @plugin["network"]["default_gateway"] = "192.168.99.126"
           @plugin["network"]["default_interface"] = "eth2"
@@ -781,8 +781,8 @@ describe Ohai::System, "Network Plugin" do
         before do
           @plugin["network"]["default_gateway"] = nil
           @plugin["network"]["default_interface"] = nil
-          @plugin["network"]["interfaces"].each do |i,iv|
-            iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+          @plugin["network"]["interfaces"].each do |i, iv|
+            iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
           end
         end
 
@@ -820,9 +820,9 @@ describe Ohai::System, "Network Plugin" do
         before do
           @plugin["network"]["default_gateway"] = nil
           @plugin["network"]["default_interface"] = nil
-          @plugin["network"]["interfaces"].each do |i,iv|
-            next if i == 'lo'
-            iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+          @plugin["network"]["interfaces"].each do |i, iv|
+            next if i == "lo"
+            iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
           end
         end
 
@@ -863,16 +863,16 @@ describe Ohai::System, "Network Plugin" do
             @expected_results = {
               "freebsd" => {
                 "ip6address" => "2001:470:d:cb4::1",
-                "macaddress" => "02:20:6f:d2:c4:00"
+                "macaddress" => "02:20:6f:d2:c4:00",
               },
               "linux" => {
                 "ip6address" => "3ffe:1111:2222::33",
-                "macaddress" => "00:16:3E:2F:36:79"
+                "macaddress" => "00:16:3E:2F:36:79",
               },
               "windows" => {
                 "ip6address" => "fe80::698d:3e37:7950:b28c",
-                "macaddress" => "00:AA:BB:CC:DD:EE"
-              }
+                "macaddress" => "00:AA:BB:CC:DD:EE",
+              },
             }
           end
 
@@ -897,16 +897,16 @@ describe Ohai::System, "Network Plugin" do
               @expected_results = {
                 "freebsd" => {
                   "ipaddress" => "76.91.1.255",
-                  "macaddress" => "00:00:24:c9:5e:b8"
+                  "macaddress" => "00:00:24:c9:5e:b8",
                 },
                 "linux" => {
                   "ipaddress" => "192.168.66.33",
-                  "macaddress" => "00:16:3E:2F:36:79"
+                  "macaddress" => "00:16:3E:2F:36:79",
                 },
                 "windows" => {
                   "ipaddress" => "172.19.0.130",
-                  "macaddress" => "52:54:44:66:66:02"
-                }
+                  "macaddress" => "52:54:44:66:66:02",
+                },
               }
             end
 
@@ -928,9 +928,9 @@ describe Ohai::System, "Network Plugin" do
             before do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each do |i,iv|
+              @plugin["network"]["interfaces"].each do |i, iv|
                 if iv.has_key? "addresses"
-                  iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                  iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
               @plugin["ip6address"] = "3ffe:8888:9999::1"
@@ -943,7 +943,7 @@ describe Ohai::System, "Network Plugin" do
                 },
                 "windows" => {
                   "macaddress" => "52:54:44:66:66:02"
-                }
+                },
               }
             end
 
@@ -982,16 +982,16 @@ describe Ohai::System, "Network Plugin" do
               @expected_results = {
                 "freebsd" => {
                   "ipaddress" => "76.91.1.255",
-                  "macaddress" => "00:00:24:c9:5e:b8"
+                  "macaddress" => "00:00:24:c9:5e:b8",
                 },
                 "linux" => {
                   "ipaddress" => "192.168.66.33",
-                  "macaddress" => "00:16:3E:2F:36:79"
+                  "macaddress" => "00:16:3E:2F:36:79",
                 },
                 "windows" => {
                   "ipaddress" => "172.19.0.130",
-                  "macaddress" => "52:54:44:66:66:02"
-                }
+                  "macaddress" => "52:54:44:66:66:02",
+                },
               }
             end
 
@@ -1013,9 +1013,9 @@ describe Ohai::System, "Network Plugin" do
             before do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each do |i,iv|
+              @plugin["network"]["interfaces"].each do |i, iv|
                 if iv.has_key? "addresses"
-                  iv["addresses"].delete_if{|k,kv| kv["family"] == "inet" }
+                  iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
               @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"

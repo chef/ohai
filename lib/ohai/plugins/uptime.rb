@@ -24,7 +24,7 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/seconds_to_human'
+require "ohai/mixin/seconds_to_human"
 
 Ohai.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
@@ -43,7 +43,7 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:hpux, :default) do
-    require 'sigar'
+    require "sigar"
 
     sigar = Sigar.new
     uptime = sigar.uptime.uptime
@@ -94,11 +94,10 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:windows) do
-    require 'wmi-lite/wmi'
+    require "wmi-lite/wmi"
     wmi = WmiLite::Wmi.new
-    uptime_seconds wmi.first_of('Win32_PerfFormattedData_PerfOS_System')['systemuptime'].to_i
+    uptime_seconds wmi.first_of("Win32_PerfFormattedData_PerfOS_System")["systemuptime"].to_i
     uptime seconds_to_human(uptime_seconds)
   end
 
 end
-

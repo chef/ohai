@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux Mdadm Plugin" do
   before(:each) do
@@ -57,9 +57,9 @@ MD
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/mdstat")
     allow(@double_file).to receive(:each).
-    and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
-    and_yield("md0 : active raid10 sdh[5] sdg[4] sdf[3] sde[2] sdd[1] sdc[0]").
-    and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
+      and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
+      and_yield("md0 : active raid10 sdh[5] sdg[4] sdf[3] sde[2] sdd[1] sdc[0]").
+      and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
     allow(File).to receive(:open).with("/proc/mdstat").and_return(@double_file)
     allow(File).to receive(:exist?).with("/proc/mdstat").and_return(true)
     allow(@plugin).to receive(:shell_out).with("mdadm --detail /dev/md0").and_return(mock_shell_out(0, @md0, ""))

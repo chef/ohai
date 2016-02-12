@@ -17,10 +17,10 @@
 # limitations under the License.
 #
 
-require 'chef-config/config'
-require 'ohai/exception'
-require 'ohai/log'
-require 'ohai/plugin_config'
+require "chef-config/config"
+require "ohai/exception"
+require "ohai/log"
+require "ohai/plugin_config"
 
 module Ohai
   Config = ChefConfig::Config
@@ -30,16 +30,19 @@ module Ohai
   class Config
     # These methods need to be defined before they are used as config defaults,
     # otherwise they will get method_missing'd to nil.
+
     private
+
     def self.default_hints_path
-      [ ChefConfig::Config.platform_specific_path('/etc/chef/ohai/hints') ]
+      [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
     end
 
     def self.default_plugin_path
-      [ File.expand_path(File.join(File.dirname(__FILE__), 'plugins')) ]
+      [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")) ]
     end
 
     public
+
     # Copy deprecated configuration options into the ohai config context.
     def self.merge_deprecated_config
       [ :hints_path, :plugin_path ].each do |option|
@@ -68,7 +71,7 @@ module Ohai
       :disabled_plugins,
       :log_level,
       :log_location,
-      :version
+      :version,
     ].each do |option|
       # https://docs.chef.io/config_rb_client.html#ohai-settings
       # hints_path and plugin_path are intentionally excluded here; warnings for
@@ -100,6 +103,7 @@ module Ohai
     end
 
     private
+
     def self.option_deprecated(option)
       <<-EOM.chomp!.gsub("\n", " ")
 Ohai::Config[:#{option}] is set. Ohai::Config[:#{option}] is deprecated and will
@@ -119,6 +123,6 @@ EOM
 
   # Shortcut for Ohai::Config.ohai
   def self.config
-    Config::ohai
+    Config.ohai
   end
 end

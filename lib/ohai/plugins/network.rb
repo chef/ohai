@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require 'ipaddress'
-require 'ohai/mixin/network_constants'
+require "ipaddress"
+require "ohai/mixin/network_constants"
 
 Ohai.plugin(:NetworkAddresses) do
   include Ohai::Mixin::NetworkConstants
@@ -29,21 +29,21 @@ Ohai.plugin(:NetworkAddresses) do
   # from interface data create array of hashes with ipaddress, scope, and iface
   # sorted by scope, prefixlen and then ipaddress where longest prefixes first
   def sorted_ips(family = "inet")
-    fail "bad family #{family}" unless %w(inet inet6).include? family
+    raise "bad family #{family}" unless %w{inet inet6}.include? family
 
     # priority of ipv6 link scopes to sort by later
     scope_prio = [ "global", "site", "link", "host", "node", nil ]
 
     # grab ipaddress, scope, and iface for sorting later
     ipaddresses = []
-    Mash[network['interfaces']].each do |iface, iface_v|
-      next if iface_v.nil? || !iface_v.has_key?('addresses')
-      iface_v['addresses'].each do |addr, addr_v|
-        next if addr_v.nil? or not addr_v.has_key? "family" or addr_v['family'] != family
+    Mash[network["interfaces"]].each do |iface, iface_v|
+      next if iface_v.nil? || !iface_v.has_key?("addresses")
+      iface_v["addresses"].each do |addr, addr_v|
+        next if addr_v.nil? or not addr_v.has_key? "family" or addr_v["family"] != family
         ipaddresses << {
           :ipaddress => addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
           :scope => addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
-          :iface => iface
+          :iface => iface,
         }
       end
     end
@@ -53,7 +53,7 @@ Ohai.plugin(:NetworkAddresses) do
     ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope]) || 999999 ),
         128 - v[:ipaddress].prefix.to_i,
-        ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 )
+        ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 ),
       ]
     end
   end
@@ -68,7 +68,7 @@ Ohai.plugin(:NetworkAddresses) do
     return [ nil, nil ] if ips.empty?
 
     # shortcuts to access default #{family} interface and gateway
-    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] +"_interface"
+    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_interface"
     gw_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
 
     if network[int_attr]
@@ -79,8 +79,8 @@ Ohai.plugin(:NetworkAddresses) do
       if gw_if_ips.empty?
         Ohai::Log.warn("[#{family}] no ip address on #{network[int_attr]}")
       elsif network[gw_attr] &&
-          network["interfaces"][network[int_attr]] &&
-          network["interfaces"][network[int_attr]]["addresses"]
+            network["interfaces"][network[int_attr]] &&
+            network["interfaces"][network[int_attr]]["addresses"]
         if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
           Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
@@ -113,7 +113,7 @@ Ohai.plugin(:NetworkAddresses) do
 
   # select mac address of first interface with family of lladdr
   def find_mac_from_iface(iface)
-    r = network["interfaces"][iface]["addresses"].select{|k,v| v["family"] == "lladdr"}
+    r = network["interfaces"][iface]["addresses"].select { |k, v| v["family"] == "lladdr" }
     r.nil? || r.first.nil? ? nil : r.first.first
   end
 
@@ -176,7 +176,7 @@ Ohai.plugin(:NetworkAddresses) do
     end
 
     if results["inet"]["iface"] && results["inet6"]["iface"] &&
-        (results["inet"]["iface"] != results["inet6"]["iface"])
+       (results["inet"]["iface"] != results["inet6"]["iface"])
       Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
     end
   end

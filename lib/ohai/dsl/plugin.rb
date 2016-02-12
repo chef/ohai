@@ -18,10 +18,10 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/os'
-require 'ohai/mixin/command'
-require 'ohai/mixin/seconds_to_human'
-require 'ohai/hints'
+require "ohai/mixin/os"
+require "ohai/mixin/command"
+require "ohai/mixin/seconds_to_human"
+require "ohai/hints"
 
 module Ohai
 
@@ -171,7 +171,7 @@ module Ohai
           raise e
         rescue => e
           Ohai::Log.debug("Plugin #{self.name} threw #{e.inspect}")
-          e.backtrace.each { |line| Ohai::Log.debug( line )}
+          e.backtrace.each { |line| Ohai::Log.debug( line ) }
         end
       end
 

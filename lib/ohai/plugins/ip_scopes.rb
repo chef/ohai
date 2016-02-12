@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,15 +22,15 @@ Ohai.plugin(:IpScopes) do
 
   collect_data do
     begin
-      require 'ipaddr_extensions'
+      require "ipaddr_extensions"
 
-      network['interfaces'].keys.sort.each do |ifName|
-        next if network['interfaces'][ifName]['addresses'].nil?
+      network["interfaces"].keys.sort.each do |ifName|
+        next if network["interfaces"][ifName]["addresses"].nil?
 
-        interface = network['interfaces'][ifName]
-        interface['addresses'].each do |address,attrs|
+        interface = network["interfaces"][ifName]
+        interface["addresses"].each do |address, attrs|
           begin
-            attrs.merge! 'ip_scope' => address.to_ip.scope
+            attrs.merge! "ip_scope" => address.to_ip.scope
 
             if private_addr?(address) && !tunnel_iface?(interface)
               privateaddress(address)
@@ -52,6 +52,6 @@ Ohai.plugin(:IpScopes) do
   end
 
   def tunnel_iface?(interface)
-    interface['type'] == 'ppp'
+    interface["type"] == "ppp"
   end
 end

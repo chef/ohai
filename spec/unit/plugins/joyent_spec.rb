@@ -1,9 +1,8 @@
-require 'spec_helper'
-
+require "spec_helper"
 
 describe Ohai::System, "plugin joyent" do
   before(:each) do
-    @plugin = get_plugin('joyent')
+    @plugin = get_plugin("joyent")
   end
 
   describe "without joyent" do
@@ -35,7 +34,7 @@ describe Ohai::System, "plugin joyent" do
       end
 
       it "should ditect global zone" do
-        expect(@plugin[:joyent][:sm_uuid]).to eql 'global'
+        expect(@plugin[:joyent][:sm_uuid]).to eql "global"
       end
 
       it "should NOT create sm_id" do
@@ -45,19 +44,19 @@ describe Ohai::System, "plugin joyent" do
 
     describe "under smartmachine" do
       before(:each) do
-        @plugin[:virtualization][:guest_uuid] = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx'
-        @plugin[:virtualization][:guest_id] = '30'
+        @plugin[:virtualization][:guest_uuid] = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
+        @plugin[:virtualization][:guest_id] = "30"
         allow(@plugin).to receive(:collect_product_file).and_return(["Name: Joyent Instance", "Image: base64 13.4.2", "Documentation: http://wiki.joyent.com/jpc2/SmartMachine+Base"])
-        allow(@plugin).to receive(:collect_pkgsrc).and_return('http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All')
+        allow(@plugin).to receive(:collect_pkgsrc).and_return("http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All")
         @plugin.run
       end
 
       it "should retrive zone uuid" do
-        expect(@plugin[:joyent][:sm_uuid]).to eql 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx'
+        expect(@plugin[:joyent][:sm_uuid]).to eql "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
       end
 
       it "should collect sm_id" do
-        expect(@plugin[:joyent][:sm_id]).to eql '30'
+        expect(@plugin[:joyent][:sm_id]).to eql "30"
       end
 
       it "should collect images" do
@@ -66,9 +65,8 @@ describe Ohai::System, "plugin joyent" do
       end
 
       it "should collect pkgsrc" do
-        expect(@plugin[:joyent][:sm_pkgsrc]).to eql 'http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All'
+        expect(@plugin[:joyent][:sm_pkgsrc]).to eql "http://pkgsrc.joyent.com/packages/SmartOS/2013Q4/x86_64/All"
       end
     end
   end
 end
-

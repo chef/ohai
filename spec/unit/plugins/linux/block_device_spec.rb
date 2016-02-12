@@ -15,24 +15,24 @@
 #  limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, 'Linux Block Device Plugin' do
+describe Ohai::System, "Linux Block Device Plugin" do
   DISKS = {
-    'sda' => {
-      'size' => '7814037168',
-      'removable' => '0',
-      'model' => 'WDC WD4000F9YZ-0',
-      'rev' => '1A01',
-      'state' => 'running',
-      'timeout' => '30',
-      'queue_depth' => '1',
-      'vendor' => 'ATA'
+    "sda" => {
+      "size" => "7814037168",
+      "removable" => "0",
+      "model" => "WDC WD4000F9YZ-0",
+      "rev" => "1A01",
+      "state" => "running",
+      "timeout" => "30",
+      "queue_depth" => "1",
+      "vendor" => "ATA",
     },
-    'dm-0' => {
-      'size' => '7806976',
-      'removable' => '0'
-    }
+    "dm-0" => {
+      "size" => "7806976",
+      "removable" => "0",
+    },
   }
 
   def file_double(value)
@@ -42,11 +42,11 @@ describe Ohai::System, 'Linux Block Device Plugin' do
   end
 
   before(:each) do
-    @plugin = get_plugin('linux/block_device')
+    @plugin = get_plugin("linux/block_device")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
 
-    allow(File).to receive(:exists?).with('/sys/block').and_return(true)
-    allow(Dir).to receive(:[]).with('/sys/block/*') do
+    allow(File).to receive(:exists?).with("/sys/block").and_return(true)
+    allow(Dir).to receive(:[]).with("/sys/block/*") do
       DISKS.collect { |disk, _files| "/sys/block/#{disk}" }
     end
 
@@ -56,17 +56,17 @@ describe Ohai::System, 'Linux Block Device Plugin' do
       end
 
       allow(File).to receive(:exists?).with(Regexp.new(disk)) do |arg|
-        filepath = arg.split('/')
+        filepath = arg.split("/")
         checks[filepath.last].nil? ? false : true
       end
 
       allow(File).to receive(:basename) do |arg|
-        arg.split('/').last
+        arg.split("/").last
       end
     end
   end
 
-  it 'should collect all relevant data from disks' do
+  it "should collect all relevant data from disks" do
     @plugin.run
     DISKS.each do |disk, checks|
       expect(@plugin[:block_device][disk.to_sym]).to include(checks)

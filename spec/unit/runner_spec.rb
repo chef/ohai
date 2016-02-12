@@ -17,7 +17,7 @@
 # limitations under the License
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 
 describe Ohai::Runner, "run_plugin" do
   let(:safe_run) { true }
@@ -137,11 +137,11 @@ describe Ohai::Runner, "run_plugin" do
       end
 
       it "should raise Ohai::Excpetions::AttributeNotFound" do
-        expect{ @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
       it "should not run the plugin" do
-        expect{ @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
         expect(@plugin.has_run?).to be false
       end
     end
@@ -244,8 +244,8 @@ describe Ohai::Runner, "run_plugin" do
         @plugins << klass.new(@ohai.data)
       end
       @plugin1, @plugin2, @plugin3 = @plugins
-      @ohai.provides_map.set_providers_for(@plugin1, ["one", "two"])
-      @ohai.provides_map.set_providers_for(@plugin2, ["one", "two"])
+      @ohai.provides_map.set_providers_for(@plugin1, %w{one two})
+      @ohai.provides_map.set_providers_for(@plugin2, %w{one two})
     end
 
     it "should run the plugins" do
@@ -322,16 +322,16 @@ describe Ohai::Runner, "run_plugin" do
       klassA = Ohai.plugin(:A) {
         provides("A")
         depends("B", "C")
-        collect_data { }
+        collect_data {}
       }
       klassB = Ohai.plugin(:B) {
         provides("B")
         depends("C")
-        collect_data { }
+        collect_data {}
       }
       klassC = Ohai.plugin(:C) {
         provides("C")
-        collect_data { }
+        collect_data {}
       }
 
       @plugins = []
@@ -373,7 +373,7 @@ describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @provides_map = Ohai::ProvidesMap.new
     @data = Mash.new
-    @ohai = double('Ohai::System', :data => @data, :provides_map => @provides_map)
+    @ohai = double("Ohai::System", :data => @data, :provides_map => @provides_map)
     @runner = Ohai::Runner.new(@ohai, true)
   end
 
@@ -397,7 +397,7 @@ describe Ohai::Runner, "fetch_plugins" do
     describe "and no parent attribute has providers" do
       it "should raise Ohai::Exceptions::AttributeNotFound exception" do
         # provides map is empty
-        expect{ @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
+        expect { @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
       end
     end
   end

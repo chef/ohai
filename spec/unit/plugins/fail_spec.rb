@@ -17,9 +17,9 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-tmp = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || '/tmp'
+tmp = ENV["TMPDIR"] || ENV["TMP"] || ENV["TEMP"] || "/tmp"
 
 shared_examples "a v7 loading failure" do
   before(:all) do

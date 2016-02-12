@@ -17,13 +17,13 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 
 describe Ohai::Loader do
   extend IntegrationSupport
 
   let(:loader) { Ohai::Loader.new(ohai) }
-  let(:ohai) { double('Ohai::System', :data => Mash.new, :provides_map => provides_map) }
+  let(:ohai) { double("Ohai::System", :data => Mash.new, :provides_map => provides_map) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
@@ -150,7 +150,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("extra_s.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("extra_s.rb")) }.not_to raise_error
         end
       end
 
@@ -161,7 +161,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("no_method.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("no_method.rb")) }.not_to raise_error
         end
       end
 
@@ -172,7 +172,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("illegal_def.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("illegal_def.rb")) }.not_to raise_error
         end
       end
 
@@ -183,7 +183,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("unexpected_error.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("unexpected_error.rb")) }.not_to raise_error
         end
       end
 
@@ -194,7 +194,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("bad_symbol.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("bad_symbol.rb")) }.not_to raise_error
         end
       end
 
@@ -205,7 +205,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("no_end.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("no_end.rb")) }.not_to raise_error
         end
       end
 
@@ -216,7 +216,7 @@ EOF
         end
 
         it "does not raise an error" do
-          expect{ loader.load_plugin(path_to("bad_name.rb")) }.not_to raise_error
+          expect { loader.load_plugin(path_to("bad_name.rb")) }.not_to raise_error
         end
       end
     end

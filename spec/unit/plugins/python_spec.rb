@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin python" do
   let(:stdout) { "2.5.2 (r252:60911, Jan  4 2009, 17:40:26)\n[GCC 4.3.2]\n" }

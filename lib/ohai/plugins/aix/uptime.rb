@@ -21,14 +21,14 @@ Ohai.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
 
   collect_data(:aix) do
-    require 'date'
+    require "date"
     # Example output:
     # $ who -b
     #   .       system boot  Jul  9 17:51
-    so = shell_out('who -b')
+    so = shell_out("who -b")
     so.stdout.lines.each do |line|
       if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime('%s').to_i
+        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime("%s").to_i
         uptime seconds_to_human(uptime_seconds)
         break
       end

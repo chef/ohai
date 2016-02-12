@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin virtualization platform" do
-  let(:plugin) { get_plugin("darwin/virtualization")}
+  let(:plugin) { get_plugin("darwin/virtualization") }
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
@@ -38,12 +38,12 @@ describe Ohai::System, "Darwin virtualization platform" do
     it "should not set parallels host if /usr/bin/prlctl not exist" do
       allow(plugin).to receive(:prlctl_exists?).and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
     it "should set parallels guest if /usr/sbin/ioreg exists and it's output contains pci1ab8,4000" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
-      ioreg=<<-IOREG
+      ioreg = <<-IOREG
     | |   +-o pci1ab8,4000@3  <class IOPCIDevice, id 0x1000001d1, registered, matched, active, busy 0 (40 ms), retain 9>
     | |   | | {
     | |   | |   "compatible" = <"pci1ab8,400","pci1ab8,4000","pciclass,ff0000">
@@ -77,7 +77,7 @@ describe Ohai::System, "Darwin virtualization platform" do
 
     it "should not set parallels guest if /usr/sbin/ioreg exists and it's output not contain pci1ab8,4000" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
-      ioreg=<<-IOREG
+      ioreg = <<-IOREG
     | |   +-o pci8086,2445@1F,4  <class IOPCIDevice, id 0x1000001d4, registered, matched, active, busy 0 (974 ms), retain 11>
     | |     | {
     | |     |   "compatible" = <"pci1ab8,400","pci8086,2445","pciclass,040100">
@@ -103,7 +103,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(shellout).to receive(:stdout).and_return(ioreg)
       allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 end

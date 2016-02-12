@@ -1,6 +1,6 @@
 
-$:.unshift File.expand_path('../lib', __FILE__)
-require 'ohai/version'
+$:.unshift File.expand_path("../lib", __FILE__)
+require "ohai/version"
 
 Gem::Specification.new do |s|
   s.name = "ohai"
@@ -42,8 +42,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec_junit_formatter"
 
   s.bindir = "bin"
-  s.executables = %w(ohai)
+  s.executables = %w{ohai}
 
-  s.require_path = 'lib'
-  s.files = %w(LICENSE README.md Gemfile Rakefile) + Dir.glob("*.gemspec") + Dir.glob("{docs,lib,spec}/**/*")
+  s.require_path = "lib"
+  s.files = %w{LICENSE README.md Gemfile Rakefile} + Dir.glob("*.gemspec") + Dir.glob("{docs,lib,spec}/**/*")
 end

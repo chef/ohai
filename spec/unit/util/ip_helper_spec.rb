@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ipaddress'
-require 'spec_helper'
-require 'ohai/util/ip_helper'
+require "ipaddress"
+require "spec_helper"
+require "ohai/util/ip_helper"
 
 class IpHelperMock
   include Ohai::Util::IpHelper
@@ -25,54 +25,54 @@ end
 describe "Ohai::Util::IpHelper" do
   let(:ip_helper) { IpHelperMock.new }
 
-  shared_examples 'ip address types' do
-    context 'with an IPv4 address' do
-      context 'that is private' do
-        let(:address) { '10.128.142.89' }
+  shared_examples "ip address types" do
+    context "with an IPv4 address" do
+      context "that is private" do
+        let(:address) { "10.128.142.89" }
 
-        it 'identifies the address as private' do
+        it "identifies the address as private" do
           expect(ip_helper.private_address?(address)).to be_truthy
         end
       end
 
-      context 'that is public' do
-        let(:address) { '74.125.224.72' }
+      context "that is public" do
+        let(:address) { "74.125.224.72" }
 
-        it 'identifies the address as public' do
+        it "identifies the address as public" do
           expect(ip_helper.private_address?(address)).to be_falsey
         end
       end
     end
 
-    context 'with an IPv6 address' do
-      context 'that is an RFC 4193 unique local address' do
-        let(:address) { 'fdf8:f53b:82e4::53' }
+    context "with an IPv6 address" do
+      context "that is an RFC 4193 unique local address" do
+        let(:address) { "fdf8:f53b:82e4::53" }
 
-        it 'identifies the address as a unique local address' do
+        it "identifies the address as a unique local address" do
           expect(ip_helper.private_address?(address)).to be_truthy
         end
       end
 
-      context 'that is a RFC 4291 Link-Local unicast address' do
-        let(:address) { 'FE80::0202:B3FF:FE1E:8329' }
+      context "that is a RFC 4291 Link-Local unicast address" do
+        let(:address) { "FE80::0202:B3FF:FE1E:8329" }
 
-        it 'does identify the address as a link-local address' do
+        it "does identify the address as a link-local address" do
           expect(ip_helper.private_address?(address)).to be_truthy
         end
       end
     end
   end
 
-  describe 'private_address?' do
-    include_examples 'ip address types'
+  describe "private_address?" do
+    include_examples "ip address types"
   end
 
-  describe 'unique_local_address?' do
-    include_examples 'ip address types'
+  describe "unique_local_address?" do
+    include_examples "ip address types"
   end
 
-  describe 'public_address?' do
-    let(:address) { '10.128.142.89' }
+  describe "public_address?" do
+    let(:address) { "10.128.142.89" }
 
     before do
       allow(ip_helper).to receive(:private_address?)
@@ -88,38 +88,38 @@ describe "Ohai::Util::IpHelper" do
     end
   end
 
-  describe 'loopback?' do
-    context 'with an IPv4 address' do
-      context 'that is a loopback address' do
-        let(:address) { '127.0.0.1' }
+  describe "loopback?" do
+    context "with an IPv4 address" do
+      context "that is a loopback address" do
+        let(:address) { "127.0.0.1" }
 
-        it 'should identify the address as a loopback address' do
+        it "should identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_truthy
         end
       end
 
-      context 'that is not a loopback address' do
-        let(:address) { '1.2.3.4' }
+      context "that is not a loopback address" do
+        let(:address) { "1.2.3.4" }
 
-        it 'should not identify the address as a loopback address' do
+        it "should not identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_falsey
         end
       end
     end
 
-    context 'with an IPv6 address' do
-      context 'that is a loopback address' do
-        let(:address) { '0:0:0:0:0:0:0:1' }
+    context "with an IPv6 address" do
+      context "that is a loopback address" do
+        let(:address) { "0:0:0:0:0:0:0:1" }
 
-        it 'should identify the address as a loopback address' do
+        it "should identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_truthy
         end
       end
 
-      context 'that is not a loopback address' do
-        let(:address) { '2400:6180:0000:00D0:0000:0000:0009:7001' }
+      context "that is not a loopback address" do
+        let(:address) { "2400:6180:0000:00D0:0000:0000:0009:7001" }
 
-        it 'should not identify the address as a loopback address' do
+        it "should not identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_falsey
         end
       end

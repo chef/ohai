@@ -15,11 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'chef-config/path_helper'
-require 'chef-config/workstation_config_loader'
-require 'ohai'
-require 'ohai/log'
-require 'mixlib/cli'
+require "chef-config/path_helper"
+require "chef-config/workstation_config_loader"
+require "ohai"
+require "ohai/log"
+require "mixlib/cli"
 
 class Ohai::Application
   include Mixlib::CLI
@@ -62,7 +62,7 @@ class Ohai::Application
     :long         => "--version",
     :description  => "Show Ohai version",
     :boolean      => true,
-    :proc         => lambda {|v| puts "Ohai: #{::Ohai::VERSION}"},
+    :proc         => lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
     :exit         => 0
 
   def initialize
@@ -113,6 +113,7 @@ class Ohai::Application
   end
 
   private
+
   def load_workstation_config
     config_loader = ChefConfig::WorkstationConfigLoader.new(
       config[:config_file], Ohai::Log

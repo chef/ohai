@@ -15,8 +15,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'open-uri'
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require "open-uri"
 
 describe Ohai::System, "plugin gce" do
   before(:each) do
@@ -34,7 +34,7 @@ describe Ohai::System, "plugin gce" do
     before(:each) do
       @http_client = double("Net::HTTP client")
       allow(@plugin).to receive(:http_client).and_return(@http_client)
-      allow(IO).to receive(:select).and_return([[],[1],[]])
+      allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
@@ -44,12 +44,12 @@ describe Ohai::System, "plugin gce" do
     it "should recursively fetch and properly parse json metadata" do
       expect(@http_client).to receive(:get).
         with("/computeMetadata/v1beta1/?recursive=true/").
-        and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code=>"200"))
+        and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
 
       @plugin.run
 
       expect(@plugin[:gce]).not_to be_nil
-      expect(@plugin[:gce]['instance']).to eq("hostname"=>"test-host")
+      expect(@plugin[:gce]["instance"]).to eq("hostname" => "test-host")
     end
 
   end
@@ -58,10 +58,10 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "gce"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/gce.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/gce.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/gce.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/gce.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/gce.json').and_return("")
     end
   end
 
@@ -69,7 +69,7 @@ describe Ohai::System, "plugin gce" do
     it_should_behave_like "!gce"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/gce.json').and_return(false)
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/gce.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
 
       # Raise Errno::ENOENT to simulate the scenario in which metadata server

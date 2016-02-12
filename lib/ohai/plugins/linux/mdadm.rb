@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:Mdadm) do
-  provides 'mdadm'
+  provides "mdadm"
 
   def create_raid_device_mash(stdout)
     device_mash = Mash.new
@@ -51,9 +51,9 @@ Ohai.plugin(:Mdadm) do
 
   collect_data(:linux) do
     # gather a list of all raid arrays
-    if File.exist?('/proc/mdstat')
+    if File.exist?("/proc/mdstat")
       devices = []
-      File.open('/proc/mdstat').each do |line|
+      File.open("/proc/mdstat").each do |line|
         devices << Regexp.last_match[1] if line =~ /(md[0-9]+)/
       end
 

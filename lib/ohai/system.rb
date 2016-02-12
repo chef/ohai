@@ -16,18 +16,18 @@
 # limitations under the License.
 #
 
-require 'ohai/loader'
-require 'ohai/log'
-require 'ohai/mash'
-require 'ohai/runner'
-require 'ohai/dsl'
-require 'ohai/mixin/command'
-require 'ohai/mixin/os'
-require 'ohai/mixin/string'
-require 'ohai/mixin/constant_helper'
-require 'ohai/provides_map'
-require 'ohai/hints'
-require 'mixlib/shellout'
+require "ohai/loader"
+require "ohai/log"
+require "ohai/mash"
+require "ohai/runner"
+require "ohai/dsl"
+require "ohai/mixin/command"
+require "ohai/mixin/os"
+require "ohai/mixin/string"
+require "ohai/mixin/constant_helper"
+require "ohai/provides_map"
+require "ohai/hints"
+require "mixlib/shellout"
 
 module Ohai
   class System
@@ -65,7 +65,7 @@ module Ohai
       @data[key]
     end
 
-    def all_plugins(attribute_filter=nil)
+    def all_plugins(attribute_filter = nil)
       # Reset the system when all_plugins is called since this function
       # can be run multiple times in order to pick up any changes in the
       # config or plugins with Chef.
@@ -88,7 +88,7 @@ module Ohai
       # Users who are migrating from ohai 6 may give one or more Ohai 6 plugin
       # names as the +attribute_filter+. In this case we return early because
       # the v7 plugin provides map will not have an entry for this plugin.
-      if attribute_filter and Array(attribute_filter).all? {|filter_item| have_v6_plugin?(filter_item) }
+      if attribute_filter and Array(attribute_filter).all? { |filter_item| have_v6_plugin?(filter_item) }
         return true
       end
 
@@ -104,7 +104,7 @@ module Ohai
     end
 
     def have_v6_plugin?(name)
-      @v6_dependency_solver.values.any? {|v6plugin| v6plugin.name == name }
+      @v6_dependency_solver.values.any? { |v6plugin| v6plugin.name == name }
     end
 
     def pathify_v6_plugin(plugin_name)
@@ -117,7 +117,7 @@ module Ohai
     # Make sure that you are not breaking backwards compatibility
     # if you are changing any of the APIs below.
     #
-    def require_plugin(plugin_ref, force=false)
+    def require_plugin(plugin_ref, force = false)
       plugins = [ ]
       # This method is only callable by version 6 plugins.
       # First we check if there exists a v6 plugin that fulfills the dependency.
@@ -147,7 +147,7 @@ module Ohai
           rescue Ohai::Exceptions::DependencyCycle, Ohai::Exceptions::AttributeNotFound => e
             Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
             raise
-          rescue Exception,Errno::ENOENT => e
+          rescue Exception, Errno::ENOENT => e
             Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
           end
         end
@@ -163,7 +163,7 @@ module Ohai
     #
     # This method takes a naive approach to v6 plugins: it simply re-runs all
     # of them whenever called.
-    def refresh_plugins(attribute_filter=nil)
+    def refresh_plugins(attribute_filter = nil)
       Ohai::Hints.refresh_hints()
       @provides_map.all_plugins(attribute_filter).each do |plugin|
         plugin.reset!
@@ -181,7 +181,7 @@ module Ohai
     #
     # Pretty Print this object as JSON
     #
-    def json_pretty_print(item=nil)
+    def json_pretty_print(item = nil)
       FFI_Yajl::Encoder.new(pretty: true, validate_utf8: false).encode(item || @data)
     end
 
@@ -192,7 +192,7 @@ module Ohai
       end
       raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
       case data
-      when Hash,Mash,Array,Fixnum
+      when Hash, Mash, Array, Fixnum
         json_pretty_print(data)
       when String
         if data.respond_to?(:lines)
@@ -206,12 +206,13 @@ module Ohai
     end
 
     private
+
     def configure_ohai
       Ohai::Config.merge_deprecated_config
       Ohai.config.merge!(@config)
 
       if Ohai.config[:directory] &&
-          !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
+         !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
         Ohai.config[:plugin_path] << Ohai.config[:directory]
       end
     end

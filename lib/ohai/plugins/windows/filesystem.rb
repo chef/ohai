@@ -21,7 +21,7 @@ Ohai.plugin(:Filesystem) do
 
   collect_data(:windows) do
 
-    require 'wmi-lite/wmi'
+    require "wmi-lite/wmi"
 
     fs = Mash.new
     ld_info = Mash.new
@@ -30,10 +30,10 @@ Ohai.plugin(:Filesystem) do
 
     # Grab filesystem data from WMI
     # Note: we should really be parsing Win32_Volume and Win32_Mapped drive
-    disks = wmi.instances_of('Win32_LogicalDisk')
+    disks = wmi.instances_of("Win32_LogicalDisk")
 
     disks.each do |disk|
-      filesystem = disk['deviceid']
+      filesystem = disk["deviceid"]
       fs[filesystem] = Mash.new
       ld_info[filesystem] = Mash.new
       disk.wmi_ole_object.properties_.each do |p|
@@ -42,7 +42,7 @@ Ohai.plugin(:Filesystem) do
       fs[filesystem][:kb_size] = ld_info[filesystem][:size].to_i / 1000
       fs[filesystem][:kb_available] = ld_info[filesystem][:free_space].to_i / 1000
       fs[filesystem][:kb_used] = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
-      fs[filesystem][:percent_used]  = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
+      fs[filesystem][:percent_used] = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
       fs[filesystem][:mount] = ld_info[filesystem][:name]
       fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system] == nil
       fs[filesystem][:volume_name] = ld_info[filesystem][:volume_name]

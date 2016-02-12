@@ -21,7 +21,7 @@ Ohai.plugin(:Filesystem) do
 
   def get_blk_cmd(attr, have_lsblk)
     if have_lsblk
-      attr = 'FSTYPE' if attr == 'TYPE'
+      attr = "FSTYPE" if attr == "TYPE"
       "lsblk -P -n -o NAME,#{attr}"
     else
       "blkid -s #{attr}"
@@ -30,7 +30,7 @@ Ohai.plugin(:Filesystem) do
 
   def get_blk_regex(attr, have_lsblk)
     if have_lsblk
-      attr = 'FSTYPE' if attr == 'TYPE'
+      attr = "FSTYPE" if attr == "TYPE"
       /^NAME="(\S+).*?" #{attr}="(\S+)"/
     else
       /^(\S+): #{attr}="(\S+)"/
@@ -47,7 +47,7 @@ Ohai.plugin(:Filesystem) do
 
   collect_data(:linux) do
     fs = Mash.new
-    have_lsblk = File.executable?('/bin/lsblk')
+    have_lsblk = File.executable?("/bin/lsblk")
 
     # Grab filesystem data from df
     so = shell_out("df -P")
@@ -95,56 +95,56 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    have_lsblk = File.exist?('/bin/lsblk')
+    have_lsblk = File.exist?("/bin/lsblk")
 
     # Gather more filesystem types via libuuid, even devices that's aren't mounted
-    cmd = get_blk_cmd('TYPE', have_lsblk)
-    regex = get_blk_regex('TYPE', have_lsblk)
+    cmd = get_blk_cmd("TYPE", have_lsblk)
+    regex = get_blk_regex("TYPE", have_lsblk)
     so = shell_out(cmd)
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
         type = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
+        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:fs_type] = type
       end
     end
 
     # Gather device UUIDs via libuuid
-    cmd = get_blk_cmd('UUID', have_lsblk)
-    regex = get_blk_regex('UUID', have_lsblk)
+    cmd = get_blk_cmd("UUID", have_lsblk)
+    regex = get_blk_regex("UUID", have_lsblk)
     so = shell_out(cmd)
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
         uuid = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
+        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:uuid] = uuid
       end
     end
 
     # Gather device labels via libuuid
-    cmd = get_blk_cmd('LABEL', have_lsblk)
-    regex = get_blk_regex('LABEL', have_lsblk)
+    cmd = get_blk_cmd("LABEL", have_lsblk)
+    regex = get_blk_regex("LABEL", have_lsblk)
     so = shell_out(cmd)
     so.stdout.lines do |line|
       if line =~ regex
         filesystem = $1
         label = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?('/')
+        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
         fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
         fs[filesystem][:label] = label
       end
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exist?('/proc/mounts')
-      mounts = ''
+    if File.exist?("/proc/mounts")
+      mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.
-      f = File.open('/proc/mounts')
+      f = File.open("/proc/mounts")
       loop do
         begin
           data = f.read_nonblock(4096)

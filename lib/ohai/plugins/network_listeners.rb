@@ -22,8 +22,8 @@ Ohai.plugin(:NetworkListeners) do
   depends "network", "counters/network"
 
   collect_data do
-    require 'sigar'
-    flags = Sigar::NETCONN_TCP|Sigar::NETCONN_SERVER
+    require "sigar"
+    flags = Sigar::NETCONN_TCP | Sigar::NETCONN_SERVER
 
     network Mash.new unless network
     listeners = Mash.new

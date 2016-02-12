@@ -16,8 +16,7 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin kernel plugin" do
   before(:each) do
@@ -35,12 +34,9 @@ describe Ohai::System, "Darwin kernel plugin" do
 EOF
 
     modules = {
-      "com.apple.kec.corecrypto"=>
-      {"version"=>"1.0", "size"=>266240, "index"=>"8", "refcount"=>"0"},
-      "com.apple.iokit.IOACPIFamily"=>
-      {"version"=>"1.4", "size"=>36864, "index"=>"9", "refcount"=>"22"},
-      "com.apple.iokit.IOPCIFamily"=>
-      {"version"=>"2.8", "size"=>167936, "index"=>"10", "refcount"=>"30"}}
+      "com.apple.kec.corecrypto" =>       { "version" => "1.0", "size" => 266240, "index" => "8", "refcount" => "0" },
+      "com.apple.iokit.IOACPIFamily" =>       { "version" => "1.4", "size" => 36864, "index" => "9", "refcount" => "22" },
+      "com.apple.iokit.IOPCIFamily" =>       { "version" => "2.8", "size" => 167936, "index" => "10", "refcount" => "30" } }
 
     @plugin.run
     expect(@plugin[:kernel][:modules]).to eql(modules)
@@ -50,14 +46,14 @@ EOF
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
-    expect(@plugin[:kernel][:machine]).not_to eq('x86_64')
+    expect(@plugin[:kernel][:machine]).not_to eq("x86_64")
   end
 
   it "should set kernel_machine to x86_64" do
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
-    expect(@plugin[:kernel][:machine]).to eq('x86_64')
+    expect(@plugin[:kernel][:machine]).to eq("x86_64")
   end
 
   it "should set the kernel_os to the kernel_name value" do

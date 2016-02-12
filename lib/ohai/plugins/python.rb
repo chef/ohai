@@ -32,7 +32,7 @@ Ohai.plugin(:Python) do
       output = so.stdout.split
       python[:version] = output[0]
       if output.length >= 6
-        python[:builddate] = "%s %s %s %s" % [output[2],output[3],output[4],output[5].gsub!(/\)/,'')]
+        python[:builddate] = "%s %s %s %s" % [output[2], output[3], output[4], output[5].gsub!(/\)/, "")]
       end
 
       languages[:python] = python if python[:version] and python[:builddate]

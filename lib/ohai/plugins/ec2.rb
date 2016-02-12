@@ -17,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ohai/mixin/ec2_metadata'
-require 'base64'
+require "ohai/mixin/ec2_metadata"
+require "base64"
 
 Ohai.plugin(:EC2) do
   include Ohai::Mixin::Ec2Metadata
@@ -30,7 +30,7 @@ Ohai.plugin(:EC2) do
 
   # look for ec2metadata which is included on paravirt / hvm AMIs
   def has_ec2metadata_bin?
-    if File.exist?('/usr/bin/ec2metadata')
+    if File.exist?("/usr/bin/ec2metadata")
       Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == true")
       true
     else
@@ -75,11 +75,11 @@ EOM
   end
 
   def looks_like_ec2?
-    return true if hint?('ec2')
+    return true if hint?("ec2")
 
     # if has ec2 mac try non-blocking connect so we don't "block" if
     # the Xen environment is *not* EC2
-    return true if (has_ec2metadata_bin? || has_ec2_dmi?) || (has_xen_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR,80))
+    return true if (has_ec2metadata_bin? || has_ec2_dmi?) || (has_xen_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80))
   end
 
   collect_data do
@@ -91,7 +91,7 @@ EOM
         # secret access key. We'd rather not have ohai send this information
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
-        next if k == 'iam' && !hint?('iam')
+        next if k == "iam" && !hint?("iam")
         ec2[k] = v
       end
       ec2[:userdata] = self.fetch_userdata

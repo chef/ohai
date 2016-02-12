@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux virtualization platform" do
   let(:plugin) { get_plugin("linux/virtualization") }
@@ -72,7 +72,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "does not set virtualization if xen isn't there" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
@@ -116,7 +116,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "does not set virtualization if kvm isn't there" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
@@ -142,7 +142,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "does not set virtualization if vbox isn't there" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
@@ -152,7 +152,7 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
-      ms_vpc_dmidecode=<<-MSVPC
+      ms_vpc_dmidecode = <<-MSVPC
 System Information
   Manufacturer: Microsoft Corporation
   Product Name: Virtual Machine
@@ -169,7 +169,7 @@ MSVPC
     end
 
     it "sets hyperv guest if dmidecode detects Hyper-V or version 7.0" do
-      ms_hv_dmidecode=<<-MSHV
+      ms_hv_dmidecode = <<-MSHV
 System Information
         Manufacturer: Microsoft Corporation
         Product Name: Virtual Machine
@@ -186,7 +186,7 @@ MSHV
     end
 
     it "sets virtualserver guest if dmidecode detects version 5.0" do
-      ms_vs_dmidecode=<<-MSVS
+      ms_vs_dmidecode = <<-MSVS
 System Information
   Manufacturer: Microsoft Corporation
   Product Name: Virtual Machine
@@ -203,7 +203,7 @@ MSVS
     end
 
     it "sets vmware guest if dmidecode detects VMware" do
-      vmware_dmidecode=<<-VMWARE
+      vmware_dmidecode = <<-VMWARE
 System Information
   Manufacturer: VMware, Inc.
   Product Name: VMware Virtual Platform
@@ -222,7 +222,7 @@ VMWARE
     end
 
     it "sets vbox guest if dmidecode detects VirtualBox" do
-      vbox_dmidecode=<<-VBOX
+      vbox_dmidecode = <<-VBOX
 Base Board Information
   Manufacturer: Oracle Corporation
   Product Name: VirtualBox
@@ -243,7 +243,7 @@ VBOX
     end
 
     it "sets openstack guest if dmidecode detects OpenStack" do
-      openstack_dmidecode=<<-OPENSTACK
+      openstack_dmidecode = <<-OPENSTACK
 System Information
         Manufacturer: Red Hat Inc.
         Product Name: OpenStack Nova
@@ -262,7 +262,7 @@ OPENSTACK
     end
 
     it "sets kvm guest if dmidecode contains KVM" do
-      kvm_dmidecode=<<-RKVM
+      kvm_dmidecode = <<-RKVM
 System Information
   Manufacturer: Red Hat
   Product Name: KVM
@@ -281,7 +281,7 @@ RKVM
     end
 
     it "sets kvm guest if dmidecode detects RHEV" do
-      kvm_dmidecode=<<-RHEV
+      kvm_dmidecode = <<-RHEV
 System Information
   Manufacturer: Red Hat
   Product Name: RHEV Hypervisor
@@ -302,7 +302,7 @@ RHEV
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
@@ -313,7 +313,7 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("host")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
     end
 
     it "sets Linux-VServer host if /proc/self/status contains VxID: 0" do
@@ -322,7 +322,7 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("host")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
     end
 
     it "sets Linux-VServer host if /proc/self/status contains multiple space VxID:   0" do
@@ -331,7 +331,7 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("host")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
     end
 
     it "sets Linux-VServer host if /proc/self/status contains tabbed VxID:\t0" do
@@ -340,7 +340,7 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("host")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
     end
 
     it "sets Linux-VServer guest if /proc/self/status contains s_context > 0" do
@@ -349,7 +349,7 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("guest")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("guest")
     end
 
     it "sets Linux-VServer guest if /proc/self/status contains VxID > 0" do
@@ -358,13 +358,13 @@ RHEV
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("linux-vserver")
       expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems]['linux-vserver']).to eq("guest")
+      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("guest")
     end
 
     it "does not set virtualization if Linux-VServer isn't there" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
@@ -390,13 +390,13 @@ RHEV
       expect(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
       expect(File).to receive(:exist?).with("/proc/vz").and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
   describe "when we are checking for parallels" do
     it "sets parallels guest if /proc/bus/pci/devices contains 1ab84000" do
-      devices=<<-DEVICES
+      devices = <<-DEVICES
 0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
 0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
       DEVICES
@@ -409,20 +409,20 @@ RHEV
     end
 
     it "does not set virtualization if /proc/bus/pci/devices not contains 1ab84000" do
-      devices=<<-DEVICES
+      devices = <<-DEVICES
 0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
 0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
       DEVICES
       expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
   describe "when we are checking for lxc" do
     it "sets lxc guest if /proc/self/cgroup exist and there are /lxc/<hexadecimal> mounts" do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 7:net_cls:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 6:freezer:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
@@ -441,7 +441,7 @@ CGROUP
     end
 
     it "sets lxc guest if /proc/self/cgroup exist and there are /lxc/<name> mounts" do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/lxc/vanilla
 7:net_cls:/lxc/vanilla
 6:freezer:/lxc/vanilla
@@ -460,7 +460,7 @@ CGROUP
     end
 
     it "sets not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/Charlie
 7:net_cls:/Charlie
 6:freezer:/Charlie
@@ -473,12 +473,12 @@ CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
     context "/proc/self/cgroup only has / mounts" do
       before(:each) do
-        self_cgroup=<<-CGROUP
+        self_cgroup = <<-CGROUP
 8:blkio:/
 7:net_cls:/
 6:freezer:/
@@ -515,7 +515,7 @@ CGROUP
         plugin.run
         expect(plugin[:virtualization][:system]).to be_nil
         expect(plugin[:virtualization][:role]).to be_nil
-        expect(plugin[:virtualization]).to eq({'systems' => {}})
+        expect(plugin[:virtualization]).to eq({ "systems" => {} })
       end
 
     end
@@ -523,13 +523,13 @@ CGROUP
     it "does not set virtualization if /proc/self/cgroup isn't there" do
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 
   describe "when we are checking for docker" do
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<hexadecimal> mounts" do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 7:net_cls:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
 6:freezer:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
@@ -548,7 +548,7 @@ CGROUP
     end
 
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/docker/vanilla
 7:net_cls:/docker/vanilla
 6:freezer:/docker/vanilla
@@ -569,7 +569,7 @@ CGROUP
     # Relevant at least starting docker 1.6.2, kernel 4.0.5 & systemd 224-1.
     # Doi not exactly know which software/version really matters here.
     it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:devices:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 7:cpuset:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 6:blkio:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
@@ -588,7 +588,7 @@ CGROUP
     end
 
     it "sets not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
-      self_cgroup=<<-CGROUP
+      self_cgroup = <<-CGROUP
 8:blkio:/Charlie
 7:net_cls:/Charlie
 6:freezer:/Charlie
@@ -601,12 +601,12 @@ CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
     context "/proc/self/cgroup only has / mounts" do
       before(:each) do
-        self_cgroup=<<-CGROUP
+        self_cgroup = <<-CGROUP
 8:blkio:/
 7:net_cls:/
 6:freezer:/
@@ -619,7 +619,7 @@ CGROUP
         allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
         plugin.run
-        expect(plugin[:virtualization]).to eq({'systems' => {}})
+        expect(plugin[:virtualization]).to eq({ "systems" => {} })
       end
 
     end
@@ -639,13 +639,13 @@ CGROUP
       plugin.run
       expect(plugin[:virtualization][:system]).to be_nil
       expect(plugin[:virtualization][:role]).to be_nil
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
     it "does not set virtualization if /proc/self/cgroup isn't there" do
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
     it "sets virtualization if /.dockerenv exists" do
@@ -668,13 +668,13 @@ CGROUP
       allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
       allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
       plugin.run
-      expect(plugin[:virtualization]).to eq({'systems' => {}})
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
   end
 
   it "does not set virtualization if no tests match" do
     plugin.run
-    expect(plugin[:virtualization]).to eq({'systems' => {}})
+    expect(plugin[:virtualization]).to eq({ "systems" => {} })
   end
 end

@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X kernel plugin" do
   # NOTE: Solaris will report the same module loaded multiple times
   # with the same ID, Loadaddr, etc. and only the info column different
   # ignoring it, and removing the data from this fixture.
-  MODINFO=<<-TOOMUCH
+  MODINFO = <<-TOOMUCH
    Id Loadaddr   Size Info Rev Module Name
     6  1180000   4623   1   1  specfs (filesystem for specfs)
     8  1185df0   38c4   1   1  TS (time sharing sched class)
@@ -151,7 +151,7 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     # Teh daterz
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
-    teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" =>  17955, "description" => "filesystem for specfs"}
+    teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" =>  17955, "description" => "filesystem for specfs" }
     expect(@plugin[:kernel][:modules].keys).to include("specfs")
     expect(@plugin[:kernel][:modules].keys).not_to include("Module")
     expect(@plugin[:kernel][:modules]["specfs"]).to eq(teh_daterz)

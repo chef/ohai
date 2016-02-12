@@ -16,8 +16,7 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 # We do not alter case for lsb attributes and consume them as provided
 

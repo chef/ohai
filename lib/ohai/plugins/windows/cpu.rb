@@ -20,14 +20,14 @@ Ohai.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:windows) do
-    require 'wmi-lite/wmi'
+    require "wmi-lite/wmi"
 
     cpu Mash.new
     cores = 0
     logical_processors = 0
 
     wmi = WmiLite::Wmi.new
-    processors = wmi.instances_of('Win32_Processor')
+    processors = wmi.instances_of("Win32_Processor")
 
     processors.each_with_index do |processor, index|
       current_cpu = index.to_s
@@ -43,23 +43,23 @@ Ohai.plugin(:CPU) do
       #
 
       begin
-        cpu[current_cpu]["cores"] = processor['numberofcores']
-        cores += processor['numberofcores']
+        cpu[current_cpu]["cores"] = processor["numberofcores"]
+        cores += processor["numberofcores"]
       rescue NoMethodError => e
         Ohai::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
         cpu[current_cpu]["cores"] = nil
       end
 
-      logical_processors += processor['numberoflogicalprocessors']
-      cpu[current_cpu]["vendor_id"] = processor['manufacturer']
-      cpu[current_cpu]["family"] = processor['family'].to_s
-      cpu[current_cpu]["model"] = processor['revision'].to_s
-      cpu[current_cpu]["stepping"] = processor['stepping'].nil? \
-                  ? processor['description'].match(/Stepping\s+(\d+)/)[1] \
-                  : processor['stepping']
-      cpu[current_cpu]["physical_id"] = processor['deviceid']
-      cpu[current_cpu]["model_name"] = processor['description']
-      cpu[current_cpu]["mhz"] = processor['maxclockspeed'].to_s
+      logical_processors += processor["numberoflogicalprocessors"]
+      cpu[current_cpu]["vendor_id"] = processor["manufacturer"]
+      cpu[current_cpu]["family"] = processor["family"].to_s
+      cpu[current_cpu]["model"] = processor["revision"].to_s
+      cpu[current_cpu]["stepping"] = processor["stepping"].nil? \
+                  ? processor["description"].match(/Stepping\s+(\d+)/)[1] \
+                  : processor["stepping"]
+      cpu[current_cpu]["physical_id"] = processor["deviceid"]
+      cpu[current_cpu]["model_name"] = processor["description"]
+      cpu[current_cpu]["mhz"] = processor["maxclockspeed"].to_s
       cpu[current_cpu]["cache_size"] = "#{processor['l2cachesize']} KB"
     end
 

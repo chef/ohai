@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'ohai/plugin_config'
+require "ohai/plugin_config"
 
 describe "Ohai::PluginConfig" do
 
@@ -56,7 +56,7 @@ describe "Ohai::PluginConfig" do
             {
               :bar0 => true,
               :bar1 => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, :qux1 => false }
+              :bar2 => { :qux0 => true, :qux1 => false },
             }
           }
 
@@ -70,7 +70,7 @@ describe "Ohai::PluginConfig" do
             {
               :bar0 => true,
               "bar1" => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, :qux1 => false }
+              :bar2 => { :qux0 => true, :qux1 => false },
             }
           }
 
@@ -84,7 +84,7 @@ describe "Ohai::PluginConfig" do
             {
               :bar0 => true,
               :bar1 => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, "qux1" => false }
+              :bar2 => { :qux0 => true, "qux1" => false },
             }
           }
 

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 
 describe "Ohai::Hints" do
   # We are using the plugins directory infrastructure to test hints
@@ -54,11 +54,11 @@ EOF
     end
 
     it "hint? should return the data for full hints" do
-      expect(Ohai::Hints.hint?("cloud")).to eq({"name" => "circus"})
+      expect(Ohai::Hints.hint?("cloud")).to eq({ "name" => "circus" })
     end
 
     it "hint? should return empty hash for empty hints" do
-      expect(Ohai::Hints.hint?("cloud_empty")).to eq({ })
+      expect(Ohai::Hints.hint?("cloud_empty")).to eq({})
     end
   end
 

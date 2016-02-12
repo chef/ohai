@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ipaddress'
+require "ipaddress"
 
 module Ohai
   module Util
     module IpHelper
       # Corresponding to RFC 4192 + RFC 4193
-      IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress('fe80::/10')
-      IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress('fc00::/7')
+      IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress("fe80::/10")
+      IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress("fc00::/7")
 
       def private_address?(addr)
         ip = IPAddress(addr)
@@ -47,7 +47,7 @@ module Ohai
         if ip.respond_to? :loopback?
           ip.loopback?
         else
-          IPAddress('127.0.0.0/8').include? ip
+          IPAddress("127.0.0.0/8").include? ip
         end
       end
     end

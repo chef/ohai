@@ -18,21 +18,20 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
-require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
 
 describe Ohai::System, "plugin lua" do
-  test_plugin([ "languages", "lua" ], [ "lua" ]) do | p |
-    p.test([ "centos-6.4" ], ["x86", "x64"], [[], ["lua"]],
-           { "languages" => { "lua" => { "version" => "5.1.4" }}})
-    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[]],
-           { "languages" => { "lua" => nil }})
+  test_plugin(%w{languages lua}, [ "lua" ]) do |p|
+    p.test([ "centos-6.4" ], %w{x86 x64}, [[], ["lua"]],
+           { "languages" => { "lua" => { "version" => "5.1.4" } } })
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], %w{x86 x64}, [[]],
+           { "languages" => { "lua" => nil } })
     p.test([ "ubuntu-13.04" ], [ "x64" ], [[]],
-           { "languages" => { "lua" => nil }})
-    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], [ "x86", "x64" ], [[ "lua" ]],
-           { "languages" => { "lua" => { "version" => "5.1.4" }}})
+           { "languages" => { "lua" => nil } })
+    p.test([ "ubuntu-10.04", "ubuntu-12.04" ], %w{x86 x64}, [[ "lua" ]],
+           { "languages" => { "lua" => { "version" => "5.1.4" } } })
     p.test([ "ubuntu-13.04" ], [ "x64" ], [["lua"]],
-           { "languages" => { "lua" => { "version" => "5.1.5" }}})
+           { "languages" => { "lua" => { "version" => "5.1.5" } } })
   end
 end

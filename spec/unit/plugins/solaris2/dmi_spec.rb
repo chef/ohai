@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 SOLARIS_DMI_OUT = <<-EOS
 ID    SIZE TYPE
@@ -127,16 +127,16 @@ describe Ohai::System, "Solaris2.X DMI plugin" do
   {
     bios: {
       vendor: "American Megatrends Inc.",
-      release_date: "08/26/2014"
+      release_date: "08/26/2014",
     },
     system: {
       manufacturer: "System manufacturer",
-      product: "System Product Name"
+      product: "System Product Name",
     },
     chassis: {
       lock_present: "N",
-      asset_tag: "PCS"
-    }
+      asset_tag: "PCS",
+    },
   }.each do |id, data|
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do
@@ -151,4 +151,3 @@ describe Ohai::System, "Solaris2.X DMI plugin" do
     expect(@plugin[:dmi]).not_to have_key(:on_board_devices)
   end
 end
-

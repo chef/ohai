@@ -19,38 +19,38 @@
 #
 
 Ohai.plugin(:Virtualization) do
-  provides 'virtualization'
+  provides "virtualization"
 
   collect_data(:windows) do
-    require 'wmi-lite/wmi'
+    require "wmi-lite/wmi"
 
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     # Grab BIOS data from WMI to determine vendor information
     wmi = WmiLite::Wmi.new
-    bios = wmi.instances_of('Win32_BIOS')
+    bios = wmi.instances_of("Win32_BIOS")
 
-    case bios[0]['manufacturer']
-    when 'innotek GmbH'
-      virtualization[:system] = 'vbox'
-      virtualization[:role] = 'guest'
-      virtualization[:systems][:vbox] = 'guest'
-    when 'Parallels Software International Inc.'
-      virtualization[:system] = 'parallels'
-      virtualization[:role] = 'guest'
-      virtualization[:systems][:parallels] = 'guest'
-    when 'Bochs'
+    case bios[0]["manufacturer"]
+    when "innotek GmbH"
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:vbox] = "guest"
+    when "Parallels Software International Inc."
+      virtualization[:system] = "parallels"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:parallels] = "guest"
+    when "Bochs"
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
     end
 
     # vmware fusion detection
-    if bios[0]['serialnumber'] =~ /VMware/
-      virtualization[:system] = 'vmware'
-      virtualization[:role] = 'guest'
-      virtualization[:systems][:vmware] = 'guest'
+    if bios[0]["serialnumber"] =~ /VMware/
+      virtualization[:system] = "vmware"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:vmware] = "guest"
     end
   end
 end

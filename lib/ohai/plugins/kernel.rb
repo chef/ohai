@@ -80,7 +80,7 @@ Ohai.plugin(:Kernel) do
 
     so = shell_out("sysctl -n hw.optional.x86_64")
     if so.stdout.split($/)[0].to_i == 1
-      kernel[:machine] = 'x86_64'
+      kernel[:machine] = "x86_64"
     end
 
     modules = Mash.new
@@ -157,10 +157,10 @@ Ohai.plugin(:Kernel) do
     # EXAMPLE:
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
-    module_description =  /[\s]*([\d]+)[\s]+([a-f\d]+)[\s]+([a-f\d]+)[\s]+(?:[\-\d]+)[\s]+(?:[\d]+)[\s]+([\S]+)[\s]+\((.+)\)$/
+    module_description = /[\s]*([\d]+)[\s]+([a-f\d]+)[\s]+([a-f\d]+)[\s]+(?:[\-\d]+)[\s]+(?:[\d]+)[\s]+([\S]+)[\s]+\((.+)\)$/
     so.stdout.lines do |line|
       if mod = module_description.match(line)
-        modules[mod[4]] = { :id => mod[1].to_i, :loadaddr => mod[2], :size => mod[3].to_i(16), :description => mod[5]}
+        modules[mod[4]] = { :id => mod[1].to_i, :loadaddr => mod[2], :size => mod[3].to_i(16), :description => mod[5] }
       end
     end
 
@@ -168,8 +168,8 @@ Ohai.plugin(:Kernel) do
   end
 
   collect_data(:windows) do
-    require 'win32ole'
-    require 'wmi-lite/wmi'
+    require "win32ole"
+    require "wmi-lite/wmi"
 
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
@@ -177,7 +177,7 @@ Ohai.plugin(:Kernel) do
 
     kernel Mash.new
 
-    host = wmi.first_of('Win32_OperatingSystem')
+    host = wmi.first_of("Win32_OperatingSystem")
     kernel[:os_info] = Mash.new
     host.wmi_ole_object.properties_.each do |p|
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
@@ -188,10 +188,10 @@ Ohai.plugin(:Kernel) do
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
-    host = wmi.first_of('Win32_ComputerSystem')
+    host = wmi.first_of("Win32_ComputerSystem")
     kernel[:cs_info] = Mash.new
     cs_info_blacklist = [
-      'oem_logo_bitmap'
+      "oem_logo_bitmap"
     ]
     host.wmi_ole_object.properties_.each do |p|
       if !cs_info_blacklist.include?(p.name.wmi_underscore)

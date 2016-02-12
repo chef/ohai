@@ -15,38 +15,38 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin linode" do
-  let(:hint_path_nix) { '/etc/chef/ohai/hints/linode.json' }
+  let(:hint_path_nix) { "/etc/chef/ohai/hints/linode.json" }
   let(:hint_path_win) { 'C:\chef\ohai\hints/linode.json' }
 
   before do
     @plugin = get_plugin("linode")
     @plugin[:network] = {
-      "interfaces"=> {
-        "eth0"=> {
-          "addresses"=> {
-            "1.2.3.4"=> {
-              "broadcast"=> "67.23.20.255",
-              "netmask"=> "255.255.255.0",
-              "family"=> "inet"
+      "interfaces" => {
+        "eth0" => {
+          "addresses" => {
+            "1.2.3.4" => {
+              "broadcast" => "67.23.20.255",
+              "netmask" => "255.255.255.0",
+              "family" => "inet",
             },
-            "fe80::4240:95ff:fe47:6eed"=> {
-              "scope"=> "Link",
-              "prefixlen"=> "64",
-              "family"=> "inet6"
+            "fe80::4240:95ff:fe47:6eed" => {
+              "scope" => "Link",
+              "prefixlen" => "64",
+              "family" => "inet6",
             },
             "40:40:95:47:6E:ED" => {
               "family" => "lladdr"
-            }
+            },
           }
         }
       }
     }
   end
 
-  shared_examples_for "!linode"  do
+  shared_examples_for "!linode" do
     it "does not create the linode mash" do
       @plugin.run
       expect(@plugin[:linode]).to be_nil
@@ -92,19 +92,19 @@ describe Ohai::System, "plugin linode" do
       before do
         @plugin[:network][:interfaces]["eth0:1"] = {
           "addresses" => {
-            "5.6.7.8"=> {
-              "broadcast"=> "10.176.191.255",
-              "netmask"=> "255.255.224.0",
-              "family"=> "inet"
+            "5.6.7.8" => {
+              "broadcast" => "10.176.191.255",
+              "netmask" => "255.255.224.0",
+              "family" => "inet",
             },
             "fe80::4240:f5ff:feab:2836" => {
-              "scope"=> "Link",
-              "prefixlen"=> "64",
-              "family"=> "inet6"
+              "scope" => "Link",
+              "prefixlen" => "64",
+              "family" => "inet6",
             },
             "40:40:F5:AB:28:36" => {
-              "family"=> "lladdr"
-            }
+              "family" => "lladdr"
+            },
           }
         }
       end
@@ -121,9 +121,9 @@ describe Ohai::System, "plugin linode" do
   describe "with linode cloud file" do
     before do
       allow(File).to receive(:exist?).with(hint_path_nix).and_return(true)
-      allow(File).to receive(:read).with(hint_path_nix).and_return('')
+      allow(File).to receive(:read).with(hint_path_nix).and_return("")
       allow(File).to receive(:exist?).with(hint_path_win).and_return(true)
-      allow(File).to receive(:read).with(hint_path_win).and_return('')
+      allow(File).to receive(:read).with(hint_path_win).and_return("")
     end
 
     it_should_behave_like "linode"
@@ -139,7 +139,7 @@ describe Ohai::System, "plugin linode" do
   end
 
   context "with ec2 cloud file" do
-    let(:ec2_hint_path_nix) { '/etc/chef/ohai/hints/ec2.json' }
+    let(:ec2_hint_path_nix) { "/etc/chef/ohai/hints/ec2.json" }
     let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
 
     before do
@@ -147,9 +147,9 @@ describe Ohai::System, "plugin linode" do
       allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
 
       allow(File).to receive(:exist?).with(ec2_hint_path_nix).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return('')
+      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return("")
       allow(File).to receive(:exist?).with(ec2_hint_path_win).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_win).and_return('')
+      allow(File).to receive(:read).with(ec2_hint_path_win).and_return("")
     end
 
     it_should_behave_like "!linode"

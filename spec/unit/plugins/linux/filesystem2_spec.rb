@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux filesystem plugin" do
   let (:plugin) { get_plugin("linux/filesystem2") }
@@ -166,7 +166,7 @@ MOUNT
 
     it "should set mount_options to an array of values from mount" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime" ])
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime})
     end
   end
 
@@ -338,7 +338,7 @@ MOUNTS
 
     it "should set mount_options to an array of values from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
+      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime attr2 noquota})
     end
   end
 
@@ -385,9 +385,9 @@ BLKID_TYPE
 
     it "should provide a devices view with all mountpoints" do
       plugin.run
-      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(['/', '/var/chroot'])
-      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(['/home', '/home2'])
-      expect(plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(['/lib/init/rw', '/dev/shm'])
+      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(["/", "/var/chroot"])
+      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(["/home", "/home2"])
+      expect(plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(["/lib/init/rw", "/dev/shm"])
     end
   end
 
@@ -431,7 +431,7 @@ BLKID_TYPE
 
     it "should provide a mounts view with all devices" do
       plugin.run
-      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/sdb1', '/dev/sdc1'])
+      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/sdb1", "/dev/sdc1"])
     end
   end
 end

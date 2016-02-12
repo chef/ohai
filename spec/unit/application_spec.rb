@@ -16,11 +16,11 @@
 # limitations under the License.
 #
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'ohai/application'
+require "ohai/application"
 
-RSpec.describe 'Ohai::Application' do
+RSpec.describe "Ohai::Application" do
 
   let(:argv) { [] }
   let(:app) { Ohai::Application.new }
@@ -35,12 +35,12 @@ RSpec.describe 'Ohai::Application' do
   end
 
   describe '#configure_ohai' do
-    describe 'loading configuration from a file' do
-      let(:config_file) { '/local/workstation/config' }
-      let(:config_loader) { instance_double('ChefConfig::WorkstationConfigLoader') }
+    describe "loading configuration from a file" do
+      let(:config_file) { "/local/workstation/config" }
+      let(:config_loader) { instance_double("ChefConfig::WorkstationConfigLoader") }
 
-      context 'when specified on the command line' do
-        let(:argv) { [ '-c', config_file ] }
+      context "when specified on the command line" do
+        let(:argv) { [ "-c", config_file ] }
 
         before(:each) do
           if windows?
@@ -54,13 +54,13 @@ RSpec.describe 'Ohai::Application' do
           end
         end
 
-        it 'loads the configuration file' do
+        it "loads the configuration file" do
           expect(config_loader).to receive(:load)
           app.configure_ohai
         end
 
-        context 'when the configuration file does not exist' do
-          it 'terminates the application' do
+        context "when the configuration file does not exist" do
+          it "terminates the application" do
             expect(config_loader).to receive(:load).and_raise(ChefConfig::ConfigurationError)
             expect(Ohai::Application).to receive(:fatal!)
             app.configure_ohai
@@ -68,25 +68,25 @@ RSpec.describe 'Ohai::Application' do
         end
       end
 
-      context 'when a local workstation config exists' do
+      context "when a local workstation config exists" do
         before(:each) do
           expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
             with(nil, Ohai::Log).
             and_return(config_loader)
         end
 
-        it 'loads the configuration file' do
+        it "loads the configuration file" do
           expect(config_loader).to receive(:load)
           app.configure_ohai
         end
       end
     end
 
-    context 'when CLI options are provided' do
-      let(:argv) { [ '-d', directory ] }
-      let(:directory) { '/some/fantastic/plugins' }
+    context "when CLI options are provided" do
+      let(:argv) { [ "-d", directory ] }
+      let(:directory) { "/some/fantastic/plugins" }
 
-      it 'does not generate deprecated config warnings for cli options' do
+      it "does not generate deprecated config warnings for cli options" do
         expect(Ohai::Log).to_not receive(:warn).
           with(/Ohai::Config\[:directory\] is deprecated/)
         app.configure_ohai

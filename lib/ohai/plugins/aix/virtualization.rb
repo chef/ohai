@@ -56,63 +56,63 @@ Ohai.plugin(:Virtualization) do
 
           sections.each do |line|
             case title
-            when 'network'
+            when "network"
               next if line =~ /^Interface|^---/
               splat = line.strip.split
               key   = splat[0].downcase
               value = {
-                        'address'   => splat[1],
-                        'netmask'   => splat[2],
-                        'broadcast' => splat[3],
+                        "address"   => splat[1],
+                        "netmask"   => splat[2],
+                        "broadcast" => splat[3],
                       }
               wpars[wpar_name][title][key] = value
-            when 'user-specified routes'
+            when "user-specified routes"
               next if line =~ /^Type|^---/
               splat = line.strip.split
               key   = splat[2].downcase
               value = {
-                        'destination' => splat[0],
-                        'gateway'     => splat[1],
+                        "destination" => splat[0],
+                        "gateway"     => splat[1],
                       }
               wpars[wpar_name][title][key] = value
-            when 'file systems'
+            when "file systems"
               next if line =~ /^MountPoint|^---/
               splat = line.strip.split
               key = splat[1].downcase
               value = {
-                        'mountpoint' => splat[0],
-                        'device'     => splat[1],
-                        'vfs'     => splat[2],
-                        'options'     => splat[3].split(','),
+                        "mountpoint" => splat[0],
+                        "device"     => splat[1],
+                        "vfs"     => splat[2],
+                        "options"     => splat[3].split(","),
                       }
               wpars[wpar_name][title][key] = value
-            when 'security settings'
-              privileges ||= ''
-              wpars[wpar_name][title]['Privileges'] ||= []
+            when "security settings"
+              privileges ||= ""
+              wpars[wpar_name][title]["Privileges"] ||= []
 
               if line =~ /^Privileges/
-                privileges << line.split(':')[1].strip
+                privileges << line.split(":")[1].strip
               else
                 privileges << line.strip
               end
 
-              wpars[wpar_name][title]['Privileges'] += privileges.split(',')
-            when 'device exports'
+              wpars[wpar_name][title]["Privileges"] += privileges.split(",")
+            when "device exports"
               next if line =~ /^Name|^---/
               splat = line.strip.split
               key = splat[0].downcase
               value = {
-                        'type' => splat[1],
-                        'status'     => splat[2],
+                        "type" => splat[1],
+                        "status"     => splat[2],
                       }
               wpars[wpar_name][title][key] = value
             else
               # key-value pairs are handled here
               # such as GENERAL and RESOURCE-
               # CONTROL
-              splat = line.strip.split(':')
+              splat = line.strip.split(":")
               key   = splat[0].downcase
-              value = splat[1..-1].join(', ').strip
+              value = splat[1..-1].join(", ").strip
               value = value.empty? ? nil : value
               case value
               when "yes"
@@ -136,7 +136,7 @@ Ohai.plugin(:Virtualization) do
 
         top_level.each do |attribute|
           evalstr = "wpars['#{wpar_name}']"
-          breadcrumb = attribute.split('.')
+          breadcrumb = attribute.split(".")
           breadcrumb.each do |node|
             evalstr << "[\'#{node}\']"
           end

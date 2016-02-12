@@ -22,7 +22,7 @@ module Ohai
     module NetworkConstants
       FAMILIES = {
         "inet" => "default",
-        "inet6" => "default_inet6"
+        "inet6" => "default_inet6",
       }
 
       # From sigar: include/sigar.h sigar_net_route_t

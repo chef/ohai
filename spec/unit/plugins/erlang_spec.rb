@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin erlang" do
 
@@ -40,7 +40,7 @@ describe Ohai::System, "plugin erlang" do
 
   it "should set languages[:erlang][:options]" do
     @plugin.run
-    expect(@plugin.languages[:erlang][:options]).to eql(["ASYNC_THREADS", "SMP", "HIPE"])
+    expect(@plugin.languages[:erlang][:options]).to eql(%w{ASYNC_THREADS SMP HIPE})
   end
 
   it "should set languages[:erlang][:emulator]" do

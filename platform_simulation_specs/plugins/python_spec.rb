@@ -17,21 +17,20 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
 
 describe Ohai::System, "plugin python" do
-  test_plugin([ "languages", "python" ], [ "python" ]) do | p |
-    p.test([ "centos-5.9" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.4.3" }}})
-    p.test([ "centos-6.4" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.6.6" }}})
-    p.test([ "ubuntu-10.04" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.6.5" }}})
-    p.test([ "ubuntu-12.04" ], [ "x86", "x64" ], [[], [ "python" ]],
-           { "languages" => { "python" => { "version" => "2.7.3"}}})
+  test_plugin(%w{languages python}, [ "python" ]) do |p|
+    p.test([ "centos-5.9" ], %w{x86 x64}, [[], [ "python" ]],
+           { "languages" => { "python" => { "version" => "2.4.3" } } })
+    p.test([ "centos-6.4" ], %w{x86 x64}, [[], [ "python" ]],
+           { "languages" => { "python" => { "version" => "2.6.6" } } })
+    p.test([ "ubuntu-10.04" ], %w{x86 x64}, [[], [ "python" ]],
+           { "languages" => { "python" => { "version" => "2.6.5" } } })
+    p.test([ "ubuntu-12.04" ], %w{x86 x64}, [[], [ "python" ]],
+           { "languages" => { "python" => { "version" => "2.7.3" } } })
     p.test([ "ubuntu-13.04" ], ["x64"], [[], ["python"]],
-           { "languages" => { "python" => { "version" => "2.7.4"}}})
+           { "languages" => { "python" => { "version" => "2.7.4" } } })
   end
 end

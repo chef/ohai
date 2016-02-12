@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "AIX virtualization plugin" do
 
@@ -254,24 +254,24 @@ LSWPAR_L
       expect(plugin[:virtualization][:lpar_name]).to eq("l273pp027")
     end
 
-    context 'when WPARs exist on the LPAR' do
+    context "when WPARs exist on the LPAR" do
       before do
         plugin.run
       end
 
       let(:wpar1) do
-        plugin[:virtualization][:wpars]['applejack-541ba3']
+        plugin[:virtualization][:wpars]["applejack-541ba3"]
       end
 
       let(:wpar2) do
-        plugin[:virtualization][:wpars]['fluttershy-5c969f']
+        plugin[:virtualization][:wpars]["fluttershy-5c969f"]
       end
 
-      it 'detects all WPARs present (2)' do
+      it "detects all WPARs present (2)" do
         expect(plugin[:virtualization][:wpars].length).to eq(2)
       end
 
-      context 'when collecting WPAR info' do
+      context "when collecting WPAR info" do
         it 'finds the WPAR\'s hostname correctly' do
           expect(wpar1[:hostname]).to eq("applejack-pony-541ba3.ponyville.com")
           expect(wpar2[:hostname]).to eq("fluttershy-pony-5c969f.ponyville.com")
@@ -282,20 +282,20 @@ LSWPAR_L
           expect(wpar2[:address]).to eq("192.168.0.18")
         end
 
-        it 'parses device exports properly' do
-          expect(wpar1['device exports']['/dev/nvram']['type']).to eq("pseudo")
-          expect(wpar1['device exports']['/dev/nvram']['status']).to eq("EXPORTED")
+        it "parses device exports properly" do
+          expect(wpar1["device exports"]["/dev/nvram"]["type"]).to eq("pseudo")
+          expect(wpar1["device exports"]["/dev/nvram"]["status"]).to eq("EXPORTED")
         end
       end
     end
 
     context 'when WPARs don\'t exist on the LPAR' do
       before do
-        allow(plugin).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, '', nil))
+        allow(plugin).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, "", nil))
         plugin.run
       end
 
-      it 'detects all WPARs present (0)' do
+      it "detects all WPARs present (0)" do
         expect(plugin[:virtualization][:wpars]).to be_nil
       end
     end

@@ -54,14 +54,14 @@ Ohai.plugin(:Filesystem) do
         oldie[key] ||= Mash.new
         oldie[key][:mount] = fields[1]
         oldie[key][:fs_type] = fields[2]
-        oldie[key][:mount_options] = fields[6].split(',')
+        oldie[key][:mount_options] = fields[6].split(",")
       # entries occupying the 'Node' column parsed here
       else
         key = fields[0] + ":" + fields[1]
         oldie[key] ||= Mash.new
         oldie[key][:mount] = fields[1]
         oldie[key][:fs_type] = fields[3]
-        oldie[key][:mount_options] = fields[7].split(',')
+        oldie[key][:mount_options] = fields[7].split(",")
       end
     end
     oldie

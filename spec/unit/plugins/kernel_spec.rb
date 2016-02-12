@@ -16,8 +16,7 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin kernel" do
   before(:each) do
@@ -39,7 +38,7 @@ describe Ohai::System, "plugin kernel" do
 
   describe "when running on windows", :windows_only do
     before do
-      require 'wmi-lite/wmi'
+      require "wmi-lite/wmi"
 
       @ohai_system = Ohai::System.new
       @plugin = get_plugin("kernel", @ohai_system)
@@ -52,30 +51,30 @@ describe Ohai::System, "plugin kernel" do
       os_type = double("WIN32OLE", :name => "OsType")
       os_properties = [ caption, version, build_number, csd_version, os_type ]
 
-      os =  double( "WIN32OLE",
+      os = double( "WIN32OLE",
                     :properties_ => os_properties)
 
-      allow(os).to receive(:invoke).with(build_number.name).and_return('7601')
-      allow(os).to receive(:invoke).with(csd_version.name).and_return('Service Pack 1')
+      allow(os).to receive(:invoke).with(build_number.name).and_return("7601")
+      allow(os).to receive(:invoke).with(csd_version.name).and_return("Service Pack 1")
       allow(os).to receive(:invoke).with(os_type.name).and_return(18)
-      allow(os).to receive(:invoke).with(caption.name).and_return('Microsoft Windows 7 Ultimate')
-      allow(os).to receive(:invoke).with(version.name).and_return('6.1.7601')
+      allow(os).to receive(:invoke).with(caption.name).and_return("Microsoft Windows 7 Ultimate")
+      allow(os).to receive(:invoke).with(version.name).and_return("6.1.7601")
 
       os_wmi = WmiLite::Wmi::Instance.new(os)
 
-      expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with('Win32_OperatingSystem').and_return(os_wmi)
+      expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(os_wmi)
 
       # Mock a Win32_ComputerSystem OLE32 WMI object
-      x64_system_type = 'x64-based PC'
+      x64_system_type = "x64-based PC"
 
       cs = double("WIN32OLE",
                   :properties_ => [ double("WIN32OLE", :name => "SystemType") ])
 
-      allow(cs).to receive(:invoke).with('SystemType').and_return(x64_system_type)
+      allow(cs).to receive(:invoke).with("SystemType").and_return(x64_system_type)
 
       cs_wmi = WmiLite::Wmi::Instance.new(cs)
 
-      expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with('Win32_ComputerSystem').and_return(cs_wmi)
+      expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_ComputerSystem").and_return(cs_wmi)
 
       @plugin.run
     end

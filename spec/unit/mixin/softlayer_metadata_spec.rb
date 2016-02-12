@@ -17,9 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'ohai/mixin/softlayer_metadata'
-
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require "ohai/mixin/softlayer_metadata"
 
 describe ::Ohai::Mixin::SoftlayerMetadata do
 
@@ -33,39 +32,36 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
   end
 
   def make_res(body)
-    double("response", {:body => body, :code => "200"})
+    double("response", { :body => body, :code => "200" })
   end
 
-
-  context 'fetch_metadata' do
+  context "fetch_metadata" do
     it "riases error if softlayer api query results with error" do
-      http_mock = double('http', {:ssl_version= => true, :use_ssl= => true, :ca_file= => true})
+      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true })
       allow(http_mock).to receive(:get).and_raise(StandardError.new("API return fake error"))
-      allow(::Net::HTTP).to receive(:new).with('api.service.softlayer.com', 443).and_return(http_mock)
+      allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
       expect(::Ohai::Log).to receive(:error).at_least(:once)
-      expect{mixin.fetch_metadata}.to raise_error(StandardError)
+      expect { mixin.fetch_metadata }.to raise_error(StandardError)
     end
 
     it "query api service" do
-      http_mock = double('http', {:ssl_version= => true, :use_ssl= => true, :ca_file= => true})
-      allow(::Net::HTTP).to receive(:new).with('api.service.softlayer.com', 443).and_return(http_mock)
+      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true })
+      allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
-      expect(http_mock).to receive(:get).with(make_request('getFullyQualifiedDomainName.txt')).and_return(make_res('abc.host.org')).once
-      expect(http_mock).to receive(:get).with(make_request('getPrimaryBackendIpAddress.txt')).and_return(make_res('10.0.1.10')).once
-      expect(http_mock).to receive(:get).with(make_request('getPrimaryIpAddress.txt')).and_return(make_res('8.8.8.8')).once
-      expect(http_mock).to receive(:get).with(make_request('getId.txt')).and_return(make_res('1111')).once
-      expect(http_mock).to receive(:get).with(make_request('getDatacenter.txt')).and_return(make_res('dal05')).once
-
+      expect(http_mock).to receive(:get).with(make_request("getFullyQualifiedDomainName.txt")).and_return(make_res("abc.host.org")).once
+      expect(http_mock).to receive(:get).with(make_request("getPrimaryBackendIpAddress.txt")).and_return(make_res("10.0.1.10")).once
+      expect(http_mock).to receive(:get).with(make_request("getPrimaryIpAddress.txt")).and_return(make_res("8.8.8.8")).once
+      expect(http_mock).to receive(:get).with(make_request("getId.txt")).and_return(make_res("1111")).once
+      expect(http_mock).to receive(:get).with(make_request("getDatacenter.txt")).and_return(make_res("dal05")).once
 
       metadata = mixin.fetch_metadata
       expect(metadata).not_to be_nil
-      expect(metadata["public_fqdn"]).to eq('abc.host.org')
-      expect(metadata["local_ipv4"]).to  eq('10.0.1.10')
-      expect(metadata["instance_id"]).to eq('1111')
-      expect(metadata["region"]).to      eq('dal05')
-      expect(metadata["public_ipv4"]).to eq('8.8.8.8')
+      expect(metadata["public_fqdn"]).to eq("abc.host.org")
+      expect(metadata["local_ipv4"]).to  eq("10.0.1.10")
+      expect(metadata["instance_id"]).to eq("1111")
+      expect(metadata["region"]).to      eq("dal05")
+      expect(metadata["public_ipv4"]).to eq("8.8.8.8")
     end
   end
 end
-

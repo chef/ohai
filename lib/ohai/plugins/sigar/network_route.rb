@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/network_constants'
+require "ohai/mixin/network_constants"
 
 Ohai.plugin(:NetworkRoutes) do
   include Ohai::Mixin::NetworkConstants
@@ -45,12 +45,12 @@ Ohai.plugin(:NetworkRoutes) do
     sigar.net_route_list.each do |route|
       next unless network[:interfaces][route.ifname] # this should never happen
       network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
-      route_data={}
+      route_data = {}
       Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
         if(m == :flags)
-          route_data[m]=flags(route.send(m))
+          route_data[m] = flags(route.send(m))
         else
-          route_data[m]=route.send(m)
+          route_data[m] = route.send(m)
         end
       end
       network[:interfaces][route.ifname][:route][route.destination] = route_data

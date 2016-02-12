@@ -16,13 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
-require 'ohai/util/file_helper'
+require "spec_helper"
+require "ohai/util/file_helper"
 
 class FileHelperMock
   include Ohai::Util::FileHelper
 end
-
 
 describe "Ohai::Util::FileHelper" do
   let(:file_helper) { FileHelperMock.new }
@@ -33,13 +32,13 @@ describe "Ohai::Util::FileHelper" do
 
   describe "which" do
     it "returns the path to an executable that is in the path" do
-      allow(File).to receive(:executable?).with('/usr/bin/skyhawk').and_return(true)
+      allow(File).to receive(:executable?).with("/usr/bin/skyhawk").and_return(true)
 
-      expect(file_helper.which('skyhawk')).to eql "/usr/bin/skyhawk"
+      expect(file_helper.which("skyhawk")).to eql "/usr/bin/skyhawk"
     end
 
     it "returns false if the executable is not in the path" do
-      expect(file_helper.which('the_cake')).to be false
+      expect(file_helper.which("the_cake")).to be false
     end
   end
 end

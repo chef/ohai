@@ -15,13 +15,13 @@
 # limitations under the License.
 #
 
-require 'ipaddress'
-require 'spec_helper'
+require "ipaddress"
+require "spec_helper"
 
 describe Ohai::System, "plugin digital_ocean" do
-  let(:hint_path_nix) { '/etc/chef/ohai/hints/digital_ocean.json' }
+  let(:hint_path_nix) { "/etc/chef/ohai/hints/digital_ocean.json" }
   let(:hint_path_win) { 'C:\chef\ohai\hints/digital_ocean.json' }
-  let(:digitalocean_path) { '/etc/digitalocean' }
+  let(:digitalocean_path) { "/etc/digitalocean" }
   let(:hint) {
     '{
       "droplet_id": 12345678,
@@ -39,13 +39,13 @@ describe Ohai::System, "plugin digital_ocean" do
   before do
     @plugin = get_plugin("digital_ocean")
     @plugin[:network] = {
-      "interfaces"=> {
-        "eth0"=> {
-          "addresses"=> {
-            "1.2.3.4"=> {
-              "netmask"=> "255.255.255.0"
+      "interfaces" => {
+        "eth0" => {
+          "addresses" => {
+            "1.2.3.4" => {
+              "netmask" => "255.255.255.0"
             },
-            "2400:6180:0000:00d0:0000:0000:0009:7001"=> {}
+            "2400:6180:0000:00d0:0000:0000:0009:7001" => {},
           }
         }
       }
@@ -57,8 +57,7 @@ describe Ohai::System, "plugin digital_ocean" do
     allow(File).to receive(:read).with(hint_path_win).and_return(hint)
   end
 
-
-  shared_examples_for "!digital_ocean"  do
+  shared_examples_for "!digital_ocean" do
     before(:each) do
       @plugin.run
     end
@@ -74,12 +73,12 @@ describe Ohai::System, "plugin digital_ocean" do
     end
 
     it "pulls ip addresses from the network interfaces" do
-      expect(@plugin[:digital_ocean][:networks][:v4]).to eq([{"ip_address" => "1.2.3.4",
-                                                         "type" => "public",
-                                                         "netmask" => "255.255.255.0"}])
-      expect(@plugin[:digital_ocean][:networks][:v6]).to eq([{"ip_address"=>"2400:6180:0000:00d0:0000:0000:0009:7001",
-                                                          "type"=>"public",
-                                                          "cidr"=>128}])
+      expect(@plugin[:digital_ocean][:networks][:v4]).to eq([{ "ip_address" => "1.2.3.4",
+                                                               "type" => "public",
+                                                               "netmask" => "255.255.255.0" }])
+      expect(@plugin[:digital_ocean][:networks][:v6]).to eq([{ "ip_address" => "2400:6180:0000:00d0:0000:0000:0009:7001",
+                                                               "type" => "public",
+                                                               "cidr" => 128 }])
     end
   end
 
@@ -112,7 +111,7 @@ describe Ohai::System, "plugin digital_ocean" do
       expect(@plugin[:digital_ocean][:region_id]).to eq(4)
     end
 
-    include_examples 'digital_ocean_networking'
+    include_examples "digital_ocean_networking"
   end
 
   describe "with digital_ocean hint file" do
@@ -128,11 +127,11 @@ describe Ohai::System, "plugin digital_ocean" do
     context "with private networking enabled" do
       before do
         @plugin[:network][:interfaces][:eth1] = {
-          "addresses"=> {
+          "addresses" => {
             "10.128.142.89" => {
               "netmask" => "255.255.255.0"
             },
-            "fdf8:f53b:82e4:0000:0000:0000:0000:0053" => {}
+            "fdf8:f53b:82e4:0000:0000:0000:0000:0053" => {},
           }
         }
 
@@ -140,18 +139,18 @@ describe Ohai::System, "plugin digital_ocean" do
       end
 
       it "should extract the private networking ips" do
-        expect(@plugin[:digital_ocean][:networks][:v4]).to eq([{"ip_address" => "1.2.3.4",
-                                                            "type" => "public",
-                                                            "netmask" => "255.255.255.0"},
-                                                            {"ip_address" => "10.128.142.89",
-                                                            "type" => "private",
-                                                            "netmask" => "255.255.255.0"}])
-        expect(@plugin[:digital_ocean][:networks][:v6]).to eq([{"ip_address"=>"2400:6180:0000:00d0:0000:0000:0009:7001",
-                                                            "type"=>"public",
-                                                            "cidr"=>128},
-                                                           {"ip_address"=>"fdf8:f53b:82e4:0000:0000:0000:0000:0053",
-                                                            "type"=>"private",
-                                                            "cidr"=>128}])
+        expect(@plugin[:digital_ocean][:networks][:v4]).to eq([{ "ip_address" => "1.2.3.4",
+                                                                 "type" => "public",
+                                                                 "netmask" => "255.255.255.0" },
+                                                            { "ip_address" => "10.128.142.89",
+                                                              "type" => "private",
+                                                              "netmask" => "255.255.255.0" }])
+        expect(@plugin[:digital_ocean][:networks][:v6]).to eq([{ "ip_address" => "2400:6180:0000:00d0:0000:0000:0009:7001",
+                                                                 "type" => "public",
+                                                                 "cidr" => 128 },
+                                                           { "ip_address" => "fdf8:f53b:82e4:0000:0000:0000:0000:0053",
+                                                             "type" => "private",
+                                                             "cidr" => 128 }])
       end
     end
   end
@@ -161,7 +160,6 @@ describe Ohai::System, "plugin digital_ocean" do
       allow(File).to receive(:exist?).with(hint_path_nix).and_return(false)
       allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
     end
-
 
     describe "with the /etc/digitalocean file" do
       before do
@@ -180,7 +178,7 @@ describe Ohai::System, "plugin digital_ocean" do
   end
 
   context "with ec2 hint file" do
-    let(:ec2_hint_path_nix) { '/etc/chef/ohai/hints/ec2.json' }
+    let(:ec2_hint_path_nix) { "/etc/chef/ohai/hints/ec2.json" }
     let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
 
     before do
@@ -188,9 +186,9 @@ describe Ohai::System, "plugin digital_ocean" do
       allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
 
       allow(File).to receive(:exist?).with(ec2_hint_path_nix).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return('')
+      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return("")
       allow(File).to receive(:exist?).with(ec2_hint_path_win).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_win).and_return('')
+      allow(File).to receive(:read).with(ec2_hint_path_win).and_return("")
     end
 
     describe "with the /etc/digitalocean file" do

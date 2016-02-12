@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'open-uri'
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require "open-uri"
 
 describe Ohai::System, "plugin eucalyptus" do
   before(:each) do
@@ -58,15 +58,15 @@ describe Ohai::System, "plugin eucalyptus" do
     end
 
     it "should recursively fetch all the eucalyptus metadata" do
-      allow(IO).to receive(:select).and_return([[],[1],[]])
+      allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
       @plugin.run
       expect(@plugin[:eucalyptus]).not_to be_nil
-      expect(@plugin[:eucalyptus]['instance_type']).to eq("c1.medium")
-      expect(@plugin[:eucalyptus]['ami_id']).to eq("ami-5d2dc934")
-      expect(@plugin[:eucalyptus]['security_groups']).to eql ['group1', 'group2']
+      expect(@plugin[:eucalyptus]["instance_type"]).to eq("c1.medium")
+      expect(@plugin[:eucalyptus]["ami_id"]).to eq("ami-5d2dc934")
+      expect(@plugin[:eucalyptus]["security_groups"]).to eql %w{group1 group2}
     end
   end
 
@@ -74,8 +74,8 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      allow(IO).to receive(:select).and_return([[],[1],[]])
-      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
+      allow(IO).to receive(:select).and_return([[], [1], []])
+      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
   end
 
@@ -83,7 +83,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED"=> { "family" => "lladdr" } } } } }
+      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
   end
 
@@ -91,10 +91,10 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "eucalyptus"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/eucalyptus.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/eucalyptus.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return("")
     end
   end
 
@@ -102,8 +102,8 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = {:interfaces => {}}
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      @plugin[:network] = { :interfaces => {} }
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
     end
   end
@@ -112,14 +112,14 @@ describe Ohai::System, "plugin eucalyptus" do
     it_should_behave_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = {:interfaces => {}}
+      @plugin[:network] = { :interfaces => {} }
 
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/eucalyptus.json').and_return(false)
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/ec2.json").and_return("")
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return("")
     end
   end
 

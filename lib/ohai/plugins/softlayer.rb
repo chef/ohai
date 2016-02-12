@@ -18,12 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ohai/mixin/softlayer_metadata'
+require "ohai/mixin/softlayer_metadata"
 
 Ohai.plugin(:Softlayer) do
   include ::Ohai::Mixin::SoftlayerMetadata
 
-  provides 'softlayer'
+  provides "softlayer"
 
   # Identifies the softlayer cloud
   #
@@ -31,7 +31,7 @@ Ohai.plugin(:Softlayer) do
   # true:: If the softlayer cloud can be identified
   # false:: Otherwise
   def looks_like_softlayer?
-    hint?('softlayer')
+    hint?("softlayer")
   end
 
   collect_data do
@@ -40,7 +40,7 @@ Ohai.plugin(:Softlayer) do
       Ohai::Log.debug("softlayer plugin: looks_like_softlayer? == true")
       metadata = fetch_metadata
       softlayer Mash.new
-      metadata.each { |k,v| softlayer[k] = v } if metadata
+      metadata.each { |k, v| softlayer[k] = v } if metadata
     else
       Ohai::Log.debug("softlayer plugin: looks_like_softlayer? == false")
     end

@@ -46,11 +46,11 @@ Ohai.plugin(:Network) do
   end
 
   def is_openvz?
-    ::File.directory?('/proc/vz')
+    ::File.directory?("/proc/vz")
   end
 
   def is_openvz_host?
-    is_openvz? && ::File.directory?('/proc/bc')
+    is_openvz? && ::File.directory?("/proc/bc")
   end
 
   def extract_neighbors(family, iface, neigh_attr)
@@ -98,7 +98,7 @@ Ohai.plugin(:Network) do
           Ohai::Log.debug("Skipping route entry without a device: '#{line}'")
           next
         end
-        route_int = 'venet0:0' if is_openvz? && !is_openvz_host? && route_int == 'venet0' && iface['venet0:0']
+        route_int = "venet0:0" if is_openvz? && !is_openvz_host? && route_int == "venet0" && iface["venet0:0"]
 
         unless iface[route_int]
           Ohai::Log.debug("Skipping previously unseen interface from 'ip route show': #{route_int}")
@@ -107,7 +107,7 @@ Ohai.plugin(:Network) do
 
         route_entry = Mash.new(:destination => route_dest,
                                :family => family[:name])
-        %w[via scope metric proto src].each do |k|
+        %w{via scope metric proto src}.each do |k|
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)\b/
         end
 
@@ -141,19 +141,19 @@ Ohai.plugin(:Network) do
   # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
     return iface unless ethtool_binary = find_ethtool_binary
-    keys = %w[ Speed Duplex Port Transceiver Auto-negotiation MDI-X ]
+    keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
     iface.each_key do |tmp_int|
-      next unless iface[tmp_int][:encapsulation] == 'Ethernet'
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
       so = shell_out("#{ethtool_binary} #{tmp_int}")
       so.stdout.lines do |line|
         line.chomp!
         Ohai::Log.debug("Parsing ethtool output: #{line}")
         line.lstrip!
-        k, v = line.split(': ')
+        k, v = line.split(": ")
         next unless keys.include? k
-        k.downcase!.tr!('-', '_')
-        if k == 'speed'
-          k = 'link_speed'   # This is not necessarily the maximum speed the NIC supports
+        k.downcase!.tr!("-", "_")
+        if k == "speed"
+          k = "link_speed" # This is not necessarily the maximum speed the NIC supports
           v = v[/\d+/].to_i
         end
         iface[tmp_int][k] = v
@@ -181,7 +181,7 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int][int][:packets] = $2
         net_counters[tmp_int][int][:errors] = $3
         net_counters[tmp_int][int][:drop] = $4
-        if (int == :rx)
+        if int == :rx
           net_counters[tmp_int][int][:overrun] = $5
         else
           net_counters[tmp_int][int][:carrier] = $5
@@ -214,7 +214,7 @@ Ohai.plugin(:Network) do
       end
 
       if line =~ /state (\w+)/
-        iface[tmp_int]['state'] = $1.downcase
+        iface[tmp_int]["state"] = $1.downcase
       end
     end
     iface
@@ -258,7 +258,7 @@ Ohai.plugin(:Network) do
       iface[cint][:encapsulation] = linux_encaps_lookup($1)
       unless $2 == "00:00:00:00:00:00"
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$2.upcase] = {"family" => "lladdr"}
+        iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
       end
     end
   end
@@ -279,7 +279,7 @@ Ohai.plugin(:Network) do
 
       iface[cint] = Mash.new unless iface[cint] # Create the fake alias interface if needed
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][tmp_addr] = {"family" => "inet", "prefixlen" => tmp_prefix}
+      iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
       iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
 
       if line =~ /peer (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
@@ -304,20 +304,20 @@ Ohai.plugin(:Network) do
     if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       tmp_addr = $1
-      iface[cint][:addresses][tmp_addr] = {"family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("host") ? "Node" : $3.capitalize)}
+      iface[cint][:addresses][tmp_addr] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("host") ? "Node" : $3.capitalize) }
     end
   end
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
-    interfaces[interface][:addresses].select{|k,v| v["family"]=="lladdr"}.first.first unless interfaces[interface][:flags].include? "NOARP"
+    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:flags].include? "NOARP"
   end
 
   # returns the default route with the lowest metric (unspecified metric is 0)
   def choose_default_route(routes)
     default_route = routes.select do |r|
       r[:destination] == "default"
-    end.sort do |x,y|
+    end.sort do |x, y|
       (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
     end.first
   end
@@ -365,7 +365,7 @@ Ohai.plugin(:Network) do
          IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
        rescue
          0
-       end
+       end,
       ]
     end.first
   end
@@ -374,7 +374,7 @@ Ohai.plugin(:Network) do
   # If the 'ip' binary is available, this plugin may set {ip,mac,ip6}address. The network plugin should not overwrite these.
   # The older code section below that relies on the deprecated net-tools, e.g. netstat and ifconfig, provides less functionality.
   collect_data(:linux) do
-    require 'ipaddr'
+    require "ipaddr"
 
     iface = Mash.new
     net_counters = Mash.new
@@ -386,7 +386,7 @@ Ohai.plugin(:Network) do
 
     # ohai.plugin[:network][:default_route_table] = 'default'
     if configuration(:default_route_table).nil? || configuration(:default_route_table).empty?
-      default_route_table = 'main'
+      default_route_table = "main"
     else
       default_route_table = configuration(:default_route_table)
     end
@@ -403,14 +403,14 @@ Ohai.plugin(:Network) do
                     :name => "inet",
                     :default_route => "0.0.0.0/0",
                     :default_prefix => :default,
-                    :neighbour_attribute => :arp
+                    :neighbour_attribute => :arp,
                   }]
 
       families << {
                     :name => "inet6",
                     :default_route => "::/0",
                     :default_prefix => :default_inet6,
-                    :neighbour_attribute => :neighbour_inet6
+                    :neighbour_attribute => :neighbour_inet6,
                   } if ipv6_enabled?
 
       parse_ip_addr(iface)
@@ -476,7 +476,7 @@ Ohai.plugin(:Network) do
       begin
         so = shell_out("route -n")
         route_result = so.stdout.split($/).grep( /^0.0.0.0/ )[0].split( /[ \t]+/ )
-        network[:default_gateway], network[:default_interface] = route_result.values_at(1,7)
+        network[:default_gateway], network[:default_interface] = route_result.values_at(1, 7)
       rescue Ohai::Exceptions::Exec
         Ohai::Log.debug("Unable to determine default interface")
       end

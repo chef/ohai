@@ -44,5 +44,3 @@ module Ohai
     end
   end
 end
-
-

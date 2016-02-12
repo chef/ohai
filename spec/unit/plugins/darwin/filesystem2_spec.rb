@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "darwin filesystem2 plugin" do
   let (:plugin) { get_plugin("darwin/filesystem2") }
@@ -59,7 +59,7 @@ DF
       expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
       expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:device]).to eq("/dev/disk0s2")
     end
-    
+
     it "should set inode info to value from df -i" do
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:total_inodes]).to eq("61069440")
@@ -90,7 +90,7 @@ MOUNT
       plugin.run
       expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount]).to eq("/")
       expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:fs_type]).to eq("hfs")
-      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount_options]).to eq([ "local", "journaled" ])
+      expect(plugin[:filesystem2]["by_pair"]["/dev/disk0s2,/"][:mount_options]).to eq(%w{local journaled})
     end
   end
 
@@ -111,7 +111,7 @@ DF
 
     it "should provide a devices view with all mountpoints" do
       plugin.run
-      expect(plugin[:filesystem2]["by_device"]["/dev/disk0s2"][:mounts]).to eq(['/', '/another/mountpoint'])
+      expect(plugin[:filesystem2]["by_device"]["/dev/disk0s2"][:mounts]).to eq(["/", "/another/mountpoint"])
     end
   end
 
@@ -133,7 +133,7 @@ DF
 
     it "should provide a mounts view with all devices" do
       plugin.run
-      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(['/dev/disk0s3', '/dev/disk0s4'])
+      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/disk0s3", "/dev/disk0s4"])
     end
   end
 end

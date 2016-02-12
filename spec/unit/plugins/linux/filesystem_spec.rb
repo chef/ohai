@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux filesystem plugin" do
   let(:plugin) { get_plugin("linux/filesystem") }
@@ -73,7 +73,7 @@ tmpfs                  2030944      2960   2027984       1% /dev/shm
 /dev/md0                960492     36388    875312       4% /boot
 DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
-      
+
       @inode_stdout = <<-DFi
 Filesystem      Inodes  IUsed   IFree IUse% Mounted on
 /dev/xvda1     1310720 107407 1203313    9% /
@@ -115,17 +115,17 @@ DFi
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
-    
+
     it "should set total_inodes to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes]).to eq("124865")
     end
-    
+
     it "should set inodes_used to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used]).to eq("380")
     end
-    
+
     it "should set inodes_available to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available]).to eq("124485")
@@ -171,26 +171,26 @@ MOUNT
 
     it "should set mount_options to an array of values from mount" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq([ "ro", "noatime" ])
+      expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq(%w{ro noatime})
     end
   end
 
   describe "when gathering filesystem type data from blkid" do
     before(:each) do
       @stdout = <<-BLKID_TYPE
-/dev/sdb1: TYPE=\"linux_raid_member\" 
-/dev/sdb2: TYPE=\"linux_raid_member\" 
-/dev/sda1: TYPE=\"linux_raid_member\" 
-/dev/sda2: TYPE=\"linux_raid_member\" 
-/dev/md0: TYPE=\"ext3\" 
-/dev/md1: TYPE=\"LVM2_member\" 
-/dev/mapper/sys.vg-root.lv: TYPE=\"ext4\" 
-/dev/mapper/sys.vg-swap.lv: TYPE=\"swap\" 
-/dev/mapper/sys.vg-tmp.lv: TYPE=\"ext4\" 
-/dev/mapper/sys.vg-usr.lv: TYPE=\"ext4\" 
-/dev/mapper/sys.vg-var.lv: TYPE=\"ext4\" 
-/dev/mapper/sys.vg-home.lv: TYPE=\"xfs\" 
-/dev/mapper/debian--7-root: TYPE=\"ext4\" 
+/dev/sdb1: TYPE=\"linux_raid_member\"
+/dev/sdb2: TYPE=\"linux_raid_member\"
+/dev/sda1: TYPE=\"linux_raid_member\"
+/dev/sda2: TYPE=\"linux_raid_member\"
+/dev/md0: TYPE=\"ext3\"
+/dev/md1: TYPE=\"LVM2_member\"
+/dev/mapper/sys.vg-root.lv: TYPE=\"ext4\"
+/dev/mapper/sys.vg-swap.lv: TYPE=\"swap\"
+/dev/mapper/sys.vg-tmp.lv: TYPE=\"ext4\"
+/dev/mapper/sys.vg-usr.lv: TYPE=\"ext4\"
+/dev/mapper/sys.vg-var.lv: TYPE=\"ext4\"
+/dev/mapper/sys.vg-home.lv: TYPE=\"xfs\"
+/dev/mapper/debian--7-root: TYPE=\"ext4\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -210,19 +210,19 @@ BLKID_TYPE
     before(:each) do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
-NAME="sdb1" FSTYPE="linux_raid_member" 
-NAME="sdb2" FSTYPE="linux_raid_member" 
-NAME="sda1" FSTYPE="linux_raid_member" 
-NAME="sda2" FSTYPE="linux_raid_member" 
-NAME="md0" FSTYPE="ext3" 
-NAME="md1" FSTYPE="LVM2_member" 
-NAME="sys.vg-root.lv" FSTYPE="ext4" 
-NAME="sys.vg-swap.lv" FSTYPE="swap" 
-NAME="sys.vg-tmp.lv" FSTYPE="ext4" 
-NAME="sys.vg-usr.lv" FSTYPE="ext4" 
-NAME="sys.vg-var.lv" FSTYPE="ext4" 
-NAME="sys.vg-home.lv" FSTYPE="xfs" 
-NAME="debian--7-root (dm-0)" FSTYPE="ext4" 
+NAME="sdb1" FSTYPE="linux_raid_member"
+NAME="sdb2" FSTYPE="linux_raid_member"
+NAME="sda1" FSTYPE="linux_raid_member"
+NAME="sda2" FSTYPE="linux_raid_member"
+NAME="md0" FSTYPE="ext3"
+NAME="md1" FSTYPE="LVM2_member"
+NAME="sys.vg-root.lv" FSTYPE="ext4"
+NAME="sys.vg-swap.lv" FSTYPE="swap"
+NAME="sys.vg-tmp.lv" FSTYPE="ext4"
+NAME="sys.vg-usr.lv" FSTYPE="ext4"
+NAME="sys.vg-var.lv" FSTYPE="ext4"
+NAME="sys.vg-home.lv" FSTYPE="xfs"
+NAME="debian--7-root (dm-0)" FSTYPE="ext4"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -248,19 +248,19 @@ BLKID_TYPE
   describe "when gathering filesystem uuid data from blkid" do
     before(:each) do
       @stdout = <<-BLKID_UUID
-/dev/sdb1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" 
-/dev/sdb2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" 
-/dev/sda1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" 
-/dev/sda2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" 
-/dev/md0: UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" 
-/dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" 
-/dev/mapper/sys.vg-root.lv: UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" 
-/dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" 
-/dev/mapper/sys.vg-tmp.lv: UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" 
-/dev/mapper/sys.vg-usr.lv: UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" 
-/dev/mapper/sys.vg-var.lv: UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" 
-/dev/mapper/sys.vg-home.lv: UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" 
-/dev/mapper/debian--7-root: UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" 
+/dev/sdb1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\"
+/dev/sdb2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\"
+/dev/sda1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\"
+/dev/sda2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\"
+/dev/md0: UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\"
+/dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\"
+/dev/mapper/sys.vg-root.lv: UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\"
+/dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"
+/dev/mapper/sys.vg-tmp.lv: UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\"
+/dev/mapper/sys.vg-usr.lv: UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\"
+/dev/mapper/sys.vg-var.lv: UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\"
+/dev/mapper/sys.vg-home.lv: UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\"
+/dev/mapper/debian--7-root: UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\"
 BLKID_UUID
       allow(plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -280,19 +280,19 @@ BLKID_UUID
     before(:each) do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_UUID
-NAME="sdb1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" 
-NAME="sdb2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" 
-NAME="sda1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" 
-NAME="sda2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" 
-NAME="md0" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32" 
-NAME="md1" UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK" 
-NAME="sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" 
-NAME="sys.vg-swap.lv" UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96" 
-NAME="sys.vg-tmp.lv" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5" 
-NAME="sys.vg-usr.lv" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" 
-NAME="sys.vg-var.lv" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" 
-NAME="sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" 
-NAME="debian--7-root (dm-0)" UUID="09187faa-3512-4505-81af-7e86d2ccb99a" 
+NAME="sdb1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5"
+NAME="sdb2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+NAME="sda1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5"
+NAME="sda2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
+NAME="md0" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32"
+NAME="md1" UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK"
+NAME="sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea"
+NAME="sys.vg-swap.lv" UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96"
+NAME="sys.vg-tmp.lv" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5"
+NAME="sys.vg-usr.lv" UUID="26ec33c5-d00b-4f88-a550-492def013bbc"
+NAME="sys.vg-var.lv" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3"
+NAME="sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e"
+NAME="debian--7-root (dm-0)" UUID="09187faa-3512-4505-81af-7e86d2ccb99a"
 BLKID_UUID
       allow(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -322,17 +322,17 @@ BLKID_UUID
   describe "when gathering filesystem label data from blkid" do
     before(:each) do
       @stdout = <<-BLKID_LABEL
-/dev/sda1: LABEL=\"fuego:0\" 
-/dev/sda2: LABEL=\"fuego:1\" 
-/dev/sdb1: LABEL=\"fuego:0\" 
-/dev/sdb2: LABEL=\"fuego:1\" 
-/dev/md0: LABEL=\"/boot\" 
-/dev/mapper/sys.vg-root.lv: LABEL=\"/\" 
-/dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" 
-/dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" 
-/dev/mapper/sys.vg-var.lv: LABEL=\"/var\" 
-/dev/mapper/sys.vg-home.lv: LABEL=\"/home\" 
-/dev/mapper/debian--7-root: LABEL=\"root\" 
+/dev/sda1: LABEL=\"fuego:0\"
+/dev/sda2: LABEL=\"fuego:1\"
+/dev/sdb1: LABEL=\"fuego:0\"
+/dev/sdb2: LABEL=\"fuego:1\"
+/dev/md0: LABEL=\"/boot\"
+/dev/mapper/sys.vg-root.lv: LABEL=\"/\"
+/dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\"
+/dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\"
+/dev/mapper/sys.vg-var.lv: LABEL=\"/var\"
+/dev/mapper/sys.vg-home.lv: LABEL=\"/home\"
+/dev/mapper/debian--7-root: LABEL=\"root\"
 BLKID_LABEL
       allow(plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -352,17 +352,17 @@ BLKID_LABEL
     before(:each) do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_LABEL
-NAME="sda1" LABEL="fuego:0" 
-NAME="sda2" LABEL="fuego:1" 
-NAME="sdb1" LABEL="fuego:0" 
-NAME="sdb2" LABEL="fuego:1" 
-NAME="md0" LABEL="/boot" 
-NAME="sys.vg-root.lv" LABEL="/" 
-NAME="sys.vg-tmp.lv" LABEL="/tmp" 
-NAME="sys.vg-usr.lv" LABEL="/usr" 
-NAME="sys.vg-var.lv" LABEL="/var" 
-NAME="sys.vg-home.lv" LABEL="/home" 
-NAME="debian--7-root (dm-0)" LABEL="root" 
+NAME="sda1" LABEL="fuego:0"
+NAME="sda2" LABEL="fuego:1"
+NAME="sdb1" LABEL="fuego:0"
+NAME="sdb2" LABEL="fuego:1"
+NAME="md0" LABEL="/boot"
+NAME="sys.vg-root.lv" LABEL="/"
+NAME="sys.vg-tmp.lv" LABEL="/tmp"
+NAME="sys.vg-usr.lv" LABEL="/usr"
+NAME="sys.vg-var.lv" LABEL="/var"
+NAME="sys.vg-home.lv" LABEL="/home"
+NAME="debian--7-root (dm-0)" LABEL="root"
 BLKID_LABEL
       allow(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
@@ -384,7 +384,6 @@ BLKID_LABEL
       expect(plugin[:filesystem]["/dev/mapper/debian--7-root"][:label]).to eq("root")
     end
   end
-
 
   describe "when gathering data from /proc/mounts" do
     before(:each) do
@@ -422,15 +421,15 @@ MOUNTS
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
-  
+
     it "should set fs_type to value from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type]).to eq("xfs")
     end
-  
+
     it "should set mount_options to an array of values from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq([ "ro", "noatime", "attr2", "noquota" ])
+      expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq(%w{ro noatime attr2 noquota})
     end
   end
 

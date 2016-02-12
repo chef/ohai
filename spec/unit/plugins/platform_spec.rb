@@ -16,15 +16,14 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin platform" do
   before(:each) do
     @plugin = get_plugin("platform")
     allow(@plugin).to receive(:collect_os).and_return(:default)
-    @plugin[:os] = 'monkey'
-    @plugin[:os_version] = 'poop'
+    @plugin[:os] = "monkey"
+    @plugin[:os_version] = "poop"
   end
 
   it "should set the platform and platform family to the os if it was not set earlier" do
@@ -34,20 +33,20 @@ describe Ohai::System, "plugin platform" do
   end
 
   it "should not set the platform to the os if it was set earlier" do
-    @plugin[:platform] = 'lars'
+    @plugin[:platform] = "lars"
     @plugin.run
     expect(@plugin[:platform]).to eql("lars")
   end
 
   it "should set the platform_family to the platform if platform was set earlier but not platform_family" do
-    @plugin[:platform] = 'lars'
-    @plugin[:platform_family] = 'jack'
+    @plugin[:platform] = "lars"
+    @plugin[:platform_family] = "jack"
     @plugin.run
     expect(@plugin[:platform_family]).to eql("jack")
   end
 
   it "should not set the platform_family if the platform_family was set earlier." do
-    @plugin[:platform] = 'lars'
+    @plugin[:platform] = "lars"
     @plugin.run
     expect(@plugin[:platform]).to eql("lars")
     expect(@plugin[:platform_family]).to eql("lars")
@@ -59,7 +58,7 @@ describe Ohai::System, "plugin platform" do
   end
 
   it "should not set the platform to the os if it was set earlier" do
-    @plugin[:platform_version] = 'ulrich'
+    @plugin[:platform_version] = "ulrich"
     @plugin.run
     expect(@plugin[:platform_version]).to eql("ulrich")
   end

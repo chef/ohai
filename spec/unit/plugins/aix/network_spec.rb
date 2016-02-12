@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX network plugin" do
 
@@ -94,15 +94,15 @@ ARP_AN
     end
 
     it "detects network information" do
-      expect(@plugin['network']).not_to be_nil
+      expect(@plugin["network"]).not_to be_nil
     end
 
     it "detects the interfaces" do
-      expect(@plugin['network']['interfaces'].keys.sort).to eq(["en0", "en1", "lo0"])
+      expect(@plugin["network"]["interfaces"].keys.sort).to eq(%w{en0 en1 lo0})
     end
 
     it "detects the ip addresses of the interfaces" do
-      expect(@plugin['network']['interfaces']['en0']['addresses'].keys).to include('172.29.174.58')
+      expect(@plugin["network"]["interfaces"]["en0"]["addresses"].keys).to include("172.29.174.58")
     end
   end
 
@@ -124,11 +124,11 @@ ARP_AN
       end
 
       it "returns the default gateway of the system's network" do
-        expect(@plugin[:network][:default_gateway]).to eq('172.31.8.1')
+        expect(@plugin[:network][:default_gateway]).to eq("172.31.8.1")
       end
 
       it "returns the default interface of the system's network" do
-        expect(@plugin[:network][:default_interface]).to eq('en0')
+        expect(@plugin[:network][:default_interface]).to eq("en0")
       end
     end
   end
@@ -155,42 +155,42 @@ ARP_AN
   describe "lsdev -Cc if" do
     it "detects the state of the interfaces in the system" do
       @plugin.run
-      expect(@plugin['network']['interfaces']['en0'][:state]).to eq("up")
+      expect(@plugin["network"]["interfaces"]["en0"][:state]).to eq("up")
     end
 
     describe "ifconfig interface" do
       it "detects the CHAIN network flag" do
         @plugin.run
-        expect(@plugin['network']['interfaces']['en0'][:flags]).to include('CHAIN')
+        expect(@plugin["network"]["interfaces"]["en0"][:flags]).to include("CHAIN")
       end
 
       it "detects the metric network flag" do
         @plugin.run
-        expect(@plugin['network']['interfaces']['en0'][:metric]).to eq('1')
+        expect(@plugin["network"]["interfaces"]["en0"][:metric]).to eq("1")
       end
 
       context "inet entries" do
         before do
           @plugin.run
-          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.58"]
+          @inet_entry = @plugin["network"]["interfaces"]["en0"][:addresses]["172.29.174.58"]
         end
 
         it "detects the family" do
-          expect(@inet_entry[:family]).to eq('inet')
+          expect(@inet_entry[:family]).to eq("inet")
         end
 
         it "detects the netmask" do
-          expect(@inet_entry[:netmask]).to eq('255.255.192.0')
+          expect(@inet_entry[:netmask]).to eq("255.255.192.0")
         end
 
         it "detects the broadcast" do
-          expect(@inet_entry[:broadcast]).to eq('172.29.191.255')
+          expect(@inet_entry[:broadcast]).to eq("172.29.191.255")
         end
 
         it "detects all key-values" do
-          expect(@plugin['network']['interfaces']['en0'][:tcp_sendspace]).to eq("262144")
-          expect(@plugin['network']['interfaces']['en0'][:tcp_recvspace]).to eq("262144")
-          expect(@plugin['network']['interfaces']['en0'][:rfc1323]).to eq("1")
+          expect(@plugin["network"]["interfaces"]["en0"][:tcp_sendspace]).to eq("262144")
+          expect(@plugin["network"]["interfaces"]["en0"][:tcp_recvspace]).to eq("262144")
+          expect(@plugin["network"]["interfaces"]["en0"][:rfc1323]).to eq("1")
         end
 
         # For an output with no netmask like inet 172.29.174.59 broadcast 172.29.191.255
@@ -200,13 +200,13 @@ ARP_AN
           end
 
           it "detects the default prefixlen" do
-            @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.59"]
-            expect(@inet_entry[:prefixlen]).to eq('32')
+            @inet_entry = @plugin["network"]["interfaces"]["en0"][:addresses]["172.29.174.59"]
+            expect(@inet_entry[:prefixlen]).to eq("32")
           end
 
           it "detects the default netmask" do
-            @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["172.29.174.59"]
-            expect(@inet_entry[:netmask]).to eq('255.255.255.255')
+            @inet_entry = @plugin["network"]["interfaces"]["en0"][:addresses]["172.29.174.59"]
+            expect(@inet_entry[:netmask]).to eq("255.255.255.255")
           end
         end
       end
@@ -214,15 +214,15 @@ ARP_AN
       context "inet6 entries" do
         before do
           @plugin.run
-          @inet_entry = @plugin['network']['interfaces']['en0'][:addresses]["::1"]
+          @inet_entry = @plugin["network"]["interfaces"]["en0"][:addresses]["::1"]
         end
 
         it "detects the prefixlen" do
-          expect(@inet_entry[:prefixlen]).to eq('0')
+          expect(@inet_entry[:prefixlen]).to eq("0")
         end
 
         it "detects the family" do
-          expect(@inet_entry[:family]).to eq('inet6')
+          expect(@inet_entry[:family]).to eq("inet6")
         end
       end
     end
@@ -230,10 +230,10 @@ ARP_AN
     context "entstat -d interface" do
       before do
         @plugin.run
-        @inet_interface_addresses = @plugin['network']['interfaces']['en0'][:addresses]["BE:42:80:00:B0:05"]
+        @inet_interface_addresses = @plugin["network"]["interfaces"]["en0"][:addresses]["BE:42:80:00:B0:05"]
       end
       it "detects the family" do
-        expect(@inet_interface_addresses[:family]).to eq('lladdr')
+        expect(@inet_interface_addresses[:family]).to eq("lladdr")
       end
     end
   end
@@ -245,39 +245,39 @@ ARP_AN
 
     context "inet" do
       it "detects the route destinations" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][0][:destination]).to eq("default")
-        expect(@plugin['network']['interfaces']['en0'][:routes][1][:destination]).to eq("172.29.128.0")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][0][:destination]).to eq("default")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][1][:destination]).to eq("172.29.128.0")
       end
 
       it "detects the route family" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][0][:family]).to eq("inet")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][0][:family]).to eq("inet")
       end
 
       it "detects the route gateway" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][0][:via]).to eq("172.29.128.13")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][0][:via]).to eq("172.29.128.13")
       end
 
       it "detects the route flags" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][0][:flags]).to eq("UG")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][0][:flags]).to eq("UG")
       end
     end
 
     context "inet6" do
 
       it "detects the route destinations" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][4][:destination]).to eq("::1%1")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:destination]).to eq("::1%1")
       end
 
       it "detects the route family" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][4][:family]).to eq("inet6")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:family]).to eq("inet6")
       end
 
       it "detects the route gateway" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][4][:via]).to eq("::1%1")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:via]).to eq("::1%1")
       end
 
       it "detects the route flags" do
-        expect(@plugin['network']['interfaces']['en0'][:routes][4][:flags]).to eq("UH")
+        expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:flags]).to eq("UH")
       end
     end
   end
@@ -287,15 +287,15 @@ ARP_AN
       @plugin.run
     end
     it "supresses the hostname entries" do
-      expect(@plugin['network']['arp'][0][:remote_host]).to eq("?")
+      expect(@plugin["network"]["arp"][0][:remote_host]).to eq("?")
     end
 
     it "detects the remote ip entry" do
-      expect(@plugin['network']['arp'][0][:remote_ip]).to eq("172.29.131.16")
+      expect(@plugin["network"]["arp"][0][:remote_ip]).to eq("172.29.131.16")
     end
 
     it "detects the remote mac entry" do
-      expect(@plugin['network']['arp'][0][:remote_mac]).to eq("6e:87:70:0:40:3")
+      expect(@plugin["network"]["arp"][0][:remote_mac]).to eq("6e:87:70:0:40:3")
     end
   end
 
@@ -304,7 +304,7 @@ ARP_AN
       @plugin.run
     end
     it "converts a netmask from hexadecimal form to decimal form" do
-      expect(@plugin.hex_to_dec_netmask('0xffff0000')).to eq("255.255.0.0")
+      expect(@plugin.hex_to_dec_netmask("0xffff0000")).to eq("255.255.0.0")
     end
   end
 end

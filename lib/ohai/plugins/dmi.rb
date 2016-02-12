@@ -6,9 +6,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ Ohai.plugin(:DMI) do
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
   collect_data do
-    require 'ohai/common/dmi'
+    require "ohai/common/dmi"
     dmi Mash.new
 
     # all output lines should fall within one of these patterns
@@ -49,7 +49,7 @@ Ohai.plugin(:DMI) do
     #Handle 0x0000, DMI type 0, 24 bytes
     #BIOS Information
     #        Vendor: American Megatrends Inc.
-    #        Version: 080012 
+    #        Version: 080012
     # ... similar lines trimmed
     #        Characteristics:
     #                ISA is supported
@@ -80,7 +80,7 @@ Ohai.plugin(:DMI) do
           next
         end
 
-        dmi_record = {:type => Ohai::Common::DMI.id_lookup(handle[2])}
+        dmi_record = { :type => Ohai::Common::DMI.id_lookup(handle[2]) }
 
         dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
         dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
@@ -115,7 +115,7 @@ Ohai.plugin(:DMI) do
           next
         end
         # overwrite "raw" value with a new Mash
-        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == 'Mash'
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == "Mash"
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = nil
 
       else

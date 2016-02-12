@@ -20,7 +20,7 @@ Ohai.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:hpux, :default) do
-    require 'sigar'
+    require "sigar"
 
     sigar = Sigar.new
 

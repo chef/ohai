@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper.rb')
-require 'ohai/mixin/os'
+require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
+require "ohai/mixin/os"
 
 describe "Ohai::System" do
   extend IntegrationSupport
@@ -38,7 +38,7 @@ describe "Ohai::System" do
       expect(ohai.v6_dependency_solver).to be_a_kind_of(Hash)
     end
 
-    it 'merges deprecated config settings into the ohai config context' do
+    it "merges deprecated config settings into the ohai config context" do
       expect(Ohai::Log).to receive(:warn).
         with(/Ohai::Config\[:disabled_plugins\] is deprecated/)
       Ohai::Config[:disabled_plugins] = [ :Foo, :Baz ]
@@ -48,10 +48,10 @@ describe "Ohai::System" do
       expect(Ohai.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
     end
 
-    it 'merges provided configuration options into the ohai config context' do
+    it "merges provided configuration options into the ohai config context" do
       config = {
         disabled_plugins: [ :Foo, :Baz ],
-        directory: '/some/extra/plugins'
+        directory: "/some/extra/plugins",
       }
       allow(Ohai::Config).to receive(:merge_deprecated_config)
       expect(Ohai.config).to receive(:merge!).with(config).and_call_original
@@ -61,18 +61,18 @@ describe "Ohai::System" do
       end
     end
 
-    context 'when directory is configured' do
-      let(:directory) { '/some/fantastic/plugins' }
+    context "when directory is configured" do
+      let(:directory) { "/some/fantastic/plugins" }
 
-      it 'adds directory to plugin_path' do
+      it "adds directory to plugin_path" do
         Ohai.config[:directory] = directory
         Ohai::System.new
         expect(Ohai.config[:plugin_path]).to include(directory)
       end
     end
 
-    shared_examples_for 'appendable deprecated configuration option' do
-      it 'logs a warning and configures the option on the ohai config context' do
+    shared_examples_for "appendable deprecated configuration option" do
+      it "logs a warning and configures the option on the ohai config context" do
         Ohai::Config[option] << value
         expect(Ohai::Log).to receive(:warn).
           with(/Ohai::Config\[:#{option}\] is deprecated/)
@@ -81,21 +81,21 @@ describe "Ohai::System" do
       end
     end
 
-    context 'when a top-level hints_path is configured' do
-      include_examples 'appendable deprecated configuration option' do
+    context "when a top-level hints_path is configured" do
+      include_examples "appendable deprecated configuration option" do
         let(:option) { :hints_path }
-        let(:value) { '/path/to/hints' }
+        let(:value) { "/path/to/hints" }
       end
     end
 
-    context 'when a top-level plugin_path is configured' do
-      include_examples 'appendable deprecated configuration option' do
+    context "when a top-level plugin_path is configured" do
+      include_examples "appendable deprecated configuration option" do
         let(:option) { :plugin_path }
-        let(:value) { '/path/to/plugins' }
+        let(:value) { "/path/to/plugins" }
       end
     end
 
-    it 'configures logging' do
+    it "configures logging" do
       log_level = :debug
       Ohai.config[:log_level] = log_level
       expect(Ohai::Log).to receive(:init).with(Ohai.config[:log_location])
@@ -103,7 +103,7 @@ describe "Ohai::System" do
       Ohai::System.new
     end
 
-    it 'resolves log_level when set to :auto' do
+    it "resolves log_level when set to :auto" do
       expect(Ohai::Log).to receive(:level=).with(:info)
       Ohai::System.new
     end
@@ -394,7 +394,7 @@ EOF
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai.config[:disabled_plugins] = [ :Zoo, 'my_plugins::park' ]
+          Ohai.config[:disabled_plugins] = [ :Zoo, "my_plugins::park" ]
         end
 
         after do

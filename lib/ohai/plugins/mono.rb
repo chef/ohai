@@ -33,7 +33,7 @@ Ohai.plugin(:Mono) do
         mono[:version] = output[4]
       end
       if output.length >= 11
-        mono[:builddate] = "%s %s %s %s" % [output[6],output[7],output[8],output[11].gsub!(/\)/,'')]
+        mono[:builddate] = "%s %s %s %s" % [output[6], output[7], output[8], output[11].gsub!(/\)/, "")]
       end
       languages[:mono] = mono if mono[:version]
     end

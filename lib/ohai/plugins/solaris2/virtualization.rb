@@ -22,9 +22,9 @@ Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
   def collect_solaris_guestid
-    command = '/usr/sbin/zoneadm list -p'
+    command = "/usr/sbin/zoneadm list -p"
     so = shell_out(command)
-    so.stdout.split(':').first
+    so.stdout.split(":").first
   end
 
   collect_data(:solaris2) do
@@ -41,7 +41,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # http://www.dmo.ca/blog/detecting-virtualization-on-linux
-    smbios_path= Ohai.abs_path( "/usr/sbin/smbios" )
+    smbios_path = Ohai.abs_path( "/usr/sbin/smbios" )
     if File.exists?(smbios_path)
       so = shell_out(smbios_path)
       case so.stdout
@@ -60,32 +60,32 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    if File.executable?('/usr/sbin/zoneadm')
+    if File.executable?("/usr/sbin/zoneadm")
       zones = Mash.new
       so = shell_out("zoneadm list -pc")
       so.stdout.lines do |line|
         info = line.chomp.split(/:/)
         zones[info[1]] = {
-          'id' => info[0],
-          'state' => info[2],
-          'root' => info[3],
-          'uuid' => info[4],
-          'brand' => info[5],
-          'ip' => info[6],
+          "id" => info[0],
+          "state" => info[2],
+          "root" => info[3],
+          "uuid" => info[4],
+          "brand" => info[5],
+          "ip" => info[6],
         }
       end
 
-      if (zones.length == 1)
+      if zones.length == 1
         first_zone = zones.keys[0]
-        unless( first_zone == 'global')
-          virtualization[:system] = 'zone'
-          virtualization[:role] = 'guest'
-          virtualization[:guest_uuid] = zones[first_zone]['uuid']
+        unless( first_zone == "global")
+          virtualization[:system] = "zone"
+          virtualization[:role] = "guest"
+          virtualization[:guest_uuid] = zones[first_zone]["uuid"]
           virtualization[:guest_id] = collect_solaris_guestid
         end
-      elsif (zones.length > 1)
-        virtualization[:system] = 'zone'
-        virtualization[:role] = 'host'
+      elsif zones.length > 1
+        virtualization[:system] = "zone"
+        virtualization[:role] = "host"
         virtualization[:guests] = zones
       end
     end

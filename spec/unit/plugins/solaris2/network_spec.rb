@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X network plugin" do
 
@@ -129,23 +129,23 @@ ROUTE_GET
     end
 
     it "completes the run" do
-      expect(@plugin['network']).not_to be_nil
+      expect(@plugin["network"]).not_to be_nil
     end
 
     it "detects the interfaces" do
-      expect(@plugin['network']['interfaces'].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3","net0", "qfe1"])
+      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "qfe1"])
     end
 
     it "detects the ip addresses of the interfaces" do
-      expect(@plugin['network']['interfaces']['e1000g0:3']['addresses'].keys).to include('72.2.115.28')
+      expect(@plugin["network"]["interfaces"]["e1000g0:3"]["addresses"].keys).to include("72.2.115.28")
     end
 
     it "detects the encapsulation type of the interfaces" do
-      expect(@plugin['network']['interfaces']['e1000g0:3']['encapsulation']).to eq('Ethernet')
+      expect(@plugin["network"]["interfaces"]["e1000g0:3"]["encapsulation"]).to eq("Ethernet")
     end
 
     it "detects the L3PROTECT network flag" do
-      expect(@plugin['network']['interfaces']['net0']['flags']).to include('L3PROTECT')
+      expect(@plugin["network"]["interfaces"]["net0"]["flags"]).to include("L3PROTECT")
     end
   end
 
@@ -159,8 +159,7 @@ ROUTE_GET
     end
 
     it "finds the default interface by asking which iface has the default route" do
-      expect(@plugin[:network][:default_interface]).to eq('e1000g0')
+      expect(@plugin[:network][:default_interface]).to eq("e1000g0")
     end
   end
 end
-

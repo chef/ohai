@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris virtualization platform" do
   before(:each) do
@@ -72,7 +72,7 @@ PSRINFO_PV
     end
 
     it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
-      ms_vpc_smbios=<<-MSVPC
+      ms_vpc_smbios = <<-MSVPC
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
 
@@ -91,7 +91,7 @@ MSVPC
     end
 
     it "should set vmware guest if smbios detects VMware Virtual Platform" do
-      vmware_smbios=<<-VMWARE
+      vmware_smbios = <<-VMWARE
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
 
@@ -121,5 +121,3 @@ VMWARE
     expect(@plugin[:virtualization]).to eq({})
   end
 end
-
-

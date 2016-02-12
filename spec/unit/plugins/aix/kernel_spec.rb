@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX kernel plugin" do
   before(:each) do
@@ -54,8 +54,8 @@ describe Ohai::System, "AIX kernel plugin" do
   it "detects the modules" do
     expect(@plugin[:kernel][:modules]["/usr/lib/drivers/cluster"]["text"]).to eq({ "address" => "f1000000c0338000", "size" => "77000" })
     expect(@plugin[:kernel][:modules]["/usr/lib/drivers/cluster"]["data"]).to eq({ "address" => "f1000000c0390000", "size" => "1ec8c" })
-    expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["text"]).to eq({ "address" => "6390000", "size" => "20000"})
-    expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["data"]).to eq({ "address" => "63a0000", "size" => "ba8"})
+    expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["text"]).to eq({ "address" => "6390000", "size" => "20000" })
+    expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["data"]).to eq({ "address" => "63a0000", "size" => "ba8" })
 
   end
 end

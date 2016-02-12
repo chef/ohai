@@ -34,16 +34,16 @@ Ohai.plugin(:Filesystem2) do
       regex = /NAME="(\S+).*?" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
       if line =~ regex
         dev = $1
-        dev = find_device(dev) unless dev.start_with?('/')
+        dev = find_device(dev) unless dev.start_with?("/")
         uuid = $2
         label = $3
         fs_type = $4
-        return {:dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type}
+        return { :dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type }
       end
     else
       bits = line.split
-      dev = bits.shift.split(':')[0]
-      f = {:dev => dev}
+      dev = bits.shift.split(":")[0]
+      f = { :dev => dev }
       bits.each do |keyval|
         if keyval =~ /(\S+)="(\S+)"/
           key = $1.downcase.to_sym
@@ -61,7 +61,7 @@ Ohai.plugin(:Filesystem2) do
     fs.each_value do |entry|
       view[entry[:device]] = Mash.new unless view[entry[:device]]
       entry.each do |key, val|
-        next if ['device', 'mount'].include?(key)
+        next if %w{device mount}.include?(key)
         view[entry[:device]][key] = val
       end
       view[entry[:device]][:mounts] ||= []
@@ -78,7 +78,7 @@ Ohai.plugin(:Filesystem2) do
       next unless entry[:mount]
       view[entry[:mount]] = Mash.new unless view[entry[:mount]]
       entry.each do |key, val|
-        next if ['mount', 'device'].include?(key)
+        next if %w{mount device}.include?(key)
         view[entry[:mount]][key] = val
       end
       view[entry[:mount]][:devices] ||= []
@@ -141,12 +141,12 @@ Ohai.plugin(:Filesystem2) do
       end
     end
 
-    have_lsblk = File.exist?('/bin/lsblk')
+    have_lsblk = File.exist?("/bin/lsblk")
     if have_lsblk
-      cmd = 'lsblk -n -P -o NAME,UUID,LABEL,FSTYPE'
+      cmd = "lsblk -n -P -o NAME,UUID,LABEL,FSTYPE"
     else
       # CentOS5 and other platforms don't have lsblk
-      cmd = 'blkid'
+      cmd = "blkid"
     end
 
     so = shell_out(cmd)
@@ -177,11 +177,11 @@ Ohai.plugin(:Filesystem2) do
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exist?('/proc/mounts')
-      mounts = ''
+    if File.exist?("/proc/mounts")
+      mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.
-      f = File.open('/proc/mounts')
+      f = File.open("/proc/mounts")
       loop do
         begin
           data = f.read_nonblock(4096)
@@ -213,9 +213,9 @@ Ohai.plugin(:Filesystem2) do
     by_mountpoint = generate_mountpoint_view(fs)
 
     fs2 = Mash.new
-    fs2['by_device'] = by_device
-    fs2['by_mountpoint'] = by_mountpoint
-    fs2['by_pair'] = by_pair
+    fs2["by_device"] = by_device
+    fs2["by_mountpoint"] = by_mountpoint
+    fs2["by_pair"] = by_pair
 
     # Set the filesystem data
     filesystem2 fs2

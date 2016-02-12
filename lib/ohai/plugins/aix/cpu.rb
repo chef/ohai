@@ -27,7 +27,7 @@ Ohai.plugin(:CPU) do
     cpu[:total] = shell_out("pmcycles -m").stdout.lines.length
 
     # The below is only relevent on an LPAR
-    if shell_out('uname -W').stdout.strip == "0"
+    if shell_out("uname -W").stdout.strip == "0"
 
       # At least one CPU will be available, but we'll wait to increment this later.
       cpu[:available] = 0
@@ -36,7 +36,7 @@ Ohai.plugin(:CPU) do
       #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
       #on AIX number of cores and processors are considered same
       cpu[:real] = cpu[:cores] = cpudevs.length
-      cpudevs.each.with_index do |c,i|
+      cpudevs.each.with_index do |c, i|
         name, status, location = c.split
         index = i.to_s
         cpu[index] = Mash.new

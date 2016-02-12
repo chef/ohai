@@ -16,9 +16,8 @@
 # limitations under the License.
 #
 
-
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux plugin platform" do
 
@@ -203,9 +202,9 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     it "should set platform_version to kernel release" do
-      expect(@plugin).to receive(:`).with('uname -r').and_return('3.18.2-2-ARCH')
+      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
       @plugin.run
-      expect(@plugin[:platform_version]).to eq('3.18.2-2-ARCH')
+      expect(@plugin[:platform_version]).to eq("3.18.2-2-ARCH")
     end
   end
 
@@ -238,7 +237,7 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin.run
       expect(@plugin[:platform]).to eq("alpine")
       expect(@plugin[:platform_family]).to eq("alpine")
-      expect(@plugin[:platform_version]).to eq('3.2.3')
+      expect(@plugin[:platform_version]).to eq("3.2.3")
     end
   end
 
@@ -257,9 +256,9 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     it "should set platform_version to kernel release" do
-      expect(@plugin).to receive(:`).with('uname -r').and_return('3.18.2-2-ARCH')
+      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
       @plugin.run
-      expect(@plugin[:platform_version]).to eq('3.18.2-2-ARCH')
+      expect(@plugin[:platform_version]).to eq("3.18.2-2-ARCH")
     end
 
   end
@@ -671,114 +670,114 @@ CISCO_RELEASE
 
   describe '#read_os_release_info' do
     let(:file_contents) { "COW=MOO\nDOG=\"BARK\"" }
-    it 'returns nil if the file does not exist' do
-      allow(File).to receive(:exist?).with('/etc/test-release').and_return(false)
-      expect(@plugin.read_os_release_info('/etc/test-release')).to be nil
+    it "returns nil if the file does not exist" do
+      allow(File).to receive(:exist?).with("/etc/test-release").and_return(false)
+      expect(@plugin.read_os_release_info("/etc/test-release")).to be nil
     end
 
-    it 'returns a hash of expected contents' do
-      allow(File).to receive(:exist?).with('/etc/test-release').and_return(true)
-      allow(File).to receive(:read).with('/etc/test-release').and_return(file_contents)
-      release_info = @plugin.read_os_release_info('/etc/test-release')
+    it "returns a hash of expected contents" do
+      allow(File).to receive(:exist?).with("/etc/test-release").and_return(true)
+      allow(File).to receive(:read).with("/etc/test-release").and_return(file_contents)
+      release_info = @plugin.read_os_release_info("/etc/test-release")
 
-      expect(release_info['COW']).to eq('MOO')
-      expect(release_info['DOG']).to eq('BARK')
+      expect(release_info["COW"]).to eq("MOO")
+      expect(release_info["DOG"]).to eq("BARK")
     end
   end
 
   describe '#os_release_info' do
-    context 'when CISCO_RELEASE_INFO is not populated' do
-      let(:release_info) { { 'ID' => 'os_id' } }
+    context "when CISCO_RELEASE_INFO is not populated" do
+      let(:release_info) { { "ID" => "os_id" } }
 
       before do
-        allow(File).to receive(:exist?).with('/etc/os-release').and_return(true)
-        allow(@plugin).to receive(:read_os_release_info).with('/etc/os-release').and_return(release_info)
+        allow(File).to receive(:exist?).with("/etc/os-release").and_return(true)
+        allow(@plugin).to receive(:read_os_release_info).with("/etc/os-release").and_return(release_info)
       end
 
-      it 'reads the os-release file' do
-        expect(@plugin).to receive(:read_os_release_info).with('/etc/os-release').and_return(release_info)
+      it "reads the os-release file" do
+        expect(@plugin).to receive(:read_os_release_info).with("/etc/os-release").and_return(release_info)
         @plugin.os_release_info
       end
 
-      it 'returns a hash of expected contents' do
-        expect(@plugin.os_release_info['ID']).to eq('os_id')
+      it "returns a hash of expected contents" do
+        expect(@plugin.os_release_info["ID"]).to eq("os_id")
       end
     end
 
-    context 'when CISCO_RELEASE_INFO is populated' do
-      let(:release_info) { { 'ID' => 'os_id', 'CISCO_RELEASE_INFO' => '/etc/cisco-release' } }
-      let(:cisco_release_info) { { 'ID' => 'cisco_id' } }
+    context "when CISCO_RELEASE_INFO is populated" do
+      let(:release_info) { { "ID" => "os_id", "CISCO_RELEASE_INFO" => "/etc/cisco-release" } }
+      let(:cisco_release_info) { { "ID" => "cisco_id" } }
 
       before do
-        allow(File).to receive(:exist?).with('/etc/os-release').and_return(true)
-        allow(File).to receive(:exist?).with('/etc/cisco-release').and_return(true)
-        allow(@plugin).to receive(:read_os_release_info).with('/etc/os-release').and_return(release_info)
-        allow(@plugin).to receive(:read_os_release_info).with('/etc/cisco-release').and_return(cisco_release_info)
+        allow(File).to receive(:exist?).with("/etc/os-release").and_return(true)
+        allow(File).to receive(:exist?).with("/etc/cisco-release").and_return(true)
+        allow(@plugin).to receive(:read_os_release_info).with("/etc/os-release").and_return(release_info)
+        allow(@plugin).to receive(:read_os_release_info).with("/etc/cisco-release").and_return(cisco_release_info)
       end
 
-      it 'reads the os-release AND the cisco-release file' do
-        expect(@plugin).to receive(:read_os_release_info).with('/etc/os-release').and_return(release_info)
-        expect(@plugin).to receive(:read_os_release_info).with('/etc/cisco-release').and_return(release_info)
+      it "reads the os-release AND the cisco-release file" do
+        expect(@plugin).to receive(:read_os_release_info).with("/etc/os-release").and_return(release_info)
+        expect(@plugin).to receive(:read_os_release_info).with("/etc/cisco-release").and_return(release_info)
         @plugin.os_release_info
       end
 
-      it 'returns the ID from the cisco-release file instead of the os-release file' do
-        expect(@plugin.os_release_info['ID']).to eq('cisco_id')
+      it "returns the ID from the cisco-release file instead of the os-release file" do
+        expect(@plugin.os_release_info["ID"]).to eq("cisco_id")
       end
     end
   end
 
-  describe 'on Wind River Linux 5 for Cisco Nexus' do
+  describe "on Wind River Linux 5 for Cisco Nexus" do
     let(:have_os_release) { true }
     let(:os_release_info) do
       {
-        'ID'                 => 'nexus',
-        'ID_LIKE'            => 'wrlinux',
-        'NAME'               => 'Nexus',
-        'VERSION'            => '7.0(3)I2(0.475E.6)',
-        'VERSION_ID'         => '7.0(3)I2',
-        'PRETTY_NAME'        => 'Nexus 7.0(3)I2',
-        'HOME_URL'           => 'http://www.cisco.com',
-        'BUILD_ID'           => '6',
-        'CISCO_RELEASE_INFO' => '/etc/os-release'
+        "ID"                 => "nexus",
+        "ID_LIKE"            => "wrlinux",
+        "NAME"               => "Nexus",
+        "VERSION"            => "7.0(3)I2(0.475E.6)",
+        "VERSION_ID"         => "7.0(3)I2",
+        "PRETTY_NAME"        => "Nexus 7.0(3)I2",
+        "HOME_URL"           => "http://www.cisco.com",
+        "BUILD_ID"           => "6",
+        "CISCO_RELEASE_INFO" => "/etc/os-release",
       }
     end
 
-    it 'should set platform to nexus and platform_family to wrlinux' do
+    it "should set platform to nexus and platform_family to wrlinux" do
       allow(@plugin).to receive(:os_release_info).and_return(os_release_info)
       @plugin.lsb = nil
       @plugin.run
 
-      expect(@plugin[:platform]).to eq('nexus')
-      expect(@plugin[:platform_family]).to eq('wrlinux')
-      expect(@plugin[:platform_version]).to eq('7.0(3)I2(0.475E.6)')
+      expect(@plugin[:platform]).to eq("nexus")
+      expect(@plugin[:platform_family]).to eq("wrlinux")
+      expect(@plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
     end
   end
 
-  describe 'on Wind River Linux 7 for Cisco IOS-XR' do
+  describe "on Wind River Linux 7 for Cisco IOS-XR" do
     let(:have_os_release) { true }
     let(:os_release_info) do
       {
-        'ID'          => 'ios_xr',
-        'ID_LIKE'     => 'cisco-wrlinux wrlinux',
-        'NAME'        => 'IOS XR',
-        'VERSION'     => '6.0.0.14I',
-        'VERSION_ID'  => '6.0.0.14I',
-        'PRETTY_NAME' => 'Cisco IOS XR Software, Version 6.0.0.14I',
-        'BUILD_ID'    => '2015-09-10-15-50-17',
-        'HOME_URL'    => 'http://www.cisco.com',
-        'CISCO_RELEASE_INFO' => '/etc/os-release'
+        "ID"          => "ios_xr",
+        "ID_LIKE"     => "cisco-wrlinux wrlinux",
+        "NAME"        => "IOS XR",
+        "VERSION"     => "6.0.0.14I",
+        "VERSION_ID"  => "6.0.0.14I",
+        "PRETTY_NAME" => "Cisco IOS XR Software, Version 6.0.0.14I",
+        "BUILD_ID"    => "2015-09-10-15-50-17",
+        "HOME_URL"    => "http://www.cisco.com",
+        "CISCO_RELEASE_INFO" => "/etc/os-release",
       }
     end
 
-    it 'should set platform to ios_xr and platform_family to wrlinux' do
+    it "should set platform to ios_xr and platform_family to wrlinux" do
       allow(@plugin).to receive(:os_release_info).and_return(os_release_info)
       @plugin.lsb = nil
       @plugin.run
 
-      expect(@plugin[:platform]).to eq('ios_xr')
-      expect(@plugin[:platform_family]).to eq('wrlinux')
-      expect(@plugin[:platform_version]).to eq('6.0.0.14I')
+      expect(@plugin[:platform]).to eq("ios_xr")
+      expect(@plugin[:platform_family]).to eq("wrlinux")
+      expect(@plugin[:platform_version]).to eq("6.0.0.14I")
     end
   end
 end

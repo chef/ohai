@@ -58,18 +58,18 @@ Ohai.plugin(:CPU) do
       when /cache size\s+:\s(.+)/
         cpuinfo[current_cpu]["cache_size"] = $1
       when /flags\s+:\s(.+)/
-        cpuinfo[current_cpu]["flags"] = $1.split(' ')
+        cpuinfo[current_cpu]["flags"] = $1.split(" ")
       when /bogomips per cpu:\s(.+)/
         cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/
-        cpuinfo["features"] = $1.split(' ')
+        cpuinfo["features"] = $1.split(" ")
       when /processor\s(\d):\s(.+)/
         current_cpu = $1
         cpu_number += 1
         cpuinfo[current_cpu] = Mash.new
-        current_cpu_info = $2.split(',')
+        current_cpu_info = $2.split(",")
         for i in current_cpu_info
-          name_value = i.split('=')
+          name_value = i.split("=")
           name = name_value[0].strip
           value = name_value[1].strip
           cpuinfo[current_cpu][name] = value

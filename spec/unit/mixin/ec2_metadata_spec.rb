@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require 'ohai/mixin/ec2_metadata'
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require "ohai/mixin/ec2_metadata"
 
 describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) {
@@ -49,7 +49,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "2020-01-01\nUnsupported", :code => "200") }
 
       it "raises an error" do
-        expect { mixin.best_api_version}.to raise_error(RuntimeError)
+        expect { mixin.best_api_version }.to raise_error(RuntimeError)
       end
     end
 
@@ -58,7 +58,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :code => "404") }
 
       it "returns 'latest' as the version" do
-        expect(mixin.best_api_version).to eq('latest')
+        expect(mixin.best_api_version).to eq("latest")
       end
     end
 
@@ -66,7 +66,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "418") }
 
       it "raises an error" do
-        expect { mixin.best_api_version}.to raise_error(RuntimeError)
+        expect { mixin.best_api_version }.to raise_error(RuntimeError)
       end
     end
   end
@@ -76,7 +76,7 @@ describe Ohai::Mixin::Ec2Metadata do
       let(:response) { double("Net::HTTP Response", :body => "", :code => "418") }
 
       it "raises an error" do
-        expect { mixin.metadata_get('', '2012-01-12') }.to raise_error(RuntimeError)
+        expect { mixin.metadata_get("", "2012-01-12") }.to raise_error(RuntimeError)
       end
     end
   end

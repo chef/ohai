@@ -25,12 +25,12 @@
 ##   the data in that file as appropriate.
 ##
 
-require 'yaml'
-require 'set'
-require 'mixlib/shellout'
-require 'mixlib/cli'
-require 'optparse'
-require File.expand_path(File.dirname(__FILE__) + '/../spec/unit/path/ohai_plugin_common.rb')
+require "yaml"
+require "set"
+require "mixlib/shellout"
+require "mixlib/cli"
+require "optparse"
+require File.expand_path(File.dirname(__FILE__) + "/../spec/unit/path/ohai_plugin_common.rb")
 
 #get options
 class MyCLI
@@ -86,12 +86,12 @@ env ||= []
 # collect output
 
 results = params.map do |p|
-  m = Mixlib::ShellOut.new(cmd + ' ' + p)
+  m = Mixlib::ShellOut.new(cmd + " " + p)
   begin
     m.run_command
-    {:env => env, :params => p, :stdout => m.stdout, :stderr => m.stderr, :exit_status => m.exitstatus }
+    { :env => env, :params => p, :stdout => m.stdout, :stderr => m.stderr, :exit_status => m.exitstatus }
   rescue Errno::ENOENT
-    {:env => env, :params => p, :stdout => '', :stderr => 'command not found', :exit_status => 127 }
+    { :env => env, :params => p, :stdout => "", :stderr => "command not found", :exit_status => 127 }
   end
 end
 

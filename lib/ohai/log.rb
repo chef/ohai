@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'mixlib/log'
+require "mixlib/log"
 
 module Ohai
   class Log

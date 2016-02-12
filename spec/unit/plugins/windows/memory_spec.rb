@@ -14,19 +14,19 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Windows memory plugin", :windows_only do
   before do
     require "wmi-lite/wmi"
     @plugin = get_plugin("windows/memory")
-    mock_os = { 
+    mock_os = {
                 "TotalVisibleMemorySize" => "10485760",
                 "FreePhysicalMemory" => "5242880",
                 "SizeStoredInPagingFiles" => "20971520",
-                "FreeSpaceInPagingFiles" =>  "15728640"
+                "FreeSpaceInPagingFiles" =>  "15728640",
               }
-    expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with('Win32_OperatingSystem').and_return(mock_os)
+    expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(mock_os)
   end
 
   it "should get total memory" do

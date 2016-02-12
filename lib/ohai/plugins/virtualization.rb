@@ -24,31 +24,31 @@ Ohai.plugin(:VirtualizationInfo) do
   collect_data do
     unless virtualization.nil? || !(virtualization[:role].eql?("host"))
       begin
-        require 'libvirt'
-        require 'hpricot'
+        require "libvirt"
+        require "hpricot"
 
-        emu = (virtualization[:system].eql?('kvm') ? 'qemu' : virtualization[:system])
-        virtualization[:libvirt_version] = Libvirt::version(emu)[0].to_s
+        emu = (virtualization[:system].eql?("kvm") ? "qemu" : virtualization[:system])
+        virtualization[:libvirt_version] = Libvirt.version(emu)[0].to_s
 
-        virtconn = Libvirt::open_read_only("#{emu}:///system")
+        virtconn = Libvirt.open_read_only("#{emu}:///system")
 
         virtualization[:uri] = virtconn.uri
         virtualization[:capabilities] = Mash.new
-        virtualization[:capabilities][:xml_desc] = (virtconn.capabilities.split("\n").collect {|line| line.strip}).join
+        virtualization[:capabilities][:xml_desc] = (virtconn.capabilities.split("\n").collect { |line| line.strip }).join
         #xdoc = Hpricot virtualization[:capabilities][:xml_desc]
 
         virtualization[:nodeinfo] = Mash.new
         ni = virtconn.node_get_info
-        ['cores','cpus','memory','mhz','model','nodes','sockets','threads'].each {|a| virtualization[:nodeinfo][a] = ni.send(a)}
+        %w{cores cpus memory mhz model nodes sockets threads}.each { |a| virtualization[:nodeinfo][a] = ni.send(a) }
 
         virtualization[:domains] = Mash.new
         virtconn.list_domains.each do |d|
           dv = virtconn.lookup_domain_by_id d
           virtualization[:domains][dv.name] = Mash.new
           virtualization[:domains][dv.name][:id] = d
-          virtualization[:domains][dv.name][:xml_desc] = (dv.xml_desc.split("\n").collect {|line| line.strip}).join
-          ['os_type','uuid'].each {|a| virtualization[:domains][dv.name][a] = dv.send(a)}
-          ['cpu_time','max_mem','memory','nr_virt_cpu','state'].each {|a| virtualization[:domains][dv.name][a] = dv.info.send(a)}
+          virtualization[:domains][dv.name][:xml_desc] = (dv.xml_desc.split("\n").collect { |line| line.strip }).join
+          %w{os_type uuid}.each { |a| virtualization[:domains][dv.name][a] = dv.send(a) }
+          %w{cpu_time max_mem memory nr_virt_cpu state}.each { |a| virtualization[:domains][dv.name][a] = dv.info.send(a) }
           #xdoc = Hpricot virtualization[:domains][dv.name][:xml_desc]
 
         end
@@ -57,8 +57,8 @@ Ohai.plugin(:VirtualizationInfo) do
         virtconn.list_networks.each do |n|
           nv = virtconn.lookup_network_by_name n
           virtualization[:networks][n] = Mash.new
-          virtualization[:networks][n][:xml_desc] = (nv.xml_desc.split("\n").collect {|line| line.strip}).join
-          ['bridge_name','uuid'].each {|a| virtualization[:networks][n][a] = nv.send(a)}
+          virtualization[:networks][n][:xml_desc] = (nv.xml_desc.split("\n").collect { |line| line.strip }).join
+          %w{bridge_name uuid}.each { |a| virtualization[:networks][n][a] = nv.send(a) }
           #xdoc = Hpricot virtualization[:networks][n][:xml_desc]
 
         end
@@ -67,17 +67,17 @@ Ohai.plugin(:VirtualizationInfo) do
         virtconn.list_storage_pools.each do |pool|
           sp = virtconn.lookup_storage_pool_by_name pool
           virtualization[:storage][pool] = Mash.new
-          virtualization[:storage][pool][:xml_desc] = (sp.xml_desc.split("\n").collect {|line| line.strip}).join
-          ['autostart','uuid'].each {|a| virtualization[:storage][pool][a] = sp.send(a)}
-          ['allocation','available','capacity','state'].each {|a| virtualization[:storage][pool][a] = sp.info.send(a)}
+          virtualization[:storage][pool][:xml_desc] = (sp.xml_desc.split("\n").collect { |line| line.strip }).join
+          %w{autostart uuid}.each { |a| virtualization[:storage][pool][a] = sp.send(a) }
+          %w{allocation available capacity state}.each { |a| virtualization[:storage][pool][a] = sp.info.send(a) }
           #xdoc = Hpricot virtualization[:storage][pool][:xml_desc]
 
           virtualization[:storage][pool][:volumes] = Mash.new
           sp.list_volumes.each do |v|
             virtualization[:storage][pool][:volumes][v] = Mash.new
             sv = sp.lookup_volume_by_name v
-            ['key','name','path'].each {|a| virtualization[:storage][pool][:volumes][v][a] = sv.send(a)}
-            ['allocation','capacity','type'].each {|a| virtualization[:storage][pool][:volumes][v][a] = sv.info.send(a)}
+            %w{key name path}.each { |a| virtualization[:storage][pool][:volumes][v][a] = sv.send(a) }
+            %w{allocation capacity type}.each { |a| virtualization[:storage][pool][:volumes][v][a] = sv.info.send(a) }
           end
         end
 

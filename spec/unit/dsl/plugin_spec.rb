@@ -124,33 +124,33 @@ end
 
 describe Ohai::DSL::Plugin::VersionVII do
   it "should not modify the plugin name when the plugin is named correctly" do
-    plugin = Ohai.plugin(:FunkyVALIDpluginName) { }.new({ })
+    plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({})
     expect(plugin.name).to eql(:FunkyVALIDpluginName)
   end
 
   describe "when the plugin is named incorrectly" do
     context "because the plugin name doesn't start with a capital letter" do
       it "should raise an Ohai::Exceptions::InvalidPluginName exception" do
-        expect{ Ohai.plugin(:badName) { } }.to raise_error(Ohai::Exceptions::InvalidPluginName, /badName is not a valid plugin name/)
+        expect { Ohai.plugin(:badName) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /badName is not a valid plugin name/)
       end
     end
 
     context "because the plugin name contains an underscore" do
       it "should raise an Ohai::Exceptions::InvalidPluginName exception" do
-        expect{ Ohai.plugin(:Bad_Name) { } }.to raise_error(Ohai::Exceptions::InvalidPluginName, /Bad_Name is not a valid plugin name/)
+        expect { Ohai.plugin(:Bad_Name) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /Bad_Name is not a valid plugin name/)
       end
     end
 
     context "because the plugin name isn't a symbol" do
       it "should raise an Ohai::Exceptions::InvalidPluginName exception" do
-        expect{ Ohai.plugin(1138) { } }.to raise_error(Ohai::Exceptions::InvalidPluginName, /1138 is not a valid plugin name/)
+        expect { Ohai.plugin(1138) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /1138 is not a valid plugin name/)
       end
     end
   end
 
   describe "#version" do
     it "should save the plugin version as :version7" do
-      plugin = Ohai.plugin(:Test) { }
+      plugin = Ohai.plugin(:Test) {}
       expect(plugin.version).to eql(:version7)
     end
   end
@@ -163,7 +163,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "should collect a list of attributes" do
       plugin = Ohai.plugin(:Test) { provides("one", "two", "three") }
-      expect(plugin.provides_attrs).to eql(["one", "two", "three"])
+      expect(plugin.provides_attrs).to eql(%w{one two three})
     end
 
     it "should collect from multiple provides statements" do
@@ -172,19 +172,19 @@ describe Ohai::DSL::Plugin::VersionVII do
         provides("two", "three")
         provides("four")
       }
-      expect(plugin.provides_attrs).to eql(["one", "two", "three", "four"])
+      expect(plugin.provides_attrs).to eql(%w{one two three four})
     end
 
     it "should collect attributes across multiple plugin files" do
       plugin = Ohai.plugin(:Test) { provides("one") }
       plugin = Ohai.plugin(:Test) { provides("two", "three") }
-      expect(plugin.provides_attrs).to eql(["one", "two", "three"])
+      expect(plugin.provides_attrs).to eql(%w{one two three})
     end
 
     it "should collect unique attributes" do
       plugin = Ohai.plugin(:Test) { provides("one") }
       plugin = Ohai.plugin(:Test) { provides("one", "two") }
-      expect(plugin.provides_attrs).to eql(["one", "two"])
+      expect(plugin.provides_attrs).to eql(%w{one two})
     end
   end
 
@@ -196,7 +196,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "should collect a list of dependencies" do
       plugin = Ohai.plugin(:Test) { depends("one", "two", "three") }
-      expect(plugin.depends_attrs).to eql(["one", "two", "three"])
+      expect(plugin.depends_attrs).to eql(%w{one two three})
     end
 
     it "should collect from multiple depends statements" do
@@ -205,35 +205,35 @@ describe Ohai::DSL::Plugin::VersionVII do
         depends("two", "three")
         depends("four")
       }
-      expect(plugin.depends_attrs).to eql(["one", "two", "three", "four"])
+      expect(plugin.depends_attrs).to eql(%w{one two three four})
     end
 
     it "should collect dependencies across multiple plugin files" do
       plugin = Ohai.plugin(:Test) { depends("one") }
       plugin = Ohai.plugin(:Test) { depends("two", "three") }
-      expect(plugin.depends_attrs).to eql(["one", "two", "three"])
+      expect(plugin.depends_attrs).to eql(%w{one two three})
     end
 
     it "should collect unique attributes" do
       plugin = Ohai.plugin(:Test) { depends("one") }
       plugin = Ohai.plugin(:Test) { depends("one", "two") }
-      expect(plugin.depends_attrs).to eql(["one", "two"])
+      expect(plugin.depends_attrs).to eql(%w{one two})
     end
   end
 
   describe "#collect_data" do
     it "should save as :default if no platform is given" do
-      plugin = Ohai.plugin(:Test) { collect_data { } }
+      plugin = Ohai.plugin(:Test) { collect_data {} }
       expect(plugin.data_collector).to have_key(:default)
     end
 
     it "should save a single given platform" do
-      plugin = Ohai.plugin(:Test) { collect_data(:ubuntu) { } }
+      plugin = Ohai.plugin(:Test) { collect_data(:ubuntu) {} }
       expect(plugin.data_collector).to have_key(:ubuntu)
     end
 
     it "should save a list of platforms" do
-      plugin = Ohai.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) { } }
+      plugin = Ohai.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) {} }
       [:freebsd, :netbsd, :openbsd].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
@@ -241,9 +241,9 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "should save multiple collect_data blocks" do
       plugin = Ohai.plugin(:Test) {
-        collect_data { }
-        collect_data(:windows) { }
-        collect_data(:darwin) { }
+        collect_data {}
+        collect_data(:windows) {}
+        collect_data(:darwin) {}
       }
       [:darwin, :default, :windows].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
@@ -251,8 +251,8 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "should save platforms across multiple plugins" do
-      plugin = Ohai.plugin(:Test) { collect_data { } }
-      plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) { } }
+      plugin = Ohai.plugin(:Test) { collect_data {} }
+      plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) {} }
       [:aix, :default, :sigar].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
@@ -261,17 +261,17 @@ describe Ohai::DSL::Plugin::VersionVII do
     it "should fail a platform has already been defined in the same plugin" do
       expect {
         Ohai.plugin(:Test) {
-          collect_data { }
-          collect_data { }
+          collect_data {}
+          collect_data {}
         }
       }.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
 
     it "should fail if a platform has already been defined in another plugin file" do
-      Ohai.plugin(:Test) { collect_data { } }
+      Ohai.plugin(:Test) { collect_data {} }
       expect {
         Ohai.plugin(:Test) {
-          collect_data { }
+          collect_data {}
         }
       }.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
@@ -295,7 +295,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#configuration" do
     let(:plugin) do
-      klass = Ohai.plugin(camel_name) { }
+      klass = Ohai.plugin(camel_name) {}
       klass.new({})
     end
 
@@ -325,7 +325,7 @@ describe Ohai::DSL::Plugin::VersionVII do
       end
 
       it "returns nil when the suboption is not configured" do
-        Ohai.config[:plugin][snake_name][:foo] = { }
+        Ohai.config[:plugin][snake_name][:foo] = {}
         expect(plugin.configuration(:foo, :bar)).to eq(nil)
       end
 
@@ -376,7 +376,7 @@ end
 describe Ohai::DSL::Plugin::VersionVI do
   describe "#version" do
     it "should save the plugin version as :version6" do
-      plugin = Class.new(Ohai::DSL::Plugin::VersionVI) { }
+      plugin = Class.new(Ohai::DSL::Plugin::VersionVI) {}
       expect(plugin.version).to eql(:version6)
     end
   end

@@ -15,11 +15,11 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '/spec_helper.rb'))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin powershell" do
   before do
-    stub_const('::RbConfig::CONFIG', {'host_os' => 'windows'})
+    stub_const("::RbConfig::CONFIG", { "host_os" => "windows" })
   end
 
   before(:each) do
@@ -50,7 +50,7 @@ END
     expect(@plugin.languages[:powershell][:serialization_version]).to eql("1.1.0.1")
     expect(@plugin.languages[:powershell][:clr_version]).to eql("4.0.30319.34014")
     expect(@plugin.languages[:powershell][:build_version]).to eql("6.3.9600.16394")
-    expect(@plugin.languages[:powershell][:compatible_versions]).to eql(['1.0', '2.0', '3.0', '4.0'])
+    expect(@plugin.languages[:powershell][:compatible_versions]).to eql(["1.0", "2.0", "3.0", "4.0"])
     expect(@plugin.languages[:powershell][:remoting_protocol_version]).to eql("2.2")
   end
 

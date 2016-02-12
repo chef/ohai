@@ -17,26 +17,26 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
-require File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'common', 'ohai_plugin_common.rb' ))
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
 
 describe Ohai::System, "plugin perl" do
-  test_plugin([ "languages", "perl" ], [ "perl" ]) do | p |
+  test_plugin(%w{languages perl}, [ "perl" ]) do |p|
     p.test([ "centos-5.9" ], [ "x86" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "i386-linux-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "i386-linux-thread-multi" } } })
     p.test([ "centos-5.9" ], [ "x64" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "x86_64-linux-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "x86_64-linux-thread-multi" } } })
     p.test([ "centos-6.4" ], [ "x86" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i386-linux-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i386-linux-thread-multi" } } })
     p.test([ "centos-6.4" ], [ "x64" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-thread-multi" } } })
     p.test([ "ubuntu-10.04" ], [ "x86" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i486-linux-gnu-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "i486-linux-gnu-thread-multi" } } })
     p.test([ "ubuntu-10.04" ], [ "x64" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-gnu-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.10.1", "archname" => "x86_64-linux-gnu-thread-multi" } } })
     p.test([ "ubuntu-12.04" ], [ "x86" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "i686-linux-gnu-thread-multi-64int" }}})
+           { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "i686-linux-gnu-thread-multi-64int" } } })
     p.test([ "ubuntu-12.04", "ubuntu-13.04" ], [ "x64" ], [[], [ "perl" ]],
-           { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" }}})
+           { "languages" => { "perl" => { "version" => "5.14.2", "archname" => "x86_64-linux-gnu-thread-multi" } } })
   end
 end

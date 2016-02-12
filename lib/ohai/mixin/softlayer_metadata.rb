@@ -17,20 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'net/https'
-require 'uri'
+require "net/https"
+require "uri"
 
 # http://sldn.softlayer.com/reference/services/SoftLayer_Resource_Metadata
 module ::Ohai::Mixin::SoftlayerMetadata
-  SOFTLAYER_API_QUERY_URL = 'https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata' unless defined?(SOFTLAYER_API_QUERY_URL)
+  SOFTLAYER_API_QUERY_URL = "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata" unless defined?(SOFTLAYER_API_QUERY_URL)
 
   def fetch_metadata
-    metadata  = {
-      'public_fqdn'   => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
-      'local_ipv4'    => fetch_metadata_item("getPrimaryBackendIpAddress.txt"),
-      'public_ipv4'   => fetch_metadata_item("getPrimaryIpAddress.txt"),
-      'region'        => fetch_metadata_item("getDatacenter.txt"),
-      'instance_id'   => fetch_metadata_item("getId.txt")
+    metadata = {
+      "public_fqdn"   => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
+      "local_ipv4"    => fetch_metadata_item("getPrimaryBackendIpAddress.txt"),
+      "public_ipv4"   => fetch_metadata_item("getPrimaryIpAddress.txt"),
+      "region"        => fetch_metadata_item("getDatacenter.txt"),
+      "instance_id"   => fetch_metadata_item("getId.txt"),
     }
   end
 
@@ -51,7 +51,7 @@ module ::Ohai::Mixin::SoftlayerMetadata
     net.use_ssl = true
     net.ca_file = ca_file_location
     res = net.get(u.request_uri)
-    if res.code.to_i.between?(200,299)
+    if res.code.to_i.between?(200, 299)
       res.body
     else
       ::Ohai::Log.error("Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")

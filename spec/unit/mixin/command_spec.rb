@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::Mixin::Command, "popen4" do
   break if RUBY_PLATFORM =~ /(win|w)32$/
@@ -30,7 +30,7 @@ describe Ohai::Mixin::Command, "popen4" do
   end
 
   it "should respect locale when specified explicitly" do
-    Ohai::Mixin::Command.popen4("echo $LC_ALL", :environment => {"LC_ALL" => "es"}) do |pid, stdin, stdout, stderr|
+    Ohai::Mixin::Command.popen4("echo $LC_ALL", :environment => { "LC_ALL" => "es" }) do |pid, stdin, stdout, stderr|
       stdin.close
       expect(stdout.read.strip).to eq("es")
     end
@@ -52,14 +52,14 @@ describe Ohai::Mixin::Command, "popen4" do
 
       it "should force encode the string to UTF-8" do
         extend Ohai::Mixin::Command
-        snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
+        snowy = run_command(:command => ("echo '" + ("☃" * 8096) + "'"))[1]
         expect(snowy.encoding).to eq(Encoding::UTF_8)
       end
     end
 
     it "should force encode the string to UTF-8" do
       extend Ohai::Mixin::Command
-      snowy = run_command(:command => ("echo '" + ('☃' * 8096) + "'"))[1]
+      snowy = run_command(:command => ("echo '" + ("☃" * 8096) + "'"))[1]
       expect(snowy.encoding).to eq(Encoding::UTF_8)
     end
   end
@@ -72,7 +72,7 @@ describe Ohai::Mixin::Command, "popen4" do
     created_procs = 0
     100.times do
       begin
-        Ohai::Mixin::Command.popen4("/bin/this-is-not-a-real-command") {|p,i,o,e| nil }
+        Ohai::Mixin::Command.popen4("/bin/this-is-not-a-real-command") { |p, i, o, e| nil }
       rescue Ohai::Exceptions::Exec
         created_procs += 1
       end

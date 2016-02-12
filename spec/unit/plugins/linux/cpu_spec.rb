@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require 'tempfile'
+require "tempfile"
 
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 shared_examples "Common cpu info" do |total_cpu, real_cpu|
   describe "cpu" do
@@ -89,7 +89,7 @@ clflush size  : 32
   end
 
   let(:tempfile_handle) do
-    tempfile = Tempfile.new('ohai-rspec-proc-cpuinfo')
+    tempfile = Tempfile.new("ohai-rspec-proc-cpuinfo")
     tempfile.write cpuinfo_contents
     tempfile.rewind
     tempfile

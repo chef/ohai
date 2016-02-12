@@ -22,7 +22,7 @@ Ohai.plugin(:Network) do
 
   def parse_media(media_string)
     media = Hash.new
-    line_array = media_string.split(' ')
+    line_array = media_string.split(" ")
 
     0.upto(line_array.length - 1) do |i|
       unless line_array[i].eql?("none")
@@ -67,7 +67,7 @@ Ohai.plugin(:Network) do
   end
 
   def excluded_setting?(setting)
-    setting.match('_sw_cksum')
+    setting.match("_sw_cksum")
   end
 
   def locate_interface(ifaces, ifname, mac)
@@ -84,7 +84,7 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:darwin) do
-    require 'scanf'
+    require "scanf"
 
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]
@@ -112,7 +112,7 @@ Ohai.plugin(:Network) do
         iface[cint] = Mash.new unless iface[cint]; iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
         iface[cint][:mtu] = $2
         if line =~ /\sflags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
-          flags = $1.split(',')
+          flags = $1.split(",")
         else
           flags = Array.new
         end
@@ -134,11 +134,11 @@ Ohai.plugin(:Network) do
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8})\s*$/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*"."}
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf('%2x'*4)*".", "broadcast" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*/
         iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
@@ -185,12 +185,12 @@ Ohai.plugin(:Network) do
     so = shell_out("netstat -i -d -l -b -n")
     so.stdout.lines do |line|
       if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+([a-f0-9\:]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
-          line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+         line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case
         net_counters[ifname] = Mash.new unless net_counters[ifname]
         net_counters[ifname] = { :rx => { :bytes => $5, :packets => $3, :errors => $4, :drop => 0, :overrun => 0, :frame => 0, :compressed => 0, :multicast => 0 },
-          :tx => { :bytes => $8, :packets => $6, :errors => $7, :drop => 0, :overrun => 0, :collisions => $9, :carrier => 0, :compressed => 0 }
+                                 :tx => { :bytes => $8, :packets => $6, :errors => $7, :drop => 0, :overrun => 0, :collisions => $9, :carrier => 0, :compressed => 0 },
         }
       end
     end

@@ -41,6 +41,6 @@ Ohai.plugin(:CPU) do
     so = shell_out("sysctl -n machdep.cpu.stepping")
     cpu[:stepping] = so.stdout.to_i
     so = shell_out("sysctl -n machdep.cpu.features")
-    cpu[:flags] = so.stdout.downcase.split(' ')
+    cpu[:flags] = so.stdout.downcase.split(" ")
   end
 end

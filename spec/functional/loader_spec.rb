@@ -33,7 +33,7 @@ Ohai.plugin(:Foo) do
   provides 'foo'
 end
 EOF
-        File.open(File.join(plugin_directory, "foo.rb"), 'w+') do |f|
+        File.open(File.join(plugin_directory, "foo.rb"), "w+") do |f|
           f.write(plugin_content)
         end
       end

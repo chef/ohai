@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require 'ohai/exception'
+require "ohai/exception"
 
 module Ohai
   class PluginConfig < Hash

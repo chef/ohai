@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'net/http'
-require 'socket'
+require "net/http"
+require "socket"
 
 module Ohai
   module Mixin
@@ -25,7 +25,7 @@ module Ohai
       GCE_METADATA_ADDR = "metadata.google.internal." unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/computeMetadata/v1beta1/?recursive=true" unless defined?(GCE_METADATA_URL)
 
-      def can_metadata_connect?(addr, port, timeout=2)
+      def can_metadata_connect?(addr, port, timeout = 2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         saddr = Socket.pack_sockaddr_in(port, addr)
         connected = false
@@ -33,7 +33,7 @@ module Ohai
         begin
           t.connect_nonblock(saddr)
         rescue Errno::EINPROGRESS
-          r,w,e = IO::select(nil,[t],nil,timeout)
+          r, w, e = IO.select(nil, [t], nil, timeout)
           if !w.nil?
             connected = true
           else
@@ -52,10 +52,10 @@ module Ohai
       end
 
       def http_client
-        Net::HTTP.start(GCE_METADATA_ADDR).tap {|h| h.read_timeout = 6}
+        Net::HTTP.start(GCE_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
       end
 
-      def fetch_metadata(id='')
+      def fetch_metadata(id = "")
         uri = "#{GCE_METADATA_URL}/#{id}"
         response = http_client.get(uri)
         return nil unless response.code == "200"
@@ -64,8 +64,8 @@ module Ohai
           data = StringIO.new(response.body)
           parser = FFI_Yajl::Parser.new
           parser.parse(data)
-        elsif  has_trailing_slash?(id) or (id == '')
-          temp={}
+        elsif has_trailing_slash?(id) or (id == "")
+          temp = {}
           response.body.split("\n").each do |sub_attr|
             temp[sanitize_key(sub_attr)] = fetch_metadata("#{id}#{sub_attr}")
           end
@@ -95,7 +95,7 @@ module Ohai
       end
 
       def sanitize_key(key)
-        key.gsub(/\-|\//, '_')
+        key.gsub(/\-|\//, "_")
       end
     end
   end

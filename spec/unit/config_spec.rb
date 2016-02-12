@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
-require 'ohai/config'
+require "ohai/config"
 
 RSpec.describe Ohai::Config do
 

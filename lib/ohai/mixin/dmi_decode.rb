@@ -23,23 +23,23 @@ module ::Ohai::Mixin::DmiDecode
       when /Manufacturer: Microsoft/
         if dmi_data =~ /Product Name: Virtual Machine/
           if dmi_data =~ /Version: (7.0|Hyper-V)/
-            return 'hyperv'
+            return "hyperv"
           elsif dmi_data =~ /Version: (VS2005R2|6.0)/
-            return 'virtualpc'
+            return "virtualpc"
           elsif dmi_data =~ /Version: 5.0/
-            return 'virtualserver'
+            return "virtualserver"
           end
         end
       when /Manufacturer: VMware/
-        return 'vmware'
+        return "vmware"
       when /Manufacturer: Xen/
-        return 'xen'
+        return "xen"
       when /Product Name: VirtualBox/
-        return 'vbox'
+        return "vbox"
       when /Product Name: OpenStack/
-        return 'openstack'
+        return "openstack"
       when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
-        return 'kvm'
+        return "kvm"
       end
     end
     return nil

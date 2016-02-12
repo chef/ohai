@@ -36,7 +36,7 @@ Ohai.plugin(:Filesystem) do
         fs[filesystem][:kb_size] = (usage.total / 1024).to_s
         fs[filesystem][:kb_used] = ((usage.total - usage.free) / 1024).to_s
         fs[filesystem][:kb_available] = (usage.free / 1024).to_s
-        fs[filesystem][:percent_used] = (usage.use_percent * 100).to_s + '%'
+        fs[filesystem][:percent_used] = (usage.use_percent * 100).to_s + "%"
       rescue SystemExit => e
         raise
       rescue Exception => e

@@ -21,51 +21,50 @@ Ohai.plugin(:SystemProfile) do
 
   collect_data(:darwin) do
     begin
-      require 'plist'
+      require "plist"
 
       system_profile Array.new
-      items =  Array.new
+      items = Array.new
       detail_level = {
-        'mini' => [
-                   "SPParallelATAData",
-                   "SPAudioData",
-                   "SPBluetoothData",
-                   "SPCardReaderData",
-                   "SPDiagnosticsData",
-                   "SPDiscBurningData",
-                   "SPEthernetData",
-                   "SPFibreChannelData",
-                   "SPFireWireData",
-                   "SPDisplaysData",
-                   "SPHardwareRAIDData",
-                   "SPMemoryData",
-                   "SPModemData",
-                   "SPNetworkData",
-                   "SPPCIData",
-                   "SPParallelSCSIData",
-                   "SPPrintersSoftwareData",
-                   "SPPrintersData",
-                   "SPSASData",
-                   "SPSerialATAData",
-                   "SPSoftwareData",
-                   "SPThunderboltData",
-                   "SPUSBData",
-                   "SPWWANData",
-                   "SPAirPortData"
-                  ],
-        'full' => [
+        "mini" => %w{
+SPParallelATAData
+SPAudioData
+SPBluetoothData
+SPCardReaderData
+SPDiagnosticsData
+SPDiscBurningData
+SPEthernetData
+SPFibreChannelData
+SPFireWireData
+SPDisplaysData
+SPHardwareRAIDData
+SPMemoryData
+SPModemData
+SPNetworkData
+SPPCIData
+SPParallelSCSIData
+SPPrintersSoftwareData
+SPPrintersData
+SPSASData
+SPSerialATAData
+SPSoftwareData
+SPThunderboltData
+SPUSBData
+SPWWANData
+SPAirPortData},
+        "full" => [
                    "SPHardwareDataType"
-                  ]
+                  ],
       }
 
       detail_level.each do |level, data_types|
         so = shell_out("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}")
-        Plist::parse_xml(so.stdout).each do |e|
+        Plist.parse_xml(so.stdout).each do |e|
           items << e
         end
       end
 
-      system_profile items.sort_by { |h| h['_dataType'] }
+      system_profile items.sort_by { |h| h["_dataType"] }
     rescue LoadError => e
       Ohai::Log.debug("Can't load gem: #{e})")
     end

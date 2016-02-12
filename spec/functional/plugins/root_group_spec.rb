@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, 'root_group plugin' do
+describe Ohai::System, "root_group plugin" do
   let(:plugin) { get_plugin("root_group") }
 
-  describe 'windows platform', :windows_only do
-    let (:wmi) {  wmi = WmiLite::Wmi.new }
+  describe "windows platform", :windows_only do
+    let (:wmi) { wmi = WmiLite::Wmi.new }
 
     it 'should return the system\'s administrators (root) group' do
       # Notethat the Win32_Group WMI provider can be slow if your
@@ -33,7 +33,7 @@ describe Ohai::System, 'root_group plugin' do
       # something to watch if you run this test in such an environment.
       groups = wmi.query("select * from Win32_Group where sid = 'S-1-5-32-544'")
       expect(groups.length).to eq(1)
-      administrators_group = groups[0]['name'].downcase
+      administrators_group = groups[0]["name"].downcase
       plugin.run
       expect(plugin[:root_group].downcase).to be == administrators_group
     end

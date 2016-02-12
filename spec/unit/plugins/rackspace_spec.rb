@@ -15,53 +15,53 @@
 # limitations under the License.
 #
 
-require 'resolv'
+require "resolv"
 
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin rackspace" do
   before(:each) do
     allow(Resolv).to receive(:getname).and_return("1.2.3.4")
     @plugin = get_plugin("rackspace")
     @plugin[:hostname] = "katie"
-    @plugin[:network] = {:interfaces => {:eth0 => {"addresses"=> {
-      "1.2.3.4"=> {
-        "broadcast"=> "67.23.20.255",
-        "netmask"=> "255.255.255.0",
-        "family"=> "inet"
+    @plugin[:network] = { :interfaces => { :eth0 => { "addresses" => {
+      "1.2.3.4" => {
+        "broadcast" => "67.23.20.255",
+        "netmask" => "255.255.255.0",
+        "family" => "inet",
       },
-      "2a00:1a48:7805:111:e875:efaf:ff08:75"=> {
-        "family"=> "inet6",
-        "prefixlen"=> "64",
-        "scope"=> "Global"
+      "2a00:1a48:7805:111:e875:efaf:ff08:75" => {
+        "family" => "inet6",
+        "prefixlen" => "64",
+        "scope" => "Global",
       },
-      "fe80::4240:95ff:fe47:6eed"=> {
-        "scope"=> "Link",
-        "prefixlen"=> "64",
-        "family"=> "inet6"
+      "fe80::4240:95ff:fe47:6eed" => {
+        "scope" => "Link",
+        "prefixlen" => "64",
+        "family" => "inet6",
       },
-      "40:40:95:47:6E:ED"=> {
-        "family"=> "lladdr"
-      }
-      }}
+      "40:40:95:47:6E:ED" => {
+        "family" => "lladdr"
+      },
+      } }
     }
   }
 
-  @plugin[:network][:interfaces][:eth1] = {:addresses => {
-    "fe80::4240:f5ff:feab:2836" => {
-      "scope"=> "Link",
-      "prefixlen"=> "64",
-      "family"=> "inet6"
-    },
-    "5.6.7.8"=> {
-      "broadcast"=> "10.176.191.255",
-      "netmask"=> "255.255.224.0",
-      "family"=> "inet"
-    },
-    "40:40:F5:AB:28:36" => {
-      "family"=> "lladdr"
-    }
-  }}
+    @plugin[:network][:interfaces][:eth1] = { :addresses => {
+      "fe80::4240:f5ff:feab:2836" => {
+        "scope" => "Link",
+        "prefixlen" => "64",
+        "family" => "inet6",
+      },
+      "5.6.7.8" => {
+        "broadcast" => "10.176.191.255",
+        "netmask" => "255.255.224.0",
+        "family" => "inet",
+      },
+      "40:40:F5:AB:28:36" => {
+        "family" => "lladdr"
+      },
+    } }
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
     # This is here to make #has_rackspace_kernel? fail until we remove that check
@@ -72,7 +72,7 @@ describe Ohai::System, "plugin rackspace" do
     allow(@plugin).to receive(:shell_out).and_return(mock_shell_out(1, "", ""))
   end
 
-  shared_examples_for "!rackspace"  do
+  shared_examples_for "!rackspace" do
     it "should NOT create rackspace" do
       @plugin.run
       expect(@plugin[:rackspace]).to be_nil
@@ -119,7 +119,7 @@ describe Ohai::System, "plugin rackspace" do
       expect(@plugin[:rackspace][:public_ipv4]).to eq("1.2.3.4")
       expect(@plugin[:rackspace][:local_ipv4]).to eq("5.6.7.8")
       expect(@plugin[:rackspace][:public_ipv6]).to eq("2a00:1a48:7805:111:e875:efaf:ff08:75")
-      expect(@plugin[:rackspace][:local_hostname]).to eq('katie')
+      expect(@plugin[:rackspace][:local_hostname]).to eq("katie")
       expect(@plugin[:rackspace][:public_hostname]).to eq("1.2.3.4")
     end
 
@@ -149,18 +149,18 @@ OUT
 
     before(:each) do
       allow(Resolv).to receive(:getname).and_raise(Resolv::ResolvError)
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
-      allow(File).to receive(:exist?).with('/etc/resolv.conf').and_return(true)
-      allow(File).to receive(:read).with('/etc/resolv.conf').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
+      allow(File).to receive(:exist?).with("/etc/resolv.conf").and_return(true)
+      allow(File).to receive(:read).with("/etc/resolv.conf").and_return("")
     end
 
-    describe 'with no public interfaces (empty eth0)' do
+    describe "with no public interfaces (empty eth0)" do
       before do
         # unset public (eth0) addresses
-        @plugin[:network][:interfaces][:eth0]['addresses'] = {}
+        @plugin[:network][:interfaces][:eth0]["addresses"] = {}
       end
 
       it "should have all required attributes" do
@@ -181,7 +181,7 @@ OUT
         @plugin.run
         expect(@plugin[:rackspace][:private_ip]).to eq("5.6.7.8")
         expect(@plugin[:rackspace][:local_ipv4]).to eq("5.6.7.8")
-        expect(@plugin[:rackspace][:local_hostname]).to eq('katie')
+        expect(@plugin[:rackspace][:local_hostname]).to eq("katie")
       end
     end
   end
@@ -190,7 +190,7 @@ OUT
     it_should_behave_like "!rackspace"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
@@ -199,12 +199,12 @@ OUT
     it_should_behave_like "!rackspace"
 
     before(:each) do
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/ec2.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/ec2.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/ec2.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return("")
 
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(false)
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
     end
   end
@@ -234,10 +234,10 @@ OUT
       stdout = '{"label": "public", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
       allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
 
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
     end
 
     it "should not have private_networks object" do
@@ -248,30 +248,30 @@ OUT
 
   describe "has private networks" do
     before do
-      @plugin[:network][:interfaces][:eth2] = {:addresses => {
+      @plugin[:network][:interfaces][:eth2] = { :addresses => {
         "fe80::be76:4eff:fe20:422b" => {
-          "scope"=> "Link",
-          "prefixlen"=> "64",
-          "family"=> "inet6"
+          "scope" => "Link",
+          "prefixlen" => "64",
+          "family" => "inet6",
        },
-        "9.10.11.12"=> {
-          "broadcast"=> "9.10.11.255",
-          "netmask"=> "255.255.255.0",
-          "family"=> "inet"
+        "9.10.11.12" => {
+          "broadcast" => "9.10.11.255",
+          "netmask" => "255.255.255.0",
+          "family" => "inet",
         },
         "BC:76:4E:20:42:2B" => {
-          "family"=> "lladdr"
-        }
-      }}
+          "family" => "lladdr"
+        },
+      } }
       stdout = 'BC764E20422B = "{"label": "private-network"}"\n'
       allow(@plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
       stdout = '{"label": "private-network", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
       allow(@plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
 
-      allow(File).to receive(:exist?).with('/etc/chef/ohai/hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('/etc/chef/ohai/hints/rackspace.json').and_return('')
+      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
+      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return('')
+      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
     end
 
     it "should private_networks object" do
@@ -287,7 +287,5 @@ OUT
     end
 
   end
-
-
 
 end

@@ -16,12 +16,12 @@
 # limitations under the License.
 #
 
-require 'ohai/mixin/dmi_decode'
+require "ohai/mixin/dmi_decode"
 
 include Ohai::Mixin::DmiDecode
 
 Ohai.plugin(:Virtualization) do
-  provides 'virtualization'
+  provides "virtualization"
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
 
@@ -33,14 +33,14 @@ Ohai.plugin(:Virtualization) do
     if so.stdout.split($/)[0].to_i == 1
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
-      virtualization[:systems][:jail] = 'guest'
+      virtualization[:systems][:jail] = "guest"
     end
 
-    so = shell_out('jls -n')
-    if (so.stdout || '').lines.count >= 1
-      virtualization[:system] = 'jail'
-      virtualization[:role] = 'host'
-      virtualization[:systems][:jail] = 'host'
+    so = shell_out("jls -n")
+    if (so.stdout || "").lines.count >= 1
+      virtualization[:system] = "jail"
+      virtualization[:role] = "host"
+      virtualization[:systems][:jail] = "host"
     end
 
     # detect from modules
@@ -48,32 +48,32 @@ Ohai.plugin(:Virtualization) do
     so.stdout.lines do |line|
       case line
       when /vboxdrv/
-        virtualization[:system] = 'vbox'
-        virtualization[:role] = 'host'
-        virtualization[:systems][:vbox] = 'host'
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "host"
+        virtualization[:systems][:vbox] = "host"
       when /vboxguest/
-        virtualization[:system] = 'vbox'
-        virtualization[:role] = 'guest'
-        virtualization[:systems][:vbox] = 'guest'
+        virtualization[:system] = "vbox"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:vbox] = "guest"
       end
     end
 
     # Detect KVM/QEMU from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
-    so = shell_out('sysctl -n hw.model')
+    so = shell_out("sysctl -n hw.model")
     if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
-      virtualization[:system] = 'kvm'
-      virtualization[:role] = 'guest'
-      virtualization[:systems][:kvm] = 'guest'
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:kvm] = "guest"
     end
 
     # parse dmidecode to discover various virtualization guests
-    if File.exist?('/usr/local/sbin/dmidecode') || File.exist?('/usr/pkg/sbin/dmidecode')
-      guest = guest_from_dmi(shell_out('dmidecode').stdout)
+    if File.exist?("/usr/local/sbin/dmidecode") || File.exist?("/usr/pkg/sbin/dmidecode")
+      guest = guest_from_dmi(shell_out("dmidecode").stdout)
       if guest
         virtualization[:system] = guest
-        virtualization[:role] = 'guest'
-        virtualization[:systems][guest.to_sym] = 'guest'
+        virtualization[:role] = "guest"
+        virtualization[:systems][guest.to_sym] = "guest"
       end
     end
   end

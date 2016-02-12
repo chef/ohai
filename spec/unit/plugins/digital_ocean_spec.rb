@@ -42,6 +42,9 @@ describe Ohai::System, "plugin digital_ocean" do
       "interfaces" => {
         "eth0" => {
           "addresses" => {
+            "00:D3:AD:B3:3F:00" => {
+              "family": "lladdr"
+            },
             "1.2.3.4" => {
               "netmask" => "255.255.255.0"
             },

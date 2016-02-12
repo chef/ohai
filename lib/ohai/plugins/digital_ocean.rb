@@ -28,7 +28,7 @@ Ohai.plugin(:DigitalOcean) do
     addresses = Mash.new({ "v4" => [], "v6" => [] })
     network[:interfaces].each_value do |iface|
       iface[:addresses].each do |address, details|
-        next if loopback?(address) || details[:family] == "lladdr"
+        next if details[:family] == "lladdr" || loopback?(address)
 
         ip = IPAddress(address)
         type = digital_ocean_address_type(ip)

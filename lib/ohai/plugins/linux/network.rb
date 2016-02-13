@@ -365,15 +365,21 @@ Ohai.plugin(:Network) do
   def favored_default_route(routes, iface, default_route, family)
     routes.select do |r|
       if family[:name] == "inet"
-        # the route must have a source field
-        return false unless defined?(r[:src])
-
-        route_interface = iface[r[:dev]]
+        # the route must have a source address
+        next if r[:src].nil? || r[:src].empty?
 
         # the interface specified in the route must exist
-        return false unless defined?(route_interface) # the interface specified in the route must exist
+        route_interface = iface[r[:dev]]
+        next if route_interface.nil? # the interface specified in the route must exist
 
-        interface_valid_for_route?(route_interface, r[:src], "inet") && route_is_valid_default_route?(r, default_route)
+        # the interface must have no addresses, or if it has the source address, the address must not
+        # be a link-level address
+        next unless interface_valid_for_route?(route_interface, r[:src], "inet")
+
+        # the route must either be a default route, or it must have a gateway which is accessible via the route
+        next unless route_is_valid_default_route?(r, default_route)
+
+        true
       elsif family[:name] == "inet6"
         iface[r[:dev]] &&
           iface[r[:dev]][:state] == "up" &&

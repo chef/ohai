@@ -29,7 +29,7 @@ module Ohai
   module Mixin
     module Command
       def shell_out(cmd)
-        m = Mixlib::ShellOut.new(cmd)
+        m = Mixlib::ShellOut.new(cmd, :timeout => 30)
         begin
           m.run_command
 
@@ -42,6 +42,9 @@ module Ohai
           m
         rescue Errno::ENOENT => e
           Ohai::Log.debug("Plugin #{self.name} failed to run command #{cmd}")
+          raise Ohai::Exceptions::Exec, e
+        rescue Mixlib::ShellOut::CommandTimeout => e
+          Ohai::Log.debug("Plugin #{self.name} timeout after 30s running command #{cmd}")
           raise Ohai::Exceptions::Exec, e
         end
       end

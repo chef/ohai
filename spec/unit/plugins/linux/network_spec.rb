@@ -1068,9 +1068,9 @@ EOM
       end
 
       describe "with a link level default route to an unaddressed int" do
-        let(:linux_ip_route) {
-'default dev eth3 scope link
-'
+        let(:linux_ip_route) { <<-EOM
+default dev eth3 scope link
+EOM
         }
 
         before(:each) do
@@ -1092,9 +1092,9 @@ EOM
       end
 
       describe "with a link level default route with a source" do
-        let(:linux_ip_route) {
-'default dev fwdintf scope link src 2.2.2.2
-'
+        let(:linux_ip_route) { <<-EOM
+default dev fwdintf scope link src 2.2.2.2
+EOM
         }
 
         before(:each) do

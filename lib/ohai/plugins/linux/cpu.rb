@@ -68,7 +68,7 @@ Ohai.plugin(:CPU) do
         cpu_number += 1
         cpuinfo[current_cpu] = Mash.new
         current_cpu_info = $2.split(",")
-        for i in current_cpu_info
+        current_cpu_info.each do |i|
           name_value = i.split("=")
           name = name_value[0].strip
           value = name_value[1].strip

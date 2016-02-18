@@ -54,6 +54,9 @@ e1000g2:1: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 ind
 net0: flags=40201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS,L3PROTECT> mtu 1500 index 2
         inet 37.153.96.148 netmask fffffe00 broadcast 37.153.97.255
         ether 90:b8:d0:16:9b:97
+net1:1: flags=100001000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,PHYSRUNNING> mtu 1500 index 2
+        inet 10.16.125.36 netmask fffffe00 broadcast 10.16.125.255
+        ether 90:b8:d0:16:9b:97
 ip.tun0: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
        inet tunnel src 109.146.85.57   tunnel dst 109.146.85.212
        tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
@@ -103,7 +106,18 @@ NETSTAT_RN
 destination: default
        mask: default
     gateway: 10.13.37.1
-  interface: e1000g0
+  interface: e1000g0 index 3
+      flags: <UP,GATEWAY,DONE,STATIC>
+ recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
+       0         0         0         0         0         0      1500         0
+ROUTE_GET
+
+    @solaris11_route_get = <<-ROUTE_GET
+   route to: default
+destination: default
+       mask: default
+    gateway: 10.13.37.1
+  interface: net1 index 2
       flags: <UP,GATEWAY,DONE,STATIC>
  recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
        0         0         0         0         0         0      1500         0
@@ -117,13 +131,13 @@ ROUTE_GET
 
     allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_route_get, ""))
     allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @solaris_arp_rn, ""))
-    allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @soalris_route_get, ""))
+    allow(@plugin).to receive(:shell_out).with("route -v -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
   end
 
   describe "gathering IP layer address info" do
     before do
       @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      allow(@plugin).to receive(:shell_out).with("route -v -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
       allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_ifconfig, ""))
       @plugin.run
     end
@@ -133,7 +147,7 @@ ROUTE_GET
     end
 
     it "detects the interfaces" do
-      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "qfe1"])
+      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "net1:1", "qfe1"])
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -149,12 +163,29 @@ ROUTE_GET
     end
   end
 
+  describe "gathering solaris 11 zone IP layer address info" do
+    before do
+      @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris11_route_get)
+      allow(@plugin).to receive(:shell_out).with("route -v -n get default").and_return(mock_shell_out(0, @solaris11_route_get, ""))
+      allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @solaris_ifconfig, ""))
+      @plugin.run
+    end
+
+    it "finds the flags for a PHYSRUNNING interface" do
+      expect(@plugin[:network][:interfaces]["net1:1"][:flags]).to eq(%w{ UP BROADCAST RUNNING MULTICAST IPv4 PHYSRUNNING })
+    end
+
+    it "finds the default interface for a solaris 11 zone" do
+      expect(@plugin[:network][:default_interface]).to eq("net1:1")
+    end
+  end
+
   # TODO: specs for the arp -an stuff, check that it correctly adds the MAC addr to the right iface, etc.
 
   describe "setting the node's default IP address attribute" do
     before do
       @stdout = double("Pipe, stdout, cmd=`route get default`", :read => @solaris_route_get)
-      allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
+      allow(@plugin).to receive(:shell_out).with("route -v -n get default").and_return(mock_shell_out(0, @solaris_route_get, ""))
       @plugin.run
     end
 

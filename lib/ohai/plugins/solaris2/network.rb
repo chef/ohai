@@ -58,7 +58,7 @@ ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
                       dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
                       iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
                       nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                      rwn sfe tavor vr wpi xge yge} unless defined?(ETHERNET_ENCAPS)
+                      rwn sfe tavor vr wpi xge yge } unless defined?(ETHERNET_ENCAPS)
 
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
@@ -74,6 +74,15 @@ Ohai.plugin(:Network) do
   def arpname_to_ifname(iface, arpname)
     iface.keys.each do |ifn|
       return ifn if ifn.split(":")[0].eql?(arpname)
+    end
+
+    nil
+  end
+
+  def full_interface_name(iface, part_name, index)
+    iface.each do |name, attrs|
+      next unless attrs && attrs.respond_to?(:[])
+      return name if /^#{part_name}($|:)/.match(name) && attrs[:index] == index
     end
 
     nil
@@ -97,10 +106,10 @@ Ohai.plugin(:Network) do
         iface[cint] = Mash.new unless iface[cint]
         iface[cint][:mtu] = $2
         iface[cint][:index] = $3
-        if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
+        if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|PHYSRUNNING|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
           flags = $1.split(",")
         else
-          flags = Array.new
+          flags = []
         end
         iface[cint][:flags] = flags.flatten
         if cint =~ /^(\w+)(\d+.*)/
@@ -156,16 +165,24 @@ Ohai.plugin(:Network) do
 
     network[:interfaces] = iface
 
-    so = shell_out("route -n get default")
+    so = shell_out("route -v -n get default")
     so.stdout.lines do |line|
-      matches = /interface: (\S+)/.match(line)
+      matches = /interface: (?<name>\S+)\s+index\s+(?<index>\d+)/.match(line)
       if matches
-        Ohai::Log.debug("found gateway device: #{$1}")
-        network[:default_interface] = matches[1]
+        network[:default_interface] =
+        case
+        when iface[matches[:name]]
+          matches[:name]
+        when int_name = full_interface_name(iface, matches[:name], matches[:index])
+          int_name
+        else
+          matches[:name]
+        end
+        Ohai::Log.debug("found interface device: #{network[:default_interface]} #{matches[:name]}")
       end
       matches = /gateway: (\S+)/.match(line)
       if matches
-        Ohai::Log.debug("found gateway: #{$1}")
+        Ohai::Log.debug("found gateway: #{matches[1]}")
         network[:default_gateway] = matches[1]
       end
     end

@@ -185,7 +185,7 @@ Ohai.plugin(:Network) do
     so = shell_out("netstat -i -d -l -b -n")
     so.stdout.lines do |line|
       if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+([a-f0-9\:]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
-         line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+          line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case
         net_counters[ifname] = Mash.new unless net_counters[ifname]

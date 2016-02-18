@@ -22,35 +22,39 @@ Ohai.plugin(:NetworkListeners) do
   depends "network", "counters/network"
 
   collect_data do
-    require "sigar"
-    flags = Sigar::NETCONN_TCP | Sigar::NETCONN_SERVER
+    begin
+      require 'sigar'
+      flags = Sigar::NETCONN_TCP | Sigar::NETCONN_SERVER
 
-    network Mash.new unless network
-    listeners = Mash.new
+      network Mash.new unless network
+      listeners = Mash.new
 
-    sigar = Sigar.new
-    sigar.net_connection_list(flags).each do |conn|
-      port = conn.local_port
-      addr = conn.local_address.to_s
-      if addr == "0.0.0.0" || addr == "::"
-        addr = "*"
+      sigar = Sigar.new
+      sigar.net_connection_list(flags).each do |conn|
+        port = conn.local_port
+        addr = conn.local_address.to_s
+        if addr == "0.0.0.0" || addr == "::"
+          addr = "*"
+        end
+        listeners[port] = Mash.new
+        listeners[port][:address] = addr
+        begin
+          pid = sigar.proc_port(conn.type, port)
+          # workaround for a failure of proc_state to throw
+          # after the first 0 has been supplied to it
+          #
+          # no longer required when hyperic/sigar#48 is fixed
+          throw ArgumentError.new("No such process") if pid == 0
+          listeners[port][:pid] = pid
+          listeners[port][:name] = sigar.proc_state(pid).name
+        rescue
+        end
       end
-      listeners[port] = Mash.new
-      listeners[port][:address] = addr
-      begin
-        pid = sigar.proc_port(conn.type, port)
-        # workaround for a failure of proc_state to throw
-        # after the first 0 has been supplied to it
-        #
-        # no longer required when hyperic/sigar#48 is fixed
-        throw ArgumentError.new("No such process") if pid == 0
-        listeners[port][:pid] = pid
-        listeners[port][:name] = sigar.proc_state(pid).name
-      rescue
-      end
+
+      network[:listeners] = Mash.new
+      network[:listeners][:tcp] = listeners
+    rescue LoadError
+      Ohai::Log.debug('Could not load sigar gem. Skipping NetworkListeners plugin')
     end
-
-    network[:listeners] = Mash.new
-    network[:listeners][:tcp] = listeners
   end
 end

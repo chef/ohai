@@ -96,7 +96,7 @@ Ohai.plugin(:Network) do
         # Apparently you can have more than one mac_address? Odd.
         [iface[cint][:configuration][:mac_address]].flatten.each do |mac_addr|
           iface[cint][:addresses][mac_addr] = {
-            "family" => "lladdr"
+            "family"    => "lladdr"
           }
         end
         iface[cint][:mtu] = iface[cint][:configuration][:mtu]

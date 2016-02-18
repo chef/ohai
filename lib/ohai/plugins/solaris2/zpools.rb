@@ -39,7 +39,7 @@ Ohai.plugin(:Zpools) do
     end
 
     # Grab individual health for devices in the zpools
-    pools.keys.each do |pool|
+    for pool in pools.keys
       pools[pool][:devices] = Mash.new
       # Run "zpool status" as non-root user (adm) so that
       # the command won't try to open() each device which can

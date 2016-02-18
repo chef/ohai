@@ -33,7 +33,7 @@ Ohai.plugin(:CPU) do
     processor_info.each_with_index do |processor, i|
       desc, instance, record, keyvalue = processor.split(":")
       cpu[instance] ||= Mash.new
-      if currentcpu != instance
+      if (currentcpu != instance)
         cpu["total"] += 1
         currentcpu = instance
       end

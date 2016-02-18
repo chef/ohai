@@ -37,7 +37,7 @@ module Ohai
       module_function :shell_out
 
       def run_command(args = {})
-        Ohai::Log.warn("Ohai::Mixin::Command run_command is deprecated and will be removed in Ohai 9.0.0")
+        Ohai::Log.warn('Ohai::Mixin::Command run_command is deprecated and will be removed in Ohai 9.0.0')
         if args.has_key?(:creates)
           if File.exists?(args[:creates])
             Ohai::Log.debug("Skipping #{args[:command]} - creates #{args[:creates]} exists.")
@@ -125,7 +125,7 @@ module Ohai
       #
       # Thanks Ara!
       def popen4(cmd, args = {}, &b)
-        Ohai::Log.warn("Ohai::Mixin::Command popen4 is deprecated and will be removed in Ohai 9.0.0")
+        Ohai::Log.warn('Ohai::Mixin::Command popen4 is deprecated and will be removed in Ohai 9.0.0')
 
         # Disable garbage collection to work around possible bug in MRI
         # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select

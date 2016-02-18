@@ -59,6 +59,6 @@ Ohai.plugin(:NetworkRoutes) do
       end
     end
   rescue LoadError
-    Ohai::Log.debug("Could not load sigar gem. Skipping NetworkRoutes plugin")
+    Ohai::Log.debug('Could not load sigar gem. Skipping NetworkRoutes plugin')
   end
 end

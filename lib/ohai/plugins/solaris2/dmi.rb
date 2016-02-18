@@ -117,7 +117,7 @@ Ohai.plugin(:DMI) do
 
       # remove/replace any characters that don't fall inside permissible ASCII range, or whitespace
       line = raw_line.gsub(/[^\x20-\x7E\n\t\r]/, ".")
-      if line != raw_line
+      if (line != raw_line)
         Ohai::Log.debug("converted characters from line:\n#{raw_line}")
       end
 

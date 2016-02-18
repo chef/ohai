@@ -17,10 +17,10 @@
 #  limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper.rb')
 
 begin
-  require "ipaddress"
+  require 'ipaddress'
 rescue LoadError => e
   puts "The linux network plugin spec tests will fail without the 'ipaddress' library/gem.\n\n"
   raise e
@@ -29,8 +29,8 @@ end
 describe Ohai::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }
 
-  let(:linux_ifconfig) { <<-EOM
-eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2
+  let(:linux_ifconfig) {
+'eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2
           inet addr:10.116.201.76  Bcast:10.116.201.255  Mask:255.255.255.0
           inet6 addr: fe80::1031:3dff:fe02:bea2/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
@@ -138,41 +138,41 @@ xapi1     Link encap:Ethernet  HWaddr E8:39:35:C5:C8:50
           TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0
           RX bytes:21515031 (20.5 MiB)  TX bytes:2052 (2.0 KiB)
-EOM
+'
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
   }
 
-  let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel
+  let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 10.5.4.0/24 \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
 default via 10.116.201.1 dev eth0
-EOM
+'
   }
 
-  let(:linux_route_n) { <<-EOM
-Kernel IP routing table
+  let(:linux_route_n) {
+'Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
 0.0.0.0         10.116.201.1    0.0.0.0         UG    0      0        0 eth0
-EOM
+'
   }
 
-  let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+  let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+'
   }
 
-  let(:linux_ip_addr) { <<-EOM
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+  let(:linux_ip_addr) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
     inet6 ::1/128 scope host
@@ -225,11 +225,11 @@ EOM
     link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
     inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
        valid_lft forever preferred_lft forever
-EOM
+'
   }
 
-  let(:linux_ip_link_s_d) { <<-EOM
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+  let(:linux_ip_link_s_d) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     RX: bytes  packets  errors  dropped overrun mcast
     35224      524      0       0       0       0
@@ -278,28 +278,28 @@ EOM
     21468183   159866   0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     2052       6        0       0       0       0
-EOM
+'
   }
 
-  let(:linux_arp_an) { <<-EOM
-? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
-EOM
+  let(:linux_arp_an) {
+'? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
+'
   }
 
-  let(:linux_ip_neighbor_show) { <<-EOM
-10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
-EOM
+  let(:linux_ip_neighbor_show) {
+'10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
+'
   }
 
-  let(:linux_ip_inet6_neighbor_show) { <<-EOM
-1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
+  let(:linux_ip_inet6_neighbor_show) {
+'1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.11 lladdr 00:1c:0e:30:28:00 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
-EOM
+'
   }
 
-  let(:linux_ethtool) { <<-EOM
-Settings for eth0:
+  let(:linux_ethtool) {
+'Settings for eth0:
         Supported ports: [ FIBRE ]
         Supported link modes:   1000baseT/Full
                                 10000baseT/Full
@@ -320,7 +320,7 @@ Settings for eth0:
         Current message level: 0x00000007 (7)
                                drv probe link
         Link detected: yes
-EOM
+'
   }
 
   before(:each) do
@@ -359,119 +359,121 @@ EOM
     end
   end
 
-  %w{ifconfig iproute2}.each do |network_method|
+
+  ["ifconfig","iproute2"].each do |network_method|
 
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
-        allow(plugin).to receive(:find_ethtool_binary).and_return( "/sbin/ethtool" )
+        allow(plugin).to receive(:find_ethtool_binary).and_return( '/sbin/ethtool' )
         plugin.run
       end
 
       it "completes the run" do
         expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-        expect(plugin["network"]).not_to be_nil
+        expect(plugin['network']).not_to be_nil
       end
 
       it "detects the interfaces" do
-        expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        expect(plugin['network']['interfaces'].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system",  "tun0", "venet0", "venet0:0", "xapi1"])
       end
 
       it "detects the layer one details of an ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["link_speed"]).to eq(10000)
-        expect(plugin["network"]["interfaces"]["eth0"]["duplex"]).to eq("Full")
-        expect(plugin["network"]["interfaces"]["eth0"]["port"]).to eq("FIBRE")
-        expect(plugin["network"]["interfaces"]["eth0"]["transceiver"]).to eq("external")
-        expect(plugin["network"]["interfaces"]["eth0"]["auto_negotiation"]).to eq("on")
-        expect(plugin["network"]["interfaces"]["eth0"]["mdi_x"]).to be_nil
+        expect(plugin['network']['interfaces']['eth0']['link_speed']).to eq(10000)
+        expect(plugin['network']['interfaces']['eth0']['duplex']).to eq('Full')
+        expect(plugin['network']['interfaces']['eth0']['port']).to eq('FIBRE')
+        expect(plugin['network']['interfaces']['eth0']['transceiver']).to eq('external')
+        expect(plugin['network']['interfaces']['eth0']['auto_negotiation']).to eq('on')
+        expect(plugin['network']['interfaces']['eth0']['mdi_x']).to be_nil
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"].keys).to include("10.116.201.76")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["10.116.201.76"]["netmask"]).to eq("255.255.255.0")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["10.116.201.76"]["broadcast"]).to eq("10.116.201.255")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["10.116.201.76"]["family"]).to eq("inet")
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('10.116.201.76')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['netmask']).to eq('255.255.255.0')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['broadcast']).to eq('10.116.201.255')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['10.116.201.76']['family']).to eq('inet')
       end
 
       it "detects the ipv4 addresses of an ethernet subinterface" do
-        expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"].keys).to include("192.168.0.16")
-        expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"]["192.168.0.16"]["netmask"]).to eq("255.255.255.0")
-        expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"]["192.168.0.16"]["broadcast"]).to eq("192.168.0.255")
-        expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"]["192.168.0.16"]["family"]).to eq("inet")
+        expect(plugin['network']['interfaces']['eth0.11']['addresses'].keys).to include('192.168.0.16')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['netmask']).to eq('255.255.255.0')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['broadcast']).to eq('192.168.0.255')
+        expect(plugin['network']['interfaces']['eth0.11']['addresses']['192.168.0.16']['family']).to eq('inet')
       end
 
       it "detects the ipv6 addresses of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"].keys).to include("fe80::1031:3dff:fe02:bea2")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["fe80::1031:3dff:fe02:bea2"]["scope"]).to eq("Link")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["fe80::1031:3dff:fe02:bea2"]["prefixlen"]).to eq("64")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["fe80::1031:3dff:fe02:bea2"]["family"]).to eq("inet6")
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('fe80::1031:3dff:fe02:bea2')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['scope']).to eq('Link')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['prefixlen']).to eq('64')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['fe80::1031:3dff:fe02:bea2']['family']).to eq('inet6')
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        %w{ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 }.each  do |addr|
-          expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"].keys).to include(addr)
-          expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["scope"]).to eq("Global")
-          expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["prefixlen"]).to eq("64")
-          expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["family"]).to eq("inet6")
+        %w[ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 ].each  do |addr|
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'].keys).to include(addr)
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['scope']).to eq('Global')
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['prefixlen']).to eq('64')
+          expect(plugin['network']['interfaces']['eth0.11']['addresses'][addr]['family']).to eq('inet6')
         end
       end
 
       it "detects the mac addresses of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"].keys).to include("12:31:3D:02:BE:A2")
-        expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["12:31:3D:02:BE:A2"]["family"]).to eq("lladdr")
+        expect(plugin['network']['interfaces']['eth0']['addresses'].keys).to include('12:31:3D:02:BE:A2')
+        expect(plugin['network']['interfaces']['eth0']['addresses']['12:31:3D:02:BE:A2']['family']).to eq('lladdr')
       end
 
       it "detects the encapsulation type of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["encapsulation"]).to eq("Ethernet")
+        expect(plugin['network']['interfaces']['eth0']['encapsulation']).to eq('Ethernet')
       end
 
       it "detects the flags of the ethernet interface" do
         if network_method == "ifconfig"
-          expect(plugin["network"]["interfaces"]["eth0"]["flags"].sort).to eq(%w{BROADCAST MULTICAST RUNNING UP})
+          expect(plugin['network']['interfaces']['eth0']['flags'].sort).to eq(['BROADCAST','MULTICAST','RUNNING','UP'])
         else
-          expect(plugin["network"]["interfaces"]["eth0"]["flags"].sort).to eq(%w{BROADCAST LOWER_UP MULTICAST UP})
+          expect(plugin['network']['interfaces']['eth0']['flags'].sort).to eq(['BROADCAST','LOWER_UP','MULTICAST','UP'])
         end
       end
 
       it "detects the number of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["number"]).to eq("0")
+        expect(plugin['network']['interfaces']['eth0']['number']).to eq("0")
       end
 
       it "detects the mtu of the ethernet interface" do
-        expect(plugin["network"]["interfaces"]["eth0"]["mtu"]).to eq("1500")
+        expect(plugin['network']['interfaces']['eth0']['mtu']).to eq("1500")
       end
 
       it "detects the ipv4 addresses of the loopback interface" do
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"].keys).to include("127.0.0.1")
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"]["127.0.0.1"]["netmask"]).to eq("255.0.0.0")
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"]["127.0.0.1"]["family"]).to eq("inet")
+        expect(plugin['network']['interfaces']['lo']['addresses'].keys).to include('127.0.0.1')
+        expect(plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['netmask']).to eq('255.0.0.0')
+        expect(plugin['network']['interfaces']['lo']['addresses']['127.0.0.1']['family']).to eq('inet')
       end
 
       it "detects the ipv6 addresses of the loopback interface" do
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"].keys).to include("::1")
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"]["::1"]["scope"]).to eq("Node")
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"]["::1"]["prefixlen"]).to eq("128")
-        expect(plugin["network"]["interfaces"]["lo"]["addresses"]["::1"]["family"]).to eq("inet6")
+        expect(plugin['network']['interfaces']['lo']['addresses'].keys).to include('::1')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['scope']).to eq('Node')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['prefixlen']).to eq('128')
+        expect(plugin['network']['interfaces']['lo']['addresses']['::1']['family']).to eq('inet6')
       end
 
       it "detects the encapsulation type of the loopback interface" do
-        expect(plugin["network"]["interfaces"]["lo"]["encapsulation"]).to eq("Loopback")
+        expect(plugin['network']['interfaces']['lo']['encapsulation']).to eq('Loopback')
       end
 
       it "detects the flags of the ethernet interface" do
         if network_method == "ifconfig"
-          expect(plugin["network"]["interfaces"]["lo"]["flags"].sort).to eq(%w{LOOPBACK RUNNING UP})
+          expect(plugin['network']['interfaces']['lo']['flags'].sort).to eq(['LOOPBACK','RUNNING','UP'])
         else
-          expect(plugin["network"]["interfaces"]["lo"]["flags"].sort).to eq(%w{LOOPBACK LOWER_UP UP})
+          expect(plugin['network']['interfaces']['lo']['flags'].sort).to eq(['LOOPBACK','LOWER_UP','UP'])
         end
       end
 
+
       it "detects the mtu of the loopback interface" do
-        expect(plugin["network"]["interfaces"]["lo"]["mtu"]).to eq("16436")
+        expect(plugin['network']['interfaces']['lo']['mtu']).to eq("16436")
       end
 
       it "detects the arp entries" do
-        expect(plugin["network"]["interfaces"]["eth0"]["arp"]["10.116.201.1"]).to eq("fe:ff:ff:ff:ff:ff")
+        expect(plugin['network']['interfaces']['eth0']['arp']['10.116.201.1']).to eq('fe:ff:ff:ff:ff:ff')
       end
 
     end
@@ -483,34 +485,34 @@ EOM
       end
 
       it "detects the ethernet counters" do
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["bytes"]).to eq("691785313")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["packets"]).to eq("1919690")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["collisions"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["queuelen"]).to eq("1000")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["errors"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["carrier"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["tx"]["drop"]).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['bytes']).to eq("691785313")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['packets']).to eq("1919690")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['collisions']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['queuelen']).to eq("1000")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['carrier']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['tx']['drop']).to eq("0")
 
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["rx"]["bytes"]).to eq("1392844460")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["rx"]["packets"]).to eq("2659966")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["rx"]["errors"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["rx"]["overrun"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["eth0"]["rx"]["drop"]).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['bytes']).to eq("1392844460")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['packets']).to eq("2659966")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['overrun']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['eth0']['rx']['drop']).to eq("0")
       end
 
       it "detects the loopback counters" do
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["bytes"]).to eq("35224")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["packets"]).to eq("524")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["collisions"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["errors"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["carrier"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["tx"]["drop"]).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['bytes']).to eq("35224")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['packets']).to eq("524")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['collisions']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['carrier']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['tx']['drop']).to eq("0")
 
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["rx"]["bytes"]).to eq("35224")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["rx"]["packets"]).to eq("524")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["rx"]["errors"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["rx"]["overrun"]).to eq("0")
-        expect(plugin["counters"]["network"]["interfaces"]["lo"]["rx"]["drop"]).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['bytes']).to eq("35224")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['packets']).to eq("524")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['errors']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['overrun']).to eq("0")
+        expect(plugin['counters']['network']['interfaces']['lo']['rx']['drop']).to eq("0")
       end
     end
 
@@ -522,27 +524,27 @@ EOM
 
       describe "without a subinterface" do
         it "finds the default interface by asking which iface has the default route" do
-          expect(plugin["network"]["default_interface"]).to eq("eth0")
+          expect(plugin['network']['default_interface']).to eq('eth0')
         end
 
         it "finds the default gateway by asking which iface has the default route" do
-          expect(plugin["network"]["default_gateway"]).to eq("10.116.201.1")
+          expect(plugin['network']['default_gateway']).to eq('10.116.201.1')
         end
       end
 
       describe "with a link level default route" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
 default dev eth0 scope link
-EOM
+'
         }
 
-        let(:linux_route_n) { <<-EOM
-Kernel IP routing table
+        let(:linux_route_n) {
+'Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
-EOM
+'
         }
 
         before(:each) do
@@ -550,27 +552,27 @@ EOM
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          expect(plugin["network"]["default_interface"]).to eq("eth0")
+          expect(plugin['network']['default_interface']).to eq('eth0')
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          expect(plugin["network"]["default_gateway"]).to eq("0.0.0.0")
+          expect(plugin['network']['default_gateway']).to eq('0.0.0.0')
         end
       end
 
       describe "with a subinterface" do
-        let(:linux_ip_route) { <<-EOM
-192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
+        let(:linux_ip_route) {
+'192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
 default via 192.168.0.15 dev eth0.11
-EOM
+'
         }
 
-        let(:linux_route_n) { <<-EOM
-Kernel IP routing table
+        let(:linux_route_n) {
+'Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.0.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0.11
 0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
-EOM
+'
         }
 
         before(:each) do
@@ -578,11 +580,11 @@ EOM
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          expect(plugin["network"]["default_interface"]).to eq("eth0.11")
+          expect(plugin['network']["default_interface"]).to eq('eth0.11')
         end
 
         it "finds the default interface by asking which iface has the default route" do
-          expect(plugin["network"]["default_gateway"]).to eq("192.168.0.15")
+          expect(plugin['network']["default_gateway"]).to eq('192.168.0.15')
         end
       end
     end
@@ -598,44 +600,44 @@ EOM
 
     it "completes the run" do
       expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-      expect(plugin["network"]).not_to be_nil
+      expect(plugin['network']).not_to be_nil
     end
 
     it "finds the default inet6 interface if there's a inet6 default route" do
-      expect(plugin["network"]["default_inet6_interface"]).to eq("eth0.11")
+      expect(plugin['network']['default_inet6_interface']).to eq('eth0.11')
     end
 
     it "finds the default inet6 gateway if there's a inet6 default route" do
-      expect(plugin["network"]["default_inet6_gateway"]).to eq("1111:2222:3333:4444::1")
+      expect(plugin['network']['default_inet6_gateway']).to eq('1111:2222:3333:4444::1')
     end
 
     it "finds inet6 neighbours" do
-      expect(plugin["network"]["interfaces"]["eth0.11"]["neighbour_inet6"]["1111:2222:3333:4444::1"]).to eq("00:1c:0e:12:34:56")
+      expect(plugin['network']['interfaces']['eth0.11']['neighbour_inet6']['1111:2222:3333:4444::1']).to eq('00:1c:0e:12:34:56')
     end
 
     it "detects the ipv4 addresses of an ethernet interface with a crazy name" do
-      expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"].keys).to include("192.168.212.2")
-      expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["netmask"]).to eq("255.255.255.0")
-      expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["family"]).to eq("inet")
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses'].keys).to include('192.168.212.2')
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['netmask']).to eq('255.255.255.0')
+      expect(plugin['network']['interfaces']['foo:veth0@eth0']['addresses']['192.168.212.2']['family']).to eq('inet')
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do
-      expect(plugin["network"]["interfaces"]["eth0:5"]["addresses"].keys).to include("192.168.5.1")
-      expect(plugin["network"]["interfaces"]["eth0:5"]["addresses"]["192.168.5.1"]["netmask"]).to eq("255.255.255.0")
-      expect(plugin["network"]["interfaces"]["eth0:5"]["addresses"]["192.168.5.1"]["family"]).to eq("inet")
+      expect(plugin['network']['interfaces']['eth0:5']['addresses'].keys).to include('192.168.5.1')
+      expect(plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['netmask']).to eq('255.255.255.0')
+      expect(plugin['network']['interfaces']['eth0:5']['addresses']['192.168.5.1']['family']).to eq('inet')
     end
 
     it "adds the vlan information of an interface" do
-      expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["id"]).to eq("11")
-      expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["flags"]).to eq([ "REORDER_HDR" ])
+      expect(plugin['network']['interfaces']['eth0.11']['vlan']['id']).to eq('11')
+      expect(plugin['network']['interfaces']['eth0.11']['vlan']['flags']).to eq([ 'REORDER_HDR' ])
     end
 
     it "adds the state of an interface" do
-      expect(plugin["network"]["interfaces"]["eth0.11"]["state"]).to eq("up")
+      expect(plugin['network']['interfaces']['eth0.11']['state']).to eq('up')
     end
 
     it "detects interfaces only visible via ip link" do
-      expect(plugin["network"]["interfaces"]["eth3"]["state"]).to eq("up")
+      expect(plugin['network']['interfaces']['eth3']['state']).to eq('up')
     end
 
     describe "when IPv6 is disabled" do
@@ -645,28 +647,28 @@ EOM
       end
 
       it "doesn't set ip6address" do
-        expect(plugin["ip6address"]).to be_nil
+        expect(plugin['ip6address']).to be_nil
       end
     end
 
     describe "when dealing with routes" do
       it "adds routes" do
         plugin.run
-        expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family => "inet" )
-        expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to include Mash.new( :destination => "10.5.4.0/24", :family => "inet", :via => "10.5.4.1")
-        expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to include Mash.new( :destination => "10.5.4.0/24", :family => "inet", :via => "10.5.4.2")
-        expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["routes"]).to include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family => "inet" )
-        expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
-        expect(plugin["network"]["interfaces"]["eth0.11"]["routes"]).to include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
-        expect(plugin["network"]["interfaces"]["eth0.11"]["routes"]).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.116.201.0/24", :proto => "kernel", :family =>"inet" )
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.1")
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "10.5.4.0/24", :family =>"inet", :via => "10.5.4.2")
+        expect(plugin['network']['interfaces']['foo:veth0@eth0']['routes']).to include Mash.new( :destination => "192.168.212.0/24", :proto => "kernel", :src => "192.168.212.2", :family =>"inet" )
+        expect(plugin['network']['interfaces']['eth0']['routes']).to include Mash.new( :destination => "fe80::/64", :metric => "256", :proto => "kernel", :family => "inet6" )
+        expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "1111:2222:3333:4444::/64", :metric => "1024", :family => "inet6" )
+        expect(plugin['network']['interfaces']['eth0.11']['routes']).to include Mash.new( :destination => "default", :via => "1111:2222:3333:4444::1", :metric => "1024", :family => "inet6")
       end
 
       describe "when there isn't a source field in route entries and no ipv6 default routes" do
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
-EOM
+'
         }
 
         before(:each) do
@@ -674,35 +676,35 @@ EOM
         end
 
         it "doesn't set ipaddress" do
-          expect(plugin["ipaddress"]).to be nil
+          expect(plugin['ipaddress']).to be nil
         end
 
         it "doesn't set macaddress" do
-          expect(plugin["macaddress"]).to be nil
+          expect(plugin['macaddress']).to be nil
         end
 
         it "doesn't set ip6address" do
-          expect(plugin["ip6address"]).to be nil
+          expect(plugin['ip6address']).to be nil
         end
       end
 
       describe "when there's a source field in the default route entry" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0  src 10.116.201.76
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-EOM
+'
         }
 
         before(:each) do
@@ -711,37 +713,37 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
-          expect(plugin["ipaddress"]).to eq("10.116.201.76")
+          expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
         it "sets ip6address" do
-          expect(plugin["ip6address"]).to eq("1111:2222:3333:4444::3")
+          expect(plugin['ip6address']).to eq("1111:2222:3333:4444::3")
         end
       end
 
       describe "when there're several default routes" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
-EOM
+'
         }
 
         before(:each) do
@@ -750,39 +752,39 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets default ipv4 interface and gateway" do
-          expect(plugin["network"]["default_interface"]).to eq("eth0")
-          expect(plugin["network"]["default_gateway"]).to eq("10.116.201.254")
+          expect(plugin['network']['default_interface']).to eq('eth0')
+          expect(plugin['network']['default_gateway']).to eq('10.116.201.254')
         end
 
         it "sets default ipv6 interface and gateway" do
-          expect(plugin["network"]["default_inet6_interface"]).to eq("eth0.11")
-          expect(plugin["network"]["default_inet6_gateway"]).to eq("1111:2222:3333:4444::ffff")
+          expect(plugin['network']['default_inet6_interface']).to eq('eth0.11')
+          expect(plugin['network']['default_inet6_gateway']).to eq('1111:2222:3333:4444::ffff')
         end
       end
 
       describe "when there're a mixed setup of routes that could be used to set ipaddress" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9 src 10.116.201.74
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
-EOM
+'
         }
 
         before(:each) do
@@ -791,7 +793,7 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
@@ -804,82 +806,82 @@ EOM
       end
 
       describe "when there's a source field in a local route entry but it isnt in the default route" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+'
         }
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           plugin.run
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets ipaddress" do
           plugin.run
-          expect(plugin["ipaddress"]).to eq("10.116.201.76")
+          expect(plugin['ipaddress']).to eq("10.116.201.76")
         end
 
         # without a source address on the default route we cannot pick the an ipv6 address from the interface
         # In the future an RFC6724 compliant process should choose ip6address in the network plugin
         it "does not set ip6address" do
           plugin.run
-          expect(plugin["ip6address"]).to eq(nil)
+          expect(plugin['ip6address']).to eq(nil)
         end
 
         context "with only ipv6 routes" do
-          let(:linux_ip_route) { "" }
+          let(:linux_ip_route) { '' }
 
           it "sets macaddress to the mac address of the ip6 default interface" do
-            expect(plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
+            expect(plugin['macaddress']).to eq("00:AA:BB:CC:DD:EE")
           end
         end
 
         describe "when about to set macaddress" do
           it "sets macaddress" do
             plugin.run
-            expect(plugin["macaddress"]).to eq("12:31:3D:02:BE:A2")
+            expect(plugin['macaddress']).to eq("12:31:3D:02:BE:A2")
           end
 
           context "when then ipv4 interface has the NOARP flag and no ipv6 routes exist" do
-            let(:linux_ip_route) { <<-EOM
-10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
+            let(:linux_ip_route) {
+'10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
-EOM
+'
             }
-            let(:linux_ip_route_inet6) { "" }
+            let(:linux_ip_route_inet6) { '' }
 
             it "completes the run" do
               expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
               plugin.run
-              expect(plugin["network"]).not_to be_nil
+              expect(plugin['network']).not_to be_nil
             end
 
             it "doesn't set macaddress" do
               plugin.run
-              expect(plugin["macaddress"]).to be_nil
+              expect(plugin['macaddress']).to be_nil
             end
           end
         end
       end
 
       describe "with a link level default route" do
-        let(:linux_ip_route) { <<-EOM
-default dev venet0 scope link
-EOM
+        let(:linux_ip_route) {
+'default dev venet0 scope link
+'
         }
 
         before(:each) do
@@ -888,19 +890,19 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ipaddress" do
-          expect(plugin["ipaddress"]).to be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
       end
 
       describe "when not having a global scope ipv6 address" do
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
-EOM
+'
         }
         before(:each) do
           plugin.run
@@ -908,30 +910,30 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ip6address" do
-          expect(plugin["ip6address"]).to be_nil
+          expect(plugin['ip6address']).to be_nil
         end
 
       end
 
       describe "with no default route" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+        let(:linux_ip_route) {
+'10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-EOM
+'
         }
 
         before(:each) do
@@ -940,22 +942,21 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't set ipaddress" do
-          expect(plugin["ipaddress"]).to be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
 
         it "doesn't set ip6address" do
-          expect(plugin["ip6address"]).to be_nil
+          expect(plugin['ip6address']).to be_nil
         end
       end
 
       describe "with openvz setup" do
-        let(:linux_ip_route) { "default dev venet0  scope link" }
-        let(:linux_ip_addr) { <<-EOM
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+        let(:linux_ip_route) {'default dev venet0  scope link' }
+        let(:linux_ip_addr) {'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
     inet6 ::1/128 scope host
@@ -966,11 +967,10 @@ EOM
     inet 10.116.201.76/24 brd 10.116.201.255 scope global venet0:0
     inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
        valid_lft 6128sec preferred_lft 2526sec
-EOM
-        }
+'}
         # We don't have the corresponding ipv6 data for these tests
-        let(:linux_ip_route_inet6) { "" }
-        let(:linux_ip_inet6_neighbor_show) { "" }
+        let(:linux_ip_route_inet6) { '' }
+        let(:linux_ip_inet6_neighbor_show) { '' }
 
         before(:each) do
           allow(plugin).to receive(:is_openvz?).and_return true
@@ -980,39 +980,39 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "sets default ipv4 interface and gateway" do
-          expect(plugin["network"]["default_interface"]).to eq("venet0:0")
-          expect(plugin["network"]["default_gateway"]).to eq("0.0.0.0")
+          expect(plugin['network']['default_interface']).to eq('venet0:0')
+          expect(plugin['network']['default_gateway']).to eq('0.0.0.0')
         end
 
         it "sets correct routing information" do
-          expect(plugin["network"]["interfaces"]["venet0:0"]["routes"]).to eq([Mash.new( :destination => "default", :family => "inet", :scope => "link" )])
+          expect(plugin['network']['interfaces']['venet0:0']['routes']).to eq([Mash.new( :destination => "default", :family => "inet", :scope => "link" )])
         end
 
         it "sets correct address information" do
-          expect(plugin["network"]["interfaces"]["venet0:0"]["addresses"]).to eq("10.116.201.76" => Mash.new(:family => "inet", :prefixlen => "24", :netmask => "255.255.255.0", :broadcast => "10.116.201.255", :scope => "Global"))
+          expect(plugin['network']['interfaces']['venet0:0']['addresses']).to eq("10.116.201.76" => Mash.new(:family => 'inet', :prefixlen => '24', :netmask =>'255.255.255.0', :broadcast => '10.116.201.255', :scope => "Global"))
         end
       end
 
       describe "with irrelevant routes (container setups)" do
-        let(:linux_ip_route) { <<-EOM
-10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
+        let(:linux_ip_route) {
+'10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
 10.116.201.0/26 dev if4 proto kernel  src 10.116.201.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
 10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
 default via 10.116.201.1 dev eth0  src 10.116.201.99
-EOM
+'
         }
 
-        let(:linux_ip_route_inet6) { <<-EOM
-fe80::/64 dev eth0  proto kernel  metric 256
+        let(:linux_ip_route_inet6) {
+'fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+'
         }
 
         before(:each) do
@@ -1021,29 +1021,29 @@ EOM
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
-          expect(plugin["network"]).not_to be_nil
+          expect(plugin['network']).not_to be_nil
         end
 
         it "doesn't add bogus routes" do
-          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).not_to include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
-          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).not_to include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
-          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).not_to include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "10.116.201.0/26", :proto => "kernel", :family => "inet", :via => "10.116.201.39" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "10.118.19.0/26", :proto => "kernel", :family => "inet", :via => "10.118.19.39" )
+          expect(plugin['network']['interfaces']['eth0']['routes']).not_to include Mash.new( :destination => "1111:2222:3333:4444::/64", :family => "inet6", :metric => "1024" )
         end
 
         it "doesn't set ipaddress" do
-          expect(plugin["ipaddress"]).to be_nil
+          expect(plugin['ipaddress']).to be_nil
         end
 
         it "doesn't set ip6address" do
-          expect(plugin["ip6address"]).to be_nil
+          expect(plugin['ip6address']).to be_nil
         end
       end
 
       # This should never happen in the real world.
       describe "when encountering a surprise interface" do
-        let(:linux_ip_route) { <<-EOM
-192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
-EOM
+        let(:linux_ip_route) {
+'192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
+'
         }
 
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
@@ -1054,8 +1054,8 @@ EOM
       end
 
       describe "when running with ip version ss131122" do
-        let(:linux_ip_link_s_d) { <<-EOM
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
+        let(:linux_ip_link_s_d) {
+'1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
     RX: bytes  packets  errors  dropped overrun mcast
     35224      524      0       0       0       0
@@ -1086,14 +1086,14 @@ EOM
     1392844460 2659966  0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     691785313  1919690  0       0       0       0
-EOM
+'
         }
 
         it "adds the vlan information of an interface" do
           plugin.run
-          expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["id"]).to eq("11")
-          expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["protocol"]).to eq("802.1Q")
-          expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["flags"]).to eq([ "REORDER_HDR" ])
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['id']).to eq('11')
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['protocol']).to eq('802.1Q')
+          expect(plugin['network']['interfaces']['eth0.11']['vlan']['flags']).to eq([ 'REORDER_HDR' ])
         end
       end
     end

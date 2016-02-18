@@ -34,9 +34,9 @@ describe Ohai::System, "Darwin kernel plugin" do
 EOF
 
     modules = {
-      "com.apple.kec.corecrypto" => { "version" => "1.0", "size" => 266240, "index" => "8", "refcount" => "0" },
-      "com.apple.iokit.IOACPIFamily" => { "version" => "1.4", "size" => 36864, "index" => "9", "refcount" => "22" },
-      "com.apple.iokit.IOPCIFamily" => { "version" => "2.8", "size" => 167936, "index" => "10", "refcount" => "30" } }
+      "com.apple.kec.corecrypto" =>       { "version" => "1.0", "size" => 266240, "index" => "8", "refcount" => "0" },
+      "com.apple.iokit.IOACPIFamily" =>       { "version" => "1.4", "size" => 36864, "index" => "9", "refcount" => "22" },
+      "com.apple.iokit.IOPCIFamily" =>       { "version" => "2.8", "size" => 167936, "index" => "10", "refcount" => "30" } }
 
     @plugin.run
     expect(@plugin[:kernel][:modules]).to eql(modules)

@@ -32,7 +32,7 @@ module OhaiPluginCommon
 
     # env = JSON.load(env)
 
-    argv = ARGV.map { |arg| ( /\ / =~ arg ) ? "\"" + arg + "\"" : arg }.join " "
+    argv = ARGV.map { |arg| if /\ / =~ arg then "\"" + arg + "\"" else arg end }.join " "
     match = data[platform][arch].select { |v| v[:params] == argv && v[:env] == env }
 
     raise "No canned output for these settings." if match.empty?
@@ -199,7 +199,7 @@ def test_plugin(plugin_names, cmd_list)
   return
 
   # clean the path directory, in case a previous test was interrupted
-  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/ # rubocop:disable Lint/UnreachableCode
+  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
 
   l = lambda do |*args|
     platforms = args[0]

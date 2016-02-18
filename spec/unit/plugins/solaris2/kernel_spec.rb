@@ -151,7 +151,7 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     # Teh daterz
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
-    teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" => 17955, "description" => "filesystem for specfs" }
+    teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" =>  17955, "description" => "filesystem for specfs" }
     expect(@plugin[:kernel][:modules].keys).to include("specfs")
     expect(@plugin[:kernel][:modules].keys).not_to include("Module")
     expect(@plugin[:kernel][:modules]["specfs"]).to eq(teh_daterz)

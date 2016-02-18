@@ -117,7 +117,7 @@ Ohai.plugin(:Network) do
         if route_entry[:src]
           addr = iface[route_int][:addresses]
           unless addr.nil? || addr.has_key?(route_entry[:src]) ||
-                 addr.values.all? { |a| a['family'] != family[:name] }
+              addr.values.all? { |a| a["family"] != family[:name] }
             Ohai::Log.debug("Skipping route entry whose src does not match the interface IP")
             next
           end
@@ -333,7 +333,7 @@ Ohai.plugin(:Network) do
 
   def interface_has_no_addresses_in_family?(iface, family)
     return true if iface[:addresses].nil?
-    iface[:addresses].values.all? { |addr| addr['family'] != family }
+    iface[:addresses].values.all? { |addr| addr["family"] != family }
   end
 
   def interface_have_address?(iface, address)
@@ -465,10 +465,10 @@ Ohai.plugin(:Network) do
 
         if default_route.nil? or default_route.empty?
           attribute_name = if family[:name] == "inet"
-                              "default_interface"
-                            else
-                              "default_#{family[:name]}_interface"
-                            end
+                             "default_interface"
+                           else
+                             "default_#{family[:name]}_interface"
+                           end
           Ohai::Log.debug("Unable to determine '#{attribute_name}' as no default routes were found for that interface family")
         else
           network["#{default_prefix}_interface"] = default_route[:dev]

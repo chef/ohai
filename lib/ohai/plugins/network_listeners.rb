@@ -23,7 +23,7 @@ Ohai.plugin(:NetworkListeners) do
 
   collect_data do
     begin
-      require 'sigar'
+      require "sigar"
       flags = Sigar::NETCONN_TCP | Sigar::NETCONN_SERVER
 
       network Mash.new unless network
@@ -54,7 +54,7 @@ Ohai.plugin(:NetworkListeners) do
       network[:listeners] = Mash.new
       network[:listeners][:tcp] = listeners
     rescue LoadError
-      Ohai::Log.debug('Could not load sigar gem. Skipping NetworkListeners plugin')
+      Ohai::Log.debug("Could not load sigar gem. Skipping NetworkListeners plugin")
     end
   end
 end

@@ -82,8 +82,8 @@ Ohai.plugin(:Virtualization) do
               value = {
                         "mountpoint" => splat[0],
                         "device"     => splat[1],
-                        "vfs"     => splat[2],
-                        "options"     => splat[3].split(","),
+                        "vfs" => splat[2],
+                        "options" => splat[3].split(","),
                       }
               wpars[wpar_name][title][key] = value
             when "security settings"
@@ -103,7 +103,7 @@ Ohai.plugin(:Virtualization) do
               key = splat[0].downcase
               value = {
                         "type" => splat[1],
-                        "status"     => splat[2],
+                        "status" => splat[2],
                       }
               wpars[wpar_name][title][key] = value
             else

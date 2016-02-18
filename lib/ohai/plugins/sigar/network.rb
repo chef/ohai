@@ -58,7 +58,7 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses][ifconfig.address] = { "family" => "inet" }
         # Backwards compat: no broadcast on tunnel or loopback dev
         if ((ifconfig.flags & Sigar::IFF_POINTOPOINT) == 0) &&
-           ((ifconfig.flags & Sigar::IFF_LOOPBACK) == 0)
+            ((ifconfig.flags & Sigar::IFF_LOOPBACK) == 0)
           iface[cint][:addresses][ifconfig.address]["broadcast"] = ifconfig.broadcast
         end
         iface[cint][:addresses][ifconfig.address]["netmask"] = ifconfig.netmask

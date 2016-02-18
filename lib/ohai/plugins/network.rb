@@ -79,8 +79,8 @@ Ohai.plugin(:NetworkAddresses) do
       if gw_if_ips.empty?
         Ohai::Log.warn("[#{family}] no ip address on #{network[int_attr]}")
       elsif network[gw_attr] &&
-            network["interfaces"][network[int_attr]] &&
-            network["interfaces"][network[int_attr]]["addresses"]
+          network["interfaces"][network[int_attr]] &&
+          network["interfaces"][network[int_attr]]["addresses"]
         if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
           Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
@@ -176,7 +176,7 @@ Ohai.plugin(:NetworkAddresses) do
     end
 
     if results["inet"]["iface"] && results["inet6"]["iface"] &&
-       (results["inet"]["iface"] != results["inet6"]["iface"])
+        (results["inet"]["iface"] != results["inet6"]["iface"])
       Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
     end
   end

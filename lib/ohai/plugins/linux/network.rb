@@ -113,7 +113,15 @@ Ohai.plugin(:Network) do
 
         # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
         # don't report the route entry if the src address isn't set on the node
-        next if route_entry[:src] and not iface[route_int][:addresses].has_key? route_entry[:src]
+        # unless the interface has no addresses of this type at all
+        if route_entry[:src]
+          addr = iface[route_int][:addresses]
+          unless addr.nil? || addr.has_key?(route_entry[:src]) ||
+              addr.values.all? { |a| a["family"] != family[:name] }
+            Ohai::Log.debug("Skipping route entry whose src does not match the interface IP")
+            next
+          end
+        end
 
         iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
         iface[route_int][:routes] << route_entry
@@ -126,6 +134,7 @@ Ohai.plugin(:Network) do
   # for information, default routes can be of this form :
   # - default via 10.0.2.4 dev br0
   # - default dev br0  scope link
+  # - default dev eth0  scope link src 1.1.1.1
   # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
   # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
 
@@ -310,16 +319,44 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
-    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:flags].include? "NOARP"
+    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
   end
 
   # returns the default route with the lowest metric (unspecified metric is 0)
   def choose_default_route(routes)
-    default_route = routes.select do |r|
+    routes.select do |r|
       r[:destination] == "default"
     end.sort do |x, y|
       (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
     end.first
+  end
+
+  def interface_has_no_addresses_in_family?(iface, family)
+    return true if iface[:addresses].nil?
+    iface[:addresses].values.all? { |addr| addr["family"] != family }
+  end
+
+  def interface_have_address?(iface, address)
+    return false if iface[:addresses].nil?
+    iface[:addresses].key?(address)
+  end
+
+  def interface_address_not_link_level?(iface, address)
+    iface[:addresses][address][:scope].downcase != "link"
+  end
+
+  def interface_valid_for_route?(iface, address, family)
+    return true if interface_has_no_addresses_in_family?(iface, family)
+
+    interface_have_address?(iface, address) && interface_address_not_link_level?(iface, address)
+  end
+
+  def route_is_valid_default_route?(route, default_route)
+    # if the route destination is a default route, it's good
+    return true if route[:destination] == "default"
+
+    # the default route has a gateway and the route matches the gateway
+    !default_route[:via].nil? && IPAddress(route[:destination]).include?(IPAddress(default_route[:via]))
   end
 
   # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
@@ -328,28 +365,25 @@ Ohai.plugin(:Network) do
   def favored_default_route(routes, iface, default_route, family)
     routes.select do |r|
       if family[:name] == "inet"
-        # selecting routes for ipv4
-        # using the source field when it's specified :
-        # 1) in the default route
-        # 2) in the route entry used to reach the default gateway
-        r[:src] and # it has a src field
-          iface[r[:dev]] and # the iface exists
-          iface[r[:dev]][:addresses].has_key? r[:src] and # the src ip is set on the node
-          iface[r[:dev]][:addresses][r[:src]][:scope].downcase != "link" and # this isn't a link level addresse
-          ( r[:destination] == "default" or
-            ( default_route[:via] and # the default route has a gateway
-              IPAddress(r[:destination]).include? IPAddress(default_route[:via]) # the route matches the gateway
-              )
-            )
+        # the route must have a source address
+        next if r[:src].nil? || r[:src].empty?
+
+        # the interface specified in the route must exist
+        route_interface = iface[r[:dev]]
+        next if route_interface.nil? # the interface specified in the route must exist
+
+        # the interface must have no addresses, or if it has the source address, the address must not
+        # be a link-level address
+        next unless interface_valid_for_route?(route_interface, r[:src], "inet")
+
+        # the route must either be a default route, or it must have a gateway which is accessible via the route
+        next unless route_is_valid_default_route?(r, default_route)
+
+        true
       elsif family[:name] == "inet6"
-        # selecting routes for ipv6
-        iface[r[:dev]] and # the iface exists
-          iface[r[:dev]][:state] == "up" and # the iface is up
-          ( r[:destination] == "default" or
-            ( default_route[:via] and # the default route has a gateway
-              IPAddress(r[:destination]).include? IPAddress(default_route[:via]) # the route matches the gateway
-              )
-            )
+        iface[r[:dev]] &&
+          iface[r[:dev]][:state] == "up" &&
+          route_is_valid_default_route?(r, default_route)
       end
     end.sort_by do |r|
       # sorting the selected routes:
@@ -430,11 +464,11 @@ Ohai.plugin(:Network) do
         default_route = choose_default_route(routes)
 
         if default_route.nil? or default_route.empty?
-          attribute_name == if family[:name] == "inet"
-                              "default_interface"
-                            else
-                              "default_#{family[:name]}_interface"
-                            end
+          attribute_name = if family[:name] == "inet"
+                             "default_interface"
+                           else
+                             "default_#{family[:name]}_interface"
+                           end
           Ohai::Log.debug("Unable to determine '#{attribute_name}' as no default routes were found for that interface family")
         else
           network["#{default_prefix}_interface"] = default_route[:dev]

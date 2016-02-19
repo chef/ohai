@@ -138,6 +138,14 @@ xapi1     Link encap:Ethernet  HWaddr E8:39:35:C5:C8:50
           TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0
           RX bytes:21515031 (20.5 MiB)  TX bytes:2052 (2.0 KiB)
+
+fwdintf   Link encap:Ethernet  HWaddr 00:00:00:00:00:0a
+          inet6 addr: fe80::200:ff:fe00:a/64 Scope:Link
+          UP RUNNING NOARP MULTICAST  MTU:1496  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2 errors:0 dropped:1 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
 EOM
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
@@ -225,6 +233,8 @@ EOM
     link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
     inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
        valid_lft forever preferred_lft forever
+13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN group default qlen 1000
+    link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff
 EOM
   }
 
@@ -278,6 +288,12 @@ EOM
     21468183   159866   0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     2052       6        0       0       0       0
+13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
+    link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff promiscuity 0
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    140        2        0       1       0       0
 EOM
   }
 
@@ -359,8 +375,162 @@ EOM
     end
   end
 
-  %w{ifconfig iproute2}.each do |network_method|
+  describe '#interface_has_no_addresses_in_family?' do
+    context "when interface has no addresses" do
+      let(:iface) { {} }
 
+      it "returns true" do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, "inet")).to eq(true)
+      end
+    end
+
+    context "when an interface has no addresses in family" do
+      let(:iface) { { addresses: { "1.2.3.4" => { "family" => "inet6" } } } }
+
+      it "returns true" do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, "inet")).to eq(true)
+      end
+    end
+
+    context "when an interface has addresses in family" do
+      let(:iface) { { addresses: { "1.2.3.4" => { "family" => "inet" } } } }
+
+      it "returns false" do
+        expect(plugin.interface_has_no_addresses_in_family?(iface, "inet")).to eq(false)
+      end
+    end
+  end
+
+  describe '#interface_have_address?' do
+    context "when interface has no addresses" do
+      let(:iface) { {} }
+
+      it "returns false" do
+        expect(plugin.interface_have_address?(iface, "1.2.3.4")).to eq(false)
+      end
+    end
+
+    context "when interface has a matching address" do
+      let(:iface) { { addresses: { "1.2.3.4" => {} } } }
+
+      it "returns true" do
+        expect(plugin.interface_have_address?(iface, "1.2.3.4")).to eq(true)
+      end
+    end
+
+    context "when interface does not have a matching address" do
+      let(:iface) { { addresses: { "4.3.2.1" => {} } } }
+
+      it "returns false" do
+        expect(plugin.interface_have_address?(iface, "1.2.3.4")).to eq(false)
+      end
+    end
+  end
+
+  describe '#interface_address_not_link_level?' do
+    context "when the address scope is link" do
+      let(:iface) { { addresses: { "1.2.3.4" => { scope: "Link" } } } }
+
+      it "returns false" do
+        expect(plugin.interface_address_not_link_level?(iface, "1.2.3.4")).to eq(false)
+      end
+    end
+
+    context "when the address scope is global" do
+      let(:iface) { { addresses: { "1.2.3.4" => { scope: "Global" } } } }
+
+      it "returns true" do
+        expect(plugin.interface_address_not_link_level?(iface, "1.2.3.4")).to eq(true)
+      end
+    end
+  end
+
+  describe '#interface_valid_for_route?' do
+    let(:iface)   { double("iface") }
+    let(:address) { "1.2.3.4" }
+    let(:family)  { "inet" }
+
+    context "when interface has no addresses" do
+      it "returns true" do
+        expect(plugin).to receive(:interface_has_no_addresses_in_family?).with(iface, family).and_return(true)
+        expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(true)
+      end
+    end
+
+    context "when interface has addresses" do
+      before do
+        expect(plugin).to receive(:interface_has_no_addresses_in_family?).with(iface, family).and_return(false)
+      end
+
+      context "when interface contains the address" do
+        before do
+          expect(plugin).to receive(:interface_have_address?).with(iface, address).and_return(true)
+        end
+
+        context "when interface address is not a link-level address" do
+          it "returns true" do
+            expect(plugin).to receive(:interface_address_not_link_level?).with(iface, address).and_return(true)
+            expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(true)
+          end
+        end
+
+        context "when the interface address is a link-level address" do
+          it "returns false" do
+            expect(plugin).to receive(:interface_address_not_link_level?).with(iface, address).and_return(false)
+            expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(false)
+          end
+        end
+      end
+
+      context "when interface does not contain the address" do
+        it "returns false" do
+          expect(plugin).to receive(:interface_have_address?).with(iface, address).and_return(false)
+          expect(plugin.interface_valid_for_route?(iface, address, family)).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe '#route_is_valid_default_route?' do
+    context "when the route destination is default" do
+      let(:route)         { { destination: "default" } }
+      let(:default_route) { double("default_route") }
+
+      it "returns true" do
+        expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(true)
+      end
+    end
+
+    context "when the route destination is not default" do
+      let(:route) { { destination: "10.0.0.0/24" } }
+
+      context "when the default route does not have a gateway" do
+        let(:default_route) { {} }
+
+        it "returns false" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
+
+      context "when the gateway is within the destination" do
+        let(:default_route) { { via: "10.0.0.1" } }
+
+        it "returns true" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(true)
+        end
+      end
+
+      context "when the gateway is not within the destination" do
+        let(:default_route) { { via: "20.0.0.1" } }
+
+        it "returns false" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
+    end
+  end
+
+  %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
@@ -374,7 +544,7 @@ EOM
       end
 
       it "detects the interfaces" do
-        expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
       end
 
       it "detects the layer one details of an ethernet interface" do
@@ -893,6 +1063,54 @@ EOM
 
         it "doesn't set ipaddress" do
           expect(plugin["ipaddress"]).to be_nil
+        end
+      end
+
+      describe "with a link level default route to an unaddressed int" do
+        let(:linux_ip_route) { <<-EOM
+default dev eth3 scope link
+EOM
+        }
+
+        before(:each) do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin["network"]).not_to be_nil
+        end
+
+        it "sets default_interface" do
+          expect(plugin["network"]["default_interface"]).to eq("eth3")
+        end
+
+        it "doesn't set ipaddress" do
+          expect(plugin["ipaddress"]).to be_nil
+        end
+      end
+
+      describe "with a link level default route with a source" do
+        let(:linux_ip_route) { <<-EOM
+default dev fwdintf scope link src 2.2.2.2
+EOM
+        }
+
+        before(:each) do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(plugin["network"]).not_to be_nil
+        end
+
+        it "sets default_interface" do
+          expect(plugin["network"]["default_interface"]).to eq("fwdintf")
+        end
+
+        it "sets ipaddress" do
+          expect(plugin["ipaddress"]).to eq("2.2.2.2")
         end
       end
 

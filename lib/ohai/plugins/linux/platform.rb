@@ -124,7 +124,7 @@ Ohai.plugin(:Platform) do
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
       platform_version suse_version
-      if suse_release =~ /^openSUSE/
+      if suse_release =~ /^openSUSE/ && platform_version.to_i < 42
         platform "opensuse"
       else
         platform "suse"

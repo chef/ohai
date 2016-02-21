@@ -665,6 +665,13 @@ CISCO_RELEASE
         expect(@plugin[:platform]).to eq("opensuse")
         expect(@plugin[:platform_family]).to eq("suse")
       end
+      
+      it "should read the platform as suse on openSUSE Leap" do
+        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 42.1 (x86_64)\nVERSION = 42.1\nCODENAME = Malachite\n")
+        @plugin.run
+        expect(@plugin[:platform]).to eq("suse")
+        expect(@plugin[:platform_family]).to eq("suse")
+      end
     end
   end
 

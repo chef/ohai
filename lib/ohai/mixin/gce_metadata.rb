@@ -61,7 +61,7 @@ module Ohai
       def http_get(uri)
         conn = Net::HTTP.start(GCE_METADATA_ADDR)
         conn.read_timeout = 6
-        conn.get(uri, initheader = { 'Metadata-Flavor' => 'Google' })
+        conn.get(uri, initheader = { "Metadata-Flavor" => "Google" })
       end
 
       def fetch_metadata(id = "")

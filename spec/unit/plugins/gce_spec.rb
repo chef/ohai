@@ -25,15 +25,20 @@ describe Ohai::System, "plugin gce" do
 
   shared_examples_for "!gce" do
     it "should NOT attempt to fetch the gce metadata" do
-      expect(@plugin).not_to receive(:http_client)
+      expect(@plugin).not_to receive(:http_get)
+      @plugin.run
+    end
+
+    it "should NOT set gce attributes" do
+      expect(@plugin[:gce]).to be_nil
       @plugin.run
     end
   end
 
   shared_examples_for "gce" do
     before(:each) do
-      @http_client = double("Net::HTTP client")
-      allow(@plugin).to receive(:http_client).and_return(@http_client)
+      @http_get = double("Net::HTTP client")
+      allow(@plugin).to receive(:http_get).and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
@@ -42,10 +47,6 @@ describe Ohai::System, "plugin gce" do
     end
 
     it "should recursively fetch and properly parse json metadata" do
-      expect(@http_client).to receive(:get).
-        with("/computeMetadata/v1beta1/?recursive=true/").
-        and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
-
       @plugin.run
 
       expect(@plugin[:gce]).not_to be_nil

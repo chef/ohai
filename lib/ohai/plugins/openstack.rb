@@ -1,13 +1,13 @@
 #
-# Author:: Matt Ray (<matt@chef.io>)
-# Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
+# Author:: Anthony Caiafa (<acaiafa1@bloomberg.net>)
+# Copyright 2015-2016, Bloomberg Finance L.P.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,51 +20,52 @@ require "ohai/mixin/ec2_metadata"
 Ohai.plugin(:Openstack) do
   provides "openstack"
 
-  include Ohai::Mixin::Ec2Metadata
+  def collect_openstack_metadata(addr, api_version)
+    require "net/http"
+    require "json"
 
-  def collect_openstack_metadata(addr = Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, api_version = "2013-04-04")
-    path = "/openstack/#{api_version}/meta_data.json"
-    uri = "http://#{addr}#{path}"
-    begin
-      response = http_client.get_response(URI.parse(uri), nil, nil)
-      case response.code
-      when "200"
-        FFI_Yajl::Parser.parse(response.body)
-      when "404"
-        Ohai::Log.debug("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
-        nil
+    Timeout.timeout(3) do
+      path = "/openstack/#{api_version}/meta_data.json"
+      uri = URI.parse("http://#{addr}/#{path}")
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Get.new(uri.request_uri)
+      response = http.request(request)
+
+      if response.code.to_i == 404
+        Ohai::Log.warn("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
+        return nil
+      elsif response.code.to_i != 200
+        Ohai::Log.warn("Encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
+        return nil
       else
-        raise "Encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)"
+        data = JSON(response.body)
+        return data
       end
-    rescue => e
-      Ohai::Log.debug("Encountered error retrieving OpenStack specific metadata (#{uri}), due to #{e.class}")
-      nil
     end
+  rescue Timeout::Error
+    Ohai::Log.warn("Timeout connecting to OpenStack metadata service.")
+    nil
+  rescue Exception => e
+    Ohai::Log.error("Error retrieving node information from Openstack: #{e}")
   end
 
-  collect_data do
+  collect_data(:default) do
     # Adds openstack Mash
     if hint?("openstack") || hint?("hp")
       Ohai::Log.debug("ohai openstack")
-
-      if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      if can_metadata_connect?('169.254.169.254',80)
         openstack Mash.new
-        Ohai::Log.debug("connecting to the OpenStack metadata service")
-        fetch_metadata.each { |k, v| openstack[k] = v }
-
-        if hint?("hp")
-          openstack["provider"] = "hp"
+        if hint?('hp')
+          openstack['provider'] = 'hp'
         else
-          openstack["provider"] = "openstack"
-          Ohai::Log.debug("connecting to the OpenStack specific metadata service")
-          openstack["metadata"] = collect_openstack_metadata
+          openstack['provider'] = 'openstack'
+          data =  collect_openstack_metadata('169.254.169.254', 'latest')
+          openstack[:metadata] = Mash.new
+          data.each do |k, v|
+            openstack[:metadata][k] = v
+          end
         end
-
-      else
-        Ohai::Log.debug("unable to connect to the OpenStack metadata service")
       end
-    else
-      Ohai::Log.debug("NOT ohai openstack")
     end
   end
 end

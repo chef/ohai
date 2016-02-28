@@ -45,8 +45,9 @@ Ohai.plugin(:Openstack) do
   rescue Timeout::Error
     Ohai::Log.warn("Timeout connecting to OpenStack metadata service.")
     nil
-  rescue Exception => e
+  rescue Errno::ECONNRESET, EOFError, Errno::EHOSTDOWN => e
     Ohai::Log.error("Error retrieving node information from Openstack: #{e}")
+    nil
   end
 
   collect_data(:default) do

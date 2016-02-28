@@ -22,7 +22,6 @@ require "ohai/plugins/openstack"
 describe "OpenStack Plugin" do
 
   let(:openstack_hint) { false }
-  let(:hp_hint) { false }
 
   let(:ohai_system) { Ohai::System.new }
   let(:ohai_data) { ohai_system.data }
@@ -30,7 +29,6 @@ describe "OpenStack Plugin" do
   let(:openstack_plugin) do
     plugin = get_plugin("openstack", ohai_system)
     allow(plugin).to receive(:hint?).with("openstack").and_return(openstack_hint)
-    allow(plugin).to receive(:hint?).with("hp").and_return(hp_hint)
     plugin
   end
 
@@ -57,9 +55,9 @@ describe "OpenStack Plugin" do
           and_return(false)
       end
 
-      it "does not set any openstack data" do
+      it "sets openstack provider" do
         openstack_plugin.run
-        expect(ohai_data).to_not have_key("openstack")
+        expect(ohai_data["openstack"]["provider"]).to eq("openstack")
       end
     end
 

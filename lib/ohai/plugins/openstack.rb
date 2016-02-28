@@ -53,10 +53,10 @@ Ohai.plugin(:Openstack) do
   collect_data(:default) do
     # Adds openstack Mash
     if hint?("openstack")
-      Ohai::Log.debug("ohai openstack")
+      Ohai::Log.debug("openstack: openstack hint present")
+      openstack Mash.new
+      openstack["provider"] = "openstack"
       if can_metadata_connect?("169.254.169.254", 80)
-        openstack Mash.new
-        openstack["provider"] = "openstack"
         data = collect_openstack_metadata("169.254.169.254", "latest")
         openstack[:metadata] = Mash.new
         data.each do |k, v|

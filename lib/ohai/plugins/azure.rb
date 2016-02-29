@@ -27,7 +27,7 @@ Ohai.plugin(:Azure) do
       Ohai::Log.debug("azure plugin: azure_metadata_from_hints is present.")
       azure Mash.new
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
-    elsif looks_like_azure?
+    elsif has_waagent? || has_dhcp_option_245?
       Ohai::Log.debug("azure plugin: No hints present, but system appears to be on azure.")
       azure Mash.new
     else
@@ -38,17 +38,25 @@ Ohai.plugin(:Azure) do
 
   # check for either the waagent or the unknown-245 DHCP option that Azure uses
   # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
-  def looks_like_azure?
+  def has_waagent?
     if File.exist?("/usr/sbin/waagent") || Dir.exist?('C:\WindowsAzure')
       Ohai::Log.debug("azure plugin: Found waagent used by MS Azure.")
       return true
-    elsif File.exist?("/var/lib/dhcp/dhclient.eth0.leases")
+    end
+  end
+
+  def has_dhcp_option_245?
+    has_245 = false
+    if File.exist?("/var/lib/dhcp/dhclient.eth0.leases")
       File.open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
         if line =~ /unknown-245/
           Ohai::Log.debug("azure plugin: Found unknown-245 DHCP option used by MS Azure.")
-          return true
+          has_245 = true
+          break
         end
       end
     end
+    return has_245
   end
+
 end

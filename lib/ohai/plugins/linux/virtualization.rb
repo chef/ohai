@@ -34,7 +34,7 @@ Ohai.plugin(:Virtualization) do
   end
 
   def nova_exists?
-    which('nova')
+    which("nova")
   end
 
   collect_data(:linux) do
@@ -175,7 +175,7 @@ Ohai.plugin(:Virtualization) do
     if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
-         cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-.+$}
+          cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-.+$}
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"

@@ -84,7 +84,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for openstack" do
     it "sets openstack host if nova binary exists" do
-      allow(plugin).to receive(:nova_exists?).and_return('/usr/bin/nova')
+      allow(plugin).to receive(:nova_exists?).and_return("/usr/bin/nova")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("openstack")
       expect(plugin[:virtualization][:role]).to eq("host")

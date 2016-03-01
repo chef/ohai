@@ -20,6 +20,33 @@ require "ohai/mixin/ec2_metadata"
 Ohai.plugin(:Openstack) do
   provides "openstack"
 
+  depends "dmi"
+
+  # do we have the openstack dmi data
+  def openstack_dmi?
+    begin
+      # detect a manufacturer of OpenStack Foundation
+      if dmi[:system][:all_records][0][:Manufacturer] =~ /OpenStack/
+        Ohai::Log.debug("openstack plugin: has_openstack_dmi? == true")
+        true
+      end
+    rescue NoMethodError
+      Ohai::Log.debug("openstack plugin: has_openstack_dmi? == false")
+      false
+    end
+  end
+
+  # check for the ohai hint and log debug messaging
+  def openstack_hint?
+    if hint?("openstack")
+      Ohai::Log.debug("openstack plugin: openstack hint present")
+      return true
+    else
+      Ohai::Log.debug("openstack plugin: openstack hint not present")
+      return false
+    end
+  end
+
   def collect_openstack_metadata(addr, api_version)
     require "net/http"
     require "json"
@@ -32,10 +59,10 @@ Ohai.plugin(:Openstack) do
       response = http.request(request)
 
       if response.code.to_i == 404
-        Ohai::Log.warn("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
+        Ohai::Log.warn("openstack plugin: encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
         return nil
       elsif response.code.to_i != 200
-        Ohai::Log.warn("Encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
+        Ohai::Log.warn("openstack plugin: encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
         return nil
       else
         data = JSON(response.body)
@@ -52,8 +79,7 @@ Ohai.plugin(:Openstack) do
 
   collect_data(:default) do
     # Adds openstack Mash
-    if hint?("openstack")
-      Ohai::Log.debug("openstack: openstack hint present")
+    if openstack_hint? || openstack_dmi?
       openstack Mash.new
       openstack["provider"] = "openstack"
       if can_metadata_connect?("169.254.169.254", 80)

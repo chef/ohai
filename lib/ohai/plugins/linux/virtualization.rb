@@ -64,14 +64,10 @@ Ohai.plugin(:Virtualization) do
     # - Additional edge cases likely should not change the above assumptions
     #   but rather be additive - btm
 
-    # Detect from kernel module
+    # Detect Virtualbox from kernel module
     if File.exist?("/proc/modules")
       modules = File.read("/proc/modules")
-      if modules =~ /^kvm/
-        virtualization[:system] = "kvm"
-        virtualization[:role] = "host"
-        virtualization[:systems][:kvm] = "host"
-      elsif modules =~ /^vboxdrv/
+      if modules =~ /^vboxdrv/
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
@@ -93,6 +89,13 @@ Ohai.plugin(:Virtualization) do
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
       end
+    end
+
+    # Detect KVM guests via /sys/ data
+    if File.exist?("/sys/devices/virtual/misc/kvm")
+      virtualization[:system] = "kvm"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:kvm] = "guest"
     end
 
     # Detect OpenVZ / Virtuozzo.

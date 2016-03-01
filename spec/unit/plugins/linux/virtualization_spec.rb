@@ -77,13 +77,12 @@ describe Ohai::System, "Linux virtualization platform" do
   end
 
   describe "when we are checking for kvm" do
-    it "sets kvm host if /proc/modules contains kvm" do
-      expect(File).to receive(:exist?).with("/proc/modules").and_return(true)
-      allow(File).to receive(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
+    it "sets kvm guest if /sys/devices/virtual/misc/kvm exists" do
+      expect(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
-      expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems][:kvm]).to eq("host")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
     it "sets kvm guest if /proc/cpuinfo contains QEMU Virtual CPU" do

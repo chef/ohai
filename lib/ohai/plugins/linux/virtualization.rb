@@ -83,11 +83,17 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # Detect KVM guests via /sys/ data
+    # Detect KVM systems via /sys
+    # guests will have the hypervisor cpu feature that hosts don't have
     if File.exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:kvm] = "guest"
+      if File.read("/proc/cpuinfo") =~ /hypervisor/
+        virtualization[:role] = "guest"
+        virtualization[:systems][:kvm] = "guest"
+      else
+        virtualization[:role] = "host"
+        virtualization[:systems][:kvm] = "host"
+      end
     end
 
     # Detect OpenVZ / Virtuozzo.

@@ -27,6 +27,7 @@ describe "Ohai::Util::FileHelper" do
   let(:file_helper) { FileHelperMock.new }
 
   before(:each) do
+    allow(file_helper).to receive(:name).and_return("Fakeclass")
     allow(File).to receive(:executable?).and_return(false)
   end
 

@@ -25,8 +25,12 @@ module Ohai
         paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
         paths.each do |path|
           filename = File.join(path, cmd)
-          return filename if File.executable?(filename)
+          if File.executable?(filename)
+            Ohai::Log.debug("#{self.name} plugin: found #{cmd} at #{filename}")
+            return filename
+          end
         end
+        Ohai::Log.debug("#{self.name} plugin: did not find #{cmd}")
         false
       end
     end

@@ -19,30 +19,27 @@ require "ohai/mixin/ec2_metadata"
 
 Ohai.plugin(:Openstack) do
   provides "openstack"
-
   depends "dmi"
 
   # do we have the openstack dmi data
   def openstack_dmi?
-    begin
-      # detect a manufacturer of OpenStack Foundation
-      if dmi[:system][:all_records][0][:Manufacturer] =~ /OpenStack/
-        Ohai::Log.debug("openstack plugin: has_openstack_dmi? == true")
-        true
-      end
-    rescue NoMethodError
-      Ohai::Log.debug("openstack plugin: has_openstack_dmi? == false")
-      false
+    # detect a manufacturer of OpenStack Foundation
+    if dmi[:system][:all_records][0][:Manufacturer] =~ /OpenStack/
+      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
+      true
     end
+  rescue NoMethodError
+    Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
+    false
   end
 
   # check for the ohai hint and log debug messaging
   def openstack_hint?
     if hint?("openstack")
-      Ohai::Log.debug("openstack plugin: openstack hint present")
+      Ohai::Log.debug("Plugin Openstack: openstack hint present")
       return true
     else
-      Ohai::Log.debug("openstack plugin: openstack hint not present")
+      Ohai::Log.debug("Plugin Openstack: openstack hint not present")
       return false
     end
   end
@@ -59,10 +56,10 @@ Ohai.plugin(:Openstack) do
       response = http.request(request)
 
       if response.code.to_i == 404
-        Ohai::Log.warn("openstack plugin: encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
+        Ohai::Log.warn("Plugin Openstack: encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
         return nil
       elsif response.code.to_i != 200
-        Ohai::Log.warn("openstack plugin: encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
+        Ohai::Log.warn("Plugin Openstack: encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
         return nil
       else
         data = JSON(response.body)
@@ -70,10 +67,10 @@ Ohai.plugin(:Openstack) do
       end
     end
   rescue Timeout::Error
-    Ohai::Log.warn("Timeout connecting to OpenStack metadata service.")
+    Ohai::Log.warn("Plugin Openstack: Timeout connecting to OpenStack metadata service.")
     nil
   rescue Errno::ECONNRESET, EOFError, Errno::EHOSTDOWN => e
-    Ohai::Log.error("Error retrieving node information from Openstack: #{e}")
+    Ohai::Log.error("Plugin Openstack: Error retrieving node information from Openstack: #{e}")
     nil
   end
 
@@ -81,7 +78,7 @@ Ohai.plugin(:Openstack) do
     # Adds openstack Mash
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
-      openstack["provider"] = "openstack"
+      openstack[:provider] = "openstack"
       if can_metadata_connect?("169.254.169.254", 80)
         data = collect_openstack_metadata("169.254.169.254", "latest")
         openstack[:metadata] = Mash.new

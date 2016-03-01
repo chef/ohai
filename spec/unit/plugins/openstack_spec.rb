@@ -19,10 +19,9 @@
 require "spec_helper"
 require "ohai/plugins/openstack"
 
-describe "OpenStack Plugin" do
+describe "Openstack Plugin" do
 
   let(:openstack_hint) { false }
-
   let(:ohai_system) { Ohai::System.new }
   let(:ohai_data) { ohai_system.data }
 
@@ -36,12 +35,10 @@ describe "OpenStack Plugin" do
   end
 
   context "when there is no relevant hint" do
-
     it "does not set any openstack data" do
       openstack_plugin.run
       expect(ohai_data).to_not have_key("openstack")
     end
-
   end
 
   context "when there is an `openstack` hint" do

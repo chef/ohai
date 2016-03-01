@@ -37,6 +37,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
     allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -78,7 +79,7 @@ describe Ohai::System, "Linux virtualization platform" do
 
   describe "when we are checking for kvm" do
     it "sets kvm guest if /sys/devices/virtual/misc/kvm exists" do
-      expect(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
+      allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
       expect(plugin[:virtualization][:role]).to eq("guest")

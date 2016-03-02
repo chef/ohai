@@ -50,7 +50,29 @@ describe Ohai::System, "plugin azure" do
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
-      allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
+      allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
+      @double_file = double("/var/lib/dhcp/dhclient.eth0.leases")
+      allow(@double_file).to receive(:each).
+        and_yield("lease {").
+        and_yield('  interface "eth0";').
+        and_yield("  fixed-address 192.168.1.194;").
+        and_yield("  option subnet-mask 255.255.255.0;").
+        and_yield("  option routers 192.168.1.1;").
+        and_yield("  option dhcp-lease-time 86400;").
+        and_yield("  option dhcp-message-type 5;").
+        and_yield("  option domain-name-servers 8.8.8.8;").
+        and_yield("  option dhcp-server-identifier 192.168.1.2;").
+        and_yield("  option interface-mtu 1454;").
+        and_yield("  option dhcp-renewal-time 42071;").
+        and_yield("  option broadcast-address 192.168.1.255;").
+        and_yield("  option dhcp-rebinding-time 74471;").
+        and_yield('  option host-name "host-192-168-1-194";').
+        and_yield('  option domain-name "openstacklocal";').
+        and_yield("  renew 2 2016/03/01 01:49:41;").
+        and_yield("  rebind 2 2016/03/01 13:22:07;").
+        and_yield("  expire 2 2016/03/01 16:40:56;").
+        and_yield("}")
+      allow(File).to receive(:open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
       @plugin.run
     end
 
@@ -59,7 +81,7 @@ describe Ohai::System, "plugin azure" do
     end
   end
 
-  describe "with rackspace hint file no agent and no dhcp options" do
+  describe "with rackspace hint file no agent and no dhcp lease" do
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
       allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")

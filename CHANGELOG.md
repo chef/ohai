@@ -1,10 +1,24 @@
-# Ohai Changelog
+# Change Log
 
-## UNRELEASED
-* [pr#724](https://github.com/chef/ohai/pull/724) Improved debug logging for cloud plugins
-* [pr#722](https://github.com/chef/ohai/pull/722) Detect paravirt amazon instances without hint files
-* [pr#714](https://github.com/chef/ohai/pull/714) Detect Azure using the Azure agent and DHCP options
-* [pr#724](https://github.com/chef/ohai/pull/725) Add support for the 2 latest EC2 metadata versions
+## [8.11.0](https://github.com/chef/ohai/tree/8.11.0) (2016-03-02)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...8.11.0)
+
+**Implemented enhancements:**
+
+- Detect Azure on non-bootstrapped hosts [\#657](https://github.com/chef/ohai/issues/657)
+- Deprecate run\_command and popen4 in the command mixin [\#730](https://github.com/chef/ohai/pull/730) ([tas50](https://github.com/tas50))
+- OHAI-726 Regex to support openjdk 1.8 [\#727](https://github.com/chef/ohai/pull/727) ([davidnewman](https://github.com/davidnewman))
+- Add support for the 2 latest EC2 metadata versions [\#725](https://github.com/chef/ohai/pull/725) ([tas50](https://github.com/tas50))
+- Improved debug logging for cloud plugins [\#724](https://github.com/chef/ohai/pull/724) ([tas50](https://github.com/tas50))
+- Detect paravirt amazon instances without hint files [\#722](https://github.com/chef/ohai/pull/722) ([tas50](https://github.com/tas50))
+- Detect Azure using the Azure agent and DHCP options [\#714](https://github.com/chef/ohai/pull/714) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+
+- EC2 autodetection is broken [\#691](https://github.com/chef/ohai/issues/691)
+- have a proper dependency on plist [\#737](https://github.com/chef/ohai/pull/737) ([thommay](https://github.com/thommay))
+- Log sigar gem load failures [\#731](https://github.com/chef/ohai/pull/731) ([tas50](https://github.com/tas50))
+- ipaddress on Linux - default route pointing to unaddressed interface, with route src [\#682](https://github.com/chef/ohai/pull/682) ([glennmatthews](https://github.com/glennmatthews))
 
 ## Release 8.10.0
 * [pr#720](https://github.com/chef/ohai/pull/720) Make Windows driver plugin opt-in via config

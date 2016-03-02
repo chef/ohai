@@ -22,3 +22,12 @@ require "rubocop/rake_task"
 RuboCop::RakeTask.new(:style) do |task|
   task.options += ["--display-cop-names", "--no-color"]
 end
+
+require "github_changelog_generator/task"
+
+GitHubChangelogGenerator::RakeTask.new :changelog do |config|
+  config.future_release = Ohai::VERSION
+  config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature".split(",")
+  config.bug_labels = "bug,Bug,Improvement,Upstream Bug".split(",")
+  config.exclude_labels = "duplicate,question,invalid,wontfix,no_changelog,Exclude From Changelog,Question,Discussion".split(",")
+end

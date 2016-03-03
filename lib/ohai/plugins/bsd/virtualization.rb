@@ -36,7 +36,10 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:jail] = "guest"
     end
 
-    so = shell_out("jls -n")
+    # run jls to get a list of running jails
+    # -n: name=value 1 line per jail format
+    # -d: list the dying jails as well as active jails
+    so = shell_out("jls -nd")
     if (so.stdout || "").lines.count >= 1
       virtualization[:system] = "jail"
       virtualization[:role] = "host"

@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+# Note: despite the name this is really a libvirt plugin.
+#       perhaps we'd be better off renaming it? -tsmith
+
 Ohai.plugin(:VirtualizationInfo) do
   %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
     provides "virtualization/#{info}"
@@ -24,8 +27,7 @@ Ohai.plugin(:VirtualizationInfo) do
   collect_data do
     unless virtualization.nil? || !(virtualization[:role].eql?("host"))
       begin
-        require "libvirt"
-        require "hpricot"
+        require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
 
         emu = (virtualization[:system].eql?("kvm") ? "qemu" : virtualization[:system])
         virtualization[:libvirt_version] = Libvirt.version(emu)[0].to_s
@@ -34,8 +36,6 @@ Ohai.plugin(:VirtualizationInfo) do
 
         virtualization[:uri] = virtconn.uri
         virtualization[:capabilities] = Mash.new
-        virtualization[:capabilities][:xml_desc] = (virtconn.capabilities.split("\n").collect { |line| line.strip }).join
-        #xdoc = Hpricot virtualization[:capabilities][:xml_desc]
 
         virtualization[:nodeinfo] = Mash.new
         ni = virtconn.node_get_info
@@ -46,10 +46,8 @@ Ohai.plugin(:VirtualizationInfo) do
           dv = virtconn.lookup_domain_by_id d
           virtualization[:domains][dv.name] = Mash.new
           virtualization[:domains][dv.name][:id] = d
-          virtualization[:domains][dv.name][:xml_desc] = (dv.xml_desc.split("\n").collect { |line| line.strip }).join
           %w{os_type uuid}.each { |a| virtualization[:domains][dv.name][a] = dv.send(a) }
           %w{cpu_time max_mem memory nr_virt_cpu state}.each { |a| virtualization[:domains][dv.name][a] = dv.info.send(a) }
-          #xdoc = Hpricot virtualization[:domains][dv.name][:xml_desc]
 
         end
 
@@ -57,20 +55,15 @@ Ohai.plugin(:VirtualizationInfo) do
         virtconn.list_networks.each do |n|
           nv = virtconn.lookup_network_by_name n
           virtualization[:networks][n] = Mash.new
-          virtualization[:networks][n][:xml_desc] = (nv.xml_desc.split("\n").collect { |line| line.strip }).join
           %w{bridge_name uuid}.each { |a| virtualization[:networks][n][a] = nv.send(a) }
-          #xdoc = Hpricot virtualization[:networks][n][:xml_desc]
-
         end
 
         virtualization[:storage] = Mash.new
         virtconn.list_storage_pools.each do |pool|
           sp = virtconn.lookup_storage_pool_by_name pool
           virtualization[:storage][pool] = Mash.new
-          virtualization[:storage][pool][:xml_desc] = (sp.xml_desc.split("\n").collect { |line| line.strip }).join
           %w{autostart uuid}.each { |a| virtualization[:storage][pool][a] = sp.send(a) }
           %w{allocation available capacity state}.each { |a| virtualization[:storage][pool][a] = sp.info.send(a) }
-          #xdoc = Hpricot virtualization[:storage][pool][:xml_desc]
 
           virtualization[:storage][pool][:volumes] = Mash.new
           sp.list_volumes.each do |v|
@@ -83,7 +76,7 @@ Ohai.plugin(:VirtualizationInfo) do
 
         virtconn.close
       rescue LoadError => e
-        Ohai::Log.debug("Can't load gem: #{e}.  virtualization plugin is disabled.")
+        Ohai::Log.debug("Can't load gem: #{e}. VirtualizationInfo plugin cannot continue.")
       end
     end
   end

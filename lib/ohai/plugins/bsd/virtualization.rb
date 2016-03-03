@@ -1,6 +1,7 @@
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
+# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,6 +35,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
       virtualization[:systems][:jail] = "guest"
+      Ohai::Log.debug("Virtualization plugin: Guest running in FreeBSD jail detected")
     end
 
     # run jls to get a list of running jails
@@ -44,6 +46,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "jail"
       virtualization[:role] = "host"
       virtualization[:systems][:jail] = "host"
+      Ohai::Log.debug("Virtualization plugin: Host running FreeBSD jails detected")
     end
 
     # detect from modules
@@ -54,20 +57,23 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
+        Ohai::Log.debug('Virtualization plugin: Guest running on VirtualBox detected')
       when /vboxguest/
         virtualization[:system] = "vbox"
         virtualization[:role] = "guest"
         virtualization[:systems][:vbox] = "guest"
+        Ohai::Log.debug('Virtualization plugin: Host running VirtualBox detected')
       end
     end
 
-    # Detect KVM/QEMU from cpu, report as KVM
+    # Detect KVM/QEMU paravirt guests from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out("sysctl -n hw.model")
     if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
+      Ohai::Log.debug('Virtualization plugin: Guest running on KVM detected')
     end
 
     # parse dmidecode to discover various virtualization guests
@@ -77,6 +83,7 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = guest
         virtualization[:role] = "guest"
         virtualization[:systems][guest.to_sym] = "guest"
+        Ohai::Log.debug("Virtualization plugin: Guest running on #{guest} detected")
       end
     end
   end

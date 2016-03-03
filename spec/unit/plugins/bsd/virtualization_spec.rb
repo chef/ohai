@@ -24,7 +24,7 @@ describe Ohai::System, "BSD virtualization plugin" do
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("jls -n").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("jls -nd").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
   end
 

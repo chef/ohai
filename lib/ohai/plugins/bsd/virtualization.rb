@@ -57,13 +57,21 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
-        Ohai::Log.debug('Virtualization plugin: Guest running on VirtualBox detected')
+        Ohai::Log.debug("Virtualization plugin: Guest running on VirtualBox detected")
       when /vboxguest/
         virtualization[:system] = "vbox"
         virtualization[:role] = "guest"
         virtualization[:systems][:vbox] = "guest"
-        Ohai::Log.debug('Virtualization plugin: Host running VirtualBox detected')
+        Ohai::Log.debug("Virtualization plugin: Host running VirtualBox detected")
       end
+    end
+
+    # Detect bhyve by presence of /dev/vmm
+    if File.exist?("/dev/vmm")
+      virtualization[:system] = "bhyve"
+      virtualization[:role] = "host"
+      virtualization[:systems][:bhyve] = "host"
+      Ohai::Log.debug("Virtualization plugin: Host running bhyve detected")
     end
 
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
@@ -73,7 +81,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
-      Ohai::Log.debug('Virtualization plugin: Guest running on KVM detected')
+      Ohai::Log.debug("Virtualization plugin: Guest running on KVM detected")
     end
 
     # parse dmidecode to discover various virtualization guests

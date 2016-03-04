@@ -30,11 +30,11 @@ Ohai.plugin(:Virtualization) do
   collect_data(:solaris2) do
     virtualization Mash.new
 
-    # Detect KVM/QEMU from cpuinfo, report as KVM
+    # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
-    if File.exists?(psrinfo_path)
+    if File.exist?(psrinfo_path)
       so = shell_out("#{psrinfo_path} -pv")
-      if so.stdout =~ /QEMU Virtual CPU/
+      if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
       end

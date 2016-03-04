@@ -26,16 +26,27 @@ describe Ohai::System, "BSD virtualization plugin" do
     allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("jls -nd").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "", ""))
     allow(File).to receive(:exist?).and_return false
   end
 
-  context "bhyve" do
-    it "detects we are running bhyve" do
+  context "when on a bhyve host" do
+    it "detects we are a host" do
       allow(File).to receive(:exist?).with("/dev/vmm").and_return true
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("bhyve")
       expect(@plugin[:virtualization][:role]).to eq("host")
       expect(@plugin[:virtualization][:systems][:bhyve]).to eq("host")
+    end
+  end
+
+  context "when on a bhyve guest" do
+    it "detects we are a guest" do
+      allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "bhyve", ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("bhyve")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:bhyve]).to eq("guest")
     end
   end
 
@@ -104,6 +115,36 @@ OUT
         expect(@plugin[:virtualization][:role]).to eq("guest")
         expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
       end
+    end
+  end
+
+  context "when on a xen guest" do
+    it "detects we are a guest" do
+      allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "xen", ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("xen")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:xen]).to eq("guest")
+    end
+  end
+
+  context "when on a vmware guest" do
+    it "detects we are a guest" do
+      allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "vmware", ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("vmware")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:vmware]).to eq("guest")
+    end
+  end
+
+  context "when on a hyper-v guest" do
+    it "detects we are a guest" do
+      allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "hv", ""))
+      @plugin.run
+      expect(@plugin[:virtualization][:system]).to eq("hyperv")
+      expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:hyperv]).to eq("guest")
     end
   end
 end

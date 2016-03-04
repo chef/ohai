@@ -84,6 +84,33 @@ Ohai.plugin(:Virtualization) do
       Ohai::Log.debug("Virtualization plugin: Guest running on KVM detected")
     end
 
+    # gather hypervisor of guests from sysctl kern.vm_guest
+    # there are a limited number of hypervisors detected here, BUT it doesn't
+    # require dmidecode to be installed and dmidecode isn't in freebsd out of the box
+    so = shell_out("sysctl -n kern.vm_guest")
+    case so.stdout
+    when /vmware/
+      virtualization[:system] = "vmware"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:vmware] = "guest"
+      Ohai::Log.debug("Virtualization plugin: Guest running on VMware detected")
+    when /hv/
+      virtualization[:system] = "hyperv"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:hyperv] = "guest"
+      Ohai::Log.debug("Virtualization plugin: Guest running on Hyper-V detected")
+    when /xen/
+      virtualization[:system] = "xen"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:xen] = "guest"
+      Ohai::Log.debug("Virtualization plugin: Guest running on Xen detected")
+    when /bhyve/
+      virtualization[:system] = "bhyve"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:bhyve] = "guest"
+      Ohai::Log.debug("Virtualization plugin: Guest running on bhyve detected")
+    end
+
     # parse dmidecode to discover various virtualization guests
     if File.exist?("/usr/local/sbin/dmidecode") || File.exist?("/usr/pkg/sbin/dmidecode")
       guest = guest_from_dmi(shell_out("dmidecode").stdout)

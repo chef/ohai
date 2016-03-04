@@ -34,9 +34,9 @@ module ::Ohai::Mixin::DmiDecode
         return "vmware"
       when /Manufacturer: Xen/
         return "xen"
-      when /Product Name: VirtualBox/
+      when /Product.*: VirtualBox/
         return "vbox"
-      when /Product Name: OpenStack/
+      when /Product.*: OpenStack/
         return "openstack"
       when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
         return "kvm"

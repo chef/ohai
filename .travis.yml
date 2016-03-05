@@ -9,6 +9,8 @@ branches:
     - 7.4-stable
 
 before_install:
+  - gem update --system
+  - gem install bundler
   - bundle --version
   - gem --version
 rvm:

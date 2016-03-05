@@ -41,6 +41,7 @@ Ohai.plugin(:Virtualization) do
       if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
+        virtualization[:systems][:kvm] = "guest"
       end
     end
 
@@ -73,15 +74,17 @@ Ohai.plugin(:Virtualization) do
 
       if zones.length == 1
         first_zone = zones.keys[0]
-        unless( first_zone == "global")
+        unless first_zone == "global"
           virtualization[:system] = "zone"
           virtualization[:role] = "guest"
+          virtualization[:systems][:zone] = "guest"
           virtualization[:guest_uuid] = zones[first_zone]["uuid"]
           virtualization[:guest_id] = collect_solaris_guestid
         end
       elsif zones.length > 1
         virtualization[:system] = "zone"
         virtualization[:role] = "host"
+        virtualization[:systems][:zone] = "host"
         virtualization[:guests] = zones
       end
     end

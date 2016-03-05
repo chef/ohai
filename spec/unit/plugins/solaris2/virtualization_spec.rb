@@ -30,16 +30,16 @@ PSRINFO_PV
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)
 
     # default to all requested Files not existing
-    allow(File).to receive(:exists?).with("/usr/sbin/psrinfo").and_return(false)
-    allow(File).to receive(:exists?).with("/usr/sbin/smbios").and_return(false)
-    allow(File).to receive(:exists?).with("/usr/sbin/zoneadm").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/sbin/zoneadm").and_return(false)
     allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when we are checking for kvm" do
     before(:each) do
-      expect(File).to receive(:exists?).with("/usr/sbin/psrinfo").and_return(true)
+      expect(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(true)
     end
 
     it "should run psrinfo -pv" do
@@ -52,18 +52,19 @@ PSRINFO_PV
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("kvm")
       expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
     it "should not set virtualization if kvm isn't there" do
       expect(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
       @plugin.run
-      expect(@plugin[:virtualization]).to eq({})
+      expect(@plugin[:virtualization][:systems]).to eq({})
     end
   end
 
   describe "when we are parsing smbios" do
     before(:each) do
-      expect(File).to receive(:exists?).with("/usr/sbin/smbios").and_return(true)
+      expect(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(true)
     end
 
     it "should run smbios" do
@@ -107,17 +108,18 @@ VMWARE
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("vmware")
       expect(@plugin[:virtualization][:role]).to eq("guest")
+      expect(@plugin[:virtualization][:systems][:vmware]).to eq("guest")
     end
 
     it "should run smbios and not set virtualization if nothing is detected" do
       expect(@plugin).to receive(:shell_out).with("/usr/sbin/smbios")
       @plugin.run
-      expect(@plugin[:virtualization]).to eq({})
+      expect(@plugin[:virtualization][:systems]).to eq({})
     end
   end
 
   it "should not set virtualization if no tests match" do
     @plugin.run
-    expect(@plugin[:virtualization]).to eq({})
+    expect(@plugin[:virtualization][:systems]).to eq({})
   end
 end

@@ -18,6 +18,9 @@
 # limitations under the License.
 #
 
+require "ohai/mixin/dmi_decode"
+include Ohai::Mixin::DmiDecode
+
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
@@ -29,6 +32,7 @@ Ohai.plugin(:Virtualization) do
 
   collect_data(:solaris2) do
     virtualization Mash.new
+    virtualization[:systems] = Mash.new
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
@@ -40,23 +44,15 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # http://www.dmo.ca/blog/detecting-virtualization-on-linux
-    smbios_path = Ohai.abs_path( "/usr/sbin/smbios" )
-    if File.exists?(smbios_path)
-      so = shell_out(smbios_path)
-      case so.stdout
-      when /Manufacturer: Microsoft/
-        if so.stdout =~ /Product: Virtual Machine/
-          virtualization[:system] = "virtualpc"
-          virtualization[:role] = "guest"
-        end
-      when /Manufacturer: VMware/
-        if so.stdout =~ /Product: VMware Virtual Platform/
-          virtualization[:system] = "vmware"
-          virtualization[:role] = "guest"
-        end
-      else
-        nil
+    # Pass smbios information to the dmi_decode mixin to
+    # identify possible virtualization systems
+    smbios_path = Ohai.abs_path("/usr/sbin/smbios")
+    if File.exist?(smbios_path)
+      guest = guest_from_dmi(shell_out(smbios_path).stdout)
+      if guest
+        virtualization[:system] = guest
+        virtualization[:role] = "guest"
+        virtualization[:systems][guest.to_sym] = "guest"
       end
     end
 

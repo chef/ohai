@@ -99,7 +99,7 @@ module Ohai
       end
 
       def http_client
-        Net::HTTP.start(EC2_METADATA_ADDR).tap { |h| h.read_timeout = 600 }
+        Net::HTTP.start(EC2_METADATA_ADDR).tap { |h| h.read_timeout = 30 }
       end
 
       # Get metadata for a given path and API version

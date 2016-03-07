@@ -74,12 +74,18 @@ EOM
     end
   end
 
+  # rackspace systems look like ec2 so instead of timing out dig a bit deeper
+  def looks_like_rackspace?
+    return true if File.exist?("/usr/bin/rackspace-monitoring-agent")
+  end
+
   def looks_like_ec2?
     return true if hint?("ec2")
 
-    # if has ec2 mac try non-blocking connect so we don't "block" if
-    # the Xen environment is *not* EC2
-    return true if (has_ec2metadata_bin? || has_ec2_dmi?) || (has_xen_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80))
+    # Even if it looks like EC2 try to connect first
+    if has_ec2_dmi? || has_xen_mac? || (has_ec2metadata_bin? && !looks_like_rackspace?)
+      return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+    end
   end
 
   collect_data do

@@ -28,6 +28,7 @@ describe Ohai::System, "plugin ec2" do
     allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
     allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -310,7 +311,16 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "without hint file, mac address, dmi data, or ec2metadata binary" do
+  describe "with ec2metadata, but with rackspace-monitoring-agent" do
+    it_should_behave_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
+      allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(true)
+    end
+  end
+
+  describe "without any hints that it is an ec2 system" do
     it_should_behave_like "!ec2"
 
     before(:each) do

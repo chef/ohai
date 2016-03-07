@@ -24,14 +24,13 @@ Ohai.plugin(:Sessions) do
   provides "sessions/by_session", "sessions/by_user"
 
   collect_data(:linux) do
-    sessions Mash.new unless sessions
-
     loginctl_path = which("loginctl")
     if loginctl_path
       cmd = "#{loginctl_path} --no-pager --no-legend --no-ask-password " +
         "list-sessions"
       loginctl = shell_out(cmd)
 
+      sessions Mash.new unless sessions
       sessions[:by_session] = Mash.new unless sessions[:by_session]
       sessions[:by_user] = Mash.new unless sessions[:by_user]
 

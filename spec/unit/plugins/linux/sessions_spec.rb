@@ -93,6 +93,6 @@ LOGINCTL_OUT
   it "should not populate sessions if loginctl is not found" do
     allow(plugin).to receive(:which).with("loginctl").and_return(false)
     plugin.run
-    expect(plugin[:sessions]).to eq({})
+    expect(plugin[:sessions]).to be(nil)
   end
 end

@@ -14,8 +14,10 @@ before_install:
   - bundle --version
   - gem --version
 rvm:
+  - 2.0
   - 2.1
   - 2.2
+  - 2.3.0
 
 script:
   - bundle exec chefstyle

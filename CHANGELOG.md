@@ -15,8 +15,6 @@
 
 **Fixed bugs:**
 
-- KVM modules is a bogus way to detect a KVM host [\#749](https://github.com/chef/ohai/issues/749)
-- Azure hosts should not also show up as Hyper-V guests [\#665](https://github.com/chef/ohai/issues/665)
 - Use escape\_glob\_dir instead of escape\_glob [\#747](https://github.com/chef/ohai/pull/747) ([jaym](https://github.com/jaym))
 - have a proper dependency on plist [\#737](https://github.com/chef/ohai/pull/737) ([thommay](https://github.com/thommay))
 - Fix digital ocean ip address detection [\#735](https://github.com/chef/ohai/pull/735) ([ctso](https://github.com/ctso))

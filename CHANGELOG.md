@@ -1,7 +1,7 @@
 # Change Log
 
-## [8.11.0](https://github.com/chef/ohai/tree/8.11.0) (2016-03-02)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...8.11.0)
+## [8.11.1](https://github.com/chef/ohai/tree/8.11.1) (2016-03-07)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...8.11.1)
 
 **Implemented enhancements:**
 
@@ -15,8 +15,11 @@
 
 **Fixed bugs:**
 
-- EC2 autodetection is broken [\#691](https://github.com/chef/ohai/issues/691)
+- KVM modules is a bogus way to detect a KVM host [\#749](https://github.com/chef/ohai/issues/749)
+- Azure hosts should not also show up as Hyper-V guests [\#665](https://github.com/chef/ohai/issues/665)
+- Use escape\_glob\_dir instead of escape\_glob [\#747](https://github.com/chef/ohai/pull/747) ([jaym](https://github.com/jaym))
 - have a proper dependency on plist [\#737](https://github.com/chef/ohai/pull/737) ([thommay](https://github.com/thommay))
+- Fix digital ocean ip address detection [\#735](https://github.com/chef/ohai/pull/735) ([ctso](https://github.com/ctso))
 - Log sigar gem load failures [\#731](https://github.com/chef/ohai/pull/731) ([tas50](https://github.com/tas50))
 - ipaddress on Linux - default route pointing to unaddressed interface, with route src [\#682](https://github.com/chef/ohai/pull/682) ([glennmatthews](https://github.com/glennmatthews))
 

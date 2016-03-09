@@ -21,7 +21,7 @@ module ::Ohai::Mixin::DmiDecode
     dmi_data.each_line do |line|
       case line
       when /Manufacturer: Microsoft/
-        if dmi_data =~ /Product Name: Virtual Machine/
+        if dmi_data =~ /Product.*: Virtual Machine/
           if dmi_data =~ /Version: (7.0|Hyper-V)/
             return "hyperv"
           elsif dmi_data =~ /Version: (VS2005R2|6.0)/
@@ -34,9 +34,9 @@ module ::Ohai::Mixin::DmiDecode
         return "vmware"
       when /Manufacturer: Xen/
         return "xen"
-      when /Product Name: VirtualBox/
+      when /Product.*: VirtualBox/
         return "vbox"
-      when /Product Name: OpenStack/
+      when /Product.*: OpenStack/
         return "openstack"
       when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
         return "kvm"

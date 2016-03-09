@@ -18,6 +18,9 @@
 # limitations under the License.
 #
 
+require "ohai/mixin/dmi_decode"
+include Ohai::Mixin::DmiDecode
+
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
@@ -29,34 +32,28 @@ Ohai.plugin(:Virtualization) do
 
   collect_data(:solaris2) do
     virtualization Mash.new
+    virtualization[:systems] = Mash.new
 
-    # Detect KVM/QEMU from cpuinfo, report as KVM
+    # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
-    if File.exists?(psrinfo_path)
+    if File.exist?(psrinfo_path)
       so = shell_out("#{psrinfo_path} -pv")
-      if so.stdout =~ /QEMU Virtual CPU/
+      if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
+        virtualization[:systems][:kvm] = "guest"
       end
     end
 
-    # http://www.dmo.ca/blog/detecting-virtualization-on-linux
-    smbios_path = Ohai.abs_path( "/usr/sbin/smbios" )
-    if File.exists?(smbios_path)
-      so = shell_out(smbios_path)
-      case so.stdout
-      when /Manufacturer: Microsoft/
-        if so.stdout =~ /Product: Virtual Machine/
-          virtualization[:system] = "virtualpc"
-          virtualization[:role] = "guest"
-        end
-      when /Manufacturer: VMware/
-        if so.stdout =~ /Product: VMware Virtual Platform/
-          virtualization[:system] = "vmware"
-          virtualization[:role] = "guest"
-        end
-      else
-        nil
+    # Pass smbios information to the dmi_decode mixin to
+    # identify possible virtualization systems
+    smbios_path = Ohai.abs_path("/usr/sbin/smbios")
+    if File.exist?(smbios_path)
+      guest = guest_from_dmi(shell_out(smbios_path).stdout)
+      if guest
+        virtualization[:system] = guest
+        virtualization[:role] = "guest"
+        virtualization[:systems][guest.to_sym] = "guest"
       end
     end
 
@@ -77,15 +74,17 @@ Ohai.plugin(:Virtualization) do
 
       if zones.length == 1
         first_zone = zones.keys[0]
-        unless( first_zone == "global")
+        unless first_zone == "global"
           virtualization[:system] = "zone"
           virtualization[:role] = "guest"
+          virtualization[:systems][:zone] = "guest"
           virtualization[:guest_uuid] = zones[first_zone]["uuid"]
           virtualization[:guest_id] = collect_solaris_guestid
         end
       elsif zones.length > 1
         virtualization[:system] = "zone"
         virtualization[:role] = "host"
+        virtualization[:systems][:zone] = "host"
         virtualization[:guests] = zones
       end
     end

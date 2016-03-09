@@ -37,6 +37,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
     allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -77,9 +78,18 @@ describe Ohai::System, "Linux virtualization platform" do
   end
 
   describe "when we are checking for kvm" do
-    it "sets kvm host if /proc/modules contains kvm" do
-      expect(File).to receive(:exist?).with("/proc/modules").and_return(true)
-      allow(File).to receive(:read).with("/proc/modules").and_return("kvm 165872  1 kvm_intel")
+    it "sets kvm guest if /sys/devices/virtual/misc/kvm exists & hypervisor cpu feature is present" do
+      allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
+      allow(File).to receive(:read).with("/proc/cpuinfo").and_return("fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx rdtscp lm constant_tsc arch_perfmon rep_good nopl pni vmx ssse3 cx16 sse4_1 sse4_2 x2apic popcnt hypervisor lahf_lm vnmi ept tsc_adjust")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets kvm host if /sys/devices/virtual/misc/kvm exists & hypervisor cpu feature is not present" do
+      allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(true)
+      allow(File).to receive(:read).with("/proc/cpuinfo").and_return("fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf pni dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 popcnt lahf_lm ida dtherm tpr_shadow vnmi flexpriority ept vpid")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
       expect(plugin[:virtualization][:role]).to eq("host")

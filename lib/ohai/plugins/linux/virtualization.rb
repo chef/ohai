@@ -37,9 +37,6 @@ Ohai.plugin(:Virtualization) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
-    # if it is possible to detect paravirt vs hardware virt, it should be put in
-    # virtualization[:mechanism]
-
     ## Xen
     # /proc/xen is an empty dir for EL6 + Linode Guests + Paravirt EC2 instances
     if File.exist?("/proc/xen")
@@ -60,18 +57,13 @@ Ohai.plugin(:Virtualization) do
     # Xen Notes:
     # - cpuid of guests, if we could get it, would also be a clue
     # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
-    # - EL6 guests carry a 'hypervisor' cpu flag
     # - Additional edge cases likely should not change the above assumptions
     #   but rather be additive - btm
 
-    # Detect from kernel module
+    # Detect Virtualbox from kernel module
     if File.exist?("/proc/modules")
       modules = File.read("/proc/modules")
-      if modules =~ /^kvm/
-        virtualization[:system] = "kvm"
-        virtualization[:role] = "host"
-        virtualization[:systems][:kvm] = "host"
-      elsif modules =~ /^vboxdrv/
+      if modules =~ /^vboxdrv/
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
@@ -82,16 +74,25 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # Detect KVM/QEMU from cpuinfo, report as KVM
-    # We could pick KVM from 'Booting paravirtualized kernel on KVM' in dmesg
-    # 2.6.27-9-server (intrepid) has this / 2.6.18-6-amd64 (etch) does not
-    # It would be great if we could read pv_info in the kernel
-    # Wait for reply to: http://article.gmane.org/gmane.comp.emulators.kvm.devel/27885
+    # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     if File.exist?("/proc/cpuinfo")
       if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
+      end
+    end
+
+    # Detect KVM systems via /sys
+    # guests will have the hypervisor cpu feature that hosts don't have
+    if File.exist?("/sys/devices/virtual/misc/kvm")
+      virtualization[:system] = "kvm"
+      if File.read("/proc/cpuinfo") =~ /hypervisor/
+        virtualization[:role] = "guest"
+        virtualization[:systems][:kvm] = "guest"
+      else
+        virtualization[:role] = "host"
+        virtualization[:systems][:kvm] = "host"
       end
     end
 

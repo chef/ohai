@@ -1,7 +1,24 @@
 # Change Log
 
-## [8.11.1](https://github.com/chef/ohai/tree/8.11.1) (2016-03-07)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...8.11.1)
+## [8.12.0](https://github.com/chef/ohai/tree/8.12.0) (2016-03-09)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.11.1...8.12.0)
+
+**Implemented enhancements:**
+
+- add plugin to detect user sessions using loginctl [\#766](https://github.com/chef/ohai/pull/766) ([davide125](https://github.com/davide125))
+- Improve virtualization detection on Solaris [\#760](https://github.com/chef/ohai/pull/760) ([tas50](https://github.com/tas50))
+- Improve FreeBSD guest virtualization detection [\#756](https://github.com/chef/ohai/pull/756) ([tas50](https://github.com/tas50))
+- Detect Openstack hosts [\#751](https://github.com/chef/ohai/pull/751) ([tas50](https://github.com/tas50))
+- Improve KVM host and guest detection [\#750](https://github.com/chef/ohai/pull/750) ([tas50](https://github.com/tas50))
+- Update GCE metadata API version and fail better [\#736](https://github.com/chef/ohai/pull/736) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+
+- Make ohai work with Chef 12.7 and below [\#768](https://github.com/chef/ohai/pull/768) ([jkeiser](https://github.com/jkeiser))
+- Remove XML output in VirtualizationInfo and need for hpricot gem [\#755](https://github.com/chef/ohai/pull/755) ([tas50](https://github.com/tas50))
+
+## [v8.11.1](https://github.com/chef/ohai/tree/v8.11.1) (2016-03-08)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...v8.11.1)
 
 **Implemented enhancements:**
 

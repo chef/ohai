@@ -33,6 +33,10 @@ Ohai.plugin(:Virtualization) do
     which("docker")
   end
 
+  def nova_exists?
+    which("nova")
+  end
+
   collect_data(:linux) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
@@ -72,6 +76,13 @@ Ohai.plugin(:Virtualization) do
         virtualization[:role] = "guest"
         virtualization[:systems][:vbox] = "guest"
       end
+    end
+
+    # if nova binary is present we're on an openstack host
+    if nova_exists?
+      virtualization[:system] = "openstack"
+      virtualization[:role] = "host"
+      virtualization[:systems][:openstack] = "host"
     end
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM

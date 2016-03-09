@@ -38,6 +38,11 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
     allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
+
+    # default the which wrappers to nil
+    allow(plugin).to receive(:lxc_version_exists?).and_return(false)
+    allow(plugin).to receive(:docker_exists?).and_return(false)
+    allow(plugin).to receive(:nova_exists?).and_return(false)
   end
 
   describe "when we are checking for xen" do
@@ -74,6 +79,16 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  describe "when we are checking for openstack" do
+    it "sets openstack host if nova binary exists" do
+      allow(plugin).to receive(:nova_exists?).and_return("/usr/bin/nova")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("openstack")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:openstack]).to eq("host")
     end
   end
 

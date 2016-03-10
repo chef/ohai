@@ -143,9 +143,20 @@ describe Ohai::System, "plugin digital_ocean" do
   describe "with digital_ocean cloud-config file" do
     it_should_behave_like "digital_ocean"
 
+    yaml_example = <<-EOF
+    datasource_list: [ DigitalOcean, None ]
+    datasource:
+    DigitalOcean:
+     retries: 5
+     timeout: 10
+
+    vendor_data:
+     enabled: True
+    EOF
+
     before(:each) do
         expect(File).to receive(:exist?).with("/etc/cloud/cloud.cfg").and_return(true)
-        allow(File).to receive(:read).with("/etc/cloud/cloud.cfg").and_return("")
+        allow(File).to receive(:read).with("/etc/cloud/cloud.cfg").and_return(yaml_example)
     end
   end
 end

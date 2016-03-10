@@ -157,6 +157,7 @@ describe Ohai::System, "plugin digital_ocean" do
       allow(plugin).to receive(:hint?).with("digital_ocean").and_return(false)
     end
 
+<<<<<<< HEAD
     describe "with the /etc/digitalocean file" do
       before do
         allow(File).to receive(:exist?).with(digitalocean_path).and_return(true)
@@ -170,6 +171,22 @@ describe Ohai::System, "plugin digital_ocean" do
         allow(File).to receive(:exist?).with(digitalocean_path).and_return(false)
       end
       it_behaves_like "!digital_ocean"
+=======
+    yaml_example = <<-EOF
+    datasource_list: [ DigitalOcean, None ]
+    datasource:
+    DigitalOcean:
+     retries: 5
+     timeout: 10
+
+    vendor_data:
+     enabled: True
+    EOF
+
+    before(:each) do
+        expect(File).to receive(:exist?).with("/etc/cloud/cloud.cfg").and_return(true)
+        allow(File).to receive(:read).with("/etc/cloud/cloud.cfg").and_return(yaml_example)
+>>>>>>> Remove debug code/add proper has_do_init check. Attempt to fix failing tests
     end
   end
 end

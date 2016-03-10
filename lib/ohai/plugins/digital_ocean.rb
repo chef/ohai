@@ -1,4 +1,5 @@
 #
+# Author:: Dylan Page (<dpage@digitalocean.com>)
 # Author:: Stafford Brunk (<stafford.brunk@gmail.com>)
 # License:: Apache License, Version 2.0
 #
@@ -14,65 +15,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/util/ip_helper"
+require 'ohai/mixin/do_metadata'
+require 'yaml'
 
 Ohai.plugin(:DigitalOcean) do
-  include Ohai::Util::IpHelper
+  include Ohai::Mixin::DOMetadata
 
-  DIGITALOCEAN_FILE = "/etc/digitalocean" unless defined?(DIGITALOCEAN_FILE)
+  DO_CLOUD_INIT_FILE = "/etc/cloud/cloud.cfg" unless defined?(DO_CLOUD_INIT_FILE)
 
   provides "digital_ocean"
+
   depends "network/interfaces"
 
-  def extract_droplet_ip_addresses
-    addresses = Mash.new({ "v4" => [], "v6" => [] })
-    network[:interfaces].each_value do |iface|
-      iface[:addresses].each do |address, details|
-        next if details[:family] == "lladdr" || loopback?(address)
-
-        ip = IPAddress(address)
-        type = digital_ocean_address_type(ip)
-        address_hash = build_address_hash(ip, details)
-        addresses[type] << address_hash
-      end
+  def has_do_init?
+    if File.exist?(DO_CLOUD_INIT_FILE)
+      datasource = YAML.load_file(DO_CLOUD_INIT_FILE)
+      puts datasource.inspect
+      Ohai::Log.debug("digital_ocean plugin: has_do_init? == true")
+      true
+    else
+      Ohai::Log.debug("digital_ocean plugin: has_do_init? == false")
+      false
     end
-    addresses
-  end
-
-  def build_address_hash(ip, details)
-    address_hash = Mash.new({
-      "ip_address" => ip.address,
-      "type" => private_address?(ip.address) ? "private" : "public",
-    })
-
-    if ip.ipv4?
-      address_hash["netmask"] = details[:netmask]
-    elsif ip.ipv6?
-      address_hash["cidr"] = ip.prefix
-    end
-    address_hash
-  end
-
-  def digital_ocean_address_type(ip)
-    ip.ipv4? ? "v4" : "v6"
   end
 
   def looks_like_digital_ocean?
-    hint?("digital_ocean") || File.exist?(DIGITALOCEAN_FILE)
+    return true if hint?("digital_ocean")
+
+    if has_do_init?
+     return true if can_metadata_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR,80)
+    end
   end
 
   collect_data do
     if looks_like_digital_ocean?
       Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
-      hint = hint?("digital_ocean") || {}
-      hint.each { |k, v| digital_ocean[k] = v unless k == "ip_addresses" }
-
-      # Extract actual ip addresses
-      # The networks sub-hash is structured similarly to how
-      # Digital Ocean's v2 API structures things:
-      # https://developers.digitalocean.com/#droplets
-      digital_ocean[:networks] = extract_droplet_ip_addresses
+      fetch_metadata.each do |k, v|
+        digital_ocean[k] = v
+      end
     else
       Ohai::Log.debug("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
       false

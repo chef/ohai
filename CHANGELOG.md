@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.12.1](https://github.com/chef/ohai/tree/8.12.1) (2016-03-14)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.12.0...8.12.1)
+
+**Fixed bugs:**
+
+- Fix gem conflicts in ruby environments that load rake 11 [\#774](https://github.com/chef/ohai/pull/774) ([danielsdeleo](https://github.com/danielsdeleo))
+
 ## [8.12.0](https://github.com/chef/ohai/tree/8.12.0) (2016-03-09)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.11.1...8.12.0)
 

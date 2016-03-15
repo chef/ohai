@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   # Chef 13 starts, otherwise builds will break.
   s.add_dependency "chef-config", ">= 12.5.0.alpha.1", "< 13"
 
-  s.add_dependency "rake", "~> 10.1"
+  s.add_dependency "rake", ">= 10.1.0", "< 12.0.0"
   s.add_development_dependency "rspec-core", "~> 3.0"
   s.add_development_dependency "rspec-expectations", "~> 3.0"
   s.add_development_dependency "rspec-mocks", "~> 3.0"

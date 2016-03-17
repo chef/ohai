@@ -113,7 +113,6 @@ describe Ohai::System, "plugin packages" do
     end
 
     context "on windows", :windows_only do
-      require "win32/registry"
 
       let(:plugin) do
         get_plugin("packages").tap do |plugin|

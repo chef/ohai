@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-config", "~> 2.0"
   s.add_dependency "mixlib-log"
   s.add_dependency "mixlib-shellout", "~> 2.0"
-  s.add_dependency "plist"
+  s.add_dependency "plist", "~> 3.1"
   s.add_dependency "ipaddress"
   s.add_dependency "wmi-lite", "~> 1.0"
   s.add_dependency "ffi", "~> 1.9"

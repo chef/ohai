@@ -29,27 +29,25 @@ Ohai.plugin(:Packages) do
   }
 
   collect_data(:linux) do
-    if configuration(:enabled)
-      packages Mash.new
-      if %w{debian}.include? platform_family
-        so = shell_out("dpkg-query -W")
-        pkgs = so.stdout.lines
+    packages Mash.new
+    if %w{debian}.include? platform_family
+      so = shell_out("dpkg-query -W")
+      pkgs = so.stdout.lines
 
-        pkgs.each do |pkg|
-          name, version = pkg.split
-          packages[name] = { "version" => version }
-        end
+      pkgs.each do |pkg|
+        name, version = pkg.split
+        packages[name] = { "version" => version }
+      end
 
-      elsif %w{rhel fedora suse}.include? platform_family
-        require "shellwords"
-        format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
-        so = shell_out("rpm -qa --queryformat #{format}")
-        pkgs = so.stdout.lines
+    elsif %w{rhel fedora suse}.include? platform_family
+      require "shellwords"
+      format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
+      so = shell_out("rpm -qa --queryformat #{format}")
+      pkgs = so.stdout.lines
 
-        pkgs.each do |pkg|
-          name, version, release = pkg.split
-          packages[name] = { "version" => version, "release" => release }
-        end
+      pkgs.each do |pkg|
+        name, version, release = pkg.split
+        packages[name] = { "version" => version, "release" => release }
       end
     end
   end
@@ -78,28 +76,24 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:windows) do
-    if configuration(:enabled)
-      require "win32/registry"
-      packages Mash.new
-      collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
-      # on 64 bit systems, 32 bit programs are stored here
-      collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
-    end
+    require "win32/registry"
+    packages Mash.new
+    collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    # on 64 bit systems, 32 bit programs are stored here
+    collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
   end
 
   collect_data(:aix) do
-    if configuration(:enabled)
-      packages Mash.new
-      so = shell_out("lslpp -L -q -c")
-      pkgs = so.stdout.lines
+    packages Mash.new
+    so = shell_out("lslpp -L -q -c")
+    pkgs = so.stdout.lines
 
-      # Output format is
-      # Package Name:Fileset:Level
-      # On aix, filesets are packages and levels are versions
-      pkgs.each do |pkg|
-        _, name, version = pkg.split(":")
-        packages[name] = { "version" => version }
-      end
+    # Output format is
+    # Package Name:Fileset:Level
+    # On aix, filesets are packages and levels are versions
+    pkgs.each do |pkg|
+      _, name, version = pkg.split(":")
+      packages[name] = { "version" => version }
     end
   end
 
@@ -140,10 +134,8 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:solaris2) do
-    if configuration(:enabled)
-      packages Mash.new
-      collect_ips_packages
-      collect_sysv_packages
-    end
+    packages Mash.new
+    collect_ips_packages
+    collect_sysv_packages
   end
 end

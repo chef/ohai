@@ -20,256 +20,226 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin packages" do
-  context "when the packages plugin is disabled" do
-    before do
-      Ohai.config[:plugin][:packages][:enabled] = false
-      allow(plugin).to receive(:collect_os).and_return(platform_family.to_s)
+  context "on debian" do
+    let(:plugin) do
+      get_plugin("packages").tap do |plugin|
+        plugin[:platform_family] = "debian"
+      end
+    end
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out)
+        .with("dpkg-query -W")
+        .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
-    let(:plugin) do
-      get_plugin("packages").tap do |plugin|
-        plugin[:platform_family] = platform_family
-      end
+    it "calls dpkg query" do
+      expect(plugin).to receive(:shell_out)
+        .with("dpkg-query -W")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
     end
 
-    [:debian, :fedora, :windows, :aix, :solaris2].each do |os|
-      context "on #{os}" do
-        let(:platform_family) { os }
-
-        it "does not enumerate the packages" do
-          expect(plugin[:packages]).to eq(nil)
-        end
-      end
+    it "gets packages and versions" do
+      expect(plugin[:packages]["vim-common"][:version]).to eq("2:7.4.052-1ubuntu3")
     end
   end
 
-  context "when the packages plugin is enabled" do
-    before do
-      Ohai.config[:plugin][:packages][:enabled] = true
-    end
-
-    context "on debian" do
-      let(:plugin) do
-        get_plugin("packages").tap do |plugin|
-          plugin[:platform_family] = "debian"
-        end
-      end
-
-      let(:stdout) do
-        File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
-      end
-
-      before(:each) do
-        allow(plugin).to receive(:collect_os).and_return(:linux)
-        allow(plugin).to receive(:shell_out)
-          .with("dpkg-query -W")
-          .and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
-
-      it "calls dpkg query" do
-        expect(plugin).to receive(:shell_out)
-          .with("dpkg-query -W")
-          .and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
-
-      it "gets packages and versions" do
-        expect(plugin[:packages]["vim-common"][:version]).to eq("2:7.4.052-1ubuntu3")
+  context "on fedora" do
+    let(:plugin) do
+      get_plugin("packages").tap do |plugin|
+        plugin[:platform_family] = "fedora"
       end
     end
 
-    context "on fedora" do
-      let(:plugin) do
-        get_plugin("packages").tap do |plugin|
-          plugin[:platform_family] = "fedora"
-        end
-      end
+    let(:format) { Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n' }
 
-      let(:format) { Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n' }
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "rpmquery.output"))
+    end
 
-      let(:stdout) do
-        File.read(File.join(SPEC_PLUGIN_PATH, "rpmquery.output"))
-      end
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("rpm -qa --queryformat #{format}").and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
 
-      before(:each) do
-        allow(plugin).to receive(:collect_os).and_return(:linux)
-        allow(plugin).to receive(:shell_out).with("rpm -qa --queryformat #{format}").and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
+    it "calls rpm -qa" do
+      expect(plugin).to receive(:shell_out)
+        .with("rpm -qa --queryformat #{format}")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
 
-      it "calls rpm -qa" do
-        expect(plugin).to receive(:shell_out)
-          .with("rpm -qa --queryformat #{format}")
-          .and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
+    it "gets packages and versions/release" do
+      expect(plugin[:packages]["vim-common"][:version]).to eq("7.2.411")
+      expect(plugin[:packages]["vim-common"][:release]).to eq("1.8.el6")
+    end
+  end
 
-      it "gets packages and versions/release" do
-        expect(plugin[:packages]["vim-common"][:version]).to eq("7.2.411")
-        expect(plugin[:packages]["vim-common"][:release]).to eq("1.8.el6")
+  context "on windows", :windows_only do
+
+    let(:plugin) do
+      get_plugin("packages").tap do |plugin|
+        plugin[:platform_family] = "windows"
       end
     end
 
-    context "on windows", :windows_only do
+    let(:win_reg_double) do
+      instance_double("Win32::Registry")
+    end
 
-      let(:plugin) do
-        get_plugin("packages").tap do |plugin|
-          plugin[:platform_family] = "windows"
-        end
-      end
+    let(:win_reg_keys) do
+      [ "{22FA28AB-3C1B-438B-A8B5-E23892C8B567}",
+        "{0D4BCDCD-6225-4BA5-91A3-54AFCECC281E}" ]
+    end
 
-      let(:win_reg_double) do
-        instance_double("Win32::Registry")
-      end
+    let(:i386_reg_type) do
+      Win32::Registry::KEY_READ | 0x100
+    end
 
-      let(:win_reg_keys) do
-        [ "{22FA28AB-3C1B-438B-A8B5-E23892C8B567}",
-          "{0D4BCDCD-6225-4BA5-91A3-54AFCECC281E}" ]
-      end
+    let(:x86_64_reg_type) do
+      Win32::Registry::KEY_READ | 0x200
+    end
 
-      let(:i386_reg_type) do
-        Win32::Registry::KEY_READ | 0x100
-      end
+    let(:win_reg_output) do
+      [{ "DisplayName" => "NXLOG-CE",
+         "DisplayVersion" => "2.8.1248",
+         "Publisher" => "nxsec.com",
+         "InstallDate" => "20150511"
+        },
+        { "DisplayName" => "Chef Development Kit v0.7.0",
+          "DisplayVersion" => "0.7.0.1",
+          "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
+          "InstallDate" => "20150925" }]
+    end
 
-      let(:x86_64_reg_type) do
-        Win32::Registry::KEY_READ | 0x200
-      end
+    shared_examples "windows_package_plugin" do
+      it "gets package info" do
+        plugin.run
+        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:version]).to eq("0.7.0.1")
+        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:publisher]).to eq("\"Chef Software, Inc. <maintainers@chef.io>\"")
+        expect(plugin[:packages]["Chef Development Kit v0.7.0"][:installdate]).to eq("20150925")
 
-      let(:win_reg_output) do
-        [{ "DisplayName" => "NXLOG-CE",
-           "DisplayVersion" => "2.8.1248",
-           "Publisher" => "nxsec.com",
-           "InstallDate" => "20150511"
-          },
-          { "DisplayName" => "Chef Development Kit v0.7.0",
-            "DisplayVersion" => "0.7.0.1",
-            "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
-            "InstallDate" => "20150925" }]
-      end
-
-      shared_examples "windows_package_plugin" do
-        it "gets package info" do
-          plugin.run
-          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:version]).to eq("0.7.0.1")
-          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:publisher]).to eq("\"Chef Software, Inc. <maintainers@chef.io>\"")
-          expect(plugin[:packages]["Chef Development Kit v0.7.0"][:installdate]).to eq("20150925")
-
-          expect(plugin[:packages]["NXLOG-CE"][:version]).to eq("2.8.1248")
-          expect(plugin[:packages]["NXLOG-CE"][:publisher]).to eq("nxsec.com")
-          expect(plugin[:packages]["NXLOG-CE"][:installdate]).to eq("20150511")
-        end
-      end
-
-      before(:each) do
-        allow(plugin).to receive(:collect_os).and_return(:windows)
-        allow(win_reg_double).to receive(:open).with(win_reg_keys[0]).and_return(win_reg_output[0])
-        allow(win_reg_double).to receive(:open).with(win_reg_keys[1]).and_return(win_reg_output[1])
-        allow(win_reg_double).to receive(:each_key).and_yield(win_reg_keys[0], 0).and_yield(win_reg_keys[1], 1)
-      end
-
-      describe "on 32 bit ruby" do
-        before do
-          stub_const("::RbConfig::CONFIG", { "target_cpu" => "i386" } )
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
-        end
-        it_behaves_like "windows_package_plugin"
-      end
-
-      describe "on 64 bit ruby" do
-        before do
-          stub_const("::RbConfig::CONFIG", { "target_cpu" => "x86_64" } )
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
-        end
-        it_behaves_like "windows_package_plugin"
-      end
-
-      describe "on unknown ruby" do
-        before do
-          stub_const("::RbConfig::CONFIG", { "target_cpu" => nil } )
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
-          allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
-        end
-        it_behaves_like "windows_package_plugin"
+        expect(plugin[:packages]["NXLOG-CE"][:version]).to eq("2.8.1248")
+        expect(plugin[:packages]["NXLOG-CE"][:publisher]).to eq("nxsec.com")
+        expect(plugin[:packages]["NXLOG-CE"][:installdate]).to eq("20150511")
       end
     end
 
-    context "on aix" do
-      let(:plugin) { get_plugin("packages") }
-
-      let(:stdout) do
-        File.read(File.join(SPEC_PLUGIN_PATH, "lslpp.output"))
-      end
-
-      before(:each) do
-        allow(plugin).to receive(:collect_os).and_return(:aix)
-        allow(plugin).to receive(:shell_out).with("lslpp -L -q -c").and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
-
-      it "calls lslpp -L -q -c" do
-        expect(plugin).to receive(:shell_out)
-          .with("lslpp -L -q -c")
-          .and_return(mock_shell_out(0, stdout, ""))
-        plugin.run
-      end
-
-      it "gets packages with version" do
-        expect(plugin[:packages]["chef"][:version]).to eq("12.5.1.1")
-      end
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:windows)
+      allow(win_reg_double).to receive(:open).with(win_reg_keys[0]).and_return(win_reg_output[0])
+      allow(win_reg_double).to receive(:open).with(win_reg_keys[1]).and_return(win_reg_output[1])
+      allow(win_reg_double).to receive(:each_key).and_yield(win_reg_keys[0], 0).and_yield(win_reg_keys[1], 1)
     end
 
-    context "on solaris2" do
-      let(:plugin) { get_plugin("packages") }
-
-      let(:pkglist_output) do
-        File.read(File.join(SPEC_PLUGIN_PATH, "pkglist.output"))
+    describe "on 32 bit ruby" do
+      before do
+        stub_const("::RbConfig::CONFIG", { "target_cpu" => "i386" } )
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
       end
+      it_behaves_like "windows_package_plugin"
+    end
 
-      let(:pkginfo_output) do
-        File.read(File.join(SPEC_PLUGIN_PATH, "pkginfo.output"))
+    describe "on 64 bit ruby" do
+      before do
+        stub_const("::RbConfig::CONFIG", { "target_cpu" => "x86_64" } )
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
       end
+      it_behaves_like "windows_package_plugin"
+    end
 
-      before(:each) do
-        allow(plugin).to receive(:collect_os).and_return(:solaris2)
-        allow(plugin).to receive(:shell_out).with("pkg list -H").and_return(mock_shell_out(0, pkglist_output, ""))
-        allow(plugin).to receive(:shell_out).with("pkginfo -l").and_return(mock_shell_out(0, pkginfo_output, ""))
-        plugin.run
+    describe "on unknown ruby" do
+      before do
+        stub_const("::RbConfig::CONFIG", { "target_cpu" => nil } )
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
       end
+      it_behaves_like "windows_package_plugin"
+    end
+  end
 
-      it "calls pkg list -H" do
-        expect(plugin).to receive(:shell_out)
-          .with("pkg list -H")
-          .and_return(mock_shell_out(0, pkglist_output, ""))
-        plugin.run
-      end
+  context "on aix" do
+    let(:plugin) { get_plugin("packages") }
 
-      it "calls pkginfo -l" do
-        expect(plugin).to receive(:shell_out)
-          .with("pkginfo -l")
-          .and_return(mock_shell_out(0, pkginfo_output, ""))
-        plugin.run
-      end
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "lslpp.output"))
+    end
 
-      it "gets ips packages with version" do
-        expect(plugin[:packages]["chef"][:version]).to eq("12.5.1")
-      end
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:aix)
+      allow(plugin).to receive(:shell_out).with("lslpp -L -q -c").and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
 
-      it "gets ips packages with version and publisher" do
-        expect(plugin[:packages]["system/EMCpower"][:version]).to eq("6.0.0.1.0-3")
-        expect(plugin[:packages]["system/EMCpower"][:publisher]).to eq("emc.com")
-      end
+    it "calls lslpp -L -q -c" do
+      expect(plugin).to receive(:shell_out)
+        .with("lslpp -L -q -c")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
 
-      it "gets sysv packages with version" do
-        expect(plugin[:packages]["chef"][:version]).to eq("12.5.1")
-      end
+    it "gets packages with version" do
+      expect(plugin[:packages]["chef"][:version]).to eq("12.5.1.1")
+    end
+  end
 
-      it "gets sysv packages with version" do
-        expect(plugin[:packages]["mqm"][:version]).to eq("7.0.1.4")
-      end
+  context "on solaris2" do
+    let(:plugin) { get_plugin("packages") }
+
+    let(:pkglist_output) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "pkglist.output"))
+    end
+
+    let(:pkginfo_output) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "pkginfo.output"))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:solaris2)
+      allow(plugin).to receive(:shell_out).with("pkg list -H").and_return(mock_shell_out(0, pkglist_output, ""))
+      allow(plugin).to receive(:shell_out).with("pkginfo -l").and_return(mock_shell_out(0, pkginfo_output, ""))
+      plugin.run
+    end
+
+    it "calls pkg list -H" do
+      expect(plugin).to receive(:shell_out)
+        .with("pkg list -H")
+        .and_return(mock_shell_out(0, pkglist_output, ""))
+      plugin.run
+    end
+
+    it "calls pkginfo -l" do
+      expect(plugin).to receive(:shell_out)
+        .with("pkginfo -l")
+        .and_return(mock_shell_out(0, pkginfo_output, ""))
+      plugin.run
+    end
+
+    it "gets ips packages with version" do
+      expect(plugin[:packages]["chef"][:version]).to eq("12.5.1")
+    end
+
+    it "gets ips packages with version and publisher" do
+      expect(plugin[:packages]["system/EMCpower"][:version]).to eq("6.0.0.1.0-3")
+      expect(plugin[:packages]["system/EMCpower"][:publisher]).to eq("emc.com")
+    end
+
+    it "gets sysv packages with version" do
+      expect(plugin[:packages]["chef"][:version]).to eq("12.5.1")
+    end
+
+    it "gets sysv packages with version" do
+      expect(plugin[:packages]["mqm"][:version]).to eq("7.0.1.4")
     end
   end
 end

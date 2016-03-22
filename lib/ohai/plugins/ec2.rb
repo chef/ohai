@@ -79,11 +79,16 @@ EOM
     return true if File.exist?("/usr/bin/rackspace-monitoring-agent")
   end
 
+  # digital ocean systems look like ec2 so instead of timing out dig a bit deeper
+  def looks_like_digitalocean?
+    return true if File.exist?("/etc/digitalocean")
+  end
+
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_dmi? || has_xen_mac? || (has_ec2metadata_bin? && !looks_like_rackspace?)
+    if has_ec2_dmi? || has_xen_mac? || (has_ec2metadata_bin? && !looks_like_rackspace? && !looks_like_digitalocean?)
       return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end

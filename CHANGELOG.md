@@ -1,5 +1,16 @@
 # Change Log
 
+## [8.13.0](https://github.com/chef/ohai/tree/8.13.0) (2016-03-24)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.12.1...8.13.0)
+
+**Implemented enhancements:**
+
+- Add language scala [\#524](https://github.com/chef/ohai/pull/524) ([cmluciano](https://github.com/cmluciano))
+
+**Fixed bugs:**
+
+- Lock plist to 3.x [\#779](https://github.com/chef/ohai/pull/779) ([danielsdeleo](https://github.com/danielsdeleo))
+
 ## [8.12.1](https://github.com/chef/ohai/tree/8.12.1) (2016-03-14)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.12.0...8.12.1)
 

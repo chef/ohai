@@ -22,63 +22,78 @@ Ohai.plugin(:Packages) do
   provides "packages"
   depends "platform_family"
 
+  WINDOWS_ATTRIBUTE_ALIASES = {
+    "DisplayVersion" => "version",
+    "Publisher" => "publisher",
+    "InstallDate" => "installdate"
+  }
+
   collect_data(:linux) do
-    if configuration(:enabled)
-      packages Mash.new
-      if %w{debian}.include? platform_family
-        so = shell_out("dpkg-query -W")
-        pkgs = so.stdout.lines
+    packages Mash.new
+    if %w{debian}.include? platform_family
+      so = shell_out("dpkg-query -W")
+      pkgs = so.stdout.lines
 
-        pkgs.each do |pkg|
-          name, version = pkg.split
-          packages[name] = { "version" => version }
-        end
+      pkgs.each do |pkg|
+        name, version = pkg.split
+        packages[name] = { "version" => version }
+      end
 
-      elsif %w{rhel fedora suse}.include? platform_family
-        require "shellwords"
-        format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
-        so = shell_out("rpm -qa --queryformat #{format}")
-        pkgs = so.stdout.lines
+    elsif %w{rhel fedora suse}.include? platform_family
+      require "shellwords"
+      format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
+      so = shell_out("rpm -qa --queryformat #{format}")
+      pkgs = so.stdout.lines
 
-        pkgs.each do |pkg|
-          name, version, release = pkg.split
-          packages[name] = { "version" => version, "release" => release }
+      pkgs.each do |pkg|
+        name, version, release = pkg.split
+        packages[name] = { "version" => version, "release" => release }
+      end
+    end
+  end
+
+  def collect_programs_from_registry_key(key_path)
+    # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
+    if ::RbConfig::CONFIG["target_cpu"] == "i386"
+      reg_type = Win32::Registry::KEY_READ | 0x100
+    elsif ::RbConfig::CONFIG["target_cpu"] == "x86_64"
+      reg_type = Win32::Registry::KEY_READ | 0x200
+    else
+      reg_type = Win32::Registry::KEY_READ
+    end
+    Win32::Registry::HKEY_LOCAL_MACHINE.open(key_path, reg_type) do |reg|
+      reg.each_key do |key, _wtime|
+        pkg = reg.open(key)
+        name = pkg["DisplayName"] rescue nil
+        next if name.nil?
+        package = packages[name] = Mash.new
+        WINDOWS_ATTRIBUTE_ALIASES.each do |registry_attr, package_attr|
+          value = pkg[registry_attr] rescue nil
+          package[package_attr] = value unless value.nil?
         end
       end
     end
   end
 
   collect_data(:windows) do
-    if configuration(:enabled)
-      packages Mash.new
-      require "wmi-lite"
-
-      wmi = WmiLite::Wmi.new
-      w32_product = wmi.instances_of("Win32_Product")
-
-      w32_product.find_all.each do |product|
-        name = product["name"]
-        package = packages[name] = Mash.new
-        %w{version vendor installdate}.each do |attr|
-          package[attr] = product[attr]
-        end
-      end
-    end
+    require "win32/registry"
+    packages Mash.new
+    collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    # on 64 bit systems, 32 bit programs are stored here
+    collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
   end
 
   collect_data(:aix) do
-    if configuration(:enabled)
-      packages Mash.new
-      so = shell_out("lslpp -L -q -c")
-      pkgs = so.stdout.lines
+    packages Mash.new
+    so = shell_out("lslpp -L -q -c")
+    pkgs = so.stdout.lines
 
-      # Output format is
-      # Package Name:Fileset:Level
-      # On aix, filesets are packages and levels are versions
-      pkgs.each do |pkg|
-        _, name, version = pkg.split(":")
-        packages[name] = { "version" => version }
-      end
+    # Output format is
+    # Package Name:Fileset:Level
+    # On aix, filesets are packages and levels are versions
+    pkgs.each do |pkg|
+      _, name, version = pkg.split(":")
+      packages[name] = { "version" => version }
     end
   end
 
@@ -119,10 +134,8 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:solaris2) do
-    if configuration(:enabled)
-      packages Mash.new
-      collect_ips_packages
-      collect_sysv_packages
-    end
+    packages Mash.new
+    collect_ips_packages
+    collect_sysv_packages
   end
 end

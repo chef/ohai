@@ -20,8 +20,9 @@
 
 # How we detect EC2 from easiest to hardest & least reliable
 # 1. Ohai ec2 hint exists. This always works
+# 2. Xen hypervisor UUID starts with 'ec2'. This catches Linux HVM & paravirt instances
 # 2. DMI data mentions amazon. This catches HVM instances in a VPC
-# 3. Kernel data mentioned Amazon. This catches Windows instances
+# 3. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
 require "ohai/mixin/ec2_metadata"
 require "base64"
@@ -49,6 +50,20 @@ Ohai.plugin(:EC2) do
     end
   end
 
+  # looks for a xen UUID that starts with ec2
+  # this gets us detection of Linux HVM and Paravirt hosts
+  def has_ec2_xen_uuid?
+    if ::File.exist?('/sys/hypervisor/uuid')
+      if ::File.read('/sys/hypervisor/uuid') =~ /^ec2/
+        Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == true")
+        return true
+      end
+    else
+      Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == false")
+      return false
+    end
+  end
+
   # looks for the Amazon.com Organization in Windows Kernel data
   # this gets us detection of Windows systems
   def has_amazon_org?
@@ -68,7 +83,7 @@ Ohai.plugin(:EC2) do
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_dmi? || has_amazon_org?
+    if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
       return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end
@@ -85,7 +100,7 @@ Ohai.plugin(:EC2) do
         next if k == "iam" && !hint?("iam")
         ec2[k] = v
       end
-      ec2[:userdata] = self.fetch_userdata
+      ec2[:userdata] = fetch_userdata
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
         Ohai::Log.debug("ec2 plugin: Binary UserData Found. Storing in base64")

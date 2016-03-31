@@ -24,7 +24,6 @@ require "base64"
 describe Ohai::System, "plugin ec2" do
   before(:each) do
     @plugin = get_plugin("ec2")
-    @plugin[:network] = { :interfaces => { :eth0 => {} } }
     allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
   end
@@ -254,20 +253,6 @@ describe Ohai::System, "plugin ec2" do
     end
   end # shared examples for ec2
 
-  describe "without dmi data, kernel organization, with xen mac, and metadata address connected" do
-    before(:each) do
-      allow(IO).to receive(:select).and_return([[], [1], []])
-      @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "fe:ff:ff:ff:ff:ff" }
-    end
-
-    it_should_behave_like "ec2"
-
-    it "warns that the arp table method is deprecated" do
-      expect(Ohai::Log).to receive(:warn).with(/will be removed/)
-      @plugin.has_xen_mac?
-    end
-  end
-
   describe "with ec2 dmi data" do
     it_should_behave_like "ec2"
 
@@ -316,7 +301,6 @@ describe Ohai::System, "plugin ec2" do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
       @plugin[:dmi] = nil
-      @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "00:50:56:c0:00:08" }
     end
   end
 

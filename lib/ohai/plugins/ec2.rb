@@ -2,6 +2,7 @@
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -20,6 +21,7 @@
 # How we detect EC2 from easiest to hardest & least reliable
 # 1. Ohai ec2 hint exists. This always works
 # 2. DMI data mentions amazon. This catches HVM instances in a VPC
+# 2. Kernel data mentioned Amazon. This catches Windows instances
 # 3. Has a xen MAC + can connect to metadata. This catches paravirt instances not in a VPC
 # 4. Has ec2metadata binary + can connect to metadata. This catches paravirt instances in a VPC
 
@@ -33,6 +35,7 @@ Ohai.plugin(:EC2) do
 
   depends "network/interfaces"
   depends "dmi"
+  depends "kernel"
 
   # look for ec2metadata and see if we get data back
   # this gets us detection of paravirt instances that are within a VPC
@@ -88,11 +91,26 @@ EOM
     end
   end
 
+  # looks for the Amazon.com Organization in Windows Kernel data
+  # this gets us detection of Windows systems
+  def has_amazon_org?
+    begin
+      # detect an Organization of 'Amazon.com'
+      if kernel[:os_info][:organization] =~ /Amazon/
+        Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
+        true
+      end
+    rescue NoMethodError
+      Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+      false
+    end
+  end
+
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_dmi? || has_xen_mac? || has_ec2metadata_bin?
+    if has_ec2_dmi? || has_amazon_org? || has_xen_mac? || has_ec2metadata_bin?
       return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end

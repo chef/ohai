@@ -346,6 +346,14 @@ END
     end
   end
 
+  describe "with amazon kernel data" do
+    it_should_behave_like "ec2"
+
+    before(:each) do
+      @plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
+    end
+  end
+
   describe "with ec2 hint file" do
     it_should_behave_like "ec2"
 

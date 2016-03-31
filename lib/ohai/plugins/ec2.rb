@@ -2,6 +2,7 @@
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -17,6 +18,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# How we detect EC2 from easiest to hardest & least reliable
+# 1. Ohai ec2 hint exists. This always works
+# 2. DMI data mentions amazon. This catches HVM instances in a VPC
+# 2. Kernel data mentioned Amazon. This catches Windows instances
+# 3. Has a xen MAC + can connect to metadata. This catches paravirt instances not in a VPC
+# 4. Has ec2metadata binary + can connect to metadata. This catches paravirt instances in a VPC
+
 require "ohai/mixin/ec2_metadata"
 require "base64"
 
@@ -27,19 +35,28 @@ Ohai.plugin(:EC2) do
 
   depends "network/interfaces"
   depends "dmi"
+  depends "kernel"
 
-  # look for ec2metadata which is included on paravirt / hvm AMIs
+  # look for ec2metadata and see if we get data back
+  # this gets us detection of paravirt instances that are within a VPC
   def has_ec2metadata_bin?
     if File.exist?("/usr/bin/ec2metadata")
-      Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == true")
-      true
+      # make sure actual data is returned when we run it. Otherwise we might be on GCE or Rackspace
+      if shell_out("/usr/bin/ec2metadata").stdout =~ /id: ami-/
+        Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == true")
+        return true
+      else
+        Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? found ec2metadata but no metadata returned. Not on EC2")
+        return false
+      end
     else
       Ohai::Log.debug("ec2 plugin: has_ec2metadata_bin? == false")
-      false
+      return false
     end
   end
 
-  # look for arp address that non-VPC hosts will have
+  # look for xen arp address
+  # this gets us detection of paravirt instances that are NOT within a VPC
   def has_xen_mac?
     network[:interfaces].values.each do |iface|
       unless iface[:arp].nil?
@@ -60,7 +77,7 @@ EOM
   end
 
   # look for amazon string in dmi bios data
-  # this only works on hvm instances as paravirt instances have no dmi data
+  # this gets us detection of HVM instances that are within a VPC
   def has_ec2_dmi?
     begin
       # detect a version of '4.2.amazon'
@@ -74,16 +91,26 @@ EOM
     end
   end
 
-  # rackspace systems look like ec2 so instead of timing out dig a bit deeper
-  def looks_like_rackspace?
-    return true if File.exist?("/usr/bin/rackspace-monitoring-agent")
+  # looks for the Amazon.com Organization in Windows Kernel data
+  # this gets us detection of Windows systems
+  def has_amazon_org?
+    begin
+      # detect an Organization of 'Amazon.com'
+      if kernel[:os_info][:organization] =~ /Amazon/
+        Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
+        true
+      end
+    rescue NoMethodError
+      Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+      false
+    end
   end
 
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_dmi? || has_xen_mac? || (has_ec2metadata_bin? && !looks_like_rackspace?)
+    if has_ec2_dmi? || has_amazon_org? || has_xen_mac? || has_ec2metadata_bin?
       return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end

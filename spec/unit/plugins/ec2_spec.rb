@@ -28,7 +28,6 @@ describe Ohai::System, "plugin ec2" do
     allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
     allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(false)
-    allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -270,11 +269,72 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with ec2metadata binary" do
+  describe "with ec2metadata binary and on ec2" do
     it_should_behave_like "ec2"
+
+    ec2metadata_output = <<END
+ami-id: ami-5189a661
+ami-launch-index: 0
+ami-manifest-path: (unknown)
+ancestor-ami-ids: unavailable
+availability-zone: us-west-2a
+block-device-mapping: ami
+root
+instance-action: none
+instance-id: i-c6d78f04
+instance-type: t2.micro
+local-hostname: ip-172-31-42-15.us-west-2.compute.internal
+local-ipv4: 172.31.42.15
+kernel-id: unavailable
+mac: unavailable
+profile: default-hvm
+product-codes: unavailable
+public-hostname: ec2-52-88-253-145.us-west-2.compute.amazonaws.com
+public-ipv4: 52.88.253.145
+public-keys: ['ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmvsxBSgSxK1pOCMEIx4LyVATfYA+ehoOpADJa+ZYx7Tq6Btp3yBnWZWjkTp9b0BFF7LxfJJsw62BfYPy2dJ/xy3HF0J7qY+W3LPcN9C9jyT9plbfsn1DdxgVZreekdPhjS7viyF0+g+PUdTocRPrG4H4dpe464wWTnn2OJQg4I/hiDYBouDUUVzYYpTxIia6RMDhjvC/9yeYTOVc4m5jTQLUpidUNkZ2azTKkYiL5hPMZj6QdFqeKctFhvYPhvTd9+La3gjdFfFpAUpNjBf5ry2MUkw8/Yp0n1m6/IAhRaQ3rracM7qpkJ35n6cYadSZ09N7GCbt1fE72VFYJXEMef tsmith']
+ramdisk-id: unavailable
+reserveration-id: unavailable
+security-groups: securesystem
+user-data: unavailable
+END
 
     before(:each) do
       allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
+      allow(@plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, ec2metadata_output, ""))
+    end
+  end
+
+  describe "with ec2metadata binary and NOT on ec2" do
+    it_should_behave_like "!ec2"
+
+    ec2metadata_output = <<END
+ami-id: unavailable
+ami-launch-index: unavailable
+ami-manifest-path: unavailable
+ancestor-ami-ids: unavailable
+availability-zone: unavailable
+block-device-mapping: unavailable
+instance-action: unavailable
+instance-id: unavailable
+instance-type: unavailable
+local-hostname: unavailable
+local-ipv4: unavailable
+kernel-id: unavailable
+mac: unavailable
+profile: unavailable
+product-codes: unavailable
+public-hostname: unavailable
+public-ipv4: unavailable
+public-keys: unavailable
+ramdisk-id: unavailable
+reserveration-id: unavailable
+security-groups: unavailable
+user-data: unavailable
+END
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
+      allow(@plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, ec2metadata_output, ""))
     end
   end
 
@@ -283,6 +343,14 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       @plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
+    end
+  end
+
+  describe "with amazon kernel data" do
+    it_should_behave_like "ec2"
+
+    before(:each) do
+      @plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
     end
   end
 
@@ -308,15 +376,6 @@ describe Ohai::System, "plugin ec2" do
       allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
       allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
-    end
-  end
-
-  describe "with ec2metadata, but with rackspace-monitoring-agent" do
-    it_should_behave_like "!ec2"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
-      allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(true)
     end
   end
 

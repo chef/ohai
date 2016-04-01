@@ -27,8 +27,6 @@ describe Ohai::System, "plugin ec2" do
     @plugin[:network] = { :interfaces => { :eth0 => {} } }
     allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
-    allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(false)
-    allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -256,7 +254,7 @@ describe Ohai::System, "plugin ec2" do
     end
   end # shared examples for ec2
 
-  describe "without dmi or ec2metadata binary, with xen mac, and metadata address connected" do
+  describe "without dmi data, kernel organization, with xen mac, and metadata address connected" do
     before(:each) do
       allow(IO).to receive(:select).and_return([[], [1], []])
       @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "fe:ff:ff:ff:ff:ff" }
@@ -267,14 +265,6 @@ describe Ohai::System, "plugin ec2" do
     it "warns that the arp table method is deprecated" do
       expect(Ohai::Log).to receive(:warn).with(/will be removed/)
       @plugin.has_xen_mac?
-    end
-  end
-
-  describe "with ec2metadata binary" do
-    it_should_behave_like "ec2"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
     end
   end
 
@@ -311,22 +301,12 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with ec2metadata, but with rackspace-monitoring-agent" do
-    it_should_behave_like "!ec2"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(true)
-      allow(File).to receive(:exist?).with("/usr/bin/rackspace-monitoring-agent").and_return(true)
-    end
-  end
-
   describe "without any hints that it is an ec2 system" do
     it_should_behave_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
-      allow(File).to receive(:exist?).with("/usr/bin/ec2metadata").and_return(false)
       @plugin[:dmi] = nil
       @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "00:50:56:c0:00:08" }
     end

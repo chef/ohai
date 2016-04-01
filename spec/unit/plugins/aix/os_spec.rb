@@ -21,7 +21,7 @@ describe Ohai::System, "AIX os plugin" do
   before(:each) do
     @plugin = get_plugin("aix/os")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543", nil))
+    allow(@plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543\n", nil))
     @plugin.run
   end
 

@@ -85,5 +85,123 @@ describe Ohai::Mixin::Command, "popen4" do
     end
     expect(reaped_procs).to eq(0)
   end
+end
 
+describe Ohai::Mixin::Command, "shell_out" do
+  let(:cmd) { "sparkle-dream --version" }
+
+  let(:shell_out) { double("Mixlib::ShellOut") }
+
+  let(:plugin_name) { :OSSparkleDream }
+
+  before(:each) do
+    allow(Ohai::Mixin::Command).to receive(:name).and_return(plugin_name)
+  end
+
+  describe "when the command runs" do
+    it "logs the command and exitstatus" do
+      expect(Mixlib::ShellOut).
+        to receive(:new).
+        with(cmd, { timeout: 30 }).
+        and_return(shell_out)
+
+      expect(shell_out).
+        to receive(:run_command)
+
+      expect(shell_out).
+        to receive(:exitstatus).
+        and_return(256)
+
+      expect(Ohai::Log).to receive(:debug).
+        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and returned 256")
+
+      Ohai::Mixin::Command.shell_out(cmd)
+    end
+  end
+
+  describe "when the command does not exist" do
+    it "logs the command and error message" do
+      expect(Mixlib::ShellOut).
+        to receive(:new).
+        with(cmd, { timeout: 30 }).
+        and_return(shell_out)
+
+      expect(shell_out).
+        to receive(:run_command).
+        and_raise(Errno::ENOENT, "sparkle-dream")
+
+      expect(Ohai::Log).
+        to receive(:debug).
+        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and failed " \
+             "#<Errno::ENOENT: No such file or directory - sparkle-dream>")
+
+      expect { Ohai::Mixin::Command.shell_out(cmd) }.
+        to raise_error(Ohai::Exceptions::Exec)
+    end
+  end
+
+  describe "when the command times out" do
+    it "logs the command an timeout error message" do
+      expect(Mixlib::ShellOut).
+        to receive(:new).
+        with(cmd, { timeout: 30 }).
+        and_return(shell_out)
+
+      expect(shell_out).
+        to receive(:run_command).
+        and_raise(Mixlib::ShellOut::CommandTimeout)
+
+      expect(Ohai::Log).
+        to receive(:debug).
+        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and timed " \
+             "out after 30 seconds")
+
+      expect { Ohai::Mixin::Command.shell_out(cmd) }.
+        to raise_error(Ohai::Exceptions::Exec)
+    end
+  end
+
+  describe "when a timeout option is provided" do
+    let(:options) { { timeout: 10 } }
+
+    it "runs the command with the provided timeout" do
+      expect(Mixlib::ShellOut).
+        to receive(:new).
+        with(cmd, options).
+        and_return(shell_out)
+
+      expect(shell_out).
+        to receive(:run_command)
+
+      expect(shell_out).
+        to receive(:exitstatus).
+        and_return(256)
+
+      expect(Ohai::Log).to receive(:debug).
+        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and returned 256")
+
+      Ohai::Mixin::Command.shell_out(cmd, options)
+    end
+
+    describe "when the command times out" do
+      it "logs the command an timeout error message" do
+        expect(Mixlib::ShellOut).
+          to receive(:new).
+          with(cmd, options).
+          and_return(shell_out)
+
+        expect(shell_out).
+          to receive(:run_command).
+          and_raise(Mixlib::ShellOut::CommandTimeout)
+
+        expect(Ohai::Log).
+          to receive(:debug).
+          with("Plugin OSSparkleDream ran 'sparkle-dream --version' and timed " \
+               "out after 10 seconds")
+
+        expect { Ohai::Mixin::Command.shell_out(cmd, options) }.
+          to raise_error(Ohai::Exceptions::Exec)
+      end
+    end
+  end
 end

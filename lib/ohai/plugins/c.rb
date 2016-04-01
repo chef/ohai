@@ -23,68 +23,58 @@ Ohai.plugin(:C) do
 
   depends "languages"
 
+  def collect(cmd, &block)
+    so = shell_out(cmd)
+    yield(so) if so.exitstatus == 0
+  rescue Ohai::Exceptions::Exec
+    # ignore
+  end
+
   collect_data do
     c = Mash.new
 
     #gcc
-    begin
-      so = shell_out("gcc -v")
-      if so.exitstatus == 0
-        description = so.stderr.split($/).last
-        output = description.split
-        if output.length >= 3
-          c[:gcc] = Mash.new
-          c[:gcc][:version] = output[2]
-          c[:gcc][:description] = description
-        end
+    collect("gcc -v") do |so|
+      description = so.stderr.split($/).last
+      output = description.split
+      if output.length >= 3
+        c[:gcc] = Mash.new
+        c[:gcc][:version] = output[2]
+        c[:gcc][:description] = description
       end
-    rescue Errno::ENOENT
     end
 
     #glibc
     ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-      begin
-        so = shell_out( Ohai.abs_path( glibc ))
-        if so.exitstatus == 0
-          description = so.stdout.split($/).first
-          if description =~ /(\d+\.\d+\.?\d*)/
-            c[:glibc] = Mash.new
-            c[:glibc][:version] = $1
-            c[:glibc][:description] = description
-          end
-          break
+      collect( Ohai.abs_path( glibc )) do |so|
+        description = so.stdout.split($/).first
+        if description =~ /(\d+\.\d+\.?\d*)/
+          c[:glibc] = Mash.new
+          c[:glibc][:version] = $1
+          c[:glibc][:description] = description
         end
-      rescue Errno::ENOENT
-      end
+      end unless c[:glibc]
     end
 
     #ms cl
-    begin
-      so = shell_out("cl /?")
-      if so.exitstatus == 0
-        description = so.stderr.lines.first.chomp
-        if description =~ /Compiler Version ([\d\.]+)/
-          c[:cl] = Mash.new
-          c[:cl][:version] = $1
-          c[:cl][:description] = description
-        end
+    collect("cl /?") do |so|
+      description = so.stderr.lines.first.chomp
+      if description =~ /Compiler Version ([\d\.]+)/
+        c[:cl] = Mash.new
+        c[:cl][:version] = $1
+        c[:cl][:description] = description
       end
-    rescue Errno::ENOENT
     end
 
     #ms vs
-    begin
-      so = shell_out("devenv.com /?")
-      if so.exitstatus == 0
-        lines = so.stdout.split($/)
-        description = lines[0].length == 0 ? lines[1] : lines[0]
-        if description =~ /Visual Studio Version ([\d\.]+)/
-          c[:vs] = Mash.new
-          c[:vs][:version] = $1.chop
-          c[:vs][:description] = description
-        end
+    collect("devenv.com /?") do |so|
+      lines = so.stdout.split($/)
+      description = lines[0].length == 0 ? lines[1] : lines[0]
+      if description =~ /Visual Studio Version ([\d\.]+)/
+        c[:vs] = Mash.new
+        c[:vs][:version] = $1.chop
+        c[:vs][:description] = description
       end
-    rescue Errno::ENOENT
     end
 
     #ibm xlc
@@ -98,36 +88,28 @@ Ohai.plugin(:C) do
           c[:xlc][:description] = description.strip
         end
       end
-    rescue Errno::ENOENT
+    rescue Ohai::Exceptions::Exec
     end
 
     #sun pro
-    begin
-      so = shell_out("cc -V -flags")
-      if so.exitstatus == 0
-        output = so.stderr.split
-        if so.stderr =~ /^cc: Sun C/ && output.size >= 4
-          c[:sunpro] = Mash.new
-          c[:sunpro][:version] = output[3]
-          c[:sunpro][:description] = so.stderr.chomp
-        end
+    collect("cc -V -flags") do |so|
+      output = so.stderr.split
+      if so.stderr =~ /^cc: Sun C/ && output.size >= 4
+        c[:sunpro] = Mash.new
+        c[:sunpro][:version] = output[3]
+        c[:sunpro][:description] = so.stderr.chomp
       end
-    rescue Errno::ENOENT
     end
 
     #hpux cc
-    begin
-      so = shell_out("what /opt/ansic/bin/cc")
-      if so.exitstatus == 0
-        description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
-        if description
-          output = description.split
-          c[:hpcc] = Mash.new
-          c[:hpcc][:version] = output[1] if output.size >= 1
-          c[:hpcc][:description] = description.strip
-        end
+    collect("what /opt/ansic/bin/cc") do |so|
+      description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
+      if description
+        output = description.split
+        c[:hpcc] = Mash.new
+        c[:hpcc][:version] = output[1] if output.size >= 1
+        c[:hpcc][:description] = description.strip
       end
-    rescue Errno::ENOENT
     end
 
     languages[:c] = c if c.keys.length > 0

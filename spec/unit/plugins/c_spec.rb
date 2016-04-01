@@ -102,207 +102,258 @@ EOF
 
 describe Ohai::System, "plugin c" do
 
-  before(:each) do
-    @plugin = get_plugin("c")
+  let(:plugin) { get_plugin("c") }
 
-    @plugin[:languages] = Mash.new
+  before(:each) do
+
+    plugin[:languages] = Mash.new
     #gcc
-    allow(@plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
+    allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
     #glibc
-    allow(@plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
+    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
     #ms cl
-    allow(@plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
+    allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
     #ms vs
-    allow(@plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
+    allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
     #ibm xlc
-    allow(@plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
+    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
     #sun pro
-    allow(@plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
     #hpux cc
-    allow(@plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
+    allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
   end
 
   #gcc
-  it "should get the gcc version from running gcc -v" do
-    expect(@plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
-    @plugin.run
+  it "gets the gcc version from running gcc -v" do
+    expect(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
+    plugin.run
   end
 
-  it "should set languages[:c][:gcc][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:gcc][:version]).to eql("3.4.6")
+  it "sets languages[:c][:gcc][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:gcc][:version]).to eql("3.4.6")
   end
 
-  it "should set languages[:c][:gcc][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:gcc][:description]).to eql(C_GCC.split($/).last)
+  it "sets languages[:c][:gcc][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:gcc][:description]).to eql(C_GCC.split($/).last)
   end
 
-  it "should not set the languages[:c][:gcc] tree up if gcc command fails" do
-    allow(@plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:gcc) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:gcc] tree up if gcc command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:gcc)
+  end
+
+  it "does not set the languages[:c][:gcc] tree up if gcc command fails" do
+    allow(plugin).to receive(:shell_out).with("gcc -v").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:gcc)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
   end
 
   #glibc
-  it "should get the glibc x.x.x version from running /lib/libc.so.6" do
-    expect(@plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
-    @plugin.run
+  it "gets the glibc x.x.x version from running /lib/libc.so.6" do
+    expect(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
+    plugin.run
   end
 
-  it "should set languages[:c][:glibc][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:glibc][:version]).to eql("2.3.4")
+  it "sets languages[:c][:glibc][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:glibc][:version]).to eql("2.3.4")
   end
 
-  it "should set languages[:c][:glibc][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:glibc][:description]).to eql(C_GLIBC_2_3_4.split($/).first)
+  it "sets languages[:c][:glibc][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:glibc][:description]).to eql(C_GLIBC_2_3_4.split($/).first)
   end
 
-  it "should not set the languages[:c][:glibc] tree up if glibc command fails" do
-    allow(@plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(1, "", ""))
-    allow(@plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:glibc) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:glibc] tree up if glibc exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(1, "", ""))
+    allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:glibc)
   end
 
-  it "should get the glibc x.x version from running /lib/libc.so.6" do
-    allow(@plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
-    expect(@plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
-    @plugin.run
-    expect(@plugin.languages[:c][:glibc][:version]).to eql("2.5")
+  it "does not set the languages[:c][:glibc] tree up if glibc fails" do
+    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:glibc)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
+  end
+
+  it "gets the glibc x.x version from running /lib/libc.so.6" do
+    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
+    expect(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
+    plugin.run
+    expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
   end
 
   #ms cl
-  it "should get the cl version from running cl /?" do
-    expect(@plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
-    @plugin.run
+  it "gets the cl version from running cl /?" do
+    expect(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
+    plugin.run
   end
 
-  it "should set languages[:c][:cl][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:cl][:version]).to eql("14.00.50727.762")
+  it "sets languages[:c][:cl][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:cl][:version]).to eql("14.00.50727.762")
   end
 
-  it "should set languages[:c][:cl][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:cl][:description]).to eql(C_CL.split($/).first)
+  it "sets languages[:c][:cl][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:cl][:description]).to eql(C_CL.split($/).first)
   end
 
-  it "should not set the languages[:c][:cl] tree up if cl command fails" do
-    allow(@plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:cl) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:cl] tree up if cl command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:cl)
+  end
+
+  it "does not set the languages[:c][:cl] tree up if cl command fails" do
+    allow(plugin).to receive(:shell_out).with("cl /\?").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:cl)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
   end
 
   #ms vs
-  it "should get the vs version from running devenv.com /?" do
-    expect(@plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
-    @plugin.run
+  it "gets the vs version from running devenv.com /?" do
+    expect(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
+    plugin.run
   end
 
-  it "should set languages[:c][:vs][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:vs][:version]).to eql("8.0.50727.762")
+  it "sets languages[:c][:vs][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:vs][:version]).to eql("8.0.50727.762")
   end
 
-  it "should set languages[:c][:vs][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:vs][:description]).to eql(C_VS.split($/)[1])
+  it "sets languages[:c][:vs][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:vs][:description]).to eql(C_VS.split($/)[1])
   end
 
-  it "should not set the languages[:c][:vs] tree up if devenv command fails" do
-    allow(@plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:vs) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:vs] tree up if devenv command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:vs)
+  end
+
+  it "does not set the languages[:c][:vs] tree up if devenv command fails" do
+    allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:vs)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
   end
 
   #ibm xlc
-  it "should get the xlc version from running xlc -qversion" do
-    expect(@plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
-    @plugin.run
+  it "gets the xlc version from running xlc -qversion" do
+    expect(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
+    plugin.run
   end
 
-  it "should set languages[:c][:xlc][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:xlc][:version]).to eql("9.0")
+  it "sets languages[:c][:xlc][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:xlc][:version]).to eql("9.0")
   end
 
-  it "should set languages[:c][:xlc][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:xlc][:description]).to eql(C_XLC.split($/).first)
+  it "sets languages[:c][:xlc][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:xlc][:description]).to eql(C_XLC.split($/).first)
   end
 
-  it "should not set the languages[:c][:xlc] tree up if xlc command fails" do
-    allow(@plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:xlc) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:xlc] tree up if xlc command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:xlc)
   end
 
-  it "should set the languages[:c][:xlc] tree up if xlc exit status is 249" do
-    allow(@plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(63744, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:xlc) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:xlc] tree up if xlc command fails" do
+    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:xlc)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
+  end
+
+  it "sets the languages[:c][:xlc] tree up if xlc exit status is 249" do
+    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(63744, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:xlc)
   end
 
   #sun pro
-  it "should get the cc version from running cc -V -flags" do
-    expect(@plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
-    @plugin.run
+  it "gets the cc version from running cc -V -flags" do
+    expect(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
+    plugin.run
   end
 
-  it "should set languages[:c][:sunpro][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:sunpro][:version]).to eql("5.8")
+  it "sets languages[:c][:sunpro][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:sunpro][:version]).to eql("5.8")
   end
 
-  it "should set languages[:c][:sunpro][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:sunpro][:description]).to eql(C_SUN.chomp)
+  it "sets languages[:c][:sunpro][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:sunpro][:description]).to eql(C_SUN.chomp)
   end
 
-  it "should not set the languages[:c][:sunpro] tree up if cc command fails" do
-    allow(@plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:sunpro) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:sunpro] tree up if cc command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:sunpro)
   end
 
-  it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
+  it "does not set the languages[:c][:sunpro] tree up if cc command fails" do
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:sunpro)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
+  end
+
+  it "does not set the languages[:c][:sunpro] tree if the corresponding cc command fails on linux" do
     fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 
-    allow(@plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", fedora_error_message))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:sunpro) if @plugin[:languages][:c]
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", fedora_error_message))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:sunpro)
   end
 
-  it "should not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
+  it "does not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
     hpux_error_message = "cc: warning 901: unknown option: `-flags': use +help for online documentation.\ncc: HP C/aC++ B3910B A.06.25 [Nov 30 2009]"
-    allow(@plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", hpux_error_message))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:sunpro) if @plugin[:languages][:c]
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", hpux_error_message))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:sunpro)
   end
 
   #hpux cc
-  it "should get the cc version from running what cc" do
-    expect(@plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
-    @plugin.run
+  it "gets the cc version from running what cc" do
+    expect(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
+    plugin.run
   end
 
-  it "should set languages[:c][:hpcc][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:hpcc][:version]).to eql("B.11.11.16")
+  it "sets languages[:c][:hpcc][:version]" do
+    plugin.run
+    expect(plugin.languages[:c][:hpcc][:version]).to eql("B.11.11.16")
   end
 
-  it "should set languages[:c][:hpcc][:description]" do
-    @plugin.run
-    expect(@plugin.languages[:c][:hpcc][:description]).to eql(C_HPUX.split($/)[3].strip)
+  it "sets languages[:c][:hpcc][:description]" do
+    plugin.run
+    expect(plugin.languages[:c][:hpcc][:description]).to eql(C_HPUX.split($/)[3].strip)
   end
 
-  it "should not set the languages[:c][:hpcc] tree up if cc command fails" do
-    allow(@plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(1, "", ""))
-    @plugin.run
-    expect(@plugin[:languages][:c]).not_to have_key(:hpcc) if @plugin[:languages][:c]
+  it "does not set the languages[:c][:hpcc] tree up if cc command exits nonzero" do
+    allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:hpcc)
+  end
+
+  it "does not set the languages[:c][:hpcc] tree up if cc command fails" do
+    allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin[:languages][:c]).not_to have_key(:hpcc)
+    expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
   end
 
 end

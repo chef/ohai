@@ -28,10 +28,23 @@ require "mixlib/shellout"
 module Ohai
   module Mixin
     module Command
-      def shell_out(cmd)
-        m = Mixlib::ShellOut.new(cmd)
-        m.run_command
-        m
+      # DISCLAIMER: Logging only works in the context of a plugin!!
+      # accept a command and any of the mixlib-shellout options
+      def shell_out(cmd, **options)
+        # unless specified by the caller timeout after 30 seconds
+        options[:timeout] ||= 30
+        so = Mixlib::ShellOut.new(cmd, options)
+        begin
+          so.run_command
+          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and returned #{so.exitstatus}")
+          so
+        rescue Errno::ENOENT => e
+          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and failed #{e.inspect}")
+          raise Ohai::Exceptions::Exec, e
+        rescue Mixlib::ShellOut::CommandTimeout => e
+          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
+          raise Ohai::Exceptions::Exec, e
+        end
       end
 
       module_function :shell_out

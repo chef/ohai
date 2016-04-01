@@ -47,11 +47,11 @@ describe Ohai::System, "plugin rackspace" do
               "family" => "inet6",
             },
             "40:40:95:47:6E:ED" => {
-              "family" => "lladdr"
-            }
-          }
-        }
-      }
+              "family" => "lladdr",
+            },
+          },
+        },
+      },
     }
 
     plugin[:network][:interfaces][:eth1] = {
@@ -67,9 +67,9 @@ describe Ohai::System, "plugin rackspace" do
           "family" => "inet",
         },
         "40:40:F5:AB:28:36" => {
-          "family" => "lladdr"
-        }
-      }
+          "family" => "lladdr",
+        },
+      },
     }
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
@@ -332,9 +332,9 @@ OUT
             "family" => "inet",
           },
           "BC:76:4E:20:42:2B" => {
-            "family" => "lladdr"
-          }
-        }
+            "family" => "lladdr",
+          },
+        },
       }
       stdout = 'BC764E20422B = "{"label": "private-network"}"\n'
       allow(plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))

@@ -30,7 +30,7 @@ Ohai.plugin(:IpScopes) do
         interface = network["interfaces"][ifName]
         interface["addresses"].each do |address, attrs|
           begin
-            attrs.merge! "ip_scope" => address.to_ip.scope
+            attrs["ip_scope"] = address.to_ip.scope
 
             if private_addr?(address) && !tunnel_iface?(interface)
               privateaddress(address)

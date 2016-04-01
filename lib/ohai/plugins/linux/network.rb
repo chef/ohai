@@ -205,7 +205,7 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int][:tx][:queuelen] = $1
       end
 
-      if line =~ /vlan id (\d+)/ or line =~ /vlan protocol ([\w\.]+) id (\d+)/
+      if line =~ /vlan id (\d+)/ || line =~ /vlan protocol ([\w\.]+) id (\d+)/
         if $2
           tmp_prot = $1
           tmp_id = $2
@@ -463,7 +463,7 @@ Ohai.plugin(:Network) do
 
         default_route = choose_default_route(routes)
 
-        if default_route.nil? or default_route.empty?
+        if default_route.nil? || default_route.empty?
           attribute_name = if family[:name] == "inet"
                              "default_interface"
                            else

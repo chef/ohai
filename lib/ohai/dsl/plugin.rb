@@ -117,7 +117,7 @@ module Ohai
 
       def each(&block)
         @data.each do |key, value|
-          block.call(key, value)
+          yield(key, value)
         end
       end
 

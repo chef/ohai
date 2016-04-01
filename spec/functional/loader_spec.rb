@@ -23,7 +23,7 @@ RSpec.describe "Ohai::Loader" do
   describe "#load_all" do
     context "when the plugin path contains backslash characters", :windows_only do
       let(:plugin_directory) { Dir.mktmpdir("plugins") }
-      let(:plugin_path) { plugin_directory.gsub("/", "\\") }
+      let(:plugin_path) { plugin_directory.tr("/", "\\") }
 
       before(:each) do
         Ohai.config[:plugin_path] = plugin_path

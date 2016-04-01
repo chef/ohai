@@ -58,7 +58,7 @@ describe Ohai::System, "Network Plugin" do
             "flags" => %w{UP BROADCAST RUNNING SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:b8" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "fe80::200:24ff:fec9:5eb8" => {
                 "family" => "inet6",
@@ -83,7 +83,7 @@ describe Ohai::System, "Network Plugin" do
             "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:b9" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "fe80::200:24ff:fec9:5eb9" => {
                 "family" => "inet6",
@@ -99,7 +99,7 @@ describe Ohai::System, "Network Plugin" do
             "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:ba" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "fe80::200:24ff:fec9:5eba" => {
                 "family" => "inet6",
@@ -115,7 +115,7 @@ describe Ohai::System, "Network Plugin" do
             "flags" => %w{UP BROADCAST RUNNING PROMISC SIMPLEX MULTICAST},
             "addresses" => {
               "00:00:24:c9:5e:bb" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "fe80::200:24ff:fec9:5ebb" => {
                 "family" => "inet6",
@@ -158,7 +158,7 @@ describe Ohai::System, "Network Plugin" do
             "flags" => %w{LEARNING DISCOVER AUTOEDGE AUTOPTP},
             "addresses" => {
               "02:20:6f:d2:c4:00" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "192.168.2.1" => {
                 "family" => "inet",
@@ -197,7 +197,7 @@ describe Ohai::System, "Network Plugin" do
                 "zoneid" => "gif0",
                 "prefixlen" => "64",
                 "scopeid" => "0xa",
-              }
+              },
             },
           },
         },
@@ -205,7 +205,7 @@ describe Ohai::System, "Network Plugin" do
         "default_interface" => "vr0",
         "default_inet6_gateway" => "2001:470:d:cb4::2",
         "default_inet6_interface" => "bridge0",
-      }
+      },
     },
     "linux" => {
       "network" => {
@@ -241,7 +241,7 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
               },
               "00:16:3E:2F:36:79" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "192.168.66.33" => {
                 "scope" => "Global",
@@ -271,7 +271,7 @@ describe Ohai::System, "Network Plugin" do
                 "family" => "inet6",
               },
               "00:16:3E:2F:36:80" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
               "192.168.99.11" => {
                 "scope" => "Global",
@@ -295,7 +295,7 @@ describe Ohai::System, "Network Plugin" do
         "default_interface" => "eth0",
         "default_inet6_gateway" => "3ffe:1111:2222::",
         "default_inet6_interface" => "eth0",
-      }
+      },
     },
     "windows" => {
       "network" => {
@@ -314,17 +314,17 @@ describe Ohai::System, "Network Plugin" do
                 "scope" => "Link",
               },
               "52:54:44:66:66:02" => {
-                "family" => "lladdr"
+                "family" => "lladdr",
               },
             },
             "mtu" => nil,
             "type" => "Ethernet 802.3",
             "encapsulation" => "Ethernet",
-          }
+          },
         },
         "default_gateway" => "172.19.0.1",
         "default_interface" => "0xb",
-      }
+      },
     },
   }
 
@@ -936,13 +936,13 @@ describe Ohai::System, "Network Plugin" do
               @plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
                 "freebsd" => {
-                  "macaddress" => "02:20:6f:d2:c4:00"
+                  "macaddress" => "02:20:6f:d2:c4:00",
                 },
                 "linux" => {
-                  "macaddress" => "00:16:3E:2F:36:79"
+                  "macaddress" => "00:16:3E:2F:36:79",
                 },
                 "windows" => {
-                  "macaddress" => "52:54:44:66:66:02"
+                  "macaddress" => "52:54:44:66:66:02",
                 },
               }
             end

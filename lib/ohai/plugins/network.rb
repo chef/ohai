@@ -39,7 +39,7 @@ Ohai.plugin(:NetworkAddresses) do
     Mash[network["interfaces"]].each do |iface, iface_v|
       next if iface_v.nil? || !iface_v.has_key?("addresses")
       iface_v["addresses"].each do |addr, addr_v|
-        next if addr_v.nil? or not addr_v.has_key? "family" or addr_v["family"] != family
+        next if addr_v.nil? || (not addr_v.has_key? "family") || addr_v["family"] != family
         ipaddresses << {
           :ipaddress => addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
           :scope => addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
@@ -106,7 +106,7 @@ Ohai.plugin(:NetworkAddresses) do
       Ohai::Log.debug("[#{family}] no default interface, picking the first ipaddress")
     end
 
-    return [ nil, nil ] if r.nil? or r.empty?
+    return [ nil, nil ] if r.nil? || r.empty?
 
     [ r[:ipaddress].to_s, r[:iface] ]
   end

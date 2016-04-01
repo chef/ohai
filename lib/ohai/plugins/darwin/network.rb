@@ -61,8 +61,8 @@ Ohai.plugin(:Network) do
 
   def scope_lookup(scope)
     return "Node" if scope.eql?("::1")
-    return "Link" if scope.match(/^fe80\:/)
-    return "Site" if scope.match(/^fec0\:/)
+    return "Link" if scope =~ /^fe80\:/
+    return "Site" if scope =~ /^fec0\:/
     "Global"
   end
 
@@ -73,7 +73,7 @@ Ohai.plugin(:Network) do
   def locate_interface(ifaces, ifname, mac)
     return ifname unless ifaces[ifname].nil?
     # oh well, time to go hunting!
-    return ifname.chop if ifname.match /\*$/
+    return ifname.chop if ifname =~ /\*$/
     ifaces.keys.each do |ifc|
       ifaces[ifc][:addresses].keys.each do |addr|
         return ifc if addr.eql? mac

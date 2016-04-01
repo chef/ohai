@@ -105,7 +105,7 @@ module Ohai
     private
 
     def self.option_deprecated(option)
-      <<-EOM.chomp!.gsub("\n", " ")
+      <<-EOM.chomp!.tr("\n", " ")
 Ohai::Config[:#{option}] is set. Ohai::Config[:#{option}] is deprecated and will
 be removed in future releases of ohai. Use ohai.#{option} in your configuration
 file to configure :#{option} for ohai.
@@ -113,7 +113,7 @@ EOM
     end
 
     def self.option_might_be_deprecated(option)
-      option_deprecated(option) + <<-EOM.chomp!.gsub("\n", " ")
+      option_deprecated(option) + <<-EOM.chomp!.tr("\n", " ")
  If your configuration file is used with other applications which configure
 :#{option}, and you have not configured Ohai::Config[:#{option}], you may
 disregard this warning.

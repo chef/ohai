@@ -171,7 +171,7 @@ EOM
 
         expect_get_response(
           URI.parse("#{openstack_metadata_endpoint}#{openstack_metadata_version}/meta_data.json"),
-          openstack_metadata_values,
+          openstack_metadata_values
         )
 
         openstack_plugin.run

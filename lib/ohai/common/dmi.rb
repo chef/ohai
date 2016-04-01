@@ -77,7 +77,7 @@ module Ohai
       def id_lookup(id)
         begin
           id = id.to_i
-          if (id >= 128) and (id <= 255)
+          if (id >= 128) && (id <= 255)
             id = "oem_data_#{id}"
           elsif DMI::IdToDescription.has_key?(id)
             id = DMI::IdToDescription[id]

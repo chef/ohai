@@ -112,7 +112,7 @@ describe Ohai::System, "plugin packages" do
       [{ "DisplayName" => "NXLOG-CE",
          "DisplayVersion" => "2.8.1248",
          "Publisher" => "nxsec.com",
-         "InstallDate" => "20150511"
+         "InstallDate" => "20150511",
         },
         { "DisplayName" => "Chef Development Kit v0.7.0",
           "DisplayVersion" => "0.7.0.1",

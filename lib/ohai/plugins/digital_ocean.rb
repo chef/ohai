@@ -43,7 +43,7 @@ Ohai.plugin(:DigitalOcean) do
     address_hash = Mash.new({
       "ip_address" => ip.address,
       "type" => private_address?(ip.address) ? "private" : "public",
-    },)
+    })
 
     if ip.ipv4?
       address_hash["netmask"] = details[:netmask]

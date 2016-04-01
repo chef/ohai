@@ -116,16 +116,16 @@ describe Ohai::System, "plugin dmi" do
   {
     :bios => {
       :vendor => "Phoenix Technologies LTD",
-      :release_date => "12/31/2009"
+      :release_date => "12/31/2009",
     },
     :system => {
       :manufacturer => "VMware, Inc.",
-      :product_name => "VMware Virtual Platform"
+      :product_name => "VMware Virtual Platform",
     },
     :chassis => {
       :lock => "Not Present",
-      :asset_tag => "No Asset Tag"
-    }
+      :asset_tag => "No Asset Tag",
+    },
   }.each do |id, data|
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do

@@ -34,7 +34,7 @@ Ohai.plugin(:Erlang) do
         erlang[:version] = output[5]
         erlang[:options] = options.split(",")
         erlang[:emulator] = output[2].gsub!(/(\(|\))/, "")
-        if erlang[:version] and erlang[:options] and erlang[:emulator]
+        if erlang[:version] && erlang[:options] && erlang[:emulator]
           languages[:erlang] = erlang
         end
       end

@@ -24,7 +24,7 @@ Ohai.plugin(:DMI) do
 
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
-    if (dmi.class.to_s == "Mash") and (dmi.keys.length > 1)
+    if (dmi.class.to_s == "Mash") && (dmi.keys.length > 1)
       Ohai::Log.debug("skipping smbios output, since DMI information has already been provided")
       return
     end

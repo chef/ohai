@@ -38,11 +38,11 @@ describe Ohai::System, "plugin linode" do
               "family" => "inet6",
             },
             "40:40:95:47:6E:ED" => {
-              "family" => "lladdr"
+              "family" => "lladdr",
             },
-          }
-        }
-      }
+          },
+        },
+      },
     }
   end
 
@@ -103,9 +103,9 @@ describe Ohai::System, "plugin linode" do
               "family" => "inet6",
             },
             "40:40:F5:AB:28:36" => {
-              "family" => "lladdr"
+              "family" => "lladdr",
             },
-          }
+          },
         }
       end
 

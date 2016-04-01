@@ -25,7 +25,7 @@ Ohai.plugin(:Packages) do
   WINDOWS_ATTRIBUTE_ALIASES = {
     "DisplayVersion" => "version",
     "Publisher" => "publisher",
-    "InstallDate" => "installdate"
+    "InstallDate" => "installdate",
   }
 
   collect_data(:linux) do

@@ -90,7 +90,7 @@ Ohai.plugin(:C) do
     #ibm xlc
     begin
       so = shell_out("xlc -qversion")
-      if so.exitstatus == 0 or (so.exitstatus >> 8) == 249
+      if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
         description = so.stdout.split($/).first
         if description =~ /V(\d+\.\d+)/
           c[:xlc] = Mash.new

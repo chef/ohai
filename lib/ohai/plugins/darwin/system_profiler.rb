@@ -53,7 +53,7 @@ SPUSBData
 SPWWANData
 SPAirPortData},
         "full" => [
-                   "SPHardwareDataType"
+                   "SPHardwareDataType",
                   ],
       }
 

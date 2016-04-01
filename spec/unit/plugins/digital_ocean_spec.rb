@@ -43,15 +43,15 @@ describe Ohai::System, "plugin digital_ocean" do
         "eth0" => {
           "addresses" => {
             "00:D3:AD:B3:3F:00" => {
-              "family" => "lladdr"
+              "family" => "lladdr",
             },
             "1.2.3.4" => {
-              "netmask" => "255.255.255.0"
+              "netmask" => "255.255.255.0",
             },
             "2400:6180:0000:00d0:0000:0000:0009:7001" => {},
-          }
-        }
-      }
+          },
+        },
+      },
     }
 
     allow(File).to receive(:exist?).with(hint_path_nix).and_return(true)
@@ -132,10 +132,10 @@ describe Ohai::System, "plugin digital_ocean" do
         @plugin[:network][:interfaces][:eth1] = {
           "addresses" => {
             "10.128.142.89" => {
-              "netmask" => "255.255.255.0"
+              "netmask" => "255.255.255.0",
             },
             "fdf8:f53b:82e4:0000:0000:0000:0000:0053" => {},
-          }
+          },
         }
 
         @plugin.run

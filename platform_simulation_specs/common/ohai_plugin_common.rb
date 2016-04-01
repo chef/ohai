@@ -185,7 +185,7 @@ def subsumes?(source, test, path = [], &block)
   if source.is_a?( Hash ) && test.is_a?( Hash )
     test.all? { |k, v| subsumes?( source[k], v, path.clone << k, &block ) }
   else
-    block.call( path, source, test ) if block
+    yield(path, source, test) if block
     source == test
   end
 end

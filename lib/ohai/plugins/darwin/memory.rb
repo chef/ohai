@@ -30,7 +30,7 @@ Ohai.plugin(:Memory) do
     inactive = 0
     vm_stat = shell_out("vm_stat").stdout
     vm_stat_match = /page size of (\d+) bytes/.match(vm_stat)
-    page_size = if vm_stat_match and vm_stat_match[1]
+    page_size = if vm_stat_match && vm_stat_match[1]
                   vm_stat_match[1].to_i
                 else
                   4096

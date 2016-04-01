@@ -70,7 +70,7 @@ module Ohai
 
           args[:returns] ||= 0
           args[:no_status_check] ||= false
-          if status.exitstatus != args[:returns] and not args[:no_status_check]
+          if status.exitstatus != args[:returns] && (not args[:no_status_check])
             raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
           else
             Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")

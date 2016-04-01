@@ -26,7 +26,7 @@ Ohai.plugin(:Platform) do
       when /^ProductName:\s+(.+)$/
         macname = $1
         macname.downcase!
-        macname.gsub!(" ", "_")
+        macname.tr!(" ", "_")
         platform macname
       when /^ProductVersion:\s+(.+)$/
         platform_version $1

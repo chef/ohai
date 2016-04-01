@@ -173,7 +173,7 @@ For more information visit here: docs.chef.io/ohai_custom.html")
 
     def load_v7_plugin_class(contents, plugin_path)
       plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path)
-      unless plugin_class.kind_of?(Class) and plugin_class < Ohai::DSL::Plugin
+      unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
       plugin_class.sources << plugin_path

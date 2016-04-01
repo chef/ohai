@@ -53,8 +53,8 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
         let(:plugin_config) do
           {
             :filesystem => {
-              :zfs_properties => zfs_properties
-            }
+              :zfs_properties => zfs_properties,
+            },
           }
         end
 

@@ -60,7 +60,7 @@ LOGINCTL_OUT
           "uid" => "1000",
           "user" => "joe",
           "seat" => nil,
-        }
+        },
       },
       "by_user" => {
         "Debian-gdm" => [{
@@ -73,7 +73,7 @@ LOGINCTL_OUT
           "session" => "318",
           "uid" => "0",
           "user" => "root",
-          "seat" => nil
+          "seat" => nil,
         }, {
           "session" => "46",
           "uid" => "0",

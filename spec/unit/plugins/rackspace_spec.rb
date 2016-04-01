@@ -41,10 +41,10 @@ describe Ohai::System, "plugin rackspace" do
         "family" => "inet6",
       },
       "40:40:95:47:6E:ED" => {
-        "family" => "lladdr"
+        "family" => "lladdr",
       },
-      } }
-    }
+      } },
+    },
   }
 
     @plugin[:network][:interfaces][:eth1] = { :addresses => {
@@ -59,7 +59,7 @@ describe Ohai::System, "plugin rackspace" do
         "family" => "inet",
       },
       "40:40:F5:AB:28:36" => {
-        "family" => "lladdr"
+        "family" => "lladdr",
       },
     } }
 
@@ -260,7 +260,7 @@ OUT
           "family" => "inet",
         },
         "BC:76:4E:20:42:2B" => {
-          "family" => "lladdr"
+          "family" => "lladdr",
         },
       } }
       stdout = 'BC764E20422B = "{"label": "private-network"}"\n'

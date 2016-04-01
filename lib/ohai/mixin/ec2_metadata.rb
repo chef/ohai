@@ -140,7 +140,7 @@ module Ohai
                 else
                   metadata_get(key, api_version)
                 end
-            elsif not key.eql?(id) and not key.eql?("/")
+            elsif (not key.eql?(id)) && (not key.eql?("/"))
               name = key[0..-2]
               sym = metadata_key(name)
               if EC2_ARRAY_DIR.include?(name)

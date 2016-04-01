@@ -49,7 +49,7 @@ Ohai.plugin(:NetworkRoutes) do
         network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
         route_data = {}
         Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
-          if(m == :flags)
+          if m == :flags
             route_data[m] = flags(route.send(m))
           else
             route_data[m] = route.send(m)

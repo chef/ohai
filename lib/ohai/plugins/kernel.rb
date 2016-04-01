@@ -191,7 +191,7 @@ Ohai.plugin(:Kernel) do
     host = wmi.first_of("Win32_ComputerSystem")
     kernel[:cs_info] = Mash.new
     cs_info_blacklist = [
-      "oem_logo_bitmap"
+      "oem_logo_bitmap",
     ]
     host.wmi_ole_object.properties_.each do |p|
       if !cs_info_blacklist.include?(p.name.wmi_underscore)

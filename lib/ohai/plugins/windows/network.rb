@@ -64,7 +64,7 @@ Ohai.plugin(:Network) do
     end
 
     iface_instance.keys.each do |i|
-      if iface_config[i][:ip_enabled] and iface_instance[i][:net_connection_id]
+      if iface_config[i][:ip_enabled] && iface_instance[i][:net_connection_id]
         cint = sprintf("0x%x", iface_instance[i][:interface_index] ? iface_instance[i][:interface_index] : iface_instance[i][:index] ).downcase
         iface[cint] = Mash.new
         iface[cint][:configuration] = iface_config[i]
@@ -76,7 +76,7 @@ Ohai.plugin(:Network) do
           ip = iface[cint][:configuration][:ip_address][i]
           _ip = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
           iface[cint][:addresses][ip] = Mash.new(
-                                                 :prefixlen => _ip.prefix,
+                                                 :prefixlen => _ip.prefix
                                                  )
           if _ip.ipv6?
             # inet6 address
@@ -96,14 +96,14 @@ Ohai.plugin(:Network) do
         # Apparently you can have more than one mac_address? Odd.
         [iface[cint][:configuration][:mac_address]].flatten.each do |mac_addr|
           iface[cint][:addresses][mac_addr] = {
-            "family" => "lladdr"
+            "family" => "lladdr",
           }
         end
         iface[cint][:mtu] = iface[cint][:configuration][:mtu]
         iface[cint][:type] = iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
         iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type])
-        if iface[cint][:configuration][:default_ip_gateway] != nil and iface[cint][:configuration][:default_ip_gateway].size > 0
+        if iface[cint][:configuration][:default_ip_gateway] != nil && iface[cint][:configuration][:default_ip_gateway].size > 0
           network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
           network[:default_interface] = cint
         end
@@ -119,7 +119,7 @@ Ohai.plugin(:Network) do
         end
         next unless iface[cint]
         if line =~ /^\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9\:-]+)/
-          iface[cint][:arp][$1] = $2.gsub("-", ":").downcase
+          iface[cint][:arp][$1] = $2.tr("-", ":").downcase
         end
       end
     end

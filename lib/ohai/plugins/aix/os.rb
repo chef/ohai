@@ -25,6 +25,6 @@ Ohai.plugin(:OS) do
 
   collect_data(:aix) do
     os collect_os
-    os_version kernel[:version]
+    os_version shell_out("oslevel -s").stdout.split($/)[0]
   end
 end

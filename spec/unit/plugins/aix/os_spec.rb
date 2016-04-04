@@ -20,15 +20,16 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 describe Ohai::System, "AIX os plugin" do
   before(:each) do
     @plugin = get_plugin("aix/os")
-    kernel = Mash.new
-    kernel[:version] = "6"
-    kernel[:release] = "1"
     allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:kernel).and_return(kernel)
+    allow(@plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543\n", nil))
     @plugin.run
   end
 
+  it "should set the top-level os attribute" do
+    expect(@plugin[:os]).to eql(:aix)
+  end
+
   it "should set the top-level os_level attribute" do
-    expect(@plugin[:os_version]).to eql("6")
+    expect(@plugin[:os_version]).to eql("7200-00-01-1543")
   end
 end

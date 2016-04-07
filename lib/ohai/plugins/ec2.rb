@@ -43,6 +43,9 @@ Ohai.plugin(:EC2) do
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
         Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == true")
         true
+      else
+        Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
+        false
       end
     rescue NoMethodError
       Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
@@ -72,6 +75,9 @@ Ohai.plugin(:EC2) do
       if kernel[:os_info][:organization] =~ /Amazon/
         Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
         true
+      else
+        Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+        false
       end
     rescue NoMethodError
       Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")

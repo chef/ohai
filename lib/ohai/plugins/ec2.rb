@@ -53,8 +53,8 @@ Ohai.plugin(:EC2) do
   # looks for a xen UUID that starts with ec2
   # this gets us detection of Linux HVM and Paravirt hosts
   def has_ec2_xen_uuid?
-    if ::File.exist?('/sys/hypervisor/uuid')
-      if ::File.read('/sys/hypervisor/uuid') =~ /^ec2/
+    if ::File.exist?("/sys/hypervisor/uuid")
+      if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
         Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == true")
         return true
       end

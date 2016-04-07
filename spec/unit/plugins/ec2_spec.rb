@@ -259,7 +259,7 @@ describe Ohai::System, "plugin ec2" do
   end # shared examples for ec2
 
   describe "with ec2 dmi data" do
-    it_should_behave_like "ec2"
+    it_behaves_like "ec2"
 
     before(:each) do
       plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
@@ -267,7 +267,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with amazon kernel data" do
-    it_should_behave_like "ec2"
+    it_behaves_like "ec2"
 
     before(:each) do
       plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
@@ -275,7 +275,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with EC2 Xen UUID" do
-    it_should_behave_like "ec2"
+    it_behaves_like "ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
@@ -284,7 +284,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with non-EC2 Xen UUID" do
-    it_should_behave_like "!ec2"
+    it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
@@ -293,7 +293,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with ec2 hint file" do
-    it_should_behave_like "ec2"
+    it_behaves_like "ec2"
 
     before(:each) do
       if windows?
@@ -307,7 +307,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with rackspace hint file" do
-    it_should_behave_like "!ec2"
+    it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
@@ -318,7 +318,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "without any hints that it is an ec2 system" do
-    it_should_behave_like "!ec2"
+    it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)

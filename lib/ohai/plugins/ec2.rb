@@ -21,8 +21,8 @@
 # How we detect EC2 from easiest to hardest & least reliable
 # 1. Ohai ec2 hint exists. This always works
 # 2. Xen hypervisor UUID starts with 'ec2'. This catches Linux HVM & paravirt instances
-# 2. DMI data mentions amazon. This catches HVM instances in a VPC
-# 3. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
+# 3. DMI data mentions amazon. This catches HVM instances in a VPC
+# 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
 require "ohai/mixin/ec2_metadata"
 require "base64"

@@ -42,15 +42,13 @@ Ohai.plugin(:EC2) do
       # detect a version of '4.2.amazon'
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
         Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == true")
-        true
-      else
-        Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
-        false
+        return true
       end
     rescue NoMethodError
-      Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
-      false
+      # dmi[:bios][:all_records][0][:Version] may not exist
     end
+    Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
+    return false
   end
 
   # looks for a xen UUID that starts with ec2
@@ -61,10 +59,9 @@ Ohai.plugin(:EC2) do
         Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == true")
         return true
       end
-    else
-      Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == false")
-      return false
     end
+    Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == false")
+    return false
   end
 
   # looks for the Amazon.com Organization in Windows Kernel data
@@ -74,15 +71,13 @@ Ohai.plugin(:EC2) do
       # detect an Organization of 'Amazon.com'
       if kernel[:os_info][:organization] =~ /Amazon/
         Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
-        true
-      else
-        Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
-        false
+        return true
       end
     rescue NoMethodError
-      Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
-      false
+      # kernel[:os_info][:organization] may not exist
     end
+    Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+    return false
   end
 
   def looks_like_ec2?

@@ -12,6 +12,7 @@ The [MVP list](https://github.com/opscode/chef/blob/master/CHEF_MVPS.md) is kept
 
 | Release | Date | MVP |
 |---------|------|-----|
+| Ohai 8.14.0 | 2016-04-08 | Shahul Khajamohideen |
 | [Ohai 6.20.0](https://www.chef.io/blog/2013/10/31/release-chef-client-11-8-0-ohai-6-20-0/) | 2013-10-31 | Paul Rossman |
 | [Ohai 6.18.0](http://www.chef.io/blog/2013/07/23/chef-client-11-6-0-ohai-6-18-0-and-more/) | 2013-07-19 | Joseph Anthony Pasquale Holsten |
 | [Ohai 6.16.0](http://www.chef.io/blog/2013/01/17/ohai-6-16-0-released/) | 2013-01-17 | Sascha Bates |

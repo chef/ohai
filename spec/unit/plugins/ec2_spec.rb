@@ -22,25 +22,29 @@ require "open-uri"
 require "base64"
 
 describe Ohai::System, "plugin ec2" do
+
   before(:each) do
-    @plugin = get_plugin("ec2")
-    @plugin[:network] = { :interfaces => { :eth0 => {} } }
     allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
     allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+    allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
   end
 
   shared_examples_for "!ec2" do
-    it "should NOT attempt to fetch the ec2 metadata or set ec2 attribute" do
-      expect(@plugin).not_to receive(:http_client)
-      expect(@plugin[:ec2]).to be_nil
-      @plugin.run
+    let(:plugin) { get_plugin("ec2") }
+
+    it "DOESN'T attempt to fetch the ec2 metadata or set ec2 attribute" do
+      expect(plugin).not_to receive(:http_client)
+      expect(plugin[:ec2]).to be_nil
+      plugin.run
     end
   end
 
   shared_examples_for "ec2" do
+    let(:plugin) { get_plugin("ec2") }
+
     before(:each) do
       @http_client = double("Net::HTTP client")
-      allow(@plugin).to receive(:http_client).and_return(@http_client)
+      allow(plugin).to receive(:http_client).and_return(@http_client)
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
@@ -69,12 +73,12 @@ describe Ohai::System, "plugin ec2" do
           with("/2012-01-12/user-data/").
           and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-        @plugin.run
+        plugin.run
 
-        expect(@plugin[:ec2]).not_to be_nil
-        expect(@plugin[:ec2]["instance_type"]).to eq("c1.medium")
-        expect(@plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
-        expect(@plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["instance_type"]).to eq("c1.medium")
+        expect(plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
+        expect(plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
       end
 
       it "fetches binary userdata opaquely" do
@@ -87,17 +91,17 @@ describe Ohai::System, "plugin ec2" do
           with("/2012-01-12/user-data/").
           and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
 
-        @plugin.run
+        plugin.run
 
-        expect(@plugin[:ec2]).not_to be_nil
-        expect(@plugin[:ec2]["instance_type"]).to eq("c1.medium")
-        expect(@plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
-        expect(@plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
-        expect(@plugin[:ec2]["userdata"]).to eq(Base64.decode64("Xl88OEI+XkheSDxDNz5VXkBeQ3NvbWV0aGluZ15AS1Q8Qzg+PEM5PiwpPEM5\nPklVKEktLkk8Q0I+PENDPkk8RTU+XkJeQF5RejxCRj48QjA+XlJeQF5AXkA="))
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["instance_type"]).to eq("c1.medium")
+        expect(plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
+        expect(plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
+        expect(plugin[:ec2]["userdata"]).to eq(Base64.decode64("Xl88OEI+XkheSDxDNz5VXkBeQ3NvbWV0aGluZ15AS1Q8Qzg+PEM5PiwpPEM5\nPklVKEktLkk8Q0I+PENDPkk8RTU+XkJeQF5RejxCRj48QjA+XlJeQF5AXkA="))
       end
     end
 
-    it "should parse ec2 network/ directory as a multi-level hash" do
+    it "parses ec2 network/ directory as a multi-level hash" do
       expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/").
         and_return(double("Net::HTTP Response", :body => "network/", :code => "200"))
@@ -120,10 +124,10 @@ describe Ohai::System, "plugin ec2" do
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
+      plugin.run
 
-      expect(@plugin[:ec2]).not_to be_nil
-      expect(@plugin[:ec2]["network_interfaces_macs"]["12:34:56:78:9a:bc"]["public_hostname"]).to eql("server17.opscode.com")
+      expect(plugin[:ec2]).not_to be_nil
+      expect(plugin[:ec2]["network_interfaces_macs"]["12:34:56:78:9a:bc"]["public_hostname"]).to eql("server17.opscode.com")
     end # context with common metadata paths
 
     context "with ec2_iam hint file" do
@@ -137,7 +141,7 @@ describe Ohai::System, "plugin ec2" do
         end
       end
 
-      it "should parse ec2 iam/ directory and collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and collect iam/security-credentials/" do
         expect(@http_client).to receive(:get).
           with("/2012-01-12/meta-data/").
           and_return(double("Net::HTTP Response", :body => "iam/", :code => "200"))
@@ -154,11 +158,11 @@ describe Ohai::System, "plugin ec2" do
           with("/2012-01-12/user-data/").
           and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-        @plugin.run
+        plugin.run
 
-        expect(@plugin[:ec2]).not_to be_nil
-        expect(@plugin[:ec2]["iam"]["security-credentials"]["MyRole"]["Code"]).to eql "Success"
-        expect(@plugin[:ec2]["iam"]["security-credentials"]["MyRole"]["Token"]).to eql "12345678"
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["iam"]["security-credentials"]["MyRole"]["Code"]).to eql "Success"
+        expect(plugin[:ec2]["iam"]["security-credentials"]["MyRole"]["Token"]).to eql "12345678"
       end
     end
 
@@ -171,7 +175,7 @@ describe Ohai::System, "plugin ec2" do
         end
       end
 
-      it "should parse ec2 iam/ directory and NOT collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and NOT collect iam/security-credentials/" do
         expect(@http_client).to receive(:get).
           with("/2012-01-12/meta-data/").
           and_return(double("Net::HTTP Response", :body => "iam/", :code => "200"))
@@ -188,14 +192,14 @@ describe Ohai::System, "plugin ec2" do
           with("/2012-01-12/user-data/").
           and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-        @plugin.run
+        plugin.run
 
-        expect(@plugin[:ec2]).not_to be_nil
-        expect(@plugin[:ec2]["iam"]).to be_nil
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["iam"]).to be_nil
       end
     end
 
-    it "should ignore \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
+    it "ignores \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
       expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/").
         and_return(double("Net::HTTP Response", :body => ".\n./\n..\n../\npath1/.\npath2/./\npath3/..\npath4/../", :code => "200"))
@@ -227,12 +231,12 @@ describe Ohai::System, "plugin ec2" do
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
+      plugin.run
 
-      expect(@plugin[:ec2]).not_to be_nil
+      expect(plugin[:ec2]).not_to be_nil
     end
 
-    it "should complete the run despite unavailable metadata" do
+    it "completes the run despite unavailable metadata" do
       expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/").
         and_return(double("Net::HTTP Response", :body => "metrics/", :code => "200"))
@@ -246,38 +250,50 @@ describe Ohai::System, "plugin ec2" do
         with("/2012-01-12/user-data/").
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
 
-      @plugin.run
+      plugin.run
 
-      expect(@plugin[:ec2]).not_to be_nil
-      expect(@plugin[:ec2]["metrics"]).to be_nil
-      expect(@plugin[:ec2]["metrics_vhostmd"]).to be_nil
+      expect(plugin[:ec2]).not_to be_nil
+      expect(plugin[:ec2]["metrics"]).to be_nil
+      expect(plugin[:ec2]["metrics_vhostmd"]).to be_nil
     end
   end # shared examples for ec2
 
-  describe "without dmi data, kernel organization, with xen mac, and metadata address connected" do
+  describe "with ec2 dmi data" do
+    it_behaves_like "ec2"
+
     before(:each) do
-      allow(IO).to receive(:select).and_return([[], [1], []])
-      @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "fe:ff:ff:ff:ff:ff" }
-    end
-
-    it_should_behave_like "ec2"
-
-    it "warns that the arp table method is deprecated" do
-      expect(Ohai::Log).to receive(:warn).with(/will be removed/)
-      @plugin.has_xen_mac?
+      plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
     end
   end
 
-  describe "with ec2 dmi data" do
-    it_should_behave_like "ec2"
+  describe "with amazon kernel data" do
+    it_behaves_like "ec2"
 
     before(:each) do
-      @plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
+      plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
+    end
+  end
+
+  describe "with EC2 Xen UUID" do
+    it_behaves_like "ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+    end
+  end
+
+  describe "with non-EC2 Xen UUID" do
+    it_behaves_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8")
     end
   end
 
   describe "with ec2 hint file" do
-    it_should_behave_like "ec2"
+    it_behaves_like "ec2"
 
     before(:each) do
       if windows?
@@ -291,7 +307,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "with rackspace hint file" do
-    it_should_behave_like "!ec2"
+    it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
@@ -302,13 +318,12 @@ describe Ohai::System, "plugin ec2" do
   end
 
   describe "without any hints that it is an ec2 system" do
-    it_should_behave_like "!ec2"
+    it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
       allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
-      @plugin[:dmi] = nil
-      @plugin[:network][:interfaces][:eth0][:arp] = { "169.254.1.0" => "00:50:56:c0:00:08" }
+      plugin[:dmi] = nil
     end
   end
 

@@ -2,6 +2,7 @@
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -19,8 +20,9 @@
 
 # How we detect EC2 from easiest to hardest & least reliable
 # 1. Ohai ec2 hint exists. This always works
-# 2. DMI data mentions amazon. This catches HVM instances in a VPC
-# 3. Has a xen MAC + can connect to metadata. This catches paravirt instances not in a VPC
+# 2. Xen hypervisor UUID starts with 'ec2'. This catches Linux HVM & paravirt instances
+# 3. DMI data mentions amazon. This catches HVM instances in a VPC
+# 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
 require "ohai/mixin/ec2_metadata"
 require "base64"
@@ -30,29 +32,8 @@ Ohai.plugin(:EC2) do
 
   provides "ec2"
 
-  depends "network/interfaces"
   depends "dmi"
-
-  # look for xen arp address
-  # this gets us detection of paravirt instances that are NOT within a VPC
-  def has_xen_mac?
-    network[:interfaces].values.each do |iface|
-      unless iface[:arp].nil?
-        if iface[:arp].value?("fe:ff:ff:ff:ff:ff")
-          # using MAC addresses from ARP is unreliable because they could time-out from the table
-          # fe:ff:ff:ff:ff:ff is actually a sign of Xen, not specifically EC2
-          deprecation_message <<-EOM
-ec2 plugin: Detected EC2 by the presence of fe:ff:ff:ff:ff:ff in the ARP table. This method is unreliable and will be removed in a future version of ohai. Bootstrap using knife-ec2 or create "/etc/chef/ohai/hints/ec2.json" instead.
-EOM
-          Ohai::Log.warn(deprecation_message)
-          Ohai::Log.debug("ec2 plugin: has_xen_mac? == true")
-          return true
-        end
-      end
-    end
-    Ohai::Log.debug("ec2 plugin: has_xen_mac? == false")
-    false
-  end
+  depends "kernel"
 
   # look for amazon string in dmi bios data
   # this gets us detection of HVM instances that are within a VPC
@@ -61,19 +42,49 @@ EOM
       # detect a version of '4.2.amazon'
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
         Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == true")
-        true
+        return true
       end
     rescue NoMethodError
-      Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
-      false
+      # dmi[:bios][:all_records][0][:Version] may not exist
     end
+    Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
+    return false
+  end
+
+  # looks for a xen UUID that starts with ec2
+  # this gets us detection of Linux HVM and Paravirt hosts
+  def has_ec2_xen_uuid?
+    if ::File.exist?("/sys/hypervisor/uuid")
+      if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
+        Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == true")
+        return true
+      end
+    end
+    Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == false")
+    return false
+  end
+
+  # looks for the Amazon.com Organization in Windows Kernel data
+  # this gets us detection of Windows systems
+  def has_amazon_org?
+    begin
+      # detect an Organization of 'Amazon.com'
+      if kernel[:os_info][:organization] =~ /Amazon/
+        Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
+        return true
+      end
+    rescue NoMethodError
+      # kernel[:os_info][:organization] may not exist
+    end
+    Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+    return false
   end
 
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_dmi? || has_xen_mac?
+    if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
       return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end
@@ -90,7 +101,7 @@ EOM
         next if k == "iam" && !hint?("iam")
         ec2[k] = v
       end
-      ec2[:userdata] = self.fetch_userdata
+      ec2[:userdata] = fetch_userdata
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
         Ohai::Log.debug("ec2 plugin: Binary UserData Found. Storing in base64")

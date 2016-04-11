@@ -1,60 +1,85 @@
 # Change Log
 
-## [8.13.0](https://github.com/chef/ohai/tree/8.13.0) (2016-03-24)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.12.1...8.13.0)
+## [8.14.0](https://github.com/chef/ohai/tree/8.14.0) (2016-04-08)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.13.0...8.14.0)
 
 **Implemented enhancements:**
 
-- Add language scala [\#524](https://github.com/chef/ohai/pull/524) ([cmluciano](https://github.com/cmluciano))
+- Improve Linux EC2 detection, fix false detection, and add Windows detection [#793](https://github.com/chef/ohai/pull/793) ([tas50](https://github.com/tas50))
+- Ohai shell_out logging, timeouts, and error handling [#788](https://github.com/chef/ohai/pull/788) ([mcquin](https://github.com/mcquin))
+- Detect openSUSE Leap as platform opensuseleap [#784](https://github.com/chef/ohai/pull/784) ([tas50](https://github.com/tas50))
+- Windows packages plugin - Get packages from registry [#778](https://github.com/chef/ohai/pull/778) ([sh9189](https://github.com/sh9189))
 
 **Fixed bugs:**
 
-- Lock plist to 3.x [\#779](https://github.com/chef/ohai/pull/779) ([danielsdeleo](https://github.com/danielsdeleo))
+- AIX: Set os_version to match the output of oslevel -s [#790](https://github.com/chef/ohai/pull/790) ([juliandunn](https://github.com/juliandunn))
+- Remove ec2metadata CLI as an EC2 detection method [#787](https://github.com/chef/ohai/pull/787) ([tas50](https://github.com/tas50))
+- solaris11_network: Handle solaris 11 zone interfaces [#742](https://github.com/chef/ohai/pull/742) ([MarkGibbons](https://github.com/MarkGibbons))
 
-## [8.12.1](https://github.com/chef/ohai/tree/8.12.1) (2016-03-14)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.12.0...8.12.1)
+**Merged pull requests:**
 
-**Fixed bugs:**
+- Update chefstyle to 0.3.1 and fix new offenses. [#789](https://github.com/chef/ohai/pull/789) ([mcquin](https://github.com/mcquin))
 
-- Fix gem conflicts in ruby environments that load rake 11 [\#774](https://github.com/chef/ohai/pull/774) ([danielsdeleo](https://github.com/danielsdeleo))
+## [v8.13.0](https://github.com/chef/ohai/tree/v8.13.0) (2016-03-24)
 
-## [8.12.0](https://github.com/chef/ohai/tree/8.12.0) (2016-03-09)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.11.1...8.12.0)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.12.1...v8.13.0)
 
 **Implemented enhancements:**
 
-- add plugin to detect user sessions using loginctl [\#766](https://github.com/chef/ohai/pull/766) ([davide125](https://github.com/davide125))
-- Improve virtualization detection on Solaris [\#760](https://github.com/chef/ohai/pull/760) ([tas50](https://github.com/tas50))
-- Improve FreeBSD guest virtualization detection [\#756](https://github.com/chef/ohai/pull/756) ([tas50](https://github.com/tas50))
-- Detect Openstack hosts [\#751](https://github.com/chef/ohai/pull/751) ([tas50](https://github.com/tas50))
-- Improve KVM host and guest detection [\#750](https://github.com/chef/ohai/pull/750) ([tas50](https://github.com/tas50))
-- Update GCE metadata API version and fail better [\#736](https://github.com/chef/ohai/pull/736) ([tas50](https://github.com/tas50))
+- Add language scala [#524](https://github.com/chef/ohai/pull/524) ([cmluciano](https://github.com/cmluciano))
 
 **Fixed bugs:**
 
-- Make ohai work with Chef 12.7 and below [\#768](https://github.com/chef/ohai/pull/768) ([jkeiser](https://github.com/jkeiser))
-- Remove XML output in VirtualizationInfo and need for hpricot gem [\#755](https://github.com/chef/ohai/pull/755) ([tas50](https://github.com/tas50))
+- Lock plist to 3.x [#779](https://github.com/chef/ohai/pull/779) ([danielsdeleo](https://github.com/danielsdeleo))
+
+## [v8.12.1](https://github.com/chef/ohai/tree/v8.12.1) (2016-03-15)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.12.0...v8.12.1)
+
+**Fixed bugs:**
+
+- Fix gem conflicts in ruby environments that load rake 11 [#774](https://github.com/chef/ohai/pull/774) ([danielsdeleo](https://github.com/danielsdeleo))
+
+## [v8.12.0](https://github.com/chef/ohai/tree/v8.12.0) (2016-03-09)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.11.1...v8.12.0)
+
+**Implemented enhancements:**
+
+- add plugin to detect user sessions using loginctl [#766](https://github.com/chef/ohai/pull/766) ([davide125](https://github.com/davide125))
+- Improve virtualization detection on Solaris [#760](https://github.com/chef/ohai/pull/760) ([tas50](https://github.com/tas50))
+- Improve FreeBSD guest virtualization detection [#756](https://github.com/chef/ohai/pull/756) ([tas50](https://github.com/tas50))
+- Detect Openstack hosts [#751](https://github.com/chef/ohai/pull/751) ([tas50](https://github.com/tas50))
+- Improve KVM host and guest detection [#750](https://github.com/chef/ohai/pull/750) ([tas50](https://github.com/tas50))
+- Update GCE metadata API version and fail better [#736](https://github.com/chef/ohai/pull/736) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+
+- Make ohai work with Chef 12.7 and below [#768](https://github.com/chef/ohai/pull/768) ([jkeiser](https://github.com/jkeiser))
+- Remove XML output in VirtualizationInfo and need for hpricot gem [#755](https://github.com/chef/ohai/pull/755) ([tas50](https://github.com/tas50))
 
 ## [v8.11.1](https://github.com/chef/ohai/tree/v8.11.1) (2016-03-08)
+
 [Full Changelog](https://github.com/chef/ohai/compare/v8.10.0...v8.11.1)
 
 **Implemented enhancements:**
 
-- Detect Azure on non-bootstrapped hosts [\#657](https://github.com/chef/ohai/issues/657)
-- Deprecate run\_command and popen4 in the command mixin [\#730](https://github.com/chef/ohai/pull/730) ([tas50](https://github.com/tas50))
-- OHAI-726 Regex to support openjdk 1.8 [\#727](https://github.com/chef/ohai/pull/727) ([davidnewman](https://github.com/davidnewman))
-- Add support for the 2 latest EC2 metadata versions [\#725](https://github.com/chef/ohai/pull/725) ([tas50](https://github.com/tas50))
-- Improved debug logging for cloud plugins [\#724](https://github.com/chef/ohai/pull/724) ([tas50](https://github.com/tas50))
-- Detect paravirt amazon instances without hint files [\#722](https://github.com/chef/ohai/pull/722) ([tas50](https://github.com/tas50))
-- Detect Azure using the Azure agent and DHCP options [\#714](https://github.com/chef/ohai/pull/714) ([tas50](https://github.com/tas50))
+- Detect Azure on non-bootstrapped hosts [#657](https://github.com/chef/ohai/issues/657)
+- Deprecate run_command and popen4 in the command mixin [#730](https://github.com/chef/ohai/pull/730) ([tas50](https://github.com/tas50))
+- OHAI-726 Regex to support openjdk 1.8 [#727](https://github.com/chef/ohai/pull/727) ([davidnewman](https://github.com/davidnewman))
+- Add support for the 2 latest EC2 metadata versions [#725](https://github.com/chef/ohai/pull/725) ([tas50](https://github.com/tas50))
+- Improved debug logging for cloud plugins [#724](https://github.com/chef/ohai/pull/724) ([tas50](https://github.com/tas50))
+- Detect paravirt amazon instances without hint files [#722](https://github.com/chef/ohai/pull/722) ([tas50](https://github.com/tas50))
+- Detect Azure using the Azure agent and DHCP options [#714](https://github.com/chef/ohai/pull/714) ([tas50](https://github.com/tas50))
 
 **Fixed bugs:**
 
-- Use escape\_glob\_dir instead of escape\_glob [\#747](https://github.com/chef/ohai/pull/747) ([jaym](https://github.com/jaym))
-- have a proper dependency on plist [\#737](https://github.com/chef/ohai/pull/737) ([thommay](https://github.com/thommay))
-- Fix digital ocean ip address detection [\#735](https://github.com/chef/ohai/pull/735) ([ctso](https://github.com/ctso))
-- Log sigar gem load failures [\#731](https://github.com/chef/ohai/pull/731) ([tas50](https://github.com/tas50))
-- ipaddress on Linux - default route pointing to unaddressed interface, with route src [\#682](https://github.com/chef/ohai/pull/682) ([glennmatthews](https://github.com/glennmatthews))
+- Use escape_glob_dir instead of escape_glob [#747](https://github.com/chef/ohai/pull/747) ([jaym](https://github.com/jaym))
+- have a proper dependency on plist [#737](https://github.com/chef/ohai/pull/737) ([thommay](https://github.com/thommay))
+- Fix digital ocean ip address detection [#735](https://github.com/chef/ohai/pull/735) ([ctso](https://github.com/ctso))
+- Log sigar gem load failures [#731](https://github.com/chef/ohai/pull/731) ([tas50](https://github.com/tas50))
+- ipaddress on Linux - default route pointing to unaddressed interface, with route src [#682](https://github.com/chef/ohai/pull/682) ([glennmatthews](https://github.com/glennmatthews))
 
 ## Release 8.10.0
 * [pr#720](https://github.com/chef/ohai/pull/720) Make Windows driver plugin opt-in via config

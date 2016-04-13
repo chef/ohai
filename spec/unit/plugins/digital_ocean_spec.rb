@@ -172,26 +172,4 @@ describe Ohai::System, "plugin digital_ocean" do
       it_should_behave_like "!digital_ocean"
     end
   end
-
-  context "with ec2 hint file" do
-    before do
-      allow(plugin).to receive(:hint?).with("ec2").and_return({})
-      allow(plugin).to receive(:hint?).with("digital_ocean").and_return(false)
-    end
-
-    describe "with the /etc/digitalocean file" do
-      before do
-        allow(File).to receive(:exist?).with(digitalocean_path).and_return(true)
-        plugin.run
-      end
-      it_should_behave_like "digital_ocean_networking"
-    end
-
-    describe "without the /etc/digitalocean file" do
-      before do
-        allow(File).to receive(:exist?).with(digitalocean_path).and_return(false)
-      end
-      it_should_behave_like "!digital_ocean"
-    end
-  end
 end

@@ -102,15 +102,4 @@ describe Ohai::System, "plugin eucalyptus" do
     end
   end
 
-  describe "with ec2 hint file" do
-    it_behaves_like "!eucalyptus"
-
-    before(:each) do
-      plugin[:network] = { :interfaces => {} }
-
-      allow(plugin).to receive(:hint?).with("eucalyptus").and_return(false)
-      allow(plugin).to receive(:hint?).with("ec2").and_return({})
-    end
-  end
-
 end

@@ -224,15 +224,6 @@ OUT
     end
   end
 
-  describe "with ec2 hint file and no rackspace hint file" do
-    it_behaves_like "!rackspace"
-
-    before(:each) do
-      allow(plugin).to receive(:hint?).with("ec2").and_return({})
-      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
-    end
-  end
-
   describe "xenstore provider returns rackspace" do
     it_behaves_like "rackspace"
 

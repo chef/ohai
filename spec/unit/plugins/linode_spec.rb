@@ -132,13 +132,4 @@ describe Ohai::System, "plugin linode" do
     it_behaves_like "!linode"
   end
 
-  context "with ec2 hint file" do
-    before do
-      allow(plugin).to receive(:hint?).with("linode").and_return(false)
-      allow(plugin).to receive(:hint?).with("ec2").and_return({})
-    end
-
-    it_behaves_like "!linode"
-  end
-
 end

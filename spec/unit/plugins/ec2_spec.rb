@@ -288,15 +288,6 @@ describe Ohai::System, "plugin ec2" do
       allow(plugin).to receive(:hint?).with("ec2").and_return({})
     end
   end
-
-  describe "with rackspace hint file" do
-    it_behaves_like "!ec2"
-
-    before(:each) do
-      allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
-    end
-  end
-
   describe "without any hints that it is an ec2 system" do
     it_behaves_like "!ec2"
 

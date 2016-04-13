@@ -26,15 +26,13 @@ module Ohai
     end
 
     def self.parse_hint_file(filename)
-      begin
-        json_parser = FFI_Yajl::Parser.new
-        hash = json_parser.parse(File.read(filename))
-        hash || {} # hint
-        # should exist because the file did, even if it didn't
-        # contain anything
-      rescue FFI_Yajl::ParseError => e
-        Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
-      end
+      json_parser = FFI_Yajl::Parser.new
+      hash = json_parser.parse(File.read(filename))
+      hash || {} # hint
+      # should exist because the file did, even if it didn't
+      # contain anything
+    rescue FFI_Yajl::ParseError => e
+      Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
     end
 
     def self.hint?(name)

@@ -21,21 +21,19 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 
 describe Ohai::System, "plugin eucalyptus" do
-  before(:each) do
-    @plugin = get_plugin("eucalyptus")
-  end
+  let(:plugin) { get_plugin("eucalyptus") }
 
   shared_examples_for "!eucalyptus" do
-    it "should NOT attempt to fetch the eucalyptus metadata" do
+    it "does NOT attempt to fetch the eucalyptus metadata" do
       expect(OpenURI).not_to receive(:open)
-      @plugin.run
+      plugin.run
     end
   end
 
   shared_examples_for "eucalyptus" do
     before(:each) do
       @http_client = double("Net::HTTP client")
-      allow(@plugin).to receive(:http_client).and_return(@http_client)
+      allow(plugin).to receive(:http_client).and_return(@http_client)
 
       expect(@http_client).to receive(:get).
         with("/").twice.
@@ -57,69 +55,61 @@ describe Ohai::System, "plugin eucalyptus" do
         and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
     end
 
-    it "should recursively fetch all the eucalyptus metadata" do
+    it "recursively fetches all the eucalyptus metadata" do
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
-      @plugin.run
-      expect(@plugin[:eucalyptus]).not_to be_nil
-      expect(@plugin[:eucalyptus]["instance_type"]).to eq("c1.medium")
-      expect(@plugin[:eucalyptus]["ami_id"]).to eq("ami-5d2dc934")
-      expect(@plugin[:eucalyptus]["security_groups"]).to eql %w{group1 group2}
+      plugin.run
+      expect(plugin[:eucalyptus]).not_to be_nil
+      expect(plugin[:eucalyptus]["instance_type"]).to eq("c1.medium")
+      expect(plugin[:eucalyptus]["ami_id"]).to eq("ami-5d2dc934")
+      expect(plugin[:eucalyptus]["security_groups"]).to eql %w{group1 group2}
     end
   end
 
   describe "with eucalyptus mac and metadata address connected" do
-    it_should_behave_like "eucalyptus"
+    it_behaves_like "eucalyptus"
 
     before(:each) do
       allow(IO).to receive(:select).and_return([[], [1], []])
-      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED" => { "family" => "lladdr" } } } } }
+      plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
   end
 
   describe "without eucalyptus mac and metadata address connected" do
-    it_should_behave_like "!eucalyptus"
+    it_behaves_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } } } }
+      plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
   end
 
-  describe "with eucalyptus cloud file" do
-    it_should_behave_like "eucalyptus"
+  describe "with eucalyptus hint file" do
+    it_behaves_like "eucalyptus"
 
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/eucalyptus.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/eucalyptus.json').and_return("")
+      allow(plugin).to receive(:hint?).with("eucalyptus").and_return(true)
     end
   end
 
-  describe "without cloud file" do
-    it_should_behave_like "!eucalyptus"
+  describe "without hint file" do
+    it_behaves_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = { :interfaces => {} }
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
+      plugin[:network] = { :interfaces => {} }
+      allow(plugin).to receive(:hint?).with("eucalyptus").and_return(false)
     end
   end
 
-  describe "with ec2 cloud file" do
-    it_should_behave_like "!eucalyptus"
+  describe "with ec2 hint file" do
+    it_behaves_like "!eucalyptus"
 
     before(:each) do
-      @plugin[:network] = { :interfaces => {} }
+      plugin[:network] = { :interfaces => {} }
 
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/eucalyptus.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/eucalyptus.json').and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/ec2.json").and_return("")
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return("")
+      allow(plugin).to receive(:hint?).with("eucalyptus").and_return(false)
+      allow(plugin).to receive(:hint?).with("ec2").and_return({})
     end
   end
 

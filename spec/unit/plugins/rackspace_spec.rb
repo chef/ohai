@@ -82,19 +82,19 @@ describe Ohai::System, "plugin rackspace" do
   end
 
   shared_examples_for "!rackspace" do
-    it "does not create rackspace" do
+    it "does not create rackspace attribute" do
       plugin.run
       expect(plugin[:rackspace]).to be_nil
     end
   end
 
   shared_examples_for "rackspace" do
-    it "creates rackspace" do
+    it "has rackspace attribute" do
       plugin.run
       expect(plugin[:rackspace]).not_to be_nil
     end
 
-    it "has all required attributes" do
+    it "has expected rackspace ip/hostname attributes" do
       plugin.run
       expect(plugin[:rackspace][:public_ip]).not_to be_nil
       expect(plugin[:rackspace][:private_ip]).not_to be_nil
@@ -184,17 +184,14 @@ OUT
     end
   end
 
-  describe "with rackspace cloud file" do
+  describe "with rackspace hint file" do
     it_behaves_like "rackspace"
 
     before(:each) do
       allow(Resolv).to receive(:getname).and_raise(Resolv::ResolvError)
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
       allow(File).to receive(:exist?).with("/etc/resolv.conf").and_return(true)
       allow(File).to receive(:read).with("/etc/resolv.conf").and_return("")
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
     end
 
     describe "with no public interfaces (empty eth0)" do
@@ -203,7 +200,7 @@ OUT
         plugin[:network][:interfaces][:eth0]["addresses"] = {}
       end
 
-      it "has all required attributes" do
+      it "has correct rackspace attributes" do
         plugin.run
         # expliticly nil
         expect(plugin[:rackspace][:public_ip]).to be_nil
@@ -211,14 +208,7 @@ OUT
         expect(plugin[:rackspace][:public_ipv6]).to be_nil
         expect(plugin[:rackspace][:public_hostname]).to be_nil
         # per normal
-        expect(plugin[:rackspace][:private_ip]).not_to be_nil
-        expect(plugin[:rackspace][:local_ipv4]).not_to be_nil
         expect(plugin[:rackspace][:local_ipv6]).to be_nil
-        expect(plugin[:rackspace][:local_hostname]).not_to be_nil
-      end
-
-      it "has correct values for all attributes" do
-        plugin.run
         expect(plugin[:rackspace][:private_ip]).to eq("5.6.7.8")
         expect(plugin[:rackspace][:local_ipv4]).to eq("5.6.7.8")
         expect(plugin[:rackspace][:local_hostname]).to eq("katie")
@@ -226,26 +216,11 @@ OUT
     end
   end
 
-  describe "without cloud file" do
+  describe "without hint file" do
     it_behaves_like "!rackspace"
 
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
-    end
-  end
-
-  describe "with ec2 cloud file" do
-    it_behaves_like "!rackspace"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/ec2.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return("")
-
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
     end
   end
 
@@ -254,6 +229,7 @@ OUT
 
     before(:each) do
       stdout = "Rackspace\n"
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
   end
@@ -262,6 +238,7 @@ OUT
     it_behaves_like "!rackspace"
 
     before(:each) do
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       stdout = "cumulonimbus\n"
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
@@ -271,6 +248,7 @@ OUT
     it_behaves_like "!rackspace"
 
     before(:each) do
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin).
         to receive(:shell_out).
         with("xenstore-read vm-data/provider_data/provider").
@@ -301,14 +279,10 @@ OUT
   describe "does not have private networks" do
     before do
       stdout = 'BC764E20422B = "{"label": "public"}"\n'
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
       allow(plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
       stdout = '{"label": "public", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
-
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
     end
 
     it "does not have private_networks object" do
@@ -340,11 +314,7 @@ OUT
       allow(plugin).to receive(:shell_out).with("xenstore-ls vm-data/networking").and_return(mock_shell_out(0, stdout, "" ))
       stdout = '{"label": "private-network", "broadcast": "9.10.11.255", "ips": [{"ip": "9.10.11.12", "netmask": "255.255.255.0", "enabled": "1", "gateway": null}], "mac": "BC:76:4E:20:42:2B", "dns": ["69.20.0.164", "69.20.0.196"], "gateway": null}'
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/networking/BC764E20422B").and_return(mock_shell_out(0, stdout, "" ))
-
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
     end
 
     it "has private_networks object" do
@@ -352,7 +322,7 @@ OUT
       expect(plugin[:rackspace][:private_networks]).not_to be_nil
     end
 
-    it "has correct values for all attributes" do
+    it "has correct values for all rackspace attributes" do
       plugin.run
       expect(plugin[:rackspace][:private_networks][0][:label]).to eq("private-network")
       expect(plugin[:rackspace][:private_networks][0][:broadcast]).to eq("9.10.11.255")

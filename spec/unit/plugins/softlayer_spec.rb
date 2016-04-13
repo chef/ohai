@@ -23,7 +23,7 @@ describe Ohai::System, "plugin softlayer" do
   let(:plugin) { get_plugin("softlayer") }
 
   it "not create softlayer if hint file doesn't exists" do
-    allow(@plugin).to receive(:hint?).with("softlayer").and_return(false)
+    allow(plugin).to receive(:hint?).with("softlayer").and_return(false)
     plugin.run
     expect(plugin[:softlayer]).to be_nil
   end

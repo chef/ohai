@@ -24,8 +24,7 @@ require "base64"
 describe Ohai::System, "plugin ec2" do
 
   before(:each) do
-    allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
-    allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+    allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
   end
 
@@ -132,13 +131,7 @@ describe Ohai::System, "plugin ec2" do
 
     context "with ec2_iam hint file" do
       before do
-        if windows?
-          allow(File).to receive(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(true)
-          allow(File).to receive(:read).with('C:\chef\ohai\hints/iam.json').and_return("")
-        else
-          allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/iam.json").and_return(true)
-          allow(File).to receive(:read).with("/etc/chef/ohai/hints/iam.json").and_return("")
-        end
+        allow(plugin).to receive(:hint?).with("iam").and_return(true)
       end
 
       it "parses ec2 iam/ directory and collect iam/security-credentials/" do
@@ -168,11 +161,7 @@ describe Ohai::System, "plugin ec2" do
 
     context "without ec2_iam hint file" do
       before do
-        if windows?
-          allow(File).to receive(:exist?).with('C:\chef\ohai\hints/iam.json').and_return(false)
-        else
-          allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/iam.json").and_return(false)
-        end
+        allow(plugin).to receive(:hint?).with("iam").and_return(false)
       end
 
       it "parses ec2 iam/ directory and NOT collect iam/security-credentials/" do
@@ -296,33 +285,14 @@ describe Ohai::System, "plugin ec2" do
     it_behaves_like "ec2"
 
     before(:each) do
-      if windows?
-        expect(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(true)
-        allow(File).to receive(:read).with('C:\chef\ohai\hints/ec2.json').and_return("")
-      else
-        expect(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(true)
-        allow(File).to receive(:read).with("/etc/chef/ohai/hints/ec2.json").and_return("")
-      end
+      allow(plugin).to receive(:hint?).with("ec2").and_return({})
     end
   end
-
-  describe "with rackspace hint file" do
-    it_behaves_like "!ec2"
-
-    before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
-    end
-  end
-
   describe "without any hints that it is an ec2 system" do
     it_behaves_like "!ec2"
 
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/ec2.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/ec2.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("ec2").and_return(false)
       plugin[:dmi] = nil
     end
   end

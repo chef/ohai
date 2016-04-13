@@ -19,26 +19,24 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 
 describe Ohai::System, "plugin gce" do
-  before(:each) do
-    @plugin = get_plugin("gce")
-  end
+  let(:plugin) { get_plugin("gce") }
 
   shared_examples_for "!gce" do
-    it "should NOT attempt to fetch the gce metadata" do
-      expect(@plugin).not_to receive(:http_get)
-      @plugin.run
+    it "does NOT attempt to fetch the gce metadata" do
+      expect(plugin).not_to receive(:http_get)
+      plugin.run
     end
 
-    it "should NOT set gce attributes" do
-      expect(@plugin[:gce]).to be_nil
-      @plugin.run
+    it "does NOT set gce attributes" do
+      expect(plugin[:gce]).to be_nil
+      plugin.run
     end
   end
 
   shared_examples_for "gce" do
     before(:each) do
       @http_get = double("Net::HTTP client")
-      allow(@plugin).to receive(:http_get).and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
+      allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
@@ -46,32 +44,28 @@ describe Ohai::System, "plugin gce" do
       allow(Socket).to receive(:pack_sockaddr_in).and_return(nil)
     end
 
-    it "should recursively fetch and properly parse json metadata" do
-      @plugin.run
+    it "recursively fetches and properly parses json metadata" do
+      plugin.run
 
-      expect(@plugin[:gce]).not_to be_nil
-      expect(@plugin[:gce]["instance"]).to eq("hostname" => "test-host")
+      expect(plugin[:gce]).not_to be_nil
+      expect(plugin[:gce]["instance"]).to eq("hostname" => "test-host")
     end
 
   end
 
   describe "with hint file and with metadata connection" do
-    it_should_behave_like "gce"
+    it_behaves_like "gce"
 
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/gce.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/gce.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/gce.json').and_return("")
+      allow(plugin).to receive(:hint?).with("gce").and_return({})
     end
   end
 
   describe "without hint file and without metadata connection" do
-    it_should_behave_like "!gce"
+    it_behaves_like "!gce"
 
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/gce.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/gce.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("gce").and_return(false)
 
       # Raise Errno::ENOENT to simulate the scenario in which metadata server
       # can not be connected

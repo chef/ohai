@@ -18,12 +18,10 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin linode" do
-  let(:hint_path_nix) { "/etc/chef/ohai/hints/linode.json" }
-  let(:hint_path_win) { 'C:\chef\ohai\hints/linode.json' }
+  let(:plugin) { get_plugin("linode") }
 
   before do
-    @plugin = get_plugin("linode")
-    @plugin[:network] = {
+    plugin[:network] = {
       "interfaces" => {
         "eth0" => {
           "addresses" => {
@@ -48,49 +46,49 @@ describe Ohai::System, "plugin linode" do
 
   shared_examples_for "!linode" do
     it "does not create the linode mash" do
-      @plugin.run
-      expect(@plugin[:linode]).to be_nil
+      plugin.run
+      expect(plugin[:linode]).to be_nil
     end
   end
 
   shared_examples_for "linode" do
-    it "creates a linode mash" do
-      @plugin.run
-      expect(@plugin[:linode]).not_to be_nil
+    it "creates the linode mash" do
+      plugin.run
+      expect(plugin[:linode]).not_to be_nil
     end
 
-    it "has all required attributes" do
-      @plugin.run
-      expect(@plugin[:linode][:public_ip]).not_to be_nil
+    it "has public_ip attribute" do
+      plugin.run
+      expect(plugin[:linode][:public_ip]).not_to be_nil
     end
 
-    it "has correct values for all attributes" do
-      @plugin.run
-      expect(@plugin[:linode][:public_ip]).to eq("1.2.3.4")
+    it "has correct value for public_ip attribute" do
+      plugin.run
+      expect(plugin[:linode][:public_ip]).to eq("1.2.3.4")
     end
 
   end
 
   context "without linode kernel" do
     before do
-      @plugin[:kernel] = { "release" => "3.5.2-x86_64" }
+      plugin[:kernel] = { "release" => "3.5.2-x86_64" }
     end
 
-    it_should_behave_like "!linode"
+    it_behaves_like "!linode"
   end
 
   context "with linode kernel" do
     before do
-      @plugin[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
+      plugin[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
     end
 
-    it_should_behave_like "linode"
+    it_behaves_like "linode"
 
     # This test is an interface created according to this guide by Linode
     # http://library.linode.com/networking/configuring-static-ip-interfaces
     context "with configured private ip address as suggested by linode" do
       before do
-        @plugin[:network][:interfaces]["eth0:1"] = {
+        plugin[:network][:interfaces]["eth0:1"] = {
           "addresses" => {
             "5.6.7.8" => {
               "broadcast" => "10.176.191.255",
@@ -110,49 +108,28 @@ describe Ohai::System, "plugin linode" do
       end
 
       it "detects and sets the private ip" do
-        @plugin.run
-        expect(@plugin[:linode][:private_ip]).not_to be_nil
-        expect(@plugin[:linode][:private_ip]).to eq("5.6.7.8")
+        plugin.run
+        expect(plugin[:linode][:private_ip]).not_to be_nil
+        expect(plugin[:linode][:private_ip]).to eq("5.6.7.8")
       end
     end
 
   end
 
-  describe "with linode cloud file" do
+  describe "with linode hint file" do
     before do
-      allow(File).to receive(:exist?).with(hint_path_nix).and_return(true)
-      allow(File).to receive(:read).with(hint_path_nix).and_return("")
-      allow(File).to receive(:exist?).with(hint_path_win).and_return(true)
-      allow(File).to receive(:read).with(hint_path_win).and_return("")
+      allow(plugin).to receive(:hint?).with("linode").and_return({})
     end
 
-    it_should_behave_like "linode"
+    it_behaves_like "linode"
   end
 
-  describe "without cloud file" do
+  describe "without hint file" do
     before do
-      allow(File).to receive(:exist?).with(hint_path_nix).and_return(false)
-      allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
+      allow(plugin).to receive(:hint?).with("linode").and_return(false)
     end
 
-    it_should_behave_like "!linode"
-  end
-
-  context "with ec2 cloud file" do
-    let(:ec2_hint_path_nix) { "/etc/chef/ohai/hints/ec2.json" }
-    let(:ec2_hint_path_win) { 'C:\chef\ohai\hints/ec2.json' }
-
-    before do
-      allow(File).to receive(:exist?).with(hint_path_nix).and_return(false)
-      allow(File).to receive(:exist?).with(hint_path_win).and_return(false)
-
-      allow(File).to receive(:exist?).with(ec2_hint_path_nix).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_nix).and_return("")
-      allow(File).to receive(:exist?).with(ec2_hint_path_win).and_return(true)
-      allow(File).to receive(:read).with(ec2_hint_path_win).and_return("")
-    end
-
-    it_should_behave_like "!linode"
+    it_behaves_like "!linode"
   end
 
 end

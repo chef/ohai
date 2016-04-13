@@ -20,34 +20,50 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 
 describe Ohai::System, "plugin azure" do
-  before(:each) do
-    @plugin = get_plugin("azure")
+  let(:plugin) { get_plugin("azure") }
+  let(:hint) {
+    {
+      "public_ip" => "137.135.46.202",
+      "vm_name" => "test-vm",
+      "public_fqdn" => "service.cloudapp.net",
+      "public_ssh_port" => "22",
+      "public_winrm_port" => "5985",
+    }
+  }
+
+  shared_examples_for "!azure" do
+    it "does not set the azure attribute" do
+      plugin.run
+      expect(plugin[:azure]).to be_nil
+    end
+  end
+
+  shared_examples_for "azure" do
+    it "sets the azure attribute" do
+      plugin.run
+      expect(plugin[:azure]).to be_truthy
+    end
   end
 
   describe "with azure hint file" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/azure.json").and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/azure.json').and_return('{"public_ip":"137.135.46.202","vm_name":"test-vm","public_fqdn":"service.cloudapp.net","public_ssh_port":"22", "public_winrm_port":"5985"}')
-      @plugin.run
+      allow(plugin).to receive(:hint?).with("azure").and_return(hint)
     end
 
-    it "should set the azure cloud attributes" do
-      expect(@plugin[:azure]).not_to be_nil
-      expect(@plugin[:azure]["public_ip"]).to eq("137.135.46.202")
-      expect(@plugin[:azure]["vm_name"]).to eq("test-vm")
-      expect(@plugin[:azure]["public_fqdn"]).to eq("service.cloudapp.net")
-      expect(@plugin[:azure]["public_ssh_port"]).to eq("22")
-      expect(@plugin[:azure]["public_winrm_port"]).to eq("5985")
+    it "sets the azure cloud attributes" do
+      plugin.run
+      expect(plugin[:azure]["public_ip"]).to eq("137.135.46.202")
+      expect(plugin[:azure]["vm_name"]).to eq("test-vm")
+      expect(plugin[:azure]["public_fqdn"]).to eq("service.cloudapp.net")
+      expect(plugin[:azure]["public_ssh_port"]).to eq("22")
+      expect(plugin[:azure]["public_winrm_port"]).to eq("5985")
     end
 
   end
 
   describe "without azure hint file or agent or dhcp options" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
       allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
@@ -73,66 +89,46 @@ describe Ohai::System, "plugin azure" do
         and_yield("  expire 2 2016/03/01 16:40:56;").
         and_yield("}")
       allow(File).to receive(:open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
-      @plugin.run
     end
 
-    it "should not behave like azure" do
-      expect(@plugin[:azure]).to be_nil
-    end
+    it_behaves_like "!azure"
   end
 
-  describe "with rackspace hint file no agent and no dhcp lease" do
+  describe "with rackspace hint file, no agent, and no dhcp lease" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/rackspace.json").and_return(true)
-      allow(File).to receive(:read).with("/etc/chef/ohai/hints/rackspace.json").and_return("")
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/rackspace.json').and_return(true)
-      allow(File).to receive(:read).with('C:\chef\ohai\hints/rackspace.json').and_return("")
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
       allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
-      @plugin.run
     end
 
-    it "should not behave like azure" do
-      expect(@plugin[:azure]).to be_nil
-    end
+    it_behaves_like "!azure"
   end
 
   describe "without azure hint file but with agent on linux" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(true)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
-      @plugin.run
     end
 
-    it "should create empty azure mash" do
-      expect(@plugin[:azure]).to be_empty
-    end
+    it_behaves_like "azure"
   end
 
   describe "without azure hint file but with agent on windows" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(true)
-      @plugin.run
     end
 
-    it "should create empty azure mash" do
-      puts "The dir exists?:" + "#{Dir.exist?('C:\WindowsAzure')}"
-      expect(@plugin[:azure]).to be_empty
-    end
+    it_behaves_like "azure"
   end
 
   describe "without azure hint or agent but with dhcp option" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/etc/chef/ohai/hints/azure.json").and_return(false)
-      allow(File).to receive(:exist?).with('C:\chef\ohai\hints/azure.json').and_return(false)
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
       allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
@@ -158,13 +154,9 @@ describe Ohai::System, "plugin azure" do
         and_yield("  expire 5 2152/03/10 09:03:39;").
         and_yield("}")
       allow(File).to receive(:open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
-      @plugin.run
     end
 
-    it "should create empty azure mash" do
-      puts "The dir exists?:" + "#{Dir.exist?('C:\WindowsAzure')}"
-      expect(@plugin[:azure]).to be_empty
-    end
+    it_behaves_like "azure"
   end
 
 end

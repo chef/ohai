@@ -45,7 +45,7 @@ module Ohai
         @hints[name] = parse_hint_file(filename)
       end
 
-      Ohai::Log.debug("Did not find hint #{name}.json in the hint path(s): #{Ohai.config[:hints_path].join(',')} ") unless @hints.key?(name)
+      Ohai::Log.debug("Did not find hint #{name}.json in the hint path(s): #{Ohai.config[:hints_path].join(', ')} ") unless @hints.key?(name)
       @hints[name]
     end
   end

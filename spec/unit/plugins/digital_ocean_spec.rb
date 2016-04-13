@@ -30,8 +30,8 @@ describe Ohai::System, "plugin digital_ocean" do
       "region_id" => 4,
       "ip_addresses" => {
         "public" => "1.2.3.4",
-        "private" => "5.6.7.8"
-      }
+        "private" => "5.6.7.8",
+      },
     }
   }
 
@@ -72,11 +72,11 @@ describe Ohai::System, "plugin digital_ocean" do
 
     it "pulls ip addresses from the network interfaces" do
       expect(plugin[:digital_ocean][:networks][:v4]).to eq([{ "ip_address" => "1.2.3.4",
-                                                               "type" => "public",
-                                                               "netmask" => "255.255.255.0" }])
+                                                              "type" => "public",
+                                                              "netmask" => "255.255.255.0" }])
       expect(plugin[:digital_ocean][:networks][:v6]).to eq([{ "ip_address" => "2400:6180:0000:00d0:0000:0000:0009:7001",
-                                                               "type" => "public",
-                                                               "cidr" => 128 }])
+                                                              "type" => "public",
+                                                              "cidr" => 128 }])
     end
   end
 
@@ -137,14 +137,14 @@ describe Ohai::System, "plugin digital_ocean" do
 
       it "extracts the private networking ips" do
         expect(plugin[:digital_ocean][:networks][:v4]).to eq([{ "ip_address" => "1.2.3.4",
-                                                                 "type" => "public",
-                                                                 "netmask" => "255.255.255.0" },
+                                                                "type" => "public",
+                                                                "netmask" => "255.255.255.0" },
                                                             { "ip_address" => "10.128.142.89",
                                                               "type" => "private",
                                                               "netmask" => "255.255.255.0" }])
         expect(plugin[:digital_ocean][:networks][:v6]).to eq([{ "ip_address" => "2400:6180:0000:00d0:0000:0000:0009:7001",
-                                                                 "type" => "public",
-                                                                 "cidr" => 128 },
+                                                                "type" => "public",
+                                                                "cidr" => 128 },
                                                            { "ip_address" => "fdf8:f53b:82e4:0000:0000:0000:0000:0053",
                                                              "type" => "private",
                                                              "cidr" => 128 }])

@@ -27,7 +27,7 @@ describe Ohai::System, "plugin azure" do
       "vm_name" => "test-vm",
       "public_fqdn" => "service.cloudapp.net",
       "public_ssh_port" => "22",
-      "public_winrm_port" => "5985"
+      "public_winrm_port" => "5985",
     }
   }
 

@@ -220,7 +220,7 @@ OUT
     it_behaves_like "!rackspace"
 
     before(:each) do
-      allow(plugin).to receive(:hint?).with('rackspace').and_return(false)
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
     end
   end
 

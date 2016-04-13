@@ -33,7 +33,7 @@ module Ohai
         # should exist because the file did, even if it didn't
         # contain anything
       rescue FFI_Yajl::ParseError => e
-        Ohai::Log.error("Plugin #{self.name}: Could not parse hint file at #{filename}: #{e.message}")
+        Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
       end
     end
 

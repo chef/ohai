@@ -53,7 +53,7 @@ Ohai.plugin(:C) do
           c[:glibc][:version] = $1
           c[:glibc][:description] = description
         end
-      end unless c[:glibc]
+      end unless c[:glibc] || ::RbConfig::CONFIG["host_os"] =~ /mswin|mingw32|windows/
     end
 
     #ms cl

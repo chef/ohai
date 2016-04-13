@@ -153,17 +153,17 @@ describe Ohai::System, "plugin c" do
   end
 
   #glibc
-  it "gets the glibc x.x.x version from running /lib/libc.so.6" do
+  it "gets the glibc x.x.x version from running /lib/libc.so.6", :unix_only do
     expect(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_3_4, ""))
     plugin.run
   end
 
-  it "sets languages[:c][:glibc][:version]" do
+  it "sets languages[:c][:glibc][:version]", :unix_only do
     plugin.run
     expect(plugin.languages[:c][:glibc][:version]).to eql("2.3.4")
   end
 
-  it "sets languages[:c][:glibc][:description]" do
+  it "sets languages[:c][:glibc][:description]", :unix_only do
     plugin.run
     expect(plugin.languages[:c][:glibc][:description]).to eql(C_GLIBC_2_3_4.split($/).first)
   end
@@ -183,7 +183,7 @@ describe Ohai::System, "plugin c" do
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
   end
 
-  it "gets the glibc x.x version from running /lib/libc.so.6" do
+  it "gets the glibc x.x version from running /lib/libc.so.6", :unix_only do
     allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
     expect(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC_2_5, ""))
     plugin.run

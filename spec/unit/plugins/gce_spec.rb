@@ -54,7 +54,7 @@ describe Ohai::System, "plugin gce" do
   end
 
   describe "with hint file and with metadata connection" do
-    it_should_behave_like "gce"
+    it_behaves_like "gce"
 
     before(:each) do
       allow(plugin).to receive(:hint?).with("gce").and_return({})
@@ -62,7 +62,7 @@ describe Ohai::System, "plugin gce" do
   end
 
   describe "without hint file and without metadata connection" do
-    it_should_behave_like "!gce"
+    it_behaves_like "!gce"
 
     before(:each) do
       allow(plugin).to receive(:hint?).with("gce").and_return(false)

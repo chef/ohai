@@ -118,7 +118,7 @@ describe Ohai::System, "plugin digital_ocean" do
     end
 
     context "without private networking enabled" do
-      it_should_behave_like "digital_ocean"
+      it_behaves_like "digital_ocean"
     end
 
     context "with private networking enabled" do
@@ -162,14 +162,14 @@ describe Ohai::System, "plugin digital_ocean" do
         allow(File).to receive(:exist?).with(digitalocean_path).and_return(true)
         plugin.run
       end
-      it_should_behave_like "digital_ocean_networking"
+      it_behaves_like "digital_ocean_networking"
     end
 
     describe "without the /etc/digitalocean file" do
       before do
         allow(File).to receive(:exist?).with(digitalocean_path).and_return(false)
       end
-      it_should_behave_like "!digital_ocean"
+      it_behaves_like "!digital_ocean"
     end
   end
 end

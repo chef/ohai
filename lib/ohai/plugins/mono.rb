@@ -37,14 +37,14 @@ Ohai.plugin(:Mono) do
       if so.exitstatus == 0
         mono = Mash.new
         output = so.stdout.split
-        mono[:version] = output[4] if output.length >= 4
-        if output.length >= 11
+        mono[:version] = output[4] unless output[4].nil?
+        if output.length >= 12
           mono[:builddate] = "%s %s %s %s %s %s" % [output[7], output[8], output[9], output[10], output[11], output[12].delete!(")")]
         end
         languages[:mono] = mono unless mono.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Mono plugin: Could not shell_out "mono -v". Skipping plugin')
+      Ohai::Log.debug('Mono plugin: Could not shell_out "mono -V". Skipping plugin')
     end
   end
 end

@@ -31,20 +31,20 @@ describe Ohai::System, "plugin scala" do
   def setup_plugin
     allow(plugin).to receive(:shell_out)
       .with("scala -version")
-      .and_return(mock_shell_out(0, scala_out, ""))
+      .and_return(mock_shell_out(0, "", scala_out))
     allow(plugin).to receive(:shell_out)
       .with("sbt --version")
       .and_return(mock_shell_out(0, sbt_out, ""))
   end
 
-  context " if scala is installed" do
+  context "if scala is installed" do
     before(:each) do
       setup_plugin
       plugin.run
     end
 
-    it "should set languages[:scala][:version]" do
-      expect(plugin.languages[:scala][:version]).to eql("2.11.6")
+    it "sets languages[:scala][:version]" do
+      expect(plugin[:languages][:scala][:version]).to eql("2.11.6")
     end
   end
 
@@ -55,29 +55,38 @@ describe Ohai::System, "plugin scala" do
       plugin.run
     end
 
-    it "should set languages[:sbt][:version]" do
-      expect(plugin.languages[:scala][:sbt]).to eql("0.13.8")
+    it "sets languages[:scala][:sbt][:version]" do
+      expect(plugin[:languages][:scala][:sbt][:version]).to eql("0.13.8")
     end
   end
 
-  context "if scala is not installed" do
+  context "if scala/sbt are not installed" do
 
     before(:each) do
       allow(plugin).to receive(:shell_out)
+        .and_raise( Ohai::Exceptions::Exec )
+      plugin.run
+    end
+
+    it "does NOT set the languages[:scala] if scala/sbts commands fails" do
+      expect(plugin[:languages]).not_to have_key(:scala)
+    end
+  end
+
+  context "if sbt is not installed" do
+    before(:each) do
+      allow(plugin).to receive(:shell_out)
         .with("scala -version")
-        .and_raise( Errno::ENOENT)
+        .and_return(mock_shell_out(0, "", scala_out))
 
       allow(plugin).to receive(:shell_out)
         .with("sbt --version")
-        .and_raise( Errno::ENOENT)
+        .and_raise( Ohai::Exceptions::Exec )
+      plugin.run
     end
 
-    it "should not set the languages[:scala] if scala command fails" do
-      expect(plugin.languages).not_to have_key(:scala)
-    end
-
-    it "should not set the languages[:scala][:sbt] if sbt command fails" do
-      expect(plugin.languages).not_to have_key(:sbt)
+    it "does NOT set the languages[:scala][:sbt] if sbt command fails" do
+      expect(plugin[:languages][:scala]).not_to have_key(:sbt)
     end
   end
 end

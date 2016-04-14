@@ -20,24 +20,31 @@ Ohai.plugin(:Scala) do
   depends "languages"
 
   collect_data(:default) do
-    # Check for scala
-    output = nil
-
     scala = Mash.new
-    so = shell_out("scala -version")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      scala[:version] = output[4]
-      languages[:scala] = scala if scala[:version]
+
+    # Check for scala
+    begin
+      # Scala code runner version 2.11.8 -- Copyright 2002-2016, LAMP/EPFL
+      so = shell_out("scala -version")
+      if so.exitstatus == 0
+        scala[:version] = so.stderr.split[4]
+      end
+    rescue Ohai::Exceptions::Exec
+      # ignore shell_out failures
     end
 
     # Check for sbt
-    output = nil
-
-    so = shell_out("sbt --version")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      scala[:sbt] = output[3] if scala[:version]
+    begin
+      # sbt launcher version 0.13.7
+      so = shell_out("sbt --version")
+      if so.exitstatus == 0
+        scala[:sbt] = Mash.new
+        scala[:sbt][:version] = so.stdout.split[3]
+      end
+    rescue Ohai::Exceptions::Exec
+      # ignore shell_out failures
     end
+
+    languages[:scala] = scala unless scala.empty?
   end
 end

@@ -169,11 +169,12 @@ shared_examples "Ohai::DSL::Plugin" do
             end
 
             describe "and an intermediate key is not a hash" do
-              it "returns nil" do
-                expect(
-                  plugin.get_attribute("the_moarch", "arch_rival",
+              it "raises a TypeError" do
+                expect {
+                  plugin.get_attribute("the_monarch", "arch_rival",
                                        "dr_venture", "since")
-                ).to be nil
+                }.to raise_error(TypeError,
+                                 "Expected Hash but got String.")
               end
             end
           end
@@ -202,11 +203,12 @@ shared_examples "Ohai::DSL::Plugin" do
             end
 
             describe "and an intermediate key is not a hash" do
-              it "returns nil" do
-                expect(
+              it "raises a TypeError" do
+                expect {
                   plugin.get_attribute(:the_monarch, :arch_rival,
                                        :dr_venture, :since)
-                ).to be nil
+                }.to raise_error(TypeError,
+                                 "Expected Hash but got String.")
               end
             end
           end
@@ -274,11 +276,12 @@ shared_examples "Ohai::DSL::Plugin" do
             end
 
             describe "and an intermediate key is not a hash" do
-              it "returns false" do
-                expect(
-                  plugin.attribute?("the_moarch", "arch_rival",
+              it "raises a TypeError" do
+                expect {
+                  plugin.attribute?("the_monarch", "arch_rival",
                                     "dr_venture", "since")
-                ).to be false
+                }.to raise_error(TypeError,
+                                 "Expected Hash but got String.")
               end
             end
           end
@@ -306,11 +309,12 @@ shared_examples "Ohai::DSL::Plugin" do
             end
 
             describe "and an intermediate key is not a hash" do
-              it "returns false" do
-                expect(
+              it "raises a TypeError" do
+                expect {
                   plugin.attribute?(:the_monarch, :arch_rival,
                                     :dr_venture, :since)
-                ).to be false
+                }.to raise_error(TypeError,
+                                 "Expected Hash but got String.")
               end
             end
           end

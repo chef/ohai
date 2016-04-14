@@ -186,10 +186,14 @@ module Ohai
       private
 
       def safe_get_attribute(*keys)
-        keys.inject(@data) { |attrs, key| attrs[key] }
-      rescue NoMethodError, TypeError
+        keys.inject(@data) do |attrs, key|
+          unless attrs.nil? || attrs.is_a?(Array) || attrs.is_a?(Hash)
+            raise TypeError.new("Expected Hash but got #{attrs.class}.")
+          end
+          attrs[key]
+        end
+      rescue NoMethodError
         # NoMethodError occurs when trying to access a key on nil
-        # TypeError occurs when trying to access a key on a value that is not a Hash
         nil
       end
 

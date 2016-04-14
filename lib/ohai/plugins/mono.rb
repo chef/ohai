@@ -21,26 +21,30 @@ Ohai.plugin(:Mono) do
   depends "languages"
 
   collect_data do
-    # Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)
-    # Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
-    # 	TLS:           normal
-    # 	SIGSEGV:       altstack
-    # 	Notification:  kqueue
-    # 	Architecture:  amd64
-    # 	Disabled:      none
-    # 	Misc:          softdebug
-    # 	LLVM:          supported, not enabled.
-    # 	GC:            sgen
-    so = shell_out("mono -V")
-    if so.exitstatus == 0
-      output = nil
-      mono = Mash.new
-      output = so.stdout.split
-      mono[:version] = output[4] if output.length >= 4
-      if output.length >= 11
-        mono[:builddate] = "%s %s %s %s %s %s" % [output[7], output[8], output[9], output[10], output[11], output[12].delete!(")")]
+
+    begin
+      # Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)
+      # Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
+      # 	TLS:           normal
+      # 	SIGSEGV:       altstack
+      # 	Notification:  kqueue
+      # 	Architecture:  amd64
+      # 	Disabled:      none
+      # 	Misc:          softdebug
+      # 	LLVM:          supported, not enabled.
+      # 	GC:            sgen
+      so = shell_out("mono -V")
+      if so.exitstatus == 0
+        mono = Mash.new
+        output = so.stdout.split
+        mono[:version] = output[4] if output.length >= 4
+        if output.length >= 11
+          mono[:builddate] = "%s %s %s %s %s %s" % [output[7], output[8], output[9], output[10], output[11], output[12].delete!(")")]
+        end
+        languages[:mono] = mono unless mono.empty?
       end
-      languages[:mono] = mono unless mono.empty?
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Mono plugin: Could not shell_out "mono -v". Skipping plugin')
     end
   end
 end

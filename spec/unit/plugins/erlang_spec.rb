@@ -20,41 +20,47 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin erlang" do
+  let(:plugin) { get_plugin("erlang") }
 
   before(:each) do
-    @plugin = get_plugin("erlang")
-    @plugin[:languages] = Mash.new
-    @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    allow(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
+    plugin[:languages] = Mash.new
+    erl_v_output = "Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 7.3\n"
+    erl_systeminfo_output = "\"18\"\r\n\"7.3\"\r\n\"2.10\"\r\n"
+    allow(plugin).to receive(:shell_out).with("erl +V")
+                                        .and_return(mock_shell_out(0, "", erl_v_output))
+    allow(plugin).to receive(:shell_out).with("erl -eval 'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().'  -noshell")
+                                        .and_return(mock_shell_out(0, erl_systeminfo_output, ""))
   end
 
-  it "should get the erlang version from erl +V" do
-    expect(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(0, "", @stderr))
-    @plugin.run
+  it "sets languages[:erlang][:options]" do
+    plugin.run
+    expect(plugin.languages[:erlang][:options]).to eql(%w{SMP ASYNC_THREADS HIPE})
   end
 
-  it "should set languages[:erlang][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:erlang][:version]).to eql("5.6.2")
+  it "sets languages[:erlang][:emulator]" do
+    plugin.run
+    expect(plugin.languages[:erlang][:emulator]).to eql("BEAM")
   end
 
-  it "should set languages[:erlang][:options]" do
-    @plugin.run
-    expect(@plugin.languages[:erlang][:options]).to eql(%w{ASYNC_THREADS SMP HIPE})
+  it "sets languages[:erlang][:version]" do
+    plugin.run
+    expect(plugin.languages[:erlang][:version]).to eql("18")
   end
 
-  it "should set languages[:erlang][:emulator]" do
-    @plugin.run
-    expect(@plugin.languages[:erlang][:emulator]).to eql("BEAM")
+  it "sets languages[:erlang][:erts_version]" do
+    plugin.run
+    expect(plugin.languages[:erlang][:erts_version]).to eql("7.3")
   end
 
-  it "should not set the languages[:erlang] tree up if erlang command fails" do
-    @status = 1
-    @stdin = ""
-    @stderr = "Erlang (ASYNC_THREADS,SMP,HIPE) (BEAM) emulator version 5.6.2\n"
-    allow(@plugin).to receive(:shell_out).with("erl +V").and_return(mock_shell_out(1, "", @stderr))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:erlang)
+  it "sets languages[:erlang][:nif_version]" do
+    plugin.run
+    expect(plugin.languages[:erlang][:nif_version]).to eql("2.10")
+  end
+
+  it "does not set languages[:erlang] if the erl commands fails" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:erlang)
   end
 
 end

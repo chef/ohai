@@ -1,5 +1,21 @@
 # Change Log
 
+## [8.15.0](https://github.com/chef/ohai/tree/8.15.0) (2016-04-18)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.14.0...8.15.0)
+
+**Implemented enhancements:**
+
+- Add a fips plugin to detect if fips is enabled [\#803](https://github.com/chef/ohai/pull/803) ([mwrock](https://github.com/mwrock))
+- Add debug logging to hints and improve cloud specs [\#797](https://github.com/chef/ohai/pull/797) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+
+- Fix Elixir version detection on newer Elixir releases [\#802](https://github.com/chef/ohai/pull/802) ([tas50](https://github.com/tas50))
+- Correct the version detection in erlang plugin [\#801](https://github.com/chef/ohai/pull/801) ([tas50](https://github.com/tas50))
+- Fix mono builddate capture and add debug logging [\#800](https://github.com/chef/ohai/pull/800) ([tas50](https://github.com/tas50))
+- Fix the scala plugin [\#799](https://github.com/chef/ohai/pull/799) ([tas50](https://github.com/tas50))
+- Don't execute .so libs for Windows [\#798](https://github.com/chef/ohai/pull/798) ([chefsalim](https://github.com/chefsalim))
+
 ## [8.14.0](https://github.com/chef/ohai/tree/8.14.0) (2016-04-08)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.13.0...8.14.0)

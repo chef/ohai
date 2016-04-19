@@ -18,16 +18,17 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin powershell" do
+  let(:plugin) { get_plugin("powershell") }
+
   before do
     stub_const("::RbConfig::CONFIG", { "host_os" => "windows" })
   end
 
   before(:each) do
-    @plugin = get_plugin("powershell")
-    @plugin[:languages] = Mash.new
+    plugin[:languages] = Mash.new
   end
 
-  it "should set languages[:powershell][:version] for v4" do
+  it "sets languages[:powershell][:version] for v4" do
 
     v4_output = <<END
 
@@ -43,26 +44,26 @@ PSRemotingProtocolVersion      2.2
 
 END
 
-    allow(@plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, v4_output, ""))
-    @plugin.run
-    expect(@plugin.languages[:powershell][:version]).to eql("4.0")
-    expect(@plugin.languages[:powershell][:ws_man_stack_version]).to eql("3.0")
-    expect(@plugin.languages[:powershell][:serialization_version]).to eql("1.1.0.1")
-    expect(@plugin.languages[:powershell][:clr_version]).to eql("4.0.30319.34014")
-    expect(@plugin.languages[:powershell][:build_version]).to eql("6.3.9600.16394")
-    expect(@plugin.languages[:powershell][:compatible_versions]).to eql(["1.0", "2.0", "3.0", "4.0"])
-    expect(@plugin.languages[:powershell][:remoting_protocol_version]).to eql("2.2")
+    allow(plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, v4_output, ""))
+    plugin.run
+    expect(plugin.languages[:powershell][:version]).to eql("4.0")
+    expect(plugin.languages[:powershell][:ws_man_stack_version]).to eql("3.0")
+    expect(plugin.languages[:powershell][:serialization_version]).to eql("1.1.0.1")
+    expect(plugin.languages[:powershell][:clr_version]).to eql("4.0.30319.34014")
+    expect(plugin.languages[:powershell][:build_version]).to eql("6.3.9600.16394")
+    expect(plugin.languages[:powershell][:compatible_versions]).to eql(["1.0", "2.0", "3.0", "4.0"])
+    expect(plugin.languages[:powershell][:remoting_protocol_version]).to eql("2.2")
   end
 
-  it "should not set the languages[:powershell] tree up if powershell command fails" do
+  it "does not set the languages[:powershell] tree up if powershell command fails" do
     error_output = <<END
 'powershell.exe' is not recognized as an internal or external command,
 operable program or batch file.
 END
 
-    allow(@plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:powershell)
+    allow(plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))
+    plugin.run
+    expect(plugin.languages).not_to have_key(:powershell)
   end
 
 end

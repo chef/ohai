@@ -20,39 +20,43 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin perl" do
+  let(:plugin) { get_plugin("perl") }
+
   before(:each) do
-    @plugin = get_plugin("perl")
-    @plugin[:languages] = Mash.new
+    plugin[:languages] = Mash.new
     @stdout = "version='5.8.8';#{$/}archname='darwin-thread-multi-2level';"
-    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
+    allow(plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should run perl -V:version -V:archname" do
-    expect(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
+  it "runs perl -V:version -V:archname" do
+    expect(plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, "", ""))
+    plugin.run
   end
 
-  it "should set languages[:perl][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:perl][:version]).to eql("5.8.8")
+  it "sets languages[:perl][:version]" do
+    plugin.run
+    expect(plugin.languages[:perl][:version]).to eql("5.8.8")
   end
 
-  it "should set languages[:perl][:archname]" do
-    @plugin.run
-    expect(@plugin.languages[:perl][:archname]).to eql("darwin-thread-multi-2level")
+  it "sets languages[:perl][:archname]" do
+    plugin.run
+    expect(plugin.languages[:perl][:archname]).to eql("darwin-thread-multi-2level")
   end
 
-  it "should set languages[:perl] if perl command succeeds" do
-    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
-    expect(@plugin.languages).to have_key(:perl)
+  it "sets languages[:perl] if perl command succeeds" do
+    plugin.run
+    expect(plugin.languages).to have_key(:perl)
   end
 
-  it "should not set languages[:perl] if perl command fails" do
-    @status = 1
-    allow(@plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, @stdout, ""))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:perl)
+  it "does not set languages[:perl] if perl command fails" do
+    allow(plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin.languages).not_to have_key(:perl)
   end
 
+  it "does not set languages[:perl] if perl command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:perl)
+  end
 end

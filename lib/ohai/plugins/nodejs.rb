@@ -18,21 +18,23 @@
 
 Ohai.plugin(:Nodejs) do
   provides "languages/nodejs"
-
   depends "languages"
 
   collect_data do
-    output = nil
-
-    nodejs = Mash.new
-
-    so = shell_out("node -v")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      if output.length >= 1
-        nodejs[:version] = output[0][1..output[0].length]
+    begin
+      so = shell_out("node -v")
+      # Sample output:
+      # v5.10.1
+      if so.exitstatus == 0
+        nodejs = Mash.new
+        output = so.stdout.split
+        if output.length >= 1
+          nodejs[:version] = output[0][1..output[0].length]
+        end
+        languages[:nodejs] = nodejs if nodejs[:version]
       end
-      languages[:nodejs] = nodejs if nodejs[:version]
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Nodejs plugin: Could not shell_out "node -v". Skipping plugin')
     end
   end
 end

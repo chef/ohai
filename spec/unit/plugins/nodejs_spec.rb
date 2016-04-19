@@ -22,28 +22,34 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 
 describe Ohai::System, "plugin nodejs" do
 
+  let(:plugin) { get_plugin("nodejs") }
+
   before(:each) do
-    @plugin = get_plugin("nodejs")
-    @plugin[:languages] = Mash.new
+    plugin[:languages] = Mash.new
     @stdout = "v0.8.11\n"
-    allow(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
+    allow(plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should get the nodejs version from running node -v" do
-    expect(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
+  it "gets the nodejs version from running node -v" do
+    expect(plugin).to receive(:shell_out).with("node -v")
+    plugin.run
   end
 
-  it "should set languages[:nodejs][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:nodejs][:version]).to eql("0.8.11")
+  it "sets languages[:nodejs][:version]" do
+    plugin.run
+    expect(plugin.languages[:nodejs][:version]).to eql("0.8.11")
   end
 
-  it "should not set the languages[:nodejs] tree up if node command fails" do
-    @stdout = "v0.8.11\n"
-    allow(@plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(1, @stdout, ""))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:nodejs)
+  it "does not set the languages[:nodejs] tree up if node command fails" do
+    allow(plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin.languages).not_to have_key(:nodejs)
+  end
+
+  it "does not set languages[:nodejs] if node command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:nodejs)
   end
 
 end

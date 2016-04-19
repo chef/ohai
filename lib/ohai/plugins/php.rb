@@ -20,27 +20,33 @@
 
 Ohai.plugin(:PHP) do
   provides "languages/php"
-
   depends "languages"
 
   collect_data do
-    php = Mash.new
-
-    so = shell_out("php -v")
-    if so.exitstatus == 0
-      so.stdout.each_line do |line|
-        case line
-        when /PHP (\S+).+built: ([^)]+)/
-          php[:version] = $1
-          php[:builddate] = $2
-        when /Zend Engine v([^\s]+),/
-          php[:zend_engine_version] = $1
-        when /Zend OPcache v([^\s]+),/
-          php[:zend_opcache_version] = $1
+    begin
+      so = shell_out("php -v")
+      # Sample output:
+      # PHP 5.5.31 (cli) (built: Feb 20 2016 20:33:10)
+      # Copyright (c) 1997-2015 The PHP Group
+      # Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
+      if so.exitstatus == 0
+        php = Mash.new
+        so.stdout.each_line do |line|
+          case line
+          when /PHP (\S+).+built: ([^)]+)/
+            php[:version] = $1
+            php[:builddate] = $2
+          when /Zend Engine v([^\s]+),/
+            php[:zend_engine_version] = $1
+          when /Zend OPcache v([^\s]+),/
+            php[:zend_opcache_version] = $1
+          end
         end
-      end
 
-      languages[:php] = php if php[:version]
+        languages[:php] = php unless php.empty?
+      end
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Php plugin: Could not shell_out "php -v". Skipping plugin')
     end
   end
 end

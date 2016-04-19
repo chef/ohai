@@ -15,18 +15,20 @@
 
 Ohai.plugin(:Rust) do
   provides "languages/rust"
-
   depends "languages"
 
   collect_data do
-    output = nil
-
-    rust = Mash.new
-    so = shell_out("rustc --version")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      rust[:version] = output[1]
-      languages[:rust] = rust if rust[:version]
+    begin
+      so = shell_out("rustc --version")
+      # Sample output:
+      # rustc 1.7.0
+      if so.exitstatus == 0
+        rust = Mash.new
+        rust[:version] = so.stdout.split[1]
+        languages[:rust] = rust if rust[:version]
+      end
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Rust plugin: Could not shell_out "rustc --version". Skipping plugin')
     end
   end
 end

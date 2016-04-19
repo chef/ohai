@@ -58,9 +58,14 @@ describe Ohai::System, "plugin erlang" do
   end
 
   it "does not set languages[:erlang] if the erl commands fails" do
-    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).and_return(mock_shell_out(1, "", ""))
     plugin.run
     expect(plugin.languages).not_to have_key(:erlang)
   end
 
+  it "does not set languages[:erlang] if the erl command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:erlang)
+  end
 end

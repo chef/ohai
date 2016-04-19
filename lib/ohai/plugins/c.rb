@@ -112,6 +112,6 @@ Ohai.plugin(:C) do
       end
     end
 
-    languages[:c] = c if c.keys.length > 0
+    languages[:c] = c unless c.empty?
   end
 end

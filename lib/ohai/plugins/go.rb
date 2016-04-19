@@ -18,13 +18,19 @@ Ohai.plugin(:Go) do
   depends "languages"
 
   collect_data do
-    output = nil
-    go = Mash.new
-    so = shell_out("go version")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      go[:version] = output[2].slice!(2..16)
-      languages[:go] = go if go[:version]
-    end
+    begin
+        so = shell_out("go version")
+        # Sample output:
+        # go version go1.6.1 darwin/amd64
+        if so.exitstatus == 0
+          if so.stdout =~ /go(\S+)/
+            go = Mash.new
+            go[:version] = $1
+            languages[:go] = go
+          end
+        end
+      rescue Ohai::Exceptions::Exec
+        Ohai::Log.debug('Go plugin: Could not shell_out "go version". Skipping plugin')
+      end
   end
 end

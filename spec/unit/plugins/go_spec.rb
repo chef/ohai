@@ -16,29 +16,33 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
 describe Ohai::System, "plugin go" do
+  let(:plugin) { get_plugin("go") }
 
   before(:each) do
-    @plugin = get_plugin("go")
-    @plugin[:languages] = Mash.new
-    @stdout = "go version go1.1.2 darwin/amd64\n"
-    allow(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
+    plugin[:languages] = Mash.new
+    stdout = "go version go1.6.1 darwin/amd64\n"
+    allow(plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, stdout, ""))
   end
 
-  it "should get the go version" do
-    expect(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
+  it "it shells out to get the go version" do
+    expect(plugin).to receive(:shell_out).with("go version")
+    plugin.run
   end
 
-  it "should set languages[:go][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:go][:version]).to eql("1.1.2")
+  it "sets languages[:go][:version]" do
+    plugin.run
+    expect(plugin.languages[:go][:version]).to eql("1.6.1")
   end
 
-  it "should not set the languages[:go] tree up if go command fails" do
-    @stdout = "go version go1.1.2 darwin/amd64\n"
-    allow(@plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(1, @stdout, ""))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:go)
+  it "does not set languages[:go] if go command fails" do
+    allow(plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin.languages).not_to have_key(:go)
   end
 
+  it "does not set languages[:go] if go command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:go)
+  end
 end

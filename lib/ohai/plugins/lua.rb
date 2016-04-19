@@ -18,21 +18,20 @@
 
 Ohai.plugin(:Lua) do
   provides "languages/lua"
-
   depends "languages"
 
   collect_data do
-    output = nil
-
-    lua = Mash.new
-
-    so = shell_out("lua -v")
-    if so.exitstatus == 0
-      output = so.stderr.split
-      if output.length >= 1
-        lua[:version] = output[1]
+    begin
+      so = shell_out("lua -v")
+      # Sample output:
+      # Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
+      if so.exitstatus == 0
+        lua = Mash.new
+        lua[:version] = so.stderr.split[1]
+        languages[:lua] = lua if lua[:version]
       end
-      languages[:lua] = lua if lua[:version]
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Lua plugin: Could not shell_out "lua -v". Skipping plugin')
     end
   end
 end

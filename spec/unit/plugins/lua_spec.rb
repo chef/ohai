@@ -22,28 +22,33 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 
 describe Ohai::System, "plugin lua" do
 
+  let(:plugin) { get_plugin("lua") }
+
   before(:each) do
-    @plugin = get_plugin("lua")
-    @plugin[:languages] = Mash.new
+    plugin[:languages] = Mash.new
     @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    allow(@plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
+    allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
   end
 
-  it "should get the lua version from running lua -v" do
-    expect(@plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
-    @plugin.run
+  it "gets the lua version from running lua -v" do
+    expect(plugin).to receive(:shell_out).with("lua -v")
+    plugin.run
   end
 
-  it "should set languages[:lua][:version]" do
-    @plugin.run
-    expect(@plugin.languages[:lua][:version]).to eql("5.1.2")
+  it "sets languages[:lua][:version]" do
+    plugin.run
+    expect(plugin.languages[:lua][:version]).to eql("5.1.2")
   end
 
-  it "should not set the languages[:lua] tree up if lua command fails" do
-    @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    allow(@plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(1, "", @stderr))
-    @plugin.run
-    expect(@plugin.languages).not_to have_key(:lua)
+  it "does not set languages[:lua] if lua command fails" do
+    allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(1, "", ""))
+    plugin.run
+    expect(plugin.languages).not_to have_key(:lua)
   end
 
+  it "does not set languages[:lua] if lua command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:lua)
+  end
 end

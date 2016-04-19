@@ -15,18 +15,24 @@
 
 Ohai.plugin(:Elixir) do
   provides "languages/elixir"
-
   depends "languages"
 
   collect_data do
-    output = nil
-
-    elixir = Mash.new
-    so = shell_out("elixir -v")
-    if so.exitstatus == 0
-      output = so.stdout.split
-      elixir[:version] = output[1]
-      languages[:elixir] = elixir if elixir[:version]
+    begin
+      so = shell_out("elixir -v")
+      # Sample output:
+      # Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+      #
+      # Elixir 1.2.4
+      if so.exitstatus == 0
+        elixir = Mash.new
+        if so.stdout =~ /^Elixir (\S*)/
+          elixir[:version] = $1
+          languages[:elixir] = elixir
+        end
+      end
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Elixir plugin: Could not shell_out "elixir -v". Skipping plugin')
     end
   end
 end

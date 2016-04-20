@@ -39,7 +39,13 @@ module Ohai
 
       # Finds all the *.rb files under the configured paths in :plugin_path
       def self.find_all_in(plugin_dir)
+        unless Dir.exist?(plugin_dir)
+          Ohai::Log.warn("The plugin path #{plugin_dir} does not exist. Skipping...")
+          return []
+        end
+
         Ohai::Log.debug("Searching for Ohai plugins in #{plugin_dir}")
+
         # escape_glob_dir does not exist in 12.7 or below
         if ChefConfig::PathHelper.respond_to?(:escape_glob_dir)
           escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)

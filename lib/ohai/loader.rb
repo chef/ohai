@@ -39,6 +39,7 @@ module Ohai
 
       # Finds all the *.rb files under the configured paths in :plugin_path
       def self.find_all_in(plugin_dir)
+        Ohai::Log.debug("Searching for Ohai plugins in #{plugin_dir}")
         # escape_glob_dir does not exist in 12.7 or below
         if ChefConfig::PathHelper.respond_to?(:escape_glob_dir)
           escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)
@@ -105,6 +106,7 @@ module Ohai
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
+        Ohai::Log.debug("Loading plugin at #{plugin_path}")
         contents << IO.read(plugin_path)
       rescue IOError, Errno::ENOENT
         Ohai::Log.warn("Unable to open or read plugin at #{plugin_path}")

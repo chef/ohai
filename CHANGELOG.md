@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.15.1](https://github.com/chef/ohai/tree/8.15.1) (2016-04-20)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.15.0...8.15.1)
+
+**Fixed bugs:**
+
+- Avoid defining WINDOWS\_ATTRIBUTE\_ALIASES multiple times [\#806](https://github.com/chef/ohai/pull/806) ([mwrock](https://github.com/mwrock))
+
 ## [8.15.0](https://github.com/chef/ohai/tree/8.15.0) (2016-04-18)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.14.0...8.15.0)
 

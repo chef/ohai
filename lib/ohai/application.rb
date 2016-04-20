@@ -33,7 +33,7 @@ class Ohai::Application
   option :directory,
     :short       => "-d DIRECTORY",
     :long        => "--directory DIRECTORY",
-    :description => "A directory to add to the Ohai search path",
+    :description => "A directory to add to the Ohai plugin search path",
     :proc        => lambda { |path| Ohai::Config.platform_specific_path(path) }
 
   option :log_level,

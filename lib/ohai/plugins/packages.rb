@@ -26,7 +26,7 @@ Ohai.plugin(:Packages) do
     "DisplayVersion" => "version",
     "Publisher" => "publisher",
     "InstallDate" => "installdate",
-  }
+  } unless defined?(WINDOWS_ATTRIBUTE_ALIASES)
 
   collect_data(:linux) do
     packages Mash.new

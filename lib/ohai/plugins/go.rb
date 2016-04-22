@@ -22,12 +22,10 @@ Ohai.plugin(:Go) do
       so = shell_out("go version")
       # Sample output:
       # go version go1.6.1 darwin/amd64
-      if so.exitstatus == 0
-        if so.stdout =~ /go(\S+)/
-          go = Mash.new
-          go[:version] = $1
-          languages[:go] = go
-        end
+      if so.exitstatus == 0 && so.stdout =~ /go(\S+)/
+        go = Mash.new
+        go[:version] = $1
+        languages[:go] = go
       end
     rescue Ohai::Exceptions::Exec
       Ohai::Log.debug('Go plugin: Could not shell_out "go version". Skipping plugin')

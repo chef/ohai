@@ -46,6 +46,18 @@ Ohai.plugin(:Openstack) do
     end
   end
 
+  def parse_metadata
+    if can_metadata_connect?("169.254.169.254", 80)
+      data = collect_openstack_metadata("169.254.169.254", "latest")
+      Ohai::Log.warn("I got here")
+      metadata = Mash.new
+      data.each do |k, v|
+        metadata[k] = v
+      end
+      return metadata
+    end
+  end
+
   def collect_openstack_metadata(addr, api_version)
     require "net/http"
     require "json"
@@ -81,13 +93,10 @@ Ohai.plugin(:Openstack) do
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
       openstack[:provider] = "openstack"
-      if can_metadata_connect?("169.254.169.254", 80)
-        data = collect_openstack_metadata("169.254.169.254", "latest")
-        openstack[:metadata] = Mash.new
-        data.each do |k, v|
-          openstack[:metadata][k] = v
-        end
-      end
+
+      # don't set a nil metadata value
+      meta = parse_metadata
+      openstack[:metadata] = meta unless meta.nil?
     end
   end
 end

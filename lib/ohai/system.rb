@@ -215,6 +215,8 @@ module Ohai
           !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
         Ohai.config[:plugin_path] << Ohai.config[:directory]
       end
+
+      Ohai::Log.debug("Running Ohai with the following configuration: #{Ohai.config.configuration}")
     end
 
     def configure_logging

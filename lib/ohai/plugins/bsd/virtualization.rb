@@ -35,7 +35,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
       virtualization[:systems][:jail] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running in FreeBSD jail detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running in FreeBSD jail detected")
     end
 
     # run jls to get a list of running jails
@@ -46,7 +46,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "jail"
       virtualization[:role] = "host"
       virtualization[:systems][:jail] = "host"
-      Ohai::Log.debug("Virtualization plugin: Host running FreeBSD jails detected")
+      Ohai::Log.debug("Plugin Virtualization: Host running FreeBSD jails detected")
     end
 
     # detect from modules
@@ -57,12 +57,12 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
-        Ohai::Log.debug("Virtualization plugin: Guest running on VirtualBox detected")
+        Ohai::Log.debug("Plugin Virtualization: Guest running on VirtualBox detected")
       when /vboxguest/
         virtualization[:system] = "vbox"
         virtualization[:role] = "guest"
         virtualization[:systems][:vbox] = "guest"
-        Ohai::Log.debug("Virtualization plugin: Host running VirtualBox detected")
+        Ohai::Log.debug("Plugin Virtualization: Host running VirtualBox detected")
       end
     end
 
@@ -71,7 +71,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "bhyve"
       virtualization[:role] = "host"
       virtualization[:systems][:bhyve] = "host"
-      Ohai::Log.debug("Virtualization plugin: Host running bhyve detected")
+      Ohai::Log.debug("Plugin Virtualization: Host running bhyve detected")
     end
 
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
@@ -81,7 +81,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running on KVM detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running on KVM detected")
     end
 
     # gather hypervisor of guests from sysctl kern.vm_guest
@@ -93,22 +93,22 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "vmware"
       virtualization[:role] = "guest"
       virtualization[:systems][:vmware] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running on VMware detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running on VMware detected")
     when /hv/
       virtualization[:system] = "hyperv"
       virtualization[:role] = "guest"
       virtualization[:systems][:hyperv] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running on Hyper-V detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running on Hyper-V detected")
     when /xen/
       virtualization[:system] = "xen"
       virtualization[:role] = "guest"
       virtualization[:systems][:xen] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running on Xen detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running on Xen detected")
     when /bhyve/
       virtualization[:system] = "bhyve"
       virtualization[:role] = "guest"
       virtualization[:systems][:bhyve] = "guest"
-      Ohai::Log.debug("Virtualization plugin: Guest running on bhyve detected")
+      Ohai::Log.debug("Plugin Virtualization: Guest running on bhyve detected")
     end
 
     # parse dmidecode to discover various virtualization guests
@@ -118,7 +118,7 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = guest
         virtualization[:role] = "guest"
         virtualization[:systems][guest.to_sym] = "guest"
-        Ohai::Log.debug("Virtualization plugin: Guest running on #{guest} detected")
+        Ohai::Log.debug("Plugin Virtualization: Guest running on #{guest} detected")
       end
     end
   end

@@ -36,13 +36,13 @@ module Ohai
         so = Mixlib::ShellOut.new(cmd, options)
         begin
           so.run_command
-          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and returned #{so.exitstatus}")
+          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and returned #{so.exitstatus}")
           so
         rescue Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and failed #{e.inspect}")
+          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and failed #{e.inspect}")
           raise Ohai::Exceptions::Exec, e
         rescue Mixlib::ShellOut::CommandTimeout => e
-          Ohai::Log.debug("Plugin #{self.name} ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
+          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
           raise Ohai::Exceptions::Exec, e
         end
       end

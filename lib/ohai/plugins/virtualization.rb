@@ -76,7 +76,7 @@ Ohai.plugin(:VirtualizationInfo) do
 
         virtconn.close
       rescue LoadError => e
-        Ohai::Log.debug("Can't load gem: #{e}. VirtualizationInfo plugin cannot continue.")
+        Ohai::Log.debug("Plugin Virtualization: Can't load gem: #{e}. Cannot continue.")
       end
     end
   end

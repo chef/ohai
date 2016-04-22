@@ -30,7 +30,7 @@ module Ohai
         begin
           saddr = Socket.pack_sockaddr_in(port, addr)
         rescue SocketError => e # occurs when non-GCE systems try to resolve metadata.google.internal
-          Ohai::Log.debug("gce mixin: can_metadata_connect? failed setting up socket: #{e}")
+          Ohai::Log.debug("Mixin GCE: can_metadata_connect? failed setting up socket: #{e}")
           return false
         end
 
@@ -53,7 +53,7 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("gce mixin: can_metadata_connect? == #{connected}")
+        Ohai::Log.debug("Mixin GCE: can_metadata_connect? == #{connected}")
         connected
       end
 

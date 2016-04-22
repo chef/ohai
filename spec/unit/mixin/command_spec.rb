@@ -113,7 +113,7 @@ describe Ohai::Mixin::Command, "shell_out" do
         and_return(256)
 
       expect(Ohai::Log).to receive(:debug).
-        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and returned 256")
+        with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and returned 256")
 
       Ohai::Mixin::Command.shell_out(cmd)
     end
@@ -132,7 +132,7 @@ describe Ohai::Mixin::Command, "shell_out" do
 
       expect(Ohai::Log).
         to receive(:debug).
-        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and failed " \
+        with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and failed " \
              "#<Errno::ENOENT: No such file or directory - sparkle-dream>")
 
       expect { Ohai::Mixin::Command.shell_out(cmd) }.
@@ -153,7 +153,7 @@ describe Ohai::Mixin::Command, "shell_out" do
 
       expect(Ohai::Log).
         to receive(:debug).
-        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and timed " \
+        with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
              "out after 30 seconds")
 
       expect { Ohai::Mixin::Command.shell_out(cmd) }.
@@ -178,7 +178,7 @@ describe Ohai::Mixin::Command, "shell_out" do
         and_return(256)
 
       expect(Ohai::Log).to receive(:debug).
-        with("Plugin OSSparkleDream ran 'sparkle-dream --version' and returned 256")
+        with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and returned 256")
 
       Ohai::Mixin::Command.shell_out(cmd, options)
     end
@@ -196,7 +196,7 @@ describe Ohai::Mixin::Command, "shell_out" do
 
         expect(Ohai::Log).
           to receive(:debug).
-          with("Plugin OSSparkleDream ran 'sparkle-dream --version' and timed " \
+          with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
                "out after 10 seconds")
 
         expect { Ohai::Mixin::Command.shell_out(cmd, options) }.

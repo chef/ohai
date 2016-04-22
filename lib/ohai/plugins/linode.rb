@@ -53,13 +53,13 @@ Ohai.plugin(:Linode) do
   collect_data do
     # Setup linode mash if it is a linode system
     if looks_like_linode?
-      Ohai::Log.debug("linode plugin: looks_like_linode? == true")
+      Ohai::Log.debug("Plugin Linode: looks_like_linode? == true")
       linode Mash.new
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, "eth0:1")
       hint?("linode").each { |k, v| linode[k] = v } if hint?("linode").kind_of?(Hash)
     else
-      Ohai::Log.debug("linode plugin: looks_like_linode? == false")
+      Ohai::Log.debug("Plugin Linode: looks_like_linode? == false")
     end
   end
 end

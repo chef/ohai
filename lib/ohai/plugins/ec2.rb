@@ -41,13 +41,13 @@ Ohai.plugin(:EC2) do
     begin
       # detect a version of '4.2.amazon'
       if dmi[:bios][:all_records][0][:Version] =~ /amazon/
-        Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == true")
+        Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
         return true
       end
     rescue NoMethodError
       # dmi[:bios][:all_records][0][:Version] may not exist
     end
-    Ohai::Log.debug("ec2 plugin: has_ec2_dmi? == false")
+    Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
     return false
   end
 
@@ -56,11 +56,11 @@ Ohai.plugin(:EC2) do
   def has_ec2_xen_uuid?
     if ::File.exist?("/sys/hypervisor/uuid")
       if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
-        Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == true")
+        Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
         return true
       end
     end
-    Ohai::Log.debug("ec2 plugin: has_ec2_xen_uuid? == false")
+    Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
     return false
   end
 
@@ -70,13 +70,13 @@ Ohai.plugin(:EC2) do
     begin
       # detect an Organization of 'Amazon.com'
       if kernel[:os_info][:organization] =~ /Amazon/
-        Ohai::Log.debug("ec2 plugin: has_amazon_org? == true")
+        Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
         return true
       end
     rescue NoMethodError
       # kernel[:os_info][:organization] may not exist
     end
-    Ohai::Log.debug("ec2 plugin: has_amazon_org? == false")
+    Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
     return false
   end
 
@@ -91,7 +91,7 @@ Ohai.plugin(:EC2) do
 
   collect_data do
     if looks_like_ec2?
-      Ohai::Log.debug("ec2 plugin: looks_like_ec2? == true")
+      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
@@ -104,11 +104,11 @@ Ohai.plugin(:EC2) do
       ec2[:userdata] = fetch_userdata
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
-        Ohai::Log.debug("ec2 plugin: Binary UserData Found. Storing in base64")
+        Ohai::Log.debug("Plugin EC2: Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end
     else
-      Ohai::Log.debug("ec2 plugin: looks_like_ec2? == false")
+      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == false")
       false
     end
   end

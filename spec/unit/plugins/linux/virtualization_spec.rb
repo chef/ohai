@@ -324,6 +324,25 @@ RHEV
       expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
+    it "sets bhyve guest if dmidecode detects bhyve" do
+      bhyve_dmidecode = <<-OUTPUT
+System Information
+        Manufacturer:
+        Product Name: BHYVE
+        Version: 1.0
+        Serial Number: None
+        UUID: 023B323A-E139-4B36-8BC5-CEBB2469DAAA
+        Wake-up Type: Power Switch
+        SKU Number: None
+        Family:
+OUTPUT
+      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, bhyve_dmidecode, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("bhyve")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:bhyve]).to eq("guest")
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run

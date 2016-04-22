@@ -125,7 +125,9 @@ module Ohai
         @data.has_key?(name)
       end
 
-      alias :attribute? :has_key?
+      def attribute?(name, *keys)
+        !safe_get_attribute(name, *keys).nil?
+      end
 
       def set(name, *value)
         set_attribute(name, *value)
@@ -155,8 +157,8 @@ module Ohai
         @data[name]
       end
 
-      def get_attribute(name)
-        @data[name]
+      def get_attribute(name, *keys)
+        safe_get_attribute(name, *keys)
       end
 
       def hint?(name)
@@ -182,6 +184,18 @@ module Ohai
       end
 
       private
+
+      def safe_get_attribute(*keys)
+        keys.inject(@data) do |attrs, key|
+          unless attrs.nil? || attrs.is_a?(Array) || attrs.is_a?(Hash)
+            raise TypeError.new("Expected Hash but got #{attrs.class}.")
+          end
+          attrs[key]
+        end
+      rescue NoMethodError
+        # NoMethodError occurs when trying to access a key on nil
+        nil
+      end
 
       def Array18(*args)
         return nil if args.empty?

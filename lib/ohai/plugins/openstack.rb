@@ -18,6 +18,8 @@
 require "ohai/mixin/ec2_metadata"
 
 Ohai.plugin(:Openstack) do
+  include Ohai::Mixin::Ec2Metadata
+
   provides "openstack"
   depends "dmi"
 

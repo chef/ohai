@@ -40,6 +40,8 @@ module ::Ohai::Mixin::DmiDecode
         return "openstack"
       when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
         return "kvm"
+      when /Product.*: BHYVE/
+        return "bhyve"
       end
     end
     return nil

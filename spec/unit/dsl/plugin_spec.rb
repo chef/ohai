@@ -587,6 +587,7 @@ describe Ohai::DSL::Plugin::VersionVI do
     let(:ohai) { Ohai::System.new }
 
     it "logs a debug message when provides is used" do
+      allow(Ohai::Log).to receive(:debug)
       expect(Ohai::Log).to receive(:debug).with(/Skipping provides/)
       plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")

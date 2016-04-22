@@ -31,11 +31,11 @@ describe Ohai::System, "plugin python" do
     plugin
   end
 
-  it "should get the python version from printing sys.version and sys.platform" do
+  it "gets the python version from printing sys.version and sys.platform" do
     plugin.run
   end
 
-  it "should set languages[:python][:version]" do
+  it "sets languages[:python][:version]" do
     plugin.run
     expect(plugin.languages[:python][:version]).to eql("2.5.2")
   end
@@ -43,7 +43,7 @@ describe Ohai::System, "plugin python" do
   context "when the python command fails" do
     let(:retval) { 1 }
 
-    it "should not set the languages[:python] tree up" do
+    it "does not set the languages[:python] tree up" do
       plugin.run
       expect(plugin.languages).not_to have_key(:python)
     end

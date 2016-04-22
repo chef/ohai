@@ -38,25 +38,30 @@ OUT
     allow(plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should get the mono version from running mono -V" do
+  it "gets the mono version from running mono -V" do
     expect(plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
     plugin.run
   end
 
-  it "should set languages[:mono][:version]" do
+  it "sets languages[:mono][:version]" do
     plugin.run
     expect(plugin.languages[:mono][:version]).to eql("4.2.3")
   end
 
-  it "should set languages[:mono][:builddate]" do
+  it "sets languages[:mono][:builddate]" do
     plugin.run
     expect(plugin.languages[:mono][:builddate]).to eql("Wed Mar 30 13:57:48 PDT 2016")
   end
 
-  it "should not set the languages[:mono] tree up if mono command fails" do
+  it "does not set the languages[:mono] if mono command fails" do
     allow(plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(1, @stdout, ""))
     plugin.run
     expect(plugin.languages).not_to have_key(:mono)
   end
 
+  it "does not set languages[:mono] if mono command doesn't exist" do
+    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    plugin.run
+    expect(plugin.languages).not_to have_key(:mono)
+  end
 end

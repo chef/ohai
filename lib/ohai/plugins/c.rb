@@ -25,9 +25,13 @@ Ohai.plugin(:C) do
 
   def collect(cmd, &block)
     so = shell_out(cmd)
-    yield(so) if so.exitstatus == 0
+    if so.exitstatus == 0
+      yield(so)
+    else
+      Ohai::Log.debug("Plugin C '#{cmd}' failed. Skipping data.")
+    end
   rescue Ohai::Exceptions::Exec
-    # ignore
+    Ohai::Log.debug("Plugin C '#{cmd}' binary could not be found. Skipping data.")
   end
 
   collect_data do
@@ -35,6 +39,12 @@ Ohai.plugin(:C) do
 
     #gcc
     collect("gcc -v") do |so|
+      # Sample output:
+      # Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
+      # Apple LLVM version 7.3.0 (clang-703.0.29)
+      # Target: x86_64-apple-darwin15.4.0
+      # Thread model: posix
+      # InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
       description = so.stderr.split($/).last
       output = description.split
       if output.length >= 3
@@ -112,6 +122,6 @@ Ohai.plugin(:C) do
       end
     end
 
-    languages[:c] = c if c.keys.length > 0
+    languages[:c] = c unless c.empty?
   end
 end

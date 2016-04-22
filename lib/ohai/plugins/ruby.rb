@@ -18,7 +18,6 @@
 
 Ohai.plugin(:Ruby) do
   provides "languages/ruby"
-
   depends "languages"
 
   def run_ruby(command)

@@ -21,8 +21,9 @@ Ohai.plugin(:Mono) do
   depends "languages"
 
   collect_data do
-
     begin
+      so = shell_out("mono -V")
+      # Sample output:
       # Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)
       # Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
       # 	TLS:           normal
@@ -33,7 +34,6 @@ Ohai.plugin(:Mono) do
       # 	Misc:          softdebug
       # 	LLVM:          supported, not enabled.
       # 	GC:            sgen
-      so = shell_out("mono -V")
       if so.exitstatus == 0
         mono = Mash.new
         output = so.stdout.split

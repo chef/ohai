@@ -24,12 +24,10 @@ Ohai.plugin(:Elixir) do
       # Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
       #
       # Elixir 1.2.4
-      if so.exitstatus == 0
+      if so.exitstatus == 0 && so.stdout =~ /^Elixir (\S*)/
         elixir = Mash.new
-        if so.stdout =~ /^Elixir (\S*)/
-          elixir[:version] = $1
-          languages[:elixir] = elixir
-        end
+        elixir[:version] = $1
+        languages[:elixir] = elixir
       end
     rescue Ohai::Exceptions::Exec
       Ohai::Log.debug('Elixir plugin: Could not shell_out "elixir -v". Skipping plugin')

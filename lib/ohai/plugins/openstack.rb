@@ -61,7 +61,8 @@ Ohai.plugin(:Openstack) do
   def collect_openstack_metadata(addr, api_version)
     require "timeout"
     require "net/http"
-    require "json"
+    require "uri"
+    require "ffi_yajl"
 
     Timeout.timeout(3) do
       path = "/openstack/#{api_version}/meta_data.json"
@@ -77,7 +78,7 @@ Ohai.plugin(:Openstack) do
         Ohai::Log.warn("Plugin Openstack: encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)")
         return nil
       else
-        data = JSON(response.body)
+        data = FFI_Yajl::Parser.parse(response.body)
         return data
       end
     end
@@ -94,10 +95,7 @@ Ohai.plugin(:Openstack) do
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
       openstack[:provider] = "openstack"
-
-      # don't set a nil metadata value
-      meta = parse_metadata
-      openstack[:metadata] = meta unless meta.nil?
+      openstack[:metadata] = meta
     end
   end
 end

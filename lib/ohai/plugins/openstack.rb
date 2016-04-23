@@ -59,6 +59,7 @@ Ohai.plugin(:Openstack) do
   end
 
   def collect_openstack_metadata(addr, api_version)
+    require "timeout"
     require "net/http"
     require "json"
 

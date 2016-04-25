@@ -39,7 +39,7 @@ Ohai.plugin(:Packages) do
         packages[name] = { "version" => version }
       end
 
-    elsif %w{rhel fedora suse}.include? platform_family
+    elsif %w{rhel fedora suse pld}.include? platform_family
       require "shellwords"
       format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
       so = shell_out("rpm -qa --queryformat #{format}")

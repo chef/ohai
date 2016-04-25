@@ -24,6 +24,7 @@ describe Ohai::System, "Darwin virtualization platform" do
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
     allow(plugin).to receive(:prlctl_exists?).and_return(false)
+    allow(plugin).to receive(:ioreg_exists?).and_return(false)
   end
 
   describe "when we are checking for parallels" do

@@ -63,7 +63,7 @@ Ohai.plugin(:DigitalOcean) do
 
   collect_data do
     if looks_like_digital_ocean?
-      Ohai::Log.debug("digitalocean plugin: looks_like_digital_ocean? == true")
+      Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
       hint = hint?("digital_ocean") || {}
       hint.each { |k, v| digital_ocean[k] = v unless k == "ip_addresses" }
@@ -74,7 +74,7 @@ Ohai.plugin(:DigitalOcean) do
       # https://developers.digitalocean.com/#droplets
       digital_ocean[:networks] = extract_droplet_ip_addresses
     else
-      Ohai::Log.debug("digitalocean plugin: No hints present for and doesn't look like digitalocean")
+      Ohai::Log.debug("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
       false
     end
   end

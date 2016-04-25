@@ -89,7 +89,7 @@ module Ohai
           elsif collector.has_key?(:default)
             self.instance_eval(&collector[:default])
           else
-            Ohai::Log.debug("No data to collect for plugin #{self.name}. Continuing...")
+            Ohai::Log.debug("Plugin #{self.name}: No data to collect. Skipping...")
           end
         end
 

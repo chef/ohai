@@ -43,7 +43,7 @@ Ohai.plugin(:IpScopes) do
 
     rescue LoadError => e
       # our favourite gem is not installed. Boohoo.
-      Ohai::Log.debug("ip_scopes: cannot load gem, plugin disabled: #{e}")
+      Ohai::Log.debug("Plugin ip_scopes: cannot load gem, plugin disabled: #{e}")
     end
   end
 

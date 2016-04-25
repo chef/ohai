@@ -41,11 +41,11 @@ Ohai.plugin(:GCE) do
 
   collect_data do
     if looks_like_gce?
-      Ohai::Log.debug("gce plugin: looks_like_gce? == true")
+      Ohai::Log.debug("Plugin GCE: looks_like_gce? == true")
       gce Mash.new
       fetch_metadata.each { |k, v| gce[k] = v }
     else
-      Ohai::Log.debug("gce plugin: looks_like_gce? == false")
+      Ohai::Log.debug("Plugin GCE: looks_like_gce? == false")
       false
     end
   end

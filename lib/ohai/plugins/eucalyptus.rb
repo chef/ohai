@@ -41,12 +41,12 @@ Ohai.plugin(:Eucalyptus) do
     network[:interfaces].values.each do |iface|
       mac = get_mac_address(iface[:addresses])
       if mac =~ /^[dD]0:0[dD]:/
-        Ohai::Log.debug("eucalyptus plugin: has_euca_mac? == true (#{mac})")
+        Ohai::Log.debug("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")
         return true
       end
     end
 
-    Ohai::Log.debug("eucalyptus plugin: has_euca_mac? == false")
+    Ohai::Log.debug("Plugin Eucalyptus: has_euca_mac? == false")
     false
   end
 
@@ -58,7 +58,7 @@ Ohai.plugin(:Eucalyptus) do
 
   collect_data do
     if looks_like_euca?
-      Ohai::Log.debug("eucalyptus plugin: looks_like_euca? == true")
+      Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == true")
       eucalyptus Mash.new
       self.fetch_metadata.each do |k, v|
         # Eucalyptus 3.4+ supports IAM roles and Instance Profiles much like AWS
@@ -73,7 +73,7 @@ Ohai.plugin(:Eucalyptus) do
       end
       eucalyptus[:userdata] = self.fetch_userdata
     else
-      Ohai::Log.debug("eucalyptus plugin: looks_like_euca? == false")
+      Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == false")
       false
     end
   end

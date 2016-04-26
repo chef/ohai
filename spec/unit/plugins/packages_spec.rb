@@ -193,6 +193,31 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
+  context "on freebsd" do
+    let(:plugin) { get_plugin("packages") }
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "pkg-query.output"))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:freebsd)
+      allow(plugin).to receive(:shell_out).with('pkg query -a "%n %v"').and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it 'calls pkg query -a "%n %v"' do
+      expect(plugin).to receive(:shell_out)
+        .with('pkg query -a "%n %v"')
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it "gets packages with version" do
+      expect(plugin[:packages]["rubygem-chef"][:version]).to eq("12.6.0_1")
+    end
+  end
+
   context "on solaris2" do
     let(:plugin) { get_plugin("packages") }
 

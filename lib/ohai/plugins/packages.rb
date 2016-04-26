@@ -97,6 +97,17 @@ Ohai.plugin(:Packages) do
     end
   end
 
+  collect_data(:freebsd) do
+    packages Mash.new
+    so = shell_out('pkg query -a "%n %v"')
+    # Output format is
+    # name version
+    so.stdout.lines do |pkg|
+      name, version = pkg.split(" ")
+      packages[name] = { "version" => version }
+    end
+  end
+
   def collect_ips_packages
     so = shell_out("pkg list -H")
     # Output format is

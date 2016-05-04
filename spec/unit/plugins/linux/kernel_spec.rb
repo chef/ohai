@@ -31,15 +31,41 @@ serio_raw              13031  0
 virtio_balloon         13168  0
 floppy                 55441  0
 ENV_LSMOD
+    @version_module = {
+      dm_crypt: "",
+      psmouse: "",
+      acpiphp: "",
+      microcode: "1.2.3",
+      serio_raw: "",
+      virtio_balloon: "",
+      floppy: "",
+    }
+
+    @expected_result = {
+      "dm_crypt"       => { "size" => "22321", "refcount" => "0" },
+      "psmouse"        => { "size" => "81038", "refcount" => "0" },
+      "acpiphp"        => { "size" => "23314", "refcount" => "0" },
+      "microcode"      => { "size" => "18286", "refcount" => "0", "version" => "1.2.3" },
+      "serio_raw"      => { "size" => "13031", "refcount" => "0" },
+      "virtio_balloon" => { "size" => "13168", "refcount" => "0" },
+      "floppy"         => { "size" => "55441", "refcount" => "0" },
+    }
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     allow(@plugin).to receive(:init_kernel).and_return({})
     allow(@plugin).to receive(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
     allow(@plugin).to receive(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
+    @version_module.each do |mod, vers|
+      allow(File).to receive(:exist?).with("/sys/module/#{mod}/version").and_return(true)
+      allow(File).to receive(:read).with("/sys/module/#{mod}/version").and_return(vers)
+    end
     expect(@plugin).to receive(:shell_out).with("env lsmod").at_least(1).times
     @plugin.run
   end
 
   it_should_check_from_deep_mash("linux::kernel", "kernel", "os", "uname -o", [0, "Linux", ""])
 
+  it "collects linux::kernel::modules" do
+    expect(@plugin.data["kernel"]["modules"]).to eq(@expected_result)
+  end
 end

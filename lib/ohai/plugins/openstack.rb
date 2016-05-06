@@ -1,6 +1,8 @@
 #
 # Author:: Anthony Caiafa (<acaiafa1@bloomberg.net>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright 2015-2016, Bloomberg Finance L.P.
+# Copyright 2016, Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

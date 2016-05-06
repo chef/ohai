@@ -80,7 +80,7 @@ Ohai.plugin(:Openstack) do
         return nil
       else
         data = FFI_Yajl::Parser.parse(response.body)
-        Ohai::Log.debug("Plugin Openstack: Succesfully fetched metadata")
+        Ohai::Log.debug("Plugin Openstack: Successfully fetched metadata")
         return data
       end
     end

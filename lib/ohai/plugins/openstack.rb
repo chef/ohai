@@ -49,7 +49,6 @@ Ohai.plugin(:Openstack) do
   def parse_metadata
     if can_metadata_connect?("169.254.169.254", 80)
       data = collect_openstack_metadata("169.254.169.254", "latest")
-      Ohai::Log.warn("I got here")
       metadata = Mash.new
       data.each do |k, v|
         metadata[k] = v
@@ -79,6 +78,7 @@ Ohai.plugin(:Openstack) do
         return nil
       else
         data = FFI_Yajl::Parser.parse(response.body)
+        Ohai::Log.debug("Plugin Openstack: Succesfully fetched metadata")
         return data
       end
     end
@@ -95,7 +95,7 @@ Ohai.plugin(:Openstack) do
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
       openstack[:provider] = "openstack"
-      openstack[:metadata] = meta
+      openstack[:metadata] = parse_metadata
     end
   end
 end

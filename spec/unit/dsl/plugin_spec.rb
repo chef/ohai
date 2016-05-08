@@ -90,10 +90,67 @@ shared_examples "Ohai::DSL::Plugin" do
     end
   end
 
-  context "when setting attributes" do
+  describe "set_attribute" do
+    it "raises an ArgumentError when given one argument" do
+      expect { plugin.set_attribute(:tea) }.to raise_error(ArgumentError)
+    end
+
     it "lets you set an attribute" do
       plugin.set_attribute(:tea, "is soothing")
       expect(plugin.data["tea"]).to eql("is soothing")
+    end
+
+    it "lets you set an attribute to an empty array" do
+      plugin.set_attribute(:tea, [])
+      expect(plugin.data["tea"]).to eql([])
+    end
+
+    it "lets you set an attribute to an empty Mash" do
+      plugin.set_attribute(:tea, {})
+      expect(plugin.data["tea"]).to eql({})
+    end
+
+    it "lets you modify an attribute" do
+      plugin.data["tea"] = "is soothing"
+      plugin.set_attribute(:tea, "tastes like plants")
+      expect(plugin.data["tea"]).to eql("tastes like plants")
+    end
+
+    it "lets you set a subattribute" do
+      plugin.data["tea"] = Mash.new
+      plugin.set_attribute(:tea, :green, "tastes like green")
+      expect(plugin.data["tea"]["green"]).to eql("tastes like green")
+    end
+
+    it "lets you set a subattribute to an empty array" do
+      plugin.set_attribute(:tea, :green, [])
+      expect(plugin.data["tea"]["green"]).to eql([])
+    end
+
+    it "lets you set a subattribute to an empty Mash" do
+      plugin.set_attribute(:tea, :green, {})
+      expect(plugin.data["tea"]["green"]).to eql({})
+    end
+
+    it "lets you modify a subattribute" do
+      plugin.data["tea"] = Mash.new
+      plugin.data["tea"]["green"] = "tastes like green"
+      plugin.set_attribute(:tea, :green, "made from leaves")
+      expect(plugin.data["tea"]["green"]).to eql("made from leaves")
+    end
+
+    it "raises a TypeError when modifying an attribute that is not a Mash" do
+      plugin.data["tea"] = Mash.new
+      plugin.data["tea"] = "is soothing"
+      expect { plugin.set_attribute(:tea, :green, "tastes like green") }.to raise_error(TypeError)
+    end
+
+    it "lets you modify a subattribute with an array" do
+      green = { flavor: "tastes like green" }
+      black = { flavor: "tastes like black" }
+      plugin.data[:tea] = [green, black]
+      plugin.set_attribute(:tea, 0, :source, "made from leaves")
+      expect(plugin.data[:tea][0][:source]).to eq("made from leaves")
     end
   end
 

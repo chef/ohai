@@ -49,17 +49,16 @@ Ohai.plugin(:Openstack) do
 
   # grab metadata and return a mash. if we can't connect return nil
   def openstack_metadata
+    metadata = Mash.new
     if can_metadata_connect?("169.254.169.254", 80)
-      metadata = Mash.new
       fetch_metadata.each do |k, v|
         metadata[k] = v
       end
       Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
-      metadata
     else
       Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
-      nil
     end
+    metadata
   end
 
   collect_data do

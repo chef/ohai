@@ -49,8 +49,8 @@ describe "OpenStack Plugin" do
         expect(plugin[:openstack][:provider]).to eq("openstack")
       end
 
-      it "sets the metadata attribute to nil" do
-        expect(plugin[:openstack][:metadata]).to be_nil
+      it "sets the metadata attribute to {}" do
+        expect(plugin[:openstack][:metadata]).to be_empty
       end
     end
   end
@@ -69,8 +69,8 @@ describe "OpenStack Plugin" do
         expect(plugin[:openstack][:provider]).to eq("openstack")
       end
 
-      it "sets the metadata attribute to nil" do
-        expect(plugin[:openstack][:metadata]).to be_nil
+      it "sets the metadata attribute to {}" do
+        expect(plugin[:openstack][:metadata]).to be_empty
       end
     end
 

@@ -45,13 +45,25 @@ describe "OpenStack Plugin" do
         plugin.run
       end
 
-      it "sets openstack provider attribute if the hint is provided" do
+      it "sets openstack attribute" do
         expect(plugin[:openstack][:provider]).to eq("openstack")
       end
 
       it "sets the metadata attribute to {}" do
         expect(plugin[:openstack][:metadata]).to be_empty
       end
+    end
+  end
+
+  context "when running on dreamhost" do
+    it "sets openstack provider attribute to dreamhost" do
+      plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
+      allow(plugin).to receive(:can_metadata_connect?).
+        with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+        and_return(false)
+      plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+      plugin.run
+      expect(plugin[:openstack][:provider]).to eq("dreamhost")
     end
   end
 
@@ -244,9 +256,6 @@ EOM
       end
       it "reads the block_device_mapping_root from the metadata service" do
         expect(plugin["openstack"]["metadata"]["block_device_mapping_root"]).to eq("/dev/vda")
-      end
-      it "sets the provider to openstack" do
-        expect(plugin["openstack"]["provider"]).to eq("openstack")
       end
       it "sets the provider to openstack" do
         expect(plugin["openstack"]["provider"]).to eq("openstack")

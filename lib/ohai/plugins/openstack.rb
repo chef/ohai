@@ -23,6 +23,7 @@ Ohai.plugin(:Openstack) do
 
   provides "openstack"
   depends "dmi"
+  depends "etc"
 
   # do we have the openstack dmi data
   def openstack_dmi?
@@ -47,6 +48,16 @@ Ohai.plugin(:Openstack) do
     end
   end
 
+  # dreamhost systems hae the dhc-user on them
+  def openstack_provider
+    begin
+      return "dreamhost" if etc["passwd"]["dhc-user"]
+    rescue NoMethodError
+      # handle etc not existing on non-linux systems
+    end
+    return "openstack"
+  end
+
   # grab metadata and return a mash. if we can't connect return nil
   def openstack_metadata
     metadata = Mash.new
@@ -65,7 +76,7 @@ Ohai.plugin(:Openstack) do
     # fetch data if we look like openstack
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
-      openstack[:provider] = "openstack" # for now this is our only provider
+      openstack[:provider] = openstack_provider
       openstack[:metadata] = openstack_metadata # fetch metadata or set this to nil
     else
       Ohai::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")

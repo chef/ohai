@@ -242,10 +242,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with openstack values
   def get_openstack_values
-    @cloud_attr_obj.add_ipv4_addr(openstack["public_ipv4"], :public)
-    @cloud_attr_obj.add_ipv4_addr(openstack["local_ipv4"], :private)
-    @cloud_attr_obj.public_hostname = openstack["public_hostname"]
-    @cloud_attr_obj.local_hostname = openstack["local_hostname"]
+    @cloud_attr_obj.add_ipv4_addr(openstack["metadata"]["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(openstack["metadata"]["local_ipv4"], :private)
+    @cloud_attr_obj.public_hostname = openstack["metadata"]["public_hostname"]
+    @cloud_attr_obj.local_hostname = openstack["metadata"]["local_hostname"]
     @cloud_attr_obj.provider = "openstack"
   end
 

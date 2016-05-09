@@ -57,7 +57,7 @@ Ohai.plugin(:Openstack) do
       Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
       metadata
     else
-      Ohai::Log.warn("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
+      Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
       nil
     end
   end

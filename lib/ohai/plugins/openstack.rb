@@ -58,26 +58,21 @@ Ohai.plugin(:Openstack) do
     return "openstack"
   end
 
-  # grab metadata and return a mash. if we can't connect return nil
-  def openstack_metadata
-    metadata = Mash.new
-    if can_metadata_connect?("169.254.169.254", 80)
-      fetch_metadata.each do |k, v|
-        metadata[k] = v
-      end
-      Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
-    else
-      Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
-    end
-    metadata
-  end
-
   collect_data do
     # fetch data if we look like openstack
     if openstack_hint? || openstack_dmi?
       openstack Mash.new
       openstack[:provider] = openstack_provider
-      openstack[:metadata] = openstack_metadata # fetch metadata or set this to nil
+
+      # fetch the metadata if we can do a simple socket connect first
+      if can_metadata_connect?("169.254.169.254", 80)
+        fetch_metadata.each do |k, v|
+          openstack[k] = v
+        end
+        Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
+      else
+        Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
+      end
     else
       Ohai::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")
     end

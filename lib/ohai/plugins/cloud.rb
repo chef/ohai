@@ -183,12 +183,12 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with openstack values
   def get_openstack_values
-    cloud[:public_ips] << openstack["metadata"]["public_ipv4"]
-    cloud[:private_ips] << openstack["metadata"]["local_ipv4"]
-    cloud[:public_ipv4] = openstack["metadata"]["public_ipv4"]
-    cloud[:public_hostname] = openstack["metadata"]["public_hostname"]
-    cloud[:local_ipv4] = openstack["metadata"]["local_ipv4"]
-    cloud[:local_hostname] = openstack["metadata"]["local_hostname"]
+    cloud[:public_ips] << openstack["public_ipv4"]
+    cloud[:private_ips] << openstack["local_ipv4"]
+    cloud[:public_ipv4] = openstack["public_ipv4"]
+    cloud[:public_hostname] = openstack["public_hostname"]
+    cloud[:local_ipv4] = openstack["local_ipv4"]
+    cloud[:local_hostname] = openstack["local_hostname"]
     cloud[:provider] = "openstack"
   end
 

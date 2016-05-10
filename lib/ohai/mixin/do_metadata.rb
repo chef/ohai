@@ -21,7 +21,7 @@ module Ohai
   module Mixin
     module DOMetadata
 
-      DO_METADATA_ADDR = "169.254.269.254" unless defined?(DO_METADATA_ADDR)
+      DO_METADATA_ADDR = "169.254.169.254" unless defined?(DO_METADATA_ADDR)
       DO_METADATA_URL = "/metadata/v1.json" unless defined?(DO_METADATA_URL)
 
       def can_metadata_connect?(addr, port, timeout = 2)

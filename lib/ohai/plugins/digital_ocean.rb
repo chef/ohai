@@ -15,8 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'ohai/mixin/do_metadata'
-require 'yaml'
+require "ohai/mixin/do_metadata"
+require "yaml"
 
 Ohai.plugin(:DigitalOcean) do
   include Ohai::Mixin::DOMetadata
@@ -30,7 +30,7 @@ Ohai.plugin(:DigitalOcean) do
   def has_do_init?
     if File.exist?(DO_CLOUD_INIT_FILE)
       datasource = YAML.load_file(DO_CLOUD_INIT_FILE)
-      if datasource['datasource_list'].include?("DigitalOcean")
+      if datasource["datasource_list"].include?("DigitalOcean")
         Ohai::Log.debug("digital_ocean plugin: has_do_init? == true")
         true
       end
@@ -44,7 +44,7 @@ Ohai.plugin(:DigitalOcean) do
     return true if hint?("digital_ocean")
 
     if has_do_init?
-     return true if can_metadata_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR,80)
+      return true if can_metadata_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
     end
   end
 

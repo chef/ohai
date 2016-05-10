@@ -31,11 +31,11 @@ Ohai.plugin(:DigitalOcean) do
     if File.exist?(DO_CLOUD_INIT_FILE)
       datasource = YAML.load_file(DO_CLOUD_INIT_FILE)
       if datasource["datasource_list"].include?("DigitalOcean")
-        Ohai::Log.debug("digital_ocean plugin: has_do_init? == true")
+        Ohai::Log.debug("Plugin DigitalOcean: has_do_init? == true")
         true
       end
     else
-      Ohai::Log.debug("digital_ocean plugin: has_do_init? == false")
+      Ohai::Log.debug("Plugin DigitalOcean: has_do_init? == false")
       false
     end
   end

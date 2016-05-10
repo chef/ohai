@@ -54,17 +54,18 @@ module Ohai
         Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
       end
 
-      def fetch_metadata()
+      def fetch_metadata
         uri = "#{DO_METADATA_URL}"
         response = http_client.get(uri)
         case response.code
         when "200"
-          response.body
+          parser = FFI_Yajl::Parser.new
+          parser.parse(response.body)
         when "404"
-          Ohai::Log.debug("Encountered 404 response retreiving Digital Ocean metadata: #{uri} ; continuing.")
-          Hash.new
+          Ohai::Log.debug("DOMetadata mixin:Encountered 404 response retreiving Digital Ocean metadata: #{uri} ; continuing.")
+          {}
         else
-          raise "Encountered error retrieving Digital Ocean metadata (#{uri} returned #{response.code} response)"
+          raise "DOMetadata mixin:Encountered error retrieving Digital Ocean metadata (#{uri} returned #{response.code} response)"
         end
       end
 

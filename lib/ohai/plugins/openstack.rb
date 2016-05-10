@@ -48,7 +48,7 @@ Ohai.plugin(:Openstack) do
     end
   end
 
-  # dreamhost systems hae the dhc-user on them
+  # dreamhost systems have the dhc-user on them
   def openstack_provider
     begin
       return "dreamhost" if etc["passwd"]["dhc-user"]

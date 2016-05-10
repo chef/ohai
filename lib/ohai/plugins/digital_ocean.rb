@@ -16,34 +16,34 @@
 # limitations under the License.
 
 require "ohai/mixin/do_metadata"
-require "yaml"
 
 Ohai.plugin(:DigitalOcean) do
   include Ohai::Mixin::DOMetadata
 
-  DO_CLOUD_INIT_FILE = "/etc/cloud/cloud.cfg" unless defined?(DO_CLOUD_INIT_FILE)
-
   provides "digital_ocean"
 
   depends "network/interfaces"
+  depends "dmi"
 
-  def has_do_init?
-    if File.exist?(DO_CLOUD_INIT_FILE)
-      datasource = YAML.load_file(DO_CLOUD_INIT_FILE)
-      if datasource["datasource_list"].include?("DigitalOcean")
-        Ohai::Log.debug("Plugin DigitalOcean: has_do_init? == true")
-        true
+  # look for digitalocean string in dmi bios data
+  def has_do_dmi?
+    begin
+      # detect a vendor of "DigitalOcean"
+      if dmi[:bios][:all_records][0][:Vendor] == "DigitalOcean"
+        Ohai::Log.debug("Plugin DigitalOcean: has_do_dmi? == true")
+        return true
       end
-    else
-      Ohai::Log.debug("Plugin DigitalOcean: has_do_init? == false")
-      false
+    rescue NoMethodError
+      # dmi[:bios][:all_records][0][:Vendor] may not exist
     end
+    Ohai::Log.debug("Plugin DigitalOcean: has_do_dmi? == false")
+    return false
   end
 
   def looks_like_digital_ocean?
     return true if hint?("digital_ocean")
 
-    if has_do_init?
+    if has_do_dmi?
       return true if can_metadata_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
     end
   end

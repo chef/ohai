@@ -38,17 +38,14 @@ Ohai.plugin(:EC2) do
   # look for amazon string in dmi bios data
   # this gets us detection of HVM instances that are within a VPC
   def has_ec2_dmi?
-    begin
-      # detect a version of '4.2.amazon'
-      if dmi[:bios][:all_records][0][:Version] =~ /amazon/
-        Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
-        return true
-      end
-    rescue NoMethodError
-      # dmi[:bios][:all_records][0][:Version] may not exist
+    # detect a version of '4.2.amazon'
+    if get_attribute(:dmi, :bios, :all_records, 0, :Version) =~ /amazon/
+      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
+      return true
+    else
+      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
+      return false
     end
-    Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
-    return false
   end
 
   # looks for a xen UUID that starts with ec2
@@ -67,17 +64,14 @@ Ohai.plugin(:EC2) do
   # looks for the Amazon.com Organization in Windows Kernel data
   # this gets us detection of Windows systems
   def has_amazon_org?
-    begin
-      # detect an Organization of 'Amazon.com'
-      if kernel[:os_info][:organization] =~ /Amazon/
-        Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
-        return true
-      end
-    rescue NoMethodError
-      # kernel[:os_info][:organization] may not exist
+    # detect an Organization of 'Amazon.com'
+    if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
+      Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
+      return true
+    else
+      Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
+      return false
     end
-    Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
-    return false
   end
 
   def looks_like_ec2?

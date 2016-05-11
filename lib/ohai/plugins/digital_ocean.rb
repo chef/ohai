@@ -52,7 +52,7 @@ Ohai.plugin(:DigitalOcean) do
       Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
       fetch_metadata.each do |k, v|
-        next if k == 'vendor_data' # this may have sensitive data we shouldn't store
+        next if k == "vendor_data" # this may have sensitive data we shouldn't store
         digital_ocean[k] = v
       end
     else

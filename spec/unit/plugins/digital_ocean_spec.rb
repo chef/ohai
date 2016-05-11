@@ -189,4 +189,12 @@ describe Ohai::System, "plugin digital_ocean" do
 >>>>>>> Remove debug code/add proper has_do_init check. Attempt to fix failing tests
     end
   end
+
+  describe "with digital_ocean DMI data" do
+    it_should_behave_like "digital_ocean"
+
+    before(:each) do
+      plugin[:dmi] = { :bios => { :all_records => [ { :Vendor => "DigitalOcean" } ] } }
+    end
+  end
 end

@@ -46,7 +46,7 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("DOMetadata mixin: can_metadata_connect? == #{connected}")
+        Ohai::Log.debug("Mixin DOMetadata: can_metadata_connect? == #{connected}")
         connected
       end
 
@@ -62,10 +62,10 @@ module Ohai
           parser = FFI_Yajl::Parser.new
           parser.parse(response.body)
         when "404"
-          Ohai::Log.debug("DOMetadata mixin:Encountered 404 response retreiving Digital Ocean metadata: #{uri} ; continuing.")
+          Ohai::Log.debug("Mixin DOMetadata: Encountered 404 response retreiving Digital Ocean metadata: #{uri} ; continuing.")
           {}
         else
-          raise "DOMetadata mixin:Encountered error retrieving Digital Ocean metadata (#{uri} returned #{response.code} response)"
+          raise "Mixin DOMetadata: Encountered error retrieving Digital Ocean metadata (#{uri} returned #{response.code} response)"
         end
       end
 

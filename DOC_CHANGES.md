@@ -7,7 +7,3 @@ Description of the required change.
 -->
 
 # Ohai Doc Changes:
-
-## openSUSE Leap
-
-openSUSE Leap is now detected as platform opensuseleap and platform_family suse

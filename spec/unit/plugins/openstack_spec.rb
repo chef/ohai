@@ -21,45 +21,68 @@ require "ohai/plugins/openstack"
 
 describe "OpenStack Plugin" do
 
-  let(:openstack_hint) { false }
-  let(:hp_hint) { false }
+  let(:plugin) { get_plugin("openstack") }
 
-  let(:ohai_system) { Ohai::System.new }
-  let(:ohai_data) { ohai_system.data }
-
-  let(:openstack_plugin) do
-    plugin = get_plugin("openstack", ohai_system)
-    allow(plugin).to receive(:hint?).with("openstack").and_return(openstack_hint)
-    allow(plugin).to receive(:hint?).with("hp").and_return(hp_hint)
-    plugin
+  before(:each) do
+    allow(plugin).to receive(:hint?).with("openstack").and_return(false)
+    plugin[:dmi] = nil
   end
 
-  before do
-  end
-
-  context "when there is no relevant hint" do
-
+  context "when there is no relevant hint or dmi data" do
     it "does not set any openstack data" do
-      openstack_plugin.run
-      expect(ohai_data).to_not have_key("openstack")
+      plugin.run
+      expect(plugin[:openstack]).to be_nil
     end
-
   end
 
-  context "when there is an `openstack` hint" do
-    let(:openstack_hint) { true }
-
+  context "when DMI data is Openstack" do
     context "and the metadata service is not available" do
-
       before do
-        expect(openstack_plugin).to receive(:can_metadata_connect?).
+        allow(plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
+        plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+        plugin.run
       end
 
-      it "does not set any openstack data" do
-        openstack_plugin.run
-        expect(ohai_data).to_not have_key("openstack")
+      it "sets openstack attribute" do
+        expect(plugin[:openstack][:provider]).to eq("openstack")
+      end
+
+      it "doesn't set metadata attributes" do
+        expect(plugin[:openstack][:instance_id]).to be_nil
+      end
+    end
+  end
+
+  context "when running on dreamhost" do
+    it "sets openstack provider attribute to dreamhost" do
+      plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
+      allow(plugin).to receive(:can_metadata_connect?).
+        with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+        and_return(false)
+      plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+      plugin.run
+      expect(plugin[:openstack][:provider]).to eq("dreamhost")
+    end
+  end
+
+  context "when the hint is present" do
+    context "and the metadata service is not available" do
+      before do
+        allow(plugin).to receive(:can_metadata_connect?).
+          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+          and_return(false)
+        allow(plugin).to receive(:hint?).with("openstack").and_return(true)
+        plugin.run
+      end
+
+      it "sets openstack provider attribute if the hint is provided" do
+        expect(plugin[:openstack][:provider]).to eq("openstack")
+      end
+
+      it "doesn't set metadata attributes" do
+        expect(plugin[:openstack][:instance_id]).to be_nil
       end
     end
 
@@ -118,8 +141,8 @@ EOM
         }
       end
 
-      let(:openstack_metadata_version) { "2013-04-04" }
-      let(:openstack_metadata_endpoint) { "http://169.254.169.254/openstack/" }
+      let(:openstack_metadata_version) { "2009-04-04" }
+      let(:openstack_metadata_endpoint) { "http://169.254.169.254/" }
 
       let(:openstack_metadata_values) do
         '{
@@ -140,20 +163,21 @@ EOM
 
       let(:http_client) { double("Net::HTTP", :read_timeout= => nil) }
 
-      def expect_get(url, response_body)
-        expect(http_client).to receive(:get).
+      def allow_get(url, response_body)
+        allow(http_client).to receive(:get).
           with(url).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
-      def expect_get_response(url, response_body)
-        expect(http_client).to receive(:get_response).
+      def allow_get_response(url, response_body)
+        allow(http_client).to receive(:get_response).
           with(url, nil, nil).
           and_return(double("HTTP Response", :code => "200", :body => response_body))
       end
 
       before do
-        expect(openstack_plugin).to receive(:can_metadata_connect?).
+        allow(plugin).to receive(:hint?).with("openstack").and_return(true)
+        allow(plugin).to receive(:can_metadata_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(true)
 
@@ -161,107 +185,81 @@ EOM
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR).
           and_return(http_client)
 
-        allow(openstack_plugin).to receive(:best_api_version).and_return(metadata_version)
+        allow(plugin).to receive(:best_api_version).and_return(metadata_version)
 
-        expect_get("/#{metadata_version}/meta-data/", metadata_root)
+        allow_get("/#{metadata_version}/meta-data/", metadata_root)
 
         metadata_values.each do |md_id, md_value|
-          expect_get("/#{metadata_version}/meta-data/#{md_id}", md_value)
+          allow_get("/#{metadata_version}/meta-data/#{md_id}", md_value)
         end
 
-        expect_get_response(
+        allow_get_response(
           URI.parse("#{openstack_metadata_endpoint}#{openstack_metadata_version}/meta_data.json"),
           openstack_metadata_values
         )
-
-        openstack_plugin.run
+        plugin.run
       end
 
       it "reads the reservation_id from the metadata service" do
-        expect(ohai_data["openstack"]["reservation_id"]).to eq("r-4tjvl99h")
+        expect(plugin["openstack"]["reservation_id"]).to eq("r-4tjvl99h")
       end
       it "reads the public_keys_0_openssh_key from the metadata service" do
-        expect(ohai_data["openstack"]["public_keys_0_openssh_key"]).to eq("SSH KEY DATA")
+        expect(plugin["openstack"]["public_keys_0_openssh_key"]).to eq("SSH KEY DATA")
       end
       it "reads the security_groups from the metadata service" do
-        expect(ohai_data["openstack"]["security_groups"]).to eq(["default"])
+        expect(plugin["openstack"]["security_groups"]).to eq(["default"])
       end
       it "reads the public_ipv4 from the metadata service" do
-        expect(ohai_data["openstack"]["public_ipv4"]).to eq("")
+        expect(plugin["openstack"]["public_ipv4"]).to eq("")
       end
       it "reads the ami_manifest_path from the metadata service" do
-        expect(ohai_data["openstack"]["ami_manifest_path"]).to eq("FIXME")
+        expect(plugin["openstack"]["ami_manifest_path"]).to eq("FIXME")
       end
       it "reads the instance_type from the metadata service" do
-        expect(ohai_data["openstack"]["instance_type"]).to eq("opc-tester")
+        expect(plugin["openstack"]["instance_type"]).to eq("opc-tester")
       end
       it "reads the instance_id from the metadata service" do
-        expect(ohai_data["openstack"]["instance_id"]).to eq("i-0000162a")
+        expect(plugin["openstack"]["instance_id"]).to eq("i-0000162a")
       end
       it "reads the local_ipv4 from the metadata service" do
-        expect(ohai_data["openstack"]["local_ipv4"]).to eq("172.31.7.23")
+        expect(plugin["openstack"]["local_ipv4"]).to eq("172.31.7.23")
       end
       it "reads the ari_id from the metadata service" do
-        expect(ohai_data["openstack"]["ari_id"]).to eq("ari-00000037")
+        expect(plugin["openstack"]["ari_id"]).to eq("ari-00000037")
       end
       it "reads the local_hostname from the metadata service" do
-        expect(ohai_data["openstack"]["local_hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["local_hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
       it "reads the placement_availability_zone from the metadata service" do
-        expect(ohai_data["openstack"]["placement_availability_zone"]).to eq("nova")
+        expect(plugin["openstack"]["placement_availability_zone"]).to eq("nova")
       end
       it "reads the ami_launch_index from the metadata service" do
-        expect(ohai_data["openstack"]["ami_launch_index"]).to eq("0")
+        expect(plugin["openstack"]["ami_launch_index"]).to eq("0")
       end
       it "reads the public_hostname from the metadata service" do
-        expect(ohai_data["openstack"]["public_hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["public_hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
       it "reads the hostname from the metadata service" do
-        expect(ohai_data["openstack"]["hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
       it "reads the ami_id from the metadata service" do
-        expect(ohai_data["openstack"]["ami_id"]).to eq("ami-00000035")
+        expect(plugin["openstack"]["ami_id"]).to eq("ami-00000035")
       end
       it "reads the instance_action from the metadata service" do
-        expect(ohai_data["openstack"]["instance_action"]).to eq("none")
+        expect(plugin["openstack"]["instance_action"]).to eq("none")
       end
       it "reads the aki_id from the metadata service" do
-        expect(ohai_data["openstack"]["aki_id"]).to eq("aki-00000036")
+        expect(plugin["openstack"]["aki_id"]).to eq("aki-00000036")
       end
       it "reads the block_device_mapping_ami from the metadata service" do
-        expect(ohai_data["openstack"]["block_device_mapping_ami"]).to eq("vda")
+        expect(plugin["openstack"]["block_device_mapping_ami"]).to eq("vda")
       end
       it "reads the block_device_mapping_root from the metadata service" do
-        expect(ohai_data["openstack"]["block_device_mapping_root"]).to eq("/dev/vda")
+        expect(plugin["openstack"]["block_device_mapping_root"]).to eq("/dev/vda")
       end
-      it "reads the provider from the metadata service" do
-        expect(ohai_data["openstack"]["provider"]).to eq("openstack")
-      end
-
-      context "Retreive openStack specific metadata" do
-        it "reads the availability_zone from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["availability_zone"]).to eq("nova")
-        end
-        it "reads the hostname from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["hostname"]).to eq("ohai.novalocal")
-        end
-        it "reads the launch_index from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["launch_index"]).to eq(0)
-        end
-        it "reads the meta from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["meta"]).to eq({ "priority" => "low", "role" => "ohaiserver" })
-        end
-        it "reads the name from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["name"]).to eq("ohai_spec")
-        end
-        it "reads the public_keys from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["public_keys"]).to eq({ "mykey" => "SSH KEY DATA" })
-        end
-        it "reads the uuid from the openstack metadata service" do
-          expect(ohai_data["openstack"]["metadata"]["uuid"]).to eq("00000000-0000-0000-0000-100000000000")
-        end
+      it "sets the provider to openstack" do
+        expect(plugin["openstack"]["provider"]).to eq("openstack")
       end
     end
-
   end
 end

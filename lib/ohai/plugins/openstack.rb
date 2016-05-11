@@ -1,5 +1,6 @@
 #
 # Author:: Matt Ray (<matt@chef.io>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -18,53 +19,62 @@
 require "ohai/mixin/ec2_metadata"
 
 Ohai.plugin(:Openstack) do
-  provides "openstack"
-
   include Ohai::Mixin::Ec2Metadata
 
-  def collect_openstack_metadata(addr = Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, api_version = "2013-04-04")
-    path = "/openstack/#{api_version}/meta_data.json"
-    uri = "http://#{addr}#{path}"
-    begin
-      response = http_client.get_response(URI.parse(uri), nil, nil)
-      case response.code
-      when "200"
-        FFI_Yajl::Parser.parse(response.body)
-      when "404"
-        Ohai::Log.debug("Encountered 404 response retreiving OpenStack specific metadata path: #{path} ; continuing.")
-        nil
-      else
-        raise "Encountered error retrieving OpenStack specific metadata (#{path} returned #{response.code} response)"
-      end
-    rescue => e
-      Ohai::Log.debug("Encountered error retrieving OpenStack specific metadata (#{uri}), due to #{e.class}")
-      nil
+  provides "openstack"
+  depends "dmi"
+  depends "etc"
+
+  # do we have the openstack dmi data
+  def openstack_dmi?
+    # detect a manufacturer of OpenStack Foundation
+    if dmi[:system][:all_records][0][:Manufacturer] =~ /OpenStack/
+      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
+      true
+    end
+  rescue NoMethodError
+    Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
+    false
+  end
+
+  # check for the ohai hint and log debug messaging
+  def openstack_hint?
+    if hint?("openstack")
+      Ohai::Log.debug("Plugin Openstack: openstack hint present")
+      return true
+    else
+      Ohai::Log.debug("Plugin Openstack: openstack hint not present")
+      return false
     end
   end
 
+  # dreamhost systems have the dhc-user on them
+  def openstack_provider
+    begin
+      return "dreamhost" if etc["passwd"]["dhc-user"]
+    rescue NoMethodError
+      # handle etc not existing on non-linux systems
+    end
+    return "openstack"
+  end
+
   collect_data do
-    # Adds openstack Mash
-    if hint?("openstack") || hint?("hp")
-      Ohai::Log.debug("ohai openstack")
+    # fetch data if we look like openstack
+    if openstack_hint? || openstack_dmi?
+      openstack Mash.new
+      openstack[:provider] = openstack_provider
 
+      # fetch the metadata if we can do a simple socket connect first
       if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
-        openstack Mash.new
-        Ohai::Log.debug("connecting to the OpenStack metadata service")
-        fetch_metadata.each { |k, v| openstack[k] = v }
-
-        if hint?("hp")
-          openstack["provider"] = "hp"
-        else
-          openstack["provider"] = "openstack"
-          Ohai::Log.debug("connecting to the OpenStack specific metadata service")
-          openstack["metadata"] = collect_openstack_metadata
+        fetch_metadata.each do |k, v|
+          openstack[k] = v
         end
-
+        Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
       else
-        Ohai::Log.debug("unable to connect to the OpenStack metadata service")
+        Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
       end
     else
-      Ohai::Log.debug("NOT ohai openstack")
+      Ohai::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")
     end
   end
 end

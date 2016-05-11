@@ -246,7 +246,7 @@ Ohai.plugin(:CloudV2) do
     @cloud_attr_obj.add_ipv4_addr(openstack["local_ipv4"], :private)
     @cloud_attr_obj.public_hostname = openstack["public_hostname"]
     @cloud_attr_obj.local_hostname = openstack["local_hostname"]
-    @cloud_attr_obj.provider = "openstack"
+    @cloud_attr_obj.provider = openstack["provider"]
   end
 
   # ----------------------------------------

@@ -31,23 +31,23 @@ Ohai.plugin(:Packages) do
   collect_data(:linux) do
     packages Mash.new
     if %w{debian}.include? platform_family
-      so = shell_out("dpkg-query -W")
+      so = shell_out("dpkg-query -W -f='${Package}\t${Version}\t${Architecture}\n'")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, version = pkg.split
-        packages[name] = { "version" => version }
+        name, version, arch = pkg.split
+        packages[name] = { "version" => version, "arch" => arch }
       end
 
     elsif %w{rhel fedora suse pld}.include? platform_family
       require "shellwords"
-      format = Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n'
+      format = Shellwords.escape '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{ARCH}\n'
       so = shell_out("rpm -qa --queryformat #{format}")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, version, release = pkg.split
-        packages[name] = { "version" => version, "release" => release }
+        name, epoch, version, release, arch = pkg.split
+        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "arch" => arch }
       end
     end
   end

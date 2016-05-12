@@ -41,13 +41,13 @@ Ohai.plugin(:Packages) do
 
     elsif %w{rhel fedora suse pld}.include? platform_family
       require "shellwords"
-      format = Shellwords.escape '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{ARCH}\n'
+      format = Shellwords.escape '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
       so = shell_out("rpm -qa --queryformat #{format}")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, epoch, version, release, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "arch" => arch }
+        name, epoch, version, release, installdate, arch = pkg.split
+        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
       end
     end
   end

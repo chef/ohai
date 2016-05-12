@@ -9,15 +9,14 @@ Details about the thing that changed that needs to get included in the Release N
 
 # Ohai Release Notes:
 
-## Amazon EC2
+## Openstack
 
-- Windows instances running Amazon created AMIs will now be automatically detected as running in AWS
-- Linux AWS detect has been improved and false detection of systems running in other clouds have been resolved.
+- Openstack metadata will now be properly polled if either a hint file or Openstack DMI data is present. This data will be used to populate IP information in the cloud and cloudv2 plugins
 
-## Packages Plugin
+## bhyve
 
-The packages plugin no longer requires Ohai configuration to enable the plugin. Any existing configuration will be ignored and can be removed.
+- Nodes running as bhyve guests will now be identified in the virtualization plugin
 
-## Shell Out Timeout
+## PLD Linux
 
-Plugins that shellout via the shell_out helper will now timeout after 30 seconds to prevent hung runs. The helper also includes the ability to change this time if necessary in your own plugins.
+- Package information will now be gathered in PLD Linux

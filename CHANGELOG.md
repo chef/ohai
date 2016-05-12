@@ -1,7 +1,24 @@
 # Change Log
 
-## [8.15.1](https://github.com/chef/ohai/tree/8.15.1) (2016-04-20)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.15.0...8.15.1)
+## [8.16.0](https://github.com/chef/ohai/tree/8.16.0) (2016-05-11)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.15.1...8.16.0)
+
+**Implemented enhancements:**
+
+- Properly poll Openstack metadata + other Openstack improvements [\#818](https://github.com/chef/ohai/pull/818) ([tas50](https://github.com/tas50))
+- Update packages plugin to support PLD Linux as an RPM distro [\#813](https://github.com/chef/ohai/pull/813) ([glensc](https://github.com/glensc))
+- Add detection of bhyve guests running Linux/\*BSD [\#812](https://github.com/chef/ohai/pull/812) ([tas50](https://github.com/tas50))
+- Consistent plugin debug logging [\#810](https://github.com/chef/ohai/pull/810) ([tas50](https://github.com/tas50))
+- Extra debug logging and error handling in plugin loading [\#808](https://github.com/chef/ohai/pull/808) ([tas50](https://github.com/tas50))
+- Language plugins: Improve failure logging, update specs, general cleanup [\#805](https://github.com/chef/ohai/pull/805) ([tas50](https://github.com/tas50))
+- Add method to safely get or check the existence of attributes [\#796](https://github.com/chef/ohai/pull/796) ([mcquin](https://github.com/mcquin))
+
+**Fixed bugs:**
+
+- Prevent parallels spec from checking the filesystem [\#811](https://github.com/chef/ohai/pull/811) ([tas50](https://github.com/tas50))
+
+## [v8.15.1](https://github.com/chef/ohai/tree/v8.15.1) (2016-04-20)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.15.0...v8.15.1)
 
 **Fixed bugs:**
 
@@ -20,7 +37,7 @@
 - Fix Elixir version detection on newer Elixir releases [\#802](https://github.com/chef/ohai/pull/802) ([tas50](https://github.com/tas50))
 - Correct the version detection in erlang plugin [\#801](https://github.com/chef/ohai/pull/801) ([tas50](https://github.com/tas50))
 - Fix mono builddate capture and add debug logging [\#800](https://github.com/chef/ohai/pull/800) ([tas50](https://github.com/tas50))
-- Fix the scala plugin [\#799](https://github.com/chef/ohai/pull/799) ([tas50](https://github.com/tas50))
+- Fix the scala plugin to properly return data [\#799](https://github.com/chef/ohai/pull/799) ([tas50](https://github.com/tas50))
 - Don't execute .so libs for Windows [\#798](https://github.com/chef/ohai/pull/798) ([chefsalim](https://github.com/chefsalim))
 
 ## [8.14.0](https://github.com/chef/ohai/tree/8.14.0) (2016-04-08)

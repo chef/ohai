@@ -171,6 +171,36 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine ring parameters for the interface using ethtool
+  def ethernet_ring_parameters(iface)
+    return iface unless ethtool_binary = find_ethtool_binary
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+      so = shell_out("#{ethtool_binary} -g #{tmp_int}")
+      Ohai::Log.debug("Parsing ethtool output: #{so.stdout}")
+      # Nasty, brittle regex to capture the ethtool output
+      nasty_regex =
+/Ring parameters for #{tmp_int}:
+Pre-set maximums:
+RX:\s+(\d+)
+.*
+TX:\s+(\d+)
+Current hardware settings:
+RX:\s+(\d+)
+.*
+TX:\s+(\d+)/m
+      if nasty_regex.match(so.stdout)
+        iface[tmp_int]["ring_params"] = {
+          "max_rx" => $1.to_i,
+          "max_tx" => $2.to_i,
+          "current_rx" => $3.to_i,
+          "current_tx" => $4.to_i,
+        }
+      end
+    end
+    iface
+  end
+
   # determine link stats, vlans, queue length, and state for an interface using ip
   def link_statistics(iface, net_counters)
     so = shell_out("ip -d -s link")
@@ -593,6 +623,7 @@ Ohai.plugin(:Network) do
     end # end "ip else net-tools" block
 
     iface = ethernet_layer_one(iface)
+    iface = ethernet_ring_parameters(iface)
     counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
   end

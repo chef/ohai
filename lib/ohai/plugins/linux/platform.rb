@@ -118,7 +118,10 @@ Ohai.plugin(:Platform) do
       platform_version get_redhatish_version(contents)
     elsif File.exist?("/etc/gentoo-release")
       platform "gentoo"
-      platform_version File.read("/etc/gentoo-release").scan(/(\d+|\.+)/).join
+      # the gentoo release version is the base version used to bootstrap
+      # a node and doesn't have a lot of meaning in a rolling release distro
+      # kernel release will be used - ex. 3.18.7-gentoo
+      platform_version `uname -r`.strip
     elsif File.exist?("/etc/SuSE-release")
       suse_release = File.read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")

@@ -31,7 +31,8 @@ Ohai.plugin(:Packages) do
   collect_data(:linux) do
     packages Mash.new
     if %w{debian}.include? platform_family
-      so = shell_out("dpkg-query -W -f='${Package}\t${Version}\t${Architecture}\n'")
+      format = '${Package}\t${Version}\t${Architecture}\n'
+      so = shell_out("dpkg-query -W -f='#{format}'")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
@@ -40,9 +41,8 @@ Ohai.plugin(:Packages) do
       end
 
     elsif %w{rhel fedora suse pld}.include? platform_family
-      require "shellwords"
-      format = Shellwords.escape '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
-      so = shell_out("rpm -qa --queryformat #{format}")
+      format = '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
+      so = shell_out("rpm -qa --qf '#{format}'")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|

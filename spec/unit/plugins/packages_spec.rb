@@ -80,7 +80,7 @@ describe Ohai::System, "plugin packages" do
 
     it "calls rpm -qa" do
       expect(plugin).to receive(:shell_out)
-        .with("rpm -qa --qf #{format}")
+        .with("rpm -qa --qf '#{format}'")
         .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end

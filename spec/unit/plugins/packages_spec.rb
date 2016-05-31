@@ -48,8 +48,14 @@ describe Ohai::System, "plugin packages" do
       plugin.run
     end
 
-    it "gets packages and versions" do
-      expect(plugin[:packages]["vim-common"][:version]).to eq("2:7.4.052-1ubuntu3")
+    it "gets packages and versions - arch" do
+      expect(plugin[:packages]["libc6"][:version]).to eq("2.19-18+deb8u3")
+      expect(plugin[:packages]["libc6"][:arch]).to eq("amd64")
+    end
+
+    it "gets packages and versions - noarch" do
+      expect(plugin[:packages]["tzdata"][:version]).to eq("2015g-0+deb8u1")
+      expect(plugin[:packages]["tzdata"][:arch]).to eq("all")
     end
   end
 

@@ -28,13 +28,13 @@ Ohai.plugin(:Openstack) do
   # do we have the openstack dmi data
   def openstack_dmi?
     # detect a manufacturer of OpenStack Foundation
-    if dmi[:system][:all_records][0][:Manufacturer] =~ /OpenStack/
+    if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
       Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
-      true
+      return true
+    else
+      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
+      return false
     end
-  rescue NoMethodError
-    Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
-    false
   end
 
   # check for the ohai hint and log debug messaging
@@ -50,11 +50,7 @@ Ohai.plugin(:Openstack) do
 
   # dreamhost systems have the dhc-user on them
   def openstack_provider
-    begin
-      return "dreamhost" if etc["passwd"]["dhc-user"]
-    rescue NoMethodError
-      # handle etc not existing on non-linux systems
-    end
+    return "dreamhost" if get_attribute("etc", "passwd", "dhc-user")
     return "openstack"
   end
 

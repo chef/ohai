@@ -217,10 +217,15 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     it "should set platform and platform_family to gentoo" do
-      expect(File).to receive(:read).with("/etc/gentoo-release").and_return("Gentoo Base System release 1.20.1.1")
       @plugin.run
       expect(@plugin[:platform]).to eq("gentoo")
       expect(@plugin[:platform_family]).to eq("gentoo")
+    end
+
+    it "should set platform_version to kernel release" do
+      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.7-gentoo")
+      @plugin.run
+      expect(@plugin[:platform_version]).to eq("3.18.7-gentoo")
     end
   end
 

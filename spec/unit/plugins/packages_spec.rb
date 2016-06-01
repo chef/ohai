@@ -27,6 +27,8 @@ describe Ohai::System, "plugin packages" do
       end
     end
 
+    let(:format) { '${Package}\t${Version}\t${Architecture}\n' }
+
     let(:stdout) do
       File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
     end
@@ -34,20 +36,26 @@ describe Ohai::System, "plugin packages" do
     before(:each) do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(plugin).to receive(:shell_out)
-        .with("dpkg-query -W")
+        .with("dpkg-query -W -f='#{format}'")
         .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
     it "calls dpkg query" do
       expect(plugin).to receive(:shell_out)
-        .with("dpkg-query -W")
+        .with("dpkg-query -W -f='#{format}'")
         .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
-    it "gets packages and versions" do
-      expect(plugin[:packages]["vim-common"][:version]).to eq("2:7.4.052-1ubuntu3")
+    it "gets packages and versions - arch" do
+      expect(plugin[:packages]["libc6"][:version]).to eq("2.19-18+deb8u3")
+      expect(plugin[:packages]["libc6"][:arch]).to eq("amd64")
+    end
+
+    it "gets packages and versions - noarch" do
+      expect(plugin[:packages]["tzdata"][:version]).to eq("2015g-0+deb8u1")
+      expect(plugin[:packages]["tzdata"][:arch]).to eq("all")
     end
   end
 
@@ -58,7 +66,7 @@ describe Ohai::System, "plugin packages" do
       end
     end
 
-    let(:format) { Shellwords.escape '%{NAME}\t%{VERSION}\t%{RELEASE}\n' }
+    let(:format) { '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n' }
 
     let(:stdout) do
       File.read(File.join(SPEC_PLUGIN_PATH, "rpmquery.output"))
@@ -66,20 +74,31 @@ describe Ohai::System, "plugin packages" do
 
     before(:each) do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("rpm -qa --queryformat #{format}").and_return(mock_shell_out(0, stdout, ""))
+      allow(plugin).to receive(:shell_out).with("rpm -qa --qf '#{format}'").and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
     it "calls rpm -qa" do
       expect(plugin).to receive(:shell_out)
-        .with("rpm -qa --queryformat #{format}")
+        .with("rpm -qa --qf '#{format}'")
         .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
-    it "gets packages and versions/release" do
-      expect(plugin[:packages]["vim-common"][:version]).to eq("7.2.411")
-      expect(plugin[:packages]["vim-common"][:release]).to eq("1.8.el6")
+    it "gets packages and versions/release - arch" do
+      expect(plugin[:packages]["glibc"][:version]).to eq("2.17")
+      expect(plugin[:packages]["glibc"][:release]).to eq("106.el7_2.6")
+      expect(plugin[:packages]["glibc"][:epoch]).to eq("0")
+      expect(plugin[:packages]["glibc"][:installdate]).to eq("1463486666")
+      expect(plugin[:packages]["glibc"][:arch]).to eq("x86_64")
+    end
+
+    it "gets packages and versions/release - noarch" do
+      expect(plugin[:packages]["tzdata"][:version]).to eq("2016d")
+      expect(plugin[:packages]["tzdata"][:release]).to eq("1.el7")
+      expect(plugin[:packages]["tzdata"][:epoch]).to eq("0")
+      expect(plugin[:packages]["tzdata"][:installdate]).to eq("1463486618")
+      expect(plugin[:packages]["tzdata"][:arch]).to eq("noarch")
     end
   end
 

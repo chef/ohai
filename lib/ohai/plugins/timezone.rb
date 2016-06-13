@@ -15,7 +15,7 @@
 # limitations under the License.
 
 Ohai.plugin(:Timezone) do
-  provides 'timezone'
+  provides "timezone"
 
   collect_data do
     timezone = Time.now.getlocal.zone

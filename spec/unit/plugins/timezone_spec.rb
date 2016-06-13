@@ -6,18 +6,25 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-Ohai.plugin(:Timezone) do
-  provides "timezone"
+require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-  collect_data(:default) do
-    timezone Time.now.getlocal.zone
+describe Ohai::System, "timezone plugin" do
+  before(:each) do
+    @plugin = get_plugin("timezone")
+    allow(Time).to receive_message_chain(:now, :getlocal, :zone) { "ZZZ" }
+  end
+
+  it "should get the local timezone" do
+    @plugin.run
+    expect(@plugin["timezone"]).to eq("ZZZ")
   end
 end

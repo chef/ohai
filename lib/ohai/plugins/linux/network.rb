@@ -178,24 +178,24 @@ Ohai.plugin(:Network) do
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
       so = shell_out("#{ethtool_binary} -g #{tmp_int}")
       Ohai::Log.debug("Parsing ethtool output: #{so.stdout}")
-      # Nasty, brittle regex to capture the ethtool output
-      nasty_regex =
-/Ring parameters for #{tmp_int}:
-Pre-set maximums:
-RX:\s+(\d+)
-.*
-TX:\s+(\d+)
-Current hardware settings:
-RX:\s+(\d+)
-.*
-TX:\s+(\d+)/m
-      if nasty_regex.match(so.stdout)
-        iface[tmp_int]["ring_params"] = {
-          "max_rx" => $1.to_i,
-          "max_tx" => $2.to_i,
-          "current_rx" => $3.to_i,
-          "current_tx" => $4.to_i,
-        }
+      type = nil
+      iface[tmp_int]["ring_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Ring parameters for")
+        next if line.strip.nil?
+        if line =~ /Pre-set maximums/
+          type = "max"
+          next
+        end
+        if line =~ /Current hardware settings/
+          type = "current"
+          next
+        end
+        key, val = line.split(/:\s+/)
+        if type && val
+          ring_key = "#{type}_#{key.downcase.tr(' ', '_')}"
+          iface[tmp_int]["ring_params"][ring_key] = val.to_i
+        end
       end
     end
     iface

@@ -808,6 +808,10 @@ EOM
       expect(plugin["network"]["interfaces"]["eth3"]["state"]).to eq("up")
     end
 
+    it "detects tags on v6 addresses of the ethernet interface" do
+      expect(plugin["network"]["interfaces"]["eth0"]["addresses"]["2001:44b8:4160:8f00:a00:27ff:fe13:eacd"]["tags"]).to eq(["dynamic"])
+    end
+
     describe "when IPv6 is disabled" do
       before :each do
         allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(false)

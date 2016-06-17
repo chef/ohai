@@ -310,10 +310,18 @@ Ohai.plugin(:Network) do
   end
 
   def parse_ip_addr_inet6_line(cint, iface, line)
-    if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)/
+    if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)( .*)?/
       iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
       tmp_addr = $1
-      iface[cint][:addresses][tmp_addr] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("host") ? "Node" : $3.capitalize) }
+      tags = $4 || ""
+      tags = tags.split(" ")
+
+      iface[cint][:addresses][tmp_addr] = {
+        "family" => "inet6",
+        "prefixlen" => $2,
+        "scope" => ($3.eql?("host") ? "Node" : $3.capitalize),
+        "tags" => tags,
+      }
     end
   end
 

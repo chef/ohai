@@ -9,14 +9,6 @@ Details about the thing that changed that needs to get included in the Release N
 
 # Ohai Release Notes:
 
-## Openstack
+## Gentoo platform version
 
-- Openstack metadata will now be properly polled if either a hint file or Openstack DMI data is present. This data will be used to populate IP information in the cloud and cloudv2 plugins
-
-## bhyve
-
-- Nodes running as bhyve guests will now be identified in the virtualization plugin
-
-## PLD Linux
-
-- Package information will now be gathered in PLD Linux
+Platform version on Gentoo hosts was previously detected as the Gentoo base system release version, which is actually the bootstrap image version. This hasn't changed in many years and is not an accurate way to determine the version of a Gentoo system. Instead Gentoo platform_version will now be the version of the kernel, matching the behavior we already use on Arch Linux.

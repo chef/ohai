@@ -339,6 +339,22 @@ Settings for eth0:
 EOM
   }
 
+  let(:linux_ethtool_g) { <<-EOM
+Ring parameters for eth0:
+Pre-set maximums:
+RX:		8192
+RX Mini:	0
+RX Jumbo:	0
+TX:		8192
+Current hardware settings:
+RX:		8192
+RX Mini:	0
+RX Jumbo:	0
+TX:		8192
+
+EOM
+  }
+
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -352,7 +368,8 @@ EOM
     allow(plugin).to receive(:shell_out).with("route -n").and_return(mock_shell_out(0, linux_route_n, ""))
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool/).and_return(mock_shell_out(0, linux_ethtool, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
   describe "#iproute2_binary_available?" do
@@ -554,6 +571,10 @@ EOM
         expect(plugin["network"]["interfaces"]["eth0"]["transceiver"]).to eq("external")
         expect(plugin["network"]["interfaces"]["eth0"]["auto_negotiation"]).to eq("on")
         expect(plugin["network"]["interfaces"]["eth0"]["mdi_x"]).to be_nil
+        expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["max_tx"]).to eq(8192)
+        expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["max_rx"]).to eq(8192)
+        expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_tx"]).to eq(8192)
+        expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_rx"]).to eq(8192)
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do

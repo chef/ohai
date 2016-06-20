@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require "base64"
 
 Ohai.plugin(:Powershell) do
   provides "languages/powershell"
@@ -46,7 +47,7 @@ Ohai.plugin(:Powershell) do
         powershell[:serialization_version] = version_info["SerializationVersion"]
         powershell[:clr_version] = version_info["CLRVersion"]
         powershell[:build_version] = version_info["BuildVersion"]
-        powershell[:compatible_versions] = parse_compatible_versions(version_info["PSCompatibleVersions"])
+        powershell[:compatible_versions] = parse_compatible_versions
         powershell[:remoting_protocol_version] = version_info["PSRemotingProtocolVersion"]
         languages[:powershell] = powershell unless powershell.empty?
       end
@@ -55,12 +56,28 @@ Ohai.plugin(:Powershell) do
     end
   end
 
-  def parse_compatible_versions(versions_str)
-    if versions_str
-      if versions_str.strip.start_with?("{") && versions_str.end_with?("}")
-        versions = versions_str.gsub(/[{}\s]+/, "").split(",")
-        versions if versions.length
-      end
+  def version_command
+    [
+      "$progresspreference = 'silentlycontinue'",
+      "$PSVersionTable.PSCompatibleVersions | foreach {$_.tostring()}",
+    ].join("; ")
+  end
+
+  def powershell_command
+    ["powershell.exe",
+      "-NoLogo",
+      "-NonInteractive",
+      "-NoProfile",
+      "-Command",
+    ].join(" ")
+  end
+
+  def parse_compatible_versions
+    so = shell_out("#{powershell_command} \"#{version_command}\"")
+    versions = []
+    so.stdout.strip.each_line do |line|
+      versions << line.strip
     end
+    versions
   end
 end

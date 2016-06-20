@@ -1,7 +1,20 @@
 # Change Log
 
-## [8.16.0](https://github.com/chef/ohai/tree/8.16.0) (2016-05-11)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.15.1...8.16.0)
+## [8.17.0](https://github.com/chef/ohai/tree/8.17.0) (2016-06-19)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.16.0...8.17.0)
+
+**Implemented enhancements:**
+
+- Add additional info to networking interfaces/addresses [\#830](https://github.com/chef/ohai/pull/830) ([jaymzh](https://github.com/jaymzh))
+- Add a simple plugin to get the local timezone. [\#829](https://github.com/chef/ohai/pull/829) ([johnbellone](https://github.com/johnbellone))
+- Switch to kernel version to identify platform_version on Gentoo [\#828](https://github.com/chef/ohai/pull/828) ([tas50](https://github.com/tas50))
+- Expose ring parameters in the network plugin [\#827](https://github.com/chef/ohai/pull/827) ([davide125](https://github.com/davide125))
+- Improve packages attributes [\#820](https://github.com/chef/ohai/pull/820) ([glensc](https://github.com/glensc))
+- Add version for linux modules when available [\#816](https://github.com/chef/ohai/pull/816) ([jmauro](https://github.com/jmauro))
+- Add freebsd support in packages plugin [\#814](https://github.com/chef/ohai/pull/814) ([vr](https://github.com/vr))
+
+## [v8.16.0](https://github.com/chef/ohai/tree/v8.16.0) (2016-05-12)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.15.1...v8.16.0)
 
 **Implemented enhancements:**
 

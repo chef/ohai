@@ -15,9 +15,10 @@
 # limitations under the License.
 
 Ohai.plugin(:Timezone) do
-  provides "timezone"
+  provides "time/timezone"
 
   collect_data(:default) do
-    timezone Time.now.getlocal.zone
+    time Mash.new unless time
+    time[:timezone] = Time.now.getlocal.zone
   end
 end

@@ -1,7 +1,16 @@
 # Change Log
 
-## [8.17.0](https://github.com/chef/ohai/tree/8.17.0) (2016-06-19)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.16.0...8.17.0)
+## [8.17.1](https://github.com/chef/ohai/tree/8.17.1) (2016-06-30)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.17.0...8.17.1)
+
+**Fixed bugs:**
+
+- Move timezone value under time [\#836](https://github.com/chef/ohai/pull/836) ([tas50](https://github.com/tas50))
+- Update PowerShell Version Compat Detection / Unblock bundler on Appveyor [\#832](https://github.com/chef/ohai/pull/832) ([smurawski](https://github.com/smurawski))
+
+
+## [v8.17.0](https://github.com/chef/ohai/tree/v8.17.0) (2016-06-20)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.16.0...v8.17.0)
 
 **Implemented enhancements:**
 

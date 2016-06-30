@@ -25,6 +25,6 @@ describe Ohai::System, "timezone plugin" do
 
   it "should get the local timezone" do
     @plugin.run
-    expect(@plugin["timezone"]).to eq("ZZZ")
+    expect(@plugin["time"]["timezone"]).to eq("ZZZ")
   end
 end

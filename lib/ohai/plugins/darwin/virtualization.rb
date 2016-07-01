@@ -1,6 +1,8 @@
 #
 # Author:: Pavel Yudin (<pyudin@parallels.com>)
+# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2015 Pavel Yudin
+# Copyright:: Copyright (c) 2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +25,10 @@ include Ohai::Util::FileHelper
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
+  def vboxmanage_exists?
+    which("VBoxManage")
+  end
+
   def prlctl_exists?
     which("prlctl")
   end
@@ -31,18 +37,31 @@ Ohai.plugin(:Virtualization) do
     which("ioreg")
   end
 
+  def fusion_exists?
+    ::File.exist?("/Applications/VMware\ Fusion.app/")
+  end
+
   collect_data(:darwin) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
+
+    if vboxmanage_exists?
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "host"
+      virtualization[:systems][:vbox] = "host"
+    end
+
+    if fusion_exists?
+      virtualization[:system] = "vmware"
+      virtualization[:role] = "host"
+      virtualization[:systems][:vmware] = "host"
+    end
 
     if prlctl_exists?
       virtualization[:system] = "parallels"
       virtualization[:role] = "host"
       virtualization[:systems][:parallels] = "host"
-    end
-
-    # Detect Parallels virtual machine from pci devices
-    if ioreg_exists?
+    elsif ioreg_exists?
       so = shell_out("ioreg -l")
       if so.stdout =~ /pci1ab8,4000/
         virtualization[:system] = "parallels"

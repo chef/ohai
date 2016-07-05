@@ -6,9 +6,9 @@ platform:
 
 environment:
   matrix:
-    - ruby_version: "200"
     - ruby_version: "21"
     - ruby_version: "22"
+    - ruby_version: "23"
 
 clone_folder: c:\projects\ohai
 clone_depth: 1
@@ -16,8 +16,6 @@ skip_tags: true
 branches:
   only:
     - master
-    - 8-stable
-    - 7.4-stable
 
 install:
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%

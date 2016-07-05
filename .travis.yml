@@ -9,6 +9,7 @@ branches:
 
 before_install:
   - rvm get stable
+  - rvm alias list
   - gem update --system
   - gem install bundler
   - bundle --version

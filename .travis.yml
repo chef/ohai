@@ -6,7 +6,6 @@ sudo: false
 branches:
   only:
     - master
-    - 7.4-stable
 
 before_install:
   - gem update --system

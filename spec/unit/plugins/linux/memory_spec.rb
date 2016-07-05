@@ -50,9 +50,10 @@ describe Ohai::System, "Linux memory plugin" do
       and_yield("VmallocTotal: 34359738367 kB").
       and_yield("VmallocUsed:    276796 kB").
       and_yield("VmallocChunk: 34359461515 kB").
-      and_yield("HugePages_Total:     0").
-      and_yield("HugePages_Free:      0").
-      and_yield("HugePages_Rsvd:      0").
+      and_yield("HugePages_Total: 11542").
+      and_yield("HugePages_Free:  11235").
+      and_yield("HugePages_Rsvd:  11226").
+      and_yield("HugePages_Surp:      0").
       and_yield("Hugepagesize:     2048 kB")
     allow(File).to receive(:open).with("/proc/meminfo").and_return(@double_file)
   end
@@ -197,4 +198,28 @@ describe Ohai::System, "Linux memory plugin" do
     expect(@plugin[:memory][:swap][:free]).to eql("14127356kB")
   end
 
+  it "should get total hugepages" do
+    @plugin.run
+    expect(@plugin[:memory][:hugepages][:total]).to eql("11542")
+  end
+
+  it "should get free hugepages" do
+    @plugin.run
+    expect(@plugin[:memory][:hugepages][:free]).to eql("11235")
+  end
+
+  it "should get reserved hugepages" do
+    @plugin.run
+    expect(@plugin[:memory][:hugepages][:reserved]).to eql("11226")
+  end
+
+  it "should get surplus hugepages" do
+    @plugin.run
+    expect(@plugin[:memory][:hugepages][:surplus]).to eql("0")
+  end
+
+  it "should get hugepage size" do
+    @plugin.run
+    expect(@plugin[:memory][:hugepage_size]).to eql("2048kB")
+  end
 end

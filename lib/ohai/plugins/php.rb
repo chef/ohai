@@ -33,7 +33,7 @@ Ohai.plugin(:PHP) do
         php = Mash.new
         so.stdout.each_line do |line|
           case line
-          when /PHP (\S+).+built: ([^)]+)/
+          when /^PHP (\S+)(?:.*built: ([^)]+))?/
             php[:version] = $1
             php[:builddate] = $2
           when /Zend Engine v([^\s]+),/

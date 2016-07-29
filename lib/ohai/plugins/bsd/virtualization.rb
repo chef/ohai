@@ -19,9 +19,8 @@
 
 require "ohai/mixin/dmi_decode"
 
-include Ohai::Mixin::DmiDecode
-
 Ohai.plugin(:Virtualization) do
+  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do

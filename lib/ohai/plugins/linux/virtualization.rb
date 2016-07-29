@@ -16,13 +16,10 @@
 # limitations under the License.
 #
 
-require "ohai/util/file_helper"
 require "ohai/mixin/dmi_decode"
 
-include Ohai::Util::FileHelper
-include Ohai::Mixin::DmiDecode
-
 Ohai.plugin(:Virtualization) do
+  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   def lxc_version_exists?

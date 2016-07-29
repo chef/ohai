@@ -18,10 +18,6 @@
 # limitations under the License.
 #
 
-require "ohai/util/file_helper"
-
-include Ohai::Util::FileHelper
-
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
 

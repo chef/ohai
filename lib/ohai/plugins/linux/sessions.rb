@@ -16,10 +16,6 @@
 # limitations under the License.
 #
 
-require "ohai/util/file_helper"
-
-include Ohai::Util::FileHelper
-
 Ohai.plugin(:Sessions) do
   provides "sessions/by_session", "sessions/by_user"
 

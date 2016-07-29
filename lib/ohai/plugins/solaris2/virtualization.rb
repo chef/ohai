@@ -19,9 +19,9 @@
 #
 
 require "ohai/mixin/dmi_decode"
-include Ohai::Mixin::DmiDecode
 
 Ohai.plugin(:Virtualization) do
+  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   def collect_solaris_guestid

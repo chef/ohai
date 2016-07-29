@@ -22,6 +22,7 @@ require "ohai/mixin/os"
 require "ohai/mixin/command"
 require "ohai/mixin/seconds_to_human"
 require "ohai/hints"
+require "ohai/util/file_helper"
 
 module Ohai
 
@@ -81,6 +82,7 @@ module Ohai
       include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
+      include Ohai::Util::FileHelper
 
       attr_reader :data
 

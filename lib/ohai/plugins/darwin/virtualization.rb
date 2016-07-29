@@ -20,9 +20,9 @@
 
 require "ohai/util/file_helper"
 
-include Ohai::Util::FileHelper
-
 Ohai.plugin(:Virtualization) do
+  include Ohai::Util::FileHelper
+
   provides "virtualization"
 
   def vboxmanage_exists?

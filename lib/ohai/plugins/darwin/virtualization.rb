@@ -18,11 +18,7 @@
 # limitations under the License.
 #
 
-require "ohai/util/file_helper"
-
 Ohai.plugin(:Virtualization) do
-  include Ohai::Util::FileHelper
-
   provides "virtualization"
 
   def vboxmanage_exists?

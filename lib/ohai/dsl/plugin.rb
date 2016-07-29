@@ -82,9 +82,6 @@ module Ohai
       include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
-
-      # Pending next major release of Ohai.
-      # See https://github.com/chef/ohai/issues/851 for details.
       include Ohai::Util::FileHelper
 
       attr_reader :data

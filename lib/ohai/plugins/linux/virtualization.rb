@@ -18,9 +18,8 @@
 
 require "ohai/mixin/dmi_decode"
 
-include Ohai::Mixin::DmiDecode
-
 Ohai.plugin(:Virtualization) do
+  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   def lxc_version_exists?

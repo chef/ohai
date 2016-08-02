@@ -176,10 +176,6 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif File.exist?("/dev/lxd") && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
-        virtualization[:system] = "lxc"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:lxc] = "guest"
       elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such
@@ -193,6 +189,10 @@ Ohai.plugin(:Virtualization) do
         # If so, we may need to look further for a differentiator (OHAI-573)
         virtualization[:systems][:lxc] = "host"
       end
+    elsif File.exist?("/dev/lxd")
+      virtualization[:system] = "lxc"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:lxc] = "guest"
     elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"

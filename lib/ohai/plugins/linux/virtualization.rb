@@ -176,7 +176,7 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif File.exist?("/dev/lxd")
+      elsif File.exist?("/dev/lxd") && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"

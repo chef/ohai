@@ -1,5 +1,24 @@
 # Change Log
 
+## [8.18.0](https://github.com/chef/ohai/tree/8.18.0) (2016-08-04)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.17.1...8.18.0)
+
+**Implemented enhancements:**
+
+- Add a plugin for collecting available shells [#856](https://github.com/chef/ohai/pull/856) ([tas50](https://github.com/tas50))
+- BlockDevice: Add physical and logical block size [#850](https://github.com/chef/ohai/pull/850) ([sun77](https://github.com/sun77))
+- Properly detect PHP 7 [#848](https://github.com/chef/ohai/pull/848) ([tas50](https://github.com/tas50))
+- Add support for Linux HugePages [#842](https://github.com/chef/ohai/pull/842) ([bjk-soundcloud](https://github.com/bjk-soundcloud))
+- Add detection of Virtualbox and VMware Fusion on OS X [#840](https://github.com/chef/ohai/pull/840) ([tas50](https://github.com/tas50))
+- Remove support for Ruby 2.0 [#838](https://github.com/chef/ohai/pull/838) ([tas50](https://github.com/tas50))
+- Add hardware plugin for ohai on darwin [#839](https://github.com/chef/ohai/pull/839) ([natewalck](https://github.com/natewalck))
+
+**Fixed bugs:**
+
+- Avoid global mutation. [#852](https://github.com/chef/ohai/pull/852) ([coderanger](https://github.com/coderanger))
+
+
 ## [8.17.1](https://github.com/chef/ohai/tree/8.17.1) (2016-06-30)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.17.0...8.17.1)
 

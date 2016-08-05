@@ -58,7 +58,7 @@ ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
                       dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
                       iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
                       nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                      rwn sfe tavor vr wpi xge yge } unless defined?(ETHERNET_ENCAPS)
+                      rwn sfe tavor vr wpi xge yge aggr} unless defined?(ETHERNET_ENCAPS)
 
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
@@ -101,7 +101,7 @@ Ohai.plugin(:Network) do
     cint = nil
 
     so.stdout.lines do |line|
-      if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
+      if line =~ /^([0-9a-zA-Z\.\:\-]+):/
         cint = $1
         iface[cint] = Mash.new unless iface[cint]
         iface[cint][:mtu] = $2

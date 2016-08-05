@@ -176,7 +176,7 @@ ROUTE_GET
     end
 
     it "finds the default interface for a solaris 11 zone" do
-      expect(@plugin[:network][:default_interface]).to eq("net1:1")
+      expect(@plugin[:network][:default_interface]).to eq("net1")
     end
   end
 

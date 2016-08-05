@@ -147,7 +147,7 @@ ROUTE_GET
     end
 
     it "detects the interfaces" do
-      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "lo0", "lo0:3", "net0", "net1:1", "qfe1"])
+      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "ip6.tun0", "lo0", "lo0:3", "net0", "net1:1", "qfe1", "vni0"])
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -176,7 +176,7 @@ ROUTE_GET
     end
 
     it "finds the default interface for a solaris 11 zone" do
-      expect(@plugin[:network][:default_interface]).to eq("net1:1")
+      expect(@plugin[:network][:default_interface]).to eq("net1")
     end
   end
 

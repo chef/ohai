@@ -26,6 +26,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_gentoo_release) { false }
   let(:have_exherbo_release) { false }
   let(:have_alpine_release) { false }
+  let(:have_eos_release) { false }
   let(:have_suse_release) { false }
   let(:have_arch_release) { false }
   let(:have_system_release) { false }

@@ -43,6 +43,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec_junit_formatter"
   s.add_development_dependency "github_changelog_generator", "1.13.1"
 
+  # github_changelog_generator -> github-api -> oauth2 -> rack
+  # rack being unconstrained breaks Ruby 2.1 instals
+  s.add_development_dependency "rack", "~> 1.0"
+
   s.bindir = "bin"
   s.executables = %w{ohai}
 

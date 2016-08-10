@@ -153,6 +153,10 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/alpine-release")
       platform "alpine"
       platform_version File.read("/etc/alpine-release").strip()
+    elsif File.exist?("/etc/Eos-release")
+      platform "arista_eos"
+      platform_version File.read("/etc/Eos-release").strip.split[-1]
+      platform_family "fedora"
     elsif os_release_file_is_cisco?
       raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
         os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")

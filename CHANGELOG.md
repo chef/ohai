@@ -1,5 +1,18 @@
 # Change Log
 
+## [8.19.0](https://github.com/chef/ohai/tree/8.19.0) (2016-08-11)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.18.0...8.19.0)
+
+**Implemented enhancements:**
+
+- Add platform detection for Arista EOS [#860](https://github.com/chef/ohai/pull/860) ([jerearista](https://github.com/jerearista))
+
+**Fixed bugs:**
+
+- Fix installs on Ruby 2.1 and rspec testing with rspec 3.5 [#861](https://github.com/chef/ohai/pull/861) ([tas50](https://github.com/tas50))
+- Fix solaris2 plugin network interface detection [#859](https://github.com/chef/ohai/pull/859) ([acaiafa](https://github.com/acaiafa))
+
 ## [8.18.0](https://github.com/chef/ohai/tree/8.18.0) (2016-08-04)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.17.1...8.18.0)

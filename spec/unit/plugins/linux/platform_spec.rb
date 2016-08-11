@@ -26,6 +26,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_gentoo_release) { false }
   let(:have_exherbo_release) { false }
   let(:have_alpine_release) { false }
+  let(:have_eos_release) { false }
   let(:have_suse_release) { false }
   let(:have_arch_release) { false }
   let(:have_system_release) { false }
@@ -46,6 +47,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/etc/gentoo-release").and_return(have_gentoo_release)
     allow(File).to receive(:exist?).with("/etc/exherbo-release").and_return(have_exherbo_release)
     allow(File).to receive(:exist?).with("/etc/alpine-release").and_return(have_alpine_release)
+    allow(File).to receive(:exist?).with("/etc/Eos-release").and_return(have_eos_release)
     allow(File).to receive(:exist?).with("/etc/SuSE-release").and_return(have_suse_release)
     allow(File).to receive(:exist?).with("/etc/arch-release").and_return(have_arch_release)
     allow(File).to receive(:exist?).with("/etc/system-release").and_return(have_system_release)
@@ -243,6 +245,23 @@ describe Ohai::System, "Linux plugin platform" do
       expect(@plugin[:platform]).to eq("alpine")
       expect(@plugin[:platform_family]).to eq("alpine")
       expect(@plugin[:platform_version]).to eq("3.2.3")
+    end
+  end
+
+  describe "on arista eos" do
+
+    let(:have_eos_release) { true }
+
+    before(:each) do
+      @plugin.lsb = nil
+    end
+
+    it "should set platform to arista_eos" do
+      expect(File).to receive(:read).with("/etc/Eos-release").and_return("Arista Networks EOS 4.16.7M")
+      @plugin.run
+      expect(@plugin[:platform]).to eq("arista_eos")
+      expect(@plugin[:platform_family]).to eq("fedora")
+      expect(@plugin[:platform_version]).to eq("4.16.7M")
     end
   end
 

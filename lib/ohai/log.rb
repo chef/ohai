@@ -25,5 +25,13 @@ module Ohai
     init(STDERR)
     level = :info
 
+    def self.configured?
+      @configured
+    end
+
+    def self.use_log_devices(other)
+      @configured = true
+      super
+    end
   end
 end

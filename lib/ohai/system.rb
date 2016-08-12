@@ -220,6 +220,8 @@ module Ohai
     end
 
     def configure_logging
+      return if Ohai::Log.configured?
+
       Ohai::Log.init(Ohai.config[:log_location])
 
       if Ohai.config[:log_level] == :auto

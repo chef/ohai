@@ -1,5 +1,14 @@
 # Change Log
 
+## [8.19.1](https://github.com/chef/ohai/tree/8.19.1) (2016-08-12)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.0...8.19.1)
+
+**Fixed bugs:**
+
+- Move log configuration down to Mixlib::Log [#864](https://github.com/chef/ohai/pull/864) ([thommay](https://github.com/thommay))
+- Only configure logging if we must [#863](https://github.com/chef/ohai/pull/863) ([thommay](https://github.com/thommay))
+
 ## [8.19.0](https://github.com/chef/ohai/tree/8.19.0) (2016-08-11)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.18.0...8.19.0)

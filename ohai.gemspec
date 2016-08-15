@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "mixlib-cli"
   s.add_dependency "mixlib-config", "~> 2.0"
-  s.add_dependency "mixlib-log"
+  s.add_dependency "mixlib-log", ">= 1.7.1", "< 2.0"
   s.add_dependency "mixlib-shellout", "~> 2.0"
   s.add_dependency "plist", "~> 3.1"
   s.add_dependency "ipaddress"

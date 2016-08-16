@@ -1,5 +1,13 @@
 # Change Log
 
+## [8.19.2](https://github.com/chef/ohai/tree/8.19.2) (2016-08-15)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.1...8.19.2)
+
+**Fixed bugs:**
+
+- Require at least mixlib-log 1.7.1 [#866](https://github.com/chef/ohai/pull/866) ([tas50](https://github.com/tas50))
+
 ## [8.19.1](https://github.com/chef/ohai/tree/8.19.1) (2016-08-12)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.19.0...8.19.1)

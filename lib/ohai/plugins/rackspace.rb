@@ -38,7 +38,7 @@ Ohai.plugin(:Rackspace) do
   def has_rackspace_metadata?
     so = shell_out("xenstore-read vm-data/provider_data/provider")
     if so.exitstatus == 0
-      so.stdout.strip.downcase == "rackspace"
+      so.stdout.strip.casecmp("rackspace").zero?
     end
   rescue Ohai::Exceptions::Exec
     false

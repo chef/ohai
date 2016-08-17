@@ -380,7 +380,7 @@ Ohai.plugin(:Network) do
   end
 
   def interface_address_not_link_level?(iface, address)
-    iface[:addresses][address][:scope].downcase != "link"
+    !iface[:addresses][address][:scope].casecmp("link").zero?
   end
 
   def interface_valid_for_route?(iface, address, family)

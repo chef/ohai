@@ -170,14 +170,14 @@ Ohai.plugin(:Network) do
       matches = /interface: (?<name>\S+)\s+index\s+(?<index>\d+)/.match(line)
       if matches
         network[:default_interface] =
-        case
-        when iface[matches[:name]]
-          matches[:name]
-        when int_name = full_interface_name(iface, matches[:name], matches[:index])
-          int_name
-        else
-          matches[:name]
-        end
+          case
+          when iface[matches[:name]]
+            matches[:name]
+          when int_name = full_interface_name(iface, matches[:name], matches[:index])
+            int_name
+          else
+            matches[:name]
+          end
         Ohai::Log.debug("found interface device: #{network[:default_interface]} #{matches[:name]}")
       end
       matches = /gateway: (\S+)/.match(line)

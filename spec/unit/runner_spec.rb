@@ -319,35 +319,35 @@ describe Ohai::Runner, "run_plugin" do
       @ohai = Ohai::System.new
       @runner = Ohai::Runner.new(@ohai, true)
 
-      klassA = Ohai.plugin(:A) {
+      klass_a = Ohai.plugin(:A) {
         provides("A")
         depends("B", "C")
         collect_data {}
       }
-      klassB = Ohai.plugin(:B) {
+      klass_b = Ohai.plugin(:B) {
         provides("B")
         depends("C")
         collect_data {}
       }
-      klassC = Ohai.plugin(:C) {
+      klass_c = Ohai.plugin(:C) {
         provides("C")
         collect_data {}
       }
 
       @plugins = []
-      [klassA, klassB, klassC].each do |klass|
+      [klass_a, klass_b, klass_c].each do |klass|
         @plugins << klass.new(@ohai.data)
       end
-      @pluginA, @pluginB, @pluginC = @plugins
+      @plugin_a, @plugin_b, @plugin_c = @plugins
     end
 
     it "should not detect a cycle when B is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
-      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
-      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
+      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
+      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
+      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
 
       expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
-      @runner.run_plugin(@pluginA)
+      @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
         expect(plugin.has_run?).to be true
@@ -355,12 +355,12 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when C is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
-      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
-      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
+      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
+      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
+      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
 
       expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
-      @runner.run_plugin(@pluginA)
+      @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
         expect(plugin.has_run?).to be true

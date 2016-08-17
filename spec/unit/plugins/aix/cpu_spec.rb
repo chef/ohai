@@ -20,12 +20,12 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX cpu plugin" do
   before(:each) do
-    @lsdev_Cc_processor = <<-LSDEV_CC_PROCESSOR
+    @lsdev_cc_processor = <<-LSDEV_CC_PROCESSOR
 proc0 Available 00-00 Processor
 proc4 Defined   00-04 Processor
 LSDEV_CC_PROCESSOR
 
-    @lsattr_El_proc0 = <<-LSATTR_EL
+    @lsattr_el_proc0 = <<-LSATTR_EL
 frequency   1654344000     Processor Speed       False
 smt_enabled true           Processor SMT enabled False
 smt_threads 2              Processor SMT threads False
@@ -43,8 +43,8 @@ PMCYCLES_M
     @plugin = get_plugin("aix/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
 
-    allow(@plugin).to receive(:shell_out).with("lsdev -Cc processor").and_return(mock_shell_out(0, @lsdev_Cc_processor, nil))
-    allow(@plugin).to receive(:shell_out).with("lsattr -El proc0").and_return(mock_shell_out(0, @lsattr_El_proc0, nil))
+    allow(@plugin).to receive(:shell_out).with("lsdev -Cc processor").and_return(mock_shell_out(0, @lsdev_cc_processor, nil))
+    allow(@plugin).to receive(:shell_out).with("lsattr -El proc0").and_return(mock_shell_out(0, @lsattr_el_proc0, nil))
     allow(@plugin).to receive(:shell_out).with("pmcycles -m").and_return(mock_shell_out(0, @pmcycles_m, nil))
   end
 

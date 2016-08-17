@@ -392,7 +392,7 @@ EOM
     end
   end
 
-  describe '#interface_has_no_addresses_in_family?' do
+  describe "#interface_has_no_addresses_in_family?" do
     context "when interface has no addresses" do
       let(:iface) { {} }
 
@@ -418,7 +418,7 @@ EOM
     end
   end
 
-  describe '#interface_have_address?' do
+  describe "#interface_have_address?" do
     context "when interface has no addresses" do
       let(:iface) { {} }
 
@@ -444,7 +444,7 @@ EOM
     end
   end
 
-  describe '#interface_address_not_link_level?' do
+  describe "#interface_address_not_link_level?" do
     context "when the address scope is link" do
       let(:iface) { { addresses: { "1.2.3.4" => { scope: "Link" } } } }
 
@@ -462,7 +462,7 @@ EOM
     end
   end
 
-  describe '#interface_valid_for_route?' do
+  describe "#interface_valid_for_route?" do
     let(:iface)   { double("iface") }
     let(:address) { "1.2.3.4" }
     let(:family)  { "inet" }
@@ -508,7 +508,7 @@ EOM
     end
   end
 
-  describe '#route_is_valid_default_route?' do
+  describe "#route_is_valid_default_route?" do
     context "when the route destination is default" do
       let(:route)         { { destination: "default" } }
       let(:default_route) { double("default_route") }

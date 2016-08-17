@@ -1,5 +1,5 @@
 module HardwareSystemProfilerOutput
-  Hardware = <<hardware_output
+  HARDWARE = <<hardware_output
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -289,7 +289,7 @@ module HardwareSystemProfilerOutput
 </plist>
 hardware_output
 
-  Storage = <<storage_output
+  STORAGE = <<storage_output
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -600,7 +600,7 @@ hardware_output
 </plist>
 storage_output
 
-  Power = <<power_output
+  POWER = <<power_output
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">

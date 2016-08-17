@@ -24,7 +24,7 @@ module Ohai
       # all-lowercase, all non-alphanumeric converted to '_'
       # 128-255 are 'oem_data_[id]'
       # Everything else is 'unknown'
-      IdToDescription = {
+      ID_TO_DESCRIPTION = {
         0 =>   "bios",
         1 =>   "system",
         2 =>   "base_board",
@@ -71,7 +71,7 @@ module Ohai
 
       # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
       # See OHAI-260. When we can give the user a choice, this will be a default.
-      IdToCapture = [ 0, 1, 2, 3, 4, 6, 11 ]
+      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
 
       # look up DMI ID
       def id_lookup(id)
@@ -79,8 +79,8 @@ module Ohai
           id = id.to_i
           if (id >= 128) && (id <= 255)
             id = "oem_data_#{id}"
-          elsif DMI::IdToDescription.has_key?(id)
-            id = DMI::IdToDescription[id]
+          elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
+            id = DMI::ID_TO_DESCRIPTION[id]
           else
             Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
             id = "unknown"

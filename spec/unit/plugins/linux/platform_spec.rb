@@ -699,7 +699,7 @@ CISCO_RELEASE
     end
   end
 
-  describe '#read_os_release_info' do
+  describe "#read_os_release_info" do
     let(:file_contents) { "COW=MOO\nDOG=\"BARK\"" }
     it "returns nil if the file does not exist" do
       allow(File).to receive(:exist?).with("/etc/test-release").and_return(false)
@@ -716,7 +716,7 @@ CISCO_RELEASE
     end
   end
 
-  describe '#os_release_info' do
+  describe "#os_release_info" do
     context "when CISCO_RELEASE_INFO is not populated" do
       let(:release_info) { { "ID" => "os_id" } }
 

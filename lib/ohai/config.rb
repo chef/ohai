@@ -31,28 +31,29 @@ module Ohai
     # These methods need to be defined before they are used as config defaults,
     # otherwise they will get method_missing'd to nil.
 
-    private
-
-    def self.default_hints_path
-      [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
-    end
-
-    def self.default_plugin_path
-      [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")) ]
-    end
-
-    public
-
-    # Copy deprecated configuration options into the ohai config context.
-    def self.merge_deprecated_config
-      [ :hints_path, :plugin_path ].each do |option|
-        if has_key?(option) && send(option) != send("default_#{option}".to_sym)
-          Ohai::Log.warn(option_deprecated(option))
+    class << self
+      def merge_deprecated_config
+        [ :hints_path, :plugin_path ].each do |option|
+          if has_key?(option) && send(option) != send("default_#{option}".to_sym)
+            Ohai::Log.warn(option_deprecated(option))
+          end
         end
+
+        ohai.merge!(configuration)
       end
 
-      ohai.merge!(configuration)
+      private
+
+      def default_hints_path
+        [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
+      end
+
+      def default_plugin_path
+        [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")) ]
+      end
     end
+
+    # Copy deprecated configuration options into the ohai config context.
 
     # Keep "old" config defaults around so anyone calling Ohai::Config[:key]
     # won't be broken. Also allows users to append to configuration options
@@ -105,22 +106,24 @@ module Ohai
       default :plugin_path, Ohai::Config.default_plugin_path
     end
 
-    private
+    class << self
+      private
 
-    def self.option_deprecated(option)
-      <<-EOM.chomp!.tr("\n", " ")
+      def option_deprecated(option)
+        <<-EOM.chomp!.tr("\n", " ")
 Ohai::Config[:#{option}] is set. Ohai::Config[:#{option}] is deprecated and will
 be removed in future releases of ohai. Use ohai.#{option} in your configuration
 file to configure :#{option} for ohai.
-EOM
-    end
+        EOM
+      end
 
-    def self.option_might_be_deprecated(option)
-      option_deprecated(option) + <<-EOM.chomp!.tr("\n", " ")
+      def option_might_be_deprecated(option)
+        option_deprecated(option) + <<-EOM.chomp!.tr("\n", " ")
  If your configuration file is used with other applications which configure
 :#{option}, and you have not configured Ohai::Config[:#{option}], you may
 disregard this warning.
-EOM
+        EOM
+      end
     end
   end
 

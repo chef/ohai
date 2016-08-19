@@ -18,7 +18,7 @@ module IntegrationSupport
         end
       end
 
-      def with_plugin(plugin_path, contents)
+      def with_plugin(plugin_path, contents)  #
         filename = path_to(plugin_path)
         dir = File.dirname(filename)
         FileUtils.mkdir_p(dir) unless dir == "."

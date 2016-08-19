@@ -52,13 +52,13 @@ describe "Ohai::PluginConfig" do
 
         describe "when all Hash keys are symbols" do
 
-          let(:value) {
+          let(:value) do
             {
               :bar0 => true,
               :bar1 => [ :baz0, :baz1, :baz2 ],
               :bar2 => { :qux0 => true, :qux1 => false },
             }
-          }
+          end
 
           include_examples "success"
 
@@ -66,13 +66,13 @@ describe "Ohai::PluginConfig" do
 
         describe "when some top-level Hash key is not a symbol" do
 
-          let(:value) {
+          let(:value) do
             {
               :bar0 => true,
               "bar1" => [ :baz0, :baz1, :baz2 ],
               :bar2 => { :qux0 => true, :qux1 => false },
             }
-          }
+          end
 
           include_examples "failure"
 
@@ -80,13 +80,13 @@ describe "Ohai::PluginConfig" do
 
         describe "when some nested Hash key is not a symbol" do
 
-          let(:value) {
+          let(:value) do
             {
               :bar0 => true,
               :bar1 => [ :baz0, :baz1, :baz2 ],
               :bar2 => { :qux0 => true, "qux1" => false },
             }
-          }
+          end
 
           include_examples "failure"
 

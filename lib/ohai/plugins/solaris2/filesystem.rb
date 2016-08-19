@@ -44,10 +44,10 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       next unless line =~ /^(.+?)\s*: (\S+)\s*$/
       mount = $1
-      fs.each { |filesystem, fs_attributes|
+      fs.each do |filesystem, fs_attributes|
         next unless fs_attributes[:mount] == mount
         fs[filesystem][:fs_type] = $2
-      }
+      end
     end
 
     # Grab mount information from /bin/mount
@@ -82,7 +82,7 @@ Ohai.plugin(:Filesystem) do
       zfs[filesystem][:sources][$2] = $4.chomp
     end
 
-    zfs.each { |filesystem, attributes|
+    zfs.each do |filesystem, attributes|
       fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
       fs[filesystem][:fs_type] = "zfs"
       fs[filesystem][:mount] = attributes[:values][:mountpoint] if attributes[:values].has_key?("mountpoint")
@@ -91,14 +91,14 @@ Ohai.plugin(:Filesystem) do
       # find all zfs parents
       parents = filesystem.split("/")
       zfs_parents = []
-      (0..parents.length - 1).to_a.each { |parent_indexes|
+      (0..parents.length - 1).to_a.each do |parent_indexes|
         next_parent = parents[0..parent_indexes].join("/")
         zfs_parents.push(next_parent)
-      }
+      end
       zfs_parents.pop
       fs[filesystem][:zfs_parents] = zfs_parents
       fs[filesystem][:zfs_zpool] = (zfs_parents.length == 0)
-    }
+    end
 
     # Set the filesystem data
     filesystem fs

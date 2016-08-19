@@ -177,7 +177,7 @@ module Ohai
           $VERBOSE = nil
           ps.last.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
 
-          cid = fork {
+          cid = fork do
             Process.setsid
 
             pw.last.close
@@ -226,7 +226,7 @@ module Ohai
             end
             ps.last.close unless ps.last.closed?
             exit!
-          }
+          end
         ensure
           $VERBOSE = verbose
         end

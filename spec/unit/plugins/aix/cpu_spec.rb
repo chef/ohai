@@ -119,9 +119,9 @@ PMCYCLES_M
 
     it "doesn't set mhz of a processor it can't see" do
       # I'm so sorry
-      expect {
+      expect do
         expect(@plugin[:cpu]["0"][:mhz]).to eq(1654)
-      }.to raise_error(NoMethodError)
+      end.to raise_error(NoMethodError)
     end
   end
 end

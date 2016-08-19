@@ -22,10 +22,10 @@ require "ohai/mixin/softlayer_metadata"
 
 describe ::Ohai::Mixin::SoftlayerMetadata do
 
-  let(:mixin) {
+  let(:mixin) do
     mixin = Object.new.extend(::Ohai::Mixin::SoftlayerMetadata)
     mixin
-  }
+  end
 
   def make_request(item)
     "/rest/v3.1/SoftLayer_Resource_Metadata/#{item}"

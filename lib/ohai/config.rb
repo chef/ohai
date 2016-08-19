@@ -42,8 +42,6 @@ module Ohai
         ohai.merge!(configuration)
       end
 
-      private
-
       def default_hints_path
         [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
       end
@@ -107,8 +105,6 @@ module Ohai
     end
 
     class << self
-      private
-
       def option_deprecated(option)
         <<-EOM.chomp!.tr("\n", " ")
 Ohai::Config[:#{option}] is set. Ohai::Config[:#{option}] is deprecated and will

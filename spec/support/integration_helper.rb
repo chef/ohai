@@ -18,7 +18,7 @@ module IntegrationSupport
         end
       end
 
-      def with_plugin(plugin_path, contents)  #
+      def with_plugin(plugin_path, contents) # rubocop:disable Lint/NestedMethodDefinition
         filename = path_to(plugin_path)
         dir = File.dirname(filename)
         FileUtils.mkdir_p(dir) unless dir == "."
@@ -27,11 +27,11 @@ module IntegrationSupport
         end
       end
 
-      def path_to(plugin_path)
+      def path_to(plugin_path) # rubocop:disable Lint/NestedMethodDefinition
         File.expand_path(plugin_path, @plugins_directory)
       end
 
-      def self.with_plugin(plugin_path, contents)
+      def self.with_plugin(plugin_path, contents) # rubocop:disable Lint/NestedMethodDefinition
         before :each do
           with_plugin(plugin_path, contents)
         end

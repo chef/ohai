@@ -86,8 +86,11 @@ module Ohai
         # Furthermore, when the top-level config settings are removed we will
         # need to ensure that Ohai.config[:log_level] can be set by writing
         # log_level in a configuration file for consistent behavior with chef.
-        deprecation_warning = [ :log_level, :log_location ].include?(value) ?
-          option_might_be_deprecated(option) : option_deprecated(option)
+        deprecation_warning = if [ :log_level, :log_location ].include?(value)
+                                option_might_be_deprecated(option)
+                              else
+                                option_deprecated(option)
+          end
         Ohai::Log.warn(deprecation_warning)
         value
       end

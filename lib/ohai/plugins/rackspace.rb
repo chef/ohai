@@ -115,9 +115,9 @@ Ohai.plugin(:Rackspace) do
     if so.exitstatus == 0
       networks = []
       so.stdout.split("\n").map { |l| l.split("=").first.strip }.map do |item|
-        _so = shell_out("xenstore-read vm-data/networking/#{item}")
-        if _so.exitstatus == 0
-          networks.push(FFI_Yajl::Parser.new.parse(_so.stdout))
+        so = shell_out("xenstore-read vm-data/networking/#{item}")
+        if so.exitstatus == 0
+          networks.push(FFI_Yajl::Parser.new.parse(so.stdout))
         else
           Ohai::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
           return false

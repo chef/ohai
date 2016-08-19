@@ -74,21 +74,21 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses] = Mash.new
         iface[cint][:configuration][:ip_address].each_index do |i|
           ip = iface[cint][:configuration][:ip_address][i]
-          _ip = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
+          ip2 = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
           iface[cint][:addresses][ip] = Mash.new(
-                                                 :prefixlen => _ip.prefix
+                                                 :prefixlen => ip2.prefix
                                                  )
-          if _ip.ipv6?
+          if ip2.ipv6?
             # inet6 address
             iface[cint][:addresses][ip][:family] = "inet6"
             iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
           else
             # should be an inet4 address
-            iface[cint][:addresses][ip][:netmask] = _ip.netmask.to_s
+            iface[cint][:addresses][ip][:netmask] = ip2.netmask.to_s
             if iface[cint][:configuration][:ip_use_zero_broadcast]
-              iface[cint][:addresses][ip][:broadcast] = _ip.network.to_s
+              iface[cint][:addresses][ip][:broadcast] = ip2.network.to_s
             else
-              iface[cint][:addresses][ip][:broadcast] = _ip.broadcast.to_s
+              iface[cint][:addresses][ip][:broadcast] = ip2.broadcast.to_s
             end
             iface[cint][:addresses][ip][:family] = "inet"
           end

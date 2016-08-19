@@ -170,10 +170,10 @@ shared_examples "Ohai::DSL::Plugin" do
 
             describe "and an intermediate key is not a hash" do
               it "raises a TypeError" do
-                expect {
+                expect do
                   plugin.get_attribute("the_monarch", "arch_rival",
                                        "dr_venture", "since")
-                }.to raise_error(TypeError,
+                end.to raise_error(TypeError,
                                  "Expected Hash but got String.")
               end
             end
@@ -204,10 +204,10 @@ shared_examples "Ohai::DSL::Plugin" do
 
             describe "and an intermediate key is not a hash" do
               it "raises a TypeError" do
-                expect {
+                expect do
                   plugin.get_attribute(:the_monarch, :arch_rival,
                                        :dr_venture, :since)
-                }.to raise_error(TypeError,
+                end.to raise_error(TypeError,
                                  "Expected Hash but got String.")
               end
             end
@@ -277,10 +277,10 @@ shared_examples "Ohai::DSL::Plugin" do
 
             describe "and an intermediate key is not a hash" do
               it "raises a TypeError" do
-                expect {
+                expect do
                   plugin.attribute?("the_monarch", "arch_rival",
                                     "dr_venture", "since")
-                }.to raise_error(TypeError,
+                end.to raise_error(TypeError,
                                  "Expected Hash but got String.")
               end
             end
@@ -310,10 +310,10 @@ shared_examples "Ohai::DSL::Plugin" do
 
             describe "and an intermediate key is not a hash" do
               it "raises a TypeError" do
-                expect {
+                expect do
                   plugin.attribute?(:the_monarch, :arch_rival,
                                     :dr_venture, :since)
-                }.to raise_error(TypeError,
+                end.to raise_error(TypeError,
                                  "Expected Hash but got String.")
               end
             end
@@ -369,11 +369,11 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects from multiple provides statements" do
-      plugin = Ohai.plugin(:Test) {
+      plugin = Ohai.plugin(:Test) do
         provides("one")
         provides("two", "three")
         provides("four")
-      }
+      end
       expect(plugin.provides_attrs).to eql(%w{one two three four})
     end
 
@@ -402,11 +402,11 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects from multiple depends statements" do
-      plugin = Ohai.plugin(:Test) {
+      plugin = Ohai.plugin(:Test) do
         depends("one")
         depends("two", "three")
         depends("four")
-      }
+      end
       expect(plugin.depends_attrs).to eql(%w{one two three four})
     end
 
@@ -442,11 +442,11 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "saves multiple collect_data blocks" do
-      plugin = Ohai.plugin(:Test) {
+      plugin = Ohai.plugin(:Test) do
         collect_data {}
         collect_data(:windows) {}
         collect_data(:darwin) {}
-      }
+      end
       [:darwin, :default, :windows].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
@@ -461,21 +461,21 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "fails a platform has already been defined in the same plugin" do
-      expect {
-        Ohai.plugin(:Test) {
+      expect do
+        Ohai.plugin(:Test) do
           collect_data {}
           collect_data {}
-        }
-      }.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+        end
+      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
 
     it "fails if a platform has already been defined in another plugin file" do
       Ohai.plugin(:Test) { collect_data {} }
-      expect {
-        Ohai.plugin(:Test) {
+      expect do
+        Ohai.plugin(:Test) do
           collect_data {}
-        }
-      }.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+        end
+      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
   end
 

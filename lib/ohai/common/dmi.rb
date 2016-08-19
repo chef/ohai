@@ -24,7 +24,7 @@ module Ohai
       # all-lowercase, all non-alphanumeric converted to '_'
       # 128-255 are 'oem_data_[id]'
       # Everything else is 'unknown'
-      IdToDescription = {
+      ID_TO_DESCRIPTION = {
         0 =>   "bios",
         1 =>   "system",
         2 =>   "base_board",
@@ -71,7 +71,7 @@ module Ohai
 
       # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
       # See OHAI-260. When we can give the user a choice, this will be a default.
-      IdToCapture = [ 0, 1, 2, 3, 4, 6, 11 ]
+      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
 
       # look up DMI ID
       def id_lookup(id)
@@ -79,8 +79,8 @@ module Ohai
           id = id.to_i
           if (id >= 128) && (id <= 255)
             id = "oem_data_#{id}"
-          elsif DMI::IdToDescription.has_key?(id)
-            id = DMI::IdToDescription[id]
+          elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
+            id = DMI::ID_TO_DESCRIPTION[id]
           else
             Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
             id = "unknown"
@@ -95,12 +95,12 @@ module Ohai
       # for single occurrences of one type, copy to top level all fields and values
       # for multiple occurrences of same type, copy to top level all fields and values that are common to all records
       def convenience_keys(dmi)
-        dmi.each { |type, records|
+        dmi.each do |type, records|
           in_common = Mash.new
           next unless records.class.to_s == "Mash"
           next unless records.has_key?("all_records")
-          records[:all_records].each { |record|
-            record.each { |field, value|
+          records[:all_records].each do |record|
+            record.each do |field, value|
               next if value.class.to_s == "Mash"
               next if field.to_s == "application_identifier"
               next if field.to_s == "size"
@@ -112,13 +112,13 @@ module Ohai
               else
                 in_common[translated] = value
               end
-            }
-          }
-          in_common.each { |field, value|
+            end
+          end
+          in_common.each do |field, value|
             next if value == nil
             dmi[type][field] = value.strip
-          }
-        }
+          end
+        end
       end
 
       module_function :id_lookup, :convenience_keys

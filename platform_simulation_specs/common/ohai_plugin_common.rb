@@ -60,8 +60,6 @@ module OhaiPluginCommon
   def read_output( cmd, path = "#{data_path}" )
     #using an anonymous class to minimize scoping issues.
     @data = Class.new do
-      @instances
-
       #DSL - make a list of hashes with
       def push(param, value)
         @instances ||= []

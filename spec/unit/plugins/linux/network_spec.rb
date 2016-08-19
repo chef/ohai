@@ -29,7 +29,8 @@ end
 describe Ohai::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }
 
-  let(:linux_ifconfig) { <<-EOM
+  let(:linux_ifconfig) do
+    <<-EOM
 eth0      Link encap:Ethernet  HWaddr 12:31:3D:02:BE:A2
           inet addr:10.116.201.76  Bcast:10.116.201.255  Mask:255.255.255.0
           inet6 addr: fe80::1031:3dff:fe02:bea2/64 Scope:Link
@@ -149,9 +150,10 @@ fwdintf   Link encap:Ethernet  HWaddr 00:00:00:00:00:0a
 EOM
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
-  }
+  end
 
-  let(:linux_ip_route) { <<-EOM
+  let(:linux_ip_route) do
+    <<-EOM
 10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -160,26 +162,29 @@ EOM
 10.5.4.0/24 \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
 default via 10.116.201.1 dev eth0
 EOM
-  }
+  end
 
-  let(:linux_route_n) { <<-EOM
+  let(:linux_route_n) do
+    <<-EOM
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
 0.0.0.0         10.116.201.1    0.0.0.0         UG    0      0        0 eth0
 EOM
-  }
+  end
 
-  let(:linux_ip_route_inet6) { <<-EOM
+  let(:linux_ip_route_inet6) do
+    <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 EOM
-  }
+  end
 
-  let(:linux_ip_addr) { <<-EOM
+  let(:linux_ip_addr) do
+    <<-EOM
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -236,9 +241,10 @@ EOM
 13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN group default qlen 1000
     link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff
 EOM
-  }
+  end
 
-  let(:linux_ip_link_s_d) { <<-EOM
+  let(:linux_ip_link_s_d) do
+    <<-EOM
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     RX: bytes  packets  errors  dropped overrun mcast
@@ -295,26 +301,30 @@ EOM
     TX: bytes  packets  errors  dropped carrier collsns
     140        2        0       1       0       0
 EOM
-  }
+  end
 
-  let(:linux_arp_an) { <<-EOM
+  let(:linux_arp_an) do
+    <<-EOM
 ? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
 EOM
-  }
+  end
 
-  let(:linux_ip_neighbor_show) { <<-EOM
+  let(:linux_ip_neighbor_show) do
+    <<-EOM
 10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
 EOM
-  }
+  end
 
-  let(:linux_ip_inet6_neighbor_show) { <<-EOM
+  let(:linux_ip_inet6_neighbor_show) do
+    <<-EOM
 1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.11 lladdr 00:1c:0e:30:28:00 router REACHABLE
 fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
 EOM
-  }
+  end
 
-  let(:linux_ethtool) { <<-EOM
+  let(:linux_ethtool) do
+    <<-EOM
 Settings for eth0:
         Supported ports: [ FIBRE ]
         Supported link modes:   1000baseT/Full
@@ -337,9 +347,10 @@ Settings for eth0:
                                drv probe link
         Link detected: yes
 EOM
-  }
+  end
 
-  let(:linux_ethtool_g) { <<-EOM
+  let(:linux_ethtool_g) do
+    <<-EOM
 Ring parameters for eth0:
 Pre-set maximums:
 RX:		8192
@@ -353,7 +364,7 @@ RX Jumbo:	0
 TX:		8192
 
 EOM
-  }
+  end
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -392,7 +403,7 @@ EOM
     end
   end
 
-  describe '#interface_has_no_addresses_in_family?' do
+  describe "#interface_has_no_addresses_in_family?" do
     context "when interface has no addresses" do
       let(:iface) { {} }
 
@@ -418,7 +429,7 @@ EOM
     end
   end
 
-  describe '#interface_have_address?' do
+  describe "#interface_have_address?" do
     context "when interface has no addresses" do
       let(:iface) { {} }
 
@@ -444,7 +455,7 @@ EOM
     end
   end
 
-  describe '#interface_address_not_link_level?' do
+  describe "#interface_address_not_link_level?" do
     context "when the address scope is link" do
       let(:iface) { { addresses: { "1.2.3.4" => { scope: "Link" } } } }
 
@@ -462,7 +473,7 @@ EOM
     end
   end
 
-  describe '#interface_valid_for_route?' do
+  describe "#interface_valid_for_route?" do
     let(:iface)   { double("iface") }
     let(:address) { "1.2.3.4" }
     let(:family)  { "inet" }
@@ -508,7 +519,7 @@ EOM
     end
   end
 
-  describe '#route_is_valid_default_route?' do
+  describe "#route_is_valid_default_route?" do
     context "when the route destination is default" do
       let(:route)         { { destination: "default" } }
       let(:default_route) { double("default_route") }
@@ -722,19 +733,21 @@ EOM
       end
 
       describe "with a link level default route" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel
 default dev eth0 scope link
 EOM
-        }
+        end
 
-        let(:linux_route_n) { <<-EOM
+        let(:linux_route_n) do
+          <<-EOM
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
 0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -750,19 +763,21 @@ EOM
       end
 
       describe "with a subinterface" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
 default via 192.168.0.15 dev eth0.11
 EOM
-        }
+        end
 
-        let(:linux_route_n) { <<-EOM
+        let(:linux_route_n) do
+          <<-EOM
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 192.168.0.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0.11
 0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -857,12 +872,13 @@ EOM
       end
 
       describe "when there isn't a source field in route entries and no ipv6 default routes" do
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -882,7 +898,8 @@ EOM
       end
 
       describe "when there's a source field in the default route entry" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -890,15 +907,16 @@ EOM
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0  src 10.116.201.76
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -919,7 +937,8 @@ EOM
       end
 
       describe "when there're several default routes" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -928,16 +947,17 @@ EOM
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -960,7 +980,8 @@ EOM
       end
 
       describe "when there're a mixed setup of routes that could be used to set ipaddress" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -969,16 +990,17 @@ EOM
 default via 10.116.201.1 dev eth0 metric 10
 default via 10.116.201.254 dev eth0 metric 9 src 10.116.201.74
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -999,7 +1021,8 @@ EOM
       end
 
       describe "when there's a source field in a local route entry but it isnt in the default route" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
@@ -1007,15 +1030,16 @@ EOM
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 default via 10.116.201.1 dev eth0
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 EOM
-        }
+        end
 
         it "completes the run" do
           expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
@@ -1050,11 +1074,12 @@ EOM
           end
 
           context "when then ipv4 interface has the NOARP flag and no ipv6 routes exist" do
-            let(:linux_ip_route) { <<-EOM
+            let(:linux_ip_route) do
+              <<-EOM
 10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
 default via 172.16.19.1 dev tun0
 EOM
-            }
+            end
             let(:linux_ip_route_inet6) { "" }
 
             it "completes the run" do
@@ -1072,10 +1097,11 @@ EOM
       end
 
       describe "with a link level default route" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 default dev venet0 scope link
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -1092,10 +1118,11 @@ EOM
       end
 
       describe "with a link level default route to an unaddressed int" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 default dev eth3 scope link
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -1116,10 +1143,11 @@ EOM
       end
 
       describe "with a link level default route with a source" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 default dev fwdintf scope link src 2.2.2.2
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -1140,11 +1168,12 @@ EOM
       end
 
       describe "when not having a global scope ipv6 address" do
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
 EOM
-        }
+        end
         before(:each) do
           plugin.run
         end
@@ -1161,21 +1190,23 @@ EOM
       end
 
       describe "with no default route" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
 192.168.5.0/24 dev eth0  proto kernel  src 192.168.5.1
 192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
 172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
 192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -1197,7 +1228,8 @@ EOM
 
       describe "with openvz setup" do
         let(:linux_ip_route) { "default dev venet0  scope link" }
-        let(:linux_ip_addr) { <<-EOM
+        let(:linux_ip_addr) do
+          <<-EOM
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -1210,7 +1242,7 @@ EOM
     inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
        valid_lft 6128sec preferred_lft 2526sec
 EOM
-        }
+        end
         # We don't have the corresponding ipv6 data for these tests
         let(:linux_ip_route_inet6) { "" }
         let(:linux_ip_inet6_neighbor_show) { "" }
@@ -1241,22 +1273,24 @@ EOM
       end
 
       describe "with irrelevant routes (container setups)" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 10.116.201.0/26 dev eth0 proto kernel  src 10.116.201.39
 10.116.201.0/26 dev if4 proto kernel  src 10.116.201.45
 10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
 10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
 default via 10.116.201.1 dev eth0  src 10.116.201.99
 EOM
-        }
+        end
 
-        let(:linux_ip_route_inet6) { <<-EOM
+        let(:linux_ip_route_inet6) do
+          <<-EOM
 fe80::/64 dev eth0  proto kernel  metric 256
 fe80::/64 dev eth0.11  proto kernel  metric 256
 1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
 default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 EOM
-        }
+        end
 
         before(:each) do
           plugin.run
@@ -1284,10 +1318,11 @@ EOM
 
       # This should never happen in the real world.
       describe "when encountering a surprise interface" do
-        let(:linux_ip_route) { <<-EOM
+        let(:linux_ip_route) do
+          <<-EOM
 192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
 EOM
-        }
+        end
 
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
           expect(Ohai::Log).to receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
@@ -1297,7 +1332,8 @@ EOM
       end
 
       describe "when running with ip version ss131122" do
-        let(:linux_ip_link_s_d) { <<-EOM
+        let(:linux_ip_link_s_d) do
+          <<-EOM
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
     RX: bytes  packets  errors  dropped overrun mcast
@@ -1330,7 +1366,7 @@ EOM
     TX: bytes  packets  errors  dropped carrier collsns
     691785313  1919690  0       0       0       0
 EOM
-        }
+        end
 
         it "adds the vlan information of an interface" do
           plugin.run

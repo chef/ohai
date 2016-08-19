@@ -35,7 +35,7 @@ module Ohai
     # specified by calling `require_plugin` with a relative path. To manage
     # this, we track the path and root of each file as we discover them so we
     # can feed this into the v6 "dependency solver" as we load them.
-    class PluginFile < Struct.new(:path, :plugin_root)
+    PluginFile = Struct.new(:path, :plugin_root) do
 
       # Finds all the *.rb files under the configured paths in :plugin_path
       def self.find_all_in(plugin_dir)

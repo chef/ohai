@@ -21,7 +21,7 @@ require "spec_helper"
 describe Ohai::System, "plugin digital_ocean" do
   let(:plugin) { get_plugin("digital_ocean") }
   let(:digitalocean_path) { "/etc/digitalocean" }
-  let(:hint) {
+  let(:hint) do
     {
       "droplet_id" => 12345678,
       "name" => "example.com",
@@ -33,7 +33,7 @@ describe Ohai::System, "plugin digital_ocean" do
         "private" => "5.6.7.8",
       },
     }
-  }
+  end
 
   before do
     plugin[:network] = {

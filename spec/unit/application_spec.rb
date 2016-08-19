@@ -34,7 +34,7 @@ RSpec.describe "Ohai::Application" do
     ARGV.replace(@original_argv)
   end
 
-  describe '#configure_ohai' do
+  describe "#configure_ohai" do
     describe "loading configuration from a file" do
       let(:config_file) { "/local/workstation/config" }
       let(:config_loader) { instance_double("ChefConfig::WorkstationConfigLoader") }

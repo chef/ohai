@@ -21,7 +21,7 @@ require "open-uri"
 
 describe Ohai::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }
-  let(:hint) {
+  let(:hint) do
     {
       "public_ip" => "137.135.46.202",
       "vm_name" => "test-vm",
@@ -29,7 +29,7 @@ describe Ohai::System, "plugin azure" do
       "public_ssh_port" => "22",
       "public_winrm_port" => "5985",
     }
-  }
+  end
 
   shared_examples_for "!azure" do
     it "does not set the azure attribute" do

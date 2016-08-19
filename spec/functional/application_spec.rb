@@ -35,7 +35,7 @@ RSpec.describe "Ohai::Application" do
     ARGV.replace(@original_argv)
   end
 
-  describe '#configure_ohai' do
+  describe "#configure_ohai" do
 
     let(:config_content) { "" }
     let(:config_dir) { Dir.mktmpdir(".chef") }

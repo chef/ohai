@@ -78,12 +78,12 @@ describe "Ohai::Util::IpHelper" do
       allow(ip_helper).to receive(:private_address?)
     end
 
-    it 'should call #private_address?' do
+    it "should call #private_address?" do
       expect(ip_helper).to receive(:private_address?)
       ip_helper.public_address?(address)
     end
 
-    it 'should return the inverse of #private_address?' do
+    it "should return the inverse of #private_address?" do
       expect(ip_helper.public_address?(address)).to equal !ip_helper.private_address?(address)
     end
   end

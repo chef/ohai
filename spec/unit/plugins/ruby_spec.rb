@@ -47,8 +47,9 @@ describe Ohai::System, "plugin ruby" do
     :host_os => ::RbConfig::CONFIG["host_os"],
     :host_vendor => ::RbConfig::CONFIG["host_vendor"],
     :gems_dir => `#{ruby_bin} #{::RbConfig::CONFIG["bindir"]}/gem env gemdir`.chomp,
-    :gem_bin => [ ::Gem.default_exec_format % "gem", "gem" ].map {|bin| "#{::RbConfig::CONFIG['bindir']}/#{bin}"
-    }.find { |bin| ::File.exists? bin },
+    :gem_bin => [ ::Gem.default_exec_format % "gem", "gem" ].map do |bin|
+      "#{::RbConfig::CONFIG['bindir']}/#{bin}"
+    end.find { |bin| ::File.exists? bin },
     :ruby_bin => ruby_bin,
   }.each do |attribute, value|
     it "should have #{attribute} set to #{value.inspect}" do

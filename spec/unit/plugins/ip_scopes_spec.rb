@@ -8,9 +8,10 @@ end
 describe Ohai::System, "plugin ip_scopes" do
   let(:plugin) { get_plugin("ip_scopes") }
   let(:network) { Mash.new(:interfaces => interfaces) }
-  let(:interfaces) { Hash[
+  let(:interfaces) do
+    Hash[
       interface1, { :addresses => addresses1, :type => interface1_type },
-      interface2, { :addresses => addresses2, :type => interface2_type }] }
+      interface2, { :addresses => addresses2, :type => interface2_type }] end
   let(:interface1) { :eth0 }
   let(:interface2) { :eth1 }
   let(:addresses1) { {} }

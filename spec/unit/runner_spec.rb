@@ -101,15 +101,15 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when running a plugin with no dependencies, Ohai::Runner" do
-    let(:plugin) {
-      klass = Ohai.plugin(:Test) {
+    let(:plugin) do
+      klass = Ohai.plugin(:Test) do
         provides("thing")
-        collect_data {
+        collect_data do
           thing(Mash.new)
-        }
-      }
+        end
+      end
       klass.new(@ohai.data)
-    }
+    end
 
     it "should run the plugin" do
       @runner.run_plugin(plugin)
@@ -126,13 +126,13 @@ describe Ohai::Runner, "run_plugin" do
   describe "when running a plugin with one dependency" do
     describe "when the dependency does not exist" do
       before(:each) do
-        klass = Ohai.plugin(:Test) {
+        klass = Ohai.plugin(:Test) do
           provides("thing")
           depends("other_thing")
-          collect_data {
+          collect_data do
             thing(other_thing)
-          }
-        }
+          end
+        end
         @plugin = klass.new(@ohai.data)
       end
 
@@ -148,19 +148,19 @@ describe Ohai::Runner, "run_plugin" do
 
     describe "when the dependency has a single provider" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) {
+        klass1 = Ohai.plugin(:Thing) do
           provides("thing")
-          collect_data {
+          collect_data do
             thing("thang")
-          }
-        }
-        klass2 = Ohai.plugin(:Other) {
+          end
+        end
+        klass2 = Ohai.plugin(:Other) do
           provides("other")
           depends("thing")
-          collect_data {
+          collect_data do
             other(thing)
-          }
-        }
+          end
+        end
 
         @plugins = []
         [klass1, klass2].each do |klass|
@@ -181,19 +181,19 @@ describe Ohai::Runner, "run_plugin" do
 
     describe "when the dependency has multiple providers" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) {
+        klass1 = Ohai.plugin(:Thing) do
           provides("thing")
-          collect_data {
+          collect_data do
             thing(Mash.new)
-          }
-        }
-        klass2 = Ohai.plugin(:Other) {
+          end
+        end
+        klass2 = Ohai.plugin(:Other) do
           provides("other")
           depends("thing")
-          collect_data {
+          collect_data do
             other(thing)
-          }
-        }
+          end
+        end
 
         @plugins = []
         [klass1, klass1, klass2].each do |klass|
@@ -219,25 +219,25 @@ describe Ohai::Runner, "run_plugin" do
       @ohai = Ohai::System.new
       @runner = Ohai::Runner.new(@ohai, true)
 
-      klass1 = Ohai.plugin(:One) {
+      klass1 = Ohai.plugin(:One) do
         provides("one")
-        collect_data {
+        collect_data do
           one(1)
-        }
-      }
-      klass2 = Ohai.plugin(:Two) {
+        end
+      end
+      klass2 = Ohai.plugin(:Two) do
         provides("two")
-        collect_data {
+        collect_data do
           two(2)
-        }
-      }
-      klass3 = Ohai.plugin(:Three) {
+        end
+      end
+      klass3 = Ohai.plugin(:Three) do
         provides("three")
         depends("one", "two")
-        collect_data {
+        collect_data do
           three(3)
-        }
-      }
+        end
+      end
 
       @plugins = []
       [klass1, klass2, klass3].each do |klass|
@@ -282,20 +282,20 @@ describe Ohai::Runner, "run_plugin" do
 
     context "when there is one edge in the cycle (A->B and B->A)" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) {
+        klass1 = Ohai.plugin(:Thing) do
           provides("thing")
           depends("other")
-          collect_data {
+          collect_data do
             thing(other)
-          }
-        }
-        klass2 = Ohai.plugin(:Other) {
+          end
+        end
+        klass2 = Ohai.plugin(:Other) do
           provides("other")
           depends("thing")
-          collect_data {
+          collect_data do
             other(thing)
-          }
-        }
+          end
+        end
 
         @plugins = []
         [klass1, klass2].each_with_index do |klass, idx|
@@ -319,35 +319,35 @@ describe Ohai::Runner, "run_plugin" do
       @ohai = Ohai::System.new
       @runner = Ohai::Runner.new(@ohai, true)
 
-      klassA = Ohai.plugin(:A) {
+      klass_a = Ohai.plugin(:A) do
         provides("A")
         depends("B", "C")
         collect_data {}
-      }
-      klassB = Ohai.plugin(:B) {
+      end
+      klass_b = Ohai.plugin(:B) do
         provides("B")
         depends("C")
         collect_data {}
-      }
-      klassC = Ohai.plugin(:C) {
+      end
+      klass_c = Ohai.plugin(:C) do
         provides("C")
         collect_data {}
-      }
+      end
 
       @plugins = []
-      [klassA, klassB, klassC].each do |klass|
+      [klass_a, klass_b, klass_c].each do |klass|
         @plugins << klass.new(@ohai.data)
       end
-      @pluginA, @pluginB, @pluginC = @plugins
+      @plugin_a, @plugin_b, @plugin_c = @plugins
     end
 
     it "should not detect a cycle when B is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
-      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
-      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
+      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
+      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
+      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
 
       expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
-      @runner.run_plugin(@pluginA)
+      @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
         expect(plugin.has_run?).to be true
@@ -355,12 +355,12 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when C is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@pluginA, ["A"])
-      @ohai.provides_map.set_providers_for(@pluginC, ["C"])
-      @ohai.provides_map.set_providers_for(@pluginB, ["B"])
+      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
+      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
+      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
 
       expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
-      @runner.run_plugin(@pluginA)
+      @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
         expect(plugin.has_run?).to be true
@@ -414,27 +414,27 @@ describe Ohai::Runner, "#get_cycle" do
     @ohai = Ohai::System.new
     @runner = Ohai::Runner.new(@ohai, true)
 
-    klass1 = Ohai.plugin(:One) {
+    klass1 = Ohai.plugin(:One) do
       provides("one")
       depends("two")
-      collect_data {
+      collect_data do
         one(two)
-      }
-    }
-    klass2 = Ohai.plugin(:Two) {
+      end
+    end
+    klass2 = Ohai.plugin(:Two) do
       provides("two")
       depends("one")
-      collect_data {
+      collect_data do
         two(one)
-      }
-    }
-    klass3 = Ohai.plugin(:Three) {
+      end
+    end
+    klass3 = Ohai.plugin(:Three) do
       provides("three")
       depends("two")
-      collect_data {
+      collect_data do
         three(two)
-      }
-    }
+      end
+    end
 
     plugins = []
     [klass1, klass2, klass3].each_with_index do |klass, idx|

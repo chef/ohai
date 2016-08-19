@@ -27,12 +27,12 @@ describe Ohai::System, "AIX virtualization plugin" do
       allow(p).to receive(:collect_os).and_return(:aix)
       allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
       allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
-      allow(p).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, @lswpar_L, nil))
+      allow(p).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, @lswpar_l, nil))
       p
     end
 
     before(:each) do
-      @lswpar_L = <<-LSWPAR_L
+      @lswpar_l = <<-LSWPAR_L
 =================================================================
 applejack-541ba3 - Active
 =================================================================

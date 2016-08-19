@@ -24,10 +24,10 @@ Ohai.plugin(:IpScopes) do
     begin
       require "ipaddr_extensions"
 
-      network["interfaces"].keys.sort.each do |ifName|
-        next if network["interfaces"][ifName]["addresses"].nil?
+      network["interfaces"].keys.sort.each do |if_name|
+        next if network["interfaces"][if_name]["addresses"].nil?
 
-        interface = network["interfaces"][ifName]
+        interface = network["interfaces"][if_name]
         interface["addresses"].each do |address, attrs|
           begin
             attrs["ip_scope"] = address.to_ip.scope

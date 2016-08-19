@@ -19,7 +19,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX filesystem plugin" do
   before(:each) do
-    @df_Pk_LPAR = <<-DF_PK
+    @df_pk_lpar = <<-DF_PK
 Filesystem    1024-blocks      Used Available Capacity Mounted on
 /dev/hd4          2097152    219796   1877356      11% /
 /dev/hd2          5242880   2416828   2826052      47% /usr
@@ -46,7 +46,7 @@ Filesystem    1024-blocks      Used Available Capacity Mounted on
 /dev/fslv12      10485760    272376  10213384       3% /wpars/toolchain-tester-5c969f/var
 DF_PK
 
-    @df_Pk_WPAR = <<-DF_PK
+    @df_pk_wpar = <<-DF_PK
 Filesystem    1024-blocks      Used Available Capacity Mounted on
 Global           10485760    130872  10354888       2% /
 Global            5242880     39572   5203308       1% /home
@@ -57,7 +57,7 @@ Global            5242880   2725048   2517832      52% /usr
 Global           10485760    272376  10213384       3% /var
 DF_PK
 
-    @mount_LPAR = <<-MOUNT
+    @mount_lpar = <<-MOUNT
   node       mounted        mounted over    vfs       date        options
 -------- ---------------  ---------------  ------ ------------ ---------------
          /dev/hd4         /                jfs2   Jul 17 13:22 rw,log=/dev/hd8
@@ -71,7 +71,7 @@ DF_PK
 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
 MOUNT
 
-    @mount_WPAR = <<-MOUNT
+    @mount_wpar = <<-MOUNT
   node       mounted        mounted over    vfs       date        options
 -------- ---------------  ---------------  ------ ------------ ---------------
          Global           /                jfs2   Nov 23 21:03 rw,log=NULL
@@ -91,8 +91,8 @@ MOUNT
 
   context "when run within an LPAR" do
     before do
-      allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_Pk_LPAR, nil))
-      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_LPAR, nil))
+      allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_pk_lpar, nil))
+      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_lpar, nil))
       @plugin.run
     end
 
@@ -153,8 +153,8 @@ MOUNT
 
   context "when run within a WPAR" do
     before do
-      allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_Pk_WPAR, nil))
-      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_WPAR, nil))
+      allow(@plugin).to receive(:shell_out).with("df -Pk").and_return(mock_shell_out(0, @df_pk_wpar, nil))
+      allow(@plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @mount_wpar, nil))
       @plugin.run
     end
 

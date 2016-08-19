@@ -76,9 +76,9 @@ module Ohai
 
         # Remove the already ran plugins from dependencies if force is not set
         # Also remove the plugin that we are about to run from dependencies as well.
-        dependency_providers.delete_if { |dep_plugin|
+        dependency_providers.delete_if do |dep_plugin|
           dep_plugin.has_run? || dep_plugin.eql?(next_plugin)
-        }
+        end
 
         if dependency_providers.empty?
           @safe_run ? next_plugin.safe_run : next_plugin.run

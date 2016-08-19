@@ -90,7 +90,7 @@ module Ohai
                                 option_might_be_deprecated(option)
                               else
                                 option_deprecated(option)
-          end
+                              end
         Ohai::Log.warn(deprecation_warning)
         value
       end

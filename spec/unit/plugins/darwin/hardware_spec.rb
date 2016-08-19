@@ -27,7 +27,7 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     allow(plugin).to receive(:shell_out).with(
       "system_profiler SPHardwareDataType -xml"
     ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::Hardware, "")
+      mock_shell_out(0, HardwareSystemProfilerOutput::HARDWARE, "")
     )
 
     allow(plugin).to receive(:shell_out).with(
@@ -57,13 +57,13 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     allow(plugin).to receive(:shell_out).with(
       "system_profiler SPStorageDataType -xml"
     ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::Storage, "")
+      mock_shell_out(0, HardwareSystemProfilerOutput::STORAGE, "")
     )
 
     allow(plugin).to receive(:shell_out).with(
       "system_profiler SPPowerDataType -xml"
     ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::Power, "")
+      mock_shell_out(0, HardwareSystemProfilerOutput::POWER, "")
     )
   end
 

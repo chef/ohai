@@ -194,5 +194,15 @@ Ohai.plugin(:Virtualization) do
       virtualization[:role] = "guest"
       virtualization[:systems][:docker] = "guest"
     end
+
+    # Detect LXD
+    # See https://github.com/lxc/lxd/blob/master/doc/dev-lxd.md
+    if File.exist?("/dev/lxd/sock")
+      virtualization[:system] = "lxd"
+      virtualization[:role] = "guest"
+    elsif File.exist?("/var/lib/lxd/devlxd")
+      virtualization[:system] = "lxd"
+      virtualization[:role] = "host"
+    end
   end
 end

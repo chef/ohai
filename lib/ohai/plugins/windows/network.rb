@@ -25,6 +25,34 @@ Ohai.plugin(:Network) do
     encap
   end
 
+  def mac_addresses(iface)
+    prop = iface[:configuration][:mac_address] || iface[:instance][:network_addresses]
+    [prop].flatten.map { |addr| addr.include?(":") ? addr : addr.scan(/.{1,2}/).join(":") }
+  end
+
+  def network_data
+    @network_data ||= begin
+      data = {}
+      wmi = WmiLite::Wmi.new
+      data[:addresses] = wmi.instances_of("Win32_NetworkAdapterConfiguration")
+
+      # If we are running on windows nano or anothe roperating system from the future
+      # that does not populate the deprecated win32_* WMI classes, then we should
+      # grab data from the newer MSFT_* classes
+      return msft_adapter_data if data[:addresses].count.zero?
+      data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
+      data
+    end
+  end
+
+  def msft_adapter_data
+    data = {}
+    wmi = WmiLite::Wmi.new("ROOT/StandardCimv2")
+    data[:addresses] = wmi.instances_of("MSFT_NetIPAddress")
+    data[:adapters] = wmi.instances_of("MSFT_NetAdapter")
+    data
+  end
+
   collect_data(:windows) do
 
     require "wmi-lite/wmi"
@@ -37,26 +65,20 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
-    # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394217%28v=vs.85%29.aspx
-    wmi = WmiLite::Wmi.new
-
-    adapters = wmi.instances_of("Win32_NetworkAdapterConfiguration")
-
-    adapters.each do |adapter|
-
-      i = adapter["index"]
-      iface_config[i] = Mash.new
+    network_data[:addresses].each do |adapter|
+      i = adapter["index"] || adapter["InterfaceIndex"]
+      iface_config[i] = Mash.new unless iface_config[i]
+      iface_config[i][:ip_address] ||= []
+      iface_config[i][:ip_address] << adapter["IPAddress"]
       adapter.wmi_ole_object.properties_.each do |p|
-        iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
+        if iface_config[i][p.name.wmi_underscore.to_sym].nil?
+          iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
+        end
       end
     end
 
-    # http://msdn.microsoft.com/en-us/library/windows/desktop/aa394216(v=vs.85).aspx
-
-    adapters = wmi.instances_of("Win32_NetworkAdapter")
-
-    adapters.each do |adapter|
-      i = adapter["index"]
+    network_data[:adapters].each do |adapter|
+      i = adapter["index"] || adapter["InterfaceIndex"]
       iface_instance[i] = Mash.new
       adapter.wmi_ole_object.properties_.each do |p|
         iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
@@ -64,45 +86,45 @@ Ohai.plugin(:Network) do
     end
 
     iface_instance.keys.each do |i|
-      if iface_config[i][:ip_enabled] && iface_instance[i][:net_connection_id]
-        cint = sprintf("0x%x", iface_instance[i][:interface_index] ? iface_instance[i][:interface_index] : iface_instance[i][:index] ).downcase
+      if iface_instance[i][:name] && iface_config[i] && iface_config[i][:ip_address][0]
+        cint = sprintf("0x%x", (iface_instance[i][:interface_index] || iface_instance[i][:index]) ).downcase
         iface[cint] = Mash.new
         iface[cint][:configuration] = iface_config[i]
         iface[cint][:instance] = iface_instance[i]
 
         iface[cint][:counters] = Mash.new
         iface[cint][:addresses] = Mash.new
-        iface[cint][:configuration][:ip_address].each_index do |i|
-          ip = iface[cint][:configuration][:ip_address][i]
-          ip2 = IPAddress("#{ip}/#{iface[cint][:configuration][:ip_subnet][i]}")
-          iface[cint][:addresses][ip] = Mash.new(
-                                                 :prefixlen => ip2.prefix
-                                                 )
+        iface[cint][:configuration][:ip_address] = iface[cint][:configuration][:ip_address].flatten
+        iface[cint][:configuration][:ip_address].each_index do |ip_index|
+          ip = iface[cint][:configuration][:ip_address][ip_index]
+          ip_and_subnet = ip.dup
+          ip_and_subnet << "/#{iface[cint][:configuration][:ip_subnet][ip_index]}" if iface[cint][:configuration][:ip_subnet]
+          ip2 = IPAddress(ip_and_subnet)
+          iface[cint][:addresses][ip] = Mash.new(:prefixlen => ip2.prefix)
           if ip2.ipv6?
-            # inet6 address
             iface[cint][:addresses][ip][:family] = "inet6"
             iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
           else
-            # should be an inet4 address
-            iface[cint][:addresses][ip][:netmask] = ip2.netmask.to_s
-            if iface[cint][:configuration][:ip_use_zero_broadcast]
-              iface[cint][:addresses][ip][:broadcast] = ip2.network.to_s
-            else
-              iface[cint][:addresses][ip][:broadcast] = ip2.broadcast.to_s
+            if iface[cint][:configuration][:ip_subnet]
+              iface[cint][:addresses][ip][:netmask] = ip2.netmask.to_s
+              if iface[cint][:configuration][:ip_use_zero_broadcast]
+                iface[cint][:addresses][ip][:broadcast] = ip2.network.to_s
+              else
+                iface[cint][:addresses][ip][:broadcast] = ip2.broadcast.to_s
+              end
             end
             iface[cint][:addresses][ip][:family] = "inet"
           end
         end
-        # Apparently you can have more than one mac_address? Odd.
-        [iface[cint][:configuration][:mac_address]].flatten.each do |mac_addr|
+        mac_addresses(iface[cint]).each do |mac_addr|
           iface[cint][:addresses][mac_addr] = {
             "family" => "lladdr",
           }
         end
-        iface[cint][:mtu] = iface[cint][:configuration][:mtu]
-        iface[cint][:type] = iface[cint][:instance][:adapter_type]
+        iface[cint][:mtu] = iface[cint][:configuration][:mtu] if iface[cint][:configuration].has_key?(:mtu)
+        iface[cint][:type] = iface[cint][:instance][:adapter_type] if iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
-        iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type])
+        iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type]) if iface[cint][:instance][:adapter_type]
         if iface[cint][:configuration][:default_ip_gateway] != nil && iface[cint][:configuration][:default_ip_gateway].size > 0
           network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
           network[:default_interface] = cint

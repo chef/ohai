@@ -22,21 +22,8 @@ Ohai.plugin(:LSB) do
   collect_data(:linux) do
     lsb Mash.new
 
-    if File.exists?("/etc/lsb-release")
-      File.open("/etc/lsb-release").each do |line|
-        case line
-        when /^DISTRIB_ID=["']?(.+?)["']?$/
-          lsb[:id] = $1
-        when /^DISTRIB_RELEASE=["']?(.+?)["']?$/
-          lsb[:release] = $1
-        when /^DISTRIB_CODENAME=["']?(.+?)["']?$/
-          lsb[:codename] = $1
-        when /^DISTRIB_DESCRIPTION=["']?(.+?)["']?$/
-          lsb[:description] = $1
-        end
-      end
-    elsif File.exists?("/usr/bin/lsb_release")
-      # Fedora/Redhat, requires redhat-lsb package
+    if File.exists?("/usr/bin/lsb_release")
+      # From package redhat-lsb on Fedora/Redhat, lsb-release on Debian/Ubuntu
       so = shell_out("lsb_release -a")
       so.stdout.lines do |line|
         case line
@@ -50,6 +37,20 @@ Ohai.plugin(:LSB) do
           lsb[:codename] = $1
         else
           lsb[:id] = line
+        end
+      end
+    elsif File.exists?("/etc/lsb-release")
+      # Old, non-standard Debian support
+      File.open("/etc/lsb-release").each do |line|
+        case line
+        when /^DISTRIB_ID=["']?(.+?)["']?$/
+          lsb[:id] = $1
+        when /^DISTRIB_RELEASE=["']?(.+?)["']?$/
+          lsb[:release] = $1
+        when /^DISTRIB_CODENAME=["']?(.+?)["']?$/
+          lsb[:codename] = $1
+        when /^DISTRIB_DESCRIPTION=["']?(.+?)["']?$/
+          lsb[:description] = $1
         end
       end
     else

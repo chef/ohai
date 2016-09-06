@@ -1,5 +1,13 @@
 # Change Log
 
+## [8.20.0](https://github.com/chef/ohai/tree/8.20.0) (2016-09-06)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.2...8.20.0)
+
+**Implemented Enhancements:**
+
+- Retrofit network plugin to work on Windows Nano Server [\#872](https://github.com/chef/ohai/pull/872) ([mwrock](https://github.com/mwrock))
+- chefstyle 0.4.0 [\#870](https://github.com/chef/ohai/pull/870) ([lamont-granquist](https://github.com/lamont-granquist))
+
 ## [8.19.2](https://github.com/chef/ohai/tree/8.19.2) (2016-08-15)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.19.1...8.19.2)

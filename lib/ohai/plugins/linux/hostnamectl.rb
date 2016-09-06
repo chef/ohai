@@ -16,30 +16,18 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Machine) do
-  provides "machine"
+Ohai.plugin(:Hostnamectl) do
+  provides "hostnamectl"
 
   collect_data(:linux) do
-    machine Mash.new unless machine
+    hostnamectl Mash.new unless hostnamectl
 
     hostnamectl_path = which("hostnamectl")
     if hostnamectl_path
-      hostnamectl = shell_out(hostnamectl_path)
-      hostnamectl.stdout.split("\n").each do |line|
+      hostnamectl_cmd = shell_out(hostnamectl_path)
+      hostnamectl_cmd.stdout.split("\n").each do |line|
         key, val = line.split(":")
-        machine[key.chomp.lstrip.tr(" ", "_").downcase] = val.chomp.lstrip
-      end
-    else
-      if File.exists?("/etc/machine-id")
-        machine["machine_id"] = File.read("/etc/machine-id").chomp
-      elsif File.exists?("/var/lib/dbus/machine-id")
-        machine["machine_id"] = File.read("/var/lib/dbus/machine-id").chomp
-      end
-      if File.exists?("/etc/machine-info")
-        File.read("/etc/machine-info").split("\n").each do |line|
-          key, val = line.split("=")
-          machine[key.downcase] = val.chomp.delete("\"")
-        end
+        hostnamectl[key.chomp.lstrip.tr(" ", "_").downcase] = val.chomp.lstrip
       end
     end
   end

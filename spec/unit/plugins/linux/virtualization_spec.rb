@@ -38,6 +38,8 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
     allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
+    allow(File).to receive(:exist?).with("/dev/lxd/sock").and_return(false)
+    allow(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(false)
 
     # default the which wrappers to nil
     allow(plugin).to receive(:lxc_version_exists?).and_return(false)
@@ -461,6 +463,24 @@ OUTPUT
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  describe "when we are checking for lxd" do
+    it "sets lxc guest if /dev/lxd/sock exists" do
+      expect(File).to receive(:exist?).with("/dev/lxd/sock").and_return(true)
+
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("lxd")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+    end
+
+    it "setx lxd host if /var/lib/lxd/devlxd exists" do
+      expect(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(true)
+
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("lxd")
+      expect(plugin[:virtualization][:role]).to eq("host")
     end
   end
 

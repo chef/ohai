@@ -39,6 +39,7 @@ describe Ohai::System, "Machine id plugin" do
 
     allow(File).to receive(:exists?).with("/etc/machine-id").and_return(false)
     allow(File).to receive(:exists?).with("/var/lib/dbus/machine-id").and_return(true)
+    allow(File).to receive(:read).with("/var/lib/dbus/machine-id").and_return(machine_id)
     plugin.run
     expect(plugin[:machine_id]).to eq(machine_id)
   end

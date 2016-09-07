@@ -156,6 +156,10 @@ Ohai.plugin(:Kernel) do
     so = shell_out("uname -s")
     kernel[:os] = so.stdout.split($/)[0]
 
+    so = File.open("/etc/release") { |file| file.gets }
+    md = /(?<update>\d.*\d)/.match(so)
+    kernel[:update] = md[:update] if md
+
     modules = Mash.new
 
     so = shell_out("modinfo")

@@ -139,6 +139,29 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     allow(@plugin).to receive(:init_kernel).and_return({})
     allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
     allow(@plugin).to receive(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
+    @release = StringIO.new("                   Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC\n Assembled 17 January 2013")
+    allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+  end
+
+  it "should give the Solaris update version information" do
+    @release = StringIO.new("                      Solaris 10 10/08 s10s_u6wos_07b SPARC\n Use is subject to license terms.\n Assembled 27 October 2008")
+    allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+    @plugin.run
+    expect(@plugin[:kernel][:update]).to eq("10 10/08 s10s_u6wos_07")
+  end
+
+  it "should give the Oracle Solaris update version information" do
+    @release = StringIO.new("                   Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC\n Assembled 17 January 2013")
+    allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+    @plugin.run
+    expect(@plugin[:kernel][:update]).to eq("10 1/13 s10s_u11wos_24")
+  end
+
+  it "should give the Solaris 11 update version information" do
+    @release = StringIO.new("                            Oracle Solaris 11.3 SPARC\n Assembled 25 July 2016")
+    allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+    @plugin.run
+    expect(@plugin[:kernel][:update]).to eq("11.3")
   end
 
   it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])

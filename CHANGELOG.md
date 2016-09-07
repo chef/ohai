@@ -1,28 +1,41 @@
 # Change Log
 
-## [8.19.2](https://github.com/chef/ohai/tree/8.19.2) (2016-08-15)
+## [8.20.0](https://github.com/chef/ohai/tree/8.20.0) (2016-09-07)
 
-[Full Changelog](https://github.com/chef/ohai/compare/v8.19.1...8.19.2)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.2...8.20.0)
 
-**Fixed bugs:**
+**Implemented enhancements:**
+
+- Retrofit network plugin to work on Windows Nano Server [#872](https://github.com/chef/ohai/pull/872) ([mwrock](https://github.com/mwrock))
+- Detect lxd [#871](https://github.com/chef/ohai/pull/871) ([jeunito](https://github.com/jeunito))
+- Use chefstyle 0.4.0 for linting and resolve all warnings [#870](https://github.com/chef/ohai/pull/870) ([lamont-granquist](https://github.com/lamont-granquist))
+- Add kernel[:update] on Solaris Systems [#869](https://github.com/chef/ohai/pull/869) ([MarkGibbons](https://github.com/MarkGibbons))
+- Add hostnamectl plugin for Linux machine information [#867](https://github.com/chef/ohai/pull/867) ([davide125](https://github.com/davide125))
+
+## [v8.19.2](https://github.com/chef/ohai/tree/v8.19.2) (2016-08-16)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.1...v8.19.2)
+
+**Implemented enhancements:**
 
 - Require at least mixlib-log 1.7.1 [#866](https://github.com/chef/ohai/pull/866) ([tas50](https://github.com/tas50))
 
-## [8.19.1](https://github.com/chef/ohai/tree/8.19.1) (2016-08-12)
+## [v8.19.1](https://github.com/chef/ohai/tree/v8.19.1) (2016-08-12)
 
-[Full Changelog](https://github.com/chef/ohai/compare/v8.19.0...8.19.1)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.0...v8.19.1)
 
 **Fixed bugs:**
 
 - Move log configuration down to Mixlib::Log [#864](https://github.com/chef/ohai/pull/864) ([thommay](https://github.com/thommay))
 - Only configure logging if we must [#863](https://github.com/chef/ohai/pull/863) ([thommay](https://github.com/thommay))
 
-## [8.19.0](https://github.com/chef/ohai/tree/8.19.0) (2016-08-11)
+## [v8.19.0](https://github.com/chef/ohai/tree/v8.19.0) (2016-08-11)
 
-[Full Changelog](https://github.com/chef/ohai/compare/v8.18.0...8.19.0)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.18.0...v8.19.0)
 
 **Implemented enhancements:**
 
+- Add plugin for available shells [#854](https://github.com/chef/ohai/issues/854)
 - Add platform detection for Arista EOS [#860](https://github.com/chef/ohai/pull/860) ([jerearista](https://github.com/jerearista))
 
 **Fixed bugs:**

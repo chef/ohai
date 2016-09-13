@@ -27,7 +27,7 @@ describe Ohai::System, "Windows plugin uptime" do
   end
 
   ## Windows newer versions category here includes server OS starting from Windows Server 2008 ##
-  shared_context "WMI class to use to fetch system uptime for newer versions of Windows platform" do
+  shared_context "WMI class for newer versions of Windows platform" do
     before do
       allow(uptime_plugin).to receive(:collect_os).and_return(:windows)
     end
@@ -42,7 +42,7 @@ describe Ohai::System, "Windows plugin uptime" do
   end
 
   ## Windows older versions category here includes server OS starting from Windows Server 2003 ##
-  shared_context "WMI class to use to fetch system uptime for older versions of Windows platform" do
+  shared_context "WMI class for older versions of Windows platform" do
     before do
       allow(uptime_plugin).to receive(:collect_os).and_return(:windows)
     end
@@ -63,7 +63,7 @@ describe Ohai::System, "Windows plugin uptime" do
       end
     end
 
-    include_context "WMI class to use to fetch system uptime for newer versions of Windows platform"
+    include_context "WMI class for newer versions of Windows platform"
   end
 
   context "platform is Windows Server 2003 R2" do
@@ -73,7 +73,7 @@ describe Ohai::System, "Windows plugin uptime" do
       end
     end
 
-    include_context "WMI class to use to fetch system uptime for older versions of Windows platform"
+    include_context "WMI class for older versions of Windows platform"
   end
 
   context "platform is Windows Server 2012" do
@@ -83,6 +83,6 @@ describe Ohai::System, "Windows plugin uptime" do
       end
     end
 
-    include_context "WMI class to use to fetch system uptime for newer versions of Windows platform"
+    include_context "WMI class for newer versions of Windows platform"
   end
 end

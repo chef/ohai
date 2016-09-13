@@ -29,7 +29,7 @@ describe Ohai::System, "Windows plugin uptime" do
 
     let(:wmi) do
       double("wmi", { :first_of =>
-        { "lastbootuptime" => "20160912103128.597219+330" },
+        { "lastbootuptime" => "20160912103128.597219+0000" },
       })
     end
 
@@ -41,12 +41,12 @@ describe Ohai::System, "Windows plugin uptime" do
 
     it "should set uptime_seconds to uptime" do
       uptime_plugin.run
-      expect(uptime_plugin[:uptime_seconds]).to be == 100131
+      expect(uptime_plugin[:uptime_seconds]).to be == 80331
     end
 
     it "should set uptime to a human readable value" do
       uptime_plugin.run
-      expect(uptime_plugin[:uptime]).to eq("1 day 03 hours 48 minutes 51 seconds")
+      expect(uptime_plugin[:uptime]).to eq("22 hours 18 minutes 51 seconds")
     end
   end
 

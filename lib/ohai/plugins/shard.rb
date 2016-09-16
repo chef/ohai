@@ -16,23 +16,25 @@
 # limitations under the License.
 #
 
-def get_dmi_thing(dmi, thing)
-  %w{system base_board chassis}.each do |section|
-    unless dmi[:thing][thing].compact.empty?
-      return dmi[:thing][thing]
-    end
-  end
-end
-
 Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi"
   provides "shard_seed"
 
+  def get_dmi_thing(dmi, thing)
+    %w{system base_board chassis}.each do |section|
+      unless dmi[:thing][thing].compact.empty?
+        return dmi[:thing][thing]
+      end
+    end
+  end
+
   collect_data(:default) do
-    base = Ohai.config[:plugin][:shard_seed][:base] || :hostname
+    base = Ohai.config[:plugin][:shard_seed][:base] || :fqdn
     data = case base
-           when :hostname
+           when :fqdn
              fqdn
+           when :hostname
+             hostname
            when :serial
              get_dmi_thing(dmi, :serial_number)
            when :uuid

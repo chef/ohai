@@ -16,8 +16,10 @@
 # limitations under the License.
 #
 
+require 'digest/md5'
+
 Ohai.plugin(:ShardSeed) do
-  depends "hostname", "dmi"
+  depends "hostname", "dmi", "machine_id"
   provides "shard_seed"
 
   def get_dmi_thing(dmi, thing)
@@ -29,17 +31,22 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:default) do
-    base = Ohai.config[:plugin][:shard_seed][:base] || :fqdn
-    data = case base
-           when :fqdn
-             fqdn
-           when :hostname
-             hostname
-           when :serial
-             get_dmi_thing(dmi, :serial_number)
-           when :uuid
-             get_dmi_thing(dmi, :uuid)
-           end
+    sources = Ohai.config[:plugin][:shard_seed][:source] || [:fqdn]
+    data = ''
+    sources.each do |src|
+      data << case base
+              when :fqdn
+                fqdn
+              when :hostname
+                hostname
+              when :serial
+                get_dmi_thing(dmi, :serial_number)
+              when :uuid
+                get_dmi_thing(dmi, :uuid)
+              when :machine_id
+                machine_id
+              end
+    end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
   end
 end

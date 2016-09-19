@@ -19,7 +19,7 @@
 require 'digest/md5'
 
 Ohai.plugin(:ShardSeed) do
-  depends "hostname", "dmi", "machine_id"
+  depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
 
   def get_dmi_thing(dmi, thing)
@@ -30,11 +30,37 @@ Ohai.plugin(:ShardSeed) do
     end
   end
 
-  collect_data(:default) do
-    sources = Ohai.config[:plugin][:shard_seed][:source] || [:fqdn]
+  def default_sources
+    [:machinename, :serial, :uuid]
+  end
+
+  collect_data(:darwin) do
+    sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
     data = ''
     sources.each do |src|
-      data << case base
+      data << case src
+              when :fqdn
+                fqdn
+              when :hostname
+                hostname
+              when :serial
+                hardware['serial_number']
+              when :uuid
+                hardware['platform_UUID']
+              when :machine_id
+                machine_id
+              when :machinename
+                machinename
+              end
+    end
+    shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
+  end
+
+  collect_data(:linux) do
+    sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
+    data = ''
+    sources.each do |src|
+      data << case src
               when :fqdn
                 fqdn
               when :hostname
@@ -45,6 +71,8 @@ Ohai.plugin(:ShardSeed) do
                 get_dmi_thing(dmi, :uuid)
               when :machine_id
                 machine_id
+              when :machinename
+                machinename
               end
     end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)

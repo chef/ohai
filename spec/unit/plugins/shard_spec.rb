@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'digest/md5'
+require "digest/md5"
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "shard plugin" do
@@ -29,12 +29,12 @@ describe Ohai::System, "shard plugin" do
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
-    plugin['machinename'] = machinename
-    plugin['machine_id'] = machine_id
-    plugin['fqdn'] = fqdn
-    plugin['dmi'] = {'system' => {}}
-    plugin['dmi']['system']['uuid'] = uuid
-    plugin['dmi']['system']['serial_number'] = serial
+    plugin["machinename"] = machinename
+    plugin["machine_id"] = machine_id
+    plugin["fqdn"] = fqdn
+    plugin["dmi"] = { "system" => {} }
+    plugin["dmi"]["system"]["uuid"] = uuid
+    plugin["dmi"]["system"]["serial_number"] = serial
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 

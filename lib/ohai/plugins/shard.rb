@@ -24,8 +24,8 @@ Ohai.plugin(:ShardSeed) do
 
   def get_dmi_thing(dmi, thing)
     %w{system base_board chassis}.each do |section|
-      unless dmi[:thing][thing].compact.empty?
-        return dmi[:thing][thing]
+      unless dmi[section][thing].strip.empty?
+        return dmi[section][thing]
       end
     end
   end

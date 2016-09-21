@@ -51,6 +51,8 @@ Ohai.plugin(:ShardSeed) do
                 machine_id
               when :machinename
                 machinename
+              else
+                fail "No such shard_seed source: #{src}"
               end
     end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
@@ -73,6 +75,8 @@ Ohai.plugin(:ShardSeed) do
                 machine_id
               when :machinename
                 machinename
+              else
+                fail "No such shard_seed source: #{src}"
               end
     end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)

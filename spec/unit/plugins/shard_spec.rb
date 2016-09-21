@@ -52,4 +52,9 @@ describe Ohai::System, "shard plugin" do
     result = Digest::MD5.hexdigest(fqdn)[0...7].to_i(16)
     expect(plugin[:shard_seed]).to eq(result)
   end
+
+  it "fails on an unrecognized source" do
+    Ohai.config[:plugin][:shard_seed][:sources] = [:GreatGooglyMoogly]
+    expect { plugin.run }.to raise_error(RuntimeError)
+  end
 end

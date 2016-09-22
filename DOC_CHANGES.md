@@ -17,10 +17,16 @@ means that a node with the same source inputs will always result in the same
 shard seed, but collisions are possible.
 
 The sources used to compute the seed value can be configured either in your
-Chef config file or your Ohai config file ([ed: does anyone use Ohai config files?]):
+Chef config file:
 
 ```ruby
 Ohai::Config[:plugins][:shard_seed][:sources] = [:fqdn]
+```
+
+or your Ohai config file if you run Ohai outside of Chef:
+
+```ruby
+ohai.plugin[:shard_seed][:sources] = [:fqdn]
 ```
 
 The default sources are `[:machinename, :serial, :uuid]` but this value should

@@ -38,7 +38,7 @@ Ohai.plugin(:ShardSeed) do
   # under their collect_data block.
   def create_seed(&block)
     sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
-    data = ''
+    data = ""
     sources.each do |src|
       data << case src
               when :fqdn
@@ -50,7 +50,7 @@ Ohai.plugin(:ShardSeed) do
               when :machinename
                 machinename
               else
-                block.call(src)
+                yield(src)
               end
     end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)

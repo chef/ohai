@@ -22,7 +22,7 @@ Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
 
-  def get_dmi_thing(dmi, thing)
+  def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
       unless dmi[section][thing].strip.empty?
         return dmi[section][thing]
@@ -34,51 +34,49 @@ Ohai.plugin(:ShardSeed) do
     [:machinename, :serial, :uuid]
   end
 
-  collect_data(:darwin) do
+  # Common sources go here. Put sources that need to be different per-platform
+  # under their collect_data block.
+  def create_seed(&block)
     sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
-    data = ""
+    data = ''
     sources.each do |src|
       data << case src
               when :fqdn
                 fqdn
               when :hostname
                 hostname
-              when :serial
-                hardware["serial_number"]
-              when :uuid
-                hardware["platform_UUID"]
               when :machine_id
                 machine_id
               when :machinename
                 machinename
               else
-                raise "No such shard_seed source: #{src}"
+                block.call(src)
               end
     end
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
   end
 
-  collect_data(:linux) do
-    sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
-    data = ""
-    sources.each do |src|
-      data << case src
-              when :fqdn
-                fqdn
-              when :hostname
-                hostname
-              when :serial
-                get_dmi_thing(dmi, :serial_number)
-              when :uuid
-                get_dmi_thing(dmi, :uuid)
-              when :machine_id
-                machine_id
-              when :machinename
-                machinename
-              else
-                raise "No such shard_seed source: #{src}"
-              end
+  collect_data(:darwin) do
+    create_seed do |src|
+      case src
+      when :serial
+        hardware["serial_number"]
+      when :uuid
+        hardware["platform_UUID"]
+      end
     end
-    shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
+  end
+
+  collect_data(:linux) do
+    create_seed do |src|
+      case src
+      when :serial
+        get_dmi_property(dmi, :serial_number)
+      when :uuid
+        get_dmi_property(dmi, :uuid)
+      else
+        raise "No such shard_seed source: #{src}"
+      end
+    end
   end
 end

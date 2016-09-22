@@ -10,7 +10,7 @@ Description of the required change.
 
 ## Shard Seed Plugin
 
-The new `shard_seed` attribute provides a normally distributed integer ID value
+The new `shard_seed` attribute provides a uniformly distributed integer ID value
 to all nodes. This value will be between 0 and 4294967295 (0xFFFFFFFF), based
 on a consistent hash of one or more pieces of node data. A consistent hash
 means that a node with the same source inputs will always result in the same

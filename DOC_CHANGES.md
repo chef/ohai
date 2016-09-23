@@ -20,7 +20,7 @@ The sources used to compute the seed value can be configured either in your
 Chef config file:
 
 ```ruby
-Ohai::Config[:plugins][:shard_seed][:sources] = [:fqdn]
+Ohai::Config[:plugin][:shard_seed][:sources] = [:fqdn]
 ```
 
 or your Ohai config file if you run Ohai outside of Chef:

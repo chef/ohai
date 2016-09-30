@@ -105,11 +105,36 @@ Ohai.plugin(:Hostname) do
     collect_domain
   end
 
-  collect_data(:darwin, :netbsd, :openbsd, :dragonflybsd) do
+  collect_data(:netbsd, :openbsd, :dragonflybsd) do
     hostname from_cmd("hostname -s")
     fqdn resolve_fqdn
     machinename from_cmd("hostname")
     collect_domain
+  end
+
+  collect_data(:darwin) do
+    hostname from_cmd("hostname -s")
+    machinename from_cmd("hostname")
+    begin
+      ourfqdn = resolve_fqdn
+      # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
+      # returns a blank string. WTF.
+      if ourfqdn.nil? || ourfqdn.empty?
+        Ohai::Log.debug("hostname returned an empty string, retrying once.")
+        ourfqdn = resolve_fqdn
+      end
+
+      if ourfqdn.nil? || ourfqdn.empty?
+        Ohai::Log.debug("hostname returned an empty string twice and will" +
+                        "not be set.")
+      else
+        fqdn ourfqdn
+      end
+    rescue
+      Ohai::Log.debug(
+        "hostname returned an error, probably no domain set")
+    end
+    domain collect_domain
   end
 
   collect_data(:freebsd) do

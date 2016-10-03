@@ -1,4 +1,3 @@
-# info_getter
 [![Build Status Master](https://travis-ci.org/chef/info_getter.svg?branch=master)](https://travis-ci.org/chef/info_getter)
 [![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/info_getter?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/info_getter/branch/master)
 [![Gem Version](https://badge.fury.io/rb/info_getter.svg)](https://badge.fury.io/rb/info_getter)

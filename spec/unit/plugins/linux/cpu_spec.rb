@@ -61,7 +61,7 @@ shared_examples "S390 processor info" do |cpu_no, version, identification, machi
   end
 end
 
-describe Ohai::System, "General Linux cpu plugin" do
+describe info_getter::System, "General Linux cpu plugin" do
   let(:plugin) { get_plugin("linux/cpu") }
 
   let(:cpuinfo_contents) do
@@ -89,7 +89,7 @@ clflush size  : 32
   end
 
   let(:tempfile_handle) do
-    tempfile = Tempfile.new("ohai-rspec-proc-cpuinfo")
+    tempfile = Tempfile.new("info_getter-rspec-proc-cpuinfo")
     tempfile.write cpuinfo_contents
     tempfile.rewind
     tempfile
@@ -311,7 +311,7 @@ power management:
   end
 end
 
-describe Ohai::System, "S390 linux cpu plugin" do
+describe info_getter::System, "S390 linux cpu plugin" do
   let(:plugin) { get_plugin("linux/cpu") }
 
   before(:each) do

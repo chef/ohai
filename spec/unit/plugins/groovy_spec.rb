@@ -18,7 +18,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "plugin groovy" do
+describe info_getter::System, "plugin groovy" do
   let(:plugin) { get_plugin("groovy") }
 
   before(:each) do
@@ -59,7 +59,7 @@ describe Ohai::System, "plugin groovy" do
   end
 
   it "does not set languages[:groovy] if groovy command doesn't exist" do
-    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin.languages).not_to have_key(:groovy)
   end

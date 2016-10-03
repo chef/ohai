@@ -19,9 +19,9 @@
 require "rbconfig"
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "info_getter_plugin_common.rb" ))
 
-describe Ohai::System, "plugin c" do
+describe info_getter::System, "plugin c" do
   test_plugin(%w{languages c}, [ "/lib/libc.so.6", "/lib64/libc.so.6", "gcc", "cl", "devenv.com", "xlc", "cc", "what" ]) do |p|
     p.test([ "centos-5.5" ], [ "x64" ], [[]], { "languages" => { "c" => {
                  "gcc" => { "version" => "4.1.2", "description" => "gcc version 4.1.2 20080704 (Red Hat 4.1.2-48)" },

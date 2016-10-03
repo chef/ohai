@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Solaris2.X hostname plugin" do
+describe info_getter::System, "Solaris2.X hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)

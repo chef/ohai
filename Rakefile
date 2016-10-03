@@ -1,6 +1,6 @@
 require "bundler/gem_tasks"
 require "date"
-require "ohai/version"
+require "info_getter/version"
 
 begin
   require "rspec/core/rake_task"
@@ -26,7 +26,7 @@ end
 require "github_changelog_generator/task"
 
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|
-  config.future_release = Ohai::VERSION
+  config.future_release = info_getter::VERSION
   config.enhancement_labels = "enhancement,Enhancement,New Feature,Feature".split(",")
   config.bug_labels = "bug,Bug,Improvement,Upstream Bug".split(",")
   config.exclude_labels = "duplicate,question,invalid,wontfix,no_changelog,Exclude From Changelog,Question,Discussion".split(",")

@@ -18,10 +18,10 @@
 # limitations under the License.
 
 # eucalyptus metadata service is compatible with the ec2 service calls
-require "ohai/mixin/ec2_metadata"
+require "info_getter/mixin/ec2_metadata"
 
-Ohai.plugin(:Eucalyptus) do
-  include Ohai::Mixin::Ec2Metadata
+info_getter.plugin(:Eucalyptus) do
+  include info_getter::Mixin::Ec2Metadata
 
   provides "eucalyptus"
   depends "network/interfaces"
@@ -41,31 +41,31 @@ Ohai.plugin(:Eucalyptus) do
     network[:interfaces].values.each do |iface|
       mac = get_mac_address(iface[:addresses])
       if mac =~ /^[dD]0:0[dD]:/
-        Ohai::Log.debug("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")
+        info_getter::Log.debug("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")
         return true
       end
     end
 
-    Ohai::Log.debug("Plugin Eucalyptus: has_euca_mac? == false")
+    info_getter::Log.debug("Plugin Eucalyptus: has_euca_mac? == false")
     false
   end
 
   def looks_like_euca?
     # Try non-blocking connect so we don't "block" if
     # the metadata service doesn't respond
-    hint?("eucalyptus") || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+    hint?("eucalyptus") || has_euca_mac? && can_metadata_connect?(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
   end
 
   collect_data do
     if looks_like_euca?
-      Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == true")
+      info_getter::Log.debug("Plugin Eucalyptus: looks_like_euca? == true")
       eucalyptus Mash.new
       self.fetch_metadata.each do |k, v|
         # Eucalyptus 3.4+ supports IAM roles and Instance Profiles much like AWS
         # https://www.eucalyptus.com/blog/2013/10/15/iam-roles-and-instance-profiles-eucalyptus-34
         #
         # fetch_metadata returns IAM security credentials, including the IAM user's
-        # secret access key. We'd rather not have ohai send this information
+        # secret access key. We'd rather not have info_getter send this information
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
         next if k == "iam" && !hint?("iam")
@@ -73,7 +73,7 @@ Ohai.plugin(:Eucalyptus) do
       end
       eucalyptus[:userdata] = self.fetch_userdata
     else
-      Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == false")
+      info_getter::Log.debug("Plugin Eucalyptus: looks_like_euca? == false")
       false
     end
   end

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Ohai
+module info_getter
   module Util
     module Win32
       if RUBY_PLATFORM =~ /mswin|mingw|windows/

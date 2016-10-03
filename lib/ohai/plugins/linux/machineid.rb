@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Machineid) do
+info_getter.plugin(:Machineid) do
   provides "machine_id"
 
   collect_data(:linux) do

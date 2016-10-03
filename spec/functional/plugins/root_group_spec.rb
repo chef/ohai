@@ -20,7 +20,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "root_group plugin" do
+describe info_getter::System, "root_group plugin" do
   let(:plugin) { get_plugin("root_group") }
 
   describe "windows platform", :windows_only do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Hardware) do
+info_getter.plugin(:Hardware) do
   provides "hardware"
 
   def system_profiler(datatype)
@@ -30,7 +30,7 @@ Ohai.plugin(:Hardware) do
     unless hardware
       hardware Mash.new
     else
-      Ohai::Log.debug("Plugin Darwin Hardware: namespace already exists")
+      info_getter::Log.debug("Plugin Darwin Hardware: namespace already exists")
       next
     end
 
@@ -38,7 +38,7 @@ Ohai.plugin(:Hardware) do
       require "plist"
     rescue LoadError => e
       # In case the plist gem isn't present, skip this plugin.
-      Ohai::Log.debug("Plugin Hardware: Can't load gem: #{e}. Cannot continue.")
+      info_getter::Log.debug("Plugin Hardware: Can't load gem: #{e}. Cannot continue.")
       next
     end
 

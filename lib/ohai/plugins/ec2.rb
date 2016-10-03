@@ -19,16 +19,16 @@
 # limitations under the License.
 
 # How we detect EC2 from easiest to hardest & least reliable
-# 1. Ohai ec2 hint exists. This always works
+# 1. info_getter ec2 hint exists. This always works
 # 2. Xen hypervisor UUID starts with 'ec2'. This catches Linux HVM & paravirt instances
 # 3. DMI data mentions amazon. This catches HVM instances in a VPC
 # 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
-require "ohai/mixin/ec2_metadata"
+require "info_getter/mixin/ec2_metadata"
 require "base64"
 
-Ohai.plugin(:EC2) do
-  include Ohai::Mixin::Ec2Metadata
+info_getter.plugin(:EC2) do
+  include info_getter::Mixin::Ec2Metadata
 
   provides "ec2"
 
@@ -40,10 +40,10 @@ Ohai.plugin(:EC2) do
   def has_ec2_dmi?
     # detect a version of '4.2.amazon'
     if get_attribute(:dmi, :bios, :all_records, 0, :Version) =~ /amazon/
-      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
+      info_getter::Log.debug("Plugin EC2: has_ec2_dmi? == true")
       return true
     else
-      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
+      info_getter::Log.debug("Plugin EC2: has_ec2_dmi? == false")
       return false
     end
   end
@@ -53,11 +53,11 @@ Ohai.plugin(:EC2) do
   def has_ec2_xen_uuid?
     if ::File.exist?("/sys/hypervisor/uuid")
       if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
-        Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
+        info_getter::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
         return true
       end
     end
-    Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
+    info_getter::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
     return false
   end
 
@@ -66,10 +66,10 @@ Ohai.plugin(:EC2) do
   def has_amazon_org?
     # detect an Organization of 'Amazon.com'
     if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
+      info_getter::Log.debug("Plugin EC2: has_amazon_org? == true")
       return true
     else
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
+      info_getter::Log.debug("Plugin EC2: has_amazon_org? == false")
       return false
     end
   end
@@ -79,17 +79,17 @@ Ohai.plugin(:EC2) do
 
     # Even if it looks like EC2 try to connect first
     if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
-      return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      return true if can_metadata_connect?(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end
 
   collect_data do
     if looks_like_ec2?
-      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == true")
+      info_getter::Log.debug("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
-        # secret access key. We'd rather not have ohai send this information
+        # secret access key. We'd rather not have info_getter send this information
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
         next if k == "iam" && !hint?("iam")
@@ -98,11 +98,11 @@ Ohai.plugin(:EC2) do
       ec2[:userdata] = fetch_userdata
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
-        Ohai::Log.debug("Plugin EC2: Binary UserData Found. Storing in base64")
+        info_getter::Log.debug("Plugin EC2: Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end
     else
-      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == false")
+      info_getter::Log.debug("Plugin EC2: looks_like_ec2? == false")
       false
     end
   end

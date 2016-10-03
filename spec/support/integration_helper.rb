@@ -5,7 +5,7 @@ module IntegrationSupport
     context "When the plugins directory #{description}" do
 
       before(:each) do
-        @plugins_directory = Dir.mktmpdir("ohai-plugins")
+        @plugins_directory = Dir.mktmpdir("info_getter-plugins")
       end
 
       after(:each) do

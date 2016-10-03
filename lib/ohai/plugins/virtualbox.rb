@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Virtualbox) do
+info_getter.plugin(:Virtualbox) do
   provides "virtualbox"
 
   collect_data do

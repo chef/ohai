@@ -100,7 +100,7 @@ Chassis Information
 	Contained Elements: 0
 EOS
 
-describe Ohai::System, "plugin dmi" do
+describe info_getter::System, "plugin dmi" do
   before(:each) do
     @plugin = get_plugin("dmi")
     @stdout = DMI_OUT

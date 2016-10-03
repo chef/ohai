@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 # We do not alter case for lsb attributes and consume them as provided
 
-describe Ohai::System, "Linux lsb plugin" do
+describe info_getter::System, "Linux lsb plugin" do
   before(:each) do
     @plugin = get_plugin("linux/lsb")
     allow(@plugin).to receive(:collect_os).and_return(:linux)

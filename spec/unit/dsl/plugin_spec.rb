@@ -19,7 +19,7 @@
 
 require File.expand_path("../../../spec_helper.rb", __FILE__)
 
-shared_examples "Ohai::DSL::Plugin" do
+shared_examples "info_getter::DSL::Plugin" do
   context "#initialize" do
     it "sets has_run? to false" do
       expect(plugin.has_run?).to be false
@@ -38,7 +38,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
     describe "when plugin is enabled" do
       before do
-        allow(Ohai.config).to receive(:[]).with(:disabled_plugins).and_return([ ])
+        allow(info_getter.config).to receive(:[]).with(:disabled_plugins).and_return([ ])
       end
 
       it "runs the plugin" do
@@ -54,7 +54,7 @@ shared_examples "Ohai::DSL::Plugin" do
 
     describe "if the plugin is disabled" do
       before do
-        allow(Ohai.config).to receive(:[]).with(:disabled_plugins).and_return([ :TestPlugin ])
+        allow(info_getter.config).to receive(:[]).with(:disabled_plugins).and_return([ :TestPlugin ])
       end
 
       it "does not run the plugin" do
@@ -63,7 +63,7 @@ shared_examples "Ohai::DSL::Plugin" do
       end
 
       it "logs a message to debug" do
-        expect(Ohai::Log).to receive(:debug).with(/Skipping disabled plugin TestPlugin/)
+        expect(info_getter::Log).to receive(:debug).with(/Skipping disabled plugin TestPlugin/)
         plugin.run
       end
 
@@ -324,52 +324,52 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 end
 
-describe Ohai::DSL::Plugin::VersionVII do
+describe info_getter::DSL::Plugin::VersionVII do
   it "does not modify the plugin name when the plugin is named correctly" do
-    plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({})
+    plugin = info_getter.plugin(:FunkyVALIDpluginName) {}.new({})
     expect(plugin.name).to eql(:FunkyVALIDpluginName)
   end
 
   describe "when the plugin is named incorrectly" do
     context "because the plugin name doesn't start with a capital letter" do
-      it "raises an Ohai::Exceptions::InvalidPluginName exception" do
-        expect { Ohai.plugin(:badName) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /badName is not a valid plugin name/)
+      it "raises an info_getter::Exceptions::InvalidPluginName exception" do
+        expect { info_getter.plugin(:badName) {} }.to raise_error(info_getter::Exceptions::InvalidPluginName, /badName is not a valid plugin name/)
       end
     end
 
     context "because the plugin name contains an underscore" do
-      it "raises an Ohai::Exceptions::InvalidPluginName exception" do
-        expect { Ohai.plugin(:Bad_Name) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /Bad_Name is not a valid plugin name/)
+      it "raises an info_getter::Exceptions::InvalidPluginName exception" do
+        expect { info_getter.plugin(:Bad_Name) {} }.to raise_error(info_getter::Exceptions::InvalidPluginName, /Bad_Name is not a valid plugin name/)
       end
     end
 
     context "because the plugin name isn't a symbol" do
-      it "raises an Ohai::Exceptions::InvalidPluginName exception" do
-        expect { Ohai.plugin(1138) {} }.to raise_error(Ohai::Exceptions::InvalidPluginName, /1138 is not a valid plugin name/)
+      it "raises an info_getter::Exceptions::InvalidPluginName exception" do
+        expect { info_getter.plugin(1138) {} }.to raise_error(info_getter::Exceptions::InvalidPluginName, /1138 is not a valid plugin name/)
       end
     end
   end
 
   describe "#version" do
     it "saves the plugin version as :version7" do
-      plugin = Ohai.plugin(:Test) {}
+      plugin = info_getter.plugin(:Test) {}
       expect(plugin.version).to eql(:version7)
     end
   end
 
   describe "#provides" do
     it "collects a single attribute" do
-      plugin = Ohai.plugin(:Test) { provides("one") }
+      plugin = info_getter.plugin(:Test) { provides("one") }
       expect(plugin.provides_attrs).to eql(["one"])
     end
 
     it "collects a list of attributes" do
-      plugin = Ohai.plugin(:Test) { provides("one", "two", "three") }
+      plugin = info_getter.plugin(:Test) { provides("one", "two", "three") }
       expect(plugin.provides_attrs).to eql(%w{one two three})
     end
 
     it "collects from multiple provides statements" do
-      plugin = Ohai.plugin(:Test) do
+      plugin = info_getter.plugin(:Test) do
         provides("one")
         provides("two", "three")
         provides("four")
@@ -378,31 +378,31 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects attributes across multiple plugin files" do
-      plugin = Ohai.plugin(:Test) { provides("one") }
-      plugin = Ohai.plugin(:Test) { provides("two", "three") }
+      plugin = info_getter.plugin(:Test) { provides("one") }
+      plugin = info_getter.plugin(:Test) { provides("two", "three") }
       expect(plugin.provides_attrs).to eql(%w{one two three})
     end
 
     it "collects unique attributes" do
-      plugin = Ohai.plugin(:Test) { provides("one") }
-      plugin = Ohai.plugin(:Test) { provides("one", "two") }
+      plugin = info_getter.plugin(:Test) { provides("one") }
+      plugin = info_getter.plugin(:Test) { provides("one", "two") }
       expect(plugin.provides_attrs).to eql(%w{one two})
     end
   end
 
   describe "#depends" do
     it "collects a single dependency" do
-      plugin = Ohai.plugin(:Test) { depends("one") }
+      plugin = info_getter.plugin(:Test) { depends("one") }
       expect(plugin.depends_attrs).to eql(["one"])
     end
 
     it "collects a list of dependencies" do
-      plugin = Ohai.plugin(:Test) { depends("one", "two", "three") }
+      plugin = info_getter.plugin(:Test) { depends("one", "two", "three") }
       expect(plugin.depends_attrs).to eql(%w{one two three})
     end
 
     it "collects from multiple depends statements" do
-      plugin = Ohai.plugin(:Test) do
+      plugin = info_getter.plugin(:Test) do
         depends("one")
         depends("two", "three")
         depends("four")
@@ -411,38 +411,38 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects dependencies across multiple plugin files" do
-      plugin = Ohai.plugin(:Test) { depends("one") }
-      plugin = Ohai.plugin(:Test) { depends("two", "three") }
+      plugin = info_getter.plugin(:Test) { depends("one") }
+      plugin = info_getter.plugin(:Test) { depends("two", "three") }
       expect(plugin.depends_attrs).to eql(%w{one two three})
     end
 
     it "collects unique attributes" do
-      plugin = Ohai.plugin(:Test) { depends("one") }
-      plugin = Ohai.plugin(:Test) { depends("one", "two") }
+      plugin = info_getter.plugin(:Test) { depends("one") }
+      plugin = info_getter.plugin(:Test) { depends("one", "two") }
       expect(plugin.depends_attrs).to eql(%w{one two})
     end
   end
 
   describe "#collect_data" do
     it "saves as :default if no platform is given" do
-      plugin = Ohai.plugin(:Test) { collect_data {} }
+      plugin = info_getter.plugin(:Test) { collect_data {} }
       expect(plugin.data_collector).to have_key(:default)
     end
 
     it "saves a single given platform" do
-      plugin = Ohai.plugin(:Test) { collect_data(:ubuntu) {} }
+      plugin = info_getter.plugin(:Test) { collect_data(:ubuntu) {} }
       expect(plugin.data_collector).to have_key(:ubuntu)
     end
 
     it "saves a list of platforms" do
-      plugin = Ohai.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) {} }
+      plugin = info_getter.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) {} }
       [:freebsd, :netbsd, :openbsd].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
     end
 
     it "saves multiple collect_data blocks" do
-      plugin = Ohai.plugin(:Test) do
+      plugin = info_getter.plugin(:Test) do
         collect_data {}
         collect_data(:windows) {}
         collect_data(:darwin) {}
@@ -453,8 +453,8 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "saves platforms across multiple plugins" do
-      plugin = Ohai.plugin(:Test) { collect_data {} }
-      plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) {} }
+      plugin = info_getter.plugin(:Test) { collect_data {} }
+      plugin = info_getter.plugin(:Test) { collect_data(:aix, :sigar) {} }
       [:aix, :default, :sigar].each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
@@ -462,48 +462,48 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "fails a platform has already been defined in the same plugin" do
       expect do
-        Ohai.plugin(:Test) do
+        info_getter.plugin(:Test) do
           collect_data {}
           collect_data {}
         end
-      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+      end.to raise_error(info_getter::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
 
     it "fails if a platform has already been defined in another plugin file" do
-      Ohai.plugin(:Test) { collect_data {} }
+      info_getter.plugin(:Test) { collect_data {} }
       expect do
-        Ohai.plugin(:Test) do
+        info_getter.plugin(:Test) do
           collect_data {}
         end
-      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+      end.to raise_error(info_getter::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
     end
   end
 
   describe "#provides (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
-      expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
+      plugin = info_getter::DSL::Plugin::VersionVII.new(Mash.new)
+      expect(info_getter::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
   end
 
   describe "#require_plugin (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
-      expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
+      plugin = info_getter::DSL::Plugin::VersionVII.new(Mash.new)
+      expect(info_getter::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
   end
 
   describe "#configuration" do
     let(:plugin) do
-      klass = Ohai.plugin(camel_name) {}
+      klass = info_getter.plugin(camel_name) {}
       klass.new({})
     end
 
     shared_examples_for "plugin config lookup" do
       it "returns the configuration option value" do
-        Ohai.config[:plugin][snake_name][:foo] = true
+        info_getter.config[:plugin][snake_name][:foo] = true
         expect(plugin.configuration(:foo)).to eq(true)
       end
     end
@@ -518,23 +518,23 @@ describe Ohai::DSL::Plugin::VersionVII do
 
       it "does not auto-vivify an un-configured plugin" do
         plugin.configuration(:foo)
-        expect(Ohai.config[:plugin]).to_not have_key(:test)
+        expect(info_getter.config[:plugin]).to_not have_key(:test)
       end
 
       it "returns nil when the option is not configured" do
-        Ohai.config[:plugin][snake_name][:foo] = true
+        info_getter.config[:plugin][snake_name][:foo] = true
         expect(plugin.configuration(:bar)).to eq(nil)
       end
 
       it "returns nil when the suboption is not configured" do
-        Ohai.config[:plugin][snake_name][:foo] = {}
+        info_getter.config[:plugin][snake_name][:foo] = {}
         expect(plugin.configuration(:foo, :bar)).to eq(nil)
       end
 
       include_examples "plugin config lookup"
 
       it "returns the configuration sub-option value" do
-        Ohai.config[:plugin][snake_name][:foo] = { :bar => true }
+        info_getter.config[:plugin][snake_name][:foo] = { :bar => true }
         expect(plugin.configuration(:foo, :bar)).to eq(true)
       end
     end
@@ -568,42 +568,42 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
   end
 
-  it_behaves_like "Ohai::DSL::Plugin" do
-    let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai.data) }
+  it_behaves_like "info_getter::DSL::Plugin" do
+    let(:info_getter) { info_getter::System.new }
+    let(:plugin) { info_getter::DSL::Plugin::VersionVII.new(info_getter.data) }
     let(:version) { :version7 }
   end
 end
 
-describe Ohai::DSL::Plugin::VersionVI do
+describe info_getter::DSL::Plugin::VersionVI do
   describe "#version" do
     it "saves the plugin version as :version6" do
-      plugin = Class.new(Ohai::DSL::Plugin::VersionVI) {}
+      plugin = Class.new(info_getter::DSL::Plugin::VersionVI) {}
       expect(plugin.version).to eql(:version6)
     end
   end
 
   describe "#provides" do
-    let(:ohai) { Ohai::System.new }
+    let(:info_getter) { info_getter::System.new }
 
     it "logs a debug message when provides is used" do
-      allow(Ohai::Log).to receive(:debug)
-      expect(Ohai::Log).to receive(:debug).with(/Skipping provides/)
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
+      allow(info_getter::Log).to receive(:debug)
+      expect(info_getter::Log).to receive(:debug).with(/Skipping provides/)
+      plugin = info_getter::DSL::Plugin::VersionVI.new(info_getter, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
     end
 
     it "does not update the provides map for version 6 plugins." do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
+      plugin = info_getter::DSL::Plugin::VersionVI.new(info_getter, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
-      expect(ohai.provides_map.map).to be_empty
+      expect(info_getter.provides_map.map).to be_empty
     end
 
   end
 
-  it_behaves_like "Ohai::DSL::Plugin" do
-    let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin") }
+  it_behaves_like "info_getter::DSL::Plugin" do
+    let(:info_getter) { info_getter::System.new }
+    let(:plugin) { info_getter::DSL::Plugin::VersionVI.new(info_getter, "/some/plugin/path.rb", "/some/plugin") }
     let(:version) { :version6 }
   end
 end

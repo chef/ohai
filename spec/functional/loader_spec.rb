@@ -17,8 +17,8 @@
 
 require_relative "../spec_helper"
 
-RSpec.describe "Ohai::Loader" do
-  let(:loader) { Ohai::Loader.new(Ohai::System.new) }
+RSpec.describe "info_getter::Loader" do
+  let(:loader) { info_getter::Loader.new(info_getter::System.new) }
 
   describe "#load_all" do
     context "when the plugin path contains backslash characters", :windows_only do
@@ -26,10 +26,10 @@ RSpec.describe "Ohai::Loader" do
       let(:plugin_path) { plugin_directory.tr("/", "\\") }
 
       before(:each) do
-        Ohai.config[:plugin_path] = plugin_path
+        info_getter.config[:plugin_path] = plugin_path
 
         plugin_content = <<-EOF
-Ohai.plugin(:Foo) do
+info_getter.plugin(:Foo) do
   provides 'foo'
 end
 EOF
@@ -46,7 +46,7 @@ EOF
         loader.load_all
         loaded_plugins = loader.instance_variable_get(:@v7_plugin_classes)
         loaded_plugins_names = loaded_plugins.map { |plugin| plugin.name }
-        expect(loaded_plugins_names).to eq(["Ohai::NamedPlugin::Foo"])
+        expect(loaded_plugins_names).to eq(["info_getter::NamedPlugin::Foo"])
       end
     end
   end

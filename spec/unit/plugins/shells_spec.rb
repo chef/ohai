@@ -17,7 +17,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin shells" do
+describe info_getter::System, "plugin shells" do
   let(:plugin) { get_plugin("shells") }
 
   # content from OS X 10.11

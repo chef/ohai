@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Zpools) do
+info_getter.plugin(:Zpools) do
   provides "zpools"
 
   collect_data(:solaris2) do

@@ -22,7 +22,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Kernel) do
+info_getter.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 
   # common initial kernel attribute values
@@ -40,7 +40,7 @@ Ohai.plugin(:Kernel) do
   # common *bsd code for collecting modules data
   def bsd_modules(path)
     modules = Mash.new
-    so = shell_out("#{Ohai.abs_path(path)}")
+    so = shell_out("#{info_getter.abs_path(path)}")
     so.stdout.lines do |line|
       #  1    7 0xc0400000 97f830   kernel
       if line =~ /(\d+)\s+(\d+)\s+([0-9a-fx]+)\s+([0-9a-fx]+)\s+([a-zA-Z0-9\_]+)/

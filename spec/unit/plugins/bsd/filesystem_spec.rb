@@ -19,7 +19,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "BSD filesystem plugin" do
+describe info_getter::System, "BSD filesystem plugin" do
   let(:plugin) { get_plugin("bsd/filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:freebsd)

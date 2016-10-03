@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:PHP) do
+info_getter.plugin(:PHP) do
   provides "languages/php"
   depends "languages"
 
@@ -45,8 +45,8 @@ Ohai.plugin(:PHP) do
 
         languages[:php] = php unless php.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Php plugin: Could not shell_out "php -v". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Php plugin: Could not shell_out "php -v". Skipping plugin')
     end
   end
 end

@@ -20,7 +20,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Windows virtualization platform" do
+describe info_getter::System, "Windows virtualization platform" do
   let(:plugin) { get_plugin("windows/virtualization") }
 
   before(:each) do

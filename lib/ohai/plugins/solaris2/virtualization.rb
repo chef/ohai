@@ -18,10 +18,10 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
+require "info_getter/mixin/dmi_decode"
 
-Ohai.plugin(:Virtualization) do
-  include Ohai::Mixin::DmiDecode
+info_getter.plugin(:Virtualization) do
+  include info_getter::Mixin::DmiDecode
   provides "virtualization"
 
   def collect_solaris_guestid
@@ -35,7 +35,7 @@ Ohai.plugin(:Virtualization) do
     virtualization[:systems] = Mash.new
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
-    psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
+    psrinfo_path = info_getter.abs_path( "/usr/sbin/psrinfo" )
     if File.exist?(psrinfo_path)
       so = shell_out("#{psrinfo_path} -pv")
       if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
@@ -47,7 +47,7 @@ Ohai.plugin(:Virtualization) do
 
     # Pass smbios information to the dmi_decode mixin to
     # identify possible virtualization systems
-    smbios_path = Ohai.abs_path("/usr/sbin/smbios")
+    smbios_path = info_getter.abs_path("/usr/sbin/smbios")
     if File.exist?(smbios_path)
       guest = guest_from_dmi(shell_out(smbios_path).stdout)
       if guest

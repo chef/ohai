@@ -1,8 +1,8 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "OHAI" "1" "Ohai 7.0.0" "" "ohai"
+.TH "info_getter" "1" "info_getter 7.0.0" "" "info_getter"
 .SH NAME
-ohai \- The man page for the ohai command line tool.
+info_getter \- The man page for the info_getter command line tool.
 .
 .nr rst2man-indent-level 0
 .
@@ -31,9 +31,9 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
 .sp
-Ohai is a tool that is used to detect attributes on a node, and then provide these attributes to the chef\-client at the start of every chef\-client run. Ohai is required by the chef\-client and must be present on a node. (Ohai is installed on a node as part of the chef\-client install process.)
+info_getter is a tool that is used to detect attributes on a node, and then provide these attributes to the chef\-client at the start of every chef\-client run. info_getter is required by the chef\-client and must be present on a node. (info_getter is installed on a node as part of the chef\-client install process.)
 .sp
-The types of attributes Ohai collects include (but are not limited to):
+The types of attributes info_getter collects include (but are not limited to):
 .INDENT 0.0
 .IP \(bu 2
 Platform details
@@ -53,9 +53,9 @@ Fully qualified domain names
 Other configuration details
 .UNINDENT
 .sp
-Attributes that are collected by Ohai are automatic attributes, in that these attributes are used by the chef\-client to ensure that these attributes remain unchanged after the chef\-client is done configuring the node.
+Attributes that are collected by info_getter are automatic attributes, in that these attributes are used by the chef\-client to ensure that these attributes remain unchanged after the chef\-client is done configuring the node.
 .sp
-ohai is the command\-line interface for Ohai, a tool that is used to detect attributes on a node, and then provide these attributes to the chef\-client at the start of every chef\-client run.
+info_getter is the command\-line interface for info_getter, a tool that is used to detect attributes on a node, and then provide these attributes to the chef\-client at the start of every chef\-client run.
 .SH OPTIONS
 .sp
 This command has the following syntax:
@@ -64,7 +64,7 @@ This command has the following syntax:
 .sp
 .nf
 .ft C
-ohai OPTION
+info_getter OPTION
 .ft P
 .fi
 .UNINDENT
@@ -74,10 +74,10 @@ This tool has the following options:
 .INDENT 0.0
 .TP
 .B \fBATTRIBUTE_NAME ATTRIBUTE NAME ...\fP
-Use to have Ohai show only output for named attributes.
+Use to have info_getter show only output for named attributes.
 .TP
 .B \fB\-d PATH\fP, \fB\-\-directory PATH\fP
-The directory in which Ohai plugins are located. For example: \fB/etc/ohai/plugins\fP\&.
+The directory in which info_getter plugins are located. For example: \fB/etc/info_getter/plugins\fP\&.
 .TP
 .B \fB\-h\fP, \fB\-\-help\fP
 Shows help for the command.
@@ -89,7 +89,7 @@ The level of logging that will be stored in a log file.
 The location in which log file output files will be saved. If this location is set to something other than \fBSTDOUT\fP, standard output logging will still be performed (otherwise there would be no output other than to a file).
 .TP
 .B \fB\-v\fP, \fB\-\-version\fP
-The version of Ohai\&.
+The version of info_getter\&.
 .UNINDENT
 .SH AUTHOR
 Opscode

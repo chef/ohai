@@ -30,7 +30,7 @@ require "set"
 require "mixlib/shellout"
 require "mixlib/cli"
 require "optparse"
-require File.expand_path(File.dirname(__FILE__) + "/../spec/unit/path/ohai_plugin_common.rb")
+require File.expand_path(File.dirname(__FILE__) + "/../spec/unit/path/info_getter_plugin_common.rb")
 
 #get options
 class MyCLI
@@ -76,7 +76,7 @@ cmd, params, platform, arch, env = cli.config[:command], cli.config[:params], cl
 # filename = cmd + ".output"
 
 # Mixlib::ShellOut.new("touch #{filename}").run_command
-# data = OhaiPluginCommon.read_output cmd, File.expand_path( File.dirname(__FILE__))
+# data = info_getterPluginCommon.read_output cmd, File.expand_path( File.dirname(__FILE__))
 data ||= {}
 data[platform] ||= {}
 data[platform][arch] ||= []
@@ -102,4 +102,4 @@ results.each do |r|
   data[platform][arch] << r
 end
 
-puts OhaiPluginCommon.data_to_string data
+puts info_getterPluginCommon.data_to_string data

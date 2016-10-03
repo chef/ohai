@@ -17,13 +17,13 @@
 
 require_relative "../spec_helper"
 
-require "ohai/plugin_config"
+require "info_getter/plugin_config"
 
-describe "Ohai::PluginConfig" do
+describe "info_getter::PluginConfig" do
 
   describe "#[]=" do
 
-    let(:plugin_config) { Ohai::PluginConfig.new }
+    let(:plugin_config) { info_getter::PluginConfig.new }
 
     shared_examples_for "success" do
 
@@ -39,7 +39,7 @@ describe "Ohai::PluginConfig" do
 
       it "raises an error" do
         expect { plugin_config[key] = value }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+          to raise_error(info_getter::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
     end

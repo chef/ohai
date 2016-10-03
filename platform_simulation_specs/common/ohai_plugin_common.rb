@@ -18,17 +18,17 @@
 
 require "rubygems"
 require "ffi_yajl"
-require "ohai"
+require "info_getter"
 require "yaml"
 
-module OhaiPluginCommon
+module info_getterPluginCommon
   FAKE_SEP = "___"
 
   def fake_command(data, platform, arch, env)
     # If the platform or architecture aren't set, take the first one
-    # platform = ENV['OHAI_TEST_PLATFORM']
-    # arch = ENV['OHAI_TEST_ARCH']
-    # env = ENV['OHAI_TEST_ENVIRONMENT']
+    # platform = ENV['info_getter_TEST_PLATFORM']
+    # arch = ENV['info_getter_TEST_ARCH']
+    # env = ENV['info_getter_TEST_ENVIRONMENT']
 
     # env = JSON.load(env)
 
@@ -53,7 +53,7 @@ module OhaiPluginCommon
   end
 
   def plugin_path
-    get_path "/../../../lib/ohai/plugins"
+    get_path "/../../../lib/info_getter/plugins"
   end
 
   # read in the data file for fake executables
@@ -149,9 +149,9 @@ eos
 #!#{File.join( RbConfig::CONFIG['bindir'], 'ruby' )}
 
 require 'yaml'
-require '#{path}/ohai_plugin_common.rb'
+require '#{path}/info_getter_plugin_common.rb'
 
-OhaiPluginCommon.fake_command OhaiPluginCommon.read_output( '#{cmd.gsub( /\//, OhaiPluginCommon::FAKE_SEP )}' ), '#{platform}', '#{arch}', #{FFI_Yajl::Encoder.encode( env )}
+info_getterPluginCommon.fake_command info_getterPluginCommon.read_output( '#{cmd.gsub( /\//, info_getterPluginCommon::FAKE_SEP )}' ), '#{platform}', '#{arch}', #{FFI_Yajl::Encoder.encode( env )}
 eof
     File.open(cmd_path, "w") { |f| f.puts file }
 
@@ -188,7 +188,7 @@ def subsumes?(source, test, path = [], &block)
   end
 end
 
-# test that a plugin conforms populates ohai with the correct data
+# test that a plugin conforms populates info_getter with the correct data
 def test_plugin(plugin_names, cmd_list)
   #
   # Current platform simulation tests are disabled. Remove the line below
@@ -197,13 +197,13 @@ def test_plugin(plugin_names, cmd_list)
   return
 
   # clean the path directory, in case a previous test was interrupted
-  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/ # rubocop:disable Lint/UnreachableCode
+  info_getterPluginCommon.clean_path info_getterPluginCommon.get_path, /^.*\.rb$/ # rubocop:disable Lint/UnreachableCode
 
   l = lambda do |*args|
     platforms = args[0]
     archs = args[1]
     envs = args[2]
-    ohai = args[3]
+    info_getter = args[3]
     pending_status = args[4] || nil
     platforms.each do |platform|
       describe "when the platform is #{platform}" do
@@ -211,7 +211,7 @@ def test_plugin(plugin_names, cmd_list)
           describe "and the architecture is #{arch}" do
             envs.each do |env|
               describe "and the environment is #{env}" do
-                path = OhaiPluginCommon.get_path
+                path = info_getterPluginCommon.get_path
                 cmd_not_found = Set.new
 
                 begin
@@ -220,42 +220,42 @@ def test_plugin(plugin_names, cmd_list)
 
                   # create fake executables
                   cmd_list.each do |c|
-                    data = OhaiPluginCommon.read_output( c.gsub( /\//, OhaiPluginCommon::FAKE_SEP ))
+                    data = info_getterPluginCommon.read_output( c.gsub( /\//, info_getterPluginCommon::FAKE_SEP ))
 
                     data = data[platform][arch].select { |f| f[:env] == env }
                     if data.all? { |f| ( /not found/ =~ f[:stderr] ) && f[:exit_status] == 127 }
                       cmd_not_found.add c
                     else
-                      OhaiPluginCommon.create_exe c, path, platform, arch, env
+                      info_getterPluginCommon.create_exe c, path, platform, arch, env
                     end
                   end
 
                   # capture all executions in path dir
                   ENV["PATH"] = path
-                  Ohai.instance_eval do
+                  info_getter.instance_eval do
                     def self.abs_path( abs_path )
-                      File.join( OhaiPluginCommon.get_path, abs_path )
+                      File.join( info_getterPluginCommon.get_path, abs_path )
                     end
                   end
 
-                  @ohai = Ohai::System.new
+                  @info_getter = info_getter::System.new
                   plugin_names.each do |plugin_name|
-                    @plugin = get_plugin(plugin_name, @ohai, OhaiPluginCommon.plugin_path)
+                    @plugin = get_plugin(plugin_name, @info_getter, info_getterPluginCommon.plugin_path)
                     raise "Can not find plugin #{plugin_name}" if @plugin.nil?
                     @plugin.safe_run
                   end
                 ensure
-                  Ohai.instance_eval do
+                  info_getter.instance_eval do
                     def self.abs_path( abs_path )
                       abs_path
                     end
                   end
                   ENV["PATH"] = old_path
-                  OhaiPluginCommon.clean_path OhaiPluginCommon.get_path, /^.*\.rb$/
+                  info_getterPluginCommon.clean_path info_getterPluginCommon.get_path, /^.*\.rb$/
                 end
 
                 enc = FFI_Yajl::Encoder
-                subsumes?( @ohai.data, ohai ) do |path, source, test|
+                subsumes?( @info_getter.data, info_getter ) do |path, source, test|
                   path_txt = path.map { |p| "[#{enc.encode( p )}]" }.join
                   if test.nil?
                     txt = "should not set #{path_txt}"

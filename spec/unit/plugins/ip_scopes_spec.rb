@@ -5,7 +5,7 @@ begin
 rescue LoadError
 end
 
-describe Ohai::System, "plugin ip_scopes" do
+describe info_getter::System, "plugin ip_scopes" do
   let(:plugin) { get_plugin("ip_scopes") }
   let(:network) { Mash.new(:interfaces => interfaces) }
   let(:interfaces) do

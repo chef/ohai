@@ -22,7 +22,7 @@
 # platforms built upon the Windows_NT kernel and have access to win32 or win64
 # subsystems.
 
-Ohai.plugin(:Fips) do
+info_getter.plugin(:Fips) do
   provides "fips"
 
   collect_data(:windows) do

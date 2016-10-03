@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/ohai_plugin_common.rb")
+require File.expand_path(File.dirname(__FILE__) + "/info_getter_plugin_common.rb")
 
-describe OhaiPluginCommon, "subsumes?" do
+describe info_getterPluginCommon, "subsumes?" do
   before(:each) do
     @hash = { "languages" => { "python" => { "version" => "1.6.2", "type" => "interpreted" } } }
   end

@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "darwin filesystem2 plugin" do
+describe info_getter::System, "darwin filesystem2 plugin" do
   let (:plugin) { get_plugin("darwin/filesystem2") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:darwin)

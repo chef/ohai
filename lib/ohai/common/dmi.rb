@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module Common
     module DMI
       # List of IDs and what they translate to
@@ -70,7 +70,7 @@ module Ohai
       }
 
       # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
-      # See OHAI-260. When we can give the user a choice, this will be a default.
+      # See info_getter-260. When we can give the user a choice, this will be a default.
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
 
       # look up DMI ID
@@ -82,11 +82,11 @@ module Ohai
           elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
             id = DMI::ID_TO_DESCRIPTION[id]
           else
-            Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
+            info_getter::Log.debug("unrecognized header id; falling back to 'unknown'")
             id = "unknown"
           end
         rescue
-          Ohai::Log.debug("failed to look up id #{id}, returning unchanged")
+          info_getter::Log.debug("failed to look up id #{id}, returning unchanged")
           id
         end
       end

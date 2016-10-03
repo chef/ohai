@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DMI) do
+info_getter.plugin(:DMI) do
   provides "dmi"
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
   collect_data do
-    require "ohai/common/dmi"
+    require "info_getter/common/dmi"
     dmi Mash.new
 
     # all output lines should fall within one of these patterns
@@ -74,13 +74,13 @@ Ohai.plugin(:DMI) do
         dmi[:table_location] = table_location[1]
 
       elsif handle = handle_line.match(line)
-        # Don't overcapture for now (OHAI-260)
-        unless Ohai::Common::DMI::ID_TO_CAPTURE.include?(handle[2].to_i)
+        # Don't overcapture for now (info_getter-260)
+        unless info_getter::Common::DMI::ID_TO_CAPTURE.include?(handle[2].to_i)
           dmi_record = nil
           next
         end
 
-        dmi_record = { :type => Ohai::Common::DMI.id_lookup(handle[2]) }
+        dmi_record = { :type => info_getter::Common::DMI.id_lookup(handle[2]) }
 
         dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
         dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
@@ -92,14 +92,14 @@ Ohai.plugin(:DMI) do
 
       elsif type = type_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = type[1]
 
       elsif data = data_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -107,11 +107,11 @@ Ohai.plugin(:DMI) do
 
       elsif extended_data = extended_data_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
           next
         end
         if field == nil
-          Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
           next
         end
         # overwrite "raw" value with a new Mash
@@ -119,11 +119,11 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = nil
 
       else
-        Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
+        info_getter::Log.debug("unrecognized output line; discarding:\n#{line}")
 
       end
     end
 
-    Ohai::Common::DMI.convenience_keys(dmi)
+    info_getter::Common::DMI.convenience_keys(dmi)
   end
 end

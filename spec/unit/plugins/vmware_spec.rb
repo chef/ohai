@@ -16,7 +16,7 @@
 # limitations under the License.
 require "spec_helper"
 
-describe Ohai::System, "plugin vmware" do
+describe info_getter::System, "plugin vmware" do
   let(:plugin) { get_plugin("vmware") }
   let(:path) { "/usr/bin/vmware-toolbox-cmd" }
 

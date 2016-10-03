@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux filesystem plugin" do
+describe info_getter::System, "Linux filesystem plugin" do
   let (:plugin) { get_plugin("linux/filesystem2") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)

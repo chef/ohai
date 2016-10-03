@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:CPU) do
+info_getter.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:freebsd) do
@@ -47,7 +47,7 @@ Ohai.plugin(:CPU) do
         cpuinfo["mhz"] = $2
       when /Origin.*"(.*)".*Family.*0x(\S+).*Model.*0x(\S+).*Stepping.*(\S+)/
         cpuinfo["vendor_id"] = $1
-        # convert from hex value to int, but keep a string to match Linux ohai
+        # convert from hex value to int, but keep a string to match Linux info_getter
         cpuinfo["family"] = $2.to_i(16).to_s
         cpuinfo["model"] = $3.to_i(16).to_s
         cpuinfo["stepping"] = $4

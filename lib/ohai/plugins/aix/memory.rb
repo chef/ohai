@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Memory) do
+info_getter.plugin(:Memory) do
   provides "memory"
 
   collect_data(:aix) do

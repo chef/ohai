@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "plugin fips" do
+describe info_getter::System, "plugin fips" do
   let(:enabled) { "0" }
   let(:plugin) { get_plugin("linux/fips") }
   let(:fips_path) { "/proc/sys/crypto/fips_enabled" }

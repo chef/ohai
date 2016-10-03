@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Cloud) do
+info_getter.plugin(:Cloud) do
   provides "cloud"
 
   depends "ec2"

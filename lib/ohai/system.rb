@@ -16,22 +16,22 @@
 # limitations under the License.
 #
 
-require "ohai/loader"
-require "ohai/log"
-require "ohai/mash"
-require "ohai/runner"
-require "ohai/dsl"
-require "ohai/mixin/command"
-require "ohai/mixin/os"
-require "ohai/mixin/string"
-require "ohai/mixin/constant_helper"
-require "ohai/provides_map"
-require "ohai/hints"
+require "info_getter/loader"
+require "info_getter/log"
+require "info_getter/mash"
+require "info_getter/runner"
+require "info_getter/dsl"
+require "info_getter/mixin/command"
+require "info_getter/mixin/os"
+require "info_getter/mixin/string"
+require "info_getter/mixin/constant_helper"
+require "info_getter/provides_map"
+require "info_getter/hints"
 require "mixlib/shellout"
 
-module Ohai
+module info_getter
   class System
-    include Ohai::Mixin::ConstantHelper
+    include info_getter::Mixin::ConstantHelper
 
     attr_accessor :data
     attr_reader :config
@@ -49,16 +49,16 @@ module Ohai
       @provides_map = ProvidesMap.new
       @v6_dependency_solver = Hash.new
 
-      configure_ohai
+      configure_info_getter
       configure_logging
 
-      @loader = Ohai::Loader.new(self)
-      @runner = Ohai::Runner.new(self, true)
+      @loader = info_getter::Loader.new(self)
+      @runner = info_getter::Runner.new(self, true)
 
-      Ohai::Hints.refresh_hints()
+      info_getter::Hints.refresh_hints()
 
       # Remove the previously defined plugins
-      recursive_remove_constants(Ohai::NamedPlugin)
+      recursive_remove_constants(info_getter::NamedPlugin)
     end
 
     def [](key)
@@ -85,7 +85,7 @@ module Ohai
         @runner.run_plugin(v6plugin)
       end
 
-      # Users who are migrating from ohai 6 may give one or more Ohai 6 plugin
+      # Users who are migrating from info_getter 6 may give one or more info_getter 6 plugin
       # names as the +attribute_filter+. In this case we return early because
       # the v7 plugin provides map will not have an entry for this plugin.
       if attribute_filter && Array(attribute_filter).all? { |filter_item| have_v6_plugin?(filter_item) }
@@ -97,8 +97,8 @@ module Ohai
         @provides_map.all_plugins(attribute_filter).each do |plugin|
           @runner.run_plugin(plugin)
         end
-      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
-        Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+      rescue info_getter::Exceptions::AttributeNotFound, info_getter::Exceptions::DependencyCycle => e
+        info_getter::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
     end
@@ -130,25 +130,25 @@ module Ohai
         attribute = plugin_ref.gsub("::", "/")
         begin
           plugins = @provides_map.find_providers_for([attribute])
-        rescue Ohai::Exceptions::AttributeNotFound
-          Ohai::Log.debug("Can not find any v7 plugin that provides #{attribute}")
+        rescue info_getter::Exceptions::AttributeNotFound
+          info_getter::Log.debug("Can not find any v7 plugin that provides #{attribute}")
           plugins = [ ]
         end
       end
 
       if plugins.empty?
-        raise Ohai::Exceptions::DependencyNotFound, "Can not find a plugin for dependency #{plugin_ref}"
+        raise info_getter::Exceptions::DependencyNotFound, "Can not find a plugin for dependency #{plugin_ref}"
       else
         plugins.each do |plugin|
           begin
             @runner.run_plugin(plugin)
           rescue SystemExit, Interrupt
             raise
-          rescue Ohai::Exceptions::DependencyCycle, Ohai::Exceptions::AttributeNotFound => e
-            Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+          rescue info_getter::Exceptions::DependencyCycle, info_getter::Exceptions::AttributeNotFound => e
+            info_getter::Log.error("Encountered error while running plugins: #{e.inspect}")
             raise
           rescue Exception, Errno::ENOENT => e
-            Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+            info_getter::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
           end
         end
       end
@@ -164,7 +164,7 @@ module Ohai
     # This method takes a naive approach to v6 plugins: it simply re-runs all
     # of them whenever called.
     def refresh_plugins(attribute_filter = nil)
-      Ohai::Hints.refresh_hints()
+      info_getter::Hints.refresh_hints()
       @provides_map.all_plugins(attribute_filter).each do |plugin|
         plugin.reset!
       end
@@ -207,27 +207,27 @@ module Ohai
 
     private
 
-    def configure_ohai
-      Ohai::Config.merge_deprecated_config
-      Ohai.config.merge!(@config)
+    def configure_info_getter
+      info_getter::Config.merge_deprecated_config
+      info_getter.config.merge!(@config)
 
-      if Ohai.config[:directory] &&
-          !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
-        Ohai.config[:plugin_path] << Ohai.config[:directory]
+      if info_getter.config[:directory] &&
+          !info_getter.config[:plugin_path].include?(info_getter.config[:directory])
+        info_getter.config[:plugin_path] << info_getter.config[:directory]
       end
 
-      Ohai::Log.debug("Running Ohai with the following configuration: #{Ohai.config.configuration}")
+      info_getter::Log.debug("Running info_getter with the following configuration: #{info_getter.config.configuration}")
     end
 
     def configure_logging
-      return if Ohai::Log.configured?
+      return if info_getter::Log.configured?
 
-      Ohai::Log.init(Ohai.config[:log_location])
+      info_getter::Log.init(info_getter.config[:log_location])
 
-      if Ohai.config[:log_level] == :auto
-        Ohai::Log.level = :info
+      if info_getter.config[:log_level] == :auto
+        info_getter::Log.level = :info
       else
-        Ohai::Log.level = Ohai.config[:log_level]
+        info_getter::Log.level = info_getter.config[:log_level]
       end
     end
   end

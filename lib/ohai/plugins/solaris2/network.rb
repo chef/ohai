@@ -60,7 +60,7 @@ ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
                       nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
                       rwn sfe tavor vr wpi xge yge aggr} unless defined?(ETHERNET_ENCAPS)
 
-Ohai.plugin(:Network) do
+info_getter.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
@@ -178,11 +178,11 @@ Ohai.plugin(:Network) do
           else
             matches[:name]
           end
-        Ohai::Log.debug("found interface device: #{network[:default_interface]} #{matches[:name]}")
+        info_getter::Log.debug("found interface device: #{network[:default_interface]} #{matches[:name]}")
       end
       matches = /gateway: (\S+)/.match(line)
       if matches
-        Ohai::Log.debug("found gateway: #{matches[1]}")
+        info_getter::Log.debug("found gateway: #{matches[1]}")
         network[:default_gateway] = matches[1]
       end
     end

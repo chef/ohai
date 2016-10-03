@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:PS) do
+info_getter.plugin(:PS) do
   provides "command/ps"
   depends "command"
 

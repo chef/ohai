@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
+info_getter.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "kernel"
 

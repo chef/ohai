@@ -18,9 +18,9 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin ohai_time" do
+describe info_getter::System, "plugin info_getter_time" do
   before(:each) do
-    @plugin = get_plugin("ohai_time")
+    @plugin = get_plugin("info_getter_time")
   end
 
   it "should get the current time" do
@@ -35,10 +35,10 @@ describe Ohai::System, "plugin ohai_time" do
     @plugin.run
   end
 
-  it "should set ohai_time to the current time" do
+  it "should set info_getter_time to the current time" do
     time = Time.now
     allow(Time).to receive(:now).and_return(time)
     @plugin.run
-    expect(@plugin[:ohai_time]).to eq(time.to_f)
+    expect(@plugin[:info_getter_time]).to eq(time.to_f)
   end
 end

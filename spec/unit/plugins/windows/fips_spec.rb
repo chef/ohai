@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "plugin fips", :windows_only do
+describe info_getter::System, "plugin fips", :windows_only do
   let(:enabled) { 0 }
   let(:plugin) { get_plugin("windows/fips") }
   let(:fips_key) { 'System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy' }

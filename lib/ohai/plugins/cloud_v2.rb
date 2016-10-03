@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:CloudV2) do
+info_getter.plugin(:CloudV2) do
   provides "cloud_v2"
 
   depends "ec2"
@@ -26,7 +26,7 @@ Ohai.plugin(:CloudV2) do
   depends "azure"
   depends "digital_ocean"
 
-  # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
+  # Class to help enforce the interface exposed to node[:cloud] (info_getter-542)
   #
   # cloud[:provider] - (String) the cloud provider the VM is running on.
   #
@@ -107,7 +107,7 @@ Ohai.plugin(:CloudV2) do
         ipaddr = IPAddr.new(ip)
         raise ArgumentError, "not valid #{address_family} address" unless (address_family == :ipv4) ? ipaddr.ipv4? : ipaddr.ipv6?
       rescue ArgumentError => e
-        raise "ERROR: the ohai 'cloud' plugin failed with an IP address of '#{ip}' : #{e.message}"
+        raise "ERROR: the info_getter 'cloud' plugin failed with an IP address of '#{ip}' : #{e.message}"
       end
       ipaddr
     end

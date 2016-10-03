@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Network) do
+info_getter.plugin(:Network) do
   require "ipaddr"
 
   provides "network", "counters/network", "macaddress"
@@ -46,7 +46,7 @@ Ohai.plugin(:Network) do
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]
 
-    # We unfortunately have to do things a bit different here, if ohai is running
+    # We unfortunately have to do things a bit different here, if info_getter is running
     # within a WPAR. For instance, the WPAR isn't aware of some of its own networking
     # minutia such as default gateway/route.
     unless shell_out("uname -W").stdout.to_i > 0

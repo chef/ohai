@@ -49,23 +49,23 @@ shared_examples "a v7 loading failure" do
   end
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
+    @info_getter = info_getter::System.new
+    @loader = info_getter::Loader.new(@info_getter)
   end
 
   it "should not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    #@ohai.attributes.should_not have_key("fail")
-    expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+    #@info_getter.attributes.should_not have_key("fail")
+    expect { @info_getter.provides_map.find_providers_for(["fail"]) }.to raise_error(info_getter::Exceptions::AttributeNotFound)
   end
 
   it "should not have source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    expect(@ohai.v6_dependency_solver).not_to have_key("#{tmp}/plugins/fail.rb")
+    expect(@info_getter.v6_dependency_solver).not_to have_key("#{tmp}/plugins/fail.rb")
   end
 
-  it "should write to Ohai::Log" do
-    expect(Ohai::Log).to receive(:warn).once
+  it "should write to info_getter::Log" do
+    expect(info_getter::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -98,22 +98,22 @@ shared_examples "a v7 loading success" do
   end
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
+    @info_getter = info_getter::System.new
+    @loader = info_getter::Loader.new(@info_getter)
   end
 
   it "should have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    expect(@ohai.provides_map).to have_key("fail")
+    expect(@info_getter.provides_map).to have_key("fail")
   end
 
   it "should have source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    expect(@ohai.v6_dependency_solver).to have_key("#{tmp}/plugins/fail.rb")
+    expect(@info_getter.v6_dependency_solver).to have_key("#{tmp}/plugins/fail.rb")
   end
 
-  it "should not write to Ohai::Log" do
-    expect(Ohai::Log).not_to receive(:warn)
+  it "should not write to info_getter::Log" do
+    expect(info_getter::Log).not_to receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -146,18 +146,18 @@ shared_examples "a v7 run failure" do
   end
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
+    @info_getter = info_getter::System.new
+    @loader = info_getter::Loader.new(@info_getter)
   end
 
   it "should not have new attribute keys" do
-    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
-    expect(@ohai.provides_map).not_to have_key("other")
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@info_getter).run
+    expect(@info_getter.provides_map).not_to have_key("other")
   end
 
-  it "should write to Ohai::Log" do
-    expect(Ohai::Log).to receive(:warn).once
-    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
+  it "should write to info_getter::Log" do
+    expect(info_getter::Log).to receive(:warn).once
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@info_getter).run
   end
 end
 
@@ -190,39 +190,39 @@ shared_examples "a v6 run failure" do
   end
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
+    @info_getter = info_getter::System.new
+    @loader = info_getter::Loader.new(@info_getter)
   end
 
   it "should not add data keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.data.should_not have_key("fail")
+    @info_getter.data.should_not have_key("fail")
   end
 
-  it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:warn).once
-    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
+  it "should write to info_getter::Log" do
+    info_getter::Log.should_receive(:warn).once
+    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@info_getter).run
   end
 end
 =end
 
-describe "when using DSL commands outside Ohai.plugin block" do
+describe "when using DSL commands outside info_getter.plugin block" do
   failstr1 = <<EOF
 provides "fail"
-Ohai.plugin do
+info_getter.plugin do
 end
 EOF
 
   failstr2 = <<EOF
 depends "fail"
-Ohai.plugin do
+info_getter.plugin do
 end
 EOF
 
   failstr3 = <<EOF
 collect_data do
 end
-Ohai.plugin do
+info_getter.plugin do
 end
 EOF
 
@@ -239,8 +239,8 @@ EOF
   end
 end
 
-describe "when using nonexistent DSL commands in Ohai.plugin block" do
-  failstr = "Ohai.plugin do\n\tcreates \"fail\"\nend\n"
+describe "when using nonexistent DSL commands in info_getter.plugin block" do
+  failstr = "info_getter.plugin do\n\tcreates \"fail\"\nend\n"
 
   it_behaves_like "a v7 loading failure" do
     let(:failstr) { failstr }
@@ -250,7 +250,7 @@ end
 =begin
 describe "when using DSL commands in collect_data block" do
   failstr1 = <<EOF
-Ohai.plugin do
+info_getter.plugin do
   provides "fail"
   collect_data do
     provides "other"
@@ -259,7 +259,7 @@ end
 EOF
 
   failstr2 =<<EOF
-Ohai.plugin do
+info_getter.plugin do
   provides "fail"
   collect_data do
     provides "other"
@@ -286,7 +286,7 @@ end
 
 describe "when setting undeclared attribute in collect_data block" do
   failstr = <<EOF
-Ohai.plugin do
+info_getter.plugin do
   provides "fail"
   collect_data do
     creates "other"

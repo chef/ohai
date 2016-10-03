@@ -2,17 +2,17 @@
 
 Briefly describe the issue
 
-## Ohai Version
+## info_getter Version
 
-Tell us which version of Ohai you are using.
+Tell us which version of info_getter you are using.
 
 ## Platform Version
 
-Tell us which Operating System distribution and version Ohai is running on.
+Tell us which Operating System distribution and version info_getter is running on.
 
-## Ohai Output
+## info_getter Output
 
-If relevant please include your complete Ohai output or link to a gist. Make sure to change any values that may be sensitive.
+If relevant please include your complete info_getter output or link to a gist. Make sure to change any values that may be sensitive.
 
-The debug output (ohai -l debug) may be useful, but please link to a gist, or truncate it.
+The debug output (info_getter -l debug) may be useful, but please link to a gist, or truncate it.
 

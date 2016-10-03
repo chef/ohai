@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Timezone) do
+info_getter.plugin(:Timezone) do
   provides "time/timezone"
 
   collect_data(:default) do

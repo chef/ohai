@@ -18,7 +18,7 @@
 
 # Copied from chef/lib/chef/util/selinux.rb
 
-module Ohai
+module info_getter
   module Util
     module FileHelper
       def which(cmd)
@@ -26,11 +26,11 @@ module Ohai
         paths.each do |path|
           filename = File.join(path, cmd)
           if File.executable?(filename)
-            Ohai::Log.debug("#{self.name} plugin: found #{cmd} at #{filename}")
+            info_getter::Log.debug("#{self.name} plugin: found #{cmd} at #{filename}")
             return filename
           end
         end
-        Ohai::Log.debug("#{self.name} plugin: did not find #{cmd}")
+        info_getter::Log.debug("#{self.name} plugin: did not find #{cmd}")
         false
       end
     end

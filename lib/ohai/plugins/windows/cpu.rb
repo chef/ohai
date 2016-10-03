@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:CPU) do
+info_getter.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:windows) do
@@ -46,7 +46,7 @@ Ohai.plugin(:CPU) do
         cpu[current_cpu]["cores"] = processor["numberofcores"]
         cores += processor["numberofcores"]
       rescue NoMethodError => e
-        Ohai::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
+        info_getter::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
         cpu[current_cpu]["cores"] = nil
       end
 

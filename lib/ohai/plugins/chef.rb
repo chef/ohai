@@ -16,14 +16,14 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Chef) do
+info_getter.plugin(:Chef) do
   provides "chef_packages/chef"
 
   collect_data do
     begin
       require "chef/version"
     rescue Gem::LoadError
-      # this catches when you've done a major version bump of ohai, but
+      # this catches when you've done a major version bump of info_getter, but
       # your chef gem is incompatible, so we can't load it in the same VM
       # (affects mostly internal testing)
       next

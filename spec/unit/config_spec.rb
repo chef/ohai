@@ -18,25 +18,25 @@
 
 require_relative "../spec_helper"
 
-require "ohai/config"
+require "info_getter/config"
 
-RSpec.describe Ohai::Config do
+RSpec.describe info_getter::Config do
 
   describe "top-level configuration options" do
     shared_examples_for "option" do
       it "logs a deprecation warning and sets the value" do
-        expect(Ohai::Log).to receive(:warn).
-          with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::Config[option] = value
-        expect(Ohai::Config[option]).to eq(value)
+        expect(info_getter::Log).to receive(:warn).
+          with(/info_getter::Config\[:#{option}\] is deprecated/)
+        info_getter::Config[option] = value
+        expect(info_getter::Config[option]).to eq(value)
       end
     end
 
     shared_examples_for "appendable option" do
       it "sets the value" do
-        expect(Ohai::Log).to_not receive(:warn)
-        Ohai::Config[option] << value
-        expect(Ohai::Config[option]).to include(value)
+        expect(info_getter::Log).to_not receive(:warn)
+        info_getter::Config[option] << value
+        expect(info_getter::Config[option]).to include(value)
       end
     end
 
@@ -90,58 +90,58 @@ RSpec.describe Ohai::Config do
     end
   end
 
-  describe "config_context :ohai" do
+  describe "config_context :info_getter" do
     describe "option :plugin" do
       it "gets configured with a value" do
-        Ohai::Config.ohai[:plugin][:foo] = true
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to be true
+        info_getter::Config.info_getter[:plugin][:foo] = true
+        expect(info_getter::Config.info_getter[:plugin]).to have_key(:foo)
+        expect(info_getter::Config.info_getter[:plugin][:foo]).to be true
       end
 
       it "gets configured with a Hash" do
         value = { :bar => true, :baz => true }
-        Ohai::Config.ohai[:plugin][:foo] = value
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to eq(value)
+        info_getter::Config.info_getter[:plugin][:foo] = value
+        expect(info_getter::Config.info_getter[:plugin]).to have_key(:foo)
+        expect(info_getter::Config.info_getter[:plugin][:foo]).to eq(value)
       end
 
       it "raises an error if the plugin name is not a symbol" do
-        expect { Ohai::Config.ohai[:plugin]["foo"] = false }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+        expect { info_getter::Config.info_getter[:plugin]["foo"] = false }.
+          to raise_error(info_getter::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
       it "raises an error if the value Hash has non-Symbol key" do
         value = { :bar => true, "baz" => true }
-        expect { Ohai::Config.ohai[:plugin][:foo] = value }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+        expect { info_getter::Config.info_getter[:plugin][:foo] = value }.
+          to raise_error(info_getter::Exceptions::PluginConfigError, /Expected Symbol/)
       end
     end
   end
 
   describe "::merge_deprecated_config" do
     before(:each) do
-      allow(Ohai::Log).to receive(:warn)
-      configure_ohai
+      allow(info_getter::Log).to receive(:warn)
+      configure_info_getter
     end
 
-    def configure_ohai
-      Ohai::Config[:directory] = "/some/fantastic/plugins"
-      Ohai::Config[:disabled_plugins] = [ :Foo, :Baz ]
-      Ohai::Config[:log_level] = :debug
+    def configure_info_getter
+      info_getter::Config[:directory] = "/some/fantastic/plugins"
+      info_getter::Config[:disabled_plugins] = [ :Foo, :Baz ]
+      info_getter::Config[:log_level] = :debug
     end
 
-    it "merges top-level config values into the ohai config context" do
-      Ohai::Config.merge_deprecated_config
-      expect(Ohai::Config.ohai.configuration).to eq (Ohai::Config.configuration)
+    it "merges top-level config values into the info_getter config context" do
+      info_getter::Config.merge_deprecated_config
+      expect(info_getter::Config.info_getter.configuration).to eq (info_getter::Config.configuration)
     end
 
     shared_examples_for "delayed warn" do
       it "logs a deprecation warning and merges the value" do
-        expect(Ohai::Log).to receive(:warn).
-          with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::Config[option] << value
-        Ohai::Config.merge_deprecated_config
-        expect(Ohai::Config.ohai[option]).to include(value)
+        expect(info_getter::Log).to receive(:warn).
+          with(/info_getter::Config\[:#{option}\] is deprecated/)
+        info_getter::Config[option] << value
+        info_getter::Config.merge_deprecated_config
+        expect(info_getter::Config.info_getter[option]).to include(value)
       end
     end
 
@@ -160,9 +160,9 @@ RSpec.describe Ohai::Config do
     end
   end
 
-  describe "Ohai.config" do
-    it "returns the ohai config context" do
-      expect(Ohai.config).to eq(Ohai::Config.ohai)
+  describe "info_getter.config" do
+    it "returns the info_getter config context" do
+      expect(info_getter.config).to eq(info_getter::Config.info_getter)
     end
   end
 end

@@ -18,12 +18,12 @@
 # limitations under the License.
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
-require "ohai/mixin/softlayer_metadata"
+require "info_getter/mixin/softlayer_metadata"
 
-describe ::Ohai::Mixin::SoftlayerMetadata do
+describe ::info_getter::Mixin::SoftlayerMetadata do
 
   let(:mixin) do
-    mixin = Object.new.extend(::Ohai::Mixin::SoftlayerMetadata)
+    mixin = Object.new.extend(::info_getter::Mixin::SoftlayerMetadata)
     mixin
   end
 
@@ -41,7 +41,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
       allow(http_mock).to receive(:get).and_raise(StandardError.new("API return fake error"))
       allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
-      expect(::Ohai::Log).to receive(:error).at_least(:once)
+      expect(::info_getter::Log).to receive(:error).at_least(:once)
       expect { mixin.fetch_metadata }.to raise_error(StandardError)
     end
 

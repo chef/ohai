@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Elixir) do
+info_getter.plugin(:Elixir) do
   provides "languages/elixir"
   depends "languages"
 
@@ -29,8 +29,8 @@ Ohai.plugin(:Elixir) do
         elixir[:version] = $1
         languages[:elixir] = elixir
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Elixir plugin: Could not shell_out "elixir -v". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Elixir plugin: Could not shell_out "elixir -v". Skipping plugin')
     end
   end
 end

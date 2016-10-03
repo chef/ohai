@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Rust) do
+info_getter.plugin(:Rust) do
   provides "languages/rust"
   depends "languages"
 
@@ -27,8 +27,8 @@ Ohai.plugin(:Rust) do
         rust[:version] = so.stdout.split[1]
         languages[:rust] = rust if rust[:version]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Rust plugin: Could not shell_out "rustc --version". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Rust plugin: Could not shell_out "rustc --version". Skipping plugin')
     end
   end
 end

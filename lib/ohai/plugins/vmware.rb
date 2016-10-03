@@ -31,7 +31,7 @@
 # get_vm_attributes("/usr/bin/vmware-toolbox-cmd")
 #
 
-Ohai.plugin(:VMware) do
+info_getter.plugin(:VMware) do
   provides "vmware"
   depends "virtualization"
 
@@ -42,7 +42,7 @@ Ohai.plugin(:VMware) do
 
   def get_vm_attributes(vmtools_path)
     if !File.exist?(vmtools_path)
-      Ohai::Log.debug("#{vmtools_path} not found")
+      info_getter::Log.debug("#{vmtools_path} not found")
     else
       vmware Mash.new
       begin
@@ -62,7 +62,7 @@ Ohai.plugin(:VMware) do
           vmware[param] = from_cmd("#{vmtools_path} #{param} status")
         end
       rescue
-        Ohai::Log.debug("Error while collecting VMware guest attributes")
+        info_getter::Log.debug("Error while collecting VMware guest attributes")
       end
     end
   end

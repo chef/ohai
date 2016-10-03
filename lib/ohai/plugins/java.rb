@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Java) do
+info_getter.plugin(:Java) do
   provides "languages/java"
   depends "languages"
 
@@ -42,8 +42,8 @@ Ohai.plugin(:Java) do
 
         languages[:java] = java unless java.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Java plugin: Could not shell_out "java -mx64m -version". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Java plugin: Could not shell_out "java -mx64m -version". Skipping plugin')
     end
   end
 

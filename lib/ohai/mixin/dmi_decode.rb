@@ -16,7 +16,7 @@
 # limitations under the License.
 
 # http://www.dmo.ca/blog/detecting-virtualization-on-linux
-module ::Ohai::Mixin::DmiDecode
+module ::info_getter::Mixin::DmiDecode
   def guest_from_dmi(dmi_data)
     dmi_data.each_line do |line|
       case line

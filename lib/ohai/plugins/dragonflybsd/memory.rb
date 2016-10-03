@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Memory) do
+info_getter.plugin(:Memory) do
   provides "memory", "memory/swap"
 
   collect_data(:dragonflybsd) do

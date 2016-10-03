@@ -18,7 +18,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "Init package" do
+describe info_getter::System, "Init package" do
   let(:plugin) do
     p = get_plugin("init_package")
     allow(p).to receive(:collect_os).and_return("linux")

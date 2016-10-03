@@ -16,7 +16,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux memory plugin" do
+describe info_getter::System, "Linux memory plugin" do
   before(:each) do
     @plugin = get_plugin("linux/memory")
     allow(@plugin).to receive(:collect_os).and_return(:linux)

@@ -18,7 +18,7 @@
 
 require "spec_helper"
 
-describe Ohai::System, "AIX virtualization plugin" do
+describe info_getter::System, "AIX virtualization plugin" do
 
   context "inside an LPAR" do
 

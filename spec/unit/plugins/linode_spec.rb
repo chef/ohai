@@ -17,7 +17,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin linode" do
+describe info_getter::System, "plugin linode" do
   let(:plugin) { get_plugin("linode") }
 
   before do

@@ -18,46 +18,46 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
-require "ohai/mixin/os"
+require "info_getter/mixin/os"
 
-describe "Ohai::System" do
+describe "info_getter::System" do
   extend IntegrationSupport
 
-  let(:ohai) { Ohai::System.new }
+  let(:info_getter) { info_getter::System.new }
 
   describe "#initialize" do
-    it "returns an Ohai::System object" do
-      expect(ohai).to be_a_kind_of(Ohai::System)
+    it "returns an info_getter::System object" do
+      expect(info_getter).to be_a_kind_of(info_getter::System)
     end
 
     it "sets @attributes to a ProvidesMap" do
-      expect(ohai.provides_map).to be_a_kind_of(Ohai::ProvidesMap)
+      expect(info_getter.provides_map).to be_a_kind_of(info_getter::ProvidesMap)
     end
 
     it "sets @v6_dependency_solver to a Hash" do
-      expect(ohai.v6_dependency_solver).to be_a_kind_of(Hash)
+      expect(info_getter.v6_dependency_solver).to be_a_kind_of(Hash)
     end
 
-    it "merges deprecated config settings into the ohai config context" do
-      expect(Ohai::Log).to receive(:warn).
-        with(/Ohai::Config\[:disabled_plugins\] is deprecated/)
-      Ohai::Config[:disabled_plugins] = [ :Foo, :Baz ]
-      expect(Ohai::Config).to receive(:merge_deprecated_config).
+    it "merges deprecated config settings into the info_getter config context" do
+      expect(info_getter::Log).to receive(:warn).
+        with(/info_getter::Config\[:disabled_plugins\] is deprecated/)
+      info_getter::Config[:disabled_plugins] = [ :Foo, :Baz ]
+      expect(info_getter::Config).to receive(:merge_deprecated_config).
         and_call_original
-      Ohai::System.new
-      expect(Ohai.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
+      info_getter::System.new
+      expect(info_getter.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
     end
 
-    it "merges provided configuration options into the ohai config context" do
+    it "merges provided configuration options into the info_getter config context" do
       config = {
         disabled_plugins: [ :Foo, :Baz ],
         directory: "/some/extra/plugins",
       }
-      allow(Ohai::Config).to receive(:merge_deprecated_config)
-      expect(Ohai.config).to receive(:merge!).with(config).and_call_original
-      Ohai::System.new(config)
+      allow(info_getter::Config).to receive(:merge_deprecated_config)
+      expect(info_getter.config).to receive(:merge!).with(config).and_call_original
+      info_getter::System.new(config)
       config.each do |option, value|
-        expect(Ohai.config[option]).to eq(value)
+        expect(info_getter.config[option]).to eq(value)
       end
     end
 
@@ -65,19 +65,19 @@ describe "Ohai::System" do
       let(:directory) { "/some/fantastic/plugins" }
 
       it "adds directory to plugin_path" do
-        Ohai.config[:directory] = directory
-        Ohai::System.new
-        expect(Ohai.config[:plugin_path]).to include(directory)
+        info_getter.config[:directory] = directory
+        info_getter::System.new
+        expect(info_getter.config[:plugin_path]).to include(directory)
       end
     end
 
     shared_examples_for "appendable deprecated configuration option" do
-      it "logs a warning and configures the option on the ohai config context" do
-        Ohai::Config[option] << value
-        expect(Ohai::Log).to receive(:warn).
-          with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::System.new
-        expect(Ohai.config[option]).to include(value)
+      it "logs a warning and configures the option on the info_getter config context" do
+        info_getter::Config[option] << value
+        expect(info_getter::Log).to receive(:warn).
+          with(/info_getter::Config\[:#{option}\] is deprecated/)
+        info_getter::System.new
+        expect(info_getter.config[option]).to include(value)
       end
     end
 
@@ -96,35 +96,35 @@ describe "Ohai::System" do
     end
 
     context "first time configuration" do
-      before { allow(Ohai::Log).to receive(:configured?).and_return(false) }
+      before { allow(info_getter::Log).to receive(:configured?).and_return(false) }
 
       it "configures logging" do
         log_level = :debug
-        Ohai.config[:log_level] = log_level
-        expect(Ohai::Log).to receive(:init).with(Ohai.config[:log_location])
-        expect(Ohai::Log).to receive(:level=).with(log_level)
-        Ohai::System.new
+        info_getter.config[:log_level] = log_level
+        expect(info_getter::Log).to receive(:init).with(info_getter.config[:log_location])
+        expect(info_getter::Log).to receive(:level=).with(log_level)
+        info_getter::System.new
       end
 
       it "resolves log_level when set to :auto" do
-        expect(Ohai::Log).to receive(:level=).with(:info)
-        Ohai::System.new
+        expect(info_getter::Log).to receive(:level=).with(:info)
+        info_getter::System.new
       end
     end
 
     context "after first time configuration" do
-      before { allow(Ohai::Log).to receive(:configured?).and_return(true) }
+      before { allow(info_getter::Log).to receive(:configured?).and_return(true) }
 
       it "configures logging" do
-        expect(Ohai::Log).not_to receive(:init).with(Ohai.config[:log_location])
-        Ohai::System.new
+        expect(info_getter::Log).not_to receive(:init).with(info_getter.config[:log_location])
+        info_getter::System.new
       end
     end
   end
 
   when_plugins_directory "contains v6 and v7 plugins" do
     with_plugin("zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
+info_getter.plugin(:Zoo) do
   provides 'seals'
 end
 EOF
@@ -134,20 +134,20 @@ provides 'fish'
 EOF
 
     before do
-      Ohai.config[:plugin_path] = [ path_to(".") ]
+      info_getter.config[:plugin_path] = [ path_to(".") ]
     end
 
     it "load_plugins() should load all the plugins" do
-      ohai.load_plugins
-      expect(ohai.provides_map.map.keys).to include("seals")
-      expect(ohai.v6_dependency_solver.keys).to include("lake.rb")
-      expect(Ohai::NamedPlugin.const_get(:Zoo)).to eq(Ohai::NamedPlugin::Zoo)
+      info_getter.load_plugins
+      expect(info_getter.provides_map.map.keys).to include("seals")
+      expect(info_getter.v6_dependency_solver.keys).to include("lake.rb")
+      expect(info_getter::NamedPlugin.const_get(:Zoo)).to eq(info_getter::NamedPlugin::Zoo)
     end
   end
 
   when_plugins_directory "contains directories inside" do
     with_plugin("repo1/zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
+info_getter.plugin(:Zoo) do
   provides 'seals'
 end
 EOF
@@ -157,7 +157,7 @@ provides 'fish'
 EOF
 
     with_plugin("repo2/nature.rb", <<EOF)
-Ohai.plugin(:Nature) do
+info_getter.plugin(:Nature) do
   provides 'crabs'
 end
 EOF
@@ -167,17 +167,17 @@ provides 'bear'
 EOF
 
     before do
-      Ohai.config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
+      info_getter.config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
     end
 
     it "load_plugins() should load all the plugins" do
-      ohai.load_plugins
-      expect(ohai.provides_map.map.keys).to include("seals")
-      expect(ohai.provides_map.map.keys).to include("crabs")
-      expect(ohai.v6_dependency_solver.keys).to include("lake.rb")
-      expect(ohai.v6_dependency_solver.keys).to include("mountain.rb")
-      expect(Ohai::NamedPlugin.const_get(:Zoo)).to eq(Ohai::NamedPlugin::Zoo)
-      expect(Ohai::NamedPlugin.const_get(:Nature)).to eq(Ohai::NamedPlugin::Nature)
+      info_getter.load_plugins
+      expect(info_getter.provides_map.map.keys).to include("seals")
+      expect(info_getter.provides_map.map.keys).to include("crabs")
+      expect(info_getter.v6_dependency_solver.keys).to include("lake.rb")
+      expect(info_getter.v6_dependency_solver.keys).to include("mountain.rb")
+      expect(info_getter::NamedPlugin.const_get(:Zoo)).to eq(info_getter::NamedPlugin::Zoo)
+      expect(info_getter::NamedPlugin.const_get(:Nature)).to eq(info_getter::NamedPlugin::Nature)
     end
 
   end
@@ -195,34 +195,34 @@ park("plants")
 EOF
 
       it "should collect data from all the plugins" do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
-        ohai.all_plugins
-        expect(ohai.data[:zoo]).to eq("animals")
-        expect(ohai.data[:park]).to eq("plants")
+        info_getter.config[:plugin_path] = [ path_to(".") ]
+        info_getter.all_plugins
+        expect(info_getter.data[:zoo]).to eq("animals")
+        expect(info_getter.data[:park]).to eq("plants")
       end
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai.config[:disabled_plugins] = [ "zoo" ]
+          info_getter.config[:disabled_plugins] = [ "zoo" ]
         end
 
         after do
-          Ohai.config[:disabled_plugins] = [ ]
+          info_getter.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled version 6 plugins" do
-          Ohai.config[:plugin_path] = [ path_to(".") ]
-          ohai.all_plugins
-          expect(ohai.data[:zoo]).to be_nil
-          expect(ohai.data[:park]).to eq("plants")
+          info_getter.config[:plugin_path] = [ path_to(".") ]
+          info_getter.all_plugins
+          expect(info_getter.data[:zoo]).to be_nil
+          expect(info_getter.data[:park]).to eq("plants")
         end
       end
 
       describe "when running in whitelist mode" do
-        let(:ohai_system) { Ohai::System.new }
+        let(:info_getter_system) { info_getter::System.new }
 
         let(:primary_plugin_class) do
-          Ohai.plugin(:Primary) do
+          info_getter.plugin(:Primary) do
             provides "primary"
             depends "dependency/one"
             depends "dependency/two"
@@ -231,48 +231,48 @@ EOF
         end
 
         let(:dependency_plugin_one_class) do
-          Ohai.plugin(:DependencyOne) do
+          info_getter.plugin(:DependencyOne) do
             provides "dependency/one"
             collect_data {}
           end
         end
 
         let(:dependency_plugin_two_class) do
-          Ohai.plugin(:DependencyTwo) do
+          info_getter.plugin(:DependencyTwo) do
             provides "dependency/two"
             collect_data {}
           end
         end
 
         let(:unrelated_plugin_class) do
-          Ohai.plugin(:Unrelated) do
+          info_getter.plugin(:Unrelated) do
             provides "whatever"
             collect_data {}
           end
         end
 
         let(:v6_plugin_class) do
-          Class.new(Ohai::DSL::Plugin::VersionVI) { collect_contents("v6_key('v6_data')") }
+          Class.new(info_getter::DSL::Plugin::VersionVI) { collect_contents("v6_key('v6_data')") }
         end
 
-        let(:primary_plugin) { primary_plugin_class.new(ohai_system) }
-        let(:dependency_plugin_one) { dependency_plugin_one_class.new(ohai_system) }
-        let(:dependency_plugin_two) { dependency_plugin_two_class.new(ohai_system) }
-        let(:unrelated_plugin) { unrelated_plugin_class.new(ohai_system) }
-        let(:v6_plugin) { v6_plugin_class.new(ohai_system, "/v6_plugin.rb", "/") }
+        let(:primary_plugin) { primary_plugin_class.new(info_getter_system) }
+        let(:dependency_plugin_one) { dependency_plugin_one_class.new(info_getter_system) }
+        let(:dependency_plugin_two) { dependency_plugin_two_class.new(info_getter_system) }
+        let(:unrelated_plugin) { unrelated_plugin_class.new(info_getter_system) }
+        let(:v6_plugin) { v6_plugin_class.new(info_getter_system, "/v6_plugin.rb", "/") }
 
         before do
-          allow(ohai_system).to receive(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
+          allow(info_getter_system).to receive(:load_plugins) # TODO: temporary hack - don't run unrelated plugins...
           [ primary_plugin, dependency_plugin_one, dependency_plugin_two, unrelated_plugin].each do |plugin|
             plugin_provides = plugin.class.provides_attrs
-            ohai_system.provides_map.set_providers_for(plugin, plugin_provides)
+            info_getter_system.provides_map.set_providers_for(plugin, plugin_provides)
           end
 
-          ohai_system.v6_dependency_solver["v6_plugin"] = v6_plugin
+          info_getter_system.v6_dependency_solver["v6_plugin"] = v6_plugin
 
           # Instead of calling all plugins we call load and run directly so that the information we setup is not cleared by all_plugins
-          ohai_system.load_plugins
-          ohai_system.run_plugins(true, "primary")
+          info_getter_system.load_plugins
+          info_getter_system.run_plugins(true, "primary")
         end
 
         # This behavior choice is somewhat arbitrary, based on what creates the
@@ -300,29 +300,29 @@ EOF
 
     when_plugins_directory "contains a v7 plugins with :default and platform specific blocks" do
       with_plugin("message.rb", <<EOF)
-Ohai.plugin(:Message) do
+info_getter.plugin(:Message) do
   provides 'message'
 
   collect_data(:default) do
     message("default")
   end
 
-  collect_data(:#{Ohai::Mixin::OS.collect_os}) do
+  collect_data(:#{info_getter::Mixin::OS.collect_os}) do
     message("platform_specific_message")
   end
 end
 EOF
 
       it "should collect platform specific" do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
-        ohai.all_plugins
-        expect(ohai.data[:message]).to eq("platform_specific_message")
+        info_getter.config[:plugin_path] = [ path_to(".") ]
+        info_getter.all_plugins
+        expect(info_getter.data[:message]).to eq("platform_specific_message")
       end
     end
 
     when_plugins_directory "contains v7 plugins only" do
       with_plugin("zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
+info_getter.plugin(:Zoo) do
   provides 'zoo'
 
   collect_data(:default) do
@@ -332,7 +332,7 @@ end
 EOF
 
       with_plugin("park.rb", <<EOF)
-Ohai.plugin(:Park) do
+info_getter.plugin(:Park) do
   provides 'park'
   collect_data(:default) do
     park("plants")
@@ -341,42 +341,42 @@ end
 EOF
 
       it "should collect data from all the plugins" do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
-        ohai.all_plugins
-        expect(ohai.data[:zoo]).to eq("animals")
-        expect(ohai.data[:park]).to eq("plants")
+        info_getter.config[:plugin_path] = [ path_to(".") ]
+        info_getter.all_plugins
+        expect(info_getter.data[:zoo]).to eq("animals")
+        expect(info_getter.data[:park]).to eq("plants")
       end
 
-      it "should write an error to Ohai::Log" do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+      it "should write an error to info_getter::Log" do
+        info_getter.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
-        allow(ohai).to receive(:reset_system)
-        allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
-        expect(Ohai::Log).to receive(:error).with(/Encountered error while running plugins/)
-        expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        allow(info_getter).to receive(:reset_system)
+        allow(info_getter.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(info_getter::Exceptions::AttributeNotFound)
+        expect(info_getter::Log).to receive(:error).with(/Encountered error while running plugins/)
+        expect { info_getter.all_plugins }.to raise_error(info_getter::Exceptions::AttributeNotFound)
       end
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai.config[:disabled_plugins] = [ :Zoo ]
+          info_getter.config[:disabled_plugins] = [ :Zoo ]
         end
 
         after do
-          Ohai.config[:disabled_plugins] = [ ]
+          info_getter.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled plugins" do
-          Ohai.config[:plugin_path] = [ path_to(".") ]
-          ohai.all_plugins
-          expect(ohai.data[:zoo]).to be_nil
-          expect(ohai.data[:park]).to eq("plants")
+          info_getter.config[:plugin_path] = [ path_to(".") ]
+          info_getter.all_plugins
+          expect(info_getter.data[:zoo]).to be_nil
+          expect(info_getter.data[:park]).to eq("plants")
         end
       end
     end
 
     when_plugins_directory "contains v6 & v7 plugins in different directories" do
       with_plugin("my_plugins/zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
+info_getter.plugin(:Zoo) do
   provides 'zoo'
 
   collect_data(:default) do
@@ -386,7 +386,7 @@ end
 EOF
 
       with_plugin("my_plugins/nature.rb", <<EOF)
-Ohai.plugin(:Nature) do
+info_getter.plugin(:Nature) do
   provides 'nature'
 
   collect_data(:default) do
@@ -407,20 +407,20 @@ EOF
 
       describe "when using :disabled_plugins" do
         before do
-          Ohai.config[:disabled_plugins] = [ :Zoo, "my_plugins::park" ]
+          info_getter.config[:disabled_plugins] = [ :Zoo, "my_plugins::park" ]
         end
 
         after do
-          Ohai.config[:disabled_plugins] = [ ]
+          info_getter.config[:disabled_plugins] = [ ]
         end
 
         it "shouldn't run disabled plugins" do
-          Ohai.config[:plugin_path] = [ path_to(".") ]
-          ohai.all_plugins
-          expect(ohai.data[:zoo]).to be_nil
-          expect(ohai.data[:nature]).to eq("cougars")
-          expect(ohai.data[:park]).to be_nil
-          expect(ohai.data[:home]).to eq("dog")
+          info_getter.config[:plugin_path] = [ path_to(".") ]
+          info_getter.all_plugins
+          expect(info_getter.data[:zoo]).to be_nil
+          expect(info_getter.data[:nature]).to eq("cougars")
+          expect(info_getter.data[:park]).to be_nil
+          expect(info_getter.data[:home]).to eq("dog")
         end
       end
     end
@@ -443,7 +443,7 @@ v6message "update me!"
 EOF
 
       with_plugin("v7message.rb", <<EOF)
-Ohai.plugin(:V7message) do
+info_getter.plugin(:V7message) do
   provides 'v7message'
 
   collect_data(:default) do
@@ -453,20 +453,20 @@ end
 EOF
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should collect all data" do
-        ohai.all_plugins
+        info_getter.all_plugins
         [:v6message, :v7message, :messages].each do |attribute|
-          expect(ohai.data).to have_key(attribute)
+          expect(info_getter.data).to have_key(attribute)
         end
 
-        expect(ohai.data[:v6message]).to eql("update me!")
-        expect(ohai.data[:v7message]).to eql("v7 plugins are awesome!")
+        expect(info_getter.data[:v6message]).to eql("update me!")
+        expect(info_getter.data[:v7message]).to eql("v7 plugins are awesome!")
         [:v6message, :v7message].each do |subattr|
-          expect(ohai.data[:messages]).to have_key(subattr)
-          expect(ohai.data[:messages][subattr]).to eql(ohai.data[subattr])
+          expect(info_getter.data[:messages]).to have_key(subattr)
+          expect(info_getter.data[:messages][subattr]).to eql(info_getter.data[subattr])
         end
       end
     end
@@ -481,7 +481,7 @@ message "From Version 6"
 EOF
 
       with_plugin("v7/message.rb", <<EOF)
-Ohai.plugin(:Message) do
+info_getter.plugin(:Message) do
   provides 'message'
 
   collect_data(:default) do
@@ -491,13 +491,13 @@ end
 EOF
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "version 6 should run" do
-        ohai.load_plugins
-        ohai.require_plugin("message")
-        expect(ohai.data[:message]).to eql("From Version 6")
+        info_getter.load_plugins
+        info_getter.require_plugin("message")
+        expect(info_getter.data[:message]).to eql("From Version 6")
       end
     end
 
@@ -513,7 +513,7 @@ message[:copy_message] = v7message
 EOF
 
       with_plugin("v7message.rb", <<EOF)
-Ohai.plugin(:V7message) do
+info_getter.plugin(:V7message) do
   provides 'v7message'
   depends 'zoo'
 
@@ -524,7 +524,7 @@ end
 EOF
 
       with_plugin("zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
+info_getter.plugin(:Zoo) do
   provides 'zoo'
 
   collect_data(:default) do
@@ -534,15 +534,15 @@ end
 EOF
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should collect all the data properly" do
-        ohai.all_plugins
-        expect(ohai.data[:v7message]).to eq("Hellos from 7: animals")
-        expect(ohai.data[:zoo]).to eq("animals")
-        expect(ohai.data[:message][:v6message]).to eq("Hellos from 6")
-        expect(ohai.data[:message][:copy_message]).to eq("Hellos from 7: animals")
+        info_getter.all_plugins
+        expect(info_getter.data[:v7message]).to eq("Hellos from 7: animals")
+        expect(info_getter.data[:zoo]).to eq("animals")
+        expect(info_getter.data[:message][:v6message]).to eq("Hellos from 6")
+        expect(info_getter.data[:message][:copy_message]).to eq("Hellos from 7: animals")
       end
     end
 
@@ -556,16 +556,16 @@ message v7message
 EOF
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should raise DependencyNotFound" do
-        expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::DependencyNotFound)
+        expect { info_getter.all_plugins }.to raise_error(info_getter::Exceptions::DependencyNotFound)
       end
     end
   end
 
-  describe "when Chef OHAI resource executes :reload action" do
+  describe "when Chef info_getter resource executes :reload action" do
 
     when_plugins_directory "contains a v6 plugin" do
       with_plugin("a_v6plugin.rb", <<-E)
@@ -574,19 +574,19 @@ EOF
       E
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "reloads only the v6 plugin when given a specific plugin to load" do
-        ohai.all_plugins
-        expect { ohai.all_plugins("a_v6plugin") }.not_to raise_error
+        info_getter.all_plugins
+        expect { info_getter.all_plugins("a_v6plugin") }.not_to raise_error
       end
 
     end
 
     when_plugins_directory "contains a random plugin" do
       with_plugin("random.rb", <<-E)
-        Ohai.plugin(:Random) do
+        info_getter.plugin(:Random) do
           provides 'random'
 
           collect_data do
@@ -596,14 +596,14 @@ EOF
       E
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should rerun the plugin providing the desired attributes" do
-        ohai.all_plugins
-        initial_value = ohai.data["random"]
-        ohai.all_plugins
-        updated_value = ohai.data["random"]
+        info_getter.all_plugins
+        initial_value = info_getter.data["random"]
+        info_getter.all_plugins
+        updated_value = info_getter.data["random"]
         expect(initial_value).not_to eq(updated_value)
       end
 
@@ -613,7 +613,7 @@ EOF
   describe "when refreshing plugins" do
     when_plugins_directory "contains v7 plugins" do
       with_plugin("desired.rb", <<-E)
-        Ohai.plugin(:DesiredPlugin) do
+        info_getter.plugin(:DesiredPlugin) do
           provides 'desired_attr'
           depends 'depended_attr'
 
@@ -626,7 +626,7 @@ EOF
       E
 
       with_plugin("depended.rb", <<-E)
-        Ohai.plugin(:DependedPlugin) do
+        info_getter.plugin(:DependedPlugin) do
           provides 'depended_attr'
 
           collect_data do
@@ -638,7 +638,7 @@ EOF
       E
 
       with_plugin("other.rb", <<-E)
-        Ohai.plugin(:OtherPlugin) do
+        info_getter.plugin(:OtherPlugin) do
           provides 'other_attr'
 
           collect_data do
@@ -650,37 +650,37 @@ EOF
       E
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
-        Ohai::Log.init(STDOUT)
-        Ohai::Log.level = :debug
-        ohai.all_plugins
+        info_getter.config[:plugin_path] = [ path_to(".") ]
+        info_getter::Log.init(STDOUT)
+        info_getter::Log.level = :debug
+        info_getter.all_plugins
       end
 
       it "should rerun the plugin providing the desired attributes" do
-        expect(ohai.data[:desired_attr_count]).to eq(1)
-        ohai.refresh_plugins("desired_attr")
-        expect(ohai.data[:desired_attr_count]).to eq(2)
+        expect(info_getter.data[:desired_attr_count]).to eq(1)
+        info_getter.refresh_plugins("desired_attr")
+        expect(info_getter.data[:desired_attr_count]).to eq(2)
       end
 
       it "should not re-run dependencies of the plugin providing the desired attributes" do
-        expect(ohai.data[:depended_attr_count]).to eq(1)
-        ohai.refresh_plugins("desired_attr")
-        expect(ohai.data[:depended_attr_count]).to eq(1)
+        expect(info_getter.data[:depended_attr_count]).to eq(1)
+        info_getter.refresh_plugins("desired_attr")
+        expect(info_getter.data[:depended_attr_count]).to eq(1)
       end
 
       it "should not re-run plugins unrelated to the plugin providing the desired attributes" do
-        expect(ohai.data[:other_attr_count]).to eq(1)
-        ohai.refresh_plugins("desired_attr")
-        expect(ohai.data[:other_attr_count]).to eq(1)
+        expect(info_getter.data[:other_attr_count]).to eq(1)
+        info_getter.refresh_plugins("desired_attr")
+        expect(info_getter.data[:other_attr_count]).to eq(1)
       end
 
     end
   end
 
-  describe "when running ohai for specific attributes" do
+  describe "when running info_getter for specific attributes" do
     when_plugins_directory "contains v7 plugins" do
       with_plugin("languages.rb", <<-E)
-        Ohai.plugin(:Languages) do
+        info_getter.plugin(:Languages) do
           provides 'languages'
 
           collect_data do
@@ -690,7 +690,7 @@ EOF
       E
 
       with_plugin("english.rb", <<-E)
-        Ohai.plugin(:English) do
+        info_getter.plugin(:English) do
           provides 'languages/english'
 
           depends 'languages'
@@ -703,7 +703,7 @@ EOF
       E
 
       with_plugin("french.rb", <<-E)
-        Ohai.plugin(:French) do
+        info_getter.plugin(:French) do
           provides 'languages/french'
 
           depends 'languages'
@@ -716,25 +716,25 @@ EOF
       E
 
       before do
-        Ohai.config[:plugin_path] = [ path_to(".") ]
+        info_getter.config[:plugin_path] = [ path_to(".") ]
       end
 
       it "should run all the plugins when a top level attribute is specified" do
-        ohai.all_plugins("languages")
-        expect(ohai.data[:languages][:english][:version]).to eq(2014)
-        expect(ohai.data[:languages][:french][:version]).to eq(2012)
+        info_getter.all_plugins("languages")
+        expect(info_getter.data[:languages][:english][:version]).to eq(2014)
+        expect(info_getter.data[:languages][:french][:version]).to eq(2012)
       end
 
       it "should run the first parent when a non-existent child is specified" do
-        ohai.all_plugins("languages/english/version")
-        expect(ohai.data[:languages][:english][:version]).to eq(2014)
-        expect(ohai.data[:languages][:french]).to be_nil
+        info_getter.all_plugins("languages/english/version")
+        expect(info_getter.data[:languages][:english][:version]).to eq(2014)
+        expect(info_getter.data[:languages][:french]).to be_nil
       end
 
       it "should be able to run multiple plugins" do
-        ohai.all_plugins(["languages/english", "languages/french"])
-        expect(ohai.data[:languages][:english][:version]).to eq(2014)
-        expect(ohai.data[:languages][:french][:version]).to eq(2012)
+        info_getter.all_plugins(["languages/english", "languages/french"])
+        expect(info_getter.data[:languages][:english][:version]).to eq(2014)
+        expect(info_getter.data[:languages][:french][:version]).to eq(2012)
       end
 
     end

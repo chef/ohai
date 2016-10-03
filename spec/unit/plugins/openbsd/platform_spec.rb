@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "OpenBSD plugin platform" do
+describe info_getter::System, "OpenBSD plugin platform" do
   before(:each) do
     @plugin = get_plugin("openbsd/platform")
     allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "OpenBSD\n", ""))

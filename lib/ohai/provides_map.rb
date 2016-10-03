@@ -17,12 +17,12 @@
 # limitations under the License.
 #
 
-require "ohai/mash"
-require "ohai/exception"
-require "ohai/mixin/os"
-require "ohai/dsl"
+require "info_getter/mash"
+require "info_getter/exception"
+require "info_getter/mixin/os"
+require "info_getter/dsl"
 
-module Ohai
+module info_getter
   class ProvidesMap
 
     attr_reader :map
@@ -32,8 +32,8 @@ module Ohai
     end
 
     def set_providers_for(plugin, provided_attributes)
-      unless plugin.kind_of?(Ohai::DSL::Plugin)
-        raise ArgumentError, "set_providers_for only accepts Ohai Plugin classes (got: #{plugin})"
+      unless plugin.kind_of?(info_getter::DSL::Plugin)
+        raise ArgumentError, "set_providers_for only accepts info_getter Plugin classes (got: #{plugin})"
       end
 
       provided_attributes.each do |attribute|
@@ -53,15 +53,15 @@ module Ohai
       plugins = []
       attributes.each do |attribute|
         attrs = select_subtree(@map, attribute)
-        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
-        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs[:_plugins]
+        raise info_getter::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
+        raise info_getter::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs[:_plugins]
         plugins += attrs[:_plugins]
       end
       plugins.uniq
     end
 
     # This function is used to fetch the plugins for the attributes specified
-    # in the CLI options to Ohai.
+    # in the CLI options to info_getter.
     # It first attempts to find the plugins for the attributes
     # or the sub attributes given.
     # If it can't find any, it looks for plugins that might
@@ -76,7 +76,7 @@ module Ohai
           attrs = select_closest_subtree(@map, attribute)
 
           unless attrs
-            raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'"
+            raise info_getter::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'"
           end
         end
 
@@ -94,9 +94,9 @@ module Ohai
       plugins = []
       attributes.each do |attribute|
         parts = normalize_and_validate(attribute)
-        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless @map[parts[0]]
+        raise info_getter::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless @map[parts[0]]
         attrs = select_closest_subtree(@map, attribute)
-        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs
+        raise info_getter::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs
         plugins += attrs[:_plugins]
       end
       plugins.uniq
@@ -114,8 +114,8 @@ module Ohai
     private
 
     def normalize_and_validate(attribute)
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute =~ /\/\/+/
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute =~ /\/$/
+      raise info_getter::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute =~ /\/\/+/
+      raise info_getter::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute =~ /\/$/
 
       parts = attribute.split("/")
       parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'

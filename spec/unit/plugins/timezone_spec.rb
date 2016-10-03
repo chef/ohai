@@ -17,7 +17,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "timezone plugin" do
+describe info_getter::System, "timezone plugin" do
   before(:each) do
     @plugin = get_plugin("timezone")
     allow(Time).to receive_message_chain(:now, :getlocal, :zone) { "ZZZ" }

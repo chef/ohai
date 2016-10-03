@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/ec2_metadata"
+require "info_getter/mixin/ec2_metadata"
 
-Ohai.plugin(:Openstack) do
-  include Ohai::Mixin::Ec2Metadata
+info_getter.plugin(:Openstack) do
+  include info_getter::Mixin::Ec2Metadata
 
   provides "openstack"
   depends "dmi"
@@ -29,21 +29,21 @@ Ohai.plugin(:Openstack) do
   def openstack_dmi?
     # detect a manufacturer of OpenStack Foundation
     if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
-      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
+      info_getter::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
       return true
     else
-      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
+      info_getter::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
       return false
     end
   end
 
-  # check for the ohai hint and log debug messaging
+  # check for the info_getter hint and log debug messaging
   def openstack_hint?
     if hint?("openstack")
-      Ohai::Log.debug("Plugin Openstack: openstack hint present")
+      info_getter::Log.debug("Plugin Openstack: openstack hint present")
       return true
     else
-      Ohai::Log.debug("Plugin Openstack: openstack hint not present")
+      info_getter::Log.debug("Plugin Openstack: openstack hint not present")
       return false
     end
   end
@@ -61,16 +61,16 @@ Ohai.plugin(:Openstack) do
       openstack[:provider] = openstack_provider
 
       # fetch the metadata if we can do a simple socket connect first
-      if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      if can_metadata_connect?(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
         fetch_metadata.each do |k, v|
           openstack[k] = v
         end
-        Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
+        info_getter::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
       else
-        Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
+        info_getter::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
       end
     else
-      Ohai::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")
+      info_getter::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")
     end
   end
 end

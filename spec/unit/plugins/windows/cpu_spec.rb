@@ -55,7 +55,7 @@ shared_examples "a cpu" do |cpu_no|
   end
 end
 
-describe Ohai::System, "Windows cpu plugin" do
+describe info_getter::System, "Windows cpu plugin" do
   before(:each) do
     @plugin = get_plugin("windows/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:windows)

@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux Mdadm Plugin" do
+describe info_getter::System, "Linux Mdadm Plugin" do
   before(:each) do
     @md0 = <<-MD
 /dev/md0:

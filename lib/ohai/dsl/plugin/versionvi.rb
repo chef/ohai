@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module DSL
     class Plugin
       class VersionVI < Plugin
@@ -33,7 +33,7 @@ module Ohai
         end
 
         def name
-          # Ohai V6 doesn't have any name specification for plugins.
+          # info_getter V6 doesn't have any name specification for plugins.
           # So we are using the partial path to infer the name of the plugin
           partial_path = Pathname.new(@source).relative_path_from(Pathname.new(@plugin_dir_path)).to_s
           partial_path.chomp(".rb").gsub("/", "::")
@@ -48,7 +48,7 @@ module Ohai
         end
 
         def provides(*paths)
-          Ohai::Log.debug("Skipping provides '#{paths.join(",")}' for plugin '#{name}'")
+          info_getter::Log.debug("Skipping provides '#{paths.join(",")}' for plugin '#{name}'")
         end
 
         def require_plugin(plugin_ref)

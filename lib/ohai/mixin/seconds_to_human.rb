@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module Mixin
     module SecondsToHuman
       def seconds_to_human(seconds)

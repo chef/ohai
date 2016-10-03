@@ -19,9 +19,9 @@
 #
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "info_getter_plugin_common.rb" ))
 
-describe Ohai::System, "plugin lua" do
+describe info_getter::System, "plugin lua" do
   test_plugin(%w{languages lua}, [ "lua" ]) do |p|
     p.test([ "centos-6.4" ], %w{x86 x64}, [[], ["lua"]],
            { "languages" => { "lua" => { "version" => "5.1.4" } } })

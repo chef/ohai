@@ -18,7 +18,7 @@
 
 require "digest/md5"
 
-Ohai.plugin(:ShardSeed) do
+info_getter.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
 
@@ -37,7 +37,7 @@ Ohai.plugin(:ShardSeed) do
   # Common sources go here. Put sources that need to be different per-platform
   # under their collect_data block.
   def create_seed(&block)
-    sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
+    sources = info_getter.config[:plugin][:shard_seed][:sources] || default_sources
     data = ""
     sources.each do |src|
       data << case src

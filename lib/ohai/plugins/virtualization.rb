@@ -19,7 +19,7 @@
 # Note: despite the name this is really a libvirt plugin.
 #       perhaps we'd be better off renaming it? -tsmith
 
-Ohai.plugin(:VirtualizationInfo) do
+info_getter.plugin(:VirtualizationInfo) do
   %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
     provides "virtualization/#{info}"
   end
@@ -76,7 +76,7 @@ Ohai.plugin(:VirtualizationInfo) do
 
         virtconn.close
       rescue LoadError => e
-        Ohai::Log.debug("Plugin Virtualization: Can't load gem: #{e}. Cannot continue.")
+        info_getter::Log.debug("Plugin Virtualization: Can't load gem: #{e}. Cannot continue.")
       end
     end
   end

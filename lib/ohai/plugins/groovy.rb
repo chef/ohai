@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Groovy) do
+info_getter.plugin(:Groovy) do
   provides "languages/groovy"
   depends "languages"
 
@@ -31,8 +31,8 @@ Ohai.plugin(:Groovy) do
         groovy[:jvm] = $2
         languages[:groovy] = groovy
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Groovy plugin: Could not shell_out "groovy -v". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Groovy plugin: Could not shell_out "groovy -v". Skipping plugin')
     end
   end
 end

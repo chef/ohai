@@ -16,9 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/util/win32"
+require "info_getter/util/win32"
 
-module Ohai
+module info_getter
   module Util
     class Win32::GroupHelper
 

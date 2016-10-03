@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Shells) do
+info_getter.plugin(:Shells) do
   provides "shells"
 
   collect_data do

@@ -72,7 +72,7 @@ describe "CloudAttrs object" do
 
 end
 
-describe Ohai::System, "plugin cloud" do
+describe info_getter::System, "plugin cloud" do
   before(:each) do
     @plugin = get_plugin("cloud_v2")
   end

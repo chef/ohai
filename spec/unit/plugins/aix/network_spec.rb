@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "AIX network plugin" do
+describe info_getter::System, "AIX network plugin" do
 
   before(:each) do
     @netstat_rn_grep_default = <<-NETSTAT_RN_GREP_DEFAULT

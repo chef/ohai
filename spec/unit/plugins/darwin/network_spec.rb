@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Darwin Network Plugin" do
+describe info_getter::System, "Darwin Network Plugin" do
   before(:each) do
     @darwin_ifconfig = <<-DARWIN_IFCONFIG
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384

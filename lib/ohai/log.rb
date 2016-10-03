@@ -18,7 +18,7 @@
 
 require "mixlib/log"
 
-module Ohai
+module info_getter
   class Log
     extend Mixlib::Log
 

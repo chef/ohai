@@ -16,7 +16,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Windows memory plugin", :windows_only do
+describe info_getter::System, "Windows memory plugin", :windows_only do
   before do
     require "wmi-lite/wmi"
     @plugin = get_plugin("windows/memory")

@@ -17,7 +17,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin cloud" do
+describe info_getter::System, "plugin cloud" do
   before(:each) do
     @plugin = get_plugin("cloud")
   end

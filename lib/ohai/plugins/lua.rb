@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Lua) do
+info_getter.plugin(:Lua) do
   provides "languages/lua"
   depends "languages"
 
@@ -30,8 +30,8 @@ Ohai.plugin(:Lua) do
         lua[:version] = so.stderr.split[1]
         languages[:lua] = lua if lua[:version]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Lua plugin: Could not shell_out "lua -v". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Lua plugin: Could not shell_out "lua -v". Skipping plugin')
     end
   end
 end

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Kernel) do
+info_getter.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 
   collect_data(:aix) do

@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux plugin uptime" do
+describe info_getter::System, "Linux plugin uptime" do
   before(:each) do
     @plugin = get_plugin("uptime")
     allow(@plugin).to receive(:collect_os).and_return(:linux)

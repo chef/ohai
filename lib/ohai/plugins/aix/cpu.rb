@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:CPU) do
+info_getter.plugin(:CPU) do
   provides "cpu"
 
   collect_data(:aix) do

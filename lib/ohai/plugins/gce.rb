@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/gce_metadata"
+require "info_getter/mixin/gce_metadata"
 
-Ohai.plugin(:GCE) do
-  include Ohai::Mixin::GCEMetadata
+info_getter.plugin(:GCE) do
+  include info_getter::Mixin::GCEMetadata
 
   provides "gce"
 
@@ -27,7 +27,7 @@ Ohai.plugin(:GCE) do
   # true:: If gce metadata server found
   # false:: Otherwise
   def has_gce_metadata?
-    can_metadata_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
+    can_metadata_connect?(info_getter::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
   end
 
   # Identifies gce
@@ -41,11 +41,11 @@ Ohai.plugin(:GCE) do
 
   collect_data do
     if looks_like_gce?
-      Ohai::Log.debug("Plugin GCE: looks_like_gce? == true")
+      info_getter::Log.debug("Plugin GCE: looks_like_gce? == true")
       gce Mash.new
       fetch_metadata.each { |k, v| gce[k] = v }
     else
-      Ohai::Log.debug("Plugin GCE: looks_like_gce? == false")
+      info_getter::Log.debug("Plugin GCE: looks_like_gce? == false")
       false
     end
   end

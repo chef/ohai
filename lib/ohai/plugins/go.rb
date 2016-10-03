@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Go) do
+info_getter.plugin(:Go) do
   provides "languages/go"
   depends "languages"
 
@@ -27,8 +27,8 @@ Ohai.plugin(:Go) do
         go[:version] = $1
         languages[:go] = go
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Go plugin: Could not shell_out "go version". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Go plugin: Could not shell_out "go version". Skipping plugin')
     end
   end
 end

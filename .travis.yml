@@ -20,4 +20,4 @@ rvm:
 script:
   - bundle exec chefstyle
   - bundle exec rake spec
-  - bundle exec ohai
+  - bundle exec info_getter

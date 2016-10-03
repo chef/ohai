@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Linode) do
+info_getter.plugin(:Linode) do
   provides "linode"
 
   depends "kernel"
@@ -38,7 +38,7 @@ Ohai.plugin(:Linode) do
 
   # Names linode ip address
   #
-  # name - symbol of ohai name (e.g. :public_ip)
+  # name - symbol of info_getter name (e.g. :public_ip)
   # eth - Interface name (e.g. :eth0)
   #
   # Alters linode mash with new interface based on name parameter
@@ -53,13 +53,13 @@ Ohai.plugin(:Linode) do
   collect_data do
     # Setup linode mash if it is a linode system
     if looks_like_linode?
-      Ohai::Log.debug("Plugin Linode: looks_like_linode? == true")
+      info_getter::Log.debug("Plugin Linode: looks_like_linode? == true")
       linode Mash.new
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, "eth0:1")
       hint?("linode").each { |k, v| linode[k] = v } if hint?("linode").kind_of?(Hash)
     else
-      Ohai::Log.debug("Plugin Linode: looks_like_linode? == false")
+      info_getter::Log.debug("Plugin Linode: looks_like_linode? == false")
     end
   end
 end

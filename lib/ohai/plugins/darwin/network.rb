@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Network) do
+info_getter.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 

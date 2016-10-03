@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:SystemProfile) do
+info_getter.plugin(:SystemProfile) do
   provides "system_profile"
 
   collect_data(:darwin) do
@@ -66,7 +66,7 @@ SPAirPortData},
 
       system_profile items.sort_by { |h| h["_dataType"] }
     rescue LoadError => e
-      Ohai::Log.debug("Can't load gem: #{e})")
+      info_getter::Log.debug("Can't load gem: #{e})")
     end
   end
 end

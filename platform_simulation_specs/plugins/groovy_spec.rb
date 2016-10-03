@@ -17,9 +17,9 @@
 #
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "info_getter_plugin_common.rb" ))
 
-describe Ohai::System, "plugin groovy" do
+describe info_getter::System, "plugin groovy" do
   test_plugin(%w{languages groovy}, [ "groovy" ]) do |p|
     p.test([ "centos-5.5", "ubuntu-12.10" ], [ "x64" ], [[]],
            { "languages" => { "groovy" => nil } })

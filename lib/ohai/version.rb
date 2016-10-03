@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-module Ohai
-  OHAI_ROOT = File.expand_path(File.dirname(__FILE__))
+module info_getter
+  info_getter_ROOT = File.expand_path(File.dirname(__FILE__))
   VERSION = "8.20.0"
 end

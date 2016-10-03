@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module Exceptions
     class Exec < RuntimeError; end
     class Error < StandardError; end

@@ -18,11 +18,11 @@
 
 require_relative "../spec_helper"
 
-require "ohai/application"
+require "info_getter/application"
 
-RSpec.describe "Ohai::Application" do
+RSpec.describe "info_getter::Application" do
 
-  let(:app) { Ohai::Application.new }
+  let(:app) { info_getter::Application.new }
   let(:argv) { [] }
   let(:stderr) { StringIO.new }
 
@@ -35,7 +35,7 @@ RSpec.describe "Ohai::Application" do
     ARGV.replace(@original_argv)
   end
 
-  describe "#configure_ohai" do
+  describe "#configure_info_getter" do
 
     let(:config_content) { "" }
     let(:config_dir) { Dir.mktmpdir(".chef") }
@@ -59,16 +59,16 @@ RSpec.describe "Ohai::Application" do
 
         it "logs an error and terminates the application" do
           expect(STDERR).to receive(:puts).with(/FATAL:/)
-          expect(Ohai::Log).to receive(:fatal).
+          expect(info_getter::Log).to receive(:fatal).
             with(/Specified config file #{argv[1]} does not exist/)
-          expect { app.configure_ohai }.to raise_error(SystemExit)
+          expect { app.configure_info_getter }.to raise_error(SystemExit)
         end
       end
     end
 
     context "when a workstation configuration file exists" do
 
-      let(:config_content) { "ohai.disabled_plugins = [ :Foo, :Baz ]" }
+      let(:config_content) { "info_getter.disabled_plugins = [ :Foo, :Baz ]" }
 
       # env['KNIFE_HOME']/config.rb is the first config file the workstation
       # config loader looks for:
@@ -81,8 +81,8 @@ RSpec.describe "Ohai::Application" do
       end
 
       it "loads the workstation configuration file" do
-        app.configure_ohai
-        expect(Ohai.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
+        app.configure_info_getter
+        expect(info_getter.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
       end
     end
 
@@ -98,8 +98,8 @@ RSpec.describe "Ohai::Application" do
         <<-CONFIG
 log_location "#{log_location}"
 log_level    :#{log_level}
-Ohai::Config[:disabled_plugins] = #{disabled_plugins}
-Ohai::Config[:plugin_path] << "#{plugin_path}"
+info_getter::Config[:disabled_plugins] = #{disabled_plugins}
+info_getter::Config[:plugin_path] << "#{plugin_path}"
 CONFIG
       end
 
@@ -118,10 +118,10 @@ CONFIG
         # configuration file.
         options = [ :log_location, :log_level, :disabled_plugins ]
         options.each do |option|
-          expect(Ohai::Log).to receive(:warn).
-            with(/Ohai::Config\[:#{option}\] is deprecated/)
+          expect(info_getter::Log).to receive(:warn).
+            with(/info_getter::Config\[:#{option}\] is deprecated/)
         end
-        app.configure_ohai
+        app.configure_info_getter
       end
     end
 
@@ -137,9 +137,9 @@ CONFIG
 
       it "logs an error and terminates the application" do
         expect(STDERR).to receive(:puts).with(/FATAL:/)
-        expect(Ohai::Log).to receive(:fatal).
+        expect(info_getter::Log).to receive(:fatal).
           with(/You have invalid ruby syntax in your config file/)
-        expect { app.configure_ohai }.to raise_error(SystemExit)
+        expect { app.configure_info_getter }.to raise_error(SystemExit)
       end
     end
 

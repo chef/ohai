@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Perl) do
+info_getter.plugin(:Perl) do
   provides "languages/perl"
   depends "languages"
 
@@ -38,8 +38,8 @@ Ohai.plugin(:Perl) do
         end
         languages[:perl] = perl unless perl.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Perl plugin: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Perl plugin: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
     end
   end
 end

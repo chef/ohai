@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem) do
+info_getter.plugin(:Filesystem) do
   provides "filesystem"
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do

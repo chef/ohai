@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Solaris2.X network plugin" do
+describe info_getter::System, "Solaris2.X network plugin" do
 
   before do
     @solaris_arp_rn = <<-ARP_RN

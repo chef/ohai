@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem) do
+info_getter.plugin(:Filesystem) do
   provides "filesystem"
 
   def parse_df_or_mount(shell_out)

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Virtualization) do
+info_getter.plugin(:Virtualization) do
   provides "virtualization", "virtualization/wpars"
 
   collect_data(:aix) do

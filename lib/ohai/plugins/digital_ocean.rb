@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/util/ip_helper"
+require "info_getter/util/ip_helper"
 
-Ohai.plugin(:DigitalOcean) do
-  include Ohai::Util::IpHelper
+info_getter.plugin(:DigitalOcean) do
+  include info_getter::Util::IpHelper
 
   DIGITALOCEAN_FILE = "/etc/digitalocean" unless defined?(DIGITALOCEAN_FILE)
 
@@ -63,7 +63,7 @@ Ohai.plugin(:DigitalOcean) do
 
   collect_data do
     if looks_like_digital_ocean?
-      Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
+      info_getter::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
       hint = hint?("digital_ocean") || {}
       hint.each { |k, v| digital_ocean[k] = v unless k == "ip_addresses" }
@@ -74,7 +74,7 @@ Ohai.plugin(:DigitalOcean) do
       # https://developers.digitalocean.com/#droplets
       digital_ocean[:networks] = extract_droplet_ip_addresses
     else
-      Ohai::Log.debug("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
+      info_getter::Log.debug("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
       false
     end
   end

@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG["host_os"]
 
-describe Ohai::System, "plugin os" do
+describe info_getter::System, "plugin os" do
   before(:each) do
     @plugin = get_plugin("os")
     @plugin[:kernel] = Mash.new

@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin kernel" do
+describe info_getter::System, "plugin kernel" do
   before(:each) do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:default) # for debugging
@@ -40,8 +40,8 @@ describe Ohai::System, "plugin kernel" do
     before do
       require "wmi-lite/wmi"
 
-      @ohai_system = Ohai::System.new
-      @plugin = get_plugin("kernel", @ohai_system)
+      @info_getter_system = info_getter::System.new
+      @plugin = get_plugin("kernel", @info_getter_system)
 
       # Mock a Win32_OperatingSystem OLE32 WMI object
       caption = double("WIN32OLE", :name => "Caption")
@@ -79,11 +79,11 @@ describe Ohai::System, "plugin kernel" do
       @plugin.run
     end
     it "should set the correct system information" do
-      expect(@ohai_system.data[:kernel][:name]).to eq("Microsoft Windows 7 Ultimate")
-      expect(@ohai_system.data[:kernel][:release]).to eq("6.1.7601")
-      expect(@ohai_system.data[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")
-      expect(@ohai_system.data[:kernel][:os]).to eq("WINNT")
-      expect(@ohai_system.data[:kernel][:machine]).to eq("x86_64")
+      expect(@info_getter_system.data[:kernel][:name]).to eq("Microsoft Windows 7 Ultimate")
+      expect(@info_getter_system.data[:kernel][:release]).to eq("6.1.7601")
+      expect(@info_getter_system.data[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")
+      expect(@info_getter_system.data[:kernel][:os]).to eq("WINNT")
+      expect(@info_getter_system.data[:kernel][:machine]).to eq("x86_64")
     end
   end
 

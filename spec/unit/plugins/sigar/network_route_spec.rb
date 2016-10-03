@@ -25,15 +25,15 @@ rescue LoadError
   false
 end
 
-require "ohai"
+require "info_getter"
 
-describe Ohai::System, "Sigar network route plugin" do
+describe info_getter::System, "Sigar network route plugin" do
 
   if sigar_available
 
     before(:each) do
-      @ohai = Ohai::System.new
-      @plugin = get_plugin("sigar/network", @ohai)
+      @info_getter = info_getter::System.new
+      @plugin = get_plugin("sigar/network", @info_getter)
       allow(@plugin).to receive(:collect_os).and_return(:sigar)
       @sigar = double("Sigar")
       @net_info_conf = {

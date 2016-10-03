@@ -19,7 +19,7 @@
 require "digest/md5"
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "shard plugin" do
+describe info_getter::System, "shard plugin" do
   let(:plugin) { get_plugin("shard") }
   let(:fqdn) { "somehost004.someregion.somecompany.com" }
   let(:uuid) { "48555CF4-5BB1-21D9-BC4C-E8B73DDE5801" }
@@ -47,14 +47,14 @@ describe Ohai::System, "shard plugin" do
   end
 
   it "should provide a shard with a configured source" do
-    Ohai.config[:plugin][:shard_seed][:sources] = [:fqdn]
+    info_getter.config[:plugin][:shard_seed][:sources] = [:fqdn]
     plugin.run
     result = Digest::MD5.hexdigest(fqdn)[0...7].to_i(16)
     expect(plugin[:shard_seed]).to eq(result)
   end
 
   it "fails on an unrecognized source" do
-    Ohai.config[:plugin][:shard_seed][:sources] = [:GreatGooglyMoogly]
+    info_getter.config[:plugin][:shard_seed][:sources] = [:GreatGooglyMoogly]
     expect { plugin.run }.to raise_error(RuntimeError)
   end
 end

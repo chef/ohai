@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module Mixin
     module ConstantHelper
 
@@ -27,7 +27,7 @@ module Ohai
           Object.send(:remove_const, constant) unless Object.const_get(constant).is_a?(Module)
         end
 
-        recursive_remove_constants(Ohai::NamedPlugin)
+        recursive_remove_constants(info_getter::NamedPlugin)
       end
 
       def recursive_remove_constants(object)

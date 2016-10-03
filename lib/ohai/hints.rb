@@ -19,7 +19,7 @@
 
 require "ffi_yajl"
 
-module Ohai
+module info_getter
   module Hints
     def self.refresh_hints
       @hints = {}
@@ -32,20 +32,20 @@ module Ohai
       # should exist because the file did, even if it didn't
       # contain anything
     rescue FFI_Yajl::ParseError => e
-      Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
+      info_getter::Log.error("Could not parse hint file at #{filename}: #{e.message}")
     end
 
     def self.hint?(name)
       @hints ||= {}
       return @hints[name] if @hints[name]
-      Ohai.config[:hints_path].each do |path|
+      info_getter.config[:hints_path].each do |path|
         filename = File.join(path, "#{name}.json")
         next unless File.exist?(filename)
-        Ohai::Log.debug("Found hint #{name}.json at #{filename}")
+        info_getter::Log.debug("Found hint #{name}.json at #{filename}")
         @hints[name] = parse_hint_file(filename)
       end
 
-      Ohai::Log.debug("Did not find hint #{name}.json in the hint path(s): #{Ohai.config[:hints_path].join(', ')} ") unless @hints.key?(name)
+      info_getter::Log.debug("Did not find hint #{name}.json in the hint path(s): #{info_getter.config[:hints_path].join(', ')} ") unless @hints.key?(name)
       @hints[name]
     end
   end

@@ -17,11 +17,11 @@
 
 require "chef-config/path_helper"
 require "chef-config/workstation_config_loader"
-require "ohai"
-require "ohai/log"
+require "info_getter"
+require "info_getter/log"
 require "mixlib/cli"
 
-class Ohai::Application
+class info_getter::Application
   include Mixlib::CLI
 
   option :config_file,
@@ -33,8 +33,8 @@ class Ohai::Application
   option :directory,
     :short       => "-d DIRECTORY",
     :long        => "--directory DIRECTORY",
-    :description => "A directory to add to the Ohai plugin search path",
-    :proc        => lambda { |path| Ohai::Config.platform_specific_path(path) }
+    :description => "A directory to add to the info_getter plugin search path",
+    :proc        => lambda { |path| info_getter::Config.platform_specific_path(path) }
 
   option :log_level,
     :short        => "-l LEVEL",
@@ -60,9 +60,9 @@ class Ohai::Application
   option :version,
     :short        => "-v",
     :long         => "--version",
-    :description  => "Show Ohai version",
+    :description  => "Show info_getter version",
     :boolean      => true,
-    :proc         => lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
+    :proc         => lambda { |v| puts "info_getter: #{::info_getter::VERSION}" },
     :exit         => 0
 
   def initialize
@@ -74,11 +74,11 @@ class Ohai::Application
   end
 
   def run
-    configure_ohai
+    configure_info_getter
     run_application
   end
 
-  def configure_ohai
+  def configure_info_getter
     @attributes = parse_options
     @attributes = nil if @attributes.empty?
 
@@ -86,15 +86,15 @@ class Ohai::Application
   end
 
   def run_application
-    ohai = Ohai::System.new(config)
-    ohai.all_plugins(@attributes)
+    info_getter = info_getter::System.new(config)
+    info_getter.all_plugins(@attributes)
 
     if @attributes
       @attributes.each do |a|
-        puts ohai.attributes_print(a)
+        puts info_getter.attributes_print(a)
       end
     else
-      puts ohai.json_pretty_print
+      puts info_getter.json_pretty_print
     end
   end
 
@@ -102,12 +102,12 @@ class Ohai::Application
     # Log a fatal error message to both STDERR and the Logger, exit the application
     def fatal!(msg, err = -1)
       STDERR.puts("FATAL: #{msg}")
-      Ohai::Log.fatal(msg)
+      info_getter::Log.fatal(msg)
       Process.exit err
     end
 
     def exit!(msg, err = -1)
-      Ohai::Log.debug(msg)
+      info_getter::Log.debug(msg)
       Process.exit err
     end
   end
@@ -116,12 +116,12 @@ class Ohai::Application
 
   def load_workstation_config
     config_loader = ChefConfig::WorkstationConfigLoader.new(
-      config[:config_file], Ohai::Log
+      config[:config_file], info_getter::Log
     )
     begin
       config_loader.load
     rescue ChefConfig::ConfigurationError => config_error
-      Ohai::Application.fatal!(config_error.message)
+      info_getter::Application.fatal!(config_error.message)
     end
   end
 end

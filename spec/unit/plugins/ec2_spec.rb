@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 require "base64"
 
-describe Ohai::System, "plugin ec2" do
+describe info_getter::System, "plugin ec2" do
 
   before(:each) do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)

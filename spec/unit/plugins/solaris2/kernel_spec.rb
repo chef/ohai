@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Solaris2.X kernel plugin" do
+describe info_getter::System, "Solaris2.X kernel plugin" do
   # NOTE: Solaris will report the same module loaded multiple times
   # with the same ID, Loadaddr, etc. and only the info column different
   # ignoring it, and removing the data from this fixture.

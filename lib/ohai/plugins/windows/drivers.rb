@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Drivers) do
+info_getter.plugin(:Drivers) do
   provides "kernel/pnp_drivers", "kernel/modules"
   depends "kernel"
 

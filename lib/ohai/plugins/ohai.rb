@@ -16,15 +16,15 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Ohai) do
-  provides "chef_packages/ohai"
+info_getter.plugin(:info_getter) do
+  provides "chef_packages/info_getter"
 
   collect_data do
-    require "ohai"
+    require "info_getter"
 
     chef_packages Mash.new unless chef_packages
-    chef_packages[:ohai] = Mash.new
-    chef_packages[:ohai][:version] = Ohai::VERSION
-    chef_packages[:ohai][:ohai_root] = Ohai::OHAI_ROOT
+    chef_packages[:info_getter] = Mash.new
+    chef_packages[:info_getter][:version] = info_getter::VERSION
+    chef_packages[:info_getter][:info_getter_root] = info_getter::info_getter_ROOT
   end
 end

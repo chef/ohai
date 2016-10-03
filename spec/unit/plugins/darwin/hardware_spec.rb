@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 require File.expand_path("#{File.dirname(__FILE__)}/hardware_system_profiler_output.rb")
 
-describe Ohai::System, "Darwin hardware plugin", :unix_only do
+describe info_getter::System, "Darwin hardware plugin", :unix_only do
   let (:plugin) { get_plugin("darwin/hardware") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:darwin)

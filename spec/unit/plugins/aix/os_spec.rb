@@ -17,7 +17,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "AIX os plugin" do
+describe info_getter::System, "AIX os plugin" do
   before(:each) do
     @plugin = get_plugin("aix/os")
     allow(@plugin).to receive(:collect_os).and_return(:aix)

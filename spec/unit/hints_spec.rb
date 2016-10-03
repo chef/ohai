@@ -19,25 +19,25 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 
-describe "Ohai::Hints" do
+describe "info_getter::Hints" do
   # We are using the plugins directory infrastructure to test hints
   extend IntegrationSupport
 
   before do
-    @original_hints = Ohai.config[:hints_path]
+    @original_hints = info_getter.config[:hints_path]
   end
 
   after do
-    Ohai.config[:hints_path] = @original_hints
+    info_getter.config[:hints_path] = @original_hints
   end
 
   when_plugins_directory "doesn't contain any hints" do
     before do
-      Ohai.config[:hints_path] = [ path_to(".") ]
+      info_getter.config[:hints_path] = [ path_to(".") ]
     end
 
     it "hint? should return nil" do
-      expect(Ohai::Hints.hint?("cloud")).to be_nil
+      expect(info_getter::Hints.hint?("cloud")).to be_nil
     end
   end
 
@@ -50,15 +50,15 @@ EOF
 EOF
 
     before do
-      Ohai.config[:hints_path] = [ path_to(".") ]
+      info_getter.config[:hints_path] = [ path_to(".") ]
     end
 
     it "hint? should return the data for full hints" do
-      expect(Ohai::Hints.hint?("cloud")).to eq({ "name" => "circus" })
+      expect(info_getter::Hints.hint?("cloud")).to eq({ "name" => "circus" })
     end
 
     it "hint? should return empty hash for empty hints" do
-      expect(Ohai::Hints.hint?("cloud_empty")).to eq({})
+      expect(info_getter::Hints.hint?("cloud_empty")).to eq({})
     end
   end
 

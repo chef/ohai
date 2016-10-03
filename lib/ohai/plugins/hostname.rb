@@ -28,7 +28,7 @@
 require "socket"
 require "ipaddr"
 
-Ohai.plugin(:Hostname) do
+info_getter.plugin(:Hostname) do
   provides "domain", "hostname", "fqdn", "machinename"
 
   # hostname : short hostname
@@ -127,19 +127,19 @@ Ohai.plugin(:Hostname) do
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname --fqdn returned an empty string, retrying " +
+        info_getter::Log.debug("hostname --fqdn returned an empty string, retrying " +
                         "once.")
         ourfqdn = from_cmd("hostname --fqdn")
       end
 
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
+        info_getter::Log.debug("hostname --fqdn returned an empty string twice and " +
                         "will not be set.")
       else
         fqdn ourfqdn
       end
     rescue
-      Ohai::Log.debug(
+      info_getter::Log.debug(
         "hostname --fqdn returned an error, probably no domain set")
     end
     domain collect_domain

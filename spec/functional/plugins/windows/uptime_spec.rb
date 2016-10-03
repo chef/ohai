@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Windows plugin uptime" do
+describe info_getter::System, "Windows plugin uptime" do
 
   context "for newer version of Windows" do
     let(:uptime_plugin) do

@@ -16,13 +16,13 @@
 
 require "ipaddress"
 require "spec_helper"
-require "ohai/util/ip_helper"
+require "info_getter/util/ip_helper"
 
 class IpHelperMock
-  include Ohai::Util::IpHelper
+  include info_getter::Util::IpHelper
 end
 
-describe "Ohai::Util::IpHelper" do
+describe "info_getter::Util::IpHelper" do
   let(:ip_helper) { IpHelperMock.new }
 
   shared_examples "ip address types" do

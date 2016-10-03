@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Mdadm) do
+info_getter.plugin(:Mdadm) do
   provides "mdadm"
 
   def create_raid_device_mash(stdout)

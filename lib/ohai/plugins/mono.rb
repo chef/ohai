@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Mono) do
+info_getter.plugin(:Mono) do
   provides "languages/mono"
   depends "languages"
 
@@ -43,8 +43,8 @@ Ohai.plugin(:Mono) do
         end
         languages[:mono] = mono unless mono.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Mono plugin: Could not shell_out "mono -V". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Mono plugin: Could not shell_out "mono -V". Skipping plugin')
     end
   end
 end

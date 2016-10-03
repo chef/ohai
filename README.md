@@ -1,31 +1,31 @@
-# ohai
-[![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=master)](https://travis-ci.org/chef/ohai)
-[![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/ohai?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/ohai/branch/master)
-[![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
+# info_getter
+[![Build Status Master](https://travis-ci.org/chef/info_getter.svg?branch=master)](https://travis-ci.org/chef/info_getter)
+[![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/info_getter?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/info_getter/branch/master)
+[![Gem Version](https://badge.fury.io/rb/info_getter.svg)](https://badge.fury.io/rb/info_getter)
 
 
 # DESCRIPTION:
 
-Ohai detects data about your operating system. It can be used
+info_getter detects data about your operating system. It can be used
 standalone, but its primary purpose is to provide node data to Chef.
 
-Ohai will print out a JSON data blob for all the known data about your
+info_getter will print out a JSON data blob for all the known data about your
 system. When used with Chef, that data is reported back via node
 attributes.
 
-Chef distributes ohai as a RubyGem. This README is for developers who
-want to modify the Ohai source code. For users who want to write plugins
-for Ohai, see the docs:
+Chef distributes info_getter as a RubyGem. This README is for developers who
+want to modify the info_getter source code. For users who want to write plugins
+for info_getter, see the docs:
 
-* General documentation: https://docs.chef.io/ohai.html
-* Custom plugin documentation: https://docs.chef.io/ohai_custom.html
+* General documentation: https://docs.chef.io/info_getter.html
+* Custom plugin documentation: https://docs.chef.io/info_getter_custom.html
 
 # DEVELOPMENT:
 
 Before working on the code, if you plan to contribute your changes, you
 should read the contributing guidelines:
 
-* https://github.com/chef/ohai/blob/master/CONTRIBUTING.md
+* https://github.com/chef/info_getter/blob/master/CONTRIBUTING.md
 
 The basic process for contributing is:
 
@@ -36,7 +36,7 @@ The basic process for contributing is:
 
 # ENVIRONMENT:
 
-Ohai's development dependencies should be installed with bundler. Just
+info_getter's development dependencies should be installed with bundler. Just
 run `bundle install` in the root of the repo.
 
 ## Spec Testing:
@@ -51,10 +51,10 @@ You can run individual test files by running the rspec executable:
 
 ## Rake Tasks
 
-Ohai has some Rake tasks for doing various things.
+info_getter has some Rake tasks for doing various things.
 
     rake -T
-    rake build          # Build the gem file ohai-$VERSION.gem
+    rake build          # Build the gem file info_getter-$VERSION.gem
     rake install        # install the gem locally
     rake install:local  # install the gem locally without network access
     rake release        # Create tag $VERSION, build gem, and push to Rubygems
@@ -66,15 +66,15 @@ Ohai has some Rake tasks for doing various things.
 
 Source:
 
-* https://github.com/chef/ohai/tree/master
+* https://github.com/chef/info_getter/tree/master
 
 Issues:
 
-* https://github.com/chef/ohai/issues
+* https://github.com/chef/info_getter/issues
 
 # LICENSE:
 
-Ohai - system information application
+info_getter - system information application
 
 * Author:: Adam Jacob (<adam@chef.io>)
 * Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.

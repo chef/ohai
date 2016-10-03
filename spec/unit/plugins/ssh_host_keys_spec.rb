@@ -18,7 +18,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "ssh_host_key plugin" do
+describe info_getter::System, "ssh_host_key plugin" do
 
   before(:each) do
     @plugin = get_plugin("ssh_host_key")

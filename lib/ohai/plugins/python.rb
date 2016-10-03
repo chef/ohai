@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Python) do
+info_getter.plugin(:Python) do
   provides "languages/python"
 
   depends "languages"
@@ -36,8 +36,8 @@ Ohai.plugin(:Python) do
         end
         languages[:python] = python unless python.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Python plugin: Could not shell_out "python -c "import sys; print (sys.version)"". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Python plugin: Could not shell_out "python -c "import sys; print (sys.version)"". Skipping plugin')
     end
   end
 end

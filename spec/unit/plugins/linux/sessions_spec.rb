@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux sessions plugin" do
+describe info_getter::System, "Linux sessions plugin" do
   let(:plugin) { get_plugin("linux/sessions") }
 
   before(:each) do

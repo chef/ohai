@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-Ohai.plugin(:Memory) do
+info_getter.plugin(:Memory) do
   provides "memory"
 
   collect_data(:windows) do

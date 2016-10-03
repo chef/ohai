@@ -18,7 +18,7 @@
 require "ipaddress"
 require "spec_helper"
 
-describe Ohai::System, "plugin digital_ocean" do
+describe info_getter::System, "plugin digital_ocean" do
   let(:plugin) { get_plugin("digital_ocean") }
   let(:digitalocean_path) { "/etc/digitalocean" }
   let(:hint) do

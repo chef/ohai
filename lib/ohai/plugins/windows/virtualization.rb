@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Virtualization) do
+info_getter.plugin(:Virtualization) do
   provides "virtualization"
 
   collect_data(:windows) do

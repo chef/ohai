@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
+require "info_getter/mixin/dmi_decode"
 
-Ohai.plugin(:Virtualization) do
-  include Ohai::Mixin::DmiDecode
+info_getter.plugin(:Virtualization) do
+  include info_getter::Mixin::DmiDecode
   provides "virtualization"
 
   def lxc_version_exists?
@@ -57,7 +57,7 @@ Ohai.plugin(:Virtualization) do
 
     # Xen Notes:
     # - cpuid of guests, if we could get it, would also be a clue
-    # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
+    # - may be able to determine if under paravirt from /dev/xen/evtchn (See info_getter-253)
     # - Additional edge cases likely should not change the above assumptions
     #   but rather be additive - btm
 
@@ -167,7 +167,7 @@ Ohai.plugin(:Virtualization) do
     # will show the subsystems and root (/) namespace.
     # <index #>:<subsystem>:/
     #
-    # Full notes, https://tickets.opscode.com/browse/OHAI-551
+    # Full notes, https://tickets.opscode.com/browse/info_getter-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
@@ -179,14 +179,14 @@ Ohai.plugin(:Virtualization) do
       elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such
-        # So we're cautious here to not overwrite other existing values (OHAI-573)
+        # So we're cautious here to not overwrite other existing values (info_getter-573)
         unless virtualization[:system] && virtualization[:role]
           virtualization[:system] = "lxc"
           virtualization[:role] = "host"
         end
-        # In general, the 'systems' framework from OHAI-182 is less susceptible to conflicts
+        # In general, the 'systems' framework from info_getter-182 is less susceptible to conflicts
         # But, this could overwrite virtualization[:systems][:lxc] = "guest"
-        # If so, we may need to look further for a differentiator (OHAI-573)
+        # If so, we may need to look further for a differentiator (info_getter-573)
         virtualization[:systems][:lxc] = "host"
       end
     elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")

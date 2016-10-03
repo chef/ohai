@@ -21,7 +21,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 tmp = ENV["TMPDIR"] || ENV["TMP"] || ENV["TEMP"] || "/tmp"
 
 abortstr = <<EOF
-Ohai.plugin(:Abort) do
+info_getter.plugin(:Abort) do
   provides "abort_test"
   collect_data do
     abort
@@ -57,9 +57,9 @@ describe "a plug-in that aborts execution" do
   end
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
-    @runner = Ohai::Runner.new(@ohai)
+    @info_getter = info_getter::System.new
+    @loader = info_getter::Loader.new(@info_getter)
+    @runner = info_getter::Runner.new(@info_getter)
   end
 
   it "should raise SystemExit" do

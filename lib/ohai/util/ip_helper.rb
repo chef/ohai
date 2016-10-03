@@ -16,7 +16,7 @@
 
 require "ipaddress"
 
-module Ohai
+module info_getter
   module Util
     module IpHelper
       # Corresponding to RFC 4192 + RFC 4193

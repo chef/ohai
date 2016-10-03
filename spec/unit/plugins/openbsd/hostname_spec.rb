@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "OpenBSD hostname plugin" do
+describe info_getter::System, "OpenBSD hostname plugin" do
   before(:each) do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:openbsd)

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module DSL
     class Plugin
       class VersionVII < Plugin
@@ -31,7 +31,7 @@ module Ohai
         end
 
         def name
-          self.class.name.split("Ohai::NamedPlugin::")[1].to_sym
+          self.class.name.split("info_getter::NamedPlugin::")[1].to_sym
         end
 
         def self.version
@@ -69,7 +69,7 @@ module Ohai
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
             if data_collector.has_key?(plat)
-              raise Ohai::Exceptions::IllegalPluginDefinition, "collect_data already defined on platform #{plat}"
+              raise info_getter::Exceptions::IllegalPluginDefinition, "collect_data already defined on platform #{plat}"
             else
               data_collector[plat] = block
             end
@@ -89,16 +89,16 @@ module Ohai
           elsif collector.has_key?(:default)
             self.instance_eval(&collector[:default])
           else
-            Ohai::Log.debug("Plugin #{self.name}: No data to collect. Skipping...")
+            info_getter::Log.debug("Plugin #{self.name}: No data to collect. Skipping...")
           end
         end
 
         def provides(*paths)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
+          info_getter::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
         end
 
         def require_plugin(*args)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+          info_getter::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
         end
 
         def configuration(option, *options)
@@ -136,8 +136,8 @@ module Ohai
 
           # Plugin names in config hashes are auto-vivified, so we check with
           # key? to avoid falsely instantiating a configuration hash.
-          if Ohai.config[:plugin].key?(snake_case_name)
-            Ohai.config[:plugin][snake_case_name]
+          if info_getter.config[:plugin].key?(snake_case_name)
+            info_getter.config[:plugin][snake_case_name]
           else
             nil
           end

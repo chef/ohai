@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Darwin Memory Plugin" do
+describe info_getter::System, "Darwin Memory Plugin" do
   before(:each) do
     darwin_memsize = <<-DARWIN_MEMSIZE
 17179869184

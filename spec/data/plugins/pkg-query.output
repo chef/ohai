@@ -31,7 +31,7 @@ rubygem-net-ssh-multi 1.2.1
 rubygem-net-ssh2 2.9.2,1
 rubygem-net-telnet 0.1.1
 rubygem-netrc 0.7.7
-rubygem-ohai 8.8.1
+rubygem-info_getter 8.8.1
 rubygem-plist 3.1.0
 rubygem-proxifier 1.0.3
 rubygem-pry 0.10.3_2

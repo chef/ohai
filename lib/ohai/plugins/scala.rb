@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:Scala) do
+info_getter.plugin(:Scala) do
   provides "languages/scala", "languages/scala/sbt"
   depends "languages"
 
@@ -27,8 +27,8 @@ Ohai.plugin(:Scala) do
       if so.exitstatus == 0
         scala[:version] = so.stderr.split[4]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Scala plugin: Could not shell_out "scala -version". Skipping data')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Scala plugin: Could not shell_out "scala -version". Skipping data')
     end
 
     # Check for sbt
@@ -39,8 +39,8 @@ Ohai.plugin(:Scala) do
         scala[:sbt] = Mash.new
         scala[:sbt][:version] = so.stdout.split[3]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Scala plugin: Could not shell_out "sbt --version". Skipping data')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Scala plugin: Could not shell_out "sbt --version". Skipping data')
     end
 
     languages[:scala] = scala unless scala.empty?

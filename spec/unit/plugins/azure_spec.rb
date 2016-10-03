@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 
-describe Ohai::System, "plugin azure" do
+describe info_getter::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }
   let(:hint) do
     {

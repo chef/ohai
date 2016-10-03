@@ -1,4 +1,4 @@
-Ohai.plugin do
+info_getter.plugin do
   provides 'v7message'
 
   collect_data do

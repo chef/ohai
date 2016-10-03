@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem2) do
+info_getter.plugin(:Filesystem2) do
   provides "filesystem2"
 
   def generate_device_view(fs)

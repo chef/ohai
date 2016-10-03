@@ -47,7 +47,7 @@ Name: /VirtualBox/GuestInfo/OS/Release, value: 3.19.0-31-generic, timestamp: 144
 Name: /VirtualBox/GuestInfo/OS/NoLoggedInUsers, value: false, timestamp: 1448390452251532000, flags: TRANSIENT, TRANSRESET
 EOF
 
-describe Ohai::System, "plugin virtualbox" do
+describe info_getter::System, "plugin virtualbox" do
   context "when VBoxControl shellout fails" do
     it "should not set the virtualbox attribute" do
       plugin = get_plugin("virtualbox")

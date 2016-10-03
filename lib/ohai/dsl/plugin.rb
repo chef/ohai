@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/os"
-require "ohai/mixin/command"
-require "ohai/mixin/seconds_to_human"
-require "ohai/hints"
-require "ohai/util/file_helper"
+require "info_getter/mixin/os"
+require "info_getter/mixin/command"
+require "info_getter/mixin/seconds_to_human"
+require "info_getter/hints"
+require "info_getter/util/file_helper"
 
-module Ohai
+module info_getter
 
   # For plugin namespacing
   module NamedPlugin
@@ -45,7 +45,7 @@ module Ohai
   end
 
   def self.plugin(name, &block)
-    raise Ohai::Exceptions::InvalidPluginName, "#{name} is not a valid plugin name. A valid plugin name is a symbol which begins with a capital letter and contains no underscores" unless NamedPlugin.valid_name?(name)
+    raise info_getter::Exceptions::InvalidPluginName, "#{name} is not a valid plugin name. A valid plugin name is a symbol which begins with a capital letter and contains no underscores" unless NamedPlugin.valid_name?(name)
 
     plugin = nil
 
@@ -71,7 +71,7 @@ module Ohai
 
   # Extracted abs_path to support testability:
   # This method gets overridden at test time, to force the shell to check
-  # ohai/spec/unit/path/original/absolute/path/to/exe
+  # info_getter/spec/unit/path/original/absolute/path/to/exe
   def self.abs_path( abs_path )
     abs_path
   end
@@ -79,10 +79,10 @@ module Ohai
   module DSL
     class Plugin
 
-      include Ohai::Mixin::OS
-      include Ohai::Mixin::Command
-      include Ohai::Mixin::SecondsToHuman
-      include Ohai::Util::FileHelper
+      include info_getter::Mixin::OS
+      include info_getter::Mixin::Command
+      include info_getter::Mixin::SecondsToHuman
+      include info_getter::Util::FileHelper
 
       attr_reader :data
 
@@ -94,8 +94,8 @@ module Ohai
       def run
         @has_run = true
 
-        if Ohai.config[:disabled_plugins].include?(name)
-          Ohai::Log.debug("Skipping disabled plugin #{name}")
+        if info_getter.config[:disabled_plugins].include?(name)
+          info_getter::Log.debug("Skipping disabled plugin #{name}")
         else
           run_plugin
         end
@@ -164,18 +164,18 @@ module Ohai
       end
 
       def hint?(name)
-        Ohai::Hints.hint?(name)
+        info_getter::Hints.hint?(name)
       end
 
       # emulates the old plugin loading behavior
       def safe_run
         begin
           self.run
-        rescue Ohai::Exceptions::Error => e
+        rescue info_getter::Exceptions::Error => e
           raise e
         rescue => e
-          Ohai::Log.debug("Plugin #{self.name} threw #{e.inspect}")
-          e.backtrace.each { |line| Ohai::Log.debug( line ) }
+          info_getter::Log.debug("Plugin #{self.name} threw #{e.inspect}")
+          e.backtrace.each { |line| info_getter::Log.debug( line ) }
         end
       end
 

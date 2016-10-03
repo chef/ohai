@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:LSB) do
+info_getter.plugin(:LSB) do
   provides "lsb"
 
   collect_data(:linux) do
@@ -53,7 +53,7 @@ Ohai.plugin(:LSB) do
         end
       end
     else
-      Ohai::Log.debug("Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
+      info_getter::Log.debug("Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
     end
   end
 end

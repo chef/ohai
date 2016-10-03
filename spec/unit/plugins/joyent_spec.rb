@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Ohai::System, "plugin joyent" do
+describe info_getter::System, "plugin joyent" do
   before(:each) do
     @plugin = get_plugin("joyent")
   end

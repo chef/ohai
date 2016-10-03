@@ -17,9 +17,9 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../../../lib/ohai/util/win32/group_helper.rb")
+require File.expand_path(File.dirname(__FILE__) + "/../../../lib/info_getter/util/win32/group_helper.rb")
 
-describe Ohai::System, "root_group" do
+describe info_getter::System, "root_group" do
   before(:each) do
     @plugin = get_plugin("root_group")
   end
@@ -80,7 +80,7 @@ describe Ohai::System, "root_group" do
   describe "windows platform" do
     it "should return the group administrators" do
       stub_const("::RbConfig::CONFIG", { "host_os" => "windows" } )
-      expect(Ohai::Util::Win32::GroupHelper).to receive(:windows_root_group_name).and_return("administrators")
+      expect(info_getter::Util::Win32::GroupHelper).to receive(:windows_root_group_name).and_return("administrators")
       @plugin.run
       expect(@plugin[:root_group]).to eq("administrators")
     end

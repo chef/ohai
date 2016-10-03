@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-module Ohai
+module info_getter
   module Mixin
     module NetworkConstants
       FAMILIES = {

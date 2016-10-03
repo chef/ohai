@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Hostnamectl) do
+info_getter.plugin(:Hostnamectl) do
   provides "hostnamectl"
 
   collect_data(:linux) do

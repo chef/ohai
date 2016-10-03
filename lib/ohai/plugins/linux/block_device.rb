@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:BlockDevice) do
+info_getter.plugin(:BlockDevice) do
   provides "block_device"
 
   collect_data(:linux) do

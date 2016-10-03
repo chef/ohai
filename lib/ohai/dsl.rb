@@ -17,6 +17,6 @@
 # limitations under the License.
 #
 
-require "ohai/dsl/plugin"
-require "ohai/dsl/plugin/versionvi"
-require "ohai/dsl/plugin/versionvii"
+require "info_getter/dsl/plugin"
+require "info_getter/dsl/plugin/versionvi"
+require "info_getter/dsl/plugin/versionvii"

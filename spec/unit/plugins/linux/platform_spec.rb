@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Linux plugin platform" do
+describe info_getter::System, "Linux plugin platform" do
 
   let(:have_debian_version) { false }
   let(:have_redhat_release) { false }
@@ -387,7 +387,7 @@ describe Ohai::System, "Linux plugin platform" do
         expect(@plugin[:platform_version].to_i).to eq(13)
       end
 
-      # https://github.com/chef/ohai/issues/560
+      # https://github.com/chef/info_getter/issues/560
       # Issue is seen on EL7, so that's what we're testing.
       context "on versions that have /etc/os-release" do
 
@@ -659,7 +659,7 @@ CISCO_RELEASE
         expect(@plugin[:platform_family]).to eq("suse")
       end
 
-      it "[OHAI-272] should read the version as 11.3" do
+      it "[info_getter-272] should read the version as 11.3" do
         expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
         @plugin.run
         expect(@plugin[:platform]).to eq("opensuse")
@@ -667,7 +667,7 @@ CISCO_RELEASE
         expect(@plugin[:platform_family]).to eq("suse")
       end
 
-      it "[OHAI-272] should read the version as 9.1" do
+      it "[info_getter-272] should read the version as 9.1" do
         expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
         @plugin.run
         expect(@plugin[:platform]).to eq("suse")
@@ -675,7 +675,7 @@ CISCO_RELEASE
         expect(@plugin[:platform_family]).to eq("suse")
       end
 
-      it "[OHAI-272] should read the version as 11.4" do
+      it "[info_getter-272] should read the version as 11.4" do
         expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
         @plugin.run
         expect(@plugin[:platform]).to eq("opensuse")

@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 #
-Ohai.plugin(:Packages) do
+info_getter.plugin(:Packages) do
   provides "packages"
   depends "platform_family"
 

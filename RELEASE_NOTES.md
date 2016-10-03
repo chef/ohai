@@ -7,7 +7,7 @@ Example Note:
 Details about the thing that changed that needs to get included in the Release Notes in markdown.
 -->
 
-# Ohai Release Notes:
+# info_getter Release Notes:
 
 ## Gentoo platform version
 

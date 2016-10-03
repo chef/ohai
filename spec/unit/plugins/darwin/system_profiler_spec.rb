@@ -26,7 +26,7 @@ rescue LoadError => e
   raise e
 end
 
-describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
+describe info_getter::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
     @plugin = get_plugin("darwin/system_profiler")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)

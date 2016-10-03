@@ -17,7 +17,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "plugin scala" do
+describe info_getter::System, "plugin scala" do
 
   let(:plugin) do
     plugin = get_plugin("scala").tap do |plugin|
@@ -64,7 +64,7 @@ describe Ohai::System, "plugin scala" do
 
     before(:each) do
       allow(plugin).to receive(:shell_out)
-        .and_raise( Ohai::Exceptions::Exec )
+        .and_raise( info_getter::Exceptions::Exec )
       plugin.run
     end
 
@@ -81,7 +81,7 @@ describe Ohai::System, "plugin scala" do
 
       allow(plugin).to receive(:shell_out)
         .with("sbt --version")
-        .and_raise( Ohai::Exceptions::Exec )
+        .and_raise( info_getter::Exceptions::Exec )
       plugin.run
     end
 

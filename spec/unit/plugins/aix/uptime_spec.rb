@@ -18,7 +18,7 @@
 #
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Aix plugin uptime" do
+describe info_getter::System, "Aix plugin uptime" do
 
   before(:each) do
     @plugin = get_plugin("aix/uptime")

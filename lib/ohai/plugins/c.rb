@@ -18,7 +18,7 @@
 
 require "rbconfig"
 
-Ohai.plugin(:C) do
+info_getter.plugin(:C) do
   provides "languages/c"
 
   depends "languages"
@@ -28,10 +28,10 @@ Ohai.plugin(:C) do
     if so.exitstatus == 0
       yield(so)
     else
-      Ohai::Log.debug("Plugin C '#{cmd}' failed. Skipping data.")
+      info_getter::Log.debug("Plugin C '#{cmd}' failed. Skipping data.")
     end
-  rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("Plugin C '#{cmd}' binary could not be found. Skipping data.")
+  rescue info_getter::Exceptions::Exec
+    info_getter::Log.debug("Plugin C '#{cmd}' binary could not be found. Skipping data.")
   end
 
   collect_data do
@@ -56,7 +56,7 @@ Ohai.plugin(:C) do
 
     #glibc
     ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-      collect( Ohai.abs_path( glibc )) do |so|
+      collect( info_getter.abs_path( glibc )) do |so|
         description = so.stdout.split($/).first
         if description =~ /(\d+\.\d+\.?\d*)/
           c[:glibc] = Mash.new
@@ -98,7 +98,7 @@ Ohai.plugin(:C) do
           c[:xlc][:description] = description.strip
         end
       end
-    rescue Ohai::Exceptions::Exec
+    rescue info_getter::Exceptions::Exec
     end
 
     #sun pro

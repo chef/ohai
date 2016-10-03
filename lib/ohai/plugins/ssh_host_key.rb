@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:SSHHostKey) do
+info_getter.plugin(:SSHHostKey) do
   provides "keys/ssh"
   depends "keys"
 
@@ -44,7 +44,7 @@ Ohai.plugin(:SSHHostKey) do
                     # Darwin
                     "/etc/sshd_config"
                   else
-                    Ohai::Log.debug("Failed to find sshd configuration file")
+                    info_getter::Log.debug("Failed to find sshd configuration file")
                     nil
                   end
 

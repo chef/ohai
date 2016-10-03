@@ -14,9 +14,9 @@
 # limitations under the License.
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "info_getter_plugin_common.rb" ))
 
-describe Ohai::System, "plugin go" do
+describe info_getter::System, "plugin go" do
   test_plugin(%w{languages go}, [ "go" ]) do |p|
     p.test([ "centos-6.4", "ubuntu-10.04", "ubuntu-12.04" ], %w{x86 x64}, [[]],
            { "languages" => { "go" => nil } })

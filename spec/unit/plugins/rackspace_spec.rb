@@ -19,7 +19,7 @@ require "resolv"
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin rackspace" do
+describe info_getter::System, "plugin rackspace" do
   let(:plugin) { get_plugin("rackspace") }
 
   before(:each) do
@@ -148,9 +148,9 @@ OUT
       expect(plugin).
         to receive(:shell_out).
         with("xenstore-ls vm-data/provider_data").
-        and_raise(Ohai::Exceptions::Exec)
+        and_raise(info_getter::Exceptions::Exec)
 
-      expect(Ohai::Log).
+      expect(info_getter::Log).
         to receive(:debug).
         with("rackspace plugin: Unable to find xenstore-ls, cannot capture " \
              "region information for Rackspace cloud")
@@ -171,9 +171,9 @@ OUT
       expect(plugin).
         to receive(:shell_out).
         with("xenstore-read name").
-        and_raise(Ohai::Exceptions::Exec)
+        and_raise(info_getter::Exceptions::Exec)
 
-      expect(Ohai::Log).
+      expect(info_getter::Log).
         to receive(:debug).
         with("rackspace plugin: Unable to find xenstore-read, cannot capture " \
              "instance ID information for Rackspace cloud")
@@ -252,7 +252,7 @@ OUT
       allow(plugin).
         to receive(:shell_out).
         with("xenstore-read vm-data/provider_data/provider").
-        and_raise(Ohai::Exceptions::Exec)
+        and_raise(info_getter::Exceptions::Exec)
     end
   end
 
@@ -263,9 +263,9 @@ OUT
       expect(plugin).
         to receive(:shell_out).
         with("xenstore-ls vm-data/networking").
-        and_raise(Ohai::Exceptions::Exec)
+        and_raise(info_getter::Exceptions::Exec)
 
-      expect(Ohai::Log).
+      expect(info_getter::Log).
         to receive(:debug).
         with("rackspace plugin: Unable to capture custom private networking " \
              "information for Rackspace cloud")

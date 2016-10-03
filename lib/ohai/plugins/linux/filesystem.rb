@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem) do
+info_getter.plugin(:Filesystem) do
   provides "filesystem"
 
   def get_blk_cmd(attr, have_lsblk)
@@ -142,7 +142,7 @@ Ohai.plugin(:Filesystem) do
     # Grab any missing mount information from /proc/mounts
     if File.exist?("/proc/mounts")
       mounts = ""
-      # Due to https://tickets.opscode.com/browse/OHAI-196
+      # Due to https://tickets.opscode.com/browse/info_getter-196
       # we have to non-block read dev files. Ew.
       f = File.open("/proc/mounts")
       loop do

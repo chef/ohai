@@ -24,16 +24,16 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/seconds_to_human"
+require "info_getter/mixin/seconds_to_human"
 
-Ohai.plugin(:Uptime) do
+info_getter.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
   provides "idletime", "idletime_seconds" # linux only
   depends "platform_version"
 
   def collect_uptime(path)
     # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
-    so = shell_out("#{Ohai.abs_path(path)} kern.boottime")
+    so = shell_out("#{info_getter.abs_path(path)} kern.boottime")
     so.stdout.lines do |line|
       if line =~ /kern.boottime:\D+(\d+)/
         usec = Time.new.to_i - $1.to_i
@@ -74,7 +74,7 @@ Ohai.plugin(:Uptime) do
 
   collect_data(:openbsd) do
     # kern.boottime=Tue Nov  1 14:45:52 2011
-    so = shell_out("#{ Ohai.abs_path( "/sbin/sysctl" )} #kern.boottime")
+    so = shell_out("#{ info_getter.abs_path( "/sbin/sysctl" )} #kern.boottime")
     so.stdout.lines do |line|
       if line =~ /kern.boottime=(.+)/
         uptime_seconds Time.new.to_i - Time.parse($1).to_i

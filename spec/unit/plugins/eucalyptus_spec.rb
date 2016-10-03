@@ -20,7 +20,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 require "open-uri"
 
-describe Ohai::System, "plugin eucalyptus" do
+describe info_getter::System, "plugin eucalyptus" do
   let(:plugin) { get_plugin("eucalyptus") }
 
   shared_examples_for "!eucalyptus" do

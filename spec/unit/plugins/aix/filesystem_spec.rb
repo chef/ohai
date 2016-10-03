@@ -17,7 +17,7 @@
 # limitations under the License.
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "AIX filesystem plugin" do
+describe info_getter::System, "AIX filesystem plugin" do
   before(:each) do
     @df_pk_lpar = <<-DF_PK
 Filesystem    1024-blocks      Used Available Capacity Mounted on

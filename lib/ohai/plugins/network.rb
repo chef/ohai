@@ -17,10 +17,10 @@
 #
 
 require "ipaddress"
-require "ohai/mixin/network_constants"
+require "info_getter/mixin/network_constants"
 
-Ohai.plugin(:NetworkAddresses) do
-  include Ohai::Mixin::NetworkConstants
+info_getter.plugin(:NetworkAddresses) do
+  include info_getter::Mixin::NetworkConstants
 
   provides "ipaddress", "ip6address", "macaddress"
 
@@ -68,8 +68,8 @@ Ohai.plugin(:NetworkAddresses) do
     return [ nil, nil ] if ips.empty?
 
     # shortcuts to access default #{family} interface and gateway
-    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_interface"
-    gw_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
+    int_attr = info_getter::Mixin::NetworkConstants::FAMILIES[family] + "_interface"
+    gw_attr = info_getter::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
 
     if network[int_attr]
       # working with the address(es) of the default network interface
@@ -77,13 +77,13 @@ Ohai.plugin(:NetworkAddresses) do
         v[:iface] == network[int_attr]
       end
       if gw_if_ips.empty?
-        Ohai::Log.warn("[#{family}] no ip address on #{network[int_attr]}")
+        info_getter::Log.warn("[#{family}] no ip address on #{network[int_attr]}")
       elsif network[gw_attr] &&
           network["interfaces"][network[int_attr]] &&
           network["interfaces"][network[int_attr]]["addresses"]
         if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
-          Ohai::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
+          info_getter::Log.debug("link level default #{family} route, picking ip from #{network[gw_attr]}")
           r = gw_if_ips.first
         else
           # checking network masks
@@ -92,9 +92,9 @@ Ohai.plugin(:NetworkAddresses) do
           end.first
           if r.nil?
             r = gw_if_ips.first
-            Ohai::Log.debug("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
+            info_getter::Log.debug("[#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
           else
-            Ohai::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
+            info_getter::Log.debug("[#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
           end
         end
       else
@@ -103,7 +103,7 @@ Ohai.plugin(:NetworkAddresses) do
       end
     else
       r = ips.first
-      Ohai::Log.debug("[#{family}] no default interface, picking the first ipaddress")
+      info_getter::Log.debug("[#{family}] no default interface, picking the first ipaddress")
     end
 
     return [ nil, nil ] if r.nil? || r.empty?
@@ -141,7 +141,7 @@ Ohai.plugin(:NetworkAddresses) do
     counters[:network] = Mash.new unless counters[:network]
 
     # inet family is processed before inet6 to give ipv4 precedence
-    Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
+    info_getter::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
       r = {}
       # find the ip/interface with the default route for this family
       (r["ip"], r["iface"]) = find_ip(family)
@@ -149,13 +149,13 @@ Ohai.plugin(:NetworkAddresses) do
       # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
       if (family == "inet") && ipaddress.nil?
         if r["ip"].nil?
-          Ohai::Log.warn("unable to detect ipaddress")
+          info_getter::Log.warn("unable to detect ipaddress")
         else
           ipaddress r["ip"]
         end
       elsif (family == "inet6") && ip6address.nil?
         if r["ip"].nil?
-          Ohai::Log.debug("unable to detect ip6address")
+          info_getter::Log.debug("unable to detect ip6address")
         else
           ip6address r["ip"]
         end
@@ -165,10 +165,10 @@ Ohai.plugin(:NetworkAddresses) do
       # otherwise we set macaddress on a first-found basis (and we started with ipv4)
       if macaddress.nil?
         if r["mac"]
-          Ohai::Log.debug("setting macaddress to '#{r["mac"]}' from interface '#{r["iface"]}' for family '#{family}'")
+          info_getter::Log.debug("setting macaddress to '#{r["mac"]}' from interface '#{r["iface"]}' for family '#{family}'")
           macaddress r["mac"]
         else
-          Ohai::Log.debug("unable to detect macaddress for family '#{family}'")
+          info_getter::Log.debug("unable to detect macaddress for family '#{family}'")
         end
       end
 
@@ -177,7 +177,7 @@ Ohai.plugin(:NetworkAddresses) do
 
     if results["inet"]["iface"] && results["inet6"]["iface"] &&
         (results["inet"]["iface"] != results["inet6"]["iface"])
-      Ohai::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
+      info_getter::Log.debug("ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
     end
   end
 end

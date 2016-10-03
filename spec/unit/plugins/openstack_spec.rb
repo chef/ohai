@@ -17,7 +17,7 @@
 #
 
 require "spec_helper"
-require "ohai/plugins/openstack"
+require "info_getter/plugins/openstack"
 
 describe "OpenStack Plugin" do
 
@@ -39,7 +39,7 @@ describe "OpenStack Plugin" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_metadata_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+          with(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
         plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
         plugin.run
@@ -59,7 +59,7 @@ describe "OpenStack Plugin" do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
       allow(plugin).to receive(:can_metadata_connect?).
-        with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+        with(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
         and_return(false)
       plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
       plugin.run
@@ -71,7 +71,7 @@ describe "OpenStack Plugin" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_metadata_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+          with(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         plugin.run
@@ -126,12 +126,12 @@ EOM
           "instance-id" => "i-0000162a",
           "local-ipv4" => "172.31.7.23",
           "ari-id" => "ari-00000037",
-          "local-hostname" => "ohai-7-system-test.opscode.us",
+          "local-hostname" => "info_getter-7-system-test.opscode.us",
           "placement/" => "availability-zone",
           "placement/availability-zone" => "nova",
           "ami-launch-index" => "0",
-          "public-hostname" => "ohai-7-system-test.opscode.us",
-          "hostname" => "ohai-7-system-test.opscode.us",
+          "public-hostname" => "info_getter-7-system-test.opscode.us",
+          "hostname" => "info_getter-7-system-test.opscode.us",
           "ami-id" => "ami-00000035",
           "instance-action" => "none",
           "aki-id" => "aki-00000036",
@@ -147,13 +147,13 @@ EOM
       let(:openstack_metadata_values) do
         '{
             "availability_zone" : "nova",
-            "hostname" : "ohai.novalocal",
+            "hostname" : "info_getter.novalocal",
             "launch_index" : 0,
             "meta" : {
                 "priority" : "low",
-                "role" : "ohaiserver"
+                "role" : "info_getterserver"
             },
-            "name" : "ohai_spec",
+            "name" : "info_getter_spec",
             "public_keys" : {
                 "mykey" : "SSH KEY DATA"
             },
@@ -178,11 +178,11 @@ EOM
       before do
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         allow(plugin).to receive(:can_metadata_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
+          with(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(true)
 
         allow(Net::HTTP).to receive(:start).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR).
+          with(info_getter::Mixin::Ec2Metadata::EC2_METADATA_ADDR).
           and_return(http_client)
 
         allow(plugin).to receive(:best_api_version).and_return(metadata_version)
@@ -228,7 +228,7 @@ EOM
         expect(plugin["openstack"]["ari_id"]).to eq("ari-00000037")
       end
       it "reads the local_hostname from the metadata service" do
-        expect(plugin["openstack"]["local_hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["local_hostname"]).to eq("info_getter-7-system-test.opscode.us")
       end
       it "reads the placement_availability_zone from the metadata service" do
         expect(plugin["openstack"]["placement_availability_zone"]).to eq("nova")
@@ -237,10 +237,10 @@ EOM
         expect(plugin["openstack"]["ami_launch_index"]).to eq("0")
       end
       it "reads the public_hostname from the metadata service" do
-        expect(plugin["openstack"]["public_hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["public_hostname"]).to eq("info_getter-7-system-test.opscode.us")
       end
       it "reads the hostname from the metadata service" do
-        expect(plugin["openstack"]["hostname"]).to eq("ohai-7-system-test.opscode.us")
+        expect(plugin["openstack"]["hostname"]).to eq("info_getter-7-system-test.opscode.us")
       end
       it "reads the ami_id from the metadata service" do
         expect(plugin["openstack"]["ami_id"]).to eq("ami-00000035")

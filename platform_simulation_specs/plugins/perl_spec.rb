@@ -18,9 +18,9 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "info_getter_plugin_common.rb" ))
 
-describe Ohai::System, "plugin perl" do
+describe info_getter::System, "plugin perl" do
   test_plugin(%w{languages perl}, [ "perl" ]) do |p|
     p.test([ "centos-5.9" ], [ "x86" ], [[], [ "perl" ]],
            { "languages" => { "perl" => { "version" => "5.8.8", "archname" => "i386-linux-thread-multi" } } })

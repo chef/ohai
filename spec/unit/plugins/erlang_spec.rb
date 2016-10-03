@@ -19,7 +19,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin erlang" do
+describe info_getter::System, "plugin erlang" do
   let(:plugin) { get_plugin("erlang") }
 
   before(:each) do
@@ -64,7 +64,7 @@ describe Ohai::System, "plugin erlang" do
   end
 
   it "does not set languages[:erlang] if the erl command doesn't exist" do
-    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin.languages).not_to have_key(:erlang)
   end

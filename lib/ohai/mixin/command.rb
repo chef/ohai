@@ -16,16 +16,16 @@
 # limitations under the License.
 #
 
-require "ohai/exception"
-require "ohai/config"
-require "ohai/log"
+require "info_getter/exception"
+require "info_getter/config"
+require "info_getter/log"
 require "stringio"
 require "tmpdir"
 require "fcntl"
 require "etc"
 require "mixlib/shellout"
 
-module Ohai
+module info_getter
   module Mixin
     module Command
       # DISCLAIMER: Logging only works in the context of a plugin!!
@@ -36,24 +36,24 @@ module Ohai
         so = Mixlib::ShellOut.new(cmd, options)
         begin
           so.run_command
-          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and returned #{so.exitstatus}")
+          info_getter::Log.debug("Plugin #{self.name}: ran '#{cmd}' and returned #{so.exitstatus}")
           so
         rescue Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and failed #{e.inspect}")
-          raise Ohai::Exceptions::Exec, e
+          info_getter::Log.debug("Plugin #{self.name}: ran '#{cmd}' and failed #{e.inspect}")
+          raise info_getter::Exceptions::Exec, e
         rescue Mixlib::ShellOut::CommandTimeout => e
-          Ohai::Log.debug("Plugin #{self.name}: ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
-          raise Ohai::Exceptions::Exec, e
+          info_getter::Log.debug("Plugin #{self.name}: ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
+          raise info_getter::Exceptions::Exec, e
         end
       end
 
       module_function :shell_out
 
       def run_command(args = {})
-        Ohai::Log.warn("Ohai::Mixin::Command run_command is deprecated and will be removed in Ohai 9.0.0")
+        info_getter::Log.warn("info_getter::Mixin::Command run_command is deprecated and will be removed in info_getter 9.0.0")
         if args.has_key?(:creates)
           if File.exists?(args[:creates])
-            Ohai::Log.debug("Skipping #{args[:command]} - creates #{args[:creates]} exists.")
+            info_getter::Log.debug("Skipping #{args[:command]} - creates #{args[:creates]} exists.")
             return false
           end
         end
@@ -63,7 +63,7 @@ module Ohai
 
         args[:cwd] ||= Dir.tmpdir
         unless File.directory?(args[:cwd])
-          raise Ohai::Exceptions::Exec, "#{args[:cwd]} does not exist or is not a directory"
+          raise info_getter::Exceptions::Exec, "#{args[:cwd]} does not exist or is not a directory"
         end
 
         status = nil
@@ -71,22 +71,22 @@ module Ohai
           status, stdout_string, stderr_string = run_command_backend(args[:command], args[:timeout])
 
           if stdout_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDOUT ----")
-            Ohai::Log.debug(stdout_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDOUT ----")
+            info_getter::Log.debug("---- Begin #{args[:command]} STDOUT ----")
+            info_getter::Log.debug(stdout_string.strip)
+            info_getter::Log.debug("---- End #{args[:command]} STDOUT ----")
           end
           if stderr_string
-            Ohai::Log.debug("---- Begin #{args[:command]} STDERR ----")
-            Ohai::Log.debug(stderr_string.strip)
-            Ohai::Log.debug("---- End #{args[:command]} STDERR ----")
+            info_getter::Log.debug("---- Begin #{args[:command]} STDERR ----")
+            info_getter::Log.debug(stderr_string.strip)
+            info_getter::Log.debug("---- End #{args[:command]} STDERR ----")
           end
 
           args[:returns] ||= 0
           args[:no_status_check] ||= false
           if status.exitstatus != args[:returns] && (not args[:no_status_check])
-            raise Ohai::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
+            raise info_getter::Exceptions::Exec, "#{args[:command_string]} returned #{status.exitstatus}, expected #{args[:returns]}"
           else
-            Ohai::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
+            info_getter::Log.debug("Ran #{args[:command_string]} (#{args[:command]}) returned #{status.exitstatus}")
           end
         end
         return status, stdout_string, stderr_string
@@ -131,18 +131,18 @@ module Ohai
         alias :run_command_backend :run_command_unix
       end
       # This is taken directly from Ara T Howard's Open4 library, and then
-      # modified to suit the needs of Ohai.  Any bugs here are most likely
+      # modified to suit the needs of info_getter.  Any bugs here are most likely
       # my own, and not Ara's.
       #
       # The original appears in external/open4.rb in its unmodified form.
       #
       # Thanks Ara!
       def popen4(cmd, args = {}, &b)
-        Ohai::Log.warn("Ohai::Mixin::Command popen4 is deprecated and will be removed in Ohai 9.0.0")
+        info_getter::Log.warn("info_getter::Mixin::Command popen4 is deprecated and will be removed in info_getter 9.0.0")
 
         # Disable garbage collection to work around possible bug in MRI
         # Ruby 1.8 suffers from intermittent segfaults believed to be due to GC while IO.select
-        # See OHAI-330 / CHEF-2916 / CHEF-1305
+        # See info_getter-330 / CHEF-2916 / CHEF-1305
         GC.disable
 
         # Waitlast - this is magic.
@@ -321,7 +321,7 @@ module Ohai
               o.rewind
               e.rewind
 
-              # **OHAI-275**
+              # **info_getter-275**
               # The way we read from the pipes causes ruby to mark the strings
               # as ASCII-8BIT (i.e., binary), but the content should be encoded
               # as the default external encoding. For example, a command may
@@ -354,7 +354,7 @@ module Ohai
           [cid, pw.last, pr.first, pe.first]
         end
       rescue Errno::ENOENT
-        raise Ohai::Exceptions::Exec, "command #{cmd} doesn't exist or is not in the PATH"
+        raise info_getter::Exceptions::Exec, "command #{cmd} doesn't exist or is not in the PATH"
       ensure
         # we disabled GC entering
         GC.enable

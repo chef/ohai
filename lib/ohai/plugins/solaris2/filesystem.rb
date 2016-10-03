@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem) do
+info_getter.plugin(:Filesystem) do
   provides "filesystem"
 
   collect_data(:solaris2) do
@@ -63,8 +63,8 @@ Ohai.plugin(:Filesystem) do
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    # ohai.plugin[:filesystem][:zfs_properties] = 'used'
-    # ohai.plugin[:filesystem][:zfs_properties] = ['mountpoint', 'creation', 'available', 'used']
+    # info_getter.plugin[:filesystem][:zfs_properties] = 'used'
+    # info_getter.plugin[:filesystem][:zfs_properties] = ['mountpoint', 'creation', 'available', 'used']
     zfs_get = "zfs get -p -H "
     if configuration(:zfs_properties).nil? || configuration(:zfs_properties).empty?
       zfs_get << "all"

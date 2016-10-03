@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# ./ohai - I'm in ur serverz, showin you the daters
+# ./info_getter - I'm in ur serverz, showin you the daters
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
@@ -29,7 +29,7 @@ begin
   # if we're in a source code checkout, we want to run the code from that.
   # have to do this *after* rubygems is loaded.
   $:.unshift File.expand_path("../../lib", __FILE__)
-  require "ohai/application"
+  require "info_getter/application"
 rescue LoadError
   if missing_rubygems
     STDERR.puts "rubygems previously failed to load - is it installed?"
@@ -38,4 +38,4 @@ rescue LoadError
   raise
 end
 
-Ohai::Application.new.run
+info_getter::Application.new.run

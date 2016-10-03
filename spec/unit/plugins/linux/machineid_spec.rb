@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Machine id plugin" do
+describe info_getter::System, "Machine id plugin" do
   let(:plugin) { get_plugin("linux/machineid") }
 
   before(:each) do

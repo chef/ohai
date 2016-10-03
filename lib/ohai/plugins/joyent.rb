@@ -19,7 +19,7 @@
 
 # Reference from: sm-summary command
 
-Ohai.plugin(:Joyent) do
+info_getter.plugin(:Joyent) do
   provides "joyent"
   provides "virtualization/guest_id"
   depends "os", "platform", "virtualization"

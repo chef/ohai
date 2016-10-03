@@ -100,7 +100,7 @@ C_HPUX = <<EOF
          $ PATCH/11.00:PHCO_27774  Oct  3 2002 09:45:59 $
 EOF
 
-describe Ohai::System, "plugin c" do
+describe info_getter::System, "plugin c" do
 
   let(:plugin) { get_plugin("c") }
 
@@ -146,7 +146,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:gcc] tree up if gcc command fails" do
-    allow(plugin).to receive(:shell_out).with("gcc -v").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("gcc -v").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:gcc)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -176,8 +176,8 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:glibc] tree up if glibc fails" do
-    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_raise(Ohai::Exceptions::Exec)
-    allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_raise(info_getter::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:glibc)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -213,7 +213,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:cl] tree up if cl command fails" do
-    allow(plugin).to receive(:shell_out).with("cl /\?").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("cl /\?").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:cl)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -242,7 +242,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:vs] tree up if devenv command fails" do
-    allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:vs)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -271,7 +271,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:xlc] tree up if xlc command fails" do
-    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:xlc)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -306,7 +306,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:sunpro] tree up if cc command fails" do
-    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("cc -V -flags").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:sunpro)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -350,7 +350,7 @@ describe Ohai::System, "plugin c" do
   end
 
   it "does not set the languages[:c][:hpcc] tree up if cc command fails" do
-    allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages][:c]).not_to have_key(:hpcc)
     expect(plugin[:languages][:c]).not_to be_empty # expect other attributes

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:InitPackage) do
+info_getter.plugin(:InitPackage) do
   provides "init_package"
 
   collect_data(:linux) do

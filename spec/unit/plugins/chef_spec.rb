@@ -23,7 +23,7 @@ begin
 
   require "chef/version"
 
-  describe Ohai::System, "plugin chef" do
+  describe info_getter::System, "plugin chef" do
     before(:each) do
       @plugin = get_plugin("chef")
     end
@@ -39,7 +39,7 @@ begin
 rescue LoadError
   # the chef module is not available, ignoring.
 
-  describe Ohai::System, "plugin chef" do
+  describe info_getter::System, "plugin chef" do
     pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
   end
 end

@@ -17,9 +17,9 @@
 # limitations under the License
 #
 
-require "ohai/dsl"
+require "info_getter/dsl"
 
-module Ohai
+module info_getter
   class Runner
 
     # safe_run: set to true if this runner will run plugins in
@@ -33,8 +33,8 @@ module Ohai
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
     def run_plugin(plugin)
-      unless plugin.kind_of?(Ohai::DSL::Plugin)
-        raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
+      unless plugin.kind_of?(info_getter::DSL::Plugin)
+        raise info_getter::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an info_getter::DSL::Plugin or subclass)"
       end
 
       begin
@@ -44,14 +44,14 @@ module Ohai
         when :version6
           run_v6_plugin(plugin)
         else
-          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+          raise info_getter::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
         end
-      rescue Ohai::Exceptions::Error
+      rescue info_getter::Exceptions::Error
         raise
-      rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
+      rescue SystemExit # abort or exit from plug-in should exit info_getter with failure code
         raise
       rescue Exception, Errno::ENOENT => e
-        Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+        info_getter::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end
     end
 
@@ -69,7 +69,7 @@ module Ohai
         next if next_plugin.has_run?
 
         if visited.include?(next_plugin)
-          raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ") }"
+          raise info_getter::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ") }"
         end
 
         dependency_providers = fetch_plugins(next_plugin.dependencies)

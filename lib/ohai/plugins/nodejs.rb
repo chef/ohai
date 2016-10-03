@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Nodejs) do
+info_getter.plugin(:Nodejs) do
   provides "languages/nodejs"
   depends "languages"
 
@@ -33,8 +33,8 @@ Ohai.plugin(:Nodejs) do
         end
         languages[:nodejs] = nodejs if nodejs[:version]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Nodejs plugin: Could not shell_out "node -v". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Nodejs plugin: Could not shell_out "node -v". Skipping plugin')
     end
   end
 end

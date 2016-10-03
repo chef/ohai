@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Uptime) do
+info_getter.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
 
   collect_data(:aix) do

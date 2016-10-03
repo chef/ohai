@@ -16,16 +16,16 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:DMI) do
+info_getter.plugin(:DMI) do
   provides "dmi"
 
   collect_data(:solaris2) do
-    require "ohai/common/dmi"
+    require "info_getter/common/dmi"
 
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
     if (dmi.class.to_s == "Mash") && (dmi.keys.length > 1)
-      Ohai::Log.debug("skipping smbios output, since DMI information has already been provided")
+      info_getter::Log.debug("skipping smbios output, since DMI information has already been provided")
       return
     end
 
@@ -118,7 +118,7 @@ Ohai.plugin(:DMI) do
       # remove/replace any characters that don't fall inside permissible ASCII range, or whitespace
       line = raw_line.gsub(/[^\x20-\x7E\n\t\r]/, ".")
       if line != raw_line
-        Ohai::Log.debug("converted characters from line:\n#{raw_line}")
+        info_getter::Log.debug("converted characters from line:\n#{raw_line}")
       end
 
       if header_information = header_information_line.match(line)
@@ -128,16 +128,16 @@ Ohai.plugin(:DMI) do
         if smb_to_id.has_key?(header_information[3])
           id = smb_to_id[header_information[3]]
 
-          # Don't overcapture for now (OHAI-260)
-          unless Ohai::Common::DMI::ID_TO_CAPTURE.include?(id)
+          # Don't overcapture for now (info_getter-260)
+          unless info_getter::Common::DMI::ID_TO_CAPTURE.include?(id)
             dmi_record = nil
             next
           end
 
-          dmi_record[:type] = Ohai::Common::DMI.id_lookup(id)
+          dmi_record[:type] = info_getter::Common::DMI.id_lookup(id)
 
         else
-          Ohai::Log.debug("unrecognized header type; skipping")
+          info_getter::Log.debug("unrecognized header type; skipping")
           dmi_record = nil
           next
         end
@@ -153,7 +153,7 @@ Ohai.plugin(:DMI) do
 
       elsif data = data_key_value_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -161,7 +161,7 @@ Ohai.plugin(:DMI) do
 
       elsif data = data_key_only_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ""
@@ -169,11 +169,11 @@ Ohai.plugin(:DMI) do
 
       elsif extended_data = extended_data_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
           next
         end
         if field == nil
-          Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
+          info_getter::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
           next
         end
         # overwrite "raw" value with a new Mash
@@ -181,11 +181,11 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
 
       else
-        Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
+        info_getter::Log.debug("unrecognized output line; discarding:\n#{line}")
 
       end
     end
 
-    Ohai::Common::DMI.convenience_keys(dmi)
+    info_getter::Common::DMI.convenience_keys(dmi)
   end
 end

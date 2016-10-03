@@ -17,7 +17,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "plugin powershell" do
+describe info_getter::System, "plugin powershell" do
   let(:plugin) { get_plugin("powershell") }
 
   before do

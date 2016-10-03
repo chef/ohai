@@ -21,7 +21,7 @@ require "net/https"
 require "uri"
 
 # http://sldn.softlayer.com/reference/services/SoftLayer_Resource_Metadata
-module ::Ohai::Mixin::SoftlayerMetadata
+module ::info_getter::Mixin::SoftlayerMetadata
   SOFTLAYER_API_QUERY_URL = "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata" unless defined?(SOFTLAYER_API_QUERY_URL)
 
   def fetch_metadata
@@ -40,7 +40,7 @@ module ::Ohai::Mixin::SoftlayerMetadata
   # Manually supply and specify a suitable CA bundle here or
   # set the SSL_CERT_FILE file environment variable to a valid value otherwise.
   def ca_file_location
-    ::Ohai::Config[:ca_file]
+    ::info_getter::Config[:ca_file]
   end
 
   def fetch_metadata_item(item)
@@ -54,11 +54,11 @@ module ::Ohai::Mixin::SoftlayerMetadata
     if res.code.to_i.between?(200, 299)
       res.body
     else
-      ::Ohai::Log.error("Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
+      ::info_getter::Log.error("Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
       nil
     end
   rescue => e
-    ::Ohai::Log.error("Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
+    ::info_getter::Log.error("Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
     raise e
   end
 end

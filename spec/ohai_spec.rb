@@ -18,10 +18,10 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper.rb")
 
-describe Ohai do
+describe info_getter do
 
   it "should have a version constant defined" do
-    expect(Ohai::VERSION).to be_a_kind_of(String)
+    expect(info_getter::VERSION).to be_a_kind_of(String)
   end
 
 end

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Powershell) do
+info_getter.plugin(:Powershell) do
   provides "languages/powershell"
   depends "languages"
 
@@ -50,8 +50,8 @@ Ohai.plugin(:Powershell) do
         powershell[:remoting_protocol_version] = version_info["PSRemotingProtocolVersion"]
         languages[:powershell] = powershell unless powershell.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Powershell plugin: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Powershell plugin: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
     end
   end
 

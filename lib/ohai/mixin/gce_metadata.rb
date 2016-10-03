@@ -17,7 +17,7 @@
 require "net/http"
 require "socket"
 
-module Ohai
+module info_getter
   module Mixin
     module GCEMetadata
 
@@ -30,7 +30,7 @@ module Ohai
         begin
           saddr = Socket.pack_sockaddr_in(port, addr)
         rescue SocketError => e # occurs when non-GCE systems try to resolve metadata.google.internal
-          Ohai::Log.debug("Mixin GCE: can_metadata_connect? failed setting up socket: #{e}")
+          info_getter::Log.debug("Mixin GCE: can_metadata_connect? failed setting up socket: #{e}")
           return false
         end
 
@@ -53,7 +53,7 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("Mixin GCE: can_metadata_connect? == #{connected}")
+        info_getter::Log.debug("Mixin GCE: can_metadata_connect? == #{connected}")
         connected
       end
 

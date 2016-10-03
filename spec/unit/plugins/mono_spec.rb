@@ -18,7 +18,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
 
-describe Ohai::System, "plugin mono" do
+describe info_getter::System, "plugin mono" do
   let(:plugin) { get_plugin("mono") }
 
   before(:each) do
@@ -60,7 +60,7 @@ OUT
   end
 
   it "does not set languages[:mono] if mono command doesn't exist" do
-    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin.languages).not_to have_key(:mono)
   end

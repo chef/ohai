@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/network_constants"
+require "info_getter/mixin/network_constants"
 
-Ohai.plugin(:NetworkRoutes) do
+info_getter.plugin(:NetworkRoutes) do
   begin
     require "sigar"
 
-    include Ohai::Mixin::NetworkConstants
+    include info_getter::Mixin::NetworkConstants
 
     provides "network/interfaces/adapters/route"
     depends "network/interfaces"
@@ -48,7 +48,7 @@ Ohai.plugin(:NetworkRoutes) do
         next unless network[:interfaces][route.ifname] # this should never happen
         network[:interfaces][route.ifname][:route] = Mash.new unless network[:interfaces][route.ifname][:route]
         route_data = {}
-        Ohai::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
+        info_getter::Mixin::NetworkConstants::SIGAR_ROUTE_METHODS.each do |m|
           if m == :flags
             route_data[m] = flags(route.send(m))
           else
@@ -59,6 +59,6 @@ Ohai.plugin(:NetworkRoutes) do
       end
     end
   rescue LoadError
-    Ohai::Log.debug("Could not load sigar gem. Skipping NetworkRoutes plugin")
+    info_getter::Log.debug("Could not load sigar gem. Skipping NetworkRoutes plugin")
   end
 end

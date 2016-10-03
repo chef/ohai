@@ -111,7 +111,7 @@ ID    SIZE TYPE
   Element Records: 0
 EOS
 
-describe Ohai::System, "Solaris2.X DMI plugin" do
+describe info_getter::System, "Solaris2.X DMI plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/dmi")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")

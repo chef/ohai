@@ -10,7 +10,7 @@ environment:
     - ruby_version: "22"
     - ruby_version: "23"
 
-clone_folder: c:\projects\ohai
+clone_folder: c:\projects\info_getter
 clone_depth: 1
 skip_tags: true
 branches:
@@ -30,4 +30,4 @@ build_script:
 
 test_script:
   - bundle exec rspec
-  - bundle exec ohai
+  - bundle exec info_getter

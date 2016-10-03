@@ -15,7 +15,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Solaris 2.x zpool plugin" do
+describe info_getter::System, "Solaris 2.x zpool plugin" do
   before(:each) do
     @plugin = get_plugin("solaris2/zpools")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)

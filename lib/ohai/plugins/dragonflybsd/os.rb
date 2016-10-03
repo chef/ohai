@@ -18,9 +18,9 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/os"
+require "info_getter/mixin/os"
 
-Ohai.plugin(:OS) do
+info_getter.plugin(:OS) do
   provides "os", "os_version"
 
   collect_data(:dragonflybsd) do

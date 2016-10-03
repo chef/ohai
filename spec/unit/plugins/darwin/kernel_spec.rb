@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Darwin kernel plugin" do
+describe info_getter::System, "Darwin kernel plugin" do
   before(:each) do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)

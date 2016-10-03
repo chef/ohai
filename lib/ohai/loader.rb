@@ -17,15 +17,15 @@
 #
 
 require "chef-config/path_helper"
-require "ohai/log"
-require "ohai/mash"
-require "ohai/dsl"
+require "info_getter/log"
+require "info_getter/mash"
+require "info_getter/dsl"
 require "pathname"
 
-module Ohai
+module info_getter
 
-  # Ohai plugin loader. Finds all the plugins in your
-  # `Ohai.config[:plugin_path]` (supports a single or multiple path setting
+  # info_getter plugin loader. Finds all the plugins in your
+  # `info_getter.config[:plugin_path]` (supports a single or multiple path setting
   # here), evaluates them and returns plugin objects.
   class Loader
 
@@ -40,11 +40,11 @@ module Ohai
       # Finds all the *.rb files under the configured paths in :plugin_path
       def self.find_all_in(plugin_dir)
         unless Dir.exist?(plugin_dir)
-          Ohai::Log.warn("The plugin path #{plugin_dir} does not exist. Skipping...")
+          info_getter::Log.warn("The plugin path #{plugin_dir} does not exist. Skipping...")
           return []
         end
 
-        Ohai::Log.debug("Searching for Ohai plugins in #{plugin_dir}")
+        info_getter::Log.debug("Searching for info_getter plugins in #{plugin_dir}")
 
         # escape_glob_dir does not exist in 12.7 or below
         if ChefConfig::PathHelper.respond_to?(:escape_glob_dir)
@@ -71,7 +71,7 @@ module Ohai
     # Searches all plugin paths and returns an Array of PluginFile objects
     # representing each plugin file.
     def plugin_files_by_dir
-      Array(Ohai.config[:plugin_path]).inject([]) do |plugin_files, plugin_path|
+      Array(info_getter.config[:plugin_path]).inject([]) do |plugin_files, plugin_path|
         plugin_files + PluginFile.find_all_in(plugin_path)
       end
     end
@@ -85,17 +85,17 @@ module Ohai
       collect_v7_plugins
     end
 
-    # Load a specified file as an ohai plugin and creates an instance of it.
-    # Not used by ohai itself, but can be used to load a plugin for testing
+    # Load a specified file as an info_getter plugin and creates an instance of it.
+    # Not used by info_getter itself, but can be used to load a plugin for testing
     # purposes.
     # plugin_dir_path is required when loading a v6 plugin.
     def load_plugin(plugin_path, plugin_dir_path = nil)
       plugin_class = load_plugin_class(plugin_path, plugin_dir_path)
       return nil unless plugin_class.kind_of?(Class)
       case
-      when plugin_class < Ohai::DSL::Plugin::VersionVI
+      when plugin_class < info_getter::DSL::Plugin::VersionVI
         load_v6_plugin(plugin_class, plugin_path, plugin_dir_path)
-      when plugin_class < Ohai::DSL::Plugin::VersionVII
+      when plugin_class < info_getter::DSL::Plugin::VersionVII
         load_v7_plugin(plugin_class)
       else
         raise Exceptions::IllegalPluginDefinition, "cannot create plugin of type #{plugin_class}"
@@ -103,7 +103,7 @@ module Ohai
     end
 
     # Reads the file specified by `plugin_path` and returns a class object for
-    # the ohai plugin defined therein.
+    # the info_getter plugin defined therein.
     #
     # If `plugin_dir_path` is given, and the file at `plugin_path` is a v6
     # plugin, the 'relative path' of the plugin (used by `require_plugin()`) is
@@ -112,21 +112,21 @@ module Ohai
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
-        Ohai::Log.debug("Loading plugin at #{plugin_path}")
+        info_getter::Log.debug("Loading plugin at #{plugin_path}")
         contents << IO.read(plugin_path)
       rescue IOError, Errno::ENOENT
-        Ohai::Log.warn("Unable to open or read plugin at #{plugin_path}")
+        info_getter::Log.warn("Unable to open or read plugin at #{plugin_path}")
         return nil
       end
 
-      # We assume that a plugin is a V7 plugin if it contains Ohai.plugin in its contents.
-      if contents.include?("Ohai.plugin")
+      # We assume that a plugin is a V7 plugin if it contains info_getter.plugin in its contents.
+      if contents.include?("info_getter.plugin")
         load_v7_plugin_class(contents, plugin_path)
       else
-        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. \
-Version 6 plugins will not be supported in future releases of Ohai. \
+        info_getter::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. \
+Version 6 plugins will not be supported in future releases of info_getter. \
 Please upgrade your plugin to version 7 plugin syntax. \
-For more information visit here: docs.chef.io/ohai_custom.html")
+For more information visit here: docs.chef.io/info_getter_custom.html")
 
         load_v6_plugin_class(contents, plugin_path, plugin_dir_path)
       end
@@ -157,7 +157,7 @@ For more information visit here: docs.chef.io/ohai_custom.html")
     end
 
     def load_v6_plugin_class(contents, plugin_path, plugin_dir_path)
-      plugin_class = Class.new(Ohai::DSL::Plugin::VersionVI) { collect_contents(contents) }
+      plugin_class = Class.new(info_getter::DSL::Plugin::VersionVI) { collect_contents(contents) }
       @v6_plugin_classes << V6PluginClass.new(plugin_class, plugin_path, plugin_dir_path)
       plugin_class
     end
@@ -175,26 +175,26 @@ For more information visit here: docs.chef.io/ohai_custom.html")
       unless v6_dependency_solver.has_key?(partial_path)
         v6_dependency_solver[partial_path] = plugin
       else
-        Ohai::Log.debug("Plugin '#{plugin_file_path}' is already loaded.")
+        info_getter::Log.debug("Plugin '#{plugin_file_path}' is already loaded.")
       end
     end
 
     def load_v7_plugin_class(contents, plugin_path)
       plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path)
-      unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin
-        raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
+      unless plugin_class.kind_of?(Class) && plugin_class < info_getter::DSL::Plugin
+        raise info_getter::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
       plugin_class.sources << plugin_path
       @v7_plugin_classes << plugin_class unless @v7_plugin_classes.include?(plugin_class)
       plugin_class
     rescue SystemExit, Interrupt
       raise
-    rescue Ohai::Exceptions::InvalidPluginName => e
-      Ohai::Log.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")
-    rescue Ohai::Exceptions::IllegalPluginDefinition => e
-      Ohai::Log.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
+    rescue info_getter::Exceptions::InvalidPluginName => e
+      info_getter::Log.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")
+    rescue info_getter::Exceptions::IllegalPluginDefinition => e
+      info_getter::Log.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
     rescue NoMethodError => e
-      Ohai::Log.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
+      info_getter::Log.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
     rescue SyntaxError => e
       # split on occurrences of
       #    <env>: syntax error,
@@ -203,11 +203,11 @@ For more information visit here: docs.chef.io/ohai_custom.html")
       parts = e.message.split(/<.*>[:[0-9]+]*: syntax error, /)
       parts.each do |part|
         next if part.length == 0
-        Ohai::Log.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
+        info_getter::Log.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
       end
     rescue Exception, Errno::ENOENT => e
-      Ohai::Log.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
-      Ohai::Log.debug("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
+      info_getter::Log.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
+      info_getter::Log.debug("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
     end
 
     def load_v7_plugin(plugin_class)

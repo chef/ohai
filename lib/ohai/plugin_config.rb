@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 
-require "ohai/exception"
+require "info_getter/exception"
 
-module Ohai
+module info_getter
   class PluginConfig < Hash
 
     def []=(key, value_or_hash)
@@ -31,7 +31,7 @@ module Ohai
     def enforce_symbol(key)
       unless key.is_a?(Symbol)
         msg = "Expected Symbol, got #{key.inspect}"
-        raise Ohai::Exceptions::PluginConfigError, msg
+        raise info_getter::Exceptions::PluginConfigError, msg
       end
     end
 

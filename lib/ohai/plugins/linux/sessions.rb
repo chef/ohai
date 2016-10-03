@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Sessions) do
+info_getter.plugin(:Sessions) do
   provides "sessions/by_session", "sessions/by_user"
 
   collect_data(:linux) do

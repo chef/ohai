@@ -19,7 +19,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin softlayer" do
+describe info_getter::System, "plugin softlayer" do
   let(:plugin) { get_plugin("softlayer") }
 
   it "not create softlayer if hint file doesn't exists" do

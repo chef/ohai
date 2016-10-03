@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem2) do
+info_getter.plugin(:Filesystem2) do
   provides "filesystem2"
 
   def find_device(name)
@@ -179,7 +179,7 @@ Ohai.plugin(:Filesystem2) do
     # Grab any missing mount information from /proc/mounts
     if File.exist?("/proc/mounts")
       mounts = ""
-      # Due to https://tickets.opscode.com/browse/OHAI-196
+      # Due to https://tickets.opscode.com/browse/info_getter-196
       # we have to non-block read dev files. Ew.
       f = File.open("/proc/mounts")
       loop do

@@ -19,7 +19,7 @@
 
 require "rbconfig"
 
-module Ohai
+module info_getter
   module Mixin
     module OS
 

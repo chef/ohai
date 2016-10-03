@@ -19,7 +19,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin perl" do
+describe info_getter::System, "plugin perl" do
   let(:plugin) { get_plugin("perl") }
 
   before(:each) do
@@ -55,7 +55,7 @@ describe Ohai::System, "plugin perl" do
   end
 
   it "does not set languages[:perl] if perl command doesn't exist" do
-    allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
+    allow(plugin).to receive(:shell_out).and_raise(info_getter::Exceptions::Exec)
     plugin.run
     expect(plugin.languages).not_to have_key(:perl)
   end

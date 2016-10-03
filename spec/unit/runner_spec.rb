@@ -19,22 +19,22 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 
-describe Ohai::Runner, "run_plugin" do
+describe info_getter::Runner, "run_plugin" do
   let(:safe_run) { true }
 
   before(:each) do
-    @ohai = Ohai::System.new
-    @runner = Ohai::Runner.new(@ohai, safe_run)
+    @info_getter = info_getter::System.new
+    @runner = info_getter::Runner.new(@info_getter, safe_run)
   end
 
   describe "when running an invalid plugin" do
     it "should raise error" do
-      expect { @runner.run_plugin(double("Ohai::NotPlugin")) }.to raise_error(Ohai::Exceptions::InvalidPlugin)
+      expect { @runner.run_plugin(double("info_getter::NotPlugin")) }.to raise_error(info_getter::Exceptions::InvalidPlugin)
     end
   end
 
   describe "when running a plugin" do
-    let(:plugin) { double("Ohai::DSL::Plugin", :kind_of? => true, :version => version, :name => :Test, :has_run? => has_run, :dependencies => [ ]) }
+    let(:plugin) { double("info_getter::DSL::Plugin", :kind_of? => true, :version => version, :name => :Test, :has_run? => has_run, :dependencies => [ ]) }
     let(:version) { :version7 }
     let(:has_run) { false }
 
@@ -95,20 +95,20 @@ describe Ohai::Runner, "run_plugin" do
       let(:version) { :versionBla }
 
       it "should raise error" do
-        expect { @runner.run_plugin(plugin) }.to raise_error(Ohai::Exceptions::InvalidPlugin)
+        expect { @runner.run_plugin(plugin) }.to raise_error(info_getter::Exceptions::InvalidPlugin)
       end
     end
   end
 
-  describe "when running a plugin with no dependencies, Ohai::Runner" do
+  describe "when running a plugin with no dependencies, info_getter::Runner" do
     let(:plugin) do
-      klass = Ohai.plugin(:Test) do
+      klass = info_getter.plugin(:Test) do
         provides("thing")
         collect_data do
           thing(Mash.new)
         end
       end
-      klass.new(@ohai.data)
+      klass.new(@info_getter.data)
     end
 
     it "should run the plugin" do
@@ -116,45 +116,45 @@ describe Ohai::Runner, "run_plugin" do
       expect(plugin.has_run?).to be true
     end
 
-    it "should add plugin data to Ohai::System.data" do
+    it "should add plugin data to info_getter::System.data" do
       @runner.run_plugin(plugin)
-      expect(@ohai.data).to have_key(:thing)
-      expect(@ohai.data[:thing]).to eql({})
+      expect(@info_getter.data).to have_key(:thing)
+      expect(@info_getter.data[:thing]).to eql({})
     end
   end
 
   describe "when running a plugin with one dependency" do
     describe "when the dependency does not exist" do
       before(:each) do
-        klass = Ohai.plugin(:Test) do
+        klass = info_getter.plugin(:Test) do
           provides("thing")
           depends("other_thing")
           collect_data do
             thing(other_thing)
           end
         end
-        @plugin = klass.new(@ohai.data)
+        @plugin = klass.new(@info_getter.data)
       end
 
-      it "should raise Ohai::Excpetions::AttributeNotFound" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+      it "should raise info_getter::Excpetions::AttributeNotFound" do
+        expect { @runner.run_plugin(@plugin) }.to raise_error(info_getter::Exceptions::AttributeNotFound)
       end
 
       it "should not run the plugin" do
-        expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
+        expect { @runner.run_plugin(@plugin) }.to raise_error(info_getter::Exceptions::AttributeNotFound)
         expect(@plugin.has_run?).to be false
       end
     end
 
     describe "when the dependency has a single provider" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) do
+        klass1 = info_getter.plugin(:Thing) do
           provides("thing")
           collect_data do
             thing("thang")
           end
         end
-        klass2 = Ohai.plugin(:Other) do
+        klass2 = info_getter.plugin(:Other) do
           provides("other")
           depends("thing")
           collect_data do
@@ -164,11 +164,11 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@info_getter.data)
         end
         @plugin1, @plugin2 = @plugins
 
-        @ohai.provides_map.set_providers_for(@plugin1, ["thing"])
+        @info_getter.provides_map.set_providers_for(@plugin1, ["thing"])
       end
 
       it "should run the plugins" do
@@ -181,13 +181,13 @@ describe Ohai::Runner, "run_plugin" do
 
     describe "when the dependency has multiple providers" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) do
+        klass1 = info_getter.plugin(:Thing) do
           provides("thing")
           collect_data do
             thing(Mash.new)
           end
         end
-        klass2 = Ohai.plugin(:Other) do
+        klass2 = info_getter.plugin(:Other) do
           provides("other")
           depends("thing")
           collect_data do
@@ -197,12 +197,12 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@info_getter.data)
         end
         @plugin1, @plugin2, @plugin3 = @plugins
 
-        @ohai.provides_map.set_providers_for(@plugin1, ["thing"])
-        @ohai.provides_map.set_providers_for(@plugin2, ["thing"])
+        @info_getter.provides_map.set_providers_for(@plugin1, ["thing"])
+        @info_getter.provides_map.set_providers_for(@plugin2, ["thing"])
       end
 
       it "should run the plugins" do
@@ -216,22 +216,22 @@ describe Ohai::Runner, "run_plugin" do
 
   describe "when running a plugin with many dependencies" do
     before(:each) do
-      @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+      @info_getter = info_getter::System.new
+      @runner = info_getter::Runner.new(@info_getter, true)
 
-      klass1 = Ohai.plugin(:One) do
+      klass1 = info_getter.plugin(:One) do
         provides("one")
         collect_data do
           one(1)
         end
       end
-      klass2 = Ohai.plugin(:Two) do
+      klass2 = info_getter.plugin(:Two) do
         provides("two")
         collect_data do
           two(2)
         end
       end
-      klass3 = Ohai.plugin(:Three) do
+      klass3 = info_getter.plugin(:Three) do
         provides("three")
         depends("one", "two")
         collect_data do
@@ -241,11 +241,11 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klass1, klass2, klass3].each do |klass|
-        @plugins << klass.new(@ohai.data)
+        @plugins << klass.new(@info_getter.data)
       end
       @plugin1, @plugin2, @plugin3 = @plugins
-      @ohai.provides_map.set_providers_for(@plugin1, %w{one two})
-      @ohai.provides_map.set_providers_for(@plugin2, %w{one two})
+      @info_getter.provides_map.set_providers_for(@plugin1, %w{one two})
+      @info_getter.provides_map.set_providers_for(@plugin2, %w{one two})
     end
 
     it "should run the plugins" do
@@ -257,11 +257,11 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when a cycle is detected" do
-    let(:runner) { Ohai::Runner.new(@ohai, true) }
+    let(:runner) { info_getter::Runner.new(@info_getter, true) }
 
     context "when there are no edges in the cycle (A->A)" do
       let(:plugin_class) do
-        klass1 = Ohai.plugin(:Thing) do
+        klass1 = info_getter.plugin(:Thing) do
           provides("thing")
           depends("thing")
           collect_data do
@@ -269,10 +269,10 @@ describe Ohai::Runner, "run_plugin" do
           end
         end
       end
-      let(:plugin) { plugin_class.new(@ohai.data) }
+      let(:plugin) { plugin_class.new(@info_getter.data) }
 
       it "ignores the cycle" do
-        @ohai.provides_map.set_providers_for(plugin, ["thing"])
+        @info_getter.provides_map.set_providers_for(plugin, ["thing"])
 
         expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
         runner.run_plugin(plugin) # should not raise
@@ -282,14 +282,14 @@ describe Ohai::Runner, "run_plugin" do
 
     context "when there is one edge in the cycle (A->B and B->A)" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) do
+        klass1 = info_getter.plugin(:Thing) do
           provides("thing")
           depends("other")
           collect_data do
             thing(other)
           end
         end
-        klass2 = Ohai.plugin(:Other) do
+        klass2 = info_getter.plugin(:Other) do
           provides("other")
           depends("thing")
           collect_data do
@@ -299,54 +299,54 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each_with_index do |klass, idx|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@info_getter.data)
         end
 
         @plugin1, @plugin2 = @plugins
       end
 
-      it "should raise Ohai::Exceptions::DependencyCycle" do
+      it "should raise info_getter::Exceptions::DependencyCycle" do
         allow(runner).to receive(:fetch_plugins).with(["thing"]).and_return([@plugin1])
         allow(runner).to receive(:fetch_plugins).with(["other"]).and_return([@plugin2])
         expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
-        expect { runner.run_plugin(@plugin1) }.to raise_error(Ohai::Exceptions::DependencyCycle, expected_error_string)
+        expect { runner.run_plugin(@plugin1) }.to raise_error(info_getter::Exceptions::DependencyCycle, expected_error_string)
       end
     end
   end
 
   describe "when A depends on B and C, and B depends on C" do
     before(:each) do
-      @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+      @info_getter = info_getter::System.new
+      @runner = info_getter::Runner.new(@info_getter, true)
 
-      klass_a = Ohai.plugin(:A) do
+      klass_a = info_getter.plugin(:A) do
         provides("A")
         depends("B", "C")
         collect_data {}
       end
-      klass_b = Ohai.plugin(:B) do
+      klass_b = info_getter.plugin(:B) do
         provides("B")
         depends("C")
         collect_data {}
       end
-      klass_c = Ohai.plugin(:C) do
+      klass_c = info_getter.plugin(:C) do
         provides("C")
         collect_data {}
       end
 
       @plugins = []
       [klass_a, klass_b, klass_c].each do |klass|
-        @plugins << klass.new(@ohai.data)
+        @plugins << klass.new(@info_getter.data)
       end
       @plugin_a, @plugin_b, @plugin_c = @plugins
     end
 
     it "should not detect a cycle when B is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
-      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
-      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
+      @info_getter.provides_map.set_providers_for(@plugin_a, ["A"])
+      @info_getter.provides_map.set_providers_for(@plugin_b, ["B"])
+      @info_getter.provides_map.set_providers_for(@plugin_c, ["C"])
 
-      expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
+      expect(info_getter::Log).not_to receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
@@ -355,11 +355,11 @@ describe Ohai::Runner, "run_plugin" do
     end
 
     it "should not detect a cycle when C is the first provider returned" do
-      @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
-      @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
-      @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
+      @info_getter.provides_map.set_providers_for(@plugin_a, ["A"])
+      @info_getter.provides_map.set_providers_for(@plugin_c, ["C"])
+      @info_getter.provides_map.set_providers_for(@plugin_b, ["B"])
 
-      expect(Ohai::Log).not_to receive(:error).with(/DependencyCycleError/)
+      expect(info_getter::Log).not_to receive(:error).with(/DependencyCycleError/)
       @runner.run_plugin(@plugin_a)
 
       @plugins.each do |plugin|
@@ -369,17 +369,17 @@ describe Ohai::Runner, "run_plugin" do
   end
 end
 
-describe Ohai::Runner, "fetch_plugins" do
+describe info_getter::Runner, "fetch_plugins" do
   before(:each) do
-    @provides_map = Ohai::ProvidesMap.new
+    @provides_map = info_getter::ProvidesMap.new
     @data = Mash.new
-    @ohai = double("Ohai::System", :data => @data, :provides_map => @provides_map)
-    @runner = Ohai::Runner.new(@ohai, true)
+    @info_getter = double("info_getter::System", :data => @data, :provides_map => @provides_map)
+    @runner = info_getter::Runner.new(@info_getter, true)
   end
 
   it "should collect the provider" do
-    plugin = Ohai::DSL::Plugin.new(@ohai.data)
-    @ohai.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
+    plugin = info_getter::DSL::Plugin.new(@info_getter.data)
+    @info_getter.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
     expect(dependency_providers).to eql([plugin])
@@ -388,47 +388,47 @@ describe Ohai::Runner, "fetch_plugins" do
   describe "when the attribute is not provided by any plugin" do
     describe "and some parent attribute has providers" do
       it "should return the providers for the parent" do
-        plugin = Ohai::DSL::Plugin.new(@ohai.data)
+        plugin = info_getter::DSL::Plugin.new(@info_getter.data)
         @provides_map.set_providers_for(plugin, ["test/attribute"])
         expect(@runner.fetch_plugins(["test/attribute/too_far"])).to eql([plugin])
       end
     end
 
     describe "and no parent attribute has providers" do
-      it "should raise Ohai::Exceptions::AttributeNotFound exception" do
+      it "should raise info_getter::Exceptions::AttributeNotFound exception" do
         # provides map is empty
-        expect { @runner.fetch_plugins(["false/attribute"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
+        expect { @runner.fetch_plugins(["false/attribute"]) }.to raise_error(info_getter::Exceptions::AttributeNotFound, "No such attribute: 'false/attribute'")
       end
     end
   end
 
   it "should return unique providers" do
-    plugin = Ohai::DSL::Plugin.new(@ohai.data)
+    plugin = info_getter::DSL::Plugin.new(@info_getter.data)
     @provides_map.set_providers_for(plugin, ["test", "test/too_far/way_too_far"])
     expect(@runner.fetch_plugins(["test", "test/too_far/way_too_far"])).to eql([plugin])
   end
 end
 
-describe Ohai::Runner, "#get_cycle" do
+describe info_getter::Runner, "#get_cycle" do
   before(:each) do
-    @ohai = Ohai::System.new
-    @runner = Ohai::Runner.new(@ohai, true)
+    @info_getter = info_getter::System.new
+    @runner = info_getter::Runner.new(@info_getter, true)
 
-    klass1 = Ohai.plugin(:One) do
+    klass1 = info_getter.plugin(:One) do
       provides("one")
       depends("two")
       collect_data do
         one(two)
       end
     end
-    klass2 = Ohai.plugin(:Two) do
+    klass2 = info_getter.plugin(:Two) do
       provides("two")
       depends("one")
       collect_data do
         two(one)
       end
     end
-    klass3 = Ohai.plugin(:Three) do
+    klass3 = info_getter.plugin(:Three) do
       provides("three")
       depends("two")
       collect_data do
@@ -438,7 +438,7 @@ describe Ohai::Runner, "#get_cycle" do
 
     plugins = []
     [klass1, klass2, klass3].each_with_index do |klass, idx|
-      plugins << klass.new(@ohai.data)
+      plugins << klass.new(@info_getter.data)
     end
     @plugin1, @plugin2, @plugin3 = plugins
   end

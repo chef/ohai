@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Erlang) do
+info_getter.plugin(:Erlang) do
   provides "languages/erlang"
   depends "languages"
 
@@ -35,8 +35,8 @@ Ohai.plugin(:Erlang) do
         erlang[:erts_version] = output[1]
         erlang[:nif_version] = output[2]
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Erlang plugin: Could not shell_out "erl -eval \'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().\'  -noshell". Skipping data')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Erlang plugin: Could not shell_out "erl -eval \'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().\'  -noshell". Skipping data')
     end
 
     begin
@@ -52,8 +52,8 @@ Ohai.plugin(:Erlang) do
           erlang[:emulator] = output[2].gsub!(/(\(|\))/, "")
         end
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Erlang plugin: Could not shell_out "erl +V". Skipping data')
+    rescue info_getter::Exceptions::Exec
+      info_getter::Log.debug('Erlang plugin: Could not shell_out "erl +V". Skipping data')
     end
 
     languages[:erlang] = erlang unless erlang.empty?

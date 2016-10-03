@@ -1,5 +1,5 @@
 ============
-Ohai Notices
+info_getter Notices
 ============
 
 Developed at Chef (http://www.chef.io).
@@ -13,9 +13,9 @@ Contributors and Copyright holders:
  * Copyright 2009, Joe Williams <joe@joetify.com>
  * Copyright 2009, Paul Nasrat <pnasrat@googlemail.com>
 
-Parts of Ohai were taken from Chef, a configuration management system.
+Parts of info_getter were taken from Chef, a configuration management system.
 
-Ohai incorporates functionality from Open4 (http://www.codeforpeople.com/lib/ruby/open4/).
+info_getter incorporates functionality from Open4 (http://www.codeforpeople.com/lib/ruby/open4/).
 
 ============
 Chef Notices
@@ -29,4 +29,3 @@ Contributors and Copyright holders:
  * Copyright 2008, Arjuna Christensen <aj@hjksolutions.com>
  * Copyright 2008-2015, Bryan McLellan <btm@loftninjas.org>
  * Copyright 2008, Ezra Zygmuntowicz <ezra@engineyard.com>
-

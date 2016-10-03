@@ -16,7 +16,7 @@
 
 require "resolv"
 
-Ohai.plugin(:Rackspace) do
+info_getter.plugin(:Rackspace) do
   provides "rackspace"
 
   depends "kernel", "network/interfaces"
@@ -40,7 +40,7 @@ Ohai.plugin(:Rackspace) do
     if so.exitstatus == 0
       so.stdout.strip.casecmp("rackspace").zero?
     end
-  rescue Ohai::Exceptions::Exec
+  rescue info_getter::Exceptions::Exec
     false
   end
 
@@ -91,8 +91,8 @@ Ohai.plugin(:Rackspace) do
         rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
       end
     end
-  rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("rackspace plugin: Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
+  rescue info_getter::Exceptions::Exec
+    info_getter::Log.debug("rackspace plugin: Unable to find xenstore-ls, cannot capture region information for Rackspace cloud")
     nil
   end
 
@@ -103,8 +103,8 @@ Ohai.plugin(:Rackspace) do
     if so.exitstatus == 0
       rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
     end
-  rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("rackspace plugin: Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")
+  rescue info_getter::Exceptions::Exec
+    info_getter::Log.debug("rackspace plugin: Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")
     nil
   end
 
@@ -119,16 +119,16 @@ Ohai.plugin(:Rackspace) do
         if so.exitstatus == 0
           networks.push(FFI_Yajl::Parser.new.parse(so.stdout))
         else
-          Ohai::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
+          info_getter::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
           return false
         end
       end
-      # these networks are already known to ohai, and are not 'private networks'
+      # these networks are already known to info_getter, and are not 'private networks'
       networks.delete_if { |hash| hash["label"] == "private" }
       networks.delete_if { |hash| hash["label"] == "public" }
     end
-  rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
+  rescue info_getter::Exceptions::Exec
+    info_getter::Log.debug("rackspace plugin: Unable to capture custom private networking information for Rackspace cloud")
     nil
   end
 

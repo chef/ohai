@@ -9,10 +9,10 @@ $:.unshift(File.dirname(__FILE__) + "/../lib")
 require "spec/support/platform_helpers"
 require "spec/support/integration_helper"
 require "wmi-lite"
-require "ohai"
-Ohai.config[:log_level] = :error
+require "info_getter"
+info_getter.config[:log_level] = :error
 
-PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
+PLUGIN_PATH = File.expand_path("../../lib/info_getter/plugins", __FILE__)
 SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
 
 RSpec.configure do |config|
@@ -20,14 +20,14 @@ RSpec.configure do |config|
   config.after(:each) { remove_constants }
 end
 
-include Ohai::Mixin::ConstantHelper
+include info_getter::Mixin::ConstantHelper
 
-if Ohai::Mixin::OS.collect_os == /mswin|mingw32|windows/
+if info_getter::Mixin::OS.collect_os == /mswin|mingw32|windows/
   ENV["PATH"] = ""
 end
 
-def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
-  loader = Ohai::Loader.new(ohai)
+def get_plugin(plugin, info_getter = info_getter::System.new, path = PLUGIN_PATH)
+  loader = info_getter::Loader.new(info_getter)
   loader.load_plugin(File.join(path, "#{plugin}.rb"))
 end
 
@@ -90,7 +90,7 @@ end
 
 RSpec.configure do |config|
 
-  # Not worth addressing warnings in Ohai until upstream ones in ffi-yajl are
+  # Not worth addressing warnings in info_getter until upstream ones in ffi-yajl are
   # fixed.
   # config.warnings = true
 
@@ -117,10 +117,10 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 
   config.before :each do
-    # TODO: Change to Ohai.config once Ohai::Config is deprecated fully. Needs
-    # to stay Ohai::Config for now so that top-level attributes will get cleared
+    # TODO: Change to info_getter.config once info_getter::Config is deprecated fully. Needs
+    # to stay info_getter::Config for now so that top-level attributes will get cleared
     # out between tests (config_spec should be the only place where top-level
     # config attributes are set).
-    Ohai::Config.reset
+    info_getter::Config.reset
   end
 end

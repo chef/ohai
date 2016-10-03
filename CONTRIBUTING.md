@@ -1,11 +1,11 @@
-# Contributing to Ohai
+# Contributing to info_getter
 
-We are glad you want to contribute to Ohai!
+We are glad you want to contribute to info_getter!
 
 We utilize **Github Issues** for issue tracking and contributions. You can contribute in two ways:
 
 1. Reporting an issue or making a feature request [here](#issues).
-2. Adding features or fixing bugs yourself and contributing your code to Ohai.
+2. Adding features or fixing bugs yourself and contributing your code to info_getter.
 
 ## Contribution Process
 
@@ -15,13 +15,13 @@ We have a 3 step process that utilizes **Github Issues**:
 2. Create a Github Pull Request.
 3. Do [Code Review](#cr) with the **Chef Engineering Team** or **Chef Core Committers** on the pull request.
 
-### <a name="pulls"></a> Ohai Pull Requests
+### <a name="pulls"></a> info_getter Pull Requests
 
-Ohai is built to last. We strive to ensure high quality throughout the Ohai experience. In order to ensure
-  this, we require a couple of things for all pull requests to Ohai:
+info_getter is built to last. We strive to ensure high quality throughout the info_getter experience. In order to ensure
+  this, we require a couple of things for all pull requests to info_getter:
 
 1. **Tests:** To ensure high quality code and protect against future regressions, we require all the
-  code in Ohai to have at least unit test coverage. See the [spec/unit](https://github.com/chef/ohai/tree/master/spec/unit)
+  code in info_getter to have at least unit test coverage. See the [spec/unit](https://github.com/chef/info_getter/tree/master/spec/unit)
   directory for the existing tests and use ```bundle exec rake spec``` to run them.
 2. **Green Travis Run:** We use [Travis CI](https://travis-ci.org/) in order to run our tests
   continuously on all the pull requests. We require the Travis runs to succeed on every pull
@@ -46,14 +46,14 @@ Once you a pull request, the **Chef Engineering Team** or **Chef Core Committers
   and you will be included in `CHANGELOG.md`. Our goal is to have patches merged in 2 weeks
   after they are marked to be merged.
 
-If you would like to learn about when your code will be available in a release of Ohai, read more about
+If you would like to learn about when your code will be available in a release of info_getter, read more about
   the [Release Process](#release).
 
 ### Contributor License Agreement (CLA)
 Licensing is very important to open source projects. It helps ensure the
   software continues to be available under the terms that the author desired.
 
-Chef uses [the Apache 2.0 license](https://github.com/chef/ohai/blob/master/LICENSE)
+Chef uses [the Apache 2.0 license](https://github.com/chef/info_getter/blob/master/LICENSE)
   to strike a balance between open contribution and allowing you to use the
   software however you would like to.
 
@@ -109,16 +109,16 @@ Date:   Wed Sep 18 11:44:40 2013 -0700
 ------------------------------------------------------------------------
 ```
 
-## <a name="issues"></a> Ohai Issue Tracking
+## <a name="issues"></a> info_getter Issue Tracking
 
-Ohai Issue Tracking is handled using Github Issues.
+info_getter Issue Tracking is handled using Github Issues.
 
-If you are familiar with Ohai and know the component that is causing you a problem or if you
+If you are familiar with info_getter and know the component that is causing you a problem or if you
   have a feature request on a specific component you can file an issue in the corresponding
   Github project. All of our Open Source Software can be found in our
   [Github organization](https://github.com/chef/).
 
-Otherwise you can file your issue in the [Ohai project](https://github.com/chef/ohai/issues)
+Otherwise you can file your issue in the [info_getter project](https://github.com/chef/info_getter/issues)
   and we will make sure it gets filed against the appropriate project.
 
 In order to decrease the back and forth in issues, and to help us get to the bottom of them quickly
@@ -149,14 +149,14 @@ In order to decrease the back and forth in issues, and to help us get to the bot
 [What actually happens after the reproduction steps?]
 ```
 
-## <a name="release"></a>Ohai Release Cycles
+## <a name="release"></a>info_getter Release Cycles
 
 Our primary shipping vehicle is operating system specific packages that includes
-  all the requirements of Chef and Ohai. We call these [Omnibus packages](https://github.com/chef/omnibus)
+  all the requirements of Chef and info_getter. We call these [Omnibus packages](https://github.com/chef/omnibus)
 
 We also release our software as gems to [Rubygems](https://rubygems.org/) but we strongly
   recommend using the Chef packages, since they are the only combination  of native libraries
-  and gems required by Ohai that we test throughly.
+  and gems required by info_getter that we test throughly.
 
 Our version numbering closely follows [Semantic Versioning](http://semver.org/) standard. Our
   standard version numbers look like X.Y.Z which mean:
@@ -177,7 +177,7 @@ Announcements of releases are available on [Chef Blog](https://www.chef.io/blog/
 
 ## Chef Community
 
-Ohai is made possible by a strong community of developers and system administrators in the Chef
+info_getter is made possible by a strong community of developers and system administrators in the Chef
   community. If you have any questions or if you would like to get involved in the community you
   can check out:
 

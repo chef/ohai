@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
+describe info_getter::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do
     @plugin = get_plugin("freebsd/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
@@ -93,7 +93,7 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
 
 end
 
-describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
+describe info_getter::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
   before(:each) do
     @plugin = get_plugin("freebsd/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)

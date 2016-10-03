@@ -17,13 +17,13 @@
 # limitations under the License.
 
 require "spec_helper"
-require "ohai/util/file_helper"
+require "info_getter/util/file_helper"
 
 class FileHelperMock
-  include Ohai::Util::FileHelper
+  include info_getter::Util::FileHelper
 end
 
-describe "Ohai::Util::FileHelper" do
+describe "info_getter::Util::FileHelper" do
   let(:file_helper) { FileHelperMock.new }
 
   before(:each) do

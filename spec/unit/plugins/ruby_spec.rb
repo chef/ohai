@@ -20,18 +20,18 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 ruby_bin = File.join(::RbConfig::CONFIG["bindir"], ::RbConfig::CONFIG["ruby_install_name"])
 
-describe Ohai::System, "plugin ruby" do
+describe info_getter::System, "plugin ruby" do
 
   before(:all) do
     @plugin = get_plugin("ruby")
     @plugin[:languages] = Mash.new
     @plugin.run
 
-    @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
+    @ruby_info_getter_data_pristine = @plugin[:languages][:ruby]
   end
 
   before(:each) do
-    @ruby_ohai_data = @ruby_ohai_data_pristine.dup
+    @ruby_info_getter_data = @ruby_info_getter_data_pristine.dup
   end
 
   {
@@ -53,7 +53,7 @@ describe Ohai::System, "plugin ruby" do
     :ruby_bin => ruby_bin,
   }.each do |attribute, value|
     it "should have #{attribute} set to #{value.inspect}" do
-      expect(@ruby_ohai_data[attribute]).to eql(value)
+      expect(@ruby_info_getter_data[attribute]).to eql(value)
     end
   end
 

@@ -20,13 +20,13 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
-describe Ohai::System, "plugin ohai" do
+describe info_getter::System, "plugin info_getter" do
   before(:each) do
-    @plugin = get_plugin("ohai")
+    @plugin = get_plugin("info_getter")
   end
 
-  it "should set [:chef_packages][:ohai][:version] to the current version" do
+  it "should set [:chef_packages][:info_getter][:version] to the current version" do
     @plugin.run
-    expect(@plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
+    expect(@plugin[:chef_packages][:info_getter][:version]).to eq(info_getter::VERSION)
   end
 end

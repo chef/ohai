@@ -18,7 +18,7 @@
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
-describe Ohai::System, "Solaris virtualization platform" do
+describe info_getter::System, "Solaris virtualization platform" do
   before(:each) do
     @psrinfo_pv = <<-PSRINFO_PV
 The physical processor has 1 virtual processor (0)
@@ -34,7 +34,7 @@ PSRINFO_PV
     allow(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(false)
     allow(File).to receive(:exist?).with("/usr/sbin/zoneadm").and_return(false)
     allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("#{ info_getter.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when we are checking for kvm" do
@@ -43,12 +43,12 @@ PSRINFO_PV
     end
 
     it "should run psrinfo -pv" do
-      expect(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv")
+      expect(@plugin).to receive(:shell_out).with("#{ info_getter.abs_path( "/usr/sbin/psrinfo" )} -pv")
       @plugin.run
     end
 
     it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
-      allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
+      allow(@plugin).to receive(:shell_out).with("#{ info_getter.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("kvm")
       expect(@plugin[:virtualization][:role]).to eq("guest")
@@ -56,7 +56,7 @@ PSRINFO_PV
     end
 
     it "should not set virtualization if kvm isn't there" do
-      expect(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
+      expect(@plugin).to receive(:shell_out).with("#{ info_getter.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
       @plugin.run
       expect(@plugin[:virtualization][:systems]).to eq({})
     end

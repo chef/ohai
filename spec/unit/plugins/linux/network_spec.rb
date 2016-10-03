@@ -26,7 +26,7 @@ rescue LoadError => e
   raise e
 end
 
-describe Ohai::System, "Linux Network Plugin" do
+describe info_getter::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }
 
   let(:linux_ifconfig) do
@@ -567,7 +567,7 @@ EOM
       end
 
       it "completes the run" do
-        expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+        expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
         expect(plugin["network"]).not_to be_nil
       end
 
@@ -803,7 +803,7 @@ EOM
     end
 
     it "completes the run" do
-      expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+      expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
       expect(plugin["network"]).not_to be_nil
     end
 
@@ -923,7 +923,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -964,7 +964,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1007,7 +1007,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1042,7 +1042,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           plugin.run
           expect(plugin["network"]).not_to be_nil
         end
@@ -1083,7 +1083,7 @@ EOM
             let(:linux_ip_route_inet6) { "" }
 
             it "completes the run" do
-              expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+              expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
               plugin.run
               expect(plugin["network"]).not_to be_nil
             end
@@ -1108,7 +1108,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1129,7 +1129,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1154,7 +1154,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1179,7 +1179,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1213,7 +1213,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1254,7 +1254,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1297,7 +1297,7 @@ EOM
         end
 
         it "completes the run" do
-          expect(Ohai::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
+          expect(info_getter::Log).not_to receive(:debug).with(/Plugin linux::network threw exception/)
           expect(plugin["network"]).not_to be_nil
         end
 
@@ -1325,8 +1325,8 @@ EOM
         end
 
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
-          expect(Ohai::Log).to receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
-          allow(Ohai::Log).to receive(:debug) # Catches the 'Loading plugin network' type messages
+          expect(info_getter::Log).to receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
+          allow(info_getter::Log).to receive(:debug) # Catches the 'Loading plugin network' type messages
           plugin.run
         end
       end

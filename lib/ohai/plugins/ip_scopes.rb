@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:IpScopes) do
+info_getter.plugin(:IpScopes) do
   provides "network_ip_scope", "privateaddress"
 
   depends "network/interfaces"
@@ -43,7 +43,7 @@ Ohai.plugin(:IpScopes) do
 
     rescue LoadError => e
       # our favourite gem is not installed. Boohoo.
-      Ohai::Log.debug("Plugin ip_scopes: cannot load gem, plugin disabled: #{e}")
+      info_getter::Log.debug("Plugin ip_scopes: cannot load gem, plugin disabled: #{e}")
     end
   end
 

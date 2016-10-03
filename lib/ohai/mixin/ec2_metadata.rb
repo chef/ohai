@@ -20,7 +20,7 @@
 require "net/http"
 require "socket"
 
-module Ohai
+module info_getter
   module Mixin
     ##
     # This code parses the EC2 Instance Metadata API to provide details
@@ -71,14 +71,14 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("ec2 metadata mixin: can_metadata_connect? == #{connected}")
+        info_getter::Log.debug("ec2 metadata mixin: can_metadata_connect? == #{connected}")
         connected
       end
 
       def best_api_version
         response = http_client.get("/")
         if response.code == "404"
-          Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
+          info_getter::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
           return "latest"
         elsif response.code != "200"
           raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
@@ -89,9 +89,9 @@ module Ohai
         versions = response.body.split("\n").sort
         until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
           pv = versions.pop
-          Ohai::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == "latest"
+          info_getter::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == "latest"
         end
-        Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
+        info_getter::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
         if versions.empty?
           raise "Unable to determine EC2 metadata version (no supported entries found)"
         end
@@ -116,7 +116,7 @@ module Ohai
         when "200"
           response.body
         when "404"
-          Ohai::Log.debug("ec2 metadata mixin: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
+          info_getter::Log.debug("ec2 metadata mixin: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
           nil
         else
           raise "Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"

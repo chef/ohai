@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:NetworkListeners) do
+info_getter.plugin(:NetworkListeners) do
   provides "network/listeners"
 
   depends "network", "counters/network"
@@ -54,7 +54,7 @@ Ohai.plugin(:NetworkListeners) do
       network[:listeners] = Mash.new
       network[:listeners][:tcp] = listeners
     rescue LoadError
-      Ohai::Log.debug("Could not load sigar gem. Skipping NetworkListeners plugin")
+      info_getter::Log.debug("Could not load sigar gem. Skipping NetworkListeners plugin")
     end
   end
 end

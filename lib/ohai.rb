@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "ohai/version"
-require "ohai/config"
-require "ohai/system"
-require "ohai/exception"
+require "info_getter/version"
+require "info_getter/config"
+require "info_getter/system"
+require "info_getter/exception"

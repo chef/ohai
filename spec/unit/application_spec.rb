@@ -18,12 +18,12 @@
 
 require_relative "../spec_helper"
 
-require "ohai/application"
+require "info_getter/application"
 
-RSpec.describe "Ohai::Application" do
+RSpec.describe "info_getter::Application" do
 
   let(:argv) { [] }
-  let(:app) { Ohai::Application.new }
+  let(:app) { info_getter::Application.new }
 
   before(:each) do
     @original_argv = ARGV
@@ -34,7 +34,7 @@ RSpec.describe "Ohai::Application" do
     ARGV.replace(@original_argv)
   end
 
-  describe "#configure_ohai" do
+  describe "#configure_info_getter" do
     describe "loading configuration from a file" do
       let(:config_file) { "/local/workstation/config" }
       let(:config_loader) { instance_double("ChefConfig::WorkstationConfigLoader") }
@@ -45,25 +45,25 @@ RSpec.describe "Ohai::Application" do
         before(:each) do
           if windows?
             expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-              with("C:#{config_file}", Ohai::Log).
+              with("C:#{config_file}", info_getter::Log).
               and_return(config_loader)
           else
             expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-              with(config_file, Ohai::Log).
+              with(config_file, info_getter::Log).
               and_return(config_loader)
           end
         end
 
         it "loads the configuration file" do
           expect(config_loader).to receive(:load)
-          app.configure_ohai
+          app.configure_info_getter
         end
 
         context "when the configuration file does not exist" do
           it "terminates the application" do
             expect(config_loader).to receive(:load).and_raise(ChefConfig::ConfigurationError)
-            expect(Ohai::Application).to receive(:fatal!)
-            app.configure_ohai
+            expect(info_getter::Application).to receive(:fatal!)
+            app.configure_info_getter
           end
         end
       end
@@ -71,13 +71,13 @@ RSpec.describe "Ohai::Application" do
       context "when a local workstation config exists" do
         before(:each) do
           expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-            with(nil, Ohai::Log).
+            with(nil, info_getter::Log).
             and_return(config_loader)
         end
 
         it "loads the configuration file" do
           expect(config_loader).to receive(:load)
-          app.configure_ohai
+          app.configure_info_getter
         end
       end
     end
@@ -87,9 +87,9 @@ RSpec.describe "Ohai::Application" do
       let(:directory) { "/some/fantastic/plugins" }
 
       it "does not generate deprecated config warnings for cli options" do
-        expect(Ohai::Log).to_not receive(:warn).
-          with(/Ohai::Config\[:directory\] is deprecated/)
-        app.configure_ohai
+        expect(info_getter::Log).to_not receive(:warn).
+          with(/info_getter::Config\[:directory\] is deprecated/)
+        app.configure_info_getter
       end
     end
 

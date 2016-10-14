@@ -47,7 +47,12 @@ Ohai.plugin(:Packages) do
 
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        unless packages[name].nil?
+	  duplicate = packages[name]
+          packages[name] = { "epoch" => epoch, "version" => [ version, duplicate['version'] ], "release" => [ release, duplicate['release'] ], "installdate" => [ installdate, duplicate['installdate'] ], "arch" => arch }
+        else
+          packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        end
       end
     end
   end

@@ -1,8 +1,20 @@
 # Change Log
 
-## [8.20.0](https://github.com/chef/ohai/tree/8.20.0) (2016-09-07)
+## [8.21.0](https://github.com/chef/ohai/tree/8.21.0) (2016-10-16)
 
-[Full Changelog](https://github.com/chef/ohai/compare/v8.19.2...8.20.0)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.20.0...8.21.0)
+
+**Implemented enhancements:**
+
+- Add a new shard plugin [#877](https://github.com/chef/ohai/pull/877) ([jaymzh](https://github.com/jaymzh))
+
+**Fixed bugs:**
+
+- Ohai uptime plugin hangs in Windows. [#876](https://github.com/chef/ohai/pull/876) ([Aliasgar16](https://github.com/Aliasgar16))
+
+## [v8.20.0](https://github.com/chef/ohai/tree/v8.20.0) (2016-09-07)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.19.2...v8.20.0)
 
 **Implemented enhancements:**
 

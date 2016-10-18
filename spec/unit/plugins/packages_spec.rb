@@ -100,6 +100,24 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["tzdata"][:installdate]).to eq("1463486618")
       expect(plugin[:packages]["tzdata"][:arch]).to eq("noarch")
     end
+   
+    it "gets duplicate kernel verions/releases - arch" do
+      expect(plugin[:packages]["kernel"][:epoch][0]).to eq("0")
+      expect(plugin[:packages]["kernel"][:version][0]).to eq("2.6.32")
+      expect(plugin[:packages]["kernel"][:release][0]).to eq("573.7.1.el6")
+      expect(plugin[:packages]["kernel"][:installdate][0]).to eq("1447146252")
+      expect(plugin[:packages]["kernel"][:arch][0]).to eq("x86_64")
+      expect(plugin[:packages]["kernel"][:epoch][1]).to eq("0")
+      expect(plugin[:packages]["kernel"][:version][1]).to eq("2.6.32")
+      expect(plugin[:packages]["kernel"][:release][1]).to eq("642.4.2.el6")
+      expect(plugin[:packages]["kernel"][:installdate][1]).to eq("1474573895")
+      expect(plugin[:packages]["kernel"][:arch][1]).to eq("x86_64")
+      expect(plugin[:packages]["kernel"][:epoch][2]).to eq("0")
+      expect(plugin[:packages]["kernel"][:version][2]).to eq("2.6.32")
+      expect(plugin[:packages]["kernel"][:release][2]).to eq("642.3.1.el6")
+      expect(plugin[:packages]["kernel"][:installdate][2]).to eq("1473753838")
+      expect(plugin[:packages]["kernel"][:arch][2]).to eq("x86_64")
+    end
   end
 
   context "on windows", :windows_only do

@@ -35,6 +35,7 @@ describe Ohai::System, "Linux lsb plugin" do
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
       allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file)
+      allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
       allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
@@ -61,7 +62,6 @@ describe Ohai::System, "Linux lsb plugin" do
 
   describe "on systems with /usr/bin/lsb_release" do
     before(:each) do
-      allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
       allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(true)
 
       @stdin = double("STDIN", { :close => true })

@@ -59,7 +59,7 @@ Ohai.plugin(:Packages) do
           duparch = packages[name]["arch"]
 
           #first time through must initialize array since we had a string value
-          unless packages[name]["version"].is_a?(Array) 
+          unless packages[name]["version"].is_a?(Array)
             packages[name] = { "epoch" => [ dupepoch, epoch ], "version" => [ dupversion, version ], "release" => [duprelease, release ], "installdate" => [dupinstalldate, installdate], "arch" => [ duparch, arch ] }
           else
             packages[name] = { "epoch" => dupepoch.push(epoch), "version" => dupversion.push(version), "release" => duprelease.push(release), "installdate" => dupinstalldate.push(installdate), "arch" => duparch.push(arch) }

@@ -100,7 +100,7 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["tzdata"][:installdate]).to eq("1463486618")
       expect(plugin[:packages]["tzdata"][:arch]).to eq("noarch")
     end
-   
+
     it "gets duplicate kernel verions/releases - arch" do
       expect(plugin[:packages]["kernel"][:epoch][0]).to eq("0")
       expect(plugin[:packages]["kernel"][:version][0]).to eq("2.6.32")

@@ -65,6 +65,11 @@ Ohai.plugin(:Hardware) do
       drive[:name] = drive_entry["_name"]
       drive[:bsd_name] = drive_entry["bsd_name"]
       drive[:capacity] = drive_entry["size_in_bytes"]
+      if drive_entry.has_key?("com.apple.corestorage.lv")
+        drive[:encrypted] = drive_entry["com.apple.corestorage.lv"]["com.apple.corestorage.lv.encrypted"]
+        drive[:encryption_type] = drive_entry["com.apple.corestorage.lv"]["com.apple.corestorage.lv.encryptionType"]
+        drive[:locked] = drive_entry["com.apple.corestorage.lv"]["com.apple.corestorage.lv.locked"]
+      end
       if drive_entry.has_key?("com.apple.corestorage.pv")
         drive[:drive_type] = drive_entry["com.apple.corestorage.pv"][0]["medium_type"]
         drive[:smart_status] = drive_entry["com.apple.corestorage.pv"][0]["smart_status"]

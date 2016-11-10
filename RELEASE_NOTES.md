@@ -8,7 +8,3 @@ Details about the thing that changed that needs to get included in the Release N
 -->
 
 # Ohai Release Notes:
-
-## Gentoo platform version
-
-Platform version on Gentoo hosts was previously detected as the Gentoo base system release version, which is actually the bootstrap image version. This hasn't changed in many years and is not an accurate way to determine the version of a Gentoo system. Instead Gentoo platform_version will now be the version of the kernel, matching the behavior we already use on Arch Linux.

@@ -109,8 +109,6 @@ RSpec.configure do |config|
 
   config.filter_run_excluding :windows_only => true unless windows?
   config.filter_run_excluding :unix_only => true unless unix?
-  config.filter_run_excluding :ruby_18_only => true unless ruby_18?
-  config.filter_run_excluding :ruby_19_only => true unless ruby_19?
   config.filter_run_excluding :requires_root => true unless ENV["USER"] == "root"
   config.filter_run_excluding :requires_unprivileged_user => true if ENV["USER"] == "root"
 

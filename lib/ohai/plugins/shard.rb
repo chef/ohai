@@ -56,6 +56,12 @@ Ohai.plugin(:ShardSeed) do
     shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
   end
 
+  collect_data(:default) do
+    create_seed do
+      ''
+    end
+  end
+
   collect_data(:darwin) do
     create_seed do |src|
       case src

@@ -19,45 +19,45 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin platform" do
-  before(:each) do
+  before do
     @plugin = get_plugin("platform")
     allow(@plugin).to receive(:collect_os).and_return(:default)
     @plugin[:os] = "monkey"
     @plugin[:os_version] = "poop"
   end
 
-  it "should set the platform and platform family to the os if it was not set earlier" do
+  it "sets the platform and platform family to the os if it was not set earlier" do
     @plugin.run
     expect(@plugin[:platform]).to eql("monkey")
     expect(@plugin[:platform_family]).to eql("monkey")
   end
 
-  it "should not set the platform to the os if it was set earlier" do
+  it "does not set the platform to the os if it was set earlier" do
     @plugin[:platform] = "lars"
     @plugin.run
     expect(@plugin[:platform]).to eql("lars")
   end
 
-  it "should set the platform_family to the platform if platform was set earlier but not platform_family" do
+  it "sets the platform_family to the platform if platform was set earlier but not platform_family" do
     @plugin[:platform] = "lars"
     @plugin[:platform_family] = "jack"
     @plugin.run
     expect(@plugin[:platform_family]).to eql("jack")
   end
 
-  it "should not set the platform_family if the platform_family was set earlier." do
+  it "does not set the platform_family if the platform_family was set earlier." do
     @plugin[:platform] = "lars"
     @plugin.run
     expect(@plugin[:platform]).to eql("lars")
     expect(@plugin[:platform_family]).to eql("lars")
   end
 
-  it "should set the platform_version to the os_version if it was not set earlier" do
+  it "sets the platform_version to the os_version if it was not set earlier" do
     @plugin.run
     expect(@plugin[:os_version]).to eql("poop")
   end
 
-  it "should not set the platform to the os if it was set earlier" do
+  it "does not set the platform to the os if it was set earlier" do
     @plugin[:platform_version] = "ulrich"
     @plugin.run
     expect(@plugin[:platform_version]).to eql("ulrich")

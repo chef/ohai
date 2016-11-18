@@ -27,16 +27,16 @@ RSpec.describe Ohai::Config do
       it "logs a deprecation warning and sets the value" do
         expect(Ohai::Log).to receive(:warn).
           with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::Config[option] = value
-        expect(Ohai::Config[option]).to eq(value)
+        described_class[option] = value
+        expect(described_class[option]).to eq(value)
       end
     end
 
     shared_examples_for "appendable option" do
       it "sets the value" do
-        expect(Ohai::Log).to_not receive(:warn)
-        Ohai::Config[option] << value
-        expect(Ohai::Config[option]).to include(value)
+        expect(Ohai::Log).not_to receive(:warn)
+        described_class[option] << value
+        expect(described_class[option]).to include(value)
       end
     end
 
@@ -93,33 +93,33 @@ RSpec.describe Ohai::Config do
   describe "config_context :ohai" do
     describe "option :plugin" do
       it "gets configured with a value" do
-        Ohai::Config.ohai[:plugin][:foo] = true
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to be true
+        described_class.ohai[:plugin][:foo] = true
+        expect(described_class.ohai[:plugin]).to have_key(:foo)
+        expect(described_class.ohai[:plugin][:foo]).to be true
       end
 
       it "gets configured with a Hash" do
         value = { :bar => true, :baz => true }
-        Ohai::Config.ohai[:plugin][:foo] = value
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to eq(value)
+        described_class.ohai[:plugin][:foo] = value
+        expect(described_class.ohai[:plugin]).to have_key(:foo)
+        expect(described_class.ohai[:plugin][:foo]).to eq(value)
       end
 
       it "raises an error if the plugin name is not a symbol" do
-        expect { Ohai::Config.ohai[:plugin]["foo"] = false }.
+        expect { described_class.ohai[:plugin]["foo"] = false }.
           to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
       it "raises an error if the value Hash has non-Symbol key" do
         value = { :bar => true, "baz" => true }
-        expect { Ohai::Config.ohai[:plugin][:foo] = value }.
+        expect { described_class.ohai[:plugin][:foo] = value }.
           to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
     end
   end
 
   describe "::merge_deprecated_config" do
-    before(:each) do
+    before do
       allow(Ohai::Log).to receive(:warn)
       configure_ohai
     end
@@ -131,17 +131,17 @@ RSpec.describe Ohai::Config do
     end
 
     it "merges top-level config values into the ohai config context" do
-      Ohai::Config.merge_deprecated_config
-      expect(Ohai::Config.ohai.configuration).to eq (Ohai::Config.configuration)
+      described_class.merge_deprecated_config
+      expect(described_class.ohai.configuration).to eq (described_class.configuration)
     end
 
     shared_examples_for "delayed warn" do
       it "logs a deprecation warning and merges the value" do
         expect(Ohai::Log).to receive(:warn).
           with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::Config[option] << value
-        Ohai::Config.merge_deprecated_config
-        expect(Ohai::Config.ohai[option]).to include(value)
+        described_class[option] << value
+        described_class.merge_deprecated_config
+        expect(described_class.ohai[option]).to include(value)
       end
     end
 
@@ -162,7 +162,7 @@ RSpec.describe Ohai::Config do
 
   describe "Ohai.config" do
     it "returns the ohai config context" do
-      expect(Ohai.config).to eq(Ohai::Config.ohai)
+      expect(Ohai.config).to eq(described_class.ohai)
     end
   end
 end

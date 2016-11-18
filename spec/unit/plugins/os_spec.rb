@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG["host_os"]
 
 describe Ohai::System, "plugin os" do
-  before(:each) do
+  before do
     @plugin = get_plugin("os")
     @plugin[:kernel] = Mash.new
     @plugin[:kernel][:release] = "kings of leon"
@@ -31,28 +31,28 @@ describe Ohai::System, "plugin os" do
     ::RbConfig::CONFIG["host_os"] = ORIGINAL_CONFIG_HOST_OS
   end
 
-  it "should set os_version to kernel_release" do
+  it "sets os_version to kernel_release" do
     @plugin.run
     expect(@plugin[:os_version]).to eq(@plugin[:kernel][:release])
   end
 
   describe "on linux" do
-    before(:each) do
+    before do
       ::RbConfig::CONFIG["host_os"] = "linux"
     end
 
-    it "should set the os to linux" do
+    it "sets the os to linux" do
       @plugin.run
       expect(@plugin[:os]).to eq("linux")
     end
   end
 
   describe "on darwin" do
-    before(:each) do
+    before do
       ::RbConfig::CONFIG["host_os"] = "darwin10.0"
     end
 
-    it "should set the os to darwin" do
+    it "sets the os to darwin" do
       @plugin.run
       expect(@plugin[:os]).to eq("darwin")
     end

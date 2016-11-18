@@ -21,11 +21,11 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 describe Ohai::System, "Linux sessions plugin" do
   let(:plugin) { get_plugin("linux/sessions") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it "should populate sessions if loginctl is found" do
+  it "populates sessions if loginctl is found" do
     loginctl_out = <<-LOGINCTL_OUT
         c1        118 Debian-gdm       seat0
        318          0 root
@@ -90,7 +90,7 @@ LOGINCTL_OUT
     })
   end
 
-  it "should not populate sessions if loginctl is not found" do
+  it "does not populate sessions if loginctl is not found" do
     allow(plugin).to receive(:which).with("loginctl").and_return(false)
     plugin.run
     expect(plugin[:sessions]).to be(nil)

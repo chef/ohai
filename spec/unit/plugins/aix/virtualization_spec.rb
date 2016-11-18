@@ -31,7 +31,7 @@ describe Ohai::System, "AIX virtualization plugin" do
       p
     end
 
-    before(:each) do
+    before do
       @lswpar_l = <<-LSWPAR_L
 =================================================================
 applejack-541ba3 - Active

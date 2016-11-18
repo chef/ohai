@@ -18,7 +18,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 describe Ohai::System, "plugin go" do
   let(:plugin) { get_plugin("go") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     stdout = "go version go1.6.1 darwin/amd64\n"
     allow(plugin).to receive(:shell_out).with("go version").and_return(mock_shell_out(0, stdout, ""))

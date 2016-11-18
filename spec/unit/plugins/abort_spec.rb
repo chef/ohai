@@ -38,13 +38,13 @@ describe "a plug-in that aborts execution" do
     end
   end
 
-  before(:each) do
+  before do
     fail_file = File.open("#{tmp}/plugins/abort.rb", "w+")
     fail_file.write(abortstr)
     fail_file.close
   end
 
-  after(:each) do
+  after do
     File.delete("#{tmp}/plugins/abort.rb")
   end
 
@@ -56,13 +56,13 @@ describe "a plug-in that aborts execution" do
     end
   end
 
-  before(:each) do
+  before do
     @ohai = Ohai::System.new
     @loader = Ohai::Loader.new(@ohai)
     @runner = Ohai::Runner.new(@ohai)
   end
 
-  it "should raise SystemExit" do
+  it "raises SystemExit" do
     @plugin = @loader.load_plugin("#{tmp}/plugins/abort.rb")
     expect { @runner.run_plugin(@plugin) }.to raise_error(SystemExit)
   end

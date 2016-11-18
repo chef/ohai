@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "FreeBSD kernel plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:init_kernel).and_return({ :name => "freebsd" })
@@ -28,7 +28,7 @@ describe Ohai::System, "FreeBSD kernel plugin" do
     allow(@plugin).to receive(:shell_out).with( Ohai.abs_path( "/sbin/kldstat" )).and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
   end
 
-  it "should set the kernel_os to the kernel_name value" do
+  it "sets the kernel_os to the kernel_name value" do
     @plugin.run
     expect(@plugin[:kernel][:os]).to eq(@plugin[:kernel][:name])
   end

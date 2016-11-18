@@ -95,12 +95,12 @@ clflush size  : 32
     tempfile
   end
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(tempfile_handle)
   end
 
-  after(:each) do
+  after do
     begin
       tempfile.close
       tempfile.unlink
@@ -113,7 +113,7 @@ clflush size  : 32
 
   it "gets total cores" do
     plugin.run
-    expect(plugin[:cpu][:cores]).to eql(0)
+    expect(plugin[:cpu][:cores]).to be(0)
   end
 
   it "doesn't have a cpu 1" do
@@ -314,7 +314,7 @@ end
 describe Ohai::System, "S390 linux cpu plugin" do
   let(:plugin) { get_plugin("linux/cpu") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     @double_file = double("/proc/cpuinfo")

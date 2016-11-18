@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 describe Ohai::System, "plugin perl" do
   let(:plugin) { get_plugin("perl") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     @stdout = "version='5.8.8';#{$/}archname='darwin-thread-multi-2level';"
     allow(plugin).to receive(:shell_out).with("perl -V:version -V:archname").and_return(mock_shell_out(0, @stdout, ""))

@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Aix plugin uptime" do
 
-  before(:each) do
+  before do
     @plugin = get_plugin("aix/uptime")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     allow(Time).to receive_message_chain(:now, :to_i).and_return(1412072511)
@@ -31,11 +31,11 @@ describe Ohai::System, "Aix plugin uptime" do
     @plugin.run
   end
 
-  it "should set uptime_seconds to uptime" do
+  it "sets uptime_seconds to uptime" do
     expect(@plugin[:uptime_seconds]).to eq(511191)
   end
 
-  it "should set uptime to a human readable date" do
+  it "sets uptime to a human readable date" do
     expect(@plugin[:uptime]).to eq("5 days 21 hours 59 minutes 51 seconds")
   end
 end

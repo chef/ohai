@@ -24,11 +24,11 @@ begin
   require "chef/version"
 
   describe Ohai::System, "plugin chef" do
-    before(:each) do
+    before do
       @plugin = get_plugin("chef")
     end
 
-    it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
+    it "sets [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
       @plugin.run
       expect(@plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
     end

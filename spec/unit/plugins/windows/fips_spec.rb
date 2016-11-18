@@ -24,7 +24,7 @@ describe Ohai::System, "plugin fips", :windows_only do
   let(:fips_key) { 'System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy' }
   let(:win_reg_entry) { { "Enabled" => enabled } }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:windows)
     allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with(fips_key, arch).and_yield(win_reg_entry)
   end

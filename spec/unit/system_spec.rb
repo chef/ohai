@@ -194,7 +194,7 @@ provides 'park'
 park("plants")
 EOF
 
-      it "should collect data from all the plugins" do
+      it "collects data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
@@ -210,7 +210,7 @@ EOF
           Ohai.config[:disabled_plugins] = [ ]
         end
 
-        it "shouldn't run disabled version 6 plugins" do
+        it "does not run disabled version 6 plugins" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
@@ -313,7 +313,7 @@ Ohai.plugin(:Message) do
 end
 EOF
 
-      it "should collect platform specific" do
+      it "collects platform specific" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:message]).to eq("platform_specific_message")
@@ -340,14 +340,14 @@ Ohai.plugin(:Park) do
 end
 EOF
 
-      it "should collect data from all the plugins" do
+      it "collects data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
         expect(ohai.data[:park]).to eq("plants")
       end
 
-      it "should write an error to Ohai::Log" do
+      it "writes an error to Ohai::Log" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
@@ -365,7 +365,7 @@ EOF
           Ohai.config[:disabled_plugins] = [ ]
         end
 
-        it "shouldn't run disabled plugins" do
+        it "does not run disabled plugins" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
@@ -414,7 +414,7 @@ EOF
           Ohai.config[:disabled_plugins] = [ ]
         end
 
-        it "shouldn't run disabled plugins" do
+        it "does not run disabled plugins" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
@@ -456,7 +456,7 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should collect all data" do
+      it "collects all data" do
         ohai.all_plugins
         [:v6message, :v7message, :messages].each do |attribute|
           expect(ohai.data).to have_key(attribute)
@@ -537,7 +537,7 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should collect all the data properly" do
+      it "collects all the data properly" do
         ohai.all_plugins
         expect(ohai.data[:v7message]).to eq("Hellos from 7: animals")
         expect(ohai.data[:zoo]).to eq("animals")
@@ -559,7 +559,7 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should raise DependencyNotFound" do
+      it "raises DependencyNotFound" do
         expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::DependencyNotFound)
       end
     end
@@ -599,7 +599,7 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should rerun the plugin providing the desired attributes" do
+      it "reruns the plugin providing the desired attributes" do
         ohai.all_plugins
         initial_value = ohai.data["random"]
         ohai.all_plugins
@@ -656,19 +656,19 @@ EOF
         ohai.all_plugins
       end
 
-      it "should rerun the plugin providing the desired attributes" do
+      it "reruns the plugin providing the desired attributes" do
         expect(ohai.data[:desired_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
         expect(ohai.data[:desired_attr_count]).to eq(2)
       end
 
-      it "should not re-run dependencies of the plugin providing the desired attributes" do
+      it "does not re-run dependencies of the plugin providing the desired attributes" do
         expect(ohai.data[:depended_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
         expect(ohai.data[:depended_attr_count]).to eq(1)
       end
 
-      it "should not re-run plugins unrelated to the plugin providing the desired attributes" do
+      it "does not re-run plugins unrelated to the plugin providing the desired attributes" do
         expect(ohai.data[:other_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
         expect(ohai.data[:other_attr_count]).to eq(1)
@@ -719,19 +719,19 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should run all the plugins when a top level attribute is specified" do
+      it "runs all the plugins when a top level attribute is specified" do
         ohai.all_plugins("languages")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french][:version]).to eq(2012)
       end
 
-      it "should run the first parent when a non-existent child is specified" do
+      it "runs the first parent when a non-existent child is specified" do
         ohai.all_plugins("languages/english/version")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french]).to be_nil
       end
 
-      it "should be able to run multiple plugins" do
+      it "is able to run multiple plugins" do
         ohai.all_plugins(["languages/english", "languages/french"])
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french][:version]).to eq(2012)

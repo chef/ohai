@@ -24,7 +24,7 @@ describe Ohai::System, "plugin powershell" do
     stub_const("::RbConfig::CONFIG", { "host_os" => "windows" })
   end
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
   end
 

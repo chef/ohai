@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "BSD virtualization plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("bsd/virtualization")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))

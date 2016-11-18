@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris virtualization platform" do
-  before(:each) do
+  before do
     @psrinfo_pv = <<-PSRINFO_PV
 The physical processor has 1 virtual processor (0)
   x86 (GenuineIntel family 6 model 2 step 3 clock 2667 MHz)
@@ -38,16 +38,16 @@ PSRINFO_PV
   end
 
   describe "when we are checking for kvm" do
-    before(:each) do
+    before do
       expect(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(true)
     end
 
-    it "should run psrinfo -pv" do
+    it "runs psrinfo -pv" do
       expect(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv")
       @plugin.run
     end
 
-    it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
+    it "sets kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
       allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
       @plugin.run
       expect(@plugin[:virtualization][:system]).to eq("kvm")
@@ -55,7 +55,7 @@ PSRINFO_PV
       expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
-    it "should not set virtualization if kvm isn't there" do
+    it "does not set virtualization if kvm isn't there" do
       expect(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
       @plugin.run
       expect(@plugin[:virtualization][:systems]).to eq({})
@@ -63,16 +63,16 @@ PSRINFO_PV
   end
 
   describe "when we are parsing smbios" do
-    before(:each) do
+    before do
       expect(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(true)
     end
 
-    it "should run smbios" do
+    it "runs smbios" do
       expect(@plugin).to receive(:shell_out).with("/usr/sbin/smbios")
       @plugin.run
     end
 
-    it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
+    it "sets virtualpc guest if smbios detects Microsoft Virtual Machine" do
       ms_vpc_smbios = <<-MSVPC
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
@@ -91,7 +91,7 @@ MSVPC
       expect(@plugin[:virtualization][:role]).to eq("guest")
     end
 
-    it "should set vmware guest if smbios detects VMware Virtual Platform" do
+    it "sets vmware guest if smbios detects VMware Virtual Platform" do
       vmware_smbios = <<-VMWARE
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
@@ -111,14 +111,14 @@ VMWARE
       expect(@plugin[:virtualization][:systems][:vmware]).to eq("guest")
     end
 
-    it "should run smbios and not set virtualization if nothing is detected" do
+    it "runs smbios and not set virtualization if nothing is detected" do
       expect(@plugin).to receive(:shell_out).with("/usr/sbin/smbios")
       @plugin.run
       expect(@plugin[:virtualization][:systems]).to eq({})
     end
   end
 
-  it "should not set virtualization if no tests match" do
+  it "does not set virtualization if no tests match" do
     @plugin.run
     expect(@plugin[:virtualization][:systems]).to eq({})
   end

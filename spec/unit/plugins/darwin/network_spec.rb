@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin Network Plugin" do
-  before(:each) do
+  before do
     @darwin_ifconfig = <<-DARWIN_IFCONFIG
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
         options=3<RXCSUM,TXCSUM>
@@ -430,7 +430,7 @@ net.smb.fs.tcprcvbuf: 261120
   end
 
   describe "gathering IP layer address info" do
-    before(:each) do
+    before do
       allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @darwin_arp, ""))
       allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @darwin_ifconfig, ""))
       allow(@plugin).to receive(:shell_out).with("netstat -i -d -l -b -n").and_return(mock_shell_out(0, @darwin_netstat, ""))
@@ -549,7 +549,7 @@ net.smb.fs.tcprcvbuf: 261120
       expect(@plugin["network"][:default_gateway]).to eq("10.20.10.1")
     end
 
-    it "should detect network settings" do
+    it "detects network settings" do
       expect(@plugin["network"]["settings"]["net.local.stream.sendspace"]).to eq("8192")
       expect(@plugin["network"]["settings"]["net.local.stream.recvspace"]).to eq("8192")
       expect(@plugin["network"]["settings"]["net.local.stream.tracemdns"]).to eq("0")

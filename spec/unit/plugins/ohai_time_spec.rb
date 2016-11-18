@@ -19,23 +19,23 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin ohai_time" do
-  before(:each) do
+  before do
     @plugin = get_plugin("ohai_time")
   end
 
-  it "should get the current time" do
+  it "gets the current time" do
     expect(Time).to receive(:now)
     @plugin.run
   end
 
-  it "should turn the time into a floating point number" do
+  it "turns the time into a floating point number" do
     time = Time.now
     expect(time).to receive(:to_f)
     allow(Time).to receive(:now).and_return(time)
     @plugin.run
   end
 
-  it "should set ohai_time to the current time" do
+  it "sets ohai_time to the current time" do
     time = Time.now
     allow(Time).to receive(:now).and_return(time)
     @plugin.run

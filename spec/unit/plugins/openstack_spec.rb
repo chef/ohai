@@ -23,7 +23,7 @@ describe "OpenStack Plugin" do
 
   let(:plugin) { get_plugin("openstack") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
     plugin[:dmi] = nil
   end

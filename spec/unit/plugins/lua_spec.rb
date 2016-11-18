@@ -24,7 +24,7 @@ describe Ohai::System, "plugin lua" do
 
   let(:plugin) { get_plugin("lua") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
     allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))

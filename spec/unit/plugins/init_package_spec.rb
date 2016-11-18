@@ -30,12 +30,12 @@ describe Ohai::System, "Init package" do
   let(:proc_1_file_path) { "/proc/1/comm" }
   let(:proc_1_file) { double(proc_1_file_path, :gets => proc1_content) }
 
-  before(:each) do
+  before do
     allow(File).to receive(:exists?).with(proc_1_file_path).and_return(proc1_exists)
     allow(File).to receive(:open).with(proc_1_file_path).and_return(proc_1_file)
   end
 
-  it "should set init_package to init" do
+  it "sets init_package to init" do
     plugin.run
     expect(plugin[:init_package]).to eq("init")
   end
@@ -43,7 +43,7 @@ describe Ohai::System, "Init package" do
   describe "when init_package is systemd" do
     let(:proc1_content) { "systemd\n" }
 
-    it "should set init_package to systemd" do
+    it "sets init_package to systemd" do
       plugin.run
       expect(plugin[:init_package]).to eq("systemd")
     end
@@ -52,7 +52,7 @@ describe Ohai::System, "Init package" do
   describe "when /proc/1/comm doesn't exist" do
     let(:proc1_exists) { false }
 
-    it "should set init_package to init" do
+    it "sets init_package to init" do
       plugin.run
       expect(plugin[:init_package]).to eq("init")
     end

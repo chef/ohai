@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin cpu plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("darwin/cpu")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.packages").and_return(mock_shell_out(0, "1", ""))
@@ -35,43 +35,43 @@ describe Ohai::System, "Darwin cpu plugin" do
     @plugin.run
   end
 
-  it "should set cpu[:cores] to 4" do
+  it "sets cpu[:cores] to 4" do
     expect(@plugin[:cpu][:cores]).to eq(4)
   end
 
-  it "should set cpu[:total] to 8" do
+  it "sets cpu[:total] to 8" do
     expect(@plugin[:cpu][:total]).to eq(8)
   end
 
-  it "should set cpu[:real] to 1" do
+  it "sets cpu[:real] to 1" do
     expect(@plugin[:cpu][:real]).to eq(1)
   end
 
-  it "should set cpu[:mhz] to 2300" do
+  it "sets cpu[:mhz] to 2300" do
     expect(@plugin[:cpu][:mhz]).to eq(2300)
   end
 
-  it "should set cpu[:vendor_id] to GenuineIntel" do
+  it "sets cpu[:vendor_id] to GenuineIntel" do
     expect(@plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
   end
 
-  it "should set cpu[:model_name] to Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz" do
+  it "sets cpu[:model_name] to Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz" do
     expect(@plugin[:cpu][:model_name]).to eq("Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz")
   end
 
-  it "should set cpu[:model] to 58" do
+  it "sets cpu[:model] to 58" do
     expect(@plugin[:cpu][:model]).to eq(58)
   end
 
-  it "should set cpu[:family] to 6" do
+  it "sets cpu[:family] to 6" do
     expect(@plugin[:cpu][:family]).to eq(6)
   end
 
-  it "should set cpu[:stepping] to 9" do
+  it "sets cpu[:stepping] to 9" do
     expect(@plugin[:cpu][:stepping]).to eq(9)
   end
 
-  it "should set cpu[:flags] to array of flags" do
+  it "sets cpu[:flags] to array of flags" do
     expect(@plugin[:cpu][:flags]).to eq(["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "est", "tm2", "ssse3", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "popcnt", "aes", "pcid", "xsave", "osxsave", "tsctmr", "avx1.0", "rdrand", "f16c"])
   end
 end

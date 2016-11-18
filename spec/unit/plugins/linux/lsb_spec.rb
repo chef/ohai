@@ -21,13 +21,13 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 # We do not alter case for lsb attributes and consume them as provided
 
 describe Ohai::System, "Linux lsb plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("linux/lsb")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
   end
 
   describe "on systems with /etc/lsb-release" do
-    before(:each) do
+    before do
       @double_file = double("/etc/lsb-release")
       allow(@double_file).to receive(:each).
         and_yield("DISTRIB_ID=Ubuntu").
@@ -39,29 +39,29 @@ describe Ohai::System, "Linux lsb plugin" do
       allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
-    it "should set lsb[:id]" do
+    it "sets lsb[:id]" do
       @plugin.run
       expect(@plugin[:lsb][:id]).to eq("Ubuntu")
     end
 
-    it "should set lsb[:release]" do
+    it "sets lsb[:release]" do
       @plugin.run
       expect(@plugin[:lsb][:release]).to eq("8.04")
     end
 
-    it "should set lsb[:codename]" do
+    it "sets lsb[:codename]" do
       @plugin.run
       expect(@plugin[:lsb][:codename]).to eq("hardy")
     end
 
-    it "should set lsb[:description]" do
+    it "sets lsb[:description]" do
       @plugin.run
       expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
     end
   end
 
   describe "on systems with /usr/bin/lsb_release" do
-    before(:each) do
+    before do
       allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(true)
 
       @stdin = double("STDIN", { :close => true })
@@ -73,7 +73,7 @@ describe Ohai::System, "Linux lsb plugin" do
     end
 
     describe "on Centos 5.4 correctly" do
-      before(:each) do
+      before do
         @stdout = <<-LSB_RELEASE
 LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch
 Distributor ID: CentOS
@@ -84,29 +84,29 @@ LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
-      it "should set lsb[:id]" do
+      it "sets lsb[:id]" do
         @plugin.run
         expect(@plugin[:lsb][:id]).to eq("CentOS")
       end
 
-      it "should set lsb[:release]" do
+      it "sets lsb[:release]" do
         @plugin.run
         expect(@plugin[:lsb][:release]).to eq("5.4")
       end
 
-      it "should set lsb[:codename]" do
+      it "sets lsb[:codename]" do
         @plugin.run
         expect(@plugin[:lsb][:codename]).to eq("Final")
       end
 
-      it "should set lsb[:description]" do
+      it "sets lsb[:description]" do
         @plugin.run
         expect(@plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
       end
     end
 
     describe "on Fedora 14 correctly" do
-      before(:each) do
+      before do
         @stdout = <<-LSB_RELEASE
 LSB Version:    :core-4.0-ia32:core-4.0-noarch
 Distributor ID: Fedora
@@ -117,29 +117,29 @@ LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
-      it "should set lsb[:id]" do
+      it "sets lsb[:id]" do
         @plugin.run
         expect(@plugin[:lsb][:id]).to eq("Fedora")
       end
 
-      it "should set lsb[:release]" do
+      it "sets lsb[:release]" do
         @plugin.run
         expect(@plugin[:lsb][:release]).to eq("14")
       end
 
-      it "should set lsb[:codename]" do
+      it "sets lsb[:codename]" do
         @plugin.run
         expect(@plugin[:lsb][:codename]).to eq("Laughlin")
       end
 
-      it "should set lsb[:description]" do
+      it "sets lsb[:description]" do
         @plugin.run
         expect(@plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
       end
     end
   end
 
-  it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
+  it "does not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist" do
     allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
     allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
     expect(@plugin.attribute?(:lsb)).to be(false)

@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux Mdadm Plugin" do
-  before(:each) do
+  before do
     @md0 = <<-MD
 /dev/md0:
         Version : 1.2
@@ -67,26 +67,26 @@ MD
 
   describe "gathering Mdadm information via /proc/mdstat and mdadm" do
 
-    it "should not raise an error" do
+    it "does not raise an error" do
       expect { @plugin.run }.not_to raise_error
     end
 
-    it "should detect raid level" do
+    it "detects raid level" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:level]).to eq(10)
     end
 
-    it "should detect raid state" do
+    it "detects raid state" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:state]).to eq("clean")
     end
 
-    it "should detect raid size" do
+    it "detects raid size" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:size]).to eq(2794.16)
     end
 
-    it "should detect raid metadata level" do
+    it "detects raid metadata level" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:version]).to eq(1.2)
     end

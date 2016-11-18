@@ -31,7 +31,7 @@ describe Ohai::System, "Sigar network route plugin" do
 
   if sigar_available
 
-    before(:each) do
+    before do
       @ohai = Ohai::System.new
       @plugin = get_plugin("sigar/network", @ohai)
       allow(@plugin).to receive(:collect_os).and_return(:sigar)
@@ -126,11 +126,11 @@ describe Ohai::System, "Sigar network route plugin" do
       @plugin.run
     end
 
-    it "should set the routes" do
+    it "sets the routes" do
       expect(@plugin[:network][:interfaces][:eth0]).to have_key(:route)
     end
 
-    it "should set the route details" do
+    it "sets the route details" do
       @net_route_conf.each_pair do |k, v|
         # Work around the above doubleing of net_route_list skipping the call to flags()
         if k == :flags

@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin hostname plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
     allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
@@ -31,12 +31,12 @@ describe Ohai::System, "Darwin hostname plugin" do
 
   it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
-  it "should use #resolve_fqdn to find the fqdn" do
+  it "uses #resolve_fqdn to find the fqdn" do
     @plugin.run
     expect(@plugin[:fqdn]).to eq("katie.bethell")
   end
 
-  it "should set the domain to everything after the first dot of the fqdn" do
+  it "sets the domain to everything after the first dot of the fqdn" do
     @plugin.run
     expect(@plugin[:domain]).to eq("bethell")
   end

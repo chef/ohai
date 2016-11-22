@@ -32,7 +32,7 @@ Ohai.plugin(:IpScopes) do
           begin
             attrs["ip_scope"] = address.to_ip.scope
 
-            if private_addr?(address) && !tunel_iface?(interface) && !ppp_iface?(interface) && !docker_iface?(interface)
+            if private_addr?(address) && !tunnel_iface?(interface) && !ppp_iface?(interface) && !docker_iface?(interface)
               privateaddress(address)
             end
           rescue ArgumentError
@@ -55,7 +55,7 @@ Ohai.plugin(:IpScopes) do
     interface["type"] == "ppp"
   end
 
-  def tunel_iface?(interface)
+  def tunnel_iface?(interface)
     interface["type"] == "tunl"
   end
 

@@ -11,13 +11,17 @@ describe Ohai::System, "plugin ip_scopes" do
   let(:interfaces) do
     Hash[
       interface1, { :addresses => addresses1, :type => interface1_type },
-      interface2, { :addresses => addresses2, :type => interface2_type }] end
+      interface2, { :addresses => addresses2, :type => interface2_type },
+      interface3, { :addresses => addresses3, :type => interface3_type }] end
   let(:interface1) { :eth0 }
   let(:interface2) { :eth1 }
+  let(:interface3) { :eth2 }
   let(:addresses1) { {} }
   let(:addresses2) { {} }
+  let(:addresses3) { {} }
   let(:interface1_type) { "eth" }
   let(:interface2_type) { "eth" }
+  let(:interface3_type) { "eth" }
 
   before { plugin[:network] = network }
 
@@ -62,11 +66,36 @@ describe Ohai::System, "plugin ip_scopes" do
           end
         end
 
+        context "when host has tunl" do
+          let(:ip1) { "10.0.0.1" }
+          let(:ip2) { "192.168.1.1" }
+          let(:interface1_type) { "eth" }
+          let(:interface2_type) { "tunl" }
+
+          it "picks the non-virtual address" do
+            expect(plugin[:privateaddress]).to eq("10.0.0.1")
+          end
+        end
+
+        context "when host has docker" do
+          let(:ip1) { "10.0.0.1" }
+          let(:ip2) { "192.168.1.1" }
+          let(:interface1_type) { "eth" }
+          let(:interface2_type) { "docker" }
+
+          it "picks the non-virtual address" do
+            expect(plugin[:privateaddress]).to eq("10.0.0.1")
+          end
+        end
+
         context "when host only has virtual RFC1918 addresses" do
           let(:ip1) { "10.0.0.1" }
           let(:ip2) { "192.168.1.1" }
+          let(:ip3) { "172.16.1.1" }
+
           let(:interface1_type) { "ppp" }
-          let(:interface2_type) { "ppp" }
+          let(:interface2_type) { "tunl" }
+          let(:interface3_type) { "docker" }
 
           it "ignores them" do
             expect(plugin[:privateaddress]).to be nil

@@ -200,6 +200,18 @@ module Ohai
         response.code == "200" ? response.body : nil
       end
 
+      def fetch_dynamic_data
+        api_version = best_api_version
+        return {} if api_version.nil?
+        response = http_client.get("/#{api_version}/dynamic/instance-identity/document/")
+
+        if json?(response.body) && response.code == "200"
+          FFI_Yajl::Parser.parse(response.body)
+        else
+          {}
+        end
+      end
+
       private
 
       def expand_path(file_name)

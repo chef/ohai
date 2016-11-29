@@ -25,21 +25,18 @@ Ohai.plugin(:Joyent) do
   depends "os", "platform", "virtualization"
 
   def collect_product_file
-    lines = []
-    if ::File.exists?("/etc/product")
-      ::File.open("/etc/product") do |file|
-        while line = file.gets
-          lines << line
-        end
-      end
+    data = ::File.read("/etc/product") rescue nil
+    if data
+      data.strip.split("\n")
+    else
+      nil
     end
-    lines
   end
 
   def collect_pkgsrc
-    if File.exist?("/opt/local/etc/pkg_install.conf")
-      sm_pkgsrc = ::File.read("/opt/local/etc/pkg_install.conf").split("=")
-      sm_pkgsrc[1].chomp
+    data = ::File.read("/opt/local/etc/pkg_install.conf") rescue nil
+    if data
+      data.strip.split("=", 2).last
     else
       nil
     end

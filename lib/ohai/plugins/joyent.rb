@@ -29,7 +29,7 @@ Ohai.plugin(:Joyent) do
     if data
       data.strip.split("\n")
     else
-      nil
+      []
     end
   end
 

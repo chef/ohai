@@ -73,7 +73,7 @@ Ohai.plugin(:Joyent) do
       end
 
       ## retrieve pkgsrc
-      joyent[:sm_pkgsrc] = collect_pkgsrc if collect_pkgsrc
+      joyent[:sm_pkgsrc] = collect_pkgsrc
     end
   end
 end

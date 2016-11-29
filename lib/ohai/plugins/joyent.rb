@@ -36,9 +36,7 @@ Ohai.plugin(:Joyent) do
   def collect_pkgsrc
     data = ::File.read("/opt/local/etc/pkg_install.conf") rescue nil
     if data
-      data.strip.split("=", 2).last
-    else
-      nil
+      /PKG_PATH=(.*)/.match(data)[1] rescue nil
     end
   end
 

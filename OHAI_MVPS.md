@@ -12,6 +12,7 @@ The [MVP list](https://github.com/opscode/chef/blob/master/CHEF_MVPS.md) is kept
 
 | Release | Date | MVP |
 |---------|------|-----|
+| Ohai 8.22.0 | 2016-11-30 | Chris Dituri |
 | Ohai 8.21.0 | 2016-10-18 | Phil Dibowitz |
 | Ohai 8.20.0 | 2016-09-07 | Davide Cavalca |
 | Ohai 8.19.0 | 2016-08-11 | Jere Julian |

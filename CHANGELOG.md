@@ -1,12 +1,28 @@
 # Change Log
 
-## [8.21.0](https://github.com/chef/ohai/tree/8.21.0) (2016-10-16)
-
-[Full Changelog](https://github.com/chef/ohai/compare/v8.20.0...8.21.0)
+## [8.22.0](https://github.com/chef/ohai/tree/8.22.0) (2016-11-30)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.21.0...8.22.0)
 
 **Implemented enhancements:**
 
-- Add a new shard plugin [#877](https://github.com/chef/ohai/pull/877) ([jaymzh](https://github.com/jaymzh))
+- Detect the global zone of a Solaris system as a virt host even without guests [\#908](https://github.com/chef/ohai/pull/908) ([numericillustration](https://github.com/numericillustration))
+- Add new haskell language plugin [\#902](https://github.com/chef/ohai/pull/902) ([cdituri](https://github.com/cdituri))
+- Better handle errors in fetching the hostname on darwin \(macOS\) systems [\#884](https://github.com/chef/ohai/pull/884) ([erikng](https://github.com/erikng))
+- Prefer lsb\_release tool to /etc/lsb-release data [\#873](https://github.com/chef/ohai/pull/873) ([kylev](https://github.com/kylev))
+- Extend set\_attribute plugin helper method to set sub-attributes. [\#822](https://github.com/chef/ohai/pull/822) ([mcquin](https://github.com/mcquin))
+
+**Fixed bugs:**
+
+- Rework / fix logic in the joyent plugin and improve specs [\#909](https://github.com/chef/ohai/pull/909) ([tas50](https://github.com/tas50))
+- Avoid  ip\_scopes returning tunl/docker interfaces as privateaddress [\#890](https://github.com/chef/ohai/pull/890) ([n-marton](https://github.com/n-marton))
+
+## [v8.21.0](https://github.com/chef/ohai/tree/v8.21.0) (2016-10-18)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.20.0...v8.21.0)
+
+**Implemented enhancements:**
+
+- Add shard plugin [#877](https://github.com/chef/ohai/pull/877) ([jaymzh](https://github.com/jaymzh))
 
 **Fixed bugs:**
 

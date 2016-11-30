@@ -27,7 +27,8 @@ describe Ohai::System, "plugin haskell" do
   let(:ghc_out) { "The Glorious Glasgow Haskell Compilation System, version 7.6.3" }
   let(:ghci_out) { "The Glorious Glasgow Haskell Compilation System, version 7.6.3" }
   let(:cabal_out) { "cabal-install version 1.16.0.2\nusing version 1.16.0 of the Cabal library" }
-  let(:stack_out) { "Version 1.1.0, Git revision 0e9430aad55841b5ff2c6c2851f0548c16bce7cf (3540 commits) x86_64 hpack-0.13.0" }
+  let(:stack_out) { "Version 1.2.0 x86_64 hpack-0.14.0" }
+  let(:stack_out_git) { "Version 1.1.0, Git revision 0e9430aad55841b5ff2c6c2851f0548c16bce7cf (3540 commits) x86_64 hpack-0.13.0" }
 
   def setup_plugin
     allow(plugin).to receive(:shell_out)
@@ -100,11 +101,30 @@ describe Ohai::System, "plugin haskell" do
     end
 
     it "set languages[:haskell][:stack][:version]" do
-      expect(plugin[:languages][:haskell][:stack][:version]).to eql("1.1.0")
+      expect(plugin[:languages][:haskell][:stack][:version]).to eql("1.2.0")
     end
 
     it "set languages[:haskell][:stack][:description]" do
       expect(plugin[:languages][:haskell][:stack][:description]).to eql(stack_out)
+    end
+  end
+
+  context "if haskell/stack prerelease is installed" do
+
+    before(:each) do
+      setup_plugin
+      allow(plugin).to receive(:shell_out)
+        .with("stack --version")
+        .and_return(mock_shell_out(0, stack_out_git, ""))
+      plugin.run
+    end
+
+    it "set languages[:haskell][:stack][:version]" do
+      expect(plugin[:languages][:haskell][:stack][:version]).to eql("1.1.0")
+    end
+
+    it "set languages[:haskell][:stack][:description]" do
+      expect(plugin[:languages][:haskell][:stack][:description]).to eql(stack_out_git)
     end
   end
 

@@ -79,9 +79,11 @@ Ohai.plugin(:Haskell) do
 
       # Sample output:
       # Version 1.1.0, Git revision 0e9430aad55841b5ff2c6c2851f0548c16bce7cf (3540 commits) x86_64 hpack-0.13.0
+      # or
+      # Version 1.2.0 x86_64 hpack-0.14.0
       if so.exitstatus == 0
         haskell[:stack] = Mash.new
-        haskell[:stack][:version] = so.stdout.split[1][0..-2]
+        haskell[:stack][:version] = /Version ([^\s,]*)/.match(so.stdout)[1] rescue nil
         haskell[:stack][:description] = so.stdout.chomp
       end
     rescue Ohai::Exceptions::Exec

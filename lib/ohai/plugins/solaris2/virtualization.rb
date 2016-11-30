@@ -74,7 +74,7 @@ Ohai.plugin(:Virtualization) do
 
       if zones.length == 1
         first_zone = zones.keys[0]
-        if( first_zone == "global")
+        if first_zone == "global"
           virtualization[:system] = "zone"
           virtualization[:role] = "host"
           virtualization[:systems][:zone] = "host"

@@ -25,10 +25,10 @@ describe Ohai::System, "plugin erlang" do
   before(:each) do
     plugin[:languages] = Mash.new
     erl_v_output = "Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 7.3\n"
-    erl_systeminfo_output = "\"18\"\r\n\"7.3\"\r\n\"2.10\"\r\n"
+    erl_systeminfo_output = "19.1,8.1,2.11"
     allow(plugin).to receive(:shell_out).with("erl +V")
                                         .and_return(mock_shell_out(0, "", erl_v_output))
-    allow(plugin).to receive(:shell_out).with("erl -eval 'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().'  -noshell")
+    allow(plugin).to receive(:shell_out).with("erl -eval '{ok, Ver} = file:read_file(filename:join([code:root_dir(), \"releases\", erlang:system_info(otp_release), \"OTP_VERSION\"])), Vsn = binary:bin_to_list(Ver, {0, byte_size(Ver) - 1}), io:format(\"~s,~s,~s\", [Vsn, erlang:system_info(version), erlang:system_info(nif_version)]), halt().' -noshell")
                                         .and_return(mock_shell_out(0, erl_systeminfo_output, ""))
   end
 
@@ -44,17 +44,17 @@ describe Ohai::System, "plugin erlang" do
 
   it "sets languages[:erlang][:version]" do
     plugin.run
-    expect(plugin.languages[:erlang][:version]).to eql("18")
+    expect(plugin.languages[:erlang][:version]).to eql("19.1")
   end
 
   it "sets languages[:erlang][:erts_version]" do
     plugin.run
-    expect(plugin.languages[:erlang][:erts_version]).to eql("7.3")
+    expect(plugin.languages[:erlang][:erts_version]).to eql("8.1")
   end
 
   it "sets languages[:erlang][:nif_version]" do
     plugin.run
-    expect(plugin.languages[:erlang][:nif_version]).to eql("2.10")
+    expect(plugin.languages[:erlang][:nif_version]).to eql("2.11")
   end
 
   it "does not set languages[:erlang] if the erl commands fails" do

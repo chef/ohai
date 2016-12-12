@@ -201,14 +201,16 @@ module Ohai
       end
 
       def fetch_dynamic_data
-        api_version = best_api_version
-        return {} if api_version.nil?
-        response = http_client.get("/#{api_version}/dynamic/instance-identity/document/")
+        @fetch_dynamic_data ||= begin
+          api_version = best_api_version
+          return {} if api_version.nil?
+          response = http_client.get("/#{api_version}/dynamic/instance-identity/document/")
 
-        if json?(response.body) && response.code == "200"
-          FFI_Yajl::Parser.parse(response.body)
-        else
-          {}
+          if json?(response.body) && response.code == "200"
+            FFI_Yajl::Parser.parse(response.body)
+          else
+            {}
+          end
         end
       end
 

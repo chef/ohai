@@ -96,6 +96,7 @@ Ohai.plugin(:EC2) do
         ec2[k] = v
       end
       ec2[:userdata] = fetch_userdata
+      ec2[:account_id] = fetch_dynamic_data["accountId"]
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
         Ohai::Log.debug("Plugin EC2: Binary UserData Found. Storing in base64")

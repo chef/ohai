@@ -175,7 +175,7 @@ describe Ohai::System, "Windows virtualization platform" do
 
   context "when running on hyper-v" do
     it "system is hyper-v" do
-      allow_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_BIOS").and_return([{ "bioscharacteristics" => [4,7,9,11,12,14,15,16,17,19,22,23,24,25,26,27,28,29,30,34,36,37,40],
+      allow_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_BIOS").and_return([{ "bioscharacteristics" => [4, 7, 9, 11, 12, 14, 15, 16, 17, 19, 22, 23, 24, 25, 26, 27, 28, 29, 30, 34, 36, 37, 40],
                                                                                                      "biosversion" => ["VRTUAL - 4001628, BIOS Date: 04/28/16 13:00:17  Ver: 09.00.06, BIOS Date: 04/28/16 13:00:17 Ver: 09.00.06"],
                                                                                                      "buildnumber" => nil,
                                                                                                      "codeset" => nil,
@@ -202,10 +202,10 @@ describe Ohai::System, "Windows virtualization platform" do
                                                                                                      "targetoperatingsystem" => 0,
                                                                                                      "version" => "VRTUAL - 4001628",
       }])
-    plugin.run
-    expect(plugin[:virtualization][:system]).to eq("hyper-v")
-    expect(plugin[:virtualization][:role]).to eq("guest")
-    expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyper-v")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
     end
   end
 
@@ -215,13 +215,13 @@ describe Ohai::System, "Windows virtualization platform" do
                                                                                                      "manufacturer" => "Xen",
                                                                                                      "name" => "Revision: 1.221",
                                                                                                      "serialnumber" => "ec2b487f-d9ed-7d17-c7c0-1d4599d6c1da",
-                                                                                                     "version" => "Xen - 0"
+                                                                                                     "version" => "Xen - 0",
       }])
-    plugin.run
-    expect(plugin[:virtualization][:system]).to eq("xen")
-    expect(plugin[:virtualization][:role]).to eq("guest")
-    expect(plugin[:virtualization][:systems][:xen]).to eq("guest")
-    end    
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("xen")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:xen]).to eq("guest")
+    end
   end
 
   context "when running on a hardware system" do

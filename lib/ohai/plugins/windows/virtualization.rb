@@ -45,9 +45,11 @@ Ohai.plugin(:Virtualization) do
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
     when "American Megatrends Inc."
-      virtualization[:system] = "hyper-v"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:hyperv] = "guest"
+      if bios[0]["version"] =~ /VRTUAL -/
+        virtualization[:system] = "hyper-v"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:hyperv] = "guest"
+      end
     when "Xen"
       virtualization[:system] = "xen"
       virtualization[:role] = "guest"

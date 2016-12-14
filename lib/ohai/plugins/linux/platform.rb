@@ -72,6 +72,54 @@ Ohai.plugin(:Platform) do
     File.exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
   end
 
+  #
+  # Determines the platform version for Debian based systems
+  #
+  # @returns [String] version of the platform
+  #
+  def debian_platform_version
+    if platform == "cumulus"
+      if File.exist?("/etc/cumulus/etc.replace/os-release")
+        release_contents = File.read("/etc/cumulus/etc.replace/os-release")
+        release_contents.match(/VERSION_ID=(.*)/)[1] rescue nil
+      else
+        Ohai::Log.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release not found to determine platform_version")
+      end
+    else # not cumulus
+      File.read("/etc/debian_version").chomp
+    end
+  end
+
+  #
+  # Determines the platform_family based on the platform_family
+  #
+  # @returns [String] platform_family value
+  #
+  def determine_platform_family
+    case platform
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
+      "debian"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+      "rhel"
+    when /suse/
+      "suse"
+    when /fedora/, /pidora/, /arista_eos/
+      "fedora"
+    when /nexus/, /ios_xr/
+      "wrlinux"
+    when /gentoo/
+      "gentoo"
+    when /slackware/
+      "slackware"
+    when /arch/
+      "arch"
+    when /exherbo/
+      "exherbo"
+    when /alpine/
+      "alpine"
+    end
+  end
+
   collect_data(:linux) do
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
     if File.exist?("/etc/oracle-release")
@@ -94,10 +142,12 @@ Ohai.plugin(:Platform) do
       else
         if File.exist?("/usr/bin/raspi-config")
           platform "raspbian"
+        elsif Dir.exist?("/etc/cumulus")
+          platform "cumulus"
         else
           platform "debian"
         end
-        platform_version File.read("/etc/debian_version").chomp
+        platform_version debian_platform_version
       end
     elsif File.exist?("/etc/parallels-release")
       contents = File.read("/etc/parallels-release").chomp
@@ -189,25 +239,6 @@ Ohai.plugin(:Platform) do
       platform_version lsb[:release]
     end
 
-    case platform
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/
-      platform_family "debian"
-    when /fedora/, /pidora/
-      platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
-      platform_family "rhel"
-    when /suse/
-      platform_family "suse"
-    when /gentoo/
-      platform_family "gentoo"
-    when /slackware/
-      platform_family "slackware"
-    when /arch/
-      platform_family "arch"
-    when /exherbo/
-      platform_family "exherbo"
-    when /alpine/
-      platform_family "alpine"
-    end
+    platform_family determine_platform_family
   end
 end

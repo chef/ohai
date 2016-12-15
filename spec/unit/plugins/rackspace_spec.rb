@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 describe Ohai::System, "plugin rackspace" do
   let(:plugin) { get_plugin("rackspace") }
 
-  before(:each) do
+  before do
     allow(Resolv).to receive(:getname).and_return("1.2.3.4")
 
     plugin[:hostname] = "katie"
@@ -187,7 +187,7 @@ OUT
   describe "with rackspace hint file" do
     it_behaves_like "rackspace"
 
-    before(:each) do
+    before do
       allow(Resolv).to receive(:getname).and_raise(Resolv::ResolvError)
       allow(File).to receive(:exist?).with("/etc/resolv.conf").and_return(true)
       allow(File).to receive(:read).with("/etc/resolv.conf").and_return("")
@@ -219,7 +219,7 @@ OUT
   describe "without hint file" do
     it_behaves_like "!rackspace"
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
     end
   end
@@ -227,7 +227,7 @@ OUT
   describe "xenstore provider returns rackspace" do
     it_behaves_like "rackspace"
 
-    before(:each) do
+    before do
       stdout = "Rackspace\n"
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
@@ -237,7 +237,7 @@ OUT
   describe "xenstore provider does not return rackspace" do
     it_behaves_like "!rackspace"
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       stdout = "cumulonimbus\n"
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
@@ -247,7 +247,7 @@ OUT
   describe "xenstore provider does not exist" do
     it_behaves_like "!rackspace"
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin).
         to receive(:shell_out).

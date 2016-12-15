@@ -24,7 +24,7 @@ describe Ohai::System, "plugin nodejs" do
 
   let(:plugin) { get_plugin("nodejs") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     @stdout = "v0.8.11\n"
     allow(plugin).to receive(:shell_out).with("node -v").and_return(mock_shell_out(0, @stdout, ""))

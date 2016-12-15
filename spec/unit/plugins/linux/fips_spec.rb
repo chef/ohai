@@ -23,7 +23,7 @@ describe Ohai::System, "plugin fips" do
   let(:plugin) { get_plugin("linux/fips") }
   let(:fips_path) { "/proc/sys/crypto/fips_enabled" }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(::File).to receive(:read).with(fips_path).and_return(enabled)
   end

@@ -19,11 +19,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 describe Ohai::System, "plugin elixir" do
   let(:plugin) { get_plugin("elixir") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
   end
 
-  it "should shellout to elixir -v" do
+  it "shellouts to elixir -v" do
     expect(plugin).to receive(:shell_out).with("elixir -v").and_return(mock_shell_out(0, "Elixir 1.0.2", ""))
     plugin.run
   end

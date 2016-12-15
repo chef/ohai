@@ -19,14 +19,14 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris plugin platform" do
-  before(:each) do
+  before do
     @plugin = get_plugin("solaris2/platform")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)
     allow(@plugin).to receive(:shell_out).with("/sbin/uname -X")
   end
 
   describe "on SmartOS" do
-    before(:each) do
+    before do
       @uname_x = <<-UNAME_X
 System = SunOS
 Node = node.example.com
@@ -48,17 +48,17 @@ UNAME_X
       allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
-    it "should run uname and set platform and build" do
+    it "runs uname and set platform and build" do
       @plugin.run
       expect(@plugin[:platform_build]).to eq("joyent_20120130T201844Z")
     end
 
-    it "should set the platform" do
+    it "sets the platform" do
       @plugin.run
       expect(@plugin[:platform]).to eq("smartos")
     end
 
-    it "should set the platform_version" do
+    it "sets the platform_version" do
       @plugin.run
       expect(@plugin[:platform_version]).to eq("5.11")
     end
@@ -66,7 +66,7 @@ UNAME_X
   end
 
   describe "on Solaris 11" do
-    before(:each) do
+    before do
       @uname_x = <<-UNAME_X
 System = SunOS
 Node = node.example.com
@@ -88,17 +88,17 @@ UNAME_X
       allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
-    it "should run uname and set platform and build" do
+    it "runs uname and set platform and build" do
       @plugin.run
       expect(@plugin[:platform_build]).to eq("11.1")
     end
 
-    it "should set the platform" do
+    it "sets the platform" do
       @plugin.run
       expect(@plugin[:platform]).to eq("solaris2")
     end
 
-    it "should set the platform_version" do
+    it "sets the platform_version" do
       @plugin.run
       expect(@plugin[:platform_version]).to eq("5.11")
     end

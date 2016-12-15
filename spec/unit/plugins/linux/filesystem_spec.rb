@@ -20,7 +20,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux filesystem plugin" do
   let(:plugin) { get_plugin("linux/filesystem") }
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
@@ -58,7 +58,7 @@ describe Ohai::System, "Linux filesystem plugin" do
   end
 
   describe "when gathering filesystem usage data from df" do
-    before(:each) do
+    before do
       @stdout = <<-DF
 Filesystem         1024-blocks      Used Available Capacity Mounted on
 /dev/mapper/sys.vg-root.lv   4805760    378716   4182924       9% /
@@ -85,55 +85,55 @@ DFi
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
-    it "should run df -P and df -iP" do
+    it "runs df -P and df -iP" do
       expect(plugin).to receive(:shell_out).ordered.with("df -P").and_return(mock_shell_out(0, @stdout, ""))
       expect(plugin).to receive(:shell_out).ordered.with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
       plugin.run
     end
 
-    it "should set kb_size to value from df -P" do
+    it "sets kb_size to value from df -P" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_size]).to eq("97605057")
     end
 
-    it "should set kb_used to value from df -P" do
+    it "sets kb_used to value from df -P" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_used]).to eq("53563253")
     end
 
-    it "should set kb_available to value from df -P" do
+    it "sets kb_available to value from df -P" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:kb_available]).to eq("44041805")
     end
 
-    it "should set percent_used to value from df -P" do
+    it "sets percent_used to value from df -P" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:percent_used]).to eq("56%")
     end
 
-    it "should set mount to value from df -P" do
+    it "sets mount to value from df -P" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
 
-    it "should set total_inodes to value from df -iP" do
+    it "sets total_inodes to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:total_inodes]).to eq("124865")
     end
 
-    it "should set inodes_used to value from df -iP" do
+    it "sets inodes_used to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_used]).to eq("380")
     end
 
-    it "should set inodes_available to value from df -iP" do
+    it "sets inodes_available to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:inodes_available]).to eq("124485")
     end
   end
 
   describe "when gathering mounted filesystem data from mount" do
-    before(:each) do
+    before do
       @stdout = <<-MOUNT
 /dev/mapper/sys.vg-root.lv on / type ext4 (rw,noatime,errors=remount-ro)
 tmpfs on /lib/init/rw type tmpfs (rw,nosuid,mode=0755)
@@ -154,29 +154,29 @@ MOUNT
       allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run mount" do
+    it "runs mount" do
       expect(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set mount to value from mount" do
+    it "sets mount to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
 
-    it "should set fs_type to value from mount" do
+    it "sets fs_type to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type]).to eq("xfs")
     end
 
-    it "should set mount_options to an array of values from mount" do
+    it "sets mount_options to an array of values from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq(%w{ro noatime})
     end
   end
 
   describe "when gathering filesystem type data from blkid" do
-    before(:each) do
+    before do
       @stdout = <<-BLKID_TYPE
 /dev/sdb1: TYPE=\"linux_raid_member\"
 /dev/sdb2: TYPE=\"linux_raid_member\"
@@ -195,19 +195,19 @@ BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run blkid -s TYPE" do
+    it "runs blkid -s TYPE" do
       expect(plugin).to receive(:shell_out).with("blkid -s TYPE").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set fs_type to value from blkid -s TYPE" do
+    it "sets fs_type to value from blkid -s TYPE" do
       plugin.run
       expect(plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
   end
 
   describe "when gathering filesystem type data from lsblk" do
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_TYPE
 NAME="sdb1" FSTYPE="linux_raid_member"
@@ -228,25 +228,25 @@ BLKID_TYPE
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run lsblk -P -n -o NAME,FSTYPE" do
+    it "runs lsblk -P -n -o NAME,FSTYPE" do
       expect(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
+    it "sets fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
       plugin.run
       expect(plugin[:filesystem]["/dev/md1"][:fs_type]).to eq("LVM2_member")
     end
 
-    it "should ignore extra info in name and set fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
+    it "ignores extra info in name and set fs_type to value from lsblk -P -n -o NAME,FSTYPE" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/debian--7-root"][:fs_type]).to eq("ext4")
     end
   end
 
   describe "when gathering filesystem uuid data from blkid" do
-    before(:each) do
+    before do
       @stdout = <<-BLKID_UUID
 /dev/sdb1: UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\"
 /dev/sdb2: UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\"
@@ -265,19 +265,19 @@ BLKID_UUID
       allow(plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run blkid -s UUID" do
+    it "runs blkid -s UUID" do
       expect(plugin).to receive(:shell_out).with("blkid -s UUID").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set uuid to value from blkid -s UUID" do
+    it "sets uuid to value from blkid -s UUID" do
       plugin.run
       expect(plugin[:filesystem]["/dev/sda2"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
     end
   end
 
   describe "when gathering filesystem uuid data from lsblk" do
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_UUID
 NAME="sdb1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5"
@@ -298,20 +298,20 @@ BLKID_UUID
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run lsblk -P -n -o NAME,UUID" do
+    it "runs lsblk -P -n -o NAME,UUID" do
       expect(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,UUID").
         and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set uuid to value from lsblk -P -n -o NAME,UUID" do
+    it "sets uuid to value from lsblk -P -n -o NAME,UUID" do
       plugin.run
       expect(plugin[:filesystem]["/dev/sda2"][:uuid]).to eq(
         "e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa"
       )
     end
 
-    it "should ignore extra info in name and set uuid to value from lsblk -P -n -o NAME,UUID" do
+    it "ignores extra info in name and set uuid to value from lsblk -P -n -o NAME,UUID" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/debian--7-root"][:uuid]).to eq(
         "09187faa-3512-4505-81af-7e86d2ccb99a"
@@ -320,7 +320,7 @@ BLKID_UUID
   end
 
   describe "when gathering filesystem label data from blkid" do
-    before(:each) do
+    before do
       @stdout = <<-BLKID_LABEL
 /dev/sda1: LABEL=\"fuego:0\"
 /dev/sda2: LABEL=\"fuego:1\"
@@ -337,19 +337,19 @@ BLKID_LABEL
       allow(plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run blkid -s LABEL" do
+    it "runs blkid -s LABEL" do
       expect(plugin).to receive(:shell_out).with("blkid -s LABEL").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set label to value from blkid -s LABEL" do
+    it "sets label to value from blkid -s LABEL" do
       plugin.run
       expect(plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end
   end
 
   describe "when gathering filesystem label data from lsblk" do
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
       @stdout = <<-BLKID_LABEL
 NAME="sda1" LABEL="fuego:0"
@@ -368,25 +368,25 @@ BLKID_LABEL
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run lsblk -P -n -o NAME,LABEL" do
+    it "runs lsblk -P -n -o NAME,LABEL" do
       expect(plugin).to receive(:shell_out).with("lsblk -P -n -o NAME,LABEL").
         and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set label to value from lsblk -P -n -o NAME,LABEL" do
+    it "sets label to value from lsblk -P -n -o NAME,LABEL" do
       plugin.run
       expect(plugin[:filesystem]["/dev/md0"][:label]).to eq("/boot")
     end
 
-    it "should ignore extra info in name and set label to value from lsblk -P -n -o NAME,LABEL" do
+    it "ignores extra info in name and set label to value from lsblk -P -n -o NAME,LABEL" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/debian--7-root"][:label]).to eq("root")
     end
   end
 
   describe "when gathering data from /proc/mounts" do
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/proc/mounts").and_return(true)
       @double_file = double("/proc/mounts")
       @mounts = <<-MOUNTS
@@ -417,17 +417,17 @@ MOUNTS
       allow(File).to receive(:open).with("/proc/mounts").and_return(@double_file)
     end
 
-    it "should set mount to value from /proc/mounts" do
+    it "sets mount to value from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount]).to eq("/special")
     end
 
-    it "should set fs_type to value from /proc/mounts" do
+    it "sets fs_type to value from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:fs_type]).to eq("xfs")
     end
 
-    it "should set mount_options to an array of values from /proc/mounts" do
+    it "sets mount_options to an array of values from /proc/mounts" do
       plugin.run
       expect(plugin[:filesystem]["/dev/mapper/sys.vg-special.lv"][:mount_options]).to eq(%w{ro noatime attr2 noquota})
     end

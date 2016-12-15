@@ -104,7 +104,7 @@ describe Ohai::System, "plugin c" do
 
   let(:plugin) { get_plugin("c") }
 
-  before(:each) do
+  before do
 
     plugin[:languages] = Mash.new
     #gcc

@@ -21,7 +21,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 describe Ohai::System, "plugin groovy" do
   let(:plugin) { get_plugin("groovy") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
   end
 

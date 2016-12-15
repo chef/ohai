@@ -101,13 +101,13 @@ Chassis Information
 EOS
 
 describe Ohai::System, "plugin dmi" do
-  before(:each) do
+  before do
     @plugin = get_plugin("dmi")
     @stdout = DMI_OUT
     allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should run dmidecode" do
+  it "runs dmidecode" do
     expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
@@ -141,7 +141,7 @@ describe Ohai::System, "plugin dmi" do
     end
   end
 
-  it "should correctly ignore unwanted data" do
+  it "correctlies ignore unwanted data" do
     @plugin.run
     expect(@plugin[:dmi][:base_board]).not_to have_key(:error_correction_type)
   end

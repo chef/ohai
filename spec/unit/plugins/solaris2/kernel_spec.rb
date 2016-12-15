@@ -133,7 +133,7 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   146  121719e    28c   -   1  RT_DPTBL (realtime dispatch table)
   TOOMUCH
 
-  before(:each) do
+  before do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)
     allow(@plugin).to receive(:init_kernel).and_return({})
@@ -143,21 +143,21 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
   end
 
-  it "should give the Solaris update version information" do
+  it "gives the Solaris update version information" do
     @release = StringIO.new("                      Solaris 10 10/08 s10s_u6wos_07b SPARC\n Use is subject to license terms.\n Assembled 27 October 2008")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     @plugin.run
     expect(@plugin[:kernel][:update]).to eq("10 10/08 s10s_u6wos_07")
   end
 
-  it "should give the Oracle Solaris update version information" do
+  it "gives the Oracle Solaris update version information" do
     @release = StringIO.new("                   Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC\n Assembled 17 January 2013")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     @plugin.run
     expect(@plugin[:kernel][:update]).to eq("10 1/13 s10s_u11wos_24")
   end
 
-  it "should give the Solaris 11 update version information" do
+  it "gives the Solaris 11 update version information" do
     @release = StringIO.new("                            Oracle Solaris 11.3 SPARC\n Assembled 25 July 2016")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     @plugin.run

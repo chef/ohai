@@ -21,7 +21,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 describe Ohai::System, "Linux virtualization platform" do
   let(:plugin) { get_plugin("linux/virtualization") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     # default to all requested Files not existing
@@ -174,7 +174,7 @@ describe Ohai::System, "Linux virtualization platform" do
   end
 
   describe "when we are parsing dmidecode" do
-    before(:each) do
+    before do
       expect(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(true)
     end
 
@@ -345,7 +345,7 @@ OUTPUT
       expect(plugin[:virtualization][:systems][:bhyve]).to eq("guest")
     end
 
-    it "should run dmidecode and not set virtualization if nothing is detected" do
+    it "runs dmidecode and not set virtualization if nothing is detected" do
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
@@ -541,7 +541,7 @@ CGROUP
     end
 
     context "/proc/self/cgroup only has / mounts" do
-      before(:each) do
+      before do
         self_cgroup = <<-CGROUP
 8:blkio:/
 7:net_cls:/
@@ -632,7 +632,7 @@ CGROUP
 
     # Relevant at least starting docker 1.6.2, kernel 4.0.5 & systemd 224-1.
     # Doi not exactly know which software/version really matters here.
-    it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do
+    it "sets docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do
       self_cgroup = <<-CGROUP
 8:devices:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 7:cpuset:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
@@ -669,7 +669,7 @@ CGROUP
     end
 
     context "/proc/self/cgroup only has / mounts" do
-      before(:each) do
+      before do
         self_cgroup = <<-CGROUP
 8:blkio:/
 7:net_cls:/

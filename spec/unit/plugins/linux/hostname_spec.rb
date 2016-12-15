@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux hostname plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
@@ -34,15 +34,15 @@ describe Ohai::System, "Linux hostname plugin" do
   it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
   describe "when domain name is unset" do
-    before(:each) do
+    before do
       expect(@plugin).to receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
     end
 
-    it "should not raise an error" do
+    it "does not raise an error" do
       expect { @plugin.run }.not_to raise_error
     end
 
-    it "should not set fqdn" do
+    it "does not set fqdn" do
       @plugin.run
       expect(@plugin.fqdn).to eq(nil)
     end

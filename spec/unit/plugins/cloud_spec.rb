@@ -18,7 +18,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin cloud" do
-  before(:each) do
+  before do
     @plugin = get_plugin("cloud")
   end
 
@@ -188,7 +188,7 @@ describe Ohai::System, "plugin cloud" do
       expect(@plugin[:cloud][:public_ssh_port]).to eq(@plugin[:azure]["public_ssh_port"])
     end
 
-    it "should not populate cloud public_ssh_port when winrm is used" do
+    it "does not populate cloud public_ssh_port when winrm is used" do
       @plugin[:azure]["public_winrm_port"] = "5985"
       @plugin.run
       expect(@plugin[:cloud][:public_ssh_port]).to be_nil
@@ -217,7 +217,7 @@ describe Ohai::System, "plugin cloud" do
                                                  { "ip_address" => "fdf8:f53b:82e4::53", "type" => "private" }]
     end
 
-    before(:each) do
+    before do
       @plugin.run
     end
 

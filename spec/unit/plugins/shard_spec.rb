@@ -27,7 +27,7 @@ describe Ohai::System, "shard plugin" do
   let(:machine_id) { "0a1f869f457a4c8080ab19faf80af9cc" }
   let(:machinename) { "somehost004" }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     plugin["machinename"] = machinename
     plugin["machine_id"] = machine_id
@@ -38,7 +38,7 @@ describe Ohai::System, "shard plugin" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it "should provide a shard with a default-safe set of sources" do
+  it "provides a shard with a default-safe set of sources" do
     plugin.run
     result = Digest::MD5.hexdigest(
       "#{machinename}#{serial}#{uuid}"
@@ -46,7 +46,7 @@ describe Ohai::System, "shard plugin" do
     expect(plugin[:shard_seed]).to eq(result)
   end
 
-  it "should provide a shard with a configured source" do
+  it "provides a shard with a configured source" do
     Ohai.config[:plugin][:shard_seed][:sources] = [:fqdn]
     plugin.run
     result = Digest::MD5.hexdigest(fqdn)[0...7].to_i(16)

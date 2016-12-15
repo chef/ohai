@@ -112,14 +112,14 @@ ID    SIZE TYPE
 EOS
 
 describe Ohai::System, "Solaris2.X DMI plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("solaris2/dmi")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
     @stdout = SOLARIS_DMI_OUT
     allow(@plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should run smbios" do
+  it "runs smbios" do
     expect(@plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
@@ -146,7 +146,7 @@ describe Ohai::System, "Solaris2.X DMI plugin" do
     end
   end
 
-  it "should ignore unwanted types" do
+  it "ignores unwanted types" do
     @plugin.run
     expect(@plugin[:dmi]).not_to have_key(:on_board_devices)
   end

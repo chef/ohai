@@ -21,11 +21,11 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 describe Ohai::System, "Linux hostnamectl plugin" do
   let(:plugin) { get_plugin("linux/hostnamectl") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it "should populate hostnamectl if hostnamectl is available" do
+  it "populates hostnamectl if hostnamectl is available" do
     hostnamectl_out = <<-HOSTNAMECTL_OUT
    Static hostname: foo
          Icon name: computer-laptop
@@ -52,7 +52,7 @@ HOSTNAMECTL_OUT
     })
   end
 
-  it "should not populate hostnamectl if hostnamectl is not available" do
+  it "does not populate hostnamectl if hostnamectl is not available" do
     allow(plugin).to receive(:which).with("hostnamectl").and_return(false)
     expect(plugin[:hostnamectl]).to eq(nil)
   end

@@ -17,7 +17,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X memory plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("solaris2/memory")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
     allow(@plugin).to receive(:shell_out).with("prtconf | grep Memory").and_return(mock_shell_out(0, "Memory size: 8194 Megabytes\n", ""))
@@ -25,17 +25,17 @@ describe Ohai::System, "Solaris2.X memory plugin" do
     allow(@plugin).to receive(:shell_out).with("swap -s").and_return(mock_shell_out(0, @swap_s, ""))
   end
 
-  it "should get the total memory" do
+  it "gets the total memory" do
     @plugin.run
     expect(@plugin[:memory][:total]).to eql("#{8194 * 1024}kB")
   end
 
-  it "should get total swap" do
+  it "gets total swap" do
     @plugin.run
     expect(@plugin[:memory][:swap][:total]).to eql("#{(470096232 + 47057688)}kB" )
   end
 
-  it "should get free swap" do
+  it "gets free swap" do
     @plugin.run
     expect(@plugin[:memory][:swap][:free]).to eql("47057688kB")
   end

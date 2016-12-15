@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 describe Ohai::System, "plugin erlang" do
   let(:plugin) { get_plugin("erlang") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     erl_v_output = "Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 7.3\n"
     erl_systeminfo_output = "19.1,8.1,2.11"

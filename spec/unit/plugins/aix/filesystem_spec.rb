@@ -18,7 +18,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX filesystem plugin" do
-  before(:each) do
+  before do
     @df_pk_lpar = <<-DF_PK
 Filesystem    1024-blocks      Used Available Capacity Mounted on
 /dev/hd4          2097152    219796   1877356      11% /

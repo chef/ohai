@@ -26,12 +26,12 @@ RSpec.describe "Ohai::Application" do
   let(:argv) { [] }
   let(:stderr) { StringIO.new }
 
-  before(:each) do
+  before do
     @original_argv = ARGV.dup
     ARGV.replace(argv)
   end
 
-  after(:each) do
+  after do
     ARGV.replace(@original_argv)
   end
 
@@ -41,13 +41,13 @@ RSpec.describe "Ohai::Application" do
     let(:config_dir) { Dir.mktmpdir(".chef") }
     let(:config_location) { File.join(config_dir, "config.rb") }
 
-    before(:each) do
+    before do
       File.open(config_location, "w+") do |f|
         f.write(config_content)
       end
     end
 
-    after(:each) do
+    after do
       FileUtils.rm_rf(config_dir)
     end
 
@@ -75,7 +75,7 @@ RSpec.describe "Ohai::Application" do
       # https://github.com/chef/chef/blob/master/chef-config/lib/chef-config/workstation_config_loader.rb#L102
       let(:env) { { "KNIFE_HOME" => config_dir } }
 
-      before(:each) do
+      before do
         allow_any_instance_of(ChefConfig::WorkstationConfigLoader).
           to receive(:env).and_return(env)
       end

@@ -366,7 +366,7 @@ TX:		8192
 EOM
   end
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, linux_ip_addr, ""))
@@ -560,7 +560,7 @@ EOM
 
   %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         allow(plugin).to receive(:find_ethtool_binary).and_return( "/sbin/ethtool" )
         plugin.run
@@ -679,7 +679,7 @@ EOM
     end
 
     describe "gathering interface counters via #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         plugin.run
       end
@@ -717,7 +717,7 @@ EOM
     end
 
     describe "setting the node's default IP address attribute with #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
         plugin.run
       end
@@ -749,7 +749,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -779,7 +779,7 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -795,7 +795,7 @@ EOM
   end
 
   describe "for newer network features using iproute2 only" do
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
       allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
       allow(File).to receive(:exist?).with("/sbin/ethtool").and_return(true) # ethtool is available
@@ -849,7 +849,7 @@ EOM
     end
 
     describe "when IPv6 is disabled" do
-      before :each do
+      before do
         allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(false)
         plugin.run
       end
@@ -880,7 +880,7 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -918,7 +918,7 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -959,7 +959,7 @@ default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1002,7 +1002,7 @@ default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:333
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1103,7 +1103,7 @@ default dev venet0 scope link
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1124,7 +1124,7 @@ default dev eth3 scope link
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1149,7 +1149,7 @@ default dev fwdintf scope link src 2.2.2.2
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1174,7 +1174,7 @@ fe80::/64 dev eth0  proto kernel  metric 256
 default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
 EOM
         end
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1208,7 +1208,7 @@ fe80::/64 dev eth0.11  proto kernel  metric 256
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1247,7 +1247,7 @@ EOM
         let(:linux_ip_route_inet6) { "" }
         let(:linux_ip_inet6_neighbor_show) { "" }
 
-        before(:each) do
+        before do
           allow(plugin).to receive(:is_openvz?).and_return true
           allow(plugin).to receive(:is_openvz_host?).and_return false
           plugin.run
@@ -1292,7 +1292,7 @@ default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
 EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 

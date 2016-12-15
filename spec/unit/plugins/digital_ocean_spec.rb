@@ -56,7 +56,7 @@ describe Ohai::System, "plugin digital_ocean" do
   end
 
   shared_examples_for "!digital_ocean" do
-    before(:each) do
+    before do
       plugin.run
     end
 
@@ -81,7 +81,7 @@ describe Ohai::System, "plugin digital_ocean" do
   end
 
   shared_examples_for "digital_ocean" do
-    before(:each) do
+    before do
       plugin.run
     end
 

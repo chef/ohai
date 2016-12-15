@@ -23,7 +23,7 @@ require "base64"
 
 describe Ohai::System, "plugin ec2" do
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
   end
@@ -41,7 +41,7 @@ describe Ohai::System, "plugin ec2" do
   shared_examples_for "ec2" do
     let(:plugin) { get_plugin("ec2") }
 
-    before(:each) do
+    before do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)
       allow(IO).to receive(:select).and_return([[], [1], []])
@@ -294,7 +294,7 @@ describe Ohai::System, "plugin ec2" do
   describe "with ec2 dmi data" do
     it_behaves_like "ec2"
 
-    before(:each) do
+    before do
       plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
     end
   end
@@ -302,7 +302,7 @@ describe Ohai::System, "plugin ec2" do
   describe "with amazon kernel data" do
     it_behaves_like "ec2"
 
-    before(:each) do
+    before do
       plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
     end
   end
@@ -310,7 +310,7 @@ describe Ohai::System, "plugin ec2" do
   describe "with EC2 Xen UUID" do
     it_behaves_like "ec2"
 
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
       allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8")
     end
@@ -319,7 +319,7 @@ describe Ohai::System, "plugin ec2" do
   describe "with non-EC2 Xen UUID" do
     it_behaves_like "!ec2"
 
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
       allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8")
     end
@@ -328,14 +328,14 @@ describe Ohai::System, "plugin ec2" do
   describe "with ec2 hint file" do
     it_behaves_like "ec2"
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("ec2").and_return({})
     end
   end
   describe "without any hints that it is an ec2 system" do
     it_behaves_like "!ec2"
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("ec2").and_return(false)
       plugin[:dmi] = nil
     end

@@ -30,13 +30,13 @@ shared_examples "a v7 loading failure" do
     end
   end
 
-  before(:each) do
+  before do
     fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
     fail_file.write(failstr)
     fail_file.close
   end
 
-  after(:each) do
+  after do
     File.delete("#{tmp}/plugins/fail.rb")
   end
 
@@ -48,23 +48,23 @@ shared_examples "a v7 loading failure" do
     end
   end
 
-  before(:each) do
+  before do
     @ohai = Ohai::System.new
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should not have attribute keys" do
+  it "does not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     #@ohai.attributes.should_not have_key("fail")
     expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
-  it "should not have source key" do
+  it "does not have source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     expect(@ohai.v6_dependency_solver).not_to have_key("#{tmp}/plugins/fail.rb")
   end
 
-  it "should write to Ohai::Log" do
+  it "writes to Ohai::Log" do
     expect(Ohai::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
@@ -79,13 +79,13 @@ shared_examples "a v7 loading success" do
     end
   end
 
-  before(:each) do
+  before do
     fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
     fail_file.write(failstr)
     fail_file.close
   end
 
-  after(:each) do
+  after do
     File.delete("#{tmp}/plugins/fail.rb")
   end
 
@@ -97,22 +97,22 @@ shared_examples "a v7 loading success" do
     end
   end
 
-  before(:each) do
+  before do
     @ohai = Ohai::System.new
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should have attribute keys" do
+  it "has attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     expect(@ohai.provides_map).to have_key("fail")
   end
 
-  it "should have source key" do
+  it "has source key" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     expect(@ohai.v6_dependency_solver).to have_key("#{tmp}/plugins/fail.rb")
   end
 
-  it "should not write to Ohai::Log" do
+  it "does not write to Ohai::Log" do
     expect(Ohai::Log).not_to receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
@@ -127,13 +127,13 @@ shared_examples "a v7 run failure" do
     end
   end
 
-  before(:each) do
+  before do
     fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
     fail_file.write(failstr)
     fail_file.close
   end
 
-  after(:each) do
+  after do
     File.delete("#{tmp}/plugins/fail.rb")
   end
 
@@ -145,17 +145,17 @@ shared_examples "a v7 run failure" do
     end
   end
 
-  before(:each) do
+  before do
     @ohai = Ohai::System.new
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should not have new attribute keys" do
+  it "does not have new attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
     expect(@ohai.provides_map).not_to have_key("other")
   end
 
-  it "should write to Ohai::Log" do
+  it "writes to Ohai::Log" do
     expect(Ohai::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end

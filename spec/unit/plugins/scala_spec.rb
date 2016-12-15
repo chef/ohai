@@ -38,7 +38,7 @@ describe Ohai::System, "plugin scala" do
   end
 
   context "if scala is installed" do
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -50,7 +50,7 @@ describe Ohai::System, "plugin scala" do
 
   context "if sbt is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -62,7 +62,7 @@ describe Ohai::System, "plugin scala" do
 
   context "if scala/sbt are not installed" do
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .and_raise( Ohai::Exceptions::Exec )
       plugin.run
@@ -74,7 +74,7 @@ describe Ohai::System, "plugin scala" do
   end
 
   context "if sbt is not installed" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .with("scala -version")
         .and_return(mock_shell_out(0, "", scala_out))

@@ -21,7 +21,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 describe Ohai::System, "plugin mono" do
   let(:plugin) { get_plugin("mono") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     @stdout = <<-OUT
 Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)

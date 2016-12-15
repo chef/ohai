@@ -20,14 +20,14 @@ require_relative "../../../spec_helper"
 describe Ohai::System, "Solaris2.X filesystem plugin" do
   let(:plugin) { get_plugin("solaris2/filesystem") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return("solaris2")
   end
 
   describe "filesystem properties" do
     let(:plugin_config) { {} }
 
-    before(:each) do
+    before do
       @original_plugin_config = Ohai.config[:plugin]
       Ohai.config[:plugin] = plugin_config
       allow(plugin).to receive(:shell_out).with("df -Pka").and_return(mock_shell_out(0, "", ""))
@@ -35,7 +35,7 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
       allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     end
 
-    after(:each) do
+    after do
       Ohai.config[:plugin] = @original_plugin_config
     end
 

@@ -27,12 +27,12 @@ rescue LoadError => e
 end
 
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
-  before(:each) do
+  before do
     @plugin = get_plugin("darwin/system_profiler")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
   end
 
-  it "should return the right serial number" do
+  it "returns the right serial number" do
     mini_cmd = "system_profiler -xml -detailLevel mini SPParallelATAData SPAudioData SPBluetoothData"
     mini_cmd += " SPCardReaderData SPDiagnosticsData SPDiscBurningData SPEthernetData SPFibreChannelData"
     mini_cmd += " SPFireWireData SPDisplaysData SPHardwareRAIDData SPMemoryData SPModemData SPNetworkData"

@@ -16,7 +16,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris 2.x zpool plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("solaris2/zpools")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)
 
@@ -68,49 +68,49 @@ EOZO
   end
 
   describe "On Solaris2 Common" do
-    it "Should have entries for both zpools" do
+    it "has entries for both zpools" do
       @plugin.run
       expect(@plugin[:zpools][:rpool]).to be
       expect(@plugin[:zpools][:tank]).to be
     end
 
-    it "Should have the correct pool size" do
+    it "has the correct pool size" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:pool_size]).to match("109G")
       expect(@plugin[:zpools][:tank][:pool_size]).to match("130T")
     end
 
-    it "Should have the correct pool allocated size" do
+    it "has the correct pool allocated size" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:pool_allocated]).to match("66.2G")
       expect(@plugin[:zpools][:tank][:pool_allocated]).to match("4.91M")
     end
 
-    it "Should have the correct pool free size" do
+    it "has the correct pool free size" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:pool_free]).to match("42.8G")
       expect(@plugin[:zpools][:tank][:pool_free]).to match("130T")
     end
 
-    it "Should have the correct capacity_used" do
+    it "has the correct capacity_used" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:capacity_used]).to match("60%")
       expect(@plugin[:zpools][:tank][:capacity_used]).to match("0%")
     end
 
-    it "Should have the correct dedup_factor" do
+    it "has the correct dedup_factor" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:dedup_factor]).to match("1.00x")
       expect(@plugin[:zpools][:tank][:dedup_factor]).to match("1.00x")
     end
 
-    it "Should have the correct health" do
+    it "has the correct health" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:health]).to match("ONLINE")
       expect(@plugin[:zpools][:tank][:health]).to match("ONLINE")
     end
 
-    it "Should have the correct number of devices" do
+    it "has the correct number of devices" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:devices].keys.size).to match(2)
       expect(@plugin[:zpools][:tank][:devices].keys.size).to match(12)
@@ -118,7 +118,7 @@ EOZO
   end
 
   describe "On OmniOS_151006" do
-    before(:each) do
+    before do
       @zpool_out = <<-EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  -
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  -
@@ -135,7 +135,7 @@ EOZO
   end
 
   describe "On Solaris_11.1" do
-    before(:each) do
+    before do
       @zpool_out = <<-EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
@@ -143,7 +143,7 @@ EOZO
       allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
     end
 
-    it "Should have a version number" do
+    it "has a version number" do
       @plugin.run
       expect(@plugin[:zpools][:rpool][:zpool_version]).to match("34")
       expect(@plugin[:zpools][:tank][:zpool_version]).to match("34")

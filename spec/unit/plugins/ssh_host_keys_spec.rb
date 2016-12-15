@@ -20,7 +20,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 
 describe Ohai::System, "ssh_host_key plugin" do
 
-  before(:each) do
+  before do
     @plugin = get_plugin("ssh_host_key")
     @plugin[:keys] = Mash.new
 

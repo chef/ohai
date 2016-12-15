@@ -25,7 +25,7 @@ RSpec.describe "Ohai::Loader" do
       let(:plugin_directory) { Dir.mktmpdir("plugins") }
       let(:plugin_path) { plugin_directory.tr("/", "\\") }
 
-      before(:each) do
+      before do
         Ohai.config[:plugin_path] = plugin_path
 
         plugin_content = <<-EOF
@@ -38,7 +38,7 @@ EOF
         end
       end
 
-      after(:each) do
+      after do
         FileUtils.rm_rf(plugin_directory)
       end
 

@@ -329,7 +329,7 @@ describe Ohai::System, "Network Plugin" do
   }
 
   describe "on linux" do
-    before(:each) do
+    before do
       @plugin = get_plugin("network")
       @plugin["network"] = basic_data["linux"]["network"]
     end
@@ -490,7 +490,7 @@ describe Ohai::System, "Network Plugin" do
             expect(@plugin["ip6address"]).to be_nil
           end
 
-          it "should warn about it" do
+          it "warns about it" do
             expect(Ohai::Log).to receive(:warn).with(/^unable to detect ipaddress/).once
             expect(Ohai::Log).to receive(:debug).with(/^unable to detect macaddress/).twice # for each family
             expect(Ohai::Log).to receive(:debug).with(/^unable to detect ip6address/).once
@@ -852,7 +852,7 @@ describe Ohai::System, "Network Plugin" do
     # specs using network plugin data for each mocked OS (freebsd,linux,windows)
     basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
-        before(:each) do
+        before do
           @plugin["network"] = basic_data[os]["network"]
         end
 

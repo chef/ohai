@@ -4,11 +4,11 @@ module IntegrationSupport
   def when_plugins_directory(description, &block)
     context "When the plugins directory #{description}" do
 
-      before(:each) do
+      before do
         @plugins_directory = Dir.mktmpdir("ohai-plugins")
       end
 
-      after(:each) do
+      after do
         if @plugins_directory
           begin
             FileUtils.remove_entry_secure(@plugins_directory)
@@ -32,7 +32,7 @@ module IntegrationSupport
       end
 
       def self.with_plugin(plugin_path, contents) # rubocop:disable Lint/NestedMethodDefinition
-        before :each do
+        before do
           with_plugin(plugin_path, contents)
         end
       end

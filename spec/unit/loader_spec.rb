@@ -22,14 +22,14 @@ require File.expand_path(File.dirname(__FILE__) + "/../spec_helper.rb")
 describe Ohai::Loader do
   extend IntegrationSupport
 
-  let(:loader) { Ohai::Loader.new(ohai) }
+  let(:loader) { described_class.new(ohai) }
   let(:ohai) { double("Ohai::System", :data => Mash.new, :provides_map => provides_map) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
     it "returns an Ohai::Loader object" do
-      loader = Ohai::Loader.new(ohai)
-      expect(loader).to be_a_kind_of(Ohai::Loader)
+      loader = described_class.new(ohai)
+      expect(loader).to be_a_kind_of(described_class)
     end
   end
 
@@ -73,7 +73,7 @@ EOF
       describe "when loading a v6 plugin" do
         let(:plugin) { loader.load_plugin(path_to("lake.rb"), path_to(".")) }
 
-        before(:each) do
+        before do
           expect(Ohai::Log).to receive(:warn).with(/\[DEPRECATION\]/)
         end
 

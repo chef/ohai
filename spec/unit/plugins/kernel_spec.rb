@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 
 describe Ohai::System, "plugin kernel" do
-  before(:each) do
+  before do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:default) # for debugging
     allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "Darwin\n", ""))
@@ -78,7 +78,7 @@ describe Ohai::System, "plugin kernel" do
 
       @plugin.run
     end
-    it "should set the correct system information" do
+    it "sets the correct system information" do
       expect(@ohai_system.data[:kernel][:name]).to eq("Microsoft Windows 7 Ultimate")
       expect(@ohai_system.data[:kernel][:release]).to eq("6.1.7601")
       expect(@ohai_system.data[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")

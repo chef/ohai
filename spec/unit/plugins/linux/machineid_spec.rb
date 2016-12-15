@@ -21,11 +21,11 @@ require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 describe Ohai::System, "Machine id plugin" do
   let(:plugin) { get_plugin("linux/machineid") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it "should read /etc/machine-id if available" do
+  it "reads /etc/machine-id if available" do
     machine_id = "6f702523e2fc7499eb1dc68e5314dacf"
 
     allow(File).to receive(:exists?).with("/etc/machine-id").and_return(true)
@@ -34,7 +34,7 @@ describe Ohai::System, "Machine id plugin" do
     expect(plugin[:machine_id]).to eq(machine_id)
   end
 
-  it "should read /var/lib/dbus/machine-id if available" do
+  it "reads /var/lib/dbus/machine-id if available" do
     machine_id = "6f702523e2fc7499eb1dc68e5314dacf"
 
     allow(File).to receive(:exists?).with("/etc/machine-id").and_return(false)

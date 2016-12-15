@@ -30,7 +30,7 @@ describe Ohai::System, "plugin ruby" do
     @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
   end
 
-  before(:each) do
+  before do
     @ruby_ohai_data = @ruby_ohai_data_pristine.dup
   end
 

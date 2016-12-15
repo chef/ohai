@@ -23,7 +23,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_he
 describe Ohai::System, "plugin php" do
   let(:plugin) { get_plugin("php") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
     @stdout = <<-OUT
 PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)

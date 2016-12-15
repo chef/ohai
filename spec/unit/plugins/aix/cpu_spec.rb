@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX cpu plugin" do
-  before(:each) do
+  before do
     @lsdev_cc_processor = <<-LSDEV_CC_PROCESSOR
 proc0 Available 00-00 Processor
 proc4 Defined   00-04 Processor

@@ -155,7 +155,7 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 
   context "when getting attributes" do
-    before(:each) do
+    before do
       plugin.set_attribute(:tea, "is soothing")
     end
 
@@ -170,7 +170,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a top-level attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:tea, "is soothing")
       end
 
@@ -196,7 +196,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a nested attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:the_monarch, { arch_rival: "dr_venture" })
       end
 
@@ -282,12 +282,12 @@ shared_examples "Ohai::DSL::Plugin" do
     describe "a top-level attribute" do
       describe "as a string" do
         it "returns false when the attribute does not exist" do
-          expect(plugin.attribute?("alice in chains")).to eql(false)
+          expect(plugin.attribute?("alice in chains")).to be(false)
         end
 
         it "returns true if an attribute exists with the given name" do
           plugin.metallica("death magnetic")
-          expect(plugin.attribute?("metallica")).to eql(true)
+          expect(plugin.attribute?("metallica")).to be(true)
         end
       end
 
@@ -304,7 +304,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a nested attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:the_monarch, { arch_rival: "dr_venture" })
       end
 
@@ -384,7 +384,7 @@ end
 describe Ohai::DSL::Plugin::VersionVII do
   it "does not modify the plugin name when the plugin is named correctly" do
     plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({})
-    expect(plugin.name).to eql(:FunkyVALIDpluginName)
+    expect(plugin.name).to be(:FunkyVALIDpluginName)
   end
 
   describe "when the plugin is named incorrectly" do
@@ -410,7 +410,7 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#version" do
     it "saves the plugin version as :version7" do
       plugin = Ohai.plugin(:Test) {}
-      expect(plugin.version).to eql(:version7)
+      expect(plugin.version).to be(:version7)
     end
   end
 
@@ -538,7 +538,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#provides (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
+      plugin = described_class.new(Mash.new)
       expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
@@ -546,7 +546,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#require_plugin (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
+      plugin = described_class.new(Mash.new)
       expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
@@ -575,7 +575,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
       it "does not auto-vivify an un-configured plugin" do
         plugin.configuration(:foo)
-        expect(Ohai.config[:plugin]).to_not have_key(:test)
+        expect(Ohai.config[:plugin]).not_to have_key(:test)
       end
 
       it "returns nil when the option is not configured" do
@@ -627,7 +627,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai.data) }
+    let(:plugin) { described_class.new(ohai.data) }
     let(:version) { :version7 }
   end
 end
@@ -636,7 +636,7 @@ describe Ohai::DSL::Plugin::VersionVI do
   describe "#version" do
     it "saves the plugin version as :version6" do
       plugin = Class.new(Ohai::DSL::Plugin::VersionVI) {}
-      expect(plugin.version).to eql(:version6)
+      expect(plugin.version).to be(:version6)
     end
   end
 
@@ -646,12 +646,12 @@ describe Ohai::DSL::Plugin::VersionVI do
     it "logs a debug message when provides is used" do
       allow(Ohai::Log).to receive(:debug)
       expect(Ohai::Log).to receive(:debug).with(/Skipping provides/)
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
+      plugin = described_class.new(ohai, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
     end
 
     it "does not update the provides map for version 6 plugins." do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
+      plugin = described_class.new(ohai, "/some/plugin/path.rb", "/some/plugin")
       plugin.provides("attribute")
       expect(ohai.provides_map.map).to be_empty
     end
@@ -660,7 +660,7 @@ describe Ohai::DSL::Plugin::VersionVI do
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin") }
+    let(:plugin) { described_class.new(ohai, "/some/plugin/path.rb", "/some/plugin") }
     let(:version) { :version6 }
   end
 end

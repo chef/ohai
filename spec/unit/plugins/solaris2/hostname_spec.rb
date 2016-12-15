@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X hostname plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:solaris2)
     allow(@plugin).to receive(:resolve_fqdn).and_return("kitteh.inurfridge.eatinurfoodz")
@@ -29,7 +29,7 @@ describe Ohai::System, "Solaris2.X hostname plugin" do
 
   it_should_check_from("solaris2::hostname", "hostname", "hostname", "kitteh")
 
-  it "should get the fqdn value from #resolve_fqdn" do
+  it "gets the fqdn value from #resolve_fqdn" do
     @plugin.run
     expect(@plugin["fqdn"]).to eq("kitteh.inurfridge.eatinurfoodz")
   end

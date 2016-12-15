@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX memory plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("aix/memory")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     allow(@plugin).to receive(:shell_out).with("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").and_return(mock_shell_out(0, " 513280.00 340034.17 173245.83   62535.17 230400.05 276950.14  70176.00\n", nil))
@@ -27,22 +27,22 @@ describe Ohai::System, "AIX memory plugin" do
     allow(@plugin).to receive(:shell_out).with("swap -s").and_return(mock_shell_out(0, @swap_s, nil))
   end
 
-  it "should get total memory" do
+  it "gets total memory" do
     @plugin.run
     expect(@plugin["memory"]["total"]).to eql("#{513280 * 1024}kB")
   end
 
-  it "should get free memory" do
+  it "gets free memory" do
     @plugin.run
     expect(@plugin["memory"]["free"]).to eql("#{173245.83.to_i * 1024}kB")
   end
 
-  it "should get total swap" do
+  it "gets total swap" do
     @plugin.run
     expect(@plugin["memory"]["swap"]["total"]).to eql( "#{23887872 * 4}kB")
   end
 
-  it "should get free swap" do
+  it "gets free swap" do
     @plugin.run
     expect(@plugin["memory"]["swap"]["free"]).to eql( "#{23598960 * 4}kB")
   end

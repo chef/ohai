@@ -22,7 +22,7 @@ describe Ohai::System, "Windows plugin uptime" do
 
   let(:wmi) { double("wmi", { :first_of => "" }) }
 
-  before(:each) do
+  before do
     allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
   end
 
@@ -49,8 +49,8 @@ describe Ohai::System, "Windows plugin uptime" do
 
     it "uses Win32_PerfFormattedData_PerfOS_System WMI class to fetch the system's uptime" do
       expect(wmi).to receive(:first_of).with("Win32_PerfFormattedData_PerfOS_System")
-      expect(Time).to_not receive(:new)
-      expect(Time).to_not receive(:parse)
+      expect(Time).not_to receive(:new)
+      expect(Time).not_to receive(:parse)
       expect(uptime_plugin).to receive(:seconds_to_human)
       uptime_plugin.run
     end

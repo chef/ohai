@@ -17,13 +17,13 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Solaris2.X cpu plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("solaris2/cpu")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
   end
 
   describe "on x86 processors" do
-    before(:each) do
+    before do
       kstatinfo_output = <<-END
 cpu_info:0:cpu_info0:brand      Crazy(r) Argon(r) CPU           Y5570  @ 1.93GHz
 cpu_info:0:cpu_info0:cache_id   1
@@ -446,28 +446,28 @@ END
       @plugin.run
     end
 
-    it "should get the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to eql(16)
+    it "gets the total virtual processor count" do
+      expect(@plugin["cpu"]["total"]).to be(16)
     end
 
-    it "should get the total processor count" do
-      expect(@plugin["cpu"]["real"]).to eql(2)
+    it "gets the total processor count" do
+      expect(@plugin["cpu"]["real"]).to be(2)
     end
 
-    it "should get the number of threads per core" do
+    it "gets the number of threads per core" do
       expect(@plugin["cpu"]["corethreads"]).to eql (2)
     end
 
-    it "should get the total number of online cores" do
+    it "gets the total number of online cores" do
       expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql (8)
     end
 
-    it "should get the total number of offline cores" do
+    it "gets the total number of offline cores" do
       expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql (8)
     end
 
     describe "per-cpu information" do
-      it "should include processor vendor_ids" do
+      it "includes processor vendor_ids" do
         # CPU Socket 0
         expect(@plugin["cpu"]["15"]["vendor_id"]).to eql("GenuineIntel")
         expect(@plugin["cpu"]["13"]["vendor_id"]).to eql("GenuineIntel")
@@ -488,7 +488,7 @@ END
         expect(@plugin["cpu"]["0"]["vendor_id"]).to eql("CrazyTown")
       end
 
-      it "should include processor families" do
+      it "includes processor families" do
         expect(@plugin["cpu"]["15"]["family"]).to eql("6")
         expect(@plugin["cpu"]["13"]["family"]).to eql("6")
         expect(@plugin["cpu"]["11"]["family"]).to eql("6")
@@ -508,7 +508,7 @@ END
         expect(@plugin["cpu"]["0"]["family"]).to eql("12")
       end
 
-      it "should include processor models" do
+      it "includes processor models" do
         expect(@plugin["cpu"]["15"]["model"]).to eql("26")
         expect(@plugin["cpu"]["13"]["model"]).to eql("26")
         expect(@plugin["cpu"]["11"]["model"]).to eql("26")
@@ -528,7 +528,7 @@ END
         expect(@plugin["cpu"]["0"]["model"]).to eql("93")
       end
 
-      it "should includ processor architecture" do
+      it "includs processor architecture" do
         expect(@plugin["cpu"]["15"]["arch"]).to eql("i386")
         expect(@plugin["cpu"]["13"]["arch"]).to eql("i386")
         expect(@plugin["cpu"]["11"]["arch"]).to eql("i386")
@@ -548,7 +548,7 @@ END
         expect(@plugin["cpu"]["0"]["arch"]).to eql("i386")
       end
 
-      it "should include processor stepping" do
+      it "includes processor stepping" do
         expect(@plugin["cpu"]["15"]["stepping"]).to eql("5")
         expect(@plugin["cpu"]["13"]["stepping"]).to eql("5")
         expect(@plugin["cpu"]["11"]["stepping"]).to eql("5")
@@ -569,7 +569,7 @@ END
 
       end
 
-      it "should include processor model names" do
+      it "includes processor model names" do
         expect(@plugin["cpu"]["15"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
         expect(@plugin["cpu"]["13"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
         expect(@plugin["cpu"]["11"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
@@ -588,7 +588,7 @@ END
         expect(@plugin["cpu"]["0"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
       end
 
-      it "should include processor speed in MHz" do
+      it "includes processor speed in MHz" do
         expect(@plugin["cpu"]["15"]["mhz"]).to eql("2926")
         expect(@plugin["cpu"]["13"]["mhz"]).to eql("2926")
         expect(@plugin["cpu"]["11"]["mhz"]).to eql("2926")
@@ -607,7 +607,7 @@ END
         expect(@plugin["cpu"]["0"]["mhz"]).to eql("1933")
       end
 
-      it "should include processor state" do
+      it "includes processor state" do
         expect(@plugin["cpu"]["15"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["13"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["11"]["state"]).to eql("on-line")
@@ -629,7 +629,7 @@ END
   end
 
   describe "on sparc processors" do
-    before(:each) do
+    before do
       kstatinfo_output = <<-END
 cpu_info:0:cpu_info0:brand	SPARC-T3
 cpu_info:0:cpu_info0:chip_id	0
@@ -2812,32 +2812,32 @@ END
       @plugin.run
     end
 
-    it "should get the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to eql(128)
+    it "gets the total virtual processor count" do
+      expect(@plugin["cpu"]["total"]).to be(128)
     end
 
-    it "should get the total processor count" do
-      expect(@plugin["cpu"]["real"]).to eql(1)
+    it "gets the total processor count" do
+      expect(@plugin["cpu"]["real"]).to be(1)
     end
 
-    it "should get the total core count" do
-      expect(@plugin["cpu"]["cores"]).to eql(16)
+    it "gets the total core count" do
+      expect(@plugin["cpu"]["cores"]).to be(16)
     end
 
-    it "should get the number of threads per core" do
-      expect(@plugin["cpu"]["corethreads"]).to eql(8)
+    it "gets the number of threads per core" do
+      expect(@plugin["cpu"]["corethreads"]).to be(8)
     end
 
-    it "should get the total number of online cores" do
-      expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql(124)
+    it "gets the total number of online cores" do
+      expect(@plugin["cpu"]["cpustates"]["on-line"]).to be(124)
     end
 
-    it "should get the total number of offline cores" do
-      expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql(4)
+    it "gets the total number of offline cores" do
+      expect(@plugin["cpu"]["cpustates"]["off-line"]).to be(4)
     end
 
     describe "per-cpu information" do
-      it "should include processor model names" do
+      it "includes processor model names" do
         expect(@plugin["cpu"]["0"]["model_name"]).to eql("SPARC-T3")
         expect(@plugin["cpu"]["1"]["model_name"]).to eql("SPARC-T3")
         expect(@plugin["cpu"]["2"]["model_name"]).to eql("SPARC-T3")
@@ -2848,7 +2848,7 @@ END
         expect(@plugin["cpu"]["127"]["model_name"]).to eql("SPARC-T4")
       end
 
-      it "should include processor sockets" do
+      it "includes processor sockets" do
         expect(@plugin["cpu"]["0"]["socket"]).to eql("0")
         expect(@plugin["cpu"]["1"]["socket"]).to eql("0")
         expect(@plugin["cpu"]["2"]["socket"]).to eql("0")
@@ -2859,7 +2859,7 @@ END
         expect(@plugin["cpu"]["127"]["socket"]).to eql("0")
       end
 
-      it "should include processor MHz" do
+      it "includes processor MHz" do
         expect(@plugin["cpu"]["0"]["mhz"]).to eql("1649")
         expect(@plugin["cpu"]["1"]["mhz"]).to eql("1649")
         expect(@plugin["cpu"]["2"]["mhz"]).to eql("1649")
@@ -2870,7 +2870,7 @@ END
         expect(@plugin["cpu"]["127"]["mhz"]).to eql("1649")
       end
 
-      it "should include processor core IDs" do
+      it "includes processor core IDs" do
         expect(@plugin["cpu"]["0"]["core_id"]).to eql("1026")
         expect(@plugin["cpu"]["8"]["core_id"]).to eql("1033")
         expect(@plugin["cpu"]["16"]["core_id"]).to eql("1040")
@@ -2889,7 +2889,7 @@ END
         expect(@plugin["cpu"]["120"]["core_id"]).to eql("1131")
       end
 
-      it "should include processor architecture" do
+      it "includes processor architecture" do
         expect(@plugin["cpu"]["0"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["1"]["arch"]).to eql("sparcv9")
         expect(@plugin["cpu"]["2"]["arch"]).to eql("sparcv9")
@@ -2900,7 +2900,7 @@ END
         expect(@plugin["cpu"]["127"]["arch"]).to eql("sparcv9")
       end
 
-      it "should include processor FPU type" do
+      it "includes processor FPU type" do
         expect(@plugin["cpu"]["0"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["1"]["fpu_type"]).to eql("sparcv9")
         expect(@plugin["cpu"]["2"]["fpu_type"]).to eql("sparcv9")
@@ -2911,7 +2911,7 @@ END
         expect(@plugin["cpu"]["127"]["fpu_type"]).to eql("sparcv9")
       end
 
-      it "should include processor state" do
+      it "includes processor state" do
         expect(@plugin["cpu"]["0"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["1"]["state"]).to eql("on-line")
         expect(@plugin["cpu"]["2"]["state"]).to eql("on-line")

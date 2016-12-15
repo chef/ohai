@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "AIX kernel plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("aix/kernel")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "AIX", nil))

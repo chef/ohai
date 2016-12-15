@@ -19,7 +19,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Aix plugin platform" do
-  before(:each) do
+  before do
     @plugin = get_plugin("aix/platform")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     kernel = Mash.new
@@ -30,15 +30,15 @@ describe Ohai::System, "Aix plugin platform" do
     @plugin.run
   end
 
-  it "should set platform to aix" do
+  it "sets platform to aix" do
     expect(@plugin[:platform]).to eq("aix")
   end
 
-  it "should set the platform_version" do
+  it "sets the platform_version" do
     expect(@plugin[:platform_version]).to eq("7.1")
   end
 
-  it "should set platform_family" do
+  it "sets platform_family" do
     expect(@plugin[:platform_family]).to eq(@plugin[:platform])
   end
 end

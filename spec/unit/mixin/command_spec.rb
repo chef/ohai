@@ -22,14 +22,14 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 describe Ohai::Mixin::Command, "popen4" do
   break if RUBY_PLATFORM =~ /(win|w)32$/
 
-  it "should default all commands to be run in the POSIX standard C locale" do
+  it "defaults all commands to be run in the POSIX standard C locale" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL") do |pid, stdin, stdout, stderr|
       stdin.close
       expect(stdout.read.strip).to eq("C")
     end
   end
 
-  it "should respect locale when specified explicitly" do
+  it "respects locale when specified explicitly" do
     Ohai::Mixin::Command.popen4("echo $LC_ALL", :environment => { "LC_ALL" => "es" }) do |pid, stdin, stdout, stderr|
       stdin.close
       expect(stdout.read.strip).to eq("es")
@@ -50,14 +50,14 @@ describe Ohai::Mixin::Command, "popen4" do
         Encoding.default_internal = @saved_default_internal
       end
 
-      it "should force encode the string to UTF-8" do
+      it "forces encode the string to UTF-8" do
         extend Ohai::Mixin::Command
         snowy = run_command(:command => ("echo '" + ("☃" * 8096) + "'"))[1]
         expect(snowy.encoding).to eq(Encoding::UTF_8)
       end
     end
 
-    it "should force encode the string to UTF-8" do
+    it "forces encode the string to UTF-8" do
       extend Ohai::Mixin::Command
       snowy = run_command(:command => ("echo '" + ("☃" * 8096) + "'"))[1]
       expect(snowy.encoding).to eq(Encoding::UTF_8)
@@ -94,7 +94,7 @@ describe Ohai::Mixin::Command, "shell_out" do
 
   let(:plugin_name) { :OSSparkleDream }
 
-  before(:each) do
+  before do
     allow(Ohai::Mixin::Command).to receive(:name).and_return(plugin_name)
   end
 

@@ -19,13 +19,13 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Darwin kernel plugin" do
-  before(:each) do
+  before do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
     allow(@plugin).to receive(:init_kernel).and_return({})
   end
 
-  it "should populate kernel[:modules] from `kextstat -k -l`" do
+  it "populates kernel[:modules] from `kextstat -k -l`" do
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, <<EOF, ""))
     8    0 0xffffff7f81aed000 0x41000    0x41000    com.apple.kec.corecrypto (1.0) <7 6 5 4 3 1>
@@ -42,21 +42,21 @@ EOF
     expect(@plugin[:kernel][:modules]).to eql(modules)
   end
 
-  it "should not set kernel_machine to x86_64" do
+  it "does not set kernel_machine to x86_64" do
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
     expect(@plugin[:kernel][:machine]).not_to eq("x86_64")
   end
 
-  it "should set kernel_machine to x86_64" do
+  it "sets kernel_machine to x86_64" do
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
     expect(@plugin[:kernel][:machine]).to eq("x86_64")
   end
 
-  it "should set the kernel_os to the kernel_name value" do
+  it "sets the kernel_os to the kernel_name value" do
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run

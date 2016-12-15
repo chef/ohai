@@ -22,7 +22,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
 describe Ohai::System, "plugin java (Java5 Client VM)" do
   let(:plugin) { get_plugin("java") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
   end
 
@@ -78,7 +78,7 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
 
   shared_examples_for "when the Server JRE is installed" do
 
-    before(:each) do
+    before do
       stderr = "java version \"1.6.0_22\"\nJava(TM) 2 Runtime Environment (build 1.6.0_22-b04)\nJava HotSpot(TM) Server VM (build 17.1-b03, mixed mode)"
       allow(plugin).to receive(:shell_out).with("java -mx64m -version").and_return(mock_shell_out(0, "", stderr))
     end
@@ -123,7 +123,7 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
 
   shared_examples_for "when the openjdk 1.8 is installed" do
 
-    before(:each) do
+    before do
       stderr = "openjdk version \"1.8.0_71\"\nOpenJDK Runtime Environment (build 1.8.0_71-b15)\nOpenJDK 64-Bit Server VM (build 25.71-b15, mixed mode)"
       allow(plugin).to receive(:shell_out).with("java -mx64m -version").and_return(mock_shell_out(0, "", stderr))
     end

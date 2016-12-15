@@ -44,6 +44,16 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
+    when "American Megatrends Inc."
+      if bios[0]["version"] =~ /VRTUAL -/
+        virtualization[:system] = "hyper-v"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:hyperv] = "guest"
+      end
+    when "Xen"
+      virtualization[:system] = "xen"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:xen] = "guest"
     end
 
     # vmware fusion detection

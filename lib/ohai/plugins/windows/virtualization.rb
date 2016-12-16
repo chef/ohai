@@ -54,6 +54,10 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "xen"
       virtualization[:role] = "guest"
       virtualization[:systems][:xen] = "guest"
+    when "Veertu"
+      virtualization[:system] = "veertu"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:veertu] = "guest"
     end
 
     # vmware fusion detection

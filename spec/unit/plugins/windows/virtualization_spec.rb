@@ -224,6 +224,22 @@ describe Ohai::System, "Windows virtualization platform" do
     end
   end
 
+  context "when running on veertu" do
+    it "system is veertu" do
+      allow_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_BIOS").and_return([{ "smbiosbiosversion" => ["Veertu"],
+                                                                                                     "manufacturer" => "Veertu",
+                                                                                                     "name" => "Default System BIOS",
+                                                                                                     "serialnumber" => "",
+                                                                                                     "version" => "Veertu - 1",
+
+      }])
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("veertu")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:veertu]).to eq("guest")
+    end
+  end
+
   context "when running on a hardware system" do
     it "does not set virtualization attributes" do
       allow_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_BIOS").and_return([{ "bioscharacteristics" => [7, 11, 12, 15, 16, 17, 19, 23, 24, 25, 26, 27, 28, 29, 32, 33, 40, 42, 43],

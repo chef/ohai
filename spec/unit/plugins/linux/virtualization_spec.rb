@@ -345,6 +345,25 @@ OUTPUT
       expect(plugin[:virtualization][:systems][:bhyve]).to eq("guest")
     end
 
+    it "sets veertu guest if dmidecode detects Veertu" do
+      veertu_dmidecode = <<-VEERTU
+System Information
+  Manufacturer: Veertu
+  Product Name: Veertu
+  Version: Not Specified
+  Serial Number: Not Specified
+  UUID: Not Settable
+  Wake-up Type: Power Switch
+  SKU Number: Not Specified
+  Family: Not Specified
+VEERTU
+      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, veertu_dmidecode, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("veertu")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:veertu]).to eq("guest")
+    end
+
     it "should run dmidecode and not set virtualization if nothing is detected" do
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run

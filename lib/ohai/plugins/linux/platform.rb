@@ -166,12 +166,6 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/gentoo-release")
-      platform "gentoo"
-      # the gentoo release version is the base version used to bootstrap
-      # a node and doesn't have a lot of meaning in a rolling release distro
-      # kernel release will be used - ex. 3.18.7-gentoo
-      platform_version `uname -r`.strip
     elsif File.exist?("/etc/SuSE-release")
       suse_release = File.read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
@@ -187,22 +181,6 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif File.exist?("/etc/slackware-version")
-      platform "slackware"
-      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/arch-release")
-      platform "arch"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/exherbo-release")
-      platform "exherbo"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 3.13
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/alpine-release")
-      platform "alpine"
-      platform_version File.read("/etc/alpine-release").strip()
     elsif File.exist?("/etc/Eos-release")
       platform "arista_eos"
       platform_version File.read("/etc/Eos-release").strip.split[-1]
@@ -222,6 +200,28 @@ Ohai.plugin(:Platform) do
 
       platform_family "wrlinux"
       platform_version os_release_info["VERSION"]
+    elsif File.exist?("/etc/gentoo-release")
+      platform "gentoo"
+      # the gentoo release version is the base version used to bootstrap
+      # a node and doesn't have a lot of meaning in a rolling release distro
+      # kernel release will be used - ex. 3.18.7-gentoo
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/slackware-version")
+      platform "slackware"
+      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
+    elsif File.exist?("/etc/arch-release")
+      platform "arch"
+      # no way to determine platform_version in a rolling release distribution
+      # kernel release will be used - ex. 2.6.32-ARCH
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/exherbo-release")
+      platform "exherbo"
+      # no way to determine platform_version in a rolling release distribution
+      # kernel release will be used - ex. 3.13
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/alpine-release")
+      platform "alpine"
+      platform_version File.read("/etc/alpine-release").strip()
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

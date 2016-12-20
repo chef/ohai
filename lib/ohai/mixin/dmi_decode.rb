@@ -42,6 +42,8 @@ module ::Ohai::Mixin::DmiDecode
         return "kvm"
       when /Product.*: BHYVE/
         return "bhyve"
+      when /Manufacturer: Veertu/
+        return "veertu"
       end
     end
     return nil

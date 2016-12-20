@@ -28,7 +28,7 @@ Ohai.plugin(:Scala) do
         scala[:version] = so.stderr.split[4]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Scala plugin: Could not shell_out "scala -version". Skipping data')
+      Ohai::Log.debug('Plugin Scala: Could not shell_out "scala -version". Skipping data')
     end
 
     # Check for sbt
@@ -40,7 +40,7 @@ Ohai.plugin(:Scala) do
         scala[:sbt][:version] = so.stdout.split[3]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Scala plugin: Could not shell_out "sbt --version". Skipping data')
+      Ohai::Log.debug('Plugin Scala: Could not shell_out "sbt --version". Skipping data')
     end
 
     languages[:scala] = scala unless scala.empty?

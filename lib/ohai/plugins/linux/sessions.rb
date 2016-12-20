@@ -45,6 +45,8 @@ Ohai.plugin(:Sessions) do
           sessions[:by_user][user] = [s]
         end
       end
+    else
+      Ohai::Log.debug("Plugin Sessions: Could not find loginctl. Skipping plugin.")
     end
   end
 end

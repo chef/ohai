@@ -3,8 +3,6 @@ source "https://rubygems.org"
 gemspec
 
 group :development do
-  gem "sigar", :platform => "ruby"
-
   gem "chefstyle"
   gem "overcommit", ">= 0.34.1"
   gem "pry-byebug"

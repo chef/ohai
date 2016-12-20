@@ -25,50 +25,25 @@ describe Ohai::System, "hostname plugin" do
     allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
-  context "when sigar is not installed" do
-    before(:each) do
-      allow(@plugin).to receive(:sigar_is_available?).and_return(false)
-      expect(@plugin).not_to receive(:get_fqdn_from_sigar)
-      allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
-    end
-    it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
+  context "default behavior"
+  before(:each) do
+    allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
+  end
+  it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
-    it "should use #resolve_fqdn to find the fqdn" do
-      @plugin.run
-      expect(@plugin[:fqdn]).to eq("katie.bethell")
-    end
-
-    it "should set the domain to everything after the first dot of the fqdn" do
-      @plugin.run
-      expect(@plugin[:domain]).to eq("bethell")
-    end
-
-    it "should set the [short] hostname to everything before the first dot of the fqdn" do
-      @plugin.run
-      expect(@plugin[:hostname]).to eq("katie")
-    end
+  it "should use #resolve_fqdn to find the fqdn" do
+    @plugin.run
+    expect(@plugin[:fqdn]).to eq("katie.bethell")
   end
 
-  context "when sigar is installed" do
-    before(:each) do
-      allow(@plugin).to receive(:sigar_is_available?).and_return(true)
-      allow(@plugin).to receive(:get_fqdn_from_sigar).and_return("katie.bethell")
-    end
-    it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
-    it "should set the fqdn to the returned value from sigar" do
-      @plugin.run
-      expect(@plugin[:fqdn]).to eq("katie.bethell")
-    end
+  it "should set the domain to everything after the first dot of the fqdn" do
+    @plugin.run
+    expect(@plugin[:domain]).to eq("bethell")
+  end
 
-    it "should set the domain to everything after the first dot of the fqdn" do
-      @plugin.run
-      expect(@plugin[:domain]).to eq("bethell")
-    end
-
-    it "should set the [short] hostname to everything before the first dot of the fqdn" do
-      @plugin.run
-      expect(@plugin[:hostname]).to eq("katie")
-    end
+  it "should set the [short] hostname to everything before the first dot of the fqdn" do
+    @plugin.run
+    expect(@plugin[:hostname]).to eq("katie")
   end
 
   context "when a system has a bare hostname without a FQDN" do

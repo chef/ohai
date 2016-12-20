@@ -24,11 +24,6 @@ module Ohai
         "inet" => "default",
         "inet6" => "default_inet6",
       }
-
-      # From sigar: include/sigar.h sigar_net_route_t
-      SIGAR_ROUTE_METHODS = [:destination, :gateway, :mask, :flags,
-                             :refcnt, :use, :metric, :mtu, :window,
-                             :irtt, :ifname]
     end
   end
 end

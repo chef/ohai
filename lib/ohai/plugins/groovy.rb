@@ -32,7 +32,7 @@ Ohai.plugin(:Groovy) do
         languages[:groovy] = groovy
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Groovy plugin: Could not shell_out "groovy -v". Skipping plugin')
+      Ohai::Log.debug('Plugin Groovy: Could not shell_out "groovy -v". Skipping plugin')
     end
   end
 end

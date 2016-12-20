@@ -153,7 +153,7 @@ Ohai.plugin(:DMI) do
 
       elsif data = data_key_value_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -161,7 +161,7 @@ Ohai.plugin(:DMI) do
 
       elsif data = data_key_only_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected data line found before header; discarding:\n#{line}")
+          Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ""
@@ -169,11 +169,11 @@ Ohai.plugin(:DMI) do
 
       elsif extended_data = extended_data_line.match(line)
         if dmi_record == nil
-          Ohai::Log.debug("unexpected extended data line found before header; discarding:\n#{line}")
+          Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
           next
         end
         if field == nil
-          Ohai::Log.debug("unexpected extended data line found outside data section; discarding:\n#{line}")
+          Ohai::Log.debug("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
           next
         end
         # overwrite "raw" value with a new Mash
@@ -181,7 +181,7 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
 
       else
-        Ohai::Log.debug("unrecognized output line; discarding:\n#{line}")
+        Ohai::Log.debug("Plugin DMI: unrecognized output line; discarding:\n#{line}")
 
       end
     end

@@ -31,7 +31,7 @@ Ohai.plugin(:Lua) do
         languages[:lua] = lua if lua[:version]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Lua plugin: Could not shell_out "lua -v". Skipping plugin')
+      Ohai::Log.debug('Plugin Lua: Could not shell_out "lua -v". Skipping plugin')
     end
   end
 end

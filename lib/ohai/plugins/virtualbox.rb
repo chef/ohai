@@ -20,25 +20,30 @@ Ohai.plugin(:Virtualbox) do
   provides "virtualbox"
 
   collect_data do
-    so = shell_out("VBoxControl guestproperty enumerate")
-    if so.exitstatus == 0
-      virtualbox Mash.new
-      virtualbox[:host] = Mash.new
-      virtualbox[:guest] = Mash.new
-      so.stdout.lines.each do |line|
-        case line
-        when /LanguageID, value: (\S*),/
-          virtualbox[:host][:language] = Regexp.last_match(1)
-        when /VBoxVer, value: (\S*),/
-          virtualbox[:host][:version] = Regexp.last_match(1)
-        when /VBoxRev, value: (\S*),/
-          virtualbox[:host][:revision] = Regexp.last_match(1)
-        when /GuestAdd\/VersionExt, value: (\S*),/
-          virtualbox[:guest][:guest_additions_version] = Regexp.last_match(1)
-        when /GuestAdd\/Revision, value: (\S*),/
-          virtualbox[:guest][:guest_additions_revision] = Regexp.last_match(1)
+    begin
+      so = shell_out("VBoxControl guestproperty enumerate")
+
+      if so.exitstatus == 0
+        virtualbox Mash.new
+        virtualbox[:host] = Mash.new
+        virtualbox[:guest] = Mash.new
+        so.stdout.lines.each do |line|
+          case line
+          when /LanguageID, value: (\S*),/
+            virtualbox[:host][:language] = Regexp.last_match(1)
+          when /VBoxVer, value: (\S*),/
+            virtualbox[:host][:version] = Regexp.last_match(1)
+          when /VBoxRev, value: (\S*),/
+            virtualbox[:host][:revision] = Regexp.last_match(1)
+          when /GuestAdd\/VersionExt, value: (\S*),/
+            virtualbox[:guest][:guest_additions_version] = Regexp.last_match(1)
+          when /GuestAdd\/Revision, value: (\S*),/
+            virtualbox[:guest][:guest_additions_revision] = Regexp.last_match(1)
+          end
         end
       end
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Plugin Virtualbox: Could not shell_out "VBoxControl guestproperty enumerate". Skipping data')
     end
   end
 end

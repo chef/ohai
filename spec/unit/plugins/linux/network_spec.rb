@@ -1325,7 +1325,7 @@ EOM
         end
 
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
-          expect(Ohai::Log).to receive(:debug).with("Skipping previously unseen interface from 'ip route show': virbr0").once
+          expect(Ohai::Log).to receive(:debug).with(/Skipping previously unseen interface from 'ip route show': virbr0/).once
           allow(Ohai::Log).to receive(:debug) # Catches the 'Loading plugin network' type messages
           plugin.run
         end

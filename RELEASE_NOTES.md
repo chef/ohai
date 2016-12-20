@@ -9,21 +9,6 @@ Details about the thing that changed that needs to get included in the Release N
 
 # Ohai Release Notes:
 
-## Haskell Language plugin
+## Cumulus Linux Platform
 
-Haskell is now detected in a new haskell language plugin:
-
-```javascript
-"languages": {
-  "haskell": {
-    "stack": {
-      "version": "1.2.0",
-      "description": "Version 1.2.0 x86_64 hpack-0.14.0"
-    }
-  }
-}
-```
-
-## LSB Release Detection
-
-The lsb_release command line tool is now preferred to the contents of /etc/lsb-release. This resolves an issue where a distro can be upgraded, but /etc/lsb-release is not upgraded to reflect the change
+Cumulus Linux will now be detected as platform `cumulus` instead of `debian` and the `platform_version` will be properly set to the Cumulus Linux release.

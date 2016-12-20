@@ -72,6 +72,62 @@ Ohai.plugin(:Platform) do
     File.exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
   end
 
+  #
+  # Determines the platform version for Cumulus Linux systems
+  #
+  # @returns [String] cumulus Linux version from /etc/cumulus/etc.replace/os-release
+  #
+  def cumulus_version
+    release_contents = File.read("/etc/cumulus/etc.replace/os-release")
+    release_contents.match(/VERSION_ID=(.*)/)[1]
+  rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
+    Ohai::Log.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release could not be parsed to determine platform_version")
+    nil
+  end
+
+  #
+  # Determines the platform version for Debian based systems
+  #
+  # @returns [String] version of the platform
+  #
+  def debian_platform_version
+    if platform == "cumulus"
+      cumulus_version
+    else # not cumulus
+      File.read("/etc/debian_version").chomp
+    end
+  end
+
+  #
+  # Determines the platform_family based on the platform
+  #
+  # @returns [String] platform_family value
+  #
+  def determine_platform_family
+    case platform
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
+      "debian"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+      "rhel"
+    when /suse/
+      "suse"
+    when /fedora/, /pidora/, /arista_eos/
+      "fedora"
+    when /nexus/, /ios_xr/
+      "wrlinux"
+    when /gentoo/
+      "gentoo"
+    when /slackware/
+      "slackware"
+    when /arch/
+      "arch"
+    when /exherbo/
+      "exherbo"
+    when /alpine/
+      "alpine"
+    end
+  end
+
   collect_data(:linux) do
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
     if File.exist?("/etc/oracle-release")
@@ -94,10 +150,12 @@ Ohai.plugin(:Platform) do
       else
         if File.exist?("/usr/bin/raspi-config")
           platform "raspbian"
+        elsif Dir.exist?("/etc/cumulus")
+          platform "cumulus"
         else
           platform "debian"
         end
-        platform_version File.read("/etc/debian_version").chomp
+        platform_version debian_platform_version
       end
     elsif File.exist?("/etc/parallels-release")
       contents = File.read("/etc/parallels-release").chomp
@@ -116,12 +174,6 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/gentoo-release")
-      platform "gentoo"
-      # the gentoo release version is the base version used to bootstrap
-      # a node and doesn't have a lot of meaning in a rolling release distro
-      # kernel release will be used - ex. 3.18.7-gentoo
-      platform_version `uname -r`.strip
     elsif File.exist?("/etc/SuSE-release")
       suse_release = File.read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
@@ -137,22 +189,6 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif File.exist?("/etc/slackware-version")
-      platform "slackware"
-      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/arch-release")
-      platform "arch"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/exherbo-release")
-      platform "exherbo"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 3.13
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/alpine-release")
-      platform "alpine"
-      platform_version File.read("/etc/alpine-release").strip()
     elsif File.exist?("/etc/Eos-release")
       platform "arista_eos"
       platform_version File.read("/etc/Eos-release").strip.split[-1]
@@ -172,6 +208,28 @@ Ohai.plugin(:Platform) do
 
       platform_family "wrlinux"
       platform_version os_release_info["VERSION"]
+    elsif File.exist?("/etc/gentoo-release")
+      platform "gentoo"
+      # the gentoo release version is the base version used to bootstrap
+      # a node and doesn't have a lot of meaning in a rolling release distro
+      # kernel release will be used - ex. 3.18.7-gentoo
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/slackware-version")
+      platform "slackware"
+      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
+    elsif File.exist?("/etc/arch-release")
+      platform "arch"
+      # no way to determine platform_version in a rolling release distribution
+      # kernel release will be used - ex. 2.6.32-ARCH
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/exherbo-release")
+      platform "exherbo"
+      # no way to determine platform_version in a rolling release distribution
+      # kernel release will be used - ex. 3.13
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/alpine-release")
+      platform "alpine"
+      platform_version File.read("/etc/alpine-release").strip()
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]
@@ -189,25 +247,6 @@ Ohai.plugin(:Platform) do
       platform_version lsb[:release]
     end
 
-    case platform
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/
-      platform_family "debian"
-    when /fedora/, /pidora/
-      platform_family "fedora"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
-      platform_family "rhel"
-    when /suse/
-      platform_family "suse"
-    when /gentoo/
-      platform_family "gentoo"
-    when /slackware/
-      platform_family "slackware"
-    when /arch/
-      platform_family "arch"
-    when /exherbo/
-      platform_family "exherbo"
-    when /alpine/
-      platform_family "alpine"
-    end
+    platform_family determine_platform_family
   end
 end

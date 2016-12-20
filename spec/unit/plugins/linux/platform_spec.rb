@@ -17,7 +17,6 @@
 #
 
 require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
 
 describe Ohai::System, "Linux plugin platform" do
 
@@ -37,6 +36,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_raspi_config) { false }
   let(:have_os_release) { false }
   let(:have_cisco_release) { false }
+  let(:have_cumulus_dir) { false }
 
   before(:each) do
     @plugin = get_plugin("linux/platform")
@@ -58,6 +58,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
     allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
     allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
+    allow(Dir).to receive(:exist?).with("/etc/cumulus").and_return(have_cumulus_dir)
 
     allow(File).to receive(:read).with("PLEASE STUB ALL File.read CALLS")
   end
@@ -171,6 +172,41 @@ describe Ohai::System, "Linux plugin platform" do
         expect(@plugin[:platform_family]).to eq("debian")
       end
     end
+
+    context "on cumulus" do
+
+      let(:have_cumulus_dir) { true }
+      let(:cumulus_release_content) do
+        <<-OS_RELEASE
+NAME="Cumulus Linux"
+VERSION_ID=3.1.2
+VERSION="Cumulus Linux 3.1.2"
+PRETTY_NAME="Cumulus Linux"
+ID=cumulus-linux
+ID_LIKE=debian
+CPE_NAME=cpe:/o:cumulusnetworks:cumulus_linux:3.1.2
+HOME_URL="http://www.cumulusnetworks.com/"
+SUPPORT_URL="http://support.cumulusnetworks.com/"
+
+OS_RELEASE
+      end
+
+      before(:each) do
+        expect(File).to receive(:read).with("/etc/cumulus/etc.replace/os-release").and_return(cumulus_release_content)
+      end
+
+      # Cumulus is a debian derivative
+      it "should detect Cumulus as itself with debian as the family" do
+        @plugin.run
+        expect(@plugin[:platform]).to eq("cumulus")
+        expect(@plugin[:platform_family]).to eq("debian")
+      end
+
+      it "should detect Cumulus platform_version" do
+        @plugin.run
+        expect(@plugin[:platform_version]).to eq("3.1.2")
+      end
+    end
   end
 
   describe "on slackware" do
@@ -186,6 +222,12 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin.run
       expect(@plugin[:platform]).to eq("slackware")
       expect(@plugin[:platform_family]).to eq("slackware")
+    end
+
+    it "should set platform_version on slackware" do
+      expect(File).to receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
+      @plugin.run
+      expect(@plugin[:platform_version]).to eq("12.0.0")
     end
   end
 

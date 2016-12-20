@@ -99,7 +99,7 @@ Ohai.plugin(:Platform) do
   end
 
   #
-  # Determines the platform_family based on the platform_family
+  # Determines the platform_family based on the platform
   #
   # @returns [String] platform_family value
   #

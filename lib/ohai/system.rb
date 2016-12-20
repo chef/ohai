@@ -41,7 +41,6 @@ module Ohai
     def initialize(config = {})
       @plugin_path = ""
       @config = config
-      reset_system
     end
 
     def reset_system

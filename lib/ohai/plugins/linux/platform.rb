@@ -73,18 +73,26 @@ Ohai.plugin(:Platform) do
   end
 
   #
+  # Determines the platform version for Cumulus Linux systems
+  #
+  # @returns [String] cumulus Linux version from /etc/cumulus/etc.replace/os-release
+  #
+  def cumulus_version
+    release_contents = File.read("/etc/cumulus/etc.replace/os-release")
+    release_contents.match(/VERSION_ID=(.*)/)[1]
+  rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
+    Ohai::Log.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release could not be parsed to determine platform_version")
+    nil
+  end
+
+  #
   # Determines the platform version for Debian based systems
   #
   # @returns [String] version of the platform
   #
   def debian_platform_version
     if platform == "cumulus"
-      if File.exist?("/etc/cumulus/etc.replace/os-release")
-        release_contents = File.read("/etc/cumulus/etc.replace/os-release")
-        release_contents.match(/VERSION_ID=(.*)/)[1] rescue nil
-      else
-        Ohai::Log.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release not found to determine platform_version")
-      end
+      cumulus_version
     else # not cumulus
       File.read("/etc/debian_version").chomp
     end

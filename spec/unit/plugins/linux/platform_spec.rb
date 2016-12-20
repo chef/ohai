@@ -176,7 +176,6 @@ describe Ohai::System, "Linux plugin platform" do
     context "on cumulus" do
 
       let(:have_cumulus_dir) { true }
-      let(:have_cumulus_release) { true }
       let(:cumulus_release_content) do
         <<-OS_RELEASE
 NAME="Cumulus Linux"
@@ -193,7 +192,6 @@ OS_RELEASE
       end
 
       before(:each) do
-        expect(File).to receive(:exist?).with("/etc/cumulus/etc.replace/os-release").and_return(true)
         expect(File).to receive(:read).with("/etc/cumulus/etc.replace/os-release").and_return(cumulus_release_content)
       end
 

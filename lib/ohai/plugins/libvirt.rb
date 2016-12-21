@@ -16,66 +16,100 @@
 # limitations under the License.
 #
 
+# Note: This plugin requires libvirt-bin/libvirt-dev as well as the ruby-libvirt
+#       gem to be installed before it will properly parse data
+
 Ohai.plugin(:LibVirt) do
   %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
     provides "libvirt/#{info}"
+    depends "virtualization"
+  end
+
+  def emu
+    @emu ||= (virtualization[:system].eql?("kvm") ? "qemu" : virtualization[:system])
+  end
+
+  def load_libvirt
+    begin
+      require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
+      Ohai::Log.debug("Plugin LibVirt: Successfully loaded ruby-libvirt gem")
+    rescue LoadError
+      Ohai::Log.debug("Plugin LibVirt: Can't load gem ruby-libvirt.")
+    end
+  end
+
+  def virtconn
+    @virt_connect ||= Libvirt.open_read_only("#{emu}:///system")
+  end
+
+  def get_node_data
+    node_data = Mash.new
+    ni = virtconn.node_get_info
+    %w{cores cpus memory mhz model nodes sockets threads}.each { |a| node_data[a] = ni.send(a) }
+    node_data
+  end
+
+  def get_domain_data
+    domain_data = Mash.new
+    virtconn.list_domains.each do |d|
+      dv = virtconn.lookup_domain_by_id d
+      domain_data[dv.name] = Mash.new
+      domain_data[dv.name][:id] = d
+      %w{os_type uuid}.each { |a| domain_data[dv.name][a] = dv.send(a) }
+      %w{cpu_time max_mem memory nr_virt_cpu state}.each { |a| domain_data[dv.name][a] = dv.info.send(a) }
+    end
+    domain_data
+  end
+
+  def get_network_data
+    network_data = Mash.new
+    virtconn.list_networks.each do |n|
+      nv = virtconn.lookup_network_by_name n
+      network_data[n] = Mash.new
+      %w{bridge_name uuid}.each { |a| network_data[n][a] = nv.send(a) }
+    end
+    network_data
+  end
+
+  def get_storage_data
+    storage_data = Mash.new
+    virtconn.list_storage_pools.each do |pool|
+      sp = virtconn.lookup_storage_pool_by_name pool
+      storage_data[pool] = Mash.new
+      %w{autostart uuid}.each { |a| storage_data[pool][a] = sp.send(a) }
+      %w{allocation available capacity state}.each { |a| storage_data[pool][a] = sp.info.send(a) }
+
+      storage_data[pool][:volumes] = Mash.new
+      sp.list_volumes.each do |v|
+        storage_data[pool][:volumes][v] = Mash.new
+        sv = sp.lookup_volume_by_name v
+        %w{key name path}.each { |a| storage_data[pool][:volumes][v][a] = sv.send(a) }
+        %w{allocation capacity type}.each { |a| storage_data[pool][:volumes][v][a] = sv.info.send(a) }
+      end
+    end
+    storage_data
   end
 
   collect_data do
     if virtualization[:role].eql?("host")
+      load_libvirt
       begin
-        require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
-
-        libvirt Mash.new
-        emu = (virtualization[:system].eql?("kvm") ? "qemu" : libvirt[:system])
-        libvirt[:libvirt_version] = Libvirt.version(emu)[0].to_s
-
-        virtconn = Libvirt.open_read_only("#{emu}:///system")
-
-        libvirt[:uri] = virtconn.uri
-        libvirt[:capabilities] = Mash.new
-
-        libvirt[:nodeinfo] = Mash.new
-        ni = virtconn.node_get_info
-        %w{cores cpus memory mhz model nodes sockets threads}.each { |a| libvirt[:nodeinfo][a] = ni.send(a) }
-
-        libvirt[:domains] = Mash.new
-        virtconn.list_domains.each do |d|
-          dv = virtconn.lookup_domain_by_id d
-          libvirt[:domains][dv.name] = Mash.new
-          libvirt[:domains][dv.name][:id] = d
-          %w{os_type uuid}.each { |a| libvirt[:domains][dv.name][a] = dv.send(a) }
-          %w{cpu_time max_mem memory nr_virt_cpu state}.each { |a| libvirt[:domains][dv.name][a] = dv.info.send(a) }
-
-        end
-
-        libvirt[:networks] = Mash.new
-        virtconn.list_networks.each do |n|
-          nv = virtconn.lookup_network_by_name n
-          libvirt[:networks][n] = Mash.new
-          %w{bridge_name uuid}.each { |a| libvirt[:networks][n][a] = nv.send(a) }
-        end
-
-        libvirt[:storage] = Mash.new
-        virtconn.list_storage_pools.each do |pool|
-          sp = virtconn.lookup_storage_pool_by_name pool
-          libvirt[:storage][pool] = Mash.new
-          %w{autostart uuid}.each { |a| libvirt[:storage][pool][a] = sp.send(a) }
-          %w{allocation available capacity state}.each { |a| libvirt[:storage][pool][a] = sp.info.send(a) }
-
-          libvirt[:storage][pool][:volumes] = Mash.new
-          sp.list_volumes.each do |v|
-            libvirt[:storage][pool][:volumes][v] = Mash.new
-            sv = sp.lookup_volume_by_name v
-            %w{key name path}.each { |a| libvirt[:storage][pool][:volumes][v][a] = sv.send(a) }
-            %w{allocation capacity type}.each { |a| libvirt[:storage][pool][:volumes][v][a] = sv.info.send(a) }
-          end
-        end
-
+        libvirt_data = Mash.new
+        libvirt_data[:uri] = virtconn.uri
+        libvirt_data[:libvirt_version] = Libvirt.version(emu)[0].to_s
+        libvirt_data[:nodeinfo] = get_node_data
+        libvirt_data[:domains] = get_domain_data
+        libvirt_data[:networks] = get_network_data
+        libvirt_data[:storage] = get_storage_data
         virtconn.close
-      rescue LoadError => e
-        Ohai::Log.debug("Plugin LibVirt: Can't load gem ruby-libvirt. Cannot continue.")
+        libvirt libvirt_data
+      rescue NameError
+        Ohai::Log.debug("Plugin LibVirt: Cannot load Libvirt. Skipping...")
+      rescue Libvirt::ConnectionError
+        Ohai::Log.debug("Plugin LibVirt: Failed to connect to #{emu}:///system. Skipping...")
       end
+    else
+      Ohai::Log.debug("Plugin LibVirt: Node is not a virtualization host. Skipping...")
     end
   end
 end

@@ -28,10 +28,10 @@ Ohai.plugin(:C) do
     if so.exitstatus == 0
       yield(so)
     else
-      Ohai::Log.debug("Plugin C '#{cmd}' failed. Skipping data.")
+      Ohai::Log.debug("Plugin C: '#{cmd}' failed. Skipping data.")
     end
   rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("Plugin C '#{cmd}' binary could not be found. Skipping data.")
+    Ohai::Log.debug("Plugin C: '#{cmd}' binary could not be found. Skipping data.")
   end
 
   collect_data do

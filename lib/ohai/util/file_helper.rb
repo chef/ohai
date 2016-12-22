@@ -26,11 +26,11 @@ module Ohai
         paths.each do |path|
           filename = File.join(path, cmd)
           if File.executable?(filename)
-            Ohai::Log.debug("#{self.name} plugin: found #{cmd} at #{filename}")
+            Ohai::Log.debug("Plugin #{self.name}: found #{cmd} at #{filename}")
             return filename
           end
         end
-        Ohai::Log.debug("#{self.name} plugin: did not find #{cmd}")
+        Ohai::Log.debug("Plugin #{self.name}: did not find #{cmd}")
         false
       end
     end

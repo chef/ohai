@@ -120,19 +120,19 @@ Ohai.plugin(:Hostname) do
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname returned an empty string, retrying once.")
+        Ohai::Log.debug("Plugin Hostname: hostname returned an empty string, retrying once.")
         ourfqdn = resolve_fqdn
       end
 
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname returned an empty string twice and will" +
+        Ohai::Log.debug("Plugin Hostname: hostname returned an empty string twice and will" +
                         "not be set.")
       else
         fqdn ourfqdn
       end
     rescue
       Ohai::Log.debug(
-        "hostname returned an error, probably no domain set")
+        "Plugin Hostname: hostname returned an error, probably no domain set")
     end
     domain collect_domain
   end
@@ -152,20 +152,20 @@ Ohai.plugin(:Hostname) do
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname --fqdn returned an empty string, retrying " +
+        Ohai::Log.debug("Plugin Hostname: hostname --fqdn returned an empty string, retrying " +
                         "once.")
         ourfqdn = from_cmd("hostname --fqdn")
       end
 
       if ourfqdn.nil? || ourfqdn.empty?
-        Ohai::Log.debug("hostname --fqdn returned an empty string twice and " +
+        Ohai::Log.debug("Plugin Hostname: hostname --fqdn returned an empty string twice and " +
                         "will not be set.")
       else
         fqdn ourfqdn
       end
     rescue
       Ohai::Log.debug(
-        "hostname --fqdn returned an error, probably no domain set")
+        "Plugin Hostname: hostname --fqdn returned an error, probably no domain set")
     end
     domain collect_domain
   end

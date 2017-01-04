@@ -162,6 +162,12 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:azure] = Mash.new()
     end
 
+    it "populates cloud private ip" do
+      @plugin[:azure]["private_ip"] = "10.0.0.1"
+      @plugin.run
+      expect(@plugin[:cloud][:private_ips][0]).to eq(@plugin[:azure]["private_ip"])
+    end
+
     it "populates cloud public ip" do
       @plugin[:azure]["public_ip"] = "174.129.150.8"
       @plugin.run

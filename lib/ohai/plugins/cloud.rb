@@ -208,6 +208,7 @@ Ohai.plugin(:Cloud) do
   # Fill cloud hash with azure values
   def get_azure_values
     cloud[:vm_name] = azure["vm_name"]
+    cloud[:private_ips] << azure["private_ip"]
     cloud[:public_ips] << azure["public_ip"]
     cloud[:public_ipv4] = azure["public_ip"]
     cloud[:public_fqdn] = azure["public_fqdn"]

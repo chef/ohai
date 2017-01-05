@@ -13,9 +13,9 @@ before_install:
   - bundle --version
   - gem --version
 rvm:
-  - 2.1.9
   - 2.2.6
   - 2.3.3
+  - 2.4.0
   - ruby-head
 
 allow_failures:

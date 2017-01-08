@@ -208,7 +208,6 @@ module Ohai
     private
 
     def configure_ohai
-      Ohai::Config.merge_deprecated_config
       Ohai.config.merge!(@config)
 
       if Ohai.config[:directory] &&

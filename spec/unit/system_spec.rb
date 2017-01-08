@@ -38,16 +38,6 @@ describe "Ohai::System" do
       expect(ohai.v6_dependency_solver).to be_a_kind_of(Hash)
     end
 
-    it "merges deprecated config settings into the ohai config context" do
-      expect(Ohai::Log).to receive(:warn).
-        with(/Ohai::Config\[:disabled_plugins\] is deprecated/)
-      Ohai::Config[:disabled_plugins] = [ :Foo, :Baz ]
-      expect(Ohai::Config).to receive(:merge_deprecated_config).
-        and_call_original
-      Ohai::System.new
-      expect(Ohai.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
-    end
-
     it "merges provided configuration options into the ohai config context" do
       config = {
         disabled_plugins: [ :Foo, :Baz ],
@@ -68,30 +58,6 @@ describe "Ohai::System" do
         Ohai.config[:directory] = directory
         Ohai::System.new
         expect(Ohai.config[:plugin_path]).to include(directory)
-      end
-    end
-
-    shared_examples_for "appendable deprecated configuration option" do
-      it "logs a warning and configures the option on the ohai config context" do
-        Ohai::Config[option] << value
-        expect(Ohai::Log).to receive(:warn).
-          with(/Ohai::Config\[:#{option}\] is deprecated/)
-        Ohai::System.new
-        expect(Ohai.config[option]).to include(value)
-      end
-    end
-
-    context "when a top-level hints_path is configured" do
-      include_examples "appendable deprecated configuration option" do
-        let(:option) { :hints_path }
-        let(:value) { "/path/to/hints" }
-      end
-    end
-
-    context "when a top-level plugin_path is configured" do
-      include_examples "appendable deprecated configuration option" do
-        let(:option) { :plugin_path }
-        let(:value) { "/path/to/plugins" }
       end
     end
 

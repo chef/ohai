@@ -86,45 +86,6 @@ RSpec.describe "Ohai::Application" do
       end
     end
 
-    context "when the configuration file contains deprecated config options" do
-      # For the purpose of these tests it doesn't matter if the configuration
-      # file was specified via command line or discovered on the local
-      # workstation. It's easier if we pass the configuration file as a cli
-      # argument (there's less to stub).
-
-      let(:argv) { [ "-c", config_location ] }
-
-      let(:config_content) do
-        <<-CONFIG
-log_location "#{log_location}"
-log_level    :#{log_level}
-Ohai::Config[:disabled_plugins] = #{disabled_plugins}
-Ohai::Config[:plugin_path] << "#{plugin_path}"
-CONFIG
-      end
-
-      # config settings
-      let(:disabled_plugins) { [ :Foo, :Baz ] }
-
-      let(:log_level) { :debug }
-
-      let(:log_location) { "path/to/log" }
-
-      let(:plugin_path) { "/path/to/plugins" }
-
-      it "logs warnings for deprecated top-level options" do
-        # deprecation warnings for options need to be stubbed in the order
-        # they are received, in this case it's the order they appear in the
-        # configuration file.
-        options = [ :log_location, :log_level, :disabled_plugins ]
-        options.each do |option|
-          expect(Ohai::Log).to receive(:warn).
-            with(/Ohai::Config\[:#{option}\] is deprecated/)
-        end
-        app.configure_ohai
-      end
-    end
-
     context "when the configuration file has a syntax error" do
       # For the purpose of these tests it doesn't matter if the configuration
       # file was specified via command line or discovered on the local

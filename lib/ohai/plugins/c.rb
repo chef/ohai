@@ -28,29 +28,48 @@ Ohai.plugin(:C) do
     if so.exitstatus == 0
       yield(so)
     else
-      Ohai::Log.debug("Plugin C: '#{cmd}' failed. Skipping data.")
+      Ohai::Log.debug("Plugin C '#{cmd}' failed. Skipping data.")
     end
   rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("Plugin C: '#{cmd}' binary could not be found. Skipping data.")
+    Ohai::Log.debug("Plugin C '#{cmd}' binary could not be found. Skipping data.")
   end
 
   collect_data do
     c = Mash.new
 
     #gcc
-    collect("gcc -v") do |so|
-      # Sample output:
-      # Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
-      # Apple LLVM version 7.3.0 (clang-703.0.29)
-      # Target: x86_64-apple-darwin15.4.0
-      # Thread model: posix
-      # InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
-      description = so.stderr.split($/).last
-      output = description.split
-      if output.length >= 3
-        c[:gcc] = Mash.new
-        c[:gcc][:version] = output[2]
-        c[:gcc][:description] = description
+    if :darwin
+      Ohai::Log.debug("Checking for Xcode Command Line Tools.")
+      so = shell_out("/usr/bin/xcode-select -p")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Xcode Command Line Tools found.")
+        collect("gcc -v") do |so|
+          description = so.stderr.split($/).last
+          output = description.split
+          if output.length >= 3
+            c[:gcc] = Mash.new
+            c[:gcc][:version] = output[2]
+            c[:gcc][:description] = description
+          end
+        end
+      else
+        Ohai::Log.debug("Xcode Command Line Tools not found.")
+      end
+    else
+      collect("gcc -v") do |so|
+        # Sample output:
+        # Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/usr/include/c++/4.2.1
+        # Apple LLVM version 7.3.0 (clang-703.0.29)
+        # Target: x86_64-apple-darwin15.4.0
+        # Thread model: posix
+        # InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+        description = so.stderr.split($/).last
+        output = description.split
+        if output.length >= 3
+          c[:gcc] = Mash.new
+          c[:gcc][:version] = output[2]
+          c[:gcc][:description] = description
+        end
       end
     end
 
@@ -102,12 +121,30 @@ Ohai.plugin(:C) do
     end
 
     #sun pro
-    collect("cc -V -flags") do |so|
-      output = so.stderr.split
-      if so.stderr =~ /^cc: Sun C/ && output.size >= 4
-        c[:sunpro] = Mash.new
-        c[:sunpro][:version] = output[3]
-        c[:sunpro][:description] = so.stderr.chomp
+    if :darwin
+      Ohai::Log.debug("Checking for Xcode Command Line Tools.")
+      so = shell_out("/usr/bin/xcode-select -p")
+      if so.exitstatus == 0
+        Ohai::Log.debug("Xcode Command Line Tools found.")
+        collect("cc -V -flags") do |so|
+          output = so.stderr.split
+          if so.stderr =~ /^cc: Sun C/ && output.size >= 4
+            c[:sunpro] = Mash.new
+            c[:sunpro][:version] = output[3]
+            c[:sunpro][:description] = so.stderr.chomp
+          end
+        end
+      else
+        Ohai::Log.debug("Xcode Command Line Tools not found.")
+      end
+    else
+      collect("cc -V -flags") do |so|
+        output = so.stderr.split
+        if so.stderr =~ /^cc: Sun C/ && output.size >= 4
+          c[:sunpro] = Mash.new
+          c[:sunpro][:version] = output[3]
+          c[:sunpro][:description] = so.stderr.chomp
+        end
       end
     end
 

@@ -48,30 +48,6 @@ Ohai.plugin(:C) do
     Ohai::Log.debug("xcode-select binary could not be found. Skipping data.")
   end
 
-  collect_data(:darwin) do
-    if xcode_installed?
-      collect_gcc
-      collect_cc
-    end
-  end
-
-  collect_data(:windows) do
-    check_for_cl
-    check_for_devenv
-  end
-
-  collect_data(:default) do
-    collect_gcc
-    collect_glibc
-    check_for_cl
-    check_for_devenv
-    collect_xlc
-    collect_cc
-    collect_hpux_cc
-  end
-
-  c = Mash.new
-
   def collect_gcc
     #gcc
     collect("gcc -v") do |so|
@@ -171,5 +147,31 @@ Ohai.plugin(:C) do
     end
   end
 
-  languages[:c] = c unless c.empty?
+  collect_data(:darwin) do
+    c = Mash.new
+    if xcode_installed?
+      collect_gcc
+      collect_cc
+    end
+    languages[:c] = c unless c.empty?
+  end
+
+  collect_data(:windows) do
+    c = Mash.new
+    check_for_cl
+    check_for_devenv
+    languages[:c] = c unless c.empty?
+  end
+
+  collect_data(:default) do
+    c = Mash.new
+    collect_gcc
+    collect_glibc
+    check_for_cl
+    check_for_devenv
+    collect_xlc
+    collect_cc
+    collect_hpux_cc
+    languages[:c] = c unless c.empty?
+  end
 end

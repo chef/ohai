@@ -20,7 +20,6 @@ require "rbconfig"
 
 Ohai.plugin(:C) do
   provides "languages/c"
-
   depends "languages"
 
   def collect(cmd, &block)
@@ -38,14 +37,14 @@ Ohai.plugin(:C) do
     Ohai::Log.debug("Checking for Xcode Command Line Tools.")
     so = shell_out("/usr/bin/xcode-select -p")
     if so.exitstatus == 0
-      Ohai::Log.debug("Xcode Command Line Tools found.")
+      Ohai::Log.debug("Plugin C: Xcode Command Line Tools found.")
       return true
     else
-      Ohai::Log.debug("Xcode Command Line Tools not found.")
+      Ohai::Log.debug("Plugin C: Xcode Command Line Tools not found.")
       return false
     end
   rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug("xcode-select binary could not be found. Skipping data.")
+    Ohai::Log.debug("Plugin C: xcode-select binary could not be found. Skipping data.")
   end
 
   def collect_gcc

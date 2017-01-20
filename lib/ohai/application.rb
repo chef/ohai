@@ -83,6 +83,8 @@ class Ohai::Application
     @attributes = nil if @attributes.empty?
 
     load_workstation_config
+
+    Ohai::Log.init(Ohai.config[:log_location])
   end
 
   def run_application

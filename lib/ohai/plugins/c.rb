@@ -163,15 +163,19 @@ Ohai.plugin(:C) do
     languages[:c] = c unless c.empty?
   end
 
-  collect_data(:default) do
+  collect_data(:hpux) do
+    c = Mash.new
+    collect_gcc
+    collect_hpux_cc
+    languages[:c] = c unless c.empty?
+  end
+
+  collect_data(:hpux) do
     c = Mash.new
     collect_gcc
     collect_glibc
-    check_for_cl
-    check_for_devenv
     collect_xlc
     collect_cc
-    collect_hpux_cc
     languages[:c] = c unless c.empty?
   end
 end

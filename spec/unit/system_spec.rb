@@ -101,7 +101,6 @@ describe "Ohai::System" do
       it "configures logging" do
         log_level = :debug
         Ohai.config[:log_level] = log_level
-        expect(Ohai::Log).to receive(:init).with(Ohai.config[:log_location])
         expect(Ohai::Log).to receive(:level=).with(log_level)
         Ohai::System.new
       end

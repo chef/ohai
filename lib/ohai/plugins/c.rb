@@ -147,10 +147,7 @@ Ohai.plugin(:C) do
 
   collect_data(:darwin) do
     c = Mash.new
-    if xcode_installed?
-      collect_gcc
-      collect_cc
-    end
+    collect_gcc if xcode_installed?
     languages[:c] = c unless c.empty?
   end
 

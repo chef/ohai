@@ -79,7 +79,7 @@ Ohai.plugin(:C) do
         end
       end
     end
-    @c[:gcc] = gcc
+    @c[:gcc] = gcc unless gcc.empty?
   end
 
   def collect_glibc

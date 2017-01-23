@@ -78,7 +78,6 @@ C_HPUX = <<EOF
          $ PATCH/11.00:PHCO_27774  Oct  3 2002 09:45:59 $
 EOF
 
-
 describe Ohai::System, "plugin c" do
 
   let(:plugin) { get_plugin("c") }
@@ -89,7 +88,6 @@ describe Ohai::System, "plugin c" do
     #gcc
     allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
   end
-
 
   context "on HPUX" do
     before(:each) do
@@ -143,7 +141,6 @@ describe Ohai::System, "plugin c" do
       expect(plugin).not_to receive(:shell_out).with("gcc -v")
       plugin.run
     end
-
 
   end
 

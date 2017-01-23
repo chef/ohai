@@ -89,6 +89,49 @@ describe Ohai::System, "plugin c" do
     allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
   end
 
+  context "on AIX" do
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:aix)
+      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
+    end
+
+    #ibm xlc
+    it "gets the xlc version from running xlc -qversion" do
+      expect(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
+      plugin.run
+    end
+
+    it "sets languages[:c][:xlc][:version]" do
+      plugin.run
+      expect(plugin.languages[:c][:xlc][:version]).to eql("9.0")
+    end
+
+    it "sets languages[:c][:xlc][:description]" do
+      plugin.run
+      expect(plugin.languages[:c][:xlc][:description]).to eql("IBM XL C/C++ Enterprise Edition for AIX, V9.0")
+    end
+
+    it "does not set the languages[:c][:xlc] tree up if xlc command exits nonzero" do
+      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
+      plugin.run
+      expect(plugin[:languages][:c]).not_to have_key(:xlc)
+    end
+
+    it "does not set the languages[:c][:xlc] tree up if xlc command fails" do
+      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(Ohai::Exceptions::Exec)
+      plugin.run
+      expect(plugin[:languages][:c]).not_to have_key(:xlc)
+      expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
+    end
+
+    it "sets the languages[:c][:xlc] tree up if xlc exit status is 249" do
+      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(63744, "", ""))
+      plugin.run
+      expect(plugin[:languages][:c]).not_to have_key(:xlc)
+    end
+
+  end
+
   context "on HPUX" do
     before(:each) do
       allow(plugin).to receive(:collect_os).and_return(:hpux)
@@ -216,8 +259,6 @@ describe Ohai::System, "plugin c" do
       # glibc
       allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))
       allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))
-      #ibm xlc
-      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
       #sun pro
       allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
     end
@@ -302,41 +343,6 @@ describe Ohai::System, "plugin c" do
       expect(plugin).to receive(:shell_out).with("/lib/libc.so.6")
       plugin.run
       expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
-    end
-
-    #ibm xlc
-    it "gets the xlc version from running xlc -qversion" do
-      expect(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
-      plugin.run
-    end
-
-    it "sets languages[:c][:xlc][:version]" do
-      plugin.run
-      expect(plugin.languages[:c][:xlc][:version]).to eql("9.0")
-    end
-
-    it "sets languages[:c][:xlc][:description]" do
-      plugin.run
-      expect(plugin.languages[:c][:xlc][:description]).to eql("IBM XL C/C++ Enterprise Edition for AIX, V9.0")
-    end
-
-    it "does not set the languages[:c][:xlc] tree up if xlc command exits nonzero" do
-      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:xlc)
-    end
-
-    it "does not set the languages[:c][:xlc] tree up if xlc command fails" do
-      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(Ohai::Exceptions::Exec)
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:xlc)
-      expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
-    end
-
-    it "sets the languages[:c][:xlc] tree up if xlc exit status is 249" do
-      allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(63744, "", ""))
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:xlc)
     end
 
     #sun pro

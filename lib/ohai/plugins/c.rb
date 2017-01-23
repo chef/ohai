@@ -137,7 +137,7 @@ Ohai.plugin(:C) do
     end
   end
 
-  def collect_cc
+  def collect_sunpro
     # sun pro
     collect("cc -V -flags") do |so|
       output = so.stderr.split
@@ -160,6 +160,13 @@ Ohai.plugin(:C) do
         @c[:hpcc][:description] = description.strip
       end
     end
+  end
+
+  collect_data(:aix) do
+    @c = Mash.new
+    collect_xlc
+    collect_gcc
+    languages[:c] = @c unless @c.empty?
   end
 
   collect_data(:darwin) do
@@ -186,8 +193,7 @@ Ohai.plugin(:C) do
     @c = Mash.new
     collect_gcc
     collect_glibc
-    collect_xlc
-    collect_cc
+    collect_sunpro
     languages[:c] = @c unless @c.empty?
   end
 end

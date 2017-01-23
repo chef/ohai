@@ -26,3 +26,7 @@ A new plugin parses the output of the sysconf command to provide information on 
 ## AWS Account ID
 
 The EC2 plugin now fetches the AWS Account ID in addition to previous instance metadata
+
+## GCC Detection
+
+GCC detection has been improved to collect additional information, and to not prompt for the installation of Xcode on macOS systems

@@ -43,15 +43,6 @@ Ohai.plugin(:Uptime) do
     return [nil, nil]
   end
 
-  collect_data(:hpux, :default) do
-    require "sigar"
-
-    sigar = Sigar.new
-    uptime = sigar.uptime.uptime
-    uptime_seconds uptime.to_i * 1000
-    uptime seconds_to_human(uptime.to_i)
-  end
-
   collect_data(:darwin) do
     data = collect_uptime("/usr/sbin/sysctl")
     uptime_seconds data.first

@@ -76,24 +76,9 @@ Ohai.plugin(:Hostname) do
     end
   end
 
-  def get_fqdn_from_sigar
-    require "sigar"
-    sigar = Sigar.new
-    sigar.fqdn
-  end
-
-  def sigar_is_available?
-    begin
-      require "sigar"
-      true
-    rescue LoadError
-      false
-    end
-  end
-
   collect_data(:hpux, :default) do
     machinename from_cmd("hostname")
-    fqdn sigar_is_available? ? get_fqdn_from_sigar : resolve_fqdn
+    fqdn resolve_fqdn
     collect_hostname
     collect_domain
   end

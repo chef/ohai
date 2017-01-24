@@ -60,7 +60,8 @@ Ohai.plugin(:CPU) do
                                        processor["stepping"]
                                      end
       cpu[current_cpu]["physical_id"] = processor["deviceid"]
-      cpu[current_cpu]["model_name"] = processor["description"]
+      cpu[current_cpu]["model_name"] = processor["name"]
+      cpu[current_cpu]["description"] = processor["description"]
       cpu[current_cpu]["mhz"] = processor["maxclockspeed"].to_s
       cpu[current_cpu]["cache_size"] = "#{processor['l2cachesize']} KB"
     end

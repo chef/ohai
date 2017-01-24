@@ -32,8 +32,13 @@ shared_examples "a cpu" do |cpu_no|
       expect(@plugin[:cpu]["#{cpu_no}"][:vendor_id]).to eq("GenuineIntel")
     end
 
-    it "should set model_name to Intel64 Family 6 Model 70 Stepping 1" do
+    it "should set model_name to Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz" do
       expect(@plugin[:cpu]["#{cpu_no}"][:model_name])
+        .to eq("Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz")
+    end
+
+    it "should set description to Intel64 Family 6 Model 70 Stepping 1" do
+      expect(@plugin[:cpu]["#{cpu_no}"][:description])
         .to eq("Intel64 Family 6 Model 70 Stepping 1")
     end
 
@@ -64,6 +69,7 @@ describe Ohai::System, "Windows cpu plugin" do
     @double_wmi_instance = instance_double(WmiLite::Wmi)
 
     @processors = [{ "description" => "Intel64 Family 6 Model 70 Stepping 1",
+                     "name" => "Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz",
                      "deviceid" => "CPU0",
                      "family" => 2,
                      "manufacturer" => "GenuineIntel",
@@ -75,6 +81,7 @@ describe Ohai::System, "Windows cpu plugin" do
                      "l2cachesize" => 64 },
 
                    { "description" => "Intel64 Family 6 Model 70 Stepping 1",
+                     "name" => "Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz",
                      "deviceid" => "CPU1",
                      "family" => 2,
                      "manufacturer" => "GenuineIntel",

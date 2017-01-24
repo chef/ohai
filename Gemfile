@@ -17,5 +17,4 @@ group :development do
   gem "rspec-collection_matchers", "~> 1.0"
   gem "rspec_junit_formatter"
   gem "github_changelog_generator", git: "https://github.com/tduffield/github-changelog-generator", branch: "adjust-tag-section-mapping"
-  gem "activesupport", "< 5.0" if RUBY_VERSION <= "2.2.2" # github_changelog_generator dep
 end

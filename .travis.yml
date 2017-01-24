@@ -6,12 +6,16 @@ sudo: false
 branches:
   only:
     - master
+    - 8-stable
 
 before_install:
   - gem update --system
+  - gem --version
+  - gem uninstall bundler -a -x -I
+  - rvm @global do gem uninstall bundler -a -x -I
   - gem install bundler
   - bundle --version
-  - gem --version
+  - rm -f .bundle/config
 rvm:
   - 2.2.6
   - 2.3.3

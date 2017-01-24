@@ -19,7 +19,7 @@
 # Note: This plugin requires libvirt-bin/libvirt-dev as well as the ruby-libvirt
 #       gem to be installed before it will properly parse data
 
-Ohai.plugin(:LibVirt) do
+Ohai.plugin(:Libvirt) do
   %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
     provides "libvirt/#{info}"
     depends "virtualization"
@@ -32,9 +32,9 @@ Ohai.plugin(:LibVirt) do
   def load_libvirt
     begin
       require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
-      Ohai::Log.debug("Plugin LibVirt: Successfully loaded ruby-libvirt gem")
+      Ohai::Log.debug("Plugin Libvirt: Successfully loaded ruby-libvirt gem")
     rescue LoadError
-      Ohai::Log.debug("Plugin LibVirt: Can't load gem ruby-libvirt.")
+      Ohai::Log.debug("Plugin Libvirt: Can't load gem ruby-libvirt.")
     end
   end
 
@@ -104,12 +104,12 @@ Ohai.plugin(:LibVirt) do
         virtconn.close
         libvirt libvirt_data
       rescue NameError
-        Ohai::Log.debug("Plugin LibVirt: Cannot load Libvirt. Skipping...")
+        Ohai::Log.debug("Plugin Libvirt: Cannot load Libvirt. Skipping...")
       rescue Libvirt::ConnectionError
-        Ohai::Log.debug("Plugin LibVirt: Failed to connect to #{emu}:///system. Skipping...")
+        Ohai::Log.debug("Plugin Libvirt: Failed to connect to #{emu}:///system. Skipping...")
       end
     else
-      Ohai::Log.debug("Plugin LibVirt: Node is not a virtualization host. Skipping...")
+      Ohai::Log.debug("Plugin Libvirt: Node is not a virtualization host. Skipping...")
     end
   end
 end

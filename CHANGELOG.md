@@ -1,7 +1,33 @@
 # Change Log
 
+## [8.23.0](https://github.com/chef/ohai/tree/8.23.0) (2017-01-23)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.22.1...v8.23.0)
+
+**Implemented enhancements:**
+
+- C Plugin: Expand GCC data & only shellout to gcc if Xcode is installed on macOS [#944](https://github.com/chef/ohai/pull/944) ([tas50](https://github.com/tas50))
+- Improve debug logging in multiple plugins [#935](https://github.com/chef/ohai/pull/935) ([tas50](https://github.com/tas50))
+- Detect guests running on Veertu hypervisor [#925](https://github.com/chef/ohai/pull/925) ([tas50](https://github.com/tas50))
+- Properly detect Cumulus Linux platform / version [#921](https://github.com/chef/ohai/pull/921) ([tas50](https://github.com/tas50))
+- Fetch AWS Account ID from metadata [#907](https://github.com/chef/ohai/pull/907) ([Fodoj](https://github.com/Fodoj))
+
+**Fixed bugs:**
+
+- Fix log level selection when running the ohai command  [\#942](https://github.com/chef/ohai/pull/942) ([thommay](https://github.com/thommay))
+- updating cloud plugin to populate azure private_ip as it's currently nil [#937](https://github.com/chef/ohai/pull/937) ([rshade](https://github.com/rshade))
+
+## [v8.22.1](https://github.com/chef/ohai/tree/v8.22.1) (2016-12-07)
+
+[Full Changelog](https://github.com/chef/ohai/compare/8.22.1...v8.22.1)
+
+**Implemented enhancements:**
+
+- Pull the complete version string of Erlang [#916](https://github.com/chef/ohai/pull/916) ([tas50](https://github.com/tas50))
+- Add sysconf plugin to expose system configuration variables [#893](https://github.com/chef/ohai/pull/893) ([davide125](https://github.com/davide125))
+
 ## [8.22.0](https://github.com/chef/ohai/tree/8.22.0) (2016-11-30)
-[Full Changelog](https://github.com/chef/ohai/compare/v8.21.0...8.22.0)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.21.0...v8.22.0)
 
 **Implemented enhancements:**
 

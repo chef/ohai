@@ -9,6 +9,11 @@ Details about the thing that changed that needs to get included in the Release N
 
 # Ohai Release Notes:
 
+## Upcoming Chef/Ohai 13 release
+
+This April we'll be releasing Chef 13, and with the Chef 13 release we'll also be bumping the Ohai version to 13 to match. This release of Ohai will be the last 8.X release before we begin merging changes for Ohai 13.
+
+
 ## Cumulus Linux Platform
 
 Cumulus Linux will now be detected as platform `cumulus` instead of `debian` and the `platform_version` will be properly set to the Cumulus Linux release.

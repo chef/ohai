@@ -28,6 +28,7 @@ require "ohai/mixin/constant_helper"
 require "ohai/provides_map"
 require "ohai/hints"
 require "mixlib/shellout"
+require "ohai/config"
 
 module Ohai
   class System

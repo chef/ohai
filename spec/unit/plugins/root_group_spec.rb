@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
-require File.expand_path(File.dirname(__FILE__) + "/../../../lib/ohai/util/win32/group_helper.rb")
+require_relative "../../spec_helper.rb"
+require "ohai/util/win32/group_helper"
 
 describe Ohai::System, "root_group" do
   before(:each) do

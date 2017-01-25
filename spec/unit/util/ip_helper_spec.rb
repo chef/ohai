@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "ipaddress"
-require "spec_helper"
+require_relative "../../spec_helper.rb"
 require "ohai/util/ip_helper"
 
 class IpHelperMock

@@ -94,10 +94,6 @@ module Ohai
         end
       end
 
-      def multiline?(data)
-        data.lines.to_a.size > 1
-      end
-
       def has_trailing_slash?(data)
         !! ( data =~ %r{/$} )
       end

@@ -26,6 +26,10 @@ Ohai.plugin(:Virtualization) do
     which("lxc-version")
   end
 
+  def lxc_ls_exists?
+    which("lxc-ls")
+  end
+
   def docker_exists?
     which("docker")
   end
@@ -181,9 +185,33 @@ Ohai.plugin(:Virtualization) do
     # <index #>:<subsystem>:/
     #
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
+    #
+    # LXC 2.0 containers got cgroup-awareness with LXCFS to feel more like a real
+    # independent system.
+    # @see: https://linuxcontainers.org/lxcfs/introduction/
+    #
+    # /proc/1/environ will look like this inside a lxc container:
+    # container=lxc
+    # container_ttys=/dev/pts/0 /dev/pts/1 /dev/pts/2 /dev/pts/3
+    #
+    # /proc/self/cgroup will look like this inside a lxc container:
+    # <index #>:<subsystem>:/
+    #
+    # /proc/1/environ will look like this inside a docker container:
+    # PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    # HOSTNAME=f16ee9853412
+    # TERM=xterm
+    # HOME=/root
+    #
+    # /proc/self/cgroup will look like this inside a docker container:
+    # <index #>:<subsystem>:/docker/<hexadecimal container id>
+    #
+    # /LXC 2.0
+    #
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
+      init_environ_content = File.read("/proc/1/environ")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
           cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-.+$}
         Ohai::Log.debug("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
@@ -202,6 +230,18 @@ Ohai.plugin(:Virtualization) do
         # In general, the 'systems' framework from OHAI-182 is less susceptible to conflicts
         # But, this could overwrite virtualization[:systems][:lxc] = "guest"
         # If so, we may need to look further for a differentiator (OHAI-573)
+        virtualization[:systems][:lxc] = "host"
+      elsif init_environ_content =~ %r{\x00?container=lxc\x00?}
+        # we are within lxc-container
+        virtualization[:system] = "lxc"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:lxc] = "guest"
+      elsif lxc_ls_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
+        # we are lxc-capable host
+        unless virtualization[:system] && virtualization[:role]
+          virtualization[:system] = "lxc"
+          virtualization[:role] = "host"
+        end
         virtualization[:systems][:lxc] = "host"
       end
     elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")

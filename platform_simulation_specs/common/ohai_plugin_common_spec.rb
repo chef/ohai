@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/ohai_plugin_common.rb")
+require_relative "ohai_plugin_common.rb"
 
 describe OhaiPluginCommon, "subsumes?" do
   before(:each) do

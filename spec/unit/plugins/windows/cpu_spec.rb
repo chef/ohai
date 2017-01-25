@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require_relative "../../../spec_helper.rb"
 
 shared_examples "a cpu" do |cpu_no|
   describe "cpu #{cpu_no}" do

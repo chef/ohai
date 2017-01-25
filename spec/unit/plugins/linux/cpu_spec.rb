@@ -17,8 +17,7 @@
 #
 
 require "tempfile"
-
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require_relative "../../../spec_helper.rb"
 
 shared_examples "Common cpu info" do |total_cpu, real_cpu|
   describe "cpu" do

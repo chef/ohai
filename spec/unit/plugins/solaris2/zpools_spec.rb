@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris 2.x zpool plugin" do
   before(:each) do

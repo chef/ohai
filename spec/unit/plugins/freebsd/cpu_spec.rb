@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do

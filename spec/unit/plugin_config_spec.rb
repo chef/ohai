@@ -16,7 +16,6 @@
 #
 
 require_relative "../spec_helper"
-
 require "ohai/plugin_config"
 
 describe "Ohai::PluginConfig" do

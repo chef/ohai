@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
-require File.expand_path("#{File.dirname(__FILE__)}/system_profiler_output.rb")
+require_relative "../../../spec_helper.rb"
+require_relative "system_profiler_output.rb"
 
 begin
   require "plist"

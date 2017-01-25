@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "../../../spec_helper.rb")
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require_relative "../../../spec_helper.rb"
+require_relative "../common/ohai_plugin_common.rb"
 
 describe Ohai::System, "Linux kernel plugin" do
   test_plugin([ "kernel" ], %w{uname env}) do |p|

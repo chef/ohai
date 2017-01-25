@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
+require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris2.X kernel plugin" do
   # NOTE: Solaris will report the same module loaded multiple times

@@ -16,10 +16,9 @@
 # limitations under the License.
 #
 
-require "spec_helper"
-require "ohai/plugins/openstack"
+require_relative "../../spec_helper.rb"
 
-describe "OpenStack Plugin" do
+describe Ohai::System, "plugin openstack" do
 
   let(:plugin) { get_plugin("openstack") }
 

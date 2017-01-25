@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../../spec_helper.rb")
-require File.expand_path("#{File.dirname(__FILE__)}/hardware_system_profiler_output.rb")
+require_relative "../../../spec_helper.rb"
+require_relative "hardware_system_profiler_output.rb"
 
 describe Ohai::System, "Darwin hardware plugin", :unix_only do
   let (:plugin) { get_plugin("darwin/hardware") }

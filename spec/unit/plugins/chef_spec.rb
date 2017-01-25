@@ -19,8 +19,7 @@
 #
 
 begin
-  require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
-
+  require_relative "../../spec_helper.rb"
   require "chef/version"
 
   describe Ohai::System, "plugin chef" do

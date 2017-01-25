@@ -17,9 +17,8 @@
 #
 
 require "rbconfig"
-
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "/spec_helper.rb"))
-require File.expand_path( File.join( File.dirname( __FILE__ ), "..", "common", "ohai_plugin_common.rb" ))
+require_relative "../../spec_helper.rb"
+require_relative "../common/ohai_plugin_common.rb"
 
 describe Ohai::System, "plugin c" do
   test_plugin(%w{languages c}, [ "/lib/libc.so.6", "/lib64/libc.so.6", "gcc", "cl", "devenv.com", "xlc", "cc", "what" ]) do |p|

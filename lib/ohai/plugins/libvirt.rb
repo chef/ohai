@@ -104,7 +104,7 @@ Ohai.plugin(:Libvirt) do
         virtconn.close
         libvirt libvirt_data
       rescue NameError
-        Ohai::Log.debug("Plugin Libvirt: Cannot load Libvirt. Skipping...")
+        Ohai::Log.debug("Plugin Libvirt: Cannot load ruby-libvirt gem. Skipping...")
       rescue Libvirt::ConnectionError
         Ohai::Log.debug("Plugin Libvirt: Failed to connect to #{emu}:///system. Skipping...")
       end

@@ -43,7 +43,6 @@ describe Ohai::System, "Linux virtualization platform" do
 
     # default the which wrappers to nil
     allow(plugin).to receive(:lxc_version_exists?).and_return(false)
-    allow(plugin).to receive(:docker_exists?).and_return(false)
     allow(plugin).to receive(:nova_exists?).and_return(false)
   end
 
@@ -708,7 +707,6 @@ CGROUP
     end
 
     it "does not set the old virtualization attributes if they are already set" do
-      allow(plugin).to receive(:docker_exists?).and_return("/usr/bin/docker")
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:system] = "the cloud"
       plugin[:virtualization][:role] = "cumulonimbus"
@@ -718,7 +716,6 @@ CGROUP
     end
 
     it "does not set docker host if docker does not exist" do
-      allow(plugin).to receive(:docker_exists?).and_return(false)
       plugin.run
       expect(plugin[:virtualization][:system]).to be_nil
       expect(plugin[:virtualization][:role]).to be_nil

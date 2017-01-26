@@ -26,10 +26,6 @@ Ohai.plugin(:Virtualization) do
     which("lxc-version")
   end
 
-  def docker_exists?
-    which("docker")
-  end
-
   def nova_exists?
     which("nova")
   end

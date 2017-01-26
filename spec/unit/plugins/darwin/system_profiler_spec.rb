@@ -19,13 +19,6 @@
 require_relative "../../../spec_helper.rb"
 require_relative "system_profiler_output.rb"
 
-begin
-  require "plist"
-rescue LoadError => e
-  puts "The darwin systemprofile plugin spec tests will fail without the 'plist' library/gem.\n\n"
-  raise e
-end
-
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
   before(:each) do
     @plugin = get_plugin("darwin/system_profiler")

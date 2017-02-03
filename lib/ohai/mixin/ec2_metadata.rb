@@ -18,7 +18,6 @@
 # limitations under the License.
 
 require "net/http"
-require "socket"
 
 module Ohai
   module Mixin
@@ -48,32 +47,6 @@ module Ohai
       EC2_ARRAY_VALUES = %w{security-groups}
       EC2_ARRAY_DIR    = %w{network/interfaces/macs}
       EC2_JSON_DIR     = %w{iam}
-
-      def can_metadata_connect?(addr, port, timeout = 2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        saddr = Socket.pack_sockaddr_in(port, addr)
-        connected = false
-
-        begin
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          r, w, e = IO.select(nil, [t], nil, timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
-        rescue SystemCallError
-        end
-        Ohai::Log.debug("ec2 metadata mixin: can_metadata_connect? == #{connected}")
-        connected
-      end
 
       def best_api_version
         response = http_client.get("/")

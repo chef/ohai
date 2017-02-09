@@ -54,11 +54,13 @@
 # inet6 fe80::203:baff:fe17:4444/128
 
 # Extracted from http://illumos.org/hcl/
-ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
-                      dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
-                      iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
-                      nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                      rwn sfe tavor vr wpi xge yge aggr} unless defined?(ETHERNET_ENCAPS)
+unless defined?(ETHERNET_ENCAPS)
+  ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+                        dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
+                        iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
+                        nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
+                        rwn sfe tavor vr wpi xge yge aggr}
+end
 
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"

@@ -23,7 +23,7 @@ describe Ohai::System, "BSD virtualization plugin" do
     @plugin = get_plugin("bsd/virtualization")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n security.jail.jailed").and_return(mock_shell_out(0, "0", ""))
-    allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
+    allow(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/sbin/kldstat" )}").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("jls -nd").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.model").and_return(mock_shell_out(0, "", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl -n kern.vm_guest").and_return(mock_shell_out(0, "", ""))
@@ -77,7 +77,7 @@ Id Refs Address Size Name
 1 40 0xffffffff80100000 d20428 kernel
 7 3 0xffffffff81055000 41e88 vboxguest.ko
 OUT
-      allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path("/sbin/kldstat")}").and_return(mock_shell_out(0, @vbox_guest, ""))
+      allow(@plugin).to receive(:shell_out).with("#{Ohai.abs_path("/sbin/kldstat")}").and_return(mock_shell_out(0, @vbox_guest, ""))
     end
 
     it "detects we are a guest" do

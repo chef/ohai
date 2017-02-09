@@ -115,7 +115,7 @@ module Ohai
             end
           end
           in_common.each do |field, value|
-            next if value == nil
+            next if value.nil?
             dmi[type][field] = value.strip
           end
         end

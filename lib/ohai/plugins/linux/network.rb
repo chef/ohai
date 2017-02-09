@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Chris Read <chris.read@gmail.com>
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,9 +141,11 @@ Ohai.plugin(:Network) do
   # using a temporary var to hold routes and their interface name
   def parse_routes(family, iface)
     iface.collect do |i, iv|
-      iv[:routes].collect do |r|
-        r.merge(:dev => i) if r[:family] == family[:name]
-      end.compact if iv[:routes]
+      if iv[:routes]
+        iv[:routes].collect do |r|
+          r.merge(:dev => i) if r[:family] == family[:name]
+        end.compact
+      end
     end.compact.flatten
   end
 
@@ -380,7 +382,7 @@ Ohai.plugin(:Network) do
   end
 
   def interface_address_not_link_level?(iface, address)
-    !iface[:addresses][address][:scope].casecmp("link").zero?
+    !(iface[:addresses][address][:scope].casecmp("link") == 0)
   end
 
   def interface_valid_for_route?(iface, address, family)
@@ -478,12 +480,14 @@ Ohai.plugin(:Network) do
                     :neighbour_attribute => :arp,
                   }]
 
-      families << {
-                    :name => "inet6",
-                    :default_route => "::/0",
-                    :default_prefix => :default_inet6,
-                    :neighbour_attribute => :neighbour_inet6,
-                  } if ipv6_enabled?
+      if ipv6_enabled?
+        families << {
+                      :name => "inet6",
+                      :default_route => "::/0",
+                      :default_prefix => :default_inet6,
+                      :neighbour_attribute => :neighbour_inet6,
+                    }
+      end
 
       parse_ip_addr(iface)
 

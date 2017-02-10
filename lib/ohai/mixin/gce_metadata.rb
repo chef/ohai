@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "net/http"
-require "socket"
 
 module Ohai
   module Mixin
@@ -24,38 +23,6 @@ module Ohai
       # Trailing dot to host is added to avoid DNS search path
       GCE_METADATA_ADDR = "metadata.google.internal." unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/computeMetadata/v1/?recursive=true" unless defined?(GCE_METADATA_URL)
-
-      def can_metadata_connect?(addr, port, timeout = 2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        begin
-          saddr = Socket.pack_sockaddr_in(port, addr)
-        rescue SocketError => e # occurs when non-GCE systems try to resolve metadata.google.internal
-          Ohai::Log.debug("Mixin GCE: can_metadata_connect? failed setting up socket: #{e}")
-          return false
-        end
-
-        connected = false
-
-        begin
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          r, w, e = IO.select(nil, [t], nil, timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
-        rescue SystemCallError
-        end
-        Ohai::Log.debug("Mixin GCE: can_metadata_connect? == #{connected}")
-        connected
-      end
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)

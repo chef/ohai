@@ -15,9 +15,11 @@
 # limitations under the License.
 
 require "ohai/mixin/gce_metadata"
+require "ohai/mixin/http_helper"
 
 Ohai.plugin(:GCE) do
   include Ohai::Mixin::GCEMetadata
+  include Ohai::Mixin::HttpHelper
 
   provides "gce"
 
@@ -27,7 +29,7 @@ Ohai.plugin(:GCE) do
   # true:: If gce metadata server found
   # false:: Otherwise
   def has_gce_metadata?
-    can_metadata_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
+    can_socket_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
   end
 
   # Identifies gce

@@ -25,10 +25,12 @@
 # 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
 require "ohai/mixin/ec2_metadata"
+require "ohai/mixin/http_helper"
 require "base64"
 
 Ohai.plugin(:EC2) do
   include Ohai::Mixin::Ec2Metadata
+  include Ohai::Mixin::HttpHelper
 
   provides "ec2"
 
@@ -79,7 +81,7 @@ Ohai.plugin(:EC2) do
 
     # Even if it looks like EC2 try to connect first
     if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
-      return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end
 

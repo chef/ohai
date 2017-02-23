@@ -16,9 +16,11 @@
 # limitations under the License.
 
 require "ohai/mixin/do_metadata"
+require "ohai/mixin/http_helper"
 
 Ohai.plugin(:DigitalOcean) do
   include Ohai::Mixin::DOMetadata
+  include Ohai::Mixin::HttpHelper
 
   provides "digital_ocean"
 
@@ -41,10 +43,8 @@ Ohai.plugin(:DigitalOcean) do
 
   def looks_like_digital_ocean?
     return true if hint?("digital_ocean")
-
-    if has_do_dmi?
-      return true if can_metadata_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
-    end
+    return true if has_do_dmi? && can_socket_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
+    return false
   end
 
   collect_data do

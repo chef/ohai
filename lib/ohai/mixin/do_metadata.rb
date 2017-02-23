@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "net/http"
-require "socket"
 
 module Ohai
   module Mixin
@@ -23,32 +22,6 @@ module Ohai
 
       DO_METADATA_ADDR = "169.254.169.254" unless defined?(DO_METADATA_ADDR)
       DO_METADATA_URL = "/metadata/v1.json" unless defined?(DO_METADATA_URL)
-
-      def can_metadata_connect?(addr, port, timeout = 2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
-        saddr = Socket.pack_sockaddr_in(port, addr)
-        connected = false
-
-        begin
-          t.connect_nonblock(saddr)
-        rescue Errno::EINPROGRESS
-          r, w, e = IO.select(nil, [t], nil, timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
-        rescue SystemCallError
-        end
-        Ohai::Log.debug("Mixin DOMetadata: can_metadata_connect? == #{connected}")
-        connected
-      end
 
       def http_client
         Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }

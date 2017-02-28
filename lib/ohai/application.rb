@@ -88,6 +88,7 @@ class Ohai::Application
   end
 
   def run_application
+    config[:invoked_from_cli] = true
     ohai = Ohai::System.new(config)
     ohai.all_plugins(@attributes)
 

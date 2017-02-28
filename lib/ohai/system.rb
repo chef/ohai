@@ -39,6 +39,10 @@ module Ohai
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
+    # the cli flag is used to determine if we're being constructed by
+    # something like chef-client (which doesn't not set this flag) and
+    # which sets up its own loggers, or if we're coming from Ohai::Application
+    # and therefore need to configure Ohai's own logger.
     def initialize(config = {}, cli: false)
       @cli = cli
       @plugin_path = ""

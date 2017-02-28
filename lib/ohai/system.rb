@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,8 @@ module Ohai
     attr_reader :provides_map
     attr_reader :v6_dependency_solver
 
-    def initialize(config = {})
+    def initialize(config = {}, cli: false)
+      @cli = cli
       @plugin_path = ""
       @config = config
       reset_system
@@ -51,7 +52,7 @@ module Ohai
       @v6_dependency_solver = Hash.new
 
       configure_ohai
-      configure_logging
+      configure_logging if @cli
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)

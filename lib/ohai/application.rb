@@ -88,7 +88,7 @@ class Ohai::Application
   end
 
   def run_application
-    ohai = Ohai::System.new(config)
+    ohai = Ohai::System.new(config, cli: true)
     ohai.all_plugins(@attributes)
 
     if @attributes

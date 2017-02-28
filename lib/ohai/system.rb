@@ -43,8 +43,8 @@ module Ohai
     # something like chef-client (which doesn't not set this flag) and
     # which sets up its own loggers, or if we're coming from Ohai::Application
     # and therefore need to configure Ohai's own logger.
-    def initialize(config = {}, cli: false)
-      @cli = cli
+    def initialize(config = {})
+      @cli = config[:invoked_from_cli]
       @plugin_path = ""
       @config = config
       reset_system

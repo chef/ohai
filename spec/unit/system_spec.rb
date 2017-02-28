@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,8 @@ require "ohai/mixin/os"
 describe "Ohai::System" do
   extend IntegrationSupport
 
-  let(:ohai) { Ohai::System.new }
+  let(:ohai_external) { }
+  let(:ohai) { Ohai::System.new({ invoked_from_cli: true }) }
 
   describe "#initialize" do
     it "returns an Ohai::System object" do
@@ -43,8 +44,6 @@ describe "Ohai::System" do
         disabled_plugins: [ :Foo, :Baz ],
         directory: "/some/extra/plugins",
       }
-      allow(Ohai::Config).to receive(:merge_deprecated_config)
-      expect(Ohai.config).to receive(:merge!).with(config).and_call_original
       Ohai::System.new(config)
       config.each do |option, value|
         expect(Ohai.config[option]).to eq(value)
@@ -56,33 +55,36 @@ describe "Ohai::System" do
 
       it "adds directory to plugin_path" do
         Ohai.config[:directory] = directory
-        Ohai::System.new
+        Ohai::System.new({ invoked_from_cli: true })
         expect(Ohai.config[:plugin_path]).to include(directory)
       end
     end
 
-    context "first time configuration" do
-      before { allow(Ohai::Log).to receive(:configured?).and_return(false) }
-
+    context "when testing the intializer that does way too much" do
       it "configures logging" do
         log_level = :debug
         Ohai.config[:log_level] = log_level
         expect(Ohai::Log).to receive(:level=).with(log_level)
-        Ohai::System.new
+        Ohai::System.new({ invoked_from_cli: true })
       end
 
       it "resolves log_level when set to :auto" do
         expect(Ohai::Log).to receive(:level=).with(:info)
-        Ohai::System.new
+        Ohai::System.new({ invoked_from_cli: true })
       end
-    end
 
-    context "after first time configuration" do
-      before { allow(Ohai::Log).to receive(:configured?).and_return(true) }
+      context "when called externally" do
+        it "does not configure logging" do
+          log_level = :debug
+          Ohai.config[:log_level] = log_level
+          expect(Ohai::Log).not_to receive(:level=).with(log_level)
+          Ohai::System.new()
+        end
 
-      it "configures logging" do
-        expect(Ohai::Log).not_to receive(:init).with(Ohai.config[:log_location])
-        Ohai::System.new
+        it "does not resolve log_level when set to :auto" do
+          expect(Ohai::Log).not_to receive(:level=).with(:info)
+          Ohai::System.new()
+        end
       end
     end
   end

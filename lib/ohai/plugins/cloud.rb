@@ -233,17 +233,17 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with linode values
   def get_digital_ocean_values
-    public_ipv4 = digital_ocean["networks"]["v4"].select { |address| address["type"] == "public" }
-    private_ipv4 = digital_ocean["networks"]["v4"].select { |address| address["type"] == "private" }
-    public_ipv6 = digital_ocean["networks"]["v6"].select { |address| address["type"] == "public" }
-    private_ipv6 = digital_ocean["networks"]["v6"].select { |address| address["type"] == "private" }
+    public_ipv4 = digital_ocean["interfaces"]["public"].map { |iface| iface["ipv4"]["ip_address"] }
+    private_ipv4 = digital_ocean["interfaces"]["private"] ? digital_ocean["interfaces"]["private"].map { |iface| iface["ipv4"]["ip_address"] } : []
+    public_ipv6 = digital_ocean["interfaces"]["public"].map { |iface| iface["ipv6"]["ip_address"] }
+    private_ipv6 = digital_ocean["interfaces"]["private"] ? digital_ocean["interfaces"]["private"].map { |iface| iface["ipv6"]["ip_address"] } : []
     cloud[:public_ips].concat public_ipv4 + public_ipv6
     cloud[:private_ips].concat private_ipv4 + private_ipv6
     cloud[:public_ipv4] = public_ipv4.first
     cloud[:public_ipv6] = public_ipv6.first
     cloud[:local_ipv4] = private_ipv4.first
     cloud[:local_ipv6] = private_ipv6.first
-    cloud[:public_hostname] = digital_ocean["name"]
+    cloud[:public_hostname] = digital_ocean["hostname"]
     cloud[:provider] = "digital_ocean"
   end
 

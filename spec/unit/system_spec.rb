@@ -23,7 +23,7 @@ require "ohai/mixin/os"
 describe "Ohai::System" do
   extend IntegrationSupport
 
-  let(:ohai_external) { }
+  let(:ohai_external) {}
   let(:ohai) { Ohai::System.new({ invoked_from_cli: true }) }
 
   describe "#initialize" do

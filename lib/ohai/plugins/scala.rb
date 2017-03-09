@@ -23,9 +23,10 @@ Ohai.plugin(:Scala) do
     begin
       so = shell_out("scala -version")
       # Sample output:
-      # Scala code runner version 2.11.8 -- Copyright 2002-2016, LAMP/EPFL
+      # cat: /release: No such file or directory
+      # Scala code runner version 2.12.1 -- Copyright 2002-2016, LAMP/EPFL and Lightbend, Inc.
       if so.exitstatus == 0
-        scala[:version] = so.stderr.split[4]
+        scala[:version] = so.stderr.match(/.*version (\S*)/)[1]
       end
     rescue Ohai::Exceptions::Exec
       Ohai::Log.debug('Plugin Scala: Could not shell_out "scala -version". Skipping data')

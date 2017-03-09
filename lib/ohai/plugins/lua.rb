@@ -27,7 +27,9 @@ Ohai.plugin(:Lua) do
       # Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
       if so.exitstatus == 0
         lua = Mash.new
-        lua[:version] = so.stderr.split[1]
+        # at some point in lua's history they went from outputting the version
+        # on stderr to doing it on stdout. This handles old / new versions
+        lua[:version] = so.stdout.empty? ? so.stderr.split[1] : so.stdout.split[1]
         languages[:lua] = lua if lua[:version]
       end
     rescue Ohai::Exceptions::Exec

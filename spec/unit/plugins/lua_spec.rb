@@ -26,8 +26,8 @@ describe Ohai::System, "plugin lua" do
 
   before(:each) do
     plugin[:languages] = Mash.new
-    @stderr = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
-    allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @stderr))
+    @message = "Lua 5.1.2  Copyright (C) 1994-2008 Lua.org, PUC-Rio\n"
+    allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, "", @message))
   end
 
   it "gets the lua version from running lua -v" do
@@ -50,5 +50,11 @@ describe Ohai::System, "plugin lua" do
     allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
     plugin.run
     expect(plugin.languages).not_to have_key(:lua)
+  end
+
+  it "sets languages[:lua][:version] when 'lua -v' returns output on stdout not stderr" do
+    allow(plugin).to receive(:shell_out).with("lua -v").and_return(mock_shell_out(0, @message, ""))
+    plugin.run
+    expect(plugin.languages[:lua][:version]).to eql("5.1.2")
   end
 end

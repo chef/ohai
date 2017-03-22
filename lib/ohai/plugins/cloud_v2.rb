@@ -285,13 +285,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with digital_ocean values
   def get_digital_ocean_values
-    digital_ocean["networks"].each do |network, addresses|
-      type = network == "v4" ? "ipv4" : "ipv6"
-      addresses.each do |address|
-        @cloud_attr_obj.send("add_#{type}_addr", address["ip_address"], address["type"].to_sym)
-      end
-    end
-    @cloud_attr_obj.public_hostname = digital_ocean["name"]
+    @cloud_attr_obj.send("add_ipv4_addr", digital_ocean["interfaces"]["public"][0]["ipv4"]["ip_address"], :public) rescue NoMethodError
+    @cloud_attr_obj.send("add_ipv4_addr", digital_ocean["interfaces"]["private"][0]["ipv4"]["ip_address"], :private) rescue NoMethodError
+    @cloud_attr_obj.send("add_ipv6_addr", digital_ocean["interfaces"]["public"][0]["ipv6"]["ip_address"], :public) rescue NoMethodError
+    @cloud_attr_obj.send("add_ipv6_addr", digital_ocean["interfaces"]["private"][0]["ipv6"]["ip_address"], :private) rescue NoMethodError
     @cloud_attr_obj.provider = "digital_ocean"
   end
 

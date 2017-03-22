@@ -37,7 +37,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with EC2 mash" do
     before do
-      @plugin[:ec2] = Mash.new()
+      @plugin[:ec2] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -60,7 +60,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with rackspace" do
     before do
-      @plugin[:rackspace] = Mash.new()
+      @plugin[:rackspace] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -107,7 +107,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with linode mash" do
     before do
-      @plugin[:linode] = Mash.new()
+      @plugin[:linode] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -136,7 +136,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with eucalyptus mash" do
     before do
-      @plugin[:eucalyptus] = Mash.new()
+      @plugin[:eucalyptus] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -159,7 +159,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with Azure mash" do
     before do
-      @plugin[:azure] = Mash.new()
+      @plugin[:azure] = Mash.new
     end
 
     it "populates cloud private ip" do

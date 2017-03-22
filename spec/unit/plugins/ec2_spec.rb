@@ -127,6 +127,49 @@ describe Ohai::System, "plugin ec2" do
         expect(plugin[:ec2]["account_id"]).to eq("4815162342")
       end
 
+      it "fetches AWS region" do
+        paths.each do |name, body|
+          expect(@http_client).to receive(:get).
+            with("/2012-01-12/#{name}").
+            and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+        end
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/dynamic/instance-identity/document/").
+          and_return(double("Net::HTTP Response", :body => "{\"region\":\"us-east-1\"}", :code => "200"))
+
+        plugin.run
+
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["instance_type"]).to eq("c1.medium")
+        expect(plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
+        expect(plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
+        expect(plugin[:ec2]["region"]).to eq("us-east-1")
+      end
+
+      it "fetches AWS availability zone" do
+        paths.each do |name, body|
+          expect(@http_client).to receive(:get).
+            with("/2012-01-12/#{name}").
+            and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+        end
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/user-data/").
+          and_return(double("Net::HTTP Response", :body => "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", :code => "200"))
+        expect(@http_client).to receive(:get).
+          with("/2012-01-12/dynamic/instance-identity/document/").
+          and_return(double("Net::HTTP Response", :body => "{\"availabilityZone\":\"us-east-1d\"}", :code => "200"))
+
+        plugin.run
+
+        expect(plugin[:ec2]).not_to be_nil
+        expect(plugin[:ec2]["instance_type"]).to eq("c1.medium")
+        expect(plugin[:ec2]["ami_id"]).to eq("ami-5d2dc934")
+        expect(plugin[:ec2]["security_groups"]).to eql %w{group1 group2}
+        expect(plugin[:ec2]["availability_zone"]).to eq("us-east-1d")
+      end
     end
 
     it "parses ec2 network/ directory as a multi-level hash" do

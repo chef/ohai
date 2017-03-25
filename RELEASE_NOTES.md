@@ -35,3 +35,9 @@ The EC2 plugin now fetches the AWS Account ID in addition to previous instance m
 ## GCC Detection
 
 GCC detection has been improved to collect additional information, and to not prompt for the installation of Xcode on macOS systems
+
+## Support multiple kernel RPMs
+The last kernel installed will be accessible via `[:packages]['kernel']`. Additional kernels can be accessed via `[:packages]['kernel-VERSION-RELEASE']`.
+
+## Support gpg-pubkey pseudo RPMs
+These are created via `rpm --import KEY`. The last key imported is accessible via `[:packages]['gpg-pubkey']`. Additional keys are accessible via `[:packages]['gpg-pubkey-KEYID']`.

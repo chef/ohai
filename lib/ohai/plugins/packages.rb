@@ -49,7 +49,20 @@ Ohai.plugin(:Packages) do
 
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        hash = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        packages[name] = hash
+
+        case name
+        when 'kernel'
+          # multiple kernels can be installed
+          packages["#{name}-#{version}-#{release}"] = hash
+        when 'gpg-pubkey'
+          # these are the result of an `rpm --import KEY`
+          # version is the keyid available from`gpg --throw-keyids < KEY`
+          # release is the import date
+          # http://unix.stackexchange.com/questions/190203/what-are-gpg-pubkey-packages
+          packages["#{name}-#{version}"] = hash
+        end
       end
     end
   end

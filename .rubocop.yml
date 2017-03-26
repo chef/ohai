@@ -1,3 +1,6 @@
+inherit_gem:
+  chefstyle: config/chefstyle.yml
+
 AllCops:
   Exclude:
     - "spec/data/**/*"

@@ -53,10 +53,10 @@ Ohai.plugin(:Packages) do
         packages[name] = hash
 
         case name
-        when 'kernel'
+        when "kernel"
           # multiple kernels can be installed
           packages["#{name}-#{version}-#{release}"] = hash
-        when 'gpg-pubkey'
+        when "gpg-pubkey"
           # these are the result of an `rpm --import KEY`
           # version is the keyid available from`gpg --throw-keyids < KEY`
           # release is the import date

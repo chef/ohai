@@ -59,17 +59,17 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context 'on fedora' do
+  context "on fedora" do
     let(:plugin) do
-      get_plugin('packages').tap do |plugin|
-        plugin[:platform_family] = 'fedora'
+      get_plugin("packages").tap do |plugin|
+        plugin[:platform_family] = "fedora"
       end
     end
 
     let(:format) { '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n' }
 
     let(:stdout) do
-      File.read(File.join(SPEC_PLUGIN_PATH, 'rpmquery.output'))
+      File.read(File.join(SPEC_PLUGIN_PATH, "rpmquery.output"))
     end
 
     before(:each) do
@@ -78,75 +78,75 @@ describe Ohai::System, "plugin packages" do
       plugin.run
     end
 
-    it 'calls rpm -qa' do
+    it "calls rpm -qa" do
       expect(plugin).to receive(:shell_out)
         .with("rpm -qa --qf '#{format}'")
-        .and_return(mock_shell_out(0, stdout, ''))
+        .and_return(mock_shell_out(0, stdout, ""))
       plugin.run
     end
 
-    it 'gets packages and versions/release - arch' do
-      expect(plugin[:packages]['glibc'][:version]).to eq('2.17')
-      expect(plugin[:packages]['glibc'][:release]).to eq('106.el7_2.6')
-      expect(plugin[:packages]['glibc'][:epoch]).to eq('0')
-      expect(plugin[:packages]['glibc'][:installdate]).to eq('1463486666')
-      expect(plugin[:packages]['glibc'][:arch]).to eq('x86_64')
+    it "gets packages and versions/release - arch" do
+      expect(plugin[:packages]["glibc"][:version]).to eq("2.17")
+      expect(plugin[:packages]["glibc"][:release]).to eq("106.el7_2.6")
+      expect(plugin[:packages]["glibc"][:epoch]).to eq("0")
+      expect(plugin[:packages]["glibc"][:installdate]).to eq("1463486666")
+      expect(plugin[:packages]["glibc"][:arch]).to eq("x86_64")
     end
 
-    it 'gets packages and versions/release - noarch' do
-      expect(plugin[:packages]['tzdata'][:version]).to eq('2016d')
-      expect(plugin[:packages]['tzdata'][:release]).to eq('1.el7')
-      expect(plugin[:packages]['tzdata'][:epoch]).to eq('0')
-      expect(plugin[:packages]['tzdata'][:installdate]).to eq('1463486618')
-      expect(plugin[:packages]['tzdata'][:arch]).to eq('noarch')
+    it "gets packages and versions/release - noarch" do
+      expect(plugin[:packages]["tzdata"][:version]).to eq("2016d")
+      expect(plugin[:packages]["tzdata"][:release]).to eq("1.el7")
+      expect(plugin[:packages]["tzdata"][:epoch]).to eq("0")
+      expect(plugin[:packages]["tzdata"][:installdate]).to eq("1463486618")
+      expect(plugin[:packages]["tzdata"][:arch]).to eq("noarch")
     end
 
-    it 'gets last kernel installed' do
-      expect(plugin[:packages]['kernel'][:version]).to eq('3.10.0')
-      expect(plugin[:packages]['kernel'][:release]).to eq('327.36.3.el7')
-      expect(plugin[:packages]['kernel'][:epoch]).to eq('0')
-      expect(plugin[:packages]['kernel'][:installdate]).to eq('1478879645')
-      expect(plugin[:packages]['kernel'][:arch]).to eq('x86_64')
+    it "gets last kernel installed" do
+      expect(plugin[:packages]["kernel"][:version]).to eq("3.10.0")
+      expect(plugin[:packages]["kernel"][:release]).to eq("327.36.3.el7")
+      expect(plugin[:packages]["kernel"][:epoch]).to eq("0")
+      expect(plugin[:packages]["kernel"][:installdate]).to eq("1478879645")
+      expect(plugin[:packages]["kernel"][:arch]).to eq("x86_64")
     end
 
-    it 'gets base kernel by name-version-release' do
-      expect(plugin[:packages]['kernel-3.10.0-327.el7'][:version]).to eq('3.10.0')
-      expect(plugin[:packages]['kernel-3.10.0-327.el7'][:release]).to eq('327.el7')
-      expect(plugin[:packages]['kernel-3.10.0-327.el7'][:epoch]).to eq('0')
-      expect(plugin[:packages]['kernel-3.10.0-327.el7'][:installdate]).to eq('1490461514')
-      expect(plugin[:packages]['kernel-3.10.0-327.el7'][:arch]).to eq('x86_64')
+    it "gets base kernel by name-version-release" do
+      expect(plugin[:packages]["kernel-3.10.0-327.el7"][:version]).to eq("3.10.0")
+      expect(plugin[:packages]["kernel-3.10.0-327.el7"][:release]).to eq("327.el7")
+      expect(plugin[:packages]["kernel-3.10.0-327.el7"][:epoch]).to eq("0")
+      expect(plugin[:packages]["kernel-3.10.0-327.el7"][:installdate]).to eq("1490461514")
+      expect(plugin[:packages]["kernel-3.10.0-327.el7"][:arch]).to eq("x86_64")
     end
 
-    it 'gets update kernel by name-verion-release' do
-      expect(plugin[:packages]['kernel-3.10.0-327.36.3.el7'][:version]).to eq('3.10.0')
-      expect(plugin[:packages]['kernel-3.10.0-327.36.3.el7'][:release]).to eq('327.36.3.el7')
-      expect(plugin[:packages]['kernel-3.10.0-327.36.3.el7'][:epoch]).to eq('0')
-      expect(plugin[:packages]['kernel-3.10.0-327.36.3.el7'][:installdate]).to eq('1478879645')
-      expect(plugin[:packages]['kernel-3.10.0-327.36.3.el7'][:arch]).to eq('x86_64')
+    it "gets update kernel by name-verion-release" do
+      expect(plugin[:packages]["kernel-3.10.0-327.36.3.el7"][:version]).to eq("3.10.0")
+      expect(plugin[:packages]["kernel-3.10.0-327.36.3.el7"][:release]).to eq("327.36.3.el7")
+      expect(plugin[:packages]["kernel-3.10.0-327.36.3.el7"][:epoch]).to eq("0")
+      expect(plugin[:packages]["kernel-3.10.0-327.36.3.el7"][:installdate]).to eq("1478879645")
+      expect(plugin[:packages]["kernel-3.10.0-327.36.3.el7"][:arch]).to eq("x86_64")
     end
 
-    it 'gets last gpg key imported' do
-      expect(plugin[:packages]['gpg-pubkey'][:version]).to eq('83ef826a')
-      expect(plugin[:packages]['gpg-pubkey'][:release]).to eq('4a690bb4')
-      expect(plugin[:packages]['gpg-pubkey'][:epoch]).to eq('0')
-      expect(plugin[:packages]['gpg-pubkey'][:installdate]).to eq('1490376378')
-      expect(plugin[:packages]['gpg-pubkey'][:arch]).to eq('(none)')
+    it "gets last gpg key imported" do
+      expect(plugin[:packages]["gpg-pubkey"][:version]).to eq("83ef826a")
+      expect(plugin[:packages]["gpg-pubkey"][:release]).to eq("4a690bb4")
+      expect(plugin[:packages]["gpg-pubkey"][:epoch]).to eq("0")
+      expect(plugin[:packages]["gpg-pubkey"][:installdate]).to eq("1490376378")
+      expect(plugin[:packages]["gpg-pubkey"][:arch]).to eq("(none)")
     end
 
-    it 'gets vendor gpg key by keyid' do
-      expect(plugin[:packages]['gpg-pubkey-f4a80eb5'][:version]).to eq('f4a80eb5')
-      expect(plugin[:packages]['gpg-pubkey-f4a80eb5'][:release]).to eq('53a7ff4b')
-      expect(plugin[:packages]['gpg-pubkey-f4a80eb5'][:epoch]).to eq('0')
-      expect(plugin[:packages]['gpg-pubkey-f4a80eb5'][:installdate]).to eq('1490281117')
-      expect(plugin[:packages]['gpg-pubkey-f4a80eb5'][:arch]).to eq('(none)')
+    it "gets vendor gpg key by keyid" do
+      expect(plugin[:packages]["gpg-pubkey-f4a80eb5"][:version]).to eq("f4a80eb5")
+      expect(plugin[:packages]["gpg-pubkey-f4a80eb5"][:release]).to eq("53a7ff4b")
+      expect(plugin[:packages]["gpg-pubkey-f4a80eb5"][:epoch]).to eq("0")
+      expect(plugin[:packages]["gpg-pubkey-f4a80eb5"][:installdate]).to eq("1490281117")
+      expect(plugin[:packages]["gpg-pubkey-f4a80eb5"][:arch]).to eq("(none)")
     end
 
-    it 'gets chef gpg key by keyid' do
-      expect(plugin[:packages]['gpg-pubkey-83ef826a'][:version]).to eq('83ef826a')
-      expect(plugin[:packages]['gpg-pubkey-83ef826a'][:release]).to eq('4a690bb4')
-      expect(plugin[:packages]['gpg-pubkey-83ef826a'][:epoch]).to eq('0')
-      expect(plugin[:packages]['gpg-pubkey-83ef826a'][:installdate]).to eq('1490376378')
-      expect(plugin[:packages]['gpg-pubkey-83ef826a'][:arch]).to eq('(none)')
+    it "gets chef gpg key by keyid" do
+      expect(plugin[:packages]["gpg-pubkey-83ef826a"][:version]).to eq("83ef826a")
+      expect(plugin[:packages]["gpg-pubkey-83ef826a"][:release]).to eq("4a690bb4")
+      expect(plugin[:packages]["gpg-pubkey-83ef826a"][:epoch]).to eq("0")
+      expect(plugin[:packages]["gpg-pubkey-83ef826a"][:installdate]).to eq("1490376378")
+      expect(plugin[:packages]["gpg-pubkey-83ef826a"][:arch]).to eq("(none)")
     end
   end
 

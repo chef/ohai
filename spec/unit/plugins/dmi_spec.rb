@@ -101,15 +101,16 @@ Chassis Information
 EOS
 
 describe Ohai::System, "plugin dmi" do
+  let(:plugin) { get_plugin("dmi") }
+  let(:stdout) { DMI_OUT }
+
   before(:each) do
-    @plugin = get_plugin("dmi")
-    @stdout = DMI_OUT
-    allow(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
+    allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, stdout, ""))
   end
 
-  it "should run dmidecode" do
-    expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
+  it "runs dmidecode" do
+    expect(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, stdout, ""))
+    plugin.run
   end
 
   # Test some simple sample data
@@ -128,21 +129,21 @@ describe Ohai::System, "plugin dmi" do
     },
   }.each do |id, data|
     data.each do |attribute, value|
-      it "should have [:dmi][:#{id}][:#{attribute}] set" do
-        @plugin.run
-        expect(@plugin[:dmi][id][attribute]).to eql(value)
+      it "attribute [:dmi][:#{id}][:#{attribute}] is set" do
+        plugin.run
+        expect(plugin[:dmi][id][attribute]).to eql(value)
       end
-      it "should have [:dmi][:#{id}][:#{attribute}] set for windows output" do
-        @stdout = convert_windows_output(DMI_OUT)
-        expect(@plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, @stdout, ""))
-        @plugin.run
-        expect(@plugin[:dmi][id][attribute]).to eql(value)
+      it "attribute [:dmi][:#{id}][:#{attribute}] set for windows output" do
+        stdout = convert_windows_output(DMI_OUT)
+        expect(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, stdout, ""))
+        plugin.run
+        expect(plugin[:dmi][id][attribute]).to eql(value)
       end
     end
   end
 
-  it "should correctly ignore unwanted data" do
-    @plugin.run
-    expect(@plugin[:dmi][:base_board]).not_to have_key(:error_correction_type)
+  it "correctly ignores unwanted data" do
+    plugin.run
+    expect(plugin[:dmi][:base_board]).not_to have_key(:error_correction_type)
   end
 end

@@ -65,6 +65,9 @@ module Ohai
         37 =>  "memory_channel",
         38 =>  "ipmi_device",
         39 =>  "power_supply",
+        40 =>  "additional_information",
+        41 =>  "onboard_devices_extended_information",
+        42 =>  "management_controller_host_interfaces",
         126 => "disabled_entries",
         127 => "end_of_table_marker",
       }

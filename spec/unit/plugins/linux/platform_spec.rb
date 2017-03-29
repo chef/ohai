@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -113,7 +113,7 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:lsb][:release] = "2011.09"
       @plugin.run
       expect(@plugin[:platform]).to eq("amazon")
-      expect(@plugin[:platform_family]).to eq("rhel")
+      expect(@plugin[:platform_family]).to eq("fedora")
     end
 
     it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
@@ -358,7 +358,7 @@ OS_RELEASE
       it "should set the platform_family to rhel if the LSB name is amazon-ish" do
         @plugin[:lsb][:id] = "Amazon"
         @plugin.run
-        expect(@plugin[:platform_family]).to eq("rhel")
+        expect(@plugin[:platform_family]).to eq("fedora")
       end
 
       it "should set the platform_family to fedora if the LSB name is fedora-ish" do

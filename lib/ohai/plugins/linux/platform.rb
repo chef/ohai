@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015-2017, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,11 +107,11 @@ Ohai.plugin(:Platform) do
     case platform
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
       "debian"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /amazon/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       "rhel"
     when /suse/
       "suse"
-    when /fedora/, /pidora/, /arista_eos/
+    when /fedora/, /pidora/, /arista_eos/, /amazon/
       "fedora"
     when /nexus/, /ios_xr/
       "wrlinux"

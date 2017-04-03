@@ -92,6 +92,18 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe "with a cloud mash" do
+    before do
+      @plugin[:ec2] = Mash.new
+    end
+
+    it "populates cloud public ip" do
+      @plugin.run
+      expect(@plugin[:cloud_v2]).to_not be_nil
+      expect(@plugin[:cloud]).to_not be_nil
+    end
+  end
+
   describe "with EC2 mash" do
     before do
       @plugin[:ec2] = Mash.new

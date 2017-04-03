@@ -285,10 +285,10 @@ Ohai.plugin(:CloudV2) do
 
   # Fill cloud hash with digital_ocean values
   def get_digital_ocean_values
-    @cloud_attr_obj.send("add_ipv4_addr", digital_ocean["interfaces"]["public"][0]["ipv4"]["ip_address"], :public) rescue NoMethodError
-    @cloud_attr_obj.send("add_ipv4_addr", digital_ocean["interfaces"]["private"][0]["ipv4"]["ip_address"], :private) rescue NoMethodError
-    @cloud_attr_obj.send("add_ipv6_addr", digital_ocean["interfaces"]["public"][0]["ipv6"]["ip_address"], :public) rescue NoMethodError
-    @cloud_attr_obj.send("add_ipv6_addr", digital_ocean["interfaces"]["private"][0]["ipv6"]["ip_address"], :private) rescue NoMethodError
+    @cloud_attr_obj.add_ipv4_addr(digital_ocean["interfaces"]["public"][0]["ipv4"]["ip_address"], :public) rescue NoMethodError
+    @cloud_attr_obj.add_ipv4_addr(digital_ocean["interfaces"]["private"][0]["ipv4"]["ip_address"], :private) rescue NoMethodError
+    @cloud_attr_obj.add_ipv6_addr(digital_ocean["interfaces"]["public"][0]["ipv6"]["ip_address"], :public) rescue NoMethodError
+    @cloud_attr_obj.add_ipv6_addr(digital_ocean["interfaces"]["private"][0]["ipv6"]["ip_address"], :private) rescue NoMethodError
     @cloud_attr_obj.provider = "digital_ocean"
   end
 

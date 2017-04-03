@@ -93,7 +93,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with EC2 mash" do
     before do
-      @plugin[:ec2] = Mash.new()
+      @plugin[:ec2] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -117,8 +117,8 @@ describe Ohai::System, "plugin cloud" do
   describe "with GCE mash" do
     describe "with a public IP" do
       before do
-        @plugin[:gce] = Mash.new()
-        @plugin[:gce]["instance"] = Mash.new()
+        @plugin[:gce] = Mash.new
+        @plugin[:gce]["instance"] = Mash.new
         @plugin[:gce]["instance"]["networkInterfaces"] = [
           {
             "accessConfigs" => [ { "externalIp" => "8.35.198.173", "type" => "ONE_TO_ONE_NAT" } ],
@@ -146,8 +146,8 @@ describe Ohai::System, "plugin cloud" do
 
     describe "with no public IP" do
       before do
-        @plugin[:gce] = Mash.new()
-        @plugin[:gce]["instance"] = Mash.new()
+        @plugin[:gce] = Mash.new
+        @plugin[:gce]["instance"] = Mash.new
         @plugin[:gce]["instance"]["networkInterfaces"] = [
           {
             "accessConfigs" => [ { "externalIp" => "", "type" => "ONE_TO_ONE_NAT" } ],
@@ -176,7 +176,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with rackspace" do
     before do
-      @plugin[:rackspace] = Mash.new()
+      @plugin[:rackspace] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -223,7 +223,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with linode mash" do
     before do
-      @plugin[:linode] = Mash.new()
+      @plugin[:linode] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -252,7 +252,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with eucalyptus mash" do
     before do
-      @plugin[:eucalyptus] = Mash.new()
+      @plugin[:eucalyptus] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -275,7 +275,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with Azure mash" do
     before do
-      @plugin[:azure] = Mash.new()
+      @plugin[:azure] = Mash.new
     end
 
     it "populates cloud public ip" do
@@ -323,20 +323,51 @@ describe Ohai::System, "plugin cloud" do
   describe "with digital_ocean mash" do
     before do
       @plugin[:digital_ocean] = Mash.new
-      @plugin[:digital_ocean][:name] = "public.example.com"
-      @plugin[:digital_ocean][:networks] = Mash.new
-      @plugin[:digital_ocean][:networks][:v4] = [{ "ip_address" => "1.2.3.4", "type" => "public" },
-                                                 { "ip_address" => "5.6.7.8", "type" => "private" }]
-      @plugin[:digital_ocean][:networks][:v6] = [{ "ip_address" => "fe80::4240:95ff:fe47:6eee", "type" => "public" },
-                                                 { "ip_address" => "fdf8:f53b:82e4::53", "type" => "private" }]
+      @plugin[:digital_ocean][:interfaces] = Mash.new
+      @plugin[:digital_ocean][:interfaces] = {
+        "private" =>
+          [
+            {
+              "ipv4" =>
+              {
+                "ip_address" => "10.135.32.4",
+                "netmask" => "255.255.0.0",
+                "gateway" => "10.135.0.1",
+              },
+              "mac" => "36:9e:23:65:c1:fe",
+              "type" => "private",
+            },
+          ],
+        "public" =>
+          [
+            {
+              "ipv4" =>
+                {
+                  "ip_address" => "207.154.221.42",
+                  "netmask" => "255.255.240.0",
+                  "gateway" => "207.154.208.1",
+                },
+              "ipv6" =>
+                {
+                  "ip_address" => "2A03:B0C0:0003:00D0:0000:0000:3B15:B001",
+                  "cidr" => 64,
+                  "gateway" => "2A03:B0C0:0003:00D0:0000:0000:0000:0001",
+                },
+              "anchor_ipv4" =>
+                {
+                  "ip_address" => "10.19.0.5",
+                  "netmask" => "255.255.0.0",
+                  "gateway" => "10.19.0.1",
+                },
+              "mac" => "9a:80:15:02:7a:c1",
+              "type" => "public",
+            },
+          ],
+        }
     end
 
     before(:each) do
       @plugin.run
-    end
-
-    it "populates cloud public hostname" do
-      expect(@plugin[:cloud_v2][:public_hostname]).to eq("public.example.com")
     end
 
     it "populates cloud local hostname" do
@@ -344,41 +375,37 @@ describe Ohai::System, "plugin cloud" do
     end
 
     it "populates cloud public_ipv4_addrs" do
-      expect(@plugin[:cloud_v2][:public_ipv4_addrs]).to eq(@plugin[:digital_ocean][:networks][:v4].select { |ip| ip["type"] == "public" }
-                                                                                              .map { |ip| ip["ip_address"] })
+      expect(@plugin[:cloud_v2][:public_ipv4_addrs]).to eq(["207.154.221.42"])
 
     end
 
     it "populates cloud local_ipv4_addrs" do
-      expect(@plugin[:cloud_v2][:local_ipv4_addrs]).to eq(@plugin[:digital_ocean][:networks][:v4].select { |ip| ip["type"] == "private" }
-                                                                                             .map { |ip| ip["ip_address"] })
+      expect(@plugin[:cloud_v2][:local_ipv4_addrs]).to eq(["10.135.32.4"])
 
     end
 
     it "populates cloud public_ipv4" do
-      expect(@plugin[:cloud_v2][:public_ipv4]).to eq(@plugin[:digital_ocean][:networks][:v4].find { |ip| ip["type"] == "public" }["ip_address"])
+      expect(@plugin[:cloud_v2][:public_ipv4]).to eq("207.154.221.42")
     end
 
     it "populates cloud local_ipv4" do
-      expect(@plugin[:cloud_v2][:local_ipv4]).to eq(@plugin[:digital_ocean][:networks][:v4].find { |ip| ip["type"] == "private" }["ip_address"])
+      expect(@plugin[:cloud_v2][:local_ipv4]).to eq("10.135.32.4")
     end
 
     it "populates cloud public_ipv6_addrs" do
-      expect(@plugin[:cloud_v2][:public_ipv6_addrs]).to eq(@plugin[:digital_ocean][:networks][:v6].select { |ip| ip["type"] == "public" }
-                                                                                              .map { |ip| ip["ip_address"] })
+      expect(@plugin[:cloud_v2][:public_ipv6_addrs]).to eq(["2a03:b0c0:3:d0::3b15:b001"])
     end
 
     it "populates cloud local_ipv6_addrs" do
-      expect(@plugin[:cloud_v2][:local_ipv6_addrs]).to eq(@plugin[:digital_ocean][:networks][:v6].select { |ip| ip["type"] == "private" }
-                                                                                             .map { |ip| ip["ip_address"] })
+      expect(@plugin[:cloud_v2][:local_ipv6_addrs]).to be_nil
     end
 
     it "populates cloud public_ipv6" do
-      expect(@plugin[:cloud_v2][:public_ipv6]).to eq(@plugin[:digital_ocean][:networks][:v6].find { |ip| ip["type"] == "public" }["ip_address"])
+      expect(@plugin[:cloud_v2][:public_ipv6]).to eq("2a03:b0c0:3:d0::3b15:b001")
     end
 
     it "populates cloud local_ipv6" do
-      expect(@plugin[:cloud_v2][:local_ipv6]).to eq(@plugin[:digital_ocean][:networks][:v6].find { |ip| ip["type"] == "private" }["ip_address"])
+      expect(@plugin[:cloud_v2][:local_ipv6]).to be_nil
     end
 
     it "populates cloud provider" do

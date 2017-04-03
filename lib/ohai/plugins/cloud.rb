@@ -231,18 +231,20 @@ Ohai.plugin(:Cloud) do
     digital_ocean != nil
   end
 
-  # Fill cloud hash with linode values
+  # Fill cloud hash with digital ocean values
   def get_digital_ocean_values
-    public_ipv4 = digital_ocean["interfaces"]["public"].map { |iface| iface["ipv4"]["ip_address"] }
-    private_ipv4 = digital_ocean["interfaces"]["private"] ? digital_ocean["interfaces"]["private"].map { |iface| iface["ipv4"]["ip_address"] } : []
-    public_ipv6 = digital_ocean["interfaces"]["public"].map { |iface| iface["ipv6"]["ip_address"] }
-    private_ipv6 = digital_ocean["interfaces"]["private"] ? digital_ocean["interfaces"]["private"].map { |iface| iface["ipv6"]["ip_address"] } : []
-    cloud[:public_ips].concat public_ipv4 + public_ipv6
-    cloud[:private_ips].concat private_ipv4 + private_ipv6
-    cloud[:public_ipv4] = public_ipv4.first
-    cloud[:public_ipv6] = public_ipv6.first
-    cloud[:local_ipv4] = private_ipv4.first
-    cloud[:local_ipv6] = private_ipv6.first
+    public_ipv4 = digital_ocean["interfaces"]["public"][0]["ipv4"]["ip_address"] rescue nil
+    private_ipv4 = digital_ocean["interfaces"]["private"][0]["ipv4"]["ip_address"] rescue nil
+    public_ipv6 = digital_ocean["interfaces"]["public"][0]["ipv6"]["ip_address"] rescue nil
+    private_ipv6 = digital_ocean["interfaces"]["private"][0]["ipv6"]["ip_address"] rescue nil
+    cloud[:public_ips] << public_ipv4 unless public_ipv4.nil?
+    cloud[:public_ips] << public_ipv6 unless public_ipv6.nil?
+    cloud[:private_ips] << private_ipv4 unless private_ipv4.nil?
+    cloud[:private_ips] << private_ipv6 unless private_ipv6.nil?
+    cloud[:public_ipv4] = public_ipv4
+    cloud[:public_ipv6] = public_ipv6
+    cloud[:local_ipv4] = private_ipv4
+    cloud[:local_ipv6] = private_ipv6
     cloud[:public_hostname] = digital_ocean["hostname"]
     cloud[:provider] = "digital_ocean"
   end

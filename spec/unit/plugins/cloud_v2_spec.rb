@@ -99,8 +99,7 @@ describe Ohai::System, "plugin cloud" do
 
     it "populates cloud public ip" do
       @plugin.run
-      expect(@plugin[:cloud_v2]).to_not be_nil
-      expect(@plugin[:cloud]).to_not be_nil
+      expect(@plugin[:cloud_v2]).to eq(@plugin[:cloud])
     end
   end
 

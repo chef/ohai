@@ -245,9 +245,9 @@ module Ohai
       visitor = lambda do |val|
         case val
         when Hash
-          val.each_value {|v| visitor.call(v) }
+          val.each_value { |v| visitor.call(v) }
         when Array
-          val.each {|v| visitor.call(v) }
+          val.each { |v| visitor.call(v) }
         when String
           val.freeze
         end

@@ -33,7 +33,7 @@ describe Ohai::System, "plugin scala" do
       .with("scala -version")
       .and_return(mock_shell_out(0, "", scala_out))
     allow(plugin).to receive(:shell_out)
-      .with("sbt --version")
+      .with("sbt --version", { :timeout => 5 })
       .and_return(mock_shell_out(0, sbt_out, ""))
   end
 
@@ -80,7 +80,7 @@ describe Ohai::System, "plugin scala" do
         .and_return(mock_shell_out(0, "", scala_out))
 
       allow(plugin).to receive(:shell_out)
-        .with("sbt --version")
+        .with("sbt --version", { :timeout => 5 })
         .and_raise( Ohai::Exceptions::Exec )
       plugin.run
     end

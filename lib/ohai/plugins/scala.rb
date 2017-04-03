@@ -32,16 +32,21 @@ Ohai.plugin(:Scala) do
       Ohai::Log.debug('Plugin Scala: Could not shell_out "scala -version". Skipping data')
     end
 
-    # Check for sbt
+    # Check for sbt in a way that is known compatible with 0.12 and 0.13 releases
     begin
-      # sbt launcher version 0.13.7
-      so = shell_out("sbt --version", timeout: 5)
+      # [info] Set current project to tsmith (in build file:/Users/tsmith/)
+      # [info] This is sbt 0.13.13
+      # [info] The current project is {file:/Users/tsmith/}tsmith 0.1-SNAPSHOT
+      # [info] The current project is built against Scala 2.10.6
+      # [info] Available Plugins: sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.CorePlugin, sbt.plugins.JUnitXmlReportPlugin, sbt.plugins.Giter8TemplatePlugin
+      # [info] sbt, sbt plugins, and build definitions are using Scala 2.10.6
+      so = shell_out("sbt about", timeout: 10)
       if so.exitstatus == 0
         scala[:sbt] = Mash.new
-        scala[:sbt][:version] = so.stdout.split[3]
+        scala[:sbt][:version] = so.stdout.match(/.*This is sbt ([a-z0-9.]*)/)[1] # necessary to avoid color codes in the output
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Scala: Could not shell_out "sbt --version". Skipping data')
+      Ohai::Log.debug('Plugin Scala: Could not shell_out "sbt about". Skipping data')
     end
 
     languages[:scala] = scala unless scala.empty?

@@ -35,7 +35,7 @@ Ohai.plugin(:Scala) do
     # Check for sbt
     begin
       # sbt launcher version 0.13.7
-      so = shell_out("sbt --version")
+      so = shell_out("sbt --version", timeout: 5)
       if so.exitstatus == 0
         scala[:sbt] = Mash.new
         scala[:sbt][:version] = so.stdout.split[3]

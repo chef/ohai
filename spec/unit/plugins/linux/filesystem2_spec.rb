@@ -52,6 +52,12 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
   end
 
+  it "sets both filesystem and filesystem_v2 attributes" do
+    plugin.run
+    expect(plugin[:filesystem]).to_not be_nil
+    expect(plugin[:filesystem_v2]).to_not be_nil
+  end
+
   describe "when gathering filesystem usage data from df" do
     before(:each) do
       @stdout = <<-DF

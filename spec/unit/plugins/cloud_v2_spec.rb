@@ -88,6 +88,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:digital_ocean] = nil
       @plugin.run
       expect(@plugin[:cloud_v2]).to be_nil
+      expect(@plugin[:cloud]).to be_nil
     end
   end
 

@@ -107,6 +107,9 @@ module Ohai
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
+
+      # Freeze all strings.
+      freeze_strings!
     end
 
     def have_v6_plugin?(name)
@@ -230,6 +233,26 @@ module Ohai
       else
         Ohai::Log.level = Ohai.config[:log_level]
       end
+    end
+
+    # Freeze all string values in @data. This makes them immutable and saves
+    # a bit of RAM.
+    #
+    # @api private
+    # @return [void]
+    def freeze_strings!
+      # Recursive visitor pattern helper.
+      visitor = lambda do |val|
+        case val
+        when Hash
+          val.each_value {|v| visitor.call(v) }
+        when Array
+          val.each {|v| visitor.call(v) }
+        when String
+          val.freeze
+        end
+      end
+      visitor.call(@data)
     end
   end
 end

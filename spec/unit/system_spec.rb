@@ -166,6 +166,8 @@ EOF
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
         expect(ohai.data[:park]).to eq("plants")
+        expect(ohai.data[:zoo]).to be_frozen
+        expect(ohai.data[:park]).to be_frozen
       end
 
       describe "when using :disabled_plugins" do
@@ -312,6 +314,8 @@ EOF
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
         expect(ohai.data[:park]).to eq("plants")
+        expect(ohai.data[:zoo]).to be_frozen
+        expect(ohai.data[:park]).to be_frozen
       end
 
       it "should write an error to Ohai::Log" do

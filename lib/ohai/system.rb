@@ -112,6 +112,15 @@ module Ohai
       freeze_strings!
     end
 
+    def run_additional_plugins(plugin_path)
+      @loader.load_additional(plugin_path).each do |plugin|
+        Ohai::Log.debug "Running plugin #{plugin}"
+        @runner.run_plugin(plugin)
+      end
+
+      freeze_strings!
+    end
+
     def have_v6_plugin?(name)
       @v6_dependency_solver.values.any? { |v6plugin| v6plugin.name == name }
     end

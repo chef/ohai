@@ -74,7 +74,19 @@ module Ohai
 
       # list of IDs to collect from config or default to a sane list that prunes
       # away some of the less useful IDs
-      ID_TO_CAPTURE = Ohai.config[:plugin][:dmi][:ids] || [ 0, 1, 2, 3, 4, 6, 11 ]
+      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
+
+      # add additional config defined IDs from the config hash
+      if Ohai.config[:additional_dmi_ids]
+        if Ohai.config[:additional_dmi_ids].is_a?(Hash)
+          Ohai.config[:additional_dmi_ids].each_pair do |id,desc|
+            ID_TO_CAPTURE << id
+            ID_TO_DESCRIPTION[id] = desc
+          end
+        else
+          Ohai::Log.debug("The DMI additional_ids config must be a hash of IDs and their description.")
+        end
+      end
 
       # look up DMI ID
       def id_lookup(id)

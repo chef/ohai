@@ -1,6 +1,8 @@
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Author:: Phil Dibowitz <phil@ipom.com>
+# Author:: Adam Jacob <adam@chef.io>
+# Copyright:: Copyright (c) 2008-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +20,7 @@
 
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
-
-  def get_blk_cmd(attr, have_lsblk)
-    if have_lsblk
-      attr = "FSTYPE" if attr == "TYPE"
-      "lsblk -P -n -o NAME,#{attr}"
-    else
-      "blkid -s #{attr}"
-    end
-  end
-
-  def get_blk_regex(attr, have_lsblk)
-    if have_lsblk
-      attr = "FSTYPE" if attr == "TYPE"
-      /^NAME="(\S+).*?" #{attr}="(\S+)"/
-    else
-      /^(\S+): #{attr}="(\S+)"/
-    end
-  end
+  provides "filesystem2"
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
@@ -45,97 +30,150 @@ Ohai.plugin(:Filesystem) do
     name
   end
 
+  def parse_line(line, have_lsblk)
+    if have_lsblk
+      regex = /NAME="(\S+).*?" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
+      if line =~ regex
+        dev = $1
+        dev = find_device(dev) unless dev.start_with?("/")
+        uuid = $2
+        label = $3
+        fs_type = $4
+        return { :dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type }
+      end
+    else
+      bits = line.split
+      dev = bits.shift.split(":")[0]
+      f = { :dev => dev }
+      bits.each do |keyval|
+        if keyval =~ /(\S+)="(\S+)"/
+          key = $1.downcase.to_sym
+          key = :fs_type if key == :type
+          f[key] = $2
+        end
+      end
+      return f
+    end
+    return nil
+  end
+
+  def generate_device_view(fs)
+    view = {}
+    fs.each_value do |entry|
+      view[entry[:device]] = Mash.new unless view[entry[:device]]
+      entry.each do |key, val|
+        next if %w{device mount}.include?(key)
+        view[entry[:device]][key] = val
+      end
+      view[entry[:device]][:mounts] ||= []
+      if entry[:mount]
+        view[entry[:device]][:mounts] << entry[:mount]
+      end
+    end
+    view
+  end
+
+  def generate_mountpoint_view(fs)
+    view = {}
+    fs.each_value do |entry|
+      next unless entry[:mount]
+      view[entry[:mount]] = Mash.new unless view[entry[:mount]]
+      entry.each do |key, val|
+        next if %w{mount device}.include?(key)
+        view[entry[:mount]][key] = val
+      end
+      view[entry[:mount]][:devices] ||= []
+      if entry[:device]
+        view[entry[:mount]][:devices] << entry[:device]
+      end
+    end
+    view
+  end
+
   collect_data(:linux) do
     fs = Mash.new
-    have_lsblk = File.executable?("/bin/lsblk")
 
     # Grab filesystem data from df
     so = shell_out("df -P")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       case line
       when /^Filesystem\s+1024-blocks/
         next
       when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-        filesystem = $1
-        fs[filesystem] = Mash.new
-        fs[filesystem][:kb_size] = $2
-        fs[filesystem][:kb_used] = $3
-        fs[filesystem][:kb_available] = $4
-        fs[filesystem][:percent_used] = $5
-        fs[filesystem][:mount] = $6
+        key = "#{$1},#{$6}"
+        fs[key] = Mash.new
+        fs[key][:device] = $1
+        fs[key][:kb_size] = $2
+        fs[key][:kb_used] = $3
+        fs[key][:kb_available] = $4
+        fs[key][:percent_used] = $5
+        fs[key][:mount] = $6
       end
     end
 
     # Grab filesystem inode data from df
     so = shell_out("df -iP")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       case line
       when /^Filesystem\s+Inodes/
         next
       when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-        filesystem = $1
-        fs[filesystem] ||= Mash.new
-        fs[filesystem][:total_inodes] = $2
-        fs[filesystem][:inodes_used] = $3
-        fs[filesystem][:inodes_available] = $4
-        fs[filesystem][:inodes_percent_used] = $5
-        fs[filesystem][:mount] = $6
+        key = "#{$1},#{$6}"
+        fs[key] ||= Mash.new
+        fs[key][:device] = $1
+        fs[key][:total_inodes] = $2
+        fs[key][:inodes_used] = $3
+        fs[key][:inodes_available] = $4
+        fs[key][:inodes_percent_used] = $5
+        fs[key][:mount] = $6
       end
     end
 
     # Grab mount information from /bin/mount
     so = shell_out("mount")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
-        filesystem = $1
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:mount] = $2
-        fs[filesystem][:fs_type] = $3
-        fs[filesystem][:mount_options] = $4.split(",")
+        key = "#{$1},#{$2}"
+        fs[key] = Mash.new unless fs.has_key?(key)
+        fs[key][:device] = $1
+        fs[key][:mount] = $2
+        fs[key][:fs_type] = $3
+        fs[key][:mount_options] = $4.split(",")
       end
     end
 
     have_lsblk = File.exist?("/bin/lsblk")
-
-    # Gather more filesystem types via libuuid, even devices that's aren't mounted
-    cmd = get_blk_cmd("TYPE", have_lsblk)
-    regex = get_blk_regex("TYPE", have_lsblk)
-    so = shell_out(cmd)
-    so.stdout.lines do |line|
-      if line =~ regex
-        filesystem = $1
-        type = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:fs_type] = type
-      end
+    if have_lsblk
+      cmd = "lsblk -n -P -o NAME,UUID,LABEL,FSTYPE"
+    else
+      # CentOS5 and other platforms don't have lsblk
+      cmd = "blkid"
     end
 
-    # Gather device UUIDs via libuuid
-    cmd = get_blk_cmd("UUID", have_lsblk)
-    regex = get_blk_regex("UUID", have_lsblk)
     so = shell_out(cmd)
-    so.stdout.lines do |line|
-      if line =~ regex
-        filesystem = $1
-        uuid = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:uuid] = uuid
+    so.stdout.each_line do |line|
+      parsed = parse_line(line, have_lsblk)
+      next if parsed.nil?
+      # lsblk lists each device once, so we need to update all entries
+      # in the hash that are related to this device
+      keys_to_update = []
+      fs.each_key do |key|
+        keys_to_update << key if key.start_with?("#{parsed[:dev]},")
       end
-    end
 
-    # Gather device labels via libuuid
-    cmd = get_blk_cmd("LABEL", have_lsblk)
-    regex = get_blk_regex("LABEL", have_lsblk)
-    so = shell_out(cmd)
-    so.stdout.lines do |line|
-      if line =~ regex
-        filesystem = $1
-        label = $2
-        filesystem = find_device(filesystem) unless filesystem.start_with?("/")
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:label] = label
+      if keys_to_update.empty?
+        key = "#{parsed[:dev]},"
+        fs[key] = Mash.new
+        fs[key][:device] = parsed[:dev]
+        keys_to_update << key
+      end
+
+      keys_to_update.each do |key|
+        [:fs_type, :uuid, :label].each do |subkey|
+          if parsed[subkey] && !parsed[subkey].empty?
+            fs[key][subkey] = parsed[subkey]
+          end
+        end
       end
     end
 
@@ -160,17 +198,28 @@ Ohai.plugin(:Filesystem) do
       f.close
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
-          filesystem = $1
-          next if fs.has_key?(filesystem)
-          fs[filesystem] = Mash.new
-          fs[filesystem][:mount] = $2
-          fs[filesystem][:fs_type] = $3
-          fs[filesystem][:mount_options] = $4.split(",")
+          key = "#{$1},#{$2}"
+          next if fs.has_key?(key)
+          fs[key] = Mash.new
+          fs[key][:device] = $1
+          fs[key][:mount] = $2
+          fs[key][:fs_type] = $3
+          fs[key][:mount_options] = $4.split(",")
         end
       end
     end
 
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
     # Set the filesystem data
-    filesystem fs
+    filesystem fs_data
+    filesystem2 fs_data
   end
 end

@@ -1,7 +1,7 @@
 #
 # Author:: Phil Dibowitz <phil@ipom.com>
 # Author:: Adam Jacob <adam@chef.io>
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2017 Chef Software, Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -18,9 +18,9 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Filesystem2) do
-  provides "filesystem2"
+Ohai.plugin(:Filesystem) do
   provides "filesystem"
+  provides "filesystem2"
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
@@ -213,13 +213,13 @@ Ohai.plugin(:Filesystem2) do
     by_device = generate_device_view(fs)
     by_mountpoint = generate_mountpoint_view(fs)
 
-    fs2 = Mash.new
-    fs2["by_device"] = by_device
-    fs2["by_mountpoint"] = by_mountpoint
-    fs2["by_pair"] = by_pair
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
 
     # Set the filesystem data
-    filesystem2 fs2
-    filesystem fs2
+    filesystem fs_data
+    filesystem2 fs_data
   end
 end

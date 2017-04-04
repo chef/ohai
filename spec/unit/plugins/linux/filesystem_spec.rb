@@ -19,7 +19,7 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux filesystem plugin" do
-  let (:plugin) { get_plugin("linux/filesystem2") }
+  let (:plugin) { get_plugin("linux/filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -52,9 +52,9 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
   end
 
-  it "sets both filesystem and filesystem_v2 attributes" do
+  it "sets both filesystem and filesystem2 attributes" do
     plugin.run
-    expect(plugin[:filesystem]).to eq(plugin[:filesystem_v2])
+    expect(plugin[:filesystem]).to eq(plugin[:filesystem2])
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -93,42 +93,42 @@ DFi
 
     it "should set kb_size to value from df -P" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_size]).to eq("97605057")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_size]).to eq("97605057")
     end
 
     it "should set kb_used to value from df -P" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_used]).to eq("53563253")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_used]).to eq("53563253")
     end
 
     it "should set kb_available to value from df -P" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_available]).to eq("44041805")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:kb_available]).to eq("44041805")
     end
 
     it "should set percent_used to value from df -P" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:percent_used]).to eq("56%")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:percent_used]).to eq("56%")
     end
 
     it "should set mount to value from df -P" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
 
     it "should set total_inodes to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:total_inodes]).to eq("124865")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:total_inodes]).to eq("124865")
     end
 
     it "should set inodes_used to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_used]).to eq("380")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_used]).to eq("380")
     end
 
     it "should set inodes_available to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_available]).to eq("124485")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:inodes_available]).to eq("124485")
     end
   end
 
@@ -161,17 +161,17 @@ MOUNT
 
     it "should set mount to value from mount" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
 
     it "should set fs_type to value from mount" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
     end
 
     it "should set mount_options to an array of values from mount" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime})
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime})
     end
   end
 
@@ -227,9 +227,9 @@ BLKID_TYPE
 
     it "should set kb_size to value from blkid" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
-      expect(plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
-      expect(plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
+      expect(plugin[:filesystem]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
+      expect(plugin[:filesystem]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
+      expect(plugin[:filesystem]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
     end
   end
 
@@ -287,14 +287,14 @@ BLKID_TYPE
 
     it "should set kb_size to value from lsblk -n -P -o NAME,UUID,LABEL,FSTYPE" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
-      expect(plugin[:filesystem2]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
-      expect(plugin[:filesystem2]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
+      expect(plugin[:filesystem]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
+      expect(plugin[:filesystem]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
+      expect(plugin[:filesystem]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
     end
 
     it "should ignore extra info in name and set label to value from lsblk  -n -P -o NAME,UUID,LABEL,FSTYPE" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
     end
 
   end
@@ -333,17 +333,17 @@ MOUNTS
 
     it "should set mount to value from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount]).to eq("/special")
     end
 
     it "should set fs_type to value from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
     end
 
     it "should set mount_options to an array of values from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem2]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime attr2 noquota})
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:mount_options]).to eq(%w{ro noatime attr2 noquota})
     end
   end
 
@@ -390,9 +390,9 @@ BLKID_TYPE
 
     it "should provide a devices view with all mountpoints" do
       plugin.run
-      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(["/", "/var/chroot"])
-      expect(plugin[:filesystem2]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(["/home", "/home2"])
-      expect(plugin[:filesystem2]["by_device"]["tmpfs"][:mounts]).to eq(["/lib/init/rw", "/dev/shm"])
+      expect(plugin[:filesystem]["by_device"]["/dev/mapper/sys.vg-root.lv"][:mounts]).to eq(["/", "/var/chroot"])
+      expect(plugin[:filesystem]["by_device"]["/dev/mapper/sys.vg-home.lv"][:mounts]).to eq(["/home", "/home2"])
+      expect(plugin[:filesystem]["by_device"]["tmpfs"][:mounts]).to eq(["/lib/init/rw", "/dev/shm"])
     end
   end
 
@@ -436,7 +436,7 @@ BLKID_TYPE
 
     it "should provide a mounts view with all devices" do
       plugin.run
-      expect(plugin[:filesystem2]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/sdb1", "/dev/sdc1"])
+      expect(plugin[:filesystem]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/sdb1", "/dev/sdc1"])
     end
   end
 end

@@ -1,6 +1,8 @@
 #
+# Author:: Phil Dibowitz (<phil@ipom.com>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,46 +20,90 @@
 
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
+  provides "filesystem2"
+
+  def generate_device_view(fs)
+    view = {}
+    fs.each_value do |entry|
+      view[entry[:device]] = Mash.new unless view[entry[:device]]
+      entry.each do |key, val|
+        next if %w{device mount}.include?(key)
+        view[entry[:device]][key] = val
+      end
+      if entry[:mount]
+        view[entry[:device]][:mounts] = [] unless view[entry[:device]][:mounts]
+        view[entry[:device]][:mounts] << entry[:mount]
+      end
+    end
+    view
+  end
+
+  def generate_mountpoint_view(fs)
+    view = {}
+    fs.each_value do |entry|
+      next unless entry[:mount]
+      view[entry[:mount]] = Mash.new unless view[entry[:mount]]
+      entry.each do |key, val|
+        next if %w{mount device}.include?(key)
+        view[entry[:mount]][key] = val
+      end
+      if entry[:device]
+        view[entry[:mount]][:devices] = [] unless view[entry[:mount]][:devices]
+        view[entry[:mount]][:devices] << entry[:device]
+      end
+    end
+    view
+  end
 
   collect_data(:darwin) do
     fs = Mash.new
-
     block_size = 0
+    # on new versions of OSX, -i is default, on old versions it's not, so
+    # specifying it gets consistent output
     so = shell_out("df -i")
-    so.stdout.lines do |line|
+    so.stdout.each_line do |line|
       case line
       when /^Filesystem\s+(\d+)-/
         block_size = $1.to_i
         next
       when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\d+)\s+(\d+)\s+(\d+%)\s+(.+)$/
-        filesystem = $1
-        fs[filesystem] = Mash.new
-        fs[filesystem][:block_size] = block_size
-        # To match linux, these should be strings, but we don't want
-        # to break back compat so we'll leave them as they are. In filesystem2
-        # we make them consistent.
-        fs[filesystem][:kb_size] = $2.to_i / (1024 / block_size)
-        fs[filesystem][:kb_used] = $3.to_i / (1024 / block_size)
-        fs[filesystem][:kb_available] = $4.to_i / (1024 / block_size)
-        fs[filesystem][:percent_used] = $5
-        fs[filesystem][:inodes_used] = $6
-        fs[filesystem][:inodes_available] = $7
-        fs[filesystem][:total_inodes] = ($6.to_i + $7.to_i).to_s
-        fs[filesystem][:mount] = $9
+        key = "#{$1},#{$9}"
+        fs[key] = Mash.new
+        fs[key][:block_size] = block_size
+        fs[key][:device] = $1
+        fs[key][:kb_size] = ($2.to_i / (1024 / block_size)).to_s
+        fs[key][:kb_used] = ($3.to_i / (1024 / block_size)).to_s
+        fs[key][:kb_available] = ($4.to_i / (1024 / block_size)).to_s
+        fs[key][:percent_used] = $5
+        fs[key][:inodes_used] = $6
+        fs[key][:inodes_available] = $7
+        fs[key][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[key][:inodes_percent_used] = $8
+        fs[key][:mount] = $9
       end
     end
 
     so = shell_out("mount")
     so.stdout.lines do |line|
       if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
-        filesystem = $1
-        fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
-        fs[filesystem][:mount] = $2
-        fs[filesystem][:fs_type] = $3
-        fs[filesystem][:mount_options] = $4.split(/,\s*/)
+        key = "#{$1},#{$2}"
+        fs[key] = Mash.new unless fs.has_key?(key)
+        fs[key][:mount] = $2
+        fs[key][:fs_type] = $3
+        fs[key][:mount_options] = $4.split(/,\s*/)
       end
     end
 
-    filesystem fs
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
+    filesystem fs_data
+    filesystem2 fs_data
   end
 end

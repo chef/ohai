@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Ohai.plugin(:CloudV2) do
+Ohai.plugin(:Cloud) do
   provides "cloud_v2"
   provides "cloud"
 

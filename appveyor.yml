@@ -6,7 +6,6 @@ platform:
 
 environment:
   matrix:
-    - ruby_version: "22"
     - ruby_version: "23"
 
 clone_folder: c:\projects\ohai

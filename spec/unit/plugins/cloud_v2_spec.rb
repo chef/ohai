@@ -88,6 +88,18 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:digital_ocean] = nil
       @plugin.run
       expect(@plugin[:cloud_v2]).to be_nil
+      expect(@plugin[:cloud]).to be_nil
+    end
+  end
+
+  describe "with a cloud mash" do
+    before do
+      @plugin[:ec2] = Mash.new
+    end
+
+    it "populates cloud public ip" do
+      @plugin.run
+      expect(@plugin[:cloud_v2]).to eq(@plugin[:cloud])
     end
   end
 

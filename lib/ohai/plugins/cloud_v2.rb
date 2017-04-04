@@ -16,6 +16,7 @@
 
 Ohai.plugin(:CloudV2) do
   provides "cloud_v2"
+  provides "cloud"
 
   depends "ec2"
   depends "gce"
@@ -306,7 +307,8 @@ Ohai.plugin(:CloudV2) do
     get_azure_values if on_azure?
     get_digital_ocean_values if on_digital_ocean?
 
-    # set node[:cloud] hash here
+    # set node[:cloud] and node[:cloud_v2] hash here
     cloud_v2 @cloud_attr_obj.cloud_mash
+    cloud @cloud_attr_obj.cloud_mash
   end
 end

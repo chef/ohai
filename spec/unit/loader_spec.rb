@@ -95,6 +95,31 @@ EOF
     end
   end
 
+  when_plugins_directory "is an additional plugin path" do
+    with_plugin("cookbook_a/alpha.rb", <<EOF)
+Ohai.plugin(:Alpha) do
+  provides "alpha"
+end
+EOF
+
+    with_plugin("cookbook_b/beta.rb", <<EOF)
+Ohai.plugin(:Beta) do
+  provides "beta"
+end
+EOF
+
+    describe "#load_additional" do
+      it "adds the plugins to the map" do
+        loader.load_additional(@plugins_directory)
+        expect(provides_map.map.keys).to eql(%w{alpha beta})
+      end
+
+      it "returns a set of plugins" do
+        expect(loader.load_additional(@plugins_directory)).to include(Ohai::NamedPlugin::Alpha)
+      end
+    end
+  end
+
   when_plugins_directory "contains invalid plugins" do
     with_plugin("extra_s.rb", <<EOF)
 Ohai.plugins(:ExtraS) do

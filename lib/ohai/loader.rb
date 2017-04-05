@@ -86,6 +86,7 @@ module Ohai
     end
 
     def load_additional(from)
+      from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
         Ohai::Log.debug "Loading additional plugin: #{plugin_file}"
         plugin = load_plugin_class(plugin_file.path, plugin_file.plugin_root)

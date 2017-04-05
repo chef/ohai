@@ -26,15 +26,11 @@ describe Ohai::System, "plugin scala" do
   end
 
   let(:scala_out) { "Scala code runner version 2.11.6 -- Copyright 2002-2013, LAMP/EPFL" }
-  let(:sbt_out) { "sbt launcher version 0.13.8" }
 
   def setup_plugin
     allow(plugin).to receive(:shell_out)
       .with("scala -version")
       .and_return(mock_shell_out(0, "", scala_out))
-    allow(plugin).to receive(:shell_out)
-      .with("sbt --version", { :timeout => 5 })
-      .and_return(mock_shell_out(0, sbt_out, ""))
   end
 
   context "if scala is installed" do
@@ -48,45 +44,15 @@ describe Ohai::System, "plugin scala" do
     end
   end
 
-  context "if sbt is installed" do
-
-    before(:each) do
-      setup_plugin
-      plugin.run
-    end
-
-    it "sets languages[:scala][:sbt][:version]" do
-      expect(plugin[:languages][:scala][:sbt][:version]).to eql("0.13.8")
-    end
-  end
-
-  context "if scala/sbt are not installed" do
-
+  context "if scala is not installed" do
     before(:each) do
       allow(plugin).to receive(:shell_out)
         .and_raise( Ohai::Exceptions::Exec )
       plugin.run
     end
 
-    it "does NOT set the languages[:scala] if scala/sbts commands fails" do
+    it "does NOT set the languages[:scala] if scala commands fails" do
       expect(plugin[:languages]).not_to have_key(:scala)
-    end
-  end
-
-  context "if sbt is not installed" do
-    before(:each) do
-      allow(plugin).to receive(:shell_out)
-        .with("scala -version")
-        .and_return(mock_shell_out(0, "", scala_out))
-
-      allow(plugin).to receive(:shell_out)
-        .with("sbt --version", { :timeout => 5 })
-        .and_raise( Ohai::Exceptions::Exec )
-      plugin.run
-    end
-
-    it "does NOT set the languages[:scala][:sbt] if sbt command fails" do
-      expect(plugin[:languages][:scala]).not_to have_key(:sbt)
     end
   end
 end

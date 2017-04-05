@@ -713,46 +713,46 @@ EOF
 
   describe "when loading a specific plugin path" do
     when_plugins_directory "contains v7 plugins" do
-      with_plugin("my_cookbook/languages.rb", <<-E)
-        Ohai.plugin(:Languages) do
-          provides 'languages'
+      with_plugin("my_cookbook/canteloupe.rb", <<-E)
+        Ohai.plugin(:Canteloupe) do
+          provides 'canteloupe'
 
           collect_data do
-            languages Mash.new
+            canteloupe Mash.new
           end
         end
       E
 
       with_plugin("english/english.rb", <<-E)
         Ohai.plugin(:English) do
-          provides 'languages/english'
+          provides 'canteloupe/english'
 
-          depends 'languages'
+          depends 'canteloupe'
 
           collect_data do
-            languages[:english] = Mash.new
-            languages[:english][:version] = 2014
+            canteloupe[:english] = Mash.new
+            canteloupe[:english][:version] = 2014
           end
         end
       E
 
       with_plugin("french/french.rb", <<-E)
         Ohai.plugin(:French) do
-          provides 'languages/french'
+          provides 'canteloupe/french'
 
-          depends 'languages'
+          depends 'canteloupe'
 
           collect_data do
-            languages[:french] = Mash.new
-            languages[:french][:version] = 2012
+            canteloupe[:french] = Mash.new
+            canteloupe[:french][:version] = 2012
           end
         end
       E
 
       it "should run all the plugins" do
         ohai.run_additional_plugins(@plugins_directory)
-        expect(ohai.data[:languages][:english][:version]).to eq(2014)
-        expect(ohai.data[:languages][:french][:version]).to eq(2012)
+        expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
+        expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)
       end
     end
   end

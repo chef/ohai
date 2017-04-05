@@ -26,14 +26,14 @@ describe Ohai::System, "plugin scala" do
   end
 
   let(:scala_out) { "Scala code runner version 2.11.6 -- Copyright 2002-2013, LAMP/EPFL" }
-  let(:sbt_out) { "sbt launcher version 0.13.8" }
+  let(:sbt_out) { '\e[0m[\e[0minfo\e[0m] \e[0mSet current project to ohai (in build file:/Users/tsmith/dev/work/ohai/)\e[0m\n\e[0m[\e[0minfo\e[0m] \e[0mThis is sbt 0.13.13\e[0m\n\e[0m[\e[0minfo\e[0m] \e[0mThe current project is {file:/Users/tsmith/dev/work/ohai/}ohai 0.1-SNAPSHOT\e[0m\n\e[0m[\e[0minfo\e[0m] \e[0mThe current project is built against Scala 2.10.6\e[0m\n\e[0m[\e[0minfo\e[0m] \e[0mAvailable Plugins: sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.CorePlugin, sbt.plugins.JUnitXmlReportPlugin, sbt.plugins.Giter8TemplatePlugin\e[0m\n\e[0m[\e[0minfo\e[0m] \e[0msbt, sbt plugins, and build definitions are using Scala 2.10.6\e[0m\n' }
 
   def setup_plugin
     allow(plugin).to receive(:shell_out)
       .with("scala -version")
       .and_return(mock_shell_out(0, "", scala_out))
     allow(plugin).to receive(:shell_out)
-      .with("sbt --version", { :timeout => 5 })
+      .with("sbt about", { :timeout => 10 })
       .and_return(mock_shell_out(0, sbt_out, ""))
   end
 
@@ -56,7 +56,7 @@ describe Ohai::System, "plugin scala" do
     end
 
     it "sets languages[:scala][:sbt][:version]" do
-      expect(plugin[:languages][:scala][:sbt][:version]).to eql("0.13.8")
+      expect(plugin[:languages][:scala][:sbt][:version]).to eql("0.13.13")
     end
   end
 
@@ -80,7 +80,7 @@ describe Ohai::System, "plugin scala" do
         .and_return(mock_shell_out(0, "", scala_out))
 
       allow(plugin).to receive(:shell_out)
-        .with("sbt --version", { :timeout => 5 })
+        .with("sbt about", { :timeout => 10 })
         .and_raise( Ohai::Exceptions::Exec )
       plugin.run
     end

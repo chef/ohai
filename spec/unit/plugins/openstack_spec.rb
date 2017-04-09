@@ -37,7 +37,7 @@ describe Ohai::System, "plugin openstack" do
   context "when DMI data is Openstack" do
     context "and the metadata service is not available" do
       before do
-        allow(plugin).to receive(:can_metadata_connect?).
+        allow(plugin).to receive(:can_socket_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
         plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
@@ -57,7 +57,7 @@ describe Ohai::System, "plugin openstack" do
   context "when running on dreamhost" do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
-      allow(plugin).to receive(:can_metadata_connect?).
+      allow(plugin).to receive(:can_socket_connect?).
         with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
         and_return(false)
       plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
@@ -69,7 +69,7 @@ describe Ohai::System, "plugin openstack" do
   context "when the hint is present" do
     context "and the metadata service is not available" do
       before do
-        allow(plugin).to receive(:can_metadata_connect?).
+        allow(plugin).to receive(:can_socket_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
@@ -176,7 +176,7 @@ EOM
 
       before do
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
-        allow(plugin).to receive(:can_metadata_connect?).
+        allow(plugin).to receive(:can_socket_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(true)
 

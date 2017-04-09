@@ -17,9 +17,11 @@
 # limitations under the License.
 
 require "ohai/mixin/ec2_metadata"
+require "ohai/mixin/http_helper"
 
 Ohai.plugin(:Openstack) do
   include Ohai::Mixin::Ec2Metadata
+  include Ohai::Mixin::HttpHelper
 
   provides "openstack"
   depends "dmi"
@@ -61,7 +63,7 @@ Ohai.plugin(:Openstack) do
       openstack[:provider] = openstack_provider
 
       # fetch the metadata if we can do a simple socket connect first
-      if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
         fetch_metadata.each do |k, v|
           openstack[k] = v
         end

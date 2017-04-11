@@ -19,9 +19,11 @@
 
 # eucalyptus metadata service is compatible with the ec2 service calls
 require "ohai/mixin/ec2_metadata"
+require "ohai/mixin/http_helper"
 
 Ohai.plugin(:Eucalyptus) do
   include Ohai::Mixin::Ec2Metadata
+  include Ohai::Mixin::HttpHelper
 
   provides "eucalyptus"
   depends "network/interfaces"
@@ -53,7 +55,7 @@ Ohai.plugin(:Eucalyptus) do
   def looks_like_euca?
     # Try non-blocking connect so we don't "block" if
     # the metadata service doesn't respond
-    hint?("eucalyptus") || has_euca_mac? && can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+    hint?("eucalyptus") || has_euca_mac? && can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
   end
 
   collect_data do

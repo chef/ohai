@@ -30,9 +30,6 @@ begin
     config.future_release = Ohai::VERSION
     config.max_issues = 0
     config.add_issues_wo_labels = false
-    config.enhancement_labels = "Type: Enhancement".split(",")
-    config.bug_labels = "Type: Bug,Type: Regression".split(",")
-    config.exclude_labels = "Type: Documentation,Status: Duplicate,Meta: Exclude From Changelog".split(",")
   end
 rescue LoadError
 end

@@ -1,32 +1,72 @@
 # Change Log
 
-## [8.23.0](https://github.com/chef/ohai/tree/8.23.0) (2017-01-23)
+## [13.0.1](https://github.com/chef/ohai/tree/13.0.1) (2017-04-12)
+[Full Changelog](https://github.com/chef/ohai/compare/v13.0.0...13.0.1)
 
+**Fixed bugs:**
+
+- Fix Eucalyptus plugin to use the HttpHelper mixin [\#987](https://github.com/chef/ohai/pull/987) ([akitada](https://github.com/akitada))
+- Fix OpenStack plugin to use the HttpHelper mixin [\#986](https://github.com/chef/ohai/pull/986) ([akitada](https://github.com/akitada))
+
+## [v13.0.0](https://github.com/chef/ohai/tree/v13.0.0) (2017-04-06)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.23.0...v13.0.0)
+
+**Implemented enhancements:**
+
+- Load all the plugin paths for ohai plugin dependency resolution [\#984](https://github.com/chef/ohai/pull/984) ([thommay](https://github.com/thommay))
+- Require Ruby 2.3+ to match Chef itself [\#981](https://github.com/chef/ohai/pull/981) ([tas50](https://github.com/tas50))
+- Allow ohai to load a plugin path [\#980](https://github.com/chef/ohai/pull/980) ([thommay](https://github.com/thommay))
+- Fully rename the cloud\_v2 plugin to cloud [\#978](https://github.com/chef/ohai/pull/978) ([tas50](https://github.com/tas50))
+- Replace the existing filesystem plugin on Linux and Darwin with filesystem\_v2 [\#974](https://github.com/chef/ohai/pull/974) ([tas50](https://github.com/tas50))
+- Replace the cloud plugin with the cloud\_v2 plugin [\#973](https://github.com/chef/ohai/pull/973) ([tas50](https://github.com/tas50))
+- Freeze all string values coming out of Ohai. [\#972](https://github.com/chef/ohai/pull/972) ([coderanger](https://github.com/coderanger))
+- Update amazon to use the platform\_family of amazon not RHEL [\#971](https://github.com/chef/ohai/pull/971) ([lamont-granquist](https://github.com/lamont-granquist))
+- Add DMI type 40,41, and 42 from the latest man page [\#969](https://github.com/chef/ohai/pull/969) ([tas50](https://github.com/tas50))
+- \[ec2\] Add additional data from identity document [\#964](https://github.com/chef/ohai/pull/964) ([webframp](https://github.com/webframp))
+- Move duplicate http logic into a helper [\#951](https://github.com/chef/ohai/pull/951) ([tas50](https://github.com/tas50))
+- Remove deprecated config logic [\#939](https://github.com/chef/ohai/pull/939) ([tas50](https://github.com/tas50))
+- Require Ruby 2.2+ [\#938](https://github.com/chef/ohai/pull/938) ([tas50](https://github.com/tas50))
+- Remove the deprecated run\_command and popen4 methods [\#933](https://github.com/chef/ohai/pull/933) ([tas50](https://github.com/tas50))
+- Remove usage of the Sigar gem [\#930](https://github.com/chef/ohai/pull/930) ([tas50](https://github.com/tas50))
+
+**Fixed bugs:**
+
+- Remove sbt version detect as it's not possible in the current sbt [\#982](https://github.com/chef/ohai/pull/982) ([tas50](https://github.com/tas50))
+- Fix scala detection when version output contains a warning [\#959](https://github.com/chef/ohai/pull/959) ([tas50](https://github.com/tas50))
+- Fix lua detection on new versions of lua [\#958](https://github.com/chef/ohai/pull/958) ([tas50](https://github.com/tas50))
+- Fix logger issues [\#955](https://github.com/chef/ohai/pull/955) ([lamont-granquist](https://github.com/lamont-granquist))
+- Rescue exception in DMI plugin [\#952](https://github.com/chef/ohai/pull/952) ([tas50](https://github.com/tas50))
+- Use name for Windows CPU model\_name [\#918](https://github.com/chef/ohai/pull/918) ([tduffield](https://github.com/tduffield))
+
+## [v8.23.0](https://github.com/chef/ohai/tree/v8.23.0) (2017-01-24)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.22.1...v8.23.0)
 
 **Implemented enhancements:**
 
-- C Plugin: Expand GCC data & only shellout to gcc if Xcode is installed on macOS [#944](https://github.com/chef/ohai/pull/944) ([tas50](https://github.com/tas50))
-- Improve debug logging in multiple plugins [#935](https://github.com/chef/ohai/pull/935) ([tas50](https://github.com/tas50))
-- Detect guests running on Veertu hypervisor [#925](https://github.com/chef/ohai/pull/925) ([tas50](https://github.com/tas50))
-- Properly detect Cumulus Linux platform / version [#921](https://github.com/chef/ohai/pull/921) ([tas50](https://github.com/tas50))
-- Fetch AWS Account ID from metadata [#907](https://github.com/chef/ohai/pull/907) ([Fodoj](https://github.com/Fodoj))
+- C Plugin: Expand GCC data & only shellout to gcc if Xcode is installed on macOS [\#944](https://github.com/chef/ohai/pull/944) ([tas50](https://github.com/tas50))
+- Improve debug logging in multiple plugins [\#935](https://github.com/chef/ohai/pull/935) ([tas50](https://github.com/tas50))
+- Detect guests running on Veertu hypervisor [\#925](https://github.com/chef/ohai/pull/925) ([tas50](https://github.com/tas50))
+- Detect Windows guests running on Hyper-v and Xen [\#922](https://github.com/chef/ohai/pull/922) ([rdean716](https://github.com/rdean716))
+- Properly detect Cumulus Linux platform / version [\#921](https://github.com/chef/ohai/pull/921) ([tas50](https://github.com/tas50))
+- Fetch AWS Account ID from metadata [\#907](https://github.com/chef/ohai/pull/907) ([Fodoj](https://github.com/Fodoj))
 
 **Fixed bugs:**
 
 - Fix log level selection when running the ohai command  [\#942](https://github.com/chef/ohai/pull/942) ([thommay](https://github.com/thommay))
-- updating cloud plugin to populate azure private_ip as it's currently nil [#937](https://github.com/chef/ohai/pull/937) ([rshade](https://github.com/rshade))
+- updating cloud plugin to populate azure private\_ip as it's currently nil [\#937](https://github.com/chef/ohai/pull/937) ([rshade](https://github.com/rshade))
 
 ## [v8.22.1](https://github.com/chef/ohai/tree/v8.22.1) (2016-12-07)
-
 [Full Changelog](https://github.com/chef/ohai/compare/8.22.1...v8.22.1)
+
+## [8.22.1](https://github.com/chef/ohai/tree/8.22.1) (2016-12-07)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.22.0...8.22.1)
 
 **Implemented enhancements:**
 
-- Pull the complete version string of Erlang [#916](https://github.com/chef/ohai/pull/916) ([tas50](https://github.com/tas50))
-- Add sysconf plugin to expose system configuration variables [#893](https://github.com/chef/ohai/pull/893) ([davide125](https://github.com/davide125))
+- Pull the complete version string of Erlang [\#916](https://github.com/chef/ohai/pull/916) ([tas50](https://github.com/tas50))
+- Add sysconf plugin to expose system configuration variables [\#893](https://github.com/chef/ohai/pull/893) ([davide125](https://github.com/davide125))
 
-## [8.22.0](https://github.com/chef/ohai/tree/8.22.0) (2016-11-30)
+## [v8.22.0](https://github.com/chef/ohai/tree/v8.22.0) (2016-11-30)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.21.0...v8.22.0)
 
 **Implemented enhancements:**

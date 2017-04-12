@@ -14,6 +14,6 @@ group :development do
   gem "rspec-mocks", "~> 3.0"
   gem "rspec-collection_matchers", "~> 1.0"
   gem "rspec_junit_formatter"
-  gem "github_changelog_generator", git: "https://github.com/tduffield/github-changelog-generator", branch: "adjust-tag-section-mapping"
+  gem "github_changelog_generator", git: "https://github.com/chef/github-changelog-generator"
   gem "ipaddr_extensions"
 end

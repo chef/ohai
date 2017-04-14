@@ -99,6 +99,12 @@ MD
       end
     end
 
+    it "should detect member devies" do
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+        %w{sdc sdd sde sdf sdg sdh}
+      )
+    end
   end
 
 end

@@ -126,7 +126,8 @@ module Ohai
       subtree = provides_map
       parts = normalize_and_validate(attribute)
       parts.each do |part|
-        return nil unless subtree[part]
+        # OHAI-546: We may have reached the end of a 'provides' chain, return what we have.
+        return subtree unless subtree[part]
         subtree = subtree[part]
       end
       subtree

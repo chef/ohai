@@ -43,5 +43,13 @@ Ohai.plugin(:BlockDevice) do
       end
       block_device block
     end
+    %w{logical_block_size}.each do |check|
+      if File.exists?("/sys/block/#{dir}/queue/#{check}")
+        File.open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip     }
+      end
+    end
+    unless block[dir]["size"].nil? or block[dir]["logical_block_size"].nil?
+      block[dir]["size_bytes"] = block[dir]["size"].to_i * block[dir]["logical_block_size"].to_i
+    end
   end
 end

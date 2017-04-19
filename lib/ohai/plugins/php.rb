@@ -36,6 +36,8 @@ Ohai.plugin(:PHP) do
           when /^PHP (\S+)(?:.*built: ([^)]+))?/
             php[:version] = $1
             php[:builddate] = $2
+          when /PHP (\S+) \(/
+            php[:version] = $1
           when /Zend Engine v([^\s]+),/
             php[:zend_engine_version] = $1
           when /Zend OPcache v([^\s]+),/

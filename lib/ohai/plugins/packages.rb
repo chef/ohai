@@ -49,7 +49,24 @@ Ohai.plugin(:Packages) do
 
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        #This check for nil to prevent duplicate package names from overwriting previous entries
+        if packages[name].nil?
+          packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        else
+          #duplicate handling variables
+          dupepoch = packages[name]["epoch"]
+          dupversion = packages[name]["version"]
+          duprelease = packages[name]["release"]
+          dupinstalldate = packages[name]["installdate"]
+          duparch = packages[name]["arch"]
+
+          #first time through must initialize array since we had a string value
+          unless packages[name]["version"].is_a?(Array)
+            packages[name] = { "epoch" => [ dupepoch, epoch ], "version" => [ dupversion, version ], "release" => [duprelease, release ], "installdate" => [dupinstalldate, installdate], "arch" => [ duparch, arch ] }
+          else
+            packages[name] = { "epoch" => dupepoch.push(epoch), "version" => dupversion.push(version), "release" => duprelease.push(release), "installdate" => dupinstalldate.push(installdate), "arch" => duparch.push(arch) }
+          end
+        end
       end
     end
   end

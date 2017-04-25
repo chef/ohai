@@ -26,15 +26,24 @@ describe Ohai::Mixin::Command, "shell_out" do
 
   let(:plugin_name) { :OSSparkleDream }
 
+  let(:options) { windows? ? { timeout: 30 } : { timeout: 30, env: { "PATH" => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" } } }
+
   before(:each) do
     allow(Ohai::Mixin::Command).to receive(:name).and_return(plugin_name)
+    @original_env = ENV.to_hash
+    ENV.clear
+  end
+
+  after(:each) do
+    ENV.clear
+    ENV.update(@original_env)
   end
 
   describe "when the command runs" do
     it "logs the command and exitstatus" do
       expect(Mixlib::ShellOut).
         to receive(:new).
-        with(cmd, { timeout: 30 }).
+        with(cmd, options).
         and_return(shell_out)
 
       expect(shell_out).
@@ -55,7 +64,7 @@ describe Ohai::Mixin::Command, "shell_out" do
     it "logs the command and error message" do
       expect(Mixlib::ShellOut).
         to receive(:new).
-        with(cmd, { timeout: 30 }).
+        with(cmd, options).
         and_return(shell_out)
 
       expect(shell_out).
@@ -76,7 +85,7 @@ describe Ohai::Mixin::Command, "shell_out" do
     it "logs the command an timeout error message" do
       expect(Mixlib::ShellOut).
         to receive(:new).
-        with(cmd, { timeout: 30 }).
+        with(cmd, options).
         and_return(shell_out)
 
       expect(shell_out).
@@ -94,7 +103,7 @@ describe Ohai::Mixin::Command, "shell_out" do
   end
 
   describe "when a timeout option is provided" do
-    let(:options) { { timeout: 10 } }
+    let(:options) { windows? ? { timeout: 10 } : { timeout: 10, env: { "PATH" => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" } } }
 
     it "runs the command with the provided timeout" do
       expect(Mixlib::ShellOut).

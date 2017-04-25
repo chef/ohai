@@ -27,8 +27,13 @@ module Ohai
       # DISCLAIMER: Logging only works in the context of a plugin!!
       # accept a command and any of the mixlib-shellout options
       def shell_out(cmd, **options)
+        options = options.dup
         # unless specified by the caller timeout after 30 seconds
         options[:timeout] ||= 30
+        unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+          options[:env] = options.key?(:env) ? options[:env].dup : {}
+          options[:env]["PATH"] ||= ((ENV["PATH"] || "").split(":") + %w{/usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin}).join(":")
+        end
         so = Mixlib::ShellOut.new(cmd, options)
         begin
           so.run_command

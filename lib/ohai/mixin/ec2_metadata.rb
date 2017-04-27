@@ -2,7 +2,7 @@
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: 2009-2017 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ module Ohai
       EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
       EC2_SUPPORTED_VERSIONS = %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
-                                   2014-11-05 2014-02-25 }
+                                   2014-11-05 2014-02-25 2016-04-19 2016-06-30 2016-09-02}
 
       EC2_ARRAY_VALUES = %w{security-groups}
       EC2_ARRAY_DIR    = %w{network/interfaces/macs}

@@ -58,7 +58,6 @@ module Ohai
         end
         # Note: Sorting the list of versions may have unintended consequences in
         # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
-        versions = response.body.split("\n")
         versions = response.body.split("\n").sort
         until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
           pv = versions.pop

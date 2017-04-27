@@ -62,7 +62,7 @@ module Ohai
         versions = response.body.split("\n").sort
         until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
           pv = versions.pop
-          Ohai::Log.debug("ec2 metadata mixin: EC2 shows unsupported metadata version: #{pv}") unless pv == "latest"
+          Ohai::Log.debug("ec2 metadata mixin: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
         end
         Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
         if versions.empty?

@@ -160,7 +160,7 @@ EOM
         }'
       end
 
-      let(:http_client) { double("Net::HTTP", :read_timeout= => nil) }
+      let(:http_client) { double("Net::HTTP", { :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
 
       def allow_get(url, response_body)
         allow(http_client).to receive(:get).

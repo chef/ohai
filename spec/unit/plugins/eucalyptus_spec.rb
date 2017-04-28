@@ -36,7 +36,7 @@ describe Ohai::System, "plugin eucalyptus" do
       allow(plugin).to receive(:http_client).and_return(@http_client)
 
       expect(@http_client).to receive(:get).
-        with("/").twice.
+        with("/").
         and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
       expect(@http_client).to receive(:get).
         with("/2012-01-12/meta-data/").

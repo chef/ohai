@@ -49,7 +49,7 @@ describe Ohai::System, "plugin ec2" do
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
       expect(@http_client).to receive(:get).
-        with("/").exactly(3).times.
+        with("/").
         and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
     end
 

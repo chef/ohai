@@ -48,25 +48,27 @@ module Ohai
       EC2_JSON_DIR     = %w{iam}
 
       def best_api_version
-        response = http_client.get("/")
-        if response.code == "404"
-          Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
-          return "latest"
-        elsif response.code != "200"
-          raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
+        @api_version ||= begin
+          response = http_client.get("/")
+          if response.code == "404"
+            Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
+            return "latest"
+          elsif response.code != "200"
+            raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
+          end
+          # Note: Sorting the list of versions may have unintended consequences in
+          # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
+          versions = response.body.split("\n").sort
+          until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
+            pv = versions.pop
+            Ohai::Log.debug("ec2 metadata mixin: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
+          end
+          Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
+          if versions.empty?
+            raise "Unable to determine EC2 metadata version (no supported entries found)"
+          end
+          versions.last
         end
-        # Note: Sorting the list of versions may have unintended consequences in
-        # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
-        versions = response.body.split("\n").sort
-        until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
-          pv = versions.pop
-          Ohai::Log.debug("ec2 metadata mixin: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
-        end
-        Ohai::Log.debug("ec2 metadata mixin: EC2 metadata version: #{versions.last}")
-        if versions.empty?
-          raise "Unable to determine EC2 metadata version (no supported entries found)"
-        end
-        versions.last
       end
 
       def http_client
@@ -98,31 +100,28 @@ module Ohai
       end
 
       def fetch_metadata(id = "", api_version = nil)
-        api_version ||= best_api_version
-        return {} if api_version.nil?
-
         metadata = {}
-        retrieved_metadata = metadata_get(id, api_version)
+        retrieved_metadata = metadata_get(id, best_api_version)
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
             key = expand_path("#{id}#{o}")
             if key[-1..-1] != "/"
               metadata[metadata_key(key)] =
                 if EC2_ARRAY_VALUES.include? key
-                  retr_meta = metadata_get(key, api_version)
+                  retr_meta = metadata_get(key, best_api_version)
                   retr_meta ? retr_meta.split("\n") : retr_meta
                 else
-                  metadata_get(key, api_version)
+                  metadata_get(key, best_api_version)
                 end
             elsif (not key.eql?(id)) && (not key.eql?("/"))
               name = key[0..-2]
               sym = metadata_key(name)
               if EC2_ARRAY_DIR.include?(name)
-                metadata[sym] = fetch_dir_metadata(key, api_version)
+                metadata[sym] = fetch_dir_metadata(key, best_api_version)
               elsif EC2_JSON_DIR.include?(name)
-                metadata[sym] = fetch_json_dir_metadata(key, api_version)
+                metadata[sym] = fetch_json_dir_metadata(key, best_api_version)
               else
-                fetch_metadata(key, api_version).each { |k, v| metadata[k] = v }
+                fetch_metadata(key, best_api_version).each { |k, v| metadata[k] = v }
               end
             end
           end
@@ -168,17 +167,13 @@ module Ohai
       end
 
       def fetch_userdata
-        api_version = best_api_version
-        return nil if api_version.nil?
-        response = http_client.get("/#{api_version}/user-data/")
+        response = http_client.get("/#{best_api_version}/user-data/")
         response.code == "200" ? response.body : nil
       end
 
       def fetch_dynamic_data
         @fetch_dynamic_data ||= begin
-          api_version = best_api_version
-          return {} if api_version.nil?
-          response = http_client.get("/#{api_version}/dynamic/instance-identity/document/")
+          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/")
 
           if json?(response.body) && response.code == "200"
             FFI_Yajl::Parser.parse(response.body)

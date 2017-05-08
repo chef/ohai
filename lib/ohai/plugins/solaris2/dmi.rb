@@ -152,7 +152,7 @@ Ohai.plugin(:DMI) do
         field = nil
 
       elsif data = data_key_value_line.match(line)
-        if dmi_record == nil
+        if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
@@ -160,7 +160,7 @@ Ohai.plugin(:DMI) do
         field = data[1]
 
       elsif data = data_key_only_line.match(line)
-        if dmi_record == nil
+        if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
@@ -168,11 +168,11 @@ Ohai.plugin(:DMI) do
         field = data[1]
 
       elsif extended_data = extended_data_line.match(line)
-        if dmi_record == nil
+        if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
           next
         end
-        if field == nil
+        if field.nil?
           Ohai::Log.debug("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
           next
         end

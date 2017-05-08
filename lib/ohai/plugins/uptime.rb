@@ -74,7 +74,7 @@ Ohai.plugin(:Uptime) do
 
   collect_data(:openbsd) do
     # kern.boottime=Tue Nov  1 14:45:52 2011
-    so = shell_out("#{ Ohai.abs_path( "/sbin/sysctl" )} #kern.boottime")
+    so = shell_out("#{Ohai.abs_path( "/sbin/sysctl" )} #kern.boottime")
     so.stdout.lines do |line|
       if line =~ /kern.boottime=(.+)/
         uptime_seconds Time.new.to_i - Time.parse($1).to_i

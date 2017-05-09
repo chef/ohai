@@ -1,6 +1,8 @@
 #
 # Author:: Tim Smith <tsmith@limelight.com>
+# Author:: Phil Dibowitz <phild@ipomc.com>
 # Copyright:: Copyright (c) 2013-2014, Limelight Networks, Inc.
+# Copyright:: Copyright (c) 2017 Facebook, Inc.
 # Plugin:: mdadm
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,15 +54,19 @@ Ohai.plugin(:Mdadm) do
   collect_data(:linux) do
     # gather a list of all raid arrays
     if File.exist?("/proc/mdstat")
-      devices = []
+      devices = {}
       File.open("/proc/mdstat").each do |line|
-        devices << Regexp.last_match[1] if line =~ /(md[0-9]+)/
+        if line =~ /(md[0-9]+)/
+          device = Regexp.last_match[1]
+          pieces = line.split(/\s+/)
+          devices[device] = pieces[4..-1].map { |s| s.match(/(.+)\[\d\]/)[1] }
+        end
       end
 
       # create the mdadm mash and gather individual information if devices are present
       unless devices.empty?
         mdadm Mash.new
-        devices.sort.each do |device|
+        devices.keys.sort.each do |device|
           mdadm[device] = Mash.new
 
           # gather detailed information on the array
@@ -68,6 +74,7 @@ Ohai.plugin(:Mdadm) do
 
           # if the mdadm command was sucessful pass so.stdout to create_raid_device_mash to grab the tidbits we want
           mdadm[device] = create_raid_device_mash(so.stdout) if so.stdout
+          mdadm[device]["members"] = devices[device]
         end
       end
     end

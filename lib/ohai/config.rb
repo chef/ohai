@@ -47,7 +47,7 @@ module Ohai
       end
 
       def default_plugin_path
-        [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")) ]
+        [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
       end
     end
 

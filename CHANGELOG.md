@@ -1,7 +1,17 @@
 # Change Log
 
-## [13.0.1](https://github.com/chef/ohai/tree/13.0.1) (2017-04-12)
-[Full Changelog](https://github.com/chef/ohai/compare/v13.0.0...13.0.1)
+## [v13.1.0](https://github.com/chef/ohai/tree/v13.1.0) (2017-05-09)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.0.1...v13.1.0)
+
+- Improvements to EC2 metadata handling to reuse connections [#995](https://github.com/chef/ohai/pull/995) ([tas50](https://github.com/tas50))
+- EC2: Poll EC2 metadata from the new 2016 metadata API versions [#992](https://github.com/chef/ohai/pull/992) ([tas50](https://github.com/tas50))
+- Inject sane paths into shell_out [#991](https://github.com/chef/ohai/pull/991) ([akitada](https://github.com/akitada))
+- mdadm: Add members devices array [#989](https://github.com/chef/ohai/pull/989) ([jaymzh](https://github.com/jaymzh))
+
+## [v13.0.1](https://github.com/chef/ohai/tree/v13.0.1) (2017-04-12)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.0.0...v13.0.1)
 
 **Fixed bugs:**
 
@@ -37,6 +47,19 @@
 - Fix logger issues [\#955](https://github.com/chef/ohai/pull/955) ([lamont-granquist](https://github.com/lamont-granquist))
 - Rescue exception in DMI plugin [\#952](https://github.com/chef/ohai/pull/952) ([tas50](https://github.com/tas50))
 - Use name for Windows CPU model\_name [\#918](https://github.com/chef/ohai/pull/918) ([tduffield](https://github.com/tduffield))
+
+## [8.24.0](https://github.com/chef/ohai/tree/v8.24.0) (2017-05-08)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v8.23.0...v8.24.0)
+
+- base: Load additional ohai plugins from /etc/chef/ohai/plugins or C:\chef\ohai\plugins\
+- ec2: Poll EC2 metadata from the new 2016 metadata API versions [#992](https://github.com/chef/ohai/pull/992) ([tas50](https://github.com/tas50))
+- mdadm: Add a new 'members' attribute for member devices in the array [#989](https://github.com/chef/ohai/pull/989) ([jaymzh](https://github.com/jaymzh))
+- dmi: Add DMI type 40,41, and 42 from the latest man page [#969](https://github.com/chef/ohai/pull/969) ([tas50](https://github.com/tas50))
+- ec2: Gather availability_zone and region data [#964](https://github.com/chef/ohai/pull/964) ([webframp](https://github.com/webframp))
+- scala: Fix scala detection when version output contains a warning [#959](https://github.com/chef/ohai/pull/959) ([tas50](https://github.com/tas50))
+- lua: Fix lua detection on new versions of lua [#958](https://github.com/chef/ohai/pull/958) ([tas50](https://github.com/tas50))
+- dmi: Rescue exception in DMI plugin to improve debug logs [#952](https://github.com/chef/ohai/pull/952) ([tas50](https://github.com/tas50))
 
 ## [v8.23.0](https://github.com/chef/ohai/tree/v8.23.0) (2017-01-24)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.22.1...v8.23.0)

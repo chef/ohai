@@ -69,7 +69,7 @@ module Ohai
         next if next_plugin.has_run?
 
         if visited.include?(next_plugin)
-          raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ") }"
+          raise Ohai::Exceptions::DependencyCycle, "Dependency cycle detected. Please refer to the following plugins: #{get_cycle(visited, plugin).join(", ")}"
         end
 
         dependency_providers = fetch_plugins(next_plugin.dependencies)

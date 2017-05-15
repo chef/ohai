@@ -18,6 +18,7 @@
 
 Ohai.plugin(:Zpools) do
   provides "zpools"
+  depends "platform_family"
 
   # If zpool status doesn't know about a field it returns '-'.
   # We don't want to fill a field with that
@@ -31,8 +32,8 @@ Ohai.plugin(:Zpools) do
     so = shell_out("zpool list -H -o name,size,alloc,free,cap,dedup,health,version")
     so.stdout.lines do |line|
       case line
-      Ohai::Log.debug("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
       when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
+        Ohai::Log.debug("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
         pools[$1] = Mash.new
         pools[$1][:pool_size] = sanitize_value($2)
         pools[$1][:pool_allocated] = sanitize_value($3)
@@ -46,26 +47,35 @@ Ohai.plugin(:Zpools) do
     pools
   end
 
-  collect_data(:solaris2) do
+  collect_data(:solaris2, :linux) do
     pools = gather_pool_info
 
     # Grab individual health for devices in the zpools
     pools.keys.each do |pool|
       pools[pool][:devices] = Mash.new
+
       # Run "zpool status" as non-root user (adm) so that
       # the command won't try to open() each device which can
       # hang the command if any of the disks are bad.
-      so = shell_out("su adm -c \"zpool status #{pool}\"")
+      if platform_family == "solaris2"
+        command = "su adm -c \"zpool status #{pool}\""
+      else
+        command = "zpool status #{pool}"
+      end
+
+      so = shell_out(command)
       so.stdout.lines do |line|
         case line
-        when /^\s+(c[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+        # linux: http://rubular.com/r/J3wQC6E2lH
+        # solaris: http://rubular.com/r/FqOBzUQQ4p
+        when /^\s+((sd|c)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
           Ohai::Log.debug("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
-          pools[pool][:devices][$1][:state] = $2
+          pools[pool][:devices][$1][:state] = $3
           pools[pool][:devices][$1][:errors] = Mash.new
-          pools[pool][:devices][$1][:errors][:read] = $3
-          pools[pool][:devices][$1][:errors][:write] = $4
-          pools[pool][:devices][$1][:errors][:checksum] = $5
+          pools[pool][:devices][$1][:errors][:read] = $4
+          pools[pool][:devices][$1][:errors][:write] = $5
+          pools[pool][:devices][$1][:errors][:checksum] = $6
         end
       end
     end

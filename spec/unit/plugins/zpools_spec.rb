@@ -13,12 +13,14 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper.rb"
+require_relative "../../spec_helper.rb"
 
-describe Ohai::System, "Solaris 2.x zpool plugin" do
+describe Ohai::System, "zpools plugin" do
+  let(:plugin) { get_plugin("zpools") }
+
   before(:each) do
-    @plugin = get_plugin("solaris2/zpools")
-    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(plugin).to receive(:platform_family).and_return('solaris2')
+    allow(plugin).to receive(:collect_os).and_return(:solaris2)
 
     @zpool_status_rpool = <<-EOSR
 pool: rpool
@@ -62,58 +64,58 @@ EOST
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
 EOZO
-    allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
-    allow(@plugin).to receive(:shell_out).with("su adm -c \"zpool status rpool\"").and_return(mock_shell_out(0, @zpool_status_rpool, ""))
-    allow(@plugin).to receive(:shell_out).with("su adm -c \"zpool status tank\"").and_return(mock_shell_out(0, @zpool_status_tank, ""))
+    allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
+    allow(plugin).to receive(:shell_out).with("su adm -c \"zpool status rpool\"").and_return(mock_shell_out(0, @zpool_status_rpool, ""))
+    allow(plugin).to receive(:shell_out).with("su adm -c \"zpool status tank\"").and_return(mock_shell_out(0, @zpool_status_tank, ""))
   end
 
   describe "On Solaris2 Common" do
     it "Should have entries for both zpools" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool]).to be
-      expect(@plugin[:zpools][:tank]).to be
+      plugin.run
+      expect(plugin[:zpools][:rpool]).to be
+      expect(plugin[:zpools][:tank]).to be
     end
 
     it "Should have the correct pool size" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:pool_size]).to match("109G")
-      expect(@plugin[:zpools][:tank][:pool_size]).to match("130T")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:pool_size]).to match("109G")
+      expect(plugin[:zpools][:tank][:pool_size]).to match("130T")
     end
 
     it "Should have the correct pool allocated size" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:pool_allocated]).to match("66.2G")
-      expect(@plugin[:zpools][:tank][:pool_allocated]).to match("4.91M")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:pool_allocated]).to match("66.2G")
+      expect(plugin[:zpools][:tank][:pool_allocated]).to match("4.91M")
     end
 
     it "Should have the correct pool free size" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:pool_free]).to match("42.8G")
-      expect(@plugin[:zpools][:tank][:pool_free]).to match("130T")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:pool_free]).to match("42.8G")
+      expect(plugin[:zpools][:tank][:pool_free]).to match("130T")
     end
 
     it "Should have the correct capacity_used" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:capacity_used]).to match("60%")
-      expect(@plugin[:zpools][:tank][:capacity_used]).to match("0%")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:capacity_used]).to match("60%")
+      expect(plugin[:zpools][:tank][:capacity_used]).to match("0%")
     end
 
     it "Should have the correct dedup_factor" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:dedup_factor]).to match("1.00x")
-      expect(@plugin[:zpools][:tank][:dedup_factor]).to match("1.00x")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:dedup_factor]).to match("1.00x")
+      expect(plugin[:zpools][:tank][:dedup_factor]).to match("1.00x")
     end
 
     it "Should have the correct health" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:health]).to match("ONLINE")
-      expect(@plugin[:zpools][:tank][:health]).to match("ONLINE")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:health]).to match("ONLINE")
+      expect(plugin[:zpools][:tank][:health]).to match("ONLINE")
     end
 
     it "Should have the correct number of devices" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:devices].keys.size).to match(2)
-      expect(@plugin[:zpools][:tank][:devices].keys.size).to match(12)
+      plugin.run
+      expect(plugin[:zpools][:rpool][:devices].keys.size).to match(2)
+      expect(plugin[:zpools][:tank][:devices].keys.size).to match(12)
     end
   end
 
@@ -123,13 +125,13 @@ EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  -
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  -
 EOZO
-      allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
+      allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
     end
 
     it "Won't have a version number" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:zpool_version]).to match("-")
-      expect(@plugin[:zpools][:tank][:zpool_version]).to match("-")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:zpool_version]).to be_nil
+      expect(plugin[:zpools][:tank][:zpool_version]).to be_nil
     end
 
   end
@@ -140,13 +142,13 @@ EOZO
 rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
 tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
 EOZO
-      allow(@plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
+      allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, @zpool_out, ""))
     end
 
     it "Should have a version number" do
-      @plugin.run
-      expect(@plugin[:zpools][:rpool][:zpool_version]).to match("34")
-      expect(@plugin[:zpools][:tank][:zpool_version]).to match("34")
+      plugin.run
+      expect(plugin[:zpools][:rpool][:zpool_version]).to match("34")
+      expect(plugin[:zpools][:tank][:zpool_version]).to match("34")
     end
 
   end

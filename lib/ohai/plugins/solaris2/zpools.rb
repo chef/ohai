@@ -1,6 +1,6 @@
 #
 # Author:: Jason J. W. Williams (williamsjj@digitar.com)
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011-2017 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,24 +19,35 @@
 Ohai.plugin(:Zpools) do
   provides "zpools"
 
-  collect_data(:solaris2) do
-    pools = Mash.new
+  # If zpool status doesn't know about a field it returns '-'.
+  # We don't want to fill a field with that
+  def sanitize_value(value)
+    value == "-" ? nil : value
+  end
 
+  def gather_pool_info
+    pools = Mash.new
     # Grab ZFS zpools overall health and attributes
     so = shell_out("zpool list -H -o name,size,alloc,free,cap,dedup,health,version")
     so.stdout.lines do |line|
       case line
+      Ohai::Log.debug("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
       when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
         pools[$1] = Mash.new
-        pools[$1][:pool_size] = $2
-        pools[$1][:pool_allocated] = $3
-        pools[$1][:pool_free] = $4
-        pools[$1][:capacity_used] = $5
-        pools[$1][:dedup_factor] = $6
-        pools[$1][:health] = $7
-        pools[$1][:zpool_version] = $8
+        pools[$1][:pool_size] = sanitize_value($2)
+        pools[$1][:pool_allocated] = sanitize_value($3)
+        pools[$1][:pool_free] = sanitize_value($4)
+        pools[$1][:capacity_used] = sanitize_value($5)
+        pools[$1][:dedup_factor] = sanitize_value($6)
+        pools[$1][:health] = sanitize_value($7)
+        pools[$1][:zpool_version] = sanitize_value($8)
       end
     end
+    pools
+  end
+
+  collect_data(:solaris2) do
+    pools = gather_pool_info
 
     # Grab individual health for devices in the zpools
     pools.keys.each do |pool|
@@ -48,6 +59,7 @@ Ohai.plugin(:Zpools) do
       so.stdout.lines do |line|
         case line
         when /^\s+(c[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+          Ohai::Log.debug("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
           pools[pool][:devices][$1][:state] = $2
           pools[pool][:devices][$1][:errors] = Mash.new

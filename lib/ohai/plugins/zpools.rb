@@ -47,7 +47,7 @@ Ohai.plugin(:Zpools) do
     pools
   end
 
-  collect_data(:solaris2, :linux) do
+  collect_data(:solaris2, :linux, :freebsd, :openbsd, :netbsd, :dragonflybsd) do
     pools = gather_pool_info
 
     # Grab individual health for devices in the zpools
@@ -68,7 +68,8 @@ Ohai.plugin(:Zpools) do
         case line
         # linux: http://rubular.com/r/J3wQC6E2lH
         # solaris: http://rubular.com/r/FqOBzUQQ4p
-        when /^\s+((sd|c)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+        # freebsd: http://rubular.com/r/RYkMNlytXl
+        when /^\s+((sd|c|ad|da)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
           Ohai::Log.debug("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
           pools[pool][:devices][$1][:state] = $3

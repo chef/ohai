@@ -51,7 +51,9 @@ module Ohai
     end
 
     def reset_system
-      @data = Mash.new
+      @data = Mash.new({}, nil) do |key|
+        require_plugin(key) if key.is_a? String
+      end
       @provides_map = ProvidesMap.new
       @v6_dependency_solver = Hash.new
 

@@ -1,5 +1,6 @@
 *.sw?
 Gemfile.lock
+Gemfile.local
 pkg/
 tmp/
 coverage/

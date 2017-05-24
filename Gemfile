@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
+# NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
   gem "chefstyle"
   gem "rake", ">= 10.1.0"

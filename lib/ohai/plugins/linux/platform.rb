@@ -107,7 +107,7 @@ Ohai.plugin(:Platform) do
     case platform
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
       "debian"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       "rhel"
     when /amazon/
       "amazon"

@@ -21,17 +21,64 @@ require_relative "../../../spec_helper.rb"
 describe Ohai::System, "Darwin cpu plugin" do
   before(:each) do
     @plugin = get_plugin("darwin/cpu")
+    @stdout = <<-CTL
+hw.ncpu: 8
+hw.byteorder: 1234
+hw.memsize: 17179869184
+hw.activecpu: 8
+hw.packages: 1
+hw.tbfrequency: 1000000000
+hw.l3cachesize: 6291456
+hw.l2cachesize: 262144
+hw.l1dcachesize: 32768
+hw.l1icachesize: 32768
+hw.cachelinesize: 64
+hw.cpufrequency: 2800000000
+hw.busfrequency: 100000000
+hw.pagesize32: 4096
+hw.pagesize: 4096
+hw.cpufamily: 280134364
+hw.cpu64bit_capable: 1
+hw.cpusubtype: 8
+hw.cputype: 7
+hw.logicalcpu_max: 8
+hw.logicalcpu: 8
+hw.physicalcpu_max: 4
+hw.physicalcpu: 4
+hw.targettype: Mac
+hw.cputhreadtype: 1
+machdep.cpu.thread_count: 8
+machdep.cpu.core_count: 4
+machdep.cpu.address_bits.virtual: 48
+machdep.cpu.address_bits.physical: 39
+machdep.cpu.cache.size: 256
+machdep.cpu.cache.L2_associativity: 8
+machdep.cpu.cache.linesize: 64
+machdep.cpu.processor_flag: 5
+machdep.cpu.microcode_version: 15
+machdep.cpu.cores_per_package: 8
+machdep.cpu.logical_per_package: 16
+machdep.cpu.extfeatures: SYSCALL XD 1GBPAGE EM64T LAHF LZCNT RDTSCP TSCI
+machdep.cpu.leaf7_features: SMEP ERMS RDWRFSGS TSC_THREAD_OFFSET BMI1 HLE AVX2 BMI2 INVPCID RTM FPU_CSDS
+machdep.cpu.features: FPU VME DE PSE TSC MSR PAE MCE CX8 APIC SEP MTRR PGE MCA CMOV PAT PSE36 CLFSH DS ACPI MMX FXSR SSE SSE2 SS HTT TM PBE SSE3 PCLMULQDQ DTES64 MON DSCPL VMX SMX EST TM2 SSSE3 FMA CX16 TPR PDCM SSE4.1 SSE4.2 x2APIC MOVBE POPCNT AES PCID XSAVE OSXSAVE SEGLIM64 TSCTMR AVX1.0 RDRAND F16C
+machdep.cpu.brand: 0
+machdep.cpu.signature: 263777
+machdep.cpu.extfeature_bits: 142473169152
+machdep.cpu.leaf7_feature_bits: 12219
+machdep.cpu.feature_bits: 9221960262849657855
+machdep.cpu.stepping: 1
+machdep.cpu.extfamily: 0
+machdep.cpu.extmodel: 4
+machdep.cpu.model: 70
+machdep.cpu.family: 6
+machdep.cpu.brand_string: Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz
+machdep.cpu.vendor: GenuineIntel
+machdep.cpu.max_ext: 2147483656
+machdep.cpu.max_basic: 13
+CTL
+
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.packages").and_return(mock_shell_out(0, "1", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.physicalcpu").and_return(mock_shell_out(0, "4", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.logicalcpu").and_return(mock_shell_out(0, "8", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.cpufrequency").and_return(mock_shell_out(0, "2300000000", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.vendor").and_return(mock_shell_out(0, "GenuineIntel\n", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.brand_string").and_return(mock_shell_out(0, "Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz\n", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.model").and_return(mock_shell_out(0, "58", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.family").and_return(mock_shell_out(0, "6", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.stepping").and_return(mock_shell_out(0, "9", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl -n machdep.cpu.features").and_return(mock_shell_out(0, "FPU VME DE PSE TSC MSR PAE MCE CX8 APIC SEP MTRR PGE MCA CMOV PAT PSE36 CLFSH DS ACPI MMX FXSR SSE SSE2 SS HTT TM PBE SSE3 PCLMULQDQ DTES64 MON DSCPL VMX EST TM2 SSSE3 CX16 TPR PDCM SSE4.1 SSE4.2 x2APIC POPCNT AES PCID XSAVE OSXSAVE TSCTMR AVX1.0 RDRAND F16C", ""))
+    allow(@plugin).to receive(:shell_out).with("sysctl -a").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
@@ -47,31 +94,31 @@ describe Ohai::System, "Darwin cpu plugin" do
     expect(@plugin[:cpu][:real]).to eq(1)
   end
 
-  it "should set cpu[:mhz] to 2300" do
-    expect(@plugin[:cpu][:mhz]).to eq(2300)
+  it "should set cpu[:mhz] to 2800" do
+    expect(@plugin[:cpu][:mhz]).to eq(2800)
   end
 
   it "should set cpu[:vendor_id] to GenuineIntel" do
     expect(@plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
   end
 
-  it "should set cpu[:model_name] to Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz" do
-    expect(@plugin[:cpu][:model_name]).to eq("Intel(R) Core(TM) i7-3615QM CPU @ 2.30GHz")
+  it "should set cpu[:model_name] to Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz" do
+    expect(@plugin[:cpu][:model_name]).to eq("Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz")
   end
 
-  it "should set cpu[:model] to 58" do
-    expect(@plugin[:cpu][:model]).to eq(58)
+  it "should set cpu[:model] to 70" do
+    expect(@plugin[:cpu][:model]).to eq(70)
   end
 
   it "should set cpu[:family] to 6" do
     expect(@plugin[:cpu][:family]).to eq(6)
   end
 
-  it "should set cpu[:stepping] to 9" do
-    expect(@plugin[:cpu][:stepping]).to eq(9)
+  it "should set cpu[:stepping] to 1" do
+    expect(@plugin[:cpu][:stepping]).to eq(1)
   end
 
   it "should set cpu[:flags] to array of flags" do
-    expect(@plugin[:cpu][:flags]).to eq(["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "est", "tm2", "ssse3", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "popcnt", "aes", "pcid", "xsave", "osxsave", "tsctmr", "avx1.0", "rdrand", "f16c"])
+    expect(@plugin[:cpu][:flags]).to eq(["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "smx", "est", "tm2", "ssse3", "fma", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "movbe", "popcnt", "aes", "pcid", "xsave", "osxsave", "seglim64", "tsctmr", "avx1.0", "rdrand", "f16c"])
   end
 end

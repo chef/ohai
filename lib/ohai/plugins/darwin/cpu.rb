@@ -22,25 +22,29 @@ Ohai.plugin(:CPU) do
 
   collect_data(:darwin) do
     cpu Mash.new
-    so = shell_out("sysctl -n hw.packages")
-    cpu[:real] = so.stdout.to_i
-    so = shell_out("sysctl -n hw.physicalcpu")
-    cpu[:cores] = so.stdout.to_i
-    so = shell_out("sysctl -n hw.logicalcpu")
-    cpu[:total] = so.stdout.to_i
-    so = shell_out("sysctl -n hw.cpufrequency")
-    cpu[:mhz] = so.stdout.to_i / 1000000
-    so = shell_out("sysctl -n machdep.cpu.vendor")
-    cpu[:vendor_id] = so.stdout.chomp
-    so = shell_out("sysctl -n machdep.cpu.brand_string")
-    cpu[:model_name] = so.stdout.chomp
-    so = shell_out("sysctl -n machdep.cpu.model")
-    cpu[:model] = so.stdout.to_i
-    so = shell_out("sysctl -n machdep.cpu.family")
-    cpu[:family] = so.stdout.to_i
-    so = shell_out("sysctl -n machdep.cpu.stepping")
-    cpu[:stepping] = so.stdout.to_i
-    so = shell_out("sysctl -n machdep.cpu.features")
-    cpu[:flags] = so.stdout.downcase.split(" ")
+    shell_out("sysctl -a").stdout.lines.each do |line|
+      case line
+      when /^hw.packages: (.*)$/
+        cpu[:real] = Regexp.last_match[1].to_i
+      when /^hw.physicalcpu: (.*)$/
+        cpu[:cores] = Regexp.last_match[1].to_i
+      when /^hw.logicalcpu: (.*)$/
+        cpu[:total] = Regexp.last_match[1].to_i
+      when /^hw.cpufrequency: (.*)$/
+        cpu[:mhz] = Regexp.last_match[1].to_i / 1000000
+      when /^machdep.cpu.vendor: (.*)$/
+        cpu[:vendor_id] = Regexp.last_match[1].chomp
+      when /^machdep.cpu.brand_string: (.*)$/
+        cpu[:model_name] = Regexp.last_match[1].chomp
+      when /^machdep.cpu.model: (.*)$/
+        cpu[:model] = Regexp.last_match[1].to_i
+      when /^machdep.cpu.family: (.*)$/
+        cpu[:family] = Regexp.last_match[1].to_i
+      when /^machdep.cpu.stepping: (.*)$/
+        cpu[:stepping] = Regexp.last_match[1].to_i
+      when /^machdep.cpu.features: (.*)$/
+        cpu[:flags] = Regexp.last_match[1].downcase.split(" ")
+      end
+    end
   end
 end

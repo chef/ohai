@@ -130,6 +130,13 @@ describe Ohai::System, "Linux plugin platform" do
       expect(@plugin[:platform]).to eq("ibm_powerkvm")
       expect(@plugin[:platform_family]).to eq("rhel")
     end
+
+    it "should set platform to devuan and platform_family to debian [:lsb][:id] contains Devuan" do
+      @plugin[:lsb][:id] = "Devuan"
+      @plugin.run
+      expect(@plugin[:platform]).to eq("devuan")
+      expect(@plugin[:platform_family]).to eq("debian")
+    end
   end
 
   describe "on debian" do
@@ -158,6 +165,13 @@ describe Ohai::System, "Linux plugin platform" do
       @plugin[:lsb][:release] = "8.04"
       @plugin.run
       expect(@plugin[:platform]).to eq("ubuntu")
+    end
+
+    it "should detect Devuan as itself rather than debian" do
+      @plugin[:lsb][:id] = "Devuan"
+      @plugin[:lsb][:release] = "1.0"
+      @plugin.run
+      expect(@plugin[:platform]).to eq("devuan")
     end
 
     context "on raspbian" do

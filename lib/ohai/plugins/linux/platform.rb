@@ -149,6 +149,9 @@ Ohai.plugin(:Platform) do
       elsif lsb[:id] =~ /LinuxMint/i
         platform "linuxmint"
         platform_version lsb[:release]
+      elsif lsb[:id] =~ /Devuan/i
+        platform "devuan"
+        platform_version lsb[:release]
       else
         if File.exist?("/usr/bin/raspi-config")
           platform "raspbian"

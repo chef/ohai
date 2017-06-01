@@ -30,7 +30,7 @@ Ohai.plugin(:Hardware) do
     unless hardware
       hardware Mash.new
     else
-      Ohai::Log.debug("Plugin Darwin Hardware: namespace already exists")
+      Ohai::Log.debug("Plugin Hardware: namespace already exists")
       next
     end
 

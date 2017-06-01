@@ -51,7 +51,7 @@ Ohai.plugin(:Powershell) do
         languages[:powershell] = powershell unless powershell.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Powershell plugin: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
+      Ohai::Log.debug('Plugin Powershell: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
     end
   end
 

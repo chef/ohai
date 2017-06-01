@@ -28,7 +28,7 @@ Ohai.plugin(:Go) do
         languages[:go] = go
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Go plugin: Could not shell_out "go version". Skipping plugin')
+      Ohai::Log.debug('Plugin Go: Could not shell_out "go version". Skipping plugin')
     end
   end
 end

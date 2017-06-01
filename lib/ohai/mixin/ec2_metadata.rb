@@ -49,24 +49,24 @@ module Ohai
 
       def best_api_version
         @api_version ||= begin
-          Ohai::Log.debug("ec2 metadata mixin: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")
+          Ohai::Log.debug("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")
           response = http_client.get("/")
           if response.code == "404"
-            Ohai::Log.debug("ec2 metadata mixin: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
+            Ohai::Log.debug("Mixin EC2: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
             return "latest"
           elsif response.code != "200"
-            raise "Unable to determine EC2 metadata version (returned #{response.code} response)"
+            raise "Mixin EC2: Unable to determine EC2 metadata version (returned #{response.code} response)"
           end
           # Note: Sorting the list of versions may have unintended consequences in
           # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
           versions = response.body.split("\n").sort
           until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
             pv = versions.pop
-            Ohai::Log.debug("ec2 metadata mixin: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
+            Ohai::Log.debug("Mixin EC2: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
           end
-          Ohai::Log.debug("ec2 metadata mixin: Latest supported EC2 metadata version: #{versions.last}")
+          Ohai::Log.debug("Mixin EC2: Latest supported EC2 metadata version: #{versions.last}")
           if versions.empty?
-            raise "Unable to determine EC2 metadata version (no supported entries found)"
+            raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"
           end
           versions.last
         end
@@ -88,16 +88,16 @@ module Ohai
       #   `nil` and continue the run instead of failing it.
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
-        Ohai::Log.debug("ec2 metadata mixin: Fetching http://#{EC2_METADATA_ADDR}#{path}")
+        Ohai::Log.debug("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
         response = http_client.get(path)
         case response.code
         when "200"
           response.body
         when "404"
-          Ohai::Log.debug("ec2 metadata mixin: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
+          Ohai::Log.debug("Mixin EC2: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
           nil
         else
-          raise "Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
+          raise "Mixin EC2: Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
         end
       end
 
@@ -169,7 +169,7 @@ module Ohai
       end
 
       def fetch_userdata
-        Ohai::Log.debug("ec2 metadata mixin: Fetching http://#{EC2_METADATA_ADDR}/#{best_api_version}/user-data/")
+        Ohai::Log.debug("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/#{best_api_version}/user-data/")
         response = http_client.get("/#{best_api_version}/user-data/")
         response.code == "200" ? response.body : nil
       end

@@ -151,7 +151,7 @@ OUT
 
       expect(Ohai::Log).
         to receive(:debug).
-        with("rackspace plugin: Unable to find xenstore-ls, cannot capture " \
+        with("Plugin Rackspace: Unable to find xenstore-ls, cannot capture " \
              "region information for Rackspace cloud")
 
       plugin.run
@@ -174,7 +174,7 @@ OUT
 
       expect(Ohai::Log).
         to receive(:debug).
-        with("rackspace plugin: Unable to find xenstore-read, cannot capture " \
+        with("Plugin Rackspace: Unable to find xenstore-read, cannot capture " \
              "instance ID information for Rackspace cloud")
 
       plugin.run
@@ -266,7 +266,7 @@ OUT
 
       expect(Ohai::Log).
         to receive(:debug).
-        with("rackspace plugin: Unable to capture custom private networking " \
+        with("Plugin Rackspace: Unable to capture custom private networking " \
              "information for Rackspace cloud")
 
       plugin.run

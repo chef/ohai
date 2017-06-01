@@ -28,7 +28,7 @@ Ohai.plugin(:Rust) do
         languages[:rust] = rust if rust[:version]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Rust plugin: Could not shell_out "rustc --version". Skipping plugin')
+      Ohai::Log.debug('Plugin Rust: Could not shell_out "rustc --version". Skipping plugin')
     end
   end
 end

@@ -43,7 +43,7 @@ Ohai.plugin(:Java) do
         languages[:java] = java unless java.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Java plugin: Could not shell_out "java -mx64m -version". Skipping plugin')
+      Ohai::Log.debug('Plugin Java: Could not shell_out "java -mx64m -version". Skipping plugin')
     end
   end
 

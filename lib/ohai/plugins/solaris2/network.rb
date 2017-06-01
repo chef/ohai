@@ -180,11 +180,11 @@ Ohai.plugin(:Network) do
           else
             matches[:name]
           end
-        Ohai::Log.debug("found interface device: #{network[:default_interface]} #{matches[:name]}")
+        Ohai::Log.debug("Plugin Network: found interface device: #{network[:default_interface]} #{matches[:name]}")
       end
       matches = /gateway: (\S+)/.match(line)
       if matches
-        Ohai::Log.debug("found gateway: #{matches[1]}")
+        Ohai::Log.debug("Plugin Network: found gateway: #{matches[1]}")
         network[:default_gateway] = matches[1]
       end
     end

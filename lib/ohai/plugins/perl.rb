@@ -39,7 +39,7 @@ Ohai.plugin(:Perl) do
         languages[:perl] = perl unless perl.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Perl plugin: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
+      Ohai::Log.debug('Plugin Perl: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
     end
   end
 end

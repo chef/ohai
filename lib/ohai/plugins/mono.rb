@@ -44,7 +44,7 @@ Ohai.plugin(:Mono) do
         languages[:mono] = mono unless mono.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Mono plugin: Could not shell_out "mono -V". Skipping plugin')
+      Ohai::Log.debug('Plugin Mono: Could not shell_out "mono -V". Skipping plugin')
     end
   end
 end

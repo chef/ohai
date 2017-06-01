@@ -34,7 +34,7 @@ Ohai.plugin(:Erlang) do
         erlang[:nif_version] = output[2]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Erlang plugin: Could not shell_out "erl -eval \'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().\'  -noshell". Skipping data')
+      Ohai::Log.debug('Plugin Erlang: Could not shell_out "erl -eval \'erlang:display(erlang:system_info(otp_release)), erlang:display(erlang:system_info(version)), erlang:display(erlang:system_info(nif_version)), halt().\'  -noshell". Skipping data')
     end
 
     begin
@@ -51,7 +51,7 @@ Ohai.plugin(:Erlang) do
         end
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Erlang plugin: Could not shell_out "erl +V". Skipping data')
+      Ohai::Log.debug('Plugin Erlang: Could not shell_out "erl +V". Skipping data')
     end
 
     languages[:erlang] = erlang unless erlang.empty?

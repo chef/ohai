@@ -37,12 +37,12 @@ Ohai.plugin(:Network) do
     File.exist? "/proc/net/if_inet6"
   end
 
-  def iproute2_binary_available?
-    ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].any? { |path| File.exist?(path) }
+  def iproute2_binary_path
+    which("ip")
   end
 
-  def find_ethtool_binary
-    ["/sbin/ethtool", "/usr/sbin/ethtool"].find { |path| File.exist?(path) }
+  def ethtool_binary_path
+    which("ethtool")
   end
 
   def is_openvz?
@@ -151,7 +151,7 @@ Ohai.plugin(:Network) do
 
   # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
-    return iface unless ethtool_binary = find_ethtool_binary
+    return iface unless ethtool_binary = ethtool_binary_path
     keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
@@ -175,7 +175,7 @@ Ohai.plugin(:Network) do
 
   # determine ring parameters for the interface using ethtool
   def ethernet_ring_parameters(iface)
-    return iface unless ethtool_binary = find_ethtool_binary
+    return iface unless ethtool_binary = ethtool_binary_path
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
       so = shell_out("#{ethtool_binary} -g #{tmp_int}")
@@ -471,7 +471,7 @@ Ohai.plugin(:Network) do
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
     IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/ unless defined? IPROUTE_INT_REGEX
 
-    if iproute2_binary_available?
+    if iproute2_binary_path
       # families to get default routes from
       families = [{
                     :name => "inet",

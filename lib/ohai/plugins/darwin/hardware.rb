@@ -46,15 +46,21 @@ Ohai.plugin(:Hardware) do
     hw_hash[0]["_items"][0].delete("_name")
     hardware.merge!(hw_hash[0]["_items"][0])
 
-    {
-      "operating_system" => "sw_vers -productName",
-      "operating_system_version" => "sw_vers -productVersion",
-      "build_version" => "sw_vers -buildVersion",
-      "architecture" => "uname -m",
-    }.each do |var, cmd|
-      os_info = shell_out(cmd).stdout
-      hardware[var] = os_info.strip unless os_info.nil?
+    # ProductName:	Mac OS X
+    # ProductVersion:	10.12.5
+    # BuildVersion:	16F73
+    shell_out("sw_vers").stdout.lines.each do |line|
+      case line
+      when /^ProductName:\s*(.*)$/
+        hardware["operating_system"] = Regexp.last_match[1].strip
+      when /^ProductVersion:\s*(.*)$/
+        hardware["operating_system_version"] = Regexp.last_match[1].strip
+      when /^BuildVersion:\s*(.*)$/
+        hardware["build_version"] = Regexp.last_match[1].strip
+      end
     end
+
+    hardware["architecture"] = shell_out("uname -m").stdout.strip
 
     # Storage queries
     storage = []

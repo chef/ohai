@@ -31,21 +31,9 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     )
 
     allow(plugin).to receive(:shell_out).with(
-      "sw_vers -productName"
+      "sw_vers"
     ).and_return(
-      mock_shell_out(0, "Mac OS X", "")
-    )
-
-    allow(plugin).to receive(:shell_out).with(
-      "sw_vers -productVersion"
-    ).and_return(
-      mock_shell_out(0, "10.12", "")
-    )
-
-    allow(plugin).to receive(:shell_out).with(
-      "sw_vers -buildVersion"
-    ).and_return(
-      mock_shell_out(0, "16A239j", "")
+      mock_shell_out(0, "ProductName:	Mac OS X\nProductVersion:	10.12\nBuildVersion:	16A239j", "")
     )
 
     allow(plugin).to receive(:shell_out).with(

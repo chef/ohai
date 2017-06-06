@@ -59,6 +59,10 @@ Ohai.plugin(:CPU) do
         cpuinfo[current_cpu]["cache_size"] = $1
       when /flags\s+:\s(.+)/
         cpuinfo[current_cpu]["flags"] = $1.split(" ")
+      when /BogoMIPS\s+:\s(.+)/
+        cpuinfo[current_cpu]["bogomips"] = $1
+      when /Features\s+:\s(.+)/
+        cpuinfo[current_cpu]["features"] = $1.split(" ")
       when /bogomips per cpu:\s(.+)/
         cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/

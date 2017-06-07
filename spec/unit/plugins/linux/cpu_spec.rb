@@ -60,6 +60,22 @@ shared_examples "S390 processor info" do |cpu_no, version, identification, machi
   end
 end
 
+shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
+  describe "arm64 processor" do
+    it "has bogomips for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu]["#{cpu_no}"]).to have_key("bogomips")
+      expect(plugin[:cpu]["#{cpu_no}"]["bogomips"]).to eql(bogomips)
+    end
+
+    it "has features for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu]["#{cpu_no}"]).to have_key("features")
+      expect(plugin[:cpu]["#{cpu_no}"]["features"]).to eql(features)
+    end
+  end
+end
+
 describe Ohai::System, "General Linux cpu plugin" do
   let(:plugin) { get_plugin("linux/cpu") }
 
@@ -354,4 +370,35 @@ describe Ohai::System, "S390 linux cpu plugin" do
 
   it_behaves_like "S390 processor info", 0, "EE", "06E276", "2717"
   it_behaves_like "S390 processor info", 1, "FF", "06E278", "2818"
+end
+
+describe Ohai::System, "arm64 linux cpu plugin" do
+  let(:plugin) { get_plugin("linux/cpu") }
+
+  before(:each) do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
+
+    @double_file = double("/proc/cpuinfo")
+    allow(@double_file).to receive(:each).
+      and_yield("processor	: 0").
+      and_yield("BogoMIPS	: 40.00").
+      and_yield("Features	: fp asimd evtstrm aes pmull sha1 sha2 crc32").
+      and_yield("").
+      and_yield("processor      : 1").
+      and_yield("BogoMIPS       : 40.00").
+      and_yield("Features       : fp asimd evtstrm aes pmull sha1 sha2 crc32").
+      and_yield("")
+    allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
+  end
+
+  it_behaves_like "Common cpu info", 2, 0
+
+  it "has a cpu 1" do
+    plugin.run
+    expect(plugin[:cpu]).to have_key("1")
+  end
+
+  features = %w{fp asimd evtstrm aes pmull sha1 sha2 crc32}
+  it_behaves_like "arm64 processor info", 0, "40.00", features
+  it_behaves_like "arm64 processor info", 1, "40.00", features
 end

@@ -37,16 +37,12 @@ Ohai.plugin(:Network) do
     File.exist? "/proc/net/if_inet6"
   end
 
-  def iproute2_binary_path
-    which("ip")
-  end
-
   def ethtool_binary_path
-    which("ethtool")
+    @ethtool ||= which("ethtool")
   end
 
   def is_openvz?
-    ::File.directory?("/proc/vz")
+    @openvz ||= ::File.directory?("/proc/vz")
   end
 
   def is_openvz_host?
@@ -151,11 +147,11 @@ Ohai.plugin(:Network) do
 
   # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
-    return iface unless ethtool_binary = ethtool_binary_path
+    return iface unless ethtool_binary_path
     keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
-      so = shell_out("#{ethtool_binary} #{tmp_int}")
+      so = shell_out("#{ethtool_binary_path} #{tmp_int}")
       so.stdout.lines do |line|
         line.chomp!
         Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{line}")
@@ -175,10 +171,10 @@ Ohai.plugin(:Network) do
 
   # determine ring parameters for the interface using ethtool
   def ethernet_ring_parameters(iface)
-    return iface unless ethtool_binary = ethtool_binary_path
+    return iface unless ethtool_binary_path
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
-      so = shell_out("#{ethtool_binary} -g #{tmp_int}")
+      so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
       Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["ring_params"] = {}
@@ -471,7 +467,7 @@ Ohai.plugin(:Network) do
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
     IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/ unless defined? IPROUTE_INT_REGEX
 
-    if iproute2_binary_path
+    if which("ip")
       # families to get default routes from
       families = [{
                     :name => "inet",

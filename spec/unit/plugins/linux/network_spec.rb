@@ -535,8 +535,8 @@ EOM
   %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_path).and_return( network_method == "ifconfig" ? false : "/sbin/ip" )
-        allow(plugin).to receive(:ethtool_binary_path).and_return( "/sbin/ethtool" )
+        allow(plugin).to receive(:which).with("ip").and_return( network_method == "iproute2" ? "/sbin/ip" : false )
+        allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
         plugin.run
       end
 
@@ -654,7 +654,8 @@ EOM
 
     describe "gathering interface counters via #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_path).and_return( "/sbin/ip" )
+        allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
+        allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
       end
 
@@ -690,9 +691,10 @@ EOM
       end
     end
 
-    describe "setting the node's default IP address attribute with iproute2" do
+    describe "setting the node's default IP address attribute with #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_path).and_return( "/sbin/ip" )
+        allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
+        allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
       end
 
@@ -770,8 +772,8 @@ EOM
 
   describe "for newer network features using iproute2 only" do
     before(:each) do
-      allow(plugin).to receive(:iproute2_binary_path).and_return( "/sbin/ip" )
-      allow(plugin).to receive(:ethtool_binary_path).and_return( "/sbin/ethtool" )
+      allow(plugin).to receive(:which).with("ip").and_return("/sbin/ip")
+      allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
       allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
       plugin.run
     end

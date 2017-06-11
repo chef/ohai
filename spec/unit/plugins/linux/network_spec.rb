@@ -377,26 +377,6 @@ EOM
     allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
-  describe "#iproute2_binary_available?" do
-    ["/sbin/ip", "/usr/bin/ip", "/bin/ip"].each do |path|
-      it "accepts #{path}" do
-        allow(File).to receive(:exist?).and_return(false)
-        allow(File).to receive(:exist?).with(path).and_return(true)
-        expect(plugin.iproute2_binary_available?).to be_truthy
-      end
-    end
-  end
-
-  describe "#find_ethtool_binary" do
-    ["/sbin/ethtool", "/usr/sbin/ethtool"].each do |path|
-      it "accepts #{path}" do
-        allow(File).to receive(:exist?).and_return(false)
-        allow(File).to receive(:exist?).with(path).and_return(true)
-        expect(plugin.find_ethtool_binary).to end_with("/ethtool")
-      end
-    end
-  end
-
   describe "#interface_has_no_addresses_in_family?" do
     context "when interface has no addresses" do
       let(:iface) { {} }
@@ -555,8 +535,8 @@ EOM
   %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
-        allow(plugin).to receive(:find_ethtool_binary).and_return( "/sbin/ethtool" )
+        allow(plugin).to receive(:which).with("ip").and_return( network_method == "iproute2" ? "/sbin/ip" : false )
+        allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
         plugin.run
       end
 
@@ -674,7 +654,8 @@ EOM
 
     describe "gathering interface counters via #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
+        allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
       end
 
@@ -712,7 +693,8 @@ EOM
 
     describe "setting the node's default IP address attribute with #{network_method}" do
       before(:each) do
-        allow(plugin).to receive(:iproute2_binary_available?).and_return( network_method == "iproute2" )
+        allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
+        allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
       end
 
@@ -790,9 +772,9 @@ EOM
 
   describe "for newer network features using iproute2 only" do
     before(:each) do
-      allow(File).to receive(:exist?).with("/sbin/ip").and_return(true) # iproute2 only
+      allow(plugin).to receive(:which).with("ip").and_return("/sbin/ip")
+      allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
       allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
-      allow(File).to receive(:exist?).with("/sbin/ethtool").and_return(true) # ethtool is available
       plugin.run
     end
 

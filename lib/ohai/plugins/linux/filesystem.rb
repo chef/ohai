@@ -30,8 +30,9 @@ Ohai.plugin(:Filesystem) do
     name
   end
 
-  def parse_line(line, have_lsblk)
-    if have_lsblk
+  def parse_line(line, cmdtype)
+    case cmdtype
+    when "lsblk"
       regex = /NAME="(\S+).*?" UUID="(\S*)" LABEL="(\S*)" FSTYPE="(\S*)"/
       if line =~ regex
         dev = $1
@@ -41,7 +42,7 @@ Ohai.plugin(:Filesystem) do
         fs_type = $4
         return { :dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type }
       end
-    else
+    when "blkid"
       bits = line.split
       dev = bits.shift.split(":")[0]
       f = { :dev => dev }
@@ -142,36 +143,48 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    have_lsblk = File.exist?("/bin/lsblk")
-    if have_lsblk
-      cmd = "lsblk -n -P -o NAME,UUID,LABEL,FSTYPE"
-    else
-      # CentOS5 and other platforms don't have lsblk
-      cmd = "blkid"
+    # We used to try to decide if we wanted to run lsblk or blkid
+    # but they each have a variety of cases were they fail to report
+    # data. For example, there are a variety of cases where lsblk won't
+    # report unmounted filesystems, but blkid will. And vise-versa. Sweet.
+    # So for reliability, we'll run both, if we have them.
+
+    lsblk = which("lsblk")
+    blkid = which("blkid")
+    cmds = []
+    # These should be in order of preference... first writer wins.
+    if lsblk
+      cmds << "#{lsblk} -n -P -o NAME,UUID,LABEL,FSTYPE"
+    end
+    if blkid
+      cmds << blkid
     end
 
-    so = shell_out(cmd)
-    so.stdout.each_line do |line|
-      parsed = parse_line(line, have_lsblk)
-      next if parsed.nil?
-      # lsblk lists each device once, so we need to update all entries
-      # in the hash that are related to this device
-      keys_to_update = []
-      fs.each_key do |key|
-        keys_to_update << key if key.start_with?("#{parsed[:dev]},")
-      end
+    cmds.each do |cmd|
+      cmdtype = File.basename(cmd.split.first)
+      so = shell_out(cmd)
+      so.stdout.each_line do |line|
+        parsed = parse_line(line, cmdtype)
+        next if parsed.nil?
+        # lsblk lists each device once, so we need to update all entries
+        # in the hash that are related to this device
+        keys_to_update = []
+        fs.each_key do |key|
+          keys_to_update << key if key.start_with?("#{parsed[:dev]},")
+        end
 
-      if keys_to_update.empty?
-        key = "#{parsed[:dev]},"
-        fs[key] = Mash.new
-        fs[key][:device] = parsed[:dev]
-        keys_to_update << key
-      end
+        if keys_to_update.empty?
+          key = "#{parsed[:dev]},"
+          fs[key] = Mash.new
+          fs[key][:device] = parsed[:dev]
+          keys_to_update << key
+        end
 
-      keys_to_update.each do |key|
-        [:fs_type, :uuid, :label].each do |subkey|
-          if parsed[subkey] && !parsed[subkey].empty?
-            fs[key][subkey] = parsed[subkey]
+        keys_to_update.each do |key|
+          [:fs_type, :uuid, :label].each do |subkey|
+            if parsed[subkey] && !parsed[subkey].empty?
+              fs[key][subkey] = parsed[subkey]
+            end
           end
         end
       end

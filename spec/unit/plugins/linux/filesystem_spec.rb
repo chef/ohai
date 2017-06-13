@@ -26,8 +26,9 @@ describe Ohai::System, "Linux filesystem plugin" do
     allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
-    allow(File).to receive(:exist?).with("/bin/lsblk").and_return(false)
-    allow(plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:which).with("lsblk").and_return(nil)
+    allow(plugin).to receive(:which).with("blkid").and_return("/sbin/blkid")
+    allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, "", ""))
 
     allow(plugin).to receive(:shell_out).
       with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
@@ -218,7 +219,7 @@ DFi
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
 BLKID_TYPE
-      allow(plugin).to receive(:shell_out).with("blkid").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid" do
@@ -260,7 +261,8 @@ none            126922      1  126921    1% /run/shm
 DFi
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
-      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
+      allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
+      allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<-BLKID_TYPE
 NAME=\"sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
 NAME=\"sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
@@ -277,7 +279,7 @@ NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/h
 NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -295,6 +297,92 @@ BLKID_TYPE
     it "should ignore extra info in name and set label to value from lsblk  -n -P -o NAME,UUID,LABEL,FSTYPE" do
       plugin.run
       expect(plugin[:filesystem]["by_pair"]["/dev/mapper/debian--7-root,"][:label]).to eq("root")
+    end
+
+  end
+
+  describe "when gathering filesystem type data from both lsblk and blkid" do
+    before(:each) do
+      @dfstdout = <<-DF
+Filesystem         1024-blocks      Used Available Capacity Mounted on
+/dev/mapper/sys.vg-root.lv   4805760    378716   4182924       9% /
+tmpfs                  2030944         0   2030944       0% /lib/init/rw
+udev                   2025576       228   2025348       1% /dev
+tmpfs                  2030944      2960   2027984       1% /dev/shm
+/dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home
+/dev/mapper/sys.vg-special.lv  97605057  53563253  44041805      56% /special
+/dev/mapper/sys.vg-tmp.lv   1919048     46588   1774976       3% /tmp
+/dev/mapper/sys.vg-usr.lv  19223252   5479072  12767696      31% /usr
+/dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
+/dev/md0                960492     36388    875312       4% /boot
+DF
+      allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
+
+      @inode_stdout = <<-DFi
+Filesystem      Inodes  IUsed   IFree IUse% Mounted on
+/dev/xvda1     1310720 107407 1203313    9% /
+/dev/mapper/sys.vg-special.lv            124865    380  124485    1% /special
+tmpfs           126922    273  126649    1% /run
+none            126922      1  126921    1% /run/lock
+none            126922      1  126921    1% /run/shm
+DFi
+      allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
+
+      allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
+      allow(plugin).to receive(:which).with("blkid").and_return("/sbin/blkid")
+      @stdout = <<-BLKID_TYPE
+NAME=\"sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
+NAME=\"sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
+NAME=\"sda1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
+NAME=\"sda2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
+NAME=\"md0\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" LABEL=\"/boot\" FSTYPE=\"ext3\"
+NAME=\"md1\" UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" LABEL=\"\" FSTYPE=\"LVM2_member\"
+NAME=\"sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\"
+NAME=\"sys.vg-swap.lv\" UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" LABEL=\"\" FSTYPE=\"swap\"
+NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\"
+NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
+NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/BADhome\" FSTYPE=\"xfs\"
+NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
+BLKID_TYPE
+      allow(plugin).to receive(:shell_out).
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        and_return(mock_shell_out(0, @stdout, ""))
+      @stdout = <<-BLKID_TYPE
+/dev/sdb1: LABEL=\"fuego:0\" TYPE=\"linux_raid_member\"
+/dev/sdb2: LABEL=\"fuego:1\" TYPE=\"linux_raid_member\"
+/dev/sda1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
+/dev/sda2: LABEL=\"fuego:1\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" TYPE=\"linux_raid_member\"
+/dev/md0: LABEL=\"/boot\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" TYPE=\"ext3\"
+/dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" TYPE=\"LVM2_member\"
+/dev/mapper/sys.vg-root.lv: LABEL=\"/\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" TYPE=\"ext4\"
+/dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
+/dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
+/dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
+/dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
+/dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
+BLKID_TYPE
+      allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, @stdout, ""))
+    end
+
+    it "should fill in missing FS data from lsblk using blkid" do
+      plugin.run
+      pairs = plugin[:filesystem]["by_pair"]
+      expect(pairs["/dev/mapper/sys.vg-root.lv,/"]["fs_type"]).to eq("ext4")
+      expect(pairs["/dev/mapper/sys.vg-usr.lv,/usr"]["fs_type"]).to eq("ext4")
+    end
+
+    it "should fill in missing FS data from blkid using lsblk" do
+      plugin.run
+      pairs = plugin[:filesystem]["by_pair"]
+      expect(pairs["/dev/sdb1,"]["uuid"]).to eq("bd1197e0-6997-1f3a-e27e-7801388308b5")
+      expect(pairs["/dev/sdb2,"]["uuid"]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
+    end
+
+    it "should prefer lsblk data to blkid data when they conflict" do
+      plugin.run
+      pairs = plugin[:filesystem]["by_pair"]
+      expect(pairs["/dev/mapper/sys.vg-home.lv,/home"]["label"]).to eq("/home")
     end
 
   end
@@ -378,13 +466,14 @@ udev            126922      1  126921    1% /dev
 DFi
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
-      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
+      allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
+      allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<-BLKID_TYPE
 NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -422,7 +511,8 @@ udev            126922      1  126921    1% /dev
 DFi
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
-      allow(File).to receive(:exist?).with("/bin/lsblk").and_return(true)
+      allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
+      allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<-BLKID_TYPE
 NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
 NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
@@ -430,7 +520,7 @@ NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" 
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
         and_return(mock_shell_out(0, @stdout, ""))
     end
 

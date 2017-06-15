@@ -429,6 +429,14 @@ OS_RELEASE
         expect(@plugin[:platform_version].to_i).to eq(13)
       end
 
+      it "should read the platform as clearos and version as 7.3" do
+        expect(File).to receive(:read).with("/etc/redhat-release").and_return("ClearOS release 7.3.0 (Final)")
+        @plugin.run
+        expect(@plugin[:platform]).to eq("clearos")
+        expect(@plugin[:platform_family]).to eq("rhel")
+        expect(@plugin[:platform_version].to_f).to eq(7.3)
+      end
+
       # https://github.com/chef/ohai/issues/560
       # Issue is seen on EL7, so that's what we're testing.
       context "on versions that have /etc/os-release" do

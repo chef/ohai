@@ -180,14 +180,12 @@ module Ohai
 
       # emulates the old plugin loading behavior
       def safe_run
-        begin
-          self.run
-        rescue Ohai::Exceptions::Error => e
-          raise e
-        rescue => e
-          Ohai::Log.debug("Plugin #{self.name} threw #{e.inspect}")
-          e.backtrace.each { |line| Ohai::Log.debug( line ) }
-        end
+        run
+      rescue Ohai::Exceptions::Error => e
+        raise e
+      rescue => e
+        Ohai::Log.debug("Plugin #{name} threw #{e.inspect}")
+        e.backtrace.each { |line| Ohai::Log.debug( line ) }
       end
 
       def method_missing(name, *args)

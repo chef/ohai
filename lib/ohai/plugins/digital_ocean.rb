@@ -38,13 +38,13 @@ Ohai.plugin(:DigitalOcean) do
       # dmi[:bios][:all_records][0][:Vendor] may not exist
     end
     Ohai::Log.debug("Plugin DigitalOcean: has_do_dmi? == false")
-    return false
+    false
   end
 
   def looks_like_digital_ocean?
     return true if hint?("digital_ocean")
     return true if has_do_dmi? && can_socket_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
-    return false
+    false
   end
 
   collect_data do

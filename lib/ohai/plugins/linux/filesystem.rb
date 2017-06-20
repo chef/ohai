@@ -55,7 +55,7 @@ Ohai.plugin(:Filesystem) do
       end
       return f
     end
-    return nil
+    nil
   end
 
   def generate_device_view(fs)

@@ -62,7 +62,7 @@ Ohai.plugin(:Eucalyptus) do
     if looks_like_euca?
       Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == true")
       eucalyptus Mash.new
-      self.fetch_metadata.each do |k, v|
+      fetch_metadata.each do |k, v|
         # Eucalyptus 3.4+ supports IAM roles and Instance Profiles much like AWS
         # https://www.eucalyptus.com/blog/2013/10/15/iam-roles-and-instance-profiles-eucalyptus-34
         #
@@ -73,7 +73,7 @@ Ohai.plugin(:Eucalyptus) do
         next if k == "iam" && !hint?("iam")
         eucalyptus[k] = v
       end
-      eucalyptus[:userdata] = self.fetch_userdata
+      eucalyptus[:userdata] = fetch_userdata
     else
       Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == false")
       false

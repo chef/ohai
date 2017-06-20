@@ -40,7 +40,7 @@ Ohai.plugin(:Uptime) do
         return [usec, seconds_to_human(usec)]
       end
     end
-    return [nil, nil]
+    [nil, nil]
   end
 
   collect_data(:darwin) do

@@ -85,11 +85,11 @@ module Ohai
           platform = collect_os
 
           if collector.has_key?(platform)
-            self.instance_eval(&collector[platform])
+            instance_eval(&collector[platform])
           elsif collector.has_key?(:default)
-            self.instance_eval(&collector[:default])
+            instance_eval(&collector[:default])
           else
-            Ohai::Log.debug("Plugin #{self.name}: No data to collect. Skipping...")
+            Ohai::Log.debug("Plugin #{name}: No data to collect. Skipping...")
           end
         end
 
@@ -122,7 +122,7 @@ module Ohai
           # Memory => ["", "Memory"]
           # NetworkListeners => ["", "Network", "", "Listeners"]
           # SSHHostKey => ["SSH", "Host", "", "Key"]
-          parts = self.name.to_s.split(/([A-Z][a-z]+)/)
+          parts = name.to_s.split(/([A-Z][a-z]+)/)
           # ["DMI"] => ["DMI"]
           # ["", "Memory"] => ["Memory"]
           # ["", "Network", "", "Listeners"] => ["Network", "Listeners"]

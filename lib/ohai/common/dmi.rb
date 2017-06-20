@@ -78,20 +78,18 @@ module Ohai
 
       # look up DMI ID
       def id_lookup(id)
-        begin
-          id = id.to_i
-          if (id >= 128) && (id <= 255)
-            id = "oem_data_#{id}"
-          elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
-            id = DMI::ID_TO_DESCRIPTION[id]
-          else
-            Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
-            id = "unknown"
-          end
-        rescue
-          Ohai::Log.debug("failed to look up id #{id}, returning unchanged")
-          id
+        id = id.to_i
+        if (id >= 128) && (id <= 255)
+          id = "oem_data_#{id}"
+        elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
+          id = DMI::ID_TO_DESCRIPTION[id]
+        else
+          Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
+          id = "unknown"
         end
+      rescue
+        Ohai::Log.debug("failed to look up id #{id}, returning unchanged")
+        id
       end
 
       # create simplified convenience access keys for each record type

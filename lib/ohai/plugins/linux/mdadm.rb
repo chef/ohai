@@ -60,9 +60,12 @@ Ohai.plugin(:Mdadm) do
           device = Regexp.last_match[1]
           pieces = line.split(/\s+/)
           # there are variable numbers of fields until you hit the raid level
-          # everything after that is members
-          members = pieces.drop_while { |x| !x.start_with?("raid") }
+          # everything after that is members...
+          # unless the array is inactive, in which case you don't get a raid
+          # level.
+          members = pieces.drop_while { |x| !x.start_with?("raid", "inactive") }
           # drop the 'raid' too
+
           members.shift unless members.empty?
           devices[device] = members.map { |s| s.match(/(.+)\[\d\]/)[1] }
         end

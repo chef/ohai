@@ -67,7 +67,7 @@ Ohai.plugin(:Kernel) do
     return "WIN98" if sys_type.to_s.eql?("17")
     return "WINNT" if sys_type.to_s.eql?("18")
     return "WINCE" if sys_type.to_s.eql?("19")
-    return nil
+    nil
   end
 
   collect_data(:default) do

@@ -44,7 +44,7 @@ module Ohai
         end
 
         def self.collect_contents(contents)
-          define_method(:run_plugin) { self.instance_eval(contents) }
+          define_method(:run_plugin) { instance_eval(contents) }
         end
 
         def provides(*paths)

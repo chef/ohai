@@ -46,6 +46,6 @@ module ::Ohai::Mixin::DmiDecode
         return "veertu"
       end
     end
-    return nil
+    nil
   end
 end

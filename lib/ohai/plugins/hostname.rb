@@ -47,14 +47,12 @@ Ohai.plugin(:Hostname) do
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
   # this is ipv6-safe, works on ruby 1.8.7+
   def resolve_fqdn
-    begin
-      hostname = from_cmd("hostname")
-      addrinfo = Socket.getaddrinfo(hostname, nil).first
-      iaddr = IPAddr.new(addrinfo[3])
-      Socket.gethostbyaddr(iaddr.hton)[0]
-    rescue
-      nil
-    end
+    hostname = from_cmd("hostname")
+    addrinfo = Socket.getaddrinfo(hostname, nil).first
+    iaddr = IPAddr.new(addrinfo[3])
+    Socket.gethostbyaddr(iaddr.hton)[0]
+  rescue
+    nil
   end
 
   def collect_domain

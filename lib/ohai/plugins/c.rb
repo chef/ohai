@@ -123,18 +123,17 @@ Ohai.plugin(:C) do
 
   def collect_xlc
     # ibm xlc
-    begin
-      so = shell_out("xlc -qversion")
-      if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
-        description = so.stdout.split($/).first
-        if description =~ /V(\d+\.\d+)/
-          @c[:xlc] = Mash.new
-          @c[:xlc][:version] = $1
-          @c[:xlc][:description] = description.strip
-        end
+
+    so = shell_out("xlc -qversion")
+    if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
+      description = so.stdout.split($/).first
+      if description =~ /V(\d+\.\d+)/
+        @c[:xlc] = Mash.new
+        @c[:xlc][:version] = $1
+        @c[:xlc][:description] = description.strip
       end
-    rescue Ohai::Exceptions::Exec
     end
+  rescue Ohai::Exceptions::Exec
   end
 
   def collect_sunpro

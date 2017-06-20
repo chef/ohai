@@ -41,7 +41,7 @@ Ohai.plugin(:Azure) do
   def has_waagent?
     if File.exist?("/usr/sbin/waagent") || Dir.exist?('C:\WindowsAzure')
       Ohai::Log.debug("Plugin Azure: Found waagent used by MS Azure.")
-      return true
+      true
     end
   end
 
@@ -56,7 +56,7 @@ Ohai.plugin(:Azure) do
         end
       end
     end
-    return has_245
+    has_245
   end
 
 end

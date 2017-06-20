@@ -32,10 +32,10 @@ Ohai.plugin(:Openstack) do
     # detect a manufacturer of OpenStack Foundation
     if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
       Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
-      return true
+      true
     else
       Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
-      return false
+      false
     end
   end
 
@@ -43,17 +43,17 @@ Ohai.plugin(:Openstack) do
   def openstack_hint?
     if hint?("openstack")
       Ohai::Log.debug("Plugin Openstack: openstack hint present")
-      return true
+      true
     else
       Ohai::Log.debug("Plugin Openstack: openstack hint not present")
-      return false
+      false
     end
   end
 
   # dreamhost systems have the dhc-user on them
   def openstack_provider
     return "dreamhost" if get_attribute("etc", "passwd", "dhc-user")
-    return "openstack"
+    "openstack"
   end
 
   collect_data do

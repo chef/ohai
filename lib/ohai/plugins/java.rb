@@ -21,30 +21,28 @@ Ohai.plugin(:Java) do
   depends "languages"
 
   def get_java_info
-    begin
-      so = shell_out("java -mx64m -version")
-      # Sample output:
-      # java version "1.8.0_60"
-      # Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
-      # Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
-      if so.exitstatus == 0
-        java = Mash.new
-        so.stderr.split(/\r?\n/).each do |line|
-          case line
-          when /(?:java|openjdk) version \"([0-9\.\_]+)\"/
-            java[:version] = $1
-          when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
-            java[:runtime] = { "name" => $1, "build" => $3 }
-          when /^(.+ (Client|Server) VM) \(build\s*(.+)\)$/
-            java[:hotspot] = { "name" => $1, "build" => $3 }
-          end
+    so = shell_out("java -mx64m -version")
+    # Sample output:
+    # java version "1.8.0_60"
+    # Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
+    # Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
+    if so.exitstatus == 0
+      java = Mash.new
+      so.stderr.split(/\r?\n/).each do |line|
+        case line
+        when /(?:java|openjdk) version \"([0-9\.\_]+)\"/
+          java[:version] = $1
+        when /^(.+Runtime Environment.*) \((build)\s*(.+)\)$/
+          java[:runtime] = { "name" => $1, "build" => $3 }
+        when /^(.+ (Client|Server) VM) \(build\s*(.+)\)$/
+          java[:hotspot] = { "name" => $1, "build" => $3 }
         end
-
-        languages[:java] = java unless java.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Java: Could not shell_out "java -mx64m -version". Skipping plugin')
+
+      languages[:java] = java unless java.empty?
     end
+  rescue Ohai::Exceptions::Exec
+    Ohai::Log.debug('Plugin Java: Could not shell_out "java -mx64m -version". Skipping plugin')
   end
 
   # On Mac OS X, the development tools include "stubs" for JVM executables that

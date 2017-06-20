@@ -70,7 +70,7 @@ module OhaiPluginCommon
         @instances << current
       end
       @methods = [:platform, :arch, :env, :params, :stdout, :stderr, :exit_status]
-      @methods.each { |m| self.send(:define_method, m.to_s) { |text| push m.to_sym, text } }
+      @methods.each { |m| send(:define_method, m.to_s) { |text| push m.to_sym, text } }
 
       #Format data into a form the rest of the app expects
       def process

@@ -43,10 +43,10 @@ Ohai.plugin(:EC2) do
     # detect a version of '4.2.amazon'
     if get_attribute(:dmi, :bios, :all_records, 0, :Version) =~ /amazon/
       Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
-      return true
+      true
     else
       Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
-      return false
+      false
     end
   end
 
@@ -60,7 +60,7 @@ Ohai.plugin(:EC2) do
       end
     end
     Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
-    return false
+    false
   end
 
   # looks for the Amazon.com Organization in Windows Kernel data
@@ -69,10 +69,10 @@ Ohai.plugin(:EC2) do
     # detect an Organization of 'Amazon.com'
     if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
       Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
-      return true
+      true
     else
       Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
-      return false
+      false
     end
   end
 

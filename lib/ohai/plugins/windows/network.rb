@@ -39,7 +39,7 @@ Ohai.plugin(:Network) do
       # If we are running on windows nano or anothe roperating system from the future
       # that does not populate the deprecated win32_* WMI classes, then we should
       # grab data from the newer MSFT_* classes
-      return msft_adapter_data if data[:addresses].count.zero?
+      return msft_adapter_data if data[:addresses].count == 0
       data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
       data
     end
@@ -125,7 +125,7 @@ Ohai.plugin(:Network) do
         iface[cint][:type] = iface[cint][:instance][:adapter_type] if iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
         iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type]) if iface[cint][:instance][:adapter_type]
-        if iface[cint][:configuration][:default_ip_gateway] != nil && iface[cint][:configuration][:default_ip_gateway].size > 0
+        if !iface[cint][:configuration][:default_ip_gateway].nil? && iface[cint][:configuration][:default_ip_gateway].size > 0
           network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
           network[:default_interface] = cint
         end

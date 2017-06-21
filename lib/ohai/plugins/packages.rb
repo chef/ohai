@@ -95,7 +95,7 @@ Ohai.plugin(:Packages) do
     # On aix, filesets are packages and levels are versions
     pkgs.each do |pkg|
       name, fileset, version, _, _, _, pkg_type = pkg.split(":")
-      if pkg_type == 'R'
+      if pkg_type == "R"
         # RPM
         packages[name] = { "version" => version }
       else

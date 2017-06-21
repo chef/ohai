@@ -1,5 +1,10 @@
 # Change Log
 
+## [8.24.0](https://github.com/chef/ohai/tree/v8.24.1) (2017-06-21)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.24.0...v8.24.1)
+
+- bump chefstyle development dependency
+
 ## [8.24.0](https://github.com/chef/ohai/tree/v8.24.0) (2017-05-08)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.23.0...v8.24.0)

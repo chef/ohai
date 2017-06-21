@@ -170,7 +170,7 @@ eof
   def clean_path( path, regex )
     Dir.glob( File.join( path, "*" )).
       reject { |e| e =~ regex }.
-      each { |e| Mixlib::ShellOut.new( "rm -rf #{ e }" ).run_command }
+      each { |e| Mixlib::ShellOut.new( "rm -rf #{e}" ).run_command }
   end
 
   module_function( :fake_command, :data_path, :get_path, :read_output, :clean_path,

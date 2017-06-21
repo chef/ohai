@@ -44,7 +44,7 @@ Ohai.plugin(:Filesystem) do
       fs[filesystem][:kb_used] = fs[filesystem][:kb_size].to_i - fs[filesystem][:kb_available].to_i
       fs[filesystem][:percent_used] = (fs[filesystem][:kb_size].to_i != 0 ? fs[filesystem][:kb_used].to_i * 100 / fs[filesystem][:kb_size].to_i : 0)
       fs[filesystem][:mount] = ld_info[filesystem][:name]
-      fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system] == nil
+      fs[filesystem][:fs_type] = ld_info[filesystem][:file_system].downcase unless ld_info[filesystem][:file_system].nil?
       fs[filesystem][:volume_name] = ld_info[filesystem][:volume_name]
     end
 

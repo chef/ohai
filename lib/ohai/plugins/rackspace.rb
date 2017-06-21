@@ -38,7 +38,7 @@ Ohai.plugin(:Rackspace) do
   def has_rackspace_metadata?
     so = shell_out("xenstore-read vm-data/provider_data/provider")
     if so.exitstatus == 0
-      so.stdout.strip.casecmp("rackspace").zero?
+      so.stdout.strip.casecmp("rackspace") == 0
     end
   rescue Ohai::Exceptions::Exec
     false
@@ -84,7 +84,7 @@ Ohai.plugin(:Rackspace) do
 
   # Get the rackspace region
   #
-  def get_region()
+  def get_region
     so = shell_out("xenstore-ls vm-data/provider_data")
     if so.exitstatus == 0
       so.stdout.split("\n").each do |line|
@@ -98,7 +98,7 @@ Ohai.plugin(:Rackspace) do
 
   # Get the rackspace instance_id
   #
-  def get_instance_id()
+  def get_instance_id
     so = shell_out("xenstore-read name")
     if so.exitstatus == 0
       rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
@@ -110,7 +110,7 @@ Ohai.plugin(:Rackspace) do
 
   # Get the rackspace private networks
   #
-  def get_private_networks()
+  def get_private_networks
     so = shell_out("xenstore-ls vm-data/networking")
     if so.exitstatus == 0
       networks = []

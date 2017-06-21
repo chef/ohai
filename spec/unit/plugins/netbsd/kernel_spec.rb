@@ -25,7 +25,7 @@ describe Ohai::System, "NetBSD kernel plugin" do
     allow(@plugin).to receive(:init_kernel).and_return({})
     allow(@plugin).to receive(:shell_out).with("uname -i").and_return(mock_shell_out(0, "foo", ""))
     allow(@plugin).to receive(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1\n", ""))
-    allow(@plugin).to receive(:shell_out).with("#{ Ohai.abs_path( "/usr/bin/modstat" )}").and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
+    allow(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/bin/modstat" )}").and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
   end
 
   it "should set the kernel_os to the kernel_name value" do

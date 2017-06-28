@@ -127,6 +127,8 @@ Ohai.plugin(:Platform) do
       "exherbo"
     when /alpine/
       "alpine"
+    when /clearlinux/
+      "clearlinux"
     end
   end
 
@@ -232,6 +234,12 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/alpine-release")
       platform "alpine"
       platform_version File.read("/etc/alpine-release").strip()
+    elsif File.exist?("/usr/lib/os-release")
+      contents = File.read("/usr/lib/os-release")
+      if /Clear Linux/ =~ contents
+        platform "clearlinux"
+        platform_version contents[/VERSION_ID=(\d+)/, 1]
+      end
     elsif lsb[:id] =~ /RedHat/i
       platform "redhat"
       platform_version lsb[:release]

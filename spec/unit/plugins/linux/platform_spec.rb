@@ -35,6 +35,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_parallels_release) { false }
   let(:have_raspi_config) { false }
   let(:have_os_release) { false }
+  let(:have_usr_lib_os_release) { false }
   let(:have_cisco_release) { false }
   let(:have_cumulus_dir) { false }
 
@@ -57,6 +58,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/etc/parallels-release").and_return(have_parallels_release)
     allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
     allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
+    allow(File).to receive(:exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)
     allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
     allow(Dir).to receive(:exist?).with("/etc/cumulus").and_return(have_cumulus_dir)
 
@@ -859,6 +861,37 @@ CISCO_RELEASE
       expect(@plugin[:platform]).to eq("ios_xr")
       expect(@plugin[:platform_family]).to eq("wrlinux")
       expect(@plugin[:platform_version]).to eq("6.0.0.14I")
+    end
+  end
+
+  describe "on clearlinux" do
+    let(:have_usr_lib_os_release) { true }
+    let(:usr_lib_os_release_content) do
+      <<-CLEARLINUX_RELEASE
+NAME="Clear Linux Software for Intel Architecture"
+VERSION=1
+ID=clear-linux-os
+VERSION_ID=16140
+PRETTY_NAME="Clear Linux OS for Intel Architecture"
+ANSI_COLOR="1;35"
+HOME_URL="https://clearlinux.org"
+SUPPORT_URL="https://clearlinux.org"
+BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+CLEARLINUX_RELEASE
+    end
+
+    before do
+      expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
+    end
+
+    it "should set platform to clearlinux and platform_family to clearlinux" do
+      @plugin.lsb = nil
+      @plugin.run
+
+      expect(@plugin[:platform]).to eq("clearlinux")
+      expect(@plugin[:platform_family]).to eq("clearlinux")
+      expect(@plugin[:platform_version]).to eq("16140")
     end
   end
 end

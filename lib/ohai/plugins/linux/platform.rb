@@ -121,7 +121,7 @@ Ohai.plugin(:Platform) do
       "gentoo"
     when /slackware/
       "slackware"
-    when /arch/
+    when /arch/, /chakra/
       "arch"
     when /exherbo/
       "exherbo"
@@ -225,6 +225,11 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
+      platform_version `uname -r`.strip
+    elsif File.exist?("/etc/chakra-release")
+      platform "chakra"
+      # no way to determine platform_version in a rolling release distribution
+      # kernel release will be used - ex. 2.6.32-CHAKRA
       platform_version `uname -r`.strip
     elsif File.exist?("/etc/exherbo-release")
       platform "exherbo"

@@ -22,7 +22,7 @@ The packages plugin now correctly parses RPM package name / version information 
 
 ### Additional Platform Support
 
-Ohai now properly detects the [Clear](https://clearlinux.org/) and [ClearOS](https://www.clearos.com/) Linux distributions.
+Ohai now properly detects the [Clear](https://clearlinux.org/), [ClearOS](https://www.clearos.com/) and [Chakra](https://chakralinux.org/) Linux distributions.
 
 #### Clear Linux
 
@@ -33,6 +33,11 @@ Ohai now properly detects the [Clear](https://clearlinux.org/) and [ClearOS](htt
 
 - platform: clearos
 - platform_family: rhel
+
+#### Chakra Linux
+
+- platform: chakra
+- platform_family: arch
 
 ## New Deprecations
 

@@ -24,6 +24,8 @@ Ohai.plugin(:IpScopes) do
     begin
       require "ipaddr_extensions"
 
+      Ohai::Log.warn("The IpScopes Ohai plugin has been deprecated and will be removed from Ohai 14 (April 2018).")
+
       network["interfaces"].keys.sort.each do |if_name|
         next if network["interfaces"][if_name]["addresses"].nil?
 

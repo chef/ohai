@@ -1,37 +1,43 @@
-<!-- - This file is reset every time a new release is done. The contents of this file are for the currently unreleased version. Example Note: ## Example Heading Details about the thing that changed that needs to get included in the Release Notes in markdown. -->
+# Ohai Release Notes 13.2:
 
-# Ohai Release Notes 13.1:
+Ohai 13.2 has been a fantastic release in terms of community involvement with new plugins, platform support, and critical bug fixes coming from community members. A huge thank you to msgarbossa, albertomurillo, jaymzh, and davide125 for their work.
 
 ## New Features
 
-### Shellout now injects additional paths
+### Systemd Paths Plugin
 
-The shell_out helper used by Ohai plugins to run system commands has been updated to inject commonly used paths when shelling out. This allows us to find system utilities even when the user's PATH variable lacks common locations such as /sbin.
+A new plugin has been added to expose system and user paths from systemd-path (see <https://www.freedesktop.org/software/systemd/man/systemd-path.html> for details).
 
-### EC2 metadata improvements
+### Linux Network, Filesystem, and Mdadm Plugin Resilience
 
-The EC2 plugin and helpers have been updated to support the latest versions of Amazon's EC2 metadata endpoint, which includes new IPV6 data. Additionally, when available, we will reuse HTTP connections to reduce load on metadata servers and reduce the memory footprint of Ohai. This is particularly useful in the Openstack plugin which uses the EC2 helpers and connects to servers that support connection reuse.
+The Network, Filesystem, and Mdadm plugins have been improved to greatly reduce failures to collect data. The Network plugin now better finds the binaries it requires for shelling out, filesystem more gracefully falls back to secondary data sources, and mdadm handles arrays in bad states.
 
-### mdadm device data
+### Zpool Plugin Platform Expansion
 
-The Mdadm plugin on Linux will now collect "members" data, which is an array of member devices within the array.
+The Zpool plugin has been updated to support BSD and Linux in addition to Solaris.
+
+### RPM version parsing on AIX
+
+The packages plugin now correctly parses RPM package name / version information on AIX systems.
+
+### Additional Platform Support
+
+Ohai now properly detects the [Clear](https://clearlinux.org/) and [ClearOS](https://www.clearos.com/) Linux distributions.
+
+#### Clear Linux
+
+- platform: clearlinux
+- platform_family: clearlinux
+
+#### ClearOS
+
+- platform: clearos
+- platform_family: rhel
 
 ## New Deprecations
 
-### Removal of support for Ohai version 6 plugins (OHAI-10)
+### Removal of IpScopes plugin. (OHAI-13)
 
-<https://docs.chef.io/deprecations_ohai_filesystem.html>
+<https://docs.chef.io/deprecations_ohai_ipscopes.html>
 
-In Chef/Ohai 14 (April 2018) we will remove support for loading Ohai v6 plugins, which we deprecated in Ohai 7/Chef 11.12.
-
-### Cloud V2 attribute removal. (OHAI-11)
-
-<https://docs.chef.io/deprecations_ohai_cloud_v2.html>
-
-In Chef/Ohai 15 (April 2019) we will no longer write data to node['cloud_v2']. In Chef/Ohai 13 we deprecated the existing Cloud plugin and instead used CloudV2 to write to both node['cloud'] and node['cloud_v2']. Removing the existing "v2" namespace completes this plugin migration.
-
-### Filesystem2 attribute removal. (OHAI-12)
-
-<https://docs.chef.io/deprecations_ohai_filesystem_v2.html>
-
-In Chef/Ohai 15 (April 2019) we will no longer write data to node['filesystem2']. In Chef/Ohai 13 we deprecated the existing Filesystem plugin and instead used Filesystem2 to write to both node['filesystem'] and node['filesystem2']. Removing the existing "v2" namespace completes this plugin migration.
+In Chef/Ohai 14 (April 2018) we will remove the IpScopes plugin. The data returned by this plugin is nearly identical to information already returned by individual network plugins and this plugin required the installation of an additional gem into the Chef installation. We believe that few users were installing the gem and users would be better served by the data returned from the network plugins.

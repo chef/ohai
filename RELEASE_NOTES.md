@@ -10,7 +10,7 @@ A new plugin has been added to expose system and user paths from systemd-path (s
 
 ### Linux Network, Filesystem, and Mdadm Plugin Resilience
 
-The Network, Filesystem, and Mdadm plugins have been improved to greatly reduce failures to collect data. The Network plugin now better finds the binaries it requires for shelling out, filesystem more gracefully falls back to secondary data sources, and mdadm handles arrays in bad states.
+The Network, Filesystem, and Mdadm plugins have been improved to greatly reduce failures to collect data. The Network plugin now better finds the binaries it requires for shelling out, filesystem plugin utilizes data from multiple sources, and mdadm handles arrays in bad states.
 
 ### Zpool Plugin Platform Expansion
 

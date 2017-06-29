@@ -210,6 +210,10 @@ describe Ohai::System, "plugin packages" do
     it "gets packages with version" do
       expect(plugin[:packages]["chef"][:version]).to eq("12.5.1.1")
     end
+
+    it "properly parses package names for RPMs" do
+      expect(plugin[:packages]["wget"][:version]).to eq("1.9.1-3")
+    end
   end
 
   context "on freebsd" do

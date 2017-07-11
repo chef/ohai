@@ -69,9 +69,7 @@ lo0: flags=1000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4> mtu 8232 index 1
 eri0: flags=1004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4> mtu 1500 \
 index 2
     inet 172.17.128.208 netmask ffffff00 broadcast 172.17.128.255
-ip6.tun0: flags=10008d1<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST,IPv4> \
-mtu 1460
-    index 3
+ip6.tun0: flags=10008d1<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST,IPv4> mtu 1460 index 3
     inet6 tunnel src fe80::1 tunnel dst fe80::2
     tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
     tunnel hop limit 60 tunnel encapsulation limit 4
@@ -80,8 +78,7 @@ qfe1: flags=2000841<UP,RUNNING,MULTICAST,IPv6> mtu 1500 index 3
  usesrc vni0
  inet6 fe80::203:baff:fe17:4be0/10
  ether 0:3:ba:17:4b:e0
-vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 0
- index 5
+vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 1460 index 5
  srcof qfe1
  inet6 fe80::203:baff:fe17:4444/128
 ENDIFCONFIG
@@ -176,7 +173,7 @@ ROUTE_GET
     end
 
     it "finds the default interface for a solaris 11 zone" do
-      expect(@plugin[:network][:default_interface]).to eq("net1")
+      expect(@plugin[:network][:default_interface]).to eq("net1:1")
     end
   end
 

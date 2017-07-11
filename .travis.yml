@@ -13,7 +13,7 @@ before_install:
   - gem update --system
   - gem --version
   - rvm @global do gem uninstall bundler -a -x -I
-  - gem install bundler -v 1.14.6
+  - gem install bundler -v 1.14.6 # bundler 1.15 times out resolving deps on Ruby 2.1
   - bundle --version
   - rm -f .bundle/config
 rvm:

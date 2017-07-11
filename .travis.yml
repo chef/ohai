@@ -1,5 +1,6 @@
 language: ruby
 cache: bundler
+dist: trusty
 
 sudo: false
 
@@ -11,15 +12,15 @@ branches:
 before_install:
   - gem update --system
   - gem --version
-  - gem uninstall bundler -a -x -I
   - rvm @global do gem uninstall bundler -a -x -I
-  - gem install bundler
+  - gem install bundler -v 1.14.6 # bundler 1.15 times out resolving deps on Ruby 2.1
   - bundle --version
   - rm -f .bundle/config
 rvm:
-  - 2.1.9
-  - 2.2.6
-  - 2.3.3
+  - 2.1.10
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
   - ruby-head
 
 allow_failures:

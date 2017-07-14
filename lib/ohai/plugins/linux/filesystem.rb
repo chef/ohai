@@ -20,7 +20,6 @@
 
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
-  provides "filesystem2"
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
@@ -250,6 +249,5 @@ Ohai.plugin(:Filesystem) do
 
     # Set the filesystem data
     filesystem fs_data
-    filesystem2 fs_data
   end
 end

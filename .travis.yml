@@ -1,5 +1,6 @@
 language: ruby
 cache: bundler
+dist: trusty
 
 sudo: false
 
@@ -11,7 +12,6 @@ branches:
 before_install:
   - gem update --system
   - gem --version
-  - gem uninstall bundler -a -x -I
   - rvm @global do gem uninstall bundler -a -x -I
   - gem install bundler
   - bundle --version

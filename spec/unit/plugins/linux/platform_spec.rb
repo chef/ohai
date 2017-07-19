@@ -37,6 +37,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_os_release) { false }
   let(:have_usr_lib_os_release) { false }
   let(:have_cisco_release) { false }
+  let(:have_f5_release) { false }
   let(:have_cumulus_dir) { false }
 
   before(:each) do
@@ -58,6 +59,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/etc/parallels-release").and_return(have_parallels_release)
     allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
     allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
+    allow(File).to receive(:exist?).with("/etc/f5-release").and_return(have_f5_release)
     allow(File).to receive(:exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)
     allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
     allow(Dir).to receive(:exist?).with("/etc/cumulus").and_return(have_cumulus_dir)
@@ -306,6 +308,23 @@ OS_RELEASE
       expect(@plugin[:platform]).to eq("arista_eos")
       expect(@plugin[:platform_family]).to eq("fedora")
       expect(@plugin[:platform_version]).to eq("4.16.7M")
+    end
+  end
+
+  describe "on f5 big-ip" do
+
+    let(:have_f5_release) { true }
+
+    before(:each) do
+      @plugin.lsb = nil
+    end
+
+    it "should set platform to bigip" do
+      expect(File).to receive(:read).with("/etc/f5-release").and_return("BIG-IP release 13.0.0 (Final)")
+      @plugin.run
+      expect(@plugin[:platform]).to eq("bigip")
+      expect(@plugin[:platform_family]).to eq("rhel")
+      expect(@plugin[:platform_version]).to eq("13.0.0")
     end
   end
 

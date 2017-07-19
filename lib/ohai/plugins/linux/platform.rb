@@ -86,6 +86,19 @@ Ohai.plugin(:Platform) do
   end
 
   #
+  # Determines the platform version for F5 Big-IP systems
+  #
+  # @returns [String] bigip Linux version from /etc/f5-release
+  #
+  def bigip_version
+    release_contents = File.read("/etc/f5-release")
+    release_contents.match(/BIG-IP release (\S*)/)[1] # http://rubular.com/r/O8nlrBVqSb
+  rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
+    Ohai::Log.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
+    nil
+  end
+
+  #
   # Determines the platform version for Debian based systems
   #
   # @returns [String] version of the platform
@@ -107,7 +120,7 @@ Ohai.plugin(:Platform) do
     case platform
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
       "debian"
-    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       "rhel"
     when /amazon/
       "amazon"
@@ -142,6 +155,9 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/enterprise-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
+    elsif File.exist?("/etc/f5-release")
+      platform "bigip"
+      platform_version bigip_version
     elsif File.exist?("/etc/debian_version")
       # Ubuntu and Debian both have /etc/debian_version
       # Ubuntu should always have a working lsb, debian does not by default

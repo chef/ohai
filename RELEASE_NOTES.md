@@ -1,3 +1,12 @@
+# UNRELEASED
+
+### Additional Platform Support
+
+Ohai now properly detects the [F5 Big-IP](https://www.f5.com/) platform and platform_version.
+
+- platform: bigip
+- platform_family: rhel
+
 # Ohai Release Notes 13.2:
 
 Ohai 13.2 has been a fantastic release in terms of community involvement with new plugins, platform support, and critical bug fixes coming from community members. A huge thank you to msgarbossa, albertomurillo, jaymzh, and davide125 for their work.

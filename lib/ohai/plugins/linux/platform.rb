@@ -118,7 +118,7 @@ Ohai.plugin(:Platform) do
   #
   def determine_platform_family
     case platform
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/ 
       "debian"
     when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       "rhel"

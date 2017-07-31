@@ -82,8 +82,35 @@ Ohai.plugin(:CPU) do
     end
 
     cpu cpuinfo
+
     cpu[:total] = cpu_number
-    cpu[:real] = real_cpu.keys.length
-    cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
+
+    # use data we collected unless cpuinfo is lacking core information
+    # which is the case on older linux distros (specifically SLES <= 12 SP1)
+    if !real_cpu.empty? && cpu["0"]["cores"]
+      cpu[:real] = real_cpu.keys.length
+      cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
+    else
+      begin
+        Ohai::Log.debug("Plugin CPU: Falling back to aggregate data from lscpu as real cpu & core data is missing in /proc/cpuinfo")
+        so = shell_out("lscpu")
+        lscpu_data = Mash.new
+        so.stdout.each_line do |line|
+          case line
+          when /^Thread\(s\) per core:\s(.+)/ # http://rubular.com/r/lOw2pRrw1q
+            lscpu_data[:threads] = $1.to_i
+          when /^Core\(s\) per socket:\s(.+)/ # http://rubular.com/r/lOw2pRrw1q
+            lscpu_data[:cores] = $1.to_i
+          when /^Socket\(s\):\s(.+)/ # http://rubular.com/r/DIzmPtJFvK
+            lscpu_data[:sockets] = $1.to_i
+          end
+        end
+        cpu[:total] = lscpu_data[:sockets] * lscpu_data[:cores] * lscpu_data[:threads]
+        cpu[:real] = lscpu_data[:sockets]
+        cpu[:cores] = lscpu_data[:sockets] * lscpu_data[:cores]
+      rescue Ohai::Exceptions::Exec # util-linux isn't installed most likely
+        Ohai::Log.debug("Plugin CPU: Error executing lshw. util-linux may not be installed")
+      end
+    end
   end
 end

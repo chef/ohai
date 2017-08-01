@@ -18,10 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/softlayer_metadata"
-
 Ohai.plugin(:Softlayer) do
-  include ::Ohai::Mixin::SoftlayerMetadata
 
   provides "softlayer"
 
@@ -35,6 +32,9 @@ Ohai.plugin(:Softlayer) do
   end
 
   collect_data do
+    require "ohai/mixin/softlayer_metadata"
+    include ::Ohai::Mixin::SoftlayerMetadata
+
     # Adds softlayer Mash
     if looks_like_softlayer?
       Ohai::Log.debug("Plugin Softlayer: looks_like_softlayer? == true")

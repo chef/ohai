@@ -24,12 +24,11 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/seconds_to_human"
-
 Ohai.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
   provides "idletime", "idletime_seconds" # linux only
   depends "platform_version"
+  require "ohai/mixin/seconds_to_human"
 
   def collect_uptime(path)
     # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009

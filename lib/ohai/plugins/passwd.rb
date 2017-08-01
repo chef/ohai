@@ -1,6 +1,3 @@
-
-require "etc"
-
 Ohai.plugin(:Passwd) do
   provides "etc", "current_user"
 
@@ -10,6 +7,8 @@ Ohai.plugin(:Passwd) do
   end
 
   collect_data do
+    require "etc"
+
     unless etc
       etc Mash.new
 

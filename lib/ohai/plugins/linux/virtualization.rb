@@ -16,10 +16,7 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
-
 Ohai.plugin(:Virtualization) do
-  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   def lxc_version_exists?
@@ -31,6 +28,9 @@ Ohai.plugin(:Virtualization) do
   end
 
   collect_data(:linux) do
+    require "ohai/mixin/dmi_decode"
+    include Ohai::Mixin::DmiDecode
+
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 

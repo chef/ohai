@@ -16,12 +16,7 @@
 # limitations under the License.
 #
 
-require "ipaddress"
-require "ohai/mixin/network_constants"
-
 Ohai.plugin(:NetworkAddresses) do
-  include Ohai::Mixin::NetworkConstants
-
   provides "ipaddress", "ip6address", "macaddress"
 
   depends "network/interfaces"
@@ -133,6 +128,10 @@ Ohai.plugin(:NetworkAddresses) do
   # time as ipaddress. if ipaddress is set and macaddress is nil, that means
   # the interface ipaddress is bound to has the NOARP flag
   collect_data do
+    require "ipaddress"
+    require "ohai/mixin/network_constants"
+    include Ohai::Mixin::NetworkConstants
+
     results = {}
 
     network Mash.new unless network

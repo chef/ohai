@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "resolv"
-
 Ohai.plugin(:Rackspace) do
   provides "rackspace"
 
@@ -133,6 +131,8 @@ Ohai.plugin(:Rackspace) do
   end
 
   collect_data do
+    require "resolv"
+
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new

@@ -15,12 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/do_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:DigitalOcean) do
-  include Ohai::Mixin::DOMetadata
-  include Ohai::Mixin::HttpHelper
 
   provides "digital_ocean"
 
@@ -48,6 +43,11 @@ Ohai.plugin(:DigitalOcean) do
   end
 
   collect_data do
+    require "ohai/mixin/do_metadata"
+    require "ohai/mixin/http_helper"
+    include Ohai::Mixin::DOMetadata
+    include Ohai::Mixin::HttpHelper
+
     if looks_like_digital_ocean?
       Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new

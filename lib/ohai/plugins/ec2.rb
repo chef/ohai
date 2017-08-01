@@ -24,11 +24,11 @@
 # 3. DMI data mentions amazon. This catches HVM instances in a VPC
 # 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
-require "ohai/mixin/ec2_metadata"
-require "ohai/mixin/http_helper"
-require "base64"
-
 Ohai.plugin(:EC2) do
+  require "ohai/mixin/ec2_metadata"
+  require "ohai/mixin/http_helper"
+  require "base64"
+
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 

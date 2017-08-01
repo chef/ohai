@@ -17,13 +17,12 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
-
 Ohai.plugin(:Virtualization) do
-  include Ohai::Mixin::DmiDecode
   provides "virtualization"
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
+    require "ohai/mixin/dmi_decode"
+    include Ohai::Mixin::DmiDecode
 
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]

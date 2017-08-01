@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-require "digest/md5"
-
 Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
@@ -57,6 +55,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:darwin) do
+    require "digest/md5"
     create_seed do |src|
       case src
       when :serial
@@ -68,6 +67,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:linux) do
+    require "digest/md5"
     create_seed do |src|
       case src
       when :serial

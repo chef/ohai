@@ -22,14 +22,6 @@ Ohai.plugin(:Packages) do
   provides "packages"
   depends "platform_family"
 
-  unless defined?(WINDOWS_ATTRIBUTE_ALIASES)
-    WINDOWS_ATTRIBUTE_ALIASES = {
-      "DisplayVersion" => "version",
-      "Publisher" => "publisher",
-      "InstallDate" => "installdate",
-    }
-  end
-
   collect_data(:linux) do
     packages Mash.new
     if %w{debian}.include? platform_family
@@ -79,6 +71,15 @@ Ohai.plugin(:Packages) do
 
   collect_data(:windows) do
     require "win32/registry"
+
+    unless defined?(WINDOWS_ATTRIBUTE_ALIASES)
+      WINDOWS_ATTRIBUTE_ALIASES = {
+        "DisplayVersion" => "version",
+        "Publisher" => "publisher",
+        "InstallDate" => "installdate",
+      }
+    end
+
     packages Mash.new
     collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here

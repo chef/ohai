@@ -18,12 +18,8 @@
 # limitations under the License.
 
 # eucalyptus metadata service is compatible with the ec2 service calls
-require "ohai/mixin/ec2_metadata"
-require "ohai/mixin/http_helper"
 
 Ohai.plugin(:Eucalyptus) do
-  include Ohai::Mixin::Ec2Metadata
-  include Ohai::Mixin::HttpHelper
 
   provides "eucalyptus"
   depends "network/interfaces"
@@ -59,6 +55,11 @@ Ohai.plugin(:Eucalyptus) do
   end
 
   collect_data do
+    require "ohai/mixin/ec2_metadata"
+    require "ohai/mixin/http_helper"
+    include Ohai::Mixin::Ec2Metadata
+    include Ohai::Mixin::HttpHelper
+
     if looks_like_euca?
       Ohai::Log.debug("Plugin Eucalyptus: looks_like_euca? == true")
       eucalyptus Mash.new

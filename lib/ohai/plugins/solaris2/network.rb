@@ -53,15 +53,6 @@
 # srcof qfe1
 # inet6 fe80::203:baff:fe17:4444/128
 
-# Extracted from http://illumos.org/hcl/
-unless defined?(ETHERNET_ENCAPS)
-  ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
-                        dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
-                        iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
-                        nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                        rwn sfe tavor vr wpi xge yge aggr}
-end
-
 Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
@@ -92,6 +83,15 @@ Ohai.plugin(:Network) do
 
   collect_data(:solaris2) do
     require "scanf"
+
+    # Extracted from http://illumos.org/hcl/
+    unless defined?(ETHERNET_ENCAPS)
+      ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+                            dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
+                            iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
+                            nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
+                            rwn sfe tavor vr wpi xge yge aggr}
+    end
 
     iface = Mash.new
     network Mash.new unless network

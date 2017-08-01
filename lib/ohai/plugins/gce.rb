@@ -14,12 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/gce_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:GCE) do
-  include Ohai::Mixin::GCEMetadata
-  include Ohai::Mixin::HttpHelper
 
   provides "gce"
 
@@ -42,6 +37,11 @@ Ohai.plugin(:GCE) do
   end
 
   collect_data do
+    require "ohai/mixin/gce_metadata"
+    require "ohai/mixin/http_helper"
+    include Ohai::Mixin::GCEMetadata
+    include Ohai::Mixin::HttpHelper
+
     if looks_like_gce?
       Ohai::Log.debug("Plugin GCE: looks_like_gce? == true")
       gce Mash.new

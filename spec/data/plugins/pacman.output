@@ -1,0 +1,51 @@
+Name            : acl
+Version         : 2.2.52-3
+Description     : Access control list utilities, libraries and headers
+Architecture    : x86_64
+URL             : http://savannah.nongnu.org/projects/acl
+Licenses        : LGPL
+Groups          : None
+Provides        : xfsacl
+Depends On      : attr>=2.4.46
+Optional Deps   : None
+Required By     : coreutils  gettext  libarchive  logrotate  sed  shadow  systemd  tar
+Optional For    : None
+Conflicts With  : xfsacl
+Replaces        : xfsacl
+Installed Size  : 290.00 KiB
+Packager        : Bartlomiej Piotrowski <bpiotrowski@archlinux.org>
+Build Date      : Sun Nov  6 14:03:46 2016
+Install Date    : Sun Jul 23 03:25:45 2017
+Install Reason  : Installed as a dependency for another package
+Install Script  : No
+Validated By    : Signature
+
+Name            : abcde
+Version         : 2.8.1-2
+Description     : Frontend command-line utility that grabs tracks off a CD, encodes them to ogg or mp3 format, and tags them, all in one go
+Architecture    : any
+URL             : https://abcde.einval.com/
+Licenses        : GPL
+Groups          : None
+Provides        : None
+Depends On      : bash  cd-discid  wget  vorbis-tools  python2-eyed3
+Optional Deps   : cdparanoia: Paranoia ripping support [installed]
+                  cdrkit: icedax ripping support [installed]
+                  flac: FLAC encoding support [installed]
+                  id3: ID3 v1 tag support
+                  lame: MP3 encoding support [installed]
+                  mp3gain: MP3 normalization support [installed]
+                  perl-musicbrainz-discid: musicbrainz support (AUR)
+                  perl-webservice-musicbrainz: musicbrainz support (AUR)
+                  vorbisgain: Ogg Vorbis normalization support [installed]
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : 334.00 KiB
+Packager        : Alexander Rødseth <rodseth@gmail.com>
+Build Date      : Wed Apr 26 02:04:21 2017
+Install Date    : Fri May  5 15:36:23 2017
+Install Reason  : Explicitly installed
+Install Script  : No
+Validated By    : Signature

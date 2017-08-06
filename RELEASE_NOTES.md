@@ -7,6 +7,10 @@ Ohai now properly detects the [F5 Big-IP](https://www.f5.com/) platform and plat
 - platform: bigip
 - platform_family: rhel
 
+### Package Plugin Supports Arch Linux
+
+The Package plugin has been updated to include package information on Arch Linux systems.
+
 # Ohai Release Notes 13.2:
 
 Ohai 13.2 has been a fantastic release in terms of community involvement with new plugins, platform support, and critical bug fixes coming from community members. A huge thank you to msgarbossa, albertomurillo, jaymzh, and davide125 for their work.

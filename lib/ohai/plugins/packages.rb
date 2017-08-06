@@ -32,7 +32,8 @@ Ohai.plugin(:Packages) do
 
   collect_data(:linux) do
     packages Mash.new
-    if %w{debian}.include? platform_family
+    case platform_family
+    when "debian"
       format = '${Package}\t${Version}\t${Architecture}\n'
       so = shell_out("dpkg-query -W -f='#{format}'")
       pkgs = so.stdout.lines
@@ -42,7 +43,7 @@ Ohai.plugin(:Packages) do
         packages[name] = { "version" => version, "arch" => arch }
       end
 
-    elsif %w{rhel fedora suse pld}.include? platform_family
+    when "rhel", "fedora", "suse", "pld"
       format = '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
       so = shell_out("rpm -qa --qf '#{format}'")
       pkgs = so.stdout.lines
@@ -50,6 +51,31 @@ Ohai.plugin(:Packages) do
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
         packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+      end
+
+    when "arch"
+      require "date"
+
+      # Set LANG=C to force an easy to parse date format
+      so = shell_out("LANG=C pacman -Qi")
+
+      so.stdout.split("\n\n").each do |record|
+        pacman_info = {}
+        record.lines.each do |line|
+          if line =~ /\A(.*?)\s+:\s(.*)\z/m
+            key, value = Regexp.last_match[1..2]
+            key = key.strip.downcase.gsub(/\s+/, "")
+            pacman_info[key] = value.strip
+          end
+        end
+
+        name = pacman_info["name"]
+        installdate = DateTime.strptime(pacman_info["installdate"], "%Ec").strftime("%s")
+        packages[name] = {
+          "version" => pacman_info["version"],
+          "installdate" => installdate,
+          "arch" => pacman_info["architecture"],
+        }
       end
     end
   end

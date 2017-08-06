@@ -102,6 +102,43 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
+  context "on arch" do
+    let(:plugin) do
+      get_plugin("packages").tap do |plugin|
+        plugin[:platform_family] = "arch"
+      end
+    end
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "pacman.output"))
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("LANG=C pacman -Qi").and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it "calls LANG=C pacman -Qi" do
+      expect(plugin).to receive(:shell_out)
+        .with("LANG=C pacman -Qi")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it "gets packages and versions/release - normal case" do
+      expect(plugin[:packages]["acl"][:version]).to eq("2.2.52-3")
+      expect(plugin[:packages]["acl"][:installdate]).to eq("1500780345")
+      expect(plugin[:packages]["acl"][:arch]).to eq("x86_64")
+    end
+
+    it "gets packages and versions/release - multiline optdeps" do
+      expect(plugin[:packages]["abcde"][:version]).to eq("2.8.1-2")
+      expect(plugin[:packages]["abcde"][:installdate]).to eq("1493998583")
+      expect(plugin[:packages]["abcde"][:arch]).to eq("any")
+    end
+  end
+
   context "on windows", :windows_only do
 
     let(:plugin) do

@@ -28,10 +28,10 @@ describe Ohai::System, "Linux filesystem plugin" do
     allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:which).with("lsblk").and_return(nil)
     allow(plugin).to receive(:which).with("blkid").and_return("/sbin/blkid")
-    allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, "", ""))
 
     allow(plugin).to receive(:shell_out).
-      with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+      with("lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60).
       and_return(mock_shell_out(0, "", ""))
 
     allow(File).to receive(:exist?).with("/proc/mounts").and_return(false)
@@ -219,7 +219,7 @@ DFi
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
 BLKID_TYPE
-      allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should run blkid" do
@@ -279,7 +279,7 @@ NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/h
 NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60).
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -346,7 +346,7 @@ NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/B
 NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60).
         and_return(mock_shell_out(0, @stdout, ""))
       @stdout = <<-BLKID_TYPE
 /dev/sdb1: LABEL=\"fuego:0\" TYPE=\"linux_raid_member\"
@@ -362,7 +362,7 @@ BLKID_TYPE
 /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
 /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
 BLKID_TYPE
-      allow(plugin).to receive(:shell_out).with("/sbin/blkid").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
 
     it "should fill in missing FS data from lsblk using blkid" do
@@ -473,7 +473,7 @@ NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60).
         and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -520,7 +520,7 @@ NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" 
 NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
 BLKID_TYPE
       allow(plugin).to receive(:shell_out).
-        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE").
+        with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60).
         and_return(mock_shell_out(0, @stdout, ""))
     end
 

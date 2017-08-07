@@ -162,7 +162,12 @@ Ohai.plugin(:Filesystem) do
 
     cmds.each do |cmd|
       cmdtype = File.basename(cmd.split.first)
-      so = shell_out(cmd)
+      case cmdtype
+      when "lsblk", "blkid"
+        so = shell_out(cmd, timeout: 60)
+      else
+        so = shell_out(cmd)
+      end
       so.stdout.each_line do |line|
         parsed = parse_line(line, cmdtype)
         next if parsed.nil?

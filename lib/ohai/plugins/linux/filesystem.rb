@@ -162,12 +162,10 @@ Ohai.plugin(:Filesystem) do
 
     cmds.each do |cmd|
       cmdtype = File.basename(cmd.split.first)
-      case cmdtype
-      when "lsblk", "blkid"
-        so = shell_out(cmd, timeout: 60)
-      else
-        so = shell_out(cmd)
-      end
+      # setting the timeout here for `lsblk` and `blkid` commands to 60
+      # this is to allow machines with large amounts of attached LUNs
+      # to respond back to the command successfully
+      so = shell_out(cmd, timeout: 60)
       so.stdout.each_line do |line|
         parsed = parse_line(line, cmdtype)
         next if parsed.nil?

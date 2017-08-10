@@ -1,6 +1,6 @@
-# UNRELEASED
+# Ohai Release Notes 13.3
 
-### Additional Platform Support
+## Additional Platform Support
 
 Ohai now properly detects the [F5 Big-IP](https://www.f5.com/) platform and platform_version.
 

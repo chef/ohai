@@ -79,30 +79,6 @@ end
 describe Ohai::System, "General Linux cpu plugin" do
   let(:plugin) { get_plugin("linux/cpu") }
 
-  let(:cpuinfo_contents) do
-    <<-EOF
-processor     : 0
-vendor_id     : GenuineIntel
-cpu family    : 6
-model         : 23
-model name    : Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz
-stepping      : 6
-cpu MHz       : 1968.770
-cache size    : 64 KB
-fdiv_bug      : no
-hlt_bug       : no
-f00f_bug      : no
-coma_bug      : no
-fpu           : yes
-fpu_exception : yes
-cpuid level   : 10
-wp            : yes
-flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov
-bogomips      : 2575.86
-clflush size  : 32
-    EOF
-  end
-
   let(:tempfile_handle) do
     tempfile = Tempfile.new("ohai-rspec-proc-cpuinfo")
     tempfile.write cpuinfo_contents
@@ -124,81 +100,139 @@ clflush size  : 32
     end
   end
 
-  it_behaves_like "Common cpu info", 1, 0
+  context "with old kernel that doesn't include cores in /proc/cpuinfo" do
+    let(:cpuinfo_contents) do
+      <<-EOF
+  processor     : 0
+  vendor_id     : GenuineIntel
+  cpu family    : 6
+  model         : 23
+  model name    : Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz
+  stepping      : 6
+  cpu MHz       : 1968.770
+  cache size    : 64 KB
+  fdiv_bug      : no
+  hlt_bug       : no
+  f00f_bug      : no
+  coma_bug      : no
+  fpu           : yes
+  fpu_exception : yes
+  cpuid level   : 10
+  wp            : yes
+  flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov
+  bogomips      : 2575.86
+  clflush size  : 32
+      EOF
+    end
 
-  it "gets total cores" do
-    plugin.run
-    expect(plugin[:cpu][:cores]).to eql(0)
+    let(:lscpu) do
+      <<-EOF
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                1
+On-line CPU(s) list:   0
+Thread(s) per core:    1
+Core(s) per socket:    1
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 23
+Model name:            Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz
+Stepping:              2
+CPU MHz:               1968.770
+BogoMIPS:              2575.86
+Hypervisor vendor:     Xen
+Virtualization type:   full
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              30720K
+NUMA node0 CPU(s):     0
+Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm fsgsbase bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+      EOF
+    end
+
+    it_behaves_like "Common cpu info", 1, 1
+
+    before(:each) do
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+    end
+
+    it "gets total cores" do
+      plugin.run
+      expect(plugin[:cpu][:cores]).to eql(1)
+    end
+
+    it "doesn't have a cpu 1" do
+      plugin.run
+      expect(plugin[:cpu]).not_to have_key("1")
+    end
+
+    it "has a vendor_id for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("vendor_id")
+      expect(plugin[:cpu]["0"]["vendor_id"]).to eql("GenuineIntel")
+    end
+
+    it "has a family for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("family")
+      expect(plugin[:cpu]["0"]["family"]).to eql("6")
+    end
+
+    it "has a model for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("model")
+      expect(plugin[:cpu]["0"]["model"]).to eql("23")
+    end
+
+    it "has a stepping for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("stepping")
+      expect(plugin[:cpu]["0"]["stepping"]).to eql("6")
+    end
+
+    it "doesn't have a phyiscal_id for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).not_to have_key("physical_id")
+    end
+
+    it "doesn't have a core_id for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).not_to have_key("core_id")
+    end
+
+    it "doesn't have a cores for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).not_to have_key("cores")
+    end
+
+    it "has a model name for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("model_name")
+      expect(plugin[:cpu]["0"]["model_name"]).to eql("Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz")
+    end
+
+    it "has a mhz for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("mhz")
+      expect(plugin[:cpu]["0"]["mhz"]).to eql("1968.770")
+    end
+
+    it "has a cache_size for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("cache_size")
+      expect(plugin[:cpu]["0"]["cache_size"]).to eql("64 KB")
+    end
+
+    it "has flags for cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]["0"]).to have_key("flags")
+      expect(plugin[:cpu]["0"]["flags"]).to eq(%w{fpu pse tsc msr mce cx8 sep mtrr pge cmov})
+    end
   end
-
-  it "doesn't have a cpu 1" do
-    plugin.run
-    expect(plugin[:cpu]).not_to have_key("1")
-  end
-
-  it "has a vendor_id for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("vendor_id")
-    expect(plugin[:cpu]["0"]["vendor_id"]).to eql("GenuineIntel")
-  end
-
-  it "has a family for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("family")
-    expect(plugin[:cpu]["0"]["family"]).to eql("6")
-  end
-
-  it "has a model for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("model")
-    expect(plugin[:cpu]["0"]["model"]).to eql("23")
-  end
-
-  it "has a stepping for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("stepping")
-    expect(plugin[:cpu]["0"]["stepping"]).to eql("6")
-  end
-
-  it "doesn't have a phyiscal_id for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).not_to have_key("physical_id")
-  end
-
-  it "doesn't have a core_id for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).not_to have_key("core_id")
-  end
-
-  it "doesn't have a cores for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).not_to have_key("cores")
-  end
-
-  it "has a model name for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("model_name")
-    expect(plugin[:cpu]["0"]["model_name"]).to eql("Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz")
-  end
-
-  it "has a mhz for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("mhz")
-    expect(plugin[:cpu]["0"]["mhz"]).to eql("1968.770")
-  end
-
-  it "has a cache_size for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("cache_size")
-    expect(plugin[:cpu]["0"]["cache_size"]).to eql("64 KB")
-  end
-
-  it "has flags for cpu 0" do
-    plugin.run
-    expect(plugin[:cpu]["0"]).to have_key("flags")
-    expect(plugin[:cpu]["0"]["flags"]).to eq(%w{fpu pse tsc msr mce cx8 sep mtrr pge cmov})
-  end
-
   context "with a dual-core hyperthreaded /proc/cpuinfo" do
     let(:cpuinfo_contents) do
       <<-EOF
@@ -331,6 +365,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
 
     @double_file = double("/proc/cpuinfo")
     allow(@double_file).to receive(:each).
@@ -343,7 +378,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
   end
 
-  it_behaves_like "Common cpu info", 2, 0
+  it_behaves_like "Common cpu info", 2, nil
 
   it "has a cpu 1" do
     plugin.run
@@ -377,6 +412,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
 
     @double_file = double("/proc/cpuinfo")
     allow(@double_file).to receive(:each).
@@ -391,7 +427,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
   end
 
-  it_behaves_like "Common cpu info", 2, 0
+  it_behaves_like "Common cpu info", 2, nil
 
   it "has a cpu 1" do
     plugin.run

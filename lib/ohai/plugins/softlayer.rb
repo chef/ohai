@@ -18,9 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/softlayer_metadata"
-
 Ohai.plugin(:Softlayer) do
+  require "ohai/mixin/softlayer_metadata"
   include ::Ohai::Mixin::SoftlayerMetadata
 
   provides "softlayer"

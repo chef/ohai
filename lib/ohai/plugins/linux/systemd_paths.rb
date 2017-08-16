@@ -16,12 +16,11 @@
 # limitations under the License.
 #
 
-require "ohai/util/file_helper"
-
-include Ohai::Util::FileHelper
-
 Ohai.plugin(:SystemdPaths) do
   provides "systemd_paths"
+
+  require "ohai/util/file_helper"
+  include Ohai::Util::FileHelper
 
   collect_data(:linux) do
     systemd_path_path = which("systemd-path")

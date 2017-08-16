@@ -24,9 +24,8 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/seconds_to_human"
-
 Ohai.plugin(:Uptime) do
+  require "ohai/mixin/seconds_to_human"
   provides "uptime", "uptime_seconds"
   provides "idletime", "idletime_seconds" # linux only
   depends "platform_version"

@@ -95,52 +95,60 @@ Ohai.plugin(:Filesystem) do
     fs = Mash.new
 
     # Grab filesystem data from df
-    so = shell_out("df -P")
-    so.stdout.each_line do |line|
-      case line
-      when /^Filesystem\s+1024-blocks/
-        next
-      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-        key = "#{$1},#{$6}"
-        fs[key] = Mash.new
-        fs[key][:device] = $1
-        fs[key][:kb_size] = $2
-        fs[key][:kb_used] = $3
-        fs[key][:kb_available] = $4
-        fs[key][:percent_used] = $5
-        fs[key][:mount] = $6
+    if which("df")
+      so = shell_out("df -P")
+      so.stdout.each_line do |line|
+        case line
+        when /^Filesystem\s+1024-blocks/
+          next
+        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+          key = "#{$1},#{$6}"
+          fs[key] = Mash.new
+          fs[key][:device] = $1
+          fs[key][:kb_size] = $2
+          fs[key][:kb_used] = $3
+          fs[key][:kb_available] = $4
+          fs[key][:percent_used] = $5
+          fs[key][:mount] = $6
+        end
       end
-    end
 
-    # Grab filesystem inode data from df
-    so = shell_out("df -iP")
-    so.stdout.each_line do |line|
-      case line
-      when /^Filesystem\s+Inodes/
-        next
-      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
-        key = "#{$1},#{$6}"
-        fs[key] ||= Mash.new
-        fs[key][:device] = $1
-        fs[key][:total_inodes] = $2
-        fs[key][:inodes_used] = $3
-        fs[key][:inodes_available] = $4
-        fs[key][:inodes_percent_used] = $5
-        fs[key][:mount] = $6
+      # Grab filesystem inode data from df
+      so = shell_out("df -iP")
+      so.stdout.each_line do |line|
+        case line
+        when /^Filesystem\s+Inodes/
+          next
+        when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(.+)$/
+          key = "#{$1},#{$6}"
+          fs[key] ||= Mash.new
+          fs[key][:device] = $1
+          fs[key][:total_inodes] = $2
+          fs[key][:inodes_used] = $3
+          fs[key][:inodes_available] = $4
+          fs[key][:inodes_percent_used] = $5
+          fs[key][:mount] = $6
+        end
       end
+    else
+      Ohai::Log.warn("df is not available")
     end
 
     # Grab mount information from /bin/mount
-    so = shell_out("mount")
-    so.stdout.each_line do |line|
-      if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
-        key = "#{$1},#{$2}"
-        fs[key] = Mash.new unless fs.has_key?(key)
-        fs[key][:device] = $1
-        fs[key][:mount] = $2
-        fs[key][:fs_type] = $3
-        fs[key][:mount_options] = $4.split(",")
+    if which("mount")
+      so = shell_out("mount")
+      so.stdout.each_line do |line|
+        if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
+          key = "#{$1},#{$2}"
+          fs[key] = Mash.new unless fs.has_key?(key)
+          fs[key][:device] = $1
+          fs[key][:mount] = $2
+          fs[key][:fs_type] = $3
+          fs[key][:mount_options] = $4.split(",")
+        end
       end
+    else
+      Ohai::Log.warn("mount is not available")
     end
 
     # We used to try to decide if we wanted to run lsblk or blkid

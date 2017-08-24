@@ -95,7 +95,7 @@ Ohai.plugin(:Filesystem) do
     fs = Mash.new
 
     # Grab filesystem data from df
-    if which("df")
+    begin
       so = shell_out("df -P")
       so.stdout.each_line do |line|
         case line
@@ -130,12 +130,12 @@ Ohai.plugin(:Filesystem) do
           fs[key][:mount] = $6
         end
       end
-    else
+    rescue Ohai::Exceptions::Exec
       Ohai::Log.warn("df is not available")
     end
 
     # Grab mount information from /bin/mount
-    if which("mount")
+    begin
       so = shell_out("mount")
       so.stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
@@ -147,7 +147,7 @@ Ohai.plugin(:Filesystem) do
           fs[key][:mount_options] = $4.split(",")
         end
       end
-    else
+    rescue Ohai::Exceptions::Exec
       Ohai::Log.warn("mount is not available")
     end
 

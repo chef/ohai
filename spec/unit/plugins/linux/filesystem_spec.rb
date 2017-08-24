@@ -535,7 +535,7 @@ BLKID_TYPE
   %w{df mount}.each do |command|
     describe "when #{command} does not exist" do
       it "logs warning about #{command} missing" do
-        allow(plugin).to receive(:which).with(command).and_return(nil)
+        allow(plugin).to receive(:shell_out).with(/#{command}/).and_raise(Ohai::Exceptions::Exec)
         expect(Ohai::Log).to receive(:warn).with("#{command} is not available")
         plugin.run
       end

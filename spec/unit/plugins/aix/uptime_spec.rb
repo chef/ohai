@@ -25,8 +25,7 @@ describe Ohai::System, "Aix plugin uptime" do
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     allow(@plugin).to receive(:shell_out).and_call_original
     allow(Time).to receive_message_chain(:now, :to_i).and_return(1504287957)
-    allow(@plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0,"1148-20:54:50", nil))
-    
+    allow(@plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0, "1148-20:54:50", nil))
     @plugin.run
   end
 

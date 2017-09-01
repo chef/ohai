@@ -22,16 +22,31 @@ Ohai.plugin(:Uptime) do
 
   collect_data(:aix) do
     require "date"
-    # Example output:
-    # $ who -b
-    #   .       system boot  Jul  9 17:51
-    so = shell_out("who -b")
-    so.stdout.lines.each do |line|
-      if line =~ /.* boot (.+)/
-        uptime_seconds Time.now.to_i - DateTime.parse($1 + " #{Time.now.zone}").strftime("%s").to_i
-        uptime seconds_to_human(uptime_seconds)
-        break
-      end
+    # below we're going to assume that PID 1 is init (this is true 99.99999% of the time)
+    # output will look like this
+    # 1148-20:54:50
+    # This reads as 1148 days, 20 hours, 54 minutes, 50 seconds since the process was started (elapsed)
+    # who -b does not return the YEAR, so we need something more concrete
+    so = shell_out("LC_ALL=POSIX ps -o etime= -p 1").stdout
+
+    # Here we'll check our shell_out for a dash, which indicates there is a # of days involved
+    # We'll chunk off the days, hours (where applicable), minutes, seconds into seperate vars
+    # We also need to do this because ps -o etime= will not display days if the machine has been up for less than 24 hours
+    # If the machine has been up for less than one hour, the shell_out will not output hours hence our else
+    # see here: https://www.ibm.com/support/knowledgecenter/en/ssw_aix_72/com.ibm.aix.cmds4/ps.htm#ps__row-d3e109655
+    d = nil
+    h = nil
+    case so
+    when /^\d+-\d/
+      (d, h, m, s) = so.split(/[-:]/)
+    when /^\d+:\d+:\d/
+      (h, m, s) = so.split(/[:]/)
+    else
+      (m, s) = so.split(/[:]/)
     end
+    elapsed_seconds = ((d.to_i * 86400) + (h.to_i * 3600) + (m.to_i * 60) + s.to_i)
+
+    uptime_seconds Time.now.to_i - elapsed_seconds
+    uptime seconds_to_human(elapsed_seconds)
   end
 end

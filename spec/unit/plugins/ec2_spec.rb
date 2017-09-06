@@ -342,15 +342,7 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with amazon kernel data" do
-    it_behaves_like "ec2"
-
-    before(:each) do
-      plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
-    end
-  end
-
-  describe "with EC2 Xen UUID" do
+  describe "with EC2 Xen UUID on Linux" do
     it_behaves_like "ec2"
 
     before(:each) do
@@ -359,7 +351,7 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with non-EC2 Xen UUID" do
+  describe "with non-EC2 Xen UUID on Linux" do
     it_behaves_like "!ec2"
 
     before(:each) do

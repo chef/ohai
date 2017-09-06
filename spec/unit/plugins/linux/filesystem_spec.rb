@@ -27,6 +27,8 @@ describe Ohai::System, "Linux filesystem plugin" do
     allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:which).with("lsblk").and_return(nil)
+    allow(plugin).to receive(:which).with("df").and_return("/bin/df")
+    allow(plugin).to receive(:which).with("mount").and_return("/bin/mount")
     allow(plugin).to receive(:which).with("blkid").and_return("/sbin/blkid")
     allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, "", ""))
 
@@ -527,6 +529,16 @@ BLKID_TYPE
     it "should provide a mounts view with all devices" do
       plugin.run
       expect(plugin[:filesystem]["by_mountpoint"]["/mnt"][:devices]).to eq(["/dev/sdb1", "/dev/sdc1"])
+    end
+  end
+
+  %w{df mount}.each do |command|
+    describe "when #{command} does not exist" do
+      it "logs warning about #{command} missing" do
+        allow(plugin).to receive(:shell_out).with(/#{command}/).and_raise(Ohai::Exceptions::Exec)
+        expect(Ohai::Log).to receive(:warn).with("#{command} is not available")
+        plugin.run
+      end
     end
   end
 end

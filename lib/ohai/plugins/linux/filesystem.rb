@@ -131,7 +131,7 @@ Ohai.plugin(:Filesystem) do
         end
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.warn("df is not available")
+      Ohai::Log.warn("Plugin Filesystem: df binary is not available. Some data will not be available.")
     end
 
     # Grab mount information from /bin/mount
@@ -148,7 +148,7 @@ Ohai.plugin(:Filesystem) do
         end
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.warn("mount is not available")
+      Ohai::Log.warn("Plugin Filesystem: mount binary is not available. Some data will not be available.")
     end
 
     # We used to try to decide if we wanted to run lsblk or blkid

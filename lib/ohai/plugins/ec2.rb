@@ -35,7 +35,6 @@ Ohai.plugin(:EC2) do
   provides "ec2"
 
   depends "dmi"
-  depends "kernel"
 
   # look for amazon string in dmi bios data
   # this gets us detection of HVM instances that are within a VPC
@@ -73,27 +72,13 @@ Ohai.plugin(:EC2) do
     false
   end
 
-  # looks for the Amazon.com Organization in Windows Kernel data
-  # this gets us detection of Windows systems
-  # @return [Boolean] is the Windows organization Amazon?
-  def has_amazon_org?
-    # detect an Organization of 'Amazon.com'
-    if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
-      true
-    else
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
-      false
-    end
-  end
-
   # a single check that combines all the various detection methods for EC2
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
+    if has_ec2_xen_uuid? || has_ec2_dmi?
       return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end

@@ -39,6 +39,7 @@ Ohai.plugin(:EC2) do
 
   # look for amazon string in dmi bios data
   # this gets us detection of HVM instances that are within a VPC
+  # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_dmi?
     # detect a version of '4.2.amazon'
     if get_attribute(:dmi, :bios, :all_records, 0, :Version) =~ /amazon/
@@ -52,6 +53,7 @@ Ohai.plugin(:EC2) do
 
   # looks for a xen UUID that starts with ec2
   # this gets us detection of Linux HVM and Paravirt hosts
+  # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
     if ::File.exist?("/sys/hypervisor/uuid")
       if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
@@ -65,6 +67,7 @@ Ohai.plugin(:EC2) do
 
   # looks for the Amazon.com Organization in Windows Kernel data
   # this gets us detection of Windows systems
+  # @return [Boolean] is the Windows organization Amazon?
   def has_amazon_org?
     # detect an Organization of 'Amazon.com'
     if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
@@ -76,6 +79,8 @@ Ohai.plugin(:EC2) do
     end
   end
 
+  # a single check that combines all the various detection methods for EC2
+  # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
 

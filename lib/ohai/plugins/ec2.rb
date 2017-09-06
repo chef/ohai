@@ -52,10 +52,18 @@ Ohai.plugin(:EC2) do
   end
 
   # looks for a xen UUID that starts with ec2
-  # this gets us detection of Linux HVM and Paravirt hosts
+  # uses the sys tree on Linux and a WMI query on windows
+  # this gets us detection of HVM and Paravirt hosts
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if ::File.exist?("/sys/hypervisor/uuid")
+    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+      require "wmi-lite/wmi"
+      wmi = WmiLite::Wmi.new
+      if wmi.query("select uuid from Win32_ComputerSystemProduct")[0]["identifyingnumber"] =~ /^ec2/
+        Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
+        return true
+      end
+    elsif ::File.exist?("/sys/hypervisor/uuid")
       if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
         Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
         return true

@@ -536,7 +536,7 @@ BLKID_TYPE
     describe "when #{command} does not exist" do
       it "logs warning about #{command} missing" do
         allow(plugin).to receive(:shell_out).with(/#{command}/).and_raise(Ohai::Exceptions::Exec)
-        expect(Ohai::Log).to receive(:warn).with("#{command} is not available")
+        expect(Ohai::Log).to receive(:warn).with("Plugin Filesystem: #{command} binary is not available. Some data will not be available.")
         plugin.run
       end
     end

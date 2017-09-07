@@ -33,7 +33,6 @@ Ohai.plugin(:EC2) do
   include Ohai::Mixin::HttpHelper
 
   provides "ec2"
-
   depends "dmi"
 
   # look for amazon string in dmi bios data
@@ -55,14 +54,7 @@ Ohai.plugin(:EC2) do
   # this gets us detection of HVM and Paravirt hosts
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-      require "wmi-lite/wmi"
-      wmi = WmiLite::Wmi.new
-      if wmi.query("select uuid from Win32_ComputerSystemProduct")[0]["identifyingnumber"] =~ /^ec2/
-        Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
-        return true
-      end
-    elsif ::File.exist?("/sys/hypervisor/uuid")
+    if ::File.exist?("/sys/hypervisor/uuid")
       if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
         Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
         return true
@@ -72,13 +64,31 @@ Ohai.plugin(:EC2) do
     false
   end
 
+  # looks at the identifying number WMI value to see if it starts with ec2.
+  # this is actually the same value we're looking at in has_ec2_xen_uuid? on
+  # linux hosts
+  # @return [Boolean] do we have a Xen Identifying Number or not?
+  def has_ec2_identifying_number?
+    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    #  require "wmi-lite/wmi"
+      wmi = WmiLite::Wmi.new
+      if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
+        Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == true")
+        return true
+      end
+    else
+      Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == false")
+      false
+    end
+  end
+
   # a single check that combines all the various detection methods for EC2
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_xen_uuid? || has_ec2_dmi?
+    if has_ec2_xen_uuid? || has_ec2_dmi? || has_ec2_identifying_number?
       return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end

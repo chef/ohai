@@ -342,7 +342,7 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with EC2 Xen UUID on Linux" do
+  describe "with EC2 Xen UUID" do
     it_behaves_like "ec2"
 
     before(:each) do
@@ -351,12 +351,44 @@ describe Ohai::System, "plugin ec2" do
     end
   end
 
-  describe "with non-EC2 Xen UUID on Linux" do
+  describe "with non-EC2 Xen UUID" do
     it_behaves_like "!ec2"
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
       allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+    end
+  end
+
+  describe "with EC2 Identifying Number", :windows_only do
+    it_behaves_like "ec2"
+
+    before do
+      allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
+        { "caption" => "Computer System Product",
+          "description" => "Computer System Product",
+          "identifyingnumber" => "ec2a355a-91cd-5fe8-bbfc-cc891d0bf9d6",
+          "name" => "HVM domU",
+          "skunumber" => nil,
+          "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
+          "vendor" => "Xen",
+          "version" => "4.2.amazon" })
+    end
+  end
+
+  describe "without EC2 Identifying Number", :windows_only do
+    it_behaves_like "!ec2"
+
+    before do
+      allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
+        { "caption" => "Computer System Product",
+          "description" => "Computer System Product",
+          "identifyingnumber" => "1234",
+          "name" => "HVM domU",
+          "skunumber" => nil,
+          "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
+          "vendor" => "Xen",
+          "version" => "1.2.3" })
     end
   end
 

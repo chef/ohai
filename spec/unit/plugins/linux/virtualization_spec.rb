@@ -573,10 +573,10 @@ CGROUP
 CGROUP
         expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+        allow(File).to receive(:read).with("/proc/1/environ").and_return("")
       end
 
       it "sets lxc host if lxc-version exists" do
-        allow(File).to receive(:read).with("/proc/1/environ").and_return("")
         allow(plugin).to receive(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
         plugin.run
         expect(plugin[:virtualization][:system]).to eq("lxc")
@@ -585,7 +585,6 @@ CGROUP
       end
 
       it "does not set the old virtualization attributes if they are already set" do
-        allow(File).to receive(:read).with("/proc/1/environ").and_return("")
         allow(plugin).to receive(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
         plugin[:virtualization] = Mash.new
         plugin[:virtualization][:system] = "the cloud"
@@ -597,7 +596,6 @@ CGROUP
 
       it "does not set lxc host if lxc-version does not exist" do
         allow(plugin).to receive(:lxc_version_exists?).and_return(false)
-        allow(File).to receive(:read).with("/proc/1/environ").and_return("")
         plugin.run
         expect(plugin[:virtualization][:system]).to be_nil
         expect(plugin[:virtualization][:role]).to be_nil

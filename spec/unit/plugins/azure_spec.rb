@@ -31,6 +31,33 @@ describe Ohai::System, "plugin azure" do
     }
   end
 
+  let(:response_data) do
+    { "compute" => { "location" => "westus",
+                     "name" => "timtest",
+                     "offer" => "UbuntuServer",
+                     "osType" => "Linux",
+                     "platformFaultDomain" => "0",
+                     "platformUpdateDomain" => "0",
+                     "publisher" => "Canonical",
+                     "sku" => "16.04-LTS",
+                     "version" => "16.04.201707270",
+                     "vmId" => "f78151b3-da8b-4bd8-a592-d9ce8a57ea65",
+                     "vmSize" => "Standard_DS2_v2" },
+      "network" => { "interface" => [ { "ipv4" =>
+                                          {  "ipAddress" => [{ "privateIpAddress" => "10.0.1.6", "publicIpAddress" => "40.118.212.225" }],
+                                             "subnet" => [{ "address" => "10.0.1.0", "prefix" => "24" }] },
+                                        "ipv6" =>
+                                          { "ipAddress" => [] },
+                                        "macAddress" => "000D3A37F080" }] } }
+  end
+
+  before do
+    # skips all the metadata logic unless we want to test it
+    allow(plugin).to receive(:can_socket_connect?).
+      with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80).
+      and_return(false)
+  end
+
   shared_examples_for "!azure" do
     it "does not set the azure attribute" do
       plugin.run
@@ -42,6 +69,7 @@ describe Ohai::System, "plugin azure" do
     it "sets the azure attribute" do
       plugin.run
       expect(plugin[:azure]).to be_truthy
+      expect(plugin[:azure]).to have_key(:metadata)
     end
   end
 
@@ -159,4 +187,57 @@ describe Ohai::System, "plugin azure" do
     it_behaves_like "azure"
   end
 
+  describe "with non-responsive metadata endpoint" do
+    before(:each) do
+      allow(plugin).to receive(:hint?).with("azure").and_return({})
+    end
+
+    it "does not return metadata information" do
+      allow(plugin).to receive(:can_socket_connect?).
+        with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80).
+        and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(nil)
+
+      plugin.run
+      expect(plugin[:azure]).to have_key(:metadata)
+      expect(plugin[:azure][:metadata]).to be_nil
+    end
+  end
+
+  describe "with responsive metadata endpoint" do
+    before(:each) do
+      allow(plugin).to receive(:hint?).with("azure").and_return({})
+      allow(plugin).to receive(:can_socket_connect?).
+        with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80).
+        and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(response_data)
+      plugin.run
+    end
+
+    it "returns metadata compute information" do
+      expect(plugin[:azure][:metadata][:compute][:location]).to eq("westus")
+      expect(plugin[:azure][:metadata][:compute][:name]).to eq("timtest")
+      expect(plugin[:azure][:metadata][:compute][:offer]).to eq("UbuntuServer")
+      expect(plugin[:azure][:metadata][:compute][:osType]).to eq("Linux")
+      expect(plugin[:azure][:metadata][:compute][:platformFaultDomain]).to eq("0")
+      expect(plugin[:azure][:metadata][:compute][:platformUpdateDomain]).to eq("0")
+      expect(plugin[:azure][:metadata][:compute][:publisher]).to eq("Canonical")
+      expect(plugin[:azure][:metadata][:compute][:sku]).to eq("16.04-LTS")
+      expect(plugin[:azure][:metadata][:compute][:version]).to eq("16.04.201707270")
+      expect(plugin[:azure][:metadata][:compute][:vmId]).to eq("f78151b3-da8b-4bd8-a592-d9ce8a57ea65")
+      expect(plugin[:azure][:metadata][:compute][:vmSize]).to eq("Standard_DS2_v2")
+    end
+
+    it "returns metadata network information" do
+      expect(plugin[:azure][:metadata][:network][:interfaces]["000D3A37F080"][:mac]).to eq("000D3A37F080")
+      expect(plugin[:azure][:metadata][:network][:interfaces]["000D3A37F080"][:public_ipv6]).to eq([])
+      expect(plugin[:azure][:metadata][:network][:interfaces]["000D3A37F080"][:public_ipv4]).to eq(["40.118.212.225"])
+      expect(plugin[:azure][:metadata][:network][:interfaces]["000D3A37F080"][:local_ipv6]).to eq([])
+      expect(plugin[:azure][:metadata][:network][:interfaces]["000D3A37F080"][:local_ipv4]).to eq(["10.0.1.6"])
+      expect(plugin[:azure][:metadata][:network][:public_ipv6]).to eq([])
+      expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq(["40.118.212.225"])
+      expect(plugin[:azure][:metadata][:network][:local_ipv6]).to eq([])
+      expect(plugin[:azure][:metadata][:network][:local_ipv4]).to eq(["10.0.1.6"])
+    end
+  end
 end

@@ -288,24 +288,56 @@ describe Ohai::System, "plugin cloud" do
   describe "with Azure mash" do
     before do
       @plugin[:azure] = Mash.new
+      @plugin[:azure][:metadata] = {
+        "compute" =>
+          {
+            "location" => "westus",
+            "name" => "timtest",
+            "offer" => "UbuntuServer",
+            "osType" => "Linux",
+            "platformFaultDomain" => "0",
+            "platformUpdateDomain" => "0",
+            "publisher" => "Canonical",
+            "sku" => "16.04-LTS",
+            "version" => "16.04.201707270",
+            "vmId" => "f78151b3-da8b-4bd8-a592-d9ce8357e365",
+            "vmSize" => "Standard_DS2_v2",
+          },
+        "network" =>
+          {
+            "interfaces" =>
+              {
+                "000D3A37F080" =>
+                  {
+                    "mac" => "000D3A37F080",
+                    "public_ipv6" => [],
+                    "public_ipv4" => ["40.118.212.225"],
+                    "local_ipv6" => [],
+                    "local_ipv4" => ["10.0.1.6"],
+                  },
+              },
+            "public_ipv4" => ["40.118.212.225"],
+            "local_ipv4" => ["10.0.1.6"],
+            "public_ipv6" => [],
+            "local_ipv6" => [],
+            },
+          }
     end
 
     it "populates cloud public ip" do
-      @plugin[:azure]["public_ip"] = "174.129.150.8"
       @plugin.run
-      expect(@plugin[:cloud][:public_ipv4_addrs][0]).to eq(@plugin[:azure]["public_ip"])
+      expect(@plugin[:cloud][:public_ipv4_addrs][0]).to eq("40.118.212.225")
     end
 
     it "doesn't populates cloud vm_name" do
-      @plugin[:azure]["vm_name"] = "linux-vm"
       @plugin.run
-      expect(@plugin[:cloud][:vm_name]).not_to eq(@plugin[:azure]["vm_name"])
+      expect(@plugin[:cloud][:vm_name]).not_to eq("timtest")
     end
 
     it "populates cloud public_hostname" do
       @plugin[:azure]["public_fqdn"] = "linux-vm-svc.cloudapp.net"
       @plugin.run
-      expect(@plugin[:cloud][:public_hostname]).to eq(@plugin[:azure]["public_fqdn"])
+      expect(@plugin[:cloud][:public_hostname]).to eq("linux-vm-svc.cloudapp.net")
     end
 
     it "doesn't populate cloud public_ssh_port" do

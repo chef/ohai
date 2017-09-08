@@ -23,14 +23,14 @@ require "base64"
 
 describe Ohai::System, "plugin ec2" do
 
+  let(:plugin) { get_plugin("ec2") }
+
   before(:each) do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
   end
 
   shared_examples_for "!ec2" do
-    let(:plugin) { get_plugin("ec2") }
-
     it "DOESN'T attempt to fetch the ec2 metadata or set ec2 attribute" do
       expect(plugin).not_to receive(:http_client)
       expect(plugin[:ec2]).to be_nil
@@ -39,8 +39,6 @@ describe Ohai::System, "plugin ec2" do
   end
 
   shared_examples_for "ec2" do
-    let(:plugin) { get_plugin("ec2") }
-
     before(:each) do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)

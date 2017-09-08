@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/azure_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:Azure) do
+  require "ohai/mixin/azure_metadata"
+  require "ohai/mixin/http_helper"
+
   include Ohai::Mixin::AzureMetadata
   include Ohai::Mixin::HttpHelper
 

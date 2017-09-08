@@ -31,14 +31,14 @@ describe Ohai::Mixin::AzureMetadata do
       allow(http_mock).to receive(:read_timeout=)
       allow(Net::HTTP).to receive(:start).with("169.254.169.254").and_return(http_mock)
 
-      expect(http_mock).to receive(:get).with('http://www.chef.io', initheader = { "Metadata" => "true" })
-      mixin.http_get('http://www.chef.io')
+      expect(http_mock).to receive(:get).with("http://www.chef.io", initheader = { "Metadata" => "true" })
+      mixin.http_get("http://www.chef.io")
     end
   end
 
   describe "#fetch_metadata" do
     it "returns an empty hash given a non-200 response" do
-      http_mock = double("http", {:code => "500" })
+      http_mock = double("http", { :code => "500" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(Ohai::Log).to receive(:warn)
@@ -47,7 +47,7 @@ describe Ohai::Mixin::AzureMetadata do
     end
 
     it "returns an empty hash given invalid JSON response" do
-      http_mock = double("http", {:code => "200", :body => '{ "foo" "bar"}' })
+      http_mock = double("http", { :code => "200", :body => '{ "foo" "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(Ohai::Log).to receive(:warn)
@@ -56,12 +56,12 @@ describe Ohai::Mixin::AzureMetadata do
     end
 
     it "returns a populated hash given valid JSON response" do
-      http_mock = double("http", {:code => "200", :body => '{ "foo": "bar"}' })
+      http_mock = double("http", { :code => "200", :body => '{ "foo": "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(Ohai::Log).not_to receive(:warn)
       vals = mixin.fetch_metadata
-      expect(vals).to eq({"foo" => "bar"})
+      expect(vals).to eq({ "foo" => "bar" })
     end
   end
 end

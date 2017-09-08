@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/gce_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:GCE) do
+  require "ohai/mixin/gce_metadata"
+  require "ohai/mixin/http_helper"
+
   include Ohai::Mixin::GCEMetadata
   include Ohai::Mixin::HttpHelper
 

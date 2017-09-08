@@ -16,10 +16,9 @@
 # limitations under the License.
 #
 
-require "ipaddress"
-require "ohai/mixin/network_constants"
-
 Ohai.plugin(:NetworkAddresses) do
+  require "ipaddress"
+  require "ohai/mixin/network_constants"
   include Ohai::Mixin::NetworkConstants
 
   provides "ipaddress", "ip6address", "macaddress"

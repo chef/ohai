@@ -16,9 +16,8 @@
 # limitations under the License.
 #
 
-require "digest/md5"
-
 Ohai.plugin(:ShardSeed) do
+  require "digest/md5"
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
 

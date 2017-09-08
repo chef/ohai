@@ -15,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/do_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:DigitalOcean) do
+  require "ohai/mixin/do_metadata"
+  require "ohai/mixin/http_helper"
+
   include Ohai::Mixin::DOMetadata
   include Ohai::Mixin::HttpHelper
 

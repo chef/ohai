@@ -16,10 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ohai/mixin/ec2_metadata"
-require "ohai/mixin/http_helper"
-
 Ohai.plugin(:Openstack) do
+  require "ohai/mixin/ec2_metadata"
+  require "ohai/mixin/http_helper"
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 

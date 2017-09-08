@@ -18,10 +18,9 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/os"
-
 Ohai.plugin(:OS) do
   provides "os", "os_version"
+  require "ohai/mixin/os"
 
   collect_data(:freebsd) do
     os collect_os

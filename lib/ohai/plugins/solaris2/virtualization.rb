@@ -18,9 +18,8 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
-
 Ohai.plugin(:Virtualization) do
+  require "ohai/mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
   provides "virtualization"
 

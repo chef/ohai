@@ -25,10 +25,10 @@
 # limitations under the License.
 #
 
-require "socket"
-require "ipaddr"
-
 Ohai.plugin(:Hostname) do
+  require "socket"
+  require "ipaddr"
+
   provides "domain", "hostname", "fqdn", "machinename"
 
   # hostname : short hostname

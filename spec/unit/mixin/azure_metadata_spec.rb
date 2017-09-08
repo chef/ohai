@@ -43,7 +43,7 @@ describe Ohai::Mixin::AzureMetadata do
 
       expect(Ohai::Log).to receive(:warn)
       vals = mixin.fetch_metadata
-      expect(vals).to eq({})
+      expect(vals).to eq(nil)
     end
 
     it "returns an empty hash given invalid JSON response" do
@@ -52,7 +52,7 @@ describe Ohai::Mixin::AzureMetadata do
 
       expect(Ohai::Log).to receive(:warn)
       vals = mixin.fetch_metadata
-      expect(vals).to eq({})
+      expect(vals).to eq(nil)
     end
 
     it "returns a populated hash given valid JSON response" do

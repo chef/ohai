@@ -41,11 +41,11 @@ module Ohai
             parser.parse(data)
           rescue FFI_Yajl::ParseError
             Ohai::Log.warn("Mixin AzureMetadata: Metadata response is NOT valid JSON")
-            {}
+            nil
           end
         else
           Ohai::Log.warn("Mixin AzureMetadata: Received resonse code #{response.code} requesting metadata")
-          {}
+          nil
         end
       end
     end

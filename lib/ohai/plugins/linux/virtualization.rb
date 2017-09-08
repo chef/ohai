@@ -186,7 +186,7 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif File.read("/proc/1/environ") =~ /lxc/
+      elsif File.read("/proc/1/environ") =~ /container=lxc/
         Ohai::Log.debug("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"

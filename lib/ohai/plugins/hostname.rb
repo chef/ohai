@@ -175,13 +175,17 @@ Ohai.plugin(:Hostname) do
     else
       #host is not in dns. optionally use:
       #C:\WINDOWS\system32\drivers\etc\hosts
-      if info.last.length == 4
-        #If the last ip addr in the list is IPv4 use that
-        fqdn Socket.gethostbyaddr(info.last).first
-      else
-        #If the last ip addr in the list is IPv6 use the one before it
-        #This is a workaround because the underlying winsock calls only return the machine name when given an IPv6 address
-        fqdn Socket.gethostbyaddr(info[info.length - 2]).first
+      found_fqdn = false
+      info[3..info.length].reverse.each do |addr|
+        hostent = Socket.gethostbyaddr(addr)
+        if hostent.first =~ /.+?\.(.*)/
+          fqdn hostent.first
+          found_fqdn = true
+          break
+        end
+      end
+      if !found_fqdn
+        fqdn info.first
       end
     end
     domain collect_domain

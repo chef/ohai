@@ -185,6 +185,11 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
+      elsif File.read("/proc/1/environ") =~ /container=lxc/
+        Ohai::Log.debug("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
+        virtualization[:system] = "lxc"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:lxc] = "guest"
       elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such

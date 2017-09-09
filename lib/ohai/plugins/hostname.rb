@@ -173,9 +173,20 @@ Ohai.plugin(:Hostname) do
     if info.first =~ /.+?\.(.*)/
       fqdn info.first
     else
-      # host is not in dns. optionally use:
-      # C:\WINDOWS\system32\drivers\etc\hosts
-      fqdn Socket.gethostbyaddr(info.last).first
+      #host is not in dns. optionally use:
+      #C:\WINDOWS\system32\drivers\etc\hosts
+      found_fqdn = false
+      info[3..info.length].reverse.each do |addr|
+        hostent = Socket.gethostbyaddr(addr)
+        if hostent.first =~ /.+?\.(.*)/
+          fqdn hostent.first
+          found_fqdn = true
+          break
+        end
+      end
+      if !found_fqdn
+        fqdn info.first
+      end
     end
     domain collect_domain
   end

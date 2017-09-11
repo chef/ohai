@@ -1,6 +1,46 @@
 # Change Log
 
-## [v13.1.0](https://github.com/chef/ohai/tree/v13.1.0) (2017-05-09)
+## [v13.4.0](https://github.com/chef/ohai/tree/v13.4.0) (2017-09-11)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.3.0...v13.4.0)
+
+- Add Arch Linux support to package plugin [#1042](https://github.com/chef/ohai/pull/1042)
+- Detect LXC if LXC and Docker are on the same host [#1055](https://github.com/chef/ohai/pull/1055)
+- Add Azure metadata endpoint support [#1033](https://github.com/chef/ohai/pull/1033)
+- Move all requires into the plugin definitions [#1045](https://github.com/chef/ohai/pull/1045)
+- Improve detection of Windows EC2 nodes by using UUID information [#1052](https://github.com/chef/ohai/pull/1052)
+- Add error handling in Linux filesystem plugin [#1047](https://github.com/chef/ohai/pull/1047)
+- Properly handle uptimes over a year on AIX [#1049](https://github.com/chef/ohai/pull/1049)
+- Handle situations where /proc/cpuinfo lacks core data [#1038](https://github.com/chef/ohai/pull/1038)
+
+## [v13.3.0](https://github.com/chef/ohai/tree/v13.3.0) (2017-8-10)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.2.0...v13.3.0)
+
+- Bump timeout for lsblk and blkid to 60s [#1042](https://github.com/chef/ohai/pull/1043)
+- Detect F5 Big-IPs as platform bigip [#1035](https://github.com/chef/ohai/pull/1035)
+- Properly parse Solaris network interface data [#1030](https://github.com/chef/ohai/pull/1030)
+
+## [v13.2.0](https://github.com/chef/ohai/tree/v13.2.0) (2017-06-29)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.1.0...v13.2.0)
+
+- Deprecate the IPScopes Plugin [#1023](https://github.com/chef/ohai/pull/1023)
+- Fix the AIX package data [#1020](https://github.com/chef/ohai/pull/1020)
+- Add support for ClearLinux [#1021](https://github.com/chef/ohai/pull/1021)
+- [mdadm] Handle inactive arrays correctly [#1017](https://github.com/chef/ohai/pull/1017)
+- Make Linux filesystem plugin more resilient [#1014](https://github.com/chef/ohai/pull/1014)
+- Add clearos platform to RHEL platform_family [#1004](https://github.com/chef/ohai/pull/1004)
+- Add systemd_paths plugin for system and user paths [#1013](https://github.com/chef/ohai/pull/1013)
+- Find network binaries with the which helper [#1009](https://github.com/chef/ohai/pull/1009)
+- Fix mdadm plugin when arrays are in interesting states [#1012](https://github.com/chef/ohai/pull/1012)
+- cpu: add support for arm64 cpuinfo fields [#1010](https://github.com/chef/ohai/pull/1010)
+- Only shellout to sw_vers in darwin hardware once [#1008](https://github.com/chef/ohai/pull/1008)
+- Run sysctl only once on Darwin to determine CPU data [#1007](https://github.com/chef/ohai/pull/1007)
+- Update zpools plugin to work on Linux/BSD [#1001](https://github.com/chef/ohai/pull/1001)
+- Cleanup and prune the dev gems [#1003](https://github.com/chef/ohai/pull/1003)
+
+## [v13.1.0](https://github.com/chef/ohai/tree/v13.1.0) (2017-05-12)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.0.1...v13.1.0)
 

@@ -1,3 +1,76 @@
+# Ohai Release Notes 13.4
+
+### Windows EC2 Detection
+
+Detection of nodes running in EC2 has been greatly improved and should now detect nodes 100% of the time including nodes that have been migrated to EC2 or were built with custom AMIs.
+
+### Azure Metadata Endpoint Detection
+
+Ohai now polls the new Azure metadata endpoint, giving us additional configuration details on nodes running in Azure
+
+Sample data now available under azure:
+
+```javascript
+{
+  "metadata": {
+    "compute": {
+      "location": "westus",
+      "name": "timtest",
+      "offer": "UbuntuServer",
+      "osType": "Linux",
+      "platformFaultDomain": "0",
+      "platformUpdateDomain": "0",
+      "publisher": "Canonical",
+      "sku": "17.04",
+      "version": "17.04.201706191",
+      "vmId": "8d523242-71cf-4dff-94c3-1bf660878743",
+      "vmSize": "Standard_DS1_v2"
+    },
+    "network": {
+      "interfaces": {
+        "000D3A33AF03": {
+          "mac": "000D3A33AF03",
+          "public_ipv6": [
+
+          ],
+          "public_ipv4": [
+            "52.160.95.99",
+            "23.99.10.211"
+          ],
+          "local_ipv6": [
+
+          ],
+          "local_ipv4": [
+            "10.0.1.5",
+            "10.0.1.4",
+            "10.0.1.7"
+          ]
+        }
+      },
+      "public_ipv4": [
+        "52.160.95.99",
+        "23.99.10.211"
+      ],
+      "local_ipv4": [
+        "10.0.1.5",
+        "10.0.1.4",
+        "10.0.1.7"
+      ],
+      "public_ipv6": [
+
+      ],
+      "local_ipv6": [
+
+      ]
+    }
+  }
+}
+```
+
+### Package Plugin Supports Arch Linux
+
+The Package plugin has been updated to include package information on Arch Linux systems.
+
 # Ohai Release Notes 13.3
 
 ## Additional Platform Support
@@ -6,10 +79,6 @@ Ohai now properly detects the [F5 Big-IP](https://www.f5.com/) platform and plat
 
 - platform: bigip
 - platform_family: rhel
-
-### Package Plugin Supports Arch Linux
-
-The Package plugin has been updated to include package information on Arch Linux systems.
 
 # Ohai Release Notes 13.2:
 

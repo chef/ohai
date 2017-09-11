@@ -18,6 +18,7 @@
 #
 
 require "ohai/dsl"
+require "time"
 
 module Ohai
   class Runner
@@ -33,6 +34,7 @@ module Ohai
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
     def run_plugin(plugin)
+      start_time = Time.now
       unless plugin.kind_of?(Ohai::DSL::Plugin)
         raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
@@ -53,6 +55,7 @@ module Ohai
       rescue Exception, Errno::ENOENT => e
         Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
       end
+      Ohai::Log.debug("Plugin #{plugin.name} took #{Time.now - start_time} seconds to run.")
     end
 
     def run_v6_plugin(plugin)

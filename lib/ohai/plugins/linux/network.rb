@@ -104,7 +104,8 @@ Ohai.plugin(:Network) do
         route_entry = Mash.new(:destination => route_dest,
                                :family => family[:name])
         %w{via scope metric proto src}.each do |k|
-          route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)\b/
+          # http://rubular.com/r/pwTNp65VFf
+          route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
         end
 
         # a sanity check, especially for Linux-VServer, OpenVZ and LXC:

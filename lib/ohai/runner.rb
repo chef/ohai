@@ -18,7 +18,7 @@
 #
 
 require "ohai/dsl"
-require "time"
+require "benchmark"
 
 module Ohai
   class Runner
@@ -34,28 +34,29 @@ module Ohai
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
     def run_plugin(plugin)
-      start_time = Time.now
-      unless plugin.kind_of?(Ohai::DSL::Plugin)
-        raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
-      end
-
-      begin
-        case plugin.version
-        when :version7
-          run_v7_plugin(plugin)
-        when :version6
-          run_v6_plugin(plugin)
-        else
-          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+      elapsed = Benchmark.measure do
+        unless plugin.kind_of?(Ohai::DSL::Plugin)
+          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
         end
-      rescue Ohai::Exceptions::Error
-        raise
-      rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
-        raise
-      rescue Exception, Errno::ENOENT => e
-        Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+
+        begin
+          case plugin.version
+          when :version7
+            run_v7_plugin(plugin)
+          when :version6
+            run_v6_plugin(plugin)
+          else
+            raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+          end
+        rescue Ohai::Exceptions::Error
+          raise
+        rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
+          raise
+        rescue Exception, Errno::ENOENT => e
+          Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+        end
       end
-      Ohai::Log.debug("Plugin #{plugin.name} took #{Time.now - start_time} seconds to run.")
+      Ohai::Log.debug("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
     end
 
     def run_v6_plugin(plugin)

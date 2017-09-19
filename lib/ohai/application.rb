@@ -20,7 +20,7 @@ require "chef-config/workstation_config_loader"
 require "ohai"
 require "ohai/log"
 require "mixlib/cli"
-require "time"
+require "benchmark"
 
 class Ohai::Application
   include Mixlib::CLI
@@ -75,10 +75,11 @@ class Ohai::Application
   end
 
   def run
-    start_time = Time.now
-    configure_ohai
-    run_application
-    Ohai::Log.debug("Ohai took #{Time.now - start_time} total seconds to run.")
+    elapsed = Benchmark.measure do
+      configure_ohai
+      run_application
+    end
+    Ohai::Log.debug("Ohai took #{elapsed.total} total seconds to run.")
   end
 
   def configure_ohai

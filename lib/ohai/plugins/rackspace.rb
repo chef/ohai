@@ -43,13 +43,27 @@ Ohai.plugin(:Rackspace) do
     false
   end
 
+  # Checks for the rackspace manufacturer on Windows
+  # === Return
+  # true:: If the rackspace cloud can be identified
+  # false:: Otherwise
+  def has_rackspace_manufacturer?
+    return false unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    require "wmi-lite/wmi"
+    wmi = WmiLite::Wmi.new
+    if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"
+      Ohai::Log.debug("Plugin Rackspace: has_rackspace_manufacturer? == true")
+      return true
+    end
+  end
+
   # Identifies the rackspace cloud
   #
   # === Return
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def looks_like_rackspace?
-    hint?("rackspace") || has_rackspace_metadata? || has_rackspace_kernel?
+    hint?("rackspace") || has_rackspace_metadata? || has_rackspace_kernel? || has_rackspace_manufacturer?
   end
 
   # Names rackspace ip address
@@ -137,8 +151,8 @@ Ohai.plugin(:Rackspace) do
       rackspace Mash.new
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, :eth1)
-      get_region()
-      get_instance_id()
+      get_region
+      get_instance_id
       # public_ip + private_ip are deprecated in favor of public_ipv4 and local_ipv4 to standardize.
       rackspace[:public_ipv4] = rackspace[:public_ip]
       get_global_ipv6_address(:public_ipv6, :eth0)

@@ -1,3 +1,15 @@
+# Ohai Release Notes 13.5
+
+### Correctly detect IPv6 routes ending in ::
+
+Previously we would ignore routes that ended `::`, and now we properly
+detect them.
+
+### Plugin run time is now measured
+
+Debug logs will show the length of time each plugin takes to run, making
+debugging of long ohai runs easier.
+
 # Ohai Release Notes 13.4
 
 ### Windows EC2 Detection

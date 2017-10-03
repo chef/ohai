@@ -85,10 +85,12 @@ module Ohai
       include Ohai::Util::FileHelper
 
       attr_reader :data
+      attr_reader :failed
 
       def initialize(data)
         @data = data
         @has_run = false
+        @failed = false
       end
 
       def run
@@ -183,8 +185,10 @@ module Ohai
         begin
           self.run
         rescue Ohai::Exceptions::Error => e
+          @failed = true
           raise e
         rescue => e
+          @failed = true
           Ohai::Log.debug("Plugin #{self.name} threw #{e.inspect}")
           e.backtrace.each { |line| Ohai::Log.debug( line ) }
         end

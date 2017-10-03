@@ -29,5 +29,6 @@ module Ohai
     class DependencyNotFound < Error; end
     class AttributeSyntaxError < Error; end
     class PluginConfigError < Error; end
+    class CriticalPluginFailure < Error; end
   end
 end

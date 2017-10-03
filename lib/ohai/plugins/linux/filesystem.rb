@@ -130,7 +130,10 @@ Ohai.plugin(:Filesystem) do
           fs[key][:mount] = $6
         end
       end
-    rescue Ohai::Exceptions::Exec
+    rescue Ohai::Exceptions::Exec => e
+      unless Ohai.config[:plugin][:filesystem][:allow_partial_data]
+        raise e
+      end
       Ohai::Log.warn("Plugin Filesystem: df binary is not available. Some data will not be available.")
     end
 
@@ -148,6 +151,9 @@ Ohai.plugin(:Filesystem) do
         end
       end
     rescue Ohai::Exceptions::Exec
+      unless Ohai.config[:plugin][:filesystem][:allow_partial_data]
+        raise e
+      end
       Ohai::Log.warn("Plugin Filesystem: mount binary is not available. Some data will not be available.")
     end
 

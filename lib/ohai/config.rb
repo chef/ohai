@@ -102,6 +102,7 @@ module Ohai
       default :log_location, STDERR
       default :plugin, Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new }
       default :plugin_path, Ohai::Config.default_plugin_path
+      default :critical_plugins, []
     end
 
     class << self

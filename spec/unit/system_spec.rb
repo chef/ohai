@@ -52,6 +52,7 @@ describe "Ohai::System" do
       config = {
         disabled_plugins: [ :Foo, :Baz ],
         directory: "/some/extra/plugins",
+        critical_plugins: [ :Foo, :Bar ],
       }
       allow(Ohai::Config).to receive(:merge_deprecated_config)
       expect(Ohai.config).to receive(:merge!).with(config).and_call_original
@@ -339,6 +340,15 @@ Ohai.plugin(:Park) do
 end
 EOF
 
+        with_plugin("fails.rb", <<EOF)
+Ohai.plugin(:Fails) do
+  provides 'fails'
+  collect_data(:default) do
+    fail 'thing'
+  end
+end
+EOF
+
       it "should collect data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
@@ -370,6 +380,22 @@ EOF
           expect(ohai.data[:zoo]).to be_nil
           expect(ohai.data[:park]).to eq("plants")
         end
+      end
+
+      describe "when using :critical_plugins" do
+        before do
+          Ohai.config[:critical_plugins] = [ :Fails ]
+        end
+        after do
+          Ohai.config[:critical_plugins] = []
+        end
+
+        it "should fail when critical plugins fail" do
+          Ohai.config[:plugin_path] = [ path_to(".") ]
+          expect(Ohai::Log).to receive(:error).with(/marked as critical/)
+          ohai.all_plugins
+        end
+
       end
     end
 

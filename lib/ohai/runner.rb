@@ -22,11 +22,13 @@ require "ohai/dsl"
 module Ohai
   class Runner
 
+    attr_reader :failed_plugins
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
       @provides_map = controller.provides_map
       @safe_run = safe_run
+      @failed_plugins = []
     end
 
     # Runs plugins and any un-run dependencies.
@@ -82,6 +84,9 @@ module Ohai
 
         if dependency_providers.empty?
           @safe_run ? next_plugin.safe_run : next_plugin.run
+          if next_plugin.failed
+            @failed_plugins << next_plugin.name
+          end
         else
           visited << next_plugin << dependency_providers.first
         end

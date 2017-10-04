@@ -1,3 +1,13 @@
+# Unreleased
+
+### Critical Plugins
+
+Users can now specify a list of plugins which are `critical`. Critical plugins will cause Ohai to fail if they do not run successfully (and thus cause a Chef run using Ohai to fail). The syntax for this is:
+
+```
+ohai.critical_plugins << :Filesystem
+```
+
 # Ohai Release Notes 13.5
 
 ### Correctly detect IPv6 routes ending in ::

@@ -47,6 +47,7 @@ module Ohai
       @cli = config[:invoked_from_cli]
       @plugin_path = ""
       @config = config
+      @failed_plugins = []
       reset_system
     end
 
@@ -106,6 +107,16 @@ module Ohai
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
         raise
+      end
+      critical_failed = Ohai::Config.ohai[:critical_plugins] & @runner.failed_plugins
+      unless critical_failed.empty?
+        msg = "The following Ohai plugins marked as critical failed: #{critical_failed}"
+        if @cli
+          Ohai::Log.error(msg)
+          exit(true)
+        else
+          raise Ohai::Exceptions::CriticalPluginFailure, "#{msg}. Failing Chef run."
+        end
       end
 
       # Freeze all strings.

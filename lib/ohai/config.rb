@@ -35,6 +35,7 @@ module Ohai
       default :log_location, STDERR
       default :plugin, Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new }
       default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
+      default :critical_plugins, []
     end
   end
 

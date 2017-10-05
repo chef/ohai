@@ -8,6 +8,12 @@ Users can now specify a list of plugins which are `critical`. Critical plugins w
 ohai.critical_plugins << :Filesystem
 ```
 
+### Filesystem now has a `allow_partial_data` configuration option
+
+The Filesystem plugin now has a `allow_partial_data` configuration option. If
+set, the filesystem will return whatever data it can even if some commands it
+ran failed.
+
 # Ohai Release Notes 13.5
 
 ### Correctly detect IPv6 routes ending in ::

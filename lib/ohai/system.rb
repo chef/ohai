@@ -105,13 +105,8 @@ module Ohai
       end
       critical_failed = Ohai::Config.ohai[:critical_plugins] & @runner.failed_plugins
       unless critical_failed.empty?
-        msg = "The following Ohai plugins marked as critical failed: #{critical_failed}"
-        if @cli
-          Ohai::Log.error(msg)
-          exit(true)
-        else
-          fail Ohai::Exceptions::CriticalPluginFailure, "#{msg}. Failing Chef run."
-        end
+        msg = "The following Ohai plugins marked as critical failed: #{critical_failed}. Exiting."
+        raise Ohai::Exceptions::CriticalPluginFailure, msg
       end
     end
 

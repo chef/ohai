@@ -1,9 +1,15 @@
 # Change Log
 
+## [8.25.0](https://github.com/chef/ohai/tree/v8.25.0) (2017-10-06)
+[Full Changelog](https://github.com/chef/ohai/compare/v8.24.1...v8.25.0)
+
+- Add new critial plugins functionality [#1064](https://github.com/chef/ohai/pull/1064)
+- Fix solaris2 ipaddress attribute search [#1028](https://github.com/chef/ohai/pull/1028)
+
 ## [8.24.0](https://github.com/chef/ohai/tree/v8.24.1) (2017-06-21)
 [Full Changelog](https://github.com/chef/ohai/compare/v8.24.0...v8.24.1)
 
-- bump chefstyle development dependency
+- Bumped chefstyle development dependency
 
 ## [8.24.0](https://github.com/chef/ohai/tree/v8.24.0) (2017-05-08)
 

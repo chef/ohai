@@ -42,7 +42,8 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(false)
 
     # default the which wrappers to nil
-    allow(plugin).to receive(:lxc_version_exists?).and_return(false)
+    allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
+    allow(plugin).to receive(:which).with("lxc-start").and_return(nil)
     allow(plugin).to receive(:nova_exists?).and_return(false)
   end
 
@@ -577,7 +578,15 @@ CGROUP
       end
 
       it "sets lxc host if lxc-version exists" do
-        allow(plugin).to receive(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
+        allow(plugin).to receive(:which).with("lxc-start").and_return("/usr/bin/lxc-version")
+        plugin.run
+        expect(plugin[:virtualization][:system]).to eq("lxc")
+        expect(plugin[:virtualization][:role]).to eq("host")
+        expect(plugin[:virtualization][:systems][:lxc]).to eq("host")
+      end
+
+      it "sets lxc host if lxc-start exists" do
+        allow(plugin).to receive(:which).with("lxc-start").and_return("/usr/bin/lxc-start")
         plugin.run
         expect(plugin[:virtualization][:system]).to eq("lxc")
         expect(plugin[:virtualization][:role]).to eq("host")
@@ -585,7 +594,7 @@ CGROUP
       end
 
       it "does not set the old virtualization attributes if they are already set" do
-        allow(plugin).to receive(:lxc_version_exists?).and_return("/usr/bin/lxc-version")
+        allow(plugin).to receive(:which).with("lxc-version").and_return("/usr/bin/lxc-version")
         plugin[:virtualization] = Mash.new
         plugin[:virtualization][:system] = "the cloud"
         plugin[:virtualization][:role] = "cumulonimbus"
@@ -594,8 +603,7 @@ CGROUP
         expect(plugin[:virtualization][:role]).not_to eq("host")
       end
 
-      it "does not set lxc host if lxc-version does not exist" do
-        allow(plugin).to receive(:lxc_version_exists?).and_return(false)
+      it "does not set lxc host if neither lxc-version nor lxc-start exists" do
         plugin.run
         expect(plugin[:virtualization][:system]).to be_nil
         expect(plugin[:virtualization][:role]).to be_nil

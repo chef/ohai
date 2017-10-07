@@ -22,7 +22,7 @@ Ohai.plugin(:Virtualization) do
   provides "virtualization"
 
   def lxc_version_exists?
-    which("lxc-version")
+    which("lxc-version") || which("lxc-start")
   end
 
   def nova_exists?

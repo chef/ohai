@@ -43,7 +43,7 @@ Ohai.plugin(:Packages) do
         packages[name] = { "version" => version, "arch" => arch }
       end
 
-    when "rhel", "fedora", "suse", "pld"
+    when "rhel", "fedora", "suse", "pld", "amazon"
       format = '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
       so = shell_out("rpm -qa --qf '#{format}'")
       pkgs = so.stdout.lines

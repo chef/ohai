@@ -46,6 +46,7 @@ Ohai.plugin(:Uptime) do
     end
     elapsed_seconds = ((d.to_i * 86400) + (h.to_i * 3600) + (m.to_i * 60) + s.to_i)
 
+    # uptime seconds below will return the elapsed time since boot
     uptime_seconds elapsed_seconds
     uptime seconds_to_human(elapsed_seconds)
   end

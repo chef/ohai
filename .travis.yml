@@ -12,7 +12,7 @@ branches:
 before_install:
   - gem update --system
   - gem --version
-  - rvm @global do gem uninstall bundler -a -x -I
+  - rvm @global do gem uninstall bundler -a -x -I || true
   - gem install bundler
   - bundle --version
   - rm -f .bundle/config

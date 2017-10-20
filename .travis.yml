@@ -21,8 +21,9 @@ rvm:
   - 2.4.1
   - ruby-head
 
-allow_failures:
-  - rvm: ruby-head
+matrix:
+  allow_failures:
+    - rvm: ruby-head
 
 script:
   - bundle exec chefstyle

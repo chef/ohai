@@ -1,4 +1,4 @@
-# Unreleased
+# Ohai Release Notes 13.6
 
 ### Critical Plugins
 
@@ -10,21 +10,25 @@ ohai.critical_plugins << :Filesystem
 
 ### Filesystem now has a `allow_partial_data` configuration option
 
-The Filesystem plugin now has a `allow_partial_data` configuration option. If
-set, the filesystem will return whatever data it can even if some commands it
-ran failed.
+The Filesystem plugin now has a `allow_partial_data` configuration option. If set, the filesystem will return whatever data it can even if some commands it ran failed.
+
+### Rackspace detection on Windows
+
+Windows nodes running on Rackspace will now properly detect themselves as running on Rackspace without a hint file.
+
+### Package data on Amazon Linux
+
+The Packages plugin now supports gathering packages data on Amazon Linux
 
 # Ohai Release Notes 13.5
 
 ### Correctly detect IPv6 routes ending in ::
 
-Previously we would ignore routes that ended `::`, and now we properly
-detect them.
+Previously we would ignore routes that ended `::`, and now we properly detect them.
 
 ### Plugin run time is now measured
 
-Debug logs will show the length of time each plugin takes to run, making
-debugging of long ohai runs easier.
+Debug logs will show the length of time each plugin takes to run, making debugging of long ohai runs easier.
 
 # Ohai Release Notes 13.4
 

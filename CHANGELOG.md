@@ -1,5 +1,23 @@
 # Change Log
 
+## [v13.6.0](https://github.com/chef/ohai/tree/v13.6.0) (2017-10-24)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.5.0...v13.6.0)
+
+- Add support for Critical Plugins [#1064](https://github.com/chef/ohai/pull/1064)
+- Fix LXC detection on lxc 1+ by also checking for lxc-start [#1070](https://github.com/chef/ohai/pull/1070)
+- Gather packages on Amazon Linux [#1071](https://github.com/chef/ohai/pull/1071)
+- Updating AIX uptime_seconds to reflect elapsed seconds from boot rather than epoch [#1075](https://github.com/chef/ohai/pull/1075)
+- Detect Rackspace on Windows [#1060](https://github.com/chef/ohai/pull/1060)
+
+## [v13.5.0](https://github.com/chef/ohai/tree/v13.5.0) (2017-09-28)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.4.0...v13.5.0)
+
+- Fix the route support for IPV6 routes ending in :: [#1058](https://github.com/chef/ohai/pull/1058)
+- Add plugin timing information in debug mode [#1056](https://github.com/chef/ohai/pull/1056)
+- Make sure we require wmi/lite in the ec2 plugin [#1059](https://github.com/chef/ohai/pull/1059)
+
 ## [v13.4.0](https://github.com/chef/ohai/tree/v13.4.0) (2017-09-11)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.3.0...v13.4.0)

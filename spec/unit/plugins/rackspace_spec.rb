@@ -223,6 +223,18 @@ OUT
     end
   end
 
+  describe "with Rackspace windows manufacturer data" do
+    it "has rackspace attribute" do
+      plugin.run
+      expect(plugin[:rackspace]).not_to be_nil
+    end
+
+    before(:each) do
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
+      allow(plugin).to receive(:has_rackspace_manufacturer?).and_return(true)
+    end
+  end
+
   describe "xenstore provider returns rackspace" do
     it_behaves_like "rackspace"
 

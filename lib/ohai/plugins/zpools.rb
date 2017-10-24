@@ -28,21 +28,26 @@ Ohai.plugin(:Zpools) do
 
   def gather_pool_info
     pools = Mash.new
-    # Grab ZFS zpools overall health and attributes
-    so = shell_out("zpool list -H -o name,size,alloc,free,cap,dedup,health,version")
-    so.stdout.lines do |line|
-      case line
-      when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
-        logger.trace("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
-        pools[$1] = Mash.new
-        pools[$1][:pool_size] = sanitize_value($2)
-        pools[$1][:pool_allocated] = sanitize_value($3)
-        pools[$1][:pool_free] = sanitize_value($4)
-        pools[$1][:capacity_used] = sanitize_value($5)
-        pools[$1][:dedup_factor] = sanitize_value($6)
-        pools[$1][:health] = sanitize_value($7)
-        pools[$1][:zpool_version] = sanitize_value($8)
+    begin
+      # Grab ZFS zpools overall health and attributes
+      so = shell_out("zpool list -H -o name,size,alloc,free,cap,dedup,health,version")
+      so.stdout.lines do |line|
+        case line
+        when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
+          Ohai::Log.debug("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
+          pools[$1] = Mash.new
+          pools[$1][:pool_size] = sanitize_value($2)
+          pools[$1][:pool_allocated] = sanitize_value($3)
+          pools[$1][:pool_free] = sanitize_value($4)
+          pools[$1][:capacity_used] = sanitize_value($5)
+          pools[$1][:dedup_factor] = sanitize_value($6)
+          pools[$1][:health] = sanitize_value($7)
+          pools[$1][:zpool_version] = sanitize_value($8)
+        end
       end
+
+    rescue Ohai::Exceptions::Exec
+      Ohai::Log.debug('Plugin Zpools: Could not shell_out "zpool list -H -o name,size,alloc,free,cap,dedup,health,version". Skipping plugin.')
     end
     pools
   end
@@ -82,6 +87,6 @@ Ohai.plugin(:Zpools) do
     end
 
     # Set the zpools data
-    zpools pools
+    zpools pools unless pools.empty?
   end
 end

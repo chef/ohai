@@ -159,7 +159,7 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # Detect LXC/Docker
+    # Detect LXC/Docker/Nspawn
     #
     # /proc/self/cgroup will look like this inside a docker container:
     # <index #>:<subsystem>:/lxc/<hexadecimal container id>
@@ -190,6 +190,11 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
+      elsif File.read("/proc/1/environ") =~ /container=systemd-nspawn/
+        Ohai::Log.debug("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
+        virtualization[:system] = "nspawn"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:nspawn] = "guest"
       elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such

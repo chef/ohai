@@ -28,6 +28,8 @@ describe Ohai::System, "plugin ec2" do
   before(:each) do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -332,11 +334,39 @@ describe Ohai::System, "plugin ec2" do
     end
   end # shared examples for ec2
 
-  describe "with ec2 dmi data" do
+  describe "with amazon dmi bios version data" do
     it_behaves_like "ec2"
 
     before(:each) do
-      plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+    end
+  end
+
+  describe "with non-amazon dmi bios version data" do
+    it_behaves_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+    end
+  end
+
+  describe "with amazon dmi bios vendor data" do
+    it_behaves_like "ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+    end
+  end
+
+  describe "with non-amazon dmi bios vendor data" do
+    it_behaves_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
   end
 
@@ -345,7 +375,7 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
   end
 
@@ -354,7 +384,7 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
   end
 

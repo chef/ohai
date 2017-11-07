@@ -21,65 +21,94 @@
 # How we detect EC2 from easiest to hardest & least reliable
 # 1. Ohai ec2 hint exists. This always works
 # 2. Xen hypervisor UUID starts with 'ec2'. This catches Linux HVM & paravirt instances
-# 3. DMI data mentions amazon. This catches HVM instances in a VPC
+# 3. DMI bios version data mentions amazon. This catches HVM instances in a VPC on the Xen based hypervisor
+# 3. DMI bios vendor data mentions amazon. This catches HVM instances in a VPC on the non-Xen based hypervisor
 # 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
-require "ohai/mixin/ec2_metadata"
-require "base64"
-
 Ohai.plugin(:EC2) do
+  require "ohai/mixin/ec2_metadata"
+  require "base64"
+
   include Ohai::Mixin::Ec2Metadata
 
   provides "ec2"
 
-  depends "dmi"
-  depends "kernel"
-
-  # look for amazon string in dmi bios data
-  # this gets us detection of HVM instances that are within a VPC
-  def has_ec2_dmi?
+  # look for amazon string in dmi vendor bios data within the sys tree.
+  # this works even if the system lacks dmidecode use by the Dmi plugin
+  # this gets us detection of new Xen-less HVM instances that are within a VPC
+  # @return [Boolean] do we have Amazon DMI data?
+  def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if get_attribute(:dmi, :bios, :all_records, 0, :Version) =~ /amazon/
-      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == true")
-      return true
+    if file_val_if_exists("/sys/class/dmi/id/bios_vendor") =~ /Amazon/
+      Ohai::Log.debug("Plugin EC2: has_ec2_amazon_dmi? == true")
+      true
     else
-      Ohai::Log.debug("Plugin EC2: has_ec2_dmi? == false")
-      return false
+      Ohai::Log.debug("Plugin EC2: has_ec2_amazon_dmi? == false")
+      false
     end
   end
 
-  # looks for a xen UUID that starts with ec2
-  # this gets us detection of Linux HVM and Paravirt hosts
+  # look for amazon string in dmi bios version data within the sys tree.
+  # this works even if the system lacks dmidecode use by the Dmi plugin
+  # this gets us detection of HVM instances that are within a VPC
+  # @return [Boolean] do we have Amazon DMI data?
+  def has_ec2_xen_dmi?
+    # detect a version of '4.2.amazon'
+    if file_val_if_exists("/sys/class/dmi/id/bios_version") =~ /amazon/
+      Ohai::Log.debug("Plugin EC2: has_ec2_xen_dmi? == true")
+      true
+    else
+      Ohai::Log.debug("Plugin EC2: has_ec2_xen_dmi? == false")
+      false
+    end
+  end
+
+  # looks for a xen UUID that starts with ec2 from within the Linux sys tree
+  # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if ::File.exist?("/sys/hypervisor/uuid")
-      if ::File.read("/sys/hypervisor/uuid") =~ /^ec2/
-        Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
-        return true
-      end
+    if file_val_if_exists("/sys/hypervisor/uuid") =~ /^ec2/
+      Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
+      return true
     end
     Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
-    return false
+    false
   end
 
-  # looks for the Amazon.com Organization in Windows Kernel data
-  # this gets us detection of Windows systems
-  def has_amazon_org?
-    # detect an Organization of 'Amazon.com'
-    if get_attribute(:kernel, :os_info, :organization) =~ /Amazon/
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == true")
-      return true
+  # looks at the identifying number WMI value to see if it starts with ec2.
+  # this is actually the same value we're looking at in has_ec2_xen_uuid? on
+  # linux hosts
+  # @return [Boolean] do we have a Xen Identifying Number or not?
+  def has_ec2_identifying_number?
+    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+      require "wmi-lite/wmi"
+      wmi = WmiLite::Wmi.new
+      if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
+        Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == true")
+        return true
+      end
     else
-      Ohai::Log.debug("Plugin EC2: has_amazon_org? == false")
-      return false
+      Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == false")
+      false
     end
   end
 
+  # return the contents of a file if the file exists
+  # @param path[String] abs path to the file
+  # @return [String] contents of the file if it exists
+  def file_val_if_exists(path)
+    if ::File.exist?(path)
+      ::File.read(path)
+    end
+  end
+
+  # a single check that combines all the various detection methods for EC2
+  # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
 
     # Even if it looks like EC2 try to connect first
-    if has_ec2_xen_uuid? || has_ec2_dmi? || has_amazon_org?
-      return true if can_metadata_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+    if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
+      return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
     end
   end
 

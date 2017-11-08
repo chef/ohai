@@ -10,7 +10,6 @@ branches:
     - 8-stable
 
 before_install:
-  - gem update --system
   - gem --version
   - rvm @global do gem uninstall bundler -a -x -I || true
   - gem install bundler

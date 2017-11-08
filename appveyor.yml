@@ -20,7 +20,6 @@ install:
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - echo %PATH%
   - ruby --version
-    #  - gem update --system
   - gem --version
   - gem uninstall bundler -a -x -I
   - gem install bundler --quiet --no-ri --no-rdoc

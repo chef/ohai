@@ -67,7 +67,7 @@ Ohai.plugin(:Mdadm) do
           # drop the 'raid' too
 
           members.shift unless members.empty?
-          devices[device] = members.map { |s| s.match(/(.+)\[\d\]/)[1] }
+          devices[device] = members.map { |s| s.match(/(.+)\[\d+\]/)[1] }
         end
       end
 

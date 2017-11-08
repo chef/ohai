@@ -9,6 +9,7 @@ environment:
     - ruby_version: "21"
     - ruby_version: "22"
     - ruby_version: "23"
+    - ruby_version: "24"
 
 clone_folder: c:\projects\ohai
 clone_depth: 1
@@ -21,7 +22,6 @@ install:
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
   - echo %PATH%
   - ruby --version
-  - gem update --system
   - gem --version
   - gem uninstall bundler -a -x -I
   - gem install bundler --quiet --no-ri --no-rdoc

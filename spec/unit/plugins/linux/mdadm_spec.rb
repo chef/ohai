@@ -105,6 +105,45 @@ MD
         %w{sdc sdd sde sdf sdg sdh}
       )
     end
+
+    it "should detect member devices even if there are multi-digit numbers" do
+      new_mdstat = double("/proc/mdstat2")
+      allow(new_mdstat).to receive(:each).
+        and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
+        and_yield("md0 : active raid10 sdj[2010] sdi[99] sdh[5] sdg[4] sdf[3] sde[2] sdd[1] sdc[0]").
+        and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
+      allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
+
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+        %w{sdc sdd sde sdf sdg sdh sdi sdj}
+      )
+    end
+
+    it "should detect member devices even if mdstat has extra entries" do
+      new_mdstat = double("/proc/mdstat2")
+      allow(new_mdstat).to receive(:each).
+        and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
+        and_yield("md0 : active (somecraphere) <morestuff> raid10 sdh[5] sdg[4] sdf[3] sde[2] sdd[1] sdc[0]").
+        and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
+      allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
+
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+        %w{sdc sdd sde sdf sdg sdh}
+      )
+    end
+
+    it "should accurately report inactive arrays" do
+      new_mdstat = double("/proc/mdstat_inactive")
+      allow(new_mdstat).to receive(:each).
+        and_yield("Personalities :").
+        and_yield("md0 : inactive nvme2n1p3[2](S)")
+      allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
+
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:members].sort).to eq(%w{nvme2n1p3})
+    end
   end
 
 end

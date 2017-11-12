@@ -30,6 +30,8 @@ Ohai.plugin(:Memory) do
         memory[:total] = "#{$1}#{$2}"
       when /^MemFree:\s+(\d+) (.+)$/
         memory[:free] = "#{$1}#{$2}"
+      when /^MemAvailable:\s+(\d+) (.+)$/
+        memory[:available] = "#{$1}#{$2}"
       when /^Buffers:\s+(\d+) (.+)$/
         memory[:buffers] = "#{$1}#{$2}"
       when /^Cached:\s+(\d+) (.+)$/

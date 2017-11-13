@@ -24,6 +24,7 @@ describe Ohai::System, "Linux memory plugin" do
     allow(@double_file).to receive(:each).
       and_yield("MemTotal:     131932120 kB").
       and_yield("MemFree:       2269032 kB").
+      and_yield("MemAvailable:  9208922 kB").
       and_yield("Buffers:        646368 kB").
       and_yield("Cached:       32346556 kB").
       and_yield("SwapCached:        312 kB").
@@ -66,6 +67,11 @@ describe Ohai::System, "Linux memory plugin" do
   it "should get free memory" do
     @plugin.run
     expect(@plugin[:memory][:free]).to eql("2269032kB")
+  end
+
+  it "should get available memory" do
+    @plugin.run
+    expect(@plugin[:memory][:available]).to eql("9208922kB")
   end
 
   it "should get memory used for file buffers" do

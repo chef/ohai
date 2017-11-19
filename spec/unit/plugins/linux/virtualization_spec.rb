@@ -634,7 +634,7 @@ CGROUP
       allow(File).to receive(:exist?).with("/proc/1/environ").and_return(false)
       one_environ = "container=systemd-nspawn_ttys=/dev/pts/0 /dev/pts/1 /dev/pts/2 /dev/pts/3".chomp
       allow(File).to receive(:read).with("/proc/1/environ").and_return(one_environ)
-      allow(File).to receive(:read).with("/proc/self/cgroup").and_return('')
+      allow(File).to receive(:read).with("/proc/self/cgroup").and_return("")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("nspawn")
       expect(plugin[:virtualization][:role]).to eq("guest")

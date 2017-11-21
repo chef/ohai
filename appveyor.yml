@@ -6,7 +6,6 @@ platform:
 
 environment:
   matrix:
-    - ruby_version: "23"
     - ruby_version: "24"  
 
 clone_folder: c:\projects\ohai
@@ -21,8 +20,6 @@ install:
   - echo %PATH%
   - ruby --version
   - gem --version
-  - gem uninstall bundler -a -x -I
-  - gem install bundler --quiet --no-ri --no-rdoc
   - bundler --version
 
 build_script:

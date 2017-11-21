@@ -64,10 +64,35 @@ Ohai.plugin(:Mdadm) do
           # unless the array is inactive, in which case you don't get a raid
           # level.
           members = pieces.drop_while { |x| !x.start_with?("raid", "inactive") }
-          # drop the 'raid' too
-
+          # and drop that too
           members.shift unless members.empty?
-          devices[device] = members.map { |s| s.match(/(.+)\[\d+\]/)[1] }
+          devices[device] = {
+            "active" => [],
+            "spare" => [],
+            "journal" => nil,
+          }
+          members.each do |member|
+            # We want to match the device, and optionally the type
+            # most entries will look like:
+            #   sdc1[5]
+            # but some will look like:
+            #   sdc1[5](J)
+            # where the format is:
+            #   <device>[<number in array>](<type>)
+            # Type can be things like "J" for a journal device, or "S" for
+            # a spare device.
+            m = member.match(/(.+)\[\d+\](?:\((\w)\))?/)
+            member_device = m[1]
+            member_type = m[2]
+            case member_type
+            when "J"
+              devices[device]["journal"] = member_device
+            when "S"
+              devices[device]["spare"] << member_device
+            else
+              devices[device]["active"] << member_device
+            end
+          end
         end
       end
 
@@ -82,7 +107,9 @@ Ohai.plugin(:Mdadm) do
 
           # if the mdadm command was sucessful pass so.stdout to create_raid_device_mash to grab the tidbits we want
           mdadm[device] = create_raid_device_mash(so.stdout) if so.stdout
-          mdadm[device]["members"] = devices[device]
+          mdadm[device]["members"] = devices[device]["active"]
+          mdadm[device]["spares"] = devices[device]["spare"]
+          mdadm[device]["journal"] = devices[device]["journal"]
         end
       end
     end

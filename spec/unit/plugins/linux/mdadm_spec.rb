@@ -142,8 +142,29 @@ MD
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
       @plugin.run
-      expect(@plugin[:mdadm][:md0][:members].sort).to eq(%w{nvme2n1p3})
+      expect(@plugin[:mdadm][:md0][:spares]).to eq(%w{nvme2n1p3})
+    end
+
+    it "should report journal devices" do
+      new_mdstat = double("/proc/mdstat_journal")
+      allow(new_mdstat).to receive(:each).
+        and_yield("Personalies : [raid6]").
+        and_yield("md0 : active (somecraphere) <morestuff raid6 sdbc1[7] sdd1[6] sde1[5] sdd1[4] sde1[3] sdf1[2] sdg1[1] nvme2n1p3[0](J)")
+      allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
+
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:journal]).to eq("nvme2n1p3")
+    end
+
+    it "should report spare devices" do
+      new_mdstat = double("/proc/mdstat_spare")
+      allow(new_mdstat).to receive(:each).
+        and_yield("Personalies : [raid6]").
+        and_yield("md0 : active (somecraphere) <morestuff raid6 sdbc1[7] sdd1[6] sde1[5] sdd1[4] sde1[3] sdf1[2] sdg1[1] sdh1[0](S)")
+      allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
+
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:spares]).to eq(%w{sdh1})
     end
   end
-
 end

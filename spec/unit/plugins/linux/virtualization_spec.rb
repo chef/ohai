@@ -40,6 +40,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
     allow(File).to receive(:exist?).with("/dev/lxd/sock").and_return(false)
     allow(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(false)
+    allow(File).to receive(:exist?).with("/proc/1/environ").and_return(false)
 
     # default the which wrappers to nil
     allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
@@ -624,6 +625,18 @@ CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  describe "when we are checking for systemd-nspawn" do
+    it "sets nspawn guest if /proc/1/environ has nspawn string in it" do
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
+      one_environ = "container=systemd-nspawn_ttys=/dev/pts/0 /dev/pts/1 /dev/pts/2 /dev/pts/3".chomp
+      allow(File).to receive(:read).with("/proc/1/environ").and_return(one_environ)
+      allow(File).to receive(:read).with("/proc/self/cgroup").and_return("")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("nspawn")
+      expect(plugin[:virtualization][:role]).to eq("guest")
     end
   end
 

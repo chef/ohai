@@ -35,7 +35,7 @@ module Ohai
           parser = FFI_Yajl::Parser.new
           parser.parse(response.body)
         when "404"
-          Ohai::Log.debug("Mixin DOMetadata: Encountered 404 response retreiving Digital Ocean metadata: #{uri} ; continuing.")
+          Ohai::Log.debug("Mixin DOMetadata: Encountered 404 response retrieving Digital Ocean metadata: #{uri} ; continuing.")
           {}
         else
           raise "Mixin DOMetadata: Encountered error retrieving Digital Ocean metadata (#{uri} returned #{response.code} response)"

@@ -44,7 +44,7 @@ module Ohai
             nil
           end
         else
-          Ohai::Log.warn("Mixin AzureMetadata: Received resonse code #{response.code} requesting metadata")
+          Ohai::Log.warn("Mixin AzureMetadata: Received response code #{response.code} requesting metadata")
           nil
         end
       end

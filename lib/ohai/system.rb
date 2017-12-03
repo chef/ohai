@@ -62,7 +62,7 @@ module Ohai
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
 
-      Ohai::Hints.refresh_hints()
+      Ohai::Hints.refresh_hints
 
       # Remove the previously defined plugins
       recursive_remove_constants(Ohai::NamedPlugin)
@@ -193,7 +193,7 @@ module Ohai
     # This method takes a naive approach to v6 plugins: it simply re-runs all
     # of them whenever called.
     def refresh_plugins(attribute_filter = nil)
-      Ohai::Hints.refresh_hints()
+      Ohai::Hints.refresh_hints
       @provides_map.all_plugins(attribute_filter).each do |plugin|
         plugin.reset!
       end

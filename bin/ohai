@@ -20,12 +20,6 @@
 #
 
 begin
-  require "rubygems"
-rescue LoadError
-  # must be debian! ;)
-  missing_rubygems = true
-end
-begin
   # if we're in a source code checkout, we want to run the code from that.
   # have to do this *after* rubygems is loaded.
   $:.unshift File.expand_path("../../lib", __FILE__)

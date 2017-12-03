@@ -134,6 +134,7 @@ Ohai.plugin(:C) do
       end
     end
   rescue Ohai::Exceptions::Exec
+    Ohai::Log.debug("Plugin C: 'xlc' binary could not be found. Skipping data.")
   end
 
   def collect_sunpro

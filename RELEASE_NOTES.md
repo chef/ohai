@@ -1,3 +1,13 @@
+# Ohai Release Notes 13.7
+
+### EC2 C5 Detection
+
+The EC2 plugin has been updated to properly detect the new AWS hypervisor used in the C5 instance types
+
+### mdadm
+
+The mdadm plugin has been updated to properly handle arrays with more than 10 disks and to properly handle journal and spare drives in the disk counts
+
 # Ohai Release Notes 13.6
 
 ### Critical Plugins

@@ -19,17 +19,8 @@
 # limitations under the License.
 #
 
-begin
-  # if we're in a source code checkout, we want to run the code from that.
-  # have to do this *after* rubygems is loaded.
-  $:.unshift File.expand_path("../../lib", __FILE__)
-  require "ohai/application"
-rescue LoadError
-  if missing_rubygems
-    STDERR.puts "rubygems previously failed to load - is it installed?"
-  end
-
-  raise
-end
+# if we're in a source code checkout, we want to run the code from that.
+$:.unshift File.expand_path("../../lib", __FILE__)
+require "ohai/application"
 
 Ohai::Application.new.run

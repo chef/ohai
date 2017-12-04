@@ -79,12 +79,12 @@ describe "Ohai::System" do
           log_level = :debug
           Ohai.config[:log_level] = log_level
           expect(Ohai::Log).not_to receive(:level=).with(log_level)
-          Ohai::System.new()
+          Ohai::System.new
         end
 
         it "does not resolve log_level when set to :auto" do
           expect(Ohai::Log).not_to receive(:level=).with(:info)
-          Ohai::System.new()
+          Ohai::System.new
         end
       end
     end

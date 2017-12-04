@@ -249,7 +249,7 @@ Ohai.plugin(:Platform) do
       platform_version `uname -r`.strip
     elsif File.exist?("/etc/alpine-release")
       platform "alpine"
-      platform_version File.read("/etc/alpine-release").strip()
+      platform_version File.read("/etc/alpine-release").strip
     elsif File.exist?("/usr/lib/os-release")
       contents = File.read("/usr/lib/os-release")
       if /Clear Linux/ =~ contents

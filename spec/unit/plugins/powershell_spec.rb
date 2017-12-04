@@ -45,7 +45,7 @@ PSRemotingProtocolVersion      2.2
 END
     compat_version_array = ["1.0", "2.0", "3.0", "4.0"]
 
-    allow(plugin).to receive(:shell_out).with(anything()).and_return(mock_shell_out(0, v4_output, ""))
+    allow(plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(0, v4_output, ""))
     allow(plugin).to receive(:parse_compatible_versions).and_return(compat_version_array)
     plugin.run
     expect(plugin.languages[:powershell][:version]).to eql("4.0")

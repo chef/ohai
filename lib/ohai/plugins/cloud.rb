@@ -298,7 +298,7 @@ Ohai.plugin(:Cloud) do
   collect_data do
     require "ipaddr"
 
-    @cloud_attr_obj = CloudAttrs.new()
+    @cloud_attr_obj = CloudAttrs.new
 
     get_gce_values if on_gce?
     get_ec2_values if on_ec2?

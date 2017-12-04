@@ -94,7 +94,7 @@ module Ohai
         when "200"
           response.body
         when "404"
-          Ohai::Log.debug("Mixin EC2: Encountered 404 response retreiving EC2 metadata path: #{path} ; continuing.")
+          Ohai::Log.debug("Mixin EC2: Encountered 404 response retrieving EC2 metadata path: #{path} ; continuing.")
           nil
         else
           raise "Mixin EC2: Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"

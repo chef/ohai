@@ -1,5 +1,17 @@
 # Change Log
 
+## [v13.7.0](https://github.com/chef/ohai/tree/v13.7.0) (2017-12-04)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.6.0...v13.7.0)
+
+- Detect new Amazon hypervisor used by the C5 instances 
+- [mdadm] Support arrays more than 10 disks
+- [mdadm] Handle journal and spare devices properly
+- Add support for Linux MemAvailable value
+- Added systemd-nspawn virtualization detection 
+- Remove Ruby 1.8 era rubygems error handling code
+- Fix several typos and add a missing debug message
+
 ## [v13.6.0](https://github.com/chef/ohai/tree/v13.6.0) (2017-10-24)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.5.0...v13.6.0)

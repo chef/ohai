@@ -234,6 +234,10 @@ EOM
        valid_lft forever preferred_lft forever
 13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN group default qlen 1000
     link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff
+14: ip6tnl0@NONE: <NOARP,UP,LOWER_UP> mtu 1452 qdisc noqueue state UNKNOWN group default qlen 1
+    link/tunnel6 :: brd ::
+    inet6 fe80::f47a:2aff:fef0:c6ef/64 scope link
+       valid_lft forever preferred_lft forever
 EOM
   end
 
@@ -294,6 +298,13 @@ EOM
     0          0        0       0       0       0
     TX: bytes  packets  errors  dropped carrier collsns
     140        2        0       1       0       0
+14: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN mode DEFAULT group default qlen 1
+    link/tunnel6 :: brd :: promiscuity 0
+    ip6tnl ip6ip6 remote :: local :: encaplimit 0 hoplimit 0 tclass 0x00 flowlabel 0x00000 (flowinfo 0x00000000) addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
+    RX: bytes  packets  errors  dropped overrun mcast
+    0          0        0       0       0       0
+    TX: bytes  packets  errors  dropped carrier collsns
+    0          0        0       0       0       0
 EOM
   end
 
@@ -546,7 +557,11 @@ EOM
       end
 
       it "detects the interfaces" do
-        expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        if network_method == "iproute2"
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        else
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+        end
       end
 
       it "detects the layer one details of an ethernet interface" do
@@ -650,6 +665,26 @@ EOM
         expect(plugin["network"]["interfaces"]["eth0"]["arp"]["10.116.201.1"]).to eq("fe:ff:ff:ff:ff:ff")
       end
 
+      if network_method == "iproute2"
+        it "detects the tunnel information" do
+          expect(plugin["network"]["interfaces"]["ip6tnl0"]["tunnel_info"]).to eq(
+            {
+              "proto" => "ip6ip6",
+              "remote" => "::",
+              "local" => "::",
+              "encaplimit" => "0",
+              "hoplimit" => "0",
+              "tclass" => "0x00",
+              "flowlabel" => "0x00000",
+              "addrgenmode" => "eui64",
+              "numtxqueues" => "1",
+              "numrxqueues" => "1",
+              "gso_max_size" => "65536",
+              "gso_max_segs" => "65535",
+            }
+          )
+        end
+      end
     end
 
     describe "gathering interface counters via #{network_method}" do

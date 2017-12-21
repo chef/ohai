@@ -28,6 +28,7 @@ describe Ohai::System, "Linux plugin platform" do
   let(:have_eos_release) { false }
   let(:have_suse_release) { false }
   let(:have_arch_release) { false }
+  let(:have_chakra_release) { false }
   let(:have_system_release) { false }
   let(:have_slackware_version) { false }
   let(:have_enterprise_release) { false }
@@ -52,6 +53,7 @@ describe Ohai::System, "Linux plugin platform" do
     allow(File).to receive(:exist?).with("/etc/Eos-release").and_return(have_eos_release)
     allow(File).to receive(:exist?).with("/etc/SuSE-release").and_return(have_suse_release)
     allow(File).to receive(:exist?).with("/etc/arch-release").and_return(have_arch_release)
+    allow(File).to receive(:exist?).with("/etc/chakra-release").and_return(have_chakra_release)
     allow(File).to receive(:exist?).with("/etc/system-release").and_return(have_system_release)
     allow(File).to receive(:exist?).with("/etc/slackware-version").and_return(have_slackware_version)
     allow(File).to receive(:exist?).with("/etc/enterprise-release").and_return(have_enterprise_release)
@@ -253,6 +255,26 @@ OS_RELEASE
       expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
       @plugin.run
       expect(@plugin[:platform_version]).to eq("3.18.2-2-ARCH")
+    end
+  end
+
+  describe "on chakra" do
+    let(:have_chakra_release) { true }
+
+    before(:each) do
+      @plugin.lsb = nil
+    end
+
+    it "should set platform to chakra and platform_family to arch" do
+      @plugin.run
+      expect(@plugin[:platform]).to eq("chakra")
+      expect(@plugin[:platform_family]).to eq("arch")
+    end
+
+    it "should set platform_version to kernel release" do
+      expect(@plugin).to receive(:`).with("uname -r").and_return("4.8.6-1-CHAKRA")
+      @plugin.run
+      expect(@plugin[:platform_version]).to eq("4.8.6-1-CHAKRA")
     end
   end
 

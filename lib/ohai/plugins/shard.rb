@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:ShardSeed) do
-  require "digest/md5"
+  require "digest/sha2"
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
 
@@ -52,7 +52,7 @@ Ohai.plugin(:ShardSeed) do
                 yield(src)
               end
     end
-    shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
+    shard_seed Digest::SHA256.hexdigest(data)[0...7].to_i(16)
   end
 
   collect_data(:darwin) do

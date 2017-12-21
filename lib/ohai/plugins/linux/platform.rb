@@ -118,7 +118,7 @@ Ohai.plugin(:Platform) do
   #
   def determine_platform_family
     case platform
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/ 
       "debian"
     when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       "rhel"
@@ -177,6 +177,9 @@ Ohai.plugin(:Platform) do
         end
         platform_version debian_platform_version
       end
+    elsif File.exist?("/etc/devuan_version")
+      platform "debian"
+      platform_version File.read("/etc/devuan_version").chomp
     elsif File.exist?("/etc/parallels-release")
       contents = File.read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)

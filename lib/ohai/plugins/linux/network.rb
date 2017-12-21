@@ -215,6 +215,31 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
       end
 
+      if line =~ /^\s+(ip6tnl|ipip)/
+        iface[tmp_int][:tunnel_info] = {}
+        words = line.split
+        words.each_with_index do |word, index|
+          case word
+          when "external"
+            iface[tmp_int][:tunnel_info][word] = true
+          when "any", "ipip6", "ip6ip6"
+            iface[tmp_int][:tunnel_info][:proto] = word
+          when "remote",
+               "local",
+               "encaplimit",
+               "hoplimit",
+               "tclass",
+               "flowlabel",
+               "addrgenmode",
+               "numtxqueues",
+               "numrxqueues",
+               "gso_max_size",
+               "gso_max_segs"
+            iface[tmp_int][:tunnel_info][word] = words[index + 1]
+          end
+        end
+      end
+
       if line =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         int = on_rx ? :rx : :tx
         net_counters[tmp_int][int] = Mash.new unless net_counters[tmp_int][int]

@@ -18,6 +18,7 @@ before_install:
 rvm:
   - 2.3.5
   - 2.4.2
+  - 2.5.0
   - ruby-head
 
 matrix:

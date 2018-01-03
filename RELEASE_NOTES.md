@@ -1,3 +1,9 @@
+# Unreleased
+
+### LsPci Plugin
+
+The new LsPci plugin provides a `node[:pci]` hash with information about the PCI bus based on `lspci`. Only runs on Linux.
+
 # Ohai Release Notes 13.7
 
 ### EC2 C5 Detection

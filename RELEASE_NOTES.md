@@ -7,6 +7,12 @@ Example Note:
 Details about the thing that changed that needs to get included in the Release Notes in markdown.
 -->
 
+# Unreleased
+
+### LsPci Plugin
+
+The new LsPci plugin provides a `node[:pci]` hash with information about the PCI bus based on `lspci`. Only runs on Linux.
+
 # Ohai Release Notes:
 
 ## Upcoming Chef/Ohai 13 release

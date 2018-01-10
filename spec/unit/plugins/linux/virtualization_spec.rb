@@ -679,6 +679,30 @@ CGROUP
       expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
+    it "sets docker guest if /proc/self/cgroup exist and there are /docker/docker-ce/<hexadecimal> mounts" do
+      self_cgroup = <<-CGROUP
+13:name=systemd:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+12:pids:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+11:hugetlb:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+10:net_prio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+9:perf_event:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+8:net_cls:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+7:freezer:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+6:devices:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+5:memory:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+4:blkio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+3:cpuacct:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+2:cpu:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+1:cpuset:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+CGROUP
+      allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
+      allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
+    end
+
     # Relevant at least starting docker 1.6.2, kernel 4.0.5 & systemd 224-1.
     # Doi not exactly know which software/version really matters here.
     it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do

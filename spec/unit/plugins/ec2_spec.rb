@@ -17,20 +17,22 @@
 # limitations under the License.
 #
 
-require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper.rb")
+require_relative "../../spec_helper.rb"
 require "open-uri"
 require "base64"
 
 describe Ohai::System, "plugin ec2" do
 
+  let(:plugin) { get_plugin("ec2") }
+
   before(:each) do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
+    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
-    let(:plugin) { get_plugin("ec2") }
-
     it "DOESN'T attempt to fetch the ec2 metadata or set ec2 attribute" do
       expect(plugin).not_to receive(:http_client)
       expect(plugin[:ec2]).to be_nil
@@ -39,8 +41,6 @@ describe Ohai::System, "plugin ec2" do
   end
 
   shared_examples_for "ec2" do
-    let(:plugin) { get_plugin("ec2") }
-
     before(:each) do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)
@@ -334,19 +334,39 @@ describe Ohai::System, "plugin ec2" do
     end
   end # shared examples for ec2
 
-  describe "with ec2 dmi data" do
+  describe "with amazon dmi bios version data" do
     it_behaves_like "ec2"
 
     before(:each) do
-      plugin[:dmi] = { :bios => { :all_records => [ { :Version => "4.2.amazon" } ] } }
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
     end
   end
 
-  describe "with amazon kernel data" do
+  describe "with non-amazon dmi bios version data" do
+    it_behaves_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+    end
+  end
+
+  describe "with amazon dmi bios vendor data" do
     it_behaves_like "ec2"
 
     before(:each) do
-      plugin[:kernel] = { :os_info => { :organization => "Amazon.com" } }
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+    end
+  end
+
+  describe "with non-amazon dmi bios vendor data" do
+    it_behaves_like "!ec2"
+
+    before(:each) do
+      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
   end
 
@@ -355,7 +375,7 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
   end
 
@@ -364,7 +384,39 @@ describe Ohai::System, "plugin ec2" do
 
     before(:each) do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8")
+      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+    end
+  end
+
+  describe "with EC2 Identifying Number", :windows_only do
+    it_behaves_like "ec2"
+
+    before do
+      allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
+        { "caption" => "Computer System Product",
+          "description" => "Computer System Product",
+          "identifyingnumber" => "ec2a355a-91cd-5fe8-bbfc-cc891d0bf9d6",
+          "name" => "HVM domU",
+          "skunumber" => nil,
+          "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
+          "vendor" => "Xen",
+          "version" => "4.2.amazon" })
+    end
+  end
+
+  describe "without EC2 Identifying Number", :windows_only do
+    it_behaves_like "!ec2"
+
+    before do
+      allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
+        { "caption" => "Computer System Product",
+          "description" => "Computer System Product",
+          "identifyingnumber" => "1234",
+          "name" => "HVM domU",
+          "skunumber" => nil,
+          "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
+          "vendor" => "Xen",
+          "version" => "1.2.3" })
     end
   end
 

@@ -1,5 +1,12 @@
 # Change Log
 
+## [8.26.0](https://github.com/chef/ohai/tree/v8.26.0) (2018-01-10)
+
+- [mdadm] Handle journal and spare devices properly [#1102](https://github.com/chef/ohai/pull/1102)
+- [linux/network] Tunnel information [#1105](https://github.com/chef/ohai/pull/1105)
+- Add a plugin to provide PCI bus information using `lspci` [#1108](https://github.com/chef/ohai/pull/1108)
+- Support new C5/M5 instance types in EC2 [#1111](https://github.com/chef/ohai/pull/1111)
+
 ## [8.25.1](https://github.com/chef/ohai/tree/v8.25.1) (2017-11-15)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v8.25.0...v8.25.1)
@@ -14,6 +21,7 @@
 - Fix solaris2 ipaddress attribute search [#1028](https://github.com/chef/ohai/pull/1028)
 
 ## [8.24.0](https://github.com/chef/ohai/tree/v8.24.1) (2017-06-21)
+
 [Full Changelog](https://github.com/chef/ohai/compare/v8.24.0...v8.24.1)
 
 - Bumped chefstyle development dependency

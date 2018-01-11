@@ -43,7 +43,7 @@ module Ohai
       EC2_SUPPORTED_VERSIONS = %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
                                    2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }
-      EC2_ARRAY_VALUES = %w{security-groups}
+      EC2_ARRAY_VALUES = %w{security-groups local_ipv4s}
       EC2_ARRAY_DIR    = %w{network/interfaces/macs}
       EC2_JSON_DIR     = %w{iam}
 

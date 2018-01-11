@@ -27,11 +27,6 @@ describe Ohai::System, "darwin filesystem plugin" do
     allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, "", ""))
   end
 
-  it "sets both filesystem and filesystem2 attributes" do
-    plugin.run
-    expect(plugin[:filesystem]).to eq(plugin[:filesystem2])
-  end
-
   describe "when gathering filesystem usage data from df" do
     before(:each) do
       @stdout = <<-DF

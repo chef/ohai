@@ -20,7 +20,6 @@
 
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
-  provides "filesystem2"
 
   def generate_device_view(fs)
     view = {}
@@ -104,6 +103,5 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_pair"] = by_pair
 
     filesystem fs_data
-    filesystem2 fs_data
   end
 end

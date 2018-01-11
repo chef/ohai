@@ -15,7 +15,6 @@
 # limitations under the License.
 
 Ohai.plugin(:Cloud) do
-  provides "cloud_v2"
   provides "cloud"
 
   depends "ec2"
@@ -309,8 +308,6 @@ Ohai.plugin(:Cloud) do
     get_azure_values if on_azure?
     get_digital_ocean_values if on_digital_ocean?
 
-    # set node[:cloud] and node[:cloud_v2] hash here
-    cloud_v2 @cloud_attr_obj.cloud_mash
     cloud @cloud_attr_obj.cloud_mash
   end
 end

@@ -55,11 +55,6 @@ describe Ohai::System, "Linux filesystem plugin" do
     end
   end
 
-  it "sets both filesystem and filesystem2 attributes" do
-    plugin.run
-    expect(plugin[:filesystem]).to eq(plugin[:filesystem2])
-  end
-
   describe "when gathering filesystem usage data from df" do
     before(:each) do
       @stdout = <<-DF

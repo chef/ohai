@@ -1,22 +1,26 @@
-# Unreleased
+# Ohai Release Notes 13.7.1
 
-### LsPci Plugin
+## Network Tunnel Information
+
+The Network plugin on Linux hosts now gathers additional information on tunnels
+
+## LsPci Plugin
 
 The new LsPci plugin provides a `node[:pci]` hash with information about the PCI bus based on `lspci`. Only runs on Linux.
 
 # Ohai Release Notes 13.7
 
-### EC2 C5 Detection
+## EC2 C5 Detection
 
 The EC2 plugin has been updated to properly detect the new AWS hypervisor used in the C5 instance types
 
-### mdadm
+## mdadm
 
 The mdadm plugin has been updated to properly handle arrays with more than 10 disks and to properly handle journal and spare drives in the disk counts
 
 # Ohai Release Notes 13.6
 
-### Critical Plugins
+## Critical Plugins
 
 Users can now specify a list of plugins which are `critical`. Critical plugins will cause Ohai to fail if they do not run successfully (and thus cause a Chef run using Ohai to fail). The syntax for this is:
 
@@ -24,39 +28,39 @@ Users can now specify a list of plugins which are `critical`. Critical plugins w
 ohai.critical_plugins << :Filesystem
 ```
 
-### Filesystem now has a `allow_partial_data` configuration option
+## Filesystem now has a `allow_partial_data` configuration option
 
 The Filesystem plugin now has a `allow_partial_data` configuration option. If set, the filesystem will return whatever data it can even if some commands it ran failed.
 
-### Rackspace detection on Windows
+## Rackspace detection on Windows
 
 Windows nodes running on Rackspace will now properly detect themselves as running on Rackspace without a hint file.
 
-### Package data on Amazon Linux
+## Package data on Amazon Linux
 
 The Packages plugin now supports gathering packages data on Amazon Linux
 
-### Deprecation updates
+## Deprecation updates
 
-In Ohai 13 we replaced the filesystem and cloud plugins with the filesystem2 and cloud_v2 plugins. To maintain compatibility with users of the previous V2 plugins we write data to both locations. We had originally planned to continue writing data to both locations until Chef 15. Instead due to the large amount of duplicate node data this introduces we are updating OHAI-11 and OHAI-12 deprecations to remove node['cloud_v2'] and node['filesystem2'] with the release of Chef 14 in April 2018.
+In Ohai 13 we replaced the filesystem and cloud plugins with the filesystem2 and cloud_v2 plugins. To maintain compatibility with users of the previous V2 plugins we write data to both locations. We had originally planned to continue writing data to both locations until Chef 15\. Instead due to the large amount of duplicate node data this introduces we are updating OHAI-11 and OHAI-12 deprecations to remove node['cloud_v2'] and node['filesystem2'] with the release of Chef 14 in April 2018.
 
 # Ohai Release Notes 13.5
 
-### Correctly detect IPv6 routes ending in ::
+## Correctly detect IPv6 routes ending in ::
 
 Previously we would ignore routes that ended `::`, and now we properly detect them.
 
-### Plugin run time is now measured
+## Plugin run time is now measured
 
 Debug logs will show the length of time each plugin takes to run, making debugging of long ohai runs easier.
 
 # Ohai Release Notes 13.4
 
-### Windows EC2 Detection
+## Windows EC2 Detection
 
 Detection of nodes running in EC2 has been greatly improved and should now detect nodes 100% of the time including nodes that have been migrated to EC2 or were built with custom AMIs.
 
-### Azure Metadata Endpoint Detection
+## Azure Metadata Endpoint Detection
 
 Ohai now polls the new Azure metadata endpoint, giving us additional configuration details on nodes running in Azure
 
@@ -119,7 +123,7 @@ Sample data now available under azure:
 }
 ```
 
-### Package Plugin Supports Arch Linux
+## Package Plugin Supports Arch Linux
 
 The Package plugin has been updated to include package information on Arch Linux systems.
 

@@ -7,7 +7,7 @@ sudo: false
 branches:
   only:
     - master
-    - 8-stable
+    - 13-stable
 
 before_install:
   - gem --version

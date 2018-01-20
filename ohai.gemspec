@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ipaddress"
   s.add_dependency "wmi-lite", "~> 1.0"
   s.add_dependency "ffi", "~> 1.9"
-  s.add_dependency "chef-config", ">= 12.5.0.alpha.1", "< 14"
+  s.add_dependency "chef-config", ">= 12.5.0.alpha.1", "< 15"
   # Note for ohai developers: If chef-config causes you grief, try:
   #     bundle install --with development
   # this should work as long as chef is a development dependency in Gemfile.

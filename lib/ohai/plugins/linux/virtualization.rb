@@ -185,7 +185,7 @@ Ohai.plugin(:Virtualization) do
     if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
-          cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-.+$}
+          cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-?.+$}
         Ohai::Log.debug("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
         virtualization[:system] = $1
         virtualization[:role] = "guest"

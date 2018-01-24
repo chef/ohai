@@ -1,5 +1,9 @@
 # Change Log
 
+## [8.26.1](https://github.com/chef/ohai/tree/v8.26.1) (2018-01-24)
+
+- Fix detection of containers running on the latest release of Docker for Mac [#1118](https://github.com/chef/ohai/pull/1118)
+
 ## [8.26.0](https://github.com/chef/ohai/tree/v8.26.0) (2018-01-10)
 
 - [mdadm] Handle journal and spare devices properly [#1102](https://github.com/chef/ohai/pull/1102)

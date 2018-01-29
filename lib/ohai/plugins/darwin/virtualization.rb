@@ -37,9 +37,19 @@ Ohai.plugin(:Virtualization) do
     ::File.exist?("/Applications/VMware\ Fusion.app/")
   end
 
+  def docker_exists?
+    which("docker")
+  end
+
   collect_data(:darwin) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
+
+    if docker_exists?
+      virtualization[:system] = "docker"
+      virtualization[:role] = "host"
+      virtualization[:systems][:docker] = "host"
+    end
 
     if vboxmanage_exists?
       virtualization[:system] = "vbox"

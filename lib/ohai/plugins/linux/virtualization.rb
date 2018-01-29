@@ -29,12 +29,27 @@ Ohai.plugin(:Virtualization) do
     which("nova")
   end
 
+  def docker_exists?
+    which("docker")
+  end
+
   collect_data(:linux) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
-    ## Xen
-    # /proc/xen is an empty dir for EL6 + Linode Guests + Paravirt EC2 instances
+    # Docker hosts
+    if docker_exists?
+      virtualization[:system] = "docker"
+      virtualization[:role] = "host"
+      virtualization[:systems][:docker] = "host"
+    end
+
+    # Xen Notes:
+    # - /proc/xen is an empty dir for EL6 + Linode Guests + Paravirt EC2 instances
+    # - cpuid of guests, if we could get it, would also be a clue
+    # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
+    # - Additional edge cases likely should not change the above assumptions
+    #   but rather be additive - btm
     if File.exist?("/proc/xen")
       virtualization[:system] = "xen"
       # Assume guest
@@ -50,12 +65,6 @@ Ohai.plugin(:Virtualization) do
         end
       end
     end
-
-    # Xen Notes:
-    # - cpuid of guests, if we could get it, would also be a clue
-    # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
-    # - Additional edge cases likely should not change the above assumptions
-    #   but rather be additive - btm
 
     # Detect Virtualbox from kernel module
     if File.exist?("/proc/modules")

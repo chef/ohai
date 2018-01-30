@@ -30,12 +30,10 @@ Ohai.plugin(:Libvirt) do
   end
 
   def load_libvirt
-    begin
-      require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
-      Ohai::Log.debug("Plugin Libvirt: Successfully loaded ruby-libvirt gem")
-    rescue LoadError
-      Ohai::Log.debug("Plugin Libvirt: Can't load gem ruby-libvirt.")
-    end
+    require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
+    Ohai::Log.debug("Plugin Libvirt: Successfully loaded ruby-libvirt gem")
+  rescue LoadError
+    Ohai::Log.debug("Plugin Libvirt: Can't load gem ruby-libvirt.")
   end
 
   def virtconn

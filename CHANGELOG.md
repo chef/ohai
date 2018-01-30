@@ -1,5 +1,12 @@
 # Change Log
 
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v13.7.1](https://github.com/chef/ohai/tree/v13.7.1) (2018-01-10)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.7.0...v13.7.1)
@@ -7,6 +14,7 @@
 - Fix docker detection when running on new Docker for mac releases
 - [linux/network] Tunnel information
 - Add a plugin to provide PCI bus information using `lspci`
+<!-- latest_stable_release -->
 
 ## [v13.7.0](https://github.com/chef/ohai/tree/v13.7.0) (2017-12-04)
 

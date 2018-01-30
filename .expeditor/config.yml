@@ -4,6 +4,9 @@
 slack:
   notify_channel: chef-notify
 
+rubygems:
+  - ohai
+
 github:
   # The tag format to use (e.g. v1.0.0)
   version_tag_format: "v{{version}}"
@@ -19,6 +22,11 @@ github:
         version_constraint: 13.*
     - 8-stable:
         version_constraint: 8.*
+
+promote:
+  action:
+    - built_in:publish_rubygems
+    - built_in:rollover_changelog
 
 # These actions are taken, in order they are specified, anytime a Pull Request is merged.
 merge_actions:

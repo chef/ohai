@@ -45,8 +45,6 @@ module Ohai
           case plugin.version
           when :version7
             run_v7_plugin(plugin)
-          when :version6
-            run_v6_plugin(plugin)
           else
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end

@@ -54,43 +54,6 @@ describe Ohai::Runner, "run_plugin" do
       end
     end
 
-    describe "version 6" do
-      let(:version) { :version6 }
-
-      it "should call run_v6_plugin" do
-        expect(@runner).to receive(:run_v6_plugin)
-        @runner.run_plugin(plugin)
-      end
-
-      describe "if the plugin has not run before" do
-        describe "if safe_run is not set" do
-          it "safe_run should be called" do
-            expect(plugin).to receive(:safe_run)
-            @runner.run_plugin(plugin)
-          end
-        end
-
-        describe "if safe_run is set" do
-          let(:safe_run) { false }
-
-          it "run should be called" do
-            expect(plugin).to receive(:run)
-            @runner.run_plugin(plugin)
-          end
-        end
-      end
-
-      describe "if the plugin has run before" do
-        let(:has_run) { true }
-
-        it "should not run" do
-          expect(plugin).not_to receive(:safe_run)
-          @runner.run_plugin(plugin)
-        end
-
-      end
-    end
-
     describe "invalid version" do
       let(:version) { :versionBla }
 

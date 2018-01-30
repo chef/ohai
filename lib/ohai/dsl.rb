@@ -18,5 +18,4 @@
 #
 
 require "ohai/dsl/plugin"
-require "ohai/dsl/plugin/versionvi"
 require "ohai/dsl/plugin/versionvii"

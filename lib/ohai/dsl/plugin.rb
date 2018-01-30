@@ -49,6 +49,7 @@ module Ohai
 
     plugin = nil
 
+    # avoid already initialized constant warnings if already defined
     if NamedPlugin.strict_const_defined?(name)
       plugin = NamedPlugin.const_get(name)
       plugin.class_eval(&block)

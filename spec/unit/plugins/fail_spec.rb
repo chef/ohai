@@ -59,11 +59,6 @@ shared_examples "a v7 loading failure" do
     expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
-  it "should not have source key" do
-    @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    expect(@ohai.v6_dependency_solver).not_to have_key("#{tmp}/plugins/fail.rb")
-  end
-
   it "should write to Ohai::Log" do
     expect(Ohai::Log).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
@@ -105,11 +100,6 @@ shared_examples "a v7 loading success" do
   it "should have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     expect(@ohai.provides_map).to have_key("fail")
-  end
-
-  it "should have source key" do
-    @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    expect(@ohai.v6_dependency_solver).to have_key("#{tmp}/plugins/fail.rb")
   end
 
   it "should not write to Ohai::Log" do
@@ -160,51 +150,6 @@ shared_examples "a v7 run failure" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end
 end
-
-=begin
-shared_examples "a v6 run failure" do
-  before(:all) do
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
-      # ignore
-    end
-  end
-
-  before(:each) do
-    fail_file = File.open("#{tmp}/plugins/fail.rb", "w+")
-    fail_file.write(failstr)
-    fail_file.close
-  end
-
-  after(:each) do
-    File.delete("#{tmp}/plugins/fail.rb")
-  end
-
-  after(:all) do
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
-      # ignore
-    end
-  end
-
-  before(:each) do
-    @ohai = Ohai::System.new
-    @loader = Ohai::Loader.new(@ohai)
-  end
-
-  it "should not add data keys" do
-    @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    @ohai.data.should_not have_key("fail")
-  end
-
-  it "should write to Ohai::Log" do
-    Ohai::Log.should_receive(:warn).once
-    @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
-  end
-end
-=end
 
 describe "when using DSL commands outside Ohai.plugin block" do
   failstr1 = <<EOF

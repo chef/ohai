@@ -40,6 +40,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
     allow(File).to receive(:exist?).with("/dev/lxd/sock").and_return(false)
     allow(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(false)
+    allow(File).to receive(:exist?).with("/var/snap/lxd/common/lxd/devlxd").and_return(false)
     allow(File).to receive(:exist?).with("/proc/1/environ").and_return(false)
 
     # default the which wrappers to nil
@@ -495,8 +496,16 @@ VEERTU
       expect(plugin[:virtualization][:role]).to eq("guest")
     end
 
-    it "setx lxd host if /var/lib/lxd/devlxd exists" do
+    it "sets lxd host if /var/lib/lxd/devlxd exists" do
       expect(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(true)
+
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("lxd")
+      expect(plugin[:virtualization][:role]).to eq("host")
+    end
+
+    it "sets lxd host if /var/snap/lxd/common/lxd/devlxd exists" do
+      expect(File).to receive(:exist?).with("/var/snap/lxd/common/lxd/devlxd").and_return(true)
 
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("lxd")

@@ -222,10 +222,15 @@ Ohai.plugin(:Virtualization) do
       Ohai::Log.debug("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
       virtualization[:system] = "lxd"
       virtualization[:role] = "guest"
-    elsif File.exist?("/var/lib/lxd/devlxd")
-      Ohai::Log.debug("Plugin Virtualization: /var/lib/lxd/devlxd exists. Detecting as lxd host")
-      virtualization[:system] = "lxd"
-      virtualization[:role] = "host"
+    else
+      ["/var/lib/lxd/devlxd", "/var/snap/lxd/common/lxd/devlxd"].each do |devlxd|
+        if File.exist?(devlxd)
+          Ohai::Log.debug("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
+          virtualization[:system] = "lxd"
+          virtualization[:role] = "host"
+          break
+        end
+      end
     end
   end
 end

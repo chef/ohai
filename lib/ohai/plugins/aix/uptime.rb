@@ -27,7 +27,7 @@ Ohai.plugin(:Uptime) do
     # 1148-20:54:50
     # This reads as 1148 days, 20 hours, 54 minutes, 50 seconds since the process was started (elapsed)
     # who -b does not return the YEAR, so we need something more concrete
-    so = shell_out("LC_ALL=POSIX ps -o etime= -p 1").stdout
+    so = shell_out("LC_ALL=POSIX ps -o etime= -p 1").stdout.strip
 
     # Here we'll check our shell_out for a dash, which indicates there is a # of days involved
     # We'll chunk off the days, hours (where applicable), minutes, seconds into seperate vars

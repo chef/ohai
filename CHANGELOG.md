@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.0.2 -->
+## [v14.0.2](https://github.com/chef/ohai/tree/v14.0.2) (2018-02-12)
+
+#### Merged Pull Requests
+- adds whitespace stripping for the shellout stdout [#1132](https://github.com/chef/ohai/pull/1132) ([rmcleod8](https://github.com/rmcleod8))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=13.7.1 -->
+### Changes since 13.7.1 release
+
+#### Merged Pull Requests
+- adds whitespace stripping for the shellout stdout [#1132](https://github.com/chef/ohai/pull/1132) ([rmcleod8](https://github.com/rmcleod8)) <!-- 14.0.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

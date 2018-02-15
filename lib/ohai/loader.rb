@@ -91,7 +91,6 @@ module Ohai
     # Load a specified file as an ohai plugin and creates an instance of it.
     # Not used by ohai itself, but can be used to load a plugin for testing
     # purposes.
-    # plugin_dir_path is required when loading a v6 plugin.
     def load_plugin(plugin_path, plugin_dir_path = nil)
       plugin_class = load_plugin_class(plugin_path, plugin_dir_path)
       return nil unless plugin_class.kind_of?(Class)
@@ -123,9 +122,10 @@ module Ohai
       if contents.include?("Ohai.plugin")
         load_v7_plugin_class(contents, plugin_path)
       else
-        Ohai::Log.warn("[DEPRECATION] Plugin at #{plugin_path} is a version 6 plugin. \
-Version 6 plugins are no longer supported by Ohai. This plugin will need to be updated \
-to the v7 Ohai plugin format. See https://docs.chef.io/ohai_custom.html for v7 syntax.")
+        raise Exceptions::IllegalPluginDefinition, "[DEPRECATION] Plugin at #{plugin_path}"\
+        " is a version 6 plugin. Version 6 plugins are no longer supported by Ohai. This"\
+        " plugin will need to be updated to the v7 Ohai plugin format. See"\
+        " https://docs.chef.io/ohai_custom.html for v7 syntax."
       end
     end
 

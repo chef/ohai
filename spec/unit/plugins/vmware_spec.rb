@@ -64,6 +64,7 @@ describe Ohai::System, "plugin vmware" do
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vmware] = Mash.new
       allow(File).to receive(:exist?).with("/usr/bin/vmware-toolbox-cmd").and_return(false)
+      plugin.run
       expect(plugin).not_to have_key(:vmware)
     end
   end
@@ -73,6 +74,7 @@ describe Ohai::System, "plugin vmware" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vbox] = Mash.new
+      plugin.run
       expect(plugin).not_to have_key(:vmware)
     end
   end

@@ -94,7 +94,9 @@ end
 EOF
 
     with_plugin("repo1/lake.rb", <<EOF)
+Ohai.plugin(:Nature) do
 provides 'fish'
+end
 EOF
 
     with_plugin("repo2/nature.rb", <<EOF)
@@ -104,7 +106,9 @@ end
 EOF
 
     with_plugin("repo2/mountain.rb", <<EOF)
+Ohai.plugin(:Nature) do
 provides 'bear'
+end
 EOF
 
     before do

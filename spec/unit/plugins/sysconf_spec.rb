@@ -346,6 +346,7 @@ _POSIX_RAW_SOCKETS                 200809
 GETCONF_OUT
     allow(plugin).to receive(:which).with("getconf").and_return("/usr/bin/getconf")
     allow(plugin).to receive(:shell_out).with("/usr/bin/getconf -a").and_return(mock_shell_out(0, getconf_out, ""))
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     plugin.run
     expect(plugin[:sysconf].to_hash).to eq({
       "LINK_MAX" => 65000,

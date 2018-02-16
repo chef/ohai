@@ -1,7 +1,7 @@
 # Change Log
 
-<!-- latest_release 14.0.11 -->
-## [v14.0.11](https://github.com/chef/ohai/tree/v14.0.11) (2018-02-16)
+<!-- latest_release 14.0.12 -->
+## [v14.0.12](https://github.com/chef/ohai/tree/v14.0.12) (2018-02-16)
 
 #### Merged Pull Requests
 - fix critical plugin tests [#1135](https://github.com/chef/ohai/pull/1135) ([thommay](https://github.com/thommay))

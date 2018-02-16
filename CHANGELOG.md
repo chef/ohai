@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.8 -->
-## [v14.0.8](https://github.com/chef/ohai/tree/v14.0.8) (2018-02-16)
+<!-- latest_release 14.0.9 -->
+## [v14.0.9](https://github.com/chef/ohai/tree/v14.0.9) (2018-02-16)
 
 #### Merged Pull Requests
-- fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay))
+- Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50)) <!-- 14.0.9 -->
 - fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay)) <!-- 14.0.7 -->
 - Initial removal of support for Ohai V6 plugins [#1127](https://github.com/chef/ohai/pull/1127) ([tas50](https://github.com/tas50)) <!-- 14.0.6 -->
 - Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50)) <!-- 14.0.5 -->

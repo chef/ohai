@@ -1,7 +1,7 @@
 # Change Log
 
-<!-- latest_release 14.0.7 -->
-## [v14.0.7](https://github.com/chef/ohai/tree/v14.0.7) (2018-02-16)
+<!-- latest_release 14.0.8 -->
+## [v14.0.8](https://github.com/chef/ohai/tree/v14.0.8) (2018-02-16)
 
 #### Merged Pull Requests
 - fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay))

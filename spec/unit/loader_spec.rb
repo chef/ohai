@@ -33,68 +33,6 @@ describe Ohai::Loader do
     end
   end
 
-  when_plugins_directory "contains both V6 & V7 plugins" do
-    with_plugin("zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  provides 'seals'
-end
-EOF
-
-    with_plugin("zoo_too.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  provides 'elephants'
-end
-EOF
-
-    with_plugin("lake.rb", <<EOF)
-provides 'fish'
-EOF
-
-    describe "load_plugin() method" do
-      describe "when loading a v7 plugin" do
-        let(:plugin) { loader.load_plugin(path_to("zoo.rb")) }
-
-        it "saves the plugin according to its attribute" do
-          plugin
-          expect(provides_map.map.keys).to include("seals")
-        end
-
-        it "saves a single plugin source" do
-          expect(plugin.source).to eql([path_to("zoo.rb")])
-        end
-
-        it "saves all plugin sources" do
-          plugin
-          loader.load_plugin(path_to("zoo_too.rb"))
-          expect(plugin.source).to eql([path_to("zoo.rb"), path_to("zoo_too.rb")])
-        end
-      end
-
-      describe "when loading a v6 plugin" do
-        let(:plugin) { loader.load_plugin(path_to("lake.rb"), path_to(".")) }
-
-        before(:each) do
-          expect(Ohai::Log).to receive(:warn).with(/\[DEPRECATION\]/)
-        end
-
-        it "does not add this plugin's provided attributes to the provides map" do
-          plugin
-          expect(provides_map.map).to be_empty
-        end
-
-        it "saves the plugin's source" do
-          expect(plugin.source).to eql(path_to("lake.rb"))
-        end
-      end
-
-      it "logs a warning if a plugin doesn't exist" do
-        expect(Ohai::Log).to receive(:warn).with(/Unable to open or read plugin/)
-        loader.load_plugin(path_to("rainier.rb"), path_to("."))
-        expect(provides_map.map).to be_empty
-      end
-    end
-  end
-
   when_plugins_directory "is an additional plugin path" do
     with_plugin("cookbook_a/alpha.rb", <<EOF)
 Ohai.plugin(:Alpha) do

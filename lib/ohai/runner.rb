@@ -42,11 +42,8 @@ module Ohai
         end
 
         begin
-          case plugin.version
-          when :version7
+          if plugin.version == :version7
             run_v7_plugin(plugin)
-          when :version6
-            run_v6_plugin(plugin)
           else
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end
@@ -59,12 +56,6 @@ module Ohai
         end
       end
       Ohai::Log.debug("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
-    end
-
-    def run_v6_plugin(plugin)
-      return true if plugin.has_run?
-
-      @safe_run ? plugin.safe_run : plugin.run
     end
 
     def run_v7_plugin(plugin)

@@ -631,36 +631,3 @@ describe Ohai::DSL::Plugin::VersionVII do
     let(:version) { :version7 }
   end
 end
-
-describe Ohai::DSL::Plugin::VersionVI do
-  describe "#version" do
-    it "saves the plugin version as :version6" do
-      plugin = Class.new(Ohai::DSL::Plugin::VersionVI) {}
-      expect(plugin.version).to eql(:version6)
-    end
-  end
-
-  describe "#provides" do
-    let(:ohai) { Ohai::System.new }
-
-    it "logs a debug message when provides is used" do
-      allow(Ohai::Log).to receive(:debug)
-      expect(Ohai::Log).to receive(:debug).with(/Skipping provides/)
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
-      plugin.provides("attribute")
-    end
-
-    it "does not update the provides map for version 6 plugins." do
-      plugin = Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin")
-      plugin.provides("attribute")
-      expect(ohai.provides_map.map).to be_empty
-    end
-
-  end
-
-  it_behaves_like "Ohai::DSL::Plugin" do
-    let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVI.new(ohai, "/some/plugin/path.rb", "/some/plugin") }
-    let(:version) { :version6 }
-  end
-end

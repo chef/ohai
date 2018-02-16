@@ -222,10 +222,23 @@ Ohai.plugin(:Virtualization) do
       Ohai::Log.debug("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
       virtualization[:system] = "lxd"
       virtualization[:role] = "guest"
-    elsif File.exist?("/var/lib/lxd/devlxd")
-      Ohai::Log.debug("Plugin Virtualization: /var/lib/lxd/devlxd exists. Detecting as lxd host")
-      virtualization[:system] = "lxd"
-      virtualization[:role] = "host"
+    else
+      # 'How' LXD is installed dictates the runtime data location
+      #
+      # Installations of LXD from a .deb (Ubuntu's main and backports repos) utilize '/var/lib/lxd/' for runtime data
+      #   - used by stable releases 2.0.x in trusty/xenial, and 3.0.x in bionic
+      #   - xenial-backports includes versions 2.1 through 2.21
+      #
+      # Snap based installations utilize '/var/snap/lxd/common/lxd/'
+      #   - includes all future releases starting with 2.21, and will be the only source of 3.1+ feature releases post-bionic
+      ["/var/lib/lxd/devlxd", "/var/snap/lxd/common/lxd/devlxd"].each do |devlxd|
+        if File.exist?(devlxd)
+          Ohai::Log.debug("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
+          virtualization[:system] = "lxd"
+          virtualization[:role] = "host"
+          break
+        end
+      end
     end
   end
 end

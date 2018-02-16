@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.4 -->
-## [v14.0.4](https://github.com/chef/ohai/tree/v14.0.4) (2018-02-16)
+<!-- latest_release 14.0.5 -->
+## [v14.0.5](https://github.com/chef/ohai/tree/v14.0.5) (2018-02-16)
 
 #### Merged Pull Requests
-- account for snap based installations of LXD [#1131](https://github.com/chef/ohai/pull/1131) ([thewyzard44](https://github.com/thewyzard44))
+- Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50)) <!-- 14.0.5 -->
 - account for snap based installations of LXD [#1131](https://github.com/chef/ohai/pull/1131) ([thewyzard44](https://github.com/thewyzard44)) <!-- 14.0.4 -->
 - Simplify path logic by requiring chef-config 12.8+ [#1128](https://github.com/chef/ohai/pull/1128) ([tas50](https://github.com/tas50)) <!-- 14.0.3 -->
 - adds whitespace stripping for the shellout stdout [#1132](https://github.com/chef/ohai/pull/1132) ([rmcleod8](https://github.com/rmcleod8)) <!-- 14.0.2 -->

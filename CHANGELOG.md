@@ -1,7 +1,7 @@
 # Change Log
 
-<!-- latest_release 14.0.9 -->
-## [v14.0.9](https://github.com/chef/ohai/tree/v14.0.9) (2018-02-16)
+<!-- latest_release 14.0.10 -->
+## [v14.0.10](https://github.com/chef/ohai/tree/v14.0.10) (2018-02-16)
 
 #### Merged Pull Requests
 - Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50))

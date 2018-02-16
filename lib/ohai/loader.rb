@@ -46,12 +46,7 @@ module Ohai
 
         Ohai::Log.debug("Searching for Ohai plugins in #{plugin_dir}")
 
-        # escape_glob_dir does not exist in 12.7 or below
-        if ChefConfig::PathHelper.respond_to?(:escape_glob_dir)
-          escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)
-        else
-          escaped = ChefConfig::PathHelper.escape_glob(plugin_dir)
-        end
+        escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)
         Dir[File.join(escaped, "**", "*.rb")].map do |file|
           new(file, plugin_dir)
         end

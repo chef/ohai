@@ -36,6 +36,10 @@ module Ohai
       default :plugin, Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new }
       default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
       default :critical_plugins, []
+      # causes all optional plugins to be run.
+      default :run_all_plugins, false
+      # optional plugins are the set of plugins that are marked optional but you wish to run.
+      default :optional_plugins, []
     end
   end
 

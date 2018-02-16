@@ -20,6 +20,7 @@
 Ohai.plugin(:Lspci) do
   depends "platform"
   provides "pci"
+  optional true
 
   collect_data(:linux) do
     devices = Mash.new

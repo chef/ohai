@@ -18,6 +18,7 @@
 
 Ohai.plugin(:Sessions) do
   provides "sessions/by_session", "sessions/by_user"
+  optional true
 
   collect_data(:linux) do
     loginctl_path = which("loginctl")

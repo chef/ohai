@@ -66,6 +66,14 @@ module Ohai
           end
         end
 
+        def self.optional(opt = true)
+          @optional = opt
+        end
+
+        def self.optional?
+          !!@optional
+        end
+
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
             if data_collector.has_key?(plat)
@@ -91,6 +99,10 @@ module Ohai
           else
             Ohai::Log.debug("Plugin #{name}: No data to collect. Skipping...")
           end
+        end
+
+        def optional?
+          self.class.optional?
         end
 
         def provides(*paths)

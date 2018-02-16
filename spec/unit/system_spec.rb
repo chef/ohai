@@ -213,19 +213,22 @@ EOF
       end
 
       describe "when using :critical_plugins" do
+        # if called from cli is true, we'll exit these tests
+        let(:ohai) { Ohai::System.new() }
+
         before do
           Ohai.config[:critical_plugins] = [ :Fails ]
         end
+
         after do
           Ohai.config[:critical_plugins] = []
         end
 
         it "should fail when critical plugins fail" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
-          expect(Ohai::Log).to receive(:error).with(/marked as critical/)
-          ohai.all_plugins
+          expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::CriticalPluginFailure,
+                                                     "The following Ohai plugins marked as critical failed: [:Fails]. Failing Chef run.")
         end
-
       end
     end
   end

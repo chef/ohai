@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.6 -->
-## [v14.0.6](https://github.com/chef/ohai/tree/v14.0.6) (2018-02-16)
+<!-- latest_release 14.0.7 -->
+## [v14.0.7](https://github.com/chef/ohai/tree/v14.0.7) (2018-02-16)
 
 #### Merged Pull Requests
-- Initial removal of support for Ohai V6 plugins [#1127](https://github.com/chef/ohai/pull/1127) ([tas50](https://github.com/tas50))
+- fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay)) <!-- 14.0.7 -->
 - Initial removal of support for Ohai V6 plugins [#1127](https://github.com/chef/ohai/pull/1127) ([tas50](https://github.com/tas50)) <!-- 14.0.6 -->
 - Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50)) <!-- 14.0.5 -->
 - account for snap based installations of LXD [#1131](https://github.com/chef/ohai/pull/1131) ([thewyzard44](https://github.com/thewyzard44)) <!-- 14.0.4 -->

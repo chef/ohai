@@ -46,6 +46,7 @@ describe Ohai::System, "Linux virtualization platform" do
     # default the which wrappers to nil
     allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
     allow(plugin).to receive(:which).with("lxc-start").and_return(nil)
+    allow(plugin).to receive(:which).with("docker").and_return(nil)
     allow(plugin).to receive(:nova_exists?).and_return(false)
   end
 
@@ -83,6 +84,16 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(File).to receive(:exist?).at_least(:once).and_return(false)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  describe "when we are checking for docker" do
+    it "sets docker host if docker binary exists" do
+      allow(plugin).to receive(:which).with("docker").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("host")
     end
   end
 

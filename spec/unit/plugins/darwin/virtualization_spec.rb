@@ -29,12 +29,21 @@ describe Ohai::System, "Darwin virtualization platform" do
     allow(plugin).to receive(:ioreg_exists?).and_return(false)
     allow(plugin).to receive(:vboxmanage_exists?).and_return(false)
     allow(plugin).to receive(:fusion_exists?).and_return(false)
+    allow(plugin).to receive(:docker_exists?).and_return(false)
   end
 
   describe "when detecting OS X virtualization" do
     it "should not set virtualization keys if no binaries are found" do
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "should set docker host if docker exists" do
+      allow(plugin).to receive(:docker_exists?).and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("host")
     end
 
     it "should set vmware host if /Applications/VMware\ Fusion.app exists" do

@@ -177,6 +177,17 @@ Ohai.plugin(:Fails) do
 end
 EOF
 
+      with_plugin("optional.rb", <<EOF)
+Ohai.plugin(:Optional) do
+  provides 'optional'
+  optional true
+
+  collect_data(:default) do
+    optional("canteloupe")
+  end
+end
+EOF
+
       it "should collect data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
@@ -228,6 +239,28 @@ EOF
           Ohai.config[:plugin_path] = [ path_to(".") ]
           expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::CriticalPluginFailure,
                                                      "The following Ohai plugins marked as critical failed: [:Fails]. Failing Chef run.")
+        end
+      end
+
+      describe "when using :optional_plugins" do
+        it "should not run optional plugins by default" do
+          Ohai.config[:plugin_path] = [ path_to(".") ]
+          ohai.all_plugins
+          expect(ohai.data[:optional]).to be_nil
+        end
+
+        it "should run optional plugins when specifically enabled" do
+          Ohai.config[:optional_plugins] = [ :Optional ]
+          Ohai.config[:plugin_path] = [ path_to(".") ]
+          ohai.all_plugins
+          expect(ohai.data[:optional]).to eq("canteloupe")
+        end
+
+        it "should run optional plugins when all plugins are enabled" do
+          Ohai.config[:run_all_plugins] = true
+          Ohai.config[:plugin_path] = [ path_to(".") ]
+          ohai.all_plugins
+          expect(ohai.data[:optional]).to eq("canteloupe")
         end
       end
     end

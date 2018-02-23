@@ -32,15 +32,8 @@ module Ohai
       name.is_a?(Symbol) && name.to_s.match(/^[^A-Z]|_/).nil?
     end
 
-    # dealing with ruby 1.8
-    if Module.method(:const_defined?).arity == 1
-      def self.strict_const_defined?(const)
-        const_defined?(const)
-      end
-    else
-      def self.strict_const_defined?(const)
-        const_defined?(const, false)
-      end
+    def self.strict_const_defined?(const)
+      const_defined?(const, false)
     end
   end
 

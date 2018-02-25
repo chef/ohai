@@ -52,8 +52,8 @@ Ohai.plugin(:Kernel) do
 
   # windows
   def machine_lookup(sys_type)
-    return "i386" if sys_type.eql?("X86-based PC")
-    return "x86_64" if sys_type.eql?("x64-based PC")
+    return "x86_64" if sys_type == "x64-based PC"
+    return "i386" if sys_type == "X86-based PC"
     sys_type
   end
 

@@ -4,7 +4,7 @@
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
 # Author:: Claire McQuin (<claire@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -94,7 +94,7 @@ Ohai.plugin(:Kernel) do
     kernel[:modules] = modules
   end
 
-  collect_data(:freebsd) do
+  collect_data(:freebsd, :dragonflybsd) do
     kernel init_kernel
     kernel[:os] = kernel[:name]
 
@@ -136,18 +136,6 @@ Ohai.plugin(:Kernel) do
     kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel:\ (.+)$/ }
 
     kernel[:modules] = bsd_modules("/usr/bin/modstat")
-  end
-
-  collect_data(:dragonflybsd) do
-    kernel init_kernel
-    kernel[:os] = kernel[:name]
-
-    so = shell_out("uname -i")
-    kernel[:ident] = so.stdout.split($/)[0]
-    so = shell_out("sysctl kern.securelevel")
-    kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel: (.+)$/ }
-
-    kernel[:modules] = bsd_modules("/sbin/kldstat")
   end
 
   collect_data(:solaris2) do

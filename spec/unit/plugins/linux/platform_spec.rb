@@ -686,6 +686,17 @@ CISCO_RELEASE
 
   describe "on suse" do
 
+    describe "with os-release results" do
+      let(:have_suse_release) { false }
+      it "should read the platform as sles on SLES 15" do
+        expect(File).to receive(:read).with("/etc/os-release").                                                      and_return("VERSION=\"15\"\nVERSION_ID=\"15\"\nPRETTY_NAME=\"SUSE Linux Enterprise Server                            15\"\nID=\"sles\"\nID_LIKE=\"suse\"\nANSI_COLOR=\"0;32\"\nCPE_NAME=\"cpe:/o:suse:sles:15\"\n")
+        @plugin.run
+        expect(@plugin[:platform_family]).to eq("suse")
+        expect(@plugin[:platform]).to eq("sles")
+        expect(@plugin[:platform_version]).to eq("15")
+      end
+    end
+
     let(:have_suse_release) { true }
 
     describe "with lsb_release results" do

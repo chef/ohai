@@ -4,7 +4,7 @@
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
 # Author:: Claire McQuin (<claire@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -52,22 +52,24 @@ Ohai.plugin(:Kernel) do
 
   # windows
   def machine_lookup(sys_type)
-    return "i386" if sys_type.eql?("X86-based PC")
-    return "x86_64" if sys_type.eql?("x64-based PC")
+    return "x86_64" if sys_type == "x64-based PC"
+    return "i386" if sys_type == "X86-based PC"
     sys_type
   end
 
   # windows
   def os_lookup(sys_type)
-    return "Unknown" if sys_type.to_s.eql?("0")
-    return "Other" if sys_type.to_s.eql?("1")
-    return "MSDOS" if sys_type.to_s.eql?("14")
-    return "WIN3x" if sys_type.to_s.eql?("15")
-    return "WIN95" if sys_type.to_s.eql?("16")
-    return "WIN98" if sys_type.to_s.eql?("17")
-    return "WINNT" if sys_type.to_s.eql?("18")
-    return "WINCE" if sys_type.to_s.eql?("19")
-    nil
+    case sys_type
+    when 18 then "WINNT" # most likely so first
+    when 0 then "Unknown"
+    when 1 then "Other"
+    when 14 then "MSDOS"
+    when 15 then "WIN3x"
+    when 16 then "WIN95"
+    when 17 then "WIN98"
+    when 19 then "WINCE"
+    else nil
+    end
   end
 
   collect_data(:default) do
@@ -94,7 +96,7 @@ Ohai.plugin(:Kernel) do
     kernel[:modules] = modules
   end
 
-  collect_data(:freebsd) do
+  collect_data(:freebsd, :dragonflybsd) do
     kernel init_kernel
     kernel[:os] = kernel[:name]
 
@@ -136,18 +138,6 @@ Ohai.plugin(:Kernel) do
     kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel:\ (.+)$/ }
 
     kernel[:modules] = bsd_modules("/usr/bin/modstat")
-  end
-
-  collect_data(:dragonflybsd) do
-    kernel init_kernel
-    kernel[:os] = kernel[:name]
-
-    so = shell_out("uname -i")
-    kernel[:ident] = so.stdout.split($/)[0]
-    so = shell_out("sysctl kern.securelevel")
-    kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel: (.+)$/ }
-
-    kernel[:modules] = bsd_modules("/sbin/kldstat")
   end
 
   collect_data(:solaris2) do
@@ -197,18 +187,13 @@ Ohai.plugin(:Kernel) do
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
-    host = wmi.first_of("Win32_ComputerSystem")
     kernel[:cs_info] = Mash.new
-    cs_info_blacklist = [
-      "oem_logo_bitmap",
-    ]
+    host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
-      if !cs_info_blacklist.include?(p.name.wmi_underscore)
-        kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
-      end
+      next if p.name.wmi_underscore == "oem_logo_bitmap" # big bitmap doesn't need to be in ohai
+      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
     kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
-
   end
 end

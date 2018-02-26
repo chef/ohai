@@ -155,133 +155,141 @@ Ohai.plugin(:Platform) do
   end
 
   collect_data(:linux) do
-    # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
-    if File.exist?("/etc/oracle-release")
-      contents = File.read("/etc/oracle-release").chomp
-      platform "oracle"
-      platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/enterprise-release")
-      contents = File.read("/etc/enterprise-release").chomp
-      platform "oracle"
-      platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/f5-release")
-      platform "bigip"
-      platform_version bigip_version
-    elsif File.exist?("/etc/debian_version")
-      # Ubuntu and Debian both have /etc/debian_version
-      # Ubuntu should always have a working lsb, debian does not by default
-      if lsb[:id] =~ /Ubuntu/i
-        platform "ubuntu"
-        platform_version lsb[:release]
-      elsif lsb[:id] =~ /LinuxMint/i
-        platform "linuxmint"
-        platform_version lsb[:release]
-      else
-        if File.exist?("/usr/bin/raspi-config")
-          platform "raspbian"
-        elsif Dir.exist?("/etc/cumulus")
-          platform "cumulus"
+    # use os-release (present on all modern linux distros) or use old *-release files as fallback
+    # platform_family also does not need to be hardcoded anymore
+    if File.exist?("/etc/os-release")
+      platform_family os_release_info["ID_LIKE"]
+      platform os_release_info["ID"]
+      platform_version os_release_info["VERSION_ID"]
+    else
+      # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
+      if File.exist?("/etc/oracle-release")
+        contents = File.read("/etc/oracle-release").chomp
+        platform "oracle"
+        platform_version get_redhatish_version(contents)
+      elsif File.exist?("/etc/enterprise-release")
+        contents = File.read("/etc/enterprise-release").chomp
+        platform "oracle"
+        platform_version get_redhatish_version(contents)
+      elsif File.exist?("/etc/f5-release")
+        platform "bigip"
+        platform_version bigip_version
+      elsif File.exist?("/etc/debian_version")
+        # Ubuntu and Debian both have /etc/debian_version
+        # Ubuntu should always have a working lsb, debian does not by default
+        if lsb[:id] =~ /Ubuntu/i
+          platform "ubuntu"
+          platform_version lsb[:release]
+        elsif lsb[:id] =~ /LinuxMint/i
+          platform "linuxmint"
+          platform_version lsb[:release]
         else
-          platform "debian"
+          if File.exist?("/usr/bin/raspi-config")
+            platform "raspbian"
+          elsif Dir.exist?("/etc/cumulus")
+            platform "cumulus"
+          else
+            platform "debian"
+          end
+          platform_version debian_platform_version
         end
-        platform_version debian_platform_version
-      end
-    elsif File.exist?("/etc/parallels-release")
-      contents = File.read("/etc/parallels-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif File.exist?("/etc/redhat-release")
-      if os_release_file_is_cisco? # Cisco guestshell
-        platform "nexus_centos"
-        platform_version os_release_info["VERSION"]
-      else
-        contents = File.read("/etc/redhat-release").chomp
+      elsif File.exist?("/etc/parallels-release")
+        contents = File.read("/etc/parallels-release").chomp
+        platform get_redhatish_platform(contents)
+        platform_version contents.match(/(\d\.\d\.\d)/)[0]
+      elsif File.exist?("/etc/redhat-release")
+        if os_release_file_is_cisco? # Cisco guestshell
+          platform "nexus_centos"
+          platform_version os_release_info["VERSION"]
+        else
+          contents = File.read("/etc/redhat-release").chomp
+          platform get_redhatish_platform(contents)
+          platform_version get_redhatish_version(contents)
+        end
+      elsif File.exist?("/etc/system-release")
+        contents = File.read("/etc/system-release").chomp
         platform get_redhatish_platform(contents)
         platform_version get_redhatish_version(contents)
-      end
-    elsif File.exist?("/etc/system-release")
-      contents = File.read("/etc/system-release").chomp
-      platform get_redhatish_platform(contents)
-      platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/SuSE-release")
-      suse_release = File.read("/etc/SuSE-release")
-      suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
-      suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
-      platform_version suse_version
-      if suse_release =~ /^openSUSE/
-        # opensuse releases >= 42 are openSUSE Leap
-        if platform_version.to_i < 42
-          platform "opensuse"
+      elsif File.exist?("/etc/SuSE-release")
+        suse_release = File.read("/etc/SuSE-release")
+        suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
+        suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
+        platform_version suse_version
+        if suse_release =~ /^openSUSE/
+          # opensuse releases >= 42 are openSUSE Leap
+          if platform_version.to_i < 42
+            platform "opensuse"
+          else
+            platform "opensuseleap"
+          end
         else
-          platform "opensuseleap"
+          platform "suse"
         end
-      else
-        platform "suse"
-      end
-    elsif File.exist?("/etc/Eos-release")
-      platform "arista_eos"
-      platform_version File.read("/etc/Eos-release").strip.split[-1]
-      platform_family "fedora"
-    elsif os_release_file_is_cisco?
-      raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
-        os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")
+      elsif File.exist?("/etc/Eos-release")
+        platform "arista_eos"
+        platform_version File.read("/etc/Eos-release").strip.split[-1]
+        platform_family "fedora"
+      elsif os_release_file_is_cisco?
+        raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
+          os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")
 
-      case os_release_info["ID"]
-      when "nexus"
-        platform "nexus"
-      when "ios_xr"
-        platform "ios_xr"
-      else
-        raise "unknown Cisco /etc/os-release or /etc/cisco-release ID field"
+        case os_release_info["ID"]
+        when "nexus"
+          platform "nexus"
+        when "ios_xr"
+          platform "ios_xr"
+        else
+          raise "unknown Cisco /etc/os-release or /etc/cisco-release ID field"
+        end
+
+        platform_family "wrlinux"
+        platform_version os_release_info["VERSION"]
+      elsif File.exist?("/etc/gentoo-release")
+        platform "gentoo"
+        # the gentoo release version is the base version used to bootstrap
+        # a node and doesn't have a lot of meaning in a rolling release distro
+        # kernel release will be used - ex. 3.18.7-gentoo
+        platform_version `uname -r`.strip
+      elsif File.exist?("/etc/slackware-version")
+        platform "slackware"
+        platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
+      elsif File.exist?("/etc/arch-release")
+        platform "arch"
+        # no way to determine platform_version in a rolling release distribution
+        # kernel release will be used - ex. 2.6.32-ARCH
+        platform_version `uname -r`.strip
+      elsif File.exist?("/etc/exherbo-release")
+        platform "exherbo"
+        # no way to determine platform_version in a rolling release distribution
+        # kernel release will be used - ex. 3.13
+        platform_version `uname -r`.strip
+      elsif File.exist?("/etc/alpine-release")
+        platform "alpine"
+        platform_version File.read("/etc/alpine-release").strip
+      elsif File.exist?("/usr/lib/os-release")
+        contents = File.read("/usr/lib/os-release")
+        if /Clear Linux/ =~ contents
+          platform "clearlinux"
+          platform_version contents[/VERSION_ID=(\d+)/, 1]
+        end
+      elsif lsb[:id] =~ /RedHat/i
+        platform "redhat"
+        platform_version lsb[:release]
+      elsif lsb[:id] =~ /Amazon/i
+        platform "amazon"
+        platform_version lsb[:release]
+      elsif lsb[:id] =~ /ScientificSL/i
+        platform "scientific"
+        platform_version lsb[:release]
+      elsif lsb[:id] =~ /XenServer/i
+        platform "xenserver"
+        platform_version lsb[:release]
+      elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
+        platform lsb[:id].downcase
+        platform_version lsb[:release]
       end
 
-      platform_family "wrlinux"
-      platform_version os_release_info["VERSION"]
-    elsif File.exist?("/etc/gentoo-release")
-      platform "gentoo"
-      # the gentoo release version is the base version used to bootstrap
-      # a node and doesn't have a lot of meaning in a rolling release distro
-      # kernel release will be used - ex. 3.18.7-gentoo
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/slackware-version")
-      platform "slackware"
-      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/arch-release")
-      platform "arch"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/exherbo-release")
-      platform "exherbo"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 3.13
-      platform_version `uname -r`.strip
-    elsif File.exist?("/etc/alpine-release")
-      platform "alpine"
-      platform_version File.read("/etc/alpine-release").strip
-    elsif File.exist?("/usr/lib/os-release")
-      contents = File.read("/usr/lib/os-release")
-      if /Clear Linux/ =~ contents
-        platform "clearlinux"
-        platform_version contents[/VERSION_ID=(\d+)/, 1]
-      end
-    elsif lsb[:id] =~ /RedHat/i
-      platform "redhat"
-      platform_version lsb[:release]
-    elsif lsb[:id] =~ /Amazon/i
-      platform "amazon"
-      platform_version lsb[:release]
-    elsif lsb[:id] =~ /ScientificSL/i
-      platform "scientific"
-      platform_version lsb[:release]
-    elsif lsb[:id] =~ /XenServer/i
-      platform "xenserver"
-      platform_version lsb[:release]
-    elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
-      platform lsb[:id].downcase
-      platform_version lsb[:release]
+      platform_family determine_platform_family
     end
-
-    platform_family determine_platform_family
   end
 end

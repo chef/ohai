@@ -26,6 +26,7 @@ Ohai.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 
   # common initial kernel attribute values
+  # @return [Mash] basic kernel properties from uname
   def init_kernel
     kernel Mash.new
     [["uname -s", :name], ["uname -r", :release],
@@ -38,6 +39,7 @@ Ohai.plugin(:Kernel) do
   end
 
   # common *bsd code for collecting modules data
+  # @return [Mash]
   def bsd_modules(path)
     modules = Mash.new
     so = shell_out("#{Ohai.abs_path(path)}")
@@ -50,15 +52,21 @@ Ohai.plugin(:Kernel) do
     modules
   end
 
-  # windows
-  def machine_lookup(sys_type)
+  # given the SystemType value from WMI's Win32_ComputerSystem class
+  # return the architecture type
+  # @param [String] sys_type SystemType value from Win32_ComputerSystem
+  # @return [String] x86_64 or i386
+  def arch_lookup(sys_type)
     return "x86_64" if sys_type == "x64-based PC"
     return "i386" if sys_type == "X86-based PC"
     sys_type
   end
 
-  # windows
-  def os_lookup(sys_type)
+  # decode the OSType field from WMI Win32_OperatingSystem class
+  # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+  # @param [Integer] sys_type the integer value from OSType
+  # @return [String] the human consumable OS type value
+  def os_type_decode(sys_type)
     case sys_type
     when 18 then "WINNT" # most likely so first
     when 0 then "Unknown"
@@ -185,7 +193,7 @@ Ohai.plugin(:Kernel) do
     kernel[:name] = "#{kernel[:os_info][:caption]}"
     kernel[:release] = "#{kernel[:os_info][:version]}"
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
-    kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
+    kernel[:os] = os_type_decode(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")
@@ -194,6 +202,6 @@ Ohai.plugin(:Kernel) do
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
-    kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
+    kernel[:machine] = arch_lookup("#{kernel[:cs_info][:system_type]}")
   end
 end

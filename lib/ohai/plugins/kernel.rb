@@ -59,15 +59,17 @@ Ohai.plugin(:Kernel) do
 
   # windows
   def os_lookup(sys_type)
-    return "WINNT" if sys_type == 18 # most likely so first
-    return "Unknown" if sys_type == 0
-    return "Other" if sys_type == 1
-    return "MSDOS" if sys_type == 14
-    return "WIN3x" if sys_type == 15
-    return "WIN95" if sys_type == 16
-    return "WIN98" if sys_type == 17
-    return "WINCE" if sys_type == 19
-    nil
+    case sys_type
+    when 18 then "WINNT" # most likely so first
+    when 0 then "Unknown"
+    when 1 then "Other"
+    when 14 then "MSDOS"
+    when 15 then "WIN3x"
+    when 16 then "WIN95"
+    when 17 then "WIN98"
+    when 19 then "WINCE"
+    else nil
+    end
   end
 
   collect_data(:default) do

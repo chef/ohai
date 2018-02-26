@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.13 -->
-## [v14.0.13](https://github.com/chef/ohai/tree/v14.0.13) (2018-02-23)
+<!-- latest_release 14.0.14 -->
+## [v14.0.14](https://github.com/chef/ohai/tree/v14.0.14) (2018-02-26)
 
 #### Merged Pull Requests
-- Support optional plugins [#1136](https://github.com/chef/ohai/pull/1136) ([thommay](https://github.com/thommay))
+- Simplify &amp; optimize the kernel plugin [#1139](https://github.com/chef/ohai/pull/1139) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Simplify &amp; optimize the kernel plugin [#1139](https://github.com/chef/ohai/pull/1139) ([tas50](https://github.com/tas50)) <!-- 14.0.14 -->
 - Support optional plugins [#1136](https://github.com/chef/ohai/pull/1136) ([thommay](https://github.com/thommay)) <!-- 14.0.13 -->
 - fix critical plugin tests [#1135](https://github.com/chef/ohai/pull/1135) ([thommay](https://github.com/thommay)) <!-- 14.0.11 -->
 - Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50)) <!-- 14.0.9 -->

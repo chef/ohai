@@ -185,18 +185,13 @@ Ohai.plugin(:Kernel) do
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_lookup(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
 
-    host = wmi.first_of("Win32_ComputerSystem")
     kernel[:cs_info] = Mash.new
-    cs_info_blacklist = [
-      "oem_logo_bitmap",
-    ]
+    host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
-      if !cs_info_blacklist.include?(p.name.wmi_underscore)
-        kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
-      end
+      next if p.name.wmi_underscore == "oem_logo_bitmap" # big bitmap doesn't need to be in ohai
+      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
     kernel[:machine] = machine_lookup("#{kernel[:cs_info][:system_type]}")
-
   end
 end

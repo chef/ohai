@@ -53,6 +53,7 @@ Ohai.plugin(:Kernel) do
   end
 
   # given the SystemType value from WMI's Win32_ComputerSystem class
+  # https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
   # return the architecture type
   # @param [String] sys_type SystemType value from Win32_ComputerSystem
   # @return [String] x86_64 or i386
@@ -60,6 +61,16 @@ Ohai.plugin(:Kernel) do
     return "x86_64" if sys_type == "x64-based PC"
     return "i386" if sys_type == "X86-based PC"
     sys_type
+  end
+
+  # given the ProductType value from WMI's Win32_OperatingSystem class
+  # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+  # return either workstation or server
+  # @param [Integer] type ProductType value from Win32_ComputerSystem
+  # @return [String] Workstation or Server
+  def product_type_decode(type)
+    return "Workstation" if type == 1
+    "Server"
   end
 
   # decode the OSType field from WMI Win32_OperatingSystem class
@@ -76,6 +87,25 @@ Ohai.plugin(:Kernel) do
     when 16 then "WIN95"
     when 17 then "WIN98"
     when 19 then "WINCE"
+    else nil
+    end
+  end
+
+  # decode the PCSystemType field from WMI Win32_OperatingSystem class
+  # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+  # @param [Integer] type the integer value from PCSystemType
+  # @return [String] the human consumable OS type value
+  def pc_system_type_decode(type)
+    case type
+    when 4 then "Enterprise Server" # most likely so first
+    when 0 then "Unspecified"
+    when 1 then "Desktop"
+    when 2 then "Mobile"
+    when 3 then "Workstation"
+    when 5 then "SOHO Server"
+    when 6 then "Appliance PC"
+    when 7 then "Performance Server"
+    when 8 then "Maximum"
     else nil
     end
   end
@@ -194,6 +224,7 @@ Ohai.plugin(:Kernel) do
     kernel[:release] = "#{kernel[:os_info][:version]}"
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_type_decode(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
+    kernel[:product_type] = product_type_decode(kernel[:os_info][:product_type])
 
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")
@@ -203,5 +234,6 @@ Ohai.plugin(:Kernel) do
     end
 
     kernel[:machine] = arch_lookup("#{kernel[:cs_info][:system_type]}")
+    kernel[:system_type] = pc_system_type_decode(kernel[:cs_info][:pc_system_type])
   end
 end

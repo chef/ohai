@@ -1,5 +1,5 @@
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,8 +49,9 @@ EOF
 
 describe Ohai::System, "plugin virtualbox" do
   context "when VBoxControl shellout fails" do
-    it "should not set the virtualbox attribute" do
-      plugin = get_plugin("virtualbox")
+    let(:plugin) { get_plugin("virtualbox") }
+
+    it "does not set the virtualbox attribute" do
       allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin).not_to have_key(:virtualbox)
@@ -65,23 +66,23 @@ describe Ohai::System, "plugin virtualbox" do
       plugin.run
     end
 
-    it "should set the host version" do
+    it "sets the host version" do
       expect(plugin[:virtualbox][:host][:version]).to eql("5.0.10")
     end
 
-    it "should set the host revision" do
+    it "sets the host revision" do
       expect(plugin[:virtualbox][:host][:revision]).to eql("104061")
     end
 
-    it "should set the host language" do
+    it "sets the host language" do
       expect(plugin[:virtualbox][:host][:language]).to eql("en_US")
     end
 
-    it "should set the guest additions version" do
+    it "sets the guest additions version" do
       expect(plugin[:virtualbox][:guest][:guest_additions_version]).to eql("5.0.2")
     end
 
-    it "should set the guest additions revision" do
+    it "sets the guest additions revision" do
       expect(plugin[:virtualbox][:guest][:guest_additions_revision]).to eql("102096")
     end
   end

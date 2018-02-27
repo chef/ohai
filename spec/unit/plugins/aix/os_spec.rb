@@ -1,6 +1,6 @@
 #
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,18 +18,19 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "AIX os plugin" do
+  let(:plugin) { get_plugin("aix/os") }
+
   before(:each) do
-    @plugin = get_plugin("aix/os")
-    allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543\n", nil))
-    @plugin.run
+    allow(plugin).to receive(:collect_os).and_return(:aix)
+    allow(plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543\n", nil))
+    plugin.run
   end
 
-  it "should set the top-level os attribute" do
-    expect(@plugin[:os]).to eql(:aix)
+  it "sets the top-level os attribute" do
+    expect(plugin[:os]).to eql(:aix)
   end
 
-  it "should set the top-level os_level attribute" do
-    expect(@plugin[:os_version]).to eql("7200-00-01-1543")
+  it "sets the top-level os_level attribute" do
+    expect(plugin[:os_version]).to eql("7200-00-01-1543")
   end
 end

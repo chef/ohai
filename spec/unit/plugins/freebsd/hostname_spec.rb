@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,17 +19,18 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "FreeBSD hostname plugin" do
+  let(:plugin) { get_plugin("hostname") }
+
   before(:each) do
-    @plugin = get_plugin("hostname")
-    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
-    allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname -f").and_return(mock_shell_out(0, "katie.bethell", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    allow(plugin).to receive(:shell_out).with("hostname -f").and_return(mock_shell_out(0, "katie.bethell", ""))
+    allow(plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
-  it_should_check_from("freebsd::hostname", "hostname", "hostname -s", "katie")
+  it_expects_from_mash("freebsd::hostname", "hostname", "hostname -s", "katie")
 
-  it_should_check_from("freebsd::hostname", "fqdn", "hostname -f", "katie.bethell")
+  it_expects_from_mash("freebsd::hostname", "fqdn", "hostname -f", "katie.bethell")
 
-  it_should_check_from("freebsd::hostname", "machinename", "hostname", "katie.local")
+  it_expects_from_mash("freebsd::hostname", "machinename", "hostname", "katie.local")
 end

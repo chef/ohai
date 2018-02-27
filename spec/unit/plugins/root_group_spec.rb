@@ -20,9 +20,7 @@ require_relative "../../spec_helper.rb"
 require "ohai/util/win32/group_helper"
 
 describe Ohai::System, "root_group" do
-  before(:each) do
-    @plugin = get_plugin("root_group")
-  end
+  let(:plugin) { get_plugin("root_group") }
 
   describe "unix platform", :unix_only do
     before(:each) do
@@ -40,9 +38,9 @@ describe Ohai::System, "root_group" do
       before(:each) do
         allow(@grgid).to receive(:name).and_return("wheel")
       end
-      it "should have a root_group of wheel" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("wheel")
+      it "has a root_group of wheel" do
+        plugin.run
+        expect(plugin[:root_group]).to eq("wheel")
       end
     end
 
@@ -50,9 +48,9 @@ describe Ohai::System, "root_group" do
       before(:each) do
         allow(@grgid).to receive(:name).and_return("root")
       end
-      it "should have a root_group of root" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("root")
+      it "has a root_group of root" do
+        plugin.run
+        expect(plugin[:root_group]).to eq("root")
       end
     end
 
@@ -61,18 +59,18 @@ describe Ohai::System, "root_group" do
         allow(@pwnam).to receive(:gid).and_return(3)
         allow(@grgid).to receive(:name).and_return("sys")
       end
-      it "should have a root_group of sys" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("sys")
+      it "has a root_group of sys" do
+        plugin.run
+        expect(plugin[:root_group]).to eq("sys")
       end
     end
     describe "platform aix with system group" do
       before(:each) do
         allow(@grgid).to receive(:name).and_return("system")
       end
-      it "should have a root_group of system" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("system")
+      it "has a root_group of system" do
+        plugin.run
+        expect(plugin[:root_group]).to eq("system")
       end
     end
   end
@@ -81,8 +79,8 @@ describe Ohai::System, "root_group" do
     it "should return the group administrators" do
       stub_const("::RbConfig::CONFIG", { "host_os" => "windows" } )
       expect(Ohai::Util::Win32::GroupHelper).to receive(:windows_root_group_name).and_return("administrators")
-      @plugin.run
-      expect(@plugin[:root_group]).to eq("administrators")
+      plugin.run
+      expect(plugin[:root_group]).to eq("administrators")
     end
   end
 end

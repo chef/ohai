@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright (c) 2014 Chef Software, Inc
+# Copyright:: Copyright (c) 2014-2018 Chef Software, Inc
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ describe Ohai::System, "plugin powershell" do
   let(:plugin) { get_plugin("powershell") }
 
   before do
-    stub_const("::RbConfig::CONFIG", { "host_os" => "windows" })
+    allow(plugin).to receive(:collect_os).and_return(:windows)
   end
 
   before(:each) do

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,17 +21,10 @@ require_relative "../../spec_helper.rb"
 ruby_bin = File.join(::RbConfig::CONFIG["bindir"], ::RbConfig::CONFIG["ruby_install_name"])
 
 describe Ohai::System, "plugin ruby" do
-
-  before(:all) do
-    @plugin = get_plugin("ruby")
-    @plugin[:languages] = Mash.new
-    @plugin.run
-
-    @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
-  end
-
-  before(:each) do
-    @ruby_ohai_data = @ruby_ohai_data_pristine.dup
+  let(:plugin) do
+    plugin = get_plugin("ruby")
+    plugin[:languages] = Mash.new
+    plugin
   end
 
   {
@@ -52,8 +45,9 @@ describe Ohai::System, "plugin ruby" do
     end.find { |bin| ::File.exists? bin },
     :ruby_bin => ruby_bin,
   }.each do |attribute, value|
-    it "should have #{attribute} set to #{value.inspect}" do
-      expect(@ruby_ohai_data[attribute]).to eql(value)
+    it "has #{attribute} set to #{value.inspect}" do
+      plugin.run
+      expect(plugin[:languages][:ruby][attribute]).to eql(value)
     end
   end
 

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,30 +19,31 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux plugin uptime" do
+  let(:plugin) { get_plugin("uptime") }
+
   before(:each) do
-    @plugin = get_plugin("uptime")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/uptime", { :gets => "18423 989" })
     allow(File).to receive(:open).with("/proc/uptime").and_return(@double_file)
   end
 
-  it "should set uptime_seconds to uptime" do
-    @plugin.run
-    expect(@plugin[:uptime_seconds]).to eq(18423)
+  it "sets uptime_seconds to uptime" do
+    plugin.run
+    expect(plugin[:uptime_seconds]).to eq(18423)
   end
 
-  it "should set uptime to a human readable date" do
-    @plugin.run
-    expect(@plugin[:uptime]).to eq("5 hours 07 minutes 03 seconds")
+  it "sets uptime to a human readable date" do
+    plugin.run
+    expect(plugin[:uptime]).to eq("5 hours 07 minutes 03 seconds")
   end
 
-  it "should set idletime_seconds to uptime" do
-    @plugin.run
-    expect(@plugin[:idletime_seconds]).to eq(989)
+  it "sets idletime_seconds to uptime" do
+    plugin.run
+    expect(plugin[:idletime_seconds]).to eq(989)
   end
 
-  it "should set idletime to a human readable date" do
-    @plugin.run
-    expect(@plugin[:idletime]).to eq("16 minutes 29 seconds")
+  it "sets idletime to a human readable date" do
+    plugin.run
+    expect(plugin[:idletime]).to eq("16 minutes 29 seconds")
   end
 end

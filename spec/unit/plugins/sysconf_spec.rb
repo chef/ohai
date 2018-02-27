@@ -21,7 +21,7 @@ require_relative "../../spec_helper.rb"
 describe Ohai::System, "sysconf plugin", :unix_only do
   let(:plugin) { get_plugin("sysconf") }
 
-  it "should populate sysconf if getconf is found" do
+  it "populates sysconf if getconf is found" do
     getconf_out = <<-GETCONF_OUT
 LINK_MAX                           65000
 _POSIX_LINK_MAX                    65000
@@ -672,7 +672,7 @@ GETCONF_OUT
     })
   end
 
-  it "should not populate sysconf if getconf is not found" do
+  it "does not populate sysconf if getconf is not found" do
     allow(plugin).to receive(:which).with("getconf").and_return(false)
     plugin.run
     expect(plugin[:sysconf]).to be(nil)

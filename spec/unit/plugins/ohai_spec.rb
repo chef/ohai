@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Tollef Fog Heen <tfheen@err.no>
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # Copyright:: Copyright (c) 2010 Tollef Fog Heen <tfheen@err.no>
 # License:: Apache License, Version 2.0
 #
@@ -21,12 +21,10 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "plugin ohai" do
-  before(:each) do
-    @plugin = get_plugin("ohai")
-  end
+  let(:plugin) { get_plugin("ohai") }
 
-  it "should set [:chef_packages][:ohai][:version] to the current version" do
-    @plugin.run
-    expect(@plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
+  it "sets [:chef_packages][:ohai][:version] to the current version" do
+    plugin.run
+    expect(plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
   end
 end

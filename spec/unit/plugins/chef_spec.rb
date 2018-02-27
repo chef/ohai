@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Tollef Fog Heen <tfheen@err.no>
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # Copyright:: Copyright (c) 2010 Tollef Fog Heen <tfheen@err.no>
 # License:: Apache License, Version 2.0
 #
@@ -23,13 +23,11 @@ begin
   require "chef/version"
 
   describe Ohai::System, "plugin chef" do
-    before(:each) do
-      @plugin = get_plugin("chef")
-    end
+    let(:plugin) { get_plugin("chef") }
 
-    it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
-      @plugin.run
-      expect(@plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
+    it "sets [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
+      plugin.run
+      expect(plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
     end
 
     pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)

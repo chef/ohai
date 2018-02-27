@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,53 +19,54 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin plugin platform" do
+  let(:plugin) { get_plugin("darwin/platform") }
+
   before(:each) do
-    @plugin = get_plugin("darwin/platform")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
     @stdout = "ProductName:	Mac OS X\nProductVersion:	10.5.5\nBuildVersion:	9F33"
-    allow(@plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
+    allow(plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
   end
 
-  it "should run sw_vers" do
-    expect(@plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
-    @plugin.run
+  it "runs sw_vers" do
+    expect(plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
+    plugin.run
   end
 
-  it "should set platform to ProductName, downcased with _ for \\s" do
-    @plugin.run
-    expect(@plugin[:platform]).to eq("mac_os_x")
+  it "sets platform to ProductName, downcased with _ for \\s" do
+    plugin.run
+    expect(plugin[:platform]).to eq("mac_os_x")
   end
 
-  it "should set platform_version to ProductVersion" do
-    @plugin.run
-    expect(@plugin[:platform_version]).to eq("10.5.5")
+  it "sets platform_version to ProductVersion" do
+    plugin.run
+    expect(plugin[:platform_version]).to eq("10.5.5")
   end
 
-  it "should set platform_build to BuildVersion" do
-    @plugin.run
-    expect(@plugin[:platform_build]).to eq("9F33")
+  it "sets platform_build to BuildVersion" do
+    plugin.run
+    expect(plugin[:platform_build]).to eq("9F33")
   end
 
-  it "should set platform_family to mac_os_x" do
-    @plugin.run
-    expect(@plugin[:platform_family]).to eq("mac_os_x")
+  it "sets platform_family to mac_os_x" do
+    plugin.run
+    expect(plugin[:platform_family]).to eq("mac_os_x")
   end
 
   describe "on os x server" do
     before(:each) do
-      @plugin[:os] = "darwin"
+      plugin[:os] = "darwin"
       @stdout = "ProductName:	Mac OS X Server\nProductVersion:	10.6.8\nBuildVersion:	10K549"
-      allow(@plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
+      allow(plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should set platform to mac_os_x_server" do
-      @plugin.run
-      expect(@plugin[:platform]).to eq("mac_os_x_server")
+    it "sets platform to mac_os_x_server" do
+      plugin.run
+      expect(plugin[:platform]).to eq("mac_os_x_server")
     end
 
-    it "should set platform_family to mac_os_x" do
-      @plugin.run
-      expect(@plugin[:platform_family]).to eq("mac_os_x")
+    it "sets platform_family to mac_os_x" do
+      plugin.run
+      expect(plugin[:platform_family]).to eq("mac_os_x")
     end
   end
 end

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,19 +21,20 @@ require_relative "../../spec_helper.rb"
 ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG["host_os"]
 
 describe Ohai::System, "plugin os" do
+  let(:plugin) { get_plugin("os") }
+
   before(:each) do
-    @plugin = get_plugin("os")
-    @plugin[:kernel] = Mash.new
-    @plugin[:kernel][:release] = "kings of leon"
+    plugin[:kernel] = Mash.new
+    plugin[:kernel][:release] = "kings of leon"
   end
 
   after do
     ::RbConfig::CONFIG["host_os"] = ORIGINAL_CONFIG_HOST_OS
   end
 
-  it "should set os_version to kernel_release" do
-    @plugin.run
-    expect(@plugin[:os_version]).to eq(@plugin[:kernel][:release])
+  it "sets os_version to kernel_release" do
+    plugin.run
+    expect(plugin[:os_version]).to eq(plugin[:kernel][:release])
   end
 
   describe "on linux" do
@@ -41,9 +42,9 @@ describe Ohai::System, "plugin os" do
       ::RbConfig::CONFIG["host_os"] = "linux"
     end
 
-    it "should set the os to linux" do
-      @plugin.run
-      expect(@plugin[:os]).to eq("linux")
+    it "sets the os to linux" do
+      plugin.run
+      expect(plugin[:os]).to eq("linux")
     end
   end
 
@@ -52,9 +53,9 @@ describe Ohai::System, "plugin os" do
       ::RbConfig::CONFIG["host_os"] = "darwin10.0"
     end
 
-    it "should set the os to darwin" do
-      @plugin.run
-      expect(@plugin[:os]).to eq("darwin")
+    it "sets the os to darwin" do
+      plugin.run
+      expect(plugin[:os]).to eq("darwin")
     end
   end
 
@@ -64,8 +65,8 @@ describe Ohai::System, "plugin os" do
     end
 
     it "sets the os to solaris2" do
-      @plugin.run
-      expect(@plugin[:os]).to eq("solaris2")
+      plugin.run
+      expect(plugin[:os]).to eq("solaris2")
     end
   end
 
@@ -75,8 +76,8 @@ describe Ohai::System, "plugin os" do
     end
 
     it "sets the os to the ruby 'host_os'" do
-      @plugin.run
-      expect(@plugin[:os]).to eq("tron")
+      plugin.run
+      expect(plugin[:os]).to eq("tron")
     end
   end
 end

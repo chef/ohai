@@ -33,12 +33,12 @@ describe Ohai::System, "Darwin virtualization platform" do
   end
 
   describe "when detecting OS X virtualization" do
-    it "should not set virtualization keys if no binaries are found" do
+    it "does not set virtualization keys if no binaries are found" do
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
-    it "should set docker host if docker exists" do
+    it "sets docker host if docker exists" do
       allow(plugin).to receive(:docker_exists?).and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
@@ -46,7 +46,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:docker]).to eq("host")
     end
 
-    it "should set vmware host if /Applications/VMware\ Fusion.app exists" do
+    it "sets vmware host if /Applications/VMware\ Fusion.app exists" do
       allow(plugin).to receive(:fusion_exists?).and_return(true)
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vmware")
@@ -54,7 +54,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:vmware]).to eq("host")
     end
 
-    it "should set vbox host if /usr/local/bin/VBoxManage exists" do
+    it "sets vbox host if /usr/local/bin/VBoxManage exists" do
       allow(plugin).to receive(:vboxmanage_exists?).and_return("/usr/local/bin/VBoxManage")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vbox")
@@ -62,7 +62,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:vbox]).to eq("host")
     end
 
-    it "should set parallels host if /usr/bin/prlctl exists" do
+    it "sets parallels host if /usr/bin/prlctl exists" do
       allow(plugin).to receive(:prlctl_exists?).and_return("/usr/bin/prlctl")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("parallels")
@@ -70,7 +70,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:parallels]).to eq("host")
     end
 
-    it "should set parallels guest if /usr/sbin/ioreg exists and its output contains pci1ab8,4000" do
+    it "sets parallels guest if /usr/sbin/ioreg exists and its output contains pci1ab8,4000" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       ioreg = <<-IOREG
     | |   +-o pci1ab8,4000@3  <class IOPCIDevice, id 0x1000001d1, registered, matched, active, busy 0 (40 ms), retain 9>
@@ -104,7 +104,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:parallels]).to eq("guest")
     end
 
-    it "should not set parallels guest if /usr/sbin/ioreg exists and its output not contain pci1ab8,4000" do
+    it "does not set parallels guest if /usr/sbin/ioreg exists and its output not contain pci1ab8,4000" do
       allow(plugin).to receive(:ioreg_exists?).and_return(true)
       ioreg = <<-IOREG
     | |   +-o pci8086,2445@1F,4  <class IOPCIDevice, id 0x1000001d4, registered, matched, active, busy 0 (974 ms), retain 11>

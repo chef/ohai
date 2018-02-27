@@ -1,7 +1,7 @@
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
 # Author:: Claire McQuin (claire@chef.io)
-# Copyright:: Copyright (c) 2011, 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011, 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ shared_examples "a v7 loading failure" do
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should not have attribute keys" do
+  it "does not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     #@ohai.attributes.should_not have_key("fail")
     expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
@@ -97,12 +97,12 @@ shared_examples "a v7 loading success" do
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should have attribute keys" do
+  it "has attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
     expect(@ohai.provides_map).to have_key("fail")
   end
 
-  it "should not write to Ohai::Log" do
+  it "does not write to Ohai::Log" do
     expect(Ohai::Log).not_to receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
@@ -140,7 +140,7 @@ shared_examples "a v7 run failure" do
     @loader = Ohai::Loader.new(@ohai)
   end
 
-  it "should not have new attribute keys" do
+  it "does not have new attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
     expect(@ohai.provides_map).not_to have_key("other")
   end

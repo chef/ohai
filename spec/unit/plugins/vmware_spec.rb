@@ -59,7 +59,7 @@ describe Ohai::System, "plugin vmware" do
   end
 
   context "on vmware guest without toolbox" do
-    it "should not create a vmware attribute" do
+    it "does not create a vmware attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vmware] = Mash.new
@@ -70,7 +70,7 @@ describe Ohai::System, "plugin vmware" do
   end
 
   context "on vbox guest" do
-    it "should not create a vmware attribute" do
+    it "does not create a vmware attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vbox] = Mash.new

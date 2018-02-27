@@ -1,7 +1,7 @@
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ describe Ohai::System, "BSD filesystem plugin" do
   let(:plugin) { get_plugin("bsd/filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:freebsd)
-
     allow(plugin).to receive(:shell_out).with("df").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, "", ""))
@@ -46,48 +45,48 @@ DFi
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
-    it "should run df and df -iP" do
+    it "runs df and df -iP" do
       expect(plugin).to receive(:shell_out).ordered.with("df").and_return(mock_shell_out(0, @stdout, ""))
       expect(plugin).to receive(:shell_out).ordered.with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
       plugin.run
     end
 
-    it "should set kb_size to value from df" do
+    it "sets kb_size to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_size]).to eq("9637788")
     end
 
-    it "should set kb_used to value from df" do
+    it "sets kb_used to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_used]).to eq("3313504")
     end
 
-    it "should set kb_available to value from df" do
+    it "sets kb_available to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_available]).to eq("5553264")
     end
 
-    it "should set percent_used to value from df" do
+    it "sets percent_used to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:percent_used]).to eq("37%")
     end
 
-    it "should set mount to value from df" do
+    it "sets mount to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
     end
 
-    it "should set total_inodes to value from df -iP" do
+    it "sets total_inodes to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:total_inodes]).to eq("1043326")
     end
 
-    it "should set inodes_used to value from df -iP" do
+    it "sets inodes_used to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_used]).to eq("252576")
     end
 
-    it "should set inodes_available to value from df -iP" do
+    it "sets inodes_available to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_available]).to eq("790750")
     end
@@ -102,22 +101,22 @@ MOUNT
       allow(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, @stdout, ""))
     end
 
-    it "should run mount" do
+    it "runs mount" do
       expect(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, @stdout, ""))
       plugin.run
     end
 
-    it "should set mount to value from mount" do
+    it "sets mount to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
     end
 
-    it "should set fs_type to value from mount" do
+    it "sets fs_type to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:fs_type]).to eq("ufs")
     end
 
-    it "should set mount_options to an array of values from mount" do
+    it "sets mount_options to an array of values from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount_options]).to eq(["local", "journaled soft-updates"])
     end

@@ -1,6 +1,6 @@
 #
 # Author:: Daniel DeLeo (<dan@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -153,7 +153,7 @@ describe Ohai::ProvidesMap do
         provides_map.set_providers_for(plugin_1, ["do/not/eat"])
       end
 
-      it "should not raise error if a parent attribute is provided" do
+      it "does not raise error if a parent attribute is provided" do
         expect { provides_map.find_closest_providers_for(["do/not/eat/plastic"]) }.not_to raise_error
       end
 

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,20 +19,21 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "NetBSD plugin platform" do
+  let(:plugin) { get_plugin("netbsd/platform") }
+
   before(:each) do
-    @plugin = get_plugin("netbsd/platform")
-    allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "NetBSD\n", ""))
-    allow(@plugin).to receive(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
-    allow(@plugin).to receive(:collect_os).and_return(:netbsd)
+    allow(plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "NetBSD\n", ""))
+    allow(plugin).to receive(:shell_out).with("uname -r").and_return(mock_shell_out(0, "4.5\n", ""))
+    allow(plugin).to receive(:collect_os).and_return(:netbsd)
   end
 
-  it "should set platform to lowercased lsb[:id]" do
-    @plugin.run
-    expect(@plugin[:platform]).to eq("netbsd")
+  it "sets platform to lowercased lsb[:id]" do
+    plugin.run
+    expect(plugin[:platform]).to eq("netbsd")
   end
 
-  it "should set platform_version to lsb[:release]" do
-    @plugin.run
-    expect(@plugin[:platform_version]).to eq("4.5")
+  it "sets platform_version to lsb[:release]" do
+    plugin.run
+    expect(plugin[:platform_version]).to eq("4.5")
   end
 end

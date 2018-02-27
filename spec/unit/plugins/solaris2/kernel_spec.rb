@@ -19,6 +19,8 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris2.X kernel plugin" do
+  let(:plugin) { get_plugin("kernel") }
+
   # NOTE: Solaris will report the same module loaded multiple times
   # with the same ID, Loadaddr, etc. and only the info column different
   # ignoring it, and removing the data from this fixture.
@@ -134,11 +136,10 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   TOOMUCH
 
   before(:each) do
-    @plugin = get_plugin("kernel")
-    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
-    allow(@plugin).to receive(:init_kernel).and_return({})
-    allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
-    allow(@plugin).to receive(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
+    allow(plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(plugin).to receive(:init_kernel).and_return({})
+    allow(plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "SunOS\n", ""))
+    allow(plugin).to receive(:shell_out).with("modinfo").and_return(mock_shell_out(0, MODINFO, ""))
     @release = StringIO.new("                   Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC\n Assembled 17 January 2013")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
   end
@@ -146,38 +147,38 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   it "should give the Solaris update version information" do
     @release = StringIO.new("                      Solaris 10 10/08 s10s_u6wos_07b SPARC\n Use is subject to license terms.\n Assembled 27 October 2008")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
-    @plugin.run
-    expect(@plugin[:kernel][:update]).to eq("10 10/08 s10s_u6wos_07")
+    plugin.run
+    expect(plugin[:kernel][:update]).to eq("10 10/08 s10s_u6wos_07")
   end
 
   it "should give the Oracle Solaris update version information" do
     @release = StringIO.new("                   Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC\n Assembled 17 January 2013")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
-    @plugin.run
-    expect(@plugin[:kernel][:update]).to eq("10 1/13 s10s_u11wos_24")
+    plugin.run
+    expect(plugin[:kernel][:update]).to eq("10 1/13 s10s_u11wos_24")
   end
 
   it "should give the Solaris 11 update version information" do
     @release = StringIO.new("                            Oracle Solaris 11.3 SPARC\n Assembled 25 July 2016")
     allow(File).to receive(:open).with("/etc/release").and_yield(@release)
-    @plugin.run
-    expect(@plugin[:kernel][:update]).to eq("11.3")
+    plugin.run
+    expect(plugin[:kernel][:update]).to eq("11.3")
   end
 
-  it_should_check_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])
+  it_expects_from_deep_mash("solaris2::kernel", "kernel", "os", "uname -s", [0, "SunOS\n", ""])
 
   it "gives excruciating detail about kernel modules" do
-    @plugin.run
+    plugin.run
 
-    expect(@plugin[:kernel][:modules]).to have(107).modules
+    expect(plugin[:kernel][:modules]).to have(107).modules
 
     # Teh daterz
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
     teh_daterz = { "id" => 6, "loadaddr" => "1180000", "size" => 17955, "description" => "filesystem for specfs" }
-    expect(@plugin[:kernel][:modules].keys).to include("specfs")
-    expect(@plugin[:kernel][:modules].keys).not_to include("Module")
-    expect(@plugin[:kernel][:modules]["specfs"]).to eq(teh_daterz)
+    expect(plugin[:kernel][:modules].keys).to include("specfs")
+    expect(plugin[:kernel][:modules].keys).not_to include("Module")
+    expect(plugin[:kernel][:modules]["specfs"]).to eq(teh_daterz)
   end
 
 end

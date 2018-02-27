@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,26 +19,24 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "plugin ohai_time" do
-  before(:each) do
-    @plugin = get_plugin("ohai_time")
-  end
+  let(:plugin) { get_plugin("ohai_time") }
 
-  it "should get the current time" do
+  it "gets the current time" do
     expect(Time).to receive(:now)
-    @plugin.run
+    plugin.run
   end
 
-  it "should turn the time into a floating point number" do
+  it "converts the time into a floating point number" do
     time = Time.now
     expect(time).to receive(:to_f)
     allow(Time).to receive(:now).and_return(time)
-    @plugin.run
+    plugin.run
   end
 
-  it "should set ohai_time to the current time" do
+  it "sets ohai_time to the current time" do
     time = Time.now
     allow(Time).to receive(:now).and_return(time)
-    @plugin.run
-    expect(@plugin[:ohai_time]).to eq(time.to_f)
+    plugin.run
+    expect(plugin[:ohai_time]).to eq(time.to_f)
   end
 end

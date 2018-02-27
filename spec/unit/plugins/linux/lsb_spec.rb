@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,10 @@ require_relative "../../../spec_helper.rb"
 # We do not alter case for lsb attributes and consume them as provided
 
 describe Ohai::System, "Linux lsb plugin" do
+  let(:plugin) { get_plugin("linux/lsb") }
+
   before(:each) do
-    @plugin = get_plugin("linux/lsb")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
   describe "on systems with /etc/lsb-release" do
@@ -39,24 +40,24 @@ describe Ohai::System, "Linux lsb plugin" do
       allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
     end
 
-    it "should set lsb[:id]" do
-      @plugin.run
-      expect(@plugin[:lsb][:id]).to eq("Ubuntu")
+    it "sets lsb[:id]" do
+      plugin.run
+      expect(plugin[:lsb][:id]).to eq("Ubuntu")
     end
 
-    it "should set lsb[:release]" do
-      @plugin.run
-      expect(@plugin[:lsb][:release]).to eq("8.04")
+    it "sets lsb[:release]" do
+      plugin.run
+      expect(plugin[:lsb][:release]).to eq("8.04")
     end
 
-    it "should set lsb[:codename]" do
-      @plugin.run
-      expect(@plugin[:lsb][:codename]).to eq("hardy")
+    it "sets lsb[:codename]" do
+      plugin.run
+      expect(plugin[:lsb][:codename]).to eq("hardy")
     end
 
-    it "should set lsb[:description]" do
-      @plugin.run
-      expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
+    it "sets lsb[:description]" do
+      plugin.run
+      expect(plugin[:lsb][:description]).to eq("Ubuntu 8.04")
     end
   end
 
@@ -81,27 +82,27 @@ Description:  CentOS release 5.4 (Final)
 Release:  5.4
 Codename: Final
 LSB_RELEASE
-        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
-      it "should set lsb[:id]" do
-        @plugin.run
-        expect(@plugin[:lsb][:id]).to eq("CentOS")
+      it "sets lsb[:id]" do
+        plugin.run
+        expect(plugin[:lsb][:id]).to eq("CentOS")
       end
 
-      it "should set lsb[:release]" do
-        @plugin.run
-        expect(@plugin[:lsb][:release]).to eq("5.4")
+      it "sets lsb[:release]" do
+        plugin.run
+        expect(plugin[:lsb][:release]).to eq("5.4")
       end
 
-      it "should set lsb[:codename]" do
-        @plugin.run
-        expect(@plugin[:lsb][:codename]).to eq("Final")
+      it "sets lsb[:codename]" do
+        plugin.run
+        expect(plugin[:lsb][:codename]).to eq("Final")
       end
 
-      it "should set lsb[:description]" do
-        @plugin.run
-        expect(@plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
+      it "sets lsb[:description]" do
+        plugin.run
+        expect(plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
       end
     end
 
@@ -114,34 +115,34 @@ Description:    Fedora release 14 (Laughlin)
 Release:        14
 Codename:       Laughlin
 LSB_RELEASE
-        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
-      it "should set lsb[:id]" do
-        @plugin.run
-        expect(@plugin[:lsb][:id]).to eq("Fedora")
+      it "sets lsb[:id]" do
+        plugin.run
+        expect(plugin[:lsb][:id]).to eq("Fedora")
       end
 
-      it "should set lsb[:release]" do
-        @plugin.run
-        expect(@plugin[:lsb][:release]).to eq("14")
+      it "sets lsb[:release]" do
+        plugin.run
+        expect(plugin[:lsb][:release]).to eq("14")
       end
 
-      it "should set lsb[:codename]" do
-        @plugin.run
-        expect(@plugin[:lsb][:codename]).to eq("Laughlin")
+      it "sets lsb[:codename]" do
+        plugin.run
+        expect(plugin[:lsb][:codename]).to eq("Laughlin")
       end
 
-      it "should set lsb[:description]" do
-        @plugin.run
-        expect(@plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
+      it "sets lsb[:description]" do
+        plugin.run
+        expect(plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
       end
     end
   end
 
-  it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
+  it "does not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
     allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
     allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
-    expect(@plugin.attribute?(:lsb)).to be(false)
+    expect(plugin.attribute?(:lsb)).to be(false)
   end
 end

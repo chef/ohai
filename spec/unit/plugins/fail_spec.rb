@@ -1,7 +1,7 @@
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
 # Author:: Claire McQuin (claire@chef.io)
-# Copyright:: Copyright (c) 2011, 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011, 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

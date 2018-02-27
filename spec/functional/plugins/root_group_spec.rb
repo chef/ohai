@@ -1,7 +1,7 @@
 #
 # Author:: Adam Edwards (<adamed@chef.io>)
 #
-# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014-2018 Chef Software, Inc.
 #
 # License:: Apache License, Version 2.0
 #

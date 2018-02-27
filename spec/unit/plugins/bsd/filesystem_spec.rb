@@ -1,7 +1,7 @@
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@ describe Ohai::System, "BSD filesystem plugin" do
   let(:plugin) { get_plugin("bsd/filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:freebsd)
-
     allow(plugin).to receive(:shell_out).with("df").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, "", ""))

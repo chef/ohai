@@ -35,13 +35,6 @@ def convert_windows_output(stdout)
   stdout.gsub("\n", "\r\n")
 end
 
-def it_expects_from(plugin, attribute, from, value)
-  it "sets the #{attribute} to the value from '#{from}'" do
-    plugin.run
-    expect(plugin[attribute]).to eq(value)
-  end
-end
-
 def it_expects_from_mash(plugin, attribute, from, value)
   it "gets the #{plugin}[:#{attribute}] value from '#{from}'" do
     expect(plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))

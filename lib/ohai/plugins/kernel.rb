@@ -52,6 +52,30 @@ Ohai.plugin(:Kernel) do
     modules
   end
 
+  # given the OperatingSystemSKU value from WMI's Win32_OperatingSystem class
+  # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+  # return if we're on a Server Core installation
+  # @param [String] sku OperatingSystemSKU value from Win32_OperatingSystem
+  # @return [boolean]
+  def server_core?(sku)
+    return true if [
+      12, # Server Datacenter Core
+      39, # Server Datacenter without Hyper-V Core
+      14, # Server Enterprise Core
+      41, # Server Enterprise without Hyper-V Core
+      13, # Server Standard Core
+      40, # Server Standard without Hyper-V Core
+      63, # Small Business Server Premium Core
+      53, # Server Solutions Premium Core
+      46, # Storage Server Enterprise Core
+      43, # Storage Server Express Core
+      44, # Storage Server Standard Core
+      45, # Storage Server Workgroup Core
+      29 # Web Server Core
+    ].include?(sku)
+    false
+  end
+
   # given the SystemType value from WMI's Win32_ComputerSystem class
   # https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
   # return the architecture type
@@ -66,7 +90,7 @@ Ohai.plugin(:Kernel) do
   # given the ProductType value from WMI's Win32_OperatingSystem class
   # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
   # return either workstation or server
-  # @param [Integer] type ProductType value from Win32_ComputerSystem
+  # @param [Integer] type ProductType value from Win32_OperatingSystem
   # @return [String] Workstation or Server
   def product_type_decode(type)
     return "Workstation" if type == 1
@@ -75,7 +99,7 @@ Ohai.plugin(:Kernel) do
 
   # decode the OSType field from WMI Win32_OperatingSystem class
   # https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
-  # @param [Integer] sys_type the integer value from OSType
+  # @param [Integer] sys_type OSType value from Win32_OperatingSystem
   # @return [String] the human consumable OS type value
   def os_type_decode(sys_type)
     case sys_type
@@ -225,6 +249,7 @@ Ohai.plugin(:Kernel) do
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_type_decode(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
     kernel[:product_type] = product_type_decode(kernel[:os_info][:product_type])
+    kernel[:server_core] = server_core?(kernel[:os_info][:operating_system_sku])
 
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")

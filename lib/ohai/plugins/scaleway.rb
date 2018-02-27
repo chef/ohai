@@ -51,7 +51,6 @@ Ohai.plugin(:Scaleway) do
       end
     else
       Ohai::Log.debug("Plugin Scaleway: No hints present for and doesn't look like scaleway")
-      false
     end
   end
 end

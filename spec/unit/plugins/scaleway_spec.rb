@@ -22,6 +22,7 @@ describe Ohai::System, "plugin scaleway" do
 
   before(:each) do
     allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
+    allow(File).to receive(:read).with("/proc/cmdline").and_return(false)
   end
 
   shared_examples_for "!scaleway" do
@@ -64,7 +65,7 @@ describe Ohai::System, "plugin scaleway" do
         and_return(double("Net::HTTP Response", :body => "", :code => "404"))
       plugin.run
 
-      expect(plugin[:scaleway]).to be_nil
+      expect(plugin[:scaleway]).not_to be_nil
     end
   end
 

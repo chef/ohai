@@ -21,7 +21,7 @@ describe Ohai::System, "plugin powershell" do
   let(:plugin) { get_plugin("powershell") }
 
   before do
-    stub_const("::RbConfig::CONFIG", { "host_os" => "windows" })
+    allow(plugin).to receive(:collect_os).and_return(:windows)
   end
 
   before(:each) do

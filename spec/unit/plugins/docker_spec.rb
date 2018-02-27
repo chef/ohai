@@ -78,7 +78,7 @@ describe Ohai::System, "plugin docker" do
   let(:plugin) { get_plugin("docker") }
 
   context "if the machine does not have docker installed" do
-    it "should not create a docker attribute" do
+    it "does not create a docker attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin.run
@@ -87,7 +87,7 @@ describe Ohai::System, "plugin docker" do
   end
 
   context "if the machine has docker installed" do
-    it "should create a docker attribute with correct data" do
+    it "creates a docker attribute with correct data" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:docker] = "host"

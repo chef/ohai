@@ -19,24 +19,24 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Aix plugin uptime" do
+  let(:plugin) { get_plugin("aix/uptime") }
 
   before(:each) do
-    @plugin = get_plugin("aix/uptime")
-    allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:shell_out).and_call_original
+    allow(plugin).to receive(:collect_os).and_return(:aix)
+    allow(plugin).to receive(:shell_out).and_call_original
   end
 
-  it "should set uptime_seconds and uptime standard case" do
-    allow(@plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0, "1148-20:54:50", nil))
-    @plugin.run
-    expect(@plugin[:uptime_seconds]).to eq(99262490)
-    expect(@plugin[:uptime]).to eq("1148 days 20 hours 54 minutes 50 seconds")
+  it "sets uptime_seconds and uptime standard case" do
+    allow(plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0, "1148-20:54:50", nil))
+    plugin.run
+    expect(plugin[:uptime_seconds]).to eq(99262490)
+    expect(plugin[:uptime]).to eq("1148 days 20 hours 54 minutes 50 seconds")
   end
 
-  it "should set uptime_seconds and uptime in the whitespace case" do
-    allow(@plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0, " 2-20:54:50", nil))
-    @plugin.run
-    expect(@plugin[:uptime_seconds]).to eq(248090)
-    expect(@plugin[:uptime]).to eq("2 days 20 hours 54 minutes 50 seconds")
+  it "sets uptime_seconds and uptime in the whitespace case" do
+    allow(plugin).to receive(:shell_out).with("LC_ALL=POSIX ps -o etime= -p 1").and_return(mock_shell_out(0, " 2-20:54:50", nil))
+    plugin.run
+    expect(plugin[:uptime_seconds]).to eq(248090)
+    expect(plugin[:uptime]).to eq("2 days 20 hours 54 minutes 50 seconds")
   end
 end

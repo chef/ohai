@@ -19,6 +19,8 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux Mdadm Plugin" do
+  let(:plugin) { get_plugin("linux/mdadm") }
+
   before(:each) do
     @md0 = <<-MD
 /dev/md0:
@@ -53,8 +55,7 @@ Working Devices : 6
        4       8       96        4      active sync   /dev/sdg
        5       8      112        5      active sync   /dev/sdh
 MD
-    @plugin = get_plugin("linux/mdadm")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/mdstat")
     allow(@double_file).to receive(:each).
       and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]").
@@ -62,46 +63,46 @@ MD
       and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
     allow(File).to receive(:open).with("/proc/mdstat").and_return(@double_file)
     allow(File).to receive(:exist?).with("/proc/mdstat").and_return(true)
-    allow(@plugin).to receive(:shell_out).with("mdadm --detail /dev/md0").and_return(mock_shell_out(0, @md0, ""))
+    allow(plugin).to receive(:shell_out).with("mdadm --detail /dev/md0").and_return(mock_shell_out(0, @md0, ""))
   end
 
   describe "gathering Mdadm information via /proc/mdstat and mdadm" do
 
-    it "should not raise an error" do
-      expect { @plugin.run }.not_to raise_error
+    it "does not raise an error" do
+      expect { plugin.run }.not_to raise_error
     end
 
     it "should detect raid level" do
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:level]).to eq(10)
+      plugin.run
+      expect(plugin[:mdadm][:md0][:level]).to eq(10)
     end
 
     it "should detect raid state" do
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:state]).to eq("clean")
+      plugin.run
+      expect(plugin[:mdadm][:md0][:state]).to eq("clean")
     end
 
     it "should detect raid size" do
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:size]).to eq(2794.16)
+      plugin.run
+      expect(plugin[:mdadm][:md0][:size]).to eq(2794.16)
     end
 
     it "should detect raid metadata level" do
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:version]).to eq(1.2)
+      plugin.run
+      expect(plugin[:mdadm][:md0][:version]).to eq(1.2)
     end
 
     device_counts = { :raid => 6, :total => 6, :active => 6, :working => 6, :failed => 0, :spare => 0 }
     device_counts.each_pair do |item, expected_value|
       it "should detect device count of \"#{item}\"" do
-        @plugin.run
-        expect(@plugin[:mdadm][:md0][:device_counts][item]).to eq(expected_value)
+        plugin.run
+        expect(plugin[:mdadm][:md0][:device_counts][item]).to eq(expected_value)
       end
     end
 
     it "should detect member devices" do
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+      plugin.run
+      expect(plugin[:mdadm][:md0][:members].sort).to eq(
         %w{sdc sdd sde sdf sdg sdh}
       )
     end
@@ -114,8 +115,8 @@ MD
         and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+      plugin.run
+      expect(plugin[:mdadm][:md0][:members].sort).to eq(
         %w{sdc sdd sde sdf sdg sdh sdi sdj}
       )
     end
@@ -128,8 +129,8 @@ MD
         and_yield("      2929893888 blocks super 1.2 256K chunks 2 near-copies [6/6] [UUUUUU]")
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:members].sort).to eq(
+      plugin.run
+      expect(plugin[:mdadm][:md0][:members].sort).to eq(
         %w{sdc sdd sde sdf sdg sdh}
       )
     end
@@ -141,8 +142,8 @@ MD
         and_yield("md0 : inactive nvme2n1p3[2](S)")
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:spares]).to eq(%w{nvme2n1p3})
+      plugin.run
+      expect(plugin[:mdadm][:md0][:spares]).to eq(%w{nvme2n1p3})
     end
 
     it "should report journal devices" do
@@ -152,8 +153,8 @@ MD
         and_yield("md0 : active (somecraphere) <morestuff raid6 sdbc1[7] sdd1[6] sde1[5] sdd1[4] sde1[3] sdf1[2] sdg1[1] nvme2n1p3[0](J)")
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:journal]).to eq("nvme2n1p3")
+      plugin.run
+      expect(plugin[:mdadm][:md0][:journal]).to eq("nvme2n1p3")
     end
 
     it "should report spare devices" do
@@ -163,8 +164,8 @@ MD
         and_yield("md0 : active (somecraphere) <morestuff raid6 sdbc1[7] sdd1[6] sde1[5] sdd1[4] sde1[3] sdf1[2] sdg1[1] sdh1[0](S)")
       allow(File).to receive(:open).with("/proc/mdstat").and_return(new_mdstat)
 
-      @plugin.run
-      expect(@plugin[:mdadm][:md0][:spares]).to eq(%w{sdh1})
+      plugin.run
+      expect(plugin[:mdadm][:md0][:spares]).to eq(%w{sdh1})
     end
   end
 end

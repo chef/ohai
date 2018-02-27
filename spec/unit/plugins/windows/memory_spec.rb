@@ -17,9 +17,9 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Windows memory plugin", :windows_only do
+  let(:plugin) { get_plugin("windows/memory") }
   before do
     require "wmi-lite/wmi"
-    @plugin = get_plugin("windows/memory")
     mock_os = {
                 "TotalVisibleMemorySize" => "10485760",
                 "FreePhysicalMemory" => "5242880",
@@ -29,24 +29,24 @@ describe Ohai::System, "Windows memory plugin", :windows_only do
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(mock_os)
   end
 
-  it "should get total memory" do
-    @plugin.run
-    expect(@plugin["memory"]["total"]).to eql("10485760kB")
+  it "gets total memory" do
+    plugin.run
+    expect(plugin["memory"]["total"]).to eql("10485760kB")
   end
 
-  it "should get free memory" do
-    @plugin.run
-    expect(@plugin["memory"]["free"]).to eql("5242880kB")
+  it "gets free memory" do
+    plugin.run
+    expect(plugin["memory"]["free"]).to eql("5242880kB")
   end
 
-  it "should get total swap" do
-    @plugin.run
-    expect(@plugin["memory"]["swap"]["total"]).to eql("20971520kB")
+  it "gets total swap" do
+    plugin.run
+    expect(plugin["memory"]["swap"]["total"]).to eql("20971520kB")
   end
 
-  it "should get free memory" do
-    @plugin.run
-    expect(@plugin["memory"]["swap"]["free"]).to eql("15728640kB")
+  it "gets free memory" do
+    plugin.run
+    expect(plugin["memory"]["swap"]["free"]).to eql("15728640kB")
   end
 
 end

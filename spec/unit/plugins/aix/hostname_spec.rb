@@ -19,15 +19,16 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "AIX hostname plugin" do
+  let(:plugin) { get_plugin("hostname") }
+
   before(:each) do
-    @plugin = get_plugin("hostname")
-    allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:from_cmd).with("hostname -s").and_return("aix_admin")
-    allow(@plugin).to receive(:from_cmd).with("hostname").and_return("aix_admin.ponyville.com")
-    @plugin.run
+    allow(plugin).to receive(:collect_os).and_return(:aix)
+    allow(plugin).to receive(:from_cmd).with("hostname -s").and_return("aix_admin")
+    allow(plugin).to receive(:from_cmd).with("hostname").and_return("aix_admin.ponyville.com")
+    plugin.run
   end
 
-  it "should set the machinename" do
-    expect(@plugin[:machinename]).to eql("aix_admin")
+  it "sets the machinename" do
+    expect(plugin[:machinename]).to eql("aix_admin")
   end
 end

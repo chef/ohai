@@ -19,14 +19,15 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "FreeBSD plugin os" do
+  let(:plugin) { get_plugin("freebsd/os") }
+
   before(:each) do
-    @plugin = get_plugin("freebsd/os")
-    allow(@plugin).to receive(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
-    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(plugin).to receive(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
+    allow(plugin).to receive(:collect_os).and_return(:freebsd)
   end
 
-  it "should set os_version to __FreeBSD_version" do
-    @plugin.run
-    expect(@plugin[:os_version]).to eq("902001")
+  it "sets os_version to __FreeBSD_version" do
+    plugin.run
+    expect(plugin[:os_version]).to eq("902001")
   end
 end

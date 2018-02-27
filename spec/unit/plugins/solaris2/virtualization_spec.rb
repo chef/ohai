@@ -19,6 +19,8 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris virtualization platform" do
+  let(:plugin) { get_plugin("solaris2/virtualization") }
+
   before(:each) do
     @psrinfo_pv = <<-PSRINFO_PV
 The physical processor has 1 virtual processor (0)
@@ -26,15 +28,14 @@ The physical processor has 1 virtual processor (0)
         Intel Pentium(r) Pro
 PSRINFO_PV
 
-    @plugin = get_plugin("solaris2/virtualization")
-    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(plugin).to receive(:collect_os).and_return(:solaris2)
 
     # default to all requested Files not existing
     allow(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(false)
     allow(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(false)
     allow(File).to receive(:exist?).with("/usr/sbin/zoneadm").and_return(false)
-    allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
-    allow(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
+    allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when we are checking for kvm" do
@@ -42,23 +43,23 @@ PSRINFO_PV
       expect(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(true)
     end
 
-    it "should run psrinfo -pv" do
-      expect(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv")
-      @plugin.run
+    it "runs psrinfo -pv" do
+      expect(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv")
+      plugin.run
     end
 
-    it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
-      allow(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("kvm")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
-      expect(@plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    it "sets kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
+      allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
-    it "should not set virtualization if kvm isn't there" do
-      expect(@plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
-      @plugin.run
-      expect(@plugin[:virtualization][:systems]).to eq({})
+    it "does not set virtualization if kvm isn't there" do
+      expect(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
+      plugin.run
+      expect(plugin[:virtualization][:systems]).to eq({})
     end
   end
 
@@ -67,12 +68,12 @@ PSRINFO_PV
       expect(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(true)
     end
 
-    it "should run smbios" do
-      expect(@plugin).to receive(:shell_out).with("/usr/sbin/smbios")
-      @plugin.run
+    it "runs smbios" do
+      expect(plugin).to receive(:shell_out).with("/usr/sbin/smbios")
+      plugin.run
     end
 
-    it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
+    it "sets virtualpc guest if smbios detects Microsoft Virtual Machine" do
       ms_vpc_smbios = <<-MSVPC
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
@@ -85,13 +86,13 @@ ID    SIZE TYPE
   UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
   Wake-Up Event: 0x6 (power switch)
 MSVPC
-      allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, ms_vpc_smbios, ""))
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("virtualpc")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
+      allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, ms_vpc_smbios, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("virtualpc")
+      expect(plugin[:virtualization][:role]).to eq("guest")
     end
 
-    it "should set vmware guest if smbios detects VMware Virtual Platform" do
+    it "sets vmware guest if smbios detects VMware Virtual Platform" do
       vmware_smbios = <<-VMWARE
 ID    SIZE TYPE
 1     72   SMB_TYPE_SYSTEM (system information)
@@ -104,22 +105,22 @@ ID    SIZE TYPE
   UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
   Wake-Up Event: 0x6 (power switch)
 VMWARE
-      allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, vmware_smbios, ""))
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("vmware")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
-      expect(@plugin[:virtualization][:systems][:vmware]).to eq("guest")
+      allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, vmware_smbios, ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vmware")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
     end
 
-    it "should run smbios and not set virtualization if nothing is detected" do
-      expect(@plugin).to receive(:shell_out).with("/usr/sbin/smbios")
-      @plugin.run
-      expect(@plugin[:virtualization][:systems]).to eq({})
+    it "runs smbios and not set virtualization if nothing is detected" do
+      expect(plugin).to receive(:shell_out).with("/usr/sbin/smbios")
+      plugin.run
+      expect(plugin[:virtualization][:systems]).to eq({})
     end
   end
 
-  it "should not set virtualization if no tests match" do
-    @plugin.run
-    expect(@plugin[:virtualization][:systems]).to eq({})
+  it "does not set virtualization if no tests match" do
+    plugin.run
+    expect(plugin[:virtualization][:systems]).to eq({})
   end
 end

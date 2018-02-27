@@ -39,7 +39,7 @@ describe Ohai::System, "plugin digital_ocean" do
   end
 
   shared_examples_for "!digital_ocean" do
-    it "should NOT attempt to fetch the digital_ocean metadata" do
+    it "does NOT attempt to fetch the digital_ocean metadata" do
       expect(plugin).not_to receive(:http_client)
       expect(plugin[:digital_ocean]).to be_nil
       plugin.run
@@ -72,7 +72,7 @@ describe Ohai::System, "plugin digital_ocean" do
       expect(plugin[:digital_ocean]["hostname"]).to eq("sample-droplet")
     end
 
-    it "should complete the run despite unavailable metadata" do
+    it "completes the run despite unavailable metadata" do
       expect(@http_client).to receive(:get).
         with("/metadata/v1.json").
         and_return(double("Net::HTTP Response", :body => "", :code => "404"))

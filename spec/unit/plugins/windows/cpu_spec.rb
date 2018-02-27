@@ -20,50 +20,51 @@ require_relative "../../../spec_helper.rb"
 
 shared_examples "a cpu" do |cpu_no|
   describe "cpu #{cpu_no}" do
-    it "should set physical_id to CPU#{cpu_no}" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:physical_id]).to eq("CPU#{cpu_no}")
+    it "sets physical_id to CPU#{cpu_no}" do
+      expect(plugin[:cpu]["#{cpu_no}"][:physical_id]).to eq("CPU#{cpu_no}")
     end
 
-    it "should set mhz to 2793" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:mhz]).to eq("2793")
+    it "sets mhz to 2793" do
+      expect(plugin[:cpu]["#{cpu_no}"][:mhz]).to eq("2793")
     end
 
-    it "should set vendor_id to GenuineIntel" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:vendor_id]).to eq("GenuineIntel")
+    it "sets vendor_id to GenuineIntel" do
+      expect(plugin[:cpu]["#{cpu_no}"][:vendor_id]).to eq("GenuineIntel")
     end
 
-    it "should set model_name to Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:model_name])
+    it "sets model_name to Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz" do
+      expect(plugin[:cpu]["#{cpu_no}"][:model_name])
         .to eq("Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz")
     end
 
-    it "should set description to Intel64 Family 6 Model 70 Stepping 1" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:description])
+    it "sets description to Intel64 Family 6 Model 70 Stepping 1" do
+      expect(plugin[:cpu]["#{cpu_no}"][:description])
         .to eq("Intel64 Family 6 Model 70 Stepping 1")
     end
 
-    it "should set model to 17921" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:model]).to eq("17921")
+    it "sets model to 17921" do
+      expect(plugin[:cpu]["#{cpu_no}"][:model]).to eq("17921")
     end
 
-    it "should set family to 2" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:family]).to eq("2")
+    it "sets family to 2" do
+      expect(plugin[:cpu]["#{cpu_no}"][:family]).to eq("2")
     end
 
-    it "should set stepping to 9" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:stepping]).to eq(9)
+    it "sets stepping to 9" do
+      expect(plugin[:cpu]["#{cpu_no}"][:stepping]).to eq(9)
     end
 
-    it "should set cache_size to 64 KB" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:cache_size]).to eq("64 KB")
+    it "sets cache_size to 64 KB" do
+      expect(plugin[:cpu]["#{cpu_no}"][:cache_size]).to eq("64 KB")
     end
   end
 end
 
 describe Ohai::System, "Windows cpu plugin" do
+  let(:plugin) { get_plugin("windows/cpu") }
+
   before(:each) do
-    @plugin = get_plugin("windows/cpu")
-    allow(@plugin).to receive(:collect_os).and_return(:windows)
+    allow(plugin).to receive(:collect_os).and_return(:windows)
 
     @double_wmi = double(WmiLite::Wmi)
     @double_wmi_instance = instance_double(WmiLite::Wmi)
@@ -98,20 +99,20 @@ describe Ohai::System, "Windows cpu plugin" do
       .with("Win32_Processor")
       .and_return(@processors)
 
-    @plugin.run
+    plugin.run
   end
 
-  it "should set total cpu to 2" do
-    expect(@plugin[:cpu][:total]).to eq(4)
+  it "sets total cpu to 2" do
+    expect(plugin[:cpu][:total]).to eq(4)
   end
 
-  it "should set real cpu to 2" do
-    expect(@plugin[:cpu][:real]).to eq(2)
+  it "sets real cpu to 2" do
+    expect(plugin[:cpu][:real]).to eq(2)
   end
 
-  it "should set 2 distinct cpus numbered 0 and 1" do
-    expect(@plugin[:cpu]).to have_key("0")
-    expect(@plugin[:cpu]).to have_key("1")
+  it "sets 2 distinct cpus numbered 0 and 1" do
+    expect(plugin[:cpu]).to have_key("0")
+    expect(plugin[:cpu]).to have_key("1")
   end
 
   it_behaves_like "a cpu", 0

@@ -19,9 +19,10 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
+  let(:plugin) { get_plugin("freebsd/cpu") }
+
   before(:each) do
-    @plugin = get_plugin("freebsd/cpu")
-    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(plugin).to receive(:collect_os).and_return(:freebsd)
     @double_file = double("/var/run/dmesg.boot")
     allow(@double_file).to receive(:each).
       and_yield("CPU: Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz (2793.59-MHz K8-class CPU)").
@@ -42,62 +43,63 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   end
 
   it "detects all CPU flags" do
-    @plugin.run
-    expect(@plugin[:cpu][:flags]).to eq(%w{fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 mmx fxsr sse sse2 sse3 pclmulqdq mon ssse3 cx16 sse4.1 sse4.2 movbe popcnt aesni xsave osxsave avx rdrand syscall nx rdtscp lm lahf abm nfpusg})
+    plugin.run
+    expect(plugin[:cpu][:flags]).to eq(%w{fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 mmx fxsr sse sse2 sse3 pclmulqdq mon ssse3 cx16 sse4.1 sse4.2 movbe popcnt aesni xsave osxsave avx rdrand syscall nx rdtscp lm lahf abm nfpusg})
   end
 
   it "detects CPU model_name" do
-    @plugin.run
-    expect(@plugin[:cpu][:model_name]).to eq("Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz")
+    plugin.run
+    expect(plugin[:cpu][:model_name]).to eq("Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz")
   end
 
   it "detects CPU mhz" do
-    @plugin.run
-    expect(@plugin[:cpu][:mhz]).to eq("2793.59")
+    plugin.run
+    expect(plugin[:cpu][:mhz]).to eq("2793.59")
   end
 
   it "detects CPU vendor_id" do
-    @plugin.run
-    expect(@plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
+    plugin.run
+    expect(plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
   end
 
   it "detects CPU family" do
-    @plugin.run
-    expect(@plugin[:cpu][:family]).to eq("6")
+    plugin.run
+    expect(plugin[:cpu][:family]).to eq("6")
   end
 
   it "detects CPU model" do
-    @plugin.run
-    expect(@plugin[:cpu][:model]).to eq("70")
+    plugin.run
+    expect(plugin[:cpu][:model]).to eq("70")
   end
 
   it "detects CPU stepping" do
-    @plugin.run
-    expect(@plugin[:cpu][:stepping]).to eq("1")
+    plugin.run
+    expect(plugin[:cpu][:stepping]).to eq("1")
   end
 
   it "detects real CPUs" do
-    @plugin.run
-    expect(@plugin[:cpu][:real]).to eq(2)
+    plugin.run
+    expect(plugin[:cpu][:real]).to eq(2)
   end
 
   it "detects total real CPU cores" do
-    @plugin.run
-    expect(@plugin[:cpu][:cores]).to eq(8)
+    plugin.run
+    expect(plugin[:cpu][:cores]).to eq(8)
   end
 
   it "detects total HT CPU cores" do
-    @plugin.run
-    expect(@plugin[:cpu][:total]).to eq(16)
+    plugin.run
+    expect(plugin[:cpu][:total]).to eq(16)
   end
 
 end
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
+  let(:plugin) { get_plugin("freebsd/cpu") }
+
   before(:each) do
-    @plugin = get_plugin("freebsd/cpu")
-    allow(@plugin).to receive(:collect_os).and_return(:freebsd)
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))
+    allow(plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))
     @double_file = double("/var/run/dmesg.boot")
     allow(@double_file).to receive(:each).
       and_yield("CPU: Intel(R) Atom(TM) CPU N270   @ 1.60GHz (1596.03-MHz 686-class CPU)").
@@ -106,24 +108,24 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
   end
 
   it "detects CPU vendor_id" do
-    @plugin.run
-    expect(@plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
+    plugin.run
+    expect(plugin[:cpu][:vendor_id]).to eq("GenuineIntel")
   end
 
   it "detects CPU family" do
-    @plugin.run
-    expect(@plugin[:cpu][:family]).to eq("6")
+    plugin.run
+    expect(plugin[:cpu][:family]).to eq("6")
   end
 
   it "detects CPU model" do
-    @plugin.run
+    plugin.run
 
-    expect(@plugin[:cpu][:model]).to eq("28")
+    expect(plugin[:cpu][:model]).to eq("28")
   end
 
   it "detects CPU stepping" do
-    @plugin.run
-    expect(@plugin[:cpu][:stepping]).to eq("2")
+    plugin.run
+    expect(plugin[:cpu][:stepping]).to eq("2")
   end
 
 end

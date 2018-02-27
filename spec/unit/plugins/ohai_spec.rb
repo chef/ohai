@@ -21,12 +21,10 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "plugin ohai" do
-  before(:each) do
-    @plugin = get_plugin("ohai")
-  end
+  let(:plugin) { get_plugin("ohai") }
 
-  it "should set [:chef_packages][:ohai][:version] to the current version" do
-    @plugin.run
-    expect(@plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
+  it "sets [:chef_packages][:ohai][:version] to the current version" do
+    plugin.run
+    expect(plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
   end
 end

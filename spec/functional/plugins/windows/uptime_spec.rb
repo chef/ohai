@@ -39,12 +39,12 @@ describe Ohai::System, "Windows plugin uptime" do
       allow(Time).to receive_message_chain(:new, :to_i).and_return(1473756619)
     end
 
-    it "should set uptime_seconds to uptime" do
+    it "sets uptime_seconds to uptime" do
       uptime_plugin.run
       expect(uptime_plugin[:uptime_seconds]).to be == 80331
     end
 
-    it "should set uptime to a human readable value" do
+    it "sets uptime to a human readable value" do
       uptime_plugin.run
       expect(uptime_plugin[:uptime]).to eq("22 hours 18 minutes 51 seconds")
     end
@@ -68,12 +68,12 @@ describe Ohai::System, "Windows plugin uptime" do
       allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
     end
 
-    it "should set uptime_seconds to uptime" do
+    it "sets uptime_seconds to uptime" do
       uptime_plugin.run
       expect(uptime_plugin[:uptime_seconds]).to be == 785345
     end
 
-    it "should set uptime to a human readable value" do
+    it "sets uptime to a human readable value" do
       uptime_plugin.run
       expect(uptime_plugin[:uptime]).to eq("9 days 02 hours 09 minutes 05 seconds")
     end

@@ -19,15 +19,16 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin kernel plugin" do
+  let(:plugin) { get_plugin("kernel") }
+
   before(:each) do
-    @plugin = get_plugin("kernel")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:init_kernel).and_return({})
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:init_kernel).and_return({})
   end
 
-  it "should populate kernel[:modules] from `kextstat -k -l`" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
-    allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, <<EOF, ""))
+  it "populates kernel[:modules] from `kextstat -k -l`" do
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
+    allow(plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, <<EOF, ""))
     8    0 0xffffff7f81aed000 0x41000    0x41000    com.apple.kec.corecrypto (1.0) <7 6 5 4 3 1>
     9   22 0xffffff7f807f3000 0x9000     0x9000     com.apple.iokit.IOACPIFamily (1.4) <7 6 4 3>
    10   30 0xffffff7f80875000 0x29000    0x29000    com.apple.iokit.IOPCIFamily (2.8) <7 6 5 4 3>
@@ -38,28 +39,28 @@ EOF
       "com.apple.iokit.IOACPIFamily" => { "version" => "1.4", "size" => 36864, "index" => "9", "refcount" => "22" },
       "com.apple.iokit.IOPCIFamily" => { "version" => "2.8", "size" => 167936, "index" => "10", "refcount" => "30" } }
 
-    @plugin.run
-    expect(@plugin[:kernel][:modules]).to eql(modules)
+    plugin.run
+    expect(plugin[:kernel][:modules]).to eql(modules)
   end
 
-  it "should not set kernel_machine to x86_64" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
-    allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
-    @plugin.run
-    expect(@plugin[:kernel][:machine]).not_to eq("x86_64")
+  it "does not set kernel_machine to x86_64" do
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
+    allow(plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
+    plugin.run
+    expect(plugin[:kernel][:machine]).not_to eq("x86_64")
   end
 
-  it "should set kernel_machine to x86_64" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
-    allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
-    @plugin.run
-    expect(@plugin[:kernel][:machine]).to eq("x86_64")
+  it "sets kernel_machine to x86_64" do
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
+    allow(plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
+    plugin.run
+    expect(plugin[:kernel][:machine]).to eq("x86_64")
   end
 
-  it "should set the kernel_os to the kernel_name value" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
-    allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
-    @plugin.run
-    expect(@plugin[:kernel][:os]).to eq(@plugin[:kernel][:name])
+  it "sets the kernel_os to the kernel_name value" do
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
+    allow(plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
+    plugin.run
+    expect(plugin[:kernel][:os]).to eq(plugin[:kernel][:name])
   end
 end

@@ -243,20 +243,20 @@ EOF
       end
 
       describe "when using :optional_plugins" do
-        it "should not run optional plugins by default" do
+        it "does not run optional plugins by default" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:optional]).to be_nil
         end
 
-        it "should run optional plugins when specifically enabled" do
+        it "runs optional plugins when specifically enabled" do
           Ohai.config[:optional_plugins] = [ :Optional ]
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:optional]).to eq("canteloupe")
         end
 
-        it "should run optional plugins when all plugins are enabled" do
+        it "runs optional plugins when all plugins are enabled" do
           Ohai.config[:run_all_plugins] = true
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
@@ -346,13 +346,13 @@ EOF
         expect(ohai.data[:desired_attr_count]).to eq(2)
       end
 
-      it "should not re-run dependencies of the plugin providing the desired attributes" do
+      it "does not re-run dependencies of the plugin providing the desired attributes" do
         expect(ohai.data[:depended_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
         expect(ohai.data[:depended_attr_count]).to eq(1)
       end
 
-      it "should not re-run plugins unrelated to the plugin providing the desired attributes" do
+      it "does not re-run plugins unrelated to the plugin providing the desired attributes" do
         expect(ohai.data[:other_attr_count]).to eq(1)
         ohai.refresh_plugins("desired_attr")
         expect(ohai.data[:other_attr_count]).to eq(1)
@@ -403,13 +403,13 @@ EOF
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should run all the plugins when a top level attribute is specified" do
+      it "runs all the plugins when a top level attribute is specified" do
         ohai.all_plugins("languages")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french][:version]).to eq(2012)
       end
 
-      it "should run the first parent when a non-existent child is specified" do
+      it "runs the first parent when a non-existent child is specified" do
         ohai.all_plugins("languages/english/version")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french]).to be_nil
@@ -462,7 +462,7 @@ EOF
         end
       E
 
-      it "should run all the plugins" do
+      it "runs all the plugins" do
         ohai.run_additional_plugins(@plugins_directory)
         expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
         expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)

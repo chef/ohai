@@ -47,7 +47,7 @@ describe Ohai::Runner, "run_plugin" do
       describe "if the plugin has run before" do
         let(:has_run) { true }
 
-        it "should not run the plugin" do
+        it "does not run the plugin" do
           expect(plugin).not_to receive(:safe_run)
           @runner.run_plugin(plugin)
         end
@@ -74,7 +74,7 @@ describe Ohai::Runner, "run_plugin" do
       klass.new(@ohai.data)
     end
 
-    it "should run the plugin" do
+    it "runs the plugin" do
       @runner.run_plugin(plugin)
       expect(plugin.has_run?).to be true
     end
@@ -103,7 +103,7 @@ describe Ohai::Runner, "run_plugin" do
         expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 
-      it "should not run the plugin" do
+      it "does not run the plugin" do
         expect { @runner.run_plugin(@plugin) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
         expect(@plugin.has_run?).to be false
       end
@@ -134,7 +134,7 @@ describe Ohai::Runner, "run_plugin" do
         @ohai.provides_map.set_providers_for(@plugin1, ["thing"])
       end
 
-      it "should run the plugins" do
+      it "runs the plugins" do
         @runner.run_plugin(@plugin2)
         @plugins.each do |plugin|
           expect(plugin.has_run?).to be true
@@ -168,7 +168,7 @@ describe Ohai::Runner, "run_plugin" do
         @ohai.provides_map.set_providers_for(@plugin2, ["thing"])
       end
 
-      it "should run the plugins" do
+      it "runs the plugins" do
         @runner.run_plugin(@plugin3)
         @plugins.each do |plugin|
           expect(plugin.has_run?).to be true
@@ -211,7 +211,7 @@ describe Ohai::Runner, "run_plugin" do
       @ohai.provides_map.set_providers_for(@plugin2, %w{one two})
     end
 
-    it "should run the plugins" do
+    it "runs the plugins" do
       @runner.run_plugin(@plugin3)
       @plugins.each do |plugin|
         expect(plugin.has_run?).to be true
@@ -304,7 +304,7 @@ describe Ohai::Runner, "run_plugin" do
       @plugin_a, @plugin_b, @plugin_c = @plugins
     end
 
-    it "should not detect a cycle when B is the first provider returned" do
+    it "does not detect a cycle when B is the first provider returned" do
       @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
       @ohai.provides_map.set_providers_for(@plugin_b, ["B"])
       @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
@@ -317,7 +317,7 @@ describe Ohai::Runner, "run_plugin" do
       end
     end
 
-    it "should not detect a cycle when C is the first provider returned" do
+    it "does not detect a cycle when C is the first provider returned" do
       @ohai.provides_map.set_providers_for(@plugin_a, ["A"])
       @ohai.provides_map.set_providers_for(@plugin_c, ["C"])
       @ohai.provides_map.set_providers_for(@plugin_b, ["B"])

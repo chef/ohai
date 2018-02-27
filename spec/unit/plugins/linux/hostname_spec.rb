@@ -19,32 +19,33 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux hostname plugin" do
+  let(:plugin) { get_plugin("hostname") }
+
   before(:each) do
-    @plugin = get_plugin("hostname")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
-    allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
+    allow(plugin).to receive(:shell_out).with("hostname --fqdn").and_return(mock_shell_out(0, "katie.bethell", ""))
+    allow(plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
-  it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")
+  it_expects_from_mash("linux::hostname", "hostname", "hostname -s", "katie")
 
-  it_should_check_from("linux::hostname", "fqdn", "hostname --fqdn", "katie.bethell")
+  it_expects_from_mash("linux::hostname", "fqdn", "hostname --fqdn", "katie.bethell")
 
-  it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
+  it_expects_from_mash("linux::hostname", "machinename", "hostname", "katie.local")
 
   describe "when domain name is unset" do
     before(:each) do
-      expect(@plugin).to receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
+      expect(plugin).to receive(:shell_out).with("hostname --fqdn").and_raise("Ohai::Exception::Exec")
     end
 
-    it "should not raise an error" do
-      expect { @plugin.run }.not_to raise_error
+    it "does not raise an error" do
+      expect { plugin.run }.not_to raise_error
     end
 
-    it "should not set fqdn" do
-      @plugin.run
-      expect(@plugin.fqdn).to eq(nil)
+    it "does not set fqdn" do
+      plugin.run
+      expect(plugin.fqdn).to eq(nil)
     end
 
   end

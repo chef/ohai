@@ -19,10 +19,10 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "ssh_host_key plugin" do
+  let(:plugin) { get_plugin("ssh_host_key") }
 
   before(:each) do
-    @plugin = get_plugin("ssh_host_key")
-    @plugin[:keys] = Mash.new
+    plugin[:keys] = Mash.new
 
     allow(File).to receive(:exists?).with("/etc/ssh/sshd_config").and_return(true)
     allow(File).to receive(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
@@ -49,27 +49,27 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   shared_examples "loads keys" do
     it "reads the key and sets the dsa attribute correctly" do
-      @plugin.run
-      expect(@plugin[:keys][:ssh][:host_dsa_public]).to eql(@dsa_key.split[1])
-      expect(@plugin[:keys][:ssh][:host_dsa_type]).to be_nil
+      plugin.run
+      expect(plugin[:keys][:ssh][:host_dsa_public]).to eql(@dsa_key.split[1])
+      expect(plugin[:keys][:ssh][:host_dsa_type]).to be_nil
     end
 
     it "reads the key and sets the rsa attribute correctly" do
-      @plugin.run
-      expect(@plugin[:keys][:ssh][:host_rsa_public]).to eql(@rsa_key.split[1])
-      expect(@plugin[:keys][:ssh][:host_rsa_type]).to be_nil
+      plugin.run
+      expect(plugin[:keys][:ssh][:host_rsa_public]).to eql(@rsa_key.split[1])
+      expect(plugin[:keys][:ssh][:host_rsa_type]).to be_nil
     end
 
     it "reads the key and sets the ecdsa attribute correctly" do
-      @plugin.run
-      expect(@plugin[:keys][:ssh][:host_ecdsa_public]).to eql(@ecdsa_key.split[1])
-      expect(@plugin[:keys][:ssh][:host_ecdsa_type]).to eql(@ecdsa_key.split[0])
+      plugin.run
+      expect(plugin[:keys][:ssh][:host_ecdsa_public]).to eql(@ecdsa_key.split[1])
+      expect(plugin[:keys][:ssh][:host_ecdsa_type]).to eql(@ecdsa_key.split[0])
     end
 
     it "reads the key and sets the ed25519 attribute correctly" do
-      @plugin.run
-      expect(@plugin[:keys][:ssh][:host_ed25519_public]).to eql(@ed25519_key.split[1])
-      expect(@plugin[:keys][:ssh][:host_ed25519_type]).to be_nil
+      plugin.run
+      expect(plugin[:keys][:ssh][:host_ed25519_public]).to eql(@ed25519_key.split[1])
+      expect(plugin[:keys][:ssh][:host_ed25519_type]).to be_nil
     end
   end
 

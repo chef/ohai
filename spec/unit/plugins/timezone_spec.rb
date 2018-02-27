@@ -18,13 +18,14 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "timezone plugin" do
+  let(:plugin) { get_plugin("timezone") }
+
   before(:each) do
-    @plugin = get_plugin("timezone")
     allow(Time).to receive_message_chain(:now, :getlocal, :zone) { "ZZZ" }
   end
 
-  it "should get the local timezone" do
-    @plugin.run
-    expect(@plugin["time"]["timezone"]).to eq("ZZZ")
+  it "gets the local timezone" do
+    plugin.run
+    expect(plugin["time"]["timezone"]).to eq("ZZZ")
   end
 end

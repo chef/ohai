@@ -25,7 +25,7 @@ describe Ohai::System, "Linux systemd paths plugin" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it "should populate systemd_paths if systemd-path is found" do
+  it "populates systemd_paths if systemd-path is found" do
     systemd_path_out = <<-SYSTEMD_PATH_OUT
 temporary: /tmp
 temporary-large: /var/tmp
@@ -114,7 +114,7 @@ SYSTEMD_PATH_OUT
     })
   end
 
-  it "should not populate systemd paths if systemd-path is not found" do
+  it "does not populate systemd paths if systemd-path is not found" do
     allow(plugin).to receive(:which).with("systemd-path").and_return(false)
     plugin.run
     expect(plugin[:systemd_paths]).to be(nil)

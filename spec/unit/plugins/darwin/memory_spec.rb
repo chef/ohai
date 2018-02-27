@@ -19,6 +19,8 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin Memory Plugin" do
+  let(:plugin) { get_plugin("darwin/memory") }
+
   before(:each) do
     darwin_memsize = <<-DARWIN_MEMSIZE
 17179869184
@@ -38,27 +40,26 @@ Pageins:                            630064.
 Pageouts:                                0.
 Object cache: 12 hits of 139872 lookups (0% hit rate)
     DARWIN_VM_STAT
-
-    @plugin = get_plugin("darwin/memory")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, darwin_memsize, ""))
-    allow(@plugin).to receive(:shell_out).with("vm_stat").and_return(mock_shell_out(0, darwin_vm_stat, ""))
-    @plugin.run
+    
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:shell_out).with("sysctl -n hw.memsize").and_return(mock_shell_out(0, darwin_memsize, ""))
+    allow(plugin).to receive(:shell_out).with("vm_stat").and_return(mock_shell_out(0, darwin_vm_stat, ""))
+    plugin.run
   end
 
-  it "should set memory[:total] to 16384MB" do
-    expect(@plugin[:memory][:total]).to eq("16384MB")
+  it "sets memory[:total] to 16384MB" do
+    expect(plugin[:memory][:total]).to eq("16384MB")
   end
 
-  it "should set memory[:active] to 5140MB" do
-    expect(@plugin[:memory][:active]).to eq("5140MB")
+  it "sets memory[:active] to 5140MB" do
+    expect(plugin[:memory][:active]).to eq("5140MB")
   end
 
-  it "should set memory[:inactive] to 738MB" do
-    expect(@plugin[:memory][:inactive]).to eq("738MB")
+  it "sets memory[:inactive] to 738MB" do
+    expect(plugin[:memory][:inactive]).to eq("738MB")
   end
 
-  it "should set memory[:free] to 10504MB" do
-    expect(@plugin[:memory][:free]).to eq("10504MB")
+  it "sets memory[:free] to 10504MB" do
+    expect(plugin[:memory][:free]).to eq("10504MB")
   end
 end

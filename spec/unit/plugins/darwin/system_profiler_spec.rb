@@ -20,9 +20,10 @@ require_relative "../../../spec_helper.rb"
 require_relative "system_profiler_output.rb"
 
 describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
+  let(:plugin) { get_plugin("darwin/system_profiler") }
+
   before(:each) do
-    @plugin = get_plugin("darwin/system_profiler")
-    allow(@plugin).to receive(:collect_os).and_return(:darwin)
+    allow(plugin).to receive(:collect_os).and_return(:darwin)
   end
 
   it "should return the right serial number" do
@@ -32,9 +33,9 @@ describe Ohai::System, "Darwin system_profiler plugin", :unix_only do
     mini_cmd += " SPPCIData SPParallelSCSIData SPPrintersSoftwareData SPPrintersData SPSASData SPSerialATAData"
     mini_cmd += " SPSoftwareData SPThunderboltData SPUSBData SPWWANData SPAirPortData"
     full_cmd = "system_profiler -xml -detailLevel full SPHardwareDataType"
-    allow(@plugin).to receive(:shell_out).with(full_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Full, ""))
-    allow(@plugin).to receive(:shell_out).with(mini_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Mini, ""))
-    @plugin.run
-    expect(@plugin["system_profile"][18]["_items"][0]["serial_number"]).to eq("ABCDEFG12345")
+    allow(plugin).to receive(:shell_out).with(full_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Full, ""))
+    allow(plugin).to receive(:shell_out).with(mini_cmd).and_return(mock_shell_out(0, SystemProfilerOutput::Mini, ""))
+    plugin.run
+    expect(plugin["system_profile"][18]["_items"][0]["serial_number"]).to eq("ABCDEFG12345")
   end
 end

@@ -29,7 +29,9 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     build_number = double("WIN32OLE", :name => "BuildNumber")
     csd_version  = double("WIN32OLE", :name => "CsdVersion")
     os_type = double("WIN32OLE", :name => "OsType")
-    os_properties = [ caption, version, build_number, csd_version, os_type ]
+    product_type = double("WIN32OLE", :name => "ProductType")
+    operating_system_sku = double("WIN32OLE", :name => "OperatingSystemSKU")
+    os_properties = [ caption, version, build_number, csd_version, os_type, product_type, operating_system_sku ]
 
     os = double( "WIN32OLE",
                   :properties_ => os_properties)
@@ -39,21 +41,23 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     allow(os).to receive(:invoke).with(os_type.name).and_return(18)
     allow(os).to receive(:invoke).with(caption.name).and_return("Microsoft Windows 7 Ultimate")
     allow(os).to receive(:invoke).with(version.name).and_return("6.1.7601")
+    allow(os).to receive(:invoke).with(product_type.name).and_return(1)
+    allow(os).to receive(:invoke).with(operating_system_sku.name).and_return(48)
 
     os_wmi = WmiLite::Wmi::Instance.new(os)
-
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(os_wmi)
 
-    # Mock a Win32_ComputerSystem OLE32 WMI object
-    x64_system_type = "x64-based PC"
+    system_type = double("WIN32OLE", :name => "SystemType")
+    pc_system_type = double("WIN32OLE", :name => "PCSystemType")
+    cs_properties = [ system_type, pc_system_type ]
 
     cs = double("WIN32OLE",
-                :properties_ => [ double("WIN32OLE", :name => "SystemType") ])
+                :properties_ => cs_properties)
 
-    allow(cs).to receive(:invoke).with("SystemType").and_return(x64_system_type)
+    allow(cs).to receive(:invoke).with(system_type.name).and_return("x64-based PC")
+    allow(cs).to receive(:invoke).with(pc_system_type.name).and_return(2)
 
     cs_wmi = WmiLite::Wmi::Instance.new(cs)
-
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_ComputerSystem").and_return(cs_wmi)
 
     plugin.run
@@ -65,5 +69,8 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     expect(plugin[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")
     expect(plugin[:kernel][:os]).to eq("WINNT")
     expect(plugin[:kernel][:machine]).to eq("x86_64")
+    expect(plugin[:kernel][:system_type]).to eq("Mobile")
+    expect(plugin[:kernel][:product_type]).to eq("Workstation")
+    expect(plugin[:kernel][:server_core]).to eq(false)
   end
 end

@@ -18,15 +18,12 @@
 Ohai.plugin(:RootGroup) do
   provides "root_group"
 
-  require "ohai/util/win32/group_helper" if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+  collect_data(:windows) do
+    require "ohai/util/win32/group_helper"
+    root_group Ohai::Util::Win32::GroupHelper.windows_root_group_name
+  end
 
-  collect_data do
-    case ::RbConfig::CONFIG["host_os"]
-    when /mswin|mingw32|windows/
-      group = Ohai::Util::Win32::GroupHelper.windows_root_group_name
-      root_group group
-    else
-      root_group Etc.getgrgid(Etc.getpwnam("root").gid).name
-    end
+  collect_data(:default) do
+    root_group Etc.getgrgid(Etc.getpwnam("root").gid).name
   end
 end

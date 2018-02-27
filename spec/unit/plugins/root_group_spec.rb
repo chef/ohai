@@ -79,7 +79,7 @@ describe Ohai::System, "root_group" do
 
   describe "windows platform" do
     it "should return the group administrators" do
-      stub_const("::RbConfig::CONFIG", { "host_os" => "windows" } )
+      allow(@plugin).to receive(:collect_os).and_return(:windows)
       expect(Ohai::Util::Win32::GroupHelper).to receive(:windows_root_group_name).and_return("administrators")
       @plugin.run
       expect(@plugin[:root_group]).to eq("administrators")

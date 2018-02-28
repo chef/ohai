@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.16 -->
-## [v14.0.16](https://github.com/chef/ohai/tree/v14.0.16) (2018-02-28)
+<!-- latest_release 14.0.17 -->
+## [v14.0.17](https://github.com/chef/ohai/tree/v14.0.17) (2018-02-28)
 
 #### Merged Pull Requests
-- Update root_group plugin to use the collect_data helper [#1144](https://github.com/chef/ohai/pull/1144) ([tas50](https://github.com/tas50))
+- Add additional information to the kernel plugin on Windows [#1142](https://github.com/chef/ohai/pull/1142) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Add additional information to the kernel plugin on Windows [#1142](https://github.com/chef/ohai/pull/1142) ([tas50](https://github.com/tas50)) <!-- 14.0.17 -->
 - Update root_group plugin to use the collect_data helper [#1144](https://github.com/chef/ohai/pull/1144) ([tas50](https://github.com/tas50)) <!-- 14.0.16 -->
 - Add scaleway plugin [#1124](https://github.com/chef/ohai/pull/1124) ([josqu4red](https://github.com/josqu4red)) <!-- 14.0.15 -->
 - Simplify &amp; optimize the kernel plugin [#1139](https://github.com/chef/ohai/pull/1139) ([tas50](https://github.com/tas50)) <!-- 14.0.14 -->

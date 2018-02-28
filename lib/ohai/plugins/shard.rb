@@ -20,6 +20,7 @@ Ohai.plugin(:ShardSeed) do
   require "digest/md5"
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
+  optional true
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|

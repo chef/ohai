@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "digest/md5"
+require "digest/sha2"
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "shard plugin" do
@@ -40,7 +40,7 @@ describe Ohai::System, "shard plugin" do
 
   it "should provide a shard with a default-safe set of sources" do
     plugin.run
-    result = Digest::MD5.hexdigest(
+    result = Digest::SHA256.hexdigest(
       "#{machinename}#{serial}#{uuid}"
     )[0...7].to_i(16)
     expect(plugin[:shard_seed]).to eq(result)
@@ -49,7 +49,7 @@ describe Ohai::System, "shard plugin" do
   it "should provide a shard with a configured source" do
     Ohai.config[:plugin][:shard_seed][:sources] = [:fqdn]
     plugin.run
-    result = Digest::MD5.hexdigest(fqdn)[0...7].to_i(16)
+    result = Digest::SHA256.hexdigest(fqdn)[0...7].to_i(16)
     expect(plugin[:shard_seed]).to eq(result)
   end
 

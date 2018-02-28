@@ -49,33 +49,4 @@ describe Ohai::System, "Windows plugin uptime" do
       expect(uptime_plugin[:uptime]).to eq("22 hours 18 minutes 51 seconds")
     end
   end
-
-  context "for older version of Windows" do
-    let(:uptime_plugin) do
-      get_plugin("uptime").tap do |plugin|
-        plugin[:platform_version] = "5.0.2195"
-      end
-    end
-
-    let(:wmi) do
-      double("wmi", { :first_of =>
-        { "systemuptime" => "785345" },
-      })
-    end
-
-    before(:each) do
-      allow(uptime_plugin).to receive(:collect_os).and_return(:windows)
-      allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
-    end
-
-    it "should set uptime_seconds to uptime" do
-      uptime_plugin.run
-      expect(uptime_plugin[:uptime_seconds]).to be == 785345
-    end
-
-    it "should set uptime to a human readable value" do
-      uptime_plugin.run
-      expect(uptime_plugin[:uptime]).to eq("9 days 02 hours 09 minutes 05 seconds")
-    end
-  end
 end

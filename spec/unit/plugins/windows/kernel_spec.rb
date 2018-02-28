@@ -49,13 +49,15 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
 
     system_type = double("WIN32OLE", :name => "SystemType")
     pc_system_type = double("WIN32OLE", :name => "PCSystemType")
-    cs_properties = [ system_type, pc_system_type ]
+    free_virtual_memory = double("WIN32OLE", :name => "FreeVirtualMemory")
+    cs_properties = [ system_type, pc_system_type, free_virtual_memory]
 
     cs = double("WIN32OLE",
                 :properties_ => cs_properties)
 
     allow(cs).to receive(:invoke).with(system_type.name).and_return("x64-based PC")
     allow(cs).to receive(:invoke).with(pc_system_type.name).and_return(2)
+    allow(cs).to receive(:invoke).with(free_virtual_memory.name).and_return("Why would you want this data here?")
 
     cs_wmi = WmiLite::Wmi::Instance.new(cs)
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_ComputerSystem").and_return(cs_wmi)
@@ -72,5 +74,6 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     expect(plugin[:kernel][:system_type]).to eq("Mobile")
     expect(plugin[:kernel][:product_type]).to eq("Workstation")
     expect(plugin[:kernel][:server_core]).to eq(false)
+    expect(plugin[:kernel]).not_to have_key(:free_virtual_memory)
   end
 end

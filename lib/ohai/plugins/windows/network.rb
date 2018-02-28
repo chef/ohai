@@ -36,7 +36,7 @@ Ohai.plugin(:Network) do
       wmi = WmiLite::Wmi.new
       data[:addresses] = wmi.instances_of("Win32_NetworkAdapterConfiguration")
 
-      # If we are running on windows nano or anothe roperating system from the future
+      # If we are running on windows nano or another operating system from the future
       # that does not populate the deprecated win32_* WMI classes, then we should
       # grab data from the newer MSFT_* classes
       return msft_adapter_data if data[:addresses].count == 0
@@ -81,6 +81,8 @@ Ohai.plugin(:Network) do
       i = adapter["index"] || adapter["InterfaceIndex"]
       iface_instance[i] = Mash.new
       adapter.wmi_ole_object.properties_.each do |p|
+        # skip wmi class name fields which make no sense in ohai
+        next if %w{creation_class_name system_creation_class_name}.include?(p.name.wmi_underscore)
         iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end

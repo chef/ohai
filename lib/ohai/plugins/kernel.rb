@@ -134,6 +134,24 @@ Ohai.plugin(:Kernel) do
     end
   end
 
+  # see if a WMI name is blacklisted so we can avoid writing out
+  # useless data to ohai
+  # @param [String] name the wmi name to check
+  # @return [Boolean] is the wmi name blacklisted
+  def blacklisted_wmi_name?(name)
+    [
+     "creation_class_name", # this is just the wmi name
+     "cs_creation_class_name", # this is just the wmi name
+     "oem_logo_bitmap", # this is the entire OEM bitmap file
+     "total_swap_space_size", # already in memory plugin
+     "total_virtual_memory_size", # already in memory plugin
+     "total_virtual_memory_size", # already in memory plugin
+     "free_physical_memory", # already in memory plugin
+     "free_space_in_paging_files", # already in memory plugin
+     "free_virtual_memory", # already in memory plugin
+    ].include?(name)
+  end
+
   collect_data(:default) do
     kernel init_kernel
   end
@@ -241,6 +259,7 @@ Ohai.plugin(:Kernel) do
     host = wmi.first_of("Win32_OperatingSystem")
     kernel[:os_info] = Mash.new
     host.wmi_ole_object.properties_.each do |p|
+      next if blacklisted_wmi_name?(p.name.wmi_underscore)
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
@@ -254,7 +273,7 @@ Ohai.plugin(:Kernel) do
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
-      next if p.name.wmi_underscore == "oem_logo_bitmap" # big bitmap doesn't need to be in ohai
+      next if blacklisted_wmi_name?(p.name.wmi_underscore)
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 

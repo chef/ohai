@@ -702,97 +702,146 @@ CISCO_RELEASE
 
   describe "on suse" do
 
-    describe "with os-release results" do
-      let(:have_suse_release) { false }
-      it "should read the platform as sles on SLES 15" do
-        expect(File).to receive(:read).with("/etc/os-release").                                                      and_return("VERSION=\"15\"\nVERSION_ID=\"15\"\nPRETTY_NAME=\"SUSE Linux Enterprise Server                            15\"\nID=\"sles\"\nID_LIKE=\"suse\"\nANSI_COLOR=\"0;32\"\nCPE_NAME=\"cpe:/o:suse:sles:15\"\n")
-        @plugin.run
-        expect(@plugin[:platform_family]).to eq("suse")
-        expect(@plugin[:platform]).to eq("sles")
-        expect(@plugin[:platform_version]).to eq("15")
-      end
-    end
+      context "on versions that have /etc/os-release and no /etc/SuSE-release (e.g. SLES15)" do
 
-    let(:have_suse_release) { true }
+        let(:have_suse_release) { false }
+        let(:have_os_release) { true }
 
-    describe "with lsb_release results" do
-      before(:each) do
-        @plugin[:lsb][:id] = "SUSE LINUX"
-      end
+        let(:os_release_content) do
+          <<-OS_RELEASE
+VERSION="15"
+VERSION_ID="15"
+PRETTY_NAME="SUSE Linux Enterprise Server 15"
+ID="sles"
+ID_LIKE="suse"
+ANSI_COLOR="0;32"
+CPE_NAME="cpe:/o:suse:sles:15"
 
-      it "should read the platform as opensuse on openSUSE" do
-        @plugin[:lsb][:release] = "12.1"
-        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("opensuse")
-        expect(@plugin[:platform_family]).to eq("suse")
-      end
-    end
+OS_RELEASE
+        end
 
-    describe "without lsb_release results" do
-      before(:each) do
-        @plugin.lsb = nil
-      end
+        before do
+          expect(File).to_not receive(:read).with("/etc/SuSE-release")
+          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
+        end
 
-      it "should set platform and platform_family to suse and bogus verion to 10.0" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("suse")
-        expect(@plugin[:platform_family]).to eq("suse")
+        it "correctly detects SLES15" do
+          @plugin.run
+          expect(@plugin[:platform]).to eq("sles")
+          expect(@plugin[:platform_version]).to eq("15")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
       end
 
-      it "should read the version as 10.1 for bogus SLES 10" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 10 (i586)\nVERSION = 10\nPATCHLEVEL = 1\n")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("suse")
-        expect(@plugin[:platform_version]).to eq("10.1")
-        expect(@plugin[:platform_family]).to eq("suse")
+      context "on versions that have both /etc/os-release and /etc/SuSE-release (e.g. SLES12)" do
+        let(:have_suse_release) { true }
+        let(:have_os_release) { true }
+
+        describe "with lsb_release results" do
+          before(:each) do
+            @plugin[:lsb][:id] = "SUSE LINUX"
+          end
+
+          it "should read the platform as opensuse on openSUSE" do
+            @plugin[:lsb][:release] = "12.1"
+            expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
+            @plugin.run
+            expect(@plugin[:platform]).to eq("opensuse")
+            expect(@plugin[:platform_family]).to eq("suse")
+          end
+        end
       end
 
-      it "should read the version as 11.2" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("suse")
-        expect(@plugin[:platform_version]).to eq("11.2")
-        expect(@plugin[:platform_family]).to eq("suse")
+      context "on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES11)" do
+        let(:have_suse_release) { true }
+        let(:have_os_release) { false }
+
+        describe "with lsb_release results" do
+          before(:each) do
+            @plugin[:lsb][:id] = "SUSE LINUX"
+          end
+
+          it "should read the platform as opensuse on openSUSE" do
+            @plugin[:lsb][:release] = "12.1"
+            expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
+            @plugin.run
+            expect(@plugin[:platform]).to eq("opensuse")
+            expect(@plugin[:platform_family]).to eq("suse")
+          end
+        end
       end
 
-      it "[OHAI-272] should read the version as 11.3" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("opensuse")
-        expect(@plugin[:platform_version]).to eq("11.3")
-        expect(@plugin[:platform_family]).to eq("suse")
-      end
 
-      it "[OHAI-272] should read the version as 9.1" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("suse")
-        expect(@plugin[:platform_version]).to eq("9.1")
-        expect(@plugin[:platform_family]).to eq("suse")
-      end
+    context "on openSUSE and older SLES versions" do
+      let(:have_suse_release) { true }
+      let(:have_os_release) { true }
 
-      it "[OHAI-272] should read the version as 11.4" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("opensuse")
-        expect(@plugin[:platform_version]).to eq("11.4")
-        expect(@plugin[:platform_family]).to eq("suse")
-      end
+      describe "without lsb_release results" do
+        before(:each) do
+          @plugin.lsb = nil
+        end
 
-      it "should read the platform as opensuse on openSUSE" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.2 (x86_64)\nVERSION = 12.2\nCODENAME = Mantis\n")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("opensuse")
-        expect(@plugin[:platform_family]).to eq("suse")
-      end
+        it "should set platform and platform_family to suse and bogus verion to 10.0" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("suse")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
 
-      it "should read the platform as opensuseleap on openSUSE Leap" do
-        expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 42.1 (x86_64)\nVERSION = 42.1\nCODENAME = Malachite\n")
-        @plugin.run
-        expect(@plugin[:platform]).to eq("opensuseleap")
-        expect(@plugin[:platform_family]).to eq("suse")
+        it "should read the version as 10.1 for bogus SLES 10" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 10 (i586)\nVERSION = 10\nPATCHLEVEL = 1\n")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("suse")
+          expect(@plugin[:platform_version]).to eq("10.1")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "should read the version as 11.2" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("suse")
+          expect(@plugin[:platform_version]).to eq("11.2")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "[OHAI-272] should read the version as 11.3" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("opensuse")
+          expect(@plugin[:platform_version]).to eq("11.3")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "[OHAI-272] should read the version as 9.1" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("suse")
+          expect(@plugin[:platform_version]).to eq("9.1")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "[OHAI-272] should read the version as 11.4" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("opensuse")
+          expect(@plugin[:platform_version]).to eq("11.4")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "should read the platform as opensuse on openSUSE" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.2 (x86_64)\nVERSION = 12.2\nCODENAME = Mantis\n")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("opensuse")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
+
+        it "should read the platform as opensuseleap on openSUSE Leap" do
+          expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 42.1 (x86_64)\nVERSION = 42.1\nCODENAME = Malachite\n")
+          @plugin.run
+          expect(@plugin[:platform]).to eq("opensuseleap")
+          expect(@plugin[:platform_family]).to eq("suse")
+        end
       end
     end
   end

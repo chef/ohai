@@ -1,5 +1,11 @@
 # Change Log
 
+## [v13.8.0](https://github.com/chef/ohai/tree/v13.8.0) (2018-03-02)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.7.1...v13.8.0)
+
+- Use TLS 1.2 for polling Softlayer metadata since 1.0/1.1 were disabled on 3/1/2018
+
 ## [v13.7.1](https://github.com/chef/ohai/tree/v13.7.1) (2018-01-10)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.7.0...v13.7.1)
@@ -490,19 +496,12 @@
   - Bump mime-type dependency to 3.0
 
 - Make collected zfs filesystem properties configurable on solaris2.
-
 - Add kernel bitness detection for AIX
-
 - Fix CPU detection on FreeBSD 10.2+, add collection CPU family and model data.
-
 - Add inode data for filesystems on FreeBSD
-
 - Detect Virtualbox, VMware, and KVM on Windows guests and speed up Ohai runs
-
 - Add a plugin for Virtualbox to provide host / guest version information
-
 - Escape plugin directory path to prevent failures on Windows
-
 - Detect Microsoft Hyper-V Linux/BSD guests, which were previously detected as VirtualPC guests
 - Detect Microsoft VirtualPC Linux/BSD guests on additional releases of VirtualPC
 - Add KVM, VirtualBox, and Openstack guest detection to BSD platforms and add the node[:virtualization][:systems] syntax

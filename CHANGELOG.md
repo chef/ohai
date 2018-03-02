@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.20 -->
-## [v14.0.20](https://github.com/chef/ohai/tree/v14.0.20) (2018-03-01)
+<!-- latest_release 14.0.21 -->
+## [v14.0.21](https://github.com/chef/ohai/tree/v14.0.21) (2018-03-02)
 
 #### Merged Pull Requests
-- Softlayer is forcing tlsv1_2 for all API calls [#1149](https://github.com/chef/ohai/pull/1149) ([smcavallo](https://github.com/smcavallo))
+- Remove support for Windows 2003 from uptime/cpu plugins [#1148](https://github.com/chef/ohai/pull/1148) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Remove support for Windows 2003 from uptime/cpu plugins [#1148](https://github.com/chef/ohai/pull/1148) ([tas50](https://github.com/tas50)) <!-- 14.0.21 -->
 - Softlayer is forcing tlsv1_2 for all API calls [#1149](https://github.com/chef/ohai/pull/1149) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.20 -->
 - Expand what we blacklist from the kernel/network plugins on Windows [#1147](https://github.com/chef/ohai/pull/1147) ([tas50](https://github.com/tas50)) <!-- 14.0.19 -->
 - Mark the shard plugin as optional [#1146](https://github.com/chef/ohai/pull/1146) ([thommay](https://github.com/thommay)) <!-- 14.0.18 -->

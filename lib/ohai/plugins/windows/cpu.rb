@@ -32,23 +32,9 @@ Ohai.plugin(:CPU) do
     processors.each_with_index do |processor, index|
       current_cpu = index.to_s
       cpu[current_cpu] = Mash.new
-      #
-      # On Windows Server 2003 R2 (i.e. 5.2.*), numberofcores property
-      # doesn't exist on the Win32_Processor class unless the user has
-      # patched their system with:
-      # http://support.microsoft.com/kb/932370
-      #
-      # We're returning nil for cpu["cores"]
-      # when we don't see numberofcores property
-      #
 
-      begin
-        cpu[current_cpu]["cores"] = processor["numberofcores"]
-        cores += processor["numberofcores"]
-      rescue NoMethodError => e
-        Ohai::Log.info("Can not find numberofcores property on Win32_Processor. Consider applying this patch: http://support.microsoft.com/kb/932370")
-        cpu[current_cpu]["cores"] = nil
-      end
+      cpu[current_cpu]["cores"] = processor["numberofcores"]
+      cores += processor["numberofcores"]
 
       logical_processors += processor["numberoflogicalprocessors"]
       cpu[current_cpu]["vendor_id"] = processor["manufacturer"]

@@ -28,7 +28,6 @@ Ohai.plugin(:Uptime) do
   require "ohai/mixin/seconds_to_human"
   provides "uptime", "uptime_seconds"
   provides "idletime", "idletime_seconds" # linux only
-  depends "platform_version"
 
   def collect_uptime(path)
     # kern.boottime: { sec = 1232765114, usec = 823118 } Fri Jan 23 18:45:14 2009
@@ -87,12 +86,8 @@ Ohai.plugin(:Uptime) do
   collect_data(:windows) do
     require "wmi-lite/wmi"
     wmi = WmiLite::Wmi.new
-    if platform_version.to_f >= 6.0 ## for newer version of Windows starting from Windows Server 2008 ##
-      last_boot_up_time = wmi.first_of("Win32_OperatingSystem")["lastbootuptime"]
-      uptime_seconds Time.new.to_i - Time.parse(last_boot_up_time).to_i
-    else ## for older version of Windows starting from Windows Server 2003 ##
-      uptime_seconds wmi.first_of("Win32_PerfFormattedData_PerfOS_System")["systemuptime"].to_i
-    end
+    last_boot_up_time = wmi.first_of("Win32_OperatingSystem")["lastbootuptime"]
+    uptime_seconds Time.new.to_i - Time.parse(last_boot_up_time).to_i
     uptime seconds_to_human(uptime_seconds)
   end
 

@@ -47,7 +47,7 @@ module ::Ohai::Mixin::SoftlayerMetadata
     full_url = "#{SOFTLAYER_API_QUERY_URL}/#{item}"
     u = URI(full_url)
     net = ::Net::HTTP.new(u.hostname, u.port)
-    net.ssl_version = "TLSv1"
+    net.ssl_version = :TLSv1_2
     net.use_ssl = true
     net.ca_file = ca_file_location
     res = net.get(u.request_uri)

@@ -1,3 +1,9 @@
+# Ohai Release Notes 13.8.0
+
+## Softlayer metadata polling fixed
+
+We now use TLS 1.2 for polling Softlayer metadata since 1.0/1.1 were disabled on 3/1/2018
+
 # Ohai Release Notes 13.7.1
 
 ## Network Tunnel Information

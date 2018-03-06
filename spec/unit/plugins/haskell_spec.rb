@@ -19,7 +19,7 @@ require_relative "../../spec_helper.rb"
 describe Ohai::System, "plugin haskell" do
 
   let(:plugin) do
-    plugin = get_plugin("haskell").tap do |plugin|
+    get_plugin("haskell").tap do |plugin|
       plugin[:languages] = Mash.new
     end
   end

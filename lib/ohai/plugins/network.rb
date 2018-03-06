@@ -120,7 +120,7 @@ Ohai.plugin(:NetworkAddresses) do
   # ipaddress: IPAddress
   # iface: String
   def network_contains_address(address_to_match, ipaddress, iface)
-    if peer = network["interfaces"][iface]["addresses"][ipaddress.to_s][:peer]
+    if ( peer = network["interfaces"][iface]["addresses"][ipaddress.to_s][:peer] )
       IPAddress(peer) == IPAddress(address_to_match)
     else
       ipaddress.include? IPAddress(address_to_match)

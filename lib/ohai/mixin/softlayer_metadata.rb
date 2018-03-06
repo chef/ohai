@@ -25,7 +25,7 @@ module ::Ohai::Mixin::SoftlayerMetadata
   SOFTLAYER_API_QUERY_URL = "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata" unless defined?(SOFTLAYER_API_QUERY_URL)
 
   def fetch_metadata
-    metadata = {
+    {
       "public_fqdn"   => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
       "local_ipv4"    => fetch_metadata_item("getPrimaryBackendIpAddress.txt"),
       "public_ipv4"   => fetch_metadata_item("getPrimaryIpAddress.txt"),

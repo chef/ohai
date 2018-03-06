@@ -29,8 +29,6 @@ module Ohai
       BUILTIN_ADMINISTRATORS_SID = "S-1-5-32-544"
 
       def self.windows_root_group_name
-        administrators_group_name_result = nil
-
         administrators_sid_result = FFI::MemoryPointer.new(:pointer)
         convert_result = Win32.convert_string_sid_to_sid(BUILTIN_ADMINISTRATORS_SID, administrators_sid_result)
         last_win32_error = Win32.get_last_error

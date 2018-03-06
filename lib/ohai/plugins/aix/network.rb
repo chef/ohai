@@ -114,8 +114,8 @@ Ohai.plugin(:Network) do
       # Query macaddress
       e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
       iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
-      e_so.stdout.lines.each do |line|
-        if line =~ /Hardware Address: (\S+)/
+      e_so.stdout.lines.each do |l|
+        if l =~ /Hardware Address: (\S+)/
           iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" }
           macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
         end

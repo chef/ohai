@@ -64,7 +64,7 @@ SPAirPortData},
         end
       end
 
-      system_profile items.sort_by { |h| h["_dataType"] }
+      system_profile ( items.sort_by { |h| h["_dataType"] } ) # rubocop: disable Lint/ParenthesesAsGroupedExpression
     rescue LoadError => e
       Ohai::Log.debug("Can't load gem: #{e})")
     end

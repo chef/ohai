@@ -155,9 +155,9 @@ module Ohai
         # Will raise a TypeError if we hit a subattribute that is not a
         # Hash, Mash, or Array.
         keys = [name] + attrs
-        attribute = keys[0..-2].inject(@data) do |attrs, key|
-          attrs[key] ||= Mash.new
-          attrs[key]
+        attribute = keys[0..-2].inject(@data) do |atts, key|
+          atts[key] ||= Mash.new
+          atts[key]
         end
 
         # Set the subattribute to the value.

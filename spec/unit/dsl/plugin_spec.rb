@@ -435,13 +435,13 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects attributes across multiple plugin files" do
-      plugin = Ohai.plugin(:Test) { provides("one") }
+      plugin = Ohai.plugin(:Test) { provides("one") } # rubocop: disable Lint/UselessAssignment
       plugin = Ohai.plugin(:Test) { provides("two", "three") }
       expect(plugin.provides_attrs).to eql(%w{one two three})
     end
 
     it "collects unique attributes" do
-      plugin = Ohai.plugin(:Test) { provides("one") }
+      plugin = Ohai.plugin(:Test) { provides("one") } # rubocop: disable Lint/UselessAssignment
       plugin = Ohai.plugin(:Test) { provides("one", "two") }
       expect(plugin.provides_attrs).to eql(%w{one two})
     end
@@ -468,13 +468,13 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "collects dependencies across multiple plugin files" do
-      plugin = Ohai.plugin(:Test) { depends("one") }
+      plugin = Ohai.plugin(:Test) { depends("one") } # rubocop: disable Lint/UselessAssignment
       plugin = Ohai.plugin(:Test) { depends("two", "three") }
       expect(plugin.depends_attrs).to eql(%w{one two three})
     end
 
     it "collects unique attributes" do
-      plugin = Ohai.plugin(:Test) { depends("one") }
+      plugin = Ohai.plugin(:Test) { depends("one") } # rubocop: disable Lint/UselessAssignment
       plugin = Ohai.plugin(:Test) { depends("one", "two") }
       expect(plugin.depends_attrs).to eql(%w{one two})
     end

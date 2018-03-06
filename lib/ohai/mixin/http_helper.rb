@@ -34,7 +34,7 @@ module Ohai
         begin
           t.connect_nonblock(saddr)
         rescue Errno::EINPROGRESS
-          r, w, e = IO.select(nil, [t], nil, timeout)
+          _r, w, _e = IO.select(nil, [t], nil, timeout)
           if !w.nil?
             connected = true
           else

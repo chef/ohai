@@ -121,7 +121,7 @@ Ohai.plugin(:DMI) do
         Ohai::Log.debug("Plugin DMI: converted characters from line:\n#{raw_line}")
       end
 
-      if header_information = header_information_line.match(line)
+      if ( header_information = header_information_line.match(line) )
         dmi_record = {}
 
         # look up SMB ID
@@ -151,7 +151,7 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = header_information[4]
         field = nil
 
-      elsif data = data_key_value_line.match(line)
+      elsif ( data = data_key_value_line.match(line) )
         if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
@@ -159,7 +159,7 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
         field = data[1]
 
-      elsif data = data_key_only_line.match(line)
+      elsif ( data = data_key_only_line.match(line) )
         if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
@@ -167,7 +167,7 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ""
         field = data[1]
 
-      elsif extended_data = extended_data_line.match(line)
+      elsif ( extended_data = extended_data_line.match(line) )
         if dmi_record.nil?
           Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
           next

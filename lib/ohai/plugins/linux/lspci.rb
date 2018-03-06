@@ -51,7 +51,7 @@ Ohai.plugin(:Lspci) do
       next if dev.nil?
       case dev[0]
       when "Device" # There are two different Device tags
-        if tmp = dev[1].match(/(#{hh}:#{hh}.#{h})/)
+        if ( tmp = dev[1].match(/(#{hh}:#{hh}.#{h})/) )
           # We have a device id
           d_id = tmp[0] # From now on we will need this id
           devices[d_id] = Mash.new

@@ -47,7 +47,7 @@ Ohai.plugin(:Ruby) do
 
     # Create a query string from above hash
     env_string = ""
-    values.keys.each do |v|
+    values.each_key do |v|
       env_string << "#{v}=\#{#{values[v]}},"
     end
 

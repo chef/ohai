@@ -74,7 +74,7 @@ Ohai.plugin(:Network) do
   end
 
   def arpname_to_ifname(iface, arpname)
-    iface.keys.each do |ifn|
+    iface.each_key do |ifn|
       return ifn if ifn.split(":")[0].eql?(arpname)
     end
 
@@ -146,17 +146,17 @@ Ohai.plugin(:Network) do
       end
     end
 
-    iface.keys.each do |ifn|
+    iface.each_key do |ifn|
       iaddr = nil
       if iface[ifn][:encapsulation].eql?("Ethernet")
-        iface[ifn][:addresses].keys.each do |addr|
+        iface[ifn][:addresses].each_key do |addr|
           if iface[ifn][:addresses][addr]["family"].eql?("inet")
             iaddr = addr
             break
           end
         end
         if iface[ifn][:arp]
-          iface[ifn][:arp].keys.each do |addr|
+          iface[ifn][:arp].each_key do |addr|
             if addr.eql?(iaddr)
               iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
               break

@@ -196,10 +196,10 @@ Ohai.plugin(:Filesystem) do
           keys_to_update << key
         end
 
-        keys_to_update.each do |key|
+        keys_to_update.each do |k|
           [:fs_type, :uuid, :label].each do |subkey|
             if parsed[subkey] && !parsed[subkey].empty?
-              fs[key][subkey] = parsed[subkey]
+              fs[k][subkey] = parsed[subkey]
             end
           end
         end

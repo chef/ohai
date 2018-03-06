@@ -37,7 +37,7 @@ Ohai.plugin(:Platform) do
     end
 
     File.open("/etc/release") do |file|
-      while line = file.gets
+      while ( line = file.gets )
         case line
         when /^.*(SmartOS).*$/
           platform "smartos"

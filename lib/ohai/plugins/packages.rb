@@ -165,7 +165,7 @@ Ohai.plugin(:Packages) do
     chunked_lines = so.stdout.lines.map(&:strip).chunk do |line|
       !line.empty? || nil
     end
-    chunked_lines.each do |_, lines|
+    chunked_lines.each do |_, lines| # rubocop: disable Performance/HashEachMethods
       package = {}
       lines.each do |line|
         key, value = line.split(":", 2)

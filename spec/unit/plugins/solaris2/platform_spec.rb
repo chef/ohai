@@ -41,7 +41,7 @@ Origin# = 1
 NumCPU = 16
 UNAME_X
 
-      allow(File).to receive(:exists?).with("/sbin/uname").and_return(true)
+      allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
       allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
 
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
@@ -81,7 +81,7 @@ Origin# = 1
 NumCPU = 1
 UNAME_X
 
-      allow(File).to receive(:exists?).with("/sbin/uname").and_return(true)
+      allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
       allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
 
       @release = StringIO.new("                             Oracle Solaris 11.1 X86\n")

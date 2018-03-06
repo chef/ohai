@@ -26,7 +26,7 @@ describe Ohai::System, "root_group plugin" do
   describe "windows platform", :windows_only do
     let (:wmi) { wmi = WmiLite::Wmi.new }
 
-    it 'should return the system\'s administrators (root) group' do
+    it "should return the system's administrators (root) group" do
       # Notethat the Win32_Group WMI provider can be slow if your
       # system is domain-joined and has hundreds of thousands of
       # groups in Active Directory -- not a typical test scenario, but

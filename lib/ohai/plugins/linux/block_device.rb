@@ -20,23 +20,23 @@ Ohai.plugin(:BlockDevice) do
   provides "block_device"
 
   collect_data(:linux) do
-    if File.exists?("/sys/block")
+    if File.exist?("/sys/block")
       block = Mash.new
       Dir["/sys/block/*"].each do |block_device_dir|
         dir = File.basename(block_device_dir)
         block[dir] = Mash.new
         %w{size removable}.each do |check|
-          if File.exists?("/sys/block/#{dir}/#{check}")
+          if File.exist?("/sys/block/#{dir}/#{check}")
             File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{model rev state timeout vendor queue_depth}.each do |check|
-          if File.exists?("/sys/block/#{dir}/device/#{check}")
+          if File.exist?("/sys/block/#{dir}/device/#{check}")
             File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{rotational physical_block_size logical_block_size}.each do |check|
-          if File.exists?("/sys/block/#{dir}/queue/#{check}")
+          if File.exist?("/sys/block/#{dir}/queue/#{check}")
             File.open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end

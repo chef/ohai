@@ -35,8 +35,8 @@ describe Ohai::System, "Linux lsb plugin" do
         and_yield("DISTRIB_CODENAME=hardy").
         and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
       allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file)
-      allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
-      allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(true)
+      allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(false)
+      allow(File).to receive(:exist?).with("/etc/lsb-release").and_return(true)
     end
 
     it "should set lsb[:id]" do
@@ -62,7 +62,7 @@ describe Ohai::System, "Linux lsb plugin" do
 
   describe "on systems with /usr/bin/lsb_release" do
     before(:each) do
-      allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(true)
+      allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(true)
 
       @stdin = double("STDIN", { :close => true })
       @pid = 10
@@ -140,8 +140,8 @@ LSB_RELEASE
   end
 
   it "should not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
-    allow(File).to receive(:exists?).with("/etc/lsb-release").and_return(false)
-    allow(File).to receive(:exists?).with("/usr/bin/lsb_release").and_return(false)
+    allow(File).to receive(:exist?).with("/etc/lsb-release").and_return(false)
+    allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(false)
     expect(@plugin.attribute?(:lsb)).to be(false)
   end
 end

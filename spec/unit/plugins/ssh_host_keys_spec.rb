@@ -24,13 +24,13 @@ describe Ohai::System, "ssh_host_key plugin" do
     @plugin = get_plugin("ssh_host_key")
     @plugin[:keys] = Mash.new
 
-    allow(File).to receive(:exists?).with("/etc/ssh/sshd_config").and_return(true)
+    allow(File).to receive(:exist?).with("/etc/ssh/sshd_config").and_return(true)
     allow(File).to receive(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
-    allow(File).to receive(:exists?).and_return(true)
-    allow(File).to receive(:exists?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
-    allow(File).to receive(:exists?).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(true)
-    allow(File).to receive(:exists?).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(true)
-    allow(File).to receive(:exists?).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(true)
+    allow(File).to receive(:exist?).and_return(true)
+    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
+    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(true)
+    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(true)
+    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(true)
 
     # Ensure we can still use IO.read
     io_read = IO.method(:read)
@@ -104,8 +104,8 @@ EOS
       nil
     end
     before do
-      allow(File).to receive(:exists?).with("/etc/ssh/sshd_config").and_return(false)
-      allow(File).to receive(:exists?).with("/etc/sshd_config").and_return(false)
+      allow(File).to receive(:exist?).with("/etc/ssh/sshd_config").and_return(false)
+      allow(File).to receive(:exist?).with("/etc/sshd_config").and_return(false)
     end
 
     it_behaves_like "loads keys"

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.22 -->
-## [v14.0.22](https://github.com/chef/ohai/tree/v14.0.22) (2018-03-06)
+<!-- latest_release 14.0.23 -->
+## [v14.0.23](https://github.com/chef/ohai/tree/v14.0.23) (2018-03-07)
 
 #### Merged Pull Requests
-- SUSE: Use /etc/os-release if present for all platform attributes [#1140](https://github.com/chef/ohai/pull/1140) ([yeoldegrove](https://github.com/yeoldegrove))
+- Fix chefstyle issues in ohai [#1153](https://github.com/chef/ohai/pull/1153) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Fix chefstyle issues in ohai [#1153](https://github.com/chef/ohai/pull/1153) ([tas50](https://github.com/tas50)) <!-- 14.0.23 -->
 - SUSE: Use /etc/os-release if present for all platform attributes [#1140](https://github.com/chef/ohai/pull/1140) ([yeoldegrove](https://github.com/yeoldegrove)) <!-- 14.0.22 -->
 - Remove support for Windows 2003 from uptime/cpu plugins [#1148](https://github.com/chef/ohai/pull/1148) ([tas50](https://github.com/tas50)) <!-- 14.0.21 -->
 - Softlayer is forcing tlsv1_2 for all API calls [#1149](https://github.com/chef/ohai/pull/1149) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.20 -->

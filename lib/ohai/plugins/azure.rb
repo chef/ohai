@@ -74,8 +74,7 @@ Ohai.plugin(:Azure) do
     metadata
   end
 
-  def initialize_metadata_mash_network
-    metadata = Mash.new
+  def initialize_metadata_mash_network(metadata)
     metadata["network"] = Mash.new
     metadata["network"]["interfaces"] = Mash.new
     %w{public_ipv4 local_ipv4 public_ipv6 local_ipv6}.each do |type|
@@ -107,7 +106,7 @@ Ohai.plugin(:Azure) do
 
     # receiving network output is not guaranteed
     unless endpoint_data["network"].nil?
-      metadata = initialize_metadata_mash_network
+      metadata = initialize_metadata_mash_network(metadata)
       # parse out per interface interface IP data
       endpoint_data["network"]["interface"].each do |int|
         metadata["network"]["interfaces"][int["macAddress"]] = Mash.new

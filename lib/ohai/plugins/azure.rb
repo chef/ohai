@@ -73,6 +73,7 @@ Ohai.plugin(:Azure) do
     metadata["compute"] = Mash.new
     metadata
   end
+
   def initialize_metadata_mash_network
     metadata = Mash.new
     metadata["network"] = Mash.new
@@ -81,7 +82,7 @@ Ohai.plugin(:Azure) do
       metadata["network"][type] = []
     end
     metadata
-  end  
+  end
 
   def fetch_ip_data(data, type, field)
     ips = []
@@ -103,7 +104,7 @@ Ohai.plugin(:Azure) do
     endpoint_data["compute"].each do |k, v|
       metadata["compute"][k] = v
     end
-    
+
     # receiving network output is not guaranteed
     unless endpoint_data["network"].nil?
       metadata = initialize_metadata_mash_network

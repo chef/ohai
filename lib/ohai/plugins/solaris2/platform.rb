@@ -20,7 +20,7 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data(:solaris2) do
-    if File.exists?("/sbin/uname")
+    if File.exist?("/sbin/uname")
       uname_exec = "/sbin/uname"
     else
       uname_exec = "uname"
@@ -37,7 +37,7 @@ Ohai.plugin(:Platform) do
     end
 
     File.open("/etc/release") do |file|
-      while line = file.gets
+      while ( line = file.gets )
         case line
         when /^.*(SmartOS).*$/
           platform "smartos"

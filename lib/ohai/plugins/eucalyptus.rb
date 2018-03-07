@@ -40,7 +40,7 @@ Ohai.plugin(:Eucalyptus) do
 
   # detect if the mac address starts with d0:0d
   def has_euca_mac?
-    network[:interfaces].values.each do |iface|
+    network[:interfaces].each_value do |iface|
       mac = get_mac_address(iface[:addresses])
       if mac =~ /^[dD]0:0[dD]:/
         Ohai::Log.debug("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")

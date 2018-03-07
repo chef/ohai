@@ -45,7 +45,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
     @plugin = get_plugin("linux/block_device")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
 
-    allow(File).to receive(:exists?).with("/sys/block").and_return(true)
+    allow(File).to receive(:exist?).with("/sys/block").and_return(true)
     allow(Dir).to receive(:[]).with("/sys/block/*") do
       DISKS.collect { |disk, _files| "/sys/block/#{disk}" }
     end
@@ -55,7 +55,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
         allow(File).to receive(:open).with(Regexp.new("#{disk}.*#{check}")).and_yield(file_double(value))
       end
 
-      allow(File).to receive(:exists?).with(Regexp.new(disk)) do |arg|
+      allow(File).to receive(:exist?).with(Regexp.new(disk)) do |arg|
         filepath = arg.split("/")
         checks[filepath.last].nil? ? false : true
       end

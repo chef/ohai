@@ -33,7 +33,7 @@ module Ohai
       default :hints_path, [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
       default :log_level, :auto
       default :log_location, STDERR
-      default :plugin, Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new }
+      default :plugin, ( Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new } )
       default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
       default :critical_plugins, []
       # causes all optional plugins to be run.

@@ -224,7 +224,7 @@ describe Ohai::Runner, "run_plugin" do
 
     context "when there are no edges in the cycle (A->A)" do
       let(:plugin_class) do
-        klass1 = Ohai.plugin(:Thing) do
+        Ohai.plugin(:Thing) do
           provides("thing")
           depends("thing")
           collect_data do
@@ -236,8 +236,6 @@ describe Ohai::Runner, "run_plugin" do
 
       it "ignores the cycle" do
         @ohai.provides_map.set_providers_for(plugin, ["thing"])
-
-        expected_error_string = "Dependency cycle detected. Please refer to the following plugins: Thing, Other"
         runner.run_plugin(plugin) # should not raise
       end
 
@@ -245,7 +243,7 @@ describe Ohai::Runner, "run_plugin" do
 
     context "when there is one edge in the cycle (A->B and B->A)" do
       before(:each) do
-        klass1 = Ohai.plugin(:Thing) do
+        klass1 = Ohai.plugin(:Thing) do # rubocop disable Lint/UselessAssignment
           provides("thing")
           depends("other")
           collect_data do

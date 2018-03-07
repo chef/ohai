@@ -28,8 +28,8 @@ describe Ohai::System, "Machine id plugin" do
   it "should read /etc/machine-id if available" do
     machine_id = "6f702523e2fc7499eb1dc68e5314dacf"
 
-    allow(File).to receive(:exists?).with("/etc/machine-id").and_return(true)
-    allow(File).to receive(:read).with("/etc/machine-id").and_return(machine_id)
+    allow(::File).to receive(:exist?).with("/etc/machine-id").and_return(true)
+    allow(::File).to receive(:read).with("/etc/machine-id").and_return(machine_id)
     plugin.run
     expect(plugin[:machine_id]).to eq(machine_id)
   end
@@ -37,9 +37,9 @@ describe Ohai::System, "Machine id plugin" do
   it "should read /var/lib/dbus/machine-id if available" do
     machine_id = "6f702523e2fc7499eb1dc68e5314dacf"
 
-    allow(File).to receive(:exists?).with("/etc/machine-id").and_return(false)
-    allow(File).to receive(:exists?).with("/var/lib/dbus/machine-id").and_return(true)
-    allow(File).to receive(:read).with("/var/lib/dbus/machine-id").and_return(machine_id)
+    allow(::File).to receive(:exist?).with("/etc/machine-id").and_return(false)
+    allow(::File).to receive(:exist?).with("/var/lib/dbus/machine-id").and_return(true)
+    allow(::File).to receive(:read).with("/var/lib/dbus/machine-id").and_return(machine_id)
     plugin.run
     expect(plugin[:machine_id]).to eq(machine_id)
   end

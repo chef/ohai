@@ -47,7 +47,7 @@ Ohai.plugin(:Ruby) do
 
     # Create a query string from above hash
     env_string = ""
-    values.keys.each do |v|
+    values.each_key do |v|
       env_string << "#{v}=\#{#{values[v]}},"
     end
 
@@ -67,7 +67,7 @@ Ohai.plugin(:Ruby) do
                     run_ruby("require 'rubygems'; puts ::Gem.default_exec_format % 'gem'"),
                     "gem",
                    ].map { |bin| ::File.join(bin_dir, bin) }
-    gem_binary = gem_binaries.find { |bin| ::File.exists? bin }
+    gem_binary = gem_binaries.find { |bin| ::File.exist? bin }
     if gem_binary
       languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{gem_binary} env gemdir}.chomp!"
       languages[:ruby][:gem_bin] = gem_binary

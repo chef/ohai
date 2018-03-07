@@ -140,7 +140,7 @@ Ohai.plugin(:Virtualization) do
           breadcrumb.each do |node|
             evalstr << "[\'#{node}\']"
           end
-          wpars[wpar_name][breadcrumb[-1]] = eval evalstr
+          wpars[wpar_name][breadcrumb[-1]] = eval evalstr # rubocop: disable Security/Eval
         end
       end
       virtualization[:wpars] = wpars unless wpars.empty?

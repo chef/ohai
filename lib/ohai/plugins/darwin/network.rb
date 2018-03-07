@@ -74,8 +74,8 @@ Ohai.plugin(:Network) do
     return ifname unless ifaces[ifname].nil?
     # oh well, time to go hunting!
     return ifname.chop if ifname =~ /\*$/
-    ifaces.keys.each do |ifc|
-      ifaces[ifc][:addresses].keys.each do |addr|
+    ifaces.each_key do |ifc|
+      ifaces[ifc][:addresses].each_key do |addr|
         return ifc if addr.eql? mac
       end
     end

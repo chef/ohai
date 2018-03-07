@@ -23,7 +23,7 @@ Ohai.plugin(:Hardware) do
     sp_cmd = "system_profiler #{datatype} -xml"
     # Hardware queries
     sp_std = shell_out(sp_cmd)
-    sp_hash = Plist.parse_xml(sp_std.stdout)
+    Plist.parse_xml(sp_std.stdout)
   end
 
   collect_data(:darwin) do

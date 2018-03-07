@@ -113,7 +113,7 @@ ARP_AN
         @plugin.run
       end
 
-      it 'for \'macaddress\'' do
+      it "for 'macaddress'" do
         expect(@plugin[:macaddress]).to eq("BE:42:80:00:B0:05")
       end
     end

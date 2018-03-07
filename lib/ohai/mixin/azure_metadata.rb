@@ -28,7 +28,7 @@ module Ohai
       def http_get(uri)
         conn = Net::HTTP.start(AZURE_METADATA_ADDR)
         conn.read_timeout = 6
-        conn.get(uri, initheader = { "Metadata" => "true" })
+        conn.get(uri, { "Metadata" => "true" })
       end
 
       def fetch_metadata

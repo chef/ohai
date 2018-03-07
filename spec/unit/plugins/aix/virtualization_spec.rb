@@ -272,12 +272,12 @@ LSWPAR_L
       end
 
       context "when collecting WPAR info" do
-        it 'finds the WPAR\'s hostname correctly' do
+        it "finds the WPAR's hostname correctly" do
           expect(wpar1[:hostname]).to eq("applejack-pony-541ba3.ponyville.com")
           expect(wpar2[:hostname]).to eq("fluttershy-pony-5c969f.ponyville.com")
         end
 
-        it 'finds the WPAR\'s IP correctly' do
+        it "finds the WPAR's IP correctly" do
           expect(wpar1[:address]).to eq("192.168.0.231")
           expect(wpar2[:address]).to eq("192.168.0.18")
         end
@@ -289,7 +289,7 @@ LSWPAR_L
       end
     end
 
-    context 'when WPARs don\'t exist on the LPAR' do
+    context "when WPARs don't exist on the LPAR" do
       before do
         allow(plugin).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, "", nil))
         plugin.run

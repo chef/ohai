@@ -171,7 +171,7 @@ module Ohai
     # map, it will find all of the plugins that have at least one provided
     # attribute.
     def collect_plugins_in(provides_map, collected)
-      provides_map.keys.each do |plugin|
+      provides_map.each_key do |plugin|
         if plugin.eql?("_plugins")
           collected.concat(provides_map[plugin])
         else

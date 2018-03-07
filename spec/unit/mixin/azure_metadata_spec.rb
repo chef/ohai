@@ -31,7 +31,7 @@ describe Ohai::Mixin::AzureMetadata do
       allow(http_mock).to receive(:read_timeout=)
       allow(Net::HTTP).to receive(:start).with("169.254.169.254").and_return(http_mock)
 
-      expect(http_mock).to receive(:get).with("http://www.chef.io", initheader = { "Metadata" => "true" })
+      expect(http_mock).to receive(:get).with("http://www.chef.io", { "Metadata" => "true" })
       mixin.http_get("http://www.chef.io")
     end
   end

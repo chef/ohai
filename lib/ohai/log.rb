@@ -25,7 +25,7 @@ module Ohai
     # this class loading initalization is so that we don't lose early logger
     # messages when run from the CLI?
     init(STDERR)
-    level = :info
+    level = :info # rubocop:disable Lint/UselessAssignment
 
   end
 end

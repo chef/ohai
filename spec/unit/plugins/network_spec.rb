@@ -475,8 +475,8 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_interface"] = nil
             @plugin["network"]["default_inet6_gateway"] = nil
             @plugin["network"]["default_inet6_interface"] = nil
-            @plugin["network"]["interfaces"].each do |i, iv|
-              iv["addresses"].delete_if { |k, kv| %w{inet inet6}.include? kv["family"] }
+            @plugin["network"]["interfaces"].each_value do |val|
+              val["addresses"].delete_if { |k, kv| %w{inet inet6}.include? kv["family"] }
             end
           end
 
@@ -660,7 +660,7 @@ describe Ohai::System, "Network Plugin" do
             @plugin["network"]["default_inet6_gateway"] = nil
             @plugin["network"]["default_inet6_interface"] = nil
             # just changing scopes to lInK for eth0 addresses
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].each { |k, v| v[:scope] = "lInK" if %w{inet inet6}.include? v["family"] }
+            @plugin["network"]["interfaces"]["eth0"]["addresses"].each_value { |v| v[:scope] = "lInK" if %w{inet inet6}.include? v["family"] }
           end
 
           it_populates_ipaddress_attributes
@@ -781,8 +781,8 @@ describe Ohai::System, "Network Plugin" do
         before do
           @plugin["network"]["default_gateway"] = nil
           @plugin["network"]["default_interface"] = nil
-          @plugin["network"]["interfaces"].each do |i, iv|
-            iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
+          @plugin["network"]["interfaces"].each_value do |val|
+            val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
           end
         end
 
@@ -928,9 +928,9 @@ describe Ohai::System, "Network Plugin" do
             before do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each do |i, iv|
-                if iv.has_key? "addresses"
-                  iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
+              @plugin["network"]["interfaces"].each_value do |val|
+                if val.has_key? "addresses"
+                  val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
               @plugin["ip6address"] = "3ffe:8888:9999::1"
@@ -1013,9 +1013,9 @@ describe Ohai::System, "Network Plugin" do
             before do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each do |i, iv|
-                if iv.has_key? "addresses"
-                  iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
+              @plugin["network"]["interfaces"].each_value do |val|
+                if val.has_key? "addresses"
+                  val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
               @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"

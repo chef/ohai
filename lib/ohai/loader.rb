@@ -138,14 +138,14 @@ module Ohai
     end
 
     def load_v7_plugin_class(contents, plugin_path)
-      plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path)
+      plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path) # rubocop: disable Security/Eval
       unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
       plugin_class.sources << plugin_path
       @v7_plugin_classes << plugin_class unless @v7_plugin_classes.include?(plugin_class)
       plugin_class
-    rescue SystemExit, Interrupt
+    rescue SystemExit, Interrupt # rubocop: disable Lint/ShadowedException
       raise
     rescue Ohai::Exceptions::InvalidPluginName => e
       Ohai::Log.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")

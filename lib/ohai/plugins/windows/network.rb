@@ -87,7 +87,7 @@ Ohai.plugin(:Network) do
       end
     end
 
-    iface_instance.keys.each do |i|
+    iface_instance.each_key do |i|
       if iface_instance[i][:name] && iface_config[i] && iface_config[i][:ip_address][0]
         cint = sprintf("0x%x", (iface_instance[i][:interface_index] || iface_instance[i][:index]) ).downcase
         iface[cint] = Mash.new

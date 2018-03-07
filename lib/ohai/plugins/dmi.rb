@@ -60,21 +60,21 @@ Ohai.plugin(:DMI) do
         next if blank_line.match(line)
         line = line.encode(line.encoding, :universal_newline => true)
 
-        if dmidecode_version = dmidecode_version_line.match(line)
+        if ( dmidecode_version = dmidecode_version_line.match(line) )
           dmi[:dmidecode_version] = dmidecode_version[1]
 
-        elsif smbios_version = smbios_version_line.match(line)
+        elsif ( smbios_version = smbios_version_line.match(line) )
           dmi[:smbios_version] = smbios_version[1]
 
-        elsif structures = structures_line.match(line)
+        elsif ( structures = structures_line.match(line) )
           dmi[:structures] = Mash.new
           dmi[:structures][:count] = structures[1]
           dmi[:structures][:size] = structures[2]
 
-        elsif table_location = table_location_line.match(line)
+        elsif ( table_location = table_location_line.match(line) )
           dmi[:table_location] = table_location[1]
 
-        elsif handle = handle_line.match(line)
+        elsif ( handle = handle_line.match(line) )
           # Don't overcapture for now (OHAI-260)
           unless Ohai::Common::DMI::ID_TO_CAPTURE.include?(handle[2].to_i)
             dmi_record = nil
@@ -91,14 +91,14 @@ Ohai.plugin(:DMI) do
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:size] = handle[2]
           field = nil
 
-        elsif type = type_line.match(line)
+        elsif ( type = type_line.match(line) )
           if dmi_record .nil?
             Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
             next
           end
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = type[1]
 
-        elsif data = data_line.match(line)
+        elsif ( data = data_line.match(line) )
           if dmi_record .nil?
             Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
             next
@@ -106,7 +106,7 @@ Ohai.plugin(:DMI) do
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
           field = data[1]
 
-        elsif extended_data = extended_data_line.match(line)
+        elsif ( extended_data = extended_data_line.match(line) )
           if dmi_record .nil?
             Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
             next

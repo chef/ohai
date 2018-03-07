@@ -47,7 +47,7 @@ module Ohai
           else
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end
-        rescue Ohai::Exceptions::Error
+        rescue Ohai::Exceptions::Error # rubocop: disable Lint/ShadowedException
           raise
         rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
           raise

@@ -24,7 +24,7 @@ Ohai.plugin(:Linode) do
   #
   # Returns true or false
   def has_linode_kernel?
-    if kernel_data = kernel
+    if ( kernel_data = kernel )
       kernel_data[:release].split("-").last =~ /linode/
     end
   end
@@ -43,7 +43,7 @@ Ohai.plugin(:Linode) do
   #
   # Alters linode mash with new interface based on name parameter
   def get_ip_address(name, eth)
-    if eth_iface = network[:interfaces][eth]
+    if ( eth_iface = network[:interfaces][eth] )
       eth_iface[:addresses].each do |key, info|
         linode[name] = key if info["family"] == "inet"
       end

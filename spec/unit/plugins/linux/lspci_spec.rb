@@ -19,7 +19,7 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux lspci plugin" do
-  let (:plugin) { get_plugin("linux/lspci") }
+  let(:plugin) { get_plugin("linux/lspci") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     @stdout = <<LSPCI

@@ -31,7 +31,7 @@ describe Ohai::System, "Init package" do
   let(:proc_1_file) { double(proc_1_file_path, :gets => proc1_content) }
 
   before(:each) do
-    allow(File).to receive(:exists?).with(proc_1_file_path).and_return(proc1_exists)
+    allow(File).to receive(:exist?).with(proc_1_file_path).and_return(proc1_exists)
     allow(File).to receive(:open).with(proc_1_file_path).and_return(proc_1_file)
   end
 

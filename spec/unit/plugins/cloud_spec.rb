@@ -86,6 +86,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:azure] = nil
       @plugin[:gce] = nil
       @plugin[:digital_ocean] = nil
+      @plugin[:softlayer] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
     end
@@ -442,6 +443,41 @@ describe Ohai::System, "plugin cloud" do
 
     it "populates cloud provider" do
       expect(@plugin[:cloud][:provider]).to eq("digital_ocean")
+    end
+  end
+
+  describe "with softlayer mash" do
+    before do
+      @plugin[:softlayer] = Mash.new
+      @plugin[:softlayer] = { "local_ipv4" => "192.168.0.1",
+                              "public_ipv4" => "8.8.8.8",
+                              "public_fqdn" => "abc1234.public.com"
+      }
+    end
+
+    it "populates cloud public ip" do
+      @plugin.run
+      expect(@plugin[:cloud][:public_ipv4_addrs][0]).to eq(@plugin[:softlayer][:public_ipv4])
+    end
+
+    it "populates cloud private ip" do
+      @plugin.run
+      expect(@plugin[:cloud][:local_ipv4_addrs][0]).to eq(@plugin[:softlayer][:local_ipv4])
+    end
+
+    it "populates first cloud public ip" do
+      @plugin.run
+      expect(@plugin[:cloud][:public_ipv4_addrs].first).to eq(@plugin[:softlayer][:public_ipv4])
+    end
+
+    it "populates cloud public_hostname" do
+      @plugin.run
+      expect(@plugin[:cloud][:public_hostname]).to eq(@plugin[:softlayer][:public_fqdn])
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("softlayer")
     end
   end
 

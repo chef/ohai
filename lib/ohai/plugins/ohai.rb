@@ -20,8 +20,6 @@ Ohai.plugin(:Ohai) do
   provides "chef_packages/ohai"
 
   collect_data do
-    require "ohai"
-
     chef_packages Mash.new unless chef_packages
     chef_packages[:ohai] = Mash.new
     chef_packages[:ohai][:version] = Ohai::VERSION

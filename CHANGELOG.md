@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.24 -->
-## [v14.0.24](https://github.com/chef/ohai/tree/v14.0.24) (2018-03-09)
+<!-- latest_release 14.0.25 -->
+## [v14.0.25](https://github.com/chef/ohai/tree/v14.0.25) (2018-03-09)
 
 #### Merged Pull Requests
-- add ohai support for softlayer cloud [#1155](https://github.com/chef/ohai/pull/1155) ([smcavallo](https://github.com/smcavallo))
+- Fix bug in azure plugin/update to recent metadata version. [#1154](https://github.com/chef/ohai/pull/1154) ([kriszentner](https://github.com/kriszentner))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Fix bug in azure plugin/update to recent metadata version. [#1154](https://github.com/chef/ohai/pull/1154) ([kriszentner](https://github.com/kriszentner)) <!-- 14.0.25 -->
 - add ohai support for softlayer cloud [#1155](https://github.com/chef/ohai/pull/1155) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.24 -->
 - Fix chefstyle issues in ohai [#1153](https://github.com/chef/ohai/pull/1153) ([tas50](https://github.com/tas50)) <!-- 14.0.23 -->
 - SUSE: Use /etc/os-release if present for all platform attributes [#1140](https://github.com/chef/ohai/pull/1140) ([yeoldegrove](https://github.com/yeoldegrove)) <!-- 14.0.22 -->

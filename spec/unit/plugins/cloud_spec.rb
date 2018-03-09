@@ -451,7 +451,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:softlayer] = Mash.new
       @plugin[:softlayer] = { "local_ipv4" => "192.168.0.1",
                               "public_ipv4" => "8.8.8.8",
-                              "public_fqdn" => "abc1234.public.com"
+                              "public_fqdn" => "abc1234.public.com",
       }
     end
 

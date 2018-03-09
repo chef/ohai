@@ -22,7 +22,7 @@ module Ohai
     module AzureMetadata
 
       AZURE_METADATA_ADDR = "169.254.169.254" unless defined?(AZURE_METADATA_ADDR)
-      AZURE_METADATA_URL = "/metadata/instance?api-version=2017-04-02" unless defined?(AZURE_METADATA_URL)
+      AZURE_METADATA_URL = "/metadata/instance?api-version=2017-08-01" unless defined?(AZURE_METADATA_URL)
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)

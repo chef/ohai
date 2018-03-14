@@ -37,9 +37,10 @@ module Ohai
     attr_accessor :data
     attr_reader :config
     attr_reader :provides_map
+    attr_reader :logger
 
     # the cli flag is used to determine if we're being constructed by
-    # something like chef-client (which doesn't not set this flag) and
+    # something like chef-client (which doesn't set this flag) and
     # which sets up its own loggers, or if we're coming from Ohai::Application
     # and therefore need to configure Ohai's own logger.
     def initialize(config = {})
@@ -47,6 +48,8 @@ module Ohai
       @plugin_path = ""
       @config = config
       @failed_plugins = []
+      @logger = config[:logger] || Ohai::Log.with_child
+      @logger.metadata = { system: "ohai", version: Ohai::VERSION }
       reset_system
     end
 
@@ -90,14 +93,14 @@ module Ohai
           @runner.run_plugin(plugin)
         end
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
-        Ohai::Log.error("Encountered error while running plugins: #{e.inspect}")
+        logger.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
       critical_failed = Ohai::Config.ohai[:critical_plugins] & @runner.failed_plugins
       unless critical_failed.empty?
         msg = "The following Ohai plugins marked as critical failed: #{critical_failed}"
         if @cli
-          Ohai::Log.error(msg)
+          logger.error(msg)
           exit(true)
         else
           raise Ohai::Exceptions::CriticalPluginFailure, "#{msg}. Failing Chef run."
@@ -110,7 +113,7 @@ module Ohai
 
     def run_additional_plugins(plugin_path)
       @loader.load_additional(plugin_path).each do |plugin|
-        Ohai::Log.debug "Running plugin #{plugin}"
+        logger.trace "Running plugin #{plugin}"
         @runner.run_plugin(plugin)
       end
 
@@ -178,7 +181,7 @@ module Ohai
         Ohai.config[:plugin_path] << Ohai.config[:directory]
       end
 
-      Ohai::Log.debug("Running Ohai with the following configuration: #{Ohai.config.configuration}")
+      logger.debug("Running Ohai with the following configuration: #{Ohai.config.configuration}")
     end
 
     def configure_logging

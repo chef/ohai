@@ -62,8 +62,8 @@ shared_examples "Ohai::DSL::Plugin" do
         plugin.run
       end
 
-      it "logs a message to debug" do
-        expect(Ohai::Log).to receive(:debug).with(/Skipping disabled plugin TestPlugin/)
+      it "logs a message to trace" do
+        expect(plugin.logger).to receive(:trace).with(/Skipping disabled plugin TestPlugin/)
         plugin.run
       end
 
@@ -382,8 +382,9 @@ shared_examples "Ohai::DSL::Plugin" do
 end
 
 describe Ohai::DSL::Plugin::VersionVII do
+  let(:logger) { Ohai::Log }
   it "does not modify the plugin name when the plugin is named correctly" do
-    plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({})
+    plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({}, logger)
     expect(plugin.name).to eql(:FunkyVALIDpluginName)
   end
 
@@ -538,16 +539,16 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   describe "#provides (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
-      expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
+      plugin = Ohai.plugin(:Test).new(Mash.new, logger)
+      expect_any_instance_of(Mixlib::Log::Child).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.provides("attribute")
     end
   end
 
   describe "#require_plugin (deprecated)" do
     it "logs a warning" do
-      plugin = Ohai::DSL::Plugin::VersionVII.new(Mash.new)
-      expect(Ohai::Log).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
+      plugin = Ohai.plugin(:Test).new(Mash.new, logger)
+      expect_any_instance_of(Mixlib::Log::Child).to receive(:warn).with(/\[UNSUPPORTED OPERATION\]/)
       plugin.require_plugin("plugin")
     end
   end
@@ -555,7 +556,7 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#configuration" do
     let(:plugin) do
       klass = Ohai.plugin(camel_name) {}
-      klass.new({})
+      klass.new({}, logger)
     end
 
     shared_examples_for "plugin config lookup" do
@@ -627,7 +628,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
   it_behaves_like "Ohai::DSL::Plugin" do
     let(:ohai) { Ohai::System.new }
-    let(:plugin) { Ohai::DSL::Plugin::VersionVII.new(ohai.data) }
+    let(:plugin) { Ohai.plugin(:Test).new(ohai.data, ohai.logger) }
     let(:version) { :version7 }
   end
 end

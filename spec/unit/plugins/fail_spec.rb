@@ -60,7 +60,7 @@ shared_examples "a v7 loading failure" do
   end
 
   it "should write to Ohai::Log" do
-    expect(Ohai::Log).to receive(:warn).once
+    expect(@loader.logger).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -103,7 +103,7 @@ shared_examples "a v7 loading success" do
   end
 
   it "should not write to Ohai::Log" do
-    expect(Ohai::Log).not_to receive(:warn)
+    expect(@loader.logger).not_to receive(:warn)
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
   end
 end
@@ -146,7 +146,7 @@ shared_examples "a v7 run failure" do
   end
 
   it "should write to Ohai::Log" do
-    expect(Ohai::Log).to receive(:warn).once
+    expect(@loader.logger).to receive(:warn).once
     @loader.load_plugin("#{tmp}/plugins/fail.rb").new(@ohai).run
   end
 end

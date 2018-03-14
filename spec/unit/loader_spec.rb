@@ -23,7 +23,7 @@ describe Ohai::Loader do
   extend IntegrationSupport
 
   let(:loader) { Ohai::Loader.new(ohai) }
-  let(:ohai) { double("Ohai::System", :data => Mash.new, :provides_map => provides_map) }
+  let(:ohai) { double("Ohai::System", :data => Mash.new, :provides_map => provides_map, logger: Ohai::Log) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
@@ -108,7 +108,7 @@ EOF
     describe "load_plugin() method" do
       describe "when the plugin uses Ohai.plugin instead of Ohai.plugins" do
         it "logs an unsupported operation warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Method Error: <#{path_to("extra_s.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Method Error: <#{path_to("extra_s.rb")}>:/)
           loader.load_plugin(path_to("extra_s.rb"))
         end
 
@@ -119,7 +119,7 @@ EOF
 
       describe "when the plugin tries to call an unexisting method" do
         it "shoud log an unsupported operation warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Method Error: <#{path_to("no_method.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Method Error: <#{path_to("no_method.rb")}>:/)
           loader.load_plugin(path_to("no_method.rb"))
         end
 
@@ -130,7 +130,7 @@ EOF
 
       describe "when the plugin defines collect_data on the same platform more than once" do
         it "shoud log an illegal plugin definition warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Definition Error: <#{path_to("illegal_def.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Definition Error: <#{path_to("illegal_def.rb")}>:/)
           loader.load_plugin(path_to("illegal_def.rb"))
         end
 
@@ -141,7 +141,7 @@ EOF
 
       describe "when an unexpected error is encountered" do
         it "logs a warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Error: <#{path_to("unexpected_error.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Error: <#{path_to("unexpected_error.rb")}>:/)
           loader.load_plugin(path_to("unexpected_error.rb"))
         end
 
@@ -152,7 +152,7 @@ EOF
 
       describe "when the plugin name symbol has bad syntax" do
         it "logs a syntax error warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Syntax Error: <#{path_to("bad_symbol.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Syntax Error: <#{path_to("bad_symbol.rb")}>:/)
           loader.load_plugin(path_to("bad_symbol.rb"))
         end
 
@@ -163,7 +163,7 @@ EOF
 
       describe "when the plugin forgets an 'end'" do
         it "logs a syntax error warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Syntax Error: <#{path_to("no_end.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Syntax Error: <#{path_to("no_end.rb")}>:/)
           loader.load_plugin(path_to("no_end.rb"))
         end
 
@@ -174,7 +174,7 @@ EOF
 
       describe "when the plugin has an invalid name" do
         it "logs an invalid plugin name warning" do
-          expect(Ohai::Log).to receive(:warn).with(/Plugin Name Error: <#{path_to("bad_name.rb")}>:/)
+          expect(loader.logger).to receive(:warn).with(/Plugin Name Error: <#{path_to("bad_name.rb")}>:/)
           loader.load_plugin(path_to("bad_name.rb"))
         end
 

@@ -44,7 +44,7 @@ module Ohai
           return []
         end
 
-        Ohai::Log.debug("Searching for Ohai plugins in #{plugin_dir}")
+        Ohai::Log.trace("Searching for Ohai plugins in #{plugin_dir}")
 
         escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)
         Dir[File.join(escaped, "**", "*.rb")].map do |file|
@@ -53,8 +53,10 @@ module Ohai
       end
     end
 
+    attr_reader :logger
     def initialize(controller)
       @controller = controller
+      @logger = controller.logger.with_child(subsystem: "loader")
       @v7_plugin_classes = []
     end
 
@@ -77,7 +79,7 @@ module Ohai
     def load_additional(from)
       from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
-        Ohai::Log.debug "Loading additional plugin: #{plugin_file}"
+        logger.trace "Loading additional plugin: #{plugin_file}"
         plugin = load_plugin_class(plugin_file.path, plugin_file.plugin_root)
         load_v7_plugin(plugin)
       end
@@ -106,10 +108,10 @@ module Ohai
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
-        Ohai::Log.debug("Loading plugin at #{plugin_path}")
+        logger.trace("Loading plugin at #{plugin_path}")
         contents << IO.read(plugin_path)
       rescue IOError, Errno::ENOENT
-        Ohai::Log.warn("Unable to open or read plugin at #{plugin_path}")
+        logger.warn("Unable to open or read plugin at #{plugin_path}")
         return nil
       end
 
@@ -148,11 +150,11 @@ module Ohai
     rescue SystemExit, Interrupt # rubocop: disable Lint/ShadowedException
       raise
     rescue Ohai::Exceptions::InvalidPluginName => e
-      Ohai::Log.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")
+      logger.warn("Plugin Name Error: <#{plugin_path}>: #{e.message}")
     rescue Ohai::Exceptions::IllegalPluginDefinition => e
-      Ohai::Log.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
+      logger.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
     rescue NoMethodError => e
-      Ohai::Log.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
+      logger.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
     rescue SyntaxError => e
       # split on occurrences of
       #    <env>: syntax error,
@@ -161,15 +163,15 @@ module Ohai
       parts = e.message.split(/<.*>[:[0-9]+]*: syntax error, /)
       parts.each do |part|
         next if part.length == 0
-        Ohai::Log.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
+        logger.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
       end
     rescue Exception, Errno::ENOENT => e
-      Ohai::Log.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
-      Ohai::Log.debug("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
+      logger.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
+      logger.trace("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
     end
 
     def load_v7_plugin(plugin_class)
-      plugin = plugin_class.new(@controller.data)
+      plugin = plugin_class.new(@controller.data, @controller.logger)
       collect_provides(plugin)
       plugin
     end

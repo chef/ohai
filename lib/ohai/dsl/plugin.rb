@@ -80,9 +80,11 @@ module Ohai
 
       attr_reader :data
       attr_reader :failed
+      attr_reader :logger
 
-      def initialize(data)
+      def initialize(data, logger)
         @data = data
+        @logger = logger.with_child({ subsystem: "plugin", plugin: name })
         @has_run = false
         @failed = false
       end
@@ -91,7 +93,7 @@ module Ohai
         @has_run = true
 
         if Ohai.config[:disabled_plugins].include?(name)
-          Ohai::Log.debug("Skipping disabled plugin #{name}")
+          logger.trace("Skipping disabled plugin #{name}")
         else
           run_plugin
         end
@@ -182,8 +184,8 @@ module Ohai
         raise e
       rescue => e
         @failed = true
-        Ohai::Log.debug("Plugin #{name} threw #{e.inspect}")
-        e.backtrace.each { |line| Ohai::Log.debug( line ) }
+        logger.trace("Plugin #{name} threw #{e.inspect}")
+        e.backtrace.each { |line| logger.trace( line ) }
       end
 
       def method_missing(name, *args)

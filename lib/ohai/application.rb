@@ -93,6 +93,7 @@ class Ohai::Application
 
   def run_application
     config[:invoked_from_cli] = true
+    config[:logger] = Ohai::Log.with_child
     ohai = Ohai::System.new(config)
     ohai.all_plugins(@attributes)
 

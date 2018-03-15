@@ -30,6 +30,9 @@ describe Ohai::System, "Darwin virtualization platform" do
     allow(plugin).to receive(:vboxmanage_exists?).and_return(false)
     allow(plugin).to receive(:fusion_exists?).and_return(false)
     allow(plugin).to receive(:docker_exists?).and_return(false)
+    plugin[:hardware] = Mash.new
+    plugin[:hardware][:boot_rom_version] = "not_a_vm"
+    plugin[:hardware][:machine_model] = "not_a_vm"
   end
 
   describe "when detecting OS X virtualization" do
@@ -54,12 +57,28 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:systems][:vmware]).to eq("host")
     end
 
+    it "should set vmware guest if hardware attributes mention vmware" do
+      plugin[:hardware][:machine_model] = "VMware"
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vmware")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
+    end
+
     it "should set vbox host if /usr/local/bin/VBoxManage exists" do
       allow(plugin).to receive(:vboxmanage_exists?).and_return("/usr/local/bin/VBoxManage")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vbox")
       expect(plugin[:virtualization][:role]).to eq("host")
       expect(plugin[:virtualization][:systems][:vbox]).to eq("host")
+    end
+
+    it "should set vbox guest if hardware attributes mention virtualbox" do
+      plugin[:hardware][:boot_rom_version] = "VirtualBox"
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("vbox")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:vbox]).to eq("guest")
     end
 
     it "should set parallels host if /usr/bin/prlctl exists" do

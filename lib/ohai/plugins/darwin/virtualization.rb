@@ -20,6 +20,7 @@
 
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
+  depends "hardware"
 
   def vboxmanage_exists?
     which("VBoxManage")
@@ -47,10 +48,22 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vbox] = "host"
     end
 
+    if hardware[:boot_rom_version].match?(/VirtualBox/i)
+      virtualization[:system] = "vbox"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:vbox] = "guest"
+    end
+
     if fusion_exists?
       virtualization[:system] = "vmware"
       virtualization[:role] = "host"
       virtualization[:systems][:vmware] = "host"
+    end
+
+    if hardware[:machine_model].match?(/vmware/i)
+      virtualization[:system] = "vmware"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:vmware] = "guest"
     end
 
     if prlctl_exists?

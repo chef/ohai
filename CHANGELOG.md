@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.26 -->
-## [v14.0.26](https://github.com/chef/ohai/tree/v14.0.26) (2018-03-15)
+<!-- latest_release 14.0.27 -->
+## [v14.0.27](https://github.com/chef/ohai/tree/v14.0.27) (2018-03-16)
 
 #### Merged Pull Requests
-- Minor updates to the Ohai/Chef plugins [#1160](https://github.com/chef/ohai/pull/1160) ([tas50](https://github.com/tas50))
+- Detect virtualbox and vmware guests on Macs [#1164](https://github.com/chef/ohai/pull/1164) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.7.1 -->
 ### Changes since 13.7.1 release
 
 #### Merged Pull Requests
+- Detect virtualbox and vmware guests on Macs [#1164](https://github.com/chef/ohai/pull/1164) ([tas50](https://github.com/tas50)) <!-- 14.0.27 -->
 - Minor updates to the Ohai/Chef plugins [#1160](https://github.com/chef/ohai/pull/1160) ([tas50](https://github.com/tas50)) <!-- 14.0.26 -->
 - Fix bug in azure plugin/update to recent metadata version. [#1154](https://github.com/chef/ohai/pull/1154) ([kriszentner](https://github.com/kriszentner)) <!-- 14.0.25 -->
 - add ohai support for softlayer cloud [#1155](https://github.com/chef/ohai/pull/1155) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.24 -->

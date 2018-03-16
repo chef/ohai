@@ -60,7 +60,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vmware] = "host"
     end
 
-    if hardware[:machine_model].match?(/vmware/i)
+    if hardware[:boot_rom_version].match?(/VMW/i)
       virtualization[:system] = "vmware"
       virtualization[:role] = "guest"
       virtualization[:systems][:vmware] = "guest"

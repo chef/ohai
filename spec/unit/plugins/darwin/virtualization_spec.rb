@@ -32,7 +32,6 @@ describe Ohai::System, "Darwin virtualization platform" do
     allow(plugin).to receive(:docker_exists?).and_return(false)
     plugin[:hardware] = Mash.new
     plugin[:hardware][:boot_rom_version] = "not_a_vm"
-    plugin[:hardware][:machine_model] = "not_a_vm"
   end
 
   describe "when detecting OS X virtualization" do
@@ -58,7 +57,7 @@ describe Ohai::System, "Darwin virtualization platform" do
     end
 
     it "should set vmware guest if hardware attributes mention vmware" do
-      plugin[:hardware][:machine_model] = "VMware"
+      plugin[:hardware][:boot_rom_version] = "VMW71.00V.6997262.B64.1710270607"
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("vmware")
       expect(plugin[:virtualization][:role]).to eq("guest")

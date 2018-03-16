@@ -47,7 +47,7 @@ Ohai.plugin(:Sessions) do
         end
       end
     else
-      Ohai::Log.debug("Plugin Sessions: Could not find loginctl. Skipping plugin.")
+      logger.trace("Plugin Sessions: Could not find loginctl. Skipping plugin.")
     end
   end
 end

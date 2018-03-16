@@ -31,13 +31,13 @@ Ohai.plugin(:DigitalOcean) do
     begin
       # detect a vendor of "DigitalOcean"
       if dmi[:bios][:all_records][0][:Vendor] == "DigitalOcean"
-        Ohai::Log.debug("Plugin DigitalOcean: has_do_dmi? == true")
+        logger.trace("Plugin DigitalOcean: has_do_dmi? == true")
         return true
       end
     rescue NoMethodError
       # dmi[:bios][:all_records][0][:Vendor] may not exist
     end
-    Ohai::Log.debug("Plugin DigitalOcean: has_do_dmi? == false")
+    logger.trace("Plugin DigitalOcean: has_do_dmi? == false")
     false
   end
 
@@ -49,14 +49,14 @@ Ohai.plugin(:DigitalOcean) do
 
   collect_data do
     if looks_like_digital_ocean?
-      Ohai::Log.debug("Plugin Digitalocean: looks_like_digital_ocean? == true")
+      logger.trace("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new
       fetch_metadata.each do |k, v|
         next if k == "vendor_data" # this may have sensitive data we shouldn't store
         digital_ocean[k] = v
       end
     else
-      Ohai::Log.debug("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
+      logger.trace("Plugin Digitalocean: No hints present for and doesn't look like digitalocean")
       false
     end
   end

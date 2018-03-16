@@ -33,7 +33,7 @@ Ohai.plugin(:Zpools) do
     so.stdout.lines do |line|
       case line
       when /^([-_0-9A-Za-z]*)\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+([.0-9]+[MGTPE])\s+(\d+%)\s+([.0-9]+x)\s+([-_0-9A-Za-z]+)\s+(\d+|-)$/
-        Ohai::Log.debug("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
+        logger.trace("Plugin Zpools: Parsing zpool list line: #{line.chomp}")
         pools[$1] = Mash.new
         pools[$1][:pool_size] = sanitize_value($2)
         pools[$1][:pool_allocated] = sanitize_value($3)
@@ -70,7 +70,7 @@ Ohai.plugin(:Zpools) do
         # solaris: http://rubular.com/r/FqOBzUQQ4p
         # freebsd: http://rubular.com/r/RYkMNlytXl
         when /^\s+((sd|c|ad|da)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
-          Ohai::Log.debug("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
+          logger.trace("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
           pools[pool][:devices][$1][:state] = $3
           pools[pool][:devices][$1][:errors] = Mash.new

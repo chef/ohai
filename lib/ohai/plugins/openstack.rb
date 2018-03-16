@@ -30,21 +30,21 @@ Ohai.plugin(:Openstack) do
   def openstack_dmi?
     # detect a manufacturer of OpenStack Foundation
     if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
-      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
+      logger.trace("Plugin Openstack: has_openstack_dmi? == true")
       true
     else
-      Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
+      logger.trace("Plugin Openstack: has_openstack_dmi? == false")
       false
     end
   end
 
-  # check for the ohai hint and log debug messaging
+  # check for the ohai hint and log trace messaging
   def openstack_hint?
     if hint?("openstack")
-      Ohai::Log.debug("Plugin Openstack: openstack hint present")
+      logger.trace("Plugin Openstack: openstack hint present")
       true
     else
-      Ohai::Log.debug("Plugin Openstack: openstack hint not present")
+      logger.trace("Plugin Openstack: openstack hint not present")
       false
     end
   end
@@ -66,12 +66,12 @@ Ohai.plugin(:Openstack) do
         fetch_metadata.each do |k, v|
           openstack[k] = v
         end
-        Ohai::Log.debug("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
+        logger.trace("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
       else
-        Ohai::Log.debug("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
+        logger.trace("Plugin Openstack: Timed out connecting to Openstack metadata endpoint. Skipping metadata.")
       end
     else
-      Ohai::Log.debug("Plugin Openstack: Node does not appear to be an Openstack node")
+      logger.trace("Plugin Openstack: Node does not appear to be an Openstack node")
     end
   end
 end

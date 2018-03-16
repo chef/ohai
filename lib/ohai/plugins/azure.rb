@@ -30,16 +30,16 @@ Ohai.plugin(:Azure) do
     # project for details
     azure_metadata_from_hints = hint?("azure")
     if azure_metadata_from_hints
-      Ohai::Log.debug("Plugin Azure: Azure hint is present. Parsing any hint data.")
+      logger.trace("Plugin Azure: Azure hint is present. Parsing any hint data.")
       azure Mash.new
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
       azure["metadata"] = parse_metadata
     elsif has_waagent? || has_dhcp_option_245?
-      Ohai::Log.debug("Plugin Azure: No hints present, but system appears to be on Azure.")
+      logger.trace("Plugin Azure: No hints present, but system appears to be on Azure.")
       azure Mash.new
       azure["metadata"] = parse_metadata
     else
-      Ohai::Log.debug("Plugin Azure: No hints present and doesn't appear to be on Azure.")
+      logger.trace("Plugin Azure: No hints present and doesn't appear to be on Azure.")
       false
     end
   end
@@ -48,7 +48,7 @@ Ohai.plugin(:Azure) do
   # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
   def has_waagent?
     if File.exist?("/usr/sbin/waagent") || Dir.exist?('C:\WindowsAzure')
-      Ohai::Log.debug("Plugin Azure: Found waagent used by Azure.")
+      logger.trace("Plugin Azure: Found waagent used by Azure.")
       true
     end
   end
@@ -58,7 +58,7 @@ Ohai.plugin(:Azure) do
     if File.exist?("/var/lib/dhcp/dhclient.eth0.leases")
       File.open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
         if line =~ /unknown-245/
-          Ohai::Log.debug("Plugin Azure: Found unknown-245 DHCP option used by Azure.")
+          logger.trace("Plugin Azure: Found unknown-245 DHCP option used by Azure.")
           has_245 = true
           break
         end

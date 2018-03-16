@@ -27,10 +27,10 @@ Ohai.plugin(:Scaleway) do
   # @return [Boolean] do we have the keyword or not?
   def has_scaleway_cmdline?
     if ::File.read("/proc/cmdline") =~ /scaleway/
-      Ohai::Log.debug("Plugin Scaleway: has_scaleway_cmdline? == true")
+      logger.trace("Plugin Scaleway: has_scaleway_cmdline? == true")
       return true
     end
-    Ohai::Log.debug("Plugin Scaleway: has_scaleway_cmdline? == false")
+    logger.trace("Plugin Scaleway: has_scaleway_cmdline? == false")
     false
   end
 
@@ -44,13 +44,13 @@ Ohai.plugin(:Scaleway) do
 
   collect_data do
     if looks_like_scaleway?
-      Ohai::Log.debug("Plugin Scaleway: looks_like_scaleway? == true")
+      logger.trace("Plugin Scaleway: looks_like_scaleway? == true")
       scaleway Mash.new
       fetch_metadata.each do |k, v|
         scaleway[k] = v
       end
     else
-      Ohai::Log.debug("Plugin Scaleway: No hints present for and doesn't look like scaleway")
+      logger.trace("Plugin Scaleway: No hints present for and doesn't look like scaleway")
     end
   end
 end

@@ -31,7 +31,7 @@ Ohai.plugin(:Mono) do
       # 	Notification:  kqueue
       # 	Architecture:  amd64
       # 	Disabled:      none
-      # 	Misc:          softdebug
+      # 	Misc:          softtrace
       # 	LLVM:          supported, not enabled.
       # 	GC:            sgen
       if so.exitstatus == 0
@@ -44,7 +44,7 @@ Ohai.plugin(:Mono) do
         languages[:mono] = mono unless mono.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Mono: Could not shell_out "mono -V". Skipping plugin')
+      logger.trace('Plugin Mono: Could not shell_out "mono -V". Skipping plugin')
     end
   end
 end

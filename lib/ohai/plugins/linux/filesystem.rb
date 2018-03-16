@@ -133,7 +133,7 @@ Ohai.plugin(:Filesystem) do
       unless Ohai.config[:plugin][:filesystem][:allow_partial_data]
         raise e
       end
-      Ohai::Log.warn("Plugin Filesystem: df binary is not available. Some data will not be available.")
+      logger.warn("Plugin Filesystem: df binary is not available. Some data will not be available.")
     end
 
     # Grab mount information from /bin/mount
@@ -153,7 +153,7 @@ Ohai.plugin(:Filesystem) do
       unless Ohai.config[:plugin][:filesystem][:allow_partial_data]
         raise e
       end
-      Ohai::Log.warn("Plugin Filesystem: mount binary is not available. Some data will not be available.")
+      logger.warn("Plugin Filesystem: mount binary is not available. Some data will not be available.")
     end
 
     # We used to try to decide if we wanted to run lsblk or blkid

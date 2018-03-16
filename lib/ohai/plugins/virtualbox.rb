@@ -43,7 +43,7 @@ Ohai.plugin(:Virtualbox) do
         end
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Virtualbox: Could not execute "VBoxControl guestproperty enumerate". Skipping data')
+      logger.trace('Plugin Virtualbox: Could not execute "VBoxControl guestproperty enumerate". Skipping data')
     end
   end
 end

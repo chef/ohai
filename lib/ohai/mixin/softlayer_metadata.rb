@@ -54,11 +54,11 @@ module ::Ohai::Mixin::SoftlayerMetadata
     if res.code.to_i.between?(200, 299)
       res.body
     else
-      ::Ohai::Log.error("Mixin Softlayer: Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
+      logger.error("Mixin Softlayer: Unable to fetch item #{full_url}: status (#{res.code}) body (#{res.body})")
       nil
     end
   rescue => e
-    ::Ohai::Log.error("Mixin Softlayer: Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
+    logger.error("Mixin Softlayer: Unable to fetch softlayer metadata from #{u}: #{e.class}: #{e.message}")
     raise e
   end
 end

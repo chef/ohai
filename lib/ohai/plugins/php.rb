@@ -46,7 +46,7 @@ Ohai.plugin(:PHP) do
         languages[:php] = php unless php.empty?
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Php: Could not shell_out "php -v". Skipping plugin')
+      logger.trace('Plugin Php: Could not shell_out "php -v". Skipping plugin')
     end
   end
 end

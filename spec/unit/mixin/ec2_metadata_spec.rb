@@ -28,6 +28,11 @@ describe Ohai::Mixin::Ec2Metadata do
     metadata_object
   end
 
+  before do
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
+    allow(mixin).to receive(:logger).and_return(logger)
+  end
+
   context "#best_api_version" do
     context "with a sorted list of metadata versions" do
       let(:response) { double("Net::HTTP Response", :body => "1.0\n2011-05-01\n2012-01-12\nUnsupported", :code => "200") }

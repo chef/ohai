@@ -42,10 +42,10 @@ Ohai.plugin(:EC2) do
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
     if file_val_if_exists("/sys/class/dmi/id/bios_vendor") =~ /Amazon/
-      Ohai::Log.debug("Plugin EC2: has_ec2_amazon_dmi? == true")
+      logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
-      Ohai::Log.debug("Plugin EC2: has_ec2_amazon_dmi? == false")
+      logger.trace("Plugin EC2: has_ec2_amazon_dmi? == false")
       false
     end
   end
@@ -57,10 +57,10 @@ Ohai.plugin(:EC2) do
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
     if file_val_if_exists("/sys/class/dmi/id/bios_version") =~ /amazon/
-      Ohai::Log.debug("Plugin EC2: has_ec2_xen_dmi? == true")
+      logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else
-      Ohai::Log.debug("Plugin EC2: has_ec2_xen_dmi? == false")
+      logger.trace("Plugin EC2: has_ec2_xen_dmi? == false")
       false
     end
   end
@@ -69,10 +69,10 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
     if file_val_if_exists("/sys/hypervisor/uuid") =~ /^ec2/
-      Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == true")
+      logger.trace("Plugin EC2: has_ec2_xen_uuid? == true")
       return true
     end
-    Ohai::Log.debug("Plugin EC2: has_ec2_xen_uuid? == false")
+    logger.trace("Plugin EC2: has_ec2_xen_uuid? == false")
     false
   end
 
@@ -85,11 +85,11 @@ Ohai.plugin(:EC2) do
       require "wmi-lite/wmi"
       wmi = WmiLite::Wmi.new
       if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
-        Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == true")
+        logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
         return true
       end
     else
-      Ohai::Log.debug("Plugin EC2: has_ec2_identifying_number? == false")
+      logger.trace("Plugin EC2: has_ec2_identifying_number? == false")
       false
     end
   end
@@ -116,7 +116,7 @@ Ohai.plugin(:EC2) do
 
   collect_data do
     if looks_like_ec2?
-      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == true")
+      logger.trace("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
@@ -132,11 +132,11 @@ Ohai.plugin(:EC2) do
       ec2[:region] = fetch_dynamic_data["region"]
       # ASCII-8BIT is equivalent to BINARY in this case
       if ec2[:userdata] && ec2[:userdata].encoding.to_s == "ASCII-8BIT"
-        Ohai::Log.debug("Plugin EC2: Binary UserData Found. Storing in base64")
+        logger.trace("Plugin EC2: Binary UserData Found. Storing in base64")
         ec2[:userdata] = Base64.encode64(ec2[:userdata])
       end
     else
-      Ohai::Log.debug("Plugin EC2: looks_like_ec2? == false")
+      logger.trace("Plugin EC2: looks_like_ec2? == false")
       false
     end
   end

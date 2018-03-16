@@ -39,7 +39,7 @@ Ohai.plugin(:Haskell) do
         haskell[:ghc][:description] = so.stdout.chomp
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Haskell: Could not shell_out "ghc --version". Skipping data')
+      logger.trace('Plugin Haskell: Could not shell_out "ghc --version". Skipping data')
     end
 
     # Check for ghci
@@ -54,7 +54,7 @@ Ohai.plugin(:Haskell) do
         haskell[:ghci][:description] = so.stdout.chomp
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Haskell: Could not shell_out "ghci --version". Skipping data')
+      logger.trace('Plugin Haskell: Could not shell_out "ghci --version". Skipping data')
     end
 
     # Check for cabal
@@ -70,7 +70,7 @@ Ohai.plugin(:Haskell) do
         haskell[:cabal][:description] = so.stdout.split("\n")[0].chomp
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Haskell: Could not shell_out "cabal --version". Skipping data')
+      logger.trace('Plugin Haskell: Could not shell_out "cabal --version". Skipping data')
     end
 
     # Check for stack
@@ -87,7 +87,7 @@ Ohai.plugin(:Haskell) do
         haskell[:stack][:description] = so.stdout.chomp
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Haskell: Could not shell_out "stack --version". Skipping data')
+      logger.trace('Plugin Haskell: Could not shell_out "stack --version". Skipping data')
     end
 
     languages[:haskell] = haskell unless haskell.empty?

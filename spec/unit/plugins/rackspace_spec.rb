@@ -149,8 +149,8 @@ OUT
         with("xenstore-ls vm-data/provider_data").
         and_raise(Ohai::Exceptions::Exec)
 
-      expect(Ohai::Log).
-        to receive(:debug).
+      expect(plugin.logger).
+        to receive(:trace).
         with("Plugin Rackspace: Unable to find xenstore-ls, cannot capture " \
              "region information for Rackspace cloud")
 
@@ -172,8 +172,8 @@ OUT
         with("xenstore-read name").
         and_raise(Ohai::Exceptions::Exec)
 
-      expect(Ohai::Log).
-        to receive(:debug).
+      expect(plugin.logger).
+        to receive(:trace).
         with("Plugin Rackspace: Unable to find xenstore-read, cannot capture " \
              "instance ID information for Rackspace cloud")
 
@@ -276,8 +276,8 @@ OUT
         with("xenstore-ls vm-data/networking").
         and_raise(Ohai::Exceptions::Exec)
 
-      expect(Ohai::Log).
-        to receive(:debug).
+      expect(plugin.logger).
+        to receive(:trace).
         with("Plugin Rackspace: Unable to capture custom private networking " \
              "information for Rackspace cloud")
 

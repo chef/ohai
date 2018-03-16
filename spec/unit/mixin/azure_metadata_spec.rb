@@ -25,6 +25,11 @@ describe Ohai::Mixin::AzureMetadata do
     mixin
   end
 
+  before do
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
+    allow(mixin).to receive(:logger).and_return(logger)
+  end
+
   describe "#http_get" do
     it "gets the passed URI" do
       http_mock = double("http")
@@ -41,7 +46,7 @@ describe Ohai::Mixin::AzureMetadata do
       http_mock = double("http", { :code => "500" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
-      expect(Ohai::Log).to receive(:warn)
+      expect(mixin.logger).to receive(:warn)
       vals = mixin.fetch_metadata
       expect(vals).to eq(nil)
     end
@@ -50,7 +55,7 @@ describe Ohai::Mixin::AzureMetadata do
       http_mock = double("http", { :code => "200", :body => '{ "foo" "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
-      expect(Ohai::Log).to receive(:warn)
+      expect(mixin.logger).to receive(:warn)
       vals = mixin.fetch_metadata
       expect(vals).to eq(nil)
     end
@@ -59,7 +64,7 @@ describe Ohai::Mixin::AzureMetadata do
       http_mock = double("http", { :code => "200", :body => '{ "foo": "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
-      expect(Ohai::Log).not_to receive(:warn)
+      expect(mixin.logger).not_to receive(:warn)
       vals = mixin.fetch_metadata
       expect(vals).to eq({ "foo" => "bar" })
     end

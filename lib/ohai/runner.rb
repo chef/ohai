@@ -23,13 +23,15 @@ require "benchmark"
 module Ohai
   class Runner
 
-    attr_reader :failed_plugins
+    attr_reader :failed_plugins, :logger
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
       @provides_map = controller.provides_map
       @safe_run = safe_run
       @failed_plugins = []
+      @logger = controller.logger.with_child
+      @logger.metadata = { subsystem: "runner" }
     end
 
     # Runs plugins and any un-run dependencies.
@@ -52,10 +54,10 @@ module Ohai
         rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
           raise
         rescue Exception, Errno::ENOENT => e
-          Ohai::Log.debug("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+          logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end
-      Ohai::Log.debug("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
+      logger.trace("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
     end
 
     def run_v7_plugin(plugin)

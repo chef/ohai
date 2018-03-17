@@ -29,7 +29,7 @@ Ohai.plugin(:Scala) do
         scala[:version] = so.stderr.match(/.*version (\S*)/)[1]
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Scala: Could not shell_out "scala -version". Skipping data')
+      logger.trace('Plugin Scala: Could not shell_out "scala -version". Skipping data')
     end
 
     languages[:scala] = scala unless scala.empty?

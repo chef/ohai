@@ -30,7 +30,7 @@ Ohai.plugin(:Hardware) do
     unless hardware
       hardware Mash.new
     else
-      Ohai::Log.debug("Plugin Hardware: namespace already exists")
+      logger.trace("Plugin Hardware: namespace already exists")
       next
     end
 
@@ -38,7 +38,7 @@ Ohai.plugin(:Hardware) do
       require "plist"
     rescue LoadError => e
       # In case the plist gem isn't present, skip this plugin.
-      Ohai::Log.debug("Plugin Hardware: Can't load gem: #{e}. Cannot continue.")
+      logger.trace("Plugin Hardware: Can't load gem: #{e}. Cannot continue.")
       next
     end
 

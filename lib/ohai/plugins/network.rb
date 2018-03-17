@@ -76,13 +76,13 @@ Ohai.plugin(:NetworkAddresses) do
         v[:iface] == network[int_attr]
       end
       if gw_if_ips.empty?
-        Ohai::Log.warn("Plugin Network: [#{family}] no ip address on #{network[int_attr]}")
+        logger.warn("Plugin Network: [#{family}] no ip address on #{network[int_attr]}")
       elsif network[gw_attr] &&
           network["interfaces"][network[int_attr]] &&
           network["interfaces"][network[int_attr]]["addresses"]
         if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] }
           # link level default route
-          Ohai::Log.debug("Plugin Network: link level default #{family} route, picking ip from #{network[gw_attr]}")
+          logger.trace("Plugin Network: link level default #{family} route, picking ip from #{network[gw_attr]}")
           r = gw_if_ips.first
         else
           # checking network masks
@@ -91,9 +91,9 @@ Ohai.plugin(:NetworkAddresses) do
           end.first
           if r.nil?
             r = gw_if_ips.first
-            Ohai::Log.debug("Plugin Network: [#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
+            logger.trace("Plugin Network: [#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
           else
-            Ohai::Log.debug("Plugin Network: [#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
+            logger.trace("Plugin Network: [#{family}] Using default interface #{network[int_attr]} and default gateway #{network[gw_attr]} to set the default ip to #{r[:ipaddress]}")
           end
         end
       else
@@ -102,7 +102,7 @@ Ohai.plugin(:NetworkAddresses) do
       end
     else
       r = ips.first
-      Ohai::Log.debug("Plugin Network: [#{family}] no default interface, picking the first ipaddress")
+      logger.trace("Plugin Network: [#{family}] no default interface, picking the first ipaddress")
     end
 
     return [ nil, nil ] if r.nil? || r.empty?
@@ -148,13 +148,13 @@ Ohai.plugin(:NetworkAddresses) do
       # don't overwrite attributes if they've already been set by the "#{os}::network" plugin
       if (family == "inet") && ipaddress.nil?
         if r["ip"].nil?
-          Ohai::Log.warn("Plugin Network: unable to detect ipaddress")
+          logger.warn("Plugin Network: unable to detect ipaddress")
         else
           ipaddress r["ip"]
         end
       elsif (family == "inet6") && ip6address.nil?
         if r["ip"].nil?
-          Ohai::Log.debug("Plugin Network: unable to detect ip6address")
+          logger.trace("Plugin Network: unable to detect ip6address")
         else
           ip6address r["ip"]
         end
@@ -164,10 +164,10 @@ Ohai.plugin(:NetworkAddresses) do
       # otherwise we set macaddress on a first-found basis (and we started with ipv4)
       if macaddress.nil?
         if r["mac"]
-          Ohai::Log.debug("Plugin Network: setting macaddress to '#{r["mac"]}' from interface '#{r["iface"]}' for family '#{family}'")
+          logger.trace("Plugin Network: setting macaddress to '#{r["mac"]}' from interface '#{r["iface"]}' for family '#{family}'")
           macaddress r["mac"]
         else
-          Ohai::Log.debug("Plugin Network: unable to detect macaddress for family '#{family}'")
+          logger.trace("Plugin Network: unable to detect macaddress for family '#{family}'")
         end
       end
 
@@ -176,7 +176,7 @@ Ohai.plugin(:NetworkAddresses) do
 
     if results["inet"]["iface"] && results["inet6"]["iface"] &&
         (results["inet"]["iface"] != results["inet6"]["iface"])
-      Ohai::Log.debug("Plugin Network: ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
+      logger.trace("Plugin Network: ipaddress and ip6address are set from different interfaces (#{results["inet"]["iface"]} & #{results["inet6"]["iface"]})")
     end
   end
 end

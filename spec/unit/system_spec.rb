@@ -202,7 +202,7 @@ EOF
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
         allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
-        expect(Ohai::Log).to receive(:error).with(/Encountered error while running plugins/)
+        expect(ohai.logger).to receive(:error).with(/Encountered error while running plugins/)
         expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
 

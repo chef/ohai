@@ -54,7 +54,7 @@ Ohai.plugin(:LSB) do
         end
       end
     else
-      Ohai::Log.debug("Plugin LSB: Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
+      logger.trace("Plugin LSB: Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
     end
   end
 end

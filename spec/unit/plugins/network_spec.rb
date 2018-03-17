@@ -20,8 +20,8 @@ require_relative "../../spec_helper.rb"
 
 def it_doesnt_fail
   it "doesnt fail" do
-    allow(Ohai::Log).to receive(:warn)
-    expect(Ohai::Log).not_to receive(:debug).with(/^Plugin network threw exception/)
+    allow(@plugin.logger).to receive(:warn)
+    expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
     @plugin.run
   end
 end
@@ -32,8 +32,8 @@ def it_populates_ipaddress_attributes
 
   it "populates ipaddress, macaddress and ip6address" do
     begin
-      allow(Ohai::Log).to receive(:warn)
-      expect(Ohai::Log).not_to receive(:debug).with(/^Plugin network threw exception/)
+      allow(@plugin.logger).to receive(:warn)
+      expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
       @plugin.run
       %w{ ipaddress macaddress ip6address }.each do |attribute|
         expect(@plugin).to have_key(attribute)
@@ -367,8 +367,8 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "informs about this setup" do
-            expect(Ohai::Log).to receive(:debug).with(/ipaddress and ip6address are set from different interfaces/)
-            allow(Ohai::Log).to receive(:debug)
+            expect(@plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
           end
         end
@@ -396,8 +396,8 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "informs about this setup" do
-            expect(Ohai::Log).to receive(:debug).with(/ipaddress and ip6address are set from different interfaces/)
-            allow(Ohai::Log).to receive(:debug)
+            expect(@plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
           end
         end
@@ -413,7 +413,7 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "picks {ip,ip6,mac}address" do
-            allow(Ohai::Log).to receive(:warn)
+            allow(@plugin.logger).to receive(:warn)
             @plugin.run
             expect(@plugin["ipaddress"]).to eq("192.168.99.11")
             expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
@@ -421,9 +421,9 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "warns about this conflict" do
-            expect(Ohai::Log).to receive(:debug).with(/\[inet\] no ipaddress\/mask on eth1/).once
-            expect(Ohai::Log).to receive(:debug).with(/\[inet6\] no ipaddress\/mask on eth1/).once
-            allow(Ohai::Log).to receive(:debug)
+            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no ipaddress\/mask on eth1/).once
+            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no ipaddress\/mask on eth1/).once
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
           end
         end
@@ -435,7 +435,7 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "picks {ip,ip6,mac}address" do
-            allow(Ohai::Log).to receive(:warn)
+            allow(@plugin.logger).to receive(:warn)
             @plugin.run
             expect(@plugin["ipaddress"]).to eq("192.168.66.33")
             expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
@@ -452,7 +452,7 @@ describe Ohai::System, "Network Plugin" do
           it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            allow(Ohai::Log).to receive(:warn)
+            allow(@plugin.logger).to receive(:warn)
             @plugin.run
             expect(@plugin["ipaddress"]).to be_nil
             expect(@plugin["macaddress"]).to be_nil
@@ -460,11 +460,11 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "warns about this conflict" do
-            expect(Ohai::Log).to receive(:warn).with(/unable to detect ipaddress/).once
-            expect(Ohai::Log).to receive(:warn).with(/\[inet\] no ip address on eth0/).once
-            expect(Ohai::Log).to receive(:debug).with(/unable to detect ip6address/).once
-            expect(Ohai::Log).to receive(:debug).with(/unable to detect macaddress/).twice # for each family
-            expect(Ohai::Log).to receive(:warn).with(/\[inet6\] no ip address on eth0/).once
+            expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+            expect(@plugin.logger).to receive(:warn).with(/\[inet\] no ip address on eth0/).once
+            expect(@plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
+            expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
+            expect(@plugin.logger).to receive(:warn).with(/\[inet6\] no ip address on eth0/).once
             @plugin.run
           end
         end
@@ -483,7 +483,7 @@ describe Ohai::System, "Network Plugin" do
           it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            allow(Ohai::Log).to receive(:warn)
+            allow(@plugin.logger).to receive(:warn)
             @plugin.run
             expect(@plugin["ipaddress"]).to be_nil
             expect(@plugin["macaddress"]).to be_nil
@@ -491,9 +491,9 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "should warn about it" do
-            expect(Ohai::Log).to receive(:warn).with(/unable to detect ipaddress/).once
-            expect(Ohai::Log).to receive(:debug).with(/unable to detect macaddress/).twice # for each family
-            expect(Ohai::Log).to receive(:debug).with(/unable to detect ip6address/).once
+            expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+            expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
+            expect(@plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
             @plugin.run
           end
         end
@@ -643,9 +643,9 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the first interface" do
-            expect(Ohai::Log).to receive(:debug).with(/\[inet\] no default interface/).once
-            expect(Ohai::Log).to receive(:debug).with(/\[inet6\] no default interface/).once
-            allow(Ohai::Log).to receive(:debug)
+            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
+            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
             expect(@plugin["ipaddress"]).to eq("192.168.99.11")
             expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
@@ -666,9 +666,9 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
-            expect(Ohai::Log).to receive(:debug).with(/\[inet\] no default interface/).once
-            expect(Ohai::Log).to receive(:debug).with(/\[inet6\] no default interface/).once
-            allow(Ohai::Log).to receive(:debug)
+            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
+            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
+            allow(@plugin.logger).to receive(:trace)
             @plugin.run
             expect(@plugin["ipaddress"]).to eq("192.168.99.11")
             expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
@@ -789,29 +789,29 @@ describe Ohai::System, "Network Plugin" do
         it_doesnt_fail
 
         it "can't detect ipaddress" do
-          allow(Ohai::Log).to receive(:warn)
+          allow(@plugin.logger).to receive(:warn)
           @plugin.run
           expect(@plugin["ipaddress"]).to be_nil
         end
 
         it "warns about not being able to set {ip,mac}address (ipv4)" do
-          expect(Ohai::Log).to receive(:warn).with(/unable to detect ipaddress/).once
-          expect(Ohai::Log).to receive(:debug).with(/unable to detect macaddress/) # for ipv4
-          expect(Ohai::Log).to receive(:debug).with(/setting macaddress to/) # for ipv6
-          expect(Ohai::Log).to receive(:debug).with(/\[inet6\] Using default interface eth0 and default gateway/) # for ipv6
+          expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+          expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/) # for ipv4
+          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to/) # for ipv6
+          expect(@plugin.logger).to receive(:trace).with(/\[inet6\] Using default interface eth0 and default gateway/) # for ipv6
           @plugin.run
         end
 
         it "sets {ip6,mac}address" do
-          allow(Ohai::Log).to receive(:warn)
+          allow(@plugin.logger).to receive(:warn)
           @plugin.run
           expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(Ohai::Log).to receive(:debug).with(/setting macaddress to '00:16:3E:2F:36:79'/)
-          allow(Ohai::Log).to receive(:debug)
+          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
+          allow(@plugin.logger).to receive(:trace)
           @plugin.run
         end
       end
@@ -829,21 +829,21 @@ describe Ohai::System, "Network Plugin" do
         it_doesnt_fail
 
         it "can't detect ipaddress" do
-          allow(Ohai::Log).to receive(:warn)
+          allow(@plugin.logger).to receive(:warn)
           @plugin.run
           expect(@plugin["ipaddress"]).to eq("127.0.0.1")
         end
 
         it "sets {ip6,mac}address" do
-          allow(Ohai::Log).to receive(:warn)
+          allow(@plugin.logger).to receive(:warn)
           @plugin.run
           expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(Ohai::Log).to receive(:debug).with(/setting macaddress to '00:16:3E:2F:36:79'/)
-          allow(Ohai::Log).to receive(:debug)
+          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
+          allow(@plugin.logger).to receive(:trace)
           @plugin.run
         end
       end
@@ -950,24 +950,24 @@ describe Ohai::System, "Network Plugin" do
             it_doesnt_fail
 
             it "can't detect ipaddress (ipv4)" do
-              allow(Ohai::Log).to receive(:warn)
+              allow(@plugin.logger).to receive(:warn)
               @plugin.run
               expect(@plugin["ipaddress"]).to be_nil
             end
 
             it "takes the macaddress from ipv6" do
-              allow(Ohai::Log).to receive(:warn)
+              allow(@plugin.logger).to receive(:warn)
               @plugin.run
               expect(@plugin["macaddress"]).to eq(@expected_results[os]["macaddress"])
             end
 
             it "warns about not being able to set ipaddress" do
-              expect(Ohai::Log).to receive(:warn).with(/unable to detect ipaddress/).once
+              expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
               @plugin.run
             end
 
             it "doesn't overwrite ip6address" do
-              allow(Ohai::Log).to receive(:warn)
+              allow(@plugin.logger).to receive(:warn)
               @plugin.run
               expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
             end
@@ -1025,13 +1025,13 @@ describe Ohai::System, "Network Plugin" do
             it_doesnt_fail
 
             it "can't set ipaddress" do
-              allow(Ohai::Log).to receive(:warn)
+              allow(@plugin.logger).to receive(:warn)
               @plugin.run
               expect(@plugin["ipaddress"]).to be_nil
             end
 
             it "doesn't overwrite {ip6,mac}address" do
-              allow(Ohai::Log).to receive(:warn)
+              allow(@plugin.logger).to receive(:warn)
               @plugin.run
               expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
               expect(@plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")

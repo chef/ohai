@@ -24,8 +24,8 @@ module Ohai
         attr_reader :version
         attr_reader :source
 
-        def initialize(data)
-          super(data)
+        def initialize(data, logger)
+          super(data, logger)
           @source = self.class.sources
           @version = :version7
         end
@@ -97,7 +97,7 @@ module Ohai
           elsif collector.has_key?(:default)
             instance_eval(&collector[:default])
           else
-            Ohai::Log.debug("Plugin #{name}: No data to collect. Skipping...")
+            logger.trace("Plugin #{name}: No data to collect. Skipping...")
           end
         end
 
@@ -106,11 +106,11 @@ module Ohai
         end
 
         def provides(*paths)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
+          logger.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
         end
 
         def require_plugin(*args)
-          Ohai::Log.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+          logger.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
         end
 
         def configuration(option, *options)

@@ -540,7 +540,7 @@ BLKID_TYPE
       it "logs warning about #{command} missing" do
         Ohai.config[:plugin][:filesystem][:allow_partial_data] = true
         allow(plugin).to receive(:shell_out).with(/#{command}/).and_raise(Ohai::Exceptions::Exec)
-        expect(Ohai::Log).to receive(:warn).with("Plugin Filesystem: #{command} binary is not available. Some data will not be available.")
+        expect_any_instance_of(Mixlib::Log::Child).to receive(:warn).with("Plugin Filesystem: #{command} binary is not available. Some data will not be available.")
         plugin.run
       end
     end

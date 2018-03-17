@@ -36,12 +36,12 @@ Ohai.plugin(:Softlayer) do
   collect_data do
     # Adds softlayer Mash
     if looks_like_softlayer?
-      Ohai::Log.debug("Plugin Softlayer: looks_like_softlayer? == true")
+      logger.trace("Plugin Softlayer: looks_like_softlayer? == true")
       metadata = fetch_metadata
       softlayer Mash.new
       metadata.each { |k, v| softlayer[k] = v } if metadata
     else
-      Ohai::Log.debug("Plugin Softlayer: looks_like_softlayer? == false")
+      logger.trace("Plugin Softlayer: looks_like_softlayer? == false")
     end
   end
 end

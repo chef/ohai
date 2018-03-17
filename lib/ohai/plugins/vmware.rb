@@ -42,7 +42,7 @@ Ohai.plugin(:VMware) do
 
   def get_vm_attributes(vmtools_path)
     if !File.exist?(vmtools_path)
-      Ohai::Log.debug("Plugin VMware: #{vmtools_path} not found")
+      logger.trace("Plugin VMware: #{vmtools_path} not found")
     else
       vmware Mash.new
       begin
@@ -62,7 +62,7 @@ Ohai.plugin(:VMware) do
           vmware[param] = from_cmd("#{vmtools_path} #{param} status")
         end
       rescue
-        Ohai::Log.debug("Plugin VMware: Error while collecting VMware guest attributes")
+        logger.trace("Plugin VMware: Error while collecting VMware guest attributes")
       end
     end
   end

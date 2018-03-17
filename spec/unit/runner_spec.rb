@@ -71,7 +71,7 @@ describe Ohai::Runner, "run_plugin" do
           thing(Mash.new)
         end
       end
-      klass.new(@ohai.data)
+      klass.new(@ohai.data, @ohai.logger)
     end
 
     it "should run the plugin" do
@@ -96,7 +96,7 @@ describe Ohai::Runner, "run_plugin" do
             thing(other_thing)
           end
         end
-        @plugin = klass.new(@ohai.data)
+        @plugin = klass.new(@ohai.data, @ohai.logger)
       end
 
       it "should raise Ohai::Excpetions::AttributeNotFound" do
@@ -127,7 +127,7 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@ohai.data, @ohai.logger)
         end
         @plugin1, @plugin2 = @plugins
 
@@ -160,7 +160,7 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass1, klass2].each do |klass|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@ohai.data, @ohai.logger)
         end
         @plugin1, @plugin2, @plugin3 = @plugins
 
@@ -204,7 +204,7 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klass1, klass2, klass3].each do |klass|
-        @plugins << klass.new(@ohai.data)
+        @plugins << klass.new(@ohai.data, @ohai.logger)
       end
       @plugin1, @plugin2, @plugin3 = @plugins
       @ohai.provides_map.set_providers_for(@plugin1, %w{one two})
@@ -232,7 +232,7 @@ describe Ohai::Runner, "run_plugin" do
           end
         end
       end
-      let(:plugin) { plugin_class.new(@ohai.data) }
+      let(:plugin) { plugin_class.new(@ohai.data, @ohai.logger) }
 
       it "ignores the cycle" do
         @ohai.provides_map.set_providers_for(plugin, ["thing"])
@@ -260,7 +260,7 @@ describe Ohai::Runner, "run_plugin" do
 
         @plugins = []
         [klass1, klass2].each_with_index do |klass, idx|
-          @plugins << klass.new(@ohai.data)
+          @plugins << klass.new(@ohai.data, @ohai.logger)
         end
 
         @plugin1, @plugin2 = @plugins
@@ -297,7 +297,7 @@ describe Ohai::Runner, "run_plugin" do
 
       @plugins = []
       [klass_a, klass_b, klass_c].each do |klass|
-        @plugins << klass.new(@ohai.data)
+        @plugins << klass.new(@ohai.data, @ohai.logger)
       end
       @plugin_a, @plugin_b, @plugin_c = @plugins
     end
@@ -334,12 +334,12 @@ describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @provides_map = Ohai::ProvidesMap.new
     @data = Mash.new
-    @ohai = double("Ohai::System", :data => @data, :provides_map => @provides_map)
+    @ohai = double("Ohai::System", :data => @data, :provides_map => @provides_map, logger: Ohai::Log.with_child)
     @runner = Ohai::Runner.new(@ohai, true)
   end
 
   it "should collect the provider" do
-    plugin = Ohai::DSL::Plugin.new(@ohai.data)
+    plugin = Ohai::DSL::Plugin.new(@ohai.data, @ohai.logger)
     @ohai.provides_map.set_providers_for(plugin, ["top/middle/bottom"])
 
     dependency_providers = @runner.fetch_plugins(["top/middle/bottom"])
@@ -349,7 +349,7 @@ describe Ohai::Runner, "fetch_plugins" do
   describe "when the attribute is not provided by any plugin" do
     describe "and some parent attribute has providers" do
       it "should return the providers for the parent" do
-        plugin = Ohai::DSL::Plugin.new(@ohai.data)
+        plugin = Ohai::DSL::Plugin.new(@ohai.data, @ohai.logger)
         @provides_map.set_providers_for(plugin, ["test/attribute"])
         expect(@runner.fetch_plugins(["test/attribute/too_far"])).to eql([plugin])
       end
@@ -364,7 +364,7 @@ describe Ohai::Runner, "fetch_plugins" do
   end
 
   it "should return unique providers" do
-    plugin = Ohai::DSL::Plugin.new(@ohai.data)
+    plugin = Ohai::DSL::Plugin.new(@ohai.data, @ohai.logger)
     @provides_map.set_providers_for(plugin, ["test", "test/too_far/way_too_far"])
     expect(@runner.fetch_plugins(["test", "test/too_far/way_too_far"])).to eql([plugin])
   end
@@ -399,7 +399,7 @@ describe Ohai::Runner, "#get_cycle" do
 
     plugins = []
     [klass1, klass2, klass3].each_with_index do |klass, idx|
-      plugins << klass.new(@ohai.data)
+      plugins << klass.new(@ohai.data, @ohai.logger)
     end
     @plugin1, @plugin2, @plugin3 = plugins
   end

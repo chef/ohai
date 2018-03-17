@@ -81,7 +81,7 @@ Ohai.plugin(:Platform) do
     release_contents = File.read("/etc/cumulus/etc.replace/os-release")
     release_contents.match(/VERSION_ID=(.*)/)[1]
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
-    Ohai::Log.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release could not be parsed to determine platform_version")
+    logger.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release could not be parsed to determine platform_version")
     nil
   end
 
@@ -94,7 +94,7 @@ Ohai.plugin(:Platform) do
     release_contents = File.read("/etc/f5-release")
     release_contents.match(/BIG-IP release (\S*)/)[1] # http://rubular.com/r/O8nlrBVqSb
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
-    Ohai::Log.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
+    logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
     nil
   end
 

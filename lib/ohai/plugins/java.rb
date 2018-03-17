@@ -42,7 +42,7 @@ Ohai.plugin(:Java) do
       languages[:java] = java unless java.empty?
     end
   rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug('Plugin Java: Could not shell_out "java -mx64m -version". Skipping plugin')
+    logger.trace('Plugin Java: Could not shell_out "java -mx64m -version". Skipping plugin')
   end
 
   # On Mac OS X, the development tools include "stubs" for JVM executables that

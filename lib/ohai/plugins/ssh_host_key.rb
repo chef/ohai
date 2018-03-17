@@ -44,7 +44,7 @@ Ohai.plugin(:SSHHostKey) do
                     # Darwin
                     "/etc/sshd_config"
                   else
-                    Ohai::Log.debug("Plugin SSHHostKey: Failed to find sshd configuration file")
+                    logger.trace("Plugin SSHHostKey: Failed to find sshd configuration file")
                     nil
                   end
 

@@ -23,10 +23,10 @@ describe Ohai::ProvidesMap do
 
   let(:ohai_system) { Ohai::System.new }
   let(:provides_map) { Ohai::ProvidesMap.new }
-  let(:plugin_1) { Ohai::DSL::Plugin.new(ohai_system.data) }
-  let(:plugin_2) { Ohai::DSL::Plugin.new(ohai_system.data) }
-  let(:plugin_3) { Ohai::DSL::Plugin.new(ohai_system.data) }
-  let(:plugin_4) { Ohai::DSL::Plugin.new(ohai_system.data) }
+  let(:plugin_1) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
+  let(:plugin_2) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
+  let(:plugin_3) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
+  let(:plugin_4) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
 
   describe "when looking up providing plugins for a single attribute" do
     describe "when the attribute does not exist" do

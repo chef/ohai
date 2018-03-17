@@ -27,6 +27,11 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
     mixin
   end
 
+  before do
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
+    allow(mixin).to receive(:logger).and_return(logger)
+  end
+
   def make_request(item)
     "/rest/v3.1/SoftLayer_Resource_Metadata/#{item}"
   end
@@ -41,7 +46,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
       allow(http_mock).to receive(:get).and_raise(StandardError.new("API return fake error"))
       allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
-      expect(::Ohai::Log).to receive(:error).at_least(:once)
+      expect(mixin.logger).to receive(:error).at_least(:once)
       expect { mixin.fetch_metadata }.to raise_error(StandardError)
     end
 

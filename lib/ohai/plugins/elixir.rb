@@ -30,7 +30,7 @@ Ohai.plugin(:Elixir) do
         languages[:elixir] = elixir
       end
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin Elixir: Could not shell_out "elixir -v". Skipping plugin')
+      logger.trace('Plugin Elixir: Could not shell_out "elixir -v". Skipping plugin')
     end
   end
 end

@@ -25,7 +25,7 @@ module Ohai
         begin
           saddr = Socket.pack_sockaddr_in(port, addr)
         rescue SocketError => e # generally means dns resolution error
-          Ohai::Log.debug("Mixin HttpHelper: can_socket_connect? failed setting up socket connection: #{e}")
+          logger.trace("Mixin HttpHelper: can_socket_connect? failed setting up socket connection: #{e}")
           return false
         end
 
@@ -48,7 +48,7 @@ module Ohai
           end
         rescue SystemCallError
         end
-        Ohai::Log.debug("Mixin HttpHelper: can_socket_connect? == #{connected}")
+        logger.trace("Mixin HttpHelper: can_socket_connect? == #{connected}")
         connected
       end
     end

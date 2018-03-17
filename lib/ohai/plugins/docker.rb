@@ -27,7 +27,7 @@ Ohai.plugin(:Docker) do
       return JSON.parse(so.stdout)
     end
   rescue Ohai::Exceptions::Exec
-    Ohai::Log.debug('Plugin Docker: Could not shell_out "docker info --format \'{{json .}}\'". Skipping plugin')
+    logger.trace('Plugin Docker: Could not shell_out "docker info --format \'{{json .}}\'". Skipping plugin')
   end
 
   def docker_ohai_data(shellout_data)

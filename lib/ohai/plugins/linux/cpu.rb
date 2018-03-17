@@ -92,7 +92,7 @@ Ohai.plugin(:CPU) do
       cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
     else
       begin
-        Ohai::Log.debug("Plugin CPU: Falling back to aggregate data from lscpu as real cpu & core data is missing in /proc/cpuinfo")
+        logger.trace("Plugin CPU: Falling back to aggregate data from lscpu as real cpu & core data is missing in /proc/cpuinfo")
         so = shell_out("lscpu")
         if so.exitstatus == 0
           lscpu_data = Mash.new
@@ -110,10 +110,10 @@ Ohai.plugin(:CPU) do
           cpu[:real] = lscpu_data[:sockets]
           cpu[:cores] = lscpu_data[:sockets] * lscpu_data[:cores]
         else
-          Ohai::Log.debug("Plugin CPU: Error executing lscpu. CPU data may not be available.")
+          logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
         end
       rescue Ohai::Exceptions::Exec # util-linux isn't installed most likely
-        Ohai::Log.debug("Plugin CPU: Error executing lscpu. util-linux may not be installed.")
+        logger.trace("Plugin CPU: Error executing lscpu. util-linux may not be installed.")
       end
     end
   end

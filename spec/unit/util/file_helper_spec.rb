@@ -28,6 +28,8 @@ describe "Ohai::Util::FileHelper" do
 
   before(:each) do
     allow(file_helper).to receive(:name).and_return("Fakeclass")
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
+    allow(file_helper).to receive(:logger).and_return(logger)
     allow(File).to receive(:executable?).and_return(false)
   end
 

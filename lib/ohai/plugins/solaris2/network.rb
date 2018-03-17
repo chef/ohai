@@ -181,11 +181,11 @@ Ohai.plugin(:Network) do
           else
             matches[:name]
           end
-        Ohai::Log.debug("Plugin Network: found interface device: #{network[:default_interface]} #{matches[:name]}")
+        logger.trace("Plugin Network: found interface device: #{network[:default_interface]} #{matches[:name]}")
       end
       matches = /gateway: (\S+)/.match(line)
       if matches
-        Ohai::Log.debug("Plugin Network: found gateway: #{matches[1]}")
+        logger.trace("Plugin Network: found gateway: #{matches[1]}")
         network[:default_gateway] = matches[1]
       end
     end

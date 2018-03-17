@@ -31,9 +31,9 @@ Ohai.plugin(:Libvirt) do
 
   def load_libvirt
     require "libvirt" # this is the ruby-libvirt gem not the libvirt gem
-    Ohai::Log.debug("Plugin Libvirt: Successfully loaded ruby-libvirt gem")
+    logger.trace("Plugin Libvirt: Successfully loaded ruby-libvirt gem")
   rescue LoadError
-    Ohai::Log.debug("Plugin Libvirt: Can't load gem ruby-libvirt.")
+    logger.trace("Plugin Libvirt: Can't load gem ruby-libvirt.")
   end
 
   def virtconn
@@ -102,12 +102,12 @@ Ohai.plugin(:Libvirt) do
         virtconn.close
         libvirt libvirt_data
       rescue NameError
-        Ohai::Log.debug("Plugin Libvirt: Cannot load ruby-libvirt gem. Skipping...")
+        logger.trace("Plugin Libvirt: Cannot load ruby-libvirt gem. Skipping...")
       rescue Libvirt::ConnectionError
-        Ohai::Log.debug("Plugin Libvirt: Failed to connect to #{emu}:///system. Skipping...")
+        logger.trace("Plugin Libvirt: Failed to connect to #{emu}:///system. Skipping...")
       end
     else
-      Ohai::Log.debug("Plugin Libvirt: Node is not a virtualization host. Skipping...")
+      logger.trace("Plugin Libvirt: Node is not a virtualization host. Skipping...")
     end
   end
 end

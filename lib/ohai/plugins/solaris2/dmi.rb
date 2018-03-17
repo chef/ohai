@@ -25,7 +25,7 @@ Ohai.plugin(:DMI) do
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
     if (dmi.class.to_s == "Mash") && (dmi.keys.length > 1)
-      Ohai::Log.debug("Plugin DMI: skipping smbios output, since DMI information has already been provided")
+      logger.trace("Plugin DMI: skipping smbios output, since DMI information has already been provided")
       return
     end
 
@@ -118,7 +118,7 @@ Ohai.plugin(:DMI) do
       # remove/replace any characters that don't fall inside permissible ASCII range, or whitespace
       line = raw_line.gsub(/[^\x20-\x7E\n\t\r]/, ".")
       if line != raw_line
-        Ohai::Log.debug("Plugin DMI: converted characters from line:\n#{raw_line}")
+        logger.trace("Plugin DMI: converted characters from line:\n#{raw_line}")
       end
 
       if ( header_information = header_information_line.match(line) )
@@ -137,7 +137,7 @@ Ohai.plugin(:DMI) do
           dmi_record[:type] = Ohai::Common::DMI.id_lookup(id)
 
         else
-          Ohai::Log.debug("Plugin DMI: unrecognized header type; skipping")
+          logger.trace("Plugin DMI: unrecognized header type; skipping")
           dmi_record = nil
           next
         end
@@ -153,7 +153,7 @@ Ohai.plugin(:DMI) do
 
       elsif ( data = data_key_value_line.match(line) )
         if dmi_record.nil?
-          Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
+          logger.trace("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -161,7 +161,7 @@ Ohai.plugin(:DMI) do
 
       elsif ( data = data_key_only_line.match(line) )
         if dmi_record.nil?
-          Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
+          logger.trace("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
           next
         end
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = ""
@@ -169,11 +169,11 @@ Ohai.plugin(:DMI) do
 
       elsif ( extended_data = extended_data_line.match(line) )
         if dmi_record.nil?
-          Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
+          logger.trace("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
           next
         end
         if field.nil?
-          Ohai::Log.debug("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
+          logger.trace("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
           next
         end
         # overwrite "raw" value with a new Mash
@@ -181,7 +181,7 @@ Ohai.plugin(:DMI) do
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
 
       else
-        Ohai::Log.debug("Plugin DMI: unrecognized output line; discarding:\n#{line}")
+        logger.trace("Plugin DMI: unrecognized output line; discarding:\n#{line}")
 
       end
     end

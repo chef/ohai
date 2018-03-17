@@ -55,7 +55,7 @@ Ohai.plugin(:Network) do
       if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
         interface = iface[$2]
         unless interface
-          Ohai::Log.warn("neighbor list has entries for unknown interface #{interface}")
+          logger.warn("neighbor list has entries for unknown interface #{interface}")
           next
         end
         interface[neigh_attr] = Mash.new unless interface[neigh_attr]
@@ -76,7 +76,7 @@ Ohai.plugin(:Network) do
     so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
     so.stdout.lines do |line|
       line.strip!
-      Ohai::Log.debug("Plugin Network: Parsing #{line}")
+      logger.trace("Plugin Network: Parsing #{line}")
       if line =~ /\\/
         parts = line.split('\\')
         route_dest = parts.shift.strip
@@ -91,13 +91,13 @@ Ohai.plugin(:Network) do
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
         else
-          Ohai::Log.debug("Plugin Network: Skipping route entry without a device: '#{line}'")
+          logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
           next
         end
         route_int = "venet0:0" if is_openvz? && !is_openvz_host? && route_int == "venet0" && iface["venet0:0"]
 
         unless iface[route_int]
-          Ohai::Log.debug("Plugin Network: Skipping previously unseen interface from 'ip route show': #{route_int}")
+          logger.trace("Plugin Network: Skipping previously unseen interface from 'ip route show': #{route_int}")
           next
         end
 
@@ -115,7 +115,7 @@ Ohai.plugin(:Network) do
           addr = iface[route_int][:addresses]
           unless addr.nil? || addr.has_key?(route_entry[:src]) ||
               addr.values.all? { |a| a["family"] != family[:name] }
-            Ohai::Log.debug("Plugin Network: Skipping route entry whose src does not match the interface IP")
+            logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
             next
           end
         end
@@ -155,7 +155,7 @@ Ohai.plugin(:Network) do
       so = shell_out("#{ethtool_binary_path} #{tmp_int}")
       so.stdout.lines do |line|
         line.chomp!
-        Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{line}")
+        logger.trace("Plugin Network: Parsing ethtool output: #{line}")
         line.lstrip!
         k, v = line.split(": ")
         next unless keys.include? k
@@ -176,7 +176,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
       so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
-      Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["ring_params"] = {}
       so.stdout.lines.each do |line|
@@ -486,7 +486,7 @@ Ohai.plugin(:Network) do
     else
       default_route_table = configuration(:default_route_table)
     end
-    Ohai::Log.debug("Plugin Network: default route table is '#{default_route_table}'")
+    logger.trace("Plugin Network: default route table is '#{default_route_table}'")
 
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
@@ -533,14 +533,14 @@ Ohai.plugin(:Network) do
                            else
                              "default_#{family[:name]}_interface"
                            end
-          Ohai::Log.debug("Plugin Network: Unable to determine '#{attribute_name}' as no default routes were found for that interface family")
+          logger.trace("Plugin Network: Unable to determine '#{attribute_name}' as no default routes were found for that interface family")
         else
           network["#{default_prefix}_interface"] = default_route[:dev]
-          Ohai::Log.debug("Plugin Network: #{default_prefix}_interface set to #{default_route[:dev]}")
+          logger.trace("Plugin Network: #{default_prefix}_interface set to #{default_route[:dev]}")
 
           # setting gateway to 0.0.0.0 or :: if the default route is a link level one
           network["#{default_prefix}_gateway"] = default_route[:via] ? default_route[:via] : family[:default_route].chomp("/0")
-          Ohai::Log.debug("Plugin Network: #{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
+          logger.trace("Plugin Network: #{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
 
           # deduce the default route the user most likely cares about to pick {ip,mac,ip6}address below
           favored_route = favored_default_route(routes, iface, default_route, family)
@@ -553,20 +553,20 @@ Ohai.plugin(:Network) do
             if family[:name] == "inet"
               ipaddress favored_route[:src]
               m = get_mac_for_interface(iface, favored_route[:dev])
-              Ohai::Log.debug("Plugin Network: Overwriting macaddress #{macaddress} with #{m} from interface #{favored_route[:dev]}") if macaddress
+              logger.trace("Plugin Network: Overwriting macaddress #{macaddress} with #{m} from interface #{favored_route[:dev]}") if macaddress
               macaddress m
             elsif family[:name] == "inet6"
               # this rarely does anything since we rarely have src for ipv6, so this usually falls back on the network plugin
               ip6address favored_route[:src]
               if macaddress
-                Ohai::Log.debug("Plugin Network: Not setting macaddress from ipv6 interface #{favored_route[:dev]} because macaddress is already set")
+                logger.trace("Plugin Network: Not setting macaddress from ipv6 interface #{favored_route[:dev]} because macaddress is already set")
               else
                 macaddress get_mac_for_interface(iface, favored_route[:dev])
               end
             end
           else
-            Ohai::Log.debug("Plugin Network: Unable to deduce the favored default route for family '#{family[:name]}' despite finding a default route, and is not setting ipaddress/ip6address/macaddress. the network plugin may provide fallbacks.")
-            Ohai::Log.debug("Plugin Network: This potential default route was excluded: #{default_route}")
+            logger.trace("Plugin Network: Unable to deduce the favored default route for family '#{family[:name]}' despite finding a default route, and is not setting ipaddress/ip6address/macaddress. the network plugin may provide fallbacks.")
+            logger.trace("Plugin Network: This potential default route was excluded: #{default_route}")
           end
         end
       end # end families.each
@@ -576,7 +576,7 @@ Ohai.plugin(:Network) do
         route_result = so.stdout.split($/).grep( /^0.0.0.0/ )[0].split( /[ \t]+/ )
         network[:default_gateway], network[:default_interface] = route_result.values_at(1, 7)
       rescue Ohai::Exceptions::Exec
-        Ohai::Log.debug("Plugin Network: Unable to determine default interface")
+        logger.trace("Plugin Network: Unable to determine default interface")
       end
 
       so = shell_out("ifconfig -a")

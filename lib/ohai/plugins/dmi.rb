@@ -93,14 +93,14 @@ Ohai.plugin(:DMI) do
 
         elsif ( type = type_line.match(line) )
           if dmi_record .nil?
-            Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
+            logger.trace("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
             next
           end
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:application_identifier] = type[1]
 
         elsif ( data = data_line.match(line) )
           if dmi_record .nil?
-            Ohai::Log.debug("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
+            logger.trace("Plugin DMI: unexpected data line found before header; discarding:\n#{line}")
             next
           end
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][data[1]] = data[2]
@@ -108,11 +108,11 @@ Ohai.plugin(:DMI) do
 
         elsif ( extended_data = extended_data_line.match(line) )
           if dmi_record .nil?
-            Ohai::Log.debug("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
+            logger.trace("Plugin DMI: unexpected extended data line found before header; discarding:\n#{line}")
             next
           end
           if field .nil?
-            Ohai::Log.debug("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
+            logger.trace("Plugin DMI: unexpected extended data line found outside data section; discarding:\n#{line}")
             next
           end
           # overwrite "raw" value with a new Mash
@@ -120,14 +120,14 @@ Ohai.plugin(:DMI) do
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = nil
 
         else
-          Ohai::Log.debug("Plugin DMI: unrecognized output line; discarding:\n#{line}")
+          logger.trace("Plugin DMI: unrecognized output line; discarding:\n#{line}")
 
         end
       end
 
       Ohai::Common::DMI.convenience_keys(dmi)
     rescue Ohai::Exceptions::Exec
-      Ohai::Log.debug('Plugin DMI: Could not shell_out "dmidecode". Skipping data')
+      logger.trace('Plugin DMI: Could not shell_out "dmidecode". Skipping data')
     end
   end
 end

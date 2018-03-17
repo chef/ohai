@@ -32,7 +32,7 @@ module Ohai
       end
 
       def fetch_metadata
-        Ohai::Log.debug("Mixin AzureMetadata: Fetching metadata from host #{AZURE_METADATA_ADDR} at #{AZURE_METADATA_URL}")
+        logger.trace("Mixin AzureMetadata: Fetching metadata from host #{AZURE_METADATA_ADDR} at #{AZURE_METADATA_URL}")
         response = http_get(AZURE_METADATA_URL)
         if response.code == "200"
           begin
@@ -40,11 +40,11 @@ module Ohai
             parser = FFI_Yajl::Parser.new
             parser.parse(data)
           rescue FFI_Yajl::ParseError
-            Ohai::Log.warn("Mixin AzureMetadata: Metadata response is NOT valid JSON")
+            logger.warn("Mixin AzureMetadata: Metadata response is NOT valid JSON")
             nil
           end
         else
-          Ohai::Log.warn("Mixin AzureMetadata: Received response code #{response.code} requesting metadata")
+          logger.warn("Mixin AzureMetadata: Received response code #{response.code} requesting metadata")
           nil
         end
       end

@@ -59,7 +59,7 @@ Ohai.plugin(:Virtualization) do
       # This file should exist on most Xen systems, normally empty for guests
       if File.exist?("/proc/xen/capabilities")
         if File.read("/proc/xen/capabilities") =~ /control_d/i
-          Ohai::Log.debug("Plugin Virtualization: /proc/xen/capabilities contains control_d. Detecting as Xen host")
+          logger.trace("Plugin Virtualization: /proc/xen/capabilities contains control_d. Detecting as Xen host")
           virtualization[:role] = "host"
           virtualization[:systems][:xen] = "host"
         end
@@ -70,12 +70,12 @@ Ohai.plugin(:Virtualization) do
     if File.exist?("/proc/modules")
       modules = File.read("/proc/modules")
       if modules =~ /^vboxdrv/
-        Ohai::Log.debug("Plugin Virtualization: /proc/modules contains vboxdrv. Detecting as vbox host")
+        logger.trace("Plugin Virtualization: /proc/modules contains vboxdrv. Detecting as vbox host")
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
       elsif modules =~ /^vboxguest/
-        Ohai::Log.debug("Plugin Virtualization: /proc/modules contains vboxguest. Detecting as vbox guest")
+        logger.trace("Plugin Virtualization: /proc/modules contains vboxguest. Detecting as vbox guest")
         virtualization[:system] = "vbox"
         virtualization[:role] = "guest"
         virtualization[:systems][:vbox] = "guest"
@@ -84,7 +84,7 @@ Ohai.plugin(:Virtualization) do
 
     # if nova binary is present we're on an openstack host
     if nova_exists?
-      Ohai::Log.debug("Plugin Virtualization: nova command exists. Detecting as openstack host")
+      logger.trace("Plugin Virtualization: nova command exists. Detecting as openstack host")
       virtualization[:system] = "openstack"
       virtualization[:role] = "host"
       virtualization[:systems][:openstack] = "host"
@@ -93,7 +93,7 @@ Ohai.plugin(:Virtualization) do
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     if File.exist?("/proc/cpuinfo")
       if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
-        Ohai::Log.debug("Plugin Virtualization: /proc/cpuinfo lists a KVM paravirt CPU string. Detecting as kvm guest")
+        logger.trace("Plugin Virtualization: /proc/cpuinfo lists a KVM paravirt CPU string. Detecting as kvm guest")
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
@@ -105,11 +105,11 @@ Ohai.plugin(:Virtualization) do
     if File.exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
       if File.read("/proc/cpuinfo") =~ /hypervisor/
-        Ohai::Log.debug("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
+        logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
       else
-        Ohai::Log.debug("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo does not list the hypervisor feature. Detecting as kvm host")
+        logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo does not list the hypervisor feature. Detecting as kvm host")
         virtualization[:role] = "host"
         virtualization[:systems][:kvm] = "host"
       end
@@ -118,12 +118,12 @@ Ohai.plugin(:Virtualization) do
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
     if File.exist?("/proc/bc/0")
-      Ohai::Log.debug("Plugin Virtualization: /proc/bc/0 exists. Detecting as openvz host")
+      logger.trace("Plugin Virtualization: /proc/bc/0 exists. Detecting as openvz host")
       virtualization[:system] = "openvz"
       virtualization[:role] = "host"
       virtualization[:systems][:openvz] = "host"
     elsif File.exist?("/proc/vz")
-      Ohai::Log.debug("Plugin Virtualization: /proc/vz exists. Detecting as openvz guest")
+      logger.trace("Plugin Virtualization: /proc/vz exists. Detecting as openvz guest")
       virtualization[:system] = "openvz"
       virtualization[:role] = "guest"
       virtualization[:systems][:openvz] = "guest"
@@ -132,7 +132,7 @@ Ohai.plugin(:Virtualization) do
     # Detect Parallels virtual machine from pci devices
     if File.exist?("/proc/bus/pci/devices")
       if File.read("/proc/bus/pci/devices") =~ /1ab84000/
-        Ohai::Log.debug("Plugin Virtualization: /proc/bus/pci/devices contains '1ab84000' pci device. Detecting as parallels guest")
+        logger.trace("Plugin Virtualization: /proc/bus/pci/devices contains '1ab84000' pci device. Detecting as parallels guest")
         virtualization[:system] = "parallels"
         virtualization[:role] = "guest"
         virtualization[:systems][:parallels] = "guest"
@@ -143,7 +143,7 @@ Ohai.plugin(:Virtualization) do
     if File.exist?("/usr/sbin/dmidecode")
       guest = guest_from_dmi(shell_out("dmidecode").stdout)
       if guest
-        Ohai::Log.debug("Plugin Virtualization: dmidecode contains string indicating #{guest} guest")
+        logger.trace("Plugin Virtualization: dmidecode contains string indicating #{guest} guest")
         virtualization[:system] = guest
         virtualization[:role] = "guest"
         virtualization[:systems][guest.to_sym] = "guest"
@@ -157,11 +157,11 @@ Ohai.plugin(:Virtualization) do
       if vxid && vxid[2]
         virtualization[:system] = "linux-vserver"
         if vxid[2] == "0"
-          Ohai::Log.debug("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a value of 0. Detecting as linux-vserver host")
+          logger.trace("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a value of 0. Detecting as linux-vserver host")
           virtualization[:role] = "host"
           virtualization[:systems]["linux-vserver"] = "host"
         else
-          Ohai::Log.debug("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a non-0 value. Detecting as linux-vserver guest")
+          logger.trace("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a non-0 value. Detecting as linux-vserver guest")
           virtualization[:role] = "guest"
           virtualization[:systems]["linux-vserver"] = "guest"
         end
@@ -190,17 +190,17 @@ Ohai.plugin(:Virtualization) do
       cgroup_content = File.read("/proc/self/cgroup")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
           cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-?.+$}
-        Ohai::Log.debug("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
+        logger.trace("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
       elsif File.read("/proc/1/environ") =~ /container=lxc/
-        Ohai::Log.debug("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
+        logger.trace("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
       elsif File.read("/proc/1/environ") =~ /container=systemd-nspawn/
-        Ohai::Log.debug("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
+        logger.trace("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"
         virtualization[:systems][:nspawn] = "guest"
@@ -209,7 +209,7 @@ Ohai.plugin(:Virtualization) do
         # Even so, it is likely we are on an LXC capable host that is not being used as such
         # So we're cautious here to not overwrite other existing values (OHAI-573)
         unless virtualization[:system] && virtualization[:role]
-          Ohai::Log.debug("Plugin Virtualization: /proc/self/cgroup and lxc-version command exist. Detecting as lxc host")
+          logger.trace("Plugin Virtualization: /proc/self/cgroup and lxc-version command exist. Detecting as lxc host")
           virtualization[:system] = "lxc"
           virtualization[:role] = "host"
         end
@@ -219,7 +219,7 @@ Ohai.plugin(:Virtualization) do
         virtualization[:systems][:lxc] = "host"
       end
     elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")
-      Ohai::Log.debug("Plugin Virtualization: .dockerenv or .dockerinit exist. Detecting as docker guest")
+      logger.trace("Plugin Virtualization: .dockerenv or .dockerinit exist. Detecting as docker guest")
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"
       virtualization[:systems][:docker] = "guest"
@@ -228,7 +228,7 @@ Ohai.plugin(:Virtualization) do
     # Detect LXD
     # See https://github.com/lxc/lxd/blob/master/doc/dev-lxd.md
     if File.exist?("/dev/lxd/sock")
-      Ohai::Log.debug("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
+      logger.trace("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
       virtualization[:system] = "lxd"
       virtualization[:role] = "guest"
     else
@@ -242,7 +242,7 @@ Ohai.plugin(:Virtualization) do
       #   - includes all future releases starting with 2.21, and will be the only source of 3.1+ feature releases post-bionic
       ["/var/lib/lxd/devlxd", "/var/snap/lxd/common/lxd/devlxd"].each do |devlxd|
         if File.exist?(devlxd)
-          Ohai::Log.debug("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
+          logger.trace("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
           virtualization[:system] = "lxd"
           virtualization[:role] = "host"
           break

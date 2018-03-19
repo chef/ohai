@@ -1,43 +1,41 @@
 # Change Log
 
-<!-- latest_release 14.0.28 -->
-## [v14.0.28](https://github.com/chef/ohai/tree/v14.0.28) (2018-03-17)
-
-#### Merged Pull Requests
-- Move ohai to structured logging [#1161](https://github.com/chef/ohai/pull/1161) ([thommay](https://github.com/thommay))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=13.7.1 -->
-### Changes since 13.7.1 release
-
-#### Merged Pull Requests
-- Move ohai to structured logging [#1161](https://github.com/chef/ohai/pull/1161) ([thommay](https://github.com/thommay)) <!-- 14.0.28 -->
-- Detect virtualbox and vmware guests on Macs [#1164](https://github.com/chef/ohai/pull/1164) ([tas50](https://github.com/tas50)) <!-- 14.0.27 -->
-- Minor updates to the Ohai/Chef plugins [#1160](https://github.com/chef/ohai/pull/1160) ([tas50](https://github.com/tas50)) <!-- 14.0.26 -->
-- Fix bug in azure plugin/update to recent metadata version. [#1154](https://github.com/chef/ohai/pull/1154) ([kriszentner](https://github.com/kriszentner)) <!-- 14.0.25 -->
-- add ohai support for softlayer cloud [#1155](https://github.com/chef/ohai/pull/1155) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.24 -->
-- Fix chefstyle issues in ohai [#1153](https://github.com/chef/ohai/pull/1153) ([tas50](https://github.com/tas50)) <!-- 14.0.23 -->
-- SUSE: Use /etc/os-release if present for all platform attributes [#1140](https://github.com/chef/ohai/pull/1140) ([yeoldegrove](https://github.com/yeoldegrove)) <!-- 14.0.22 -->
-- Remove support for Windows 2003 from uptime/cpu plugins [#1148](https://github.com/chef/ohai/pull/1148) ([tas50](https://github.com/tas50)) <!-- 14.0.21 -->
-- Softlayer is forcing tlsv1_2 for all API calls [#1149](https://github.com/chef/ohai/pull/1149) ([smcavallo](https://github.com/smcavallo)) <!-- 14.0.20 -->
-- Expand what we blacklist from the kernel/network plugins on Windows [#1147](https://github.com/chef/ohai/pull/1147) ([tas50](https://github.com/tas50)) <!-- 14.0.19 -->
-- Mark the shard plugin as optional [#1146](https://github.com/chef/ohai/pull/1146) ([thommay](https://github.com/thommay)) <!-- 14.0.18 -->
-- Add additional information to the kernel plugin on Windows [#1142](https://github.com/chef/ohai/pull/1142) ([tas50](https://github.com/tas50)) <!-- 14.0.17 -->
-- Update root_group plugin to use the collect_data helper [#1144](https://github.com/chef/ohai/pull/1144) ([tas50](https://github.com/tas50)) <!-- 14.0.16 -->
-- Add scaleway plugin [#1124](https://github.com/chef/ohai/pull/1124) ([josqu4red](https://github.com/josqu4red)) <!-- 14.0.15 -->
-- Simplify &amp; optimize the kernel plugin [#1139](https://github.com/chef/ohai/pull/1139) ([tas50](https://github.com/tas50)) <!-- 14.0.14 -->
-- Support optional plugins [#1136](https://github.com/chef/ohai/pull/1136) ([thommay](https://github.com/thommay)) <!-- 14.0.13 -->
-- fix critical plugin tests [#1135](https://github.com/chef/ohai/pull/1135) ([thommay](https://github.com/thommay)) <!-- 14.0.11 -->
-- Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50)) <!-- 14.0.9 -->
-- fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay)) <!-- 14.0.7 -->
-- Initial removal of support for Ohai V6 plugins [#1127](https://github.com/chef/ohai/pull/1127) ([tas50](https://github.com/tas50)) <!-- 14.0.6 -->
-- Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50)) <!-- 14.0.5 -->
-- account for snap based installations of LXD [#1131](https://github.com/chef/ohai/pull/1131) ([thewyzard44](https://github.com/thewyzard44)) <!-- 14.0.4 -->
-- Simplify path logic by requiring chef-config 12.8+ [#1128](https://github.com/chef/ohai/pull/1128) ([tas50](https://github.com/tas50)) <!-- 14.0.3 -->
-- adds whitespace stripping for the shellout stdout [#1132](https://github.com/chef/ohai/pull/1132) ([rmcleod8](https://github.com/rmcleod8)) <!-- 14.0.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.0.28](https://github.com/chef/ohai/tree/v14.0.28) (2018-03-19)
+
+#### Merged Pull Requests
+- adds whitespace stripping for the shellout stdout [#1132](https://github.com/chef/ohai/pull/1132) ([rmcleod8](https://github.com/rmcleod8))
+- Simplify path logic by requiring chef-config 12.8+ [#1128](https://github.com/chef/ohai/pull/1128) ([tas50](https://github.com/tas50))
+- account for snap based installations of LXD [#1131](https://github.com/chef/ohai/pull/1131) ([thewyzard44](https://github.com/thewyzard44))
+- Fix vmware specs to actually run the plugin [#1133](https://github.com/chef/ohai/pull/1133) ([tas50](https://github.com/tas50))
+- Initial removal of support for Ohai V6 plugins [#1127](https://github.com/chef/ohai/pull/1127) ([tas50](https://github.com/tas50))
+- fix failing tests on non linux platforms [#1134](https://github.com/chef/ohai/pull/1134) ([thommay](https://github.com/thommay))
+- Docker host detection and information [#1125](https://github.com/chef/ohai/pull/1125) ([tas50](https://github.com/tas50))
+- fix critical plugin tests [#1135](https://github.com/chef/ohai/pull/1135) ([thommay](https://github.com/thommay))
+- Support optional plugins [#1136](https://github.com/chef/ohai/pull/1136) ([thommay](https://github.com/thommay))
+- Simplify &amp; optimize the kernel plugin [#1139](https://github.com/chef/ohai/pull/1139) ([tas50](https://github.com/tas50))
+- Add scaleway plugin [#1124](https://github.com/chef/ohai/pull/1124) ([josqu4red](https://github.com/josqu4red))
+- Update root_group plugin to use the collect_data helper [#1144](https://github.com/chef/ohai/pull/1144) ([tas50](https://github.com/tas50))
+- Add additional information to the kernel plugin on Windows [#1142](https://github.com/chef/ohai/pull/1142) ([tas50](https://github.com/tas50))
+- Mark the shard plugin as optional [#1146](https://github.com/chef/ohai/pull/1146) ([thommay](https://github.com/thommay))
+- Expand what we blacklist from the kernel/network plugins on Windows [#1147](https://github.com/chef/ohai/pull/1147) ([tas50](https://github.com/tas50))
+- Softlayer is forcing tlsv1_2 for all API calls [#1149](https://github.com/chef/ohai/pull/1149) ([smcavallo](https://github.com/smcavallo))
+- Remove support for Windows 2003 from uptime/cpu plugins [#1148](https://github.com/chef/ohai/pull/1148) ([tas50](https://github.com/tas50))
+- SUSE: Use /etc/os-release if present for all platform attributes [#1140](https://github.com/chef/ohai/pull/1140) ([yeoldegrove](https://github.com/yeoldegrove))
+- Fix chefstyle issues in ohai [#1153](https://github.com/chef/ohai/pull/1153) ([tas50](https://github.com/tas50))
+- add ohai support for softlayer cloud [#1155](https://github.com/chef/ohai/pull/1155) ([smcavallo](https://github.com/smcavallo))
+- Fix bug in azure plugin/update to recent metadata version. [#1154](https://github.com/chef/ohai/pull/1154) ([kriszentner](https://github.com/kriszentner))
+- Minor updates to the Ohai/Chef plugins [#1160](https://github.com/chef/ohai/pull/1160) ([tas50](https://github.com/tas50))
+- Detect virtualbox and vmware guests on Macs [#1164](https://github.com/chef/ohai/pull/1164) ([tas50](https://github.com/tas50))
+- Move ohai to structured logging [#1161](https://github.com/chef/ohai/pull/1161) ([thommay](https://github.com/thommay))
+<!-- latest_stable_release -->
+
 ## [v13.7.1](https://github.com/chef/ohai/tree/v13.7.1) (2018-01-10)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.7.0...v13.7.1)
@@ -45,7 +43,6 @@
 - Fix docker detection when running on new Docker for mac releases
 - [linux/network] Tunnel information
 - Add a plugin to provide PCI bus information using `lspci`
-<!-- latest_stable_release -->
 
 ## [v13.7.0](https://github.com/chef/ohai/tree/v13.7.0) (2017-12-04)
 

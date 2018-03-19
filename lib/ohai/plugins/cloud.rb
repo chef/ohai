@@ -26,6 +26,7 @@ Ohai.plugin(:Cloud) do
   depends "openstack"
   depends "azure"
   depends "digital_ocean"
+  depends "softlayer"
 
   # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
   #
@@ -295,6 +296,27 @@ Ohai.plugin(:Cloud) do
     @cloud_attr_obj.provider = "digital_ocean"
   end
 
+  # ----------------------------------------
+  # softlayer
+  # ----------------------------------------
+
+  # Is current cloud softlayer?
+  #
+  # === Return
+  # true:: If softlayer Hash is defined
+  # false:: Otherwise
+  def on_softlayer?
+    softlayer != nil
+  end
+
+  # Fill cloud hash with softlayer values
+  def get_softlayer_values
+    @cloud_attr_obj.add_ipv4_addr(softlayer["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(softlayer["local_ipv4"], :private)
+    @cloud_attr_obj.public_hostname = softlayer["public_fqdn"]
+    @cloud_attr_obj.provider = "softlayer"
+  end
+
   collect_data do
     require "ipaddr"
 
@@ -308,6 +330,7 @@ Ohai.plugin(:Cloud) do
     get_openstack_values if on_openstack?
     get_azure_values if on_azure?
     get_digital_ocean_values if on_digital_ocean?
+    get_softlayer_values if on_softlayer?
 
     # set node[:cloud] and node[:cloud_v2] hash here
     cloud_v2 @cloud_attr_obj.cloud_mash

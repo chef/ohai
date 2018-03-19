@@ -68,9 +68,13 @@ Ohai.plugin(:Azure) do
   end
 
   # create the basic structure we'll store our data in
-  def initialize_metadata_mash
+  def initialize_metadata_mash_compute
     metadata = Mash.new
     metadata["compute"] = Mash.new
+    metadata
+  end
+
+  def initialize_metadata_mash_network(metadata)
     metadata["network"] = Mash.new
     metadata["network"]["interfaces"] = Mash.new
     %w{public_ipv4 local_ipv4 public_ipv6 local_ipv6}.each do |type|
@@ -93,27 +97,31 @@ Ohai.plugin(:Azure) do
 
     endpoint_data = fetch_metadata
     return nil if endpoint_data.nil?
-    metadata = initialize_metadata_mash
+    metadata = initialize_metadata_mash_compute
 
     # blindly add everything in compute to our data structure
     endpoint_data["compute"].each do |k, v|
       metadata["compute"][k] = v
     end
 
-    # parse out per interface interface IP data
-    endpoint_data["network"]["interface"].each do |int|
-      metadata["network"]["interfaces"][int["macAddress"]] = Mash.new
-      metadata["network"]["interfaces"][int["macAddress"]]["mac"] = int["macAddress"]
-      metadata["network"]["interfaces"][int["macAddress"]]["public_ipv6"] = fetch_ip_data(int, "ipv6", "publicIpAddress")
-      metadata["network"]["interfaces"][int["macAddress"]]["public_ipv4"] = fetch_ip_data(int, "ipv4", "publicIpAddress")
-      metadata["network"]["interfaces"][int["macAddress"]]["local_ipv6"] = fetch_ip_data(int, "ipv6", "privateIpAddress")
-      metadata["network"]["interfaces"][int["macAddress"]]["local_ipv4"] = fetch_ip_data(int, "ipv4", "privateIpAddress")
-    end
+    # receiving network output is not guaranteed
+    unless endpoint_data["network"].nil?
+      metadata = initialize_metadata_mash_network(metadata)
+      # parse out per interface interface IP data
+      endpoint_data["network"]["interface"].each do |int|
+        metadata["network"]["interfaces"][int["macAddress"]] = Mash.new
+        metadata["network"]["interfaces"][int["macAddress"]]["mac"] = int["macAddress"]
+        metadata["network"]["interfaces"][int["macAddress"]]["public_ipv6"] = fetch_ip_data(int, "ipv6", "publicIpAddress")
+        metadata["network"]["interfaces"][int["macAddress"]]["public_ipv4"] = fetch_ip_data(int, "ipv4", "publicIpAddress")
+        metadata["network"]["interfaces"][int["macAddress"]]["local_ipv6"] = fetch_ip_data(int, "ipv6", "privateIpAddress")
+        metadata["network"]["interfaces"][int["macAddress"]]["local_ipv4"] = fetch_ip_data(int, "ipv4", "privateIpAddress")
+      end
 
-    # aggregate the total IP data
-    %w{public_ipv4 local_ipv4 public_ipv6 local_ipv6}.each do |type|
-      metadata["network"]["interfaces"].each_value do |val|
-        metadata["network"][type].concat val[type] unless val[type].empty?
+      # aggregate the total IP data
+      %w{public_ipv4 local_ipv4 public_ipv6 local_ipv6}.each do |type|
+        metadata["network"]["interfaces"].each_value do |val|
+          metadata["network"][type].concat val[type] unless val[type].empty?
+        end
       end
     end
 

@@ -17,10 +17,6 @@ group :ci do
   gem "rspec_junit_formatter"
 end
 
-group :changelog do
-  gem "github_changelog_generator", git: "https://github.com/chef/github-changelog-generator"
-end
-
 instance_eval(ENV["GEMFILE_MOD"]) if ENV["GEMFILE_MOD"]
 
 # If you want to load debugging tools into the bundle exec sandbox,

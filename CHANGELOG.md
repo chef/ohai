@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.29 -->
-## [v14.0.29](https://github.com/chef/ohai/tree/v14.0.29) (2018-03-19)
+<!-- latest_release unreleased -->
+## Unreleased
 
 #### Merged Pull Requests
-- Don&#39;t stacktrace if we can&#39;t shell_out to zpool [#1141](https://github.com/chef/ohai/pull/1141) ([tas50](https://github.com/tas50))
+- Exclude example output from rubocop rules &amp; remove changelog generator gem [#1169](https://github.com/chef/ohai/pull/1169) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.28 -->
 ### Changes since 14.0.28 release
 
 #### Merged Pull Requests
+- Exclude example output from rubocop rules &amp; remove changelog generator gem [#1169](https://github.com/chef/ohai/pull/1169) ([tas50](https://github.com/tas50)) <!-- 14.0.29 -->
 - Don&#39;t stacktrace if we can&#39;t shell_out to zpool [#1141](https://github.com/chef/ohai/pull/1141) ([tas50](https://github.com/tas50)) <!-- 14.0.29 -->
 <!-- release_rollup -->
 

@@ -1,3 +1,67 @@
+# Ohai Release Notes 14.0
+
+## Windows Kernel information
+
+The kernel plugin now reports the following information on Windows:
+
+- `node['kernel']['product_type']` - Workstation vs. Server editions of Windows
+- `node['kernel']['system_type']` - What kind of hardware are we installed on (Desktop, Mobile, Workstation, Enterprise Server, etc.)
+- `node['kernel']['server_core']` - Are we on Windows Server Core edition?
+
+## Cloud Detection
+
+Ohai now detects the Scaleway cloud and provides additional configuration information for systems running on Azure.
+
+## Virtualization / Container Detection
+
+In addition to detecting if a system is a Docker host, we now provide a large amount of Docker configuration information available at `node['docker']`. This includes the release of Docker, installed plugins, network config, and the number of running containers.
+
+Ohai also now properly detects LXD containers and macOS guests running on VirtualBox / VMware. This data is available in `node['virtualization']['systems']`
+
+## Optional Ohai Plugins
+
+Ohai now includes the ability to mark plugins as optional, which skips those plugins by default. This allows us to ship additional plugins, which some users may find useful, but not all users would want being written to their Chef server. The change introduces two new configuration options; `run_all_plugins` which runs everything including optional plugins, and `optional_plugins` which allows you to run plugins marked as optional.
+
+By default we will now be marking the `lspci`, `sessions` and `passwd` plugins as optional. Passwd has been particularly problematic for nodes attached LDAP or AD where it attempts to write the entire directory to the node. If you previously disabled this plugin via Ohai config, you no longer need to. Hurray!
+
+## Logging Improvements
+
+Chef and Ohai now includes a new log level of `:trace` in addition to the existing `:info`, `:warn`, and `:debug` levels. With the introduction of `trace` level logging we've moved a large amount of logging that more useful for developers from `debug` to `trace`. If you want a complete insight into what is going on internally in Ohai run -l trace not -l debug.
+
+## Breaking Changes
+
+### cloud_v2 and filesystem2 Plugins
+
+In Chef 13 the `cloud_v2` plugin replaced data at `node['cloud']` and `filesystem2` replaced data at `node['filesystem']`. For compatibility with cookbooks that were previously using the "v2" data we continued to write data to both locations (ie: both node['filesystem'] and node['filesystem2']). We now no longer write data to the "v2" locations which greatly reduces the amount of data we need to store on the Chef server.
+
+### Ipscopes Plugin Removed
+
+The ipscopes plugin has been removed as it duplicated data already present in the network plugins and required the user to install an additional gem into the Chef installation.
+
+### libvirt attributes moved
+
+The libvirt Ohai plugin now writes data to `node['libvirt']` instead of writing to various locations in `node['virtualization']`. This plugin required installing an additional gem into the Chef installation and thus was infrequently used.
+
+### Ohai Plugin V6 Support Removed
+
+In 2014 we introduced Ohai v7 with a greatly improved plugin format. With Chef 14 we no longer support loading of the legacy "v6" plugin format.
+
+### Newly-disabled Ohai Plugins
+
+As mentioned above we now support an `optional` flag for Ohai plugins and have marked the `sessions`, `lspci`, and `passwd` plugins as optional, which disables them by default. If you need one of these plugins you can include them using `optional_plugins`.
+
+optional_plugins in the client.rb file:
+
+```ruby
+optional_plugins [ "lspci", "passwd" ]
+```
+
+# Ohai Release Notes 13.8.0
+
+## Softlayer metadata polling fixed
+
+We now use TLS 1.2 for polling Softlayer metadata since 1.0/1.1 were disabled on 3/1/2018
+
 # Ohai Release Notes 13.7.1
 
 ## Network Tunnel Information

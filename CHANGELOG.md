@@ -1,5 +1,14 @@
 # Change Log
 
+## [v13.9.0](https://github.com/chef/ohai/tree/v13.9.0) (2018-04-09)
+
+[Full Changelog](https://github.com/chef/ohai/compare/v13.8.0...v13.9.0)
+
+- Poll the newer Azure metadata version 2017-08-01 and properly handle missing metadata values
+- Fix parsing of uptime on AIX
+- Add missing softlayer detection to the cloud plugin
+- Add detection of macOS guests running on VMware and VirtualBox
+
 ## [v13.8.0](https://github.com/chef/ohai/tree/v13.8.0) (2018-03-02)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.7.1...v13.8.0)

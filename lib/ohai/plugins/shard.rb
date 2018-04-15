@@ -17,10 +17,13 @@
 #
 
 Ohai.plugin(:ShardSeed) do
+  require "openssl"
   require "digest/md5"
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
-  optional true
+  # Disable this plugin by default under FIPS mode because even though we aren't
+  # using MD5 for cryptography, it will still throw up an error.
+  optional true if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|

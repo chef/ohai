@@ -18,12 +18,8 @@
 
 Ohai.plugin(:ShardSeed) do
   require "openssl"
-  require "digest/md5"
   depends "hostname", "dmi", "machine_id", "machinename"
   provides "shard_seed"
-  # Disable this plugin by default under FIPS mode because even though we aren't
-  # using MD5 for cryptography, it will still throw up an error.
-  optional true if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
@@ -35,6 +31,27 @@ Ohai.plugin(:ShardSeed) do
 
   def default_sources
     [:machinename, :serial, :uuid]
+  end
+
+  def default_digest_algorithm
+    if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode
+      # Even though it is being used safely, FIPS-mode will still blow up on
+      # any use of MD5 so default to SHA2 instead.
+      "sha256"
+    else
+      "md5"
+    end
+  end
+
+  def digest_algorithm
+    case Ohai.config[:plugin][:shard_seed][:digest_algorithm] || default_digest_algorithm
+    when "md5"
+      require "digest/md5"
+      Digest::MD5
+    when "sha256"
+      require "digest/sha2"
+      Digest::SHA256
+    end
   end
 
   # Common sources go here. Put sources that need to be different per-platform
@@ -56,7 +73,7 @@ Ohai.plugin(:ShardSeed) do
                 yield(src)
               end
     end
-    shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
+    shard_seed digest_algorithm.hexdigest(data)[0...7].to_i(16)
   end
 
   collect_data(:darwin) do

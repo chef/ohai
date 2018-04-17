@@ -79,7 +79,7 @@ module Ohai
       # add additional config defined IDs from the config hash
       if Ohai.config[:additional_dmi_ids]
         if Ohai.config[:additional_dmi_ids].is_a?(Hash)
-          Ohai.config[:additional_dmi_ids].each_pair do |id,desc|
+          Ohai.config[:additional_dmi_ids].each_pair do |id, desc|
             ID_TO_CAPTURE << id
             ID_TO_DESCRIPTION[id] = desc
           end

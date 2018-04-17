@@ -142,8 +142,15 @@ describe Ohai::System, "plugin dmi" do
     end
   end
 
-  it "correctly ignores unwanted data" do
+  it "allows capturing additional DMI data" do
+    Ohai.config[:additional_dmi_ids] = [ 16 ]
     plugin.run
-    expect(plugin[:dmi][:base_board]).not_to have_key(:error_correction_type)
+    expect(plugin[:dmi]).to have_key(:physical_memory_array)
+  end
+
+  it "correctly ignores data in excluded DMI IDs" do
+    expect(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, stdout, ""))
+    plugin.run
+    expect(plugin[:dmi]).not_to have_key(:physical_memory_array)
   end
 end

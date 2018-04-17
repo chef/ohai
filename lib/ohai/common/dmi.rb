@@ -81,7 +81,6 @@ module Ohai
         if Ohai.config[:additional_dmi_ids].is_a?(Array)
           Ohai.config[:additional_dmi_ids].each do |id|
             ID_TO_CAPTURE << id
-            ID_TO_DESCRIPTION[id] = "dmi_id_#{id}" unless ID_TO_DESCRIPTION[id]
           end
         else
           Ohai::Log.warn("The DMI plugin additional_dmi_ids config must be array of IDs!")
@@ -97,7 +96,7 @@ module Ohai
           id = DMI::ID_TO_DESCRIPTION[id]
         else
           Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
-          id = "unknown"
+          id = "unknown_dmi_id_#{id}"
         end
       rescue
         Ohai::Log.debug("failed to look up id #{id}, returning unchanged")

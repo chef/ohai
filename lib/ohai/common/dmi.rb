@@ -78,13 +78,13 @@ module Ohai
 
       # add additional config defined IDs from the config hash
       if Ohai.config[:additional_dmi_ids]
-        if Ohai.config[:additional_dmi_ids].is_a?(Hash)
-          Ohai.config[:additional_dmi_ids].each_pair do |id, desc|
+        if Ohai.config[:additional_dmi_ids].is_a?(Array)
+          Ohai.config[:additional_dmi_ids].each do |id|
             ID_TO_CAPTURE << id
-            ID_TO_DESCRIPTION[id] = desc
+            ID_TO_DESCRIPTION[id] = "dmi_id_#{id}" unless ID_TO_DESCRIPTION[id]
           end
         else
-          Ohai::Log.debug("The DMI additional_ids config must be a hash of IDs and their description.")
+          Ohai::Log.warn("The DMI plugin additional_dmi_ids config must be array of IDs!")
         end
       end
 

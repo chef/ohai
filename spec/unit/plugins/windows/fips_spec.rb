@@ -17,16 +17,32 @@
 #
 
 require_relative "../../../spec_helper.rb"
+require "openssl"
 
 describe Ohai::System, "plugin fips", :windows_only do
   let(:enabled) { 0 }
   let(:plugin) { get_plugin("windows/fips") }
   let(:fips_key) { 'System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy' }
   let(:win_reg_entry) { { "Enabled" => enabled } }
+  let(:openssl_test_mode) { true }
+
+  subject do
+    plugin.run
+    plugin["fips"]["kernel"]["enabled"]
+  end
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:windows)
     allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with(fips_key, arch).and_yield(win_reg_entry)
+  end
+
+  around do |ex|
+    begin
+      $FIPS_TEST_MODE = openssl_test_mode
+      ex.run
+    ensure
+      $FIPS_TEST_MODE = false
+    end
   end
 
   shared_examples "fips_plugin" do
@@ -34,8 +50,7 @@ describe Ohai::System, "plugin fips", :windows_only do
       let(:enabled) { 1 }
 
       it "sets fips plugin" do
-        plugin.run
-        expect(plugin["fips"]["kernel"]["enabled"]).to be(true)
+        expect(subject).to be(true)
       end
     end
 
@@ -43,8 +58,7 @@ describe Ohai::System, "plugin fips", :windows_only do
       let(:enabled) { 0 }
 
       it "does not set fips plugin" do
-        plugin.run
-        expect(plugin["fips"]["kernel"]["enabled"]).to be(false)
+        expect(subject).to be(false)
       end
     end
 
@@ -54,8 +68,7 @@ describe Ohai::System, "plugin fips", :windows_only do
       end
 
       it "does not set fips plugin" do
-        plugin.run
-        expect(plugin["fips"]["kernel"]["enabled"]).to be(false)
+        expect(subject).to be(false)
       end
     end
   end
@@ -82,5 +95,24 @@ describe Ohai::System, "plugin fips", :windows_only do
     before { stub_const("::RbConfig::CONFIG", { "target_cpu" => nil } ) }
 
     it_behaves_like "fips_plugin"
+  end
+
+
+  context "with Ruby 2.5 or newer", if: defined?(OpenSSL.fips_mode) do
+    let(:openssl_test_mode) { false }
+
+    context "with OpenSSL.fips_mode == false" do
+      before { allow(OpenSSL).to receive(:fips_mode).and_return(false) }
+      it "does not set fips plugin" do
+        expect(subject).to be(false)
+      end
+    end
+
+    context "with OpenSSL.fips_mode == true" do
+      before { allow(OpenSSL).to receive(:fips_mode).and_return(true) }
+      it "sets fips plugin" do
+        expect(subject).to be(true)
+      end
+    end
   end
 end

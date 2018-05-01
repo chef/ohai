@@ -17,8 +17,7 @@
 #
 
 Ohai.plugin(:ShardSeed) do
-  require "openssl"
-  depends "hostname", "dmi", "machine_id", "machinename"
+  depends "hostname", "dmi", "machine_id", "machinename", "fips"
   provides "shard_seed"
 
   def get_dmi_property(dmi, thing)
@@ -34,7 +33,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   def default_digest_algorithm
-    if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode
+    if fips["kernel"]["enabled"]
       # Even though it is being used safely, FIPS-mode will still blow up on
       # any use of MD5 so default to SHA2 instead.
       "sha256"

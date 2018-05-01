@@ -97,7 +97,6 @@ describe Ohai::System, "plugin fips", :windows_only do
     it_behaves_like "fips_plugin"
   end
 
-
   context "with Ruby 2.5 or newer", if: defined?(OpenSSL.fips_mode) do
     let(:openssl_test_mode) { false }
 

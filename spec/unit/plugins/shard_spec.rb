@@ -41,7 +41,7 @@ describe Ohai::System, "shard plugin" do
     plugin["dmi"] = { "system" => {} }
     plugin["dmi"]["system"]["uuid"] = uuid
     plugin["dmi"]["system"]["serial_number"] = serial
-    plugin["fips"] = {"kernel" => {"enabled" => fips}}
+    plugin["fips"] = { "kernel" => { "enabled" => fips } }
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
@@ -61,8 +61,8 @@ describe Ohai::System, "shard plugin" do
 
   it "should provide a shard with a configured algorithm" do
     Ohai.config[:plugin][:shard_seed][:digest_algorithm] = "sha256"
-      expect(Digest::MD5).to_not receive(:new)
-      expect(subject).to eq(117055036)
+    expect(Digest::MD5).to_not receive(:new)
+    expect(subject).to eq(117055036)
   end
 
   context "with FIPS mode enabled" do

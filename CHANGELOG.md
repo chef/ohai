@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.31 -->
-## [v14.0.31](https://github.com/chef/ohai/tree/v14.0.31) (2018-03-29)
+<!-- latest_release 14.0.32 -->
+## [v14.0.32](https://github.com/chef/ohai/tree/v14.0.32) (2018-05-02)
 
 #### Merged Pull Requests
-- SCSI plugin [#1170](https://github.com/chef/ohai/pull/1170) ([jaymzh](https://github.com/jaymzh))
+- Make the FIPS plugins use the new Ruby 2.5 accessor if present [#1178](https://github.com/chef/ohai/pull/1178) ([coderanger](https://github.com/coderanger))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.28 -->
 ### Changes since 14.0.28 release
 
 #### Merged Pull Requests
+- Make the FIPS plugins use the new Ruby 2.5 accessor if present [#1178](https://github.com/chef/ohai/pull/1178) ([coderanger](https://github.com/coderanger)) <!-- 14.0.32 -->
 - SCSI plugin [#1170](https://github.com/chef/ohai/pull/1170) ([jaymzh](https://github.com/jaymzh)) <!-- 14.0.31 -->
 - Add Ohai 14 release notes [#1166](https://github.com/chef/ohai/pull/1166) ([tas50](https://github.com/tas50)) <!-- 14.0.30 -->
 - Exclude example output from rubocop rules &amp; remove changelog generator gem [#1169](https://github.com/chef/ohai/pull/1169) ([tas50](https://github.com/tas50)) <!-- 14.0.29 -->

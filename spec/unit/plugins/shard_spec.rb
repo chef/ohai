@@ -27,6 +27,7 @@ describe Ohai::System, "shard plugin" do
   let(:machine_id) { "0a1f869f457a4c8080ab19faf80af9cc" }
   let(:machinename) { "somehost004" }
   let(:fips) { false }
+  let(:os) { :linux }
 
   subject do
     plugin.run
@@ -34,7 +35,6 @@ describe Ohai::System, "shard plugin" do
   end
 
   before(:each) do
-    allow(plugin).to receive(:collect_os).and_return(:linux)
     plugin["machinename"] = machinename
     plugin["machine_id"] = machine_id
     plugin["fqdn"] = fqdn
@@ -42,7 +42,7 @@ describe Ohai::System, "shard plugin" do
     plugin["dmi"]["system"]["uuid"] = uuid
     plugin["dmi"]["system"]["serial_number"] = serial
     plugin["fips"] = { "kernel" => { "enabled" => fips } }
-    allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(os)
   end
 
   it "should provide a shard with a default-safe set of sources" do
@@ -63,6 +63,40 @@ describe Ohai::System, "shard plugin" do
     Ohai.config[:plugin][:shard_seed][:digest_algorithm] = "sha256"
     expect(Digest::MD5).to_not receive(:new)
     expect(subject).to eq(117055036)
+  end
+
+  context "with Darwin OS" do
+    let(:os) { :darwin }
+    before do
+      plugin["hardware"] = { "serial_number" => serial, "platform_UUID" => uuid }
+    end
+
+    it "should provide a shard with a default-safe set of sources" do
+      expect(subject).to eq(27767217)
+    end
+  end
+
+  context "with Windows OS" do
+    let(:os) { :windows }
+    before do
+      wmi = double("WmiLite::Wmi")
+      expect(WmiLite::Wmi).to receive(:new).and_return(wmi)
+      expect(wmi).to receive(:first_of).with("Win32_BIOS").and_return("SerialNumber" => serial)
+      expect(wmi).to receive(:first_of).with("Win32_ComputerSystemProduct").and_return("UUID" => uuid)
+    end
+
+    it "should provide a shard with a default-safe set of sources" do
+      expect(subject).to eq(27767217)
+    end
+  end
+
+  context "with a weird OS" do
+    let(:os) { :aix }
+
+    it "should provide a shard with a default-safe set of sources" do
+      # Note: this is different than the other defaults.
+      expect(subject).to eq(253499154)
+    end
   end
 
   context "with FIPS mode enabled" do

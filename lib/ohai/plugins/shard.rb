@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:ShardSeed) do
-  depends "hostname", "dmi", "machine_id", "machinename", "fips"
+  depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware"
   provides "shard_seed"
 
   def get_dmi_property(dmi, thing)
@@ -29,7 +29,12 @@ Ohai.plugin(:ShardSeed) do
   end
 
   def default_sources
-    [:machinename, :serial, :uuid]
+    case collect_os
+    when :linux, :darwin, :windows
+      [:machinename, :serial, :uuid]
+    else
+      [:machinename]
+    end
   end
 
   def default_digest_algorithm
@@ -75,6 +80,28 @@ Ohai.plugin(:ShardSeed) do
     shard_seed digest_algorithm.hexdigest(data)[0...7].to_i(16)
   end
 
+  collect_data do
+    create_seed do |src|
+      raise "No such shard_seed source: #{src}"
+    end
+  end
+
+  collect_data(:windows) do
+    require "wmi-lite/wmi"
+    wmi = WmiLite::Wmi.new
+
+    create_seed do |src|
+      case src
+      when :serial
+        wmi.first_of("Win32_BIOS")["SerialNumber"]
+      when :uuid
+        wmi.first_of("Win32_ComputerSystemProduct")["UUID"]
+      else
+        raise "No such shard_seed source: #{src}"
+      end
+    end
+  end
+
   collect_data(:darwin) do
     create_seed do |src|
       case src
@@ -82,6 +109,8 @@ Ohai.plugin(:ShardSeed) do
         hardware["serial_number"]
       when :uuid
         hardware["platform_UUID"]
+      else
+        raise "No such shard_seed source: #{src}"
       end
     end
   end

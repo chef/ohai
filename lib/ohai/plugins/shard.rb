@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:ShardSeed) do
-  depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware"
+  depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
   provides "shard_seed"
 
   def get_dmi_property(dmi, thing)
@@ -94,6 +94,8 @@ Ohai.plugin(:ShardSeed) do
       case src
       when :serial
         wmi.first_of("Win32_BIOS")["SerialNumber"]
+      when :os_serial
+        kernel["os_info"]["serial_number"]
       when :uuid
         wmi.first_of("Win32_ComputerSystemProduct")["UUID"]
       else

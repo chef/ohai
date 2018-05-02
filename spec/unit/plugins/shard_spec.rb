@@ -80,13 +80,21 @@ describe Ohai::System, "shard plugin" do
     let(:os) { :windows }
     before do
       wmi = double("WmiLite::Wmi")
-      expect(WmiLite::Wmi).to receive(:new).and_return(wmi)
-      expect(wmi).to receive(:first_of).with("Win32_BIOS").and_return("SerialNumber" => serial)
-      expect(wmi).to receive(:first_of).with("Win32_ComputerSystemProduct").and_return("UUID" => uuid)
+      allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
+      allow(wmi).to receive(:first_of).with("Win32_BIOS").and_return("SerialNumber" => serial)
+      allow(wmi).to receive(:first_of).with("Win32_ComputerSystemProduct").and_return("UUID" => uuid)
+      plugin["kernel"] = { "os_info" => { "serial_number" => serial + "0" } }
+      plugin.data.delete("dmi") # To make sure we aren't using the wrong data.
     end
 
     it "should provide a shard with a default-safe set of sources" do
       expect(subject).to eq(27767217)
+    end
+
+    it "should allow os_serial source" do
+      Ohai.config[:plugin][:shard_seed][:sources] = [:machinename, :os_serial, :uuid]
+      # Different from above.
+      expect(subject).to eq(178738102)
     end
   end
 

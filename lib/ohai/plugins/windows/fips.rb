@@ -26,25 +26,32 @@ Ohai.plugin(:Fips) do
   provides "fips"
 
   collect_data(:windows) do
-    require "win32/registry"
     fips Mash.new
 
-    # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
-    if ::RbConfig::CONFIG["target_cpu"] == "i386"
-      reg_type = Win32::Registry::KEY_READ | 0x100
-    elsif ::RbConfig::CONFIG["target_cpu"] == "x86_64"
-      reg_type = Win32::Registry::KEY_READ | 0x200
+    # Check for new fips_mode method added in Ruby 2.5. After we drop support
+    # for Ruby 2.4, clean up everything after this and collapse the FIPS plugins.
+    require "openssl"
+    if defined?(OpenSSL.fips_mode) && !$FIPS_TEST_MODE
+      fips["kernel"] = { "enabled" => OpenSSL.fips_mode }
     else
-      reg_type = Win32::Registry::KEY_READ
-    end
-
-    begin
-      Win32::Registry::HKEY_LOCAL_MACHINE.open('System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy', reg_type) do |policy|
-        enabled = policy["Enabled"]
-        fips["kernel"] = { "enabled" => enabled == 0 ? false : true }
+      require "win32/registry"
+      # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
+      if ::RbConfig::CONFIG["target_cpu"] == "i386"
+        reg_type = Win32::Registry::KEY_READ | 0x100
+      elsif ::RbConfig::CONFIG["target_cpu"] == "x86_64"
+        reg_type = Win32::Registry::KEY_READ | 0x200
+      else
+        reg_type = Win32::Registry::KEY_READ
       end
-    rescue Win32::Registry::Error
-      fips["kernel"] = { "enabled" => false }
+
+      begin
+        Win32::Registry::HKEY_LOCAL_MACHINE.open('System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy', reg_type) do |policy|
+          enabled = policy["Enabled"]
+          fips["kernel"] = { "enabled" => enabled == 0 ? false : true }
+        end
+      rescue Win32::Registry::Error
+        fips["kernel"] = { "enabled" => false }
+      end
     end
   end
 end

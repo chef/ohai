@@ -28,11 +28,18 @@ Ohai.plugin(:Fips) do
   collect_data(:linux) do
     fips Mash.new
 
-    begin
-      enabled = File.read("/proc/sys/crypto/fips_enabled").chomp
-      fips["kernel"] = { "enabled" => enabled == "0" ? false : true }
-    rescue Errno::ENOENT
-      fips["kernel"] = { "enabled" => false }
+    # Check for new fips_mode method added in Ruby 2.5. After we drop support
+    # for Ruby 2.4, clean up everything after this and collapse the FIPS plugins.
+    require "openssl"
+    if defined?(OpenSSL.fips_mode) && !$FIPS_TEST_MODE
+      fips["kernel"] = { "enabled" => OpenSSL.fips_mode }
+    else
+      begin
+        enabled = File.read("/proc/sys/crypto/fips_enabled").chomp
+        fips["kernel"] = { "enabled" => enabled == "0" ? false : true }
+      rescue Errno::ENOENT
+        fips["kernel"] = { "enabled" => false }
+      end
     end
   end
 end

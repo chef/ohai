@@ -111,7 +111,7 @@ describe Ohai::System, "shard plugin" do
     let(:fips) { true }
 
     it "should use SHA2" do
-      expect(Digest::MD5).to_not receive(:new)
+      expect(Digest::MD5).to_not receive(:hexdigest)
       expect(subject).to eq(117055036)
     end
   end

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.0.33 -->
-## [v14.0.33](https://github.com/chef/ohai/tree/v14.0.33) (2018-05-03)
+<!-- latest_release 14.0.34 -->
+## [v14.0.34](https://github.com/chef/ohai/tree/v14.0.34) (2018-05-03)
 
 #### Merged Pull Requests
-- Make the shard plugin work under FIPS by using SHA2 instead of MD5 [#1175](https://github.com/chef/ohai/pull/1175) ([coderanger](https://github.com/coderanger))
+- Make the DMI IDs we whitelist configurable [#970](https://github.com/chef/ohai/pull/970) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.0.28 -->
 ### Changes since 14.0.28 release
 
 #### Merged Pull Requests
+- Make the DMI IDs we whitelist configurable [#970](https://github.com/chef/ohai/pull/970) ([tas50](https://github.com/tas50)) <!-- 14.0.34 -->
 - Make the shard plugin work under FIPS by using SHA2 instead of MD5 [#1175](https://github.com/chef/ohai/pull/1175) ([coderanger](https://github.com/coderanger)) <!-- 14.0.33 -->
 - Make the FIPS plugins use the new Ruby 2.5 accessor if present [#1178](https://github.com/chef/ohai/pull/1178) ([coderanger](https://github.com/coderanger)) <!-- 14.0.32 -->
 - SCSI plugin [#1170](https://github.com/chef/ohai/pull/1170) ([jaymzh](https://github.com/jaymzh)) <!-- 14.0.31 -->

@@ -17,10 +17,8 @@
 #
 
 Ohai.plugin(:ShardSeed) do
-  require "digest/md5"
-  depends "hostname", "dmi", "machine_id", "machinename"
+  depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
   provides "shard_seed"
-  optional true
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
@@ -31,7 +29,33 @@ Ohai.plugin(:ShardSeed) do
   end
 
   def default_sources
-    [:machinename, :serial, :uuid]
+    case collect_os
+    when :linux, :darwin, :windows
+      [:machinename, :serial, :uuid]
+    else
+      [:machinename]
+    end
+  end
+
+  def default_digest_algorithm
+    if fips["kernel"]["enabled"]
+      # Even though it is being used safely, FIPS-mode will still blow up on
+      # any use of MD5 so default to SHA2 instead.
+      "sha256"
+    else
+      "md5"
+    end
+  end
+
+  def digest_algorithm
+    case Ohai.config[:plugin][:shard_seed][:digest_algorithm] || default_digest_algorithm
+    when "md5"
+      require "digest/md5"
+      Digest::MD5
+    when "sha256"
+      require "digest/sha2"
+      Digest::SHA256
+    end
   end
 
   # Common sources go here. Put sources that need to be different per-platform
@@ -53,7 +77,31 @@ Ohai.plugin(:ShardSeed) do
                 yield(src)
               end
     end
-    shard_seed Digest::MD5.hexdigest(data)[0...7].to_i(16)
+    shard_seed digest_algorithm.hexdigest(data)[0...7].to_i(16)
+  end
+
+  collect_data do
+    create_seed do |src|
+      raise "No such shard_seed source: #{src}"
+    end
+  end
+
+  collect_data(:windows) do
+    require "wmi-lite/wmi"
+    wmi = WmiLite::Wmi.new
+
+    create_seed do |src|
+      case src
+      when :serial
+        wmi.first_of("Win32_BIOS")["SerialNumber"]
+      when :os_serial
+        kernel["os_info"]["serial_number"]
+      when :uuid
+        wmi.first_of("Win32_ComputerSystemProduct")["UUID"]
+      else
+        raise "No such shard_seed source: #{src}"
+      end
+    end
   end
 
   collect_data(:darwin) do
@@ -63,6 +111,8 @@ Ohai.plugin(:ShardSeed) do
         hardware["serial_number"]
       when :uuid
         hardware["platform_UUID"]
+      else
+        raise "No such shard_seed source: #{src}"
       end
     end
   end

@@ -1,3 +1,20 @@
+# Ohai Release Notes 14.1
+
+## Configurable DMI Whitelist
+
+The whitelist of DMI IDs is now user configurable using the
+`additional_dmi_ids` configuration setting, which takes an Array.
+
+## Shard plugin
+
+The Shard plugin has been returned to a default plugin rather than an
+optional one. To ensure we work in FIPS environments, the plugin will
+use SHA256 rather than MD5 in those environments.
+
+## SCSI plugin
+
+A new plugin to enumerate SCSI devices has been added. This plugin is optional.
+
 # Ohai Release Notes 14.0
 
 ## Windows Kernel information

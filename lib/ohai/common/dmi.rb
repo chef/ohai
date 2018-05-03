@@ -76,15 +76,16 @@ module Ohai
       # away some of the less useful IDs
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
 
-      # add additional config defined IDs from the config hash
-      if Ohai.config[:additional_dmi_ids]
-        if Ohai.config[:additional_dmi_ids].is_a?(Array)
-          Ohai.config[:additional_dmi_ids].each do |id|
-            ID_TO_CAPTURE << id
+      # return the list of DMI IDs to capture
+      def whitelisted_ids
+        if Ohai.config[:additional_dmi_ids]
+          if [ Integer, Array ].include?(Ohai.config[:additional_dmi_ids].class)
+            return ID_TO_CAPTURE + Array(Ohai.config[:additional_dmi_ids])
+          else
+            Ohai::Log.warn("The DMI plugin additional_dmi_ids config must be an array of IDs!")
           end
-        else
-          Ohai::Log.warn("The DMI plugin additional_dmi_ids config must be array of IDs!")
         end
+        ID_TO_CAPTURE
       end
 
       # look up DMI ID
@@ -133,7 +134,7 @@ module Ohai
         end
       end
 
-      module_function :id_lookup, :convenience_keys
+      module_function :id_lookup, :convenience_keys, :whitelisted_ids
     end
   end
 end

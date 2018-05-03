@@ -74,7 +74,7 @@ module Ohai
 
       # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
       # See OHAI-260. When we can give the user a choice, this will be a default.
-      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
+      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11, 17 ]
 
       # look up DMI ID
       def id_lookup(id)

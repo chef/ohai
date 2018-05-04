@@ -7,21 +7,24 @@
 - Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay))
 <!-- latest_release -->
 
-<!-- release_rollup since=14.0.28 -->
-### Changes since 14.0.28 release
-
-#### Merged Pull Requests
-- Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay)) <!-- 14.1.0 -->
-- Make the DMI IDs we whitelist configurable [#970](https://github.com/chef/ohai/pull/970) ([tas50](https://github.com/tas50)) <!-- 14.0.34 -->
-- Make the shard plugin work under FIPS by using SHA2 instead of MD5 [#1175](https://github.com/chef/ohai/pull/1175) ([coderanger](https://github.com/coderanger)) <!-- 14.0.33 -->
-- Make the FIPS plugins use the new Ruby 2.5 accessor if present [#1178](https://github.com/chef/ohai/pull/1178) ([coderanger](https://github.com/coderanger)) <!-- 14.0.32 -->
-- SCSI plugin [#1170](https://github.com/chef/ohai/pull/1170) ([jaymzh](https://github.com/jaymzh)) <!-- 14.0.31 -->
-- Add Ohai 14 release notes [#1166](https://github.com/chef/ohai/pull/1166) ([tas50](https://github.com/tas50)) <!-- 14.0.30 -->
-- Exclude example output from rubocop rules &amp; remove changelog generator gem [#1169](https://github.com/chef/ohai/pull/1169) ([tas50](https://github.com/tas50)) <!-- 14.0.29 -->
-- Don&#39;t stacktrace if we can&#39;t shell_out to zpool [#1141](https://github.com/chef/ohai/pull/1141) ([tas50](https://github.com/tas50)) <!-- 14.0.29 -->
+<!-- release_rollup since=14.1.0 -->
+### Changes since 14.1.0 release
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.1.0](https://github.com/chef/ohai/tree/v14.1.0) (2018-05-04)
+
+#### Merged Pull Requests
+- Don&#39;t stacktrace if we can&#39;t shell_out to zpool [#1141](https://github.com/chef/ohai/pull/1141) ([tas50](https://github.com/tas50))
+- Exclude example output from rubocop rules &amp; remove changelog generator gem [#1169](https://github.com/chef/ohai/pull/1169) ([tas50](https://github.com/tas50))
+- Add Ohai 14 release notes [#1166](https://github.com/chef/ohai/pull/1166) ([tas50](https://github.com/tas50))
+- SCSI plugin [#1170](https://github.com/chef/ohai/pull/1170) ([jaymzh](https://github.com/jaymzh))
+- Make the FIPS plugins use the new Ruby 2.5 accessor if present [#1178](https://github.com/chef/ohai/pull/1178) ([coderanger](https://github.com/coderanger))
+- Make the shard plugin work under FIPS by using SHA2 instead of MD5 [#1175](https://github.com/chef/ohai/pull/1175) ([coderanger](https://github.com/coderanger))
+- Make the DMI IDs we whitelist configurable [#970](https://github.com/chef/ohai/pull/970) ([tas50](https://github.com/tas50))
+- Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay))
+<!-- latest_stable_release -->
+
 ## [v14.0.28](https://github.com/chef/ohai/tree/v14.0.28) (2018-03-19)
 
 #### Merged Pull Requests
@@ -49,7 +52,6 @@
 - Minor updates to the Ohai/Chef plugins [#1160](https://github.com/chef/ohai/pull/1160) ([tas50](https://github.com/tas50))
 - Detect virtualbox and vmware guests on Macs [#1164](https://github.com/chef/ohai/pull/1164) ([tas50](https://github.com/tas50))
 - Move ohai to structured logging [#1161](https://github.com/chef/ohai/pull/1161) ([thommay](https://github.com/thommay))
-<!-- latest_stable_release -->
 
 ## [v13.7.1](https://github.com/chef/ohai/tree/v13.7.1) (2018-01-10)
 

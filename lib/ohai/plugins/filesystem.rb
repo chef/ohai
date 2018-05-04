@@ -99,7 +99,6 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
-
   collect_data(:linux) do
     fs = Mash.new
 
@@ -317,14 +316,11 @@ Ohai.plugin(:Filesystem) do
     by_pair = fs
     by_device = generate_device_view(fs)
     by_mountpoint = generate_mountpoint_view(fs)
-   
 
     fs_data = Mash.new
     fs_data["by_device"] = by_device
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
-
-    old_fs_data = by_device
 
     # Set the filesystem data - BSD didn't do the conversion when everyone else
     # did, so 15 will have both be the new API and 16 will drop the old API

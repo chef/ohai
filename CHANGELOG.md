@@ -1,14 +1,18 @@
 # Change Log
 
-<!-- latest_release unreleased -->
-## Unreleased
+<!-- latest_release 14.1.1 -->
+## [v14.1.1](https://github.com/chef/ohai/tree/v14.1.1) (2018-05-10)
 
 #### Merged Pull Requests
+- [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh))
 - Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.1.0 -->
 ### Changes since 14.1.0 release
+
+#### Merged Pull Requests
+- [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh)) <!-- 14.1.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -19,7 +19,7 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux filesystem plugin" do
-  let(:plugin) { get_plugin("linux/filesystem") }
+  let(:plugin) { get_plugin("filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 

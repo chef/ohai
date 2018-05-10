@@ -90,6 +90,15 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
+  def generate_deprecated_view(fs)
+    view = generate_device_view(fs)
+    view.each do |device, entry|
+      view[device][:mount] = entry[:mounts].first
+      view[device].delete(:mounts)
+    end
+    view
+  end
+
   collect_data(:linux) do
     fs = Mash.new
 
@@ -248,6 +257,125 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_pair"] = by_pair
 
     # Set the filesystem data
+    filesystem fs_data
+  end
+
+  collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
+    fs = Mash.new
+
+    # Grab filesystem data from df
+    so = shell_out("df")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem/
+        next
+      when /^(\S+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\S+)$/
+        key = "#{$1},#{$6}"
+        fs[key] = Mash.new
+        fs[key][:device] = $1
+        fs[key][:kb_size] = $2
+        fs[key][:kb_used] = $3
+        fs[key][:kb_available] = $4
+        fs[key][:percent_used] = $5
+        fs[key][:mount] = $6
+      end
+    end
+
+    # inode parsing from 'df -iP'
+    so = shell_out("df -iP")
+    so.stdout.lines do |line|
+      case line
+      when /^Filesystem/ # skip the header
+        next
+      when /^(\S+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\%\s+(\d+)\s+(\d+)\s+(\d+)%\s+(\S+)$/
+        key = "#{$1},#{$9}"
+        fs[key] ||= Mash.new
+        fs[key][:device] = $1
+        fs[key][:inodes_used] = $6
+        fs[key][:inodes_available] = $7
+        fs[key][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[key][:inodes_percent_used] = $8
+        fs[key][:mount] = $9
+      end
+    end
+
+    # Grab mount information from mount
+    so = shell_out("mount -l")
+    so.stdout.lines do |line|
+      if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
+        key = "#{$1},#{$2}"
+        fs[key] ||= Mash.new
+        fs[key][:device] = $1
+        fs[key][:mount] = $2
+        fs[key][:fs_type] = $3
+        fs[key][:mount_options] = $4.split(/,\s*/)
+      end
+    end
+
+    # create views
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
+    # Set the filesystem data - BSD didn't do the conversion when everyone else
+    # did, so 15 will have both be the new API and 16 will drop the old API
+    filesystem generate_deprecated_view(fs)
+    filesystem2 fs_data
+  end
+
+  collect_data(:darwin) do
+    fs = Mash.new
+    block_size = 0
+    # on new versions of OSX, -i is default, on old versions it's not, so
+    # specifying it gets consistent output
+    so = shell_out("df -i")
+    so.stdout.each_line do |line|
+      case line
+      when /^Filesystem\s+(\d+)-/
+        block_size = $1.to_i
+        next
+      when /^(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+\%)\s+(\d+)\s+(\d+)\s+(\d+%)\s+(.+)$/
+        key = "#{$1},#{$9}"
+        fs[key] = Mash.new
+        fs[key][:block_size] = block_size
+        fs[key][:device] = $1
+        fs[key][:kb_size] = ($2.to_i / (1024 / block_size)).to_s
+        fs[key][:kb_used] = ($3.to_i / (1024 / block_size)).to_s
+        fs[key][:kb_available] = ($4.to_i / (1024 / block_size)).to_s
+        fs[key][:percent_used] = $5
+        fs[key][:inodes_used] = $6
+        fs[key][:inodes_available] = $7
+        fs[key][:total_inodes] = ($6.to_i + $7.to_i).to_s
+        fs[key][:inodes_percent_used] = $8
+        fs[key][:mount] = $9
+      end
+    end
+
+    so = shell_out("mount")
+    so.stdout.lines do |line|
+      if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
+        key = "#{$1},#{$2}"
+        fs[key] = Mash.new unless fs.has_key?(key)
+        fs[key][:mount] = $2
+        fs[key][:fs_type] = $3
+        fs[key][:mount_options] = $4.split(/,\s*/)
+      end
+    end
+
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
     filesystem fs_data
   end
 end

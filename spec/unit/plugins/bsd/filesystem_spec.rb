@@ -20,7 +20,7 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "BSD filesystem plugin" do
-  let(:plugin) { get_plugin("bsd/filesystem") }
+  let(:plugin) { get_plugin("filesystem") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:freebsd)
 
@@ -55,41 +55,49 @@ DFi
     it "should set kb_size to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_size]).to eq("9637788")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_size]).to eq("9637788")
     end
 
     it "should set kb_used to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_used]).to eq("3313504")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_used]).to eq("3313504")
     end
 
     it "should set kb_available to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:kb_available]).to eq("5553264")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_available]).to eq("5553264")
     end
 
     it "should set percent_used to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:percent_used]).to eq("37%")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:percent_used]).to eq("37%")
     end
 
     it "should set mount to value from df" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
     end
 
     it "should set total_inodes to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:total_inodes]).to eq("1043326")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:total_inodes]).to eq("1043326")
     end
 
     it "should set inodes_used to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_used]).to eq("252576")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:inodes_used]).to eq("252576")
     end
 
     it "should set inodes_available to value from df -iP" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_available]).to eq("790750")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:inodes_available]).to eq("790750")
     end
   end
 
@@ -110,16 +118,19 @@ MOUNT
     it "should set mount to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
     end
 
     it "should set fs_type to value from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:fs_type]).to eq("ufs")
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:fs_type]).to eq("ufs")
     end
 
     it "should set mount_options to an array of values from mount" do
       plugin.run
       expect(plugin[:filesystem]["/dev/ada0p2"][:mount_options]).to eq(["local", "journaled soft-updates"])
+      expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount_options]).to eq(["local", "journaled soft-updates"])
     end
   end
 

@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 14.1.2 -->
-## [v14.1.2](https://github.com/chef/ohai/tree/v14.1.2) (2018-05-14)
-
-#### Merged Pull Requests
-- Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.1.0 -->
-### Changes since 14.1.0 release
-
-#### Merged Pull Requests
-- Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger)) <!-- 14.1.2 -->
-- [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh)) <!-- 14.1.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.1.2](https://github.com/chef/ohai/tree/v14.1.2) (2018-05-14)
+
+#### Merged Pull Requests
+- [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh))
+- Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger))
+<!-- latest_stable_release -->
+
 ## [v14.1.0](https://github.com/chef/ohai/tree/v14.1.0) (2018-05-04)
 
 #### Merged Pull Requests
@@ -27,7 +25,6 @@
 - Make the shard plugin work under FIPS by using SHA2 instead of MD5 [#1175](https://github.com/chef/ohai/pull/1175) ([coderanger](https://github.com/coderanger))
 - Make the DMI IDs we whitelist configurable [#970](https://github.com/chef/ohai/pull/970) ([tas50](https://github.com/tas50))
 - Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay))
-<!-- latest_stable_release -->
 
 ## [v14.0.28](https://github.com/chef/ohai/tree/v14.0.28) (2018-03-19)
 

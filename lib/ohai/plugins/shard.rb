@@ -53,8 +53,8 @@ Ohai.plugin(:ShardSeed) do
       require "digest/md5"
       Digest::MD5
     when "sha256"
-      require "digest/sha2"
-      Digest::SHA256
+      require "openssl/digest"
+      OpenSSL::Digest::SHA256
     end
   end
 

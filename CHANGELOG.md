@@ -1,17 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.1.1 -->
-## [v14.1.1](https://github.com/chef/ohai/tree/v14.1.1) (2018-05-10)
+<!-- latest_release 14.1.2 -->
+## [v14.1.2](https://github.com/chef/ohai/tree/v14.1.2) (2018-05-14)
 
 #### Merged Pull Requests
-- [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh))
-- Update Release Notes for 14.1 [#1179](https://github.com/chef/ohai/pull/1179) ([thommay](https://github.com/thommay))
+- Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.1.0 -->
 ### Changes since 14.1.0 release
 
 #### Merged Pull Requests
+- Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger)) <!-- 14.1.2 -->
 - [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh)) <!-- 14.1.1 -->
 <!-- release_rollup -->
 

@@ -31,8 +31,8 @@ Ohai.plugin(:Fips) do
     # Check for new fips_mode method added in Ruby 2.5. After we drop support
     # for Ruby 2.4, clean up everything after this and collapse the FIPS plugins.
     require "openssl"
-    if defined?(OpenSSL.fips_mode) && !$FIPS_TEST_MODE
-      fips["kernel"] = { "enabled" => OpenSSL.fips_mode }
+    if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode && !$FIPS_TEST_MODE
+      fips["kernel"] = { "enabled" => true }
     else
       begin
         enabled = File.read("/proc/sys/crypto/fips_enabled").chomp

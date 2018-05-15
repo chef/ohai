@@ -1,26 +1,23 @@
 # Change Log
 
-<!-- latest_release 14.1.3 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v14.1.3](https://github.com/chef/ohai/tree/v14.1.3) (2018-05-15)
 
 #### Merged Pull Requests
 - Rework FIPS detection to only use the positive of OpenSSL.fips_mode [#1186](https://github.com/chef/ohai/pull/1186) ([coderanger](https://github.com/coderanger))
-<!-- latest_release -->
-
-<!-- release_rollup since=14.1.2 -->
-### Changes since 14.1.2 release
-
-#### Merged Pull Requests
-- Rework FIPS detection to only use the positive of OpenSSL.fips_mode [#1186](https://github.com/chef/ohai/pull/1186) ([coderanger](https://github.com/coderanger)) <!-- 14.1.3 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.1.2](https://github.com/chef/ohai/tree/v14.1.2) (2018-05-14)
 
 #### Merged Pull Requests
 - [filesystem] Unify plugins, bring BSD into the modern age [#1181](https://github.com/chef/ohai/pull/1181) ([jaymzh](https://github.com/jaymzh))
 - Fix shard plugin under FIPS mode because my testing was not sufficient [#1184](https://github.com/chef/ohai/pull/1184) ([coderanger](https://github.com/coderanger))
-<!-- latest_stable_release -->
 
 ## [v14.1.0](https://github.com/chef/ohai/tree/v14.1.0) (2018-05-04)
 

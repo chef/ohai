@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.1.3 -->
+## [v14.1.3](https://github.com/chef/ohai/tree/v14.1.3) (2018-05-15)
+
+#### Merged Pull Requests
+- Rework FIPS detection to only use the positive of OpenSSL.fips_mode [#1186](https://github.com/chef/ohai/pull/1186) ([coderanger](https://github.com/coderanger))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.1.2 -->
+### Changes since 14.1.2 release
+
+#### Merged Pull Requests
+- Rework FIPS detection to only use the positive of OpenSSL.fips_mode [#1186](https://github.com/chef/ohai/pull/1186) ([coderanger](https://github.com/coderanger)) <!-- 14.1.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

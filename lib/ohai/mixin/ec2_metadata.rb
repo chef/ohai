@@ -81,11 +81,10 @@ module Ohai
 
       # Get metadata for a given path and API version
       #
-      # @details
-      #   Typically, a 200 response is expected for valid metadata.
-      #   On certain instance types, traversing the provided metadata path
-      #   produces a 404 for some unknown reason. In that event, return
-      #   `nil` and continue the run instead of failing it.
+      # Typically, a 200 response is expected for valid metadata.
+      # On certain instance types, traversing the provided metadata path
+      # produces a 404 for some unknown reason. In that event, return
+      # `nil` and continue the run instead of failing it.
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
         logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")

@@ -20,6 +20,8 @@
 module Ohai
   module DSL
     class Plugin
+      # The class for the "Version 7" plugin format we introduced in Ohai 7. This is the 2nd
+      # generation of Ohai plugin and the previous generation (V6) was removed in Ohai 14
       class VersionVII < Plugin
         attr_reader :version
         attr_reader :source
@@ -30,14 +32,23 @@ module Ohai
           @version = :version7
         end
 
+        # the plugin name we use through Ohai (Foo) vs. the class name (Ohai::NamedPlugin::Foo)
+        #
+        # @return [String]
         def name
           self.class.name.split("Ohai::NamedPlugin::")[1].to_sym
         end
 
+        # return that we're a v7 plugin
+        #
+        # @return [Symbol]
         def self.version
           :version7
         end
 
+        # the source of the plugin on disk. This is an array since a plugin may exist for multiple platforms and this would include each of those platform specific file paths
+        #
+        # @return [Array]
         def self.sources
           @source_list ||= []
         end
@@ -50,30 +61,51 @@ module Ohai
           @depends_attrs ||= []
         end
 
+        # A block per platform for actually performing data collection constructed
+        # by the collect_data method
+        #
+        # @return [Mash]
         def self.data_collector
           @data_collector ||= Mash.new
         end
 
+        # set the attributes provided by the plugin
+        #
+        # @param attrs [Array]
         def self.provides(*attrs)
           attrs.each do |attr|
             provides_attrs << attr unless provides_attrs.include?(attr)
           end
         end
 
+        # set the attributes depended on by the plugin
+        #
+        # @param attrs [Array]
         def self.depends(*attrs)
           attrs.each do |attr|
             depends_attrs << attr unless depends_attrs.include?(attr)
           end
         end
 
+        # set the plugin optional state
+        #
+        # @param opt [Boolean]
         def self.optional(opt = true)
           @optional = opt
         end
 
+        # check if the plugin is optional
+        #
+        # @return [Boolean]
         def self.optional?
           !!@optional
         end
 
+        # define data collection methodology per platform
+        #
+        # @param platform [Symbol] the platform to collect data for
+        # @param other_platforms [Array] additional platforms to collect data for
+        # @param block [block] the actual code to collect data for the specified platforms
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
             if data_collector.has_key?(plat)
@@ -84,6 +116,7 @@ module Ohai
           end
         end
 
+        # @return [Array]
         def dependencies
           self.class.depends_attrs
         end

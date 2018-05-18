@@ -21,10 +21,14 @@ require "ffi_yajl"
 
 module Ohai
   module Hints
+    # clear out any known hints in the @hints variable
     def self.refresh_hints
       @hints = {}
     end
 
+    # parse the JSON conents of a hint file. Return an empty hash if the file has
+    # no JSON content
+    # @param filename [String] the hint file path
     def self.parse_hint_file(filename)
       json_parser = FFI_Yajl::Parser.new
       hash = json_parser.parse(File.read(filename))
@@ -35,6 +39,10 @@ module Ohai
       Ohai::Log.error("Could not parse hint file at #{filename}: #{e.message}")
     end
 
+    # retrieve hint contents given a hint name. Looks up in @hints variable first. Attempts
+    # to load from file in config's :hints_path if not already cached. Saves the contents
+    # to the hash if the file was successfully parsed
+    # @param name [String] the name of the hint (not the path)
     def self.hint?(name)
       @hints ||= {}
       return @hints[name] if @hints[name]

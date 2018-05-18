@@ -20,10 +20,13 @@
 require "net/https"
 require "uri"
 
-# http://sldn.softlayer.com/reference/services/SoftLayer_Resource_Metadata
+# https://softlayer.github.io/reference/services/SoftLayer_Resource_Metadata/
 module ::Ohai::Mixin::SoftlayerMetadata
   SOFTLAYER_API_QUERY_URL = "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata" unless defined?(SOFTLAYER_API_QUERY_URL)
 
+  # fetch metadata items and build out hash of data
+  #
+  # @return [Hash]
   def fetch_metadata
     {
       "public_fqdn"   => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
@@ -39,10 +42,16 @@ module ::Ohai::Mixin::SoftlayerMetadata
   # however Chef-omnibus should set SSL_CERT_FILE to point to a valid file.
   # Manually supply and specify a suitable CA bundle here or
   # set the SSL_CERT_FILE file environment variable to a valid value otherwise.
+  #
+  # @return [String]
   def ca_file_location
     ::Ohai::Config[:ca_file]
   end
 
+  # fetch a specified item from the Softlayer metadata API
+  # @param item [String] the metadata item to fetch
+  #
+  # @return [String] the response body
   def fetch_metadata_item(item)
     full_url = "#{SOFTLAYER_API_QUERY_URL}/#{item}"
     u = URI(full_url)

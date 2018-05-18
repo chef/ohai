@@ -28,10 +28,16 @@ module Ohai
 
   # For plugin namespacing
   module NamedPlugin
+
+    # Is the plugin a Symbol starting with a capital letter that has no underscores
+    #
+    # @param name [String] the plugin name
+    # @return [Boolean]
     def self.valid_name?(name)
       name.is_a?(Symbol) && name.to_s.match(/^[^A-Z]|_/).nil?
     end
 
+    # @return [Boolean]
     def self.strict_const_defined?(const)
       const_defined?(const, false)
     end

@@ -225,7 +225,7 @@ EOF
 
       describe "when using :critical_plugins" do
         # if called from cli is true, we'll exit these tests
-        let(:ohai) { Ohai::System.new() }
+        let(:ohai) { Ohai::System.new }
 
         before do
           Ohai.config[:critical_plugins] = [ :Fails ]

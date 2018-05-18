@@ -24,36 +24,12 @@ require "pathname"
 
 module Ohai
 
-  # Ohai plugin loader. Finds all the plugins in your
-  # `Ohai.config[:plugin_path]` (supports a single or multiple path setting
+  # Ohai plugin loader. Finds all the plugins specified in the
+  # Ohai.config :plugin_path (supports a single or multiple path setting
   # here), evaluates them and returns plugin objects.
   class Loader
-
-    # Simple struct like objects to track the path of a plugin and the root
-    # directory of plugins in which we found it. We don't care about the
-    # relative paths of v7 plugins, but in v6 plugins, dependencies are
-    # specified by calling `require_plugin` with a relative path. To manage
-    # this, we track the path and root of each file as we discover them so we
-    # can feed this into the v6 "dependency solver" as we load them.
-    PluginFile = Struct.new(:path, :plugin_root) do
-
-      # Finds all the *.rb files under the configured paths in :plugin_path
-      def self.find_all_in(plugin_dir)
-        unless Dir.exist?(plugin_dir)
-          Ohai::Log.info("The plugin path #{plugin_dir} does not exist. Skipping...")
-          return []
-        end
-
-        Ohai::Log.trace("Searching for Ohai plugins in #{plugin_dir}")
-
-        escaped = ChefConfig::PathHelper.escape_glob_dir(plugin_dir)
-        Dir[File.join(escaped, "**", "*.rb")].map do |file|
-          new(file, plugin_dir)
-        end
-      end
-    end
-
     attr_reader :logger
+
     def initialize(controller)
       @controller = controller
       @logger = controller.logger.with_child(subsystem: "loader")
@@ -65,10 +41,18 @@ module Ohai
     #
     # @param dir [Array, String] directory/directories to load plugins from
     # @return [Array<Ohai::Loader::PluginFile>]
-    def plugin_files_by_dir(dir = Ohai.config[:plugin_path])
-      Array(dir).inject([]) do |plugin_files, plugin_path|
-        plugin_files + PluginFile.find_all_in(plugin_path)
-      end
+    def plugin_files_by_dir(plugin_dir = Ohai.config[:plugin_path])
+      Array(plugin_dir).map do |path|
+        unless Dir.exist?(path)
+          Ohai::Log.info("The plugin path #{path} does not exist. Skipping...")
+          return []
+        end
+
+        Ohai::Log.trace("Searching for Ohai plugins in #{path}")
+
+        escaped = ChefConfig::PathHelper.escape_glob_dir(path)
+        Dir[File.join(escaped, "**", "*.rb")]
+      end.flatten
     end
 
     # loads all plugin classes
@@ -76,7 +60,7 @@ module Ohai
     # @return [Array<String>]
     def load_all
       plugin_files_by_dir.each do |plugin_file|
-        load_plugin_class(plugin_file.path, plugin_file.plugin_root)
+        load_plugin_class(plugin_file)
       end
 
       collect_v7_plugins
@@ -88,7 +72,7 @@ module Ohai
       from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
         logger.trace "Loading additional plugin: #{plugin_file}"
-        plugin = load_plugin_class(plugin_file.path, plugin_file.plugin_root)
+        plugin = load_plugin_class(plugin_file)
         load_v7_plugin(plugin)
       end
     end
@@ -96,11 +80,9 @@ module Ohai
     # Load a specified file as an ohai plugin and creates an instance of it.
     # Not used by ohai itself, but can be used to load a plugin for testing
     # purposes.
-    #
     # @param plugin_path [String]
-    # @param plugin_dir_path [String]
-    def load_plugin(plugin_path, plugin_dir_path = nil)
-      plugin_class = load_plugin_class(plugin_path, plugin_dir_path)
+    def load_plugin(plugin_path)
+      plugin_class = load_plugin_class(plugin_path)
       return nil unless plugin_class.kind_of?(Class)
       if plugin_class < Ohai::DSL::Plugin::VersionVII
         load_v7_plugin(plugin_class)
@@ -109,13 +91,11 @@ module Ohai
       end
     end
 
-    # Reads the file specified by `plugin_path` and returns a class object for
-    # the ohai plugin defined therein.
+    # load an ohai plugin object class from file
+    # @param plugin_path String the path to the ohai plugin
     #
-    # If `plugin_dir_path` is given, and the file at `plugin_path` is a v6
-    # plugin, the 'relative path' of the plugin (used by `require_plugin()`) is
-    # computed by finding the relative path from `plugin_dir_path` to `plugin_path`
-    def load_plugin_class(plugin_path, plugin_dir_path = nil)
+    # @return [Object] class object for the ohai plugin defined in the file
+    def load_plugin_class(plugin_path)
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
@@ -150,6 +130,11 @@ module Ohai
       end
     end
 
+    # load an Ohai v7 plugin class from a string of the object
+    # @param contents [String] text of the plugin object
+    # @param plugin_path [String] the path to the plugin file where the contents came from
+    #
+    # @return [Ohai::DSL::Plugin::VersionVII] Ohai plugin object
     def load_v7_plugin_class(contents, plugin_path)
       plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path) # rubocop: disable Security/Eval
       unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin

@@ -187,7 +187,7 @@ EOF
         it "logs an invalid plugin path warning" do
           expect(Ohai::Log).to receive(:info).with(/The plugin path.*does not exist/)
           allow(Dir).to receive(:exist?).with("/bogus/dir").and_return(false)
-          Ohai::Loader::PluginFile.find_all_in("/bogus/dir")
+          loader.plugin_files_by_dir("/bogus/dir")
         end
       end
     end

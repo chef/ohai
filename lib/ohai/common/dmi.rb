@@ -76,7 +76,10 @@ module Ohai
       # away some of the less useful IDs
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
 
-      # return the list of DMI IDs to capture
+      # the whitelisted DMI IDs. This is combination of the defaults + any additional
+      # IDs defined in the :additional_dmi_ids config
+      #
+      # @return [Array] the list of DMI IDs to capture
       def whitelisted_ids
         if Ohai.config[:additional_dmi_ids]
           if [ Integer, Array ].include?(Ohai.config[:additional_dmi_ids].class)
@@ -88,7 +91,11 @@ module Ohai
         ID_TO_CAPTURE
       end
 
-      # look up DMI ID
+      # the human readable description from a DMI ID
+      #
+      # @param id [String, Integer] the ID to lookup
+      #
+      # @return [String]
       def id_lookup(id)
         id = id.to_i
         if (id >= 128) && (id <= 255)

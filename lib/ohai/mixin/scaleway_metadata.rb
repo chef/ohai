@@ -23,10 +23,14 @@ module Ohai
       SCALEWAY_METADATA_ADDR = "169.254.42.42" unless defined?(SCALEWAY_METADATA_ADDR)
       SCALEWAY_METADATA_URL = "/conf?format=json" unless defined?(SCALEWAY_METADATA_URL)
 
+      # @return [Net::HTTP] net/http object without timeout set to 6
       def http_client
         Net::HTTP.start(SCALEWAY_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
       end
 
+      # fetch scaleway metadata and parse the resulting JSON
+      #
+      # @return [Hash]
       def fetch_metadata
         uri = "#{SCALEWAY_METADATA_URL}"
         response = http_client.get(uri)

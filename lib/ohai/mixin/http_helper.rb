@@ -20,6 +20,13 @@ module Ohai
   module Mixin
     module HttpHelper
 
+      # see if we can socket connect to an address/port
+      #
+      # @param addr [String] the address to connect to
+      # @param port [Integer] the port to connect to
+      # @param timeout [Integer] the seconds before timing out
+      #
+      # @return [Boolean] can we connect?
       def can_socket_connect?(addr, port, timeout = 2)
         t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         begin

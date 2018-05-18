@@ -72,6 +72,9 @@ module Ohai
         end
       end
 
+      # a net/http client with a timeout of 10s and a keepalive of 10s
+      #
+      # @return [Net::HTTP]
       def http_client
         @conn ||= Net::HTTP.start(EC2_METADATA_ADDR).tap do |h|
           h.read_timeout = 10

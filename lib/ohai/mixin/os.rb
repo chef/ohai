@@ -23,6 +23,9 @@ module Ohai
   module Mixin
     module OS
 
+      # Using ruby configuration determine the OS we're running on
+      #
+      # @return [String] the OS
       def collect_os
         case ::RbConfig::CONFIG["host_os"]
         when /aix(.+)$/

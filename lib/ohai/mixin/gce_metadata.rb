@@ -50,6 +50,9 @@ module Ohai
         end
       end
 
+      # @param [String] data that might be JSON
+      #
+      # @return [Boolean] is the data JSON or not?
       def json?(data)
         data = StringIO.new(data)
         parser = FFI_Yajl::Parser.new
@@ -61,6 +64,9 @@ module Ohai
         end
       end
 
+      # @param data [String]
+      #
+      # @return [Boolean] is there a trailing /?
       def has_trailing_slash?(data)
         !! ( data =~ %r{/$} )
       end

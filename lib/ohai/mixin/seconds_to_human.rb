@@ -19,6 +19,11 @@
 module Ohai
   module Mixin
     module SecondsToHuman
+      # given the number of seconds return a day/hours/minutes/seconds human form
+      #
+      # @param seconds [Integer]
+      #
+      # @return String
       def seconds_to_human(seconds)
         days = seconds.to_i / 86400
         seconds -= 86400 * days

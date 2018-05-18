@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.1.4 -->
+## [v14.1.4](https://github.com/chef/ohai/tree/v14.1.4) (2018-05-18)
+
+#### Merged Pull Requests
+- Fix yard parsing issues &amp; add more commments [#1187](https://github.com/chef/ohai/pull/1187) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.1.3 -->
+### Changes since 14.1.3 release
+
+#### Merged Pull Requests
+- Fix yard parsing issues &amp; add more commments [#1187](https://github.com/chef/ohai/pull/1187) ([tas50](https://github.com/tas50)) <!-- 14.1.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

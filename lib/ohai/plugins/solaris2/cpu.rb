@@ -30,7 +30,7 @@ Ohai.plugin(:CPU) do
     currentcpu = 0
     cpucores = Array.new
     cpusockets = Array.new
-    processor_info.each_with_index do |processor, i|
+    processor_info.each do |processor|
       _desc, instance, _record, keyvalue = processor.split(":")
       cpu[instance] ||= Mash.new
       if currentcpu != instance

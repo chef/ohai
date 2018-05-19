@@ -68,7 +68,6 @@ Ohai.plugin(:Lspci) do
         standard_array(devices, d_id, "module", dev[1])
       when "SDevice"
         standard_form(devices, d_id, hhhh, "sdevice", dev[1])
-      else
       end
     end
 

@@ -35,15 +35,15 @@ module Ohai
         seconds -= 60 * minutes
 
         if days > 1
-          return sprintf("%d days %02d hours %02d minutes %02d seconds", days, hours, minutes, seconds)
+          sprintf("%d days %02d hours %02d minutes %02d seconds", days, hours, minutes, seconds)
         elsif days == 1
-          return sprintf("%d day %02d hours %02d minutes %02d seconds", days, hours, minutes, seconds)
+          sprintf("%d day %02d hours %02d minutes %02d seconds", days, hours, minutes, seconds)
         elsif hours > 0
-          return sprintf("%d hours %02d minutes %02d seconds", hours, minutes, seconds)
+          sprintf("%d hours %02d minutes %02d seconds", hours, minutes, seconds)
         elsif minutes > 0
-          return sprintf("%d minutes %02d seconds", minutes, seconds)
+          sprintf("%d minutes %02d seconds", minutes, seconds)
         else
-          return sprintf("%02d seconds", seconds)
+          sprintf("%02d seconds", seconds)
         end
       end
     end

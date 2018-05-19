@@ -182,12 +182,19 @@ EOF
           expect { loader.load_plugin(path_to("bad_name.rb")) }.not_to raise_error
         end
       end
+    end
 
+    describe "the plugin_files_by_dir() method" do
       describe "when plugin directory does not exist" do
         it "logs an invalid plugin path warning" do
           expect(Ohai::Log).to receive(:info).with(/The plugin path.*does not exist/)
           allow(Dir).to receive(:exist?).with("/bogus/dir").and_return(false)
           loader.plugin_files_by_dir("/bogus/dir")
+        end
+
+        it "does not raise an error" do
+          allow(Dir).to receive(:exist?).with("/bogus/dir").and_return(false)
+          expect { loader.plugin_files_by_dir("/bogus/dir") }.not_to raise_error
         end
       end
     end

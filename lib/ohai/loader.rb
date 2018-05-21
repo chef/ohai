@@ -33,11 +33,12 @@ module Ohai
     def initialize(controller)
       @controller = controller
       @logger = controller.logger.with_child(subsystem: "loader")
-      @v7_plugin_classes = []
+      @plugin_classes = []
     end
 
     # Searches all plugin paths and returns an Array of PluginFile objects
     # representing each plugin file.
+    # @param dir [Array] array of plugin directories
     #
     # @param dir [Array, String] directory/directories to load plugins from
     # @return [Array<Ohai::Loader::PluginFile>]
@@ -55,47 +56,50 @@ module Ohai
       end.flatten
     end
 
-    # loads all plugin classes
+    # load all plugin classes from files
     #
-    # @return [Array<String>]
+    # @return [void]
     def load_all
       plugin_files_by_dir.each do |plugin_file|
-        load_plugin_class(plugin_file)
+        load_plugin_class_from_file(plugin_file)
       end
 
-      collect_v7_plugins
+      collect_plugins
     end
 
     # load additional plugins classes from a given directory
+    #
     # @param from [String] path to a directory with additional plugins to load
+    # @return [void]
     def load_additional(from)
       from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
         logger.trace "Loading additional plugin: #{plugin_file}"
-        plugin = load_plugin_class(plugin_file)
-        load_v7_plugin(plugin)
+        plugin = load_plugin_class_from_file(plugin_file)
+        load_plugin(plugin)
       end
     end
 
     # Load a specified file as an ohai plugin and creates an instance of it.
     # Not used by ohai itself, but can be used to load a plugin for testing
     # purposes.
+    #
     # @param plugin_path [String]
     def load_plugin(plugin_path)
-      plugin_class = load_plugin_class(plugin_path)
+      plugin_class = load_plugin_class_from_file(plugin_path)
       return nil unless plugin_class.kind_of?(Class)
       if plugin_class < Ohai::DSL::Plugin::VersionVII
-        load_v7_plugin(plugin_class)
+        load_plugin(plugin_class)
       else
         raise Exceptions::IllegalPluginDefinition, "cannot create plugin of type #{plugin_class}"
       end
     end
 
     # load an ohai plugin object class from file
-    # @param plugin_path String the path to the ohai plugin
     #
+    # @param plugin_path String the path to the ohai plugin
     # @return [Object] class object for the ohai plugin defined in the file
-    def load_plugin_class(plugin_path)
+    def load_plugin_class_from_file(plugin_path)
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
       contents = ""
       begin
@@ -108,7 +112,7 @@ module Ohai
 
       # We assume that a plugin is a V7 plugin if it contains Ohai.plugin in its contents.
       if contents.include?("Ohai.plugin")
-        load_v7_plugin_class(contents, plugin_path)
+        load_plugin_class(contents, plugin_path)
       else
         raise Exceptions::IllegalPluginDefinition, "[DEPRECATION] Plugin at #{plugin_path}"\
         " is a version 6 plugin. Version 6 plugins are no longer supported by Ohai. This"\
@@ -124,9 +128,9 @@ module Ohai
       @controller.provides_map.set_providers_for(plugin, plugin_provides)
     end
 
-    def collect_v7_plugins
-      @v7_plugin_classes.each do |plugin_class|
-        load_v7_plugin(plugin_class)
+    def collect_plugins
+      @plugin_classes.each do |plugin_class|
+        load_plugin(plugin_class)
       end
     end
 
@@ -135,13 +139,13 @@ module Ohai
     # @param plugin_path [String] the path to the plugin file where the contents came from
     #
     # @return [Ohai::DSL::Plugin::VersionVII] Ohai plugin object
-    def load_v7_plugin_class(contents, plugin_path)
+    def load_plugin_class(contents, plugin_path)
       plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path) # rubocop: disable Security/Eval
       unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
       plugin_class.sources << plugin_path
-      @v7_plugin_classes << plugin_class unless @v7_plugin_classes.include?(plugin_class)
+      @plugin_classes << plugin_class unless @plugin_classes.include?(plugin_class)
       plugin_class
     rescue SystemExit, Interrupt # rubocop: disable Lint/ShadowedException
       raise
@@ -166,7 +170,7 @@ module Ohai
       logger.trace("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
     end
 
-    def load_v7_plugin(plugin_class)
+    def load_plugin(plugin_class)
       plugin = plugin_class.new(@controller.data, @controller.logger)
       collect_provides(plugin)
       plugin

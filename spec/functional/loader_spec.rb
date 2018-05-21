@@ -44,7 +44,7 @@ EOF
 
       it "loads all the plugins" do
         loader.load_all
-        loaded_plugins = loader.instance_variable_get(:@v7_plugin_classes)
+        loaded_plugins = loader.instance_variable_get(:@plugin_classes)
         loaded_plugins_names = loaded_plugins.map { |plugin| plugin.name }
         expect(loaded_plugins_names).to eq(["Ohai::NamedPlugin::Foo"])
       end

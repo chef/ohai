@@ -59,7 +59,7 @@ Ohai.plugin(:Filesystem) do
       else
         key = fields[0] + ":" + fields[1]
         oldie[key] ||= Mash.new
-        oldie[key][:mount] = fields[1]
+        oldie[key][:mount] = fields[2]
         oldie[key][:fs_type] = fields[3]
         oldie[key][:mount_options] = fields[7].split(",")
       end

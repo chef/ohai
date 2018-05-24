@@ -40,16 +40,35 @@ describe Ohai::System, "plugin openstack" do
         allow(plugin).to receive(:can_socket_connect?).
           with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
           and_return(false)
-        plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+        plugin[:dmi] = dmi_data
         plugin.run
       end
 
-      it "sets openstack attribute" do
-        expect(plugin[:openstack][:provider]).to eq("openstack")
-      end
+      context "with normal openstack metadata" do
+        let(:dmi_data) do
+          { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+        end
 
-      it "doesn't set metadata attributes" do
-        expect(plugin[:openstack][:instance_id]).to be_nil
+        it "sets openstack attribute" do
+          expect(plugin[:openstack][:provider]).to eq("openstack")
+        end
+
+        it "doesn't set metadata attributes" do
+          expect(plugin[:openstack][:instance_id]).to be_nil
+        end
+      end
+      context "with Red Hat openstack metadata" do
+        let(:dmi_data) do
+          { :system => { :manufacturer => "Red Hat", :product_name => "OpenStack Compute" } }
+        end
+
+        it "sets openstack attribute" do
+          expect(plugin[:openstack][:provider]).to eq("openstack")
+        end
+
+        it "doesn't set metadata attributes" do
+          expect(plugin[:openstack][:instance_id]).to be_nil
+        end
       end
     end
   end

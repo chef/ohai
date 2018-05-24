@@ -44,6 +44,8 @@ module ::Ohai::Mixin::DmiDecode
         return "bhyve"
       when /Manufacturer: Veertu/
         return "veertu"
+      when /Manufacturer: Amazon EC2/
+        return "amazonec2"
       end
     end
     nil

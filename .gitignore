@@ -8,3 +8,4 @@ coverage/
 .bundle
 *~
 vendor
+.idea/*

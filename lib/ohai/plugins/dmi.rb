@@ -74,9 +74,8 @@ Ohai.plugin(:DMI) do
         elsif table_location = table_location_line.match(line)
           dmi[:table_location] = table_location[1]
 
-        elsif handle = handle_line.match(line)
-          # Don't overcapture for now (OHAI-260)
-          unless Ohai::Common::DMI::ID_TO_CAPTURE.include?(handle[2].to_i)
+        elsif ( handle = handle_line.match(line) )
+          unless Ohai::Common::DMI.whitelisted_ids.include?(handle[2].to_i)
             dmi_record = nil
             next
           end

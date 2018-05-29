@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.1.6 -->
-## [v14.1.6](https://github.com/chef/ohai/tree/v14.1.6) (2018-05-21)
+<!-- latest_release 14.1.7 -->
+## [v14.1.7](https://github.com/chef/ohai/tree/v14.1.7) (2018-05-29)
 
 #### Merged Pull Requests
-- Fix an issue caused by using the wrong field in the AIX filesystem plugin. [#1191](https://github.com/chef/ohai/pull/1191) ([jjustice6](https://github.com/jjustice6))
+- Detect virtualization on newer AWS instance types. (m5) [#1193](https://github.com/chef/ohai/pull/1193) ([cbajumpaa](https://github.com/cbajumpaa))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.1.3 -->
 ### Changes since 14.1.3 release
 
 #### Merged Pull Requests
+- Detect virtualization on newer AWS instance types. (m5) [#1193](https://github.com/chef/ohai/pull/1193) ([cbajumpaa](https://github.com/cbajumpaa)) <!-- 14.1.7 -->
 - Fix an issue caused by using the wrong field in the AIX filesystem plugin. [#1191](https://github.com/chef/ohai/pull/1191) ([jjustice6](https://github.com/jjustice6)) <!-- 14.1.6 -->
 - Misc minor cleanup [#1189](https://github.com/chef/ohai/pull/1189) ([tas50](https://github.com/tas50)) <!-- 14.1.5 -->
 - Fix yard parsing issues &amp; add more commments [#1187](https://github.com/chef/ohai/pull/1187) ([tas50](https://github.com/tas50)) <!-- 14.1.4 -->

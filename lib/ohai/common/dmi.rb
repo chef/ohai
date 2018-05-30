@@ -72,9 +72,21 @@ module Ohai
         127 => "end_of_table_marker",
       }
 
-      # list of IDs to collect, otherwise we generate pages of hashes about cache chip size and whatnot
-      # See OHAI-260. When we can give the user a choice, this will be a default.
+      # list of IDs to collect from config or default to a sane list that prunes
+      # away some of the less useful IDs
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
+
+      # return the list of DMI IDs to capture
+      def whitelisted_ids
+        if Ohai.config[:additional_dmi_ids]
+          if [ Integer, Array ].include?(Ohai.config[:additional_dmi_ids].class)
+            return ID_TO_CAPTURE + Array(Ohai.config[:additional_dmi_ids])
+          else
+            Ohai::Log.warn("The DMI plugin additional_dmi_ids config must be an array of IDs!")
+          end
+        end
+        ID_TO_CAPTURE
+      end
 
       # look up DMI ID
       def id_lookup(id)
@@ -85,7 +97,7 @@ module Ohai
           id = DMI::ID_TO_DESCRIPTION[id]
         else
           Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
-          id = "unknown"
+          id = "unknown_dmi_id_#{id}"
         end
       rescue
         Ohai::Log.debug("failed to look up id #{id}, returning unchanged")
@@ -122,7 +134,7 @@ module Ohai
         end
       end
 
-      module_function :id_lookup, :convenience_keys
+      module_function :id_lookup, :convenience_keys, :whitelisted_ids
     end
   end
 end

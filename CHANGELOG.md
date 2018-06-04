@@ -1,5 +1,12 @@
 # Change Log
 
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v13.9.0](https://github.com/chef/ohai/tree/v13.9.0) (2018-04-09)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.8.0...v13.9.0)
@@ -8,6 +15,7 @@
 - Fix parsing of uptime on AIX
 - Add missing softlayer detection to the cloud plugin
 - Add detection of macOS guests running on VMware and VirtualBox
+<!-- latest_stable_release -->
 
 ## [v13.8.0](https://github.com/chef/ohai/tree/v13.8.0) (2018-03-02)
 

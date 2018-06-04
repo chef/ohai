@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 13.9.1 -->
+## [v13.9.1](https://github.com/chef/ohai/tree/v13.9.1) (2018-06-04)
+
+#### Merged Pull Requests
+- Fix an issue caused by using the wrong field in the AIX filesystem plugin [#1199](https://github.com/chef/ohai/pull/1199) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.2.0 -->
+### Changes since 14.2.0 release
+
+#### Merged Pull Requests
+- Fix an issue caused by using the wrong field in the AIX filesystem plugin [#1199](https://github.com/chef/ohai/pull/1199) ([tas50](https://github.com/tas50)) <!-- 13.9.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

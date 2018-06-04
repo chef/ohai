@@ -1,0 +1,47 @@
+# Documentation available at https://expeditor-docs.es.chef.io/
+
+# Slack channel in Chef Software slack to send notifications about build failures, etc
+slack:
+  notify_channel: chef-notify
+
+rubygems:
+  - ohai
+
+github:
+  # The tag format to use (e.g. v1.0.0)
+  version_tag_format: "v{{version}}"
+  # The Github Team primarily responsible for handling incoming Pull Requests.
+  maintainer_group: chef/client-maintainers
+  # Which Github branches to build Omnibus releases from, and what versions
+  # (as determined by the value in the VERSION file) those branches are responsible
+  # for building.
+  release_branch:
+    - master:
+        version_constraint: 14.*
+    - 13-stable:
+        version_constraint: 13.*
+    - 8-stable:
+        version_constraint: 8.*
+
+promote:
+  action:
+    - built_in:publish_rubygems
+    - built_in:rollover_changelog
+
+# These actions are taken, in order they are specified, anytime a Pull Request is merged.
+merge_actions:
+  - built_in:bump_version:
+      ignore_labels:
+        - "Version: Skip Bump"
+        - "Expeditor: Skip Version Bump"
+        - "Expeditor: Skip All"
+  - bash:.expeditor/update_version.sh:
+      only_if: built_in:bump_version
+  - built_in:update_changelog:
+      ignore_labels:
+        - "Meta: Exclude From Changelog"
+        - "Expeditor: Exclude From Changelog"
+        - "Expeditor: Skip All"
+  - built_in:build_gem:
+      only_if: built_in:bump_version
+

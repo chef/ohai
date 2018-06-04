@@ -7,23 +7,25 @@
 - Bump version to 14.2.0 [#1195](https://github.com/chef/ohai/pull/1195) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup since=14.1.3 -->
-### Changes since 14.1.3 release
-
-#### Merged Pull Requests
-- Bump version to 14.2.0 [#1195](https://github.com/chef/ohai/pull/1195) ([tas50](https://github.com/tas50)) <!-- 14.2.0 -->
-- Detect virtualization on newer AWS instance types. (m5) [#1193](https://github.com/chef/ohai/pull/1193) ([cbajumpaa](https://github.com/cbajumpaa)) <!-- 14.1.7 -->
-- Fix an issue caused by using the wrong field in the AIX filesystem plugin. [#1191](https://github.com/chef/ohai/pull/1191) ([jjustice6](https://github.com/jjustice6)) <!-- 14.1.6 -->
-- Misc minor cleanup [#1189](https://github.com/chef/ohai/pull/1189) ([tas50](https://github.com/tas50)) <!-- 14.1.5 -->
-- Fix yard parsing issues &amp; add more commments [#1187](https://github.com/chef/ohai/pull/1187) ([tas50](https://github.com/tas50)) <!-- 14.1.4 -->
+<!-- release_rollup since=14.2.0 -->
+### Changes since 14.2.0 release
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.2.0](https://github.com/chef/ohai/tree/v14.2.0) (2018-06-04)
+
+#### Merged Pull Requests
+- Fix yard parsing issues &amp; add more commments [#1187](https://github.com/chef/ohai/pull/1187) ([tas50](https://github.com/tas50))
+- Misc minor cleanup [#1189](https://github.com/chef/ohai/pull/1189) ([tas50](https://github.com/tas50))
+- Fix an issue caused by using the wrong field in the AIX filesystem plugin. [#1191](https://github.com/chef/ohai/pull/1191) ([jjustice6](https://github.com/jjustice6))
+- Detect virtualization on newer AWS instance types. (m5) [#1193](https://github.com/chef/ohai/pull/1193) ([cbajumpaa](https://github.com/cbajumpaa))
+- Bump version to 14.2.0 [#1195](https://github.com/chef/ohai/pull/1195) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.1.3](https://github.com/chef/ohai/tree/v14.1.3) (2018-05-15)
 
 #### Merged Pull Requests
 - Rework FIPS detection to only use the positive of OpenSSL.fips_mode [#1186](https://github.com/chef/ohai/pull/1186) ([coderanger](https://github.com/coderanger))
-<!-- latest_stable_release -->
 
 ## [v14.1.2](https://github.com/chef/ohai/tree/v14.1.2) (2018-05-14)
 

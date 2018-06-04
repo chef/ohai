@@ -1,15 +1,18 @@
+# Ohai Release Notes 14.2
+
+## Virtualization detection on AWS
+
+Ohai now detects the virtualization hypervisor `amazonec2` when running on Amazon's new C5/M5 instances.
+
 # Ohai Release Notes 14.1
 
 ## Configurable DMI Whitelist
 
-The whitelist of DMI IDs is now user configurable using the
-`additional_dmi_ids` configuration setting, which takes an Array.
+The whitelist of DMI IDs is now user configurable using the `additional_dmi_ids` configuration setting, which takes an Array.
 
 ## Shard plugin
 
-The Shard plugin has been returned to a default plugin rather than an
-optional one. To ensure we work in FIPS environments, the plugin will
-use SHA256 rather than MD5 in those environments.
+The Shard plugin has been returned to a default plugin rather than an optional one. To ensure we work in FIPS environments, the plugin will use SHA256 rather than MD5 in those environments.
 
 ## SCSI plugin
 

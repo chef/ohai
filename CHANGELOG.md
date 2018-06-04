@@ -1,23 +1,19 @@
 # Change Log
 
-<!-- latest_release 13.9.2 -->
-## [v13.9.2](https://github.com/chef/ohai/tree/v13.9.2) (2018-06-04)
-
-#### Merged Pull Requests
-- Detect virtualization on newer AWS instance types. (m5) [#1201](https://github.com/chef/ohai/pull/1201) ([coderanger](https://github.com/coderanger))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.2.0 -->
-### Changes since 14.2.0 release
-
-#### Merged Pull Requests
-- Detect virtualization on newer AWS instance types. (m5) [#1201](https://github.com/chef/ohai/pull/1201) ([coderanger](https://github.com/coderanger)) <!-- 13.9.2 -->
-- Fix an issue caused by using the wrong field in the AIX filesystem plugin [#1199](https://github.com/chef/ohai/pull/1199) ([tas50](https://github.com/tas50)) <!-- 13.9.1 -->
-- [filesystem2] Backport filesystem2 on BSD for Ohai 13 [#1182](https://github.com/chef/ohai/pull/1182) ([jaymzh](https://github.com/jaymzh))
-- Backport "Make the DMI IDs we whitelist configurable" to Ohai 13 [#1194](https://github.com/chef/ohai/pull/1194) ([gsreynolds](https://github.com/gsreynolds))
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v13.9.2](https://github.com/chef/ohai/tree/v13.9.2) (2018-06-04)
+
+#### Merged Pull Requests
+- Fix an issue caused by using the wrong field in the AIX filesystem plugin [#1199](https://github.com/chef/ohai/pull/1199) ([tas50](https://github.com/tas50))
+- Detect virtualization on newer AWS instance types. (m5) [#1201](https://github.com/chef/ohai/pull/1201) ([coderanger](https://github.com/coderanger))
+<!-- latest_stable_release -->
+
 ## [v13.9.0](https://github.com/chef/ohai/tree/v13.9.0) (2018-04-09)
 
 [Full Changelog](https://github.com/chef/ohai/compare/v13.8.0...v13.9.0)
@@ -26,7 +22,6 @@
 - Fix parsing of uptime on AIX
 - Add missing softlayer detection to the cloud plugin
 - Add detection of macOS guests running on VMware and VirtualBox
-<!-- latest_stable_release -->
 
 ## [v13.8.0](https://github.com/chef/ohai/tree/v13.8.0) (2018-03-02)
 

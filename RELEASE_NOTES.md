@@ -1,3 +1,27 @@
+# Ohai Release Notes 13.9.2
+
+## Virtualization detection on AWS
+
+Ohai now detects the virtualization hypervisor `amazonec2` when running on Amazon's new C5/M5 instances.
+
+## Configurable DMI Whitelist
+
+The whitelist of DMI IDs is now user configurable using the `additional_dmi_ids` configuration setting, which takes an Array.
+
+## Filesysem2 on BSD
+
+The Filesystem2 functionality has been backported to BSD systems to provide a consistent filesystem format.
+
+# Ohai Release Notes 13.9.0
+
+## macOS Virtualization
+
+Ohai now detects the hypervisor of macOS guests running on VMware and VirtualBox.
+
+## Azure Metadata
+
+Azure metadata polling has been improved to handle incomplete data and use the updated `2017-08-01` version metadata.
+
 # Ohai Release Notes 13.8.0
 
 ## Softlayer metadata polling fixed

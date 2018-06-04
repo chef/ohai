@@ -69,7 +69,7 @@ DF_PK
          /dev/hd11admin   /admin           jfs2   Jul 17 13:22 rw,log=/dev/hd8
          /proc            /proc            procfs Jul 17 13:22 rw
          /dev/hd10opt     /opt             jfs2   Jul 17 13:22 rw,log=/dev/hd8
-192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
 MOUNT
 
     @mount_wpar = <<-MOUNT
@@ -82,7 +82,7 @@ MOUNT
          Global           /tmp             jfs2   Nov 23 21:03 rw,log=NULL
          Global           /usr             jfs2   Nov 23 21:03 rw,log=NULL
          Global           /var             jfs2   Nov 23 21:03 rw,log=NULL
-192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
 MOUNT
 
     @plugin = get_plugin("aix/filesystem")
@@ -134,19 +134,19 @@ MOUNT
         expect(@plugin[:filesystem]["/dev/hd4"]["mount_options"]).to eq(["rw", "log=/dev/hd8"])
       end
 
-      # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+      # For entries like 192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
 
         it "returns the filesystem mount location" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount"]).to eq("/stage/middleware")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware1"]["mount"]).to eq("/stage/middleware2")
         end
 
         it "returns the filesystem type" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["fs_type"]).to eq("nfs3")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware1"]["fs_type"]).to eq("nfs3")
         end
 
         it "returns the filesystem mount options" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware1"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
         end
       end
     end
@@ -196,19 +196,19 @@ MOUNT
         expect(@plugin[:filesystem]["Global:/"]["mount_options"]).to eq(["rw", "log=NULL"])
       end
 
-      # For entries like 192.168.1.11 /stage/middleware /stage/middleware nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+      # For entries like 192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
 
         it "returns the filesystem mount location" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount"]).to eq("/stage/middleware")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware3"]["mount"]).to eq("/stage/middleware4")
         end
 
         it "returns the filesystem type" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["fs_type"]).to eq("nfs3")
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware3"]["fs_type"]).to eq("nfs3")
         end
 
         it "returns the filesystem mount options" do
-          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
+          expect(@plugin[:filesystem]["192.168.1.11:/stage/middleware3"]["mount_options"]).to eq(["ro", "bg", "hard", "intr", "sec=sys"])
         end
       end
     end

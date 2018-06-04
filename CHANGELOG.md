@@ -13,6 +13,8 @@
 #### Merged Pull Requests
 - Detect virtualization on newer AWS instance types. (m5) [#1201](https://github.com/chef/ohai/pull/1201) ([coderanger](https://github.com/coderanger)) <!-- 13.9.2 -->
 - Fix an issue caused by using the wrong field in the AIX filesystem plugin [#1199](https://github.com/chef/ohai/pull/1199) ([tas50](https://github.com/tas50)) <!-- 13.9.1 -->
+- [filesystem2] Backport filesystem2 on BSD for Ohai 13 [#1182](https://github.com/chef/ohai/pull/1182) ([jaymzh](https://github.com/jaymzh))
+- Backport "Make the DMI IDs we whitelist configurable" to Ohai 13 [#1194](https://github.com/chef/ohai/pull/1194) ([gsreynolds](https://github.com/gsreynolds))
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

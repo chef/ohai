@@ -24,8 +24,14 @@ Ohai.plugin(:Platform) do
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
   end
 
+  # Amazon Linux AMI release 2013.09
+  # Amazon Linux 2
+  # Fedora release 28 (Twenty Eight)
+  # CentOS release 5.8 (Final)
+  # CentOS release 6.7 (Final)
+  # Red Hat Enterprise Linux Server release 7.5 (Maipo)
   def get_redhatish_version(contents)
-    contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/release ([\d\.]+)/, 1]
+    contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/(release)? ([\d\.]+)/, 2]
   end
 
   #

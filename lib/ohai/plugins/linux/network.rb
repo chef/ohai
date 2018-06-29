@@ -388,9 +388,9 @@ Ohai.plugin(:Network) do
   def choose_default_route(routes)
     routes.select do |r|
       r[:destination] == "default"
-    end.sort do |x, y|
+    end.min do |x, y|
       (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
-    end.first
+    end
   end
 
   def interface_has_no_addresses_in_family?(iface, family)
@@ -447,7 +447,7 @@ Ohai.plugin(:Network) do
           iface[r[:dev]][:state] == "up" &&
           route_is_valid_default_route?(r, default_route)
       end
-    end.sort_by do |r|
+    end.min_by do |r|
       # sorting the selected routes:
       # - getting default routes first
       # - then sort by metric
@@ -463,7 +463,7 @@ Ohai.plugin(:Network) do
          0
        end,
       ]
-    end.first
+    end
   end
 
   # Both the network plugin and this plugin (linux/network) are run on linux. This plugin runs first.

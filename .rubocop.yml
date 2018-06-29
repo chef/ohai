@@ -10,3 +10,6 @@ Layout/Tab:
   Exclude:
     - "lib/ohai/plugins/mono.rb"
     - "lib/ohai/plugins/darwin/hardware.rb"
+
+Performance/UnneededSort:
+  Enabled: true

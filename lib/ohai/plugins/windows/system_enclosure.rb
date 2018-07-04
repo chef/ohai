@@ -20,13 +20,13 @@ Ohai.plugin :SystemEnclosure do
   provides "system_enclosure"
 
   collect_data(:windows) do
-    system_enclosure(Mash.new)
-    so = shell_out('powershell.exe -Command "get-ciminstance win32_systemenclosure"')
-    if so.exitstatus == 0
-      so.stdout.strip.each_line do |line|
-        kv = line.split(/:/, 2).map(&:strip)
-        system_enclosure[kv[0].downcase] = kv[1] if kv.length == 2
-      end
+    require "wmi-lite/wmi"
+    system_enclosure Mash.new
+    wmi = WmiLite::Wmi.new
+    wmi_object = wmi.first_of("Win32_SystemEnclosure").wmi_ole_object
+    wmi_object.properties_.each do |property|
+      value = wmi_object.invoke(property.name)
+      system_enclosure[property.name.downcase] = value unless value.nil?
     end
   end
 end

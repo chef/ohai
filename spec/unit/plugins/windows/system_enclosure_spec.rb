@@ -24,8 +24,8 @@ describe Ohai::System, "System Enclosure", :windows_only do
   before do
     require "wmi-lite/wmi"
     @plugin = get_plugin("windows/system_enclosure")
-    manufacturer = double("WIN32OLE", :name => "manufacturer", :value => "Microsoft Corporation")
-    serialnumber = double("WIN32OLE", :name => "serialnumber", :value => "000430775257")
+    manufacturer = double("WIN32OLE", :name => "manufacturer", :value => "My Fake Manufacturer")
+    serialnumber = double("WIN32OLE", :name => "serialnumber", :value => "1234123412341234")
     property_map = [ manufacturer, serialnumber ]
 
     wmi_ole_object = double( "WIN32OLE", :properties_ => property_map)
@@ -37,11 +37,11 @@ describe Ohai::System, "System Enclosure", :windows_only do
 
   it "should return the manufacturer" do
     @plugin.run
-    expect(@plugin["system_enclosure"]["manufacturer"]).to eql("Microsoft Corporation")
+    expect(@plugin["system_enclosure"]["manufacturer"]).to eql("My Fake Manufacturer")
   end
 
   it "should return a serial number" do
     @plugin.run
-    expect(@plugin["system_enclosure"]["serialnumber"]).to eql("000430775257")
+    expect(@plugin["system_enclosure"]["serialnumber"]).to eql("1234123412341234")
   end
 end

@@ -1,8 +1,6 @@
 #
-# Author:: Pavel Yudin (<pyudin@parallels.com>)
-# Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2015 Pavel Yudin
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Author:: Stuart Preston (<stuart@chef.io>)
+# Copyright:: Copyright (c) 2018, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

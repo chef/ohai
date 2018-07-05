@@ -30,17 +30,17 @@ describe Ohai::System, "plugin powershell" do
 
   it "sets languages[:powershell][:version] for v4" do
 
-    v4_output = <<END
+    v4_output = <<~END
 
-Name                           Value
-----                           -----
-PSVersion                      4.0
-WSManStackVersion              3.0
-SerializationVersion           1.1.0.1
-CLRVersion                     4.0.30319.34014
-BuildVersion                   6.3.9600.16394
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
-PSRemotingProtocolVersion      2.2
+      Name                           Value
+      ----                           -----
+      PSVersion                      4.0
+      WSManStackVersion              3.0
+      SerializationVersion           1.1.0.1
+      CLRVersion                     4.0.30319.34014
+      BuildVersion                   6.3.9600.16394
+      PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
+      PSRemotingProtocolVersion      2.2
 
 END
     compat_version_array = ["1.0", "2.0", "3.0", "4.0"]
@@ -58,9 +58,9 @@ END
   end
 
   it "does not set the languages[:powershell] tree up if powershell command fails" do
-    error_output = <<END
-'powershell.exe' is not recognized as an internal or external command,
-operable program or batch file.
+    error_output = <<~END
+      'powershell.exe' is not recognized as an internal or external command,
+      operable program or batch file.
 END
 
     allow(plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))

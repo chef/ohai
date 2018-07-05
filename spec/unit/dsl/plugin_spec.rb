@@ -203,8 +203,8 @@ shared_examples "Ohai::DSL::Plugin" do
       describe "as a list" do
         describe "of strings" do
           it "returns true when the attribute exists" do
-            expect(plugin.get_attribute("the_monarch", "arch_rival")).
-              to eql("dr_venture")
+            expect(plugin.get_attribute("the_monarch", "arch_rival"))
+              .to eql("dr_venture")
           end
 
           describe "when the attribute does not exist" do
@@ -239,8 +239,8 @@ shared_examples "Ohai::DSL::Plugin" do
 
         describe "of symbols" do
           it "returns true when the attribute exists" do
-            expect(plugin.get_attribute(:the_monarch, :arch_rival)).
-              to eql("dr_venture")
+            expect(plugin.get_attribute(:the_monarch, :arch_rival))
+              .to eql("dr_venture")
           end
 
           describe "when the attribute does not exist" do
@@ -592,7 +592,7 @@ describe Ohai::DSL::Plugin::VersionVII do
       include_examples "plugin config lookup"
 
       it "returns the configuration sub-option value" do
-        Ohai.config[:plugin][snake_name][:foo] = { :bar => true }
+        Ohai.config[:plugin][snake_name][:foo] = { bar: true }
         expect(plugin.configuration(:foo, :bar)).to eq(true)
       end
     end

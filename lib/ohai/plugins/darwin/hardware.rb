@@ -71,7 +71,7 @@ Ohai.plugin(:Hardware) do
       drive[:name] = drive_entry["_name"]
       drive[:bsd_name] = drive_entry["bsd_name"]
       drive[:capacity] = drive_entry["size_in_bytes"]
-      if drive_entry.has_key?("com.apple.corestorage.pv")
+      if drive_entry.key?("com.apple.corestorage.pv")
         drive[:drive_type] = drive_entry["com.apple.corestorage.pv"][0]["medium_type"]
         drive[:smart_status] = drive_entry["com.apple.corestorage.pv"][0]["smart_status"]
         drive[:partitions] = drive_entry["com.apple.corestorage.pv"].count

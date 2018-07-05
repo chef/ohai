@@ -21,41 +21,41 @@ require_relative "../../../spec_helper.rb"
 shared_examples "a cpu" do |cpu_no|
   describe "cpu #{cpu_no}" do
     it "should set physical_id to CPU#{cpu_no}" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:physical_id]).to eq("CPU#{cpu_no}")
+      expect(@plugin[:cpu][cpu_no.to_s][:physical_id]).to eq("CPU#{cpu_no}")
     end
 
     it "should set mhz to 2793" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:mhz]).to eq("2793")
+      expect(@plugin[:cpu][cpu_no.to_s][:mhz]).to eq("2793")
     end
 
     it "should set vendor_id to GenuineIntel" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:vendor_id]).to eq("GenuineIntel")
+      expect(@plugin[:cpu][cpu_no.to_s][:vendor_id]).to eq("GenuineIntel")
     end
 
     it "should set model_name to Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:model_name])
+      expect(@plugin[:cpu][cpu_no.to_s][:model_name])
         .to eq("Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz")
     end
 
     it "should set description to Intel64 Family 6 Model 70 Stepping 1" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:description])
+      expect(@plugin[:cpu][cpu_no.to_s][:description])
         .to eq("Intel64 Family 6 Model 70 Stepping 1")
     end
 
     it "should set model to 17921" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:model]).to eq("17921")
+      expect(@plugin[:cpu][cpu_no.to_s][:model]).to eq("17921")
     end
 
     it "should set family to 2" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:family]).to eq("2")
+      expect(@plugin[:cpu][cpu_no.to_s][:family]).to eq("2")
     end
 
     it "should set stepping to 9" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:stepping]).to eq(9)
+      expect(@plugin[:cpu][cpu_no.to_s][:stepping]).to eq(9)
     end
 
     it "should set cache_size to 64 KB" do
-      expect(@plugin[:cpu]["#{cpu_no}"][:cache_size]).to eq("64 KB")
+      expect(@plugin[:cpu][cpu_no.to_s][:cache_size]).to eq("64 KB")
     end
   end
 end

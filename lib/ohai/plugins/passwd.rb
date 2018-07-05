@@ -17,15 +17,15 @@ Ohai.plugin(:Passwd) do
       etc[:group] = Mash.new
 
       Etc.passwd do |entry|
-        user_passwd_entry = Mash.new(:dir => entry.dir, :gid => entry.gid, :uid => entry.uid, :shell => entry.shell, :gecos => entry.gecos)
+        user_passwd_entry = Mash.new(dir: entry.dir, gid: entry.gid, uid: entry.uid, shell: entry.shell, gecos: entry.gecos)
         user_passwd_entry.each_value { |v| fix_encoding(v) }
         entry_name = fix_encoding(entry.name)
-        etc[:passwd][entry_name] = user_passwd_entry unless etc[:passwd].has_key?(entry_name)
+        etc[:passwd][entry_name] = user_passwd_entry unless etc[:passwd].key?(entry_name)
       end
 
       Etc.group do |entry|
-        group_entry = Mash.new(:gid => entry.gid,
-                               :members => entry.mem.map { |u| fix_encoding(u) })
+        group_entry = Mash.new(gid: entry.gid,
+                               members: entry.mem.map { |u| fix_encoding(u) })
 
         etc[:group][fix_encoding(entry.name)] = group_entry
       end

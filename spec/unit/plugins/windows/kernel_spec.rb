@@ -24,17 +24,17 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     require "wmi-lite/wmi"
 
     # Mock a Win32_OperatingSystem OLE32 WMI object
-    caption = double("WIN32OLE", :name => "Caption")
-    version = double("WIN32OLE", :name => "Version")
-    build_number = double("WIN32OLE", :name => "BuildNumber")
-    csd_version  = double("WIN32OLE", :name => "CsdVersion")
-    os_type = double("WIN32OLE", :name => "OsType")
-    product_type = double("WIN32OLE", :name => "ProductType")
-    operating_system_sku = double("WIN32OLE", :name => "OperatingSystemSKU")
+    caption = double("WIN32OLE", name: "Caption")
+    version = double("WIN32OLE", name: "Version")
+    build_number = double("WIN32OLE", name: "BuildNumber")
+    csd_version  = double("WIN32OLE", name: "CsdVersion")
+    os_type = double("WIN32OLE", name: "OsType")
+    product_type = double("WIN32OLE", name: "ProductType")
+    operating_system_sku = double("WIN32OLE", name: "OperatingSystemSKU")
     os_properties = [ caption, version, build_number, csd_version, os_type, product_type, operating_system_sku ]
 
     os = double( "WIN32OLE",
-                  :properties_ => os_properties)
+                  properties_: os_properties)
 
     allow(os).to receive(:invoke).with(build_number.name).and_return("7601")
     allow(os).to receive(:invoke).with(csd_version.name).and_return("Service Pack 1")
@@ -47,13 +47,13 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     os_wmi = WmiLite::Wmi::Instance.new(os)
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(os_wmi)
 
-    system_type = double("WIN32OLE", :name => "SystemType")
-    pc_system_type = double("WIN32OLE", :name => "PCSystemType")
-    free_virtual_memory = double("WIN32OLE", :name => "FreeVirtualMemory")
+    system_type = double("WIN32OLE", name: "SystemType")
+    pc_system_type = double("WIN32OLE", name: "PCSystemType")
+    free_virtual_memory = double("WIN32OLE", name: "FreeVirtualMemory")
     cs_properties = [ system_type, pc_system_type, free_virtual_memory]
 
     cs = double("WIN32OLE",
-                :properties_ => cs_properties)
+                properties_: cs_properties)
 
     allow(cs).to receive(:invoke).with(system_type.name).and_return("x64-based PC")
     allow(cs).to receive(:invoke).with(pc_system_type.name).and_return(2)

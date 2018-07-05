@@ -41,9 +41,9 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
 
     context "when 'zfs get' properties are not configured" do
       it "collects all filesystem properties" do
-        expect(plugin).to receive(:shell_out).
-          with("zfs get -p -H all").
-          and_return(mock_shell_out(0, "", ""))
+        expect(plugin).to receive(:shell_out)
+          .with("zfs get -p -H all")
+          .and_return(mock_shell_out(0, "", ""))
         plugin.run
       end
     end
@@ -52,16 +52,16 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
       shared_examples_for "configured zfs properties" do
         let(:plugin_config) do
           {
-            :filesystem => {
-              :zfs_properties => zfs_properties,
+            filesystem: {
+              zfs_properties: zfs_properties,
             },
           }
         end
 
         it "collects configured filesystem properties" do
-          expect(plugin).to receive(:shell_out).
-            with("zfs get -p -H #{expected_cmd}").
-            and_return(mock_shell_out(0, "", ""))
+          expect(plugin).to receive(:shell_out)
+            .with("zfs get -p -H #{expected_cmd}")
+            .and_return(mock_shell_out(0, "", ""))
           plugin.run
         end
       end

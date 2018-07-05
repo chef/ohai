@@ -39,12 +39,12 @@ Ohai.plugin(:Filesystem) do
         uuid = $2
         label = $3
         fs_type = $4
-        return { :dev => dev, :uuid => uuid, :label => label, :fs_type => fs_type }
+        return { dev: dev, uuid: uuid, label: label, fs_type: fs_type }
       end
     when "blkid"
       bits = line.split
       dev = bits.shift.split(":")[0]
-      f = { :dev => dev }
+      f = { dev: dev }
       bits.each do |keyval|
         if keyval =~ /(\S+)="(\S+)"/
           key = $1.downcase.to_sym
@@ -151,7 +151,7 @@ Ohai.plugin(:Filesystem) do
       so.stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
           key = "#{$1},#{$2}"
-          fs[key] = Mash.new unless fs.has_key?(key)
+          fs[key] = Mash.new unless fs.key?(key)
           fs[key][:device] = $1
           fs[key][:mount] = $2
           fs[key][:fs_type] = $3
@@ -237,7 +237,7 @@ Ohai.plugin(:Filesystem) do
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           key = "#{$1},#{$2}"
-          next if fs.has_key?(key)
+          next if fs.key?(key)
           fs[key] = Mash.new
           fs[key][:device] = $1
           fs[key][:mount] = $2
@@ -360,7 +360,7 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
         key = "#{$1},#{$2}"
-        fs[key] = Mash.new unless fs.has_key?(key)
+        fs[key] = Mash.new unless fs.key?(key)
         fs[key][:mount] = $2
         fs[key][:fs_type] = $3
         fs[key][:mount_options] = $4.split(/,\s*/)

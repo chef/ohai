@@ -25,18 +25,18 @@ describe Ohai::System, "plugin etc", :unix_only do
   GroupEntry = Struct.new(:name, :gid, :mem)
 
   it "should include a list of all users" do
-    expect(Etc).to receive(:passwd).and_yield(PasswdEntry.new("root", 1, 1, "/root", "/bin/zsh", "BOFH")).
-      and_yield(PasswdEntry.new("www", 800, 800, "/var/www", "/bin/false", "Serving the web since 1970"))
+    expect(Etc).to receive(:passwd).and_yield(PasswdEntry.new("root", 1, 1, "/root", "/bin/zsh", "BOFH"))
+      .and_yield(PasswdEntry.new("www", 800, 800, "/var/www", "/bin/false", "Serving the web since 1970"))
     @plugin.run
-    expect(@plugin[:etc][:passwd]["root"]).to eq(Mash.new(:shell => "/bin/zsh", :gecos => "BOFH", :gid => 1, :uid => 1, :dir => "/root"))
-    expect(@plugin[:etc][:passwd]["www"]).to eq(Mash.new(:shell => "/bin/false", :gecos => "Serving the web since 1970", :gid => 800, :uid => 800, :dir => "/var/www"))
+    expect(@plugin[:etc][:passwd]["root"]).to eq(Mash.new(shell: "/bin/zsh", gecos: "BOFH", gid: 1, uid: 1, dir: "/root"))
+    expect(@plugin[:etc][:passwd]["www"]).to eq(Mash.new(shell: "/bin/false", gecos: "Serving the web since 1970", gid: 800, uid: 800, dir: "/var/www"))
   end
 
   it "should ignore duplicate users" do
-    expect(Etc).to receive(:passwd).and_yield(PasswdEntry.new("root", 1, 1, "/root", "/bin/zsh", "BOFH")).
-      and_yield(PasswdEntry.new("root", 1, 1, "/", "/bin/false", "I do not belong"))
+    expect(Etc).to receive(:passwd).and_yield(PasswdEntry.new("root", 1, 1, "/root", "/bin/zsh", "BOFH"))
+      .and_yield(PasswdEntry.new("root", 1, 1, "/", "/bin/false", "I do not belong"))
     @plugin.run
-    expect(@plugin[:etc][:passwd]["root"]).to eq(Mash.new(:shell => "/bin/zsh", :gecos => "BOFH", :gid => 1, :uid => 1, :dir => "/root"))
+    expect(@plugin[:etc][:passwd]["root"]).to eq(Mash.new(shell: "/bin/zsh", gecos: "BOFH", gid: 1, uid: 1, dir: "/root"))
   end
 
   it "should set the current user" do
@@ -49,8 +49,8 @@ describe Ohai::System, "plugin etc", :unix_only do
   it "should set the available groups" do
     expect(Etc).to receive(:group).and_yield(GroupEntry.new("admin", 100, %w{root chef})).and_yield(GroupEntry.new("www", 800, %w{www deploy}))
     @plugin.run
-    expect(@plugin[:etc][:group]["admin"]).to eq(Mash.new(:gid => 100, :members => %w{root chef}))
-    expect(@plugin[:etc][:group]["www"]).to eq(Mash.new(:gid => 800, :members => %w{www deploy}))
+    expect(@plugin[:etc][:group]["admin"]).to eq(Mash.new(gid: 100, members: %w{root chef}))
+    expect(@plugin[:etc][:group]["www"]).to eq(Mash.new(gid: 800, members: %w{www deploy}))
   end
 
   if "".respond_to?(:force_encoding)

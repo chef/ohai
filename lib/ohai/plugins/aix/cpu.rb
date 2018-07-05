@@ -33,8 +33,8 @@ Ohai.plugin(:CPU) do
       cpu[:available] = 0
 
       cpudevs = shell_out("lsdev -Cc processor").stdout.lines
-      #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
-      #on AIX number of cores and processors are considered same
+      # from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
+      # on AIX number of cores and processors are considered same
       cpu[:real] = cpu[:cores] = cpudevs.length
       cpudevs.each.with_index do |c, i|
         name, status, location = c.split
@@ -50,7 +50,7 @@ Ohai.plugin(:CPU) do
             if attrib == "type"
               cpu[index][:model_name] = value
             elsif attrib == "frequency"
-              cpu[index][:mhz] = value.to_i / (1000 * 1000) #convert from hz to MHz
+              cpu[index][:mhz] = value.to_i / (1000 * 1000) # convert from hz to MHz
             else
               cpu[index][attrib] = value
             end

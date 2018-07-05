@@ -23,7 +23,7 @@ module Ohai
       FAMILIES = {
         "inet" => "default",
         "inet6" => "default_inet6",
-      }
+      }.freeze
     end
   end
 end

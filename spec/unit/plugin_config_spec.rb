@@ -37,8 +37,8 @@ describe "Ohai::PluginConfig" do
     shared_examples_for "failure" do
 
       it "raises an error" do
-        expect { plugin_config[key] = value }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+        expect { plugin_config[key] = value }
+          .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
     end
@@ -53,9 +53,9 @@ describe "Ohai::PluginConfig" do
 
           let(:value) do
             {
-              :bar0 => true,
-              :bar1 => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, :qux1 => false },
+              bar0: true,
+              bar1: [ :baz0, :baz1, :baz2 ],
+              bar2: { qux0: true, qux1: false },
             }
           end
 
@@ -69,7 +69,7 @@ describe "Ohai::PluginConfig" do
             {
               :bar0 => true,
               "bar1" => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, :qux1 => false },
+              :bar2 => { qux0: true, qux1: false },
             }
           end
 
@@ -81,9 +81,9 @@ describe "Ohai::PluginConfig" do
 
           let(:value) do
             {
-              :bar0 => true,
-              :bar1 => [ :baz0, :baz1, :baz2 ],
-              :bar2 => { :qux0 => true, "qux1" => false },
+              bar0: true,
+              bar1: [ :baz0, :baz1, :baz2 ],
+              bar2: { :qux0 => true, "qux1" => false },
             }
           end
 

@@ -42,11 +42,11 @@ Ohai.plugin(:Kernel) do
   # @return [Mash]
   def bsd_modules(path)
     modules = Mash.new
-    so = shell_out("#{Ohai.abs_path(path)}")
+    so = shell_out((Ohai.abs_path(path)).to_s)
     so.stdout.lines do |line|
       #  1    7 0xc0400000 97f830   kernel
       if line =~ /(\d+)\s+(\d+)\s+([0-9a-fx]+)\s+([0-9a-fx]+)\s+([a-zA-Z0-9\_]+)/
-        modules[$5] = { :size => $4, :refcount => $2 }
+        modules[$5] = { size: $4, refcount: $2 }
       end
     end
     modules
@@ -169,7 +169,7 @@ Ohai.plugin(:Kernel) do
     so = shell_out("kextstat -k -l")
     so.stdout.lines do |line|
       if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/
-        modules[$4] = { :version => $5, :size => $3.hex, :index => $1, :refcount => $2 }
+        modules[$4] = { version: $5, size: $3.hex, index: $1, refcount: $2 }
       end
     end
 
@@ -198,7 +198,7 @@ Ohai.plugin(:Kernel) do
     so = shell_out("env lsmod")
     so.stdout.lines do |line|
       if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
-        modules[$1] = { :size => $2, :refcount => $3 }
+        modules[$1] = { size: $2, refcount: $3 }
         # Making sure to get the module version that has been loaded
         if File.exist?("/sys/module/#{$1}/version")
           version = File.read("/sys/module/#{$1}/version").chomp.strip
@@ -239,7 +239,7 @@ Ohai.plugin(:Kernel) do
     module_description = /[\s]*([\d]+)[\s]+([a-f\d]+)[\s]+([a-f\d]+)[\s]+(?:[\-\d]+)[\s]+(?:[\d]+)[\s]+([\S]+)[\s]+\((.+)\)$/
     so.stdout.lines do |line|
       if ( mod = module_description.match(line) )
-        modules[mod[4]] = { :id => mod[1].to_i, :loadaddr => mod[2], :size => mod[3].to_i(16), :description => mod[5] }
+        modules[mod[4]] = { id: mod[1].to_i, loadaddr: mod[2], size: mod[3].to_i(16), description: mod[5] }
       end
     end
 
@@ -263,8 +263,8 @@ Ohai.plugin(:Kernel) do
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
-    kernel[:name] = "#{kernel[:os_info][:caption]}"
-    kernel[:release] = "#{kernel[:os_info][:version]}"
+    kernel[:name] = (kernel[:os_info][:caption]).to_s
+    kernel[:release] = (kernel[:os_info][:version]).to_s
     kernel[:version] = "#{kernel[:os_info][:version]} #{kernel[:os_info][:csd_version]} Build #{kernel[:os_info][:build_number]}"
     kernel[:os] = os_type_decode(kernel[:os_info][:os_type]) || languages[:ruby][:host_os]
     kernel[:product_type] = product_type_decode(kernel[:os_info][:product_type])
@@ -277,7 +277,7 @@ Ohai.plugin(:Kernel) do
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
-    kernel[:machine] = arch_lookup("#{kernel[:cs_info][:system_type]}")
+    kernel[:machine] = arch_lookup((kernel[:cs_info][:system_type]).to_s)
     kernel[:system_type] = pc_system_type_decode(kernel[:cs_info][:pc_system_type])
   end
 end

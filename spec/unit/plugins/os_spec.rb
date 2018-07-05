@@ -60,7 +60,7 @@ describe Ohai::System, "plugin os" do
 
   describe "on solaris" do
     before do
-      ::RbConfig::CONFIG["host_os"] = "solaris2.42" #heh
+      ::RbConfig::CONFIG["host_os"] = "solaris2.42" # heh
     end
 
     it "sets the os to solaris2" do

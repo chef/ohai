@@ -20,69 +20,69 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "AIX filesystem plugin" do
   before(:each) do
-    @df_pk_lpar = <<-DF_PK
-Filesystem    1024-blocks      Used Available Capacity Mounted on
-/dev/hd4          2097152    219796   1877356      11% /
-/dev/hd2          5242880   2416828   2826052      47% /usr
-/dev/hd9var       5242880    395540   4847340       8% /var
-/dev/hd3          5242880   1539508   3703372      30% /tmp
-/dev/hd1         10485760      1972  10483788       1% /home
-/dev/hd11admin      131072       380    130692       1% /admin
-/proc                   -         -         -       -  /proc
-/dev/hd10opt      5242880   1286720   3956160      25% /opt
-/dev/livedump      262144       368    261776       1% /var/adm/ras/livedump
-/dev/fslv00        524288     45076    479212       9% /wpars/sink-thinker-541ba3
-/dev/fslv01       2097152      8956   2088196       1% /wpars/sink-thinker-541ba3/home
-/dev/fslv02       5242880   1307352   3935528      25% /wpars/sink-thinker-541ba3/opt
-/proc                   -         -         -       -  /wpars/sink-thinker-541ba3/proc
-/dev/fslv03       1048576    168840    879736      17% /wpars/sink-thinker-541ba3/tmp
-/dev/fslv04       5242880   2725040   2517840      52% /wpars/sink-thinker-541ba3/usr
-/dev/fslv05        524288     76000    448288      15% /wpars/sink-thinker-541ba3/var
-/dev/fslv07      10485760    130872  10354888       2% /wpars/toolchain-tester-5c969f
-/dev/fslv08       5242880     39572   5203308       1% /wpars/toolchain-tester-5c969f/home
-/dev/fslv09       5242880   1477164   3765716      29% /wpars/toolchain-tester-5c969f/opt
-/proc                   -         -         -       -  /wpars/toolchain-tester-5c969f/proc
-/dev/fslv10       5242880     42884   5199996       1% /wpars/toolchain-tester-5c969f/tmp
-/dev/fslv11       5242880   2725048   2517832      52% /wpars/toolchain-tester-5c969f/usr
-/dev/fslv12      10485760    272376  10213384       3% /wpars/toolchain-tester-5c969f/var
+    @df_pk_lpar = <<~DF_PK
+      Filesystem    1024-blocks      Used Available Capacity Mounted on
+      /dev/hd4          2097152    219796   1877356      11% /
+      /dev/hd2          5242880   2416828   2826052      47% /usr
+      /dev/hd9var       5242880    395540   4847340       8% /var
+      /dev/hd3          5242880   1539508   3703372      30% /tmp
+      /dev/hd1         10485760      1972  10483788       1% /home
+      /dev/hd11admin      131072       380    130692       1% /admin
+      /proc                   -         -         -       -  /proc
+      /dev/hd10opt      5242880   1286720   3956160      25% /opt
+      /dev/livedump      262144       368    261776       1% /var/adm/ras/livedump
+      /dev/fslv00        524288     45076    479212       9% /wpars/sink-thinker-541ba3
+      /dev/fslv01       2097152      8956   2088196       1% /wpars/sink-thinker-541ba3/home
+      /dev/fslv02       5242880   1307352   3935528      25% /wpars/sink-thinker-541ba3/opt
+      /proc                   -         -         -       -  /wpars/sink-thinker-541ba3/proc
+      /dev/fslv03       1048576    168840    879736      17% /wpars/sink-thinker-541ba3/tmp
+      /dev/fslv04       5242880   2725040   2517840      52% /wpars/sink-thinker-541ba3/usr
+      /dev/fslv05        524288     76000    448288      15% /wpars/sink-thinker-541ba3/var
+      /dev/fslv07      10485760    130872  10354888       2% /wpars/toolchain-tester-5c969f
+      /dev/fslv08       5242880     39572   5203308       1% /wpars/toolchain-tester-5c969f/home
+      /dev/fslv09       5242880   1477164   3765716      29% /wpars/toolchain-tester-5c969f/opt
+      /proc                   -         -         -       -  /wpars/toolchain-tester-5c969f/proc
+      /dev/fslv10       5242880     42884   5199996       1% /wpars/toolchain-tester-5c969f/tmp
+      /dev/fslv11       5242880   2725048   2517832      52% /wpars/toolchain-tester-5c969f/usr
+      /dev/fslv12      10485760    272376  10213384       3% /wpars/toolchain-tester-5c969f/var
 DF_PK
 
-    @df_pk_wpar = <<-DF_PK
-Filesystem    1024-blocks      Used Available Capacity Mounted on
-Global           10485760    130872  10354888       2% /
-Global            5242880     39572   5203308       1% /home
-Global            5242880   1477164   3765716      29% /opt
-Global                  -         -         -       -  /proc
-Global            5242880     42884   5199996       1% /tmp
-Global            5242880   2725048   2517832      52% /usr
-Global           10485760    272376  10213384       3% /var
+    @df_pk_wpar = <<~DF_PK
+      Filesystem    1024-blocks      Used Available Capacity Mounted on
+      Global           10485760    130872  10354888       2% /
+      Global            5242880     39572   5203308       1% /home
+      Global            5242880   1477164   3765716      29% /opt
+      Global                  -         -         -       -  /proc
+      Global            5242880     42884   5199996       1% /tmp
+      Global            5242880   2725048   2517832      52% /usr
+      Global           10485760    272376  10213384       3% /var
 DF_PK
 
-    @mount_lpar = <<-MOUNT
-  node       mounted        mounted over    vfs       date        options
--------- ---------------  ---------------  ------ ------------ ---------------
-         /dev/hd4         /                jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /dev/hd2         /usr             jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /dev/hd9var      /var             jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /dev/hd3         /tmp             jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /dev/hd1         /home            jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /dev/hd11admin   /admin           jfs2   Jul 17 13:22 rw,log=/dev/hd8
-         /proc            /proc            procfs Jul 17 13:22 rw
-         /dev/hd10opt     /opt             jfs2   Jul 17 13:22 rw,log=/dev/hd8
-192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+    @mount_lpar = <<~MOUNT
+        node       mounted        mounted over    vfs       date        options
+      -------- ---------------  ---------------  ------ ------------ ---------------
+               /dev/hd4         /                jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /dev/hd2         /usr             jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /dev/hd9var      /var             jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /dev/hd3         /tmp             jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /dev/hd1         /home            jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /dev/hd11admin   /admin           jfs2   Jul 17 13:22 rw,log=/dev/hd8
+               /proc            /proc            procfs Jul 17 13:22 rw
+               /dev/hd10opt     /opt             jfs2   Jul 17 13:22 rw,log=/dev/hd8
+      192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
 MOUNT
 
-    @mount_wpar = <<-MOUNT
-  node       mounted        mounted over    vfs       date        options
--------- ---------------  ---------------  ------ ------------ ---------------
-         Global           /                jfs2   Nov 23 21:03 rw,log=NULL
-         Global           /home            jfs2   Nov 23 21:03 rw,log=NULL
-         Global           /opt             jfs2   Nov 23 21:03 rw,log=NULL
-         Global           /proc            namefs Nov 23 21:03 rw
-         Global           /tmp             jfs2   Nov 23 21:03 rw,log=NULL
-         Global           /usr             jfs2   Nov 23 21:03 rw,log=NULL
-         Global           /var             jfs2   Nov 23 21:03 rw,log=NULL
-192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
+    @mount_wpar = <<~MOUNT
+        node       mounted        mounted over    vfs       date        options
+      -------- ---------------  ---------------  ------ ------------ ---------------
+               Global           /                jfs2   Nov 23 21:03 rw,log=NULL
+               Global           /home            jfs2   Nov 23 21:03 rw,log=NULL
+               Global           /opt             jfs2   Nov 23 21:03 rw,log=NULL
+               Global           /proc            namefs Nov 23 21:03 rw
+               Global           /tmp             jfs2   Nov 23 21:03 rw,log=NULL
+               Global           /usr             jfs2   Nov 23 21:03 rw,log=NULL
+               Global           /var             jfs2   Nov 23 21:03 rw,log=NULL
+      192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
 MOUNT
 
     @plugin = get_plugin("aix/filesystem")

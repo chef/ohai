@@ -39,13 +39,13 @@ module Ohai
     #
     module Ec2Metadata
 
-      EC2_METADATA_ADDR = "169.254.169.254" unless defined?(EC2_METADATA_ADDR)
+      EC2_METADATA_ADDR = "169.254.169.254".freeze unless defined?(EC2_METADATA_ADDR)
       EC2_SUPPORTED_VERSIONS = %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
-                                   2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }
-      EC2_ARRAY_VALUES = %w{security-groups local_ipv4s}
-      EC2_ARRAY_DIR    = %w{network/interfaces/macs}
-      EC2_JSON_DIR     = %w{iam}
+                                   2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze
+      EC2_ARRAY_VALUES = %w{security-groups local_ipv4s}.freeze
+      EC2_ARRAY_DIR    = %w{network/interfaces/macs}.freeze
+      EC2_JSON_DIR     = %w{iam}.freeze
 
       def best_api_version
         @api_version ||= begin
@@ -193,9 +193,9 @@ module Ohai
       def expand_path(file_name)
         path = file_name.gsub(/\=.*$/, "/")
         # ignore "./" and "../"
-        path.gsub(%r{/\.\.?(?:/|$)}, "/").
-          sub(%r{^\.\.?(?:/|$)}, "").
-          sub(%r{^$}, "/")
+        path.gsub(%r{/\.\.?(?:/|$)}, "/")
+          .sub(%r{^\.\.?(?:/|$)}, "")
+          .sub(%r{^$}, "/")
       end
 
       def metadata_key(key)

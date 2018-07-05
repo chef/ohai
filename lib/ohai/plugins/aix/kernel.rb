@@ -38,7 +38,7 @@ Ohai.plugin(:Kernel) do
     # f1000000c0318000    20000 f1000000c0320000    17138 /usr/lib/drivers/random
     so.stdout.lines do |line|
       if line =~ /\s*([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([a-zA-Z0-9\/\._]+)/
-        modules[$5] = { :text => { :address => $1, :size => $2 }, :data => { :address => $3, :size => $4 } }
+        modules[$5] = { text: { address: $1, size: $2 }, data: { address: $3, size: $4 } }
       end
     end
 

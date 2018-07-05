@@ -20,15 +20,15 @@ module Ohai
   module Mixin
     module DOMetadata
 
-      DO_METADATA_ADDR = "169.254.169.254" unless defined?(DO_METADATA_ADDR)
-      DO_METADATA_URL = "/metadata/v1.json" unless defined?(DO_METADATA_URL)
+      DO_METADATA_ADDR = "169.254.169.254".freeze unless defined?(DO_METADATA_ADDR)
+      DO_METADATA_URL = "/metadata/v1.json".freeze unless defined?(DO_METADATA_URL)
 
       def http_client
         Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
       end
 
       def fetch_metadata
-        uri = "#{DO_METADATA_URL}"
+        uri = (DO_METADATA_URL).to_s
         response = http_client.get(uri)
         case response.code
         when "200"

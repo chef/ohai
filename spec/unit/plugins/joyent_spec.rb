@@ -61,17 +61,17 @@ describe Ohai::System, "plugin joyent" do
         plugin[:virtualization][:guest_uuid] = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
         plugin[:virtualization][:guest_id] = "30"
 
-        etc_product = <<-EOS
-Name: Joyent Instance
-Image: pkgbuild 16.3.1
-Documentation: https://docs.joyent.com/images/smartos/pkgbuild
+        etc_product = <<~EOS
+          Name: Joyent Instance
+          Image: pkgbuild 16.3.1
+          Documentation: https://docs.joyent.com/images/smartos/pkgbuild
       EOS
 
-        pkg_install_conf = <<-EOS
-GPG_KEYRING_VERIFY=/opt/local/etc/gnupg/pkgsrc.gpg
-GPG_KEYRING_PKGVULN=/opt/local/share/gnupg/pkgsrc-security.gpg
-PKG_PATH=https://pkgsrc.joyent.com/packages/SmartOS/2016Q3/x86_64/All
-VERIFIED_INSTALLATION=trusted
+        pkg_install_conf = <<~EOS
+          GPG_KEYRING_VERIFY=/opt/local/etc/gnupg/pkgsrc.gpg
+          GPG_KEYRING_PKGVULN=/opt/local/share/gnupg/pkgsrc-security.gpg
+          PKG_PATH=https://pkgsrc.joyent.com/packages/SmartOS/2016Q3/x86_64/All
+          VERIFIED_INSTALLATION=trusted
       EOS
 
         allow(::File).to receive(:read).with("/etc/product").and_return(etc_product)

@@ -102,7 +102,7 @@ Ohai.plugin(:Network) do
           ip_and_subnet = ip.dup
           ip_and_subnet << "/#{iface[cint][:configuration][:ip_subnet][ip_index]}" if iface[cint][:configuration][:ip_subnet]
           ip2 = IPAddress(ip_and_subnet)
-          iface[cint][:addresses][ip] = Mash.new(:prefixlen => ip2.prefix)
+          iface[cint][:addresses][ip] = Mash.new(prefixlen: ip2.prefix)
           if ip2.ipv6?
             iface[cint][:addresses][ip][:family] = "inet6"
             iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
@@ -123,7 +123,7 @@ Ohai.plugin(:Network) do
             "family" => "lladdr",
           }
         end
-        iface[cint][:mtu] = iface[cint][:configuration][:mtu] if iface[cint][:configuration].has_key?(:mtu)
+        iface[cint][:mtu] = iface[cint][:configuration][:mtu] if iface[cint][:configuration].key?(:mtu)
         iface[cint][:type] = iface[cint][:instance][:adapter_type] if iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
         iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type]) if iface[cint][:instance][:adapter_type]

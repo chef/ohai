@@ -26,7 +26,7 @@ module Ohai
       # internal name for the Administrators group, which lets us work
       # properly in environments with a renamed or localized name for the
       # Administrators group
-      BUILTIN_ADMINISTRATORS_SID = "S-1-5-32-544"
+      BUILTIN_ADMINISTRATORS_SID = "S-1-5-32-544".freeze
 
       def self.windows_root_group_name
         administrators_sid_result = FFI::MemoryPointer.new(:pointer)

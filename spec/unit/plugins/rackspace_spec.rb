@@ -27,8 +27,8 @@ describe Ohai::System, "plugin rackspace" do
     plugin[:hostname] = "katie"
 
     plugin[:network] = {
-      :interfaces => {
-        :eth0 => {
+      interfaces: {
+        eth0: {
           "addresses" => {
             "1.2.3.4" => {
               "broadcast" => "67.23.20.255",
@@ -54,7 +54,7 @@ describe Ohai::System, "plugin rackspace" do
     }
 
     plugin[:network][:interfaces][:eth1] = {
-      :addresses => {
+      addresses: {
         "fe80::4240:f5ff:feab:2836" => {
           "scope" => "Link",
           "prefixlen" => "64",
@@ -73,7 +73,7 @@ describe Ohai::System, "plugin rackspace" do
 
     # In olden days we could detect rackspace by a -rscloud suffix on the kernel
     # This is here to make #has_rackspace_kernel? fail until we remove that check
-    plugin[:kernel] = { :release => "1.2.13-not-rackspace" }
+    plugin[:kernel] = { release: "1.2.13-not-rackspace" }
 
     # We need a generic stub here for the later stubs with arguments to work
     # Because, magic.
@@ -131,12 +131,12 @@ describe Ohai::System, "plugin rackspace" do
     end
 
     it "captures region information" do
-      provider_data = <<-OUT
-provider = "Rackspace"
-service_type = "cloudServers"
-server_id = "21301000"
-created_at = "2012-12-06T22:08:16Z"
-region = "dfw"
+      provider_data = <<~OUT
+        provider = "Rackspace"
+        service_type = "cloudServers"
+        server_id = "21301000"
+        created_at = "2012-12-06T22:08:16Z"
+        region = "dfw"
 OUT
       allow(plugin).to receive(:shell_out).with("xenstore-ls vm-data/provider_data").and_return(mock_shell_out(0, provider_data, ""))
       plugin.run
@@ -144,14 +144,14 @@ OUT
     end
 
     it "logs a debug message when region info cannot be collected" do
-      expect(plugin).
-        to receive(:shell_out).
-        with("xenstore-ls vm-data/provider_data").
-        and_raise(Ohai::Exceptions::Exec)
+      expect(plugin)
+        .to receive(:shell_out)
+        .with("xenstore-ls vm-data/provider_data")
+        .and_raise(Ohai::Exceptions::Exec)
 
-      expect(plugin.logger).
-        to receive(:trace).
-        with("Plugin Rackspace: Unable to find xenstore-ls, cannot capture " \
+      expect(plugin.logger)
+        .to receive(:trace)
+        .with("Plugin Rackspace: Unable to find xenstore-ls, cannot capture " \
              "region information for Rackspace cloud")
 
       plugin.run
@@ -167,14 +167,14 @@ OUT
     end
 
     it "logs error if instance id cannot be found" do
-      expect(plugin).
-        to receive(:shell_out).
-        with("xenstore-read name").
-        and_raise(Ohai::Exceptions::Exec)
+      expect(plugin)
+        .to receive(:shell_out)
+        .with("xenstore-read name")
+        .and_raise(Ohai::Exceptions::Exec)
 
-      expect(plugin.logger).
-        to receive(:trace).
-        with("Plugin Rackspace: Unable to find xenstore-read, cannot capture " \
+      expect(plugin.logger)
+        .to receive(:trace)
+        .with("Plugin Rackspace: Unable to find xenstore-read, cannot capture " \
              "instance ID information for Rackspace cloud")
 
       plugin.run
@@ -260,10 +260,10 @@ OUT
 
     before(:each) do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
-      allow(plugin).
-        to receive(:shell_out).
-        with("xenstore-read vm-data/provider_data/provider").
-        and_raise(Ohai::Exceptions::Exec)
+      allow(plugin)
+        .to receive(:shell_out)
+        .with("xenstore-read vm-data/provider_data/provider")
+        .and_raise(Ohai::Exceptions::Exec)
     end
   end
 
@@ -271,14 +271,14 @@ OUT
     it "logs an error and does not collect private_networks" do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
 
-      expect(plugin).
-        to receive(:shell_out).
-        with("xenstore-ls vm-data/networking").
-        and_raise(Ohai::Exceptions::Exec)
+      expect(plugin)
+        .to receive(:shell_out)
+        .with("xenstore-ls vm-data/networking")
+        .and_raise(Ohai::Exceptions::Exec)
 
-      expect(plugin.logger).
-        to receive(:trace).
-        with("Plugin Rackspace: Unable to capture custom private networking " \
+      expect(plugin.logger)
+        .to receive(:trace)
+        .with("Plugin Rackspace: Unable to capture custom private networking " \
              "information for Rackspace cloud")
 
       plugin.run
@@ -305,7 +305,7 @@ OUT
   describe "has private networks" do
     before do
       plugin[:network][:interfaces][:eth2] = {
-        :addresses => {
+        addresses: {
           "fe80::be76:4eff:fe20:422b" => {
             "scope" => "Link",
             "prefixlen" => "64",

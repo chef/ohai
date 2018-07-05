@@ -108,7 +108,7 @@ module Ohai
         # @param block [block] the actual code to collect data for the specified platforms
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
-            if data_collector.has_key?(plat)
+            if data_collector.key?(plat)
               raise Ohai::Exceptions::IllegalPluginDefinition, "collect_data already defined on platform #{plat}"
             else
               data_collector[plat] = block
@@ -125,9 +125,9 @@ module Ohai
           collector = self.class.data_collector
           platform = collect_os
 
-          if collector.has_key?(platform)
+          if collector.key?(platform)
             instance_eval(&collector[platform])
-          elsif collector.has_key?(:default)
+          elsif collector.key?(:default)
             instance_eval(&collector[:default])
           else
             logger.trace("Plugin #{name}: No data to collect. Skipping...")

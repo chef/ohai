@@ -27,18 +27,18 @@ begin
       @plugin = get_plugin("chef")
     end
 
-    it "should set [:chef_packages][:chef][:version] to the current chef version", :if => defined?(Chef) do
+    it "should set [:chef_packages][:chef][:version] to the current chef version", if: defined?(Chef) do
       @plugin.run
       expect(@plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
     end
 
-    pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
+    pending "would set [:chef_packages][:chef][:version] if chef was available", unless: defined?(Chef)
   end
 
 rescue LoadError
   # the chef module is not available, ignoring.
 
   describe Ohai::System, "plugin chef" do
-    pending "would set [:chef_packages][:chef][:version] if chef was available", :unless => defined?(Chef)
+    pending "would set [:chef_packages][:chef][:version] if chef was available", unless: defined?(Chef)
   end
 end

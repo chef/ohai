@@ -20,24 +20,24 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "AIX cpu plugin" do
   before(:each) do
-    @lsdev_cc_processor = <<-LSDEV_CC_PROCESSOR
-proc0 Available 00-00 Processor
-proc4 Defined   00-04 Processor
+    @lsdev_cc_processor = <<~LSDEV_CC_PROCESSOR
+      proc0 Available 00-00 Processor
+      proc4 Defined   00-04 Processor
 LSDEV_CC_PROCESSOR
 
-    @lsattr_el_proc0 = <<-LSATTR_EL
-frequency   1654344000     Processor Speed       False
-smt_enabled true           Processor SMT enabled False
-smt_threads 2              Processor SMT threads False
-state       enable         Processor state       False
-type        PowerPC_POWER5 Processor type        False
+    @lsattr_el_proc0 = <<~LSATTR_EL
+      frequency   1654344000     Processor Speed       False
+      smt_enabled true           Processor SMT enabled False
+      smt_threads 2              Processor SMT threads False
+      state       enable         Processor state       False
+      type        PowerPC_POWER5 Processor type        False
 LSATTR_EL
 
-    @pmcycles_m = <<-PMCYCLES_M
-CPU 0 runs at 1654 MHz
-CPU 1 runs at 1654 MHz
-CPU 2 runs at 1654 MHz
-CPU 3 runs at 1654 MHz
+    @pmcycles_m = <<~PMCYCLES_M
+      CPU 0 runs at 1654 MHz
+      CPU 1 runs at 1654 MHz
+      CPU 2 runs at 1654 MHz
+      CPU 3 runs at 1654 MHz
 PMCYCLES_M
 
     @plugin = get_plugin("aix/cpu")
@@ -71,8 +71,8 @@ PMCYCLES_M
     end
 
     it "sets the number of cores" do
-      #from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
-      #on AIX number of cores and processors are considered same
+      # from http://www-01.ibm.com/software/passportadvantage/pvu_terminology_for_customers.html
+      # on AIX number of cores and processors are considered same
       expect(@plugin[:cpu][:cores]).to eq(@plugin[:cpu][:real])
     end
 

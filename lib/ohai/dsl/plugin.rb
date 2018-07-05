@@ -128,7 +128,7 @@ module Ohai
       end
 
       def has_key?(name)
-        @data.has_key?(name)
+        @data.key?(name)
       end
 
       def attribute?(name, *keys)
@@ -140,7 +140,7 @@ module Ohai
       end
 
       def from(cmd)
-        _status, stdout, _stderr = run_command(:command => cmd)
+        _status, stdout, _stderr = run_command(command: cmd)
         return "" if stdout.nil? || stdout.empty?
         stdout.strip
       end
@@ -150,7 +150,7 @@ module Ohai
       # the value.
       def from_with_regex(cmd, *regex_list)
         regex_list.flatten.each do |regex|
-          _status, stdout, _stderr = run_command(:command => cmd)
+          _status, stdout, _stderr = run_command(command: cmd)
           return "" if stdout.nil? || stdout.empty?
           stdout.chomp!.strip
           md = stdout.match(regex)

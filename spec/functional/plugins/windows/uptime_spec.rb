@@ -28,8 +28,7 @@ describe Ohai::System, "Windows plugin uptime" do
     end
 
     let(:wmi) do
-      double("wmi", { :first_of =>
-        { "lastbootuptime" => "20160912103128.597219+0000" },
+      double("wmi", { first_of:         { "lastbootuptime" => "20160912103128.597219+0000" },
       })
     end
 

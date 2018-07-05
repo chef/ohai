@@ -34,7 +34,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when running a plugin" do
-    let(:plugin) { double("Ohai::DSL::Plugin", :kind_of? => true, :version => version, :name => :Test, :has_run? => has_run, :dependencies => [ ]) }
+    let(:plugin) { double("Ohai::DSL::Plugin", kind_of?: true, version: version, name: :Test, has_run?: has_run, dependencies: [ ]) }
     let(:version) { :version7 }
     let(:has_run) { false }
 
@@ -334,7 +334,7 @@ describe Ohai::Runner, "fetch_plugins" do
   before(:each) do
     @provides_map = Ohai::ProvidesMap.new
     @data = Mash.new
-    @ohai = double("Ohai::System", :data => @data, :provides_map => @provides_map, logger: Ohai::Log.with_child)
+    @ohai = double("Ohai::System", data: @data, provides_map: @provides_map, logger: Ohai::Log.with_child)
     @runner = Ohai::Runner.new(@ohai, true)
   end
 

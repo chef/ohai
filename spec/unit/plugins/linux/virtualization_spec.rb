@@ -192,14 +192,14 @@ describe Ohai::System, "Linux virtualization platform" do
     end
 
     it "sets virtualpc guest if dmidecode detects Microsoft Virtual Machine" do
-      ms_vpc_dmidecode = <<-MSVPC
-System Information
-  Manufacturer: Microsoft Corporation
-  Product Name: Virtual Machine
-  Version: VS2005R2
-  Serial Number: 1688-7189-5337-7903-2297-1012-52
-  UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
-  Wake-up Type: Power Switch
+      ms_vpc_dmidecode = <<~MSVPC
+        System Information
+          Manufacturer: Microsoft Corporation
+          Product Name: Virtual Machine
+          Version: VS2005R2
+          Serial Number: 1688-7189-5337-7903-2297-1012-52
+          UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+          Wake-up Type: Power Switch
 MSVPC
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vpc_dmidecode, ""))
       plugin.run
@@ -209,14 +209,14 @@ MSVPC
     end
 
     it "sets hyperv guest if dmidecode detects Hyper-V or version 7.0" do
-      ms_hv_dmidecode = <<-MSHV
-System Information
-        Manufacturer: Microsoft Corporation
-        Product Name: Virtual Machine
-        Version: 7.0
-        Serial Number: 9242-2608-7031-8934-2088-5216-61
-        UUID: C2431A2D-D69C-244F-9DE8-CD5D09E0DA39
-        Wake-up Type: Power Switch
+      ms_hv_dmidecode = <<~MSHV
+        System Information
+                Manufacturer: Microsoft Corporation
+                Product Name: Virtual Machine
+                Version: 7.0
+                Serial Number: 9242-2608-7031-8934-2088-5216-61
+                UUID: C2431A2D-D69C-244F-9DE8-CD5D09E0DA39
+                Wake-up Type: Power Switch
 MSHV
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_hv_dmidecode, ""))
       plugin.run
@@ -226,14 +226,14 @@ MSHV
     end
 
     it "sets virtualserver guest if dmidecode detects version 5.0" do
-      ms_vs_dmidecode = <<-MSVS
-System Information
-  Manufacturer: Microsoft Corporation
-  Product Name: Virtual Machine
-  Version: 5.0
-  Serial Number: 1688-7189-5337-7903-2297-1012-52
-  UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
-  Wake-up Type: Power Switch
+      ms_vs_dmidecode = <<~MSVS
+        System Information
+          Manufacturer: Microsoft Corporation
+          Product Name: Virtual Machine
+          Version: 5.0
+          Serial Number: 1688-7189-5337-7903-2297-1012-52
+          UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+          Wake-up Type: Power Switch
 MSVS
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_vs_dmidecode, ""))
       plugin.run
@@ -243,16 +243,16 @@ MSVS
     end
 
     it "sets vmware guest if dmidecode detects VMware" do
-      vmware_dmidecode = <<-VMWARE
-System Information
-  Manufacturer: VMware, Inc.
-  Product Name: VMware Virtual Platform
-  Version: None
-  Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
-  UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
-  Wake-up Type: Power Switch
-  SKU Number: Not Specified
-  Family: Not Specified
+      vmware_dmidecode = <<~VMWARE
+        System Information
+          Manufacturer: VMware, Inc.
+          Product Name: VMware Virtual Platform
+          Version: None
+          Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
+          UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
+          Wake-up Type: Power Switch
+          SKU Number: Not Specified
+          Family: Not Specified
 VMWARE
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vmware_dmidecode, ""))
       plugin.run
@@ -262,18 +262,18 @@ VMWARE
     end
 
     it "sets vbox guest if dmidecode detects VirtualBox" do
-      vbox_dmidecode = <<-VBOX
-Base Board Information
-  Manufacturer: Oracle Corporation
-  Product Name: VirtualBox
-  Version: 1.2
-  Serial Number: 0
-  Asset Tag: Not Specified
-  Features:
-        Board is a hosting board
-  Location In Chasis: Not Specified
-  Type: Motherboard
-  Contained Object Handles: 0
+      vbox_dmidecode = <<~VBOX
+        Base Board Information
+          Manufacturer: Oracle Corporation
+          Product Name: VirtualBox
+          Version: 1.2
+          Serial Number: 0
+          Asset Tag: Not Specified
+          Features:
+                Board is a hosting board
+          Location In Chasis: Not Specified
+          Type: Motherboard
+          Contained Object Handles: 0
 VBOX
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vbox_dmidecode, ""))
       plugin.run
@@ -283,16 +283,16 @@ VBOX
     end
 
     it "sets openstack guest if dmidecode detects OpenStack" do
-      openstack_dmidecode = <<-OPENSTACK
-System Information
-        Manufacturer: Red Hat Inc.
-        Product Name: OpenStack Nova
-        Version: 2014.1.2-1.el6
-        Serial Number: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-        UUID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-        Wake-up Type: Power Switch
-        SKU Number: Not Specified
-        Family: Red Hat Enterprise Linux
+      openstack_dmidecode = <<~OPENSTACK
+        System Information
+                Manufacturer: Red Hat Inc.
+                Product Name: OpenStack Nova
+                Version: 2014.1.2-1.el6
+                Serial Number: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+                UUID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+                Wake-up Type: Power Switch
+                SKU Number: Not Specified
+                Family: Red Hat Enterprise Linux
 OPENSTACK
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, openstack_dmidecode, ""))
       plugin.run
@@ -302,16 +302,16 @@ OPENSTACK
     end
 
     it "sets kvm guest if dmidecode contains KVM" do
-      kvm_dmidecode = <<-RKVM
-System Information
-  Manufacturer: Red Hat
-  Product Name: KVM
-  Version: RHEL 7.0.0 PC (i440FX + PIIX, 1996)
-  Serial Number: Not Specified
-  UUID: 6E56CFE2-2088-4A46-906A-FC49EDC4072C
-  Wake-up Type: Power Switch
-  SKU Number: Not Specified
-  Family: Red Hat Enterprise Linux
+      kvm_dmidecode = <<~RKVM
+        System Information
+          Manufacturer: Red Hat
+          Product Name: KVM
+          Version: RHEL 7.0.0 PC (i440FX + PIIX, 1996)
+          Serial Number: Not Specified
+          UUID: 6E56CFE2-2088-4A46-906A-FC49EDC4072C
+          Wake-up Type: Power Switch
+          SKU Number: Not Specified
+          Family: Red Hat Enterprise Linux
 RKVM
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
       plugin.run
@@ -321,16 +321,16 @@ RKVM
     end
 
     it "sets kvm guest if dmidecode detects RHEV" do
-      kvm_dmidecode = <<-RHEV
-System Information
-  Manufacturer: Red Hat
-  Product Name: RHEV Hypervisor
-  Version: 6.7-20150911.0.el6ev
-  Serial Number: 00000000-0000-0000-0000-000000000000
-  UUID: E7F1DC93-3DA1-4EC3-A6AB-F6904BA87985
-  Wake-up Type: Power Switch
-  SKU Number: Not Specified
-  Family: Red Hat Enterprise Linux
+      kvm_dmidecode = <<~RHEV
+        System Information
+          Manufacturer: Red Hat
+          Product Name: RHEV Hypervisor
+          Version: 6.7-20150911.0.el6ev
+          Serial Number: 00000000-0000-0000-0000-000000000000
+          UUID: E7F1DC93-3DA1-4EC3-A6AB-F6904BA87985
+          Wake-up Type: Power Switch
+          SKU Number: Not Specified
+          Family: Red Hat Enterprise Linux
 RHEV
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
       plugin.run
@@ -340,16 +340,16 @@ RHEV
     end
 
     it "sets bhyve guest if dmidecode detects bhyve" do
-      bhyve_dmidecode = <<-OUTPUT
-System Information
-        Manufacturer:
-        Product Name: BHYVE
-        Version: 1.0
-        Serial Number: None
-        UUID: 023B323A-E139-4B36-8BC5-CEBB2469DAAA
-        Wake-up Type: Power Switch
-        SKU Number: None
-        Family:
+      bhyve_dmidecode = <<~OUTPUT
+        System Information
+                Manufacturer:
+                Product Name: BHYVE
+                Version: 1.0
+                Serial Number: None
+                UUID: 023B323A-E139-4B36-8BC5-CEBB2469DAAA
+                Wake-up Type: Power Switch
+                SKU Number: None
+                Family:
 OUTPUT
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, bhyve_dmidecode, ""))
       plugin.run
@@ -359,16 +359,16 @@ OUTPUT
     end
 
     it "sets veertu guest if dmidecode detects Veertu" do
-      veertu_dmidecode = <<-VEERTU
-System Information
-  Manufacturer: Veertu
-  Product Name: Veertu
-  Version: Not Specified
-  Serial Number: Not Specified
-  UUID: Not Settable
-  Wake-up Type: Power Switch
-  SKU Number: Not Specified
-  Family: Not Specified
+      veertu_dmidecode = <<~VEERTU
+        System Information
+          Manufacturer: Veertu
+          Product Name: Veertu
+          Version: Not Specified
+          Serial Number: Not Specified
+          UUID: Not Settable
+          Wake-up Type: Power Switch
+          SKU Number: Not Specified
+          Family: Not Specified
 VEERTU
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, veertu_dmidecode, ""))
       plugin.run
@@ -474,9 +474,9 @@ VEERTU
 
   describe "when we are checking for parallels" do
     it "sets parallels guest if /proc/bus/pci/devices contains 1ab84000" do
-      devices = <<-DEVICES
-0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
-0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
+      devices = <<~DEVICES
+        0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
+        0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
       DEVICES
       expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
@@ -487,9 +487,9 @@ VEERTU
     end
 
     it "does not set virtualization if /proc/bus/pci/devices not contains 1ab84000" do
-      devices = <<-DEVICES
-0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
-0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
+      devices = <<~DEVICES
+        0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
+        0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
       DEVICES
       expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
       allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
@@ -526,15 +526,15 @@ VEERTU
 
   describe "when we are checking for lxc" do
     it "sets lxc guest if /proc/self/cgroup exist and there are /lxc/<hexadecimal> mounts" do
-      self_cgroup = <<-CGROUP
-8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-7:net_cls:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-6:freezer:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-5:devices:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-4:memory:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-3:cpuacct:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-2:cpu:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-1:cpuset:/
+      self_cgroup = <<~CGROUP
+        8:blkio:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        7:net_cls:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        6:freezer:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        5:devices:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        4:memory:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        3:cpuacct:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        2:cpu:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        1:cpuset:/
 CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -545,15 +545,15 @@ CGROUP
     end
 
     it "sets lxc guest if /proc/self/cgroup exist and there are /lxc/<name> mounts" do
-      self_cgroup = <<-CGROUP
-8:blkio:/lxc/vanilla
-7:net_cls:/lxc/vanilla
-6:freezer:/lxc/vanilla
-5:devices:/lxc/vanilla
-4:memory:/lxc/vanilla
-3:cpuacct:/lxc/vanilla
-2:cpu:/lxc/vanilla
-1:cpuset:/lxc/vanilla
+      self_cgroup = <<~CGROUP
+        8:blkio:/lxc/vanilla
+        7:net_cls:/lxc/vanilla
+        6:freezer:/lxc/vanilla
+        5:devices:/lxc/vanilla
+        4:memory:/lxc/vanilla
+        3:cpuacct:/lxc/vanilla
+        2:cpu:/lxc/vanilla
+        1:cpuset:/lxc/vanilla
 CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -564,15 +564,15 @@ CGROUP
     end
 
     it "sets not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
-      self_cgroup = <<-CGROUP
-8:blkio:/Charlie
-7:net_cls:/Charlie
-6:freezer:/Charlie
-5:devices:/Charlie
-4:memory:/Charlie
-3:cpuacct:/Charlie
-2:cpu:/Charlie
-1:cpuset:/Charlie
+      self_cgroup = <<~CGROUP
+        8:blkio:/Charlie
+        7:net_cls:/Charlie
+        6:freezer:/Charlie
+        5:devices:/Charlie
+        4:memory:/Charlie
+        3:cpuacct:/Charlie
+        2:cpu:/Charlie
+        1:cpuset:/Charlie
 CGROUP
       allow(File).to receive(:read).with("/proc/1/environ").and_return("")
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
@@ -583,15 +583,15 @@ CGROUP
 
     context "/proc/self/cgroup only has / mounts" do
       before(:each) do
-        self_cgroup = <<-CGROUP
-8:blkio:/
-7:net_cls:/
-6:freezer:/
-5:devices:/
-4:memory:/
-3:cpuacct:/
-2:cpu:/
-1:cpuset:/
+        self_cgroup = <<~CGROUP
+          8:blkio:/
+          7:net_cls:/
+          6:freezer:/
+          5:devices:/
+          4:memory:/
+          3:cpuacct:/
+          2:cpu:/
+          1:cpuset:/
 CGROUP
         expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -662,15 +662,15 @@ CGROUP
 
   describe "when we are checking for docker" do
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<hexadecimal> mounts" do
-      self_cgroup = <<-CGROUP
-8:blkio:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-7:net_cls:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-6:freezer:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-5:devices:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-4:memory:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-3:cpuacct:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-2:cpu:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
-1:cpuset:/
+      self_cgroup = <<~CGROUP
+        8:blkio:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        7:net_cls:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        6:freezer:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        5:devices:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        4:memory:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        3:cpuacct:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        2:cpu:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
+        1:cpuset:/
 CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -681,15 +681,15 @@ CGROUP
     end
 
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<name> mounts" do
-      self_cgroup = <<-CGROUP
-8:blkio:/docker/vanilla
-7:net_cls:/docker/vanilla
-6:freezer:/docker/vanilla
-5:devices:/docker/vanilla
-4:memory:/docker/vanilla
-3:cpuacct:/docker/vanilla
-2:cpu:/docker/vanilla
-1:cpuset:/docker/vanilla
+      self_cgroup = <<~CGROUP
+        8:blkio:/docker/vanilla
+        7:net_cls:/docker/vanilla
+        6:freezer:/docker/vanilla
+        5:devices:/docker/vanilla
+        4:memory:/docker/vanilla
+        3:cpuacct:/docker/vanilla
+        2:cpu:/docker/vanilla
+        1:cpuset:/docker/vanilla
 CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -700,20 +700,20 @@ CGROUP
     end
 
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/docker-ce/<hexadecimal> mounts" do
-      self_cgroup = <<-CGROUP
-13:name=systemd:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-12:pids:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-11:hugetlb:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-10:net_prio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-9:perf_event:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-8:net_cls:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-7:freezer:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-6:devices:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-5:memory:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-4:blkio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-3:cpuacct:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-2:cpu:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-1:cpuset:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+      self_cgroup = <<~CGROUP
+        13:name=systemd:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        12:pids:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        11:hugetlb:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        10:net_prio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        9:perf_event:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        8:net_cls:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        7:freezer:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        6:devices:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        5:memory:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        4:blkio:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        3:cpuacct:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        2:cpu:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
+        1:cpuset:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
 CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -726,15 +726,15 @@ CGROUP
     # Relevant at least starting docker 1.6.2, kernel 4.0.5 & systemd 224-1.
     # Doi not exactly know which software/version really matters here.
     it "should set docker guest if /proc/self/cgroup exists and there are /system.slice/docker-<hexadecimal> mounts (systemd managed cgroup)" do
-      self_cgroup = <<-CGROUP
-8:devices:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-7:cpuset:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-6:blkio:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-5:freezer:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-4:net_cls:/
-3:memory:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-2:cpu,cpuacct:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-1:name=systemd:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+      self_cgroup = <<~CGROUP
+        8:devices:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        7:cpuset:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        6:blkio:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        5:freezer:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        4:net_cls:/
+        3:memory:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        2:cpu,cpuacct:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
+        1:name=systemd:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
 CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -745,15 +745,15 @@ CGROUP
     end
 
     it "sets not set anything if /proc/self/cgroup exist and the cgroup is named arbitrarily, it isn't necessarily lxc." do
-      self_cgroup = <<-CGROUP
-8:blkio:/Charlie
-7:net_cls:/Charlie
-6:freezer:/Charlie
-5:devices:/Charlie
-4:memory:/Charlie
-3:cpuacct:/Charlie
-2:cpu:/Charlie
-1:cpuset:/Charlie
+      self_cgroup = <<~CGROUP
+        8:blkio:/Charlie
+        7:net_cls:/Charlie
+        6:freezer:/Charlie
+        5:devices:/Charlie
+        4:memory:/Charlie
+        3:cpuacct:/Charlie
+        2:cpu:/Charlie
+        1:cpuset:/Charlie
 CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -764,15 +764,15 @@ CGROUP
 
     context "/proc/self/cgroup only has / mounts" do
       before(:each) do
-        self_cgroup = <<-CGROUP
-8:blkio:/
-7:net_cls:/
-6:freezer:/
-5:devices:/
-4:memory:/
-3:cpuacct:/
-2:cpu:/
-1:cpuset:/
+        self_cgroup = <<~CGROUP
+          8:blkio:/
+          7:net_cls:/
+          6:freezer:/
+          5:devices:/
+          4:memory:/
+          3:cpuacct:/
+          2:cpu:/
+          1:cpuset:/
 CGROUP
         allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)

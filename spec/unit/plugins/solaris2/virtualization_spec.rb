@@ -20,10 +20,10 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris virtualization platform" do
   before(:each) do
-    @psrinfo_pv = <<-PSRINFO_PV
-The physical processor has 1 virtual processor (0)
-  x86 (GenuineIntel family 6 model 2 step 3 clock 2667 MHz)
-        Intel Pentium(r) Pro
+    @psrinfo_pv = <<~PSRINFO_PV
+      The physical processor has 1 virtual processor (0)
+        x86 (GenuineIntel family 6 model 2 step 3 clock 2667 MHz)
+              Intel Pentium(r) Pro
 PSRINFO_PV
 
     @plugin = get_plugin("solaris2/virtualization")
@@ -73,17 +73,17 @@ PSRINFO_PV
     end
 
     it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
-      ms_vpc_smbios = <<-MSVPC
-ID    SIZE TYPE
-1     72   SMB_TYPE_SYSTEM (system information)
+      ms_vpc_smbios = <<~MSVPC
+        ID    SIZE TYPE
+        1     72   SMB_TYPE_SYSTEM (system information)
 
-  Manufacturer: Microsoft Corporation
-  Product: Virtual Machine
-  Version: VS2005R2
-  Serial Number: 1688-7189-5337-7903-2297-1012-52
+          Manufacturer: Microsoft Corporation
+          Product: Virtual Machine
+          Version: VS2005R2
+          Serial Number: 1688-7189-5337-7903-2297-1012-52
 
-  UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
-  Wake-Up Event: 0x6 (power switch)
+          UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
+          Wake-Up Event: 0x6 (power switch)
 MSVPC
       allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, ms_vpc_smbios, ""))
       @plugin.run
@@ -92,17 +92,17 @@ MSVPC
     end
 
     it "should set vmware guest if smbios detects VMware Virtual Platform" do
-      vmware_smbios = <<-VMWARE
-ID    SIZE TYPE
-1     72   SMB_TYPE_SYSTEM (system information)
+      vmware_smbios = <<~VMWARE
+        ID    SIZE TYPE
+        1     72   SMB_TYPE_SYSTEM (system information)
 
-  Manufacturer: VMware, Inc.
-  Product: VMware Virtual Platform
-  Version: None
-  Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
+          Manufacturer: VMware, Inc.
+          Product: VMware Virtual Platform
+          Version: None
+          Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
 
-  UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
-  Wake-Up Event: 0x6 (power switch)
+          UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
+          Wake-Up Event: 0x6 (power switch)
 VMWARE
       allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, vmware_smbios, ""))
       @plugin.run

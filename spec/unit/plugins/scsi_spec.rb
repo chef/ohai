@@ -22,13 +22,13 @@ describe Ohai::System, "lsscsi plugin" do
   let(:plugin) { get_plugin("scsi") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
-    @stdout = <<LSSCSI
-[5:0:0:0]    disk    ATA      Hitachi HUA72205 A3EA  /dev/sda
-[6:2:0:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdb
-[6:2:1:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdc
-[6:2:2:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdd
-[6:2:3:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sde
-[6:2:4:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdf
+    @stdout = <<~LSSCSI
+      [5:0:0:0]    disk    ATA      Hitachi HUA72205 A3EA  /dev/sda
+      [6:2:0:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdb
+      [6:2:1:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdc
+      [6:2:2:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdd
+      [6:2:3:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sde
+      [6:2:4:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdf
 LSSCSI
     allow(plugin).to receive(:shell_out).with("lsscsi").and_return(
       mock_shell_out(0, @stdout, ""))

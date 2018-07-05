@@ -20,396 +20,396 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin Network Plugin" do
   before(:each) do
-    @darwin_ifconfig = <<-DARWIN_IFCONFIG
-lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
-        options=3<RXCSUM,TXCSUM>
-        inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1
-        inet 127.0.0.1 netmask 0xff000000
-        inet6 ::1 prefixlen 128
-        inet6 fd54:185f:37df:cad2:ba8d:12ff:fe3a:32de prefixlen 128
-gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
-stf0: flags=0<> mtu 1280
-en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        ether b8:8d:12:3a:32:de
-        inet6 fe80::ba8d:12ff:fe3a:32de%en1 prefixlen 64 scopeid 0x4
-        inet 10.20.10.144 netmask 0xffffff00 broadcast 10.20.10.255
-        inet6 2001:44b8:4186:1100:ba8d:12ff:fe3a:32de prefixlen 64 autoconf
-        inet6 2001:44b8:4186:1100:7dba:7a60:97a:e14a prefixlen 64 autoconf temporary
-        media: autoselect
-        status: active
-p2p0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 2304
-        ether 0a:8d:12:3a:32:de
-        media: autoselect
-        status: inactive
-en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-        options=2b<RXCSUM,TXCSUM,VLAN_HWTAGGING,TSO4>
-        ether 3c:07:54:4e:0e:35
-        media: autoselect (none)
-        status: inactive
-fw0: flags=8822<BROADCAST,SMART,SIMPLEX,MULTICAST> mtu 4078
-        lladdr a4:b1:97:ff:fe:b9:3a:d4
-        media: autoselect <full-duplex>
-        status: inactive
-utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
-        inet6 fe80::ba8d:12ff:fe3a:32de%utun0 prefixlen 64 scopeid 0x8
-        inet6 fd00:6587:52d7:c87:ba8d:12ff:fe3a:32de prefixlen 64
+    @darwin_ifconfig = <<~DARWIN_IFCONFIG
+      lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384
+              options=3<RXCSUM,TXCSUM>
+              inet6 fe80::1%lo0 prefixlen 64 scopeid 0x1
+              inet 127.0.0.1 netmask 0xff000000
+              inet6 ::1 prefixlen 128
+              inet6 fd54:185f:37df:cad2:ba8d:12ff:fe3a:32de prefixlen 128
+      gif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280
+      stf0: flags=0<> mtu 1280
+      en1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+              ether b8:8d:12:3a:32:de
+              inet6 fe80::ba8d:12ff:fe3a:32de%en1 prefixlen 64 scopeid 0x4
+              inet 10.20.10.144 netmask 0xffffff00 broadcast 10.20.10.255
+              inet6 2001:44b8:4186:1100:ba8d:12ff:fe3a:32de prefixlen 64 autoconf
+              inet6 2001:44b8:4186:1100:7dba:7a60:97a:e14a prefixlen 64 autoconf temporary
+              media: autoselect
+              status: active
+      p2p0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 2304
+              ether 0a:8d:12:3a:32:de
+              media: autoselect
+              status: inactive
+      en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+              options=2b<RXCSUM,TXCSUM,VLAN_HWTAGGING,TSO4>
+              ether 3c:07:54:4e:0e:35
+              media: autoselect (none)
+              status: inactive
+      fw0: flags=8822<BROADCAST,SMART,SIMPLEX,MULTICAST> mtu 4078
+              lladdr a4:b1:97:ff:fe:b9:3a:d4
+              media: autoselect <full-duplex>
+              status: inactive
+      utun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380
+              inet6 fe80::ba8d:12ff:fe3a:32de%utun0 prefixlen 64 scopeid 0x8
+              inet6 fd00:6587:52d7:c87:ba8d:12ff:fe3a:32de prefixlen 64
     DARWIN_IFCONFIG
 
-    @darwin_arp = <<-DARWIN_ARP
-? (10.20.10.1) at 0:4:ed:de:41:bf on en1 ifscope [ethernet]
-? (10.20.10.2) at 0:1e:c9:55:7e:ee on en1 ifscope [ethernet]
-? (10.20.10.6) at 34:15:9e:18:a1:20 on en1 ifscope [ethernet]
-? (10.20.10.57) at cc:8:e0:e0:8a:2 on en1 ifscope [ethernet]
-? (10.20.10.61) at 28:37:37:12:5:77 on en1 ifscope [ethernet]
-? (10.20.10.73) at e0:f8:47:8:86:2 on en1 ifscope [ethernet]
-? (10.20.10.130) at 68:a8:6d:da:2b:24 on en1 ifscope [ethernet]
-? (10.20.10.138) at 8:0:37:8c:d2:23 on en1 ifscope [ethernet]
-? (10.20.10.141) at b8:8d:12:28:c5:90 on en1 ifscope [ethernet]
-? (10.20.10.166) at 0:1b:63:a0:1:3a on en1 ifscope [ethernet]
-? (10.20.10.174) at 98:d6:bb:bd:37:ad on en1 ifscope [ethernet]
-? (10.20.10.178) at 24:ab:81:2d:a3:c5 on en1 ifscope [ethernet]
-? (10.20.10.181) at 78:a3:e4:e4:16:32 on en1 ifscope [ethernet]
-? (10.20.10.185) at 0:26:8:9a:e8:a3 on en1 ifscope [ethernet]
-? (10.20.10.200) at b8:8d:12:55:7f:7f on en1 ifscope [ethernet]
-? (10.20.10.255) at ff:ff:ff:ff:ff:ff on en1 ifscope [ethernet]
+    @darwin_arp = <<~DARWIN_ARP
+      ? (10.20.10.1) at 0:4:ed:de:41:bf on en1 ifscope [ethernet]
+      ? (10.20.10.2) at 0:1e:c9:55:7e:ee on en1 ifscope [ethernet]
+      ? (10.20.10.6) at 34:15:9e:18:a1:20 on en1 ifscope [ethernet]
+      ? (10.20.10.57) at cc:8:e0:e0:8a:2 on en1 ifscope [ethernet]
+      ? (10.20.10.61) at 28:37:37:12:5:77 on en1 ifscope [ethernet]
+      ? (10.20.10.73) at e0:f8:47:8:86:2 on en1 ifscope [ethernet]
+      ? (10.20.10.130) at 68:a8:6d:da:2b:24 on en1 ifscope [ethernet]
+      ? (10.20.10.138) at 8:0:37:8c:d2:23 on en1 ifscope [ethernet]
+      ? (10.20.10.141) at b8:8d:12:28:c5:90 on en1 ifscope [ethernet]
+      ? (10.20.10.166) at 0:1b:63:a0:1:3a on en1 ifscope [ethernet]
+      ? (10.20.10.174) at 98:d6:bb:bd:37:ad on en1 ifscope [ethernet]
+      ? (10.20.10.178) at 24:ab:81:2d:a3:c5 on en1 ifscope [ethernet]
+      ? (10.20.10.181) at 78:a3:e4:e4:16:32 on en1 ifscope [ethernet]
+      ? (10.20.10.185) at 0:26:8:9a:e8:a3 on en1 ifscope [ethernet]
+      ? (10.20.10.200) at b8:8d:12:55:7f:7f on en1 ifscope [ethernet]
+      ? (10.20.10.255) at ff:ff:ff:ff:ff:ff on en1 ifscope [ethernet]
     DARWIN_ARP
 
-    @darwin_route = <<-DARWIN_ROUTE
-   route to: default
-destination: default
-       mask: default
-    gateway: 10.20.10.1
-  interface: en1
-      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING>
- recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
-       0         0         0         0         0         0      1500         0
+    @darwin_route = <<~DARWIN_ROUTE
+         route to: default
+      destination: default
+             mask: default
+          gateway: 10.20.10.1
+        interface: en1
+            flags: <UP,GATEWAY,DONE,STATIC,PRCLONING>
+       recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+             0         0         0         0         0         0      1500         0
     DARWIN_ROUTE
 
-    @darwin_netstat = <<-DARWIN_NETSTAT
-Name  Mtu   Network       Address            Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
-lo0   16384 <Link#1>                        174982     0   25774844   174982     0   25774844     0
-lo0   16384 fe80::1%lo0 fe80:1::1           174982     -   25774844   174982     -   25774844     -   -
-lo0   16384 127           127.0.0.1         174982     -   25774844   174982     -   25774844     -   -
-lo0   16384 ::1/128     ::1                 174982     -   25774844   174982     -   25774844     -   -
-lo0   16384 fd54:185f:3 fd54:185f:37df:ca   174982     -   25774844   174982     -   25774844     -   -
-gif0* 1280  <Link#2>                             0     0          0        0     0          0     0
-stf0* 1280  <Link#3>                             0     0          0        0     0          0     0
-en1   1500  <Link#4>    b8:8d:12:3a:32:de  5921903     0 2530556736 14314573     0 18228234970     0
-en1   1500  fe80::ba8d: fe80:4::ba8d:12ff  5921903     - 2530556736 14314573     - 18228234970     -   -
-en1   1500  10.20.10/24   10.20.10.144     5921903     - 2530556736 14314573     - 18228234970     -   -
-en1   1500  2001:44b8:4 2001:44b8:4186:11  5921903     - 2530556736 14314573     - 18228234970     -   -
-en1   1500  2001:44b8:4 2001:44b8:4186:11  5921903     - 2530556736 14314573     - 18228234970     -   -
-p2p0  2304  <Link#5>    0a:8d:12:3a:32:de        0     0          0        0     0          0     0
-en0   1500  <Link#6>    3c:07:54:4e:0e:35        0     0          0        0     0       2394     0
-fw0*  4078  <Link#7>    a4:b1:97:ff:fe:b9:3a:d4        0     0          0        0     0       1038     0
-utun0 1380  <Link#8>                             5     0        324       13     0        740     0
-utun0 1380  fe80::ba8d: fe80:8::ba8d:12ff        5     -        324       13     -        740     -   -
-utun0 1380  fd00:6587:5 fd00:6587:52d7:c8        5     -        324       13     -        740     -   -
+    @darwin_netstat = <<~DARWIN_NETSTAT
+      Name  Mtu   Network       Address            Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
+      lo0   16384 <Link#1>                        174982     0   25774844   174982     0   25774844     0
+      lo0   16384 fe80::1%lo0 fe80:1::1           174982     -   25774844   174982     -   25774844     -   -
+      lo0   16384 127           127.0.0.1         174982     -   25774844   174982     -   25774844     -   -
+      lo0   16384 ::1/128     ::1                 174982     -   25774844   174982     -   25774844     -   -
+      lo0   16384 fd54:185f:3 fd54:185f:37df:ca   174982     -   25774844   174982     -   25774844     -   -
+      gif0* 1280  <Link#2>                             0     0          0        0     0          0     0
+      stf0* 1280  <Link#3>                             0     0          0        0     0          0     0
+      en1   1500  <Link#4>    b8:8d:12:3a:32:de  5921903     0 2530556736 14314573     0 18228234970     0
+      en1   1500  fe80::ba8d: fe80:4::ba8d:12ff  5921903     - 2530556736 14314573     - 18228234970     -   -
+      en1   1500  10.20.10/24   10.20.10.144     5921903     - 2530556736 14314573     - 18228234970     -   -
+      en1   1500  2001:44b8:4 2001:44b8:4186:11  5921903     - 2530556736 14314573     - 18228234970     -   -
+      en1   1500  2001:44b8:4 2001:44b8:4186:11  5921903     - 2530556736 14314573     - 18228234970     -   -
+      p2p0  2304  <Link#5>    0a:8d:12:3a:32:de        0     0          0        0     0          0     0
+      en0   1500  <Link#6>    3c:07:54:4e:0e:35        0     0          0        0     0       2394     0
+      fw0*  4078  <Link#7>    a4:b1:97:ff:fe:b9:3a:d4        0     0          0        0     0       1038     0
+      utun0 1380  <Link#8>                             5     0        324       13     0        740     0
+      utun0 1380  fe80::ba8d: fe80:8::ba8d:12ff        5     -        324       13     -        740     -   -
+      utun0 1380  fd00:6587:5 fd00:6587:52d7:c8        5     -        324       13     -        740     -   -
     DARWIN_NETSTAT
 
-    @darwin_sysctl = <<-DARWIN_SYSCTL
-net.local.stream.sendspace: 8192
-net.local.stream.recvspace: 8192
-net.local.stream.tracemdns: 0
-net.local.dgram.maxdgram: 2048
-net.local.dgram.recvspace: 4096
-net.local.inflight: 0
-net.inet.ip.portrange.lowfirst: 1023
-net.inet.ip.portrange.lowlast: 600
-net.inet.ip.portrange.first: 49152
-net.inet.ip.portrange.last: 65535
-net.inet.ip.portrange.hifirst: 49152
-net.inet.ip.portrange.hilast: 65535
-net.inet.ip.forwarding: 1
-net.inet.ip.redirect: 1
-net.inet.ip.ttl: 64
-net.inet.ip.rtexpire: 12
-net.inet.ip.rtminexpire: 10
-net.inet.ip.rtmaxcache: 128
-net.inet.ip.sourceroute: 0
-net.inet.ip.intr_queue_maxlen: 50
-net.inet.ip.intr_queue_drops: 0
-net.inet.ip.accept_sourceroute: 0
-net.inet.ip.keepfaith: 0
-net.inet.ip.gifttl: 30
-net.inet.ip.subnets_are_local: 0
-net.inet.ip.mcast.maxgrpsrc: 512
-net.inet.ip.mcast.maxsocksrc: 128
-net.inet.ip.mcast.loop: 1
-net.inet.ip.check_route_selfref: 1
-net.inet.ip.use_route_genid: 1
-net.inet.ip.dummynet.hash_size: 64
-net.inet.ip.dummynet.curr_time: 0
-net.inet.ip.dummynet.ready_heap: 0
-net.inet.ip.dummynet.extract_heap: 0
-net.inet.ip.dummynet.searches: 0
-net.inet.ip.dummynet.search_steps: 0
-net.inet.ip.dummynet.expire: 1
-net.inet.ip.dummynet.max_chain_len: 16
-net.inet.ip.dummynet.red_lookup_depth: 256
-net.inet.ip.dummynet.red_avg_pkt_size: 512
-net.inet.ip.dummynet.red_max_pkt_size: 1500
-net.inet.ip.dummynet.debug: 0
-net.inet.ip.fw.enable: 1
-net.inet.ip.fw.autoinc_step: 100
-net.inet.ip.fw.one_pass: 0
-net.inet.ip.fw.debug: 0
-net.inet.ip.fw.verbose: 0
-net.inet.ip.fw.verbose_limit: 0
-net.inet.ip.fw.dyn_buckets: 256
-net.inet.ip.fw.curr_dyn_buckets: 256
-net.inet.ip.fw.dyn_count: 0
-net.inet.ip.fw.dyn_max: 4096
-net.inet.ip.fw.static_count: 2
-net.inet.ip.fw.dyn_ack_lifetime: 300
-net.inet.ip.fw.dyn_syn_lifetime: 20
-net.inet.ip.fw.dyn_fin_lifetime: 1
-net.inet.ip.fw.dyn_rst_lifetime: 1
-net.inet.ip.fw.dyn_udp_lifetime: 10
-net.inet.ip.fw.dyn_short_lifetime: 5
-net.inet.ip.fw.dyn_keepalive: 1
-net.inet.ip.maxfragpackets: 1536
-net.inet.ip.maxfragsperpacket: 128
-net.inet.ip.maxfrags: 3072
-net.inet.ip.scopedroute: 1
-net.inet.ip.check_interface: 0
-net.inet.ip.linklocal.in.allowbadttl: 1
-net.inet.ip.random_id: 1
-net.inet.ip.maxchainsent: 0
-net.inet.ip.select_srcif_debug: 0
-net.inet.icmp.maskrepl: 0
-net.inet.icmp.icmplim: 250
-net.inet.icmp.timestamp: 0
-net.inet.icmp.drop_redirect: 0
-net.inet.icmp.log_redirect: 0
-net.inet.icmp.bmcastecho: 1
-net.inet.igmp.recvifkludge: 1
-net.inet.igmp.sendra: 1
-net.inet.igmp.sendlocal: 1
-net.inet.igmp.v1enable: 1
-net.inet.igmp.v2enable: 1
-net.inet.igmp.legacysupp: 0
-net.inet.igmp.default_version: 3
-net.inet.igmp.gsrdelay: 10
-net.inet.igmp.debug: 0
-net.inet.tcp.rfc1323: 1
-net.inet.tcp.rfc1644: 0
-net.inet.tcp.mssdflt: 512
-net.inet.tcp.keepidle: 7200000
-net.inet.tcp.keepintvl: 75000
-net.inet.tcp.sendspace: 65536
-net.inet.tcp.recvspace: 65536
-net.inet.tcp.keepinit: 75000
-net.inet.tcp.v6mssdflt: 1024
-net.inet.tcp.log_in_vain: 0
-net.inet.tcp.blackhole: 0
-net.inet.tcp.delayed_ack: 3
-net.inet.tcp.tcp_lq_overflow: 1
-net.inet.tcp.recvbg: 0
-net.inet.tcp.drop_synfin: 1
-net.inet.tcp.reass.maxsegments: 3072
-net.inet.tcp.reass.cursegments: 0
-net.inet.tcp.reass.overflows: 0
-net.inet.tcp.slowlink_wsize: 8192
-net.inet.tcp.maxseg_unacked: 8
-net.inet.tcp.rfc3465: 1
-net.inet.tcp.rfc3465_lim2: 1
-net.inet.tcp.rtt_samples_per_slot: 20
-net.inet.tcp.recv_allowed_iaj: 5
-net.inet.tcp.acc_iaj_high_thresh: 100
-net.inet.tcp.rexmt_thresh: 2
-net.inet.tcp.path_mtu_discovery: 1
-net.inet.tcp.slowstart_flightsize: 1
-net.inet.tcp.local_slowstart_flightsize: 8
-net.inet.tcp.tso: 1
-net.inet.tcp.ecn_initiate_out: 0
-net.inet.tcp.ecn_negotiate_in: 0
-net.inet.tcp.packetchain: 50
-net.inet.tcp.socket_unlocked_on_output: 1
-net.inet.tcp.rfc3390: 1
-net.inet.tcp.min_iaj_win: 4
-net.inet.tcp.acc_iaj_react_limit: 200
-net.inet.tcp.sack: 1
-net.inet.tcp.sack_maxholes: 128
-net.inet.tcp.sack_globalmaxholes: 65536
-net.inet.tcp.sack_globalholes: 0
-net.inet.tcp.minmss: 216
-net.inet.tcp.minmssoverload: 0
-net.inet.tcp.do_tcpdrain: 0
-net.inet.tcp.pcbcount: 86
-net.inet.tcp.icmp_may_rst: 1
-net.inet.tcp.strict_rfc1948: 0
-net.inet.tcp.isn_reseed_interval: 0
-net.inet.tcp.background_io_enabled: 1
-net.inet.tcp.rtt_min: 100
-net.inet.tcp.rexmt_slop: 200
-net.inet.tcp.randomize_ports: 0
-net.inet.tcp.newreno_sockets: 81
-net.inet.tcp.background_sockets: -1
-net.inet.tcp.tcbhashsize: 4096
-net.inet.tcp.background_io_trigger: 5
-net.inet.tcp.msl: 15000
-net.inet.tcp.max_persist_timeout: 0
-net.inet.tcp.always_keepalive: 0
-net.inet.tcp.timer_fastmode_idlemax: 20
-net.inet.tcp.broken_peer_syn_rxmit_thres: 7
-net.inet.tcp.tcp_timer_advanced: 5
-net.inet.tcp.tcp_resched_timerlist: 12209
-net.inet.tcp.pmtud_blackhole_detection: 1
-net.inet.tcp.pmtud_blackhole_mss: 1200
-net.inet.tcp.timer_fastquantum: 100
-net.inet.tcp.timer_slowquantum: 500
-net.inet.tcp.win_scale_factor: 3
-net.inet.tcp.in_sw_cksum: 5658081
-net.inet.tcp.in_sw_cksum_bytes: 2198681467
-net.inet.tcp.out_sw_cksum: 14166053
-net.inet.tcp.out_sw_cksum_bytes: 17732561863
-net.inet.tcp.sockthreshold: 64
-net.inet.tcp.bg_target_qdelay: 100
-net.inet.tcp.bg_allowed_increase: 2
-net.inet.tcp.bg_tether_shift: 1
-net.inet.tcp.bg_ss_fltsz: 2
-net.inet.udp.checksum: 1
-net.inet.udp.maxdgram: 9216
-net.inet.udp.recvspace: 42080
-net.inet.udp.in_sw_cksum: 19639
-net.inet.udp.in_sw_cksum_bytes: 3928092
-net.inet.udp.out_sw_cksum: 17436
-net.inet.udp.out_sw_cksum_bytes: 2495444
-net.inet.udp.log_in_vain: 0
-net.inet.udp.blackhole: 0
-net.inet.udp.pcbcount: 72
-net.inet.udp.randomize_ports: 1
-net.inet.ipsec.def_policy: 1
-net.inet.ipsec.esp_trans_deflev: 1
-net.inet.ipsec.esp_net_deflev: 1
-net.inet.ipsec.ah_trans_deflev: 1
-net.inet.ipsec.ah_net_deflev: 1
-net.inet.ipsec.ah_cleartos: 1
-net.inet.ipsec.ah_offsetmask: 0
-net.inet.ipsec.dfbit: 0
-net.inet.ipsec.ecn: 0
-net.inet.ipsec.debug: 0
-net.inet.ipsec.esp_randpad: -1
-net.inet.ipsec.bypass: 0
-net.inet.ipsec.esp_port: 4500
-net.inet.raw.maxdgram: 8192
-net.inet.raw.recvspace: 8192
-net.link.generic.system.ifcount: 10
-net.link.generic.system.dlil_verbose: 0
-net.link.generic.system.multi_threaded_input: 1
-net.link.generic.system.dlil_input_sanity_check: 0
-net.link.ether.inet.prune_intvl: 300
-net.link.ether.inet.max_age: 1200
-net.link.ether.inet.host_down_time: 20
-net.link.ether.inet.apple_hwcksum_tx: 1
-net.link.ether.inet.apple_hwcksum_rx: 1
-net.link.ether.inet.arp_llreach_base: 30
-net.link.ether.inet.maxtries: 5
-net.link.ether.inet.useloopback: 1
-net.link.ether.inet.proxyall: 0
-net.link.ether.inet.sendllconflict: 0
-net.link.ether.inet.log_arp_warnings: 0
-net.link.ether.inet.keep_announcements: 1
-net.link.ether.inet.send_conflicting_probes: 1
-net.link.bridge.log_stp: 0
-net.link.bridge.debug: 0
-net.key.debug: 0
-net.key.spi_trycnt: 1000
-net.key.spi_minval: 256
-net.key.spi_maxval: 268435455
-net.key.int_random: 60
-net.key.larval_lifetime: 30
-net.key.blockacq_count: 10
-net.key.blockacq_lifetime: 20
-net.key.esp_keymin: 256
-net.key.esp_auth: 0
-net.key.ah_keymin: 128
-net.key.prefered_oldsa: 0
-net.key.natt_keepalive_interval: 20
-net.inet6.ip6.forwarding: 0
-net.inet6.ip6.redirect: 1
-net.inet6.ip6.hlim: 64
-net.inet6.ip6.maxfragpackets: 1536
-net.inet6.ip6.accept_rtadv: 0
-net.inet6.ip6.keepfaith: 0
-net.inet6.ip6.log_interval: 5
-net.inet6.ip6.hdrnestlimit: 15
-net.inet6.ip6.dad_count: 1
-net.inet6.ip6.auto_flowlabel: 1
-net.inet6.ip6.defmcasthlim: 1
-net.inet6.ip6.gifhlim: 0
-net.inet6.ip6.kame_version: 2009/apple-darwin
-net.inet6.ip6.use_deprecated: 1
-net.inet6.ip6.rr_prune: 5
-net.inet6.ip6.v6only: 0
-net.inet6.ip6.rtexpire: 3600
-net.inet6.ip6.rtminexpire: 10
-net.inet6.ip6.rtmaxcache: 128
-net.inet6.ip6.use_tempaddr: 1
-net.inet6.ip6.temppltime: 86400
-net.inet6.ip6.tempvltime: 604800
-net.inet6.ip6.auto_linklocal: 1
-net.inet6.ip6.prefer_tempaddr: 1
-net.inet6.ip6.use_defaultzone: 0
-net.inet6.ip6.maxfrags: 12288
-net.inet6.ip6.mcast_pmtu: 0
-net.inet6.ip6.neighborgcthresh: 1024
-net.inet6.ip6.maxifprefixes: 16
-net.inet6.ip6.maxifdefrouters: 16
-net.inet6.ip6.maxdynroutes: 1024
-net.inet6.ip6.fw.enable: 1
-net.inet6.ip6.fw.debug: 0
-net.inet6.ip6.fw.verbose: 0
-net.inet6.ip6.fw.verbose_limit: 0
-net.inet6.ip6.scopedroute: 1
-net.inet6.ip6.select_srcif_debug: 0
-net.inet6.ip6.mcast.maxgrpsrc: 512
-net.inet6.ip6.mcast.maxsocksrc: 128
-net.inet6.ip6.mcast.loop: 1
-net.inet6.ip6.only_allow_rfc4193_prefixes: 0
-net.inet6.ipsec6.def_policy: 1
-net.inet6.ipsec6.esp_trans_deflev: 1
-net.inet6.ipsec6.esp_net_deflev: 1
-net.inet6.ipsec6.ah_trans_deflev: 1
-net.inet6.ipsec6.ah_net_deflev: 1
-net.inet6.ipsec6.ecn: 0
-net.inet6.ipsec6.debug: 0
-net.inet6.ipsec6.esp_randpad: -1
-net.inet6.icmp6.rediraccept: 1
-net.inet6.icmp6.redirtimeout: 600
-net.inet6.icmp6.nd6_prune: 1
-net.inet6.icmp6.nd6_delay: 5
-net.inet6.icmp6.nd6_umaxtries: 3
-net.inet6.icmp6.nd6_mmaxtries: 3
-net.inet6.icmp6.nd6_useloopback: 1
-net.inet6.icmp6.nodeinfo: 3
-net.inet6.icmp6.errppslimit: 500
-net.inet6.icmp6.nd6_maxnudhint: 0
-net.inet6.icmp6.nd6_debug: 0
-net.inet6.icmp6.nd6_accept_6to4: 1
-net.inet6.icmp6.nd6_onlink_ns_rfc4861: 0
-net.inet6.icmp6.nd6_llreach_base: 30
-net.inet6.mld.gsrdelay: 10
-net.inet6.mld.v1enable: 1
-net.inet6.mld.use_allow: 1
-net.inet6.mld.debug: 0
-net.idle.route.expire_timeout: 30
-net.idle.route.drain_interval: 10
-net.statistics: 1
-net.alf.loglevel: 55
-net.alf.perm: 0
-net.alf.defaultaction: 1
-net.alf.mqcount: 0
-net.smb.fs.version: 107000
-net.smb.fs.loglevel: 0
-net.smb.fs.kern_ntlmssp: 0
-net.smb.fs.kern_deprecatePreXPServers: 1
-net.smb.fs.kern_deadtimer: 60
-net.smb.fs.kern_hard_deadtimer: 600
-net.smb.fs.kern_soft_deadtimer: 30
-net.smb.fs.tcpsndbuf: 261120
-net.smb.fs.tcprcvbuf: 261120
+    @darwin_sysctl = <<~DARWIN_SYSCTL
+      net.local.stream.sendspace: 8192
+      net.local.stream.recvspace: 8192
+      net.local.stream.tracemdns: 0
+      net.local.dgram.maxdgram: 2048
+      net.local.dgram.recvspace: 4096
+      net.local.inflight: 0
+      net.inet.ip.portrange.lowfirst: 1023
+      net.inet.ip.portrange.lowlast: 600
+      net.inet.ip.portrange.first: 49152
+      net.inet.ip.portrange.last: 65535
+      net.inet.ip.portrange.hifirst: 49152
+      net.inet.ip.portrange.hilast: 65535
+      net.inet.ip.forwarding: 1
+      net.inet.ip.redirect: 1
+      net.inet.ip.ttl: 64
+      net.inet.ip.rtexpire: 12
+      net.inet.ip.rtminexpire: 10
+      net.inet.ip.rtmaxcache: 128
+      net.inet.ip.sourceroute: 0
+      net.inet.ip.intr_queue_maxlen: 50
+      net.inet.ip.intr_queue_drops: 0
+      net.inet.ip.accept_sourceroute: 0
+      net.inet.ip.keepfaith: 0
+      net.inet.ip.gifttl: 30
+      net.inet.ip.subnets_are_local: 0
+      net.inet.ip.mcast.maxgrpsrc: 512
+      net.inet.ip.mcast.maxsocksrc: 128
+      net.inet.ip.mcast.loop: 1
+      net.inet.ip.check_route_selfref: 1
+      net.inet.ip.use_route_genid: 1
+      net.inet.ip.dummynet.hash_size: 64
+      net.inet.ip.dummynet.curr_time: 0
+      net.inet.ip.dummynet.ready_heap: 0
+      net.inet.ip.dummynet.extract_heap: 0
+      net.inet.ip.dummynet.searches: 0
+      net.inet.ip.dummynet.search_steps: 0
+      net.inet.ip.dummynet.expire: 1
+      net.inet.ip.dummynet.max_chain_len: 16
+      net.inet.ip.dummynet.red_lookup_depth: 256
+      net.inet.ip.dummynet.red_avg_pkt_size: 512
+      net.inet.ip.dummynet.red_max_pkt_size: 1500
+      net.inet.ip.dummynet.debug: 0
+      net.inet.ip.fw.enable: 1
+      net.inet.ip.fw.autoinc_step: 100
+      net.inet.ip.fw.one_pass: 0
+      net.inet.ip.fw.debug: 0
+      net.inet.ip.fw.verbose: 0
+      net.inet.ip.fw.verbose_limit: 0
+      net.inet.ip.fw.dyn_buckets: 256
+      net.inet.ip.fw.curr_dyn_buckets: 256
+      net.inet.ip.fw.dyn_count: 0
+      net.inet.ip.fw.dyn_max: 4096
+      net.inet.ip.fw.static_count: 2
+      net.inet.ip.fw.dyn_ack_lifetime: 300
+      net.inet.ip.fw.dyn_syn_lifetime: 20
+      net.inet.ip.fw.dyn_fin_lifetime: 1
+      net.inet.ip.fw.dyn_rst_lifetime: 1
+      net.inet.ip.fw.dyn_udp_lifetime: 10
+      net.inet.ip.fw.dyn_short_lifetime: 5
+      net.inet.ip.fw.dyn_keepalive: 1
+      net.inet.ip.maxfragpackets: 1536
+      net.inet.ip.maxfragsperpacket: 128
+      net.inet.ip.maxfrags: 3072
+      net.inet.ip.scopedroute: 1
+      net.inet.ip.check_interface: 0
+      net.inet.ip.linklocal.in.allowbadttl: 1
+      net.inet.ip.random_id: 1
+      net.inet.ip.maxchainsent: 0
+      net.inet.ip.select_srcif_debug: 0
+      net.inet.icmp.maskrepl: 0
+      net.inet.icmp.icmplim: 250
+      net.inet.icmp.timestamp: 0
+      net.inet.icmp.drop_redirect: 0
+      net.inet.icmp.log_redirect: 0
+      net.inet.icmp.bmcastecho: 1
+      net.inet.igmp.recvifkludge: 1
+      net.inet.igmp.sendra: 1
+      net.inet.igmp.sendlocal: 1
+      net.inet.igmp.v1enable: 1
+      net.inet.igmp.v2enable: 1
+      net.inet.igmp.legacysupp: 0
+      net.inet.igmp.default_version: 3
+      net.inet.igmp.gsrdelay: 10
+      net.inet.igmp.debug: 0
+      net.inet.tcp.rfc1323: 1
+      net.inet.tcp.rfc1644: 0
+      net.inet.tcp.mssdflt: 512
+      net.inet.tcp.keepidle: 7200000
+      net.inet.tcp.keepintvl: 75000
+      net.inet.tcp.sendspace: 65536
+      net.inet.tcp.recvspace: 65536
+      net.inet.tcp.keepinit: 75000
+      net.inet.tcp.v6mssdflt: 1024
+      net.inet.tcp.log_in_vain: 0
+      net.inet.tcp.blackhole: 0
+      net.inet.tcp.delayed_ack: 3
+      net.inet.tcp.tcp_lq_overflow: 1
+      net.inet.tcp.recvbg: 0
+      net.inet.tcp.drop_synfin: 1
+      net.inet.tcp.reass.maxsegments: 3072
+      net.inet.tcp.reass.cursegments: 0
+      net.inet.tcp.reass.overflows: 0
+      net.inet.tcp.slowlink_wsize: 8192
+      net.inet.tcp.maxseg_unacked: 8
+      net.inet.tcp.rfc3465: 1
+      net.inet.tcp.rfc3465_lim2: 1
+      net.inet.tcp.rtt_samples_per_slot: 20
+      net.inet.tcp.recv_allowed_iaj: 5
+      net.inet.tcp.acc_iaj_high_thresh: 100
+      net.inet.tcp.rexmt_thresh: 2
+      net.inet.tcp.path_mtu_discovery: 1
+      net.inet.tcp.slowstart_flightsize: 1
+      net.inet.tcp.local_slowstart_flightsize: 8
+      net.inet.tcp.tso: 1
+      net.inet.tcp.ecn_initiate_out: 0
+      net.inet.tcp.ecn_negotiate_in: 0
+      net.inet.tcp.packetchain: 50
+      net.inet.tcp.socket_unlocked_on_output: 1
+      net.inet.tcp.rfc3390: 1
+      net.inet.tcp.min_iaj_win: 4
+      net.inet.tcp.acc_iaj_react_limit: 200
+      net.inet.tcp.sack: 1
+      net.inet.tcp.sack_maxholes: 128
+      net.inet.tcp.sack_globalmaxholes: 65536
+      net.inet.tcp.sack_globalholes: 0
+      net.inet.tcp.minmss: 216
+      net.inet.tcp.minmssoverload: 0
+      net.inet.tcp.do_tcpdrain: 0
+      net.inet.tcp.pcbcount: 86
+      net.inet.tcp.icmp_may_rst: 1
+      net.inet.tcp.strict_rfc1948: 0
+      net.inet.tcp.isn_reseed_interval: 0
+      net.inet.tcp.background_io_enabled: 1
+      net.inet.tcp.rtt_min: 100
+      net.inet.tcp.rexmt_slop: 200
+      net.inet.tcp.randomize_ports: 0
+      net.inet.tcp.newreno_sockets: 81
+      net.inet.tcp.background_sockets: -1
+      net.inet.tcp.tcbhashsize: 4096
+      net.inet.tcp.background_io_trigger: 5
+      net.inet.tcp.msl: 15000
+      net.inet.tcp.max_persist_timeout: 0
+      net.inet.tcp.always_keepalive: 0
+      net.inet.tcp.timer_fastmode_idlemax: 20
+      net.inet.tcp.broken_peer_syn_rxmit_thres: 7
+      net.inet.tcp.tcp_timer_advanced: 5
+      net.inet.tcp.tcp_resched_timerlist: 12209
+      net.inet.tcp.pmtud_blackhole_detection: 1
+      net.inet.tcp.pmtud_blackhole_mss: 1200
+      net.inet.tcp.timer_fastquantum: 100
+      net.inet.tcp.timer_slowquantum: 500
+      net.inet.tcp.win_scale_factor: 3
+      net.inet.tcp.in_sw_cksum: 5658081
+      net.inet.tcp.in_sw_cksum_bytes: 2198681467
+      net.inet.tcp.out_sw_cksum: 14166053
+      net.inet.tcp.out_sw_cksum_bytes: 17732561863
+      net.inet.tcp.sockthreshold: 64
+      net.inet.tcp.bg_target_qdelay: 100
+      net.inet.tcp.bg_allowed_increase: 2
+      net.inet.tcp.bg_tether_shift: 1
+      net.inet.tcp.bg_ss_fltsz: 2
+      net.inet.udp.checksum: 1
+      net.inet.udp.maxdgram: 9216
+      net.inet.udp.recvspace: 42080
+      net.inet.udp.in_sw_cksum: 19639
+      net.inet.udp.in_sw_cksum_bytes: 3928092
+      net.inet.udp.out_sw_cksum: 17436
+      net.inet.udp.out_sw_cksum_bytes: 2495444
+      net.inet.udp.log_in_vain: 0
+      net.inet.udp.blackhole: 0
+      net.inet.udp.pcbcount: 72
+      net.inet.udp.randomize_ports: 1
+      net.inet.ipsec.def_policy: 1
+      net.inet.ipsec.esp_trans_deflev: 1
+      net.inet.ipsec.esp_net_deflev: 1
+      net.inet.ipsec.ah_trans_deflev: 1
+      net.inet.ipsec.ah_net_deflev: 1
+      net.inet.ipsec.ah_cleartos: 1
+      net.inet.ipsec.ah_offsetmask: 0
+      net.inet.ipsec.dfbit: 0
+      net.inet.ipsec.ecn: 0
+      net.inet.ipsec.debug: 0
+      net.inet.ipsec.esp_randpad: -1
+      net.inet.ipsec.bypass: 0
+      net.inet.ipsec.esp_port: 4500
+      net.inet.raw.maxdgram: 8192
+      net.inet.raw.recvspace: 8192
+      net.link.generic.system.ifcount: 10
+      net.link.generic.system.dlil_verbose: 0
+      net.link.generic.system.multi_threaded_input: 1
+      net.link.generic.system.dlil_input_sanity_check: 0
+      net.link.ether.inet.prune_intvl: 300
+      net.link.ether.inet.max_age: 1200
+      net.link.ether.inet.host_down_time: 20
+      net.link.ether.inet.apple_hwcksum_tx: 1
+      net.link.ether.inet.apple_hwcksum_rx: 1
+      net.link.ether.inet.arp_llreach_base: 30
+      net.link.ether.inet.maxtries: 5
+      net.link.ether.inet.useloopback: 1
+      net.link.ether.inet.proxyall: 0
+      net.link.ether.inet.sendllconflict: 0
+      net.link.ether.inet.log_arp_warnings: 0
+      net.link.ether.inet.keep_announcements: 1
+      net.link.ether.inet.send_conflicting_probes: 1
+      net.link.bridge.log_stp: 0
+      net.link.bridge.debug: 0
+      net.key.debug: 0
+      net.key.spi_trycnt: 1000
+      net.key.spi_minval: 256
+      net.key.spi_maxval: 268435455
+      net.key.int_random: 60
+      net.key.larval_lifetime: 30
+      net.key.blockacq_count: 10
+      net.key.blockacq_lifetime: 20
+      net.key.esp_keymin: 256
+      net.key.esp_auth: 0
+      net.key.ah_keymin: 128
+      net.key.prefered_oldsa: 0
+      net.key.natt_keepalive_interval: 20
+      net.inet6.ip6.forwarding: 0
+      net.inet6.ip6.redirect: 1
+      net.inet6.ip6.hlim: 64
+      net.inet6.ip6.maxfragpackets: 1536
+      net.inet6.ip6.accept_rtadv: 0
+      net.inet6.ip6.keepfaith: 0
+      net.inet6.ip6.log_interval: 5
+      net.inet6.ip6.hdrnestlimit: 15
+      net.inet6.ip6.dad_count: 1
+      net.inet6.ip6.auto_flowlabel: 1
+      net.inet6.ip6.defmcasthlim: 1
+      net.inet6.ip6.gifhlim: 0
+      net.inet6.ip6.kame_version: 2009/apple-darwin
+      net.inet6.ip6.use_deprecated: 1
+      net.inet6.ip6.rr_prune: 5
+      net.inet6.ip6.v6only: 0
+      net.inet6.ip6.rtexpire: 3600
+      net.inet6.ip6.rtminexpire: 10
+      net.inet6.ip6.rtmaxcache: 128
+      net.inet6.ip6.use_tempaddr: 1
+      net.inet6.ip6.temppltime: 86400
+      net.inet6.ip6.tempvltime: 604800
+      net.inet6.ip6.auto_linklocal: 1
+      net.inet6.ip6.prefer_tempaddr: 1
+      net.inet6.ip6.use_defaultzone: 0
+      net.inet6.ip6.maxfrags: 12288
+      net.inet6.ip6.mcast_pmtu: 0
+      net.inet6.ip6.neighborgcthresh: 1024
+      net.inet6.ip6.maxifprefixes: 16
+      net.inet6.ip6.maxifdefrouters: 16
+      net.inet6.ip6.maxdynroutes: 1024
+      net.inet6.ip6.fw.enable: 1
+      net.inet6.ip6.fw.debug: 0
+      net.inet6.ip6.fw.verbose: 0
+      net.inet6.ip6.fw.verbose_limit: 0
+      net.inet6.ip6.scopedroute: 1
+      net.inet6.ip6.select_srcif_debug: 0
+      net.inet6.ip6.mcast.maxgrpsrc: 512
+      net.inet6.ip6.mcast.maxsocksrc: 128
+      net.inet6.ip6.mcast.loop: 1
+      net.inet6.ip6.only_allow_rfc4193_prefixes: 0
+      net.inet6.ipsec6.def_policy: 1
+      net.inet6.ipsec6.esp_trans_deflev: 1
+      net.inet6.ipsec6.esp_net_deflev: 1
+      net.inet6.ipsec6.ah_trans_deflev: 1
+      net.inet6.ipsec6.ah_net_deflev: 1
+      net.inet6.ipsec6.ecn: 0
+      net.inet6.ipsec6.debug: 0
+      net.inet6.ipsec6.esp_randpad: -1
+      net.inet6.icmp6.rediraccept: 1
+      net.inet6.icmp6.redirtimeout: 600
+      net.inet6.icmp6.nd6_prune: 1
+      net.inet6.icmp6.nd6_delay: 5
+      net.inet6.icmp6.nd6_umaxtries: 3
+      net.inet6.icmp6.nd6_mmaxtries: 3
+      net.inet6.icmp6.nd6_useloopback: 1
+      net.inet6.icmp6.nodeinfo: 3
+      net.inet6.icmp6.errppslimit: 500
+      net.inet6.icmp6.nd6_maxnudhint: 0
+      net.inet6.icmp6.nd6_debug: 0
+      net.inet6.icmp6.nd6_accept_6to4: 1
+      net.inet6.icmp6.nd6_onlink_ns_rfc4861: 0
+      net.inet6.icmp6.nd6_llreach_base: 30
+      net.inet6.mld.gsrdelay: 10
+      net.inet6.mld.v1enable: 1
+      net.inet6.mld.use_allow: 1
+      net.inet6.mld.debug: 0
+      net.idle.route.expire_timeout: 30
+      net.idle.route.drain_interval: 10
+      net.statistics: 1
+      net.alf.loglevel: 55
+      net.alf.perm: 0
+      net.alf.defaultaction: 1
+      net.alf.mqcount: 0
+      net.smb.fs.version: 107000
+      net.smb.fs.loglevel: 0
+      net.smb.fs.kern_ntlmssp: 0
+      net.smb.fs.kern_deprecatePreXPServers: 1
+      net.smb.fs.kern_deadtimer: 60
+      net.smb.fs.kern_hard_deadtimer: 600
+      net.smb.fs.kern_soft_deadtimer: 30
+      net.smb.fs.tcpsndbuf: 261120
+      net.smb.fs.tcprcvbuf: 261120
     DARWIN_SYSCTL
 
     @plugin = get_plugin("darwin/network")

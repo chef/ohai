@@ -15,7 +15,7 @@ rescue LoadError
   end
 end
 
-task :default => :spec
+task default: :spec
 
 require "chefstyle"
 require "rubocop/rake_task"

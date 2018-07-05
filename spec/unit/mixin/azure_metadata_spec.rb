@@ -43,7 +43,7 @@ describe Ohai::Mixin::AzureMetadata do
 
   describe "#fetch_metadata" do
     it "returns an empty hash given a non-200 response" do
-      http_mock = double("http", { :code => "500" })
+      http_mock = double("http", { code: "500" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).to receive(:warn)
@@ -52,7 +52,7 @@ describe Ohai::Mixin::AzureMetadata do
     end
 
     it "returns an empty hash given invalid JSON response" do
-      http_mock = double("http", { :code => "200", :body => '{ "foo" "bar"}' })
+      http_mock = double("http", { code: "200", body: '{ "foo" "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).to receive(:warn)
@@ -61,7 +61,7 @@ describe Ohai::Mixin::AzureMetadata do
     end
 
     it "returns a populated hash given valid JSON response" do
-      http_mock = double("http", { :code => "200", :body => '{ "foo": "bar"}' })
+      http_mock = double("http", { code: "200", body: '{ "foo": "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).not_to receive(:warn)

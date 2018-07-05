@@ -21,15 +21,15 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux kernel plugin" do
   before(:each) do
-    @env_lsmod = <<-ENV_LSMOD
-Module                  Size  Used by
-dm_crypt               22321  0
-psmouse                81038  0
-acpiphp                23314  0
-microcode              18286  0
-serio_raw              13031  0
-virtio_balloon         13168  0
-floppy                 55441  0
+    @env_lsmod = <<~ENV_LSMOD
+      Module                  Size  Used by
+      dm_crypt               22321  0
+      psmouse                81038  0
+      acpiphp                23314  0
+      microcode              18286  0
+      serio_raw              13031  0
+      virtio_balloon         13168  0
+      floppy                 55441  0
 ENV_LSMOD
     @version_module = {
       dm_crypt: "",

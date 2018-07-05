@@ -125,7 +125,7 @@ Ohai.plugin(:DMI) do
         dmi_record = {}
 
         # look up SMB ID
-        if smb_to_id.has_key?(header_information[3])
+        if smb_to_id.key?(header_information[3])
           id = smb_to_id[header_information[3]]
 
           # Don't overcapture for now (OHAI-260)
@@ -142,8 +142,8 @@ Ohai.plugin(:DMI) do
           next
         end
 
-        dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
-        dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
+        dmi[dmi_record[:type]] = Mash.new unless dmi.key?(dmi_record[:type])
+        dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].key?(:all_records)
         dmi_record[:position] = dmi[dmi_record[:type]][:all_records].length
         dmi[dmi_record[:type]][:all_records].push(Mash.new)
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:record_id] = header_information[1]

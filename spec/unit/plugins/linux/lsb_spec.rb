@@ -29,11 +29,11 @@ describe Ohai::System, "Linux lsb plugin" do
   describe "on systems with /etc/lsb-release" do
     before(:each) do
       @double_file = double("/etc/lsb-release")
-      allow(@double_file).to receive(:each).
-        and_yield("DISTRIB_ID=Ubuntu").
-        and_yield("DISTRIB_RELEASE=8.04").
-        and_yield("DISTRIB_CODENAME=hardy").
-        and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
+      allow(@double_file).to receive(:each)
+        .and_yield("DISTRIB_ID=Ubuntu")
+        .and_yield("DISTRIB_RELEASE=8.04")
+        .and_yield("DISTRIB_CODENAME=hardy")
+        .and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
       allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file)
       allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(false)
       allow(File).to receive(:exist?).with("/etc/lsb-release").and_return(true)
@@ -64,7 +64,7 @@ describe Ohai::System, "Linux lsb plugin" do
     before(:each) do
       allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(true)
 
-      @stdin = double("STDIN", { :close => true })
+      @stdin = double("STDIN", { close: true })
       @pid = 10
       @stderr = double("STDERR")
       @stdout = double("STDOUT")
@@ -74,12 +74,12 @@ describe Ohai::System, "Linux lsb plugin" do
 
     describe "on Centos 5.4 correctly" do
       before(:each) do
-        @stdout = <<-LSB_RELEASE
-LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch
-Distributor ID: CentOS
-Description:  CentOS release 5.4 (Final)
-Release:  5.4
-Codename: Final
+        @stdout = <<~LSB_RELEASE
+          LSB Version: :core-3.1-ia32:core-3.1-noarch:graphics-3.1-ia32:graphics-3.1-noarch
+          Distributor ID: CentOS
+          Description:  CentOS release 5.4 (Final)
+          Release:  5.4
+          Codename: Final
 LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
@@ -107,12 +107,12 @@ LSB_RELEASE
 
     describe "on Fedora 14 correctly" do
       before(:each) do
-        @stdout = <<-LSB_RELEASE
-LSB Version:    :core-4.0-ia32:core-4.0-noarch
-Distributor ID: Fedora
-Description:    Fedora release 14 (Laughlin)
-Release:        14
-Codename:       Laughlin
+        @stdout = <<~LSB_RELEASE
+          LSB Version:    :core-4.0-ia32:core-4.0-noarch
+          Distributor ID: Fedora
+          Description:    Fedora release 14 (Laughlin)
+          Release:        14
+          Codename:       Laughlin
 LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end

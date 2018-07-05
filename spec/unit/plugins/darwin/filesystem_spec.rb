@@ -29,14 +29,14 @@ describe Ohai::System, "darwin filesystem plugin" do
 
   describe "when gathering filesystem usage data from df" do
     before(:each) do
-      @stdout = <<-DF
-Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
-/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
-devfs                       385       385         0   100%      666        0  100%   /dev
-map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
-map -hosts                    0         0         0   100%        0        0  100%   /net
-map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
-deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
+      @stdout = <<~DF
+        Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
+        /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
+        devfs                       385       385         0   100%      666        0  100%   /dev
+        map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
+        map -hosts                    0         0         0   100%        0        0  100%   /net
+        map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
+        deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
 DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -70,13 +70,13 @@ DF
 
   describe "when gathering mounted filesystem data from mount" do
     before(:each) do
-      @stdout = <<-MOUNT
-/dev/disk0s2 on / (hfs, local, journaled)
-devfs on /dev (devfs, local, nobrowse)
-map /etc/auto.direct on /mnt/vol (autofs, automounted, nobrowse)
-map -hosts on /net (autofs, nosuid, automounted, nobrowse)
-map -static on /mobile_symbol (autofs, automounted, nobrowse)
-deweyfs@osxfuse0 on /mnt/dewey (osxfusefs, synchronous, nobrowse)
+      @stdout = <<~MOUNT
+        /dev/disk0s2 on / (hfs, local, journaled)
+        devfs on /dev (devfs, local, nobrowse)
+        map /etc/auto.direct on /mnt/vol (autofs, automounted, nobrowse)
+        map -hosts on /net (autofs, nosuid, automounted, nobrowse)
+        map -static on /mobile_symbol (autofs, automounted, nobrowse)
+        deweyfs@osxfuse0 on /mnt/dewey (osxfusefs, synchronous, nobrowse)
 MOUNT
       allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -96,15 +96,15 @@ MOUNT
 
   describe "when gathering filesystem data with devices mounted more than once" do
     before(:each) do
-      @dfstdout = <<-DF
-Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
-/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
-devfs                       385       385         0   100%      666        0  100%   /dev
-map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
-map -hosts                    0         0         0   100%        0        0  100%   /net
-map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
-deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
-/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
+      @dfstdout = <<~DF
+        Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
+        /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
+        devfs                       385       385         0   100%      666        0  100%   /dev
+        map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
+        map -hosts                    0         0         0   100%        0        0  100%   /net
+        map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
+        deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
+        /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
 DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
@@ -117,16 +117,16 @@ DF
 
   describe "when gathering filesystem data with double-mounts" do
     before(:each) do
-      @dfstdout = <<-DF
-Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
-/dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
-devfs                       385       385         0   100%      666        0  100%   /dev
-map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
-map -hosts                    0         0         0   100%        0        0  100%   /net
-map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
-deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
-/dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
-/dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
+      @dfstdout = <<~DF
+        Filesystem           512-blocks      Used Available Capacity  iused    ifree %iused  Mounted on
+        /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386   64%   /
+        devfs                       385       385         0   100%      666        0  100%   /dev
+        map /etc/auto.direct          0         0         0   100%        0        0  100%   /mnt/vol
+        map -hosts                    0         0         0   100%        0        0  100%   /net
+        map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
+        deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
+        /dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
+        /dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
 DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end

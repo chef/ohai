@@ -20,8 +20,8 @@ module Ohai
   module Mixin
     module ScalewayMetadata
 
-      SCALEWAY_METADATA_ADDR = "169.254.42.42" unless defined?(SCALEWAY_METADATA_ADDR)
-      SCALEWAY_METADATA_URL = "/conf?format=json" unless defined?(SCALEWAY_METADATA_URL)
+      SCALEWAY_METADATA_ADDR = "169.254.42.42".freeze unless defined?(SCALEWAY_METADATA_ADDR)
+      SCALEWAY_METADATA_URL = "/conf?format=json".freeze unless defined?(SCALEWAY_METADATA_URL)
 
       # @return [Net::HTTP] net/http object without timeout set to 6
       def http_client
@@ -32,7 +32,7 @@ module Ohai
       #
       # @return [Hash]
       def fetch_metadata
-        uri = "#{SCALEWAY_METADATA_URL}"
+        uri = (SCALEWAY_METADATA_URL).to_s
         response = http_client.get(uri)
         case response.code
         when "200"

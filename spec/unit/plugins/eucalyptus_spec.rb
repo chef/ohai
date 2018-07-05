@@ -35,24 +35,24 @@ describe Ohai::System, "plugin eucalyptus" do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)
 
-      expect(@http_client).to receive(:get).
-        with("/").
-        and_return(double("Net::HTTP Response", :body => "2012-01-12", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/").
-        and_return(double("Net::HTTP Response", :body => "instance_type\nami_id\nsecurity-groups", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/instance_type").
-        and_return(double("Net::HTTP Response", :body => "c1.medium", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/ami_id").
-        and_return(double("Net::HTTP Response", :body => "ami-5d2dc934", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/meta-data/security-groups").
-        and_return(double("Net::HTTP Response", :body => "group1\ngroup2", :code => "200"))
-      expect(@http_client).to receive(:get).
-        with("/2012-01-12/user-data/").
-        and_return(double("Net::HTTP Response", :body => "By the pricking of my thumb...", :code => "200"))
+      expect(@http_client).to receive(:get)
+        .with("/")
+        .and_return(double("Net::HTTP Response", body: "2012-01-12", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/")
+        .and_return(double("Net::HTTP Response", body: "instance_type\nami_id\nsecurity-groups", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/instance_type")
+        .and_return(double("Net::HTTP Response", body: "c1.medium", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/ami_id")
+        .and_return(double("Net::HTTP Response", body: "ami-5d2dc934", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/meta-data/security-groups")
+        .and_return(double("Net::HTTP Response", body: "group1\ngroup2", code: "200"))
+      expect(@http_client).to receive(:get)
+        .with("/2012-01-12/user-data/")
+        .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
     end
 
     it "recursively fetches all the eucalyptus metadata" do
@@ -97,7 +97,7 @@ describe Ohai::System, "plugin eucalyptus" do
     it_behaves_like "!eucalyptus"
 
     before(:each) do
-      plugin[:network] = { :interfaces => {} }
+      plugin[:network] = { interfaces: {} }
       allow(plugin).to receive(:hint?).with("eucalyptus").and_return(false)
     end
   end

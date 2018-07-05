@@ -28,8 +28,8 @@ Ohai.plugin(:Network) do
       unless line_array[i].eql?("none")
 
         if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
-          media[line_array[i]] = Hash.new unless media.has_key?(line_array[i])
-          if media[line_array[i]].has_key?("options")
+          media[line_array[i]] = Hash.new unless media.key?(line_array[i])
+          if media[line_array[i]].key?("options")
             $1.split(",").each do |opt|
               media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
             end
@@ -38,7 +38,7 @@ Ohai.plugin(:Network) do
           end
         else
           if line_array[i].eql?("autoselect")
-            media["autoselect"] = Hash.new unless media.has_key?("autoselect")
+            media["autoselect"] = Hash.new unless media.key?("autoselect")
             media["autoselect"]["options"] = []
           end
         end
@@ -189,8 +189,8 @@ Ohai.plugin(:Network) do
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case
         net_counters[ifname] = Mash.new unless net_counters[ifname]
-        net_counters[ifname] = { :rx => { :bytes => $5, :packets => $3, :errors => $4, :drop => 0, :overrun => 0, :frame => 0, :compressed => 0, :multicast => 0 },
-                                 :tx => { :bytes => $8, :packets => $6, :errors => $7, :drop => 0, :overrun => 0, :collisions => $9, :carrier => 0, :compressed => 0 },
+        net_counters[ifname] = { rx: { bytes: $5, packets: $3, errors: $4, drop: 0, overrun: 0, frame: 0, compressed: 0, multicast: 0 },
+                                 tx: { bytes: $8, packets: $6, errors: $7, drop: 0, overrun: 0, collisions: $9, carrier: 0, compressed: 0 },
         }
       end
     end

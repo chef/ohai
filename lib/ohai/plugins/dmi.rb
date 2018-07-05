@@ -47,8 +47,8 @@ Ohai.plugin(:DMI) do
     begin
       so = shell_out("dmidecode")
       # ==== EXAMPLE RECORD: ====
-      #Handle 0x0000, DMI type 0, 24 bytes
-      #BIOS Information
+      # Handle 0x0000, DMI type 0, 24 bytes
+      # BIOS Information
       #        Vendor: American Megatrends Inc.
       #        Version: 080012
       # ... similar lines trimmed
@@ -58,7 +58,7 @@ Ohai.plugin(:DMI) do
       # ... similar lines trimmed
       so.stdout.lines do |line|
         next if blank_line.match(line)
-        line = line.encode(line.encoding, :universal_newline => true)
+        line = line.encode(line.encoding, universal_newline: true)
 
         if ( dmidecode_version = dmidecode_version_line.match(line) )
           dmi[:dmidecode_version] = dmidecode_version[1]
@@ -80,10 +80,10 @@ Ohai.plugin(:DMI) do
             next
           end
 
-          dmi_record = { :type => Ohai::Common::DMI.id_lookup(handle[2]) }
+          dmi_record = { type: Ohai::Common::DMI.id_lookup(handle[2]) }
 
-          dmi[dmi_record[:type]] = Mash.new unless dmi.has_key?(dmi_record[:type])
-          dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].has_key?(:all_records)
+          dmi[dmi_record[:type]] = Mash.new unless dmi.key?(dmi_record[:type])
+          dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].key?(:all_records)
           dmi_record[:position] = dmi[dmi_record[:type]][:all_records].length
           dmi[dmi_record[:type]][:all_records].push(Mash.new)
           dmi[dmi_record[:type]][:all_records][dmi_record[:position]][:record_id] = handle[1]

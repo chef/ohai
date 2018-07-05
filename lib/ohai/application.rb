@@ -26,45 +26,45 @@ class Ohai::Application
   include Mixlib::CLI
 
   option :config_file,
-    :short       => "-c CONFIG",
-    :long        => "--config CONFIG",
-    :description => "A configuration file to use",
-    :proc => lambda { |path| File.expand_path(path, Dir.pwd) }
+    short: "-c CONFIG",
+    long: "--config CONFIG",
+    description: "A configuration file to use",
+    proc: lambda { |path| File.expand_path(path, Dir.pwd) }
 
   option :directory,
-    :short       => "-d DIRECTORY",
-    :long        => "--directory DIRECTORY",
-    :description => "A directory to add to the Ohai plugin search path",
-    :proc        => lambda { |path| Ohai::Config.platform_specific_path(path) }
+    short: "-d DIRECTORY",
+    long: "--directory DIRECTORY",
+    description: "A directory to add to the Ohai plugin search path",
+    proc: lambda { |path| Ohai::Config.platform_specific_path(path) }
 
   option :log_level,
-    :short        => "-l LEVEL",
-    :long         => "--log_level LEVEL",
-    :description  => "Set the log level (debug, info, warn, error, fatal)",
-    :proc         => lambda { |l| l.to_sym }
+    short: "-l LEVEL",
+    long: "--log_level LEVEL",
+    description: "Set the log level (debug, info, warn, error, fatal)",
+    proc: lambda { |l| l.to_sym }
 
   option :log_location,
-    :short        => "-L LOGLOCATION",
-    :long         => "--logfile LOGLOCATION",
-    :description  => "Set the log file location, defaults to STDOUT - recommended for daemonizing",
-    :proc         => nil
+    short: "-L LOGLOCATION",
+    long: "--logfile LOGLOCATION",
+    description: "Set the log file location, defaults to STDOUT - recommended for daemonizing",
+    proc: nil
 
   option :help,
-    :short        => "-h",
-    :long         => "--help",
-    :description  => "Show this message",
-    :on           => :tail,
-    :boolean      => true,
-    :show_options => true,
-    :exit         => 0
+    short: "-h",
+    long: "--help",
+    description: "Show this message",
+    on: :tail,
+    boolean: true,
+    show_options: true,
+    exit: 0
 
   option :version,
-    :short        => "-v",
-    :long         => "--version",
-    :description  => "Show Ohai version",
-    :boolean      => true,
-    :proc         => lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
-    :exit         => 0
+    short: "-v",
+    long: "--version",
+    description: "Show Ohai version",
+    boolean: true,
+    proc: lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
+    exit: 0
 
   def initialize
     super

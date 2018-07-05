@@ -1,6 +1,6 @@
 #
 # Author:: Benjamin Black (<nostromo@gmail.com>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,40 +18,40 @@
 
 # EXAMPLE SOLARIS IFCONFIG OUTPUT; CURRENTLY, ONLY SIMPLE STUFF IS SUPPORTED (E.G., NO TUNNELS)
 # DEAR SUN: YOU GET AN F FOR YOUR IFCONFIG
-#lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
-#        inet 127.0.0.1 netmask ff000000
-#e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 3
-#        inet 72.2.115.28 netmask ffffff80 broadcast 72.2.115.127
-#e1000g2:1: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 4
-#        inet 10.2.115.28 netmask ffffff80 broadcast 10.2.115.127
-#        inet6 2001:0db8:3c4d:55:a00:20ff:fe8e:f3ad/64
-#ip.tun0: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
-#       inet tunnel src 109.146.85.57   tunnel dst 109.146.85.212
-#       tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
-#       tunnel hop limit 60
-#       inet6 fe80::6d92:5539/10 --> fe80::6d92:55d4
-#ip.tun0:1: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
-#       inet6 2::45/128 --> 2::46
-#lo0: flags=1000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4> mtu 8232 index 1
-#    inet 127.0.0.1 netmask ff000000
-#eri0: flags=1004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4> mtu 1500 \
-#index 2
-#    inet 172.17.128.208 netmask ffffff00 broadcast 172.17.128.255
-#ip6.tun0: flags=10008d1<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST,IPv4> \
-#mtu 1460
-#    index 3
-#    inet6 tunnel src fe80::1 tunnel dst fe80::2
-#    tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
-#    tunnel hop limit 60 tunnel encapsulation limit 4
-#    inet 10.0.0.208 --> 10.0.0.210 netmask ff000000
-#qfe1: flags=2000841<UP,RUNNING,MULTICAST,IPv6> mtu 1500 index 3
-# usesrc vni0
-# inet6 fe80::203:baff:fe17:4be0/10
-# ether 0:3:ba:17:4b:e0
-#vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 0
-# index 5
-# srcof qfe1
-# inet6 fe80::203:baff:fe17:4444/128
+# lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
+#         inet 127.0.0.1 netmask ff000000
+# e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 3
+#         inet 72.2.115.28 netmask ffffff80 broadcast 72.2.115.127
+# e1000g2:1: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 4
+#         inet 10.2.115.28 netmask ffffff80 broadcast 10.2.115.127
+#         inet6 2001:0db8:3c4d:55:a00:20ff:fe8e:f3ad/64
+# ip.tun0: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
+#        inet tunnel src 109.146.85.57   tunnel dst 109.146.85.212
+#        tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
+#        tunnel hop limit 60
+#        inet6 fe80::6d92:5539/10 --> fe80::6d92:55d4
+# ip.tun0:1: flags=2200851<UP,POINTOPOINT,RUNNING,MULTICAST,NONUD,IPv6> mtu 1480 index 3
+#        inet6 2::45/128 --> 2::46
+# lo0: flags=1000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4> mtu 8232 index 1
+#     inet 127.0.0.1 netmask ff000000
+# eri0: flags=1004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4> mtu 1500 \
+# index 2
+#     inet 172.17.128.208 netmask ffffff00 broadcast 172.17.128.255
+# ip6.tun0: flags=10008d1<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST,IPv4> \
+# mtu 1460
+#     index 3
+#     inet6 tunnel src fe80::1 tunnel dst fe80::2
+#     tunnel security settings  -->  use 'ipsecconf -ln -i ip.tun1'
+#     tunnel hop limit 60 tunnel encapsulation limit 4
+#     inet 10.0.0.208 --> 10.0.0.210 netmask ff000000
+# qfe1: flags=2000841<UP,RUNNING,MULTICAST,IPv6> mtu 1500 index 3
+#  usesrc vni0
+#  inet6 fe80::203:baff:fe17:4be0/10
+#  ether 0:3:ba:17:4b:e0
+# vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 0
+#  index 5
+#  srcof qfe1
+#  inet6 fe80::203:baff:fe17:4444/128
 
 # Extracted from http://illumos.org/hcl/
 unless defined?(ETHERNET_ENCAPS)
@@ -59,7 +59,7 @@ unless defined?(ETHERNET_ENCAPS)
                         dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
                         iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
                         nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
-                        rwn sfe tavor vr wpi xge yge aggr}
+                        rwn sfe tavor vr wpi xge yge aggr}.freeze
 end
 
 Ohai.plugin(:Network) do

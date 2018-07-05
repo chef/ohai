@@ -6,7 +6,7 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2018, Chef Software Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2009 Daniel DeLeo
 # Copyright:: Copyright (c) 2010 VMware, Inc.
@@ -166,15 +166,15 @@ Ohai.plugin(:Hostname) do
     wmi = WmiLite::Wmi.new
     host = wmi.first_of("Win32_ComputerSystem")
 
-    hostname "#{host['dnshostname']}"
-    machinename "#{host['name']}"
+    hostname host["dnshostname"].to_s
+    machinename host["name"].to_s
 
     info = Socket.gethostbyname(Socket.gethostname)
     if info.first =~ /.+?\.(.*)/
       fqdn info.first
     else
-      #host is not in dns. optionally use:
-      #C:\WINDOWS\system32\drivers\etc\hosts
+      # host is not in dns. optionally use:
+      # C:\WINDOWS\system32\drivers\etc\hosts
       fqdn Socket.gethostbyaddr(info.last).first
     end
     domain collect_domain

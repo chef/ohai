@@ -28,10 +28,10 @@ RSpec.describe "Ohai::Loader" do
       before(:each) do
         Ohai.config[:plugin_path] = plugin_path
 
-        plugin_content = <<-EOF
-Ohai.plugin(:Foo) do
-  provides 'foo'
-end
+        plugin_content = <<~EOF
+          Ohai.plugin(:Foo) do
+            provides 'foo'
+          end
 EOF
         File.open(File.join(plugin_directory, "foo.rb"), "w+") do |f|
           f.write(plugin_content)

@@ -37,16 +37,16 @@ describe Ohai::System, "plugin openstack" do
   context "when DMI data is Openstack" do
     context "and the metadata service is not available" do
       before do
-        allow(plugin).to receive(:can_socket_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
-          and_return(false)
+        allow(plugin).to receive(:can_socket_connect?)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .and_return(false)
         plugin[:dmi] = dmi_data
         plugin.run
       end
 
       context "with normal openstack metadata" do
         let(:dmi_data) do
-          { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+          { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
         end
 
         it "sets openstack attribute" do
@@ -59,7 +59,7 @@ describe Ohai::System, "plugin openstack" do
       end
       context "with Red Hat openstack metadata" do
         let(:dmi_data) do
-          { :system => { :manufacturer => "Red Hat", :product_name => "OpenStack Compute" } }
+          { system: { manufacturer: "Red Hat", product_name: "OpenStack Compute" } }
         end
 
         it "sets openstack attribute" do
@@ -76,10 +76,10 @@ describe Ohai::System, "plugin openstack" do
   context "when running on dreamhost" do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
-      allow(plugin).to receive(:can_socket_connect?).
-        with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
-        and_return(false)
-      plugin[:dmi] = { :system => { :all_records => [ { :Manufacturer => "OpenStack Foundation" } ] } }
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+        .and_return(false)
+      plugin[:dmi] = { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")
     end
@@ -88,9 +88,9 @@ describe Ohai::System, "plugin openstack" do
   context "when the hint is present" do
     context "and the metadata service is not available" do
       before do
-        allow(plugin).to receive(:can_socket_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
-          and_return(false)
+        allow(plugin).to receive(:can_socket_connect?)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .and_return(false)
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         plugin.run
       end
@@ -109,25 +109,25 @@ describe Ohai::System, "plugin openstack" do
       let(:metadata_version) { "2009-04-04" }
 
       let(:metadata_root) do
-        <<EOM
-reservation-id
-public-keys/
-security-groups
-public-ipv4
-ami-manifest-path
-instance-type
-instance-id
-local-ipv4
-ari-id
-local-hostname
-placement/
-ami-launch-index
-public-hostname
-hostname
-ami-id
-instance-action
-aki-id
-block-device-mapping/
+        <<~EOM
+          reservation-id
+          public-keys/
+          security-groups
+          public-ipv4
+          ami-manifest-path
+          instance-type
+          instance-id
+          local-ipv4
+          ari-id
+          local-hostname
+          placement/
+          ami-launch-index
+          public-hostname
+          hostname
+          ami-id
+          instance-action
+          aki-id
+          block-device-mapping/
 EOM
       end
 
@@ -182,26 +182,26 @@ EOM
       let(:http_client) { double("Net::HTTP", { :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
 
       def allow_get(url, response_body)
-        allow(http_client).to receive(:get).
-          with(url).
-          and_return(double("HTTP Response", :code => "200", :body => response_body))
+        allow(http_client).to receive(:get)
+          .with(url)
+          .and_return(double("HTTP Response", code: "200", body: response_body))
       end
 
       def allow_get_response(url, response_body)
-        allow(http_client).to receive(:get_response).
-          with(url, nil, nil).
-          and_return(double("HTTP Response", :code => "200", :body => response_body))
+        allow(http_client).to receive(:get_response)
+          .with(url, nil, nil)
+          .and_return(double("HTTP Response", code: "200", body: response_body))
       end
 
       before do
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
-        allow(plugin).to receive(:can_socket_connect?).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80).
-          and_return(true)
+        allow(plugin).to receive(:can_socket_connect?)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .and_return(true)
 
-        allow(Net::HTTP).to receive(:start).
-          with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR).
-          and_return(http_client)
+        allow(Net::HTTP).to receive(:start)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR)
+          .and_return(http_client)
 
         allow(plugin).to receive(:best_api_version).and_return(metadata_version)
 

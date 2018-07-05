@@ -1,7 +1,7 @@
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2011-2018, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,18 +31,18 @@ describe Ohai::System, "BSD filesystem plugin" do
 
   describe "when gathering filesystem usage data from df" do
     before(:each) do
-      @stdout = <<-DF
-Filesystem  1K-blocks    Used   Avail Capacity  Mounted on
-/dev/ada0p2   9637788 3313504 5553264    37%    /
-devfs               1       1       0   100%    /dev
+      @stdout = <<~DF
+        Filesystem  1K-blocks    Used   Avail Capacity  Mounted on
+        /dev/ada0p2   9637788 3313504 5553264    37%    /
+        devfs               1       1       0   100%    /dev
 DF
       allow(plugin).to receive(:shell_out).with("df").and_return(mock_shell_out(0, @stdout, ""))
 
-      @inode_stdout = <<-DFi
-Filesystem  512-blocks    Used   Avail Capacity iused  ifree %iused  Mounted on
-/dev/ada0p2   15411832 5109256 9069632    36%  252576 790750   24%   /
-devfs                2       2       0   100%       0      0  100%   /dev
-DFi
+      @inode_stdout = <<~DFI
+        Filesystem  512-blocks    Used   Avail Capacity iused  ifree %iused  Mounted on
+        /dev/ada0p2   15411832 5109256 9069632    36%  252576 790750   24%   /
+        devfs                2       2       0   100%       0      0  100%   /dev
+DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
@@ -103,9 +103,9 @@ DFi
 
   describe "when gathering mounted filesystem data from mount" do
     before(:each) do
-      @stdout = <<-MOUNT
-/dev/ada0p2 on / (ufs, local, journaled soft-updates)
-devfs on /dev (devfs, local, multilabel)
+      @stdout = <<~MOUNT
+        /dev/ada0p2 on / (ufs, local, journaled soft-updates)
+        devfs on /dev (devfs, local, multilabel)
 MOUNT
       allow(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, @stdout, ""))
     end

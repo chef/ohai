@@ -21,41 +21,41 @@ describe Ohai::System, "Linux memory plugin" do
     @plugin = get_plugin("linux/memory")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/meminfo")
-    allow(@double_file).to receive(:each).
-      and_yield("MemTotal:     131932120 kB").
-      and_yield("MemFree:       2269032 kB").
-      and_yield("MemAvailable:  9208922 kB").
-      and_yield("Buffers:        646368 kB").
-      and_yield("Cached:       32346556 kB").
-      and_yield("SwapCached:        312 kB").
-      and_yield("Active:       98595796 kB").
-      and_yield("Inactive:     18477320 kB").
-      and_yield("HighTotal:           0 kB").
-      and_yield("HighFree:            0 kB").
-      and_yield("LowTotal:     131932120 kB").
-      and_yield("LowFree:       2269032 kB").
-      and_yield("SwapTotal:    16777208 kB").
-      and_yield("SwapFree:     14127356 kB").
-      and_yield("Dirty:            3212 kB").
-      and_yield("Writeback:           0 kB").
-      and_yield("AnonPages:    84082132 kB").
-      and_yield("Mapped:        3445224 kB").
-      and_yield("Slab:          9892096 kB").
-      and_yield("SReclaimable:     362636 kB").
-      and_yield("SUnreclaim:        18860 kB").
-      and_yield("PageTables:    1759332 kB").
-      and_yield("NFS_Unstable:        0 kB").
-      and_yield("Bounce:              0 kB").
-      and_yield("CommitLimit:  148709328 kB").
-      and_yield("Committed_AS: 333717060 kB").
-      and_yield("VmallocTotal: 34359738367 kB").
-      and_yield("VmallocUsed:    276796 kB").
-      and_yield("VmallocChunk: 34359461515 kB").
-      and_yield("HugePages_Total: 11542").
-      and_yield("HugePages_Free:  11235").
-      and_yield("HugePages_Rsvd:  11226").
-      and_yield("HugePages_Surp:      0").
-      and_yield("Hugepagesize:     2048 kB")
+    allow(@double_file).to receive(:each)
+      .and_yield("MemTotal:     131932120 kB")
+      .and_yield("MemFree:       2269032 kB")
+      .and_yield("MemAvailable:  9208922 kB")
+      .and_yield("Buffers:        646368 kB")
+      .and_yield("Cached:       32346556 kB")
+      .and_yield("SwapCached:        312 kB")
+      .and_yield("Active:       98595796 kB")
+      .and_yield("Inactive:     18477320 kB")
+      .and_yield("HighTotal:           0 kB")
+      .and_yield("HighFree:            0 kB")
+      .and_yield("LowTotal:     131932120 kB")
+      .and_yield("LowFree:       2269032 kB")
+      .and_yield("SwapTotal:    16777208 kB")
+      .and_yield("SwapFree:     14127356 kB")
+      .and_yield("Dirty:            3212 kB")
+      .and_yield("Writeback:           0 kB")
+      .and_yield("AnonPages:    84082132 kB")
+      .and_yield("Mapped:        3445224 kB")
+      .and_yield("Slab:          9892096 kB")
+      .and_yield("SReclaimable:     362636 kB")
+      .and_yield("SUnreclaim:        18860 kB")
+      .and_yield("PageTables:    1759332 kB")
+      .and_yield("NFS_Unstable:        0 kB")
+      .and_yield("Bounce:              0 kB")
+      .and_yield("CommitLimit:  148709328 kB")
+      .and_yield("Committed_AS: 333717060 kB")
+      .and_yield("VmallocTotal: 34359738367 kB")
+      .and_yield("VmallocUsed:    276796 kB")
+      .and_yield("VmallocChunk: 34359461515 kB")
+      .and_yield("HugePages_Total: 11542")
+      .and_yield("HugePages_Free:  11235")
+      .and_yield("HugePages_Rsvd:  11226")
+      .and_yield("HugePages_Surp:      0")
+      .and_yield("Hugepagesize:     2048 kB")
     allow(File).to receive(:open).with("/proc/meminfo").and_return(@double_file)
   end
 

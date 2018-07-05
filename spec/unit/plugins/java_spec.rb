@@ -193,8 +193,8 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
 
     context "and real Java is installed" do
       before do
-        java_home_status = double(Process::Status, :success? => true)
-        java_home_cmd = double(Mixlib::ShellOut, :status => java_home_status)
+        java_home_status = double(Process::Status, success?: true)
+        java_home_cmd = double(Mixlib::ShellOut, status: java_home_status)
         expect(plugin).to receive(:shell_out).with("/usr/libexec/java_home").and_return(java_home_cmd)
       end
 
@@ -211,8 +211,8 @@ describe Ohai::System, "plugin java (Java5 Client VM)" do
 
     context "and the JVM stubs are installed" do
       before do
-        java_home_status = double(Process::Status, :success? => false)
-        java_home_cmd = double(Mixlib::ShellOut, :status => java_home_status)
+        java_home_status = double(Process::Status, success?: false)
+        java_home_cmd = double(Mixlib::ShellOut, status: java_home_status)
         expect(plugin).to receive(:shell_out).with("/usr/libexec/java_home").and_return(java_home_cmd)
       end
 

@@ -35,22 +35,22 @@ describe Ohai::System, "plugin ruby" do
   end
 
   {
-    :platform => RUBY_PLATFORM,
-    :version => RUBY_VERSION,
-    :release_date => RUBY_RELEASE_DATE,
-    :target => ::RbConfig::CONFIG["target"],
-    :target_cpu => ::RbConfig::CONFIG["target_cpu"],
-    :target_vendor => ::RbConfig::CONFIG["target_vendor"],
-    :target_os => ::RbConfig::CONFIG["target_os"],
-    :host => ::RbConfig::CONFIG["host"],
-    :host_cpu => ::RbConfig::CONFIG["host_cpu"],
-    :host_os => ::RbConfig::CONFIG["host_os"],
-    :host_vendor => ::RbConfig::CONFIG["host_vendor"],
-    :gems_dir => `#{ruby_bin} #{::RbConfig::CONFIG["bindir"]}/gem env gemdir`.chomp,
-    :gem_bin => [ ::Gem.default_exec_format % "gem", "gem" ].map do |bin|
+    platform: RUBY_PLATFORM,
+    version: RUBY_VERSION,
+    release_date: RUBY_RELEASE_DATE,
+    target: ::RbConfig::CONFIG["target"],
+    target_cpu: ::RbConfig::CONFIG["target_cpu"],
+    target_vendor: ::RbConfig::CONFIG["target_vendor"],
+    target_os: ::RbConfig::CONFIG["target_os"],
+    host: ::RbConfig::CONFIG["host"],
+    host_cpu: ::RbConfig::CONFIG["host_cpu"],
+    host_os: ::RbConfig::CONFIG["host_os"],
+    host_vendor: ::RbConfig::CONFIG["host_vendor"],
+    gems_dir: `#{ruby_bin} #{::RbConfig::CONFIG["bindir"]}/gem env gemdir`.chomp,
+    gem_bin: [ ::Gem.default_exec_format % "gem", "gem" ].map do |bin|
       "#{::RbConfig::CONFIG['bindir']}/#{bin}"
     end.find { |bin| ::File.exist? bin },
-    :ruby_bin => ruby_bin,
+    ruby_bin: ruby_bin,
   }.each do |attribute, value|
     it "should have #{attribute} set to #{value.inspect}" do
       expect(@ruby_ohai_data[attribute]).to eql(value)

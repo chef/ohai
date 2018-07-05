@@ -45,9 +45,9 @@ describe Ohai::System, "zpools plugin" do
 EOST
     end
     let(:zpool_out) do
-      <<-EOZO
-rpool	109G	66.2G	42.8G	60%	1.00x	ONLINE	-
-tank	130T	4.91M	130T	0%	1.00x	ONLINE	-
+      <<~EOZO
+        rpool	109G	66.2G	42.8G	60%	1.00x	ONLINE	-
+        tank	130T	4.91M	130T	0%	1.00x	ONLINE	-
 EOZO
     end
     let(:zpool_status_rpool) do
@@ -131,50 +131,50 @@ EOSR
 
   context "on Solaris2" do
     let(:zpool_status_tank) do
-      <<-EOST
-pool: tank
-state: ONLINE
-scan: scrub repaired 0 in 0h0m with 0 errors on Fri Jun  6 14:43:40 2014
-config:
+      <<~EOST
+        pool: tank
+        state: ONLINE
+        scan: scrub repaired 0 in 0h0m with 0 errors on Fri Jun  6 14:43:40 2014
+        config:
 
-      NAME                       STATE     READ WRITE CKSUM
-      tank                       ONLINE       0     0     0
-        raidz2-0                 ONLINE       0     0     0
-          c1t50014EE209D1DBA9d0  ONLINE       0     0     0
-          c1t50014EE20A0ECED2d0  ONLINE       0     0     0
-          c1t50014EE20A106BFFd0  ONLINE       0     0     0
-          c1t50014EE20A1423E8d0  ONLINE       0     0     0
-          c1t50014EE20A145447d0  ONLINE       0     0     0
-          c1t50014EE20A29EE56d0  ONLINE       0     0     0
-        raidz2-1                 ONLINE       0     0     0
-          c1t50014EE20A2B984Cd0  ONLINE       0     0     0
-          c1t50014EE20A2BBC78d0  ONLINE       0     0     0
-          c1t50014EE20A2BDCA9d0  ONLINE       0     0     0
-          c1t50014EE25F697DC4d0  ONLINE       0     0     0
-          c1t50014EE25F698BECd0  ONLINE       0     0     0
-          c1t50014EE25F6998DAd0  ONLINE       0     0     0
+              NAME                       STATE     READ WRITE CKSUM
+              tank                       ONLINE       0     0     0
+                raidz2-0                 ONLINE       0     0     0
+                  c1t50014EE209D1DBA9d0  ONLINE       0     0     0
+                  c1t50014EE20A0ECED2d0  ONLINE       0     0     0
+                  c1t50014EE20A106BFFd0  ONLINE       0     0     0
+                  c1t50014EE20A1423E8d0  ONLINE       0     0     0
+                  c1t50014EE20A145447d0  ONLINE       0     0     0
+                  c1t50014EE20A29EE56d0  ONLINE       0     0     0
+                raidz2-1                 ONLINE       0     0     0
+                  c1t50014EE20A2B984Cd0  ONLINE       0     0     0
+                  c1t50014EE20A2BBC78d0  ONLINE       0     0     0
+                  c1t50014EE20A2BDCA9d0  ONLINE       0     0     0
+                  c1t50014EE25F697DC4d0  ONLINE       0     0     0
+                  c1t50014EE25F698BECd0  ONLINE       0     0     0
+                  c1t50014EE25F6998DAd0  ONLINE       0     0     0
 EOST
     end
     let(:zpool_out) do
-      <<-EOZO
-rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
-tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
+      <<~EOZO
+        rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
+        tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
 EOZO
     end
     let(:zpool_status_rpool) do
-      <<-EOSR
-pool: rpool
-state: ONLINE
-scan: resilvered 65.6G in 0h8m with 0 errors on Fri Jun  6 14:22:40 2014
-config:
+      <<~EOSR
+        pool: rpool
+        state: ONLINE
+        scan: resilvered 65.6G in 0h8m with 0 errors on Fri Jun  6 14:22:40 2014
+        config:
 
-      NAME          STATE     READ WRITE CKSUM
-      rpool         ONLINE       0     0     0
-        mirror-0    ONLINE       0     0     0
-          c3t5d0s0  ONLINE       0     0     0
-          c3t4d0s0  ONLINE       0     0     0
+              NAME          STATE     READ WRITE CKSUM
+              rpool         ONLINE       0     0     0
+                mirror-0    ONLINE       0     0     0
+                  c3t5d0s0  ONLINE       0     0     0
+                  c3t4d0s0  ONLINE       0     0     0
 
-errors: No known data errors
+        errors: No known data errors
 EOSR
     end
     before do

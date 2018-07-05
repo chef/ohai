@@ -71,7 +71,7 @@ Ohai.plugin(:Network) do
         if $4.empty?
           iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }
         else
-          #found a zone_id / scope
+          # found a zone_id / scope
           iface[cint][:addresses][$1] = { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
         end
       end

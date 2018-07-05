@@ -27,7 +27,7 @@ Ohai.plugin(:Packages) do
       "DisplayVersion" => "version",
       "Publisher" => "publisher",
       "InstallDate" => "installdate",
-    }
+    }.freeze
   end
 
   collect_data(:linux) do

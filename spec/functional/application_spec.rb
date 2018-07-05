@@ -58,8 +58,8 @@ RSpec.describe "Ohai::Application" do
 
         it "logs an error and terminates the application" do
           expect(STDERR).to receive(:puts).with(/FATAL:/)
-          expect(Ohai::Log).to receive(:fatal).
-            with(/Specified config file #{argv[1]} does not exist/)
+          expect(Ohai::Log).to receive(:fatal)
+            .with(/Specified config file #{argv[1]} does not exist/)
           expect { app.configure_ohai }.to raise_error(SystemExit)
         end
       end
@@ -75,8 +75,8 @@ RSpec.describe "Ohai::Application" do
       let(:env) { { "KNIFE_HOME" => config_dir } }
 
       before(:each) do
-        allow_any_instance_of(ChefConfig::WorkstationConfigLoader).
-          to receive(:env).and_return(env)
+        allow_any_instance_of(ChefConfig::WorkstationConfigLoader)
+          .to receive(:env).and_return(env)
       end
 
       it "loads the workstation configuration file" do
@@ -97,8 +97,8 @@ RSpec.describe "Ohai::Application" do
 
       it "logs an error and terminates the application" do
         expect(STDERR).to receive(:puts).with(/FATAL:/)
-        expect(Ohai::Log).to receive(:fatal).
-          with(/You have invalid ruby syntax in your config file/)
+        expect(Ohai::Log).to receive(:fatal)
+          .with(/You have invalid ruby syntax in your config file/)
         expect { app.configure_ohai }.to raise_error(SystemExit)
       end
     end

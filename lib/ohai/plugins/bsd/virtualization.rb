@@ -49,7 +49,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # detect from modules
-    so = shell_out("#{Ohai.abs_path('/sbin/kldstat')}")
+    so = shell_out((Ohai.abs_path("/sbin/kldstat")).to_s)
     so.stdout.lines do |line|
       case line
       when /vboxdrv/

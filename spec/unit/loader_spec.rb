@@ -23,7 +23,7 @@ describe Ohai::Loader do
   extend IntegrationSupport
 
   let(:loader) { Ohai::Loader.new(ohai) }
-  let(:ohai) { double("Ohai::System", :data => Mash.new, :provides_map => provides_map, logger: Ohai::Log) }
+  let(:ohai) { double("Ohai::System", data: Mash.new, provides_map: provides_map, logger: Ohai::Log) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
@@ -34,16 +34,16 @@ describe Ohai::Loader do
   end
 
   when_plugins_directory "is an additional plugin path" do
-    with_plugin("cookbook_a/alpha.rb", <<EOF)
-Ohai.plugin(:Alpha) do
-  provides "alpha"
-end
+    with_plugin("cookbook_a/alpha.rb", <<~EOF)
+      Ohai.plugin(:Alpha) do
+        provides "alpha"
+      end
 EOF
 
-    with_plugin("cookbook_b/beta.rb", <<EOF)
-Ohai.plugin(:Beta) do
-  provides "beta"
-end
+    with_plugin("cookbook_b/beta.rb", <<~EOF)
+      Ohai.plugin(:Beta) do
+        provides "beta"
+      end
 EOF
 
     describe "#load_additional" do
@@ -59,50 +59,50 @@ EOF
   end
 
   when_plugins_directory "contains invalid plugins" do
-    with_plugin("extra_s.rb", <<EOF)
-Ohai.plugins(:ExtraS) do
-  provides "the_letter_s"
-end
+    with_plugin("extra_s.rb", <<~EOF)
+      Ohai.plugins(:ExtraS) do
+        provides "the_letter_s"
+      end
 EOF
 
-    with_plugin("no_method.rb", <<EOF)
-Ohai.plugin(:NoMethod) do
-  really_wants "this_attribute"
-end
+    with_plugin("no_method.rb", <<~EOF)
+      Ohai.plugin(:NoMethod) do
+        really_wants "this_attribute"
+      end
 EOF
 
-    with_plugin("illegal_def.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  collect_data(:darwin) do
-  end
-  collect_data(:darwin) do
-  end
-end
+    with_plugin("illegal_def.rb", <<~EOF)
+      Ohai.plugin(:Zoo) do
+        collect_data(:darwin) do
+        end
+        collect_data(:darwin) do
+        end
+      end
 EOF
 
-    with_plugin("unexpected_error.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  raise "You aren't expecting this."
-end
+    with_plugin("unexpected_error.rb", <<~EOF)
+      Ohai.plugin(:Zoo) do
+        raise "You aren't expecting this."
+      end
 EOF
 
-    with_plugin("bad_symbol.rb", <<EOF)
-Ohai.plugin(:1nval!d) do
-  provides "not_a_symbol"
-end
+    with_plugin("bad_symbol.rb", <<~EOF)
+      Ohai.plugin(:1nval!d) do
+        provides "not_a_symbol"
+      end
 EOF
 
-    with_plugin("no_end.rb", <<EOF)
-Ohai.plugin(:NoEnd) do
-  provides "fish_oil"
-  collect_data do
-end
+    with_plugin("no_end.rb", <<~EOF)
+      Ohai.plugin(:NoEnd) do
+        provides "fish_oil"
+        collect_data do
+      end
 EOF
 
-    with_plugin("bad_name.rb", <<EOF)
-Ohai.plugin(:you_give_plugins_a_bad_name) do
-  provides "that/one/song"
-end
+    with_plugin("bad_name.rb", <<~EOF)
+      Ohai.plugin(:you_give_plugins_a_bad_name) do
+        provides "that/one/song"
+      end
 EOF
 
     describe "load_plugin() method" do

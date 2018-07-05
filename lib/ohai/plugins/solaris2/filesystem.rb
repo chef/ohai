@@ -55,7 +55,7 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       next unless line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/
       filesystem = $2
-      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem] = Mash.new unless fs.key?(filesystem)
       fs[filesystem][:mount] = $1
       fs[filesystem][:mount_time] = $4 # $4 must come before "split", else it becomes nil
       fs[filesystem][:mount_options] = $3.split("/")
@@ -75,17 +75,17 @@ Ohai.plugin(:Filesystem) do
     so.stdout.lines do |line|
       next unless line =~ /^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t]+)$/
       filesystem = $1
-      zfs[filesystem] = Mash.new unless zfs.has_key?(filesystem)
-      zfs[filesystem][:values] = Mash.new unless zfs[filesystem].has_key?("values")
-      zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].has_key?("sources")
+      zfs[filesystem] = Mash.new unless zfs.key?(filesystem)
+      zfs[filesystem][:values] = Mash.new unless zfs[filesystem].key?("values")
+      zfs[filesystem][:sources] = Mash.new unless zfs[filesystem].key?("sources")
       zfs[filesystem][:values][$2] = $3
       zfs[filesystem][:sources][$2] = $4.chomp
     end
 
     zfs.each do |filesystem, attributes|
-      fs[filesystem] = Mash.new unless fs.has_key?(filesystem)
+      fs[filesystem] = Mash.new unless fs.key?(filesystem)
       fs[filesystem][:fs_type] = "zfs"
-      fs[filesystem][:mount] = attributes[:values][:mountpoint] if attributes[:values].has_key?("mountpoint")
+      fs[filesystem][:mount] = attributes[:values][:mountpoint] if attributes[:values].key?("mountpoint")
       fs[filesystem][:zfs_values] = attributes[:values]
       fs[filesystem][:zfs_sources] = attributes[:sources]
       # find all zfs parents

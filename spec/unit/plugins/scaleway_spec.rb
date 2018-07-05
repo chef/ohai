@@ -49,9 +49,9 @@ describe Ohai::System, "plugin scaleway" do
     end
 
     it "should fetch and properly parse json metadata" do
-      expect(@http_client).to receive(:get).
-        with("/conf?format=json").
-        and_return(double("Net::HTTP Response", :body => body, :code => "200"))
+      expect(@http_client).to receive(:get)
+        .with("/conf?format=json")
+        .and_return(double("Net::HTTP Response", body: body, code: "200"))
       plugin.run
 
       expect(plugin[:scaleway]).not_to be_nil
@@ -60,9 +60,9 @@ describe Ohai::System, "plugin scaleway" do
     end
 
     it "should complete the run despite unavailable metadata" do
-      expect(@http_client).to receive(:get).
-        with("/conf?format=json").
-        and_return(double("Net::HTTP Response", :body => "", :code => "404"))
+      expect(@http_client).to receive(:get)
+        .with("/conf?format=json")
+        .and_return(double("Net::HTTP Response", body: "", code: "404"))
       plugin.run
 
       expect(plugin[:scaleway]).not_to be_nil

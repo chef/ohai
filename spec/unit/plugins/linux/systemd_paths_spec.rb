@@ -26,46 +26,46 @@ describe Ohai::System, "Linux systemd paths plugin" do
   end
 
   it "should populate systemd_paths if systemd-path is found" do
-    systemd_path_out = <<-SYSTEMD_PATH_OUT
-temporary: /tmp
-temporary-large: /var/tmp
-system-binaries: /usr/bin
-system-include: /usr/include
-system-library-private: /usr/lib
-system-library-arch: /usr/lib/x86_64-linux-gnu
-system-shared: /usr/share
-system-configuration-factory: /usr/share/factory/etc
-system-state-factory: /usr/share/factory/var
-system-configuration: /etc
-system-runtime: /run
-system-runtime-logs: /run/log
-system-state-private: /var/lib
-system-state-logs: /var/log
-system-state-cache: /var/cache
-system-state-spool: /var/spool
-user-binaries: /home/foo/.local/bin
-user-library-private: /home/foo/.local/lib
-user-library-arch: /home/foo/.local/lib/x86_64-linux-gnu
-user-shared: /home/foo/.local/share
-user-configuration: /home/foo/.config
-user-runtime: /run/user/1000
-user-state-cache: /home/foo/.cache
-user: /home/foo
-user-documents: /home/foo/Documents
-user-music: /home/foo/Music
-user-pictures: /home/foo/Pictures
-user-videos: /home/foo/Videos
-user-download: /home/foo/Downloads
-user-public: /home/foo/Public
-user-templates: /home/foo/Templates
-user-desktop: /home/foo/Desktop
-search-binaries: /home/foo/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/opt/facebook/bin:/home/foo/.rvm/bin:/home/foo/.rvm/bin
-search-library-private: /home/foo/.local/lib:/usr/local/lib:/usr/lib:/lib
-search-library-arch: /home/foo/.local/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu
-search-shared: /home/foo/.local/share:/usr/share/gnome:/home/foo/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
-search-configuration-factory: /usr/local/share/factory/etc:/usr/share/factory/etc
-search-state-factory: /usr/local/share/factory/var:/usr/share/factory/var
-search-configuration: /home/foo/.config:/etc
+    systemd_path_out = <<~SYSTEMD_PATH_OUT
+      temporary: /tmp
+      temporary-large: /var/tmp
+      system-binaries: /usr/bin
+      system-include: /usr/include
+      system-library-private: /usr/lib
+      system-library-arch: /usr/lib/x86_64-linux-gnu
+      system-shared: /usr/share
+      system-configuration-factory: /usr/share/factory/etc
+      system-state-factory: /usr/share/factory/var
+      system-configuration: /etc
+      system-runtime: /run
+      system-runtime-logs: /run/log
+      system-state-private: /var/lib
+      system-state-logs: /var/log
+      system-state-cache: /var/cache
+      system-state-spool: /var/spool
+      user-binaries: /home/foo/.local/bin
+      user-library-private: /home/foo/.local/lib
+      user-library-arch: /home/foo/.local/lib/x86_64-linux-gnu
+      user-shared: /home/foo/.local/share
+      user-configuration: /home/foo/.config
+      user-runtime: /run/user/1000
+      user-state-cache: /home/foo/.cache
+      user: /home/foo
+      user-documents: /home/foo/Documents
+      user-music: /home/foo/Music
+      user-pictures: /home/foo/Pictures
+      user-videos: /home/foo/Videos
+      user-download: /home/foo/Downloads
+      user-public: /home/foo/Public
+      user-templates: /home/foo/Templates
+      user-desktop: /home/foo/Desktop
+      search-binaries: /home/foo/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/opt/facebook/bin:/home/foo/.rvm/bin:/home/foo/.rvm/bin
+      search-library-private: /home/foo/.local/lib:/usr/local/lib:/usr/lib:/lib
+      search-library-arch: /home/foo/.local/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu
+      search-shared: /home/foo/.local/share:/usr/share/gnome:/home/foo/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share
+      search-configuration-factory: /usr/local/share/factory/etc:/usr/share/factory/etc
+      search-state-factory: /usr/local/share/factory/var:/usr/share/factory/var
+      search-configuration: /home/foo/.config:/etc
 SYSTEMD_PATH_OUT
 
     allow(plugin).to receive(:which).with("systemd-path").and_return("/bin/systemd-path")

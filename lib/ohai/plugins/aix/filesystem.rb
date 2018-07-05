@@ -72,7 +72,7 @@ Ohai.plugin(:Filesystem) do
     df_hash    = parse_df_or_mount shell_outs[:df_Pk]
 
     mount_hash.each do |key, hash|
-      df_hash[key].merge!(hash) if df_hash.has_key?(key)
+      df_hash[key].merge!(hash) if df_hash.key?(key)
     end
 
     mount_hash.merge(df_hash)

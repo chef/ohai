@@ -36,7 +36,7 @@ describe Ohai::System, "plugin gce" do
   shared_examples_for "gce" do
     before(:each) do
       @http_get = double("Net::HTTP client")
-      allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", :body => '{"instance":{"hostname":"test-host"}}', :code => "200"))
+      allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", body: '{"instance":{"hostname":"test-host"}}', code: "200"))
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)

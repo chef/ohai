@@ -21,7 +21,7 @@ require_relative "../../../spec_helper.rb"
 describe Ohai::System, "Windows plugin uptime" do
 
   let(:plugin) { get_plugin("uptime") }
-  let(:wmi) { double("wmi", { :first_of => "" }) }
+  let(:wmi) { double("wmi", { first_of: "" }) }
 
   before(:each) do
     allow(WmiLite::Wmi).to receive(:new).and_return(wmi)

@@ -23,17 +23,17 @@ describe Ohai::System, "plugin mono" do
 
   before(:each) do
     plugin[:languages] = Mash.new
-    @stdout = <<-OUT
-Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)
-Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
-	TLS:           normal
-	SIGSEGV:       altstack
-	Notification:  kqueue
-	Architecture:  amd64
-	Disabled:      none
-	Misc:          softdebug
-	LLVM:          supported, not enabled.
-	GC:            sgen
+    @stdout = <<~OUT
+      Mono JIT compiler version 4.2.3 (Stable 4.2.3.4/832de4b Wed Mar 30 13:57:48 PDT 2016)
+      Copyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com
+      	TLS:           normal
+      	SIGSEGV:       altstack
+      	Notification:  kqueue
+      	Architecture:  amd64
+      	Disabled:      none
+      	Misc:          softdebug
+      	LLVM:          supported, not enabled.
+      	GC:            sgen
 OUT
     allow(plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end

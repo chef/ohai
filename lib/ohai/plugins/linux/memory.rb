@@ -85,13 +85,13 @@ Ohai.plugin(:Memory) do
       when /^SwapFree:\s+(\d+) (.+)$/
         memory[:swap][:free] = "#{$1}#{$2}"
       when /^HugePages_Total:\s+(\d+)$/
-        memory[:hugepages][:total] = "#{$1}"
+        memory[:hugepages][:total] = $1.to_s
       when /^HugePages_Free:\s+(\d+)$/
-        memory[:hugepages][:free] = "#{$1}"
+        memory[:hugepages][:free] = $1.to_s
       when /^HugePages_Rsvd:\s+(\d+)$/
-        memory[:hugepages][:reserved] = "#{$1}"
+        memory[:hugepages][:reserved] = $1.to_s
       when /^HugePages_Surp:\s+(\d+)$/
-        memory[:hugepages][:surplus] = "#{$1}"
+        memory[:hugepages][:surplus] = $1.to_s
       when /^Hugepagesize:\s+(\d+) (.+)$/
         memory[:hugepage_size] = "#{$1}#{$2}"
       end

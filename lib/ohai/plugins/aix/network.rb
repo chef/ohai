@@ -120,7 +120,7 @@ Ohai.plugin(:Network) do
           macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
         end
       end
-    end #ifconfig stdout
+    end # ifconfig stdout
 
     # Query routes information
     %w{inet inet6}.each do |family|
@@ -129,8 +129,8 @@ Ohai.plugin(:Network) do
         if line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\d+)\s+(\S+)/
           interface = $6
           iface[interface][:routes] = Array.new unless iface[interface][:routes]
-          iface[interface][:routes] << Mash.new( :destination => $1, :family => family,
-                                                 :via => $2, :flags => $3)
+          iface[interface][:routes] << Mash.new( destination: $1, family: family,
+                                                 via: $2, flags: $3)
         end
       end
     end

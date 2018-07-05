@@ -26,11 +26,11 @@ Ohai.plugin(:Lspci) do
     devices = Mash.new
     lspci = shell_out("lspci -vnnmk")
 
-    h = /[0-9a-fA-F]/ #any hex digit
-    hh = /#{h}#{h}/ #any 2 hex digits
-    hhhh = /#{h}#{h}#{h}#{h}/ #any 4 hex digits
+    h = /[0-9a-fA-F]/ # any hex digit
+    hh = /#{h}#{h}/ # any 2 hex digits
+    hhhh = /#{h}#{h}#{h}#{h}/ # any 4 hex digits
 
-    d_id = String.new #This identifies our pci devices
+    d_id = String.new # This identifies our pci devices
 
     def standard_form(devices, d_id, hhhh, tag, line)
       tmp = line.scan(/(.*)\s\[(#{hhhh})\]/)[0]

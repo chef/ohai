@@ -929,7 +929,7 @@ describe Ohai::System, "Network Plugin" do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
               @plugin["network"]["interfaces"].each_value do |val|
-                if val.has_key? "addresses"
+                if val.key? "addresses"
                   val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
@@ -1014,7 +1014,7 @@ describe Ohai::System, "Network Plugin" do
               @plugin["network"]["default_gateway"] = nil
               @plugin["network"]["default_interface"] = nil
               @plugin["network"]["interfaces"].each_value do |val|
-                if val.has_key? "addresses"
+                if val.key? "addresses"
                   val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end

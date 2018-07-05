@@ -101,8 +101,8 @@ Ohai.plugin(:Network) do
           next
         end
 
-        route_entry = Mash.new(:destination => route_dest,
-                               :family => family[:name])
+        route_entry = Mash.new(destination: route_dest,
+                               family: family[:name])
         %w{via scope metric proto src}.each do |k|
           # http://rubular.com/r/pwTNp65VFf
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
@@ -113,7 +113,7 @@ Ohai.plugin(:Network) do
         # unless the interface has no addresses of this type at all
         if route_entry[:src]
           addr = iface[route_int][:addresses]
-          unless addr.nil? || addr.has_key?(route_entry[:src]) ||
+          unless addr.nil? || addr.key?(route_entry[:src]) ||
               addr.values.all? { |a| a["family"] != family[:name] }
             logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
             next
@@ -140,7 +140,7 @@ Ohai.plugin(:Network) do
     iface.collect do |i, iv|
       if iv[:routes]
         iv[:routes].collect do |r|
-          r.merge(:dev => i) if r[:family] == family[:name]
+          r.merge(dev: i) if r[:family] == family[:name]
         end.compact
       end
     end.compact.flatten
@@ -496,18 +496,18 @@ Ohai.plugin(:Network) do
     if which("ip")
       # families to get default routes from
       families = [{
-                    :name => "inet",
-                    :default_route => "0.0.0.0/0",
-                    :default_prefix => :default,
-                    :neighbour_attribute => :arp,
+                    name: "inet",
+                    default_route: "0.0.0.0/0",
+                    default_prefix: :default,
+                    neighbour_attribute: :arp,
                   }]
 
       if ipv6_enabled?
         families << {
-                      :name => "inet6",
-                      :default_route => "::/0",
-                      :default_prefix => :default_inet6,
-                      :neighbour_attribute => :neighbour_inet6,
+                      name: "inet6",
+                      default_route: "::/0",
+                      default_prefix: :default_inet6,
+                      neighbour_attribute: :neighbour_inet6,
                     }
       end
 

@@ -27,18 +27,18 @@ describe Ohai::System, "Solaris plugin platform" do
 
   describe "on SmartOS" do
     before(:each) do
-      @uname_x = <<-UNAME_X
-System = SunOS
-Node = node.example.com
-Release = 5.11
-KernelID = joyent_20120130T201844Z
-Machine = i86pc
-BusType = <unknown>
-Serial = <unknown>
-Users = <unknown>
-OEM# = 0
-Origin# = 1
-NumCPU = 16
+      @uname_x = <<~UNAME_X
+        System = SunOS
+        Node = node.example.com
+        Release = 5.11
+        KernelID = joyent_20120130T201844Z
+        Machine = i86pc
+        BusType = <unknown>
+        Serial = <unknown>
+        Users = <unknown>
+        OEM# = 0
+        Origin# = 1
+        NumCPU = 16
 UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
@@ -67,18 +67,18 @@ UNAME_X
 
   describe "on Solaris 11" do
     before(:each) do
-      @uname_x = <<-UNAME_X
-System = SunOS
-Node = node.example.com
-Release = 5.11
-KernelID = 11.1
-Machine = i86pc
-BusType = <unknown>
-Serial = <unknown>
-Users = <unknown>
-OEM# = 0
-Origin# = 1
-NumCPU = 1
+      @uname_x = <<~UNAME_X
+        System = SunOS
+        Node = node.example.com
+        Release = 5.11
+        KernelID = 11.1
+        Machine = i86pc
+        BusType = <unknown>
+        Serial = <unknown>
+        Users = <unknown>
+        OEM# = 0
+        Origin# = 1
+        NumCPU = 1
 UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)

@@ -30,19 +30,19 @@ Ohai.plugin(:Ruby) do
     languages[:ruby] = Mash.new
 
     values = {
-      :platform => "RUBY_PLATFORM",
-      :version => "RUBY_VERSION",
-      :release_date => "RUBY_RELEASE_DATE",
-      :target => "RbConfig::CONFIG['target']",
-      :target_cpu => "RbConfig::CONFIG['target_cpu']",
-      :target_vendor => "RbConfig::CONFIG['target_vendor']",
-      :target_os => "RbConfig::CONFIG['target_os']",
-      :host => "RbConfig::CONFIG['host']",
-      :host_cpu => "RbConfig::CONFIG['host_cpu']",
-      :host_os => "RbConfig::CONFIG['host_os']",
-      :host_vendor => "RbConfig::CONFIG['host_vendor']",
-      :bin_dir => "RbConfig::CONFIG['bindir']",
-      :ruby_bin => "::File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])",
+      platform: "RUBY_PLATFORM",
+      version: "RUBY_VERSION",
+      release_date: "RUBY_RELEASE_DATE",
+      target: "RbConfig::CONFIG['target']",
+      target_cpu: "RbConfig::CONFIG['target_cpu']",
+      target_vendor: "RbConfig::CONFIG['target_vendor']",
+      target_os: "RbConfig::CONFIG['target_os']",
+      host: "RbConfig::CONFIG['host']",
+      host_cpu: "RbConfig::CONFIG['host_cpu']",
+      host_os: "RbConfig::CONFIG['host_os']",
+      host_vendor: "RbConfig::CONFIG['host_vendor']",
+      bin_dir: "RbConfig::CONFIG['bindir']",
+      ruby_bin: "::File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])",
     }
 
     # Create a query string from above hash

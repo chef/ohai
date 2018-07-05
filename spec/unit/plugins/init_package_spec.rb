@@ -28,7 +28,7 @@ describe Ohai::System, "Init package" do
   let(:proc1_content) { "init\n" }
   let(:proc1_exists) { true }
   let(:proc_1_file_path) { "/proc/1/comm" }
-  let(:proc_1_file) { double(proc_1_file_path, :gets => proc1_content) }
+  let(:proc_1_file) { double(proc_1_file_path, gets: proc1_content) }
 
   before(:each) do
     allow(File).to receive(:exist?).with(proc_1_file_path).and_return(proc1_exists)

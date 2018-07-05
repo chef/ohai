@@ -55,7 +55,7 @@ shared_examples "a v7 loading failure" do
 
   it "should not have attribute keys" do
     @loader.load_plugin("#{tmp}/plugins/fail.rb")
-    #@ohai.attributes.should_not have_key("fail")
+    # @ohai.attributes.should_not have_key("fail")
     expect { @ohai.provides_map.find_providers_for(["fail"]) }.to raise_error(Ohai::Exceptions::AttributeNotFound)
   end
 
@@ -152,23 +152,23 @@ shared_examples "a v7 run failure" do
 end
 
 describe "when using DSL commands outside Ohai.plugin block" do
-  failstr1 = <<EOF
-provides "fail"
-Ohai.plugin do
-end
+  failstr1 = <<~EOF
+    provides "fail"
+    Ohai.plugin do
+    end
 EOF
 
-  failstr2 = <<EOF
-depends "fail"
-Ohai.plugin do
-end
+  failstr2 = <<~EOF
+    depends "fail"
+    Ohai.plugin do
+    end
 EOF
 
-  failstr3 = <<EOF
-collect_data do
-end
-Ohai.plugin do
-end
+  failstr3 = <<~EOF
+    collect_data do
+    end
+    Ohai.plugin do
+    end
 EOF
 
   it_behaves_like "a v7 loading failure" do

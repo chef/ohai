@@ -30,21 +30,21 @@ RSpec.describe Ohai::Config do
       end
 
       it "gets configured with a Hash" do
-        value = { :bar => true, :baz => true }
+        value = { bar: true, baz: true }
         Ohai::Config.ohai[:plugin][:foo] = value
         expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
         expect(Ohai::Config.ohai[:plugin][:foo]).to eq(value)
       end
 
       it "raises an error if the plugin name is not a symbol" do
-        expect { Ohai::Config.ohai[:plugin]["foo"] = false }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+        expect { Ohai::Config.ohai[:plugin]["foo"] = false }
+          .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
       it "raises an error if the value Hash has non-Symbol key" do
         value = { :bar => true, "baz" => true }
-        expect { Ohai::Config.ohai[:plugin][:foo] = value }.
-          to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
+        expect { Ohai::Config.ohai[:plugin][:foo] = value }
+          .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
     end
   end

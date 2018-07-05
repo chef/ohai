@@ -181,16 +181,16 @@ describe Ohai::System, "Linux plugin platform" do
 
       let(:have_cumulus_dir) { true }
       let(:cumulus_release_content) do
-        <<-OS_RELEASE
-NAME="Cumulus Linux"
-VERSION_ID=3.1.2
-VERSION="Cumulus Linux 3.1.2"
-PRETTY_NAME="Cumulus Linux"
-ID=cumulus-linux
-ID_LIKE=debian
-CPE_NAME=cpe:/o:cumulusnetworks:cumulus_linux:3.1.2
-HOME_URL="http://www.cumulusnetworks.com/"
-SUPPORT_URL="http://support.cumulusnetworks.com/"
+        <<~OS_RELEASE
+          NAME="Cumulus Linux"
+          VERSION_ID=3.1.2
+          VERSION="Cumulus Linux 3.1.2"
+          PRETTY_NAME="Cumulus Linux"
+          ID=cumulus-linux
+          ID_LIKE=debian
+          CPE_NAME=cpe:/o:cumulusnetworks:cumulus_linux:3.1.2
+          HOME_URL="http://www.cumulusnetworks.com/"
+          SUPPORT_URL="http://support.cumulusnetworks.com/"
 
 OS_RELEASE
       end
@@ -465,17 +465,17 @@ OS_RELEASE
         let(:have_os_release) { true }
 
         let(:os_release_content) do
-          <<-OS_RELEASE
-NAME="CentOS Linux"
-VERSION="7 (Core)"
-ID="centos"
-ID_LIKE="rhel fedora"
-VERSION_ID="7"
-PRETTY_NAME="CentOS Linux 7 (Core)"
-ANSI_COLOR="0;31"
-CPE_NAME="cpe:/o:centos:centos:7"
-HOME_URL="https://www.centos.org/"
-BUG_REPORT_URL="https://bugs.centos.org/"
+          <<~OS_RELEASE
+            NAME="CentOS Linux"
+            VERSION="7 (Core)"
+            ID="centos"
+            ID_LIKE="rhel fedora"
+            VERSION_ID="7"
+            PRETTY_NAME="CentOS Linux 7 (Core)"
+            ANSI_COLOR="0;31"
+            CPE_NAME="cpe:/o:centos:centos:7"
+            HOME_URL="https://www.centos.org/"
+            BUG_REPORT_URL="https://bugs.centos.org/"
 
 OS_RELEASE
         end
@@ -498,40 +498,40 @@ OS_RELEASE
         let(:have_os_release) { true }
 
         let(:os_release_content) do
-          <<-OS_RELEASE
-NAME="CentOS Linux"
-VERSION="7 (Core)"
-ID="centos"
-ID_LIKE="rhel fedora"
-VERSION_ID="7"
-PRETTY_NAME="CentOS Linux 7 (Core)"
-ANSI_COLOR="0;31"
-CPE_NAME="cpe:/o:centos:centos:7"
-HOME_URL="https://www.centos.org/"
-BUG_REPORT_URL="https://bugs.centos.org/"
+          <<~OS_RELEASE
+            NAME="CentOS Linux"
+            VERSION="7 (Core)"
+            ID="centos"
+            ID_LIKE="rhel fedora"
+            VERSION_ID="7"
+            PRETTY_NAME="CentOS Linux 7 (Core)"
+            ANSI_COLOR="0;31"
+            CPE_NAME="cpe:/o:centos:centos:7"
+            HOME_URL="https://www.centos.org/"
+            BUG_REPORT_URL="https://bugs.centos.org/"
 
-CENTOS_MANTISBT_PROJECT="CentOS-7"
-CENTOS_MANTISBT_PROJECT_VERSION="7"
-REDHAT_SUPPORT_PRODUCT="centos"
-REDHAT_SUPPORT_PRODUCT_VERSION="7"
+            CENTOS_MANTISBT_PROJECT="CentOS-7"
+            CENTOS_MANTISBT_PROJECT_VERSION="7"
+            REDHAT_SUPPORT_PRODUCT="centos"
+            REDHAT_SUPPORT_PRODUCT_VERSION="7"
 
-CISCO_RELEASE_INFO=/etc/shared/os-release
+            CISCO_RELEASE_INFO=/etc/shared/os-release
 OS_RELEASE
         end
 
         let(:have_cisco_release) { true }
 
         let(:cisco_release_content) do
-          <<-CISCO_RELEASE
-ID=nexus
-ID_LIKE=wrlinux
-NAME=Nexus
-VERSION="7.0(3)I2(0.475E.6)"
-VERSION_ID="7.0(3)I2"
-PRETTY_NAME="Nexus 7.0(3)I2"
-HOME_URL=http://www.cisco.com
-BUILD_ID=6
-CISCO_RELEASE_INFO=/etc/os-release
+          <<~CISCO_RELEASE
+            ID=nexus
+            ID_LIKE=wrlinux
+            NAME=Nexus
+            VERSION="7.0(3)I2(0.475E.6)"
+            VERSION_ID="7.0(3)I2"
+            PRETTY_NAME="Nexus 7.0(3)I2"
+            HOME_URL=http://www.cisco.com
+            BUILD_ID=6
+            CISCO_RELEASE_INFO=/etc/os-release
 CISCO_RELEASE
         end
 
@@ -692,14 +692,14 @@ CISCO_RELEASE
       let(:have_os_release) { true }
 
       let(:os_release_content) do
-        <<-OS_RELEASE
-VERSION="15"
-VERSION_ID="15"
-PRETTY_NAME="SUSE Linux Enterprise Server 15"
-ID="sles"
-ID_LIKE="suse"
-ANSI_COLOR="0;32"
-CPE_NAME="cpe:/o:suse:sles:15"
+        <<~OS_RELEASE
+          VERSION="15"
+          VERSION_ID="15"
+          PRETTY_NAME="SUSE Linux Enterprise Server 15"
+          ID="sles"
+          ID_LIKE="suse"
+          ANSI_COLOR="0;32"
+          CPE_NAME="cpe:/o:suse:sles:15"
 
 OS_RELEASE
       end
@@ -945,17 +945,17 @@ OS_RELEASE
   describe "on clearlinux" do
     let(:have_usr_lib_os_release) { true }
     let(:usr_lib_os_release_content) do
-      <<-CLEARLINUX_RELEASE
-NAME="Clear Linux Software for Intel Architecture"
-VERSION=1
-ID=clear-linux-os
-VERSION_ID=16140
-PRETTY_NAME="Clear Linux OS for Intel Architecture"
-ANSI_COLOR="1;35"
-HOME_URL="https://clearlinux.org"
-SUPPORT_URL="https://clearlinux.org"
-BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
-PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+      <<~CLEARLINUX_RELEASE
+        NAME="Clear Linux Software for Intel Architecture"
+        VERSION=1
+        ID=clear-linux-os
+        VERSION_ID=16140
+        PRETTY_NAME="Clear Linux OS for Intel Architecture"
+        ANSI_COLOR="1;35"
+        HOME_URL="https://clearlinux.org"
+        SUPPORT_URL="https://clearlinux.org"
+        BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+        PRIVACY_POLICY_URL="http://www.intel.com/privacy"
 CLEARLINUX_RELEASE
     end
 

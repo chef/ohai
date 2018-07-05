@@ -37,7 +37,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
   end
 
   def make_res(body)
-    double("response", { :body => body, :code => "200" })
+    double("response", { body: body, code: "200" })
   end
 
   context "fetch_metadata" do

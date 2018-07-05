@@ -87,28 +87,28 @@ describe "Ohai::System" do
   end
 
   when_plugins_directory "contains directories inside" do
-    with_plugin("repo1/zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  provides 'seals'
-end
+    with_plugin("repo1/zoo.rb", <<~EOF)
+      Ohai.plugin(:Zoo) do
+        provides 'seals'
+      end
 EOF
 
-    with_plugin("repo1/lake.rb", <<EOF)
-Ohai.plugin(:Nature) do
-provides 'fish'
-end
+    with_plugin("repo1/lake.rb", <<~EOF)
+      Ohai.plugin(:Nature) do
+      provides 'fish'
+      end
 EOF
 
-    with_plugin("repo2/nature.rb", <<EOF)
-Ohai.plugin(:Nature) do
-  provides 'crabs'
-end
+    with_plugin("repo2/nature.rb", <<~EOF)
+      Ohai.plugin(:Nature) do
+        provides 'crabs'
+      end
 EOF
 
-    with_plugin("repo2/mountain.rb", <<EOF)
-Ohai.plugin(:Nature) do
-provides 'bear'
-end
+    with_plugin("repo2/mountain.rb", <<~EOF)
+      Ohai.plugin(:Nature) do
+      provides 'bear'
+      end
 EOF
 
     before do
@@ -127,18 +127,18 @@ EOF
 
   describe "when running plugins" do
     when_plugins_directory "contains a v7 plugins with :default and platform specific blocks" do
-      with_plugin("message.rb", <<EOF)
-Ohai.plugin(:Message) do
-  provides 'message'
+      with_plugin("message.rb", <<~EOF)
+        Ohai.plugin(:Message) do
+          provides 'message'
 
-  collect_data(:default) do
-    message("default")
-  end
+          collect_data(:default) do
+            message("default")
+          end
 
-  collect_data(:#{Ohai::Mixin::OS.collect_os}) do
-    message("platform_specific_message")
-  end
-end
+          collect_data(:#{Ohai::Mixin::OS.collect_os}) do
+            message("platform_specific_message")
+          end
+        end
 EOF
 
       it "should collect platform specific" do
@@ -149,43 +149,43 @@ EOF
     end
 
     when_plugins_directory "contains v7 plugins only" do
-      with_plugin("zoo.rb", <<EOF)
-Ohai.plugin(:Zoo) do
-  provides 'zoo'
+      with_plugin("zoo.rb", <<~EOF)
+        Ohai.plugin(:Zoo) do
+          provides 'zoo'
 
-  collect_data(:default) do
-    zoo("animals")
-  end
-end
+          collect_data(:default) do
+            zoo("animals")
+          end
+        end
 EOF
 
-      with_plugin("park.rb", <<EOF)
-Ohai.plugin(:Park) do
-  provides 'park'
-  collect_data(:default) do
-    park("plants")
-  end
-end
+      with_plugin("park.rb", <<~EOF)
+        Ohai.plugin(:Park) do
+          provides 'park'
+          collect_data(:default) do
+            park("plants")
+          end
+        end
 EOF
 
-      with_plugin("fails.rb", <<EOF)
-Ohai.plugin(:Fails) do
-  provides 'fails'
-  collect_data(:default) do
-    fail 'thing'
-  end
-end
+      with_plugin("fails.rb", <<~EOF)
+        Ohai.plugin(:Fails) do
+          provides 'fails'
+          collect_data(:default) do
+            fail 'thing'
+          end
+        end
 EOF
 
-      with_plugin("optional.rb", <<EOF)
-Ohai.plugin(:Optional) do
-  provides 'optional'
-  optional true
+      with_plugin("optional.rb", <<~EOF)
+        Ohai.plugin(:Optional) do
+          provides 'optional'
+          optional true
 
-  collect_data(:default) do
-    optional("canteloupe")
-  end
-end
+          collect_data(:default) do
+            optional("canteloupe")
+          end
+        end
 EOF
 
       it "should collect data from all the plugins" do

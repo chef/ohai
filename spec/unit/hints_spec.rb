@@ -42,8 +42,8 @@ describe "Ohai::Hints" do
   end
 
   when_plugins_directory "contains empty and full hints" do
-    with_plugin("cloud.json", <<EOF)
-{"name":"circus"}
+    with_plugin("cloud.json", <<~EOF)
+      {"name":"circus"}
 EOF
 
     with_plugin("cloud_empty.json", <<EOF)

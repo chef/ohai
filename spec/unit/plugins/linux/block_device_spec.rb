@@ -33,7 +33,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
       "size" => "7806976",
       "removable" => "0",
     },
-  }
+  }.freeze
 
   def file_double(value)
     tmp_double = double

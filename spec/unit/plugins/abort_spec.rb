@@ -20,13 +20,13 @@ require_relative "../../spec_helper.rb"
 
 tmp = ENV["TMPDIR"] || ENV["TMP"] || ENV["TEMP"] || "/tmp"
 
-abortstr = <<EOF
-Ohai.plugin(:Abort) do
-  provides "abort_test"
-  collect_data do
-    abort
+abortstr = <<~EOF
+  Ohai.plugin(:Abort) do
+    provides "abort_test"
+    collect_data do
+      abort
+    end
   end
-end
 EOF
 
 describe "a plug-in that aborts execution" do

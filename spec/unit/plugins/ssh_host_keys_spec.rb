@@ -75,12 +75,12 @@ describe Ohai::System, "ssh_host_key plugin" do
 
   context "when an sshd_config exists" do
     let :sshd_config_file do
-      <<EOS
-# HostKeys for protocol version 2
-HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_dsa_key
-HostKey /etc/ssh/ssh_host_ecdsa_key
-HostKey /etc/ssh/ssh_host_ed25519_key
+      <<~EOS
+        # HostKeys for protocol version 2
+        HostKey /etc/ssh/ssh_host_rsa_key
+        HostKey /etc/ssh/ssh_host_dsa_key
+        HostKey /etc/ssh/ssh_host_ecdsa_key
+        HostKey /etc/ssh/ssh_host_ed25519_key
 EOS
     end
     it_behaves_like "loads keys"
@@ -88,12 +88,12 @@ EOS
 
   context "when an sshd_config exists with commented entries" do
     let :sshd_config_file do
-      <<EOS
-# HostKeys for protocol version 2
-#HostKey /etc/ssh/ssh_host_rsa_key
-#HostKey /etc/ssh/ssh_host_dsa_key
-#HostKey /etc/ssh/ssh_host_ecdsa_key
-#HostKey /etc/ssh/ssh_host_ed25519_key
+      <<~EOS
+        # HostKeys for protocol version 2
+        #HostKey /etc/ssh/ssh_host_rsa_key
+        #HostKey /etc/ssh/ssh_host_dsa_key
+        #HostKey /etc/ssh/ssh_host_ecdsa_key
+        #HostKey /etc/ssh/ssh_host_ed25519_key
 EOS
     end
     it_behaves_like "loads keys"

@@ -20,23 +20,23 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin Memory Plugin" do
   before(:each) do
-    darwin_memsize = <<-DARWIN_MEMSIZE
-17179869184
+    darwin_memsize = <<~DARWIN_MEMSIZE
+      17179869184
     DARWIN_MEMSIZE
-    darwin_vm_stat = <<-DARWIN_VM_STAT
-Mach Virtual Memory Statistics: (page size of 4096 bytes)
-Pages free:                        2155305.
-Pages active:                       924164.
-Pages inactive:                     189127.
-Pages speculative:                  531321.
-Pages wired down:                   391749.
-"Translation faults":             14107520.
-Pages copy-on-write:                810071.
-Pages zero filled:                 6981505.
-Pages reactivated:                    1397.
-Pageins:                            630064.
-Pageouts:                                0.
-Object cache: 12 hits of 139872 lookups (0% hit rate)
+    darwin_vm_stat = <<~DARWIN_VM_STAT
+      Mach Virtual Memory Statistics: (page size of 4096 bytes)
+      Pages free:                        2155305.
+      Pages active:                       924164.
+      Pages inactive:                     189127.
+      Pages speculative:                  531321.
+      Pages wired down:                   391749.
+      "Translation faults":             14107520.
+      Pages copy-on-write:                810071.
+      Pages zero filled:                 6981505.
+      Pages reactivated:                    1397.
+      Pageins:                            630064.
+      Pageouts:                                0.
+      Object cache: 12 hits of 139872 lookups (0% hit rate)
     DARWIN_VM_STAT
 
     @plugin = get_plugin("darwin/memory")

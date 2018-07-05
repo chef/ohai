@@ -20,7 +20,7 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data(:darwin) do
-    so = shell_out("#{Ohai.abs_path( "/usr/bin/sw_vers" )}")
+    so = shell_out((Ohai.abs_path( "/usr/bin/sw_vers" )).to_s)
     so.stdout.lines do |line|
       case line
       when /^ProductName:\s+(.+)$/

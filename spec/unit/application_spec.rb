@@ -43,13 +43,13 @@ RSpec.describe "Ohai::Application" do
 
         before(:each) do
           if windows?
-            expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-              with("C:#{config_file}", Ohai::Log).
-              and_return(config_loader)
+            expect(ChefConfig::WorkstationConfigLoader).to receive(:new)
+              .with("C:#{config_file}", Ohai::Log)
+              .and_return(config_loader)
           else
-            expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-              with(config_file, Ohai::Log).
-              and_return(config_loader)
+            expect(ChefConfig::WorkstationConfigLoader).to receive(:new)
+              .with(config_file, Ohai::Log)
+              .and_return(config_loader)
           end
         end
 
@@ -69,9 +69,9 @@ RSpec.describe "Ohai::Application" do
 
       context "when a local workstation config exists" do
         before(:each) do
-          expect(ChefConfig::WorkstationConfigLoader).to receive(:new).
-            with(nil, Ohai::Log).
-            and_return(config_loader)
+          expect(ChefConfig::WorkstationConfigLoader).to receive(:new)
+            .with(nil, Ohai::Log)
+            .and_return(config_loader)
         end
 
         it "loads the configuration file" do
@@ -86,8 +86,8 @@ RSpec.describe "Ohai::Application" do
       let(:directory) { "/some/fantastic/plugins" }
 
       it "does not generate deprecated config warnings for cli options" do
-        expect(Ohai::Log).to_not receive(:warn).
-          with(/Ohai::Config\[:directory\] is deprecated/)
+        expect(Ohai::Log).to_not receive(:warn)
+          .with(/Ohai::Config\[:directory\] is deprecated/)
         app.configure_ohai
       end
     end

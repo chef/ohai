@@ -22,69 +22,69 @@ describe Ohai::System, "Linux lspci plugin" do
   let(:plugin) { get_plugin("linux/lspci") }
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
-    @stdout = <<LSPCI
-Device:	00:1f.3
-Class:	Audio device [0403]
-Vendor:	Intel Corporation [8086]
-Device:	Sunrise Point-LP HD Audio [9d71]
-SVendor:	Lenovo [17aa]
-SDevice:	Sunrise Point-LP HD Audio [224e]
-Rev:	21
-Driver:	snd_hda_intel
-Module:	snd_hda_intel
-Module:	snd_soc_skl
+    @stdout = <<~LSPCI
+      Device:	00:1f.3
+      Class:	Audio device [0403]
+      Vendor:	Intel Corporation [8086]
+      Device:	Sunrise Point-LP HD Audio [9d71]
+      SVendor:	Lenovo [17aa]
+      SDevice:	Sunrise Point-LP HD Audio [224e]
+      Rev:	21
+      Driver:	snd_hda_intel
+      Module:	snd_hda_intel
+      Module:	snd_soc_skl
 
-Device:	00:1f.4
-Class:	SMBus [0c05]
-Vendor:	Intel Corporation [8086]
-Device:	Sunrise Point-LP SMBus [9d23]
-SVendor:	Lenovo [17aa]
-SDevice:	Sunrise Point-LP SMBus [224e]
-Rev:	21
-Driver:	i801_smbus
-Module:	i2c_i801
+      Device:	00:1f.4
+      Class:	SMBus [0c05]
+      Vendor:	Intel Corporation [8086]
+      Device:	Sunrise Point-LP SMBus [9d23]
+      SVendor:	Lenovo [17aa]
+      SDevice:	Sunrise Point-LP SMBus [224e]
+      Rev:	21
+      Driver:	i801_smbus
+      Module:	i2c_i801
 
-Device:	00:1f.6
-Class:	Ethernet controller [0200]
-Vendor:	Intel Corporation [8086]
-Device:	Ethernet Connection (4) I219-LM [15d7]
-SVendor:	Lenovo [17aa]
-SDevice:	Ethernet Connection (4) I219-LM [224e]
-Rev:	21
-Driver:	e1000e
-Module:	e1000e
+      Device:	00:1f.6
+      Class:	Ethernet controller [0200]
+      Vendor:	Intel Corporation [8086]
+      Device:	Ethernet Connection (4) I219-LM [15d7]
+      SVendor:	Lenovo [17aa]
+      SDevice:	Ethernet Connection (4) I219-LM [224e]
+      Rev:	21
+      Driver:	e1000e
+      Module:	e1000e
 
-Device:	02:00.0
-Class:	Unassigned class [ff00]
-Vendor:	Realtek Semiconductor Co., Ltd. [10ec]
-Device:	RTS525A PCI Express Card Reader [525a]
-SVendor:	Lenovo [17aa]
-SDevice:	RTS525A PCI Express Card Reader [224e]
-Rev:	01
-Driver:	rtsx_pci
-Module:	rtsx_pci
+      Device:	02:00.0
+      Class:	Unassigned class [ff00]
+      Vendor:	Realtek Semiconductor Co., Ltd. [10ec]
+      Device:	RTS525A PCI Express Card Reader [525a]
+      SVendor:	Lenovo [17aa]
+      SDevice:	RTS525A PCI Express Card Reader [224e]
+      Rev:	01
+      Driver:	rtsx_pci
+      Module:	rtsx_pci
 
-Device:	04:00.0
-Class:	Network controller [0280]
-Vendor:	Intel Corporation [8086]
-Device:	Wireless 8265 / 8275 [24fd]
-SVendor:	Intel Corporation [8086]
-SDevice:	Wireless 8265 / 8275 [0130]
-Rev:	88
-Driver:	iwlwifi
-Module:	iwlwifi
+      Device:	04:00.0
+      Class:	Network controller [0280]
+      Vendor:	Intel Corporation [8086]
+      Device:	Wireless 8265 / 8275 [24fd]
+      SVendor:	Intel Corporation [8086]
+      SDevice:	Wireless 8265 / 8275 [0130]
+      Rev:	88
+      Driver:	iwlwifi
+      Module:	iwlwifi
 
-Device:	05:00.0
-Class:	Non-Volatile memory controller [0108]
-Vendor:	Toshiba America Info Systems [1179]
-Device:	Device [0115]
-SVendor:	Toshiba America Info Systems [1179]
-SDevice:	Device [0001]
-Rev:	01
-ProgIf:	02
-Driver:	nvme
-Module:	nvme
-NUMANode:	0
+      Device:	05:00.0
+      Class:	Non-Volatile memory controller [0108]
+      Vendor:	Toshiba America Info Systems [1179]
+      Device:	Device [0115]
+      SVendor:	Toshiba America Info Systems [1179]
+      SDevice:	Device [0001]
+      Rev:	01
+      ProgIf:	02
+      Driver:	nvme
+      Module:	nvme
+      NUMANode:	0
 LSPCI
     allow(plugin).to receive(:shell_out).with("lspci -vnnmk").and_return(
       mock_shell_out(0, @stdout, ""))

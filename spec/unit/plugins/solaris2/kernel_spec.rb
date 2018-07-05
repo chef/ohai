@@ -22,7 +22,7 @@ describe Ohai::System, "Solaris2.X kernel plugin" do
   # NOTE: Solaris will report the same module loaded multiple times
   # with the same ID, Loadaddr, etc. and only the info column different
   # ignoring it, and removing the data from this fixture.
-  MODINFO = <<-TOOMUCH
+  MODINFO = <<-TOOMUCH.freeze
    Id Loadaddr   Size Info Rev Module Name
     6  1180000   4623   1   1  specfs (filesystem for specfs)
     8  1185df0   38c4   1   1  TS (time sharing sched class)

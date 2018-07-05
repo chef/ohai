@@ -70,11 +70,11 @@ module Ohai
         42 =>  "management_controller_host_interfaces",
         126 => "disabled_entries",
         127 => "end_of_table_marker",
-      }
+      }.freeze
 
       # list of IDs to collect from config or default to a sane list that prunes
       # away some of the less useful IDs
-      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ]
+      ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ].freeze
 
       # the whitelisted DMI IDs. This is combination of the defaults + any additional
       # IDs defined in the :additional_dmi_ids config
@@ -100,7 +100,7 @@ module Ohai
         id = id.to_i
         if (id >= 128) && (id <= 255)
           id = "oem_data_#{id}"
-        elsif DMI::ID_TO_DESCRIPTION.has_key?(id)
+        elsif DMI::ID_TO_DESCRIPTION.key?(id)
           id = DMI::ID_TO_DESCRIPTION[id]
         else
           Ohai::Log.debug("unrecognized header id; falling back to 'unknown'")
@@ -118,7 +118,7 @@ module Ohai
         dmi.each do |type, records|
           in_common = Mash.new
           next unless records.class.to_s == "Mash"
-          next unless records.has_key?("all_records")
+          next unless records.key?("all_records")
           records[:all_records].each do |record|
             record.each do |field, value|
               next if value.class.to_s == "Mash"
@@ -127,7 +127,7 @@ module Ohai
               next if field.to_s == "record_id"
               translated = field.downcase.gsub(/[^a-z0-9]/, "_")
               value      = value.strip
-              if in_common.has_key?(translated)
+              if in_common.key?(translated)
                 in_common[translated] = nil unless in_common[translated] == value
               else
                 in_common[translated] = value

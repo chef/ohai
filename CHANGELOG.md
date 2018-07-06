@@ -1,17 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.2.1 -->
-## [v14.2.1](https://github.com/chef/ohai/tree/v14.2.1) (2018-07-05)
+<!-- latest_release 14.2.2 -->
+## [v14.2.2](https://github.com/chef/ohai/tree/v14.2.2) (2018-07-06)
 
 #### Merged Pull Requests
-- Fixes for new chefstyle rules [#1211](https://github.com/chef/ohai/pull/1211) ([lamont-granquist](https://github.com/lamont-granquist))
-- Bump version to 14.2.0 [#1195](https://github.com/chef/ohai/pull/1195) ([tas50](https://github.com/tas50))
+- Resolve several performance issues identified by Rubocop [#1208](https://github.com/chef/ohai/pull/1208) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.2.0 -->
 ### Changes since 14.2.0 release
 
 #### Merged Pull Requests
+- Resolve several performance issues identified by Rubocop [#1208](https://github.com/chef/ohai/pull/1208) ([tas50](https://github.com/tas50)) <!-- 14.2.2 -->
 - Fixes for new chefstyle rules [#1211](https://github.com/chef/ohai/pull/1211) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.2.1 -->
 <!-- release_rollup -->
 

@@ -1,3 +1,9 @@
+# Ohai Release Notes 14.3
+
+## Detection of Amazon Linux 2.0
+
+Ohai now properly detects the platform_version of the final release of Amazon Linux 2.0 in addition to the previous detection of the RC platform_version.
+
 # Ohai Release Notes 14.2
 
 ## Virtualization detection on AWS

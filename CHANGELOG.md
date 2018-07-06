@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.2.3 -->
-## [v14.2.3](https://github.com/chef/ohai/tree/v14.2.3) (2018-07-06)
+<!-- latest_release 14.2.4 -->
+## [v14.2.4](https://github.com/chef/ohai/tree/v14.2.4) (2018-07-06)
 
 #### Merged Pull Requests
--  Properly detect Amazon Linux 2 final release platform version  [#1214](https://github.com/chef/ohai/pull/1214) ([tas50](https://github.com/tas50))
+- Remove the outdated manpage [#1217](https://github.com/chef/ohai/pull/1217) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.2.0 -->
 ### Changes since 14.2.0 release
 
 #### Merged Pull Requests
+- Remove the outdated manpage [#1217](https://github.com/chef/ohai/pull/1217) ([tas50](https://github.com/tas50)) <!-- 14.2.4 -->
 -  Properly detect Amazon Linux 2 final release platform version  [#1214](https://github.com/chef/ohai/pull/1214) ([tas50](https://github.com/tas50)) <!-- 14.2.3 -->
 - Resolve several performance issues identified by Rubocop [#1208](https://github.com/chef/ohai/pull/1208) ([tas50](https://github.com/tas50)) <!-- 14.2.2 -->
 - Fixes for new chefstyle rules [#1211](https://github.com/chef/ohai/pull/1211) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.2.1 -->

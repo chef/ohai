@@ -38,7 +38,7 @@ describe "Ohai::System" do
     it "merges provided configuration options into the ohai config context" do
       config = {
         disabled_plugins: [ :Foo, :Baz ],
-        directory: "/some/extra/plugins",
+        directory: ["/some/extra/plugins"],
         critical_plugins: [ :Foo, :Bar ],
       }
       Ohai::System.new(config)
@@ -47,13 +47,14 @@ describe "Ohai::System" do
       end
     end
 
-    context "when directory is configured" do
-      let(:directory) { "/some/fantastic/plugins" }
+    context "when multiple directories are configured" do
+      let(:directory) { ["/some/fantastic/plugins", "/some/other/plugins"] }
 
       it "adds directory to plugin_path" do
         Ohai.config[:directory] = directory
         Ohai::System.new({ invoked_from_cli: true })
-        expect(Ohai.config[:plugin_path]).to include(directory)
+        expect(Ohai.config[:plugin_path]).to include("/some/fantastic/plugins")
+        expect(Ohai.config[:plugin_path]).to include("/some/other/plugins")
       end
     end
 

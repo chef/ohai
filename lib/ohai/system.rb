@@ -176,9 +176,12 @@ module Ohai
     def configure_ohai
       Ohai.config.merge!(@config)
 
-      if Ohai.config[:directory] &&
-          !Ohai.config[:plugin_path].include?(Ohai.config[:directory])
-        Ohai.config[:plugin_path] << Ohai.config[:directory]
+      # add any additional CLI passed directories to the plugin path excluding duplicates
+      unless Ohai.config[:directory].nil?
+        Ohai.config[:directory].each do |dir|
+          next if Ohai.config[:plugin_path].include?(dir)
+          Ohai.config[:plugin_path] << dir
+        end
       end
 
       logger.debug("Running Ohai with the following configuration: #{Ohai.config.configuration}")

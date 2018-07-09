@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 13.9.4 -->
-## [v13.9.4](https://github.com/chef/ohai/tree/v13.9.4) (2018-07-09)
+<!-- latest_release 13.9.5 -->
+## [v13.9.5](https://github.com/chef/ohai/tree/v13.9.5) (2018-07-09)
 
 #### Merged Pull Requests
-- Properly detect Amazon Linux 2 final release platform version [#1215](https://github.com/chef/ohai/pull/1215) ([tas50](https://github.com/tas50))
+- Prep 13.10 release [#1220](https://github.com/chef/ohai/pull/1220) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.2.0 -->
 ### Changes since 14.2.0 release
 
 #### Merged Pull Requests
+- Prep 13.10 release [#1220](https://github.com/chef/ohai/pull/1220) ([tas50](https://github.com/tas50)) <!-- 13.9.5 -->
 - Properly detect Amazon Linux 2 final release platform version [#1215](https://github.com/chef/ohai/pull/1215) ([tas50](https://github.com/tas50)) <!-- 13.9.4 -->
 - Detect Redhat Openstack clusters [#1216](https://github.com/chef/ohai/pull/1216) ([tas50](https://github.com/tas50)) <!-- 13.9.3 -->
 <!-- release_rollup -->

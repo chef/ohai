@@ -7,18 +7,21 @@
 - Bump version to 14.3 + add release notes [#1219](https://github.com/chef/ohai/pull/1219) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup since=14.2.0 -->
-### Changes since 14.2.0 release
-
-#### Merged Pull Requests
-- Bump version to 14.3 + add release notes [#1219](https://github.com/chef/ohai/pull/1219) ([tas50](https://github.com/tas50)) <!-- 14.3.0 -->
-- Remove the outdated manpage [#1217](https://github.com/chef/ohai/pull/1217) ([tas50](https://github.com/tas50)) <!-- 14.2.4 -->
--  Properly detect Amazon Linux 2 final release platform version  [#1214](https://github.com/chef/ohai/pull/1214) ([tas50](https://github.com/tas50)) <!-- 14.2.3 -->
-- Resolve several performance issues identified by Rubocop [#1208](https://github.com/chef/ohai/pull/1208) ([tas50](https://github.com/tas50)) <!-- 14.2.2 -->
-- Fixes for new chefstyle rules [#1211](https://github.com/chef/ohai/pull/1211) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 14.2.1 -->
+<!-- release_rollup since=14.3.0 -->
+### Changes since 14.3.0 release
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.3.0](https://github.com/chef/ohai/tree/v14.3.0) (2018-07-09)
+
+#### Merged Pull Requests
+- Fixes for new chefstyle rules [#1211](https://github.com/chef/ohai/pull/1211) ([lamont-granquist](https://github.com/lamont-granquist))
+- Resolve several performance issues identified by Rubocop [#1208](https://github.com/chef/ohai/pull/1208) ([tas50](https://github.com/tas50))
+-  Properly detect Amazon Linux 2 final release platform version  [#1214](https://github.com/chef/ohai/pull/1214) ([tas50](https://github.com/tas50))
+- Remove the outdated manpage [#1217](https://github.com/chef/ohai/pull/1217) ([tas50](https://github.com/tas50))
+- Bump version to 14.3 + add release notes [#1219](https://github.com/chef/ohai/pull/1219) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.2.0](https://github.com/chef/ohai/tree/v14.2.0) (2018-06-04)
 
 #### Merged Pull Requests
@@ -27,7 +30,6 @@
 - Fix an issue caused by using the wrong field in the AIX filesystem plugin. [#1191](https://github.com/chef/ohai/pull/1191) ([jjustice6](https://github.com/jjustice6))
 - Detect virtualization on newer AWS instance types. (m5) [#1193](https://github.com/chef/ohai/pull/1193) ([cbajumpaa](https://github.com/cbajumpaa))
 - Bump version to 14.2.0 [#1195](https://github.com/chef/ohai/pull/1195) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.1.3](https://github.com/chef/ohai/tree/v14.1.3) (2018-05-15)
 

@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 13.9.3 -->
+## [v13.9.3](https://github.com/chef/ohai/tree/v13.9.3) (2018-07-09)
+
+#### Merged Pull Requests
+- Detect Redhat Openstack clusters [#1216](https://github.com/chef/ohai/pull/1216) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.2.0 -->
+### Changes since 14.2.0 release
+
+#### Merged Pull Requests
+- Detect Redhat Openstack clusters [#1216](https://github.com/chef/ohai/pull/1216) ([tas50](https://github.com/tas50)) <!-- 13.9.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -7,17 +7,20 @@
 - Actually bump to 13.10 [#1222](https://github.com/chef/ohai/pull/1222) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup since=14.2.0 -->
-### Changes since 14.2.0 release
-
-#### Merged Pull Requests
-- Actually bump to 13.10 [#1222](https://github.com/chef/ohai/pull/1222) ([tas50](https://github.com/tas50)) <!-- 13.10.0 -->
-- Prep 13.10 release [#1220](https://github.com/chef/ohai/pull/1220) ([tas50](https://github.com/tas50)) <!-- 13.9.5 -->
-- Properly detect Amazon Linux 2 final release platform version [#1215](https://github.com/chef/ohai/pull/1215) ([tas50](https://github.com/tas50)) <!-- 13.9.4 -->
-- Detect Redhat Openstack clusters [#1216](https://github.com/chef/ohai/pull/1216) ([tas50](https://github.com/tas50)) <!-- 13.9.3 -->
+<!-- release_rollup since=13.10.0 -->
+### Changes since 13.10.0 release
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v13.10.0](https://github.com/chef/ohai/tree/v13.10.0) (2018-07-09)
+
+#### Merged Pull Requests
+- Detect Redhat Openstack clusters [#1216](https://github.com/chef/ohai/pull/1216) ([tas50](https://github.com/tas50))
+- Properly detect Amazon Linux 2 final release platform version [#1215](https://github.com/chef/ohai/pull/1215) ([tas50](https://github.com/tas50))
+- Prep 13.10 release [#1220](https://github.com/chef/ohai/pull/1220) ([tas50](https://github.com/tas50))
+- Actually bump to 13.10 [#1222](https://github.com/chef/ohai/pull/1222) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v13.9.2](https://github.com/chef/ohai/tree/v13.9.2) (2018-06-04)
 
 #### Merged Pull Requests
@@ -25,7 +28,6 @@
 - Detect virtualization on newer AWS instance types. (m5) [#1201](https://github.com/chef/ohai/pull/1201) ([coderanger](https://github.com/coderanger))
 - [filesystem2] Backport filesystem2 on BSD for Ohai 13 [#1182](https://github.com/chef/ohai/pull/1182) ([jaymzh](https://github.com/jaymzh))
 - Backport "Make the DMI IDs we whitelist configurable" to Ohai 13 [#1194](https://github.com/chef/ohai/pull/1194) ([gsreynolds](https://github.com/gsreynolds))
-<!-- latest_stable_release -->
 
 ## [v13.9.0](https://github.com/chef/ohai/tree/v13.9.0) (2018-04-09)
 

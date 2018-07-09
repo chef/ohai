@@ -1,3 +1,13 @@
+# Ohai Release Notes 13.10
+
+## Detection of Amazon Linux 2.0
+
+Ohai now properly detects the platform_version of the final release of Amazon Linux 2.0 in addition to the previous detection of the RC platform_version.
+
+## OpenStack Cluster Detection
+
+Ohai now detects systems with the DMI product name of "OpenStack Compute" as running OpenStack.
+
 # Ohai Release Notes 13.9.2
 
 ## Virtualization detection on AWS

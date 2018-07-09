@@ -24,9 +24,7 @@ Ohai.plugin :SystemEnclosure do
     system_enclosure Mash.new
     wmi = WmiLite::Wmi.new
     wmi_object = wmi.first_of("Win32_SystemEnclosure").wmi_ole_object
-    wmi_object.properties_.each do |property|
-      value = wmi_object.invoke(property.name)
-      system_enclosure[property.name.downcase] = value unless value.nil?
-    end
+    system_enclosure[:manufacturer] = wmi_object.invoke("manufacturer")
+    system_enclosure[:serialnumber] = wmi_object.invoke("serialnumber")
   end
 end

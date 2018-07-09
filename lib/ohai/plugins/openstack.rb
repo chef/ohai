@@ -32,6 +32,9 @@ Ohai.plugin(:Openstack) do
     if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
       Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == true")
       true
+    elsif get_attribute(:dmi, :system, :product_name) == "OpenStack Compute"
+      logger.trace("Plugin Openstack: has_openstack_dmi? == true")
+      true
     else
       Ohai::Log.debug("Plugin Openstack: has_openstack_dmi? == false")
       false

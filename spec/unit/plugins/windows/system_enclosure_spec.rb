@@ -22,11 +22,11 @@ describe Ohai::System, "System Enclosure", :windows_only do
   before do
     require "wmi-lite/wmi"
     @plugin = get_plugin("windows/system_enclosure")
-    manufacturer = double("WIN32OLE", :name => "manufacturer", :value => "My Fake Manufacturer")
-    serialnumber = double("WIN32OLE", :name => "serialnumber", :value => "1234123412341234")
+    manufacturer = double("WIN32OLE", name: "manufacturer", value: "My Fake Manufacturer")
+    serialnumber = double("WIN32OLE", name: "serialnumber", value: "1234123412341234")
     property_map = [ manufacturer, serialnumber ]
 
-    wmi_ole_object = double( "WIN32OLE", :properties_ => property_map)
+    wmi_ole_object = double( "WIN32OLE", properties_: property_map)
     allow(wmi_ole_object).to receive(:invoke).with(manufacturer.name).and_return(manufacturer.value)
     allow(wmi_ole_object).to receive(:invoke).with(serialnumber.name).and_return(serialnumber.value)
     wmi_object = WmiLite::Wmi::Instance.new(wmi_ole_object)

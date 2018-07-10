@@ -1,14 +1,18 @@
 # Change Log
 
-<!-- latest_release unreleased -->
-## Unreleased
+<!-- latest_release 14.3.1 -->
+## [v14.3.1](https://github.com/chef/ohai/tree/v14.3.1) (2018-07-10)
 
 #### Merged Pull Requests
+- Add system_enclosure plugin for Windows [#1210](https://github.com/chef/ohai/pull/1210) ([stuartpreston](https://github.com/stuartpreston))
 - Bump version to 14.3 + add release notes [#1219](https://github.com/chef/ohai/pull/1219) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.3.0 -->
 ### Changes since 14.3.0 release
+
+#### Merged Pull Requests
+- Add system_enclosure plugin for Windows [#1210](https://github.com/chef/ohai/pull/1210) ([stuartpreston](https://github.com/stuartpreston)) <!-- 14.3.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

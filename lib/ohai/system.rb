@@ -178,7 +178,8 @@ module Ohai
 
       # add any additional CLI passed directories to the plugin path excluding duplicates
       unless Ohai.config[:directory].nil?
-        Ohai.config[:directory].each do |dir|
+        # make sure the directory config is an array since it could be a string set in client.rb
+        Array(Ohai.config[:directory]).each do |dir|
           next if Ohai.config[:plugin_path].include?(dir)
           Ohai.config[:plugin_path] << dir
         end

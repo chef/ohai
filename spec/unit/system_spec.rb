@@ -47,10 +47,20 @@ describe "Ohai::System" do
       end
     end
 
+    context "when a single directory is configured as a string" do
+      let(:directory) { "/some/fantastic/plugins" }
+
+      it "adds directory to plugin_path" do
+        Ohai.config[:directory] = directory
+        Ohai::System.new({ invoked_from_cli: true })
+        expect(Ohai.config[:plugin_path]).to include("/some/fantastic/plugins")
+      end
+    end
+
     context "when multiple directories are configured" do
       let(:directory) { ["/some/fantastic/plugins", "/some/other/plugins"] }
 
-      it "adds directory to plugin_path" do
+      it "adds directories to plugin_path" do
         Ohai.config[:directory] = directory
         Ohai::System.new({ invoked_from_cli: true })
         expect(Ohai.config[:plugin_path]).to include("/some/fantastic/plugins")

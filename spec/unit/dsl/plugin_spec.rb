@@ -519,21 +519,20 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "fails a platform has already been defined in the same plugin" do
-      expect do
-        Ohai.plugin(:Test) do
-          collect_data {}
-          collect_data {}
-        end
-      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+      Ohai.plugin(:Test) { collect_data {} }
+      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/).twice
+      Ohai.plugin(:Test) do
+        collect_data {}
+        collect_data {}
+      end
     end
 
     it "fails if a platform has already been defined in another plugin file" do
       Ohai.plugin(:Test) { collect_data {} }
-      expect do
-        Ohai.plugin(:Test) do
-          collect_data {}
-        end
-      end.to raise_error(Ohai::Exceptions::IllegalPluginDefinition, /collect_data already defined/)
+      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/)
+      Ohai.plugin(:Test) do
+        collect_data {}
+      end
     end
   end
 

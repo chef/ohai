@@ -130,7 +130,7 @@ EOF
 
       describe "when the plugin defines collect_data on the same platform more than once" do
         it "shoud log an illegal plugin definition warning" do
-          expect(loader.logger).to receive(:warn).with(/Plugin Definition Error: <#{path_to("illegal_def.rb")}>:/)
+          expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/)
           loader.load_plugin(path_to("illegal_def.rb"))
         end
 

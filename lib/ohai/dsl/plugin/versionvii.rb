@@ -108,11 +108,8 @@ module Ohai
         # @param block [block] the actual code to collect data for the specified platforms
         def self.collect_data(platform = :default, *other_platforms, &block)
           [platform, other_platforms].flatten.each do |plat|
-            if data_collector.key?(plat)
-              raise Ohai::Exceptions::IllegalPluginDefinition, "collect_data already defined on platform #{plat}"
-            else
-              data_collector[plat] = block
-            end
+            Ohai::Log.warn("collect_data already defined on platform '#{plat}' for #{self}, last plugin seen will be used") if data_collector.key?(plat)
+            data_collector[plat] = block
           end
         end
 

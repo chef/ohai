@@ -22,14 +22,3 @@ require "rubocop/rake_task"
 RuboCop::RakeTask.new(:style) do |task|
   task.options += ["--display-cop-names", "--no-color"]
 end
-
-begin
-  require "github_changelog_generator/task"
-
-  GitHubChangelogGenerator::RakeTask.new :changelog do |config|
-    config.future_release = Ohai::VERSION
-    config.max_issues = 0
-    config.add_issues_wo_labels = false
-  end
-rescue LoadError
-end

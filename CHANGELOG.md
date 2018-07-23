@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.3.3 -->
-## [v14.3.3](https://github.com/chef/ohai/tree/v14.3.3) (2018-07-16)
+<!-- latest_release 14.3.4 -->
+## [v14.3.4](https://github.com/chef/ohai/tree/v14.3.4) (2018-07-23)
 
 #### Merged Pull Requests
-- Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50))
+- Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.3.0 -->
 ### Changes since 14.3.0 release
 
 #### Merged Pull Requests
+- Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50)) <!-- 14.3.4 -->
 - Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50)) <!-- 14.3.3 -->
 - Load collect_data() even if we&#39;ve already seen it [#1224](https://github.com/chef/ohai/pull/1224) ([btm](https://github.com/btm)) <!-- 14.3.2 -->
 - Add system_enclosure plugin for Windows [#1210](https://github.com/chef/ohai/pull/1210) ([stuartpreston](https://github.com/stuartpreston)) <!-- 14.3.1 -->

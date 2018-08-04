@@ -40,6 +40,7 @@ module Ohai
       default :run_all_plugins, false
       # optional plugins are the set of plugins that are marked optional but you wish to run.
       default :optional_plugins, []
+      default :timeout, 30
     end
   end
 

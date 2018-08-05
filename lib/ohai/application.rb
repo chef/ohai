@@ -34,12 +34,10 @@ class Ohai::Application
   option :directory,
     short: "-d DIRECTORY",
     long: "--directory DIRECTORY",
-    description: "A directory to add to the Ohai plugin search path. If passing multiple directories comma separate directories.",
-    proc: lambda { |paths|
-      paths = paths.split(",")
-      paths.map do |path|
-        Ohai::Config.platform_specific_path(path)
-      end
+    description: "A directory to add to the Ohai plugin search path. If passing multiple directories use this option more than once.",
+    proc: lambda { |path, path_array|
+      (path_array ||= []) << Ohai::Config.platform_specific_path(path)
+      path_array
     }
 
   option :log_level,

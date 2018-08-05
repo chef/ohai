@@ -1,3 +1,14 @@
+# UNRELEASED
+
+## Multiple plugin directories
+
+You can now specify more than one directory to load additional Ohai plugins from by using the `--directory` / `-d` flag more than once.
+
+Example:
+```bash
+ohai -d /path/to/more/plugins -d /another/path/to/more/plugins
+```
+
 # Ohai Release Notes 14.3
 
 ## Detection of Amazon Linux 2.0

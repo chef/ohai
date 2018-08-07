@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.3.4 -->
-## [v14.3.4](https://github.com/chef/ohai/tree/v14.3.4) (2018-07-23)
+<!-- latest_release 14.3.5 -->
+## [v14.3.5](https://github.com/chef/ohai/tree/v14.3.5) (2018-08-07)
 
 #### Merged Pull Requests
-- Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50))
+- Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.3.0 -->
 ### Changes since 14.3.0 release
 
 #### Merged Pull Requests
+- Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50)) <!-- 14.3.5 -->
 - Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50)) <!-- 14.3.4 -->
 - Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50)) <!-- 14.3.3 -->
 - Load collect_data() even if we&#39;ve already seen it [#1224](https://github.com/chef/ohai/pull/1224) ([btm](https://github.com/btm)) <!-- 14.3.2 -->

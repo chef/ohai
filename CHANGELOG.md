@@ -1,27 +1,25 @@
 # Change Log
 
-<!-- latest_release 14.4.0 -->
-## [v14.4.0](https://github.com/chef/ohai/tree/v14.4.0) (2018-08-08)
-
-#### Merged Pull Requests
-- Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.3.0 -->
-### Changes since 14.3.0 release
-
-#### Merged Pull Requests
-- Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50)) <!-- 14.4.0 -->
-- Resolve Expeditor config warnings [#1229](https://github.com/chef/ohai/pull/1229) ([tas50](https://github.com/tas50)) <!-- 14.3.7 -->
-- Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice)) <!-- 14.3.6 -->
-- Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50)) <!-- 14.3.5 -->
-- Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50)) <!-- 14.3.4 -->
-- Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50)) <!-- 14.3.3 -->
-- Load collect_data() even if we&#39;ve already seen it [#1224](https://github.com/chef/ohai/pull/1224) ([btm](https://github.com/btm)) <!-- 14.3.2 -->
-- Add system_enclosure plugin for Windows [#1210](https://github.com/chef/ohai/pull/1210) ([stuartpreston](https://github.com/stuartpreston)) <!-- 14.3.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.4.0](https://github.com/chef/ohai/tree/v14.4.0) (2018-08-08)
+
+#### Merged Pull Requests
+- Add system_enclosure plugin for Windows [#1210](https://github.com/chef/ohai/pull/1210) ([stuartpreston](https://github.com/stuartpreston))
+- Load collect_data() even if we&#39;ve already seen it [#1224](https://github.com/chef/ohai/pull/1224) ([btm](https://github.com/btm))
+- Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50))
+- Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50))
+- Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50))
+- Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice))
+- Resolve Expeditor config warnings [#1229](https://github.com/chef/ohai/pull/1229) ([tas50](https://github.com/tas50))
+- Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.3.0](https://github.com/chef/ohai/tree/v14.3.0) (2018-07-09)
 
 #### Merged Pull Requests
@@ -30,7 +28,6 @@
 -  Properly detect Amazon Linux 2 final release platform version  [#1214](https://github.com/chef/ohai/pull/1214) ([tas50](https://github.com/tas50))
 - Remove the outdated manpage [#1217](https://github.com/chef/ohai/pull/1217) ([tas50](https://github.com/tas50))
 - Bump version to 14.3 + add release notes [#1219](https://github.com/chef/ohai/pull/1219) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.2.0](https://github.com/chef/ohai/tree/v14.2.0) (2018-06-04)
 

@@ -1,4 +1,4 @@
-# UNRELEASED
+# Ohai Release Notes 14.4
 
 ## Multiple plugin directories
 
@@ -8,6 +8,20 @@ Example:
 ```bash
 ohai -d /path/to/more/plugins -d /another/path/to/more/plugins
 ```
+
+Thanks @jaymzh for reporting this.
+
+## Shellout Timeout Configuration
+
+By default the timeout for any shellout in Ohai is 30 seconds. If this is too short for you due to slow systems or large numbers of mounts you may need to increase this timeout. You can now configure your own timeout (lower or higher) via the new `shellout_timeout` config setting.
+
+Thanks @WheresAlice for this change.
+
+## System Enclosure Plugin
+
+On Windows we have a new System Enclosure plugin that provides you with the `manufacturer` and `serialnumber` of the underlying system.
+
+Thanks @kmf for suggesting this plugin.
 
 # Ohai Release Notes 14.3
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.3.5 -->
-## [v14.3.5](https://github.com/chef/ohai/tree/v14.3.5) (2018-08-07)
+<!-- latest_release 14.3.6 -->
+## [v14.3.6](https://github.com/chef/ohai/tree/v14.3.6) (2018-08-08)
 
 #### Merged Pull Requests
-- Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50))
+- Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.3.0 -->
 ### Changes since 14.3.0 release
 
 #### Merged Pull Requests
+- Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice)) <!-- 14.3.6 -->
 - Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50)) <!-- 14.3.5 -->
 - Update Expeditor to clean branches / bump minors [#1223](https://github.com/chef/ohai/pull/1223) ([tas50](https://github.com/tas50)) <!-- 14.3.4 -->
 - Remove the changelog generator task [#1225](https://github.com/chef/ohai/pull/1225) ([tas50](https://github.com/tas50)) <!-- 14.3.3 -->

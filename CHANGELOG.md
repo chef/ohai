@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.3.7 -->
-## [v14.3.7](https://github.com/chef/ohai/tree/v14.3.7) (2018-08-08)
+<!-- latest_release 14.4.0 -->
+## [v14.4.0](https://github.com/chef/ohai/tree/v14.4.0) (2018-08-08)
 
 #### Merged Pull Requests
-- Resolve Expeditor config warnings [#1229](https://github.com/chef/ohai/pull/1229) ([tas50](https://github.com/tas50))
+- Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.3.0 -->
 ### Changes since 14.3.0 release
 
 #### Merged Pull Requests
+- Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50)) <!-- 14.4.0 -->
 - Resolve Expeditor config warnings [#1229](https://github.com/chef/ohai/pull/1229) ([tas50](https://github.com/tas50)) <!-- 14.3.7 -->
 - Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice)) <!-- 14.3.6 -->
 - Add support for passing multiple plugin directories on CLI/client.rb [#1221](https://github.com/chef/ohai/pull/1221) ([tas50](https://github.com/tas50)) <!-- 14.3.5 -->

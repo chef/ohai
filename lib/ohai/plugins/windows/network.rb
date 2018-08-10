@@ -53,6 +53,65 @@ Ohai.plugin(:Network) do
     data
   end
 
+  # Returns interface code for an interface
+  # 
+  # Interface Index (if present, Index otherwise) will be converted in hexadecimal format
+  #
+  # @param int_idx [String or nil] the interface index of interface
+  # @param idx [String] the index of interface
+  #
+  # @return [String]
+  #
+  # @example Interface Code when interface index is present
+  #   plugin.interface_code("1", "1") #=> "ox1"
+  # @example Interface Code when interface index is not present
+  #   plugin.interface_code(nil, "2") #=> "ox2"
+  #
+  def interface_code(int_idx, idx)
+    sprintf("0x%x", (int_idx || idx)).downcase
+  end
+
+  # Returns IPV4 address from list of addresses containing IPV4 and IPV6 formats
+  # 
+  # @param addresses [Array<String>] List of addresses
+  #
+  # @return [String]
+  #
+  # @example When list contains both IPV4 and IPV6 formats
+  #   plugin.prefer_ipv4([IPV4, IPV6]) #=> "IPV4"
+  # @example When list contains only IPV6 format
+  #   plugin.prefer_ipv4([IPV6]) #=> "IPV6"
+  #
+  def prefer_ipv4(addresses)
+    return nil unless addresses.is_a?(Array)
+    addresses.find { |ip| IPAddress.valid_ipv4?(ip) } ||
+      addresses.find { |ip| IPAddress.valid_ipv6?(ip) }
+  end
+
+  # Selects default interface and returns its information
+  #
+  # @note Interface with least metric value should be prefered as default_route
+  #
+  # @param configuration [Mash] Configuration of interfaces as iface_config
+  #   [<interface_index> => {<interface_configurations>}]
+  #
+  # @return [Hash<:index, :interface_index, :default_ip_gateway, :ip_connection_metric>]
+  #
+  def favored_default_route(configuration)
+    return nil unless configuration.is_a?(Hash)
+    config = configuration.dup
+
+    config.inject([]) do |arr, (k, v)|
+      if v["default_ip_gateway"]
+        arr << { index: v["index"],
+                 interface_index: v["interface_index"],
+                 default_ip_gateway: prefer_ipv4(v["default_ip_gateway"]),
+                 ip_connection_metric: v["ip_connection_metric"] }
+      end
+      arr
+    end.min_by { |r| r[:ip_connection_metric] }
+  end
+
   collect_data(:windows) do
 
     require "wmi-lite/wmi"
@@ -70,6 +129,7 @@ Ohai.plugin(:Network) do
       iface_config[i] = Mash.new unless iface_config[i]
       iface_config[i][:ip_address] ||= []
       iface_config[i][:ip_address] << adapter["IPAddress"]
+
       adapter.wmi_ole_object.properties_.each do |p|
         if iface_config[i][p.name.wmi_underscore.to_sym].nil?
           iface_config[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
@@ -89,7 +149,7 @@ Ohai.plugin(:Network) do
 
     iface_instance.each_key do |i|
       if iface_instance[i][:name] && iface_config[i] && iface_config[i][:ip_address][0]
-        cint = sprintf("0x%x", (iface_instance[i][:interface_index] || iface_instance[i][:index]) ).downcase
+        cint = interface_code(iface_instance[i][:interface_index], iface_instance[i][:index])
         iface[cint] = Mash.new
         iface[cint][:configuration] = iface_config[i]
         iface[cint][:instance] = iface_instance[i]
@@ -97,6 +157,7 @@ Ohai.plugin(:Network) do
         iface[cint][:counters] = Mash.new
         iface[cint][:addresses] = Mash.new
         iface[cint][:configuration][:ip_address] = iface[cint][:configuration][:ip_address].flatten
+
         iface[cint][:configuration][:ip_address].each_index do |ip_index|
           ip = iface[cint][:configuration][:ip_address][ip_index]
           ip_and_subnet = ip.dup
@@ -127,11 +188,12 @@ Ohai.plugin(:Network) do
         iface[cint][:type] = iface[cint][:instance][:adapter_type] if iface[cint][:instance][:adapter_type]
         iface[cint][:arp] = {}
         iface[cint][:encapsulation] = windows_encaps_lookup(iface[cint][:instance][:adapter_type]) if iface[cint][:instance][:adapter_type]
-        if !iface[cint][:configuration][:default_ip_gateway].nil? && iface[cint][:configuration][:default_ip_gateway].size > 0
-          network[:default_gateway] = iface[cint][:configuration][:default_ip_gateway].first
-          network[:default_interface] = cint
-        end
       end
+    end
+
+    if (route = favored_default_route(iface_config))
+      network[:default_gateway] = route[:default_ip_gateway]
+      network[:default_interface] = interface_code(route[:interface_index], route[:index])
     end
 
     cint = nil

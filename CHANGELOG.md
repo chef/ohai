@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.4.1 -->
+## [v14.4.1](https://github.com/chef/ohai/tree/v14.4.1) (2018-08-21)
+
+#### Merged Pull Requests
+- Prefer ipv4 for default_gateway over ipv6 on windows [#1231](https://github.com/chef/ohai/pull/1231) ([Nimesh-Msys](https://github.com/Nimesh-Msys))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.4.0 -->
+### Changes since 14.4.0 release
+
+#### Merged Pull Requests
+- Prefer ipv4 for default_gateway over ipv6 on windows [#1231](https://github.com/chef/ohai/pull/1231) ([Nimesh-Msys](https://github.com/Nimesh-Msys)) <!-- 14.4.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

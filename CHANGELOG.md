@@ -1,20 +1,18 @@
 # Change Log
 
-<!-- latest_release 14.4.1 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v14.4.1](https://github.com/chef/ohai/tree/v14.4.1) (2018-08-21)
 
 #### Merged Pull Requests
 - Prefer ipv4 for default_gateway over ipv6 on windows [#1231](https://github.com/chef/ohai/pull/1231) ([Nimesh-Msys](https://github.com/Nimesh-Msys))
-<!-- latest_release -->
-
-<!-- release_rollup since=14.4.0 -->
-### Changes since 14.4.0 release
-
-#### Merged Pull Requests
-- Prefer ipv4 for default_gateway over ipv6 on windows [#1231](https://github.com/chef/ohai/pull/1231) ([Nimesh-Msys](https://github.com/Nimesh-Msys)) <!-- 14.4.1 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.4.0](https://github.com/chef/ohai/tree/v14.4.0) (2018-08-08)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Make the default shell_out timeout of 30 seconds configurable [#1227](https://github.com/chef/ohai/pull/1227) ([WheresAlice](https://github.com/WheresAlice))
 - Resolve Expeditor config warnings [#1229](https://github.com/chef/ohai/pull/1229) ([tas50](https://github.com/tas50))
 - Add release notes for 14.4 [#1230](https://github.com/chef/ohai/pull/1230) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.3.0](https://github.com/chef/ohai/tree/v14.3.0) (2018-07-09)
 

@@ -54,7 +54,7 @@ Ohai.plugin(:Network) do
   end
 
   # Returns interface code for an interface
-  # 
+  #
   # Interface Index (if present, Index otherwise) will be converted in hexadecimal format
   #
   # @param int_idx [String or nil] the interface index of interface
@@ -72,7 +72,7 @@ Ohai.plugin(:Network) do
   end
 
   # Returns IPV4 address from list of addresses containing IPV4 and IPV6 formats
-  # 
+  #
   # @param addresses [Array<String>] List of addresses
   #
   # @return [String]

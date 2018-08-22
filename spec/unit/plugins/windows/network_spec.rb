@@ -80,7 +80,7 @@ describe Ohai::System, "Windows Network Plugin" do
     end
   end
 
-  describe "#favored_default_route" do
+  describe "#favored_default_route_windows" do
     let(:interface1) do
       { "index" => 1,
         "interface_index" => 1,
@@ -90,28 +90,28 @@ describe Ohai::System, "Windows Network Plugin" do
     let(:iface_config) { { 1 => interface1 } }
     context "When a hash is not passed" do
       it "Returns nil" do
-        expect(plugin.favored_default_route("Invalid")).to be_nil
+        expect(plugin.favored_default_route_windows("Invalid")).to be_nil
       end
     end
     context "When no interface is passed in Hash" do
       it "Returns nil" do
-        expect(plugin.favored_default_route({})).to be_nil
+        expect(plugin.favored_default_route_windows({})).to be_nil
       end
     end
     context "When an interface configuration is passed" do
       context "without default_ip_gateway" do
         it "Returns nil" do
           interface1["default_ip_gateway"] = nil
-          expect(plugin.favored_default_route(iface_config)).to be_nil
+          expect(plugin.favored_default_route_windows(iface_config)).to be_nil
         end
       end
       context "with default_ip_gateway" do
         it "Returns a hash with details" do
-          expect(plugin.favored_default_route(iface_config)).to be_a(Hash)
-          expect(plugin.favored_default_route(iface_config)).not_to be_empty
+          expect(plugin.favored_default_route_windows(iface_config)).to be_a(Hash)
+          expect(plugin.favored_default_route_windows(iface_config)).not_to be_empty
         end
         it "Returns the default_gateway in IPV4 format" do
-          expect(plugin.favored_default_route(iface_config)).to include(default_ip_gateway: "192.168.1.1")
+          expect(plugin.favored_default_route_windows(iface_config)).to include(default_ip_gateway: "192.168.1.1")
         end
       end
     end
@@ -127,10 +127,10 @@ describe Ohai::System, "Windows Network Plugin" do
           2 => interface2 }
       end
       it "Returns the default route as least metric interface" do
-        expect(plugin.favored_default_route(iface_config)).to include(interface_index: 1)
+        expect(plugin.favored_default_route_windows(iface_config)).to include(interface_index: 1)
       end
       it "Returns its default_gateway in IPV4 format" do
-        expect(plugin.favored_default_route(iface_config)).to include(default_ip_gateway: "192.168.1.1")
+        expect(plugin.favored_default_route_windows(iface_config)).to include(default_ip_gateway: "192.168.1.1")
       end
     end
   end

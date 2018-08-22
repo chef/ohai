@@ -424,7 +424,7 @@ Ohai.plugin(:Network) do
   # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
   # this method attempts to deduce the route that is most important to the user, which is later used to deduce the favored values for {ip,mac,ip6}address
   # we only consider routes that are default routes, or those routes that get us to the gateway for a default route
-  def favored_default_route(routes, iface, default_route, family)
+  def favored_default_route_linux(routes, iface, default_route, family)
     routes.select do |r|
       if family[:name] == "inet"
         # the route must have a source address
@@ -543,7 +543,7 @@ Ohai.plugin(:Network) do
           logger.trace("Plugin Network: #{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
 
           # deduce the default route the user most likely cares about to pick {ip,mac,ip6}address below
-          favored_route = favored_default_route(routes, iface, default_route, family)
+          favored_route = favored_default_route_linux(routes, iface, default_route, family)
 
           # FIXME: This entire block should go away, and the network plugin should be the sole source of {ip,ip6,mac}address
 

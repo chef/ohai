@@ -23,15 +23,15 @@ Ohai.plugin(:Network) do
 
   provides "network", "counters/network", "macaddress"
 
-  # Helpers
-  def hex_to_dec_netmask(netmask)
-    # example '0xffff0000' -> '255.255.0.0'
-    dec = netmask[2..3].to_i(16).to_s(10)
-    [4, 6, 8].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
-    dec
-  end
-
   collect_data(:aix) do
+    # Helpers
+    def hex_to_dec_netmask(netmask)
+      # example '0xffff0000' -> '255.255.0.0'
+      dec = netmask[2..3].to_i(16).to_s(10)
+      [4, 6, 8].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
+      dec
+    end
+
     # Loads following information.
     # :default_interface, :default_gateway - route -n get 0
     # :interfaces

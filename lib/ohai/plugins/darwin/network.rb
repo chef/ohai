@@ -20,71 +20,71 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
-  def parse_media(media_string)
-    media = Hash.new
-    line_array = media_string.split(" ")
-
-    0.upto(line_array.length - 1) do |i|
-      unless line_array[i].eql?("none")
-
-        if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
-          media[line_array[i]] = Hash.new unless media.key?(line_array[i])
-          if media[line_array[i]].key?("options")
-            $1.split(",").each do |opt|
-              media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
-            end
-          else
-            media[line_array[i]]["options"] = $1.split(",")
-          end
-        else
-          if line_array[i].eql?("autoselect")
-            media["autoselect"] = Hash.new unless media.key?("autoselect")
-            media["autoselect"]["options"] = []
-          end
-        end
-      else
-        media["none"] = { "options" => [] }
-      end
-    end
-
-    media
-  end
-
-  def darwin_encaps_lookup(ifname)
-    return "Loopback" if ifname.eql?("lo")
-    return "1394" if ifname.eql?("fw")
-    return "IPIP" if ifname.eql?("gif")
-    return "6to4" if ifname.eql?("stf")
-    return "dot1q" if ifname.eql?("vlan")
-    "Unknown"
-  end
-
-  def scope_lookup(scope)
-    return "Node" if scope.eql?("::1")
-    return "Link" if scope =~ /^fe80\:/
-    return "Site" if scope =~ /^fec0\:/
-    "Global"
-  end
-
-  def excluded_setting?(setting)
-    setting.match("_sw_cksum")
-  end
-
-  def locate_interface(ifaces, ifname, mac)
-    return ifname unless ifaces[ifname].nil?
-    # oh well, time to go hunting!
-    return ifname.chop if ifname =~ /\*$/
-    ifaces.each_key do |ifc|
-      ifaces[ifc][:addresses].each_key do |addr|
-        return ifc if addr.eql? mac
-      end
-    end
-
-    nil
-  end
-
   collect_data(:darwin) do
     require "scanf"
+
+    def parse_media(media_string)
+      media = Hash.new
+      line_array = media_string.split(" ")
+
+      0.upto(line_array.length - 1) do |i|
+        unless line_array[i].eql?("none")
+
+          if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
+            media[line_array[i]] = Hash.new unless media.key?(line_array[i])
+            if media[line_array[i]].key?("options")
+              $1.split(",").each do |opt|
+                media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
+              end
+            else
+              media[line_array[i]]["options"] = $1.split(",")
+            end
+          else
+            if line_array[i].eql?("autoselect")
+              media["autoselect"] = Hash.new unless media.key?("autoselect")
+              media["autoselect"]["options"] = []
+            end
+          end
+        else
+          media["none"] = { "options" => [] }
+        end
+      end
+
+      media
+    end
+
+    def darwin_encaps_lookup(ifname)
+      return "Loopback" if ifname.eql?("lo")
+      return "1394" if ifname.eql?("fw")
+      return "IPIP" if ifname.eql?("gif")
+      return "6to4" if ifname.eql?("stf")
+      return "dot1q" if ifname.eql?("vlan")
+      "Unknown"
+    end
+
+    def scope_lookup(scope)
+      return "Node" if scope.eql?("::1")
+      return "Link" if scope =~ /^fe80\:/
+      return "Site" if scope =~ /^fec0\:/
+      "Global"
+    end
+
+    def excluded_setting?(setting)
+      setting.match("_sw_cksum")
+    end
+
+    def locate_interface(ifaces, ifname, mac)
+      return ifname unless ifaces[ifname].nil?
+      # oh well, time to go hunting!
+      return ifname.chop if ifname =~ /\*$/
+      ifaces.each_key do |ifc|
+        ifaces[ifc][:addresses].each_key do |addr|
+          return ifc if addr.eql? mac
+        end
+      end
+
+      nil
+    end
 
     network Mash.new unless network
     network[:interfaces] = Mash.new unless network[:interfaces]

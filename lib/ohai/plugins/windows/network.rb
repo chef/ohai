@@ -1,6 +1,6 @@
 #
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
+# Copyright:: Copyright 2008-2018, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,101 +20,100 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
-  def windows_encaps_lookup(encap)
-    return "Ethernet" if encap.eql?("Ethernet 802.3")
-    encap
-  end
+  collect_data(:windows) do
+    require "wmi-lite/wmi"
 
-  def mac_addresses(iface)
-    prop = iface[:configuration][:mac_address] || iface[:instance][:network_addresses]
-    [prop].flatten.map { |addr| addr.include?(":") ? addr : addr.scan(/.{1,2}/).join(":") }
-  end
+    def windows_encaps_lookup(encap)
+      return "Ethernet" if encap.eql?("Ethernet 802.3")
+      encap
+    end
 
-  def network_data
-    @network_data ||= begin
+    def mac_addresses(iface)
+      prop = iface[:configuration][:mac_address] || iface[:instance][:network_addresses]
+      [prop].flatten.map { |addr| addr.include?(":") ? addr : addr.scan(/.{1,2}/).join(":") }
+    end
+
+    def network_data
+      @network_data ||= begin
+        data = {}
+        wmi = WmiLite::Wmi.new
+        data[:addresses] = wmi.instances_of("Win32_NetworkAdapterConfiguration")
+
+        # If we are running on windows nano or another operating system from the future
+        # that does not populate the deprecated win32_* WMI classes, then we should
+        # grab data from the newer MSFT_* classes
+        return msft_adapter_data if data[:addresses].count == 0
+        data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
+        data
+      end
+    end
+
+    def msft_adapter_data
       data = {}
-      wmi = WmiLite::Wmi.new
-      data[:addresses] = wmi.instances_of("Win32_NetworkAdapterConfiguration")
-
-      # If we are running on windows nano or another operating system from the future
-      # that does not populate the deprecated win32_* WMI classes, then we should
-      # grab data from the newer MSFT_* classes
-      return msft_adapter_data if data[:addresses].count == 0
-      data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
+      wmi = WmiLite::Wmi.new("ROOT/StandardCimv2")
+      data[:addresses] = wmi.instances_of("MSFT_NetIPAddress")
+      data[:adapters] = wmi.instances_of("MSFT_NetAdapter")
       data
     end
-  end
 
-  def msft_adapter_data
-    data = {}
-    wmi = WmiLite::Wmi.new("ROOT/StandardCimv2")
-    data[:addresses] = wmi.instances_of("MSFT_NetIPAddress")
-    data[:adapters] = wmi.instances_of("MSFT_NetAdapter")
-    data
-  end
+    # Returns interface code for an interface
+    #
+    # Interface Index (if present, Index otherwise) will be converted in hexadecimal format
+    #
+    # @param int_idx [String or nil] the interface index of interface
+    # @param idx [String] the index of interface
+    #
+    # @return [String]
+    #
+    # @example Interface Code when interface index is present
+    #   plugin.interface_code("1", "1") #=> "ox1"
+    # @example Interface Code when interface index is not present
+    #   plugin.interface_code(nil, "2") #=> "ox2"
+    #
+    def interface_code(int_idx, idx)
+      sprintf("0x%x", (int_idx || idx)).downcase
+    end
 
-  # Returns interface code for an interface
-  #
-  # Interface Index (if present, Index otherwise) will be converted in hexadecimal format
-  #
-  # @param int_idx [String or nil] the interface index of interface
-  # @param idx [String] the index of interface
-  #
-  # @return [String]
-  #
-  # @example Interface Code when interface index is present
-  #   plugin.interface_code("1", "1") #=> "ox1"
-  # @example Interface Code when interface index is not present
-  #   plugin.interface_code(nil, "2") #=> "ox2"
-  #
-  def interface_code(int_idx, idx)
-    sprintf("0x%x", (int_idx || idx)).downcase
-  end
+    # Returns IPV4 address from list of addresses containing IPV4 and IPV6 formats
+    #
+    # @param addresses [Array<String>] List of addresses
+    #
+    # @return [String]
+    #
+    # @example When list contains both IPV4 and IPV6 formats
+    #   plugin.prefer_ipv4([IPV4, IPV6]) #=> "IPV4"
+    # @example When list contains only IPV6 format
+    #   plugin.prefer_ipv4([IPV6]) #=> "IPV6"
+    #
+    def prefer_ipv4(addresses)
+      return nil unless addresses.is_a?(Array)
+      addresses.find { |ip| IPAddress.valid_ipv4?(ip) } ||
+        addresses.find { |ip| IPAddress.valid_ipv6?(ip) }
+    end
 
-  # Returns IPV4 address from list of addresses containing IPV4 and IPV6 formats
-  #
-  # @param addresses [Array<String>] List of addresses
-  #
-  # @return [String]
-  #
-  # @example When list contains both IPV4 and IPV6 formats
-  #   plugin.prefer_ipv4([IPV4, IPV6]) #=> "IPV4"
-  # @example When list contains only IPV6 format
-  #   plugin.prefer_ipv4([IPV6]) #=> "IPV6"
-  #
-  def prefer_ipv4(addresses)
-    return nil unless addresses.is_a?(Array)
-    addresses.find { |ip| IPAddress.valid_ipv4?(ip) } ||
-      addresses.find { |ip| IPAddress.valid_ipv6?(ip) }
-  end
+    # Selects default interface and returns its information
+    #
+    # @note Interface with least metric value should be prefered as default_route
+    #
+    # @param configuration [Mash] Configuration of interfaces as iface_config
+    #   [<interface_index> => {<interface_configurations>}]
+    #
+    # @return [Hash<:index, :interface_index, :default_ip_gateway, :ip_connection_metric>]
+    #
+    def favored_default_route(configuration)
+      return nil unless configuration.is_a?(Hash)
+      config = configuration.dup
 
-  # Selects default interface and returns its information
-  #
-  # @note Interface with least metric value should be prefered as default_route
-  #
-  # @param configuration [Mash] Configuration of interfaces as iface_config
-  #   [<interface_index> => {<interface_configurations>}]
-  #
-  # @return [Hash<:index, :interface_index, :default_ip_gateway, :ip_connection_metric>]
-  #
-  def favored_default_route(configuration)
-    return nil unless configuration.is_a?(Hash)
-    config = configuration.dup
-
-    config.inject([]) do |arr, (k, v)|
-      if v["default_ip_gateway"]
-        arr << { index: v["index"],
-                 interface_index: v["interface_index"],
-                 default_ip_gateway: prefer_ipv4(v["default_ip_gateway"]),
-                 ip_connection_metric: v["ip_connection_metric"] }
-      end
-      arr
-    end.min_by { |r| r[:ip_connection_metric] }
-  end
-
-  collect_data(:windows) do
-
-    require "wmi-lite/wmi"
+      config.inject([]) do |arr, (k, v)|
+        if v["default_ip_gateway"]
+          arr << { index: v["index"],
+                   interface_index: v["interface_index"],
+                   default_ip_gateway: prefer_ipv4(v["default_ip_gateway"]),
+                   ip_connection_metric: v["ip_connection_metric"] }
+        end
+        arr
+      end.min_by { |r| r[:ip_connection_metric] }
+    end
 
     iface = Mash.new
     iface_config = Mash.new

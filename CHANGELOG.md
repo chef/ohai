@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.4.2 -->
+## [v14.4.2](https://github.com/chef/ohai/tree/v14.4.2) (2018-08-22)
+
+#### Merged Pull Requests
+- Uniquely name our network plugin helper methods [#1236](https://github.com/chef/ohai/pull/1236) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.4.1 -->
+### Changes since 14.4.1 release
+
+#### Merged Pull Requests
+- Uniquely name our network plugin helper methods [#1236](https://github.com/chef/ohai/pull/1236) ([tas50](https://github.com/tas50)) <!-- 14.4.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

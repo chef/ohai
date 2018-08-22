@@ -97,7 +97,7 @@ Ohai.plugin(:Network) do
   #
   # @return [Hash<:index, :interface_index, :default_ip_gateway, :ip_connection_metric>]
   #
-  def favored_default_route(configuration)
+  def favored_default_route_windows(configuration)
     return nil unless configuration.is_a?(Hash)
     config = configuration.dup
 
@@ -191,7 +191,7 @@ Ohai.plugin(:Network) do
       end
     end
 
-    if (route = favored_default_route(iface_config))
+    if (route = favored_default_route_windows(iface_config))
       network[:default_gateway] = route[:default_ip_gateway]
       network[:default_interface] = interface_code(route[:interface_index], route[:index])
     end

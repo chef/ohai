@@ -22,455 +22,455 @@ Ohai.plugin(:Network) do
   provides "counters/network", "counters/network/interfaces"
   provides "ipaddress", "ip6address", "macaddress"
 
-  def linux_encaps_lookup(encap)
-    return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
-    return "PPP" if encap.eql?("Point-to-Point Protocol")
-    return "SLIP" if encap.eql?("Serial Line IP")
-    return "VJSLIP" if encap.eql?("VJ Serial Line IP")
-    return "IPIP" if encap.eql?("IPIP Tunnel")
-    return "6to4" if encap.eql?("IPv6-in-IPv4")
-    return "Ethernet" if encap.eql?("ether")
-    encap
-  end
-
-  def ipv6_enabled?
-    File.exist? "/proc/net/if_inet6"
-  end
-
-  def ethtool_binary_path
-    @ethtool ||= which("ethtool")
-  end
-
-  def is_openvz?
-    @openvz ||= ::File.directory?("/proc/vz")
-  end
-
-  def is_openvz_host?
-    is_openvz? && ::File.directory?("/proc/bc")
-  end
-
-  def extract_neighbors(family, iface, neigh_attr)
-    so = shell_out("ip -f #{family[:name]} neigh show")
-    so.stdout.lines do |line|
-      if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
-        interface = iface[$2]
-        unless interface
-          logger.warn("neighbor list has entries for unknown interface #{interface}")
-          next
-        end
-        interface[neigh_attr] = Mash.new unless interface[neigh_attr]
-        interface[neigh_attr][$1] = $3.downcase
-      end
-    end
-    iface
-  end
-
-  # checking the routing tables
-  # why ?
-  # 1) to set the default gateway and default interfaces attributes
-  # 2) on some occasions, the best way to select node[:ipaddress] is to look at
-  #    the routing table source field.
-  # 3) and since we're at it, let's populate some :routes attributes
-  # (going to do that for both inet and inet6 addresses)
-  def check_routing_table(family, iface, default_route_table)
-    so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
-    so.stdout.lines do |line|
-      line.strip!
-      logger.trace("Plugin Network: Parsing #{line}")
-      if line =~ /\\/
-        parts = line.split('\\')
-        route_dest = parts.shift.strip
-        route_endings = parts
-      elsif line =~ /^([^\s]+)\s(.*)$/
-        route_dest = $1
-        route_endings = [$2]
-      else
-        next
-      end
-      route_endings.each do |route_ending|
-        if route_ending =~ /\bdev\s+([^\s]+)\b/
-          route_int = $1
-        else
-          logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
-          next
-        end
-        route_int = "venet0:0" if is_openvz? && !is_openvz_host? && route_int == "venet0" && iface["venet0:0"]
-
-        unless iface[route_int]
-          logger.trace("Plugin Network: Skipping previously unseen interface from 'ip route show': #{route_int}")
-          next
-        end
-
-        route_entry = Mash.new(destination: route_dest,
-                               family: family[:name])
-        %w{via scope metric proto src}.each do |k|
-          # http://rubular.com/r/pwTNp65VFf
-          route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
-        end
-
-        # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
-        # don't report the route entry if the src address isn't set on the node
-        # unless the interface has no addresses of this type at all
-        if route_entry[:src]
-          addr = iface[route_int][:addresses]
-          unless addr.nil? || addr.key?(route_entry[:src]) ||
-              addr.values.all? { |a| a["family"] != family[:name] }
-            logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
-            next
-          end
-        end
-
-        iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
-        iface[route_int][:routes] << route_entry
-      end
-    end
-    iface
-  end
-
-  # now looking at the routes to set the default attributes
-  # for information, default routes can be of this form :
-  # - default via 10.0.2.4 dev br0
-  # - default dev br0  scope link
-  # - default dev eth0  scope link src 1.1.1.1
-  # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
-  # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
-
-  # using a temporary var to hold routes and their interface name
-  def parse_routes(family, iface)
-    iface.collect do |i, iv|
-      if iv[:routes]
-        iv[:routes].collect do |r|
-          r.merge(dev: i) if r[:family] == family[:name]
-        end.compact
-      end
-    end.compact.flatten
-  end
-
-  # determine layer 1 details for the interface using ethtool
-  def ethernet_layer_one(iface)
-    return iface unless ethtool_binary_path
-    keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
-    iface.each_key do |tmp_int|
-      next unless iface[tmp_int][:encapsulation] == "Ethernet"
-      so = shell_out("#{ethtool_binary_path} #{tmp_int}")
-      so.stdout.lines do |line|
-        line.chomp!
-        logger.trace("Plugin Network: Parsing ethtool output: #{line}")
-        line.lstrip!
-        k, v = line.split(": ")
-        next unless keys.include? k
-        k.downcase!.tr!("-", "_")
-        if k == "speed"
-          k = "link_speed" # This is not necessarily the maximum speed the NIC supports
-          v = v[/\d+/].to_i
-        end
-        iface[tmp_int][k] = v
-      end
-    end
-    iface
-  end
-
-  # determine ring parameters for the interface using ethtool
-  def ethernet_ring_parameters(iface)
-    return iface unless ethtool_binary_path
-    iface.each_key do |tmp_int|
-      next unless iface[tmp_int][:encapsulation] == "Ethernet"
-      so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
-      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
-      type = nil
-      iface[tmp_int]["ring_params"] = {}
-      so.stdout.lines.each do |line|
-        next if line.start_with?("Ring parameters for")
-        next if line.strip.nil?
-        if line =~ /Pre-set maximums/
-          type = "max"
-          next
-        end
-        if line =~ /Current hardware settings/
-          type = "current"
-          next
-        end
-        key, val = line.split(/:\s+/)
-        if type && val
-          ring_key = "#{type}_#{key.downcase.tr(' ', '_')}"
-          iface[tmp_int]["ring_params"][ring_key] = val.to_i
-        end
-      end
-    end
-    iface
-  end
-
-  # determine link stats, vlans, queue length, and state for an interface using ip
-  def link_statistics(iface, net_counters)
-    so = shell_out("ip -d -s link")
-    tmp_int = nil
-    on_rx = true
-    so.stdout.lines do |line|
-      if line =~ IPROUTE_INT_REGEX
-        tmp_int = $2
-        iface[tmp_int] = Mash.new unless iface[tmp_int]
-        net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
-      end
-
-      if line =~ /^\s+(ip6tnl|ipip)/
-        iface[tmp_int][:tunnel_info] = {}
-        words = line.split
-        words.each_with_index do |word, index|
-          case word
-          when "external"
-            iface[tmp_int][:tunnel_info][word] = true
-          when "any", "ipip6", "ip6ip6"
-            iface[tmp_int][:tunnel_info][:proto] = word
-          when "remote",
-               "local",
-               "encaplimit",
-               "hoplimit",
-               "tclass",
-               "flowlabel",
-               "addrgenmode",
-               "numtxqueues",
-               "numrxqueues",
-               "gso_max_size",
-               "gso_max_segs"
-            iface[tmp_int][:tunnel_info][word] = words[index + 1]
-          end
-        end
-      end
-
-      if line =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
-        int = on_rx ? :rx : :tx
-        net_counters[tmp_int][int] = Mash.new unless net_counters[tmp_int][int]
-        net_counters[tmp_int][int][:bytes] = $1
-        net_counters[tmp_int][int][:packets] = $2
-        net_counters[tmp_int][int][:errors] = $3
-        net_counters[tmp_int][int][:drop] = $4
-        if int == :rx
-          net_counters[tmp_int][int][:overrun] = $5
-        else
-          net_counters[tmp_int][int][:carrier] = $5
-          net_counters[tmp_int][int][:collisions] = $6
-        end
-
-        on_rx = !on_rx
-      end
-
-      if line =~ /qlen (\d+)/
-        net_counters[tmp_int][:tx] = Mash.new unless net_counters[tmp_int][:tx]
-        net_counters[tmp_int][:tx][:queuelen] = $1
-      end
-
-      if line =~ /vlan id (\d+)/ || line =~ /vlan protocol ([\w\.]+) id (\d+)/
-        if $2
-          tmp_prot = $1
-          tmp_id = $2
-        else
-          tmp_id = $1
-        end
-        iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
-        iface[tmp_int][:vlan][:id] = tmp_id
-        iface[tmp_int][:vlan][:protocol] = tmp_prot if tmp_prot
-
-        vlan_flags = line.scan(/(REORDER_HDR|GVRP|LOOSE_BINDING)/)
-        if vlan_flags.length > 0
-          iface[tmp_int][:vlan][:flags] = vlan_flags.flatten.uniq
-        end
-      end
-
-      if line =~ /state (\w+)/
-        iface[tmp_int]["state"] = $1.downcase
-      end
-    end
-    iface
-  end
-
-  def match_iproute(iface, line, cint)
-    if line =~ IPROUTE_INT_REGEX
-      cint = $2
-      iface[cint] = Mash.new
-      if cint =~ /^(\w+)(\d+.*)/
-        iface[cint][:type] = $1
-        iface[cint][:number] = $2
-      end
-
-      if line =~ /mtu (\d+)/
-        iface[cint][:mtu] = $1
-      end
-
-      flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|LOWER_UP|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)/)
-      if flags.length > 1
-        iface[cint][:flags] = flags.flatten.uniq
-      end
-    end
-    cint
-  end
-
-  def parse_ip_addr(iface)
-    so = shell_out("ip addr")
-    cint = nil
-    so.stdout.lines do |line|
-      cint = match_iproute(iface, line, cint)
-
-      parse_ip_addr_link_line(cint, iface, line)
-      cint = parse_ip_addr_inet_line(cint, iface, line)
-      parse_ip_addr_inet6_line(cint, iface, line)
-    end
-  end
-
-  def parse_ip_addr_link_line(cint, iface, line)
-    if line =~ /link\/(\w+) ([\da-f\:]+) /
-      iface[cint][:encapsulation] = linux_encaps_lookup($1)
-      unless $2 == "00:00:00:00:00:00"
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-        iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
-      end
-    end
-  end
-
-  def parse_ip_addr_inet_line(cint, iface, line)
-    if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
-      tmp_addr, tmp_prefix = $1, $3
-      tmp_prefix ||= "32"
-      original_int = nil
-
-      # Are we a formerly aliased interface?
-      if line =~ /#{cint}:(\d+)$/
-        sub_int = $1
-        alias_int = "#{cint}:#{sub_int}"
-        original_int = cint
-        cint = alias_int
-      end
-
-      iface[cint] = Mash.new unless iface[cint] # Create the fake alias interface if needed
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
-      iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
-
-      if line =~ /peer (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-        iface[cint][:addresses][tmp_addr][:peer] = $1
-      end
-
-      if line =~ /brd (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-        iface[cint][:addresses][tmp_addr][:broadcast] = $1
-      end
-
-      if line =~ /scope (\w+)/
-        iface[cint][:addresses][tmp_addr][:scope] = ($1.eql?("host") ? "Node" : $1.capitalize)
-      end
-
-      # If we found we were an alias interface, restore cint to its original value
-      cint = original_int unless original_int.nil?
-    end
-    cint
-  end
-
-  def parse_ip_addr_inet6_line(cint, iface, line)
-    if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)( .*)?/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
-      tmp_addr = $1
-      tags = $4 || ""
-      tags = tags.split(" ")
-
-      iface[cint][:addresses][tmp_addr] = {
-        "family" => "inet6",
-        "prefixlen" => $2,
-        "scope" => ($3.eql?("host") ? "Node" : $3.capitalize),
-        "tags" => tags,
-      }
-    end
-  end
-
-  # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
-  def get_mac_for_interface(interfaces, interface)
-    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
-  end
-
-  # returns the default route with the lowest metric (unspecified metric is 0)
-  def choose_default_route(routes)
-    routes.select do |r|
-      r[:destination] == "default"
-    end.min do |x, y|
-      (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
-    end
-  end
-
-  def interface_has_no_addresses_in_family?(iface, family)
-    return true if iface[:addresses].nil?
-    iface[:addresses].values.all? { |addr| addr["family"] != family }
-  end
-
-  def interface_have_address?(iface, address)
-    return false if iface[:addresses].nil?
-    iface[:addresses].key?(address)
-  end
-
-  def interface_address_not_link_level?(iface, address)
-    !(iface[:addresses][address][:scope].casecmp("link") == 0)
-  end
-
-  def interface_valid_for_route?(iface, address, family)
-    return true if interface_has_no_addresses_in_family?(iface, family)
-
-    interface_have_address?(iface, address) && interface_address_not_link_level?(iface, address)
-  end
-
-  def route_is_valid_default_route?(route, default_route)
-    # if the route destination is a default route, it's good
-    return true if route[:destination] == "default"
-
-    # the default route has a gateway and the route matches the gateway
-    !default_route[:via].nil? && IPAddress(route[:destination]).include?(IPAddress(default_route[:via]))
-  end
-
-  # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
-  # this method attempts to deduce the route that is most important to the user, which is later used to deduce the favored values for {ip,mac,ip6}address
-  # we only consider routes that are default routes, or those routes that get us to the gateway for a default route
-  def favored_default_route(routes, iface, default_route, family)
-    routes.select do |r|
-      if family[:name] == "inet"
-        # the route must have a source address
-        next if r[:src].nil? || r[:src].empty?
-
-        # the interface specified in the route must exist
-        route_interface = iface[r[:dev]]
-        next if route_interface.nil? # the interface specified in the route must exist
-
-        # the interface must have no addresses, or if it has the source address, the address must not
-        # be a link-level address
-        next unless interface_valid_for_route?(route_interface, r[:src], "inet")
-
-        # the route must either be a default route, or it must have a gateway which is accessible via the route
-        next unless route_is_valid_default_route?(r, default_route)
-
-        true
-      elsif family[:name] == "inet6"
-        iface[r[:dev]] &&
-          iface[r[:dev]][:state] == "up" &&
-          route_is_valid_default_route?(r, default_route)
-      end
-    end.min_by do |r|
-      # sorting the selected routes:
-      # - getting default routes first
-      # - then sort by metric
-      # - then by prefixlen
-      [
-       r[:destination] == "default" ? 0 : 1,
-       r[:metric].nil? ? 0 : r[:metric].to_i,
-       # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
-       # just a quick workaround: use 0 if IPAddress fails
-       begin
-         IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
-       rescue
-         0
-       end,
-      ]
-    end
-  end
-
   # Both the network plugin and this plugin (linux/network) are run on linux. This plugin runs first.
   # If the 'ip' binary is available, this plugin may set {ip,mac,ip6}address. The network plugin should not overwrite these.
   # The older code section below that relies on the deprecated net-tools, e.g. netstat and ifconfig, provides less functionality.
   collect_data(:linux) do
     require "ipaddr"
+
+    def linux_encaps_lookup(encap)
+      return "Loopback" if encap.eql?("Local Loopback") || encap.eql?("loopback")
+      return "PPP" if encap.eql?("Point-to-Point Protocol")
+      return "SLIP" if encap.eql?("Serial Line IP")
+      return "VJSLIP" if encap.eql?("VJ Serial Line IP")
+      return "IPIP" if encap.eql?("IPIP Tunnel")
+      return "6to4" if encap.eql?("IPv6-in-IPv4")
+      return "Ethernet" if encap.eql?("ether")
+      encap
+    end
+
+    def ipv6_enabled?
+      File.exist? "/proc/net/if_inet6"
+    end
+
+    def ethtool_binary_path
+      @ethtool ||= which("ethtool")
+    end
+
+    def is_openvz?
+      @openvz ||= ::File.directory?("/proc/vz")
+    end
+
+    def is_openvz_host?
+      is_openvz? && ::File.directory?("/proc/bc")
+    end
+
+    def extract_neighbors(family, iface, neigh_attr)
+      so = shell_out("ip -f #{family[:name]} neigh show")
+      so.stdout.lines do |line|
+        if line =~ /^([a-f0-9\:\.]+)\s+dev\s+([^\s]+)\s+lladdr\s+([a-fA-F0-9\:]+)/
+          interface = iface[$2]
+          unless interface
+            logger.warn("neighbor list has entries for unknown interface #{interface}")
+            next
+          end
+          interface[neigh_attr] = Mash.new unless interface[neigh_attr]
+          interface[neigh_attr][$1] = $3.downcase
+        end
+      end
+      iface
+    end
+
+    # checking the routing tables
+    # why ?
+    # 1) to set the default gateway and default interfaces attributes
+    # 2) on some occasions, the best way to select node[:ipaddress] is to look at
+    #    the routing table source field.
+    # 3) and since we're at it, let's populate some :routes attributes
+    # (going to do that for both inet and inet6 addresses)
+    def check_routing_table(family, iface, default_route_table)
+      so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
+      so.stdout.lines do |line|
+        line.strip!
+        logger.trace("Plugin Network: Parsing #{line}")
+        if line =~ /\\/
+          parts = line.split('\\')
+          route_dest = parts.shift.strip
+          route_endings = parts
+        elsif line =~ /^([^\s]+)\s(.*)$/
+          route_dest = $1
+          route_endings = [$2]
+        else
+          next
+        end
+        route_endings.each do |route_ending|
+          if route_ending =~ /\bdev\s+([^\s]+)\b/
+            route_int = $1
+          else
+            logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
+            next
+          end
+          route_int = "venet0:0" if is_openvz? && !is_openvz_host? && route_int == "venet0" && iface["venet0:0"]
+
+          unless iface[route_int]
+            logger.trace("Plugin Network: Skipping previously unseen interface from 'ip route show': #{route_int}")
+            next
+          end
+
+          route_entry = Mash.new(destination: route_dest,
+                                 family: family[:name])
+          %w{via scope metric proto src}.each do |k|
+            # http://rubular.com/r/pwTNp65VFf
+            route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
+          end
+
+          # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
+          # don't report the route entry if the src address isn't set on the node
+          # unless the interface has no addresses of this type at all
+          if route_entry[:src]
+            addr = iface[route_int][:addresses]
+            unless addr.nil? || addr.key?(route_entry[:src]) ||
+                addr.values.all? { |a| a["family"] != family[:name] }
+              logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
+              next
+            end
+          end
+
+          iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
+          iface[route_int][:routes] << route_entry
+        end
+      end
+      iface
+    end
+
+    # now looking at the routes to set the default attributes
+    # for information, default routes can be of this form :
+    # - default via 10.0.2.4 dev br0
+    # - default dev br0  scope link
+    # - default dev eth0  scope link src 1.1.1.1
+    # - default via 10.0.3.1 dev eth1  src 10.0.3.2  metric 10
+    # - default via 10.0.4.1 dev eth2  src 10.0.4.2  metric 20
+
+    # using a temporary var to hold routes and their interface name
+    def parse_routes(family, iface)
+      iface.collect do |i, iv|
+        if iv[:routes]
+          iv[:routes].collect do |r|
+            r.merge(dev: i) if r[:family] == family[:name]
+          end.compact
+        end
+      end.compact.flatten
+    end
+
+    # determine layer 1 details for the interface using ethtool
+    def ethernet_layer_one(iface)
+      return iface unless ethtool_binary_path
+      keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
+      iface.each_key do |tmp_int|
+        next unless iface[tmp_int][:encapsulation] == "Ethernet"
+        so = shell_out("#{ethtool_binary_path} #{tmp_int}")
+        so.stdout.lines do |line|
+          line.chomp!
+          logger.trace("Plugin Network: Parsing ethtool output: #{line}")
+          line.lstrip!
+          k, v = line.split(": ")
+          next unless keys.include? k
+          k.downcase!.tr!("-", "_")
+          if k == "speed"
+            k = "link_speed" # This is not necessarily the maximum speed the NIC supports
+            v = v[/\d+/].to_i
+          end
+          iface[tmp_int][k] = v
+        end
+      end
+      iface
+    end
+
+    # determine ring parameters for the interface using ethtool
+    def ethernet_ring_parameters(iface)
+      return iface unless ethtool_binary_path
+      iface.each_key do |tmp_int|
+        next unless iface[tmp_int][:encapsulation] == "Ethernet"
+        so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
+        logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+        type = nil
+        iface[tmp_int]["ring_params"] = {}
+        so.stdout.lines.each do |line|
+          next if line.start_with?("Ring parameters for")
+          next if line.strip.nil?
+          if line =~ /Pre-set maximums/
+            type = "max"
+            next
+          end
+          if line =~ /Current hardware settings/
+            type = "current"
+            next
+          end
+          key, val = line.split(/:\s+/)
+          if type && val
+            ring_key = "#{type}_#{key.downcase.tr(' ', '_')}"
+            iface[tmp_int]["ring_params"][ring_key] = val.to_i
+          end
+        end
+      end
+      iface
+    end
+
+    # determine link stats, vlans, queue length, and state for an interface using ip
+    def link_statistics(iface, net_counters)
+      so = shell_out("ip -d -s link")
+      tmp_int = nil
+      on_rx = true
+      so.stdout.lines do |line|
+        if line =~ IPROUTE_INT_REGEX
+          tmp_int = $2
+          iface[tmp_int] = Mash.new unless iface[tmp_int]
+          net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
+        end
+
+        if line =~ /^\s+(ip6tnl|ipip)/
+          iface[tmp_int][:tunnel_info] = {}
+          words = line.split
+          words.each_with_index do |word, index|
+            case word
+            when "external"
+              iface[tmp_int][:tunnel_info][word] = true
+            when "any", "ipip6", "ip6ip6"
+              iface[tmp_int][:tunnel_info][:proto] = word
+            when "remote",
+                 "local",
+                 "encaplimit",
+                 "hoplimit",
+                 "tclass",
+                 "flowlabel",
+                 "addrgenmode",
+                 "numtxqueues",
+                 "numrxqueues",
+                 "gso_max_size",
+                 "gso_max_segs"
+              iface[tmp_int][:tunnel_info][word] = words[index + 1]
+            end
+          end
+        end
+
+        if line =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+          int = on_rx ? :rx : :tx
+          net_counters[tmp_int][int] = Mash.new unless net_counters[tmp_int][int]
+          net_counters[tmp_int][int][:bytes] = $1
+          net_counters[tmp_int][int][:packets] = $2
+          net_counters[tmp_int][int][:errors] = $3
+          net_counters[tmp_int][int][:drop] = $4
+          if int == :rx
+            net_counters[tmp_int][int][:overrun] = $5
+          else
+            net_counters[tmp_int][int][:carrier] = $5
+            net_counters[tmp_int][int][:collisions] = $6
+          end
+
+          on_rx = !on_rx
+        end
+
+        if line =~ /qlen (\d+)/
+          net_counters[tmp_int][:tx] = Mash.new unless net_counters[tmp_int][:tx]
+          net_counters[tmp_int][:tx][:queuelen] = $1
+        end
+
+        if line =~ /vlan id (\d+)/ || line =~ /vlan protocol ([\w\.]+) id (\d+)/
+          if $2
+            tmp_prot = $1
+            tmp_id = $2
+          else
+            tmp_id = $1
+          end
+          iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
+          iface[tmp_int][:vlan][:id] = tmp_id
+          iface[tmp_int][:vlan][:protocol] = tmp_prot if tmp_prot
+
+          vlan_flags = line.scan(/(REORDER_HDR|GVRP|LOOSE_BINDING)/)
+          if vlan_flags.length > 0
+            iface[tmp_int][:vlan][:flags] = vlan_flags.flatten.uniq
+          end
+        end
+
+        if line =~ /state (\w+)/
+          iface[tmp_int]["state"] = $1.downcase
+        end
+      end
+      iface
+    end
+
+    def match_iproute(iface, line, cint)
+      if line =~ IPROUTE_INT_REGEX
+        cint = $2
+        iface[cint] = Mash.new
+        if cint =~ /^(\w+)(\d+.*)/
+          iface[cint][:type] = $1
+          iface[cint][:number] = $2
+        end
+
+        if line =~ /mtu (\d+)/
+          iface[cint][:mtu] = $1
+        end
+
+        flags = line.scan(/(UP|BROADCAST|DEBUG|LOOPBACK|POINTTOPOINT|NOTRAILERS|LOWER_UP|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC)/)
+        if flags.length > 1
+          iface[cint][:flags] = flags.flatten.uniq
+        end
+      end
+      cint
+    end
+
+    def parse_ip_addr(iface)
+      so = shell_out("ip addr")
+      cint = nil
+      so.stdout.lines do |line|
+        cint = match_iproute(iface, line, cint)
+
+        parse_ip_addr_link_line(cint, iface, line)
+        cint = parse_ip_addr_inet_line(cint, iface, line)
+        parse_ip_addr_inet6_line(cint, iface, line)
+      end
+    end
+
+    def parse_ip_addr_link_line(cint, iface, line)
+      if line =~ /link\/(\w+) ([\da-f\:]+) /
+        iface[cint][:encapsulation] = linux_encaps_lookup($1)
+        unless $2 == "00:00:00:00:00:00"
+          iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+          iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
+        end
+      end
+    end
+
+    def parse_ip_addr_inet_line(cint, iface, line)
+      if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
+        tmp_addr, tmp_prefix = $1, $3
+        tmp_prefix ||= "32"
+        original_int = nil
+
+        # Are we a formerly aliased interface?
+        if line =~ /#{cint}:(\d+)$/
+          sub_int = $1
+          alias_int = "#{cint}:#{sub_int}"
+          original_int = cint
+          cint = alias_int
+        end
+
+        iface[cint] = Mash.new unless iface[cint] # Create the fake alias interface if needed
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
+        iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
+
+        if line =~ /peer (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+          iface[cint][:addresses][tmp_addr][:peer] = $1
+        end
+
+        if line =~ /brd (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
+          iface[cint][:addresses][tmp_addr][:broadcast] = $1
+        end
+
+        if line =~ /scope (\w+)/
+          iface[cint][:addresses][tmp_addr][:scope] = ($1.eql?("host") ? "Node" : $1.capitalize)
+        end
+
+        # If we found we were an alias interface, restore cint to its original value
+        cint = original_int unless original_int.nil?
+      end
+      cint
+    end
+
+    def parse_ip_addr_inet6_line(cint, iface, line)
+      if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)( .*)?/
+        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        tmp_addr = $1
+        tags = $4 || ""
+        tags = tags.split(" ")
+
+        iface[cint][:addresses][tmp_addr] = {
+          "family" => "inet6",
+          "prefixlen" => $2,
+          "scope" => ($3.eql?("host") ? "Node" : $3.capitalize),
+          "tags" => tags,
+        }
+      end
+    end
+
+    # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
+    def get_mac_for_interface(interfaces, interface)
+      interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
+    end
+
+    # returns the default route with the lowest metric (unspecified metric is 0)
+    def choose_default_route(routes)
+      routes.select do |r|
+        r[:destination] == "default"
+      end.min do |x, y|
+        (x[:metric].nil? ? 0 : x[:metric].to_i) <=> (y[:metric].nil? ? 0 : y[:metric].to_i)
+      end
+    end
+
+    def interface_has_no_addresses_in_family?(iface, family)
+      return true if iface[:addresses].nil?
+      iface[:addresses].values.all? { |addr| addr["family"] != family }
+    end
+
+    def interface_have_address?(iface, address)
+      return false if iface[:addresses].nil?
+      iface[:addresses].key?(address)
+    end
+
+    def interface_address_not_link_level?(iface, address)
+      !(iface[:addresses][address][:scope].casecmp("link") == 0)
+    end
+
+    def interface_valid_for_route?(iface, address, family)
+      return true if interface_has_no_addresses_in_family?(iface, family)
+
+      interface_have_address?(iface, address) && interface_address_not_link_level?(iface, address)
+    end
+
+    def route_is_valid_default_route?(route, default_route)
+      # if the route destination is a default route, it's good
+      return true if route[:destination] == "default"
+
+      # the default route has a gateway and the route matches the gateway
+      !default_route[:via].nil? && IPAddress(route[:destination]).include?(IPAddress(default_route[:via]))
+    end
+
+    # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
+    # this method attempts to deduce the route that is most important to the user, which is later used to deduce the favored values for {ip,mac,ip6}address
+    # we only consider routes that are default routes, or those routes that get us to the gateway for a default route
+    def favored_default_route(routes, iface, default_route, family)
+      routes.select do |r|
+        if family[:name] == "inet"
+          # the route must have a source address
+          next if r[:src].nil? || r[:src].empty?
+
+          # the interface specified in the route must exist
+          route_interface = iface[r[:dev]]
+          next if route_interface.nil? # the interface specified in the route must exist
+
+          # the interface must have no addresses, or if it has the source address, the address must not
+          # be a link-level address
+          next unless interface_valid_for_route?(route_interface, r[:src], "inet")
+
+          # the route must either be a default route, or it must have a gateway which is accessible via the route
+          next unless route_is_valid_default_route?(r, default_route)
+
+          true
+        elsif family[:name] == "inet6"
+          iface[r[:dev]] &&
+            iface[r[:dev]][:state] == "up" &&
+            route_is_valid_default_route?(r, default_route)
+        end
+      end.min_by do |r|
+        # sorting the selected routes:
+        # - getting default routes first
+        # - then sort by metric
+        # - then by prefixlen
+        [
+         r[:destination] == "default" ? 0 : 1,
+         r[:metric].nil? ? 0 : r[:metric].to_i,
+         # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
+         # just a quick workaround: use 0 if IPAddress fails
+         begin
+           IPAddress( r[:destination] == "default" ? family[:default_route] : r[:destination] ).prefix
+         rescue
+           0
+         end,
+        ]
+      end
+    end
 
     iface = Mash.new
     net_counters = Mash.new

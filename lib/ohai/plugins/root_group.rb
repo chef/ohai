@@ -18,9 +18,34 @@
 Ohai.plugin(:RootGroup) do
   provides "root_group"
 
+  #
+  # Performs a WMI query using WIN32OLE from the Ruby Stdlib
+  #
+  # @return [String]
+  #
+  def wmi_property_from_query(wmi_property, wmi_query)
+    @wmi = ::WIN32OLE.connect('winmgmts://')
+    result = @wmi.ExecQuery(wmi_query)
+    return nil unless result.each.count > 0
+    result.each.next.send(wmi_property)
+  end
+
+  # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
+  # internal name for the Administrators group, which lets us work
+  # properly in environments with a renamed or localized name for the
+  # Administrators group.
+  # Use LocalAccount=True because otherwise WMI will attempt to include
+  # (unneeded) Active Directory groups by querying AD, which is a performance
+  # and reliability issue since AD might not be reachable.
+  def windows_root_group_name
+    wmi_property_from_query(
+      :name,
+      "select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True"
+    )
+  end
+
   collect_data(:windows) do
-    require "ohai/util/win32/group_helper"
-    root_group Ohai::Util::Win32::GroupHelper.windows_root_group_name
+    root_group windows_root_group_name
   end
 
   collect_data(:default) do

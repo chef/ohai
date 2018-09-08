@@ -24,7 +24,7 @@ Ohai.plugin(:RootGroup) do
   # @return [String]
   #
   def wmi_property_from_query(wmi_property, wmi_query)
-    @wmi = ::WIN32OLE.connect('winmgmts://')
+    @wmi = ::WIN32OLE.connect("winmgmts://")
     result = @wmi.ExecQuery(wmi_query)
     return nil unless result.each.count > 0
     result.each.next.send(wmi_property)

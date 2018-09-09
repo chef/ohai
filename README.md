@@ -37,11 +37,16 @@ Ohai has some Rake tasks for doing various things.
 
 ```
 rake -T
-rake build          # Build the gem file ohai-$VERSION.gem
-rake install        # install the gem locally
-rake install:local  # install the gem locally without network access
-rake release        # Create tag $VERSION, build gem, and push to Rubygems
-rake spec           # Run RSpec tests
+rake build               # Build ohai-$VERSION.gem into the pkg directory
+rake clean               # Remove any temporary products
+rake clobber             # Remove any generated files
+rake docs                # Generate YARD Documentation
+rake install             # Build and install ohai-$VERSION.gem into system gems
+rake install:local       # Build and install ohai-$VERSION.gem into system gems without network access
+rake release[remote]     # Create tag $VERSION and build and push ohai-$VERSION.gem to rubygems.org
+rake spec                # Run RSpec code examples
+rake style               # Run Chefstyle tests
+rake style:auto_correct  # Auto-correct RuboCop offenses
 
 ($VERSION is the current version, from the GemSpec in Rakefile)
 ```

@@ -69,14 +69,6 @@ class Ohai::Application
     proc: lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
     exit: 0
 
-  def initialize
-    super
-
-    # Always switch to a readable directory. Keeps subsequent Dir.chdir() {}
-    # from failing due to permissions when launched as a less privileged user.
-    Dir.chdir("/")
-  end
-
   def run
     elapsed = Benchmark.measure do
       configure_ohai
@@ -95,6 +87,10 @@ class Ohai::Application
   end
 
   def run_application
+    # Always switch to a readable directory. Keeps subsequent Dir.chdir() {}
+    # from failing due to permissions when launched as a less privileged user.
+    Dir.chdir("/")
+
     config[:invoked_from_cli] = true
     config[:logger] = Ohai::Log.with_child
     ohai = Ohai::System.new(config)

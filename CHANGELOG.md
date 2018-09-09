@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.4.3 -->
+## [v14.4.3](https://github.com/chef/ohai/tree/v14.4.3) (2018-09-09)
+
+#### Merged Pull Requests
+- Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.4.2 -->
+### Changes since 14.4.2 release
+
+#### Merged Pull Requests
+- Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys)) <!-- 14.4.3 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

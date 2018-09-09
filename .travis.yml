@@ -26,6 +26,5 @@ matrix:
 
 script:
   - bundle exec chefstyle -v
-  - bundle exec chefstyle
-  - bundle exec rake spec
+  - bundle exec rake
   - bundle exec ohai

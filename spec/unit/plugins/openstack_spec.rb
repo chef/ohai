@@ -104,7 +104,7 @@ describe Ohai::System, "plugin openstack" do
         expect(plugin[:openstack][:instance_id]).to be_nil
       end
       context "when timout was set" do
-        let(:override_timout) {10}
+        let(:override_timout) { 10 }
         before do
           Ohai::Config.ohai[:openstack_metadata_timeout] = override_timout
         end

@@ -21,6 +21,7 @@ require_relative "../../spec_helper.rb"
 describe Ohai::System, "plugin openstack" do
 
   let(:plugin) { get_plugin("openstack") }
+  let(:default_timeout) { 2 }
 
   before(:each) do
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
@@ -38,7 +39,7 @@ describe Ohai::System, "plugin openstack" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
         plugin[:dmi] = dmi_data
         plugin.run
@@ -77,7 +78,7 @@ describe Ohai::System, "plugin openstack" do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
       allow(plugin).to receive(:can_socket_connect?)
-        .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+        .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
       plugin[:dmi] = { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
       plugin.run
@@ -89,7 +90,7 @@ describe Ohai::System, "plugin openstack" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         plugin.run
@@ -101,6 +102,23 @@ describe Ohai::System, "plugin openstack" do
 
       it "doesn't set metadata attributes" do
         expect(plugin[:openstack][:instance_id]).to be_nil
+      end
+      context "when timout was set" do
+        let(:override_timout) { 10 }
+        before do
+          Ohai::Config.ohai[:openstack_metadata_timeout] = override_timout
+        end
+        after do
+          Ohai::Config.ohai[:openstack_metadata_timeout] = nil
+        end
+
+        it "overwrite timout by setting" do
+          allow(plugin).to receive(:can_socket_connect?)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, override_timout)
+          .and_return(false)
+          allow(plugin).to receive(:hint?).with("openstack").and_return(true)
+          plugin.run
+        end
       end
     end
 
@@ -196,7 +214,7 @@ EOM
       before do
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(true)
 
         allow(Net::HTTP).to receive(:start)

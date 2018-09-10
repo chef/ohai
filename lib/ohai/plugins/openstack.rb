@@ -64,8 +64,10 @@ Ohai.plugin(:Openstack) do
       openstack Mash.new
       openstack[:provider] = openstack_provider
 
+      timeout = Ohai::Config.ohai[:openstack_metadata_timeout] || 2
+
       # fetch the metadata if we can do a simple socket connect first
-      if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, timeout)
         fetch_metadata.each do |k, v|
           openstack[k] = v
         end

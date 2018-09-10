@@ -38,7 +38,7 @@ describe Ohai::System, "plugin openstack" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, 10)
           .and_return(false)
         plugin[:dmi] = dmi_data
         plugin.run
@@ -77,7 +77,7 @@ describe Ohai::System, "plugin openstack" do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
       allow(plugin).to receive(:can_socket_connect?)
-        .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+        .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, 10)
         .and_return(false)
       plugin[:dmi] = { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
       plugin.run
@@ -89,7 +89,7 @@ describe Ohai::System, "plugin openstack" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, 10)
           .and_return(false)
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         plugin.run
@@ -196,7 +196,7 @@ EOM
       before do
         allow(plugin).to receive(:hint?).with("openstack").and_return(true)
         allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, 10)
           .and_return(true)
 
         allow(Net::HTTP).to receive(:start)

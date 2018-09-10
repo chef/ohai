@@ -65,7 +65,7 @@ Ohai.plugin(:Openstack) do
       openstack[:provider] = openstack_provider
 
       # fetch the metadata if we can do a simple socket connect first
-      if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
+      if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, 10)
         fetch_metadata.each do |k, v|
           openstack[k] = v
         end

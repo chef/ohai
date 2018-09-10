@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.4.3 -->
-## [v14.4.3](https://github.com/chef/ohai/tree/v14.4.3) (2018-09-09)
+<!-- latest_release 14.4.4 -->
+## [v14.4.4](https://github.com/chef/ohai/tree/v14.4.4) (2018-09-10)
 
 #### Merged Pull Requests
-- Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys))
+- override timout by Ohai::Config.ohai[:openstack_metadata_timeout] [#1244](https://github.com/chef/ohai/pull/1244) ([sawanoboly](https://github.com/sawanoboly))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.4.2 -->
 ### Changes since 14.4.2 release
 
 #### Merged Pull Requests
+- override timout by Ohai::Config.ohai[:openstack_metadata_timeout] [#1244](https://github.com/chef/ohai/pull/1244) ([sawanoboly](https://github.com/sawanoboly)) <!-- 14.4.4 -->
 - Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys)) <!-- 14.4.3 -->
 <!-- release_rollup -->
 

@@ -29,8 +29,8 @@ Ohai.plugin(:RootGroup) do
     # Use LocalAccount=True because otherwise WMI will attempt to include
     # (unneeded) Active Directory groups by querying AD, which is a performance
     # and reliability issue since AD might not be reachable.
-	  groups = wmi.query("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")
-	  windows_root_group_name = groups[0]["name"]
+    groups = wmi.query("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")
+    windows_root_group_name = groups[0]["name"]
     root_group windows_root_group_name
   end
 

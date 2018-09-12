@@ -77,11 +77,14 @@ describe Ohai::System, "root_group" do
   end
 
   describe "windows platform" do
+
+    let(:wmi) { double("wmi", { query: "" }) }
+
     before(:each) do
       allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
-      allow(plugin).to receive(:collect_os).and_return(:windows)
+      allow(@plugin).to receive(:collect_os).and_return(:windows)
     end
-    it "should return the group administrators" do
+    it "should return the group Administrators" do
       expect(wmi)
         .to receive(:query)
         .with("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")

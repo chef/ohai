@@ -1,3 +1,17 @@
+# Ohai Release Notes 14.5
+
+## Windows Improvements
+
+How we detect the `root_group` attribute on Windows has been simplified and improved to properly support non-English systems. With this change we've also deprecated the `Ohai::Util::Win32::GroupHelper` helper, which is no longer necessary. Thanks to @jugatsu for putting this together.
+
+We've also added a new `encryption_status` attribute to volumes on Windows. Thanks to @kmf for suggesting this new feature.
+
+## Configuration Improvements
+
+The timeout period for communicating with OpenStack metadata servers can now be configured with the `openstack_metadata_timeout` config option. Thanks to @sawanoboly for this improvement.
+
+Ohai now properly handles relative paths to config files when running on the command line. This means commands like `ohai -c ../client.rb` will now properly use your config values.
+
 # Ohai Release Notes 14.4
 
 ## Multiple plugin directories

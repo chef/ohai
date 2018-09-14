@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.4.6 -->
-## [v14.4.6](https://github.com/chef/ohai/tree/v14.4.6) (2018-09-14)
+<!-- latest_release 14.5.0 -->
+## [v14.5.0](https://github.com/chef/ohai/tree/v14.5.0) (2018-09-14)
 
 #### Merged Pull Requests
-- Fix root_group plugin invalid byte sequence on non-English version of Windows [#1240](https://github.com/chef/ohai/pull/1240) ([jugatsu](https://github.com/jugatsu))
+- Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.4.2 -->
 ### Changes since 14.4.2 release
 
 #### Merged Pull Requests
+- Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50)) <!-- 14.5.0 -->
 - Fix root_group plugin invalid byte sequence on non-English version of Windows [#1240](https://github.com/chef/ohai/pull/1240) ([jugatsu](https://github.com/jugatsu)) <!-- 14.4.6 -->
 - Fix providing relative paths to the config file [#1241](https://github.com/chef/ohai/pull/1241) ([tas50](https://github.com/tas50)) <!-- 14.4.5 -->
 - override timout by Ohai::Config.ohai[:openstack_metadata_timeout] [#1244](https://github.com/chef/ohai/pull/1244) ([sawanoboly](https://github.com/sawanoboly)) <!-- 14.4.4 -->

@@ -11,7 +11,7 @@ Ohai will print out a JSON data blob for all the known data about your system. W
 Chef distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the docs:
 
 - General documentation: <https://docs.chef.io/ohai.html>
-- Custom plugin documentation: <https://docs.chef.io/ohai_custom.html>
+- Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom.html>
 
 ## Development Environment:
 
@@ -70,7 +70,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

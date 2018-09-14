@@ -17,7 +17,6 @@
 #
 
 require_relative "../../spec_helper.rb"
-require "ohai/util/win32/group_helper"
 
 describe Ohai::System, "root_group" do
   before(:each) do
@@ -78,11 +77,20 @@ describe Ohai::System, "root_group" do
   end
 
   describe "windows platform" do
-    it "should return the group administrators" do
+
+    let(:wmi) { double("wmi", { query: "" }) }
+
+    before(:each) do
+      allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
       allow(@plugin).to receive(:collect_os).and_return(:windows)
-      expect(Ohai::Util::Win32::GroupHelper).to receive(:windows_root_group_name).and_return("administrators")
+    end
+    it "should return the group Administrators" do
+      expect(wmi)
+        .to receive(:query)
+        .with("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")
+        .and_return("Administrators")
+
       @plugin.run
-      expect(@plugin[:root_group]).to eq("administrators")
     end
   end
 end

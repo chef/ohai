@@ -21,6 +21,7 @@ require "ohai/util/win32"
 module Ohai
   module Util
     class Win32::GroupHelper
+      # @deprecated
 
       # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
       # internal name for the Administrators group, which lets us work
@@ -29,6 +30,8 @@ module Ohai
       BUILTIN_ADMINISTRATORS_SID = "S-1-5-32-544".freeze
 
       def self.windows_root_group_name
+        warn "The 'windows_root_group_name' helper is deprecated and will be removed in Ohai 15. Please update your plugins to remove this helper method."
+
         administrators_sid_result = FFI::MemoryPointer.new(:pointer)
         convert_result = Win32.convert_string_sid_to_sid(BUILTIN_ADMINISTRATORS_SID, administrators_sid_result)
         last_win32_error = Win32.get_last_error

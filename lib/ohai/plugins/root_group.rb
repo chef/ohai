@@ -19,8 +19,19 @@ Ohai.plugin(:RootGroup) do
   provides "root_group"
 
   collect_data(:windows) do
-    require "ohai/util/win32/group_helper"
-    root_group Ohai::Util::Win32::GroupHelper.windows_root_group_name
+    require "wmi-lite/wmi"
+
+    wmi = WmiLite::Wmi.new
+    # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
+    # internal name for the Administrators group, which lets us work
+    # properly in environments with a renamed or localized name for the
+    # Administrators group.
+    # Use LocalAccount=True because otherwise WMI will attempt to include
+    # (unneeded) Active Directory groups by querying AD, which is a performance
+    # and reliability issue since AD might not be reachable.
+    groups = wmi.query("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")
+    windows_root_group_name = groups[0]["name"]
+    root_group windows_root_group_name
   end
 
   collect_data(:default) do

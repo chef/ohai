@@ -1,29 +1,26 @@
 # Change Log
 
-<!-- latest_release 14.5.0 -->
-## [v14.5.0](https://github.com/chef/ohai/tree/v14.5.0) (2018-09-14)
-
-#### Merged Pull Requests
-- Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.4.2 -->
-### Changes since 14.4.2 release
-
-#### Merged Pull Requests
-- Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50)) <!-- 14.5.0 -->
-- Fix root_group plugin invalid byte sequence on non-English version of Windows [#1240](https://github.com/chef/ohai/pull/1240) ([jugatsu](https://github.com/jugatsu)) <!-- 14.4.6 -->
-- Fix providing relative paths to the config file [#1241](https://github.com/chef/ohai/pull/1241) ([tas50](https://github.com/tas50)) <!-- 14.4.5 -->
-- override timout by Ohai::Config.ohai[:openstack_metadata_timeout] [#1244](https://github.com/chef/ohai/pull/1244) ([sawanoboly](https://github.com/sawanoboly)) <!-- 14.4.4 -->
-- Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys)) <!-- 14.4.3 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.5.0](https://github.com/chef/ohai/tree/v14.5.0) (2018-09-14)
+
+#### Merged Pull Requests
+- Add &quot;EncryptionStatus&quot; to each volume on Windows [#1238](https://github.com/chef/ohai/pull/1238) ([Nimesh-Msys](https://github.com/Nimesh-Msys))
+- override timout by Ohai::Config.ohai[:openstack_metadata_timeout] [#1244](https://github.com/chef/ohai/pull/1244) ([sawanoboly](https://github.com/sawanoboly))
+- Fix providing relative paths to the config file [#1241](https://github.com/chef/ohai/pull/1241) ([tas50](https://github.com/tas50))
+- Fix root_group plugin invalid byte sequence on non-English version of Windows [#1240](https://github.com/chef/ohai/pull/1240) ([jugatsu](https://github.com/jugatsu))
+- Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.4.2](https://github.com/chef/ohai/tree/v14.4.2) (2018-08-22)
 
 #### Merged Pull Requests
 - Uniquely name our network plugin helper methods [#1236](https://github.com/chef/ohai/pull/1236) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.4.1](https://github.com/chef/ohai/tree/v14.4.1) (2018-08-21)
 

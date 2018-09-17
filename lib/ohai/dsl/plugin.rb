@@ -43,6 +43,7 @@ module Ohai
     end
   end
 
+  # @param name [String]
   def self.plugin(name, &block)
     raise Ohai::Exceptions::InvalidPluginName, "#{name} is not a valid plugin name. A valid plugin name is a symbol which begins with a capital letter and contains no underscores" unless NamedPlugin.valid_name?(name)
 
@@ -61,6 +62,8 @@ module Ohai
   end
 
   # Cross platform /dev/null to support testability
+  #
+  # @return [String]
   def self.dev_null
     if RUBY_PLATFORM =~ /mswin|mingw|windows/
       "NUL"

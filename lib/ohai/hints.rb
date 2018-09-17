@@ -26,7 +26,7 @@ module Ohai
       @hints = {}
     end
 
-    # parse the JSON conents of a hint file. Return an empty hash if the file has
+    # parse the JSON contents of a hint file. Return an empty hash if the file has
     # no JSON content
     # @param filename [String] the hint file path
     def self.parse_hint_file(filename)

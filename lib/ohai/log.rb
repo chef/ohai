@@ -22,7 +22,7 @@ module Ohai
   class Log
     extend Mixlib::Log
 
-    # this class loading initalization is so that we don't lose early logger
+    # this class loading initialization is so that we don't lose early logger
     # messages when run from the CLI?
     init(STDERR)
     level = :info # rubocop:disable Lint/UselessAssignment

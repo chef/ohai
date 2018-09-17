@@ -1,23 +1,21 @@
 # Change Log
 
-<!-- latest_release 14.5.4 -->
-## [v14.5.4](https://github.com/chef/ohai/tree/v14.5.4) (2018-09-17)
-
-#### Merged Pull Requests
-- Revert &quot;Connect to GCE metadata by IP not name&quot; [#1253](https://github.com/chef/ohai/pull/1253) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.5.0 -->
-### Changes since 14.5.0 release
-
-#### Merged Pull Requests
-- Revert &quot;Connect to GCE metadata by IP not name&quot; [#1253](https://github.com/chef/ohai/pull/1253) ([tas50](https://github.com/tas50)) <!-- 14.5.4 -->
-- Connect to GCE metadata by IP not name [#1252](https://github.com/chef/ohai/pull/1252) ([tas50](https://github.com/tas50)) <!-- 14.5.3 -->
-- Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50)) <!-- 14.5.2 -->
-- Remove redundant platform from the gemspec [#1248](https://github.com/chef/ohai/pull/1248) ([tas50](https://github.com/tas50)) <!-- 14.5.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.5.4](https://github.com/chef/ohai/tree/v14.5.4) (2018-09-17)
+
+#### Merged Pull Requests
+- Remove redundant platform from the gemspec [#1248](https://github.com/chef/ohai/pull/1248) ([tas50](https://github.com/tas50))
+- Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50))
+- Connect to GCE metadata by IP not name [#1252](https://github.com/chef/ohai/pull/1252) ([tas50](https://github.com/tas50))
+- Revert &quot;Connect to GCE metadata by IP not name&quot; [#1253](https://github.com/chef/ohai/pull/1253) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.5.0](https://github.com/chef/ohai/tree/v14.5.0) (2018-09-14)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Fix providing relative paths to the config file [#1241](https://github.com/chef/ohai/pull/1241) ([tas50](https://github.com/tas50))
 - Fix root_group plugin invalid byte sequence on non-English version of Windows [#1240](https://github.com/chef/ohai/pull/1240) ([jugatsu](https://github.com/jugatsu))
 - Release Ohai 14.5 [#1247](https://github.com/chef/ohai/pull/1247) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.4.2](https://github.com/chef/ohai/tree/v14.4.2) (2018-08-22)
 

@@ -5,7 +5,6 @@ require "ohai/version"
 Gem::Specification.new do |s|
   s.name = "ohai"
   s.version = Ohai::VERSION
-  s.platform = Gem::Platform::RUBY
   s.summary = "Ohai profiles your system and emits JSON"
   s.description = s.summary
   s.license = "Apache-2.0"

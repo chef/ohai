@@ -62,12 +62,18 @@ module Ohai
 
     # Searches all plugin paths and returns an Array of PluginFile objects
     # representing each plugin file.
+    #
+    # @param dir [Array, String] directory/directories to load plugins from
+    # @return [Array<Ohai::Loader::PluginFile>]
     def plugin_files_by_dir(dir = Ohai.config[:plugin_path])
       Array(dir).inject([]) do |plugin_files, plugin_path|
         plugin_files + PluginFile.find_all_in(plugin_path)
       end
     end
 
+    # loads all plugin classes
+    #
+    # @return [Array<String>]
     def load_all
       plugin_files_by_dir.each do |plugin_file|
         load_plugin_class(plugin_file.path, plugin_file.plugin_root)
@@ -76,6 +82,8 @@ module Ohai
       collect_v7_plugins
     end
 
+    # load additional plugins classes from a given directory
+    # @param from [String] path to a directory with additional plugins to load
     def load_additional(from)
       from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
@@ -88,6 +96,9 @@ module Ohai
     # Load a specified file as an ohai plugin and creates an instance of it.
     # Not used by ohai itself, but can be used to load a plugin for testing
     # purposes.
+    #
+    # @param plugin_path [String]
+    # @param plugin_dir_path [String]
     def load_plugin(plugin_path, plugin_dir_path = nil)
       plugin_class = load_plugin_class(plugin_path, plugin_dir_path)
       return nil unless plugin_class.kind_of?(Class)

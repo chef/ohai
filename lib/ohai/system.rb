@@ -54,6 +54,10 @@ module Ohai
       reset_system
     end
 
+    # clears the current collected data, clears the provides map for plugins,
+    # refreshes hints, and reconfigures ohai. In short this gets Ohai into a first run state
+    #
+    # @return [void]
     def reset_system
       @data = Mash.new
       @provides_map = ProvidesMap.new
@@ -74,6 +78,10 @@ module Ohai
       @data[key]
     end
 
+    # resets the system and loads then runs the plugins
+    #
+    # @param [Array<String>] attribute_filter
+    # @return [void]
     def all_plugins(attribute_filter = nil)
       # Reset the system when all_plugins is called since this function
       # can be run multiple times in order to pick up any changes in the

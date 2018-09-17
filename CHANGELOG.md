@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.5.2 -->
-## [v14.5.2](https://github.com/chef/ohai/tree/v14.5.2) (2018-09-17)
+<!-- latest_release 14.5.3 -->
+## [v14.5.3](https://github.com/chef/ohai/tree/v14.5.3) (2018-09-17)
 
 #### Merged Pull Requests
-- Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50))
+- Connect to GCE metadata by IP not name [#1252](https://github.com/chef/ohai/pull/1252) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.0 -->
 ### Changes since 14.5.0 release
 
 #### Merged Pull Requests
+- Connect to GCE metadata by IP not name [#1252](https://github.com/chef/ohai/pull/1252) ([tas50](https://github.com/tas50)) <!-- 14.5.3 -->
 - Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50)) <!-- 14.5.2 -->
 - Remove redundant platform from the gemspec [#1248](https://github.com/chef/ohai/pull/1248) ([tas50](https://github.com/tas50)) <!-- 14.5.1 -->
 <!-- release_rollup -->

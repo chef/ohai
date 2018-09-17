@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.5.1 -->
-## [v14.5.1](https://github.com/chef/ohai/tree/v14.5.1) (2018-09-17)
+<!-- latest_release 14.5.2 -->
+## [v14.5.2](https://github.com/chef/ohai/tree/v14.5.2) (2018-09-17)
 
 #### Merged Pull Requests
-- Remove redundant platform from the gemspec [#1248](https://github.com/chef/ohai/pull/1248) ([tas50](https://github.com/tas50))
+- Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.0 -->
 ### Changes since 14.5.0 release
 
 #### Merged Pull Requests
+- Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50)) <!-- 14.5.2 -->
 - Remove redundant platform from the gemspec [#1248](https://github.com/chef/ohai/pull/1248) ([tas50](https://github.com/tas50)) <!-- 14.5.1 -->
 <!-- release_rollup -->
 

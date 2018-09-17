@@ -29,6 +29,7 @@ require "ohai/provides_map"
 require "ohai/hints"
 require "mixlib/shellout"
 require "ohai/config"
+require "ffi_yajl"
 
 module Ohai
   class System

@@ -20,8 +20,7 @@ module Ohai
   module Mixin
     module GCEMetadata
 
-      # Trailing dot to host is added to avoid DNS search path
-      GCE_METADATA_ADDR = "metadata.google.internal.".freeze unless defined?(GCE_METADATA_ADDR)
+      GCE_METADATA_ADDR = "169.254.169.254".freeze unless defined?(GCE_METADATA_ADDR)
       GCE_METADATA_URL = "/computeMetadata/v1/?recursive=true".freeze unless defined?(GCE_METADATA_URL)
 
       # fetch the meta content with a timeout and the required header

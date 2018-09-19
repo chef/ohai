@@ -35,7 +35,7 @@ Thanks @WheresAlice for this change.
 
 On Windows, we have a new System Enclosure plugin that provides you with the `manufacturer` and `serialnumber` of the underlying system.
 
-Thanks @kmf for suggesting this plugin.
+Thanks [@kmf](https://github.com/kmf) for suggesting this plugin.
 
 # Ohai Release Notes 14.3
 

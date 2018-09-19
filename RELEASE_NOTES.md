@@ -2,7 +2,7 @@
 
 ## Windows Improvements
 
-How we detect the `root_group` attribute on Windows has been simplified and improved to properly support non-English systems. With this change we've also deprecated the `Ohai::Util::Win32::GroupHelper` helper, which is no longer necessary. Thanks to [@jugatsu](https://github.com/jugatsu) for putting this together.
+Detection for the `root_group` attribute on Windows has been simplified and improved to properly support non-English systems. With this change, we've also deprecated the `Ohai::Util::Win32::GroupHelper` helper, which is no longer necessary. Thanks to [@jugatsu](https://github.com/jugatsu) for putting this together.
 
 We've also added a new `encryption_status` attribute to volumes on Windows. Thanks to [@kmf](https://github.com/kmf) for suggesting this new feature.
 
@@ -27,15 +27,15 @@ Thanks @jaymzh for reporting this.
 
 ## Shellout Timeout Configuration
 
-By default the timeout for any shellout in Ohai is 30 seconds. If this is too short for you due to slow systems or large numbers of mounts you may need to increase this timeout. You can now configure your own timeout (lower or higher) via the new `shellout_timeout` config setting.
+By default, the timeout for any shellout in Ohai is 30 seconds. If this is too short for you, due to slow systems or large numbers of mounts, you may need to increase this timeout. You can now configure your own timeout (lower or higher) via the new `shellout_timeout` config setting.
 
 Thanks @WheresAlice for this change.
 
 ## System Enclosure Plugin
 
-On Windows we have a new System Enclosure plugin that provides you with the `manufacturer` and `serialnumber` of the underlying system.
+On Windows, we have a new System Enclosure plugin that provides you with the `manufacturer` and `serialnumber` of the underlying system.
 
-Thanks @kmf for suggesting this plugin.
+Thanks [@kmf](https://github.com/kmf) for suggesting this plugin.
 
 # Ohai Release Notes 14.3
 

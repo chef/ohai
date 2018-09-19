@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.5.5 -->
+## [v14.5.5](https://github.com/chef/ohai/tree/v14.5.5) (2018-09-19)
+
+#### Merged Pull Requests
+- Review and copyediting of RELEASE_NOTES [#1255](https://github.com/chef/ohai/pull/1255) ([mjingle](https://github.com/mjingle))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.5.4 -->
+### Changes since 14.5.4 release
+
+#### Merged Pull Requests
+- Review and copyediting of RELEASE_NOTES [#1255](https://github.com/chef/ohai/pull/1255) ([mjingle](https://github.com/mjingle)) <!-- 14.5.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

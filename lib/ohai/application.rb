@@ -22,6 +22,10 @@ require "ohai/log"
 require "mixlib/cli"
 require "benchmark"
 
+# The Application class is what is called by the Ohai CLI binary. It handles:
+#  - CLI options and attribute arguments
+#  - Collecting data via the Ohai::System class
+#  - Printing the results returned via the Ohai::System class
 class Ohai::Application
   include Mixlib::CLI
 
@@ -69,6 +73,9 @@ class Ohai::Application
     proc: lambda { |v| puts "Ohai: #{::Ohai::VERSION}" },
     exit: 0
 
+  # the method called by the Ohai binary to actually run the whole application
+  #
+  # @return void
   def run
     elapsed = Benchmark.measure do
       configure_ohai
@@ -77,6 +84,9 @@ class Ohai::Application
     Ohai::Log.debug("Ohai took #{elapsed.total} total seconds to run.")
   end
 
+  # parses the CLI options, loads the config file if present, and initializes logging
+  #
+  # @return void
   def configure_ohai
     @attributes = parse_options
     @attributes = nil if @attributes.empty?
@@ -86,6 +96,10 @@ class Ohai::Application
     Ohai::Log.init(Ohai.config[:log_location])
   end
 
+  # Passes config and attributes arguments to Ohai::System then prints the results.
+  # Called by the run method after config / logging have been initialized
+  #
+  # @return void
   def run_application
     # Always switch to a readable directory. Keeps subsequent Dir.chdir() {}
     # from failing due to permissions when launched as a less privileged user.
@@ -107,12 +121,17 @@ class Ohai::Application
 
   class << self
     # Log a fatal error message to both STDERR and the Logger, exit the application
+    # @param msg [String] the message to log
+    # @param err [Integer] the exit code
     def fatal!(msg, err = -1)
       STDERR.puts("FATAL: #{msg}")
       Ohai::Log.fatal(msg)
       Process.exit err
     end
 
+    # Log a debug message to the Logger and then exit the application
+    # @param msg [String] the message to log
+    # @param err [Integer] the exit code
     def exit!(msg, err = -1)
       Ohai::Log.debug(msg)
       Process.exit err

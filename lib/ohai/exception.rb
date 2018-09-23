@@ -17,6 +17,7 @@
 #
 
 module Ohai
+  # Ohai specific exceptions
   module Exceptions
     class Exec < RuntimeError; end
     class Error < StandardError; end

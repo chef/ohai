@@ -1,6 +1,6 @@
 #
 # Author:: Nathan L Smith (<nlloyds@gmail.com>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,7 +78,7 @@ machdep.cpu.max_basic: 13
 CTL
 
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:shell_out).with("sysctl -a").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("sysctl hw machdep").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 

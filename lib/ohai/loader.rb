@@ -52,7 +52,7 @@ module Ohai
         Ohai::Log.trace("Searching for Ohai plugins in #{path}")
 
         escaped = ChefConfig::PathHelper.escape_glob_dir(path)
-        Dir[File.join(escaped, "**", "*.rb")]
+        return Dir[File.join(escaped, "**", "*.rb")]
       end.flatten
     end
 

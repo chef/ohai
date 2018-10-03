@@ -19,6 +19,8 @@
 require "mixlib/log"
 
 module Ohai
+  # the Ohai Logger which is just Mixlib::Log defaulting to STDERR and :info level
+  # unless otherwise configured via CLI or config
   class Log
     extend Mixlib::Log
 

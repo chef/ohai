@@ -20,6 +20,11 @@
 require "ffi_yajl"
 
 module Ohai
+  # Ohai hints are json files on disk that give ohai a hint to things that are often
+  # difficult to discover like certain clouds. Previously they were used for just about
+  # every cloud, but we've since discoverd better ways to auto-detect these clouds.
+  # They are generally dropped off by the knife plugins for those clouds during bootstrap,
+  # but may also be manually dropped off and consumed by 3rd party plugins.
   module Hints
     # clear out any known hints in the @hints variable
     def self.refresh_hints

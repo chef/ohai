@@ -32,6 +32,7 @@ require "ohai/config"
 require "ffi_yajl"
 
 module Ohai
+  # The class used by Ohai::Application and Chef to actually collect data
   class System
     include Ohai::Mixin::ConstantHelper
 
@@ -78,9 +79,10 @@ module Ohai
       @data[key]
     end
 
-    # resets the system and loads then runs the plugins
+    # Resets the system and loads then runs the plugins. This is the primary method called
+    # to run the system.
     #
-    # @param [Array<String>] attribute_filter
+    # @param [Array<String>] attribute_filter the attributes to run. All will be run if not specified
     # @return [void]
     def all_plugins(attribute_filter = nil)
       # Reset the system when all_plugins is called since this function
@@ -92,10 +94,18 @@ module Ohai
       run_plugins(true, attribute_filter)
     end
 
+    # load all plugins by calling Ohai::Loader.load_all
+    # @see Ohai::Loader.load_all
     def load_plugins
       @loader.load_all
     end
 
+    # run all plugins or those that match the attribute filter is provided
+    #
+    # @param safe [Boolean]
+    # @param [Array<String>] attribute_filter the attributes to run. All will be run if not specified
+    #
+    # @return [Mash]
     def run_plugins(safe = false, attribute_filter = nil)
       begin
         @provides_map.all_plugins(attribute_filter).each do |plugin|

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.5.6 -->
-## [v14.5.6](https://github.com/chef/ohai/tree/v14.5.6) (2018-09-27)
+<!-- latest_release 14.5.7 -->
+## [v14.5.7](https://github.com/chef/ohai/tree/v14.5.7) (2018-10-03)
 
 #### Merged Pull Requests
-- Avoid gathering all data with sysctl which seems to hang [#1259](https://github.com/chef/ohai/pull/1259) ([tas50](https://github.com/tas50))
+- Add more yard comments [#1256](https://github.com/chef/ohai/pull/1256) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.4 -->
 ### Changes since 14.5.4 release
 
 #### Merged Pull Requests
+- Add more yard comments [#1256](https://github.com/chef/ohai/pull/1256) ([tas50](https://github.com/tas50)) <!-- 14.5.7 -->
 - Avoid gathering all data with sysctl which seems to hang [#1259](https://github.com/chef/ohai/pull/1259) ([tas50](https://github.com/tas50)) <!-- 14.5.6 -->
 - Review and copyediting of RELEASE_NOTES [#1255](https://github.com/chef/ohai/pull/1255) ([mjingle](https://github.com/mjingle)) <!-- 14.5.5 -->
 <!-- release_rollup -->

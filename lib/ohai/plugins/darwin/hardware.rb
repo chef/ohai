@@ -34,13 +34,7 @@ Ohai.plugin(:Hardware) do
       next
     end
 
-    begin
-      require "plist"
-    rescue LoadError => e
-      # In case the plist gem isn't present, skip this plugin.
-      Ohai::Log.debug("Plugin Hardware: Can't load gem: #{e}. Cannot continue.")
-      next
-    end
+    require "plist"
 
     hw_hash = system_profiler("SPHardwareDataType")
     hw_hash[0]["_items"][0].delete("_name")

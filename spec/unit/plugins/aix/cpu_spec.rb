@@ -40,7 +40,7 @@ LSATTR_EL
       CPU 3 runs at 1654 MHz
 PMCYCLES_M
 
-    @plugin = get_plugin("aix/cpu")
+    @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
 
     allow(@plugin).to receive(:shell_out).with("lsdev -Cc processor").and_return(mock_shell_out(0, @lsdev_cc_processor, nil))

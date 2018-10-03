@@ -20,7 +20,7 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do
-    @plugin = get_plugin("freebsd/cpu")
+    @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     @double_file = double("/var/run/dmesg.boot")
     allow(@double_file).to receive(:each)
@@ -95,7 +95,7 @@ end
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
   before(:each) do
-    @plugin = get_plugin("freebsd/cpu")
+    @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))
     @double_file = double("/var/run/dmesg.boot")

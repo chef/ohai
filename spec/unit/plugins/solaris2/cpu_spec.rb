@@ -18,7 +18,7 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Solaris2.X cpu plugin" do
   before(:each) do
-    @plugin = get_plugin("solaris2/cpu")
+    @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return("solaris2")
   end
 

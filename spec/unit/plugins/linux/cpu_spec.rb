@@ -77,7 +77,7 @@ shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
 end
 
 describe Ohai::System, "General Linux cpu plugin" do
-  let(:plugin) { get_plugin("linux/cpu") }
+  let(:plugin) { get_plugin("cpu") }
 
   let(:tempfile_handle) do
     tempfile = Tempfile.new("ohai-rspec-proc-cpuinfo")
@@ -361,7 +361,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 end
 
 describe Ohai::System, "S390 linux cpu plugin" do
-  let(:plugin) { get_plugin("linux/cpu") }
+  let(:plugin) { get_plugin("cpu") }
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -408,7 +408,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
 end
 
 describe Ohai::System, "arm64 linux cpu plugin" do
-  let(:plugin) { get_plugin("linux/cpu") }
+  let(:plugin) { get_plugin("cpu") }
 
   before(:each) do
     allow(plugin).to receive(:collect_os).and_return(:linux)

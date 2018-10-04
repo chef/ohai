@@ -62,7 +62,7 @@ end
 
 describe Ohai::System, "Windows cpu plugin" do
   before(:each) do
-    @plugin = get_plugin("windows/cpu")
+    @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:windows)
 
     @double_wmi = double(WmiLite::Wmi)

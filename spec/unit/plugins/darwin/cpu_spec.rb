@@ -20,7 +20,7 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Darwin cpu plugin" do
   before(:each) do
-    @plugin = get_plugin("darwin/cpu")
+    @plugin = get_plugin("cpu")
     @stdout = <<~CTL
       hw.ncpu: 8
       hw.byteorder: 1234

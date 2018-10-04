@@ -1,6 +1,9 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Isa Farnik (<isa@chef.io>)
+# Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +23,19 @@ Ohai.plugin(:OS) do
   require "ohai/mixin/os"
   provides "os", "os_version"
   depends "kernel"
+
+  collect_data(:aix) do
+    os collect_os
+    os_version shell_out("oslevel -s").stdout.strip
+  end
+
+  collect_data(:dragonflybsd, :freebsd) do
+    os collect_os
+
+    # This is __DragonFly_version / __FreeBSD_version. See sys/param.h or
+    # http://www.freebsd.org/doc/en/books/porters-handbook/freebsd-versions.html.
+    os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
+  end
 
   collect_data do
     os collect_os

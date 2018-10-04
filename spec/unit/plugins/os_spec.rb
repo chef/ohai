@@ -1,6 +1,9 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
+# Author:: Isa Farnik (<isa@chef.io>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,6 +69,36 @@ describe Ohai::System, "plugin os" do
     it "sets the os to solaris2" do
       @plugin.run
       expect(@plugin[:os]).to eq("solaris2")
+    end
+  end
+
+  describe "on AIX" do
+    before(:each) do
+      @plugin = get_plugin("os")
+      allow(@plugin).to receive(:collect_os).and_return(:aix)
+      allow(@plugin).to receive(:shell_out).with("oslevel -s").and_return(mock_shell_out(0, "7200-00-01-1543\n", nil))
+      @plugin.run
+    end
+
+    it "should set the top-level os attribute" do
+      expect(@plugin[:os]).to eql(:aix)
+    end
+
+    it "should set the top-level os_level attribute" do
+      expect(@plugin[:os_version]).to eql("7200-00-01-1543")
+    end
+  end
+
+  describe "on FreeBSD" do
+    before(:each) do
+      @plugin = get_plugin("os")
+      allow(@plugin).to receive(:shell_out).with("sysctl -n kern.osreldate").and_return(mock_shell_out(0, "902001\n", ""))
+      allow(@plugin).to receive(:collect_os).and_return(:freebsd)
+    end
+
+    it "should set os_version to __FreeBSD_version" do
+      @plugin.run
+      expect(@plugin[:os_version]).to eq("902001")
     end
   end
 

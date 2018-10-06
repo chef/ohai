@@ -24,7 +24,7 @@ install:
   - bundler --version
 
 build_script:
-  - bundle install
+  - bundle install || bundle install || bundle install
 
 test_script:
   - bundle exec rspec

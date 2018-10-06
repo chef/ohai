@@ -107,6 +107,14 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
+  def generate_deprecated_windows_view(fs)
+    view = generate_mountpoint_view(fs)
+    view.each do |mp, entry|
+      view[mp].delete("devices")
+    end
+    view
+  end
+
   def generate_deprecated_solaris_view(fs, old_zfs)
     view = generate_deprecated_view(fs)
     old_zfs.each do |fsname, attributes|
@@ -151,6 +159,143 @@ Ohai.plugin(:Filesystem) do
     end
 
     logger.warn("Plugin Filesystem: #{bin} binary is not available. Some data will not be available.")
+  end
+
+  ### Windows specific methods BEGINS
+  # Volume encryption or decryption status
+  #
+  # @see https://docs.microsoft.com/en-us/windows/desktop/SecProv/getconversionstatus-win32-encryptablevolume#parameters
+  #
+  CONVERSION_STATUS ||= %w{
+    FullyDecrypted FullyEncrypted EncryptionInProgress
+    DecryptionInProgress EncryptionPaused DecryptionPaused
+  }.freeze
+
+  # Returns a Mash loaded with logical details
+  #
+  # Uses Win32_LogicalDisk and logical_properties to return encryption details of volumes.
+  #
+  # Returns an empty Mash in case of any WMI exception.
+  #
+  # @see https://docs.microsoft.com/en-us/windows/desktop/CIMWin32Prov/win32-logicaldisk
+  #
+  # @return [Mash]
+  #
+  def logical_info
+    wmi = WmiLite::Wmi.new("Root\\CIMV2")
+
+    # Note: we should really be parsing Win32_Volume and Win32_Mapped drive.
+    disks = wmi.instances_of("Win32_LogicalDisk")
+    logical_properties(disks)
+  rescue WmiLite::WmiException
+    Ohai::Log.debug("Unable to access Win32_LogicalDisk. Skipping logical details")
+    Mash.new
+  end
+
+  # Returns a Mash loaded with encryption details
+  #
+  # Uses Win32_EncryptableVolume and encryption_properties to return encryption details of volumes.
+  #
+  # Returns an empty Mash in case of any WMI exception.
+  #
+  # @note We are fetching Encryption Status only as of now
+  #
+  # @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa376483(v=vs.85).aspx
+  #
+  # @return [Mash]
+  #
+  def encryptable_info
+    wmi = WmiLite::Wmi.new("Root\\CIMV2\\Security\\MicrosoftVolumeEncryption")
+    disks = wmi.instances_of("Win32_EncryptableVolume")
+    encryption_properties(disks)
+  rescue WmiLite::WmiException
+    Ohai::Log.debug("Unable to access Win32_EncryptableVolume. Skipping encryptable details")
+    Mash.new
+  end
+
+  # Refines and calculates logical properties out of given instances.
+  #
+  # Note that :device here is the same as Volume name and there for compatibility with other OSes.
+  #
+  # @param [WmiLite::Wmi::Instance] disks
+  #
+  # @return [Mash] Each drive containing following properties:
+  #
+  #  * :kb_size (Integer)
+  #  * :kb_available (Integer)
+  #  * :kb_used (Integer)
+  #  * :percent_used (Integer)
+  #  * :mount (String)
+  #  * :fs_type (String)
+  #  * :volume_name (String)
+  #  * :device (String)
+  #
+  def logical_properties(disks)
+    properties = Mash.new
+    disks.each do |disk|
+      property = Mash.new
+      # In windows the closet thing we have to a device is the volume_name
+      # and the "mountpoint" is the drive letter...
+      device = disk["volume_name"].to_s.downcase
+      mount = disk["deviceid"]
+      property[:kb_size] = disk["size"] ? disk["size"].to_i / 1000 : 0
+      property[:kb_available] = disk["freespace"].to_i / 1000
+      property[:kb_used] = property[:kb_size] - property[:kb_available]
+      property[:percent_used] = (property[:kb_size] == 0 ? 0 : (property[:kb_used] * 100 / property[:kb_size]))
+      property[:mount] = mount
+      property[:fs_type] = disk["filesystem"].to_s.downcase
+      property[:volume_name] = device
+      property[:device] = device
+
+      key = "#{device},#{mount}"
+      properties[key] = property
+    end
+    properties
+  end
+
+  # Refines and calculates encryption properties out of given instances
+  #
+  # @param [WmiLite::Wmi::Instance] disks
+  #
+  # @return [Mash] Each drive containing following properties:
+  #
+  #  * :encryption_status (String)
+  #
+  def encryption_properties(disks)
+    properties = Mash.new
+    disks.each do |disk|
+      property = Mash.new
+      property[:encryption_status] = disk["conversionstatus"] ? CONVERSION_STATUS[disk["conversionstatus"]] : ""
+      key = disk["driveletter"]
+      properties[key] = property
+    end
+    properties
+  end
+
+  # Merges all the various properties of filesystems
+  #
+  # @param [Array<Mash>] disks_info
+  #   Array of the Mashes containing disk properties
+  #
+  # @return [Mash]
+  #
+  def merge_info(logical_info, encryption_info)
+    fs = Mash.new
+
+    encryption_keys_used = Set.new
+    logical_info.each do |key, info|
+      if encryption_info[info["mount"]]
+        encryption_keys_used.add(info["mount"])
+        fs[key] = info.merge(encryption_info[info["mount"]])
+      else
+        fs[key] = info.dup
+      end
+    end
+    left_enc = encryption_info.reject { |x| encryption_keys_used.include?(x) }
+    left_enc.each do |key, info|
+      fs[",#{key}"] = info
+    end
+    fs
   end
 
   collect_data(:linux) do
@@ -597,6 +742,27 @@ Ohai.plugin(:Filesystem) do
     # Set the filesystem data - AIX didn't do the conversion when everyone
     # else did, so 15 will have both be the new API and 16 will drop the old API
     filesystem generate_deprecated_view(fs)
+    filesystem2 fs_data
+  end
+
+  collect_data(:windows) do
+    require "wmi-lite/wmi"
+    require "ohai/mash"
+
+    fs = merge_info(logical_info, encryptable_info)
+
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
+    # Set the filesystem data - Windows didn't do the conversion when everyone
+    # else did, so 15 will have both be the new API and 16 will drop the old API
+    filesystem generate_deprecated_windows_view(fs)
     filesystem2 fs_data
   end
 end

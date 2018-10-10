@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.5.9 -->
-## [v14.5.9](https://github.com/chef/ohai/tree/v14.5.9) (2018-10-04)
+<!-- latest_release 14.5.10 -->
+## [v14.5.10](https://github.com/chef/ohai/tree/v14.5.10) (2018-10-10)
 
 #### Merged Pull Requests
-- Unify the cpu plugin [#1262](https://github.com/chef/ohai/pull/1262) ([jaymzh](https://github.com/jaymzh))
+- Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.4 -->
 ### Changes since 14.5.4 release
 
 #### Merged Pull Requests
+- Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50)) <!-- 14.5.10 -->
 - Unify the cpu plugin [#1262](https://github.com/chef/ohai/pull/1262) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.9 -->
 - Unify the OS plugins [#1261](https://github.com/chef/ohai/pull/1261) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.8 -->
 - Add more yard comments [#1256](https://github.com/chef/ohai/pull/1256) ([tas50](https://github.com/tas50)) <!-- 14.5.7 -->

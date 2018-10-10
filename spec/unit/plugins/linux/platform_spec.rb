@@ -727,7 +727,7 @@ OS_RELEASE
 
       it "correctly detects SLES15" do
         @plugin.run
-        expect(@plugin[:platform]).to eq("sles")
+        expect(@plugin[:platform]).to eq("suse")
         expect(@plugin[:platform_version]).to eq("15")
         expect(@plugin[:platform_family]).to eq("suse")
       end

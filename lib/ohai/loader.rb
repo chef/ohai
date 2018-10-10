@@ -85,7 +85,7 @@ module Ohai
     # purposes.
     #
     # @param plugin_path [String]
-    def load_plugin(plugin_path)
+    def load_plugin_for_tests(plugin_path)
       plugin_class = load_plugin_class_from_file(plugin_path)
       return nil unless plugin_class.kind_of?(Class)
       if plugin_class < Ohai::DSL::Plugin::VersionVII

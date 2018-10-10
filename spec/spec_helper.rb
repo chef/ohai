@@ -28,7 +28,7 @@ end
 
 def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
   loader = Ohai::Loader.new(ohai)
-  loader.load_plugin(File.join(path, "#{plugin}.rb"))
+  loader.load_plugin_for_tests(File.join(path, "#{plugin}.rb"))
 end
 
 def convert_windows_output(stdout)

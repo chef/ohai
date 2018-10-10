@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.5.10 -->
-## [v14.5.10](https://github.com/chef/ohai/tree/v14.5.10) (2018-10-10)
+<!-- latest_release 14.6.0 -->
+## [v14.6.0](https://github.com/chef/ohai/tree/v14.6.0) (2018-10-10)
 
 #### Merged Pull Requests
-- Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50))
+- [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.4 -->
 ### Changes since 14.5.4 release
 
 #### Merged Pull Requests
+- [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh)) <!-- 14.6.0 -->
 - Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50)) <!-- 14.5.10 -->
 - Unify the cpu plugin [#1262](https://github.com/chef/ohai/pull/1262) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.9 -->
 - Unify the OS plugins [#1261](https://github.com/chef/ohai/pull/1261) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.8 -->

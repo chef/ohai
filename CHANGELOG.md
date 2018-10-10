@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.6.1 -->
-## [v14.6.1](https://github.com/chef/ohai/tree/v14.6.1) (2018-10-10)
+<!-- latest_release 14.6.2 -->
+## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-10)
 
 #### Merged Pull Requests
-- Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50))
+- Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.5.4 -->
 ### Changes since 14.5.4 release
 
 #### Merged Pull Requests
+- Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50)) <!-- 14.6.2 -->
 - Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50)) <!-- 14.6.1 -->
 - [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh)) <!-- 14.6.0 -->
 - Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50)) <!-- 14.5.10 -->

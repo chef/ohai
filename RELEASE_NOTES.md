@@ -1,3 +1,11 @@
+# Unreleased
+
+## New Deprecations
+
+### system_profile plugin
+
+The system_profile plugin will be removed from Chef/Ohai 15 in April 2019. This plugin does not correctly return data on modern Mac systems. Additionally the same data is provided by the hardware plugin, which has a format that is simpler to consume. Removing this plugin will reduce Ohai return by ~3 seconds and greatly reduce the size of the node object on the Chef server.
+
 # Ohai Release Notes 14.5
 
 ## Windows Improvements

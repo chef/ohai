@@ -709,6 +709,7 @@ CISCO_RELEASE
 
       let(:os_release_content) do
         <<~OS_RELEASE
+          NAME="SLES"
           VERSION="15"
           VERSION_ID="15"
           PRETTY_NAME="SUSE Linux Enterprise Server 15"
@@ -727,7 +728,7 @@ OS_RELEASE
 
       it "correctly detects SLES15" do
         @plugin.run
-        expect(@plugin[:platform]).to eq("sles")
+        expect(@plugin[:platform]).to eq("suse")
         expect(@plugin[:platform_version]).to eq("15")
         expect(@plugin[:platform_family]).to eq("suse")
       end

@@ -1,28 +1,26 @@
 # Change Log
 
-<!-- latest_release 14.6.2 -->
-## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-10)
-
-#### Merged Pull Requests
-- Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.5.4 -->
-### Changes since 14.5.4 release
-
-#### Merged Pull Requests
-- Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50)) <!-- 14.6.2 -->
-- Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50)) <!-- 14.6.1 -->
-- [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh)) <!-- 14.6.0 -->
-- Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50)) <!-- 14.5.10 -->
-- Unify the cpu plugin [#1262](https://github.com/chef/ohai/pull/1262) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.9 -->
-- Unify the OS plugins [#1261](https://github.com/chef/ohai/pull/1261) ([jaymzh](https://github.com/jaymzh)) <!-- 14.5.8 -->
-- Add more yard comments [#1256](https://github.com/chef/ohai/pull/1256) ([tas50](https://github.com/tas50)) <!-- 14.5.7 -->
-- Avoid gathering all data with sysctl which seems to hang [#1259](https://github.com/chef/ohai/pull/1259) ([tas50](https://github.com/tas50)) <!-- 14.5.6 -->
-- Review and copyediting of RELEASE_NOTES [#1255](https://github.com/chef/ohai/pull/1255) ([mjingle](https://github.com/mjingle)) <!-- 14.5.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-11)
+
+#### Merged Pull Requests
+- Review and copyediting of RELEASE_NOTES [#1255](https://github.com/chef/ohai/pull/1255) ([mjingle](https://github.com/mjingle))
+- Avoid gathering all data with sysctl which seems to hang [#1259](https://github.com/chef/ohai/pull/1259) ([tas50](https://github.com/tas50))
+- Add more yard comments [#1256](https://github.com/chef/ohai/pull/1256) ([tas50](https://github.com/tas50))
+- Unify the OS plugins [#1261](https://github.com/chef/ohai/pull/1261) ([jaymzh](https://github.com/jaymzh))
+- Unify the cpu plugin [#1262](https://github.com/chef/ohai/pull/1262) ([jaymzh](https://github.com/jaymzh))
+- Trim out bogus data in system_profile plugin [#1263](https://github.com/chef/ohai/pull/1263) ([tas50](https://github.com/tas50))
+- [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh))
+- Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50))
+- Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.5.4](https://github.com/chef/ohai/tree/v14.5.4) (2018-09-17)
 
 #### Merged Pull Requests
@@ -30,7 +28,6 @@
 - Add additional yard comments [#1249](https://github.com/chef/ohai/pull/1249) ([tas50](https://github.com/tas50))
 - Connect to GCE metadata by IP not name [#1252](https://github.com/chef/ohai/pull/1252) ([tas50](https://github.com/tas50))
 - Revert &quot;Connect to GCE metadata by IP not name&quot; [#1253](https://github.com/chef/ohai/pull/1253) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.5.0](https://github.com/chef/ohai/tree/v14.5.0) (2018-09-14)
 

@@ -12,6 +12,7 @@ The [MVP list](https://github.com/chef/chef/blob/master/CHEF_MVPS.md) is kept in
 
 | Release | Date | MVP |
 |---------|------|-----|
+| Ohai 14.6 | 2018-10-11 | Phil Dibowitz |
 | Ohai 14.5 | 2018-09-14 | Anton Kvashenkin |
 | Ohai 14.4 | 2018-08-08 | Alice |
 | Ohai 14.2 | 2018-06-04 | @cbajumpaa |

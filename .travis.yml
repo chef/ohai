@@ -6,6 +6,7 @@ sudo: false
 branches:
   only:
     - master
+    - 14-stable
     - 13-stable
 
 bundler_args: --jobs 7 --without docs debug

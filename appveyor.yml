@@ -25,6 +25,7 @@ skip_tags: true
 branches:
   only:
     - master
+    - 14-stable
     - 13-stable
 
 install:

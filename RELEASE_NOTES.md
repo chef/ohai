@@ -1,3 +1,7 @@
+# Unreleased (Ohai 15)
+
+This will be updated as the development of Ohai 15 progresses.
+
 # Ohai Release Notes 14.6
 
 ## Filesystem Plugin on AIX and Solaris

@@ -1,9 +1,10 @@
 # Change Log
 
-<!-- latest_release unreleased -->
-## Unreleased
+<!-- latest_release 15.0.1 -->
+## [v15.0.1](https://github.com/chef/ohai/tree/v15.0.1) (2018-10-26)
 
 #### Merged Pull Requests
+- Remove the chdir to / when running ohai [#1250](https://github.com/chef/ohai/pull/1250) ([tas50](https://github.com/tas50))
 - Update master branch for Ohai 15 development [#1277](https://github.com/chef/ohai/pull/1277) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
@@ -11,6 +12,7 @@
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Remove the chdir to / when running ohai [#1250](https://github.com/chef/ohai/pull/1250) ([tas50](https://github.com/tas50)) <!-- 15.0.1 -->
 - Update master branch for Ohai 15 development [#1277](https://github.com/chef/ohai/pull/1277) ([tas50](https://github.com/tas50)) <!-- 15.0.0 -->
 <!-- release_rollup -->
 

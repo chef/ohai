@@ -101,10 +101,6 @@ class Ohai::Application
   #
   # @return void
   def run_application
-    # Always switch to a readable directory. Keeps subsequent Dir.chdir() {}
-    # from failing due to permissions when launched as a less privileged user.
-    Dir.chdir("/")
-
     config[:invoked_from_cli] = true
     config[:logger] = Ohai::Log.with_child
     ohai = Ohai::System.new(config)

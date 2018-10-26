@@ -3,7 +3,6 @@ AllCops:
     - "spec/data/**/*"
     - "vendor/**/*"
     - "pkg/**/*"
-    - "spec/unit/plugins/darwin/system_profiler_output.rb"
 
 # these have shellout examples that need to have the tabs that come with the shellout
 Layout/Tab:

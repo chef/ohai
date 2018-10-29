@@ -11,7 +11,7 @@ Ohai will print out a JSON data blob for all the known data about your system. W
 Chef distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the docs:
 
 - General documentation: <https://docs.chef.io/ohai.html>
-- Custom plugin documentation: <https://docs.chef.io/ohai_custom.html>
+- Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom.html>
 
 ## Development Environment:
 
@@ -37,11 +37,16 @@ Ohai has some Rake tasks for doing various things.
 
 ```
 rake -T
-rake build          # Build the gem file ohai-$VERSION.gem
-rake install        # install the gem locally
-rake install:local  # install the gem locally without network access
-rake release        # Create tag $VERSION, build gem, and push to Rubygems
-rake spec           # Run RSpec tests
+rake build               # Build ohai-$VERSION.gem into the pkg directory
+rake clean               # Remove any temporary products
+rake clobber             # Remove any generated files
+rake docs                # Generate YARD Documentation
+rake install             # Build and install ohai-$VERSION.gem into system gems
+rake install:local       # Build and install ohai-$VERSION.gem into system gems without network access
+rake release[remote]     # Create tag $VERSION and build and push ohai-$VERSION.gem to rubygems.org
+rake spec                # Run RSpec code examples
+rake style               # Run Chefstyle tests
+rake style:auto_correct  # Auto-correct RuboCop offenses
 
 ($VERSION is the current version, from the GemSpec in Rakefile)
 ```
@@ -65,7 +70,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

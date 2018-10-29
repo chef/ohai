@@ -1,1 +1,4 @@
-* @chef/client-maintainers
+*                 @chef/client-maintainers
+.expeditor/**     @chef/jex-team
+README.md         @chef/docs-team
+RELEASE_NOTES.md  @chef/docs-team

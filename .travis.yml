@@ -1,6 +1,5 @@
 language: ruby
 cache: bundler
-dist: trusty
 
 sudo: false
 
@@ -9,6 +8,8 @@ branches:
     - master
     - 13-stable
 
+bundler_args: --jobs 7 --without docs debug
+
 before_install:
   - gem --version
   - rvm @global do gem uninstall bundler -a -x -I || true
@@ -16,9 +17,9 @@ before_install:
   - bundle --version
   - rm -f .bundle/config
 rvm:
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
   - ruby-head
 
 matrix:
@@ -26,6 +27,6 @@ matrix:
     - rvm: ruby-head
 
 script:
-  - bundle exec chefstyle
-  - bundle exec rake spec
+  - bundle exec chefstyle -v
+  - bundle exec rake
   - bundle exec ohai

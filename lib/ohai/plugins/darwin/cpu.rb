@@ -1,7 +1,7 @@
 #
 # Author:: Nathan L Smith (<nlloyds@gmail.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ Ohai.plugin(:CPU) do
 
   collect_data(:darwin) do
     cpu Mash.new
-    shell_out("sysctl -a").stdout.lines.each do |line|
+    shell_out("sysctl hw machdep").stdout.lines.each do |line|
       case line
       when /^hw.packages: (.*)$/
         cpu[:real] = Regexp.last_match[1].to_i

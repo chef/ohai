@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.3 -->
-## [v15.0.3](https://github.com/chef/ohai/tree/v15.0.3) (2018-10-30)
+<!-- latest_release 15.0.4 -->
+## [v15.0.4](https://github.com/chef/ohai/tree/v15.0.4) (2018-10-30)
 
 #### Merged Pull Requests
-- Remove the deprecated Ohai::Util::Win32::GroupHelper class [#1279](https://github.com/chef/ohai/pull/1279) ([tas50](https://github.com/tas50))
+- Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50)) <!-- 15.0.4 -->
 - Remove the deprecated Ohai::Util::Win32::GroupHelper class [#1279](https://github.com/chef/ohai/pull/1279) ([tas50](https://github.com/tas50)) <!-- 15.0.3 -->
 - Remove the deprecated system_profiler plugin [#1278](https://github.com/chef/ohai/pull/1278) ([tas50](https://github.com/tas50)) <!-- 15.0.2 -->
 - Remove the chdir to / when running ohai [#1250](https://github.com/chef/ohai/pull/1250) ([tas50](https://github.com/tas50)) <!-- 15.0.1 -->

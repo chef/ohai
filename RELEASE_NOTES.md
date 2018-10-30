@@ -1,3 +1,19 @@
+# Ohai Release Nots 13.12
+
+## macOS Improvements
+
+- sysctl commands have been modified to gather only the bare minimum required data, which prevents sysctl hanging in some scenarios
+- Extra data has been removed from the system_profile plugin, reducing the amount of data stored on the chef-server for each node
+
+## SUSE Linux Enterprise Server 15
+
+- Ohai now properly detects SLES 15
+
+## Command Line Improvements
+
+- Outdated man pages have been removed from the gem
+- Relative paths to the config file are now supported on the command line
+
 # Ohai Release Notes 13.10
 
 ## Detection of Amazon Linux 2.0

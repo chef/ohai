@@ -1,25 +1,23 @@
 # Change Log
 
-<!-- latest_release 13.12.4 -->
-## [v13.12.4](https://github.com/chef/ohai/tree/v13.12.4) (2018-10-30)
-
-#### Merged Pull Requests
-- Trim out bogus data in system_profile plugin [#1284](https://github.com/chef/ohai/pull/1284) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=13.10.0 -->
-### Changes since 13.10.0 release
-
-#### Merged Pull Requests
-- Trim out bogus data in system_profile plugin [#1284](https://github.com/chef/ohai/pull/1284) ([tas50](https://github.com/tas50)) <!-- 13.12.4 -->
-- Avoid gathering all data with sysctl which seems to hang [#1285](https://github.com/chef/ohai/pull/1285) ([tas50](https://github.com/tas50)) <!-- 13.12.3 -->
-- Fix provided relative paths to the config file [#1287](https://github.com/chef/ohai/pull/1287) ([tas50](https://github.com/tas50)) <!-- 13.12.2 -->
-- Add support for SLES 15 [#1286](https://github.com/chef/ohai/pull/1286) ([tas50](https://github.com/tas50)) <!-- 13.12.1 -->
-- Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50)) <!-- 13.12.0 -->
-- Misc cleanup backported from Ohai 14 [#1281](https://github.com/chef/ohai/pull/1281) ([tas50](https://github.com/tas50)) <!-- 13.10.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v13.12.4](https://github.com/chef/ohai/tree/v13.12.4) (2018-10-30)
+
+#### Merged Pull Requests
+- Misc cleanup backported from Ohai 14 [#1281](https://github.com/chef/ohai/pull/1281) ([tas50](https://github.com/tas50))
+- Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50))
+- Add support for SLES 15 [#1286](https://github.com/chef/ohai/pull/1286) ([tas50](https://github.com/tas50))
+- Fix provided relative paths to the config file [#1287](https://github.com/chef/ohai/pull/1287) ([tas50](https://github.com/tas50))
+- Avoid gathering all data with sysctl which seems to hang [#1285](https://github.com/chef/ohai/pull/1285) ([tas50](https://github.com/tas50))
+- Trim out bogus data in system_profile plugin [#1284](https://github.com/chef/ohai/pull/1284) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v13.10.0](https://github.com/chef/ohai/tree/v13.10.0) (2018-07-09)
 
 #### Merged Pull Requests
@@ -27,7 +25,6 @@
 - Properly detect Amazon Linux 2 final release platform version [#1215](https://github.com/chef/ohai/pull/1215) ([tas50](https://github.com/tas50))
 - Prep 13.10 release [#1220](https://github.com/chef/ohai/pull/1220) ([tas50](https://github.com/tas50))
 - Actually bump to 13.10 [#1222](https://github.com/chef/ohai/pull/1222) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v13.9.2](https://github.com/chef/ohai/tree/v13.9.2) (2018-06-04)
 

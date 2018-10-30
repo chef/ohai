@@ -20,13 +20,12 @@ Ohai.plugin(:SystemProfile) do
   provides "system_profile"
 
   collect_data(:darwin) do
-    begin
-      require "plist"
+    require "plist"
 
-      system_profile Array.new
-      items = Array.new
-      detail_level = {
-        "mini" => %w{
+    system_profile Array.new
+    items = Array.new
+    detail_level = {
+      "mini" => %w{
 SPParallelATAData
 SPAudioData
 SPBluetoothData
@@ -52,21 +51,22 @@ SPThunderboltData
 SPUSBData
 SPWWANData
 SPAirPortData},
-        "full" => [
-                   "SPHardwareDataType",
-                  ],
-      }
+      "full" => [
+                 "SPHardwareDataType",
+                ],
+    }
 
-      detail_level.each do |level, data_types|
-        so = shell_out("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}")
-        Plist.parse_xml(so.stdout).each do |e|
-          items << e
-        end
+    detail_level.each do |level, data_types|
+      so = shell_out("system_profiler -xml -detailLevel #{level} #{data_types.join(' ')}")
+      Plist.parse_xml(so.stdout).each do |e|
+        # delete some bogus timing data and then keep the rest
+        e.delete("_SPCompletionInterval")
+        e.delete("_SPResponseTime")
+        e.delete("_SPCommandLineArguments")
+        items << e
       end
-
-      system_profile items.sort_by { |h| h["_dataType"] }
-    rescue LoadError => e
-      Ohai::Log.debug("Can't load gem: #{e})")
     end
+
+    system_profile ( items.sort_by { |h| h["_dataType"] } ) # rubocop: disable Lint/ParenthesesAsGroupedExpression
   end
 end

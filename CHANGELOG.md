@@ -1,9 +1,10 @@
 # Change Log
 
-<!-- latest_release unreleased -->
-## Unreleased
+<!-- latest_release 13.12.1 -->
+## [v13.12.1](https://github.com/chef/ohai/tree/v13.12.1) (2018-10-30)
 
 #### Merged Pull Requests
+- Add support for SLES 15 [#1286](https://github.com/chef/ohai/pull/1286) ([tas50](https://github.com/tas50))
 - Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
@@ -11,6 +12,7 @@
 ### Changes since 13.10.0 release
 
 #### Merged Pull Requests
+- Add support for SLES 15 [#1286](https://github.com/chef/ohai/pull/1286) ([tas50](https://github.com/tas50)) <!-- 13.12.1 -->
 - Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50)) <!-- 13.12.0 -->
 - Misc cleanup backported from Ohai 14 [#1281](https://github.com/chef/ohai/pull/1281) ([tas50](https://github.com/tas50)) <!-- 13.10.1 -->
 <!-- release_rollup -->

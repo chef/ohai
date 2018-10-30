@@ -139,23 +139,6 @@ module Ohai
       freeze_strings!
     end
 
-    # Re-runs plugins that provide the attributes specified by
-    # +attribute_filter+. If +attribute_filter+ is not given, re-runs all
-    # plugins.
-    #
-    # Note that dependencies will not be re-run, so you must specify all of the
-    # attributes you want refreshed in the +attribute_filter+
-    #
-    # This method takes a naive approach to v6 plugins: it simply re-runs all
-    # of them whenever called.
-    def refresh_plugins(attribute_filter = nil)
-      Ohai::Hints.refresh_hints
-      @provides_map.all_plugins(attribute_filter).each do |plugin|
-        plugin.reset!
-      end
-      run_plugins(true, attribute_filter)
-    end
-
     #
     # Serialize this object as a hash
     #

@@ -137,7 +137,7 @@ Ohai.plugin(:Platform) do
       "rhel"
     when /amazon/
       "amazon"
-    when /suse/
+    when /suse/, /sles/, /opensuse/
       "suse"
     when /fedora/, /pidora/, /arista_eos/
       # In the broadest sense:  RPM-based, fedora-derived distributions which are not strictly re-compiled RHEL (if it uses RPMs, and smells more like redhat and less like
@@ -286,8 +286,18 @@ Ohai.plugin(:Platform) do
     elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
       platform lsb[:id].downcase
       platform_version lsb[:release]
+    # Use os-release (present on all modern linux distros) BUT use old *-release files as fallback.
+    # os-release will only be used if no other *-release file is present.
+    # We have to do this for compatibility reasons, or older OS releases might get different
+    # "platform" or "platform_version" attributes (e.g. SLES12, RHEL7).
+    elsif File.exist?("/etc/os-release")
+      platform os_release_info["ID"] == "sles" ? "suse" : os_release_info["ID"] # SLES is wrong. We call it SUSE
+      platform_version os_release_info["VERSION_ID"]
+      # platform_family also does not need to be hardcoded anymore.
+      # This would be the correct way, but we stick with "determine_platform_family" for compatibility reasons.
+      # platform_family os_release_info["ID_LIKE"]
     end
 
-    platform_family determine_platform_family
+    platform_family determine_platform_family if platform_family.nil?
   end
 end

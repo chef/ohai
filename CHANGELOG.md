@@ -1,17 +1,17 @@
 # Change Log
 
-<!-- latest_release 13.10.1 -->
-## [v13.10.1](https://github.com/chef/ohai/tree/v13.10.1) (2018-10-30)
+<!-- latest_release unreleased -->
+## Unreleased
 
 #### Merged Pull Requests
-- Misc cleanup backported from Ohai 14 [#1281](https://github.com/chef/ohai/pull/1281) ([tas50](https://github.com/tas50))
-- Actually bump to 13.10 [#1222](https://github.com/chef/ohai/pull/1222) ([tas50](https://github.com/tas50))
+- Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.10.0 -->
 ### Changes since 13.10.0 release
 
 #### Merged Pull Requests
+- Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50)) <!-- 13.12.0 -->
 - Misc cleanup backported from Ohai 14 [#1281](https://github.com/chef/ohai/pull/1281) ([tas50](https://github.com/tas50)) <!-- 13.10.1 -->
 <!-- release_rollup -->
 

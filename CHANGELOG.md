@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 13.12.2 -->
-## [v13.12.2](https://github.com/chef/ohai/tree/v13.12.2) (2018-10-30)
+<!-- latest_release 13.12.3 -->
+## [v13.12.3](https://github.com/chef/ohai/tree/v13.12.3) (2018-10-30)
 
 #### Merged Pull Requests
-- Fix provided relative paths to the config file [#1287](https://github.com/chef/ohai/pull/1287) ([tas50](https://github.com/tas50))
+- Avoid gathering all data with sysctl which seems to hang [#1285](https://github.com/chef/ohai/pull/1285) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=13.10.0 -->
 ### Changes since 13.10.0 release
 
 #### Merged Pull Requests
+- Avoid gathering all data with sysctl which seems to hang [#1285](https://github.com/chef/ohai/pull/1285) ([tas50](https://github.com/tas50)) <!-- 13.12.3 -->
 - Fix provided relative paths to the config file [#1287](https://github.com/chef/ohai/pull/1287) ([tas50](https://github.com/tas50)) <!-- 13.12.2 -->
 - Add support for SLES 15 [#1286](https://github.com/chef/ohai/pull/1286) ([tas50](https://github.com/tas50)) <!-- 13.12.1 -->
 - Bump version to 13.12.0 [#1288](https://github.com/chef/ohai/pull/1288) ([tas50](https://github.com/tas50)) <!-- 13.12.0 -->

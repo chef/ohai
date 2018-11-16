@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.5 -->
-## [v15.0.5](https://github.com/chef/ohai/tree/v15.0.5) (2018-11-16)
+<!-- latest_release 15.0.6 -->
+## [v15.0.6](https://github.com/chef/ohai/tree/v15.0.6) (2018-11-16)
 
 #### Merged Pull Requests
-- Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly))
+- Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.6 -->
 - Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.0.5 -->
 - Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50)) <!-- 15.0.4 -->
 - Remove the deprecated Ohai::Util::Win32::GroupHelper class [#1279](https://github.com/chef/ohai/pull/1279) ([tas50](https://github.com/tas50)) <!-- 15.0.3 -->

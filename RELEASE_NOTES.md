@@ -2,6 +2,10 @@
 
 This will be updated as the development of Ohai 15 progresses.
 
+## Cloud Plugin Improvements
+
+The Google Compute Engine (GCE) plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
+
 # Ohai Release Notes 14.6
 
 ## Filesystem Plugin on AIX and Solaris

@@ -156,7 +156,8 @@ EOM
           "public-keys/0/" => "openssh-key",
           "public-keys/0/openssh-key" => "SSH KEY DATA",
           "security-groups" => "default",
-          "public-ipv4" => "",
+          "public-ipv4" => "172.31.7.2",
+          "public-ipv6" => "",
           "ami-manifest-path" => "FIXME",
           "instance-type" => "opc-tester",
           "instance-id" => "i-0000162a",
@@ -246,7 +247,10 @@ EOM
         expect(plugin["openstack"]["security_groups"]).to eq(["default"])
       end
       it "reads the public_ipv4 from the metadata service" do
-        expect(plugin["openstack"]["public_ipv4"]).to eq("")
+        expect(plugin["openstack"]["public_ipv4"]).to eq("172.31.7.2")
+      end
+      it "ignore the public_ipv6 from the metadata service when empty" do
+        expect(plugin["openstack"]).not_to have_key("public_ipv6")
       end
       it "reads the ami_manifest_path from the metadata service" do
         expect(plugin["openstack"]["ami_manifest_path"]).to eq("FIXME")

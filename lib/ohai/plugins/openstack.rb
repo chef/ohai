@@ -69,7 +69,7 @@ Ohai.plugin(:Openstack) do
       # fetch the metadata if we can do a simple socket connect first
       if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, timeout)
         fetch_metadata.each do |k, v|
-          openstack[k] = v
+          openstack[k] = v unless v.empty?
         end
         logger.trace("Plugin Openstack: Successfully fetched Openstack metadata from the metadata endpoint")
       else

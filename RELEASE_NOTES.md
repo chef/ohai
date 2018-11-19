@@ -4,7 +4,9 @@ This will be updated as the development of Ohai 15 progresses.
 
 ## Cloud Plugin Improvements
 
-The Google Compute Engine (GCE) plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
+Use system information (e.g., DMI/SMBIOS or System Information (msinfo)) to determine whether a system is running on Google Compute Engine (GCE).  In the absence of an [Ohai hint](https://docs.chef.io/ohai.html#hints), system information will be consulted to make the determination.
+
+The GCE plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
 
 # Ohai Release Notes 14.6
 

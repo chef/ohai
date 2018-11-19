@@ -23,13 +23,43 @@ Ohai.plugin(:GCE) do
 
   provides "gce"
 
-  # Checks for gce metadata server
-  #
-  # === Return
-  # true:: If gce metadata server found
-  # false:: Otherwise
-  def has_gce_metadata?
-    can_socket_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
+  # look for GCE string in dmi vendor bios data within the sys tree.
+  # this works even if the system lacks dmidecode use by the Dmi plugin
+  # @return [Boolean] do we have Google Compute Engine DMI data?
+  def has_gce_dmi?
+    if file_val_if_exists("/sys/class/dmi/id/product_name") =~ /Google Compute Engine/
+      logger.trace("Plugin GCE: has_gce_dmi? == true")
+      true
+    else
+      logger.trace("Plugin GCE: has_gce_dmi? == false")
+      false
+    end
+  end
+
+  # return the contents of a file if the file exists
+  # @param path[String] abs path to the file
+  # @return [String] contents of the file if it exists
+  def file_val_if_exists(path)
+    if ::File.exist?(path)
+      ::File.read(path)
+    end
+  end
+
+  # looks at the Manufacturer and Model WMI values to see if they starts with Google.
+  # @return [Boolean] Are the manufacturer and model Google?
+  def has_gce_system_info?
+    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+      require "wmi-lite/wmi"
+      wmi = WmiLite::Wmi.new
+      computer_system = wmi.first_of("Win32_ComputerSystem")
+      if computer_system["Manufacturer"] =~ /^Google/ && computer_system["Model"] =~ /^Google/
+        logger.trace("Plugin GCE: has_gce_system_info? == true")
+        return true
+      end
+    else
+      logger.trace("Plugin GCE: has_gce_system_info? == false")
+      false
+    end
   end
 
   # Identifies gce
@@ -38,7 +68,11 @@ Ohai.plugin(:GCE) do
   # true:: If gce can be identified
   # false:: Otherwise
   def looks_like_gce?
-    hint?("gce") || has_gce_metadata?
+    return true if hint?("gce")
+
+    if has_gce_dmi? || has_gce_system_info?
+      return true if can_socket_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
+    end
   end
 
   collect_data do

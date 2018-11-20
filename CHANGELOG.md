@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.6 -->
-## [v15.0.6](https://github.com/chef/ohai/tree/v15.0.6) (2018-11-16)
+<!-- latest_release 15.0.7 -->
+## [v15.0.7](https://github.com/chef/ohai/tree/v15.0.7) (2018-11-20)
 
 #### Merged Pull Requests
-- Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey))
+- Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.7 -->
 - Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.6 -->
 - Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.0.5 -->
 - Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50)) <!-- 15.0.4 -->

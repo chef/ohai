@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 13.12.5 -->
+## [v13.12.5](https://github.com/chef/ohai/tree/v13.12.5) (2018-11-23)
+
+#### Merged Pull Requests
+- Set User-Agent in HTTP header for GCE plugin [#1293](https://github.com/chef/ohai/pull/1293) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.6.2 -->
+### Changes since 14.6.2 release
+
+#### Merged Pull Requests
+- Set User-Agent in HTTP header for GCE plugin [#1293](https://github.com/chef/ohai/pull/1293) ([tas50](https://github.com/tas50)) <!-- 13.12.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

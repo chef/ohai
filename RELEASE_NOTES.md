@@ -1,4 +1,10 @@
-# Ohai Release Nots 13.12
+# Ohai Release Notes 13.XX (unreleased)
+
+## Cloud Plugin Improvements
+
+The Google Compute Engine (GCE) plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
+
+# Ohai Release Notes 13.12
 
 ## macOS Improvements
 

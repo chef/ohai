@@ -1,4 +1,5 @@
 AllCops:
+  TargetRubyVersion: 2.5
   Exclude:
     - "spec/data/**/*"
     - "vendor/**/*"
@@ -10,5 +11,6 @@ Layout/Tab:
     - "lib/ohai/plugins/mono.rb"
     - "lib/ohai/plugins/darwin/hardware.rb"
 
-Performance/UnneededSort:
-  Enabled: true
+# this can cause failures that we need to look at one by one
+Performance/RegexpMatch:
+  Enabled: false

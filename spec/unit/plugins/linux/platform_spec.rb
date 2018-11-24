@@ -474,6 +474,14 @@ OS_RELEASE
         expect(@plugin[:platform_version].to_f).to eq(2)
       end
 
+      it "should read the platform as amazon and version as 2 when codename is in the release string" do
+        expect(File).to receive(:read).with("/etc/redhat-release").and_return("Amazon Linux release 2 (Karoo)")
+        @plugin.run
+        expect(@plugin[:platform]).to eq("amazon")
+        expect(@plugin[:platform_family]).to eq("amazon")
+        expect(@plugin[:platform_version].to_f).to eq(2)
+      end
+
       # https://github.com/chef/ohai/issues/560
       # Issue is seen on EL7, so that's what we're testing.
       context "on versions that have /etc/os-release" do
@@ -819,14 +827,6 @@ OS_RELEASE
           expect(@plugin[:platform_family]).to eq("suse")
         end
 
-        it "should read the version as 10.1 for bogus SLES 10" do
-          expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 10 (i586)\nVERSION = 10\nPATCHLEVEL = 1\n")
-          @plugin.run
-          expect(@plugin[:platform]).to eq("suse")
-          expect(@plugin[:platform_version]).to eq("10.1")
-          expect(@plugin[:platform_family]).to eq("suse")
-        end
-
         it "should read the version as 11.2" do
           expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
           @plugin.run
@@ -840,14 +840,6 @@ OS_RELEASE
           @plugin.run
           expect(@plugin[:platform]).to eq("opensuse")
           expect(@plugin[:platform_version]).to eq("11.3")
-          expect(@plugin[:platform_family]).to eq("suse")
-        end
-
-        it "[OHAI-272] should read the version as 9.1" do
-          expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("SuSE Linux 9.1 (i586)\nVERSION = 9.1")
-          @plugin.run
-          expect(@plugin[:platform]).to eq("suse")
-          expect(@plugin[:platform_version]).to eq("9.1")
           expect(@plugin[:platform_family]).to eq("suse")
         end
 

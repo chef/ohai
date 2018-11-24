@@ -6,7 +6,7 @@ platform:
 
 environment:
   matrix:
-    - ruby_version: "24"  
+    - ruby_version: "25"
 
 clone_folder: c:\projects\ohai
 clone_depth: 1

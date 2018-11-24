@@ -31,17 +31,17 @@ def it_populates_ipaddress_attributes
   source = caller[0]
 
   it "populates ipaddress, macaddress and ip6address" do
-    begin
-      allow(@plugin.logger).to receive(:warn)
-      expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
-      @plugin.run
-      %w{ ipaddress macaddress ip6address }.each do |attribute|
-        expect(@plugin).to have_key(attribute)
-      end
-    rescue Exception
-      puts "RSpec context: #{source}"
-      raise
+
+    allow(@plugin.logger).to receive(:warn)
+    expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
+    @plugin.run
+    %w{ ipaddress macaddress ip6address }.each do |attribute|
+      expect(@plugin).to have_key(attribute)
     end
+  rescue Exception
+    puts "RSpec context: #{source}"
+    raise
+
   end
 end
 

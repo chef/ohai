@@ -18,8 +18,8 @@ before_install:
   - bundle --version
   - rm -f .bundle/config
 rvm:
-  - 2.4.4
   - 2.5.1
+  - 2.6
   - ruby-head
 
 matrix:

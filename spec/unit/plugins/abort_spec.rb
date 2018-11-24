@@ -31,11 +31,11 @@ EOF
 
 describe "a plug-in that aborts execution" do
   before(:all) do
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
+
+    Dir.mkdir("#{tmp}/plugins")
+  rescue Errno::EEXIST
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -49,11 +49,11 @@ describe "a plug-in that aborts execution" do
   end
 
   after(:all) do
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
+
+    Dir.delete("#{tmp}/plugins")
+  rescue
       # ignore
-    end
+
   end
 
   before(:each) do

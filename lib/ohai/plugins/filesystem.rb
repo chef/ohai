@@ -250,16 +250,16 @@ Ohai.plugin(:Filesystem) do
       # we have to non-block read dev files. Ew.
       f = File.open("/proc/mounts")
       loop do
-        begin
-          data = f.read_nonblock(4096)
-          mounts << data
-        # We should just catch EOFError, but the kernel had a period of
-        # bugginess with reading virtual files, so we're being extra
-        # cautious here, catching all exceptions, and then we'll read
-        # whatever data we might have
-        rescue Exception
-          break
-        end
+
+        data = f.read_nonblock(4096)
+        mounts << data
+      # We should just catch EOFError, but the kernel had a period of
+      # bugginess with reading virtual files, so we're being extra
+      # cautious here, catching all exceptions, and then we'll read
+      # whatever data we might have
+      rescue Exception
+        break
+
       end
       f.close
       mounts.each_line do |line|

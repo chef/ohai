@@ -37,12 +37,12 @@ describe Ohai::System, "plugin fips", :windows_only do
   end
 
   around do |ex|
-    begin
-      $FIPS_TEST_MODE = openssl_test_mode
-      ex.run
-    ensure
-      $FIPS_TEST_MODE = false
-    end
+
+    $FIPS_TEST_MODE = openssl_test_mode
+    ex.run
+  ensure
+    $FIPS_TEST_MODE = false
+
   end
 
   shared_examples "fips_plugin" do

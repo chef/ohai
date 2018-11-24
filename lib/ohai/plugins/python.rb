@@ -22,22 +22,22 @@ Ohai.plugin(:Python) do
   depends "languages"
 
   collect_data do
-    begin
-      so = shell_out("python -c \"import sys; print (sys.version)\"")
-      # Sample output:
-      # 2.7.11 (default, Dec 26 2015, 17:47:53)
-      # [GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)]
-      if so.exitstatus == 0
-        python = Mash.new
-        output = so.stdout.split
-        python[:version] = output[0]
-        if output.length >= 6
-          python[:builddate] = "%s %s %s %s" % [output[2], output[3], output[4], output[5].delete!(")")]
-        end
-        languages[:python] = python unless python.empty?
+
+    so = shell_out("python -c \"import sys; print (sys.version)\"")
+    # Sample output:
+    # 2.7.11 (default, Dec 26 2015, 17:47:53)
+    # [GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)]
+    if so.exitstatus == 0
+      python = Mash.new
+      output = so.stdout.split
+      python[:version] = output[0]
+      if output.length >= 6
+        python[:builddate] = "%s %s %s %s" % [output[2], output[3], output[4], output[5].delete!(")")]
       end
-    rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Python: Could not shell_out "python -c "import sys; print (sys.version)"". Skipping plugin')
+      languages[:python] = python unless python.empty?
     end
+  rescue Ohai::Exceptions::Exec
+    logger.trace('Plugin Python: Could not shell_out "python -c "import sys; print (sys.version)"". Skipping plugin')
+
   end
 end

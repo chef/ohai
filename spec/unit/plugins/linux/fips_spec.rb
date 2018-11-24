@@ -36,12 +36,12 @@ describe Ohai::System, "plugin fips" do
   end
 
   around do |ex|
-    begin
-      $FIPS_TEST_MODE = openssl_test_mode
-      ex.run
-    ensure
-      $FIPS_TEST_MODE = false
-    end
+
+    $FIPS_TEST_MODE = openssl_test_mode
+    ex.run
+  ensure
+    $FIPS_TEST_MODE = false
+
   end
 
   context "fips file is present and contains 1" do

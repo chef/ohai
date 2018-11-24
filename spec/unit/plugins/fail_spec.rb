@@ -23,11 +23,11 @@ tmp = ENV["TMPDIR"] || ENV["TMP"] || ENV["TEMP"] || "/tmp"
 
 shared_examples "a v7 loading failure" do
   before(:all) do
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
+
+    Dir.mkdir("#{tmp}/plugins")
+  rescue Errno::EEXIST
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -41,11 +41,11 @@ shared_examples "a v7 loading failure" do
   end
 
   after(:all) do
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
+
+    Dir.delete("#{tmp}/plugins")
+  rescue
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -67,11 +67,11 @@ end
 
 shared_examples "a v7 loading success" do
   before(:all) do
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
+
+    Dir.mkdir("#{tmp}/plugins")
+  rescue Errno::EEXIST
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -85,11 +85,11 @@ shared_examples "a v7 loading success" do
   end
 
   after(:all) do
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
+
+    Dir.delete("#{tmp}/plugins")
+  rescue
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -110,11 +110,11 @@ end
 
 shared_examples "a v7 run failure" do
   before(:all) do
-    begin
-      Dir.mkdir("#{tmp}/plugins")
-    rescue Errno::EEXIST
+
+    Dir.mkdir("#{tmp}/plugins")
+  rescue Errno::EEXIST
       # ignore
-    end
+
   end
 
   before(:each) do
@@ -128,11 +128,11 @@ shared_examples "a v7 run failure" do
   end
 
   after(:all) do
-    begin
-      Dir.delete("#{tmp}/plugins")
-    rescue
+
+    Dir.delete("#{tmp}/plugins")
+  rescue
       # ignore
-    end
+
   end
 
   before(:each) do

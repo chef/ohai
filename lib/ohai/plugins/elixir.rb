@@ -18,19 +18,19 @@ Ohai.plugin(:Elixir) do
   depends "languages"
 
   collect_data do
-    begin
-      so = shell_out("elixir -v")
-      # Sample output:
-      # Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
-      #
-      # Elixir 1.2.4
-      if so.exitstatus == 0 && so.stdout =~ /^Elixir (\S*)/
-        elixir = Mash.new
-        elixir[:version] = $1
-        languages[:elixir] = elixir
-      end
-    rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Elixir: Could not shell_out "elixir -v". Skipping plugin')
+
+    so = shell_out("elixir -v")
+    # Sample output:
+    # Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+    #
+    # Elixir 1.2.4
+    if so.exitstatus == 0 && so.stdout =~ /^Elixir (\S*)/
+      elixir = Mash.new
+      elixir[:version] = $1
+      languages[:elixir] = elixir
     end
+  rescue Ohai::Exceptions::Exec
+    logger.trace('Plugin Elixir: Could not shell_out "elixir -v". Skipping plugin')
+
   end
 end

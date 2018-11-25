@@ -158,7 +158,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "hyperv"
       virtualization[:role] = "guest"
       virtualization[:systems][:hyperv] = "guest"
-      virtualization[:host] = hyperv_host
+      virtualization[:hypervisor_host] = hyperv_host
     end
 
     # Detect Linux-VServer

@@ -393,7 +393,7 @@ VEERTU
       expect(plugin[:virtualization][:system]).to eq("hyperv")
       expect(plugin[:virtualization][:role]).to eq("guest")
       expect(plugin[:virtualization][:systems]["hyperv"]).to eq("guest")
-      expect(plugin[:virtualization]["host"]).to eq("hyper_v.example.com")
+      expect(plugin[:virtualization]["hypervisor_host"]).to eq("hyper_v.example.com")
     end
   end
 

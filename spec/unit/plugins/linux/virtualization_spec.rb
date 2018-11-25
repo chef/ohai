@@ -385,7 +385,7 @@ VEERTU
     end
   end
 
-  describe "when we are checking for Hyper-V guest and host hostname" do
+  describe "when we are checking for Hyper-V guest and the hostname of the host" do
     it "sets Hyper-V guest if /var/lib/hyperv/.kvp_pool_3 contains hyper_v.example.com" do
       expect(File).to receive(:exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(true)
       allow(File).to receive(:read).with("/var/lib/hyperv/.kvp_pool_3").and_return("HostNamehyper_v.example.comHostingSystemEditionId")

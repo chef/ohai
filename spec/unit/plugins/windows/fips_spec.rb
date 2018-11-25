@@ -19,7 +19,7 @@
 require_relative "../../../spec_helper.rb"
 require "openssl"
 
-describe Ohai::System, "plugin fips", :windows_only do
+describe Ohai::System, "plugin fips" do
   let(:enabled) { 0 }
   let(:plugin) { get_plugin("windows/fips") }
   let(:openssl_test_mode) { false }

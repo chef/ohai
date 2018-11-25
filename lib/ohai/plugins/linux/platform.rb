@@ -327,6 +327,8 @@ Ohai.plugin(:Platform) do
       "opensuseleap"
     when "xenenterprise"
       "xenserver"
+    when "cumulus-linux"
+      "cumulus"
     else
       id
     end

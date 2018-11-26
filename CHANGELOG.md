@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.7 -->
-## [v15.0.7](https://github.com/chef/ohai/tree/v15.0.7) (2018-11-20)
+<!-- latest_release 15.0.8 -->
+## [v15.0.8](https://github.com/chef/ohai/tree/v15.0.8) (2018-11-26)
 
 #### Merged Pull Requests
-- Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey))
+- Plugin to load hyper_v hostname from guest [#1303](https://github.com/chef/ohai/pull/1303) ([safematix](https://github.com/safematix))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Plugin to load hyper_v hostname from guest [#1303](https://github.com/chef/ohai/pull/1303) ([safematix](https://github.com/safematix)) <!-- 15.0.8 -->
 - Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.7 -->
 - Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.6 -->
 - Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.0.5 -->

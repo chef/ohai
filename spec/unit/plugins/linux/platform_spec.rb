@@ -19,6 +19,8 @@
 require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "Linux plugin platform" do
+  let(:plugin) { get_plugin("linux/platform") }
+
   describe "#read_os_release_info" do
     let(:file_contents) { "COW=MOO\nDOG=\"BARK\"" }
     it "returns nil if the file does not exist" do
@@ -78,26 +80,156 @@ describe Ohai::System, "Linux plugin platform" do
     end
   end
 
-  context "on system with /etc/os-release" do
+  describe "#platform_id_remap" do
+    it "returns redhat for rhel os-release id" do
+      expect(plugin.platform_id_remap('rhel')).to eq('redhat')
+    end
 
+    it "returns amazon for amzn os-release id" do
+      expect(plugin.platform_id_remap('amzn')).to eq('amazon')
+    end
+
+    it "returns oracle for ol os-release id" do
+      expect(plugin.platform_id_remap('ol')).to eq('oracle')
+    end
+
+    it "returns suse for sles os-release id" do
+      expect(plugin.platform_id_remap('sles')).to eq('suse')
+    end
+
+    it "returns opensuseleap for opensuse-leap os-release id" do
+      expect(plugin.platform_id_remap('opensuse-leap')).to eq('opensuseleap')
+    end
+
+    it "returns xenserver for xenenterprise os-release id" do
+      expect(plugin.platform_id_remap('xenenterprise')).to eq('xenserver')
+    end
+
+    it "returns cumulus for cumulus-linux os-release id" do
+      expect(plugin.platform_id_remap('cumulus-linux')).to eq('cumulus')
+    end
+
+    it "does not transformation for any other platform" do
+      expect(plugin.platform_id_remap('ubuntu')).to eq('ubuntu')
+    end
+  end
+
+  describe "#platform_family_from_platform" do
+    %w(oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip).each do |p|
+      it "returns rhel for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq('rhel')
+      end
+    end
+
+    %w(suse sles opensuse).each do |p|
+      it "returns suse for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq('suse')
+      end
+    end
+
+    %w(fedora pidora arista_eos).each do |p|
+      it "returns fedora for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq('fedora')
+      end
+    end
+
+    %w(nexus ios_xr).each do |p|
+      it "returns wrlinux for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq('wrlinux')
+      end
+    end
+
+    %w(arch manjaro).each do |p|
+      it "returns arch for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq('arch')
+      end
+    end
+
+    %w(amazon slackware gentoo exherbo alpine clearlinux).each do |same_name|
+      it "returns #{same_name} for #{same_name} platform" do
+        expect(plugin.platform_family_from_platform(same_name)).to eq(same_name)
+      end
+    end
+  end
+
+
+  describe "on system with /etc/os-release" do
+    before(:each) do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(::File).to receive(:exist?).with("/etc/os-release").and_return(true)
+    end
+
+    # @todo
+    # - fix and test arch version detection
+    # - test fallback platform_family mapping
+    # - test the platform_family remap method
+    # - test the platform remap method
+
+    context "when os-release data is correct" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME="Ubuntu"
+          VERSION="14.04.5 LTS, Trusty Tahr"
+          ID=ubuntu
+          ID_LIKE=debian
+          PRETTY_NAME="Ubuntu 14.04.5 LTS"
+          VERSION_ID="14.04"
+OS_DATA
+      end
+
+      before(:each) do
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "should set platform, platform_family, and platform_version from os-release" do
+        plugin.run
+        expect(plugin[:platform]).to eq("ubuntu")
+        expect(plugin[:platform_family]).to eq("debian")
+        expect(plugin[:platform_version]).to eq("14.04")
+      end
+    end
+
+    context "when platform requires remapping" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME="openSUSE Leap"
+          VERSION="15.0"
+          ID="opensuse-leap"
+          ID_LIKE="suse opensuse"
+          VERSION_ID="15.0"
+          PRETTY_NAME="openSUSE Leap 15.0"
+          ANSI_COLOR="0;32"
+          CPE_NAME="cpe:/o:opensuse:leap:15.0"
+          BUG_REPORT_URL="https://bugs.opensuse.org"
+          HOME_URL="https://www.opensuse.org/"
+OS_DATA
+      end
+
+      before(:each) do
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "should set platform, platform_family, and platform_version from os-release" do
+        plugin.run
+        expect(plugin[:platform]).to eq("opensuseleap")
+        expect(plugin[:platform_family]).to eq("suse")
+        expect(plugin[:platform_version]).to eq("15.0")
+      end
+    end
   end
 
   context "on system without /etc/os-release (legacy)" do
-    let(:plugin) { get_plugin("linux/platform") }
     let(:have_debian_version) { false }
     let(:have_redhat_release) { false }
     let(:have_gentoo_release) { false }
     let(:have_exherbo_release) { false }
-    let(:have_alpine_release) { false }
     let(:have_eos_release) { false }
     let(:have_suse_release) { false }
-    let(:have_arch_release) { false }
     let(:have_system_release) { false }
     let(:have_slackware_version) { false }
     let(:have_enterprise_release) { false }
     let(:have_oracle_release) { false }
     let(:have_parallels_release) { false }
-    let(:have_raspi_config) { false }
     let(:have_os_release) { false }
     let(:have_usr_lib_os_release) { false }
     let(:have_cisco_release) { false }

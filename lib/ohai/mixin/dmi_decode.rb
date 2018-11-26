@@ -21,15 +21,7 @@ module ::Ohai::Mixin::DmiDecode
     dmi_data.each_line do |line|
       case line
       when /Manufacturer: Microsoft/
-        if dmi_data =~ /Product.*: Virtual Machine/
-          if dmi_data =~ /Version: (7.0|Hyper-V)/
-            return "hyperv"
-          elsif dmi_data =~ /Version: (VS2005R2|6.0)/
-            return "virtualpc"
-          elsif dmi_data =~ /Version: 5.0/
-            return "virtualserver"
-          end
-        end
+        return "hyperv" if dmi_data =~ /Version: (7.0|Hyper-V)/
       when /Manufacturer: VMware/
         return "vmware"
       when /Manufacturer: Xen/

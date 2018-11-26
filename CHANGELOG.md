@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.9 -->
-## [v15.0.9](https://github.com/chef/ohai/tree/v15.0.9) (2018-11-26)
+<!-- latest_release 15.0.10 -->
+## [v15.0.10](https://github.com/chef/ohai/tree/v15.0.10) (2018-11-26)
 
 #### Merged Pull Requests
-- Remove old spec files [#1301](https://github.com/chef/ohai/pull/1301) ([tas50](https://github.com/tas50))
+- Remove circa ~2005 virtualization hypervisor detection [#1305](https://github.com/chef/ohai/pull/1305) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Remove circa ~2005 virtualization hypervisor detection [#1305](https://github.com/chef/ohai/pull/1305) ([tas50](https://github.com/tas50)) <!-- 15.0.10 -->
 - Remove old spec files [#1301](https://github.com/chef/ohai/pull/1301) ([tas50](https://github.com/tas50)) <!-- 15.0.9 -->
 - Plugin to load hyper_v hostname from guest [#1303](https://github.com/chef/ohai/pull/1303) ([safematix](https://github.com/safematix)) <!-- 15.0.8 -->
 - Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.7 -->

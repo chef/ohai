@@ -243,17 +243,14 @@ OS_DATA
       allow(File).to receive(:exist?).with("/etc/redhat-release").and_return(have_redhat_release)
       allow(File).to receive(:exist?).with("/etc/gentoo-release").and_return(have_gentoo_release)
       allow(File).to receive(:exist?).with("/etc/exherbo-release").and_return(have_exherbo_release)
-      allow(File).to receive(:exist?).with("/etc/alpine-release").and_return(have_alpine_release)
       allow(File).to receive(:exist?).with("/etc/Eos-release").and_return(have_eos_release)
       allow(File).to receive(:exist?).with("/etc/SuSE-release").and_return(have_suse_release)
-      allow(File).to receive(:exist?).with("/etc/arch-release").and_return(have_arch_release)
       allow(File).to receive(:exist?).with("/etc/system-release").and_return(have_system_release)
       allow(File).to receive(:exist?).with("/etc/slackware-version").and_return(have_slackware_version)
       allow(File).to receive(:exist?).with("/etc/enterprise-release").and_return(have_enterprise_release)
       allow(File).to receive(:exist?).with("/etc/oracle-release").and_return(have_oracle_release)
       allow(File).to receive(:exist?).with("/etc/parallels-release").and_return(have_parallels_release)
       allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
-      allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
       allow(File).to receive(:exist?).with("/etc/f5-release").and_return(have_f5_release)
       allow(File).to receive(:exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)
       allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
@@ -282,13 +279,6 @@ OS_DATA
         plugin[:lsb][:id] = "Ubuntu"
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
-        expect(plugin[:platform_family]).to eq("debian")
-      end
-
-      it "should set platform to linuxmint and platform_family to debian [:lsb][:id] contains LinuxMint" do
-        plugin[:lsb][:id] = "LinuxMint"
-        plugin.run
-        expect(plugin[:platform]).to eq("linuxmint")
         expect(plugin[:platform_family]).to eq("debian")
       end
 
@@ -359,16 +349,58 @@ OS_DATA
         expect(plugin[:platform]).to eq("ubuntu")
       end
 
-      context "on raspbian" do
+      context "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
 
-        let(:have_raspi_config) { true }
+        let(:have_os_release) { true }
 
-        # Raspbian is a debian clone
-        it "should detect Raspbian as itself with debian as the family" do
-          expect(File).to receive(:read).with("/etc/debian_version").and_return("wheezy/sid")
+        let(:os_release_content) do
+          <<~OS_RELEASE
+            NAME="CentOS Linux"
+            VERSION="7 (Core)"
+            ID="centos"
+            ID_LIKE="rhel fedora"
+            VERSION_ID="7"
+            PRETTY_NAME="CentOS Linux 7 (Core)"
+            ANSI_COLOR="0;31"
+            CPE_NAME="cpe:/o:centos:centos:7"
+            HOME_URL="https://www.centos.org/"
+            BUG_REPORT_URL="https://bugs.centos.org/"
+
+            CENTOS_MANTISBT_PROJECT="CentOS-7"
+            CENTOS_MANTISBT_PROJECT_VERSION="7"
+            REDHAT_SUPPORT_PRODUCT="centos"
+            REDHAT_SUPPORT_PRODUCT_VERSION="7"
+
+            CISCO_RELEASE_INFO=/etc/shared/os-release
+    OS_RELEASE
+        end
+
+        let(:have_cisco_release) { true }
+
+        let(:cisco_release_content) do
+          <<~CISCO_RELEASE
+            ID=nexus
+            ID_LIKE=wrlinux
+            NAME=Nexus
+            VERSION="7.0(3)I2(0.475E.6)"
+            VERSION_ID="7.0(3)I2"
+            PRETTY_NAME="Nexus 7.0(3)I2"
+            HOME_URL=http://www.cisco.com
+            BUILD_ID=6
+            CISCO_RELEASE_INFO=/etc/os-release
+    CISCO_RELEASE
+        end
+
+        before do
+          expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
+          expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
+        end
+
+        it "should set platform to nexus_guestshell and platform_family to rhel" do
           plugin.run
-          expect(plugin[:platform]).to eq("raspbian")
-          expect(plugin[:platform_family]).to eq("debian")
+          expect(plugin[:platform]).to eq("nexus_centos")
+          expect(plugin[:platform_family]).to eq("rhel")
+          expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
         end
       end
 
@@ -427,27 +459,6 @@ OS_DATA
         expect(File).to receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
         plugin.run
         expect(plugin[:platform_version]).to eq("12.0.0")
-      end
-    end
-
-    describe "on arch" do
-
-      let(:have_arch_release) { true }
-
-      before(:each) do
-        plugin.lsb = nil
-      end
-
-      it "should set platform to arch and platform_family to arch" do
-        plugin.run
-        expect(plugin[:platform]).to eq("arch")
-        expect(plugin[:platform_family]).to eq("arch")
-      end
-
-      it "should set platform_version to kernel release" do
-        expect(plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
-        plugin.run
-        expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
       end
     end
 
@@ -592,150 +603,6 @@ OS_DATA
           plugin.run
           expect(plugin[:platform]).to eq("redhat")
           expect(plugin[:platform_version]).to eq("5.3")
-        end
-
-        it "should read the platform as fedora and version as 13 (rawhide)" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
-          plugin.run
-          expect(plugin[:platform]).to eq("fedora")
-          expect(plugin[:platform_version]).to eq("13 (rawhide)")
-        end
-
-        it "should read the platform as fedora and version as 10" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Fedora release 10")
-          plugin.run
-          expect(plugin[:platform]).to eq("fedora")
-          expect(plugin[:platform_version]).to eq("10")
-        end
-
-        it "should read the platform as fedora and version as 13 using to_i" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Fedora release 13 (Rawhide)")
-          plugin.run
-          expect(plugin[:platform]).to eq("fedora")
-          expect(plugin[:platform_version].to_i).to eq(13)
-        end
-
-        it "should read the platform as clearos and version as 7.3" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("ClearOS release 7.3.0 (Final)")
-          plugin.run
-          expect(plugin[:platform]).to eq("clearos")
-          expect(plugin[:platform_family]).to eq("rhel")
-          expect(plugin[:platform_version].to_f).to eq(7.3)
-        end
-
-        it "should read the platform as amazon and version as 2 on the RC release" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Amazon Linux release 2 (2017.12) LTS Release Candidate")
-          plugin.run
-          expect(plugin[:platform]).to eq("amazon")
-          expect(plugin[:platform_family]).to eq("amazon")
-          expect(plugin[:platform_version].to_f).to eq(2)
-        end
-
-        it "should read the platform as amazon and version as 2 on the final release" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Amazon Linux 2")
-          plugin.run
-          expect(plugin[:platform]).to eq("amazon")
-          expect(plugin[:platform_family]).to eq("amazon")
-          expect(plugin[:platform_version].to_f).to eq(2)
-        end
-
-        it "should read the platform as amazon and version as 2 when codename is in the release string" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Amazon Linux release 2 (Karoo)")
-          plugin.run
-          expect(plugin[:platform]).to eq("amazon")
-          expect(plugin[:platform_family]).to eq("amazon")
-          expect(plugin[:platform_version].to_f).to eq(2)
-        end
-
-        # https://github.com/chef/ohai/issues/560
-        # Issue is seen on EL7, so that's what we're testing.
-        context "on versions that have /etc/os-release" do
-
-          let(:have_os_release) { true }
-
-          let(:os_release_content) do
-            <<~OS_RELEASE
-              NAME="CentOS Linux"
-              VERSION="7 (Core)"
-              ID="centos"
-              ID_LIKE="rhel fedora"
-              VERSION_ID="7"
-              PRETTY_NAME="CentOS Linux 7 (Core)"
-              ANSI_COLOR="0;31"
-              CPE_NAME="cpe:/o:centos:centos:7"
-              HOME_URL="https://www.centos.org/"
-              BUG_REPORT_URL="https://bugs.centos.org/"
-
-  OS_RELEASE
-          end
-
-          before do
-            expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 7.1")
-            expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
-          end
-
-          it "correctly detects EL7" do
-            plugin.run
-            expect(plugin[:platform]).to eq("centos")
-            expect(plugin[:platform_version]).to eq("7.1")
-          end
-
-        end
-
-        context "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
-
-          let(:have_os_release) { true }
-
-          let(:os_release_content) do
-            <<~OS_RELEASE
-              NAME="CentOS Linux"
-              VERSION="7 (Core)"
-              ID="centos"
-              ID_LIKE="rhel fedora"
-              VERSION_ID="7"
-              PRETTY_NAME="CentOS Linux 7 (Core)"
-              ANSI_COLOR="0;31"
-              CPE_NAME="cpe:/o:centos:centos:7"
-              HOME_URL="https://www.centos.org/"
-              BUG_REPORT_URL="https://bugs.centos.org/"
-
-              CENTOS_MANTISBT_PROJECT="CentOS-7"
-              CENTOS_MANTISBT_PROJECT_VERSION="7"
-              REDHAT_SUPPORT_PRODUCT="centos"
-              REDHAT_SUPPORT_PRODUCT_VERSION="7"
-
-              CISCO_RELEASE_INFO=/etc/shared/os-release
-  OS_RELEASE
-          end
-
-          let(:have_cisco_release) { true }
-
-          let(:cisco_release_content) do
-            <<~CISCO_RELEASE
-              ID=nexus
-              ID_LIKE=wrlinux
-              NAME=Nexus
-              VERSION="7.0(3)I2(0.475E.6)"
-              VERSION_ID="7.0(3)I2"
-              PRETTY_NAME="Nexus 7.0(3)I2"
-              HOME_URL=http://www.cisco.com
-              BUILD_ID=6
-              CISCO_RELEASE_INFO=/etc/os-release
-  CISCO_RELEASE
-          end
-
-          before do
-            expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
-            expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
-          end
-
-          it "should set platform to nexus_guestshell and platform_family to rhel" do
-            plugin.run
-            expect(plugin[:platform]).to start_with("nexus")
-            expect(plugin[:platform]).to eq("nexus_centos")
-            expect(plugin[:platform_family]).to eq("rhel")
-            expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
-          end
         end
       end
 

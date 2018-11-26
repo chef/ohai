@@ -72,25 +72,6 @@ PSRINFO_PV
       @plugin.run
     end
 
-    it "should set virtualpc guest if smbios detects Microsoft Virtual Machine" do
-      ms_vpc_smbios = <<~MSVPC
-        ID    SIZE TYPE
-        1     72   SMB_TYPE_SYSTEM (system information)
-
-          Manufacturer: Microsoft Corporation
-          Product: Virtual Machine
-          Version: VS2005R2
-          Serial Number: 1688-7189-5337-7903-2297-1012-52
-
-          UUID: D29974A4-BE51-044C-BDC6-EFBC4B87A8E9
-          Wake-Up Event: 0x6 (power switch)
-MSVPC
-      allow(@plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, ms_vpc_smbios, ""))
-      @plugin.run
-      expect(@plugin[:virtualization][:system]).to eq("virtualpc")
-      expect(@plugin[:virtualization][:role]).to eq("guest")
-    end
-
     it "should set vmware guest if smbios detects VMware Virtual Platform" do
       vmware_smbios = <<~VMWARE
         ID    SIZE TYPE

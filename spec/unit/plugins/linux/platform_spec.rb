@@ -82,76 +82,75 @@ describe Ohai::System, "Linux plugin platform" do
 
   describe "#platform_id_remap" do
     it "returns redhat for rhel os-release id" do
-      expect(plugin.platform_id_remap('rhel')).to eq('redhat')
+      expect(plugin.platform_id_remap("rhel")).to eq("redhat")
     end
 
     it "returns amazon for amzn os-release id" do
-      expect(plugin.platform_id_remap('amzn')).to eq('amazon')
+      expect(plugin.platform_id_remap("amzn")).to eq("amazon")
     end
 
     it "returns oracle for ol os-release id" do
-      expect(plugin.platform_id_remap('ol')).to eq('oracle')
+      expect(plugin.platform_id_remap("ol")).to eq("oracle")
     end
 
     it "returns suse for sles os-release id" do
-      expect(plugin.platform_id_remap('sles')).to eq('suse')
+      expect(plugin.platform_id_remap("sles")).to eq("suse")
     end
 
     it "returns opensuseleap for opensuse-leap os-release id" do
-      expect(plugin.platform_id_remap('opensuse-leap')).to eq('opensuseleap')
+      expect(plugin.platform_id_remap("opensuse-leap")).to eq("opensuseleap")
     end
 
     it "returns xenserver for xenenterprise os-release id" do
-      expect(plugin.platform_id_remap('xenenterprise')).to eq('xenserver')
+      expect(plugin.platform_id_remap("xenenterprise")).to eq("xenserver")
     end
 
     it "returns cumulus for cumulus-linux os-release id" do
-      expect(plugin.platform_id_remap('cumulus-linux')).to eq('cumulus')
+      expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
     it "does not transformation for any other platform" do
-      expect(plugin.platform_id_remap('ubuntu')).to eq('ubuntu')
+      expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
     end
   end
 
   describe "#platform_family_from_platform" do
-    %w(oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip).each do |p|
+    %w{oracle centos redhat scientific enterpriseenterprise xenserver cloudlinux ibm_powerkvm parallels nexus_centos clearos bigip}.each do |p|
       it "returns rhel for #{p} platform" do
-        expect(plugin.platform_family_from_platform(p)).to eq('rhel')
+        expect(plugin.platform_family_from_platform(p)).to eq("rhel")
       end
     end
 
-    %w(suse sles opensuse).each do |p|
+    %w{suse sles opensuse}.each do |p|
       it "returns suse for #{p} platform" do
-        expect(plugin.platform_family_from_platform(p)).to eq('suse')
+        expect(plugin.platform_family_from_platform(p)).to eq("suse")
       end
     end
 
-    %w(fedora pidora arista_eos).each do |p|
+    %w{fedora pidora arista_eos}.each do |p|
       it "returns fedora for #{p} platform" do
-        expect(plugin.platform_family_from_platform(p)).to eq('fedora')
+        expect(plugin.platform_family_from_platform(p)).to eq("fedora")
       end
     end
 
-    %w(nexus ios_xr).each do |p|
+    %w{nexus ios_xr}.each do |p|
       it "returns wrlinux for #{p} platform" do
-        expect(plugin.platform_family_from_platform(p)).to eq('wrlinux')
+        expect(plugin.platform_family_from_platform(p)).to eq("wrlinux")
       end
     end
 
-    %w(arch manjaro).each do |p|
+    %w{arch manjaro}.each do |p|
       it "returns arch for #{p} platform" do
-        expect(plugin.platform_family_from_platform(p)).to eq('arch')
+        expect(plugin.platform_family_from_platform(p)).to eq("arch")
       end
     end
 
-    %w(amazon slackware gentoo exherbo alpine clearlinux).each do |same_name|
+    %w{amazon slackware gentoo exherbo alpine clearlinux}.each do |same_name|
       it "returns #{same_name} for #{same_name} platform" do
         expect(plugin.platform_family_from_platform(same_name)).to eq(same_name)
       end
     end
   end
-
 
   describe "on system with /etc/os-release" do
     before(:each) do

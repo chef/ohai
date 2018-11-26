@@ -564,36 +564,6 @@ OS_DATA
           expect(plugin[:platform_version]).to eq("5.4")
           expect(plugin[:platform_family]).to eq("rhel")
         end
-
-        it "should set the platform_family to rhel if the LSB name is oracle-ish" do
-          plugin[:lsb][:id] = "EnterpriseEnterpriseServer"
-          plugin.run
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-
-        it "should set the platform_family to rhel if the LSB name is amazon-ish" do
-          plugin[:lsb][:id] = "Amazon"
-          plugin.run
-          expect(plugin[:platform_family]).to eq("amazon")
-        end
-
-        it "should set the platform_family to fedora if the LSB name is fedora-ish" do
-          plugin[:lsb][:id] = "Fedora"
-          plugin.run
-          expect(plugin[:platform_family]).to eq("fedora")
-        end
-
-        it "should set the platform_family to redhat if the LSB name is scientific-ish" do
-          plugin[:lsb][:id] = "Scientific"
-          plugin.run
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
-
-        it "should set the platform_family to redhat if the LSB name is ibm-ish" do
-          plugin[:lsb][:id] = "IBM_PowerKVM"
-          plugin.run
-          expect(plugin[:platform_family]).to eq("rhel")
-        end
       end
 
       describe "without lsb_release results" do

@@ -109,6 +109,10 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
+    it "returns nexus_centos for nexus os-release id" do
+      expect(plugin.platform_id_remap("nexus")).to eq("nexus_centos")
+    end
+
     it "does not transformation for any other platform" do
       expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
     end

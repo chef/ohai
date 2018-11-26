@@ -297,6 +297,8 @@ Ohai.plugin(:Platform) do
       "xenserver"
     when "cumulus-linux"
       "cumulus"
+    when "nexus"
+      "nexus_centos"
     else
       id
     end

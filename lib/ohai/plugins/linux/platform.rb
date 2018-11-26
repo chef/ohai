@@ -151,7 +151,7 @@ Ohai.plugin(:Platform) do
       "amazon"
     when /suse/, /sles/, /opensuse/
       "suse"
-    when /fedora/, /pidora/, /arista_eos/, /arista_eos/
+    when /fedora/, /pidora/, /arista_eos/
       # In the broadest sense:  RPM-based, fedora-derived distributions which are not strictly re-compiled RHEL (if it uses RPMs, and smells more like redhat and less like
       # SuSE it probably goes here).
       "fedora"

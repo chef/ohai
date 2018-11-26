@@ -83,21 +83,6 @@ Ohai.plugin(:Platform) do
   end
 
   #
-  # Determines the platform version for Cumulus Linux systems
-  #
-  # @deprecated
-  #
-  # @returns [String] cumulus Linux version from /etc/cumulus/etc.replace/os-release
-  #
-  def cumulus_version
-    release_contents = File.read("/etc/cumulus/etc.replace/os-release")
-    release_contents.match(/VERSION_ID=(.*)/)[1]
-  rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
-    logger.warn("Detected Cumulus Linux, but /etc/cumulus/etc/replace/os-release could not be parsed to determine platform_version")
-    nil
-  end
-
-  #
   # Determines the platform version for F5 Big-IP systems
   #
   # @deprecated
@@ -110,21 +95,6 @@ Ohai.plugin(:Platform) do
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
     logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
     nil
-  end
-
-  #
-  # Determines the platform version for Debian based systems
-  #
-  # @deprecated
-  #
-  # @returns [String] version of the platform
-  #
-  def debian_platform_version
-    if platform == "cumulus"
-      cumulus_version
-    else # not cumulus
-      File.read("/etc/debian_version").chomp
-    end
   end
 
   #
@@ -203,12 +173,10 @@ Ohai.plugin(:Platform) do
       else
         if File.exist?("/usr/bin/raspi-config")
           platform "raspbian"
-        elsif Dir.exist?("/etc/cumulus")
-          platform "cumulus"
         else
           platform "debian"
         end
-        platform_version debian_platform_version
+        platform_version File.read("/etc/debian_version").chomp
       end
     elsif File.exist?("/etc/parallels-release")
       contents = File.read("/etc/parallels-release").chomp

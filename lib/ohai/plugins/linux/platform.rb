@@ -247,7 +247,7 @@ Ohai.plugin(:Platform) do
       platform_version File.read("/etc/Eos-release").strip.split[-1]
     elsif os_release_file_is_cisco?
       raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
-        os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")
+        os_release_info["ID_LIKE"].nil? || !os_release_info["ID_LIKE"].include?("wrlinux")
 
       case os_release_info["ID"]
       when "nexus"
@@ -334,6 +334,14 @@ Ohai.plugin(:Platform) do
     end
   end
 
+  # Grab the version from the VERSION_ID field and use the kernel release if that's not
+  # available. It should be there for everything, but rolling releases like arch / gentoo
+  # where we've traditionally used the kernel as the version
+  # @return String the OS version
+  def determine_os_version
+    os_release_info["VERSION_ID"] || `uname -r`.strip
+  end
+
   collect_data(:linux) do
     if ::File.exist?("/etc/os-release")
       logger.trace("Plugin platform: Using /etc/os-release for platform detection")
@@ -341,8 +349,7 @@ Ohai.plugin(:Platform) do
       # fixup os-release names to ohai platform names
       platform platform_id_remap(os_release_info["ID"])
 
-      # unless we already set it in a specific way above set the plaform_version from os-release file
-      platform_version os_release_info["VERSION_ID"] if platform_version.nil?
+      platform_version determine_os_version
     else # we're on an old Linux distro
       legacy_platform_detection
     end

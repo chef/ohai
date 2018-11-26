@@ -264,7 +264,7 @@ Ohai.plugin(:Platform) do
       # the gentoo release version is the base version used to bootstrap
       # a node and doesn't have a lot of meaning in a rolling release distro
       # kernel release will be used - ex. 3.18.7-gentoo
-      platform_version `uname -r`.strip
+      platform_version `/bin/uname -r`.strip
     elsif File.exist?("/etc/slackware-version")
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
@@ -272,12 +272,12 @@ Ohai.plugin(:Platform) do
       platform "arch"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version `uname -r`.strip
+      platform_version `/bin/uname -r`.strip
     elsif File.exist?("/etc/exherbo-release")
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
-      platform_version `uname -r`.strip
+      platform_version `/bin/uname -r`.strip
     elsif File.exist?("/etc/alpine-release")
       platform "alpine"
       platform_version File.read("/etc/alpine-release").strip
@@ -339,7 +339,7 @@ Ohai.plugin(:Platform) do
   # where we've traditionally used the kernel as the version
   # @return String the OS version
   def determine_os_version
-    os_release_info["VERSION_ID"] || `uname -r`.strip
+    os_release_info["VERSION_ID"] || `/bin/uname -r`.strip
   end
 
   collect_data(:linux) do

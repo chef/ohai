@@ -158,12 +158,6 @@ describe Ohai::System, "Linux plugin platform" do
       allow(::File).to receive(:exist?).with("/etc/os-release").and_return(true)
     end
 
-    # @todo
-    # - fix and test arch version detection
-    # - test fallback platform_family mapping
-    # - test the platform_family remap method
-    # - test the platform remap method
-
     context "when os-release data is correct" do
       let(:os_data) do
         <<~OS_DATA
@@ -185,6 +179,29 @@ OS_DATA
         expect(plugin[:platform]).to eq("ubuntu")
         expect(plugin[:platform_family]).to eq("debian")
         expect(plugin[:platform_version]).to eq("14.04")
+      end
+    end
+
+    context "when os-release data is missing a version_id" do
+      let(:os_data) do
+        <<~OS_DATA
+          NAME="Arch Linux"
+          PRETTY_NAME="Arch Linux"
+          ID=arch
+          ID_LIKE=archlinux
+OS_DATA
+      end
+
+      before(:each) do
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
+      end
+
+      it "should set platform_version using kernel version from uname" do
+        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.2-2-ARCH")
+        plugin.run
+        expect(plugin[:platform]).to eq("arch")
+        expect(plugin[:platform_family]).to eq("arch")
+        expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
       end
     end
 
@@ -476,7 +493,7 @@ OS_DATA
       end
 
       it "should set platform_version to kernel release" do
-        expect(plugin).to receive(:`).with("uname -r").and_return("3.18.7-gentoo")
+        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.7-gentoo")
         plugin.run
         expect(plugin[:platform_version]).to eq("3.18.7-gentoo")
       end
@@ -548,7 +565,7 @@ OS_DATA
       end
 
       it "should set platform_version to kernel release" do
-        expect(plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
+        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.2-2-ARCH")
         plugin.run
         expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
       end

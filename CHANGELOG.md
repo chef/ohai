@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.11 -->
-## [v15.0.11](https://github.com/chef/ohai/tree/v15.0.11) (2018-11-27)
+<!-- latest_release 15.0.12 -->
+## [v15.0.12](https://github.com/chef/ohai/tree/v15.0.12) (2018-11-27)
 
 #### Merged Pull Requests
-- Correctly detect openSUSE leap 15+ [#1297](https://github.com/chef/ohai/pull/1297) ([tas50](https://github.com/tas50))
+- /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50)) <!-- 15.0.12 -->
 - Correctly detect openSUSE leap 15+ [#1297](https://github.com/chef/ohai/pull/1297) ([tas50](https://github.com/tas50)) <!-- 15.0.11 -->
 - Remove circa ~2005 virtualization hypervisor detection [#1305](https://github.com/chef/ohai/pull/1305) ([tas50](https://github.com/tas50)) <!-- 15.0.10 -->
 - Remove old spec files [#1301](https://github.com/chef/ohai/pull/1301) ([tas50](https://github.com/tas50)) <!-- 15.0.9 -->

@@ -470,23 +470,6 @@ OS_DATA
       end
     end
 
-    describe "on alpine" do
-
-      let(:have_alpine_release) { true }
-
-      before(:each) do
-        plugin.lsb = nil
-      end
-
-      it "should set platform and platform_family to alpine" do
-        expect(File).to receive(:read).with("/etc/alpine-release").and_return("3.2.3")
-        plugin.run
-        expect(plugin[:platform]).to eq("alpine")
-        expect(plugin[:platform_family]).to eq("alpine")
-        expect(plugin[:platform_version]).to eq("3.2.3")
-      end
-    end
-
     describe "on arista eos" do
 
       let(:have_eos_release) { true }

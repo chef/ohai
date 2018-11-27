@@ -262,19 +262,11 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/slackware-version")
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/arch-release")
-      platform "arch"
-      # no way to determine platform_version in a rolling release distribution
-      # kernel release will be used - ex. 2.6.32-ARCH
-      platform_version `/bin/uname -r`.strip
     elsif File.exist?("/etc/exherbo-release")
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version `/bin/uname -r`.strip
-    elsif File.exist?("/etc/alpine-release")
-      platform "alpine"
-      platform_version File.read("/etc/alpine-release").strip
     elsif File.exist?("/usr/lib/os-release")
       contents = File.read("/usr/lib/os-release")
       if /Clear Linux/ =~ contents

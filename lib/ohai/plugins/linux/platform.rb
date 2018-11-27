@@ -291,7 +291,14 @@ Ohai.plugin(:Platform) do
     # We have to do this for compatibility reasons, or older OS releases might get different
     # "platform" or "platform_version" attributes (e.g. SLES12, RHEL7).
     elsif File.exist?("/etc/os-release")
-      platform os_release_info["ID"] == "sles" ? "suse" : os_release_info["ID"] # SLES is wrong. We call it SUSE
+      case os_release_info["ID"]
+      when "sles"
+        platform "suse" # SLES is wrong. We call it SUSE
+      when "opensuse-leap"
+        platform "opensuseleap"
+      else
+        platform os_release_info["ID"]
+      end
       platform_version os_release_info["VERSION_ID"]
       # platform_family also does not need to be hardcoded anymore.
       # This would be the correct way, but we stick with "determine_platform_family" for compatibility reasons.

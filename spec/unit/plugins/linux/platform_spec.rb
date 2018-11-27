@@ -283,7 +283,7 @@ OS_DATA
     describe "on lsb compliant distributions" do
       before(:each) do
         plugin[:lsb][:id] = "Ubuntu"
-        plugin[:lsb][:release] = "8.04"
+        plugin[:lsb][:release] = "18.04"
       end
 
       it "should set platform to lowercased lsb[:id]" do
@@ -293,7 +293,7 @@ OS_DATA
 
       it "should set platform_version to lsb[:release]" do
         plugin.run
-        expect(plugin[:platform_version]).to eq("8.04")
+        expect(plugin[:platform_version]).to eq("18.04")
       end
 
       it "should set platform to ubuntu and platform_family to debian [:lsb][:id] contains Ubuntu" do
@@ -312,7 +312,7 @@ OS_DATA
 
       it "should set platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
         plugin[:lsb][:id] = "RedHatEnterpriseServer"
-        plugin[:lsb][:release] = "5.7"
+        plugin[:lsb][:release] = "7.5"
         plugin.run
         expect(plugin[:platform]).to eq("redhat")
         expect(plugin[:platform_family]).to eq("rhel")
@@ -320,7 +320,7 @@ OS_DATA
 
       it "should set platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
         plugin[:lsb][:id] = "AmazonAMI"
-        plugin[:lsb][:release] = "2011.09"
+        plugin[:lsb][:release] = "2018.03"
         plugin.run
         expect(plugin[:platform]).to eq("amazon")
         expect(plugin[:platform_family]).to eq("amazon")
@@ -328,7 +328,7 @@ OS_DATA
 
       it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
         plugin[:lsb][:id] = "ScientificSL"
-        plugin[:lsb][:release] = "5.7"
+        plugin[:lsb][:release] = "7.5"
         plugin.run
         expect(plugin[:platform]).to eq("scientific")
       end
@@ -351,26 +351,26 @@ OS_DATA
       end
 
       it "should read the version from /etc/debian_version" do
-        expect(File).to receive(:read).with("/etc/debian_version").and_return("5.0")
+        expect(File).to receive(:read).with("/etc/debian_version").and_return("9.5")
         plugin.run
-        expect(plugin[:platform_version]).to eq("5.0")
+        expect(plugin[:platform_version]).to eq("9.5")
       end
 
       it "should correctly strip any newlines" do
-        expect(File).to receive(:read).with("/etc/debian_version").and_return("5.0\n")
+        expect(File).to receive(:read).with("/etc/debian_version").and_return("9.5\n")
         plugin.run
-        expect(plugin[:platform_version]).to eq("5.0")
+        expect(plugin[:platform_version]).to eq("9.5")
       end
 
       # Ubuntu has /etc/debian_version as well
       it "should detect Ubuntu as itself rather than debian" do
         plugin[:lsb][:id] = "Ubuntu"
-        plugin[:lsb][:release] = "8.04"
+        plugin[:lsb][:release] = "18.04"
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
       end
 
-      context "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
+      describe "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
 
         let(:have_os_release) { true }
 
@@ -408,7 +408,7 @@ OS_DATA
             PRETTY_NAME="Nexus 7.0(3)I2"
             HOME_URL=http://www.cisco.com
             BUILD_ID=6
-            CISCO_RELEASE_INFO=/etc/os-release
+            CISCO_RELEASE_INFO=/etc/shared/os-release
     CISCO_RELEASE
         end
 
@@ -529,19 +529,19 @@ OS_DATA
       describe "with lsb_release results" do
         it "should set the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
           plugin[:lsb][:id] = "RedHatEnterpriseServer"
-          plugin[:lsb][:release] = "6.1"
+          plugin[:lsb][:release] = "7.5"
           plugin.run
           expect(plugin[:platform]).to eq("redhat")
-          expect(plugin[:platform_version]).to eq("6.1")
+          expect(plugin[:platform_version]).to eq("7.5")
           expect(plugin[:platform_family]).to eq("rhel")
         end
 
         it "should set the platform to centos and platform_family to rhel" do
           plugin[:lsb][:id] = "CentOS"
-          plugin[:lsb][:release] = "5.4"
+          plugin[:lsb][:release] = "7.5"
           plugin.run
           expect(plugin[:platform]).to eq("centos")
-          expect(plugin[:platform_version]).to eq("5.4")
+          expect(plugin[:platform_version]).to eq("7.5")
           expect(plugin[:platform_family]).to eq("rhel")
         end
       end
@@ -554,21 +554,21 @@ OS_DATA
           plugin.lsb = nil
         end
 
-        it "should read the platform as centos and version as 5.3" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS release 5.3")
+        it "should read the platform as centos and version as 7.5" do
+          expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS Linux release 7.5.1804 (Core)")
           plugin.run
           expect(plugin[:platform]).to eq("centos")
+          expect(plugin[:platform_version]).to eq("7.5.1804")
         end
 
-        it "may be that someone munged Red Hat to be RedHat" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
+        it "reads platform of Red Hat with a space" do
+          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.5 (Santiago)")
           plugin.run
           expect(plugin[:platform]).to eq("redhat")
-          expect(plugin[:platform_version]).to eq("5.3")
         end
 
-        it "should read the platform as redhat and version as 5.3" do
-          expect(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat release 5.3")
+        it "should read the platform as redhat without a space" do
+          expect(File).to receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
           plugin.run
           expect(plugin[:platform]).to eq("redhat")
           expect(plugin[:platform_version]).to eq("5.3")

@@ -312,7 +312,6 @@ OS_DATA
     let(:have_usr_lib_os_release) { false }
     let(:have_cisco_release) { false }
     let(:have_f5_release) { false }
-    let(:have_cumulus_dir) { false }
 
     before(:each) do
       allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -331,7 +330,6 @@ OS_DATA
       allow(File).to receive(:exist?).with("/etc/f5-release").and_return(have_f5_release)
       allow(File).to receive(:exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)
       allow(File).to receive(:exist?).with("/etc/shared/os-release").and_return(have_cisco_release)
-      allow(Dir).to receive(:exist?).with("/etc/cumulus").and_return(have_cumulus_dir)
 
       allow(File).to receive(:read).with("PLEASE STUB ALL File.read CALLS")
     end

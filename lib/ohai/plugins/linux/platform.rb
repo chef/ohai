@@ -253,12 +253,6 @@ Ohai.plugin(:Platform) do
       end
 
       platform_version os_release_info["VERSION"]
-    elsif File.exist?("/etc/gentoo-release")
-      platform "gentoo"
-      # the gentoo release version is the base version used to bootstrap
-      # a node and doesn't have a lot of meaning in a rolling release distro
-      # kernel release will be used - ex. 3.18.7-gentoo
-      platform_version `/bin/uname -r`.strip
     elsif File.exist?("/etc/slackware-version")
       platform "slackware"
       platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join

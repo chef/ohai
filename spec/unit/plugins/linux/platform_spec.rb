@@ -109,10 +109,6 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
-    it "returns clearlinux for clear-linux-os os-release id" do
-      expect(plugin.platform_id_remap("clear-linux-os")).to eq("clearlinux")
-    end
-
     it "does not transformation for any other platform" do
       expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
     end
@@ -688,38 +684,6 @@ OS_DATA
     end
 
     describe "on suse" do
-      context "on openSUSE 15+" do
-
-        let(:have_suse_release) { false }
-        let(:have_os_release) { true }
-
-        let(:os_release_content) do
-          <<~OS_RELEASE
-            NAME="openSUSE Leap"
-            VERSION="15.0"
-            ID="opensuse-leap"
-            ID_LIKE="suse opensuse"
-            VERSION_ID="15.0"
-            PRETTY_NAME="openSUSE Leap 15.0"
-            ANSI_COLOR="0;32"
-            CPE_NAME="cpe:/o:opensuse:leap:15.0"
-  OS_RELEASE
-        end
-
-        before do
-          expect(File).to_not receive(:read).with("/etc/SuSE-release")
-          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
-        end
-
-        it "correctly detects opensuseleap 15" do
-          plugin.run
-          expect(plugin[:platform]).to eq("opensuseleap")
-          expect(plugin[:platform_version]).to eq("15.0")
-          expect(plugin[:platform_family]).to eq("suse")
-        end
-
-      end
-
       context "on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES12.1)" do
         let(:have_suse_release) { true }
         let(:have_os_release) { false }
@@ -792,6 +756,30 @@ OS_DATA
             expect(plugin[:platform_family]).to eq("suse")
           end
         end
+      end
+    end
+
+    describe "on clearlinux" do
+      let(:have_usr_lib_os_release) { true }
+      let(:usr_lib_os_release_content) do
+        <<~CLEARLINUX_RELEASE
+          NAME="Clear Linux OS"
+          VERSION=1
+          ID=clear-linux-os
+          ID_LIKE=clear-linux-os
+          VERSION_ID=26290
+          PRETTY_NAME="Clear Linux OS"
+  CLEARLINUX_RELEASE
+      end
+      before do
+        expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
+      end
+      it "should set platform to clearlinux and platform_family to clearlinux" do
+        plugin.lsb = nil
+        plugin.run
+        expect(plugin[:platform]).to eq("clearlinux")
+        expect(plugin[:platform_family]).to eq("clearlinux")
+        expect(plugin[:platform_version]).to eq("26290")
       end
     end
   end

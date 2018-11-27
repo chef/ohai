@@ -32,7 +32,6 @@ Ohai.plugin(:Platform) do
       "opensuse-leap" => "opensuseleap",
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",
-      "clear-linux-os" => "clearlinux",
     }.freeze
   end
 
@@ -260,7 +259,7 @@ Ohai.plugin(:Platform) do
       platform_version shell_out("/bin/uname -r").stdout.strip
     elsif File.exist?("/usr/lib/os-release")
       contents = File.read("/usr/lib/os-release")
-      if /Clear Linux/ =~ contents
+      if /clear-linux-os/ =~ contents # Clear Linux https://clearlinux.org/
         platform "clearlinux"
         platform_version contents[/VERSION_ID=(\d+)/, 1]
       end

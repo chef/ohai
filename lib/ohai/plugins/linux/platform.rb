@@ -20,6 +20,20 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
 
+  # the platform mappings between /etc/os-release values and ohai platforms
+  unless defined?(PLATFORM_MAPPINGS)
+    PLATFORM_MAPPINGS = {
+      "rhel" => "redhat",
+      "amzn" => "amazon",
+      "ol" => "oracle",
+      "sles" => "suse",
+      "opensuse-leap" => "opensuseleap",
+      "xenenterprise" => "xenserver",
+      "cumulus-linux" => "cumulus",
+      "nexus" => "nexus_centos",
+    }.freeze
+  end
+
   # @deprecated
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
@@ -95,6 +109,18 @@ Ohai.plugin(:Platform) do
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
     logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
     nil
+  end
+
+  # our platform names don't match os-release. given a time machine they would but ohai
+  # came before the os-release file. This method remaps the os-release names to
+  # the ohai names
+  #
+  # @param id [String] the platform ID from /etc/os-release
+  #
+  # @returns [String] the platform name to use in Ohai
+  #
+  def platform_id_remap(id)
+    PLATFORM_MAPPINGS[id] || id
   end
 
   #
@@ -270,37 +296,6 @@ Ohai.plugin(:Platform) do
     elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
       platform lsb[:id].downcase
       platform_version lsb[:release]
-    end
-  end
-
-  # our platform names don't match os-release. given a time machine they would but ohai
-  # came before the os-release file. This method remaps the os-release names to
-  # the ohai names
-  #
-  # @param id [String] the platform ID from /etc/os-release
-  #
-  # @returns [String] the platform name to use in Ohai
-  #
-  def platform_id_remap(id)
-    case id
-    when "rhel"
-      "redhat"
-    when "amzn"
-      "amazon"
-    when "ol"
-      "oracle"
-    when "sles"
-      "suse"
-    when "opensuse-leap"
-      "opensuseleap"
-    when "xenenterprise"
-      "xenserver"
-    when "cumulus-linux"
-      "cumulus"
-    when "nexus"
-      "nexus_centos"
-    else
-      id
     end
   end
 

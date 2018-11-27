@@ -30,7 +30,6 @@ Ohai.plugin(:Platform) do
       "opensuse-leap" => "opensuseleap",
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",
-      "nexus" => "nexus_centos",
       "clear-linux-os" => "clearlinux",
     }.freeze
   end
@@ -124,6 +123,10 @@ Ohai.plugin(:Platform) do
   # @returns [String] the platform name to use in Ohai
   #
   def platform_id_remap(id)
+    # this catches the centos guest shell in the nexus switch which identifies itself as centos
+    return "nexus_centos" if id == "centos" && os_release_file_is_cisco?
+
+    # remap based on the hash of platforms
     PLATFORM_MAPPINGS[id] || id
   end
 
@@ -294,8 +297,8 @@ Ohai.plugin(:Platform) do
   # @return String the OS version
   def determine_os_version
     # centos only includes the major version in os-release for some reason
-    if os_release_info['ID'] == 'centos'
-      get_redhatish_version
+    if os_release_info["ID"] == "centos"
+      get_redhatish_version(File.read("/etc/redhat-release").chomp)
     else
       os_release_info["VERSION_ID"] || `/bin/uname -r`.strip
     end

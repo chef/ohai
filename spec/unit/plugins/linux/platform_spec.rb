@@ -109,12 +109,49 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
-    it "returns nexus_centos for nexus os-release id" do
-      expect(plugin.platform_id_remap("nexus")).to eq("nexus_centos")
+    it "returns clearlinux for clear-linux-os os-release id" do
+      expect(plugin.platform_id_remap("clear-linux-os")).to eq("clearlinux")
     end
 
     it "does not transformation for any other platform" do
       expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
+    end
+
+    context "on a centos subshell on a nexus switch" do
+      let(:os_release_content) do
+        <<~OS_RELEASE
+          NAME="CentOS Linux"
+          VERSION="7 (Core)"
+          ID="centos"
+          ID_LIKE="rhel fedora"
+          VERSION_ID="7"
+          PRETTY_NAME="CentOS Linux 7 (Core)"
+
+          CISCO_RELEASE_INFO=/etc/shared/os-release
+  OS_RELEASE
+      end
+
+      let(:cisco_release_content) do
+        <<~CISCO_RELEASE
+          ID=nexus
+          ID_LIKE=wrlinux
+          NAME=Nexus
+          VERSION="7.0(3)I2(0.475E.6)"
+          VERSION_ID="7.0(3)I2"
+          PRETTY_NAME="Nexus 7.0(3)I2"
+          HOME_URL=http://www.cisco.com
+          BUILD_ID=6
+          CISCO_RELEASE_INFO=/etc/shared/os-release
+  CISCO_RELEASE
+      end
+
+      it "returns nexus_centos for centos os-release id" do
+        expect(File).to receive(:exist?).at_least(:once).with("/etc/shared/os-release").and_return(true)
+        expect(File).to receive(:exist?).at_least(:once).with("/etc/os-release").and_return(true)
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
+        expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
+        expect(plugin.platform_id_remap("centos")).to eq("nexus_centos")
+      end
     end
   end
 
@@ -218,10 +255,6 @@ OS_DATA
           ID_LIKE="suse opensuse"
           VERSION_ID="15.0"
           PRETTY_NAME="openSUSE Leap 15.0"
-          ANSI_COLOR="0;32"
-          CPE_NAME="cpe:/o:opensuse:leap:15.0"
-          BUG_REPORT_URL="https://bugs.opensuse.org"
-          HOME_URL="https://www.opensuse.org/"
 OS_DATA
       end
 
@@ -236,12 +269,36 @@ OS_DATA
         expect(plugin[:platform_version]).to eq("15.0")
       end
     end
+
+    context "when on centos where version data in os-release is wrong" do
+      let(:os_data) do
+        <<~OS_DATA
+        NAME="CentOS Linux"
+        VERSION="7 (Core)"
+        ID="centos"
+        ID_LIKE="rhel fedora"
+        VERSION_ID="7"
+        PRETTY_NAME="CentOS Linux 7 (Core)"
+OS_DATA
+      end
+
+      before(:each) do
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
+        expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS Linux release 7.5.1804 (Core)")
+      end
+
+      it "should set platform, platform_family, and platform_version from os-release" do
+        plugin.run
+        expect(plugin[:platform]).to eq("centos")
+        expect(plugin[:platform_family]).to eq("rhel")
+        expect(plugin[:platform_version]).to eq("7.5.1804")
+      end
+    end
   end
 
   context "on system without /etc/os-release (legacy)" do
     let(:have_debian_version) { false }
     let(:have_redhat_release) { false }
-    let(:have_gentoo_release) { false }
     let(:have_exherbo_release) { false }
     let(:have_eos_release) { false }
     let(:have_suse_release) { false }
@@ -262,7 +319,6 @@ OS_DATA
       plugin[:lsb] = Mash.new
       allow(File).to receive(:exist?).with("/etc/debian_version").and_return(have_debian_version)
       allow(File).to receive(:exist?).with("/etc/redhat-release").and_return(have_redhat_release)
-      allow(File).to receive(:exist?).with("/etc/gentoo-release").and_return(have_gentoo_release)
       allow(File).to receive(:exist?).with("/etc/exherbo-release").and_return(have_exherbo_release)
       allow(File).to receive(:exist?).with("/etc/Eos-release").and_return(have_eos_release)
       allow(File).to receive(:exist?).with("/etc/SuSE-release").and_return(have_suse_release)
@@ -369,60 +425,60 @@ OS_DATA
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
       end
+    end
 
-      describe "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
+    describe "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
 
-        let(:have_os_release) { true }
+      let(:have_os_release) { true }
 
-        let(:os_release_content) do
-          <<~OS_RELEASE
-            NAME="CentOS Linux"
-            VERSION="7 (Core)"
-            ID="centos"
-            ID_LIKE="rhel fedora"
-            VERSION_ID="7"
-            PRETTY_NAME="CentOS Linux 7 (Core)"
-            ANSI_COLOR="0;31"
-            CPE_NAME="cpe:/o:centos:centos:7"
-            HOME_URL="https://www.centos.org/"
-            BUG_REPORT_URL="https://bugs.centos.org/"
+      let(:os_release_content) do
+        <<~OS_RELEASE
+          NAME="CentOS Linux"
+          VERSION="7 (Core)"
+          ID="centos"
+          ID_LIKE="rhel fedora"
+          VERSION_ID="7"
+          PRETTY_NAME="CentOS Linux 7 (Core)"
+          ANSI_COLOR="0;31"
+          CPE_NAME="cpe:/o:centos:centos:7"
+          HOME_URL="https://www.centos.org/"
+          BUG_REPORT_URL="https://bugs.centos.org/"
 
-            CENTOS_MANTISBT_PROJECT="CentOS-7"
-            CENTOS_MANTISBT_PROJECT_VERSION="7"
-            REDHAT_SUPPORT_PRODUCT="centos"
-            REDHAT_SUPPORT_PRODUCT_VERSION="7"
+          CENTOS_MANTISBT_PROJECT="CentOS-7"
+          CENTOS_MANTISBT_PROJECT_VERSION="7"
+          REDHAT_SUPPORT_PRODUCT="centos"
+          REDHAT_SUPPORT_PRODUCT_VERSION="7"
 
-            CISCO_RELEASE_INFO=/etc/shared/os-release
-    OS_RELEASE
-        end
+          CISCO_RELEASE_INFO=/etc/shared/os-release
+  OS_RELEASE
+      end
 
-        let(:have_cisco_release) { true }
+      let(:have_cisco_release) { true }
 
-        let(:cisco_release_content) do
-          <<~CISCO_RELEASE
-            ID=nexus
-            ID_LIKE=wrlinux
-            NAME=Nexus
-            VERSION="7.0(3)I2(0.475E.6)"
-            VERSION_ID="7.0(3)I2"
-            PRETTY_NAME="Nexus 7.0(3)I2"
-            HOME_URL=http://www.cisco.com
-            BUILD_ID=6
-            CISCO_RELEASE_INFO=/etc/shared/os-release
-    CISCO_RELEASE
-        end
+      let(:cisco_release_content) do
+        <<~CISCO_RELEASE
+          ID=nexus
+          ID_LIKE=wrlinux
+          NAME=Nexus
+          VERSION="7.0(3)I2(0.475E.6)"
+          VERSION_ID="7.0(3)I2"
+          PRETTY_NAME="Nexus 7.0(3)I2"
+          HOME_URL=http://www.cisco.com
+          BUILD_ID=6
+          CISCO_RELEASE_INFO=/etc/shared/os-release
+  CISCO_RELEASE
+      end
 
-        before do
-          expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
-          expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
-        end
+      before do
+        expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
+        expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
+      end
 
-        it "should set platform to nexus_guestshell and platform_family to rhel" do
-          plugin.run
-          expect(plugin[:platform]).to eq("nexus_centos")
-          expect(plugin[:platform_family]).to eq("rhel")
-          expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
-        end
+      it "should set platform to nexus_guestshell and platform_family to rhel" do
+        plugin.run
+        expect(plugin[:platform]).to eq("nexus_centos")
+        expect(plugin[:platform_family]).to eq("rhel")
+        expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
       end
     end
 
@@ -445,27 +501,6 @@ OS_DATA
         expect(File).to receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
         plugin.run
         expect(plugin[:platform_version]).to eq("12.0.0")
-      end
-    end
-
-    describe "on gentoo" do
-
-      let(:have_gentoo_release) { true }
-
-      before(:each) do
-        plugin.lsb = nil
-      end
-
-      it "should set platform and platform_family to gentoo" do
-        plugin.run
-        expect(plugin[:platform]).to eq("gentoo")
-        expect(plugin[:platform_family]).to eq("gentoo")
-      end
-
-      it "should set platform_version to kernel release" do
-        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.7-gentoo")
-        plugin.run
-        expect(plugin[:platform_version]).to eq("3.18.7-gentoo")
       end
     end
 
@@ -814,7 +849,6 @@ OS_DATA
 
       context "on openSUSE and older SLES versions" do
         let(:have_suse_release) { true }
-        let(:have_os_release) { true }
 
         describe "without lsb_release results" do
           before(:each) do
@@ -866,60 +900,6 @@ OS_DATA
             expect(plugin[:platform_family]).to eq("suse")
           end
         end
-      end
-    end
-
-    describe "on Wind River Linux 5 for Cisco Nexus" do
-      let(:have_os_release) { true }
-      let(:os_release_info) do
-        {
-          "ID"                 => "nexus",
-          "ID_LIKE"            => "wrlinux",
-          "NAME"               => "Nexus",
-          "VERSION"            => "7.0(3)I2(0.475E.6)",
-          "VERSION_ID"         => "7.0(3)I2",
-          "PRETTY_NAME"        => "Nexus 7.0(3)I2",
-          "HOME_URL"           => "http://www.cisco.com",
-          "BUILD_ID"           => "6",
-          "CISCO_RELEASE_INFO" => "/etc/os-release",
-        }
-      end
-
-      it "should set platform to nexus and platform_family to wrlinux" do
-        allow(plugin).to receive(:os_release_info).and_return(os_release_info)
-        plugin.lsb = nil
-        plugin.run
-
-        expect(plugin[:platform]).to eq("nexus")
-        expect(plugin[:platform_family]).to eq("wrlinux")
-        expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
-      end
-    end
-
-    describe "on Wind River Linux 7 for Cisco IOS-XR" do
-      let(:have_os_release) { true }
-      let(:os_release_info) do
-        {
-          "ID"          => "ios_xr",
-          "ID_LIKE"     => "cisco-wrlinux wrlinux",
-          "NAME"        => "IOS XR",
-          "VERSION"     => "6.0.0.14I",
-          "VERSION_ID"  => "6.0.0.14I",
-          "PRETTY_NAME" => "Cisco IOS XR Software, Version 6.0.0.14I",
-          "BUILD_ID"    => "2015-09-10-15-50-17",
-          "HOME_URL"    => "http://www.cisco.com",
-          "CISCO_RELEASE_INFO" => "/etc/os-release",
-        }
-      end
-
-      it "should set platform to ios_xr and platform_family to wrlinux" do
-        allow(plugin).to receive(:os_release_info).and_return(os_release_info)
-        plugin.lsb = nil
-        plugin.run
-
-        expect(plugin[:platform]).to eq("ios_xr")
-        expect(plugin[:platform_family]).to eq("wrlinux")
-        expect(plugin[:platform_version]).to eq("6.0.0.14I")
       end
     end
   end

@@ -31,6 +31,7 @@ Ohai.plugin(:Platform) do
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",
       "nexus" => "nexus_centos",
+      "clear-linux-os" => "clearlinux",
     }.freeze
   end
 

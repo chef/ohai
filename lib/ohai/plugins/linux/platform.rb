@@ -20,7 +20,9 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
 
-  # the platform mappings between /etc/os-release values and ohai platforms
+  # the platform mappings between the 'ID' field in /etc/os-release and the value
+  # ohai uses. If you're adding a new platform here and you want to change the name
+  # you'll want to add it here and then add a spec for the platform_id_remap method
   unless defined?(PLATFORM_MAPPINGS)
     PLATFORM_MAPPINGS = {
       "rhel" => "redhat",
@@ -260,7 +262,7 @@ Ohai.plugin(:Platform) do
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
-      platform_version `/bin/uname -r`.strip
+      platform_version shell_out("/bin/uname -r").stdout.strip
     elsif File.exist?("/usr/lib/os-release")
       contents = File.read("/usr/lib/os-release")
       if /Clear Linux/ =~ contents
@@ -294,7 +296,7 @@ Ohai.plugin(:Platform) do
     if os_release_info["ID"] == "centos"
       get_redhatish_version(File.read("/etc/redhat-release").chomp)
     else
-      os_release_info["VERSION_ID"] || `/bin/uname -r`.strip
+      os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
     end
   end
 

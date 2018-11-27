@@ -238,7 +238,7 @@ OS_DATA
       end
 
       it "should set platform_version using kernel version from uname" do
-        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.2-2-ARCH")
+        allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
         plugin.run
         expect(plugin[:platform]).to eq("arch")
         expect(plugin[:platform_family]).to eq("arch")
@@ -273,12 +273,12 @@ OS_DATA
     context "when on centos where version data in os-release is wrong" do
       let(:os_data) do
         <<~OS_DATA
-        NAME="CentOS Linux"
-        VERSION="7 (Core)"
-        ID="centos"
-        ID_LIKE="rhel fedora"
-        VERSION_ID="7"
-        PRETTY_NAME="CentOS Linux 7 (Core)"
+          NAME="CentOS Linux"
+          VERSION="7 (Core)"
+          ID="centos"
+          ID_LIKE="rhel fedora"
+          VERSION_ID="7"
+          PRETTY_NAME="CentOS Linux 7 (Core)"
 OS_DATA
       end
 
@@ -541,6 +541,7 @@ OS_DATA
       let(:have_exherbo_release) { true }
 
       before(:each) do
+        allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
         plugin.lsb = nil
       end
 
@@ -551,7 +552,6 @@ OS_DATA
       end
 
       it "should set platform_version to kernel release" do
-        expect(plugin).to receive(:`).with("/bin/uname -r").and_return("3.18.2-2-ARCH")
         plugin.run
         expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
       end

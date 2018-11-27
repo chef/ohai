@@ -193,15 +193,8 @@ Ohai.plugin(:Platform) do
       if lsb[:id] =~ /Ubuntu/i
         platform "ubuntu"
         platform_version lsb[:release]
-      elsif lsb[:id] =~ /LinuxMint/i
-        platform "linuxmint"
-        platform_version lsb[:release]
       else
-        if File.exist?("/usr/bin/raspi-config")
-          platform "raspbian"
-        else
-          platform "debian"
-        end
+        platform "debian"
         platform_version File.read("/etc/debian_version").chomp
       end
     elsif File.exist?("/etc/parallels-release")

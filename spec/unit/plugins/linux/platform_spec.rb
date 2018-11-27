@@ -271,7 +271,6 @@ OS_DATA
       allow(File).to receive(:exist?).with("/etc/enterprise-release").and_return(have_enterprise_release)
       allow(File).to receive(:exist?).with("/etc/oracle-release").and_return(have_oracle_release)
       allow(File).to receive(:exist?).with("/etc/parallels-release").and_return(have_parallels_release)
-      allow(File).to receive(:exist?).with("/usr/bin/raspi-config").and_return(have_raspi_config)
       allow(File).to receive(:exist?).with("/etc/os-release").and_return(have_os_release)
       allow(File).to receive(:exist?).with("/etc/f5-release").and_return(have_f5_release)
       allow(File).to receive(:exist?).with("/usr/lib/os-release").and_return(have_usr_lib_os_release)

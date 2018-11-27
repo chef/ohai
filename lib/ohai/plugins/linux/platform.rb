@@ -47,7 +47,10 @@ Ohai.plugin(:Platform) do
   # CentOS release 6.7 (Final)
   # Red Hat Enterprise Linux Server release 7.5 (Maipo)
   #
-  # @deprecated
+  # @param contents [String] the contents of /etc/redhat-release
+  #
+  # @returns [String] the version string
+  #
   def get_redhatish_version(contents)
     contents[/Rawhide/i] ? contents[/((\d+) \(Rawhide\))/i, 1].downcase : contents[/(release)? ([\d\.]+)/, 2]
   end
@@ -289,7 +292,12 @@ Ohai.plugin(:Platform) do
   # where we've traditionally used the kernel as the version
   # @return String the OS version
   def determine_os_version
-    os_release_info["VERSION_ID"] || `/bin/uname -r`.strip
+    # centos only includes the major version in os-release for some reason
+    if os_release_info['ID'] == 'centos'
+      get_redhatish_version
+    else
+      os_release_info["VERSION_ID"] || `/bin/uname -r`.strip
+    end
   end
 
   collect_data(:linux) do

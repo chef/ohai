@@ -425,61 +425,6 @@ OS_DATA
       end
     end
 
-    describe "on 'guestshell' with /etc/os-release and overrides for Cisco Nexus" do
-
-      let(:have_os_release) { true }
-
-      let(:os_release_content) do
-        <<~OS_RELEASE
-          NAME="CentOS Linux"
-          VERSION="7 (Core)"
-          ID="centos"
-          ID_LIKE="rhel fedora"
-          VERSION_ID="7"
-          PRETTY_NAME="CentOS Linux 7 (Core)"
-          ANSI_COLOR="0;31"
-          CPE_NAME="cpe:/o:centos:centos:7"
-          HOME_URL="https://www.centos.org/"
-          BUG_REPORT_URL="https://bugs.centos.org/"
-
-          CENTOS_MANTISBT_PROJECT="CentOS-7"
-          CENTOS_MANTISBT_PROJECT_VERSION="7"
-          REDHAT_SUPPORT_PRODUCT="centos"
-          REDHAT_SUPPORT_PRODUCT_VERSION="7"
-
-          CISCO_RELEASE_INFO=/etc/shared/os-release
-  OS_RELEASE
-      end
-
-      let(:have_cisco_release) { true }
-
-      let(:cisco_release_content) do
-        <<~CISCO_RELEASE
-          ID=nexus
-          ID_LIKE=wrlinux
-          NAME=Nexus
-          VERSION="7.0(3)I2(0.475E.6)"
-          VERSION_ID="7.0(3)I2"
-          PRETTY_NAME="Nexus 7.0(3)I2"
-          HOME_URL=http://www.cisco.com
-          BUILD_ID=6
-          CISCO_RELEASE_INFO=/etc/shared/os-release
-  CISCO_RELEASE
-      end
-
-      before do
-        expect(File).to receive(:read).at_least(:once).with("/etc/os-release").and_return(os_release_content)
-        expect(File).to receive(:read).with("/etc/shared/os-release").and_return(cisco_release_content)
-      end
-
-      it "should set platform to nexus_guestshell and platform_family to rhel" do
-        plugin.run
-        expect(plugin[:platform]).to eq("nexus_centos")
-        expect(plugin[:platform_family]).to eq("rhel")
-        expect(plugin[:platform_version]).to eq("7.0(3)I2(0.475E.6)")
-      end
-    end
-
     describe "on slackware" do
 
       let(:have_slackware_version) { true }
@@ -775,58 +720,7 @@ OS_DATA
 
       end
 
-      context "on SLES 15+" do
-
-        let(:have_suse_release) { false }
-        let(:have_os_release) { true }
-
-        let(:os_release_content) do
-          <<~OS_RELEASE
-            NAME="SLES"
-            VERSION="15"
-            VERSION_ID="15"
-            PRETTY_NAME="SUSE Linux Enterprise Server 15"
-            ID="sles"
-            ID_LIKE="suse"
-            ANSI_COLOR="0;32"
-            CPE_NAME="cpe:/o:suse:sles:15"
-
-  OS_RELEASE
-        end
-
-        before do
-          expect(File).to_not receive(:read).with("/etc/SuSE-release")
-          expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
-        end
-
-        it "correctly detects SLES15" do
-          plugin.run
-          expect(plugin[:platform]).to eq("suse")
-          expect(plugin[:platform_version]).to eq("15")
-          expect(plugin[:platform_family]).to eq("suse")
-        end
-      end
-
-      context "on versions that have both /etc/os-release and /etc/SuSE-release (e.g. SLES12)" do
-        let(:have_suse_release) { true }
-        let(:have_os_release) { true }
-
-        describe "with lsb_release results" do
-          before(:each) do
-            plugin[:lsb][:id] = "SUSE LINUX"
-          end
-
-          it "should read the platform as opensuse on openSUSE" do
-            plugin[:lsb][:release] = "12.1"
-            expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
-            plugin.run
-            expect(plugin[:platform]).to eq("opensuse")
-            expect(plugin[:platform_family]).to eq("suse")
-          end
-        end
-      end
-
-      context "on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES11)" do
+      context "on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES12.1)" do
         let(:have_suse_release) { true }
         let(:have_os_release) { false }
 

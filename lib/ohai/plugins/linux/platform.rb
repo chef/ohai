@@ -198,6 +198,9 @@ Ohai.plugin(:Platform) do
       contents = File.read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
+    elsif File.exist?("/etc/Eos-release")
+      platform "arista_eos"
+      platform_version File.read("/etc/Eos-release").strip.split[-1]
     elsif File.exist?("/etc/redhat-release")
       if os_release_file_is_cisco? # Cisco guestshell
         platform "nexus_centos"
@@ -226,10 +229,6 @@ Ohai.plugin(:Platform) do
       else
         platform "suse"
       end
-    elsif File.exist?("/etc/Eos-release")
-      platform "arista_eos"
-      platform_version File.read("/etc/Eos-release").strip.split[-1]
-      platform_family "fedora"
     elsif os_release_file_is_cisco?
       raise "unknown Cisco /etc/os-release or /etc/cisco-release ID_LIKE field" if
         os_release_info["ID_LIKE"].nil? || ! os_release_info["ID_LIKE"].include?("wrlinux")

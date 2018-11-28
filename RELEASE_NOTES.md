@@ -1,8 +1,24 @@
 # Unreleased
 
-## Cloud Plugin Improvements
+## openSUSE 15
 
-The Google Compute Engine (GCE) plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
+Ohai now properly detects the openSUSE 15.X platform. Thank you [@megamorf](https://github.com/megamorf) for reporting this issue.
+
+## Hyper-V Hypervisor Detection
+
+Detection of Linux guests running on Hyper-V has been improved. In addition, Linux guests on Hyper-V hypervisors will also now detect their hypervisor's hostname. Thank you [@safematix](https://github.com/safematix) for contributing this enhancement.
+
+Example `node['virtualization']` data:
+```json
+{
+  "systems": {
+    "hyperv": "guest"
+  },
+  "system": "hyperv",
+  "role": "guest",
+  "hypervisor_host": "hyper_v.example.com"
+}
+```
 
 # Ohai Release Notes 14.6
 

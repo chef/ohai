@@ -30,6 +30,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/proc/modules").and_return(false)
     allow(File).to receive(:exist?).with("/proc/cpuinfo").and_return(false)
     allow(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(false)
+    allow(File).to receive(:exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(false)
     allow(File).to receive(:exist?).with("/proc/self/status").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
     allow(File).to receive(:exist?).with("/proc/vz").and_return(false)
@@ -381,6 +382,18 @@ VEERTU
       allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
+  describe "when we are checking for Hyper-V guest and the hostname of the host" do
+    it "sets Hyper-V guest if /var/lib/hyperv/.kvp_pool_3 contains hyper_v.example.com" do
+      expect(File).to receive(:exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(true)
+      allow(File).to receive(:read).with("/var/lib/hyperv/.kvp_pool_3").and_return("HostNamehyper_v.example.comHostingSystemEditionId")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]["hyperv"]).to eq("guest")
+      expect(plugin[:virtualization]["hypervisor_host"]).to eq("hyper_v.example.com")
     end
   end
 

@@ -150,6 +150,17 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
+    # Detect Hyper-V guest and the hostname of the host
+    if File.exist?("/var/lib/hyperv/.kvp_pool_3")
+      logger.trace("Plugin Virtualization: /var/lib/hyperv/.kvp_pool_3 contains string indicating Hyper-V guest")
+      data = File.read("/var/lib/hyperv/.kvp_pool_3")
+      hyperv_host = data[/\HostName(.*?)HostingSystemEditionId/, 1].scan(/[[:print:]]/).join.downcase
+      virtualization[:system] = "hyperv"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:hyperv] = "guest"
+      virtualization[:hypervisor_host] = hyperv_host
+    end
+
     # Detect Linux-VServer
     if File.exist?("/proc/self/status")
       proc_self_status = File.read("/proc/self/status")

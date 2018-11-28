@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.0 -->
-## [v14.8.0](https://github.com/chef/ohai/tree/v14.8.0) (2018-11-28)
+<!-- latest_release 14.8.1 -->
+## [v14.8.1](https://github.com/chef/ohai/tree/v14.8.1) (2018-11-28)
 
 #### Merged Pull Requests
-- Correctly detect openSUSE leap 15+ [#1307](https://github.com/chef/ohai/pull/1307) ([tas50](https://github.com/tas50))
+- Linux Virtualization: Load hyper_v hypervsior hostname from guest [#1308](https://github.com/chef/ohai/pull/1308) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Linux Virtualization: Load hyper_v hypervsior hostname from guest [#1308](https://github.com/chef/ohai/pull/1308) ([tas50](https://github.com/tas50)) <!-- 14.8.1 -->
 - Correctly detect openSUSE leap 15+ [#1307](https://github.com/chef/ohai/pull/1307) ([tas50](https://github.com/tas50)) <!-- 14.8.0 -->
 - Remove old spec files [#1306](https://github.com/chef/ohai/pull/1306) ([tas50](https://github.com/tas50)) <!-- 14.7.0 -->
 - Set User-Agent in HTTP header for GCE plugin [#1294](https://github.com/chef/ohai/pull/1294) ([tas50](https://github.com/tas50)) <!-- 14.6.3 -->

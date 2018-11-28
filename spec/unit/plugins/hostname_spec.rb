@@ -17,6 +17,8 @@
 #
 
 require_relative "../../spec_helper.rb"
+require "wmi-lite/wmi"
+require "socket"
 
 describe Ohai::System, "hostname plugin" do
   before(:each) do
@@ -85,6 +87,71 @@ describe Ohai::System, "hostname plugin" do
     it "should be not be called twice" do
       @plugin.run
       expect(@plugin[:fqdn]).to eq("katie.local")
+    end
+  end
+end
+
+describe Ohai::System, "hostname plugin for windows", :windows_only do
+  let(:success) { true }
+
+  let(:host) do
+    {
+      "name" => "local",
+      "dnshostname" => "local",
+    }
+  end
+
+  let(:info) do
+    [
+      "local",
+      [],
+      23,
+      "address1",
+      "address2",
+      "address3",
+      "address4"
+    ]
+  end
+
+  let(:local_hostent) do
+    [
+      "local",
+      [],
+      23,
+      "address"
+    ]
+  end
+
+  let(:fqdn_hostent) do
+    [
+      "local.dx.internal.cloudapp.net",
+      [],
+      23,
+      "address"
+    ]
+  end
+
+  before(:each) do
+    @plugin = get_plugin("hostname")
+    allow(WmiLite::Wmi).to receive(:new).and_return(success)
+    allow(success).to receive(:first_of).with("Win32_ComputerSystem").and_return(host)
+    allow(Socket).to receive(:gethostname).and_return("local")
+    allow(Socket).to receive(:gethostbyname).with(anything()).and_return(info)
+  end
+
+  context "when hostname is not set for the machine" do
+    it "should return short machine name" do
+      allow(Socket).to receive(:gethostbyaddr).with(anything()).and_return(local_hostent)
+      @plugin.run
+      expect(@plugin[:fqdn]).to eq("local")
+    end
+  end
+
+  context "when hostname is set for the machine" do
+    it "should return the fqdn of the machine" do
+      allow(Socket).to receive(:gethostbyaddr).with(anything()).and_return(fqdn_hostent)
+      @plugin.run
+      expect(@plugin[:fqdn]).to eq("local.dx.internal.cloudapp.net")
     end
   end
 end

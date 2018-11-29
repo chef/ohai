@@ -3,6 +3,7 @@
 # Author:: Peter Schroeter <peter.schroeter@rightscale.com>
 # Author:: Stas Turlo <stanislav.turlo@rightscale.com>
 # Copyright:: Copyright (c) 2010-2014 RightScale Inc
+# Copyright:: Copyright (c) 2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,14 +24,20 @@ Ohai.plugin(:Softlayer) do
   include ::Ohai::Mixin::SoftlayerMetadata
 
   provides "softlayer"
+  depends "dmi"
 
   # Identifies the softlayer cloud
   #
-  # === Return
-  # true:: If the softlayer cloud can be identified
-  # false:: Otherwise
+  # @return [Boolean] true if the system appears to be softlayer
   def looks_like_softlayer?
-    hint?("softlayer")
+    hint?("softlayer") || softlayer_dmi?
+  end
+
+  # Does this system have softlayer dmi?
+  #
+  # @return [Boolean] true if the system has a Softlayer asset tag in DMI data
+  def softlayer_dmi?
+    get_attribute(:dmi, :chassis, :asset_tag) =~ /Softlayer/
   end
 
   collect_data do

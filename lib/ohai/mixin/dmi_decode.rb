@@ -1,6 +1,6 @@
 #
 # Author:: Tim Smith <tsmith@chef.io>
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,29 +17,34 @@
 
 # http://www.dmo.ca/blog/detecting-virtualization-on-linux
 module ::Ohai::Mixin::DmiDecode
-  def guest_from_dmi(dmi_data)
-    dmi_data.each_line do |line|
-      case line
-      when /Manufacturer: Microsoft/
-        return "hyperv" if dmi_data =~ /Version: (7.0|Hyper-V)/
-      when /Manufacturer: VMware/
-        return "vmware"
-      when /Manufacturer: Xen/
-        return "xen"
-      when /Product.*: VirtualBox/
-        return "vbox"
-      when /Product.*: OpenStack/
-        return "openstack"
-      when /Manufacturer: QEMU|Product Name: (KVM|RHEV)/
-        return "kvm"
-      when /Product.*: BHYVE/
-        return "bhyve"
-      when /Manufacturer: Veertu/
-        return "veertu"
-      when /Manufacturer: Amazon EC2/
-        return "amazonec2"
-      end
+  def guest_from_dmi_data(manufacturer, product, version)
+    case manufacturer
+    when /Xen/
+      return "xen"
+    when /VMware/
+      return "vmware"
+    when /Microsoft/
+      return "hyperv" if product =~ /Virtual Machine/
+    when /Amazon EC2/
+      return "amazonec2"
+    when /QEMU/
+      return "kvm"
+    when /Veertu/
+      return "veertu"
+    when /Parallels/
+      return "parallels"
     end
-    nil
+
+    case product
+    when /VirtualBox/
+      return "vbox"
+    when /OpenStack/
+      return "openstack"
+    when /(KVM|RHEV)/
+      return "kvm"
+    when /BHYVE/
+      return "bhyve"
+    end
+    nil # doesn't look like a virt
   end
 end

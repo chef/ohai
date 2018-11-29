@@ -19,9 +19,8 @@
 #
 
 Ohai.plugin(:Virtualization) do
-  require "ohai/mixin/dmi_decode"
-  include Ohai::Mixin::DmiDecode
   provides "virtualization"
+  depends "dmi"
 
   def collect_solaris_guestid
     command = "/usr/sbin/zoneadm list -p"
@@ -30,6 +29,9 @@ Ohai.plugin(:Virtualization) do
   end
 
   collect_data(:solaris2) do
+    require "ohai/mixin/dmi_decode"
+    include Ohai::Mixin::DmiDecode
+
     virtualization Mash.new
     virtualization[:systems] = Mash.new
 
@@ -44,16 +46,13 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
-    # Pass smbios information to the dmi_decode mixin to
-    # identify possible virtualization systems
-    smbios_path = Ohai.abs_path("/usr/sbin/smbios")
-    if File.exist?(smbios_path)
-      guest = guest_from_dmi(shell_out(smbios_path).stdout)
-      if guest
-        virtualization[:system] = guest
-        virtualization[:role] = "guest"
-        virtualization[:systems][guest.to_sym] = "guest"
-      end
+    # parse dmi to discover various virtualization guests
+    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
+    if guest
+      logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
+      virtualization[:system] = guest
+      virtualization[:role] = "guest"
+      virtualization[:systems][guest.to_sym] = "guest"
     end
 
     if File.executable?("/usr/sbin/zoneadm")

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.13 -->
-## [v15.0.13](https://github.com/chef/ohai/tree/v15.0.13) (2018-11-28)
+<!-- latest_release 15.0.14 -->
+## [v15.0.14](https://github.com/chef/ohai/tree/v15.0.14) (2018-11-30)
 
 #### Merged Pull Requests
-- Windows: Fix for fqdn is being set as the machine name instead of fqdn [#1310](https://github.com/chef/ohai/pull/1310) ([vijaymmali1990](https://github.com/vijaymmali1990))
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50)) <!-- 15.0.14 -->
 - Windows: Fix for fqdn is being set as the machine name instead of fqdn [#1310](https://github.com/chef/ohai/pull/1310) ([vijaymmali1990](https://github.com/vijaymmali1990)) <!-- 15.0.13 -->
 - /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50)) <!-- 15.0.12 -->
 - Correctly detect openSUSE leap 15+ [#1297](https://github.com/chef/ohai/pull/1297) ([tas50](https://github.com/tas50)) <!-- 15.0.11 -->

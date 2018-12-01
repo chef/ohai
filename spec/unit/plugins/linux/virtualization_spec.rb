@@ -29,7 +29,6 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/proc/xen/capabilities").and_return(false)
     allow(File).to receive(:exist?).with("/proc/modules").and_return(false)
     allow(File).to receive(:exist?).with("/proc/cpuinfo").and_return(false)
-    allow(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(false)
     allow(File).to receive(:exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(false)
     allow(File).to receive(:exist?).with("/proc/self/status").and_return(false)
     allow(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
@@ -37,7 +36,6 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(false)
     allow(File).to receive(:exist?).with("/.dockerenv").and_return(false)
     allow(File).to receive(:exist?).with("/.dockerinit").and_return(false)
-    allow(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(false)
     allow(File).to receive(:exist?).with("/sys/devices/virtual/misc/kvm").and_return(false)
     allow(File).to receive(:exist?).with("/dev/lxd/sock").and_return(false)
     allow(File).to receive(:exist?).with("/var/lib/lxd/devlxd").and_return(false)
@@ -187,165 +185,28 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
-  describe "when we are parsing dmidecode" do
-    before(:each) do
-      expect(File).to receive(:exist?).with("/usr/sbin/dmidecode").and_return(true)
-    end
+  describe "when we are parsing DMI data" do
 
-    it "sets hyperv guest if dmidecode detects Hyper-V or version 7.0" do
-      ms_hv_dmidecode = <<~MSHV
-        System Information
-                Manufacturer: Microsoft Corporation
-                Product Name: Virtual Machine
-                Version: 7.0
-                Serial Number: 9242-2608-7031-8934-2088-5216-61
-                UUID: C2431A2D-D69C-244F-9DE8-CD5D09E0DA39
-                Wake-up Type: Power Switch
-MSHV
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, ms_hv_dmidecode, ""))
+    it "sets virtualization attributes if the appropriate DMI data is present" do
+      plugin[:dmi] = { system: {
+                                  manufacturer: "Amazon EC2",
+                                  product: "c5n.large",
+                                  version: nil,
+                               },
+                     }
       plugin.run
-      expect(plugin[:virtualization][:system]).to eq("hyperv")
+      expect(plugin[:virtualization][:system]).to eq("amazonec2")
       expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:hyperv]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:amazonec2]).to eq("guest")
     end
 
-    it "sets vmware guest if dmidecode detects VMware" do
-      vmware_dmidecode = <<~VMWARE
-        System Information
-          Manufacturer: VMware, Inc.
-          Product Name: VMware Virtual Platform
-          Version: None
-          Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
-          UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
-          Wake-up Type: Power Switch
-          SKU Number: Not Specified
-          Family: Not Specified
-VMWARE
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vmware_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("vmware")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
-    end
-
-    it "sets vbox guest if dmidecode detects VirtualBox" do
-      vbox_dmidecode = <<~VBOX
-        Base Board Information
-          Manufacturer: Oracle Corporation
-          Product Name: VirtualBox
-          Version: 1.2
-          Serial Number: 0
-          Asset Tag: Not Specified
-          Features:
-                Board is a hosting board
-          Location In Chasis: Not Specified
-          Type: Motherboard
-          Contained Object Handles: 0
-VBOX
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, vbox_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("vbox")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:vbox]).to eq("guest")
-    end
-
-    it "sets openstack guest if dmidecode detects OpenStack" do
-      openstack_dmidecode = <<~OPENSTACK
-        System Information
-                Manufacturer: Red Hat Inc.
-                Product Name: OpenStack Nova
-                Version: 2014.1.2-1.el6
-                Serial Number: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-                UUID: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-                Wake-up Type: Power Switch
-                SKU Number: Not Specified
-                Family: Red Hat Enterprise Linux
-OPENSTACK
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, openstack_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("openstack")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:openstack]).to eq("guest")
-    end
-
-    it "sets kvm guest if dmidecode contains KVM" do
-      kvm_dmidecode = <<~RKVM
-        System Information
-          Manufacturer: Red Hat
-          Product Name: KVM
-          Version: RHEL 7.0.0 PC (i440FX + PIIX, 1996)
-          Serial Number: Not Specified
-          UUID: 6E56CFE2-2088-4A46-906A-FC49EDC4072C
-          Wake-up Type: Power Switch
-          SKU Number: Not Specified
-          Family: Red Hat Enterprise Linux
-RKVM
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("kvm")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
-    end
-
-    it "sets kvm guest if dmidecode detects RHEV" do
-      kvm_dmidecode = <<~RHEV
-        System Information
-          Manufacturer: Red Hat
-          Product Name: RHEV Hypervisor
-          Version: 6.7-20150911.0.el6ev
-          Serial Number: 00000000-0000-0000-0000-000000000000
-          UUID: E7F1DC93-3DA1-4EC3-A6AB-F6904BA87985
-          Wake-up Type: Power Switch
-          SKU Number: Not Specified
-          Family: Red Hat Enterprise Linux
-RHEV
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, kvm_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("kvm")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
-    end
-
-    it "sets bhyve guest if dmidecode detects bhyve" do
-      bhyve_dmidecode = <<~OUTPUT
-        System Information
-                Manufacturer:
-                Product Name: BHYVE
-                Version: 1.0
-                Serial Number: None
-                UUID: 023B323A-E139-4B36-8BC5-CEBB2469DAAA
-                Wake-up Type: Power Switch
-                SKU Number: None
-                Family:
-OUTPUT
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, bhyve_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("bhyve")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:bhyve]).to eq("guest")
-    end
-
-    it "sets veertu guest if dmidecode detects Veertu" do
-      veertu_dmidecode = <<~VEERTU
-        System Information
-          Manufacturer: Veertu
-          Product Name: Veertu
-          Version: Not Specified
-          Serial Number: Not Specified
-          UUID: Not Settable
-          Wake-up Type: Power Switch
-          SKU Number: Not Specified
-          Family: Not Specified
-VEERTU
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, veertu_dmidecode, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("veertu")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:veertu]).to eq("guest")
-    end
-
-    it "should run dmidecode and not set virtualization if nothing is detected" do
-      allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, "", ""))
+    it "sets empty virtualization attributes if nothing is detected" do
+      plugin[:dmi] = { system: {
+                                  manufacturer: "Supermicro",
+                                  product: "X10SLH-N6-ST031",
+                                  version: "0123456789",
+                               },
+                     }
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
@@ -446,32 +307,6 @@ VEERTU
     it "does not set virtualization if openvz isn't there" do
       expect(File).to receive(:exist?).with("/proc/bc/0").and_return(false)
       expect(File).to receive(:exist?).with("/proc/vz").and_return(false)
-      plugin.run
-      expect(plugin[:virtualization]).to eq({ "systems" => {} })
-    end
-  end
-
-  describe "when we are checking for parallels" do
-    it "sets parallels guest if /proc/bus/pci/devices contains 1ab84000" do
-      devices = <<~DEVICES
-        0018	1ab84000	1f	            8001	               0	               0	               0	               0	               0	               0	              20	               0	               0	               0	               0	               0	               0	prl_tg
-        0028	1af41000	17	            8201	        ee000000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
-      DEVICES
-      expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
-      allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("parallels")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:parallels]).to eq("guest")
-    end
-
-    it "does not set virtualization if /proc/bus/pci/devices not contains 1ab84000" do
-      devices = <<~DEVICES
-        0030	1af41000	a	            8401	        ee040000	               0	               0	               0	               0	               0	              40	            1000	               0	               0	               0	               0	               0	virtio-pci
-        0050	10110022	0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0	               0
-      DEVICES
-      expect(File).to receive(:exist?).with("/proc/bus/pci/devices").and_return(true)
-      allow(File).to receive(:read).with("/proc/bus/pci/devices").and_return(devices)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end

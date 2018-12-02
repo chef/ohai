@@ -19,6 +19,8 @@
 #
 
 Ohai.plugin(:Virtualization) do
+  require "ohai/mixin/dmi_decode"
+  include Ohai::Mixin::DmiDecode
   provides "virtualization"
   depends "dmi"
 
@@ -29,9 +31,6 @@ Ohai.plugin(:Virtualization) do
   end
 
   collect_data(:solaris2) do
-    require "ohai/mixin/dmi_decode"
-    include Ohai::Mixin::DmiDecode
-
     virtualization Mash.new
     virtualization[:systems] = Mash.new
 

@@ -63,43 +63,6 @@ PSRINFO_PV
     end
   end
 
-  describe "when we are parsing smbios" do
-    before(:each) do
-      expect(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(true)
-    end
-
-    it "should run smbios" do
-      expect(plugin).to receive(:shell_out).with("/usr/sbin/smbios")
-      plugin.run
-    end
-
-    it "should set vmware guest if smbios detects VMware Virtual Platform" do
-      vmware_smbios = <<~VMWARE
-        ID    SIZE TYPE
-        1     72   SMB_TYPE_SYSTEM (system information)
-
-          Manufacturer: VMware, Inc.
-          Product: VMware Virtual Platform
-          Version: None
-          Serial Number: VMware-50 3f f7 14 42 d1 f1 da-3b 46 27 d0 29 b4 74 1d
-
-          UUID: a86cc405-e1b9-447b-ad05-6f8db39d876a
-          Wake-Up Event: 0x6 (power switch)
-VMWARE
-      allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, vmware_smbios, ""))
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("vmware")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
-    end
-
-    it "should run smbios and not set virtualization if nothing is detected" do
-      expect(plugin).to receive(:shell_out).with("/usr/sbin/smbios")
-      plugin.run
-      expect(plugin[:virtualization][:systems]).to eq({})
-    end
-  end
-
   describe "when we are parsing DMI data" do
 
     it "sets virtualization attributes if the appropriate DMI data is present" do

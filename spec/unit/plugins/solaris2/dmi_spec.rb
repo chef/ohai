@@ -112,17 +112,16 @@ SOLARIS_DMI_OUT = <<~EOS.freeze
 EOS
 
 describe Ohai::System, "Solaris2.X DMI plugin" do
-  let(:plugin) { get_plugin("solaris/dmi") }
-
   before(:each) do
-    allow(plugin).to receive(:collect_os).and_return("solaris2")
+    @plugin = get_plugin("solaris2/dmi")
+    allow(@plugin).to receive(:collect_os).and_return("solaris2")
     @stdout = SOLARIS_DMI_OUT
-    allow(plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
+    allow(@plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "should run smbios" do
-    expect(plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
-    plugin.run
+    expect(@plugin).to receive(:shell_out).with("smbios").and_return(mock_shell_out(0, @stdout, ""))
+    @plugin.run
   end
 
   {
@@ -141,14 +140,14 @@ describe Ohai::System, "Solaris2.X DMI plugin" do
   }.each do |id, data|
     data.each do |attribute, value|
       it "should have [:dmi][:#{id}][:#{attribute}] set" do
-        plugin.run
-        expect(plugin[:dmi][id][attribute]).to eql(value)
+        @plugin.run
+        expect(@plugin[:dmi][id][attribute]).to eql(value)
       end
     end
   end
 
   it "should ignore unwanted types" do
-    plugin.run
-    expect(plugin[:dmi]).not_to have_key(:on_board_devices)
+    @plugin.run
+    expect(@plugin[:dmi]).not_to have_key(:on_board_devices)
   end
 end

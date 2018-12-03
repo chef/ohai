@@ -81,30 +81,42 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "#platform_id_remap" do
+    # https://github.com/chef/os_release/blob/master/redhat_7
     it "returns redhat for rhel os-release id" do
       expect(plugin.platform_id_remap("rhel")).to eq("redhat")
     end
 
+    # https://github.com/chef/os_release/blob/master/amazon_2018
     it "returns amazon for amzn os-release id" do
       expect(plugin.platform_id_remap("amzn")).to eq("amazon")
     end
 
+    # https://github.com/chef/os_release/blob/master/oracle_7
     it "returns oracle for ol os-release id" do
       expect(plugin.platform_id_remap("ol")).to eq("oracle")
     end
 
+    # https://github.com/chef/os_release/blob/master/sled_15
+    it "returns suse for sled os-release id" do
+      expect(plugin.platform_id_remap("sled")).to eq("suse")
+    end
+
+    # https://github.com/chef/os_release/blob/master/sles_15_0
     it "returns suse for sles os-release id" do
       expect(plugin.platform_id_remap("sles")).to eq("suse")
     end
 
+    # https://github.com/chef/os_release/blob/master/opensuseleap_15_0
     it "returns opensuseleap for opensuse-leap os-release id" do
       expect(plugin.platform_id_remap("opensuse-leap")).to eq("opensuseleap")
     end
 
+    # https://github.com/chef/os_release/blob/master/xenserver_7_6
     it "returns xenserver for xenenterprise os-release id" do
       expect(plugin.platform_id_remap("xenenterprise")).to eq("xenserver")
     end
 
+    # https://github.com/chef/os_release/blob/master/cumulus_3_7
     it "returns cumulus for cumulus-linux os-release id" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end

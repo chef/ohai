@@ -30,6 +30,7 @@ Ohai.plugin(:Platform) do
       "ol" => "oracle",
       "sled" => "suse",
       "sles" => "suse",
+      "sles_sap" => "suse",
       "opensuse-leap" => "opensuseleap",
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",

@@ -461,6 +461,8 @@ OS_DATA
 
     describe "on arista eos" do
 
+      let(:have_system_release) { true }
+      let(:have_redhat_release) { true }
       let(:have_eos_release) { true }
 
       before(:each) do
@@ -468,11 +470,11 @@ OS_DATA
       end
 
       it "should set platform to arista_eos" do
-        expect(File).to receive(:read).with("/etc/Eos-release").and_return("Arista Networks EOS 4.16.7M")
+        expect(File).to receive(:read).with("/etc/Eos-release").and_return("Arista Networks EOS 4.21.1.1F")
         plugin.run
         expect(plugin[:platform]).to eq("arista_eos")
         expect(plugin[:platform_family]).to eq("fedora")
-        expect(plugin[:platform_version]).to eq("4.16.7M")
+        expect(plugin[:platform_version]).to eq("4.21.1.1F")
       end
     end
 

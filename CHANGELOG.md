@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.16 -->
-## [v15.0.16](https://github.com/chef/ohai/tree/v15.0.16) (2018-12-03)
+<!-- latest_release 15.0.17 -->
+## [v15.0.17](https://github.com/chef/ohai/tree/v15.0.17) (2018-12-03)
 
 #### Merged Pull Requests
-- Add support for SUSE Linux Enterprise Desktop [#1314](https://github.com/chef/ohai/pull/1314) ([tas50](https://github.com/tas50))
+- Fix arista platform detection [#1312](https://github.com/chef/ohai/pull/1312) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Fix arista platform detection [#1312](https://github.com/chef/ohai/pull/1312) ([tas50](https://github.com/tas50)) <!-- 15.0.17 -->
 - Add support for SUSE Linux Enterprise Desktop [#1314](https://github.com/chef/ohai/pull/1314) ([tas50](https://github.com/tas50)) <!-- 15.0.16 -->
 - Add mangeia platform with madriva platform_family [#1316](https://github.com/chef/ohai/pull/1316) ([tas50](https://github.com/tas50)) <!-- 15.0.15 -->
 - Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50)) <!-- 15.0.14 -->

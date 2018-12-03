@@ -155,7 +155,7 @@ Ohai.plugin(:Platform) do
       "rhel"
     when /amazon/
       "amazon"
-    when /suse/, /sles/, /opensuse/
+    when /suse/, /sles/, /opensuse/, /opensuseleap/
       "suse"
     when /fedora/, /pidora/, /arista_eos/
       # In the broadest sense:  RPM-based, fedora-derived distributions which are not strictly re-compiled RHEL (if it uses RPMs, and smells more like redhat and less like
@@ -167,7 +167,7 @@ Ohai.plugin(:Platform) do
       "gentoo"
     when /slackware/
       "slackware"
-    when /arch/, /manjaro/
+    when /arch/, /manjaro/, /antergos/
       "arch"
     when /exherbo/
       "exherbo"

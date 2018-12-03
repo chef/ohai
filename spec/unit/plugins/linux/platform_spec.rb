@@ -175,32 +175,32 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
-    %w{suse sles opensuse}.each do |p|
-      it "returns suse for #{p} platform" do
+    %w{suse sles opensuse opensuseleap}.each do |p|
+      it "returns suse for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("suse")
       end
     end
 
     %w{fedora pidora arista_eos}.each do |p|
-      it "returns fedora for #{p} platform" do
+      it "returns fedora for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("fedora")
       end
     end
 
     %w{nexus ios_xr}.each do |p|
-      it "returns wrlinux for #{p} platform" do
+      it "returns wrlinux for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("wrlinux")
       end
     end
 
-    %w{arch manjaro}.each do |p|
-      it "returns arch for #{p} platform" do
+    %w{arch manjaro antergos}.each do |p|
+      it "returns arch for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("arch")
       end
     end
 
     %w{amazon slackware gentoo exherbo alpine clearlinux}.each do |same_name|
-      it "returns #{same_name} for #{same_name} platform" do
+      it "returns #{same_name} for #{same_name} platform_family" do
         expect(plugin.platform_family_from_platform(same_name)).to eq(same_name)
       end
     end

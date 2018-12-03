@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.14 -->
-## [v15.0.14](https://github.com/chef/ohai/tree/v15.0.14) (2018-11-30)
+<!-- latest_release 15.0.15 -->
+## [v15.0.15](https://github.com/chef/ohai/tree/v15.0.15) (2018-12-03)
 
 #### Merged Pull Requests
-- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50))
+- Add mangeia platform with madriva platform_family [#1316](https://github.com/chef/ohai/pull/1316) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Add mangeia platform with madriva platform_family [#1316](https://github.com/chef/ohai/pull/1316) ([tas50](https://github.com/tas50)) <!-- 15.0.15 -->
 - Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50)) <!-- 15.0.14 -->
 - Windows: Fix for fqdn is being set as the machine name instead of fqdn [#1310](https://github.com/chef/ohai/pull/1310) ([vijaymmali1990](https://github.com/vijaymmali1990)) <!-- 15.0.13 -->
 - /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50)) <!-- 15.0.12 -->

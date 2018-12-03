@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.18 -->
-## [v15.0.18](https://github.com/chef/ohai/tree/v15.0.18) (2018-12-03)
+<!-- latest_release 15.0.19 -->
+## [v15.0.19](https://github.com/chef/ohai/tree/v15.0.19) (2018-12-03)
 
 #### Merged Pull Requests
-- bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1319](https://github.com/chef/ohai/pull/1319) ([tas50](https://github.com/tas50))
+- platform: Identify sles_sap as the suse platform [#1313](https://github.com/chef/ohai/pull/1313) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- platform: Identify sles_sap as the suse platform [#1313](https://github.com/chef/ohai/pull/1313) ([tas50](https://github.com/tas50)) <!-- 15.0.19 -->
 - bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1319](https://github.com/chef/ohai/pull/1319) ([tas50](https://github.com/tas50)) <!-- 15.0.18 -->
 - Fix arista platform detection [#1312](https://github.com/chef/ohai/pull/1312) ([tas50](https://github.com/tas50)) <!-- 15.0.17 -->
 - Add support for SUSE Linux Enterprise Desktop [#1314](https://github.com/chef/ohai/pull/1314) ([tas50](https://github.com/tas50)) <!-- 15.0.16 -->

@@ -223,6 +223,7 @@ Ohai.plugin(:Virtualization) do
           logger.trace("Plugin Virtualization: /proc/self/cgroup and lxc-version command exist. Detecting as lxc host")
           virtualization[:system] = "lxc"
           virtualization[:role] = "host"
+          virtualization[:systems][:lxc] = "host"
         end
         # In general, the 'systems' framework from OHAI-182 is less susceptible to conflicts
         # But, this could overwrite virtualization[:systems][:lxc] = "guest"
@@ -242,6 +243,7 @@ Ohai.plugin(:Virtualization) do
       logger.trace("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
       virtualization[:system] = "lxd"
       virtualization[:role] = "guest"
+      virtualization[:systems][:lxd] = "guest"
     else
       # 'How' LXD is installed dictates the runtime data location
       #
@@ -256,6 +258,7 @@ Ohai.plugin(:Virtualization) do
           logger.trace("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
           virtualization[:system] = "lxd"
           virtualization[:role] = "host"
+          virtualization[:systems][:lxd] = "host"
           break
         end
       end

@@ -170,7 +170,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
-    %w{suse sles opensuse opensuseleap}.each do |p|
+    %w{suse sles opensuse opensuseleap sled}.each do |p|
       it "returns suse for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("suse")
       end

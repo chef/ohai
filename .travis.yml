@@ -11,14 +11,14 @@ branches:
 
 bundler_args: --jobs 7 --without docs debug
 
-before_install:
-  - gem --version
-  - rvm @global do gem uninstall bundler -a -x -I || true
-  - gem install bundler
-  - bundle --version
-  - rm -f .bundle/config
 rvm:
-  - 2.5.1
+  - 2.5.3
+    before_install:
+      - gem --version
+      - rvm @global do gem uninstall bundler -a -x -I || true
+      - gem install bundler --no-document
+      - bundle --version
+      - rm -f .bundle/config
   - 2.6
   - ruby-head
 

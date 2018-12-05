@@ -25,7 +25,7 @@ On Linux systems running lxc or lxd containers, the lxc/lxd virtualization syste
 
 ### BSD Hypervisor Detection
 
-BSD based system can now detect guests running on KVM and Amazon's hypervisor without the need for the dmidecode package.
+BSD-based systems can now detect guests running on KVM and Amazon's hypervisor without the need for the dmidecode package.
 
 ## New Platform Support
 

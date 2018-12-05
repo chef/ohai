@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.20 -->
-## [v15.0.20](https://github.com/chef/ohai/tree/v15.0.20) (2018-12-03)
+<!-- latest_release 15.0.21 -->
+## [v15.0.21](https://github.com/chef/ohai/tree/v15.0.21) (2018-12-05)
 
 #### Merged Pull Requests
-- Add support for antergos linux and fix opensuseleap platform_family [#1320](https://github.com/chef/ohai/pull/1320) ([tas50](https://github.com/tas50))
+- Don&#39;t ship the readme with ohai [#1321](https://github.com/chef/ohai/pull/1321) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Don&#39;t ship the readme with ohai [#1321](https://github.com/chef/ohai/pull/1321) ([tas50](https://github.com/tas50)) <!-- 15.0.21 -->
 - Add support for antergos linux and fix opensuseleap platform_family [#1320](https://github.com/chef/ohai/pull/1320) ([tas50](https://github.com/tas50)) <!-- 15.0.20 -->
 - platform: Identify sles_sap as the suse platform [#1313](https://github.com/chef/ohai/pull/1313) ([tas50](https://github.com/tas50)) <!-- 15.0.19 -->
 - bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1319](https://github.com/chef/ohai/pull/1319) ([tas50](https://github.com/tas50)) <!-- 15.0.18 -->

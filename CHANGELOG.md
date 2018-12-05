@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.7 -->
-## [v14.8.7](https://github.com/chef/ohai/tree/v14.8.7) (2018-12-05)
+<!-- latest_release 14.8.8 -->
+## [v14.8.8](https://github.com/chef/ohai/tree/v14.8.8) (2018-12-05)
 
 #### Merged Pull Requests
-- Add mangeia platform with madriva platform_family [#1328](https://github.com/chef/ohai/pull/1328) ([tas50](https://github.com/tas50))
+- Add support for XCP-NG platform [#1330](https://github.com/chef/ohai/pull/1330) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Add support for XCP-NG platform [#1330](https://github.com/chef/ohai/pull/1330) ([tas50](https://github.com/tas50)) <!-- 14.8.8 -->
 - Add mangeia platform with madriva platform_family [#1328](https://github.com/chef/ohai/pull/1328) ([tas50](https://github.com/tas50)) <!-- 14.8.7 -->
 - Add antergos and manjaro linux to the Arch platform_family [#1326](https://github.com/chef/ohai/pull/1326) ([tas50](https://github.com/tas50)) <!-- 14.8.6 -->
 - bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1327](https://github.com/chef/ohai/pull/1327) ([tas50](https://github.com/tas50)) <!-- 14.8.5 -->

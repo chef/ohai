@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.license = "Apache-2.0"
   s.author = "Adam Jacob"
   s.email = "adam@chef.io"
-  s.homepage = "https://docs.chef.io/ohai.html"
+  s.homepage = "https://github.com/chef/ohai/"
 
   s.required_ruby_version = ">= 2.4"
 
@@ -34,5 +34,5 @@ Gem::Specification.new do |s|
   s.executables = %w{ohai}
 
   s.require_path = "lib"
-  s.files = %w{LICENSE README.md Gemfile Rakefile} + Dir.glob("*.gemspec") + Dir.glob("{docs,lib,spec}/**/*")
+  s.files = %w{LICENSE Gemfile Rakefile} + Dir.glob("*.gemspec") + Dir.glob("{docs,lib,spec}/**/*")
 end

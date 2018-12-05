@@ -1,6 +1,6 @@
 # ohai
 
-[![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=master)](https://travis-ci.org/chef/ohai) [![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/ohai?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/ohai/branch/master) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
+[![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=14-stable)](https://travis-ci.org/chef/ohai) [![Build status](https://ci.appveyor.com/api/projects/status/vqdbpspi9aphjdad/branch/14-stable?svg=true)](https://ci.appveyor.com/project/chef/ohai/branch/14-stable) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
 ## Description
 

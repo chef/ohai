@@ -1,4 +1,4 @@
-# Ohai 14.8
+# Ohai Release Notes 14.8
 
 ## Improved Virtualization Detection
 

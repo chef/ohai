@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.24 -->
-## [v15.0.24](https://github.com/chef/ohai/tree/v15.0.24) (2018-12-05)
+<!-- latest_release 15.0.25 -->
+## [v15.0.25](https://github.com/chef/ohai/tree/v15.0.25) (2018-12-05)
 
 #### Merged Pull Requests
-- Unify virtualization detection on a single helper [#1317](https://github.com/chef/ohai/pull/1317) ([tas50](https://github.com/tas50))
+- Add support for XCP-ng platform [#1283](https://github.com/chef/ohai/pull/1283) ([heyjodom](https://github.com/heyjodom))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Add support for XCP-ng platform [#1283](https://github.com/chef/ohai/pull/1283) ([heyjodom](https://github.com/heyjodom)) <!-- 15.0.25 -->
 - Unify virtualization detection on a single helper [#1317](https://github.com/chef/ohai/pull/1317) ([tas50](https://github.com/tas50)) <!-- 15.0.24 -->
 - Require Ruby 2.5 or later [#1300](https://github.com/chef/ohai/pull/1300) ([tas50](https://github.com/tas50)) <!-- 15.0.23 -->
 - Back out SLES -&gt; SUSE remapping and instead fix the platform_family [#1322](https://github.com/chef/ohai/pull/1322) ([tas50](https://github.com/tas50)) <!-- 15.0.22 -->

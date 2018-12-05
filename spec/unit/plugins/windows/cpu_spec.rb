@@ -65,7 +65,6 @@ describe Ohai::System, "Windows cpu plugin" do
     @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:windows)
 
-    @double_wmi = double(WmiLite::Wmi)
     @double_wmi_instance = instance_double(WmiLite::Wmi)
 
     @processors = [{ "description" => "Intel64 Family 6 Model 70 Stepping 1",

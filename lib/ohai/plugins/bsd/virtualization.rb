@@ -17,11 +17,11 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/dmi_decode"
-
 Ohai.plugin(:Virtualization) do
-  include Ohai::Mixin::DmiDecode
   provides "virtualization"
+  depends "dmi"
+  require "ohai/mixin/dmi_decode"
+  include Ohai::Mixin::DmiDecode
 
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
 
@@ -108,15 +108,13 @@ Ohai.plugin(:Virtualization) do
       logger.trace("Plugin Virtualization: Guest running on #{hypervisor} detected")
     end
 
-    # parse dmidecode to discover various virtualization guests
-    if File.exist?("/usr/local/sbin/dmidecode") || File.exist?("/usr/pkg/sbin/dmidecode")
-      guest = guest_from_dmi(shell_out("dmidecode").stdout)
-      if guest
-        virtualization[:system] = guest
-        virtualization[:role] = "guest"
-        virtualization[:systems][guest.to_sym] = "guest"
-        logger.trace("Plugin Virtualization: Guest running on #{guest} detected")
-      end
+    # parse dmi to discover various virtualization guests
+    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
+    if guest
+      logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
+      virtualization[:system] = guest
+      virtualization[:role] = "guest"
+      virtualization[:systems][guest.to_sym] = "guest"
     end
   end
 end

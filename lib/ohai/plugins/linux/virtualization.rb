@@ -17,9 +17,10 @@
 #
 
 Ohai.plugin(:Virtualization) do
+  provides "virtualization"
+  depends "dmi"
   require "ohai/mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
-  provides "virtualization"
 
   def lxc_version_exists?
     which("lxc-version") || which("lxc-start")
@@ -129,25 +130,14 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:openvz] = "guest"
     end
 
-    # Detect Parallels virtual machine from pci devices
-    if File.exist?("/proc/bus/pci/devices")
-      if File.read("/proc/bus/pci/devices") =~ /1ab84000/
-        logger.trace("Plugin Virtualization: /proc/bus/pci/devices contains '1ab84000' pci device. Detecting as parallels guest")
-        virtualization[:system] = "parallels"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:parallels] = "guest"
-      end
-    end
-
-    # parse dmidecode to discover various virtualization guests
-    if File.exist?("/usr/sbin/dmidecode")
-      guest = guest_from_dmi(shell_out("dmidecode").stdout)
-      if guest
-        logger.trace("Plugin Virtualization: dmidecode contains string indicating #{guest} guest")
-        virtualization[:system] = guest
-        virtualization[:role] = "guest"
-        virtualization[:systems][guest.to_sym] = "guest"
-      end
+    # parse dmi to discover various virtualization guests
+    logger.trace("Looking up #{get_attribute(:dmi, :system, :manufacturer)}, #{get_attribute(:dmi, :system, :product)} #{get_attribute(:dmi, :system, :version)}")
+    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
+    if guest
+      logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
+      virtualization[:system] = guest
+      virtualization[:role] = "guest"
+      virtualization[:systems][guest.to_sym] = "guest"
     end
 
     # Detect Hyper-V guest and the hostname of the host

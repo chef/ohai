@@ -20,6 +20,8 @@
 
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
+  require "ohai/mixin/dmi_decode"
+  include Ohai::Mixin::DmiDecode
 
   collect_data(:windows) do
     require "wmi-lite/wmi"
@@ -27,44 +29,16 @@ Ohai.plugin(:Virtualization) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
-    # Grab BIOS data from WMI to determine vendor information
+    # Grab system DMI data from WMI to determine vendor information
     wmi = WmiLite::Wmi.new
-    bios = wmi.instances_of("Win32_BIOS")
+    dmi = wmi.first_of("Win32_ComputerSystemProduct")
 
-    case bios[0]["manufacturer"]
-    when "innotek GmbH"
-      virtualization[:system] = "vbox"
+    guest = guest_from_dmi_data(dmi["vendor"], dmi["name"], dmi["version"])
+    if guest
+      logger.trace("Plugin Virtualization: DMI data in Win32_ComputerSystemProduct indicates #{guest} guest")
+      virtualization[:system] = guest
       virtualization[:role] = "guest"
-      virtualization[:systems][:vbox] = "guest"
-    when "Parallels Software International Inc."
-      virtualization[:system] = "parallels"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:parallels] = "guest"
-    when "Bochs"
-      virtualization[:system] = "kvm"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:kvm] = "guest"
-    when "American Megatrends Inc."
-      if bios[0]["version"] =~ /VRTUAL -/
-        virtualization[:system] = "hyper-v"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:hyperv] = "guest"
-      end
-    when "Xen"
-      virtualization[:system] = "xen"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:xen] = "guest"
-    when "Veertu"
-      virtualization[:system] = "veertu"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:veertu] = "guest"
-    end
-
-    # vmware fusion detection
-    if bios[0]["serialnumber"] =~ /VMware/
-      virtualization[:system] = "vmware"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:vmware] = "guest"
+      virtualization[:systems][guest.to_sym] = "guest"
     end
   end
 end

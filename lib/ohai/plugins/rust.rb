@@ -18,17 +18,17 @@ Ohai.plugin(:Rust) do
   depends "languages"
 
   collect_data do
-    begin
-      so = shell_out("rustc --version")
-      # Sample output:
-      # rustc 1.7.0
-      if so.exitstatus == 0
-        rust = Mash.new
-        rust[:version] = so.stdout.split[1]
-        languages[:rust] = rust if rust[:version]
-      end
-    rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Rust: Could not shell_out "rustc --version". Skipping plugin')
+
+    so = shell_out("rustc --version")
+    # Sample output:
+    # rustc 1.7.0
+    if so.exitstatus == 0
+      rust = Mash.new
+      rust[:version] = so.stdout.split[1]
+      languages[:rust] = rust if rust[:version]
     end
+  rescue Ohai::Exceptions::Exec
+    logger.trace('Plugin Rust: Could not shell_out "rustc --version". Skipping plugin')
+
   end
 end

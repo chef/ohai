@@ -92,12 +92,12 @@ describe Ohai::System, "General Linux cpu plugin" do
   end
 
   after(:each) do
-    begin
-      tempfile.close
-      tempfile.unlink
-    rescue
+
+    tempfile.close
+    tempfile.unlink
+  rescue
       # really do not care
-    end
+
   end
 
   context "with old kernel that doesn't include cores in /proc/cpuinfo" do

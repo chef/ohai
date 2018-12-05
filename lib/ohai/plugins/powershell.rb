@@ -20,39 +20,39 @@ Ohai.plugin(:Powershell) do
   depends "languages"
 
   collect_data(:windows) do
-    begin
-      so = shell_out("powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable")
-      # Sample output:
-      #
-      # Name                           Value
-      # ----                           -----
-      # PSVersion                      4.0
-      # WSManStackVersion              3.0
-      # SerializationVersion           1.1.0.1
-      # CLRVersion                     4.0.30319.34014
-      # BuildVersion                   6.3.9600.16394
-      # PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
-      # PSRemotingProtocolVersion      2.2
 
-      if so.exitstatus == 0
-        powershell = Mash.new
-        version_info = {}
-        so.stdout.strip.each_line do |line|
-          kv = line.strip.split(/\s+/, 2)
-          version_info[kv[0]] = kv[1] if kv.length == 2
-        end
-        powershell[:version] = version_info["PSVersion"]
-        powershell[:ws_man_stack_version] = version_info["WSManStackVersion"]
-        powershell[:serialization_version] = version_info["SerializationVersion"]
-        powershell[:clr_version] = version_info["CLRVersion"]
-        powershell[:build_version] = version_info["BuildVersion"]
-        powershell[:compatible_versions] = parse_compatible_versions
-        powershell[:remoting_protocol_version] = version_info["PSRemotingProtocolVersion"]
-        languages[:powershell] = powershell unless powershell.empty?
+    so = shell_out("powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable")
+    # Sample output:
+    #
+    # Name                           Value
+    # ----                           -----
+    # PSVersion                      4.0
+    # WSManStackVersion              3.0
+    # SerializationVersion           1.1.0.1
+    # CLRVersion                     4.0.30319.34014
+    # BuildVersion                   6.3.9600.16394
+    # PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
+    # PSRemotingProtocolVersion      2.2
+
+    if so.exitstatus == 0
+      powershell = Mash.new
+      version_info = {}
+      so.stdout.strip.each_line do |line|
+        kv = line.strip.split(/\s+/, 2)
+        version_info[kv[0]] = kv[1] if kv.length == 2
       end
-    rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Powershell: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
+      powershell[:version] = version_info["PSVersion"]
+      powershell[:ws_man_stack_version] = version_info["WSManStackVersion"]
+      powershell[:serialization_version] = version_info["SerializationVersion"]
+      powershell[:clr_version] = version_info["CLRVersion"]
+      powershell[:build_version] = version_info["BuildVersion"]
+      powershell[:compatible_versions] = parse_compatible_versions
+      powershell[:remoting_protocol_version] = version_info["PSRemotingProtocolVersion"]
+      languages[:powershell] = powershell unless powershell.empty?
     end
+  rescue Ohai::Exceptions::Exec
+    logger.trace('Plugin Powershell: Could not shell_out "powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable". Skipping plugin')
+
   end
 
   def version_command

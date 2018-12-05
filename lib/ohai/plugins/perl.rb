@@ -21,25 +21,25 @@ Ohai.plugin(:Perl) do
   depends "languages"
 
   collect_data do
-    begin
-      so = shell_out("perl -V:version -V:archname")
-      # Sample output:
-      # version='5.18.2';
-      # archname='darwin-thread-multi-2level';
-      if so.exitstatus == 0
-        perl = Mash.new
-        so.stdout.split(/\r?\n/).each do |line|
-          case line
-          when /^version=\'(.+)\';$/
-            perl[:version] = $1
-          when /^archname=\'(.+)\';$/
-            perl[:archname] = $1
-          end
+
+    so = shell_out("perl -V:version -V:archname")
+    # Sample output:
+    # version='5.18.2';
+    # archname='darwin-thread-multi-2level';
+    if so.exitstatus == 0
+      perl = Mash.new
+      so.stdout.split(/\r?\n/).each do |line|
+        case line
+        when /^version=\'(.+)\';$/
+          perl[:version] = $1
+        when /^archname=\'(.+)\';$/
+          perl[:archname] = $1
         end
-        languages[:perl] = perl unless perl.empty?
       end
-    rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Perl: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
+      languages[:perl] = perl unless perl.empty?
     end
+  rescue Ohai::Exceptions::Exec
+    logger.trace('Plugin Perl: Could not shell_out "perl -V:version -V:archname". Skipping plugin')
+
   end
 end

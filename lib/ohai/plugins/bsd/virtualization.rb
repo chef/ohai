@@ -1,7 +1,7 @@
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015-2018 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,7 +76,7 @@ Ohai.plugin(:Virtualization) do
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out("sysctl -n hw.model")
-    if so.stdout.split($/)[0] =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+    if so.stdout =~ /QEMU Virtual CPU|KVM processor/
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
@@ -87,27 +87,25 @@ Ohai.plugin(:Virtualization) do
     # there are a limited number of hypervisors detected here, BUT it doesn't
     # require dmidecode to be installed and dmidecode isn't in freebsd out of the box
     so = shell_out("sysctl -n kern.vm_guest")
-    case so.stdout
-    when /vmware/
-      virtualization[:system] = "vmware"
+    hypervisor = case so.stdout
+                 when /vmware/
+                   "vmware"
+                 when /hv/
+                   "hyperv"
+                 when /xen/
+                   "xen"
+                 when /kvm/
+                   so = shell_out("sysctl -n kern.hostuuid")
+                   so.stdout =~ /^ec2/ ? "amazonec2" : "kvm"
+                 when /bhyve/
+                   "bhyve"
+                 end
+
+    if hypervisor
+      virtualization[:system] = hypervisor
       virtualization[:role] = "guest"
-      virtualization[:systems][:vmware] = "guest"
-      logger.trace("Plugin Virtualization: Guest running on VMware detected")
-    when /hv/
-      virtualization[:system] = "hyperv"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:hyperv] = "guest"
-      logger.trace("Plugin Virtualization: Guest running on Hyper-V detected")
-    when /xen/
-      virtualization[:system] = "xen"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:xen] = "guest"
-      logger.trace("Plugin Virtualization: Guest running on Xen detected")
-    when /bhyve/
-      virtualization[:system] = "bhyve"
-      virtualization[:role] = "guest"
-      virtualization[:systems][:bhyve] = "guest"
-      logger.trace("Plugin Virtualization: Guest running on bhyve detected")
+      virtualization[:systems][hypervisor.to_sym] = "guest"
+      logger.trace("Plugin Virtualization: Guest running on #{hypervisor} detected")
     end
 
     # parse dmidecode to discover various virtualization guests

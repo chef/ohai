@@ -28,7 +28,6 @@ Ohai.plugin(:Platform) do
       "rhel" => "redhat",
       "amzn" => "amazon",
       "ol" => "oracle",
-      "sled" => "suse",
       "sles" => "suse",
       "sles_sap" => "suse",
       "opensuse-leap" => "opensuseleap",

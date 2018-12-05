@@ -96,11 +96,6 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("ol")).to eq("oracle")
     end
 
-    # https://github.com/chef/os_release/blob/master/sled_15
-    it "returns suse for sled os-release id" do
-      expect(plugin.platform_id_remap("sled")).to eq("suse")
-    end
-
     # https://github.com/chef/os_release/blob/master/sles_sap_12_3
     it "returns suse for sles_sap os-release id" do
       expect(plugin.platform_id_remap("sles_sap")).to eq("suse")

@@ -1,32 +1,30 @@
 # Change Log
 
-<!-- latest_release 14.8.10 -->
-## [v14.8.10](https://github.com/chef/ohai/tree/v14.8.10) (2018-12-05)
-
-#### Merged Pull Requests
-- Fix arista platform detection [#1332](https://github.com/chef/ohai/pull/1332) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.6.2 -->
-### Changes since 14.6.2 release
-
-#### Merged Pull Requests
-- Fix arista platform detection [#1332](https://github.com/chef/ohai/pull/1332) ([tas50](https://github.com/tas50)) <!-- 14.8.10 -->
-- Add final notes for Ohai 14.8 [#1331](https://github.com/chef/ohai/pull/1331) ([tas50](https://github.com/tas50)) <!-- 14.8.9 -->
-- Add support for XCP-NG platform [#1330](https://github.com/chef/ohai/pull/1330) ([tas50](https://github.com/tas50)) <!-- 14.8.8 -->
-- Add mangeia platform with madriva platform_family [#1328](https://github.com/chef/ohai/pull/1328) ([tas50](https://github.com/tas50)) <!-- 14.8.7 -->
-- Add antergos and manjaro linux to the Arch platform_family [#1326](https://github.com/chef/ohai/pull/1326) ([tas50](https://github.com/tas50)) <!-- 14.8.6 -->
-- bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1327](https://github.com/chef/ohai/pull/1327) ([tas50](https://github.com/tas50)) <!-- 14.8.5 -->
-- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1329](https://github.com/chef/ohai/pull/1329) ([tas50](https://github.com/tas50)) <!-- 14.8.4 -->
-- Don&#39;t ship the readme with the ohai gemfile [#1324](https://github.com/chef/ohai/pull/1324) ([tas50](https://github.com/tas50)) <!-- 14.8.3 -->
-- Make SLED be part of the suse platform_family [#1323](https://github.com/chef/ohai/pull/1323) ([tas50](https://github.com/tas50)) <!-- 14.8.2 -->
-- Linux Virtualization: Load hyper_v hypervsior hostname from guest [#1308](https://github.com/chef/ohai/pull/1308) ([tas50](https://github.com/tas50)) <!-- 14.8.1 -->
-- Correctly detect openSUSE leap 15+ [#1307](https://github.com/chef/ohai/pull/1307) ([tas50](https://github.com/tas50)) <!-- 14.8.0 -->
-- Remove old spec files [#1306](https://github.com/chef/ohai/pull/1306) ([tas50](https://github.com/tas50)) <!-- 14.7.0 -->
-- Set User-Agent in HTTP header for GCE plugin [#1294](https://github.com/chef/ohai/pull/1294) ([tas50](https://github.com/tas50)) <!-- 14.6.3 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v14.8.10](https://github.com/chef/ohai/tree/v14.8.10) (2018-12-05)
+
+#### Merged Pull Requests
+- Set User-Agent in HTTP header for GCE plugin [#1294](https://github.com/chef/ohai/pull/1294) ([tas50](https://github.com/tas50))
+- Remove old spec files [#1306](https://github.com/chef/ohai/pull/1306) ([tas50](https://github.com/tas50))
+- Correctly detect openSUSE leap 15+ [#1307](https://github.com/chef/ohai/pull/1307) ([tas50](https://github.com/tas50))
+- Linux Virtualization: Load hyper_v hypervsior hostname from guest [#1308](https://github.com/chef/ohai/pull/1308) ([tas50](https://github.com/tas50))
+- Make SLED be part of the suse platform_family [#1323](https://github.com/chef/ohai/pull/1323) ([tas50](https://github.com/tas50))
+- Don&#39;t ship the readme with the ohai gemfile [#1324](https://github.com/chef/ohai/pull/1324) ([tas50](https://github.com/tas50))
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1329](https://github.com/chef/ohai/pull/1329) ([tas50](https://github.com/tas50))
+- bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1327](https://github.com/chef/ohai/pull/1327) ([tas50](https://github.com/tas50))
+- Add antergos and manjaro linux to the Arch platform_family [#1326](https://github.com/chef/ohai/pull/1326) ([tas50](https://github.com/tas50))
+- Add mangeia platform with madriva platform_family [#1328](https://github.com/chef/ohai/pull/1328) ([tas50](https://github.com/tas50))
+- Add support for XCP-NG platform [#1330](https://github.com/chef/ohai/pull/1330) ([tas50](https://github.com/tas50))
+- Add final notes for Ohai 14.8 [#1331](https://github.com/chef/ohai/pull/1331) ([tas50](https://github.com/tas50))
+- Fix arista platform detection [#1332](https://github.com/chef/ohai/pull/1332) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-11)
 
 #### Merged Pull Requests
@@ -39,7 +37,6 @@
 - [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh))
 - Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50))
 - Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.5.4](https://github.com/chef/ohai/tree/v14.5.4) (2018-09-17)
 

@@ -20,7 +20,7 @@ Example `node['virtualization']` data:
 
 ### LXC / LXD Detection
 
-On Linux systems running lxc or lxd containers the lxc/lxd virtualization system will now properly populate the `node['virtualization']['systems']` attribute.
+On Linux systems running lxc or lxd containers, the lxc/lxd virtualization system will now properly populate the `node['virtualization']['systems']` attribute.
 
 
 ### BSD Hypervisor Detection

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.3 -->
-## [v14.8.3](https://github.com/chef/ohai/tree/v14.8.3) (2018-12-05)
+<!-- latest_release 14.8.4 -->
+## [v14.8.4](https://github.com/chef/ohai/tree/v14.8.4) (2018-12-05)
 
 #### Merged Pull Requests
-- Don&#39;t ship the readme with the ohai gemfile [#1324](https://github.com/chef/ohai/pull/1324) ([tas50](https://github.com/tas50))
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1329](https://github.com/chef/ohai/pull/1329) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1329](https://github.com/chef/ohai/pull/1329) ([tas50](https://github.com/tas50)) <!-- 14.8.4 -->
 - Don&#39;t ship the readme with the ohai gemfile [#1324](https://github.com/chef/ohai/pull/1324) ([tas50](https://github.com/tas50)) <!-- 14.8.3 -->
 - Make SLED be part of the suse platform_family [#1323](https://github.com/chef/ohai/pull/1323) ([tas50](https://github.com/tas50)) <!-- 14.8.2 -->
 - Linux Virtualization: Load hyper_v hypervsior hostname from guest [#1308](https://github.com/chef/ohai/pull/1308) ([tas50](https://github.com/tas50)) <!-- 14.8.1 -->

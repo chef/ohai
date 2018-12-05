@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.9 -->
-## [v14.8.9](https://github.com/chef/ohai/tree/v14.8.9) (2018-12-05)
+<!-- latest_release 14.8.10 -->
+## [v14.8.10](https://github.com/chef/ohai/tree/v14.8.10) (2018-12-05)
 
 #### Merged Pull Requests
-- Add final notes for Ohai 14.8 [#1331](https://github.com/chef/ohai/pull/1331) ([tas50](https://github.com/tas50))
+- Fix arista platform detection [#1332](https://github.com/chef/ohai/pull/1332) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Fix arista platform detection [#1332](https://github.com/chef/ohai/pull/1332) ([tas50](https://github.com/tas50)) <!-- 14.8.10 -->
 - Add final notes for Ohai 14.8 [#1331](https://github.com/chef/ohai/pull/1331) ([tas50](https://github.com/tas50)) <!-- 14.8.9 -->
 - Add support for XCP-NG platform [#1330](https://github.com/chef/ohai/pull/1330) ([tas50](https://github.com/tas50)) <!-- 14.8.8 -->
 - Add mangeia platform with madriva platform_family [#1328](https://github.com/chef/ohai/pull/1328) ([tas50](https://github.com/tas50)) <!-- 14.8.7 -->

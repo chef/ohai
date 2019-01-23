@@ -130,6 +130,25 @@ module Ohai
       freeze_strings!
     end
 
+    def list_plugins(attribute_filter = nil)
+      reset_system
+      load_plugins
+      plugins = {}
+      begin
+        @provides_map.all_plugins(attribute_filter).each do |plugin|
+          #require 'pry';binding.pry
+          plugins[plugin.name] = {}
+          plugins[plugin.name][:optional] = plugin.optional?
+          plugins[plugin.name][:dependencies] = plugin.dependencies
+          plugins[plugin.name][:description] = plugin.description
+        end
+      rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
+        logger.error("Encountered error while running plugins: #{e.inspect}")
+        raise
+      end
+      plugins
+    end
+
     def run_additional_plugins(plugin_path)
       @loader.load_additional(plugin_path).each do |plugin|
         logger.trace "Running plugin #{plugin}"

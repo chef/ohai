@@ -101,6 +101,10 @@ module Ohai
           !!@optional
         end
 
+        def self.description(text)
+          @description = text
+        end
+
         # define data collection methodology per platform
         #
         # @param platform [Symbol] the platform to collect data for

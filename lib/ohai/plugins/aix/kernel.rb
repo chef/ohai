@@ -20,6 +20,8 @@
 Ohai.plugin(:Kernel) do
   provides "kernel", "kernel/modules"
 
+  description "This gathers data on the kernel such as its version and modules"
+
   collect_data(:aix) do
     kernel Mash.new
 

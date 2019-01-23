@@ -56,6 +56,12 @@ class Ohai::Application
     description: "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     proc: nil
 
+  option :print_plugins,
+    short: "-p",
+    long: "--print-plugins",
+    description: "Print information on each available plugin",
+    boolean: true
+
   option :help,
     short: "-h",
     long: "--help",
@@ -79,7 +85,11 @@ class Ohai::Application
   def run
     elapsed = Benchmark.measure do
       configure_ohai
-      run_application
+      if config[:print_plugins]
+        run_print_plugins
+      else
+        run_application
+      end
     end
     Ohai::Log.debug("Ohai took #{elapsed.total} total seconds to run.")
   end
@@ -88,6 +98,8 @@ class Ohai::Application
   #
   # @return void
   def configure_ohai
+    # @attributes receives all the attribute names passed on the CLI and we use
+    # it later to pass in the list of attributes to filter
     @attributes = parse_options
     @attributes = nil if @attributes.empty?
 
@@ -113,6 +125,14 @@ class Ohai::Application
     else
       puts ohai.json_pretty_print
     end
+  end
+
+  def run_print_plugins
+    config[:invoked_from_cli] = true
+    config[:logger] = Ohai::Log.with_child
+    ohai = Ohai::System.new(config)
+    require 'pry'; binding.pry
+    ohai.list_plugins(@attributes)
   end
 
   class << self

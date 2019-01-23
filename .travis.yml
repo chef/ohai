@@ -1,7 +1,6 @@
 language: ruby
 cache: bundler
 dist: xenial
-sudo: false
 
 branches:
   only:

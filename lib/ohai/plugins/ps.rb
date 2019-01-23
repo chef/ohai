@@ -23,7 +23,7 @@ Ohai.plugin(:PS) do
   provides "command/ps"
   depends "command"
 
-  collect_data(:aix, :darwin, :hpux, :linux, :solaris2) do
+  collect_data(:aix, :darwin, :linux, :solaris2) do
     command[:ps] = "ps -ef"
   end
 

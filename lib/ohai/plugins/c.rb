@@ -149,19 +149,6 @@ Ohai.plugin(:C) do
     end
   end
 
-  def collect_hpux_cc
-    # hpux cc
-    collect("what /opt/ansic/bin/cc") do |so|
-      description = so.stdout.split($/).select { |line| line =~ /HP C Compiler/ }.first
-      if description
-        output = description.split
-        @c[:hpcc] = Mash.new
-        @c[:hpcc][:version] = output[1] if output.size >= 1
-        @c[:hpcc][:description] = description.strip
-      end
-    end
-  end
-
   collect_data(:aix) do
     @c = Mash.new
     collect_xlc
@@ -179,13 +166,6 @@ Ohai.plugin(:C) do
     @c = Mash.new
     check_for_cl
     check_for_devenv
-    languages[:c] = @c unless @c.empty?
-  end
-
-  collect_data(:hpux) do
-    @c = Mash.new
-    collect_gcc
-    collect_hpux_cc
     languages[:c] = @c unless @c.empty?
   end
 

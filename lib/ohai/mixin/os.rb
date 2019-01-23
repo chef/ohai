@@ -32,8 +32,6 @@ module Ohai
           "aix"
         when /darwin(.+)$/
           "darwin"
-        when /hpux(.+)$/
-          "hpux"
         when /linux/
           "linux"
         when /freebsd(.+)$/

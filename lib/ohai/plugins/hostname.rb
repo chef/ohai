@@ -74,7 +74,7 @@ Ohai.plugin(:Hostname) do
     end
   end
 
-  collect_data(:hpux, :default) do
+  collect_data(:default) do
     machinename from_cmd("hostname")
     fqdn resolve_fqdn
     collect_hostname

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.26 -->
-## [v15.0.26](https://github.com/chef/ohai/tree/v15.0.26) (2018-12-31)
+<!-- latest_release 15.0.27 -->
+## [v15.0.27](https://github.com/chef/ohai/tree/v15.0.27) (2019-01-24)
 
 #### Merged Pull Requests
-- Remove V6 plugin Struct to reduce memory consumption [#1333](https://github.com/chef/ohai/pull/1333) ([tas50](https://github.com/tas50))
+- Fully remove support for HP-UX [#1336](https://github.com/chef/ohai/pull/1336) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Fully remove support for HP-UX [#1336](https://github.com/chef/ohai/pull/1336) ([tas50](https://github.com/tas50)) <!-- 15.0.27 -->
 - Remove V6 plugin Struct to reduce memory consumption [#1333](https://github.com/chef/ohai/pull/1333) ([tas50](https://github.com/tas50)) <!-- 15.0.26 -->
 - Add support for XCP-ng platform [#1283](https://github.com/chef/ohai/pull/1283) ([heyjodom](https://github.com/heyjodom)) <!-- 15.0.25 -->
 - Unify virtualization detection on a single helper [#1317](https://github.com/chef/ohai/pull/1317) ([tas50](https://github.com/tas50)) <!-- 15.0.24 -->

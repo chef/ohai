@@ -70,14 +70,6 @@ C_SUN = <<~EOF.freeze
   cc: Sun C 5.8 Patch 121016-06 2007/08/01
 EOF
 
-C_HPUX = <<~EOF.freeze
-  /opt/ansic/bin/cc:
-          $Revision: 92453-07 linker linker crt0.o B.11.47 051104 $
-          LINT B.11.11.16 CXREF B.11.11.16
-          HP92453-01 B.11.11.16 HP C Compiler
-           $ PATCH/11.00:PHCO_27774  Oct  3 2002 09:45:59 $
-EOF
-
 describe Ohai::System, "plugin c" do
 
   let(:plugin) { get_plugin("c") }
@@ -131,43 +123,6 @@ describe Ohai::System, "plugin c" do
     end
 
   end
-
-  context "on HPUX" do
-    before(:each) do
-      allow(plugin).to receive(:collect_os).and_return(:hpux)
-      allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
-    end
-
-    # hpux cc
-    it "gets the cc version from running what cc" do
-      expect(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(0, C_HPUX, ""))
-      plugin.run
-    end
-
-    it "sets languages[:c][:hpcc][:version]" do
-      plugin.run
-      expect(plugin.languages[:c][:hpcc][:version]).to eql("B.11.11.16")
-    end
-
-    it "sets languages[:c][:hpcc][:description]" do
-      plugin.run
-      expect(plugin.languages[:c][:hpcc][:description]).to eql("HP92453-01 B.11.11.16 HP C Compiler")
-    end
-
-    it "does not set the languages[:c][:hpcc] tree up if cc command exits nonzero" do
-      allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_return(mock_shell_out(1, "", ""))
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:hpcc)
-    end
-
-    it "does not set the languages[:c][:hpcc] tree up if cc command fails" do
-      allow(plugin).to receive(:shell_out).with("what /opt/ansic/bin/cc").and_raise(Ohai::Exceptions::Exec)
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:hpcc)
-      expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
-    end
-  end
-
   context "on Darwin" do
     before(:each) do
       allow(plugin).to receive(:shell_out).with("/usr/bin/xcode-select -p").and_return(mock_shell_out(0, "", ""))
@@ -378,13 +333,6 @@ describe Ohai::System, "plugin c" do
       fedora_error_message = "cc: error trying to exec 'i686-redhat-linux-gcc--flags': execvp: No such file or directory"
 
       allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", fedora_error_message))
-      plugin.run
-      expect(plugin[:languages][:c]).not_to have_key(:sunpro)
-    end
-
-    it "does not set the languages[:c][:sunpro] tree if the corresponding cc command fails on hpux" do
-      hpux_error_message = "cc: warning 901: unknown option: `-flags': use +help for online documentation.\ncc: HP C/aC++ B3910B A.06.25 [Nov 30 2009]"
-      allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", hpux_error_message))
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:sunpro)
     end

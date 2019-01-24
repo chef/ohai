@@ -55,16 +55,6 @@ describe Ohai::System, "root_group" do
       end
     end
 
-    describe "platform hpux with sys group" do
-      before(:each) do
-        allow(@pwnam).to receive(:gid).and_return(3)
-        allow(@grgid).to receive(:name).and_return("sys")
-      end
-      it "should have a root_group of sys" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("sys")
-      end
-    end
     describe "platform aix with system group" do
       before(:each) do
         allow(@grgid).to receive(:name).and_return("system")

@@ -35,7 +35,7 @@ describe Ohai::System, "Linux hostnamectl plugin" do
   Operating System: Debian GNU/Linux 8 (jessie)
             Kernel: Linux 4.3.0-0.bpo.1-amd64
       Architecture: x86-64
-HOSTNAMECTL_OUT
+    HOSTNAMECTL_OUT
 
     allow(plugin).to receive(:which).with("hostnamectl").and_return("/bin/hostnamectl")
     allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out, ""))

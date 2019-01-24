@@ -37,7 +37,7 @@ describe Ohai::System, "darwin filesystem plugin" do
         map -hosts                    0         0         0   100%        0        0  100%   /net
         map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
         deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -77,7 +77,7 @@ DF
         map -hosts on /net (autofs, nosuid, automounted, nobrowse)
         map -static on /mobile_symbol (autofs, automounted, nobrowse)
         deweyfs@osxfuse0 on /mnt/dewey (osxfusefs, synchronous, nobrowse)
-MOUNT
+      MOUNT
       allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -105,7 +105,7 @@ MOUNT
         map -static                   0         0         0   100%        0        0  100%   /mobile_symbol
         deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
         /dev/disk0s2          488555536 313696448 174347088    65% 39276054 21793386 64%   /another/mountpoint
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 
@@ -127,7 +127,7 @@ DF
         deweyfs@osxfuse0              0         0         0   100%        0        0  100%   /mnt/dewey
         /dev/disk0s3          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
         /dev/disk0s4          488555536 313696448 174347088    65% 39276054 21793386 64% /mnt
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -i").and_return(mock_shell_out(0, @dfstdout, ""))
     end
 

@@ -42,7 +42,7 @@ module Ohai
     # @return [Array<String>]
     def plugin_files_by_dir(plugin_dir = Ohai.config[:plugin_path])
       Array(plugin_dir).map do |path|
-        if  Dir.exist?(path)
+        if Dir.exist?(path)
           Ohai::Log.trace("Searching for Ohai plugins in #{path}")
 
           escaped = ChefConfig::PathHelper.escape_glob_dir(path)

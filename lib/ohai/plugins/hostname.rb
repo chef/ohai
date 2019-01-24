@@ -175,7 +175,7 @@ Ohai.plugin(:Hostname) do
     else
       # host is not in dns. optionally use:
       # C:\WINDOWS\system32\drivers\etc\hosts
-      info[3..info.length].reverse.each do |addr|
+      info[3..info.length].reverse_each do |addr|
         hostent = Socket.gethostbyaddr(addr)
         if hostent.first =~ /.+?\.(.*)/
           fqdn hostent.first

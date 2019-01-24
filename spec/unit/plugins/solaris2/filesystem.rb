@@ -60,7 +60,7 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
         -hosts                         0           0           0     0%    /net
         auto_home                      0           0           0     0%    /home
         -fedfs 0 0 0 0% /nfs4
-DF_PKA
+      DF_PKA
 
       @mount = <<~MOUNT
         / on rpool/ROOT/solaris-0 read/write/setuid/nodevices/rstchown/nonbmand/exec/xattr/atime/mountpoint=/zones/servername.chef.internal.dns/root//zone=servername.chef.internal.dns/nozonemod/sharezone=151/dev=4bd0b7e on Fri Feb  2 16:27:36 2018
@@ -82,7 +82,7 @@ DF_PKA
         /var/share/pkg/repositories on rpool/VARSHARE/pkg/repositories read/write/setuid/nodevices/rstchown/nonbmand/exec/xattr/atime/zone=servername.chef.internal.dns/sharezone=151/dev=4bd0b85 on Fri Feb  2 16:28:12 2018
         /export/home/<usernameredacted> on rpool/export/home/<usernameredacted> read/write/setuid/nodevices/rstchown/nonbmand/exec/xattr/atime/zone=servername.chef.internal.dns/sharezone=151/dev=4bd0b8a on Fri Feb  2 16:39:15 2018
         /export/home/<usernameredacted> on rpool/export/home/<usernameredacted> read/write/setuid/nodevices/rstchown/nonbmand/exec/xattr/atime/zone=servername.chef.internal.dns/sharezone=151/dev=4bd0b8b on Fri Feb 2 16:39:16 2018
-MOUNT
+      MOUNT
 
       @zfs_get = <<~ZFS_GET
         data0   type    filesystem      -
@@ -323,7 +323,7 @@ MOUNT
         data0/Movies    relatime        off     default
         data0/Movies    redundant_metadata      all     default
         data0/Movies overlay off default:
-ZFS_GET
+      ZFS_GET
     end
 
     after(:each) do

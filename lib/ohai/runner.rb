@@ -62,8 +62,8 @@ module Ohai
 
     def run_v7_plugin(plugin)
       return true if plugin.optional? &&
-          !Ohai.config[:run_all_plugins] &&
-          !Ohai.config[:optional_plugins].include?(plugin.name)
+        !Ohai.config[:run_all_plugins] &&
+        !Ohai.config[:optional_plugins].include?(plugin.name)
 
       visited = [ plugin ]
       until visited.empty?

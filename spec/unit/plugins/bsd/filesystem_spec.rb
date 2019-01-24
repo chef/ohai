@@ -35,14 +35,14 @@ describe Ohai::System, "BSD filesystem plugin" do
         Filesystem  1K-blocks    Used   Avail Capacity  Mounted on
         /dev/ada0p2   9637788 3313504 5553264    37%    /
         devfs               1       1       0   100%    /dev
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df").and_return(mock_shell_out(0, @stdout, ""))
 
       @inode_stdout = <<~DFI
         Filesystem  512-blocks    Used   Avail Capacity iused  ifree %iused  Mounted on
         /dev/ada0p2   15411832 5109256 9069632    36%  252576 790750   24%   /
         devfs                2       2       0   100%       0      0  100%   /dev
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
@@ -106,7 +106,7 @@ DFI
       @stdout = <<~MOUNT
         /dev/ada0p2 on / (ufs, local, journaled soft-updates)
         devfs on /dev (devfs, local, multilabel)
-MOUNT
+      MOUNT
       allow(plugin).to receive(:shell_out).with("mount -l").and_return(mock_shell_out(0, @stdout, ""))
     end
 

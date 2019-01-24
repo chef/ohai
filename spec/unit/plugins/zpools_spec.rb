@@ -42,13 +42,13 @@ describe Ohai::System, "zpools plugin" do
         sdl                    ONLINE       0     0     0
         sdm                    ONLINE       0     0     0
         sdn                    ONLINE       0     0     0
-EOST
+      EOST
     end
     let(:zpool_out) do
       <<~EOZO
         rpool	109G	66.2G	42.8G	60%	1.00x	ONLINE	-
         tank	130T	4.91M	130T	0%	1.00x	ONLINE	-
-EOZO
+      EOZO
     end
     let(:zpool_status_rpool) do
       <<-EOSR
@@ -64,7 +64,7 @@ EOZO
         sdb       ONLINE       0     0     0
 
   errors: No known data errors
-EOSR
+      EOSR
     end
     before do
       allow(plugin).to receive(:platform_family).and_return("rhel")
@@ -153,13 +153,13 @@ EOSR
                   c1t50014EE25F697DC4d0  ONLINE       0     0     0
                   c1t50014EE25F698BECd0  ONLINE       0     0     0
                   c1t50014EE25F6998DAd0  ONLINE       0     0     0
-EOST
+      EOST
     end
     let(:zpool_out) do
       <<~EOZO
         rpool   109G    66.2G   42.8G   60%     1.00x   ONLINE  34
         tank    130T    4.91M   130T    0%      1.00x   ONLINE  34
-EOZO
+      EOZO
     end
     let(:zpool_status_rpool) do
       <<~EOSR
@@ -175,7 +175,7 @@ EOZO
                   c3t4d0s0  ONLINE       0     0     0
 
         errors: No known data errors
-EOSR
+      EOSR
     end
     before do
       allow(plugin).to receive(:platform_family).and_return("solaris2")

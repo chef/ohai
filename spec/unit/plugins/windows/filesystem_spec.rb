@@ -41,7 +41,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "size" => "10000000",
         "filesystem" => "FAT32",
         "freespace" => "100000",
-        "name" => "D:"
+        "name" => "D:",
         # Lets not pass "volumename" for this drive
       }
     ]

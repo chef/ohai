@@ -81,7 +81,7 @@ describe Ohai::System, "ssh_host_key plugin" do
         HostKey /etc/ssh/ssh_host_dsa_key
         HostKey /etc/ssh/ssh_host_ecdsa_key
         HostKey /etc/ssh/ssh_host_ed25519_key
-EOS
+      EOS
     end
     it_behaves_like "loads keys"
   end
@@ -94,7 +94,7 @@ EOS
         #HostKey /etc/ssh/ssh_host_dsa_key
         #HostKey /etc/ssh/ssh_host_ecdsa_key
         #HostKey /etc/ssh/ssh_host_ed25519_key
-EOS
+      EOS
     end
     it_behaves_like "loads keys"
   end

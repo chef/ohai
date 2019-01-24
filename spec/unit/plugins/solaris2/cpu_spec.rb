@@ -441,7 +441,7 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
         cpu_info:15:cpu_info15:supported_frequencies_Hz 2925945978
         cpu_info:15:cpu_info15:supported_max_cstates    1
         cpu_info:15:cpu_info15:vendor_id        GenuineIntel
-END
+      END
       allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
       @plugin.run
     end
@@ -2807,7 +2807,7 @@ END
         cpu_info:127:cpu_info127:state	off-line
         cpu_info:127:cpu_info127:state_begin	1430258903
         cpu_info:127:cpu_info127:supported_frequencies_Hz	1648762500
-END
+      END
       allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
       @plugin.run
     end

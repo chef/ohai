@@ -78,7 +78,7 @@ describe Ohai::System, "BSD virtualization plugin" do
         Id Refs Address Size Name
         1 40 0xffffffff80100000 d20428 kernel
         7 3 0xffffffff81055000 41e88 vboxguest.ko
-OUT
+      OUT
       allow(plugin).to receive(:shell_out).with((Ohai.abs_path("/sbin/kldstat")).to_s).and_return(mock_shell_out(0, @vbox_guest, ""))
     end
 
@@ -96,7 +96,7 @@ OUT
         Id Refs Address Size Name
         1 40 0xffffffff80100000 d20428 kernel
         7 3 0xffffffff81055000 41e88 vboxdrv.ko
-OUT
+      OUT
       allow(plugin).to receive(:shell_out).with("/sbin/kldstat").and_return(mock_shell_out(0, @stdout, ""))
     end
 

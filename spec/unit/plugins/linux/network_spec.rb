@@ -141,7 +141,7 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:2 errors:0 dropped:1 overruns:0 carrier:0
                 collisions:0 txqueuelen:1000
                 RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
-EOM
+    EOM
 # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
 # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
   end
@@ -155,7 +155,7 @@ EOM
       192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
       10.5.4.0/24 \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
       default via 10.116.201.1 dev eth0
-EOM
+    EOM
   end
 
   let(:linux_route_n) do
@@ -165,7 +165,7 @@ EOM
       10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
       169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 eth0
       0.0.0.0         10.116.201.1    0.0.0.0         UG    0      0        0 eth0
-EOM
+    EOM
   end
 
   let(:linux_ip_route_inet6) do
@@ -174,7 +174,7 @@ EOM
       fe80::/64 dev eth0.11  proto kernel  metric 256
       1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
       default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+    EOM
   end
 
   let(:linux_ip_addr) do
@@ -238,7 +238,7 @@ EOM
           link/tunnel6 :: brd ::
           inet6 fe80::f47a:2aff:fef0:c6ef/64 scope link
              valid_lft forever preferred_lft forever
-EOM
+    EOM
   end
 
   let(:linux_ip_link_s_d) do
@@ -305,19 +305,19 @@ EOM
           0          0        0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           0          0        0       0       0       0
-EOM
+    EOM
   end
 
   let(:linux_arp_an) do
     <<~EOM
       ? (10.116.201.1) at fe:ff:ff:ff:ff:ff [ether] on eth0
-EOM
+    EOM
   end
 
   let(:linux_ip_neighbor_show) do
     <<~EOM
       10.116.201.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff REACHABLE
-EOM
+    EOM
   end
 
   let(:linux_ip_inet6_neighbor_show) do
@@ -325,7 +325,7 @@ EOM
       1111:2222:3333:4444::1 dev eth0.11 lladdr 00:1c:0e:12:34:56 router REACHABLE
       fe80::21c:eff:fe12:3456 dev eth0.11 lladdr 00:1c:0e:30:28:00 router REACHABLE
       fe80::21c:eff:fe12:3456 dev eth0.153 lladdr 00:1c:0e:30:28:00 router REACHABLE
-EOM
+    EOM
   end
 
   let(:linux_ethtool) do
@@ -351,7 +351,7 @@ EOM
               Current message level: 0x00000007 (7)
                                      drv probe link
               Link detected: yes
-EOM
+    EOM
   end
 
   let(:linux_ethtool_g) do
@@ -368,7 +368,7 @@ EOM
       RX Jumbo:	0
       TX:		8192
 
-EOM
+    EOM
   end
 
   before(:each) do
@@ -748,7 +748,7 @@ EOM
           <<~EOM
             10.116.201.0/24 dev eth0  proto kernel
             default dev eth0 scope link
-EOM
+          EOM
         end
 
         let(:linux_route_n) do
@@ -757,7 +757,7 @@ EOM
             Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
             10.116.201.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0
             0.0.0.0         0.0.0.0         0.0.0.0         U     0      0        0 eth0
-EOM
+          EOM
         end
 
         before(:each) do
@@ -778,7 +778,7 @@ EOM
           <<~EOM
             192.168.0.0/24 dev eth0.11  proto kernel  src 192.168.0.2
             default via 192.168.0.15 dev eth0.11
-EOM
+          EOM
         end
 
         let(:linux_route_n) do
@@ -787,7 +787,7 @@ EOM
             Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
             192.168.0.0    0.0.0.0         255.255.255.0   U     0      0        0 eth0.11
             0.0.0.0         192.168.0.15   0.0.0.0         UG    0      0        0 eth0.11
-EOM
+          EOM
         end
 
         before(:each) do
@@ -888,7 +888,7 @@ EOM
             fe80::/64 dev eth0  proto kernel  metric 256
             fe80::/64 dev eth0.11  proto kernel  metric 256
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024  expires 86023sec
-EOM
+          EOM
         end
 
         before(:each) do
@@ -917,7 +917,7 @@ EOM
             172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
             default via 10.116.201.1 dev eth0  src 10.116.201.76
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -926,7 +926,7 @@ EOM
             fe80::/64 dev eth0.11  proto kernel  metric 256
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024
             default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-EOM
+          EOM
         end
 
         before(:each) do
@@ -957,7 +957,7 @@ EOM
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
             default via 10.116.201.1 dev eth0 metric 10
             default via 10.116.201.254 dev eth0 metric 9
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -967,7 +967,7 @@ EOM
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
             default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
             default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1000,7 +1000,7 @@ EOM
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
             default via 10.116.201.1 dev eth0 metric 10
             default via 10.116.201.254 dev eth0 metric 9 src 10.116.201.74
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -1010,7 +1010,7 @@ EOM
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
             default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
             default via 1111:2222:3333:4444::ffff dev eth0.11  metric 1023 src 1111:2222:3333:4444::2
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1040,7 +1040,7 @@ EOM
             172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
             default via 10.116.201.1 dev eth0
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -1049,7 +1049,7 @@ EOM
             fe80::/64 dev eth0.11  proto kernel  metric 256
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
             default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+          EOM
         end
 
         it "completes the run" do
@@ -1089,7 +1089,7 @@ EOM
               <<~EOM
                 10.118.19.1 dev tun0 proto kernel  src 10.118.19.39
                 default via 172.16.19.1 dev tun0
-EOM
+              EOM
             end
             let(:linux_ip_route_inet6) { "" }
 
@@ -1111,7 +1111,7 @@ EOM
         let(:linux_ip_route) do
           <<~EOM
             default dev venet0 scope link
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1132,7 +1132,7 @@ EOM
         let(:linux_ip_route) do
           <<~EOM
             default dev eth3 scope link
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1157,7 +1157,7 @@ EOM
         let(:linux_ip_route) do
           <<~EOM
             default dev fwdintf scope link src 2.2.2.2
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1183,7 +1183,7 @@ EOM
           <<~EOM
             fe80::/64 dev eth0  proto kernel  metric 256
             default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
-EOM
+          EOM
         end
         before(:each) do
           plugin.run
@@ -1208,7 +1208,7 @@ EOM
             192.168.212.0/24 dev foo:veth0@eth0  proto kernel  src 192.168.212.2
             172.16.151.0/24 dev eth0  proto kernel  src 172.16.151.100
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -1216,7 +1216,7 @@ EOM
             fe80::/64 dev eth0  proto kernel  metric 256
             fe80::/64 dev eth0.11  proto kernel  metric 256
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024  src 1111:2222:3333:4444::3
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1252,7 +1252,7 @@ EOM
                 inet 10.116.201.76/24 brd 10.116.201.255 scope global venet0:0
                 inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
                    valid_lft 6128sec preferred_lft 2526sec
-EOM
+          EOM
         end
         # We don't have the corresponding ipv6 data for these tests
         let(:linux_ip_route_inet6) { "" }
@@ -1291,7 +1291,7 @@ EOM
             10.118.19.0/26 dev eth0 proto kernel  src 10.118.19.39
             10.118.19.0/26 dev if5 proto kernel  src 10.118.19.45
             default via 10.116.201.1 dev eth0  src 10.116.201.99
-EOM
+          EOM
         end
 
         let(:linux_ip_route_inet6) do
@@ -1300,7 +1300,7 @@ EOM
             fe80::/64 dev eth0.11  proto kernel  metric 256
             1111:2222:3333:4444::/64 dev eth0.11  metric 1024 src 1111:2222:3333:4444::FFFF:2
             default via 1111:2222:3333:4444::1 dev eth0.11  metric 1024
-EOM
+          EOM
         end
 
         before(:each) do
@@ -1332,7 +1332,7 @@ EOM
         let(:linux_ip_route) do
           <<~EOM
             192.168.122.0/24 dev virbr0  proto kernel  src 192.168.122.1
-EOM
+          EOM
         end
 
         it "logs a message and skips previously unseen interfaces in 'ip route show'" do
@@ -1376,7 +1376,7 @@ EOM
                 1392844460 2659966  0       0       0       0
                 TX: bytes  packets  errors  dropped carrier collsns
                 691785313  1919690  0       0       0       0
-EOM
+          EOM
         end
 
         it "adds the vlan information of an interface" do

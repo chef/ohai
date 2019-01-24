@@ -29,7 +29,7 @@ describe Ohai::System, "lsscsi plugin" do
       [6:2:2:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdd
       [6:2:3:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sde
       [6:2:4:0]    disk    LSI      MR9286CV-8e      3.41  /dev/sdf
-LSSCSI
+    LSSCSI
     allow(plugin).to receive(:shell_out).with("lsscsi").and_return(
       mock_shell_out(0, @stdout, ""))
     plugin.run

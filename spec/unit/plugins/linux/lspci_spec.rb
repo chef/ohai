@@ -85,7 +85,7 @@ describe Ohai::System, "Linux lspci plugin" do
       Driver:	nvme
       Module:	nvme
       NUMANode:	0
-LSPCI
+    LSPCI
     allow(plugin).to receive(:shell_out).with("lspci -vnnmk").and_return(
       mock_shell_out(0, @stdout, ""))
   end

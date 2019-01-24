@@ -349,7 +349,7 @@ describe Ohai::System, "Linux virtualization platform" do
         3:cpuacct:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
         2:cpu:/lxc/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
         1:cpuset:/
-CGROUP
+      CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -368,7 +368,7 @@ CGROUP
         3:cpuacct:/lxc/vanilla
         2:cpu:/lxc/vanilla
         1:cpuset:/lxc/vanilla
-CGROUP
+      CGROUP
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -387,7 +387,7 @@ CGROUP
         3:cpuacct:/Charlie
         2:cpu:/Charlie
         1:cpuset:/Charlie
-CGROUP
+      CGROUP
       allow(File).to receive(:read).with("/proc/1/environ").and_return("")
       expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
@@ -406,7 +406,7 @@ CGROUP
           3:cpuacct:/
           2:cpu:/
           1:cpuset:/
-CGROUP
+        CGROUP
         expect(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
         allow(File).to receive(:read).with("/proc/1/environ").and_return("")
@@ -485,7 +485,7 @@ CGROUP
         3:cpuacct:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
         2:cpu:/docker/baa660ed81bc81d262ac6e19486142aeec5fce2043e2a173eb2505c6fbed89bc
         1:cpuset:/
-CGROUP
+      CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -504,7 +504,7 @@ CGROUP
         3:cpuacct:/docker/vanilla
         2:cpu:/docker/vanilla
         1:cpuset:/docker/vanilla
-CGROUP
+      CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -528,7 +528,7 @@ CGROUP
         3:cpuacct:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
         2:cpu:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
         1:cpuset:/docker-ce/docker/b15b85d19304436488a78d06afeb108d94b20bb6898d852b65cad51bd7dc9468
-CGROUP
+      CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -549,7 +549,7 @@ CGROUP
         3:memory:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
         2:cpu,cpuacct:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
         1:name=systemd:/system.slice/docker-47341c91be8d491cb3b8a475ad5b4aef6e79bf728cbb351c384e4a6c410f172f.scope
-CGROUP
+      CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       plugin.run
@@ -568,7 +568,7 @@ CGROUP
         3:cpuacct:/Charlie
         2:cpu:/Charlie
         1:cpuset:/Charlie
-CGROUP
+      CGROUP
       allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
       allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
       allow(File).to receive(:read).with("/proc/1/environ").and_return("")
@@ -587,7 +587,7 @@ CGROUP
           3:cpuacct:/
           2:cpu:/
           1:cpuset:/
-CGROUP
+        CGROUP
         allow(File).to receive(:exist?).with("/proc/self/cgroup").and_return(true)
         allow(File).to receive(:read).with("/proc/self/cgroup").and_return(self_cgroup)
         plugin.run

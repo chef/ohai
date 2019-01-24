@@ -39,7 +39,7 @@ describe Ohai::System, "Solaris plugin platform" do
         OEM# = 0
         Origin# = 1
         NumCPU = 16
-UNAME_X
+      UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
       allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
@@ -79,7 +79,7 @@ UNAME_X
         OEM# = 0
         Origin# = 1
         NumCPU = 1
-UNAME_X
+      UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
       allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))

@@ -34,7 +34,7 @@ describe Ohai::System, "plugin mono" do
       	Misc:          softdebug
       	LLVM:          supported, not enabled.
       	GC:            sgen
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("mono -V").and_return(mock_shell_out(0, @stdout, ""))
   end
 

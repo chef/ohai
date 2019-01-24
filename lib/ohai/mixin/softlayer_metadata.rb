@@ -29,11 +29,11 @@ module ::Ohai::Mixin::SoftlayerMetadata
   # @return [Hash]
   def fetch_metadata
     {
-      "public_fqdn"   => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
-      "local_ipv4"    => fetch_metadata_item("getPrimaryBackendIpAddress.txt"),
-      "public_ipv4"   => fetch_metadata_item("getPrimaryIpAddress.txt"),
-      "region"        => fetch_metadata_item("getDatacenter.txt"),
-      "instance_id"   => fetch_metadata_item("getId.txt"),
+      "public_fqdn" => fetch_metadata_item("getFullyQualifiedDomainName.txt"),
+      "local_ipv4" => fetch_metadata_item("getPrimaryBackendIpAddress.txt"),
+      "public_ipv4" => fetch_metadata_item("getPrimaryIpAddress.txt"),
+      "region" => fetch_metadata_item("getDatacenter.txt"),
+      "instance_id" => fetch_metadata_item("getId.txt"),
     }
   end
 

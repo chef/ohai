@@ -156,20 +156,20 @@ describe "when using DSL commands outside Ohai.plugin block" do
     provides "fail"
     Ohai.plugin do
     end
-EOF
+  EOF
 
   failstr2 = <<~EOF
     depends "fail"
     Ohai.plugin do
     end
-EOF
+  EOF
 
   failstr3 = <<~EOF
     collect_data do
     end
     Ohai.plugin do
     end
-EOF
+  EOF
 
   it_behaves_like "a v7 loading failure" do
     let(:failstr) { failstr1 }

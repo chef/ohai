@@ -65,14 +65,14 @@ describe Ohai::System, "plugin joyent" do
           Name: Joyent Instance
           Image: pkgbuild 16.3.1
           Documentation: https://docs.joyent.com/images/smartos/pkgbuild
-      EOS
+        EOS
 
         pkg_install_conf = <<~EOS
           GPG_KEYRING_VERIFY=/opt/local/etc/gnupg/pkgsrc.gpg
           GPG_KEYRING_PKGVULN=/opt/local/share/gnupg/pkgsrc-security.gpg
           PKG_PATH=https://pkgsrc.joyent.com/packages/SmartOS/2016Q3/x86_64/All
           VERIFIED_INSTALLATION=trusted
-      EOS
+        EOS
 
         allow(::File).to receive(:read).with("/etc/product").and_return(etc_product)
         allow(::File).to receive(:read).with("/opt/local/etc/pkg_install.conf").and_return(pkg_install_conf)

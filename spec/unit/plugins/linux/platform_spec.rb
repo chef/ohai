@@ -136,7 +136,7 @@ describe Ohai::System, "Linux plugin platform" do
           PRETTY_NAME="CentOS Linux 7 (Core)"
 
           CISCO_RELEASE_INFO=/etc/shared/os-release
-  OS_RELEASE
+        OS_RELEASE
       end
 
       let(:cisco_release_content) do
@@ -150,7 +150,7 @@ describe Ohai::System, "Linux plugin platform" do
           HOME_URL=http://www.cisco.com
           BUILD_ID=6
           CISCO_RELEASE_INFO=/etc/shared/os-release
-  CISCO_RELEASE
+        CISCO_RELEASE
       end
 
       it "returns nexus_centos for centos os-release id" do
@@ -220,7 +220,7 @@ describe Ohai::System, "Linux plugin platform" do
           ID_LIKE=debian
           PRETTY_NAME="Ubuntu 14.04.5 LTS"
           VERSION_ID="14.04"
-OS_DATA
+        OS_DATA
       end
 
       before(:each) do
@@ -242,7 +242,7 @@ OS_DATA
           PRETTY_NAME="Arch Linux"
           ID=arch
           ID_LIKE=archlinux
-OS_DATA
+        OS_DATA
       end
 
       before(:each) do
@@ -267,7 +267,7 @@ OS_DATA
           ID_LIKE="suse opensuse"
           VERSION_ID="15.0"
           PRETTY_NAME="openSUSE Leap 15.0"
-OS_DATA
+        OS_DATA
       end
 
       before(:each) do
@@ -291,7 +291,7 @@ OS_DATA
           ID_LIKE="rhel fedora"
           VERSION_ID="7"
           PRETTY_NAME="CentOS Linux 7 (Core)"
-OS_DATA
+        OS_DATA
       end
 
       before(:each) do
@@ -787,7 +787,7 @@ OS_DATA
           ID_LIKE=clear-linux-os
           VERSION_ID=26290
           PRETTY_NAME="Clear Linux OS"
-  CLEARLINUX_RELEASE
+        CLEARLINUX_RELEASE
       end
       before do
         expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)

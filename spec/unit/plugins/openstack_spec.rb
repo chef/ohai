@@ -146,7 +146,7 @@ describe Ohai::System, "plugin openstack" do
           instance-action
           aki-id
           block-device-mapping/
-EOM
+        EOM
       end
 
       let(:metadata_values) do

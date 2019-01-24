@@ -244,7 +244,7 @@ describe Ohai::System, "AIX virtualization plugin" do
         /dev/nvram         pseudo                               EXPORTED
 
 
-LSWPAR_L
+      LSWPAR_L
 
     end
 

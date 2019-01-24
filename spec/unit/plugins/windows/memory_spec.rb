@@ -24,7 +24,7 @@ describe Ohai::System, "Windows memory plugin", :windows_only do
                 "TotalVisibleMemorySize" => "10485760",
                 "FreePhysicalMemory" => "5242880",
                 "SizeStoredInPagingFiles" => "20971520",
-                "FreeSpaceInPagingFiles" =>  "15728640",
+                "FreeSpaceInPagingFiles" => "15728640",
               }
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(mock_os)
   end

@@ -23,7 +23,7 @@ describe Ohai::System, "AIX network plugin" do
   before(:each) do
     @netstat_rn_grep_default = <<~NETSTAT_RN_GREP_DEFAULT
       default            172.31.8.1        UG        2    121789 en0      -      -
-NETSTAT_RN_GREP_DEFAULT
+    NETSTAT_RN_GREP_DEFAULT
 
     @ifconfig = <<~IFCONFIG
       en0: flags=1e080863,480<UP,BROADCAST,NOTRAILERS,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,CHECKSUM_OFFLOAD(ACTIVE),CHAIN> metric 1
@@ -39,7 +39,7 @@ NETSTAT_RN_GREP_DEFAULT
               inet 127.0.0.1 netmask 0xff000000 broadcast 127.255.255.255
               inet6 ::1%1/0
                tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1
-IFCONFIG
+    IFCONFIG
 
     @netstat_nrf_inet = <<~NETSTAT_NRF_INET
       Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
@@ -48,14 +48,14 @@ IFCONFIG
       172.29.128.0       172.29.174.58     UHSb      0         0 en0      -      -   =>
       172.29.128/18      172.29.174.58     U         7   1035485 en0      -      -
       172.29.191.255     172.29.174.58     UHSb      0         1 en0      -      -
-NETSTAT_NRF_INET
+    NETSTAT_NRF_INET
 
     @entstat_err = <<~ENSTAT_ERR
 
 
       entstat: 0909-002 Unable to open device en0, errno = 13
       grep: 0652-033 Cannot open Address".
-ENSTAT_ERR
+    ENSTAT_ERR
 
     @aix_arp_an = <<~ARP_AN
         ? (172.29.131.16) at 6e:87:70:0:40:3 [ethernet] stored in bucket 16
@@ -72,7 +72,7 @@ ENSTAT_ERR
 
       bucket:    0     contains:    0 entries
       There are 6 entries in the arp table.
-ARP_AN
+    ARP_AN
 
     @plugin = get_plugin("aix/network")
     allow(@plugin).to receive(:collect_os).and_return(:aix)

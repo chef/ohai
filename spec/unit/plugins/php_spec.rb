@@ -29,7 +29,7 @@ describe Ohai::System, "plugin php" do
       PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)
       Copyright (c) 1997-2006 The PHP Group
       Zend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, @stdout, ""))
   end
 
@@ -49,7 +49,7 @@ OUT
       Copyright (c) 1997-2016 The PHP Group
       Zend Engine v3.0.0, Copyright (c) 1998-2016 Zend Technologies
           with Zend OPcache v7.0.6-dev, Copyright (c) 1999-2016, by Zend Technologies
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, stdout, ""))
     plugin.run
     expect(plugin.languages[:php][:version]).to eql("7.0.4-7ubuntu2.1")
@@ -66,7 +66,7 @@ OUT
       PHP 5.3.27 with Suhosin-Patch (cli) (built: Aug 30 2013 04:30:30)
       Copyright (c) 1997-2013 The PHP Group
       Zend Engine v2.3.0, Copyright (c) 1998-2013 Zend Technologies
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, stdout, ""))
     plugin.run
     expect(plugin.languages[:php][:builddate]).to eql("Aug 30 2013 04:30:30")
@@ -77,7 +77,7 @@ OUT
       PHP 5.1.6 (cli) (built: Jul 16 2008 19:52:52)
       Copyright (c) 1997-2006 The PHP Group
       Zend Engine v2.1.0, Copyright (c) 1998-2006 Zend Technologies
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, stdout, ""))
     plugin.run
     expect(plugin.languages[:php]).not_to have_key(:zend_opcache_version)
@@ -89,7 +89,7 @@ OUT
       Copyright (c) 1997-2014 The PHP Group
       Zend Engine v2.5.0, Copyright (c) 1998-2014 Zend Technologies
           with Zend OPcache v7.0.3, Copyright (c) 1999-2014, by Zend Technologies
-OUT
+    OUT
     allow(plugin).to receive(:shell_out).with("php -v").and_return(mock_shell_out(0, stdout, ""))
     plugin.run
     expect(plugin.languages[:php][:zend_opcache_version]).to eql("7.0.3")

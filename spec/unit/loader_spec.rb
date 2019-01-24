@@ -38,13 +38,13 @@ describe Ohai::Loader do
       Ohai.plugin(:Alpha) do
         provides "alpha"
       end
-EOF
+    EOF
 
     with_plugin("cookbook_b/beta.rb", <<~EOF)
       Ohai.plugin(:Beta) do
         provides "beta"
       end
-EOF
+    EOF
 
     describe "#load_additional" do
       it "adds the plugins to the map" do
@@ -63,13 +63,13 @@ EOF
       Ohai.plugins(:ExtraS) do
         provides "the_letter_s"
       end
-EOF
+    EOF
 
     with_plugin("no_method.rb", <<~EOF)
       Ohai.plugin(:NoMethod) do
         really_wants "this_attribute"
       end
-EOF
+    EOF
 
     with_plugin("illegal_def.rb", <<~EOF)
       Ohai.plugin(:Zoo) do
@@ -78,32 +78,32 @@ EOF
         collect_data(:darwin) do
         end
       end
-EOF
+    EOF
 
     with_plugin("unexpected_error.rb", <<~EOF)
       Ohai.plugin(:Zoo) do
         raise "You aren't expecting this."
       end
-EOF
+    EOF
 
     with_plugin("bad_symbol.rb", <<~EOF)
       Ohai.plugin(:1nval!d) do
         provides "not_a_symbol"
       end
-EOF
+    EOF
 
     with_plugin("no_end.rb", <<~EOF)
       Ohai.plugin(:NoEnd) do
         provides "fish_oil"
         collect_data do
       end
-EOF
+    EOF
 
     with_plugin("bad_name.rb", <<~EOF)
       Ohai.plugin(:you_give_plugins_a_bad_name) do
         provides "that/one/song"
       end
-EOF
+    EOF
 
     describe "load_plugin() method" do
       describe "when the plugin uses Ohai.plugin instead of Ohai.plugins" do

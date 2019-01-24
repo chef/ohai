@@ -61,8 +61,8 @@ Ohai.plugin(:Virtualization) do
               splat = line.strip.split
               key   = splat[0].downcase
               value = {
-                        "address"   => splat[1],
-                        "netmask"   => splat[2],
+                        "address" => splat[1],
+                        "netmask" => splat[2],
                         "broadcast" => splat[3],
                       }
               wpars[wpar_name][title][key] = value
@@ -72,7 +72,7 @@ Ohai.plugin(:Virtualization) do
               key   = splat[2].downcase
               value = {
                         "destination" => splat[0],
-                        "gateway"     => splat[1],
+                        "gateway" => splat[1],
                       }
               wpars[wpar_name][title][key] = value
             when "file systems"
@@ -81,7 +81,7 @@ Ohai.plugin(:Virtualization) do
               key = splat[1].downcase
               value = {
                         "mountpoint" => splat[0],
-                        "device"     => splat[1],
+                        "device" => splat[1],
                         "vfs" => splat[2],
                         "options" => splat[3].split(","),
                       }

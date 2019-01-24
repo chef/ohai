@@ -42,7 +42,7 @@ describe Ohai::System, "plugin powershell" do
       PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0}
       PSRemotingProtocolVersion      2.2
 
-END
+    END
     compat_version_array = ["1.0", "2.0", "3.0", "4.0"]
 
     allow(plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(0, v4_output, ""))
@@ -61,7 +61,7 @@ END
     error_output = <<~END
       'powershell.exe' is not recognized as an internal or external command,
       operable program or batch file.
-END
+    END
 
     allow(plugin).to receive(:shell_out).with(anything).and_return(mock_shell_out(1, error_output, ""))
     plugin.run

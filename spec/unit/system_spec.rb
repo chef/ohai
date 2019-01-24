@@ -102,25 +102,25 @@ describe "Ohai::System" do
       Ohai.plugin(:Zoo) do
         provides 'seals'
       end
-EOF
+    EOF
 
     with_plugin("repo1/lake.rb", <<~EOF)
       Ohai.plugin(:Nature) do
       provides 'fish'
       end
-EOF
+    EOF
 
     with_plugin("repo2/nature.rb", <<~EOF)
       Ohai.plugin(:Nature) do
         provides 'crabs'
       end
-EOF
+    EOF
 
     with_plugin("repo2/mountain.rb", <<~EOF)
       Ohai.plugin(:Nature) do
       provides 'bear'
       end
-EOF
+    EOF
 
     before do
       Ohai.config[:plugin_path] = [ path_to("repo1"), path_to("repo2") ]
@@ -150,7 +150,7 @@ EOF
             message("platform_specific_message")
           end
         end
-EOF
+      EOF
 
       it "should collect platform specific" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
@@ -168,7 +168,7 @@ EOF
             zoo("animals")
           end
         end
-EOF
+      EOF
 
       with_plugin("park.rb", <<~EOF)
         Ohai.plugin(:Park) do
@@ -177,7 +177,7 @@ EOF
             park("plants")
           end
         end
-EOF
+      EOF
 
       with_plugin("fails.rb", <<~EOF)
         Ohai.plugin(:Fails) do
@@ -186,7 +186,7 @@ EOF
             fail 'thing'
           end
         end
-EOF
+      EOF
 
       with_plugin("optional.rb", <<~EOF)
         Ohai.plugin(:Optional) do
@@ -197,7 +197,7 @@ EOF
             optional("canteloupe")
           end
         end
-EOF
+      EOF
 
       it "should collect data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]

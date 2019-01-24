@@ -26,7 +26,7 @@ describe Ohai::System, "Solaris virtualization platform" do
       The physical processor has 1 virtual processor (0)
         x86 (GenuineIntel family 6 model 2 step 3 clock 2667 MHz)
               Intel Pentium(r) Pro
-PSRINFO_PV
+    PSRINFO_PV
 
     allow(plugin).to receive(:collect_os).and_return(:solaris2)
 

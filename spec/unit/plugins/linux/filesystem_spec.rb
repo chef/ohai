@@ -69,7 +69,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-usr.lv  19223252   5479072  12767696      31% /usr
         /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
         /dev/md0                960492     36388    875312       4% /boot
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @stdout, ""))
 
       @inode_stdout = <<~DFI
@@ -79,7 +79,7 @@ DF
         tmpfs           126922    273  126649    1% /run
         none            126922      1  126921    1% /run/lock
         none            126922      1  126921    1% /run/shm
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
     end
 
@@ -148,7 +148,7 @@ DFI
         /dev/md0 on /boot type ext3 (rw,noatime,errors=remount-ro)
         fusectl on /sys/fs/fuse/connections type fusectl (rw)
         binfmt_misc on /proc/sys/fs/binfmt_misc type binfmt_misc (rw,noexec,nosuid,nodev)
-MOUNT
+      MOUNT
       allow(plugin).to receive(:shell_out).with("mount").and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -189,7 +189,7 @@ MOUNT
         /dev/mapper/sys.vg-usr.lv  19223252   5479072  12767696      31% /usr
         /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
         /dev/md0                960492     36388    875312       4% /boot
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
 
       @inode_stdout = <<~DFI
@@ -199,7 +199,7 @@ DF
         tmpfs           126922    273  126649    1% /run
         none            126922      1  126921    1% /run/lock
         none            126922      1  126921    1% /run/shm
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       @stdout = <<~BLKID_TYPE
@@ -215,7 +215,7 @@ DFI
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -245,7 +245,7 @@ BLKID_TYPE
         /dev/mapper/sys.vg-usr.lv  19223252   5479072  12767696      31% /usr
         /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
         /dev/md0                960492     36388    875312       4% /boot
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
 
       @inode_stdout = <<~DFI
@@ -255,7 +255,7 @@ DF
         tmpfs           126922    273  126649    1% /run
         none            126922      1  126921    1% /run/lock
         none            126922      1  126921    1% /run/shm
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
@@ -274,7 +274,7 @@ DFI
         NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
         NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
         NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
         .and_return(mock_shell_out(0, @stdout, ""))
@@ -312,7 +312,7 @@ BLKID_TYPE
         /dev/mapper/sys.vg-usr.lv  19223252   5479072  12767696      31% /usr
         /dev/mapper/sys.vg-var.lv  19223252   3436556  14810212      19% /var
         /dev/md0                960492     36388    875312       4% /boot
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
 
       @inode_stdout = <<~DFI
@@ -322,7 +322,7 @@ DF
         tmpfs           126922    273  126649    1% /run
         none            126922      1  126921    1% /run/lock
         none            126922      1  126921    1% /run/shm
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
@@ -341,7 +341,7 @@ DFI
         NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
         NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/BADhome\" FSTYPE=\"xfs\"
         NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
         .and_return(mock_shell_out(0, @stdout, ""))
@@ -358,7 +358,7 @@ BLKID_TYPE
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
 
@@ -405,7 +405,7 @@ BLKID_TYPE
         /dev/md0 /boot ext3 rw,noatime,errors=remount-ro,data=ordered 0 0
         fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
         binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
-MOUNTS
+      MOUNTS
       @counter = 0
       allow(@double_file).to receive(:read_nonblock) do
         @counter += 1
@@ -448,7 +448,7 @@ MOUNTS
         /dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home
         /dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home2
         /dev/mapper/sys.vg-root.lv  4805760    378716   4182924       9% /var/chroot
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
 
       @inode_stdout = <<~DFI
@@ -460,7 +460,7 @@ DF
         /dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home
         /dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home2
         /dev/mapper/sys.vg-root.lv  1310720 107407 1203313       9% /var/chroot
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
@@ -468,7 +468,7 @@ DFI
       @stdout = <<~BLKID_TYPE
         NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
         NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
         .and_return(mock_shell_out(0, @stdout, ""))
@@ -493,7 +493,7 @@ BLKID_TYPE
         /dev/mapper/sys.vg-home.lv  97605056  53563252  44041804      55% /home
         /dev/sdb1              97605056  53563252  44041804      55% /mnt
         /dev/sdc1              4805760    378716   4182924       9% /mnt
-DF
+      DF
       allow(plugin).to receive(:shell_out).with("df -P").and_return(mock_shell_out(0, @dfstdout, ""))
 
       @inode_stdout = <<~DFI
@@ -505,7 +505,7 @@ DF
         /dev/mapper/sys.vg-home.lv  60891136  4696030 56195106      8% /home
         /dev/sdb1       60891136  4696030 56195106      8% /mnt
         /dev/sdc1       1310720 107407 1203313          9% /mnt
-DFI
+      DFI
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
@@ -515,7 +515,7 @@ DFI
         NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
         NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
         NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
-BLKID_TYPE
+      BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
         .and_return(mock_shell_out(0, @stdout, ""))

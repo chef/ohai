@@ -32,7 +32,7 @@ RSpec.describe "Ohai::Loader" do
           Ohai.plugin(:Foo) do
             provides 'foo'
           end
-EOF
+        EOF
         File.open(File.join(plugin_directory, "foo.rb"), "w+") do |f|
           f.write(plugin_content)
         end

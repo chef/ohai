@@ -80,7 +80,7 @@ describe Ohai::System, "Linux lsb plugin" do
           Description:  CentOS release 5.4 (Final)
           Release:  5.4
           Codename: Final
-LSB_RELEASE
+        LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
@@ -113,7 +113,7 @@ LSB_RELEASE
           Description:    Fedora release 14 (Laughlin)
           Release:        14
           Codename:       Laughlin
-LSB_RELEASE
+        LSB_RELEASE
         allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 

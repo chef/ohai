@@ -23,7 +23,7 @@ describe Ohai::System, "AIX cpu plugin" do
     @lsdev_cc_processor = <<~LSDEV_CC_PROCESSOR
       proc0 Available 00-00 Processor
       proc4 Defined   00-04 Processor
-LSDEV_CC_PROCESSOR
+    LSDEV_CC_PROCESSOR
 
     @lsattr_el_proc0 = <<~LSATTR_EL
       frequency   1654344000     Processor Speed       False
@@ -31,14 +31,14 @@ LSDEV_CC_PROCESSOR
       smt_threads 2              Processor SMT threads False
       state       enable         Processor state       False
       type        PowerPC_POWER5 Processor type        False
-LSATTR_EL
+    LSATTR_EL
 
     @pmcycles_m = <<~PMCYCLES_M
       CPU 0 runs at 1654 MHz
       CPU 1 runs at 1654 MHz
       CPU 2 runs at 1654 MHz
       CPU 3 runs at 1654 MHz
-PMCYCLES_M
+    PMCYCLES_M
 
     @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:aix)

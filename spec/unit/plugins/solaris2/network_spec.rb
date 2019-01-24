@@ -41,7 +41,7 @@ describe Ohai::System, "Solaris2.X network plugin" do
       rtls0  172.31.4.82          255.255.255.255       52:54:00:2d:93:0c
       rtls0  172.31.4.81          255.255.255.255       02:08:20:37:80:87
       rtls0  224.0.0.0            240.0.0.0       SM    01:00:5e:00:00:00
-ARP_RN
+    ARP_RN
 
     @solaris_ifconfig = <<~ENDIFCONFIG
       lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
@@ -80,7 +80,7 @@ ARP_RN
       vni0: flags=2002210041<UP,RUNNING,NOXMIT,NONUD,IPv6,VIRTUAL> mtu 1460 index 5
        srcof qfe1
        inet6 fe80::203:baff:fe17:4444/128
-ENDIFCONFIG
+    ENDIFCONFIG
 
     @solaris_netstat_rn = <<~NETSTAT_RN
       Routing Table: IPv4
@@ -95,7 +95,7 @@ ENDIFCONFIG
       --------------------------- --------------------------- ----- --- ------- -----
       fe80::/10                   fe80::250:56ff:fe13:3757    U       1       0 e1000g0
       ::1                         ::1                         UH      1       0 lo0
-NETSTAT_RN
+    NETSTAT_RN
 
     @solaris_route_get = <<~ROUTE_GET
          route to: default
@@ -106,7 +106,7 @@ NETSTAT_RN
             flags: <UP,GATEWAY,DONE,STATIC>
        recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
              0         0         0         0         0         0      1500         0
-ROUTE_GET
+    ROUTE_GET
 
     @solaris11_route_get = <<~ROUTE_GET
          route to: default
@@ -117,7 +117,7 @@ ROUTE_GET
             flags: <UP,GATEWAY,DONE,STATIC>
        recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
              0         0         0         0         0         0      1500         0
-ROUTE_GET
+    ROUTE_GET
 
     @ifconfig_lines = @solaris_ifconfig.split("\n")
 

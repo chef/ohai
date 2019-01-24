@@ -66,7 +66,7 @@ describe Ohai::System, "Linux systemd paths plugin" do
       search-configuration-factory: /usr/local/share/factory/etc:/usr/share/factory/etc
       search-state-factory: /usr/local/share/factory/var:/usr/share/factory/var
       search-configuration: /home/foo/.config:/etc
-SYSTEMD_PATH_OUT
+    SYSTEMD_PATH_OUT
 
     allow(plugin).to receive(:which).with("systemd-path").and_return("/bin/systemd-path")
     allow(plugin).to receive(:shell_out).with("/bin/systemd-path").and_return(mock_shell_out(0, systemd_path_out, ""))

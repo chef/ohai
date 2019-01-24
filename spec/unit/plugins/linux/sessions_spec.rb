@@ -31,7 +31,7 @@ describe Ohai::System, "Linux sessions plugin" do
        318          0 root
         46          0 root
        306       1000 joe
-LOGINCTL_OUT
+    LOGINCTL_OUT
     allow(plugin).to receive(:which).with("loginctl").and_return("/bin/loginctl")
     allow(plugin).to receive(:shell_out).with("/bin/loginctl --no-pager --no-legend --no-ask-password list-sessions").and_return(mock_shell_out(0, loginctl_out, ""))
     plugin.run

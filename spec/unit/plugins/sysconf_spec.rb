@@ -343,7 +343,7 @@ describe Ohai::System, "sysconf plugin", :unix_only do
       RAW_SOCKETS                        200809
       _POSIX_IPV6                        200809
       _POSIX_RAW_SOCKETS                 200809
-GETCONF_OUT
+    GETCONF_OUT
     allow(plugin).to receive(:which).with("getconf").and_return("/usr/bin/getconf")
     allow(plugin).to receive(:shell_out).with("/usr/bin/getconf -a").and_return(mock_shell_out(0, getconf_out, ""))
     allow(plugin).to receive(:collect_os).and_return(:linux)

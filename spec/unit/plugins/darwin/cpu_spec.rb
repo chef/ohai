@@ -75,7 +75,7 @@ describe Ohai::System, "Darwin cpu plugin" do
       machdep.cpu.vendor: GenuineIntel
       machdep.cpu.max_ext: 2147483656
       machdep.cpu.max_basic: 13
-CTL
+    CTL
 
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
     allow(@plugin).to receive(:shell_out).with("sysctl hw machdep").and_return(mock_shell_out(0, @stdout, ""))

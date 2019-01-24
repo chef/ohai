@@ -19,7 +19,7 @@
 require_relative "../../spec_helper.rb"
 
 describe Ohai::System, "languages plugin" do
-  VERSION_MATCHING_REGEX = /^(?:[\d]+\.)+[\d]+$/
+  VERSION_MATCHING_REGEX = /^(?:[\d]+\.)+[\d]+$/.freeze
   describe "powershell plugin", :windows_only do
     RSpec.shared_examples "a version looking thing" do
       it "should be present" do

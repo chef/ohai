@@ -287,7 +287,7 @@ module HardwareSystemProfilerOutput
       </dict>
     </array>
     </plist>
-HARDWARE_OUTPUT
+  HARDWARE_OUTPUT
 
   STORAGE = <<~STORAGE_OUTPUT.freeze
     <?xml version="1.0" encoding="UTF-8"?>
@@ -598,7 +598,7 @@ HARDWARE_OUTPUT
       </dict>
     </array>
     </plist>
-STORAGE_OUTPUT
+  STORAGE_OUTPUT
 
   POWER = <<~POWER_OUTPUT.freeze
     <?xml version="1.0" encoding="UTF-8"?>
@@ -1105,6 +1105,6 @@ STORAGE_OUTPUT
       </dict>
     </array>
     </plist>
-POWER_OUTPUT
+  POWER_OUTPUT
 
 end

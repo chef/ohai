@@ -45,7 +45,7 @@ describe Ohai::System, "AIX filesystem plugin" do
       /dev/fslv10       5242880     42884   5199996       1% /wpars/toolchain-tester-5c969f/tmp
       /dev/fslv11       5242880   2725048   2517832      52% /wpars/toolchain-tester-5c969f/usr
       /dev/fslv12      10485760    272376  10213384       3% /wpars/toolchain-tester-5c969f/var
-DF_PK
+    DF_PK
 
     @df_pk_wpar = <<~DF_PK
       Filesystem    1024-blocks      Used Available Capacity Mounted on
@@ -56,7 +56,7 @@ DF_PK
       Global            5242880     42884   5199996       1% /tmp
       Global            5242880   2725048   2517832      52% /usr
       Global           10485760    272376  10213384       3% /var
-DF_PK
+    DF_PK
 
     @mount_lpar = <<~MOUNT
         node       mounted        mounted over    vfs       date        options
@@ -70,7 +70,7 @@ DF_PK
                /proc            /proc            procfs Jul 17 13:22 rw
                /dev/hd10opt     /opt             jfs2   Jul 17 13:22 rw,log=/dev/hd8
       192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
-MOUNT
+    MOUNT
 
     @mount_wpar = <<~MOUNT
         node       mounted        mounted over    vfs       date        options
@@ -83,7 +83,7 @@ MOUNT
                Global           /usr             jfs2   Nov 23 21:03 rw,log=NULL
                Global           /var             jfs2   Nov 23 21:03 rw,log=NULL
       192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
-MOUNT
+    MOUNT
 
     @plugin = get_plugin("filesystem")
     allow(@plugin).to receive(:collect_os).and_return(:aix)

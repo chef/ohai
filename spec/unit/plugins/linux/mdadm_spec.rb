@@ -52,7 +52,7 @@ describe Ohai::System, "Linux Mdadm Plugin" do
              3       8       80        3      active sync   /dev/sdf
              4       8       96        4      active sync   /dev/sdg
              5       8      112        5      active sync   /dev/sdh
-MD
+    MD
     @plugin = get_plugin("linux/mdadm")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/mdstat")

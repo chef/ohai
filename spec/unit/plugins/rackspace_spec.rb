@@ -137,7 +137,7 @@ describe Ohai::System, "plugin rackspace" do
         server_id = "21301000"
         created_at = "2012-12-06T22:08:16Z"
         region = "dfw"
-OUT
+      OUT
       allow(plugin).to receive(:shell_out).with("xenstore-ls vm-data/provider_data").and_return(mock_shell_out(0, provider_data, ""))
       plugin.run
       expect(plugin[:rackspace][:region]).to eq("dfw")

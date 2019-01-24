@@ -491,7 +491,7 @@ Ohai.plugin(:Network) do
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-    IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/ unless defined? IPROUTE_INT_REGEX
+    IPROUTE_INT_REGEX = /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z]+|):\s/.freeze unless defined? IPROUTE_INT_REGEX
 
     if which("ip")
       # families to get default routes from

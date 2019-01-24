@@ -30,7 +30,7 @@ describe Ohai::System, "Linux kernel plugin" do
       serio_raw              13031  0
       virtio_balloon         13168  0
       floppy                 55441  0
-ENV_LSMOD
+    ENV_LSMOD
     @version_module = {
       dm_crypt: "",
       psmouse: "",
@@ -42,13 +42,13 @@ ENV_LSMOD
     }
 
     @expected_result = {
-      "dm_crypt"       => { "size" => "22321", "refcount" => "0" },
-      "psmouse"        => { "size" => "81038", "refcount" => "0" },
-      "acpiphp"        => { "size" => "23314", "refcount" => "0" },
-      "microcode"      => { "size" => "18286", "refcount" => "0", "version" => "1.2.3" },
-      "serio_raw"      => { "size" => "13031", "refcount" => "0" },
+      "dm_crypt" => { "size" => "22321", "refcount" => "0" },
+      "psmouse" => { "size" => "81038", "refcount" => "0" },
+      "acpiphp" => { "size" => "23314", "refcount" => "0" },
+      "microcode" => { "size" => "18286", "refcount" => "0", "version" => "1.2.3" },
+      "serio_raw" => { "size" => "13031", "refcount" => "0" },
       "virtio_balloon" => { "size" => "13168", "refcount" => "0" },
-      "floppy"         => { "size" => "55441", "refcount" => "0" },
+      "floppy" => { "size" => "55441", "refcount" => "0" },
     }
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:linux)

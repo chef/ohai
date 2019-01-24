@@ -4,9 +4,11 @@ os: Windows Server 2012 R2
 platform:
   - x64
 
+cache:
+  - vendor/bundle
 environment:
   matrix:
-    - ruby_version: "25"
+    - ruby_version: 25-x64
 
 clone_folder: c:\projects\ohai
 clone_depth: 1
@@ -30,13 +32,15 @@ branches:
 
 install:
   - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
+  - SET BUNDLE_WITHOUT=debug:docs
   - echo %PATH%
+  - gem install bundler --no-document
+  - bundle install --jobs 3 --retry 3
   - ruby --version
   - gem --version
   - bundler --version
 
-build_script:
-  - bundle install || bundle install || bundle install
+build: off
 
 test_script:
   - bundle exec rspec

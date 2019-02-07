@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 13.12.6 -->
-## [v13.12.6](https://github.com/chef/ohai/tree/v13.12.6) (2019-02-07)
-
-#### Merged Pull Requests
-- Pin mixlib-cli to less than 2.0 [#1338](https://github.com/chef/ohai/pull/1338) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.6.2 -->
-### Changes since 14.6.2 release
-
-#### Merged Pull Requests
-- Pin mixlib-cli to less than 2.0 [#1338](https://github.com/chef/ohai/pull/1338) ([tas50](https://github.com/tas50)) <!-- 13.12.6 -->
-- Set User-Agent in HTTP header for GCE plugin [#1293](https://github.com/chef/ohai/pull/1293) ([tas50](https://github.com/tas50)) <!-- 13.12.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v13.12.6](https://github.com/chef/ohai/tree/v13.12.6) (2019-02-07)
+
+#### Merged Pull Requests
+- Set User-Agent in HTTP header for GCE plugin [#1293](https://github.com/chef/ohai/pull/1293) ([tas50](https://github.com/tas50))
+- Pin mixlib-cli to less than 2.0 [#1338](https://github.com/chef/ohai/pull/1338) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v13.12.4](https://github.com/chef/ohai/tree/v13.12.4) (2018-10-30)
 
 #### Merged Pull Requests
@@ -25,7 +23,6 @@
 - Fix provided relative paths to the config file [#1287](https://github.com/chef/ohai/pull/1287) ([tas50](https://github.com/tas50))
 - Avoid gathering all data with sysctl which seems to hang [#1285](https://github.com/chef/ohai/pull/1285) ([tas50](https://github.com/tas50))
 - Trim out bogus data in system_profile plugin [#1284](https://github.com/chef/ohai/pull/1284) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v13.10.0](https://github.com/chef/ohai/tree/v13.10.0) (2018-07-09)
 

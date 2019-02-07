@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "systemu", "~> 2.6.4"
   s.add_dependency "ffi-yajl", "~> 2.2"
-  s.add_dependency "mixlib-cli"
+  s.add_dependency "mixlib-cli", "< 2.0" # 2.0 requires Ruby 2.5+
   s.add_dependency "mixlib-config", "~> 2.0"
   s.add_dependency "mixlib-log", ">= 1.7.1", "< 2.0"
   s.add_dependency "mixlib-shellout", "~> 2.0"

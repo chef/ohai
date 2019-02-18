@@ -8,6 +8,10 @@ Use system information (e.g., DMI/SMBIOS or System Information (msinfo)) to dete
 
 The GCE plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
 
+## VboxHost (VirtualBox) plugin added
+
+Added VboxHost plugin to detect VirtualBox running as a virtualization host. Provides the 'vbox' attribute tree.
+
 # Ohai Release Notes 14.6
 
 ## Filesystem Plugin on AIX and Solaris

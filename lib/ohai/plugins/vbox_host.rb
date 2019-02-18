@@ -16,7 +16,7 @@
 
 Ohai.plugin(:VboxHost) do
   depends 'virtualization'
-  provides 'virtualization/vbox'
+  provides 'vbox'
 
   # determine if this host is configured with virtualbox or not
   # the determination is ultimately controlled by the 'virtualization' plugin
@@ -33,17 +33,19 @@ Ohai.plugin(:VboxHost) do
   def vboxmanage_list_vms
     vms = Mash.new
     if vbox_host?
-      so = shell_out('VBoxManage list --sorted vms')
-      # raise an exception if the command fails
-      so.error!
+      so_cmd = 'VBoxManage list --sorted vms'
+      logger.trace(so_cmd)
+      so = shell_out(so_cmd)
 
-      # parse the output
-      so.stdout.lines.each do |line|
-        case line
-        when /^"(\S*)" \{(\S*)\}$/
-          name = Regexp.last_match(1)
-          uuid = Regexp.last_match(2)
-          vms[name] = vboxmanage_vminfo(uuid)
+      if so.exitstatus == 0
+        # parse the output
+        so.stdout.lines.each do |line|
+          case line
+          when /^"(\S*)" \{(\S*)\}$/
+            name = Regexp.last_match(1)
+            uuid = Regexp.last_match(2)
+            vms[name] = vboxmanage_vminfo(uuid)
+          end
         end
       end
     end
@@ -58,41 +60,43 @@ Ohai.plugin(:VboxHost) do
     vm = Mash.new
 
     if vbox_host?
-      so = shell_out("VBoxManage showvminfo #{machine_id} --machinereadable")
-      # raise an exception if the command fails
-      so.error!
+      so_cmd = "VBoxManage showvminfo #{machine_id} --machinereadable"
+      logger.trace(so_cmd)
+      so = shell_out(so_cmd)
 
-      so.stdout.lines.each do |line|
-        line.chomp!
-        left, right = line.split('=')
+      if so.exitstatus == 0
+        so.stdout.lines.each do |line|
+          line.chomp!
+          left, right = line.split('=')
 
-        # remove enclosing quotes, if needed
-        key =
-          case left
-          when /^"(.*)"$/
-            Regexp.last_match(1)
-          else
-            left
-          end
+          # remove enclosing quotes, if needed
+          key =
+            case left
+            when /^"(.*)"$/
+              Regexp.last_match(1)
+            else
+              left
+            end
 
-        # skip the name attribute since that is the parent key
-        next if left == 'name'
+          # skip the name attribute since that is the parent key
+          next if left == 'name'
 
-        # remove enclosing quotes, if needed
-        value =
-          case right
-          when /^"(.*)"$/
-            Regexp.last_match(1)
-          else
-            right
-          end
+          # remove enclosing quotes, if needed
+          value =
+            case right
+            when /^"(.*)"$/
+              Regexp.last_match(1)
+            else
+              right
+            end
 
-        vm[key.downcase] = value
+          vm[key.downcase] = value
+        end
       end
     end
     vm
   rescue Ohai::Exceptions::Exec
-    logger.trace("Plugin VboxHost: Could not run 'VBoxManage showvminfo #{machine_id} --machinereadable'. Skipping data")
+    logger.trace("Plugin VboxHost: Could not run '#{so_cmd}'. Skipping data")
   end
 
   # query virtualbox for a list of #{query_type} items
@@ -110,40 +114,46 @@ Ohai.plugin(:VboxHost) do
     results = Mash.new
 
     if vbox_host?
-      so = shell_out("VBoxManage list --sorted #{query_type}")
+      so_cmd = "VBoxManage list --sorted #{query_type}"
+      logger.trace(so_cmd)
+      so = shell_out(so_cmd)
       # raise an exception if the command fails
-      so.error!
+      # so.error!
 
-      # break the result into paragraph blocks, on successive newlines
-      so.stdout.each_line('') do |blk|
-        # remove the multiple newlines of each record
-        blk.chomp!.chomp!
-        # initialize a blank record hash
-        record = Mash.new
-        # parse the record block into key/value pairs
-        blk.each_line() do |line|
-          # split the line into key/value pair
-          key, right = line.split(':')
-          # strip the leading/trailing whitespace if the value is not nil
-          value = right.nil? ? '' : right.strip
-          record[key.downcase] = value
-        end
+      if so.exitstatus == 0
+        # break the result into paragraph blocks, on successive newlines
+        so.stdout.each_line('') do |blk|
+          # remove the multiple newlines of each record
+          blk.chomp!.chomp!
+          # initialize a blank record hash
+          record = Mash.new
+          # parse the record block into key/value pairs
+          blk.each_line() do |line|
+            next unless line.include? ':'
+            # split the line into key/value pair
+            key, right = line.split(':', 2)
 
-        # compile the block of data into the Mash
-        if record.key? name_key.downcase
-          name = record.delete(name_key.downcase)
-          results[name] = record
+            # strip the leading/trailing whitespace if the value is not nil
+            value = right.nil? ? '' : right.strip
+            record[key.downcase] = value
+          end
+
+          # insert the record into the list of results
+          if record.key? name_key.downcase
+            name = record.delete(name_key.downcase)
+            results[name] = record
+          end
         end
       end
     end
     results
   rescue Ohai::Exceptions::Exec
-    logger.trace("Plugin VboxHost: Could not run 'VBoxManage list --sorted #{query_type}'. Skipping data")
+    logger.trace("Plugin VboxHost: Could not run '#{so_cmd}'. Skipping data")
   end
 
   # collect the data for a virtualization host running VirtualBox
   collect_data(:default) do
-    vbox = 'vbox'
+    # vbox = Mash.new
     ostypes = 'ostypes'
     guests = 'guests'
     natnets = 'natnets'
@@ -156,38 +166,40 @@ Ohai.plugin(:VboxHost) do
     hostfloppies = 'hostfloppies'
 
     if vbox_host?
-      virtualization[vbox] = Mash.new unless virtualization[vbox]
+      # virtualization[vbox] = Mash.new unless virtualization[vbox]
+      vbox Mash.new unless vbox
 
       # get a list of virtualbox virtual hard disk drives
-      virtualization[vbox][ostypes] = vboxmanage_list_blocks(ostypes, 'ID')
+      vbox[ostypes] = vboxmanage_list_blocks(ostypes, 'ID')
 
       # get a list of virtualbox guest vms
-      virtualization[vbox][guests] = vboxmanage_list_vms
+      vbox[guests] = vboxmanage_list_vms
 
       # get a list of virtualbox virtual hard disk drives
-      virtualization[vbox][hdds] = vboxmanage_list_blocks(hdds, 'UUID')
+      vbox[hdds] = vboxmanage_list_blocks(hdds, 'Location')
 
       # get a list of virtualbox virtual dvd drives
-      virtualization[vbox][dvds] = vboxmanage_list_blocks(dvds, 'UUID')
+      vbox[dvds] = vboxmanage_list_blocks(dvds, 'Location')
 
       # get a list of virtualbox host dvd drives
-      virtualization[vbox][hostdvds] = vboxmanage_list_blocks(hostdvds, 'Name')
+      vbox[hostdvds] = vboxmanage_list_blocks(hostdvds, 'Name')
 
       # get a list of virtualbox host floppy drives
-      virtualization[vbox][hostfloppies] = vboxmanage_list_blocks(hostfloppies, 'Name')
+      vbox[hostfloppies] = vboxmanage_list_blocks(hostfloppies, 'Name')
 
       # get a list of virtualbox hostonly network interfaces
-      virtualization[vbox][hostonlyifs] = vboxmanage_list_blocks(hostonlyifs, 'Name')
+      vbox[hostonlyifs] = vboxmanage_list_blocks(hostonlyifs, 'Name')
 
       # get a list of virtualbox bridged network interfaces
-      virtualization[vbox][bridgedifs] = vboxmanage_list_blocks(bridgedifs, 'Name')
+      vbox[bridgedifs] = vboxmanage_list_blocks(bridgedifs, 'Name')
 
       # get a list of virtualbox dhcp servers
-      virtualization[vbox][dhcpservers] = vboxmanage_list_blocks(dhcpservers, 'NetworkName')
+      vbox[dhcpservers] = vboxmanage_list_blocks(dhcpservers, 'NetworkName')
 
       # get a list of virtualbox nat networks
-      virtualization[vbox][natnets] = vboxmanage_list_blocks(natnets, 'NetworkName')
+      vbox[natnets] = vboxmanage_list_blocks(natnets, 'NetworkName')
     end
+    vbox
   rescue Ohai::Exceptions::Exec
     logger.trace('Plugin VboxHost: Could not collect data for VirtualBox host. Skipping data')
   end

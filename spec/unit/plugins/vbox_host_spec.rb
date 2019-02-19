@@ -302,6 +302,7 @@ describe Ohai::System, "plugin vbox_host" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vbox] = "host"
+      allow(plugin).to receive(:which).with("VBoxManage").and_return("/usr/bin/VBoxManage")
       allow(plugin).to receive(:shell_out).with("VBoxManage list --sorted ostypes").and_return(mock_shell_out(0, vbox_list_ostypes_stdout, ""))
       allow(plugin).to receive(:shell_out).with("VBoxManage list --sorted vms").and_return(mock_shell_out(0, vbox_list_vms_stdout, ""))
       allow(plugin).to receive(:shell_out).with("VBoxManage showvminfo 6294f16b-4f05-4430-afb9-773bdb237aec --machinereadable").and_return(mock_shell_out(0, vbox_vminfo_stdout, ""))

@@ -154,7 +154,6 @@ Ohai.plugin(:VboxHost) do
 
   # collect the data for a virtualization host running VirtualBox
   collect_data(:default) do
-    # vbox = Mash.new
     ostypes = "ostypes"
     guests = "guests"
     natnets = "natnets"
@@ -167,7 +166,6 @@ Ohai.plugin(:VboxHost) do
     hostfloppies = "hostfloppies"
 
     if vbox_host?
-      # virtualization[vbox] = Mash.new unless virtualization[vbox]
       vbox Mash.new unless vbox
 
       # get a list of virtualbox virtual hard disk drives

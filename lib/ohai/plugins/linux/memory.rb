@@ -97,7 +97,7 @@ Ohai.plugin(:Memory) do
         memory[:hugepage_size] = "#{$1}#{$2}"
       when /^Hugetlb:\s+(\d+) (.+)$/
         memory[:hugetlb] = "#{$1}#{$2}"
-      when /^DirectMap([0-9][a-zA-Z]):\s+(\d+) (.+)$/
+      when /^DirectMap([0-9]+[a-zA-Z]):\s+(\d+) (.+)$/
         memory[:directmap][$1.to_sym] = "#{$2}#{$3}"
       end
     end

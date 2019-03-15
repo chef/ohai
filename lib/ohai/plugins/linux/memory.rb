@@ -23,6 +23,7 @@ Ohai.plugin(:Memory) do
     memory Mash.new
     memory[:swap] = Mash.new
     memory[:hugepages] = Mash.new
+    memory[:directmap] = Mash.new
 
     File.open("/proc/meminfo").each do |line|
       case line
@@ -94,6 +95,10 @@ Ohai.plugin(:Memory) do
         memory[:hugepages][:surplus] = $1.to_s
       when /^Hugepagesize:\s+(\d+) (.+)$/
         memory[:hugepage_size] = "#{$1}#{$2}"
+      when /^Hugetlb:\s+(\d+) (.+)$/
+        memory[:hugetlb] = "#{$1}#{$2}"
+      when /^DirectMap([0-9]+[a-zA-Z]):\s+(\d+) (.+)$/
+        memory[:directmap][$1.to_sym] = "#{$2}#{$3}"
       end
     end
   end

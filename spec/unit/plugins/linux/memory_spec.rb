@@ -56,6 +56,11 @@ describe Ohai::System, "Linux memory plugin" do
       .and_yield("HugePages_Rsvd:  11226")
       .and_yield("HugePages_Surp:      0")
       .and_yield("Hugepagesize:     2048 kB")
+      .and_yield("Hugetlb:               0 kB")
+      .and_yield("DirectMap4k:     3720736 kB")
+      .and_yield("DirectMap2M:    12795904 kB")
+      .and_yield("DirectMap1G:           0 kB")
+
     allow(File).to receive(:open).with("/proc/meminfo").and_return(@double_file)
   end
 
@@ -227,5 +232,25 @@ describe Ohai::System, "Linux memory plugin" do
   it "should get hugepage size" do
     @plugin.run
     expect(@plugin[:memory][:hugepage_size]).to eql("2048kB")
+  end
+
+  it "should get hugetlb memory" do
+    @plugin.run
+    expect(@plugin[:memory][:hugetlb]).to eql("0kB")
+  end
+
+  it "should get directmap 4k memory" do
+    @plugin.run
+    expect(@plugin[:memory][:directmap][:'4k']).to eql("3720736kB")
+  end
+
+  it "should get directmap 2M memory" do
+    @plugin.run
+    expect(@plugin[:memory][:directmap][:'2M']).to eql("12795904kB")
+  end
+
+  it "should get directmap 1G memory" do
+    @plugin.run
+    expect(@plugin[:memory][:directmap][:'1G']).to eql("0kB")
   end
 end

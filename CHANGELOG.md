@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.29 -->
-## [v15.0.29](https://github.com/chef/ohai/tree/v15.0.29) (2019-03-15)
+<!-- latest_release 15.0.30 -->
+## [v15.0.30](https://github.com/chef/ohai/tree/v15.0.30) (2019-03-18)
 
 #### Merged Pull Requests
-- Parse new /proc/meminfo fields [#1340](https://github.com/chef/ohai/pull/1340) ([davide125](https://github.com/davide125))
+- Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50)) <!-- 15.0.30 -->
 - Parse new /proc/meminfo fields [#1340](https://github.com/chef/ohai/pull/1340) ([davide125](https://github.com/davide125)) <!-- 15.0.29 -->
 - Chefstyle fixes for Chefstyle 0.12 [#1337](https://github.com/chef/ohai/pull/1337) ([tas50](https://github.com/tas50)) <!-- 15.0.28 -->
 - Fully remove support for HP-UX [#1336](https://github.com/chef/ohai/pull/1336) ([tas50](https://github.com/tas50)) <!-- 15.0.27 -->

@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.8.11 -->
+## [v14.8.11](https://github.com/chef/ohai/tree/v14.8.11) (2019-03-19)
+
+#### Merged Pull Requests
+- Loosen the mixlib version dependencies [#1342](https://github.com/chef/ohai/pull/1342) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=14.8.10 -->
+### Changes since 14.8.10 release
+
+#### Merged Pull Requests
+- Loosen the mixlib version dependencies [#1342](https://github.com/chef/ohai/pull/1342) ([tas50](https://github.com/tas50)) <!-- 14.8.11 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

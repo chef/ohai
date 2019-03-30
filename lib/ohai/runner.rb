@@ -19,6 +19,7 @@
 
 require "ohai/dsl"
 require "benchmark"
+require "train"
 
 module Ohai
   class Runner
@@ -37,7 +38,7 @@ module Ohai
     # Runs plugins and any un-run dependencies.
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
-    def run_plugin(plugin)
+    def run_plugin(plugin, backend)
       elapsed = Benchmark.measure do
         unless plugin.kind_of?(Ohai::DSL::Plugin)
           raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
@@ -45,7 +46,7 @@ module Ohai
 
         begin
           if plugin.version == :version7
-            run_v7_plugin(plugin)
+            run_v7_plugin(plugin, backend)
           else
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end
@@ -60,7 +61,7 @@ module Ohai
       logger.trace("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
     end
 
-    def run_v7_plugin(plugin)
+    def run_v7_plugin(plugin, backend)
       return true if plugin.optional? &&
         !Ohai.config[:run_all_plugins] &&
         !Ohai.config[:optional_plugins].include?(plugin.name)
@@ -84,7 +85,9 @@ module Ohai
         end
 
         if dependency_providers.empty?
+          next_plugin.data[:backend] = backend
           @safe_run ? next_plugin.safe_run : next_plugin.run
+          next_plugin.data[:backend] = nil
           if next_plugin.failed
             @failed_plugins << next_plugin.name
           end

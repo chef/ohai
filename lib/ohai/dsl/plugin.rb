@@ -82,10 +82,43 @@ module Ohai
   module DSL
     class Plugin
 
-      include Ohai::Mixin::OS
-      include Ohai::Mixin::Command
+      # include Ohai::Mixin::OS
+      def collect_os
+        data[:backend].os[:family]
+      end
+
+      # include Ohai::Mixin::Command
+
+      def shell_out(cmd, **options)
+        # require 'pry' ; binding.pry
+        data[:backend].run_command(cmd)
+      end
+
       include Ohai::Mixin::SecondsToHuman
-      include Ohai::Util::FileHelper
+      # include Ohai::Util::FileHelper
+
+      def which(cmd)
+        # require 'pry' ; binding.pry
+        # paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+        paths = data[:backend].run_command("echo $PATH").split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+        paths.each do |path|
+          filename = File.join(path, cmd)
+          
+          # TODO: Is the file executable to the current user?
+          #   At the moment I don't know how to get the current user (local and remote)
+
+          # find the file stats => mode => convert to octal
+          backend_file_mode = data[:backend].file(filename).stat.mode
+
+          # if File.executable?(filename)
+          if backend_file_mode.to_s(8) == "755"
+            logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
+            return filename
+          end
+        end
+        logger.trace("Plugin #{name}: did not find #{cmd}")
+        false
+      end
 
       attr_reader :data
       attr_reader :failed

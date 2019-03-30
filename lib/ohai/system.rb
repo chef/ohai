@@ -100,6 +100,28 @@ module Ohai
       @loader.load_all
     end
 
+    def backend
+      @backend ||= begin
+        # TODO: this should be borrowed code from inspec executable
+        if config[:target].nil?
+          Train.create('local')
+        elsif config[:target].to_s.start_with?('docker')
+          medium, host = config[:target].split('://')
+          Train.create('docker', host: host)
+        elsif config[:target].to_s.start_with?('ssh')
+          # ssh://user:password@host:port
+          user_pass, host_port = config[:target].gsub('ssh://','').split('@')
+          host, port = host_port.split(':')
+          # require 'pry' ; binding.pry
+          
+          Train.create('ssh',host: host, port: port || 22, user: user_pass, key_files: '~/.ssh/ohai.pem')
+        else
+          fail 'unsupported target'
+        end
+        
+      end
+    end
+
     # run all plugins or those that match the attribute filter is provided
     #
     # @param safe [Boolean]
@@ -108,9 +130,13 @@ module Ohai
     # @return [Mash]
     def run_plugins(safe = false, attribute_filter = nil)
       begin
+        conn = backend.connection
+          
         @provides_map.all_plugins(attribute_filter).each do |plugin|
-          @runner.run_plugin(plugin)
+          @runner.run_plugin(plugin, conn)
         end
+        conn.close
+
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         logger.error("Encountered error while running plugins: #{e.inspect}")
         raise

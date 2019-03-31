@@ -21,6 +21,7 @@ Ohai.plugin(:Chef) do
 
   collect_data do
     begin
+      # TODO: This approach to finding the chef version will not work remotely
       require "chef/version"
     rescue Gem::LoadError
       logger.trace("Plugin Chef: Unable to load the chef gem to determine the version")

@@ -36,7 +36,7 @@ Ohai.plugin(:Rackspace) do
   # false:: Otherwise
   def has_rackspace_metadata?
     so = shell_out("xenstore-read vm-data/provider_data/provider")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       so.stdout.strip.casecmp("rackspace") == 0
     end
   rescue Ohai::Exceptions::Exec
@@ -99,7 +99,7 @@ Ohai.plugin(:Rackspace) do
   #
   def get_region
     so = shell_out("xenstore-ls vm-data/provider_data")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       so.stdout.split("\n").each do |line|
         rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
       end
@@ -113,7 +113,7 @@ Ohai.plugin(:Rackspace) do
   #
   def get_instance_id
     so = shell_out("xenstore-read name")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
     end
   rescue Ohai::Exceptions::Exec
@@ -125,11 +125,11 @@ Ohai.plugin(:Rackspace) do
   #
   def get_private_networks
     so = shell_out("xenstore-ls vm-data/networking")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       networks = []
       so.stdout.split("\n").map { |l| l.split("=").first.strip }.map do |item|
         so = shell_out("xenstore-read vm-data/networking/#{item}")
-        if so.exitstatus == 0
+        if so.exit_status == 0
           networks.push(FFI_Yajl::Parser.new.parse(so.stdout))
         else
           logger.trace("Plugin Rackspace: Unable to capture custom private networking information for Rackspace cloud")

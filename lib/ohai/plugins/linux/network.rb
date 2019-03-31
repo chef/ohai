@@ -34,7 +34,7 @@ Ohai.plugin(:Network) do
   end
 
   def ipv6_enabled?
-    File.exist? "/proc/net/if_inet6"
+    file_exist? "/proc/net/if_inet6"
   end
 
   def ethtool_binary_path

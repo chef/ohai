@@ -22,7 +22,7 @@ Ohai.plugin(:C) do
 
   def collect(cmd, &block)
     so = shell_out(cmd)
-    if so.exitstatus == 0
+    if so.exit_status == 0
       yield(so)
     else
       logger.trace("Plugin C: '#{cmd}' failed. Skipping data.")
@@ -34,7 +34,7 @@ Ohai.plugin(:C) do
   def xcode_installed?
     logger.trace("Plugin C: Checking for Xcode Command Line Tools.")
     so = shell_out("/usr/bin/xcode-select -p")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       logger.trace("Plugin C: Xcode Command Line Tools found.")
       return true
     else
@@ -125,7 +125,7 @@ Ohai.plugin(:C) do
     # ibm xlc
 
     so = shell_out("xlc -qversion")
-    if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
+    if so.exit_status == 0 || (so.exit_status >> 8) == 249
       description = so.stdout.split($/).first
       if description =~ /V(\d+\.\d+)/
         @c[:xlc] = Mash.new

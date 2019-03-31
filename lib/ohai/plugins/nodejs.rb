@@ -25,7 +25,7 @@ Ohai.plugin(:Nodejs) do
     so = shell_out("node -v")
     # Sample output:
     # v5.10.1
-    if so.exitstatus == 0
+    if so.exit_status == 0
       nodejs = Mash.new
       output = so.stdout.split
       if output.length >= 1

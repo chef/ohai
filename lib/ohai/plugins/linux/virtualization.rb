@@ -51,15 +51,15 @@ Ohai.plugin(:Virtualization) do
     # - may be able to determine if under paravirt from /dev/xen/evtchn (See OHAI-253)
     # - Additional edge cases likely should not change the above assumptions
     #   but rather be additive - btm
-    if File.exist?("/proc/xen")
+    if file_exist?("/proc/xen")
       virtualization[:system] = "xen"
       # Assume guest
       virtualization[:role] = "guest"
       virtualization[:systems][:xen] = "guest"
 
       # This file should exist on most Xen systems, normally empty for guests
-      if File.exist?("/proc/xen/capabilities")
-        if File.read("/proc/xen/capabilities") =~ /control_d/i
+      if file_exist?("/proc/xen/capabilities")
+        if file_read("/proc/xen/capabilities") =~ /control_d/i
           logger.trace("Plugin Virtualization: /proc/xen/capabilities contains control_d. Detecting as Xen host")
           virtualization[:role] = "host"
           virtualization[:systems][:xen] = "host"
@@ -68,8 +68,8 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect Virtualbox from kernel module
-    if File.exist?("/proc/modules")
-      modules = File.read("/proc/modules")
+    if file_exist?("/proc/modules")
+      modules = file_read("/proc/modules")
       if modules =~ /^vboxdrv/
         logger.trace("Plugin Virtualization: /proc/modules contains vboxdrv. Detecting as vbox host")
         virtualization[:system] = "vbox"
@@ -92,8 +92,8 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
-    if File.exist?("/proc/cpuinfo")
-      if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+    if file_exist?("/proc/cpuinfo")
+      if file_read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
         logger.trace("Plugin Virtualization: /proc/cpuinfo lists a KVM paravirt CPU string. Detecting as kvm guest")
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
@@ -103,9 +103,9 @@ Ohai.plugin(:Virtualization) do
 
     # Detect KVM systems via /sys
     # guests will have the hypervisor cpu feature that hosts don't have
-    if File.exist?("/sys/devices/virtual/misc/kvm")
+    if file_exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
-      if File.read("/proc/cpuinfo") =~ /hypervisor/
+      if file_read("/proc/cpuinfo") =~ /hypervisor/
         logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
@@ -118,12 +118,12 @@ Ohai.plugin(:Virtualization) do
 
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
-    if File.exist?("/proc/bc/0")
+    if file_exist?("/proc/bc/0")
       logger.trace("Plugin Virtualization: /proc/bc/0 exists. Detecting as openvz host")
       virtualization[:system] = "openvz"
       virtualization[:role] = "host"
       virtualization[:systems][:openvz] = "host"
-    elsif File.exist?("/proc/vz")
+    elsif file_exist?("/proc/vz")
       logger.trace("Plugin Virtualization: /proc/vz exists. Detecting as openvz guest")
       virtualization[:system] = "openvz"
       virtualization[:role] = "guest"
@@ -141,9 +141,9 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect Hyper-V guest and the hostname of the host
-    if File.exist?("/var/lib/hyperv/.kvp_pool_3")
+    if file_exist?("/var/lib/hyperv/.kvp_pool_3")
       logger.trace("Plugin Virtualization: /var/lib/hyperv/.kvp_pool_3 contains string indicating Hyper-V guest")
-      data = File.read("/var/lib/hyperv/.kvp_pool_3")
+      data = file_read("/var/lib/hyperv/.kvp_pool_3")
       hyperv_host = data[/\HostName(.*?)HostingSystemEditionId/, 1].scan(/[[:print:]]/).join.downcase
       virtualization[:system] = "hyperv"
       virtualization[:role] = "guest"
@@ -152,8 +152,8 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect Linux-VServer
-    if File.exist?("/proc/self/status")
-      proc_self_status = File.read("/proc/self/status")
+    if file_exist?("/proc/self/status")
+      proc_self_status = file_read("/proc/self/status")
       vxid = proc_self_status.match(/^(s_context|VxID):\s*(\d+)$/)
       if vxid && vxid[2]
         virtualization[:system] = "linux-vserver"
@@ -187,25 +187,25 @@ Ohai.plugin(:Virtualization) do
     #
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
-    if File.exist?("/proc/self/cgroup")
-      cgroup_content = File.read("/proc/self/cgroup")
+    if file_exist?("/proc/self/cgroup")
+      cgroup_content = file_read("/proc/self/cgroup")
       if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
           cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-?.+$}
         logger.trace("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif File.read("/proc/1/environ") =~ /container=lxc/
+      elsif file_read("/proc/1/environ") =~ /container=lxc/
         logger.trace("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
-      elsif File.read("/proc/1/environ") =~ /container=systemd-nspawn/
+      elsif file_read("/proc/1/environ") =~ /container=systemd-nspawn/
         logger.trace("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"
         virtualization[:systems][:nspawn] = "guest"
-      elsif lxc_version_exists? && File.read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
+      elsif lxc_version_exists? && file_read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such
         # So we're cautious here to not overwrite other existing values (OHAI-573)
@@ -220,7 +220,7 @@ Ohai.plugin(:Virtualization) do
         # If so, we may need to look further for a differentiator (OHAI-573)
         virtualization[:systems][:lxc] = "host"
       end
-    elsif File.exist?("/.dockerenv") || File.exist?("/.dockerinit")
+    elsif file_exist?("/.dockerenv") || file_exist?("/.dockerinit")
       logger.trace("Plugin Virtualization: .dockerenv or .dockerinit exist. Detecting as docker guest")
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"
@@ -229,7 +229,7 @@ Ohai.plugin(:Virtualization) do
 
     # Detect LXD
     # See https://github.com/lxc/lxd/blob/master/doc/dev-lxd.md
-    if File.exist?("/dev/lxd/sock")
+    if file_exist?("/dev/lxd/sock")
       logger.trace("Plugin Virtualization: /dev/lxd/sock exists. Detecting as lxd guest")
       virtualization[:system] = "lxd"
       virtualization[:role] = "guest"
@@ -244,7 +244,7 @@ Ohai.plugin(:Virtualization) do
       # Snap based installations utilize '/var/snap/lxd/common/lxd/'
       #   - includes all future releases starting with 2.21, and will be the only source of 3.1+ feature releases post-bionic
       ["/var/lib/lxd/devlxd", "/var/snap/lxd/common/lxd/devlxd"].each do |devlxd|
-        if File.exist?(devlxd)
+        if file_exist?(devlxd)
           logger.trace("Plugin Virtualization: #{devlxd} exists. Detecting as lxd host")
           virtualization[:system] = "lxd"
           virtualization[:role] = "host"

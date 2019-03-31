@@ -20,9 +20,9 @@ Ohai.plugin(:Shells) do
   provides "shells"
 
   collect_data do
-    if ::File.exist?("/etc/shells")
+    if file_exist?("/etc/shells")
       shells []
-      ::File.readlines("/etc/shells").each do |line|
+      file_readlines("/etc/shells").each do |line|
         # remove carriage returns and skip over comments / empty lines
         shells << line.chomp if line[0] == "/"
       end

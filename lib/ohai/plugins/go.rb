@@ -22,7 +22,7 @@ Ohai.plugin(:Go) do
     so = shell_out("go version")
     # Sample output:
     # go version go1.6.1 darwin/amd64
-    if so.exitstatus == 0 && so.stdout =~ /go(\S+)/
+    if so.exit_status == 0 && so.stdout =~ /go(\S+)/
       go = Mash.new
       go[:version] = $1
       languages[:go] = go

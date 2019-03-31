@@ -27,7 +27,7 @@ Ohai.plugin(:Erlang) do
       so = shell_out("erl -eval '{ok, Ver} = file:read_file(filename:join([code:root_dir(), \"releases\", erlang:system_info(otp_release), \"OTP_VERSION\"])), Vsn = binary:bin_to_list(Ver, {0, byte_size(Ver) - 1}), io:format(\"~s,~s,~s\", [Vsn, erlang:system_info(version), erlang:system_info(nif_version)]), halt().' -noshell")
       # Sample output:
       # 19.1,8.1,2.11
-      if so.exitstatus == 0
+      if so.exit_status == 0
         output = so.stdout.split(",")
         erlang[:version] = output[0]
         erlang[:erts_version] = output[1]
@@ -41,7 +41,7 @@ Ohai.plugin(:Erlang) do
       so = shell_out("erl +V")
       # Sample output:
       # Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 7.3
-      if so.exitstatus == 0
+      if so.exit_status == 0
         output = so.stderr.split
         if output.length >= 6
           options = output[1]

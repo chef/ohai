@@ -25,7 +25,7 @@ Ohai.plugin(:Groovy) do
     so = shell_out("groovy -v")
     # Sample output:
     # Groovy Version: 2.4.6 JVM: 1.8.0_60 Vendor: Oracle Corporation OS: Mac OS X
-    if so.exitstatus == 0 && so.stdout =~ /Groovy Version: (\S+).*JVM: (\S+)/
+    if so.exit_status == 0 && so.stdout =~ /Groovy Version: (\S+).*JVM: (\S+)/
       groovy = Mash.new
       groovy[:version] = $1
       groovy[:jvm] = $2

@@ -122,7 +122,7 @@ Ohai.plugin(:CPU) do
       begin
         logger.trace("Plugin CPU: Falling back to aggregate data from lscpu as real cpu & core data is missing in /proc/cpuinfo")
         so = shell_out("lscpu")
-        if so.exitstatus == 0
+        if so.exit_status == 0
           lscpu_data = Mash.new
           so.stdout.each_line do |line|
             case line

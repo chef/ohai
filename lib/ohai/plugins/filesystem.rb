@@ -29,7 +29,7 @@ Ohai.plugin(:Filesystem) do
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
       path = File.join(dir, name)
-      return path if File.exist?(path)
+      return path if file_exist?(path)
     end
     name
   end
@@ -244,7 +244,7 @@ Ohai.plugin(:Filesystem) do
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exist?("/proc/mounts")
+    if file_exist?("/proc/mounts")
       mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.

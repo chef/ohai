@@ -25,7 +25,7 @@ Ohai.plugin(:Lua) do
     so = shell_out("lua -v")
     # Sample output:
     # Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
-    if so.exitstatus == 0
+    if so.exit_status == 0
       lua = Mash.new
       # at some point in lua's history they went from outputting the version
       # on stderr to doing it on stdout. This handles old / new versions

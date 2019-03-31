@@ -65,8 +65,8 @@ Ohai.plugin(:Platform) do
   # @returns [Hash] the file parsed into a Hash or nil
   #
   def read_os_release_info(file)
-    return nil unless File.exist?(file)
-    File.read(file).split.inject({}) do |map, line|
+    return nil unless file_exist?(file)
+    file_read(file).split.inject({}) do |map, line|
       key, value = line.split("=")
       map[key] = value.gsub(/\A"|"\Z/, "") if value
       map
@@ -85,7 +85,7 @@ Ohai.plugin(:Platform) do
       begin
         os_release_info = read_os_release_info("/etc/os-release")
         cisco_release_info = os_release_info["CISCO_RELEASE_INFO"] if os_release_info
-        if cisco_release_info && File.exist?(cisco_release_info)
+        if cisco_release_info && file_exist?(cisco_release_info)
           os_release_info.merge!(read_os_release_info(cisco_release_info))
         end
         os_release_info
@@ -98,7 +98,7 @@ Ohai.plugin(:Platform) do
   # @returns [Boolean] if we are Cisco according to /etc/os-release
   #
   def os_release_file_is_cisco?
-    File.exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
+    file_exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
   end
 
   #
@@ -109,7 +109,7 @@ Ohai.plugin(:Platform) do
   # @returns [String] bigip Linux version from /etc/f5-release
   #
   def bigip_version
-    release_contents = File.read("/etc/f5-release")
+    release_contents = file_read("/etc/f5-release")
     release_contents.match(/BIG-IP release (\S*)/)[1] # http://rubular.com/r/O8nlrBVqSb
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
     logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
@@ -187,18 +187,18 @@ Ohai.plugin(:Platform) do
   # @deprecated
   def legacy_platform_detection
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
-    if File.exist?("/etc/oracle-release")
-      contents = File.read("/etc/oracle-release").chomp
+    if file_exist?("/etc/oracle-release")
+      contents = file_read("/etc/oracle-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/enterprise-release")
-      contents = File.read("/etc/enterprise-release").chomp
+    elsif file_exist?("/etc/enterprise-release")
+      contents = file_read("/etc/enterprise-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/f5-release")
+    elsif file_exist?("/etc/f5-release")
       platform "bigip"
       platform_version bigip_version
-    elsif File.exist?("/etc/debian_version")
+    elsif file_exist?("/etc/debian_version")
       # Ubuntu and Debian both have /etc/debian_version
       # Ubuntu should always have a working lsb, debian does not by default
       if lsb[:id] =~ /Ubuntu/i
@@ -206,25 +206,25 @@ Ohai.plugin(:Platform) do
         platform_version lsb[:release]
       else
         platform "debian"
-        platform_version File.read("/etc/debian_version").chomp
+        platform_version file_read("/etc/debian_version").chomp
       end
-    elsif File.exist?("/etc/parallels-release")
-      contents = File.read("/etc/parallels-release").chomp
+    elsif file_exist?("/etc/parallels-release")
+      contents = file_read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif File.exist?("/etc/Eos-release")
+    elsif file_exist?("/etc/Eos-release")
       platform "arista_eos"
-      platform_version File.read("/etc/Eos-release").strip.split[-1]
-    elsif File.exist?("/etc/redhat-release")
-      contents = File.read("/etc/redhat-release").chomp
+      platform_version file_read("/etc/Eos-release").strip.split[-1]
+    elsif file_exist?("/etc/redhat-release")
+      contents = file_read("/etc/redhat-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/system-release")
-      contents = File.read("/etc/system-release").chomp
+    elsif file_exist?("/etc/system-release")
+      contents = file_read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/SuSE-release")
-      suse_release = File.read("/etc/SuSE-release")
+    elsif file_exist?("/etc/SuSE-release")
+      suse_release = file_read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
       platform_version suse_version
@@ -252,16 +252,16 @@ Ohai.plugin(:Platform) do
       end
 
       platform_version os_release_info["VERSION"]
-    elsif File.exist?("/etc/slackware-version")
+    elsif file_exist?("/etc/slackware-version")
       platform "slackware"
-      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/exherbo-release")
+      platform_version file_read("/etc/slackware-version").scan(/(\d+|\.+)/).join
+    elsif file_exist?("/etc/exherbo-release")
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version shell_out("/bin/uname -r").stdout.strip
-    elsif File.exist?("/usr/lib/os-release")
-      contents = File.read("/usr/lib/os-release")
+    elsif file_exist?("/usr/lib/os-release")
+      contents = file_read("/usr/lib/os-release")
       if /clear-linux-os/ =~ contents # Clear Linux https://clearlinux.org/
         platform "clearlinux"
         platform_version contents[/VERSION_ID=(\d+)/, 1]
@@ -294,14 +294,14 @@ Ohai.plugin(:Platform) do
   def determine_os_version
     # centos only includes the major version in os-release for some reason
     if os_release_info["ID"] == "centos"
-      get_redhatish_version(File.read("/etc/redhat-release").chomp)
+      get_redhatish_version(file_read("/etc/redhat-release").chomp)
     else
       os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
     end
   end
 
   collect_data(:linux) do
-    if ::File.exist?("/etc/os-release")
+    if file_exist?("/etc/os-release")
       logger.trace("Plugin platform: Using /etc/os-release for platform detection")
 
       # fixup os-release names to ohai platform names

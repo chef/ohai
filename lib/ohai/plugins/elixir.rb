@@ -24,7 +24,7 @@ Ohai.plugin(:Elixir) do
     # Erlang/OTP 18 [erts-7.3] [source] [64-bit] [smp:8:8] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
     #
     # Elixir 1.2.4
-    if so.exitstatus == 0 && so.stdout =~ /^Elixir (\S*)/
+    if so.exit_status == 0 && so.stdout =~ /^Elixir (\S*)/
       elixir = Mash.new
       elixir[:version] = $1
       languages[:elixir] = elixir

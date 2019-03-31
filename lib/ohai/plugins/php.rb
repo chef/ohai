@@ -29,7 +29,7 @@ Ohai.plugin(:PHP) do
     # PHP 5.5.31 (cli) (built: Feb 20 2016 20:33:10)
     # Copyright (c) 1997-2015 The PHP Group
     # Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
-    if so.exitstatus == 0
+    if so.exit_status == 0
       php = Mash.new
       so.stdout.each_line do |line|
         case line

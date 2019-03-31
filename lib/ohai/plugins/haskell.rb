@@ -33,7 +33,7 @@ Ohai.plugin(:Haskell) do
 
       # Sample output:
       # The Glorious Glasgow Haskell Compilation System, version 7.6.3
-      if so.exitstatus == 0
+      if so.exit_status == 0
         haskell[:ghc] = Mash.new
         haskell[:ghc][:version] = so.stdout.split[-1]
         haskell[:ghc][:description] = so.stdout.chomp
@@ -48,7 +48,7 @@ Ohai.plugin(:Haskell) do
 
       # Sample output:
       # The Glorious Glasgow Haskell Compilation System, version 7.6.3
-      if so.exitstatus == 0
+      if so.exit_status == 0
         haskell[:ghci] = Mash.new
         haskell[:ghci][:version] = so.stdout.split[-1]
         haskell[:ghci][:description] = so.stdout.chomp
@@ -64,7 +64,7 @@ Ohai.plugin(:Haskell) do
       # Sample output:
       # cabal-install version 1.16.0.2
       # using version 1.16.0 of the Cabal library
-      if so.exitstatus == 0
+      if so.exit_status == 0
         haskell[:cabal] = Mash.new
         haskell[:cabal][:version] = so.stdout.split("\n")[0].split[-1]
         haskell[:cabal][:description] = so.stdout.split("\n")[0].chomp
@@ -81,7 +81,7 @@ Ohai.plugin(:Haskell) do
       # Version 1.1.0, Git revision 0e9430aad55841b5ff2c6c2851f0548c16bce7cf (3540 commits) x86_64 hpack-0.13.0
       # or
       # Version 1.2.0 x86_64 hpack-0.14.0
-      if so.exitstatus == 0
+      if so.exit_status == 0
         haskell[:stack] = Mash.new
         haskell[:stack][:version] = /Version ([^\s,]*)/.match(so.stdout)[1] rescue nil
         haskell[:stack][:description] = so.stdout.chomp

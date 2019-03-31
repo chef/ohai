@@ -84,19 +84,27 @@ module Ohai
 
       # include Ohai::Mixin::OS
       def collect_os
-        data[:backend].os[:family]
+        found_os = data[:backend].os[:family]
+        # NOTE: The original mixin for this returned some values different than
+        #   what is being returned by the train connection.
+        # TODO: the result when on centos was the value redhat but really what 
+        #   what we want is linux - at least that is what I believe is suppose
+        #   to be the os value for the plugins to match on the collect_data blocks
+        data[:backend].os[:family_hierarchy][1]
       end
 
       # include Ohai::Mixin::Command
-
+      # This mixin is replaced currently with this method.
       def shell_out(cmd, **options)
-        # require 'pry' ; binding.pry
-        data[:backend].run_command(cmd)
+        logger.info("Running: #{cmd}")
+        result = data[:backend].run_command(cmd)
+        result
       end
 
       include Ohai::Mixin::SecondsToHuman
+      
       # include Ohai::Util::FileHelper
-
+      # This mixin is replaced currently with this method.
       def which(cmd)
         # require 'pry' ; binding.pry
         # paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
@@ -118,6 +126,26 @@ module Ohai
         end
         logger.trace("Plugin #{name}: did not find #{cmd}")
         false
+      end
+
+      # This is to provide a replacement for `File.exist?`
+      def file_exist?(filename)
+        data[:backend].file(filename).exist?
+      end
+
+      # This is to provide a replacement for `File.read`
+      def file_read(filename)
+        data[:backend].file(filename).content
+      end
+
+      # This is to provide a replacement for `File.realines`
+      def file_readlines(filename)
+        file_read(filename).lines
+      end
+
+      # This is to provide a replacement for Dir[] and Dir.glob
+      def files_in_dir(path)
+        data[:backend].run_command("ls -d #{path}").stdout.split
       end
 
       attr_reader :data

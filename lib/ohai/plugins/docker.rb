@@ -23,7 +23,7 @@ Ohai.plugin(:Docker) do
 
   def docker_info_json
     so = shell_out("docker info --format '{{json .}}'")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       return JSON.parse(so.stdout)
     end
   rescue Ohai::Exceptions::Exec

@@ -25,7 +25,7 @@ Ohai.plugin(:Scala) do
       # Sample output:
       # cat: /release: No such file or directory
       # Scala code runner version 2.12.1 -- Copyright 2002-2016, LAMP/EPFL and Lightbend, Inc.
-      if so.exitstatus == 0
+      if so.exit_status == 0
         scala[:version] = so.stderr.match(/.*version (\S*)/)[1]
       end
     rescue Ohai::Exceptions::Exec

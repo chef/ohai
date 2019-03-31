@@ -34,7 +34,7 @@ Ohai.plugin(:Mono) do
     # 	Misc:          softtrace
     # 	LLVM:          supported, not enabled.
     # 	GC:            sgen
-    if so.exitstatus == 0
+    if so.exit_status == 0
       mono = Mash.new
       output = so.stdout.split
       mono[:version] = output[4] unless output[4].nil?

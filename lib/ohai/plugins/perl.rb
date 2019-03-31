@@ -26,7 +26,7 @@ Ohai.plugin(:Perl) do
     # Sample output:
     # version='5.18.2';
     # archname='darwin-thread-multi-2level';
-    if so.exitstatus == 0
+    if so.exit_status == 0
       perl = Mash.new
       so.stdout.split(/\r?\n/).each do |line|
         case line

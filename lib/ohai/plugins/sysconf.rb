@@ -24,7 +24,7 @@ Ohai.plugin(:Sysconf) do
     if getconf_path
       getconf = shell_out("#{getconf_path} -a")
 
-      if getconf.exitstatus == 0
+      if getconf.exit_status == 0
         sysconf Mash.new unless sysconf
 
         getconf.stdout.split("\n").each do |line|

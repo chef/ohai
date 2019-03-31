@@ -198,7 +198,7 @@ Ohai.plugin(:Network) do
 
     cint = nil
     so = shell_out("arp -a")
-    if so.exitstatus == 0
+    if so.exit_status == 0
       so.stdout.lines do |line|
         if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
           cint = $2.downcase

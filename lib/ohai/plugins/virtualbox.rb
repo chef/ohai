@@ -23,7 +23,7 @@ Ohai.plugin(:Virtualbox) do
 
     so = shell_out("VBoxControl guestproperty enumerate")
 
-    if so.exitstatus == 0
+    if so.exit_status == 0
       virtualbox Mash.new
       virtualbox[:host] = Mash.new
       virtualbox[:guest] = Mash.new

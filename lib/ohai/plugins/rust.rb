@@ -22,7 +22,7 @@ Ohai.plugin(:Rust) do
     so = shell_out("rustc --version")
     # Sample output:
     # rustc 1.7.0
-    if so.exitstatus == 0
+    if so.exit_status == 0
       rust = Mash.new
       rust[:version] = so.stdout.split[1]
       languages[:rust] = rust if rust[:version]

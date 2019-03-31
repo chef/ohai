@@ -27,7 +27,7 @@ Ohai.plugin(:Python) do
     # Sample output:
     # 2.7.11 (default, Dec 26 2015, 17:47:53)
     # [GCC 4.2.1 Compatible Apple LLVM 7.0.2 (clang-700.1.81)]
-    if so.exitstatus == 0
+    if so.exit_status == 0
       python = Mash.new
       output = so.stdout.split
       python[:version] = output[0]

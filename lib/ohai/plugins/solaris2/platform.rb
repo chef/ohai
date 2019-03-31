@@ -36,7 +36,7 @@ Ohai.plugin(:Platform) do
       end
     end
 
-    File.open("/etc/release") do |file|
+    file_open("/etc/release") do |file|
       while ( line = file.gets )
         case line
         when /^.*(SmartOS).*$/

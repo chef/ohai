@@ -133,6 +133,23 @@ module Ohai
         data[:backend].file(filename).exist?
       end
 
+      # This is to provide a replacement for `File.open`
+      # returning a stringio gets you support for `gets` `lines`
+      # taking the block brings it on par with `File.open` use of block
+      def file_open(filename)
+        file_object = StringIO.new data[:backend].file(filename)
+        yield file_object if block_given?
+        file_object
+      end
+
+      # This is to provide a replacement for `File.executable?`
+      def file_executable?(filename)
+        binding.require 'pry' ; binding.pry
+        data[:backend].file(filename)
+        puts "Currently this may work"
+        true
+      end
+
       # This is to provide a replacement for `File.read`
       def file_read(filename)
         data[:backend].file(filename).content

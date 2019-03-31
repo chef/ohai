@@ -27,17 +27,17 @@ Ohai.plugin(:BlockDevice) do
         block[dir] = Mash.new
         %w{size removable}.each do |check|
           if file_exist?("/sys/block/#{dir}/#{check}")
-            File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+            file_open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{model rev state timeout vendor queue_depth}.each do |check|
           if file_exist?("/sys/block/#{dir}/device/#{check}")
-            File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+            file_open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{rotational physical_block_size logical_block_size}.each do |check|
           if file_exist?("/sys/block/#{dir}/queue/#{check}")
-            File.open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+            file_open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
       end

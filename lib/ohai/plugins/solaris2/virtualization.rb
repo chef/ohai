@@ -54,7 +54,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][guest.to_sym] = "guest"
     end
 
-    if File.executable?("/usr/sbin/zoneadm")
+    if file_executable?("/usr/sbin/zoneadm")
       zones = Mash.new
       so = shell_out("zoneadm list -pc")
       so.stdout.lines do |line|

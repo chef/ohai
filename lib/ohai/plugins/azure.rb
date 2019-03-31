@@ -56,7 +56,7 @@ Ohai.plugin(:Azure) do
   def has_dhcp_option_245?
     has_245 = false
     if file_exist?("/var/lib/dhcp/dhclient.eth0.leases")
-      File.open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
+      file_open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
         if line =~ /unknown-245/
           logger.trace("Plugin Azure: Found unknown-245 DHCP option used by Azure.")
           has_245 = true

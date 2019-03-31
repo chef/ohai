@@ -55,7 +55,7 @@ Ohai.plugin(:Mdadm) do
     # gather a list of all raid arrays
     if file_exist?("/proc/mdstat")
       devices = {}
-      File.open("/proc/mdstat").each do |line|
+      file_open("/proc/mdstat").each do |line|
         if line =~ /(md[0-9]+)/
           device = Regexp.last_match[1]
           pieces = line.split(/\s+/)

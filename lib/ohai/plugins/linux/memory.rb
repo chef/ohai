@@ -25,7 +25,7 @@ Ohai.plugin(:Memory) do
     memory[:hugepages] = Mash.new
     memory[:directmap] = Mash.new
 
-    File.open("/proc/meminfo").each do |line|
+    file_open("/proc/meminfo").each do |line|
       case line
       when /^MemTotal:\s+(\d+) (.+)$/
         memory[:total] = "#{$1}#{$2}"

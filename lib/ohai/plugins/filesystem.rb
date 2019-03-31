@@ -248,7 +248,7 @@ Ohai.plugin(:Filesystem) do
       mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.
-      f = File.open("/proc/mounts")
+      f = file_open("/proc/mounts")
       loop do
 
         data = f.read_nonblock(4096)

@@ -49,7 +49,7 @@ Ohai.plugin(:SSHHostKey) do
                   end
 
     if sshd_config
-      File.open(sshd_config) do |conf|
+      file_open(sshd_config) do |conf|
         conf.each_line do |line|
           if line =~ /^hostkey\s/i
             pub_file = "#{line.split[1]}.pub"

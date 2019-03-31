@@ -42,11 +42,11 @@ Ohai.plugin(:Network) do
   end
 
   def is_openvz?
-    @openvz ||= ::File.directory?("/proc/vz")
+    @openvz ||= file_exist?("/proc/vz")
   end
 
   def is_openvz_host?
-    is_openvz? && ::File.directory?("/proc/bc")
+    is_openvz? && file_exist?("/proc/bc")
   end
 
   def extract_neighbors(family, iface, neigh_attr)

@@ -110,11 +110,21 @@ module Ohai
           Train.create('docker', host: host)
         elsif config[:target].to_s.start_with?('ssh')
           # ssh://user:password@host:port
+          # TODO: This has already been written within inspec. It would be
+          #   best to use that code.
           user_pass, host_port = config[:target].gsub('ssh://','').split('@')
+          user, pass = user_pass.split(':')
           host, port = host_port.split(':')
-          # require 'pry' ; binding.pry
+
+          train_config = {
+            host: host,
+            port: port,
+            user: user,
+            password: password
+            key_files = config[:keyfile]
+          }
           
-          Train.create('ssh',host: host, port: port || 22, user: user_pass, key_files: '~/.ssh/ohai.pem')
+          Train.create('ssh',train_config)
         else
           fail 'unsupported target'
         end

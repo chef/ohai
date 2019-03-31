@@ -61,6 +61,14 @@ class Ohai::Application
     long: "--target TARGET",
     description: "Target a remote location to invoke Ohai",
     on: :on
+  
+  # NOTE: This cli library does not support multiple parameters making
+  #   this not paralleled by what is offered by inspec.
+  option :keyfiles,
+    short: "-i TARGET",
+    long: "--key-file=KEYFILE",
+    description: "Login key or certificate file for a remote scan.",
+    on: :on
 
   option :help,
     short: "-h",

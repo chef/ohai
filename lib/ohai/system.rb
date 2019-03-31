@@ -120,10 +120,10 @@ module Ohai
             host: host,
             port: port,
             user: user,
-            password: password
-            key_files = config[:keyfile]
+            password: pass,
+            key_files: config[:keyfiles]
           }
-          
+
           Train.create('ssh',train_config)
         else
           fail 'unsupported target'
@@ -148,6 +148,7 @@ module Ohai
         conn.close
 
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
+        require 'pry' ; binding.pry
         logger.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end

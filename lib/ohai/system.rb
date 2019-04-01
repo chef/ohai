@@ -151,7 +151,7 @@ module Ohai
         conn.close
 
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
-        require 'pry' ; binding.pry
+        # require 'pry' ; binding.pry
         logger.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end

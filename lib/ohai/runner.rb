@@ -51,13 +51,13 @@ module Ohai
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end
         rescue Ohai::Exceptions::Error # rubocop: disable Lint/ShadowedException
-          require 'pry' ; binding.pry
+          # require 'pry' ; binding.pry
           raise
         rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
-          require 'pry' ; binding.pry
+          # require 'pry' ; binding.pry
           raise
         rescue Exception, Errno::ENOENT => e
-          require 'pry' ; binding.pry
+          # require 'pry' ; binding.pry
           logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end

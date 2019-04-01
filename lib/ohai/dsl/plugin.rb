@@ -137,7 +137,7 @@ module Ohai
       # returning a stringio gets you support for `gets` `lines`
       # taking the block brings it on par with `File.open` use of block
       def file_open(filename)
-        file_object = StringIO.new data[:backend].file(filename)
+        file_object = StringIO.new data[:backend].file(filename).content
         yield file_object if block_given?
         file_object
       end

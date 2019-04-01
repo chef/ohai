@@ -143,6 +143,9 @@ module Ohai
         conn = backend.connection
           
         @provides_map.all_plugins(attribute_filter).each do |plugin|
+          # This is a good place to use the train connection to
+          # execute a command or look at a file
+          # require 'pry' ; binding.pry
           @runner.run_plugin(plugin, conn)
         end
         conn.close

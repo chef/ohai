@@ -128,6 +128,7 @@ module Ohai
 
       # This is to provide a replacement for `File.exist?`
       def file_exist?(filename)
+        # require 'pry' ; binding.pry
         data[:backend].file(filename).exist?
       end
 
@@ -142,7 +143,7 @@ module Ohai
 
       # This is to provide a replacement for `File.executable?`
       def file_executable?(filename)
-        binding.require 'pry' ; binding.pry
+        # require 'pry' ; binding.pry
         data[:backend].file(filename)
         puts "Currently this may work"
         true
@@ -150,6 +151,7 @@ module Ohai
 
       # This is to provide a replacement for `File.read`
       def file_read(filename)
+        # require 'pry' ; binding.pry
         data[:backend].file(filename).content
       end
 

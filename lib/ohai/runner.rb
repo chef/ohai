@@ -88,7 +88,10 @@ module Ohai
         end
 
         if dependency_providers.empty?
+          # TODO: assigning the backend to the data of the plugin.
+          #   is probably not the best approach but it was an easy spot to start.
           next_plugin.data[:backend] = backend
+          # require 'pry' ; binding.pry
           @safe_run ? next_plugin.safe_run : next_plugin.run
           next_plugin.data[:backend] = nil
           if next_plugin.failed

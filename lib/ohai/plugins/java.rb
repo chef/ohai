@@ -21,7 +21,7 @@ Ohai.plugin(:Java) do
   depends "languages"
 
   def get_java_info
-    so = shell_out("java -mx64m -version")
+    so = shell_out("#{which("java")} -mx64m -version")
     # Sample output:
     # java version "1.8.0_60"
     # Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
@@ -63,11 +63,11 @@ Ohai.plugin(:Java) do
   # workaround for this particular annoyance.
   def has_real_java?
     return true unless on_darwin?
-    shell_out("/usr/libexec/java_home").status.success?
+    shell_out("/usr/libexec/java_home").exit_status == 0
   end
 
   def on_darwin?
-    RUBY_PLATFORM.downcase.include?("darwin")
+    collect_os == "darwin"
   end
 
   collect_data do

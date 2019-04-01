@@ -196,6 +196,11 @@ Ohai.plugin(:Kernel) do
 
     modules = Mash.new
     so = shell_out("env lsmod")
+    # NOTE: I don't know that this is right alternative on every linux platform.
+    if so.stdout == ""
+      so = shell_out("/sbin/lsmod")
+    end
+    
     so.stdout.lines do |line|
       if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
         modules[$1] = { size: $2, refcount: $3 }

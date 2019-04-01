@@ -45,7 +45,7 @@ Ohai.plugin(:DMI) do
     field = nil
 
     begin
-      so = shell_out("dmidecode")
+      so = shell_out(which("dmidecode"))
       # ==== EXAMPLE RECORD: ====
       # Handle 0x0000, DMI type 0, 24 bytes
       # BIOS Information

@@ -91,7 +91,7 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
-    so = shell_out("route -n get default")
+    so = shell_out("#{which("route")} -n get default")
     so.stdout.lines do |line|
       if line =~ /(\w+): ([\w\.]+)/
         case $1
@@ -104,7 +104,7 @@ Ohai.plugin(:Network) do
     end
 
     iface = Mash.new
-    so = shell_out("ifconfig -a")
+    so = shell_out("#{which("ifconfig")} -a")
     cint = nil
     so.stdout.lines do |line|
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)$/
@@ -159,7 +159,7 @@ Ohai.plugin(:Network) do
       end
     end
 
-    so = shell_out("arp -an")
+    so = shell_out("#{which("arp")} -an")
     so.stdout.lines do |line|
       if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+).*\[(\w+)\]/
         # MAC addr really should be normalized to include all the zeroes.
@@ -170,7 +170,7 @@ Ohai.plugin(:Network) do
     end
 
     settings = Mash.new
-    so = shell_out("sysctl net")
+    so = shell_out("#{which("sysctl")} net")
     so.stdout.lines do |line|
       if line =~ /^([a-zA-Z0-9\.\_]+)\: (.*)/
         # should normalize names between platforms for the same settings.
@@ -182,7 +182,7 @@ Ohai.plugin(:Network) do
     network[:interfaces] = iface
 
     net_counters = Mash.new
-    so = shell_out("netstat -i -d -l -b -n")
+    so = shell_out("#{which("netstat")} -i -d -l -b -n")
     so.stdout.lines do |line|
       if line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>\s+([a-f0-9\:]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/ ||
           line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/

@@ -106,9 +106,8 @@ module Ohai
       # include Ohai::Util::FileHelper
       # This mixin is replaced currently with this method.
       def which(cmd)
-        # require 'pry' ; binding.pry
         # paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
-        paths = data[:backend].run_command("echo $PATH").split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+        paths = data[:backend].run_command("echo $PATH").stdout.split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
         paths.each do |path|
           filename = File.join(path, cmd)
           
@@ -116,10 +115,9 @@ module Ohai
           #   At the moment I don't know how to get the current user (local and remote)
 
           # find the file stats => mode => convert to octal
-          backend_file_mode = data[:backend].file(filename).stat.mode
-
+          backend_file_mode = data[:backend].file(filename).stat[:mode]
           # if File.executable?(filename)
-          if backend_file_mode.to_s(8) == "755"
+          if backend_file_mode.to_i.to_s(8) == "755"
             logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
             return filename
           end

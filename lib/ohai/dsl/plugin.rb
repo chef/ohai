@@ -136,9 +136,13 @@ module Ohai
       # returning a stringio gets you support for `gets` `lines`
       # taking the block brings it on par with `File.open` use of block
       def file_open(filename)
-        file_object = StringIO.new data[:backend].file(filename).content
-        yield file_object if block_given?
-        file_object
+        # require 'pry' ; binding.pry
+        content = data[:backend].file(filename).content
+        # NOTE: I need to look at the interface for File.open better.
+        #   it seems with a block passed you use the content in the block
+        #   but you return an IO object.
+        yield content if block_given?
+        StringIO.new content
       end
 
       # This is to provide a replacement for `File.executable?`

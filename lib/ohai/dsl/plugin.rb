@@ -82,20 +82,56 @@ module Ohai
   module DSL
     class Plugin
 
+      def __collect_os(family)
+        case family
+        when /aix/
+          "aix"
+        when /darwin$/
+          "darwin"
+        when /linux/
+          "linux"
+        when /freebsd/
+          "freebsd"
+        when /openbsd/
+          "openbsd"
+        when /netbsd/
+          "netbsd"
+        when /dragonfly/
+          "dragonflybsd"
+        when /solaris2/
+          "solaris2"
+        when /mswin|mingw32|windows/
+          # After long discussion in IRC the "powers that be" have come to a consensus
+          # that no Windows platform exists that was not based on the
+          # Windows_NT kernel, so we herby decree that "windows" will refer to all
+          # platforms built upon the Windows_NT kernel and have access to win32 or win64
+          # subsystems.
+          "windows"
+        else
+          nil
+        end
+      end
+
       # include Ohai::Mixin::OS
       def collect_os
-        found_os = data[:backend].os[:family]
         # NOTE: The original mixin for this returned some values different than
         #   what is being returned by the train connection.
         # TODO: the result when on centos was the value redhat but really what 
         #   what we want is linux - at least that is what I believe is suppose
         #   to be the os value for the plugins to match on the collect_data blocks
-        data[:backend].os[:family_hierarchy][1]
+        found_os = data[:backend].os[:family_hierarchy].find { |family| __collect_os(family) }
+        # require 'pry' ; binding.pry
+        if found_os.nil?
+          require 'pry' ; binding.pry
+          logger.error('There is a problem with the os detection mechanism')
+        end
+        found_os
       end
 
       # include Ohai::Mixin::Command
       # This mixin is replaced currently with this method.
       def shell_out(cmd, **options)
+        # require 'pry' ; binding.pry
         logger.info("Running: #{cmd}")
         result = data[:backend].run_command(cmd)
         result
@@ -113,11 +149,14 @@ module Ohai
           
           # TODO: Is the file executable to the current user?
           #   At the moment I don't know how to get the current user (local and remote)
+          # if File.executable?(filename)
 
           # find the file stats => mode => convert to octal
           backend_file_mode = data[:backend].file(filename).stat[:mode]
-          # if File.executable?(filename)
-          if backend_file_mode.to_i.to_s(8) == "755"
+          permissions = backend_file_mode.to_i.to_s(8)
+
+          # TODO: use another mechanic to find executable - bit mask / etc.
+          if permissions == "755" || permissions == "555"
             logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
             return filename
           end

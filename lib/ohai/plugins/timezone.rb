@@ -19,6 +19,12 @@ Ohai.plugin(:Timezone) do
 
   collect_data(:default) do
     time Mash.new unless time
+    logger.warn('Collecting time locally and not remotely')
     time[:timezone] = Time.now.getlocal.zone
+  end
+
+  collect_data(:linux) do
+    time Mash.new unless time
+    time[:timezone] = shell_out('date +%Z').stdout.chomp
   end
 end

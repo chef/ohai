@@ -146,23 +146,16 @@ module Ohai
         paths = data[:backend].run_command("echo $PATH").stdout.split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
         paths.each do |path|
           filename = File.join(path, cmd)
-          
-          # TODO: Is the file executable to the current user?
-          #   At the moment I don't know how to get the current user (local and remote)
-          # if File.executable?(filename)
-
-          # find the file stats => mode => convert to octal
-          backend_file_mode = data[:backend].file(filename).stat[:mode]
-          permissions = backend_file_mode.to_i.to_s(8)
-
-          # TODO: use another mechanic to find executable - bit mask / etc.
-          if permissions == "755" || permissions == "555"
+          if file_executable?(filename)
             logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
             return filename
           end
         end
-        logger.trace("Plugin #{name}: did not find #{cmd}")
-        false
+        logger.warn("Plugin #{name}: did not find #{cmd}")
+        # NOTE this was a poor interface - originally this returned a filename or false
+        #  I have changed it to return the same command that it was given and that will
+        #  likely result in no data collected but at least a well-formed command
+        cmd
       end
 
       # This is to provide a replacement for `File.exist?`
@@ -177,19 +170,25 @@ module Ohai
       def file_open(filename)
         # require 'pry' ; binding.pry
         content = data[:backend].file(filename).content
-        # NOTE: I need to look at the interface for File.open better.
-        #   it seems with a block passed you use the content in the block
-        #   but you return an IO object.
-        yield content if block_given?
-        StringIO.new content
+        # NOTE: StringIO is the superclass for File. This has a nearly
+        #   the same interface which gives it the ability to be a replacement
+        string_io = StringIO.new content
+        yield string_io if block_given?
+        string_io
       end
 
       # This is to provide a replacement for `File.executable?`
       def file_executable?(filename)
         # require 'pry' ; binding.pry
-        data[:backend].file(filename)
-        puts "Currently this may work"
-        true
+        # TODO: Is the file executable to the current user?
+        #   At the moment I don't know how to get the current user (local and remote)          
+        # TODO: this will need to be updated to support windows
+        file_mode = data[:backend].file(filename).stat[:mode]
+        permissions = file_mode.to_i.to_s(8)
+
+        # TODO: use another mechanic to find executable - bit mask / etc.
+        #   as this is a quick implementation to to satisfy some common modes
+        permissions == "755" || permissions == "555"
       end
 
       # This is to provide a replacement for `File.read`
@@ -205,6 +204,8 @@ module Ohai
 
       # This is to provide a replacement for Dir[] and Dir.glob
       def files_in_dir(path)
+        # require 'pry' ; binding.pry
+        # TODO: This would need to support windows.
         data[:backend].run_command("ls -d #{path}").stdout.split
       end
 

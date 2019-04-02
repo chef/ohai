@@ -144,8 +144,13 @@ module Ohai
           
         @provides_map.all_plugins(attribute_filter).each do |plugin|
           # This is a good place to use the train connection to
-          # execute a command or look at a file
+          # execute a command or look at a file.
+          # If you run ohai with a particular plugin in mind it makes 
+          # it easier to troubleshoot:
+          #
+          # plugin.data[:backend] = conn
           # require 'pry' ; binding.pry
+          # plugin.run_plugin
           @runner.run_plugin(plugin, conn)
         end
         conn.close

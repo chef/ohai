@@ -35,6 +35,22 @@ Ohai.plugin(:RootGroup) do
   end
 
   collect_data(:default) do
-    root_group Etc.getgrgid(Etc.getpwnam("root").gid).name
+    users = file_read('/etc/passwd').lines.map do |line|
+      name, has_password, uid, gid, gecos, dir, shell = line.strip.split(':')
+      Mash.new(name: name, dir: dir, gid: gid, uid: uid, shell: shell, gecos: gecos)
+    end
+
+    root_user = users.find { |u| u[:name] == 'root' }
+    
+    groups = file_read('/etc/group').lines.map do |line|
+      name, has_password, gid, members = line.strip.split(':')
+      Mash.new(name: name, gid: gid, members: members.to_s.split(","))
+    end
+    
+    found_root_group = groups.find { |group| group[:gid] == root_user[:gid] }
+
+    if found_root_group
+      root_group found_root_group[:name]
+    end
   end
 end

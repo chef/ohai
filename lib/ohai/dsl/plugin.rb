@@ -137,6 +137,11 @@ module Ohai
         result
       end
 
+      def can_connect?(address, port = 80, timeout = 2)
+        # require 'pry' ; binding.pry
+        shell_out("curl -Is #{address}:#{port} --connect-timeout #{timeout}").exit_status == 0
+      end
+
       include Ohai::Mixin::SecondsToHuman
       
       # include Ohai::Util::FileHelper

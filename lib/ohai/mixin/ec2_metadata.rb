@@ -75,10 +75,47 @@ module Ohai
       # a net/http client with a timeout of 10s and a keepalive of 10s
       #
       # @return [Net::HTTP]
+      # def http_client
+      #   @conn ||= Net::HTTP.start(EC2_METADATA_ADDR).tap do |h|
+      #     h.read_timeout = 10
+      #     h.keep_alive_timeout = 10
+      #   end
+      # end
       def http_client
-        @conn ||= Net::HTTP.start(EC2_METADATA_ADDR).tap do |h|
-          h.read_timeout = 10
-          h.keep_alive_timeout = 10
+        # --keepalive-time 10
+        # Ruby's read_timeout is the time between its reads
+        # @see https://ruby-doc.org/stdlib-2.2.1/libdoc/net/http/rdoc/Net/HTTP.html
+        # I don't know what the equivalent would be right for curl - perhaps:
+        # --max-time SECONDS
+        
+        # NOTE: because we are module mixed into the plugin we can use the backend connection
+        CurlClient.new(data[:backend], EC2_METADATA_ADDR)
+      end
+
+      class CurlClient
+        def initialize(connection,host,port = 80)
+          @connection = connection
+          @host = host
+          @port = port
+        end
+
+        attr_reader :connection, :host, :port
+
+        def get(path)
+          path = "/#{path}" unless path.start_with?("/")
+          result = connection.run_command("curl -i http://#{host}:#{port}#{path} --keepalive-time 10").stdout
+          head, body = result.to_s.strip.split("\r\n\r\n", 2)
+          Response.new(head.to_s, body.to_s)
+        end
+
+        class Response
+          def initialize(head, body)
+            @head = head
+            @protocol, @code, @message = @head.lines.first.split(" ")
+            @body = body
+          end
+
+          attr_reader :body, :code
         end
       end
 

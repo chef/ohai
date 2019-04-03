@@ -213,6 +213,17 @@ module Ohai
         response.code == "200" ? response.body : nil
       end
 
+      def json?(data)
+        data = StringIO.new(data)
+        parser = FFI_Yajl::Parser.new
+        begin
+          parser.parse(data)
+          true
+        rescue FFI_Yajl::ParseError
+          false
+        end
+      end
+
       def fetch_dynamic_data
         @fetch_dynamic_data ||= begin
           response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/")

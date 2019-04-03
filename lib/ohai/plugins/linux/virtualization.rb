@@ -22,16 +22,21 @@ Ohai.plugin(:Virtualization) do
   require "ohai/mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
+  # TODO: A series of expensive operations are about to begin
+  #   This which operation will look through all the possible paths
+  #   and when it is done it returns the same name back if it can't find it
+  #   
+    
   def lxc_version_exists?
-    which("lxc-version") || which("lxc-start")
+    which("lxc-version") != "lxc-version" || which("lxc-start") != "lxc-start"
   end
 
   def nova_exists?
-    which("nova")
+    which("nova") != "nova"
   end
 
   def docker_exists?
-    which("docker")
+    which("docker") != "docker"
   end
 
   collect_data(:linux) do

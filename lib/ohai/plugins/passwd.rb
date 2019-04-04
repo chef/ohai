@@ -12,13 +12,13 @@ Ohai.plugin(:Passwd) do
 
       file_read('/etc/passwd').lines.each do |line|
         name, has_password, uid, gid, gecos, dir, shell = line.strip.split(':')
-        user_passwd_entry = Mash.new(dir: dir, gid: gid, uid: uid, shell: shell, gecos: gecos)
+        user_passwd_entry = Mash.new(dir: dir, gid: gid.to_i, uid: uid.to_i, shell: shell, gecos: gecos)
         etc[:passwd][name] = user_passwd_entry unless etc[:passwd].key?(name)
       end
 
       file_read('/etc/group').lines.each do |line|
         name, has_password, gid, members = line.strip.split(':')
-        etc[:group][name] = Mash.new(gid: gid, members: members.to_s.split(","))
+        etc[:group][name] = Mash.new(gid: gid.to_i, members: members.to_s.split(","))
       end
     end
 

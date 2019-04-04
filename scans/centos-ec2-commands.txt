@@ -1,0 +1,1281 @@
+(uname -s)
+(uname -m)
+(test -f /etc/debian_version && cat /etc/debian_version)
+(test -f /etc/os-release && cat /etc/os-release)
+(test -f /usr/bin/FastCli)
+(show version | json)
+(test -f /etc/lsb-release && cat /etc/lsb-release)
+(test -f /usr/bin/lsb-release && cat /usr/bin/lsb-release)
+(test -f /etc/oracle-release && cat /etc/oracle-release)
+(test -f /etc/enterprise-release && cat /etc/enterprise-release)
+(test -f /etc/parallels-release && cat /etc/parallels-release)
+(test -f /etc/system-release && cat /etc/system-release)
+(test -f /etc/redhat-release && cat /etc/redhat-release)
+(cat /proc/uptime || echo -n)
+(which chef-client)
+(/usr/bin/chef-client --version)
+(find /opt -path '*/chef-14.11.21/lib')
+(which ohai)
+(/usr/bin/ohai --version)
+(find /opt -path '*/ohai-14.8.10/lib')
+(scala -version)
+(groovy -v)
+(rustc --version)
+(php -v)
+(ghc --version)
+(ghci --version)
+(cabal --version)
+(stack --version)
+(python -c "import sys; print (sys.version)")
+(go version)
+(gcc -v)
+(/lib/libc.so.6)
+(/lib64/libc.so.6)
+(cc -V -flags)
+(elixir -v)
+(ruby -e "require 'rbconfig'; puts %Q(platform=#{RUBY_PLATFORM},version=#{RUBY_VERSION},release_date=#{RUBY_RELEASE_DATE},target=#{RbConfig::CONFIG['target']},target_cpu=#{RbConfig::CONFIG['target_cpu']},target_vendor=#{RbConfig::CONFIG['target_vendor']},target_os=#{RbConfig::CONFIG['target_os']},host=#{RbConfig::CONFIG['host']},host_cpu=#{RbConfig::CONFIG['host_cpu']},host_os=#{RbConfig::CONFIG['host_os']},host_vendor=#{RbConfig::CONFIG['host_vendor']},bin_dir=#{RbConfig::CONFIG['bindir']},ruby_bin=#{::File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])},)")
+(ruby -e "require 'rbconfig'; require 'rubygems'; puts ::Gem.default_exec_format % 'gem'")
+(perl -V:version -V:archname)
+(node -v)
+(erl -eval '{ok, Ver} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), Vsn = binary:bin_to_list(Ver, {0, byte_size(Ver) - 1}), io:format("~s,~s,~s", [Vsn, erlang:system_info(version), erlang:system_info(nif_version)]), halt().' -noshell)
+(erl +V)
+(which java)
+(echo $PATH)
+(stat -L /usr/local/bin/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/java 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:01:19-05:00] WARN: Plugin Java: did not find java
+(java -mx64m -version)
+(lua -v)
+(mono -V)
+(which ip)
+(echo $PATH)
+(stat -L /usr/local/bin/ip 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/ip 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/ip 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/ip 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/ip 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(test -e /proc/net/if_inet6)
+(which ip)
+(echo $PATH)
+(/sbin/ip addr)
+(which ip)
+(echo $PATH)
+(/sbin/ip -d -s link)
+(which ip)
+(echo $PATH)
+(/sbin/ip -f inet neigh show)
+(which ip)
+(echo $PATH)
+(/sbin/ip -o -f inet route show table main)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(which ip)
+(echo $PATH)
+(/sbin/ip -f inet6 neigh show)
+(which ip)
+(echo $PATH)
+(/sbin/ip -o -f inet6 route show table main)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(test -e /proc/vz)
+(which ethtool)
+(echo $PATH)
+(stat -L /usr/local/bin/ethtool 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/ethtool 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/ethtool 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/ethtool 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/ethtool 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(/sbin/ethtool eth0)
+(/sbin/ethtool -g eth0)
+(uname -s)
+(uname -r)
+(uname -v)
+(uname -m)
+(uname -p)
+(uname -o)
+(env lsmod)
+(which lsmod)
+(echo $PATH)
+(stat -L /usr/local/bin/lsmod 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/lsmod 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/lsmod 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/lsmod 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/lsmod 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(/sbin/lsmod)
+(test -e /sys/module/ipt_REJECT/version)
+(test -e /sys/module/nf_conntrack_ipv4/version)
+(test -e /sys/module/nf_defrag_ipv4/version)
+(test -e /sys/module/iptable_filter/version)
+(test -e /sys/module/ip_tables/version)
+(test -e /sys/module/ip6t_REJECT/version)
+(test -e /sys/module/nf_conntrack_ipv6/version)
+(test -e /sys/module/nf_defrag_ipv6/version)
+(test -e /sys/module/xt_state/version)
+(test -e /sys/module/nf_conntrack/version)
+(test -e /sys/module/ip6table_filter/version)
+(test -e /sys/module/ip6_tables/version)
+(test -e /sys/module/ib_ipoib/version)
+(cat /sys/module/ib_ipoib/version || echo -n)
+(test -e /sys/module/rdma_ucm/version)
+(test -e /sys/module/ib_ucm/version)
+(test -e /sys/module/ib_uverbs/version)
+(test -e /sys/module/ib_umad/version)
+(test -e /sys/module/rdma_cm/version)
+(test -e /sys/module/ib_cm/version)
+(test -e /sys/module/iw_cm/version)
+(test -e /sys/module/ib_sa/version)
+(test -e /sys/module/ib_mad/version)
+(test -e /sys/module/ib_core/version)
+(test -e /sys/module/ib_addr/version)
+(test -e /sys/module/ipv6/version)
+(test -e /sys/module/xen_netfront/version)
+(test -e /sys/module/i2c_piix4/version)
+(test -e /sys/module/i2c_core/version)
+(test -e /sys/module/ext4/version)
+(test -e /sys/module/jbd2/version)
+(test -e /sys/module/mbcache/version)
+(test -e /sys/module/xen_blkfront/version)
+(test -e /sys/module/pata_acpi/version)
+(cat /sys/module/pata_acpi/version || echo -n)
+(test -e /sys/module/ata_generic/version)
+(cat /sys/module/ata_generic/version || echo -n)
+(test -e /sys/module/ata_piix/version)
+(cat /sys/module/ata_piix/version || echo -n)
+(test -e /sys/module/dm_mirror/version)
+(test -e /sys/module/dm_region_hash/version)
+(test -e /sys/module/dm_log/version)
+(test -e /sys/module/dm_mod/version)
+(test -e /usr/bin/lsb_release)
+(test -e /etc/lsb-release)
+(test -e /etc/os-release)
+(test -e /etc/oracle-release)
+(test -e /etc/enterprise-release)
+(test -e /etc/f5-release)
+(test -e /etc/debian_version)
+(test -e /etc/parallels-release)
+(test -e /etc/Eos-release)
+(test -e /etc/redhat-release)
+(cat /etc/redhat-release || echo -n)
+(cat /proc/meminfo || echo -n)
+(which dmidecode)
+(echo $PATH)
+(stat -L /usr/local/bin/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/dmidecode 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(/usr/sbin/dmidecode)
+(hostname -s)
+(hostname)
+(hostname --fqdn)
+(hostname --fqdn)
+(test -e /proc/1/comm)
+(cat /proc/1/comm || echo -n)
+(VBoxControl guestproperty enumerate)
+(date +%Z)
+(xenstore-read vm-data/provider_data/provider)
+(test -e /sys/hypervisor/uuid)
+(cat /sys/hypervisor/uuid || echo -n)
+(curl -Is 169.254.169.254:80 --connect-timeout 2)
+(curl -i http://169.254.169.254:80/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/ami-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/ami-launch-index --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/ami-manifest-path --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/block-device-mapping/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/block-device-mapping/ami --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/block-device-mapping/root --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/hostname --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/instance-action --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/instance-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/instance-type --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/local-hostname --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/local-ipv4 --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/mac --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/metrics/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/metrics/vhostmd --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/device-number --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/interface-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/ipv4-associations/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/ipv4-associations/54.167.86.159 --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/local-hostname --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/local-ipv4s --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/mac --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/owner-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/public-hostname --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/public-ipv4s --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/security-group-ids --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/security-groups --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/subnet-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/subnet-ipv4-cidr-block --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/vpc-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/vpc-ipv4-cidr-block --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/network/interfaces/macs/0a:f3:15:99:19:36/vpc-ipv4-cidr-blocks --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/placement/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/placement/availability-zone --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/product-codes --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/profile --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/public-hostname --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/public-ipv4 --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/public-keys/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/public-keys/0/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/public-keys/0/openssh-key --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/reservation-id --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/security-groups --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/services/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/services/domain --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/meta-data/services/partition --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/user-data/ --keepalive-time 10)
+(curl -i http://169.254.169.254:80/2016-09-02/dynamic/instance-identity/document/ --keepalive-time 10)
+(cat /etc/passwd || echo -n)
+(cat /etc/group || echo -n)
+(which docker)
+(echo $PATH)
+(stat -L /usr/local/bin/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/docker 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:01:56-05:00] WARN: Plugin Virtualization: did not find docker
+(test -e /proc/xen)
+(test -e /proc/xen/capabilities)
+(test -e /proc/modules)
+(cat /proc/modules || echo -n)
+(which nova)
+(echo $PATH)
+(stat -L /usr/local/bin/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/nova 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:01:58-05:00] WARN: Plugin Virtualization: did not find nova
+(test -e /proc/cpuinfo)
+(cat /proc/cpuinfo || echo -n)
+(test -e /sys/devices/virtual/misc/kvm)
+(test -e /proc/bc/0)
+(test -e /proc/vz)
+(test -e /var/lib/hyperv/.kvp_pool_3)
+(test -e /proc/self/status)
+(cat /proc/self/status || echo -n)
+(test -e /proc/self/cgroup)
+(cat /proc/self/cgroup || echo -n)
+(stat -L /proc/self/cgroup 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(cat /proc/1/environ || echo -n)
+(stat -L /proc/1/environ 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(which lxc-version)
+(echo $PATH)
+(stat -L /usr/local/bin/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/lxc-version 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:02:01-05:00] WARN: Plugin Virtualization: did not find lxc-version
+(which lxc-start)
+(echo $PATH)
+(stat -L /usr/local/bin/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/lxc-start 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:02:03-05:00] WARN: Plugin Virtualization: did not find lxc-start
+(test -e /dev/lxd/sock)
+(test -e /var/lib/lxd/devlxd)
+(test -e /var/snap/lxd/common/lxd/devlxd)
+(test -e /etc/machine-id)
+(test -e /var/lib/dbus/machine-id)
+(test -e /etc/ssh/sshd_config)
+(cat /etc/ssh/sshd_config || echo -n)
+(test -e /etc/ssh/ssh_host_dsa_key.pub)
+(cat /etc/ssh/ssh_host_dsa_key.pub || echo -n)
+(test -e /etc/ssh/ssh_host_rsa_key.pub)
+(cat /etc/ssh/ssh_host_rsa_key.pub || echo -n)
+(test -e /etc/ssh/ssh_host_ecdsa_key.pub)
+(test -e /etc/ssh/ssh_host_ed25519_key.pub)
+(rpm -qa --qf '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n')
+(test -e /etc/shells)
+(cat /etc/shells || echo -n)
+(test -e /sys/class/dmi/id/product_name)
+(cat /sys/class/dmi/id/product_name || echo -n)
+(whoami)
+(docker info --format '{{json .}}')
+(test -e /proc/mdstat)
+(cat /proc/mdstat || echo -n)
+(test -e /sys/block)
+(ls -d /sys/block/*)
+(test -e /sys/block/loop0/size)
+(cat /sys/block/loop0/size || echo -n)
+(test -e /sys/block/loop0/removable)
+(cat /sys/block/loop0/removable || echo -n)
+(test -e /sys/block/loop0/device/model)
+(test -e /sys/block/loop0/device/rev)
+(test -e /sys/block/loop0/device/state)
+(test -e /sys/block/loop0/device/timeout)
+(test -e /sys/block/loop0/device/vendor)
+(test -e /sys/block/loop0/device/queue_depth)
+(test -e /sys/block/loop0/queue/rotational)
+(cat /sys/block/loop0/queue/rotational || echo -n)
+(test -e /sys/block/loop0/queue/physical_block_size)
+(cat /sys/block/loop0/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop0/queue/logical_block_size)
+(cat /sys/block/loop0/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop1/size)
+(cat /sys/block/loop1/size || echo -n)
+(test -e /sys/block/loop1/removable)
+(cat /sys/block/loop1/removable || echo -n)
+(test -e /sys/block/loop1/device/model)
+(test -e /sys/block/loop1/device/rev)
+(test -e /sys/block/loop1/device/state)
+(test -e /sys/block/loop1/device/timeout)
+(test -e /sys/block/loop1/device/vendor)
+(test -e /sys/block/loop1/device/queue_depth)
+(test -e /sys/block/loop1/queue/rotational)
+(cat /sys/block/loop1/queue/rotational || echo -n)
+(test -e /sys/block/loop1/queue/physical_block_size)
+(cat /sys/block/loop1/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop1/queue/logical_block_size)
+(cat /sys/block/loop1/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop2/size)
+(cat /sys/block/loop2/size || echo -n)
+(test -e /sys/block/loop2/removable)
+(cat /sys/block/loop2/removable || echo -n)
+(test -e /sys/block/loop2/device/model)
+(test -e /sys/block/loop2/device/rev)
+(test -e /sys/block/loop2/device/state)
+(test -e /sys/block/loop2/device/timeout)
+(test -e /sys/block/loop2/device/vendor)
+(test -e /sys/block/loop2/device/queue_depth)
+(test -e /sys/block/loop2/queue/rotational)
+(cat /sys/block/loop2/queue/rotational || echo -n)
+(test -e /sys/block/loop2/queue/physical_block_size)
+(cat /sys/block/loop2/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop2/queue/logical_block_size)
+(cat /sys/block/loop2/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop3/size)
+(cat /sys/block/loop3/size || echo -n)
+(test -e /sys/block/loop3/removable)
+(cat /sys/block/loop3/removable || echo -n)
+(test -e /sys/block/loop3/device/model)
+(test -e /sys/block/loop3/device/rev)
+(test -e /sys/block/loop3/device/state)
+(test -e /sys/block/loop3/device/timeout)
+(test -e /sys/block/loop3/device/vendor)
+(test -e /sys/block/loop3/device/queue_depth)
+(test -e /sys/block/loop3/queue/rotational)
+(cat /sys/block/loop3/queue/rotational || echo -n)
+(test -e /sys/block/loop3/queue/physical_block_size)
+(cat /sys/block/loop3/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop3/queue/logical_block_size)
+(cat /sys/block/loop3/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop4/size)
+(cat /sys/block/loop4/size || echo -n)
+(test -e /sys/block/loop4/removable)
+(cat /sys/block/loop4/removable || echo -n)
+(test -e /sys/block/loop4/device/model)
+(test -e /sys/block/loop4/device/rev)
+(test -e /sys/block/loop4/device/state)
+(test -e /sys/block/loop4/device/timeout)
+(test -e /sys/block/loop4/device/vendor)
+(test -e /sys/block/loop4/device/queue_depth)
+(test -e /sys/block/loop4/queue/rotational)
+(cat /sys/block/loop4/queue/rotational || echo -n)
+(test -e /sys/block/loop4/queue/physical_block_size)
+(cat /sys/block/loop4/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop4/queue/logical_block_size)
+(cat /sys/block/loop4/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop5/size)
+(cat /sys/block/loop5/size || echo -n)
+(test -e /sys/block/loop5/removable)
+(cat /sys/block/loop5/removable || echo -n)
+(test -e /sys/block/loop5/device/model)
+(test -e /sys/block/loop5/device/rev)
+(test -e /sys/block/loop5/device/state)
+(test -e /sys/block/loop5/device/timeout)
+(test -e /sys/block/loop5/device/vendor)
+(test -e /sys/block/loop5/device/queue_depth)
+(test -e /sys/block/loop5/queue/rotational)
+(cat /sys/block/loop5/queue/rotational || echo -n)
+(test -e /sys/block/loop5/queue/physical_block_size)
+(cat /sys/block/loop5/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop5/queue/logical_block_size)
+(cat /sys/block/loop5/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop6/size)
+(cat /sys/block/loop6/size || echo -n)
+(test -e /sys/block/loop6/removable)
+(cat /sys/block/loop6/removable || echo -n)
+(test -e /sys/block/loop6/device/model)
+(test -e /sys/block/loop6/device/rev)
+(test -e /sys/block/loop6/device/state)
+(test -e /sys/block/loop6/device/timeout)
+(test -e /sys/block/loop6/device/vendor)
+(test -e /sys/block/loop6/device/queue_depth)
+(test -e /sys/block/loop6/queue/rotational)
+(cat /sys/block/loop6/queue/rotational || echo -n)
+(test -e /sys/block/loop6/queue/physical_block_size)
+(cat /sys/block/loop6/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop6/queue/logical_block_size)
+(cat /sys/block/loop6/queue/logical_block_size || echo -n)
+(test -e /sys/block/loop7/size)
+(cat /sys/block/loop7/size || echo -n)
+(test -e /sys/block/loop7/removable)
+(cat /sys/block/loop7/removable || echo -n)
+(test -e /sys/block/loop7/device/model)
+(test -e /sys/block/loop7/device/rev)
+(test -e /sys/block/loop7/device/state)
+(test -e /sys/block/loop7/device/timeout)
+(test -e /sys/block/loop7/device/vendor)
+(test -e /sys/block/loop7/device/queue_depth)
+(test -e /sys/block/loop7/queue/rotational)
+(cat /sys/block/loop7/queue/rotational || echo -n)
+(test -e /sys/block/loop7/queue/physical_block_size)
+(cat /sys/block/loop7/queue/physical_block_size || echo -n)
+(test -e /sys/block/loop7/queue/logical_block_size)
+(cat /sys/block/loop7/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram0/size)
+(cat /sys/block/ram0/size || echo -n)
+(test -e /sys/block/ram0/removable)
+(cat /sys/block/ram0/removable || echo -n)
+(test -e /sys/block/ram0/device/model)
+(test -e /sys/block/ram0/device/rev)
+(test -e /sys/block/ram0/device/state)
+(test -e /sys/block/ram0/device/timeout)
+(test -e /sys/block/ram0/device/vendor)
+(test -e /sys/block/ram0/device/queue_depth)
+(test -e /sys/block/ram0/queue/rotational)
+(cat /sys/block/ram0/queue/rotational || echo -n)
+(test -e /sys/block/ram0/queue/physical_block_size)
+(cat /sys/block/ram0/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram0/queue/logical_block_size)
+(cat /sys/block/ram0/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram1/size)
+(cat /sys/block/ram1/size || echo -n)
+(test -e /sys/block/ram1/removable)
+(cat /sys/block/ram1/removable || echo -n)
+(test -e /sys/block/ram1/device/model)
+(test -e /sys/block/ram1/device/rev)
+(test -e /sys/block/ram1/device/state)
+(test -e /sys/block/ram1/device/timeout)
+(test -e /sys/block/ram1/device/vendor)
+(test -e /sys/block/ram1/device/queue_depth)
+(test -e /sys/block/ram1/queue/rotational)
+(cat /sys/block/ram1/queue/rotational || echo -n)
+(test -e /sys/block/ram1/queue/physical_block_size)
+(cat /sys/block/ram1/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram1/queue/logical_block_size)
+(cat /sys/block/ram1/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram10/size)
+(cat /sys/block/ram10/size || echo -n)
+(test -e /sys/block/ram10/removable)
+(cat /sys/block/ram10/removable || echo -n)
+(test -e /sys/block/ram10/device/model)
+(test -e /sys/block/ram10/device/rev)
+(test -e /sys/block/ram10/device/state)
+(test -e /sys/block/ram10/device/timeout)
+(test -e /sys/block/ram10/device/vendor)
+(test -e /sys/block/ram10/device/queue_depth)
+(test -e /sys/block/ram10/queue/rotational)
+(cat /sys/block/ram10/queue/rotational || echo -n)
+(test -e /sys/block/ram10/queue/physical_block_size)
+(cat /sys/block/ram10/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram10/queue/logical_block_size)
+(cat /sys/block/ram10/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram11/size)
+(cat /sys/block/ram11/size || echo -n)
+(test -e /sys/block/ram11/removable)
+(cat /sys/block/ram11/removable || echo -n)
+(test -e /sys/block/ram11/device/model)
+(test -e /sys/block/ram11/device/rev)
+(test -e /sys/block/ram11/device/state)
+(test -e /sys/block/ram11/device/timeout)
+(test -e /sys/block/ram11/device/vendor)
+(test -e /sys/block/ram11/device/queue_depth)
+(test -e /sys/block/ram11/queue/rotational)
+(cat /sys/block/ram11/queue/rotational || echo -n)
+(test -e /sys/block/ram11/queue/physical_block_size)
+(cat /sys/block/ram11/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram11/queue/logical_block_size)
+(cat /sys/block/ram11/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram12/size)
+(cat /sys/block/ram12/size || echo -n)
+(test -e /sys/block/ram12/removable)
+(cat /sys/block/ram12/removable || echo -n)
+(test -e /sys/block/ram12/device/model)
+(test -e /sys/block/ram12/device/rev)
+(test -e /sys/block/ram12/device/state)
+(test -e /sys/block/ram12/device/timeout)
+(test -e /sys/block/ram12/device/vendor)
+(test -e /sys/block/ram12/device/queue_depth)
+(test -e /sys/block/ram12/queue/rotational)
+(cat /sys/block/ram12/queue/rotational || echo -n)
+(test -e /sys/block/ram12/queue/physical_block_size)
+(cat /sys/block/ram12/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram12/queue/logical_block_size)
+(cat /sys/block/ram12/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram13/size)
+(cat /sys/block/ram13/size || echo -n)
+(test -e /sys/block/ram13/removable)
+(cat /sys/block/ram13/removable || echo -n)
+(test -e /sys/block/ram13/device/model)
+(test -e /sys/block/ram13/device/rev)
+(test -e /sys/block/ram13/device/state)
+(test -e /sys/block/ram13/device/timeout)
+(test -e /sys/block/ram13/device/vendor)
+(test -e /sys/block/ram13/device/queue_depth)
+(test -e /sys/block/ram13/queue/rotational)
+(cat /sys/block/ram13/queue/rotational || echo -n)
+(test -e /sys/block/ram13/queue/physical_block_size)
+(cat /sys/block/ram13/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram13/queue/logical_block_size)
+(cat /sys/block/ram13/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram14/size)
+(cat /sys/block/ram14/size || echo -n)
+(test -e /sys/block/ram14/removable)
+(cat /sys/block/ram14/removable || echo -n)
+(test -e /sys/block/ram14/device/model)
+(test -e /sys/block/ram14/device/rev)
+(test -e /sys/block/ram14/device/state)
+(test -e /sys/block/ram14/device/timeout)
+(test -e /sys/block/ram14/device/vendor)
+(test -e /sys/block/ram14/device/queue_depth)
+(test -e /sys/block/ram14/queue/rotational)
+(cat /sys/block/ram14/queue/rotational || echo -n)
+(test -e /sys/block/ram14/queue/physical_block_size)
+(cat /sys/block/ram14/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram14/queue/logical_block_size)
+(cat /sys/block/ram14/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram15/size)
+(cat /sys/block/ram15/size || echo -n)
+(test -e /sys/block/ram15/removable)
+(cat /sys/block/ram15/removable || echo -n)
+(test -e /sys/block/ram15/device/model)
+(test -e /sys/block/ram15/device/rev)
+(test -e /sys/block/ram15/device/state)
+(test -e /sys/block/ram15/device/timeout)
+(test -e /sys/block/ram15/device/vendor)
+(test -e /sys/block/ram15/device/queue_depth)
+(test -e /sys/block/ram15/queue/rotational)
+(cat /sys/block/ram15/queue/rotational || echo -n)
+(test -e /sys/block/ram15/queue/physical_block_size)
+(cat /sys/block/ram15/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram15/queue/logical_block_size)
+(cat /sys/block/ram15/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram2/size)
+(cat /sys/block/ram2/size || echo -n)
+(test -e /sys/block/ram2/removable)
+(cat /sys/block/ram2/removable || echo -n)
+(test -e /sys/block/ram2/device/model)
+(test -e /sys/block/ram2/device/rev)
+(test -e /sys/block/ram2/device/state)
+(test -e /sys/block/ram2/device/timeout)
+(test -e /sys/block/ram2/device/vendor)
+(test -e /sys/block/ram2/device/queue_depth)
+(test -e /sys/block/ram2/queue/rotational)
+(cat /sys/block/ram2/queue/rotational || echo -n)
+(test -e /sys/block/ram2/queue/physical_block_size)
+(cat /sys/block/ram2/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram2/queue/logical_block_size)
+(cat /sys/block/ram2/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram3/size)
+(cat /sys/block/ram3/size || echo -n)
+(test -e /sys/block/ram3/removable)
+(cat /sys/block/ram3/removable || echo -n)
+(test -e /sys/block/ram3/device/model)
+(test -e /sys/block/ram3/device/rev)
+(test -e /sys/block/ram3/device/state)
+(test -e /sys/block/ram3/device/timeout)
+(test -e /sys/block/ram3/device/vendor)
+(test -e /sys/block/ram3/device/queue_depth)
+(test -e /sys/block/ram3/queue/rotational)
+(cat /sys/block/ram3/queue/rotational || echo -n)
+(test -e /sys/block/ram3/queue/physical_block_size)
+(cat /sys/block/ram3/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram3/queue/logical_block_size)
+(cat /sys/block/ram3/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram4/size)
+(cat /sys/block/ram4/size || echo -n)
+(test -e /sys/block/ram4/removable)
+(cat /sys/block/ram4/removable || echo -n)
+(test -e /sys/block/ram4/device/model)
+(test -e /sys/block/ram4/device/rev)
+(test -e /sys/block/ram4/device/state)
+(test -e /sys/block/ram4/device/timeout)
+(test -e /sys/block/ram4/device/vendor)
+(test -e /sys/block/ram4/device/queue_depth)
+(test -e /sys/block/ram4/queue/rotational)
+(cat /sys/block/ram4/queue/rotational || echo -n)
+(test -e /sys/block/ram4/queue/physical_block_size)
+(cat /sys/block/ram4/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram4/queue/logical_block_size)
+(cat /sys/block/ram4/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram5/size)
+(cat /sys/block/ram5/size || echo -n)
+(test -e /sys/block/ram5/removable)
+(cat /sys/block/ram5/removable || echo -n)
+(test -e /sys/block/ram5/device/model)
+(test -e /sys/block/ram5/device/rev)
+(test -e /sys/block/ram5/device/state)
+(test -e /sys/block/ram5/device/timeout)
+(test -e /sys/block/ram5/device/vendor)
+(test -e /sys/block/ram5/device/queue_depth)
+(test -e /sys/block/ram5/queue/rotational)
+(cat /sys/block/ram5/queue/rotational || echo -n)
+(test -e /sys/block/ram5/queue/physical_block_size)
+(cat /sys/block/ram5/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram5/queue/logical_block_size)
+(cat /sys/block/ram5/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram6/size)
+(cat /sys/block/ram6/size || echo -n)
+(test -e /sys/block/ram6/removable)
+(cat /sys/block/ram6/removable || echo -n)
+(test -e /sys/block/ram6/device/model)
+(test -e /sys/block/ram6/device/rev)
+(test -e /sys/block/ram6/device/state)
+(test -e /sys/block/ram6/device/timeout)
+(test -e /sys/block/ram6/device/vendor)
+(test -e /sys/block/ram6/device/queue_depth)
+(test -e /sys/block/ram6/queue/rotational)
+(cat /sys/block/ram6/queue/rotational || echo -n)
+(test -e /sys/block/ram6/queue/physical_block_size)
+(cat /sys/block/ram6/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram6/queue/logical_block_size)
+(cat /sys/block/ram6/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram7/size)
+(cat /sys/block/ram7/size || echo -n)
+(test -e /sys/block/ram7/removable)
+(cat /sys/block/ram7/removable || echo -n)
+(test -e /sys/block/ram7/device/model)
+(test -e /sys/block/ram7/device/rev)
+(test -e /sys/block/ram7/device/state)
+(test -e /sys/block/ram7/device/timeout)
+(test -e /sys/block/ram7/device/vendor)
+(test -e /sys/block/ram7/device/queue_depth)
+(test -e /sys/block/ram7/queue/rotational)
+(cat /sys/block/ram7/queue/rotational || echo -n)
+(test -e /sys/block/ram7/queue/physical_block_size)
+(cat /sys/block/ram7/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram7/queue/logical_block_size)
+(cat /sys/block/ram7/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram8/size)
+(cat /sys/block/ram8/size || echo -n)
+(test -e /sys/block/ram8/removable)
+(cat /sys/block/ram8/removable || echo -n)
+(test -e /sys/block/ram8/device/model)
+(test -e /sys/block/ram8/device/rev)
+(test -e /sys/block/ram8/device/state)
+(test -e /sys/block/ram8/device/timeout)
+(test -e /sys/block/ram8/device/vendor)
+(test -e /sys/block/ram8/device/queue_depth)
+(test -e /sys/block/ram8/queue/rotational)
+(cat /sys/block/ram8/queue/rotational || echo -n)
+(test -e /sys/block/ram8/queue/physical_block_size)
+(cat /sys/block/ram8/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram8/queue/logical_block_size)
+(cat /sys/block/ram8/queue/logical_block_size || echo -n)
+(test -e /sys/block/ram9/size)
+(cat /sys/block/ram9/size || echo -n)
+(test -e /sys/block/ram9/removable)
+(cat /sys/block/ram9/removable || echo -n)
+(test -e /sys/block/ram9/device/model)
+(test -e /sys/block/ram9/device/rev)
+(test -e /sys/block/ram9/device/state)
+(test -e /sys/block/ram9/device/timeout)
+(test -e /sys/block/ram9/device/vendor)
+(test -e /sys/block/ram9/device/queue_depth)
+(test -e /sys/block/ram9/queue/rotational)
+(cat /sys/block/ram9/queue/rotational || echo -n)
+(test -e /sys/block/ram9/queue/physical_block_size)
+(cat /sys/block/ram9/queue/physical_block_size || echo -n)
+(test -e /sys/block/ram9/queue/logical_block_size)
+(cat /sys/block/ram9/queue/logical_block_size || echo -n)
+(test -e /sys/block/xvda/size)
+(cat /sys/block/xvda/size || echo -n)
+(test -e /sys/block/xvda/removable)
+(cat /sys/block/xvda/removable || echo -n)
+(test -e /sys/block/xvda/device/model)
+(test -e /sys/block/xvda/device/rev)
+(test -e /sys/block/xvda/device/state)
+(test -e /sys/block/xvda/device/timeout)
+(test -e /sys/block/xvda/device/vendor)
+(test -e /sys/block/xvda/device/queue_depth)
+(test -e /sys/block/xvda/queue/rotational)
+(cat /sys/block/xvda/queue/rotational || echo -n)
+(test -e /sys/block/xvda/queue/physical_block_size)
+(cat /sys/block/xvda/queue/physical_block_size || echo -n)
+(test -e /sys/block/xvda/queue/logical_block_size)
+(cat /sys/block/xvda/queue/logical_block_size || echo -n)
+(which hostnamectl)
+(echo $PATH)
+(stat -L /usr/local/bin/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/sbin/hostnamectl 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+[2019-04-03T23:03:15-05:00] WARN: Plugin Hostnamectl: did not find hostnamectl
+(hostnamectl)
+(cat /proc/cmdline || echo -n)
+(zpool list -H -o name,size,alloc,free,cap,dedup,health,version)
+(test -e /usr/sbin/waagent)
+(test -e C:\\WindowsAzure)
+(test -e /var/lib/dhcp/dhclient.eth0.leases)
+(df -P)
+(df -iP)
+(mount)
+(which lsblk)
+(which blkid)
+(echo $PATH)
+(stat -L /usr/local/bin/blkid 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /bin/blkid 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin'
+'/blkid 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /usr/bin/blkid 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(stat -L /sbin/blkid 2>/dev/null --printf '%s
+%f
+%U
+%u
+%G
+%g
+%X
+%Y
+%C')
+(/bin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE)
+(test -e /dev/xvda)
+(test -e /dev/xvda1)
+(/sbin/blkid)
+(test -e /proc/mounts)
+(cat /proc/mounts || echo -n)
+(which getconf)
+(/usr/bin/getconf -a)

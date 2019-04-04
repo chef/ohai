@@ -20,12 +20,7 @@ Ohai.plugin(:Ohai) do
   provides "chef_packages/ohai"
 
   collect_data do
-    chef_packages Mash.new unless chef_packages
-    chef_packages[:ohai] = Mash.new
-    chef_packages[:ohai][:version] = Ohai::VERSION
-    chef_packages[:ohai][:ohai_root] = Ohai::OHAI_ROOT
-
-        # welcome to a quick implementation that gets the job done.
+    # welcome to a quick implementation that gets the job done.
 
     # Try and find chef. If it results in returning us chef its not on the path
     # So we want to look for it in the usual install locations.

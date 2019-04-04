@@ -20,20 +20,31 @@ Ohai.plugin(:Chef) do
   provides "chef_packages/chef"
 
   collect_data do
-    begin
-      # TODO: This approach to finding the chef version will not work remotely
-      require "chef/version"
-    rescue Gem::LoadError
-      logger.trace("Plugin Chef: Unable to load the chef gem to determine the version")
-      # this catches when you've done a major version bump of ohai, but
-      # your chef gem is incompatible, so we can't load it in the same VM
-      # (affects mostly internal testing)
-      next # avoids us writing an empty mash
+    # welcome to a quick implementation that gets the job done.
+
+    # Try and find chef. If it results in returning us chef its not on the path
+    # So we want to look for it in the usual install locations.
+    chef_client_bin = which('chef-client') 
+    if chef_client_bin == 'chef-client'
+      if file_exist?('/opt/chef/bin/chef-client')
+        chef_client_bin = '/opt/chef/bin/chef-client'
+      elsif file_exist?('/opt/chefdk/bin/chef-client')
+        chef_client_bin = '/opt/chefdk/bin/chef-client'
+      end
     end
 
-    chef_packages Mash.new unless chef_packages
-    chef_packages[:chef] = Mash.new
-    chef_packages[:chef][:version] = Chef::VERSION
-    chef_packages[:chef][:chef_root] = Chef::CHEF_ROOT
+    if chef_client_bin != 'chef-client'
+      chef_app_name, version = shell_out("#{chef_client_bin} --version").stdout.chomp.split(' ')
+
+      chef_packages Mash.new unless chef_packages
+      chef_packages[:chef] = Mash.new
+      chef_packages[:chef][:version] = version
+
+      # There is an assumption that it exists somewhere within this directory.
+      # There could multiple and I'm not sure which one would be prefered. I honestly would
+      # just put them all into the value here in an array.
+      chef_root = shell_out("find /opt -path '*/chef-#{version}/lib'").stdout.chomp.lines.first
+      chef_packages[:chef][:chefroot] = chef_root
+    end
   end
 end

@@ -198,7 +198,7 @@ Ohai.plugin(:Kernel) do
     so = shell_out("env lsmod")
     
     if so.stdout == ""
-      so = shell_out(which("lsmod"))
+      so = shell_out(which("lsmod") || "lsmod")
     end
     
     so.stdout.lines do |line|

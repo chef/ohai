@@ -178,9 +178,13 @@
 		}
 	},
 	"chef_packages": {
+		"chef": {
+			"version": "14.11.21",
+			"chefroot": "/opt/chef/embedded/lib/ruby/gems/2.5.0/gems/chef-14.11.21/lib"
+		},
 		"ohai": {
-			"version": "15.0.30",
-			"ohai_root": "/Users/franklinwebber/src/ohai/lib/ohai"
+			"version": "14.8.10",
+			"ohai_root": "/opt/chef/embedded/lib/ruby/gems/2.5.0/gems/ohai-14.8.10/lib"
 		}
 	},
 	"cloud": {
@@ -223,16 +227,16 @@
 				"eth0": {
 					"tx": {
 						"queuelen": "1000",
-						"bytes": "134131",
-						"packets": "1036",
+						"bytes": "5319652",
+						"packets": "33323",
 						"errors": "0",
 						"drop": "0",
 						"carrier": "0",
 						"collisions": "0"
 					},
 					"rx": {
-						"bytes": "569521",
-						"packets": "1115",
+						"bytes": "34029399",
+						"packets": "38452",
 						"errors": "0",
 						"drop": "0",
 						"overrun": "0"
@@ -325,7 +329,6 @@
 	"dmi": {
 		"dmidecode_version": "3.0"
 	},
-	"docker": {},
 	"domain": null,
 	"ec2": {
 		"ami_id": "ami-0565af6e282977273",
@@ -383,464 +386,464 @@
 		"passwd": {
 			"root": {
 				"dir": "/root",
-				"gid": "0",
-				"uid": "0",
+				"gid": 0,
+				"uid": 0,
 				"shell": "/bin/bash",
 				"gecos": "root"
 			},
 			"daemon": {
 				"dir": "/usr/sbin",
-				"gid": "1",
-				"uid": "1",
+				"gid": 1,
+				"uid": 1,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "daemon"
 			},
 			"bin": {
 				"dir": "/bin",
-				"gid": "2",
-				"uid": "2",
+				"gid": 2,
+				"uid": 2,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "bin"
 			},
 			"sys": {
 				"dir": "/dev",
-				"gid": "3",
-				"uid": "3",
+				"gid": 3,
+				"uid": 3,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "sys"
 			},
 			"sync": {
 				"dir": "/bin",
-				"gid": "65534",
-				"uid": "4",
+				"gid": 65534,
+				"uid": 4,
 				"shell": "/bin/sync",
 				"gecos": "sync"
 			},
 			"games": {
 				"dir": "/usr/games",
-				"gid": "60",
-				"uid": "5",
+				"gid": 60,
+				"uid": 5,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "games"
 			},
 			"man": {
 				"dir": "/var/cache/man",
-				"gid": "12",
-				"uid": "6",
+				"gid": 12,
+				"uid": 6,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "man"
 			},
 			"lp": {
 				"dir": "/var/spool/lpd",
-				"gid": "7",
-				"uid": "7",
+				"gid": 7,
+				"uid": 7,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "lp"
 			},
 			"mail": {
 				"dir": "/var/mail",
-				"gid": "8",
-				"uid": "8",
+				"gid": 8,
+				"uid": 8,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "mail"
 			},
 			"news": {
 				"dir": "/var/spool/news",
-				"gid": "9",
-				"uid": "9",
+				"gid": 9,
+				"uid": 9,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "news"
 			},
 			"uucp": {
 				"dir": "/var/spool/uucp",
-				"gid": "10",
-				"uid": "10",
+				"gid": 10,
+				"uid": 10,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "uucp"
 			},
 			"proxy": {
 				"dir": "/bin",
-				"gid": "13",
-				"uid": "13",
+				"gid": 13,
+				"uid": 13,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "proxy"
 			},
 			"www-data": {
 				"dir": "/var/www",
-				"gid": "33",
-				"uid": "33",
+				"gid": 33,
+				"uid": 33,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "www-data"
 			},
 			"backup": {
 				"dir": "/var/backups",
-				"gid": "34",
-				"uid": "34",
+				"gid": 34,
+				"uid": 34,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "backup"
 			},
 			"list": {
 				"dir": "/var/list",
-				"gid": "38",
-				"uid": "38",
+				"gid": 38,
+				"uid": 38,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "Mailing List Manager"
 			},
 			"irc": {
 				"dir": "/var/run/ircd",
-				"gid": "39",
-				"uid": "39",
+				"gid": 39,
+				"uid": 39,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "ircd"
 			},
 			"gnats": {
 				"dir": "/var/lib/gnats",
-				"gid": "41",
-				"uid": "41",
+				"gid": 41,
+				"uid": 41,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "Gnats Bug-Reporting System (admin)"
 			},
 			"nobody": {
 				"dir": "/nonexistent",
-				"gid": "65534",
-				"uid": "65534",
+				"gid": 65534,
+				"uid": 65534,
 				"shell": "/usr/sbin/nologin",
 				"gecos": "nobody"
 			},
 			"systemd-timesync": {
 				"dir": "/run/systemd",
-				"gid": "102",
-				"uid": "100",
+				"gid": 102,
+				"uid": 100,
 				"shell": "/bin/false",
 				"gecos": "systemd Time Synchronization,,,"
 			},
 			"systemd-network": {
 				"dir": "/run/systemd/netif",
-				"gid": "103",
-				"uid": "101",
+				"gid": 103,
+				"uid": 101,
 				"shell": "/bin/false",
 				"gecos": "systemd Network Management,,,"
 			},
 			"systemd-resolve": {
 				"dir": "/run/systemd/resolve",
-				"gid": "104",
-				"uid": "102",
+				"gid": 104,
+				"uid": 102,
 				"shell": "/bin/false",
 				"gecos": "systemd Resolver,,,"
 			},
 			"systemd-bus-proxy": {
 				"dir": "/run/systemd",
-				"gid": "105",
-				"uid": "103",
+				"gid": 105,
+				"uid": 103,
 				"shell": "/bin/false",
 				"gecos": "systemd Bus Proxy,,,"
 			},
 			"syslog": {
 				"dir": "/home/syslog",
-				"gid": "108",
-				"uid": "104",
+				"gid": 108,
+				"uid": 104,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"_apt": {
 				"dir": "/nonexistent",
-				"gid": "65534",
-				"uid": "105",
+				"gid": 65534,
+				"uid": 105,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"lxd": {
 				"dir": "/var/lib/lxd/",
-				"gid": "65534",
-				"uid": "106",
+				"gid": 65534,
+				"uid": 106,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"messagebus": {
 				"dir": "/var/run/dbus",
-				"gid": "111",
-				"uid": "107",
+				"gid": 111,
+				"uid": 107,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"uuidd": {
 				"dir": "/run/uuidd",
-				"gid": "112",
-				"uid": "108",
+				"gid": 112,
+				"uid": 108,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"dnsmasq": {
 				"dir": "/var/lib/misc",
-				"gid": "65534",
-				"uid": "109",
+				"gid": 65534,
+				"uid": 109,
 				"shell": "/bin/false",
 				"gecos": "dnsmasq,,,"
 			},
 			"sshd": {
 				"dir": "/var/run/sshd",
-				"gid": "65534",
-				"uid": "110",
+				"gid": 65534,
+				"uid": 110,
 				"shell": "/usr/sbin/nologin",
 				"gecos": ""
 			},
 			"pollinate": {
 				"dir": "/var/cache/pollinate",
-				"gid": "1",
-				"uid": "111",
+				"gid": 1,
+				"uid": 111,
 				"shell": "/bin/false",
 				"gecos": ""
 			},
 			"ubuntu": {
 				"dir": "/home/ubuntu",
-				"gid": "1000",
-				"uid": "1000",
+				"gid": 1000,
+				"uid": 1000,
 				"shell": "/bin/bash",
 				"gecos": "Ubuntu"
 			}
 		},
 		"group": {
 			"root": {
-				"gid": "0",
+				"gid": 0,
 				"members": []
 			},
 			"daemon": {
-				"gid": "1",
+				"gid": 1,
 				"members": []
 			},
 			"bin": {
-				"gid": "2",
+				"gid": 2,
 				"members": []
 			},
 			"sys": {
-				"gid": "3",
+				"gid": 3,
 				"members": []
 			},
 			"adm": {
-				"gid": "4",
+				"gid": 4,
 				"members": [
 					"syslog",
 					"ubuntu"
 				]
 			},
 			"tty": {
-				"gid": "5",
+				"gid": 5,
 				"members": []
 			},
 			"disk": {
-				"gid": "6",
+				"gid": 6,
 				"members": []
 			},
 			"lp": {
-				"gid": "7",
+				"gid": 7,
 				"members": []
 			},
 			"mail": {
-				"gid": "8",
+				"gid": 8,
 				"members": []
 			},
 			"news": {
-				"gid": "9",
+				"gid": 9,
 				"members": []
 			},
 			"uucp": {
-				"gid": "10",
+				"gid": 10,
 				"members": []
 			},
 			"man": {
-				"gid": "12",
+				"gid": 12,
 				"members": []
 			},
 			"proxy": {
-				"gid": "13",
+				"gid": 13,
 				"members": []
 			},
 			"kmem": {
-				"gid": "15",
+				"gid": 15,
 				"members": []
 			},
 			"dialout": {
-				"gid": "20",
+				"gid": 20,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"fax": {
-				"gid": "21",
+				"gid": 21,
 				"members": []
 			},
 			"voice": {
-				"gid": "22",
+				"gid": 22,
 				"members": []
 			},
 			"cdrom": {
-				"gid": "24",
+				"gid": 24,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"floppy": {
-				"gid": "25",
+				"gid": 25,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"tape": {
-				"gid": "26",
+				"gid": 26,
 				"members": []
 			},
 			"sudo": {
-				"gid": "27",
+				"gid": 27,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"audio": {
-				"gid": "29",
+				"gid": 29,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"dip": {
-				"gid": "30",
+				"gid": 30,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"www-data": {
-				"gid": "33",
+				"gid": 33,
 				"members": []
 			},
 			"backup": {
-				"gid": "34",
+				"gid": 34,
 				"members": []
 			},
 			"operator": {
-				"gid": "37",
+				"gid": 37,
 				"members": []
 			},
 			"list": {
-				"gid": "38",
+				"gid": 38,
 				"members": []
 			},
 			"irc": {
-				"gid": "39",
+				"gid": 39,
 				"members": []
 			},
 			"src": {
-				"gid": "40",
+				"gid": 40,
 				"members": []
 			},
 			"gnats": {
-				"gid": "41",
+				"gid": 41,
 				"members": []
 			},
 			"shadow": {
-				"gid": "42",
+				"gid": 42,
 				"members": []
 			},
 			"utmp": {
-				"gid": "43",
+				"gid": 43,
 				"members": []
 			},
 			"video": {
-				"gid": "44",
+				"gid": 44,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"sasl": {
-				"gid": "45",
+				"gid": 45,
 				"members": []
 			},
 			"plugdev": {
-				"gid": "46",
+				"gid": 46,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"staff": {
-				"gid": "50",
+				"gid": 50,
 				"members": []
 			},
 			"games": {
-				"gid": "60",
+				"gid": 60,
 				"members": []
 			},
 			"users": {
-				"gid": "100",
+				"gid": 100,
 				"members": []
 			},
 			"nogroup": {
-				"gid": "65534",
+				"gid": 65534,
 				"members": []
 			},
 			"systemd-journal": {
-				"gid": "101",
+				"gid": 101,
 				"members": []
 			},
 			"systemd-timesync": {
-				"gid": "102",
+				"gid": 102,
 				"members": []
 			},
 			"systemd-network": {
-				"gid": "103",
+				"gid": 103,
 				"members": []
 			},
 			"systemd-resolve": {
-				"gid": "104",
+				"gid": 104,
 				"members": []
 			},
 			"systemd-bus-proxy": {
-				"gid": "105",
+				"gid": 105,
 				"members": []
 			},
 			"input": {
-				"gid": "106",
+				"gid": 106,
 				"members": []
 			},
 			"crontab": {
-				"gid": "107",
+				"gid": 107,
 				"members": []
 			},
 			"syslog": {
-				"gid": "108",
+				"gid": 108,
 				"members": []
 			},
 			"netdev": {
-				"gid": "109",
+				"gid": 109,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"lxd": {
-				"gid": "110",
+				"gid": 110,
 				"members": [
 					"ubuntu"
 				]
 			},
 			"messagebus": {
-				"gid": "111",
+				"gid": 111,
 				"members": []
 			},
 			"uuidd": {
-				"gid": "112",
+				"gid": 112,
 				"members": []
 			},
 			"ssh": {
-				"gid": "113",
+				"gid": 113,
 				"members": []
 			},
 			"mlocate": {
-				"gid": "114",
+				"gid": 114,
 				"members": []
 			},
 			"admin": {
-				"gid": "115",
+				"gid": 115,
 				"members": []
 			},
 			"ubuntu": {
-				"gid": "1000",
+				"gid": 1000,
 				"members": []
 			}
 		}
@@ -899,12 +902,12 @@
 			},
 			"/dev/xvda1": {
 				"kb_size": "8065444",
-				"kb_used": "1154124",
-				"kb_available": "6894936",
+				"kb_used": "1153112",
+				"kb_available": "6895948",
 				"percent_used": "15%",
 				"total_inodes": "1024000",
-				"inodes_used": "73359",
-				"inodes_available": "950641",
+				"inodes_used": "73246",
+				"inodes_available": "950754",
 				"inodes_percent_used": "8%",
 				"fs_type": "ext4",
 				"mount_options": [
@@ -1182,12 +1185,12 @@
 			},
 			"/": {
 				"kb_size": "8065444",
-				"kb_used": "1154124",
-				"kb_available": "6894936",
+				"kb_used": "1153112",
+				"kb_available": "6895948",
 				"percent_used": "15%",
 				"total_inodes": "1024000",
-				"inodes_used": "73359",
-				"inodes_available": "950641",
+				"inodes_used": "73246",
+				"inodes_available": "950754",
 				"inodes_percent_used": "8%",
 				"fs_type": "ext4",
 				"mount_options": [
@@ -1671,13 +1674,13 @@
 			"/dev/xvda1,/": {
 				"device": "/dev/xvda1",
 				"kb_size": "8065444",
-				"kb_used": "1154124",
-				"kb_available": "6894936",
+				"kb_used": "1153112",
+				"kb_available": "6895948",
 				"percent_used": "15%",
 				"mount": "/",
 				"total_inodes": "1024000",
-				"inodes_used": "73359",
-				"inodes_available": "950641",
+				"inodes_used": "73246",
+				"inodes_available": "950754",
 				"inodes_percent_used": "8%",
 				"fs_type": "ext4",
 				"mount_options": [
@@ -2113,8 +2116,8 @@
 		"kernel": "Linux 4.4.0-1075-aws",
 		"architecture": "x86-64"
 	},
-	"idletime": "01 seconds",
-	"idletime_seconds": 1,
+	"idletime": "39 minutes 13 seconds",
+	"idletime_seconds": 2353,
 	"init_package": "systemd",
 	"ip6address": "fe80::8a3:feff:fe6c:de9e",
 	"ipaddress": "172.30.0.152",
@@ -2328,24 +2331,24 @@
 			"2M": "1011712kB"
 		},
 		"total": "1014436kB",
-		"free": "524844kB",
-		"available": "794232kB",
-		"buffers": "29108kB",
-		"cached": "364244kB",
-		"active": "152992kB",
-		"inactive": "271828kB",
-		"dirty": "16504kB",
+		"free": "314124kB",
+		"available": "773692kB",
+		"buffers": "43732kB",
+		"cached": "522688kB",
+		"active": "195040kB",
+		"inactive": "404788kB",
+		"dirty": "12kB",
 		"writeback": "0kB",
-		"anon_pages": "35084kB",
-		"mapped": "46236kB",
-		"slab": "38364kB",
-		"slab_reclaimable": "18988kB",
-		"slab_unreclaim": "19376kB",
-		"page_tables": "2952kB",
+		"anon_pages": "37056kB",
+		"mapped": "46904kB",
+		"slab": "74160kB",
+		"slab_reclaimable": "53272kB",
+		"slab_unreclaim": "20888kB",
+		"page_tables": "3008kB",
 		"nfs_unstable": "0kB",
 		"bounce": "0kB",
 		"commit_limit": "507216kB",
-		"committed_as": "283084kB",
+		"committed_as": "299448kB",
 		"vmalloc_total": "34359738367kB",
 		"vmalloc_used": "0kB",
 		"vmalloc_chunk": "0kB",
@@ -2437,7 +2440,7 @@
 		"default_interface": "eth0",
 		"default_gateway": "172.30.0.1"
 	},
-	"ohai_time": 1554351530.9332821,
+	"ohai_time": 1554353924.525873,
 	"os": "linux",
 	"os_version": "4.4.0-1075-aws",
 	"packages": {
@@ -4331,7 +4334,7 @@
 		"ULONG_MAX": 18446744073709552000,
 		"USHRT_MAX": 65535,
 		"WORD_BIT": 32,
-		"_AVPHYS_PAGES": 78135,
+		"_AVPHYS_PAGES": 78483,
 		"_NPROCESSORS_CONF": 1,
 		"_NPROCESSORS_ONLN": 1,
 		"_PHYS_PAGES": 253609,
@@ -4592,11 +4595,10 @@
 	"time": {
 		"timezone": "UTC"
 	},
-	"uptime": "14 seconds",
-	"uptime_seconds": 14,
+	"uptime": "39 minutes 53 seconds",
+	"uptime_seconds": 2393,
 	"virtualization": {
 		"systems": {
-			"docker": "host",
 			"xen": "guest"
 		},
 		"system": "xen",

@@ -25,7 +25,7 @@ Ohai.plugin(:Chef) do
     # Try and find chef. If it results in returning us chef its not on the path
     # So we want to look for it in the usual install locations.
     chef_client_bin = which('chef-client') 
-    if chef_client_bin == 'chef-client'
+    if chef_client_bin.nil?
       if file_exist?('/opt/chef/bin/chef-client')
         chef_client_bin = '/opt/chef/bin/chef-client'
       elsif file_exist?('/opt/chefdk/bin/chef-client')
@@ -33,7 +33,7 @@ Ohai.plugin(:Chef) do
       end
     end
 
-    if chef_client_bin != 'chef-client'
+    if chef_client_bin
       chef_app_name, version = shell_out("#{chef_client_bin} --version").stdout.chomp.split(' ')
 
       chef_packages Mash.new unless chef_packages

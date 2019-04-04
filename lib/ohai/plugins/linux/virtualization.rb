@@ -28,15 +28,15 @@ Ohai.plugin(:Virtualization) do
   #   
     
   def lxc_version_exists?
-    which("lxc-version") != "lxc-version" || which("lxc-start") != "lxc-start"
+    which("lxc-version") || which("lxc-start")
   end
 
   def nova_exists?
-    which("nova") != "nova"
+    which("nova")
   end
 
   def docker_exists?
-    which("docker") != "docker"
+    which("docker")
   end
 
   collect_data(:linux) do

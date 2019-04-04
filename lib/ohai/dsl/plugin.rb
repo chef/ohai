@@ -120,6 +120,7 @@ module Ohai
         #   what we want is linux - at least that is what I believe is suppose
         #   to be the os value for the plugins to match on the collect_data blocks
         found_os = data[:backend].os[:family_hierarchy].find { |family| __collect_os(family) }
+        
         # require 'pry' ; binding.pry
         if found_os.nil?
           require 'pry' ; binding.pry
@@ -132,7 +133,7 @@ module Ohai
       # This mixin is replaced currently with this method.
       def shell_out(cmd, **options)
         # require 'pry' ; binding.pry
-        logger.info("Running: #{cmd}")
+        # logger.info("Running: #{cmd}")
         result = data[:backend].run_command(cmd)
         result
       end
@@ -149,7 +150,7 @@ module Ohai
       def which(cmd)
         # require 'pry' ; binding.pry
 
-        # TODO: the interface here is poor it returns the cmd back when it fails to find
+        # TODO: the interface here is poor it returns a nil if it fails to find
         #   a full path. On success it returns the full path.
         #
         #   Perhaps:
@@ -193,10 +194,7 @@ module Ohai
           end
         end
         logger.warn("Plugin #{name}: did not find #{cmd}")
-        # NOTE this was a poor interface - originally this returned a filename or false
-        #  I have changed it to return the same command that it was given and that will
-        #  likely result in no data collected but at least a well-formed command
-        cmd
+        nil
       end
 
       # This is to provide a replacement for `File.exist?`

@@ -21,7 +21,7 @@ Ohai.plugin(:Java) do
   depends "languages"
 
   def get_java_info
-    so = shell_out("#{which("java")} -mx64m -version")
+    so = shell_out("#{which("java") || "java"} -mx64m -version")
     # Sample output:
     # java version "1.8.0_60"
     # Java(TM) SE Runtime Environment (build 1.8.0_60-b27)

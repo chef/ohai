@@ -202,6 +202,20 @@ module Ohai
         key.gsub(/\-|\//, "_")
       end
 
+      # @param [String] data that might be JSON
+      #
+      # @return [Boolean] is the data JSON or not?
+      def json?(data)
+        data = StringIO.new(data)
+        parser = FFI_Yajl::Parser.new
+        begin
+          parser.parse(data)
+          true
+        rescue FFI_Yajl::ParseError
+          false
+        end
+      end
+
     end
   end
 end

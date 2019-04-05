@@ -1,0 +1,516 @@
+{
+	"chef_packages": {
+		"chef": {
+			"version": "14.10.9",
+			"chef_root": "C:/opscode/chefdk/embedded/lib/ruby/gems/2.5.0/gems/chef-14.10.9-universal-mingw32/lib"
+		},
+		"ohai": {
+			"version": "14.8.10",
+			"ohai_root": "C:/opscode/chefdk/embedded/lib/ruby/gems/2.5.0/gems/ohai-14.8.10/lib/ohai"
+		}
+	},
+	"cloud": {
+		"public_ipv4_addrs": [
+			"34.204.13.246"
+		],
+		"local_ipv4_addrs": [
+			"172.30.0.161"
+		],
+		"provider": "ec2",
+		"public_hostname": "",
+		"local_hostname": "ip-172-30-0-161.ec2.internal",
+		"public_ipv4": "34.204.13.246",
+		"local_ipv4": "172.30.0.161"
+	},
+	"command": {},
+	"counters": {
+		"network": {}
+	},
+	"cpu": {
+		"0": {
+			"cores": 1,
+			"vendor_id": "GenuineIntel",
+			"family": "5",
+			"model": "16130",
+			"stepping": "2",
+			"physical_id": "CPU0",
+			"model_name": "Intel(R) Xeon(R) CPU E5-2676 v3 @ 2.40GHz",
+			"description": "Intel64 Family 6 Model 63 Stepping 2",
+			"mhz": "2400",
+			"cache_size": " KB"
+		},
+		"total": 1,
+		"cores": 1,
+		"real": 1
+	},
+	"dmi": {},
+	"domain": null,
+	"ec2": {
+		"ami_id": "ami-00a20f508263efd30",
+		"ami_launch_index": "0",
+		"ami_manifest_path": "(unknown)",
+		"block_device_mapping_ami": "/dev/sda1",
+		"block_device_mapping_root": "/dev/sda1",
+		"hostname": "ip-172-30-0-161.ec2.internal",
+		"instance_action": "none",
+		"instance_id": "i-0ec9ba331fcfd024f",
+		"instance_type": "t2.micro",
+		"local_hostname": "ip-172-30-0-161.ec2.internal",
+		"local_ipv4": "172.30.0.161",
+		"mac": "0a:02:96:51:71:06",
+		"metrics_vhostmd": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+		"network_interfaces_macs": {
+			"0a:02:96:51:71:06": {
+				"device_number": "0",
+				"interface_id": "eni-027ce671f1be1096f",
+				"ipv4-associations": {
+					"34.204.13.246": "172.30.0.161"
+				},
+				"local_hostname": "ip-172-30-0-161.ec2.internal",
+				"local_ipv4s": "172.30.0.161",
+				"mac": "0a:02:96:51:71:06",
+				"owner_id": "399524901138",
+				"public_hostname": "",
+				"public_ipv4s": "34.204.13.246",
+				"security_group_ids": "sg-c7086ca3",
+				"security_groups": "launch-wizard-1",
+				"subnet_id": "subnet-49b5d63e",
+				"subnet_ipv4_cidr_block": "172.30.0.0/24",
+				"vpc_id": "vpc-02550367",
+				"vpc_ipv4_cidr_block": "172.30.0.0/16",
+				"vpc_ipv4_cidr_blocks": "172.30.0.0/16"
+			}
+		},
+		"placement_availability_zone": "us-east-1a",
+		"profile": "windows-hvm",
+		"public_hostname": "",
+		"public_ipv4": "34.204.13.246",
+		"public_keys_0_openssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCiezJPkkl7W6lXMfl3x7oEs6ahrR8W35zLGxQRsnq99ShKpZnB+X20wlskUQt8PpXE+3rersJwA8euF5lTiml53K/ojM190FZAiwgvYjLe0yB/mtP8nPzh5h2G6U6Iu7eNV0C2f+rzvzy7LM8W6t8ULpS+W48Va2teVD7927BMwWVzL1g4iLRvRnOHpYkVlO9KbzUzO2mDW8giT8tRQyc7hDBiJClLxxr+hUu7i/8Rfq2esTp2aXRyvpVycfExTKGotVcLYd4+f3VH2Lmf4mR5SckGXGyym/VUOl6uaRDoTijTaf3DDL3sZiZBTEdihGidt3hlysbum2HfWKfxbGgr ohai\n",
+		"reservation_id": "r-0eae86fcf05969195",
+		"security_groups": [
+			"launch-wizard-1"
+		],
+		"services_domain": "amazonaws.com",
+		"services_partition": "aws",
+		"userdata": null,
+		"account_id": "399524901138",
+		"availability_zone": "us-east-1a",
+		"region": "us-east-1"
+	},
+	"filesystem": {
+		"C:": {
+			"kb_size": 32210153,
+			"kb_available": 10753798,
+			"kb_used": 21456355,
+			"percent_used": 66,
+			"mount": "C:",
+			"fs_type": "ntfs",
+			"volume_name": ""
+		}
+	},
+	"fips": {
+		"kernel": {
+			"enabled": false
+		}
+	},
+	"fqdn": "EC2AMAZ-7PBJIN6",
+	"hostname": "EC2AMAZ-7PBJIN6",
+	"ip6address": "fe80::901a:ea1e:dc2d:2542",
+	"ipaddress": "172.30.0.161",
+	"json?": "{\n  \"devpayProductCodes\" : null,\n  \"marketplaceProductCodes\" : null,\n  \"version\" : \"2017-09-30\",\n  \"instanceType\" : \"t2.micro\",\n  \"billingProducts\" : [ \"bp-6ba54002\" ],\n  \"instanceId\" : \"i-0ec9ba331fcfd024f\",\n  \"pendingTime\" : \"2019-04-05T15:37:52Z\",\n  \"imageId\" : \"ami-00a20f508263efd30\",\n  \"accountId\" : \"399524901138\",\n  \"availabilityZone\" : \"us-east-1a\",\n  \"kernelId\" : null,\n  \"ramdiskId\" : null,\n  \"architecture\" : \"x86_64\",\n  \"privateIp\" : \"172.30.0.161\",\n  \"region\" : \"us-east-1\"\n}",
+	"kernel": {
+		"os_info": {
+			"boot_device": "\\Device\\HarddiskVolume1",
+			"build_number": "14393",
+			"build_type": "Multiprocessor Free",
+			"caption": "Microsoft Windows Server 2016 Datacenter",
+			"code_set": "1252",
+			"country_code": "1",
+			"csd_version": null,
+			"cs_name": "EC2AMAZ-7PBJIN6",
+			"current_time_zone": 0,
+			"data_execution_prevention_32_bit_applications": true,
+			"data_execution_prevention_available": true,
+			"data_execution_prevention_drivers": true,
+			"data_execution_prevention_support_policy": 3,
+			"debug": false,
+			"description": "",
+			"distributed": false,
+			"encryption_level": 256,
+			"foreground_application_boost": 2,
+			"install_date": "20190404222613.000000+000",
+			"large_system_cache": null,
+			"last_boot_up_time": "20190405153817.498853+000",
+			"local_date_time": "20190405160404.880000+000",
+			"locale": "0409",
+			"manufacturer": "Microsoft Corporation",
+			"max_number_of_processes": -1,
+			"max_process_memory_size": "137438953344",
+			"mui_languages": [
+				"en-US"
+			],
+			"name": "Microsoft Windows Server 2016 Datacenter|C:\\Windows|\\Device\\Harddisk0\\Partition1",
+			"number_of_licensed_users": 0,
+			"number_of_processes": 51,
+			"number_of_users": 1,
+			"operating_system_sku": 8,
+			"organization": "Amazon.com",
+			"os_architecture": "64-bit",
+			"os_language": 1033,
+			"os_product_suite": 400,
+			"os_type": 18,
+			"other_type_description": null,
+			"pae_enabled": null,
+			"plus_product_id": null,
+			"plus_version_number": null,
+			"portable_operating_system": false,
+			"primary": true,
+			"product_type": 3,
+			"registered_user": "EC2",
+			"serial_number": "00376-40000-00000-AA753",
+			"service_pack_major_version": 0,
+			"service_pack_minor_version": 0,
+			"size_stored_in_paging_files": "3509592",
+			"status": "OK",
+			"suite_mask": 400,
+			"system_device": "\\Device\\HarddiskVolume1",
+			"system_directory": "C:\\Windows\\system32",
+			"system_drive": "C:",
+			"total_visible_memory_size": "1048176",
+			"version": "10.0.14393",
+			"windows_directory": "C:\\Windows"
+		},
+		"name": "Microsoft Windows Server 2016 Datacenter",
+		"release": "10.0.14393",
+		"version": "10.0.14393  Build 14393",
+		"os": "WINNT",
+		"product_type": "Server",
+		"server_core": false,
+		"cs_info": {
+			"admin_password_status": 3,
+			"automatic_managed_pagefile": true,
+			"automatic_reset_boot_option": true,
+			"automatic_reset_capability": true,
+			"boot_option_on_limit": null,
+			"boot_option_on_watch_dog": null,
+			"boot_rom_supported": true,
+			"boot_status": [
+				0,
+				0,
+				0,
+				127,
+				4,
+				0,
+				127,
+				0,
+				0,
+				0
+			],
+			"bootup_state": "Normal boot",
+			"caption": "EC2AMAZ-7PBJIN6",
+			"chassis_bootup_state": 3,
+			"chassis_sku_number": null,
+			"current_time_zone": 0,
+			"daylight_in_effect": null,
+			"description": "AT/AT COMPATIBLE",
+			"dns_host_name": "EC2AMAZ-7PBJIN6",
+			"domain": "WORKGROUP",
+			"domain_role": 2,
+			"enable_daylight_savings_time": true,
+			"front_panel_reset_status": 3,
+			"hypervisor_present": true,
+			"infrared_supported": false,
+			"initial_load_info": null,
+			"install_date": null,
+			"keyboard_password_status": 3,
+			"last_load_info": null,
+			"manufacturer": "Xen",
+			"model": "HVM domU",
+			"name": "EC2AMAZ-7PBJIN6",
+			"name_format": null,
+			"network_server_mode_enabled": true,
+			"number_of_logical_processors": 1,
+			"number_of_processors": 1,
+			"oem_string_array": [
+				"Xen"
+			],
+			"part_of_domain": false,
+			"pause_after_reset": "-1",
+			"pc_system_type": 1,
+			"pc_system_type_ex": 1,
+			"power_management_capabilities": null,
+			"power_management_supported": null,
+			"power_on_password_status": 3,
+			"power_state": 0,
+			"power_supply_state": 3,
+			"primary_owner_contact": null,
+			"primary_owner_name": "EC2",
+			"reset_capability": 1,
+			"reset_count": -1,
+			"reset_limit": -1,
+			"roles": [
+				"LM_Workstation",
+				"LM_Server",
+				"NT",
+				"Server_NT"
+			],
+			"status": "OK",
+			"support_contact_description": null,
+			"system_family": null,
+			"system_sku_number": null,
+			"system_startup_delay": null,
+			"system_startup_options": null,
+			"system_startup_setting": null,
+			"system_type": "x64-based PC",
+			"thermal_state": 3,
+			"total_physical_memory": "1073332224",
+			"user_name": null,
+			"wake_up_type": 6,
+			"workgroup": "WORKGROUP"
+		},
+		"machine": "x86_64",
+		"system_type": "Desktop"
+	},
+	"keys": {
+		"ssh": {}
+	},
+	"languages": {
+		"powershell": {
+			"version": "5.1.14393.2828",
+			"ws_man_stack_version": "3.0",
+			"serialization_version": "1.1.0.1",
+			"clr_version": "4.0.30319.42000",
+			"build_version": "10.0.14393.2828",
+			"compatible_versions": [
+				"1.0",
+				"2.0",
+				"3.0",
+				"4.0",
+				"5.0",
+				"5.1.14393.2828"
+			],
+			"remoting_protocol_version": "2.3"
+		},
+		"ruby": {}
+	},
+	"macaddress": "0A:02:96:51:71:06",
+	"machinename": "EC2AMAZ-7PBJIN6",
+	"memory": {
+		"swap": {
+			"total": "3509592kB",
+			"free": "3050784kB"
+		},
+		"total": "1048176kB",
+		"free": "327284kB"
+	},
+	"network": {
+		"interfaces": {
+			"0x3": {
+				"configuration": {
+					"ip_address": [
+						"172.30.0.161",
+						"fe80::901a:ea1e:dc2d:2542"
+					],
+					"arp_always_source_route": null,
+					"arp_use_ether_snap": null,
+					"caption": "[00000001] AWS PV Network Device",
+					"database_path": "%SystemRoot%\\System32\\drivers\\etc",
+					"dead_gw_detect_enabled": null,
+					"default_ip_gateway": [
+						"172.30.0.1"
+					],
+					"default_tos": null,
+					"default_ttl": null,
+					"description": "AWS PV Network Device #0",
+					"dhcp_enabled": true,
+					"dhcp_lease_expires": "20190405163837.000000+000",
+					"dhcp_lease_obtained": "20190405153837.000000+000",
+					"dhcp_server": "172.30.0.1",
+					"dns_domain": "ec2.internal",
+					"dns_domain_suffix_search_order": [
+						"us-east-1.ec2-utilities.amazonaws.com",
+						"ec2.internal"
+					],
+					"dns_enabled_for_wins_resolution": false,
+					"dns_host_name": "EC2AMAZ-7PBJIN6",
+					"dns_server_search_order": [
+						"172.30.0.2"
+					],
+					"domain_dns_registration_enabled": false,
+					"forward_buffer_memory": null,
+					"full_dns_registration_enabled": true,
+					"gateway_cost_metric": [
+						0
+					],
+					"igmp_level": null,
+					"index": 1,
+					"interface_index": 3,
+					"ip_connection_metric": 25,
+					"ip_enabled": true,
+					"ip_filter_security_enabled": false,
+					"ip_port_security_enabled": null,
+					"ip_sec_permit_ip_protocols": [],
+					"ip_sec_permit_tcp_ports": [],
+					"ip_sec_permit_udp_ports": [],
+					"ip_subnet": [
+						"255.255.255.0",
+						"64"
+					],
+					"ip_use_zero_broadcast": null,
+					"ipx_address": null,
+					"ipx_enabled": null,
+					"ipx_frame_type": null,
+					"ipx_media_type": null,
+					"ipx_network_number": null,
+					"ipx_virtual_net_number": null,
+					"keep_alive_interval": null,
+					"keep_alive_time": null,
+					"mac_address": "0A:02:96:51:71:06",
+					"mtu": null,
+					"num_forward_packets": null,
+					"pmtubh_detect_enabled": null,
+					"pmtu_discovery_enabled": null,
+					"service_name": "xennet",
+					"setting_id": "{39842DAA-D697-48D6-8421-4564EED68D56}",
+					"tcpip_netbios_options": 0,
+					"tcp_max_connect_retransmissions": null,
+					"tcp_max_data_retransmissions": null,
+					"tcp_num_connections": null,
+					"tcp_use_rfc1122_urgent_pointer": null,
+					"tcp_window_size": null,
+					"wins_enable_lm_hosts_lookup": true,
+					"wins_host_lookup_file": null,
+					"wins_primary_server": null,
+					"wins_scope_id": "",
+					"wins_secondary_server": null
+				},
+				"instance": {
+					"adapter_type": "Ethernet 802.3",
+					"adapter_type_id": 0,
+					"auto_sense": null,
+					"availability": 3,
+					"caption": "[00000001] AWS PV Network Device",
+					"config_manager_error_code": 0,
+					"config_manager_user_config": false,
+					"description": "AWS PV Network Device",
+					"device_id": "1",
+					"error_cleared": null,
+					"error_description": null,
+					"guid": "{39842DAA-D697-48D6-8421-4564EED68D56}",
+					"index": 1,
+					"install_date": null,
+					"installed": true,
+					"interface_index": 3,
+					"last_error_code": null,
+					"mac_address": "0A:02:96:51:71:06",
+					"manufacturer": "Amazon Inc.",
+					"max_number_controlled": 0,
+					"max_speed": null,
+					"name": "AWS PV Network Device #0",
+					"net_connection_id": "Ethernet",
+					"net_connection_status": 2,
+					"net_enabled": true,
+					"network_addresses": null,
+					"permanent_address": null,
+					"physical_adapter": true,
+					"pnp_device_id": "XENVIF\\VEN_XS0001&DEV_NET&REV_0000000B\\0",
+					"power_management_capabilities": null,
+					"power_management_supported": false,
+					"product_name": "AWS PV Network Device",
+					"service_name": "xennet",
+					"speed": "1000000000",
+					"status": null,
+					"status_info": null,
+					"system_name": "EC2AMAZ-7PBJIN6",
+					"time_of_last_reset": "20190405153817.498853+000"
+				},
+				"counters": {},
+				"addresses": {
+					"172.30.0.161": {
+						"prefixlen": "24",
+						"netmask": "255.255.255.0",
+						"broadcast": "172.30.0.255",
+						"family": "inet"
+					},
+					"fe80::901a:ea1e:dc2d:2542": {
+						"prefixlen": "64",
+						"family": "inet6",
+						"scope": "Link"
+					},
+					"0A:02:96:51:71:06": {
+						"family": "lladdr"
+					}
+				},
+				"mtu": null,
+				"type": "Ethernet 802.3",
+				"arp": {
+					"172.30.0.1": "0a:e7:37:d9:20:26",
+					"172.30.0.2": "0a:e7:37:d9:20:26",
+					"172.30.0.255": "ff:ff:ff:ff:ff:ff",
+					"224.0.0.22": "01:00:5e:00:00:16",
+					"224.0.0.252": "01:00:5e:00:00:fc",
+					"239.255.255.250": "01:00:5e:7f:ff:fa",
+					"255.255.255.255": "ff:ff:ff:ff:ff:ff"
+				},
+				"encapsulation": "Ethernet"
+			}
+		},
+		"default_gateway": "172.30.0.1",
+		"default_interface": "0x3"
+	},
+	"ohai_time": 1554480249.471531,
+	"os": "windows",
+	"os_version": "10.0.14393",
+	"packages": {
+		"AWS PV Drivers": {
+			"version": "8.2.6",
+			"publisher": "Amazon Web Services",
+			"installdate": "20190213"
+		},
+		"Chef Development Kit v3.8.14": {
+			"version": "3.8.14.1",
+			"publisher": "Chef Software, Inc.",
+			"installdate": "20190405"
+		},
+		"aws-cfn-bootstrap": {
+			"version": "1.4.31",
+			"publisher": "Amazon Web Services",
+			"installdate": "20181014"
+		},
+		"ConEmu 190331.x64": {
+			"version": "11.190.3310",
+			"publisher": "ConEmu-Maximus5",
+			"installdate": "20190405"
+		},
+		"Amazon SSM Agent": {
+			"version": "2.3.444.0",
+			"publisher": "Amazon Web Services"
+		},
+		"AWS Tools for Windows": {
+			"version": "3.15.693",
+			"publisher": "Amazon Web Services Developer Relations",
+			"installdate": "20190314"
+		}
+	},
+	"platform": "windows",
+	"platform_family": "windows",
+	"platform_version": "10.0.14393",
+	"root_group": "Administrators",
+	"shard_seed": 257296168,
+	"system_enclosure": {
+		"manufacturer": "Xen",
+		"serialnumber": ""
+	},
+	"time": {
+		"timezone": "Coordinated Universal Time"
+	},
+	"uptime": "25 minutes 48 seconds",
+	"uptime_seconds": 1548,
+	"virtualization": {
+		"systems": {
+			"xen": "guest"
+		},
+		"system": "xen",
+		"role": "guest"
+	}
+}

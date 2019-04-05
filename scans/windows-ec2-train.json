@@ -1,0 +1,67 @@
+{
+	"backend": null,
+	"chef_packages": {
+		"chef": {
+			"version": null,
+			"chefroot": null
+		},
+		"ohai": {
+			"version": null,
+			"ohai_root": null
+		}
+	},
+	"cloud": null,
+	"command": {},
+	"counters": {
+		"network": {}
+	},
+	"cpu": {},
+	"dmi": {},
+	"fips": {
+		"kernel": {
+			"enabled": false
+		}
+	},
+	"keys": {
+		"ssh": {}
+	},
+	"languages": {
+		"ruby": {
+			"platform": "x64-mingw32",
+			"version": "2.5.3",
+			"release_date": "2018-10-18",
+			"target": "x86_64-w64-mingw32",
+			"target_cpu": "x64",
+			"target_vendor": "w64",
+			"target_os": "mingw32",
+			"host": "x86_64-w64-mingw32",
+			"host_cpu": "x86_64",
+			"host_os": "mingw32",
+			"host_vendor": "w64",
+			"bin_dir": "C:/opscode/chefdk/embedded/bin",
+			"ruby_bin": "C:/opscode/chefdk/embedded/bin/ruby",
+			"gems_dir": "C:/opscode/chefdk/embedded/lib/ruby/gems/2.5.0",
+			"gem_bin": "C:/opscode/chefdk/embedded/bin/gem"
+		},
+		"perl": {
+			"version": "5.8.8",
+			"archname": "msys-64int"
+		}
+	},
+	"memory": {
+		"swap": {}
+	},
+	"network": {
+		"interfaces": {}
+	},
+	"ohai_time": 1554480437.837558,
+	"os": "windows",
+	"platform": "windows",
+	"system_enclosure": {},
+	"time": {
+		"timezone": "CDT"
+	},
+	"virtualization": {
+		"systems": {}
+	}
+}

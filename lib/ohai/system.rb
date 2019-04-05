@@ -125,6 +125,21 @@ module Ohai
           }
 
           Train.create('ssh',train_config)
+        elsif config[:target].to_s.start_with?('winrm')
+          user_pass, host_port = config[:target].gsub('winrm://','').split('@')
+
+          user, pass = user_pass.split(':')
+          host, port = host_port.split(':')
+
+          train_config = {
+            host: host,
+            port: port,
+            user: user,
+            password: pass,
+            key_files: config[:keyfiles]
+          }
+
+          Train.create('winrm', host: host, user: (user || "  Administrator"), password: pass, ssl: false)
         else
           fail 'unsupported target'
         end

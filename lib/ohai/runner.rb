@@ -91,6 +91,7 @@ module Ohai
           # TODO: assigning the backend to the data of the plugin.
           #   is probably not the best approach but it was an easy spot to start.
           next_plugin.data[:backend] = backend
+          next_plugin.extend ::Ohai::WhichHelper
           # require 'pry' ; binding.pry
           @safe_run ? next_plugin.safe_run : next_plugin.run
           next_plugin.data[:backend] = nil

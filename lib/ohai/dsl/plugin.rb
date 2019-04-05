@@ -26,6 +26,76 @@ require "ohai/util/file_helper"
 
 module Ohai
 
+  module WhichHelper
+    def self.extended(instance)
+      if instance.collect_os == 'windows'
+        instance.extend Windows
+      else
+        instance.extend linux
+      end
+    end
+
+    module Windows
+      def which(cmd)
+        which_result = shell_out("get-command #{cmd} | Select-Object -ExpandProperty Definition")
+        if which_result.exit_status == 0
+          which_result.stdout.strip
+        end
+      end
+    end
+
+    module Linux
+      def which(cmd)
+        # require 'pry' ; binding.pry
+        # TODO: the interface here is poor it returns a nil if it fails to find
+        #   a full path. On success it returns the full path.
+        #
+        #   Perhaps:
+        # 
+        #     result = which('ifconfig').args('-a').run
+        #     result.stdout
+        #     result.stderr
+        #     result.exit_status
+        #     result.success?
+        #     result.success!     # throw an exception if the command failed
+        #     result.fail?
+        #     result.fail!        # throw an exception if the command successful
+        #
+        #   If which were to fail then it would return a FailedToFindCommand that would still
+        #   accept args which would still run. The choices with result feels mostly poor
+        #   all around. Generally it could throw exception by default or be disabled by default
+        #   Or it could be suggested to use the exclamation methods to control the flow 
+        #   that way by default.
+
+        # TODO: better performance can be found in the comments below
+        # The ssh backend can give you the results of `echo $PATH`
+        # But often commands found in /sbin were not being found and that may be because of
+        # some difference in the shell created.
+        #
+        # We can call which and if it doesn't come up we could resort to combing every path ...
+        #   but this is where it may more efficient to ls every directory and create a big table
+        #   of paths and then search through that ... this means the first time which
+        #   misses then the multple `ls` would fire and the data would be parsed and stored.
+        #   all other calls would use that cache.
+
+        which = data[:backend].run_command("which #{cmd}")
+        return which.stdout.chomp if which.exit_status == 0
+
+        # paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+        paths = data[:backend].run_command("echo $PATH").stdout.split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
+        paths.each do |path|
+          filename = File.join(path, cmd)
+          if file_executable?(filename)
+            logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
+            return filename
+          end
+        end
+        logger.warn("Plugin #{name}: did not find #{cmd}")
+        nil
+      end
+    end
+  end
+
   # For plugin namespacing
   module NamedPlugin
 
@@ -145,74 +215,6 @@ module Ohai
 
       include Ohai::Mixin::SecondsToHuman
   
-      
-      def which(cmd)
-        if collect_os == 'windows'
-          windows_which(cmd)
-        else
-          linux_which(cmd)
-        end
-      end
-
-      def windows_which(cmd)
-        which_result = shell_out("get-command #{cmd} | Select-Object -ExpandProperty Definition")
-        if which_result.exit_status == 0
-          which_result.stdout.strip
-        end
-      end
-
-      # include Ohai::Util::FileHelper
-      # This mixin is replaced currently with this method.
-      def linux_which(cmd)
-        # require 'pry' ; binding.pry
-
-        # TODO: the interface here is poor it returns a nil if it fails to find
-        #   a full path. On success it returns the full path.
-        #
-        #   Perhaps:
-        # 
-        #     result = which('ifconfig').args('-a').run
-        #     result.stdout
-        #     result.stderr
-        #     result.exit_status
-        #     result.success?
-        #     result.success!     # throw an exception if the command failed
-        #     result.fail?
-        #     result.fail!        # throw an exception if the command successful
-        #
-        #   If which were to fail then it would return a FailedToFindCommand that would still
-        #   accept args which would still run. The choices with result feels mostly poor
-        #   all around. Generally it could throw exception by default or be disabled by default
-        #   Or it could be suggested to use the exclamation methods to control the flow 
-        #   that way by default.
-
-        # TODO: better performance can be found in the comments below
-        # The ssh backend can give you the results of `echo $PATH`
-        # But often commands found in /sbin were not being found and that may be because of
-        # some difference in the shell created.
-        #
-        # We can call which and if it doesn't come up we could resort to combing every path ...
-        #   but this is where it may more efficient to ls every directory and create a big table
-        #   of paths and then search through that ... this means the first time which
-        #   misses then the multple `ls` would fire and the data would be parsed and stored.
-        #   all other calls would use that cache.
-
-        which = data[:backend].run_command("which #{cmd}")
-        return which.stdout.chomp if which.exit_status == 0
-
-        # paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
-        paths = data[:backend].run_command("echo $PATH").stdout.split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
-        paths.each do |path|
-          filename = File.join(path, cmd)
-          if file_executable?(filename)
-            logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
-            return filename
-          end
-        end
-        logger.warn("Plugin #{name}: did not find #{cmd}")
-        nil
-      end
-
       # This is to provide a replacement for `File.exist?`
       def file_exist?(filename)
         # require 'pry' ; binding.pry

@@ -19,7 +19,7 @@
 Ohai.plugin(:Ohai) do
   provides "chef_packages/ohai"
 
-  collect_data do
+  collect_data(:linux) do
     # welcome to a quick implementation that gets the job done.
 
     # Try and find chef. If it results in returning us chef its not on the path
@@ -46,6 +46,35 @@ Ohai.plugin(:Ohai) do
       # just put them all into the value here in an array.
       ohai_root = shell_out("find /opt -path '*/ohai-#{version}/lib'").stdout.chomp.lines.first
       chef_packages[:ohai][:ohai_root] = ohai_root
+    end
+  end
+
+  collect_data(:windows) do
+    # welcome to a quick implementation that gets the job done.
+
+    # Try and find chef. If it results in returning us chef its not on the path
+    # So we want to look for it in the usual install locations.
+    ohai_bin = which('ohai') 
+    
+    if ohai_bin
+      ohai_app_name, version = shell_out("#{ohai_bin} --version").stdout.chomp.split(' ')
+
+      chef_packages Mash.new unless chef_packages
+      chef_packages[:ohai] = Mash.new
+      chef_packages[:ohai][:version] = version
+
+      # There is an assumption that it exists somewhere within this directory.
+      # There could multiple and I'm not sure which one would be prefered. I honestly would
+      # just put them all into the value here in an array.
+
+      chef_base_install_path = ohai_bin.split("\\")[0..2].join("\\")
+      ohai_root_results = shell_out("get-childitem -Path #{chef_base_install_path} -Filter ohai-#{version} -Directory -Recurse | Select-Object -ExpandProperty FullName")
+        
+      if ohai_root_results.exit_status == 0
+        # There are two entries lets asssume that the last one the gems directory and not the extensions directory
+        ohai_root = ohai_root_results.stdout.strip.split("\r\n")[-1]
+        chef_packages[:ohai][:ohai_root] = ohai_root
+      end
     end
   end
 end

@@ -144,10 +144,26 @@ module Ohai
       end
 
       include Ohai::Mixin::SecondsToHuman
+  
       
+      def which(cmd)
+        if collect_os == 'windows'
+          windows_which(cmd)
+        else
+          linux_which(cmd)
+        end
+      end
+
+      def windows_which(cmd)
+        which_result = shell_out("get-command #{cmd} | Select-Object -ExpandProperty Definition")
+        if which_result.exit_status == 0
+          which_result.stdout.strip
+        end
+      end
+
       # include Ohai::Util::FileHelper
       # This mixin is replaced currently with this method.
-      def which(cmd)
+      def linux_which(cmd)
         # require 'pry' ; binding.pry
 
         # TODO: the interface here is poor it returns a nil if it fails to find

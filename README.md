@@ -2,6 +2,14 @@
 
 [![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=master)](https://travis-ci.org/chef/ohai) [![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/ohai?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/ohai/branch/master) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
+**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/master/teams/chef-infra.md)
+
+**Project State**: [Active](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#active)
+
+**Issues Response SLA**: 10 business days
+
+**Pull Request Response SLA**: 10 business days
+
 ## Description
 
 Ohai detects data about your operating system. It can be used standalone, but its primary purpose is to provide node data to Chef.
@@ -70,7 +78,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2019 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

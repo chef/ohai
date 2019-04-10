@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.30 -->
-## [v15.0.30](https://github.com/chef/ohai/tree/v15.0.30) (2019-03-18)
+<!-- latest_release 15.0.31 -->
+## [v15.0.31](https://github.com/chef/ohai/tree/v15.0.31) (2019-04-10)
 
 #### Merged Pull Requests
-- Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50))
+- Ohai::Util::FileHelper does not need to be loaded in this systemd_paths plugin [#1347](https://github.com/chef/ohai/pull/1347) ([burtlo](https://github.com/burtlo))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Ohai::Util::FileHelper does not need to be loaded in this systemd_paths plugin [#1347](https://github.com/chef/ohai/pull/1347) ([burtlo](https://github.com/burtlo)) <!-- 15.0.31 -->
 - Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50)) <!-- 15.0.30 -->
 - Parse new /proc/meminfo fields [#1340](https://github.com/chef/ohai/pull/1340) ([davide125](https://github.com/davide125)) <!-- 15.0.29 -->
 - Chefstyle fixes for Chefstyle 0.12 [#1337](https://github.com/chef/ohai/pull/1337) ([tas50](https://github.com/tas50)) <!-- 15.0.28 -->

@@ -210,7 +210,11 @@ module Ohai
 
       def can_connect?(address, port = 80, timeout = 2)
         # require 'pry' ; binding.pry
-        shell_out("curl -Is #{address}:#{port} --connect-timeout #{timeout}").exit_status == 0
+        if collect_os != 'windows'
+          shell_out("curl -Is #{address}:#{port} --connect-timeout #{timeout}").exit_status == 0
+        else
+          shell_out("Invoke-WebRequest -UseBasicParsing http://#{address}:#{port} | Select-Object -ExpandProperty StatusCode").stdout.chomp == "200"
+        end
       end
 
       include Ohai::Mixin::SecondsToHuman

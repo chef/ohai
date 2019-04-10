@@ -87,9 +87,59 @@ module Ohai
         # @see https://ruby-doc.org/stdlib-2.2.1/libdoc/net/http/rdoc/Net/HTTP.html
         # I don't know what the equivalent would be right for curl - perhaps:
         # --max-time SECONDS
-        
+        if collect_os != 'windows'
         # NOTE: because we are module mixed into the plugin we can use the backend connection
-        CurlClient.new(data[:backend], EC2_METADATA_ADDR)
+          CurlClient.new(data[:backend], EC2_METADATA_ADDR)
+        else
+          PowershellClient.new(data[:backend], EC2_METADATA_ADDR)
+        end
+      end
+
+      class PowershellClient
+        def initialize(connection,host,port = 80)
+          @connection = connection
+          @host = host
+          @port = port
+        end
+
+        attr_reader :connection, :host, :port
+
+        def get(path)
+          path = "/#{path}" unless path.start_with?("/")
+          result = connection.run_command("Invoke-WebRequest -UseBasicParsing http://#{host}:#{port}#{path} | Format-List -Property StatusCode,Content").stdout.strip
+          current_key = nil
+          results = {}
+          result.split("\r\n").each do |line|
+            if line.start_with?(/\S/)
+              current_key, initial_value = line.split(':', 2).map { |item| item.strip }
+              results[current_key] = initial_value
+            else
+              if current_key
+                results[current_key] = "#{results[current_key]}\n#{line.strip}"
+              end
+            end
+          end
+          AnotherResponse.new(results["StatusCode"],results["Content"])
+        end
+
+        class AnotherResponse
+          def initialize(code, body)
+            @code = code
+            @body = body
+          end
+
+          attr_reader :body, :code
+        end
+
+        class Response
+          def initialize(head, body)
+            @head = head
+            @protocol, @code, @message = @head.lines.first.split(" ")
+            @body = body
+          end
+
+          attr_reader :body, :code
+        end
       end
 
       class CurlClient

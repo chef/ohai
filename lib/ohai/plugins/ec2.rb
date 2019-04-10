@@ -81,13 +81,8 @@ Ohai.plugin(:EC2) do
   # linux hosts
   # @return [Boolean] do we have a Xen Identifying Number or not?
   def has_ec2_identifying_number?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-      require "wmi-lite/wmi"
-      wmi = WmiLite::Wmi.new
-      if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
-        logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
-        return true
-      end
+    if collect_os == 'windows'
+      shell_out('Get-WmiObject Win32_ComputerSystemProduct | Select-Object -ExpandProperty IdentifyingNumber').stdout.chomp != ''
     else
       logger.trace("Plugin EC2: has_ec2_identifying_number? == false")
       false
@@ -107,7 +102,6 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
-
     # Even if it looks like EC2 try to connect first
     if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
       can_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR)

@@ -49,8 +49,11 @@ Ohai.plugin(:Hostname) do
   def resolve_fqdn
     hostname = from_cmd("hostname")
     addrinfo = Socket.getaddrinfo(hostname, nil).first
+    # ["AF_INET", 0, "10.0.1.2", "10.0.1.2", 2, 2, 17]
     iaddr = IPAddr.new(addrinfo[3])
     Socket.gethostbyaddr(iaddr.hton)[0]
+    # Socket.gethostbyaddr("\n\x00\x01\x02")[0] # => nil
+    # "\n"
   rescue
     nil
   end
@@ -160,30 +163,10 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-    require "socket"
-
-    wmi = WmiLite::Wmi.new
-    host = wmi.first_of("Win32_ComputerSystem")
-
-    hostname host["dnshostname"].to_s
-    machinename host["name"].to_s
-
-    info = Socket.gethostbyname(Socket.gethostname)
-    if info.first =~ /.+?\.(.*)/
-      fqdn info.first
-    else
-      # host is not in dns. optionally use:
-      # C:\WINDOWS\system32\drivers\etc\hosts
-      info[3..info.length].reverse_each do |addr|
-        hostent = Socket.gethostbyaddr(addr)
-        if hostent.first =~ /.+?\.(.*)/
-          fqdn hostent.first
-          break
-        end
-      end
-      fqdn info.first unless fqdn
-    end
-    domain collect_domain
+    # NOTE: Windows test a connection: shell_out("Test-NetConnection | Select-Object -ExpandProperty Succeeded")
+    hostname shell_out('Get-WmiObject Win32_ComputerSystem | Select-Object -ExpandProperty DNSHostName').stdout.chomp
+    machinename shell_out('Get-WmiObject Win32_ComputerSystem | Select-Object -ExpandProperty Name').stdout.chomp
+    fqdn shell_out('[System.Net.Dns]::GetHostByName($env:computerName) | Select-Object -ExpandProperty HostName').stdout.chomp
+    domain shell_out('Get-WmiObject Win32_ComputerSystem | Select-Object -ExpandProperty Domain').stdout.chomp
   end
 end

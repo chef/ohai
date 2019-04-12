@@ -255,15 +255,29 @@ Ohai.plugin(:Kernel) do
     kernel Mash.new
     kernel[:os_info] = Mash.new
 
-    host = shell_out('Get-WmiObject Win32_OperatingSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
+    host = shell_out('Get-WmiObject Win32_OperatingSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.IsArray),$($_.Value)" } }').stdout
     
     host.lines.each do |line|
-      property_name, property_type, property_value = line.strip.split(',',3)
+      property_name, property_type, is_array, property_value = line.strip.split(',',4)
       next if blacklisted_wmi_name?(property_name.wmi_underscore)
-      property_value = true if property_type == 'Boolean' && property_value == 'True'
-      property_value = false if property_type == 'Boolean' && property_value == 'False'
-      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      is_array = (is_array == 'True' ? true : false)
+
+      if is_array
+        property_value = property_value.to_s.split(" ").map do |subvalue|
+          if property_type == 'Boolean'
+            subvalue == 'True' ? true : false
+          elsif property_type =~ /UInt(?:64|32|16|8)/
+            subvalue.to_i
+          else
+            subvalue
+          end
+        end
+      else
+        property_value = true if property_type == 'Boolean' && property_value == 'True'
+        property_value = false if property_type == 'Boolean' && property_value == 'False'
+        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      end
 
       kernel[:os_info][property_name.wmi_underscore.to_sym] = property_value
     end
@@ -277,14 +291,28 @@ Ohai.plugin(:Kernel) do
 
     kernel[:cs_info] = Mash.new
 
-    host = shell_out('Get-WmiObject Win32_ComputerSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
+    host = shell_out('Get-WmiObject Win32_ComputerSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.IsArray),$($_.Value)" } }').stdout
     host.lines.each do |line|
-      property_name, property_type, property_value = line.strip.split(',',3)
+      property_name, property_type, is_array, property_value = line.strip.split(',',4)
       next if blacklisted_wmi_name?(property_name.wmi_underscore)
-      property_value = true if property_type == 'Boolean' && property_value == 'True'
-      property_value = false if property_type == 'Boolean' && property_value == 'False'
-      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      is_array = (is_array == 'True' ? true : false)
+      
+      if is_array
+        property_value = property_value.to_s.split(" ").map do |subvalue|
+          if property_type == 'Boolean'
+            subvalue == 'True' ? true : false
+          elsif property_type =~ /UInt(?:64|32|16|8)/
+            subvalue.to_i
+          else
+            subvalue
+          end
+        end
+      else
+        property_value = true if property_type == 'Boolean' && property_value == 'True'
+        property_value = false if property_type == 'Boolean' && property_value == 'False'
+        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      end
 
       kernel[:cs_info][property_name.wmi_underscore.to_sym] = property_value
     end

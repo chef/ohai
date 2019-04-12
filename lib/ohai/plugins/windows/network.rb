@@ -140,8 +140,6 @@ Ohai.plugin(:Network) do
       true_index = index || interface_index
       iface_instance[true_index] ||= Mash.new
 
-      is_array = (is_array == 'True' ? true : false)
-
       if is_array
         property_value = property_value.to_s.split(" ").map do |subvalue|
           if property_type == 'Boolean'

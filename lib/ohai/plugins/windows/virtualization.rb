@@ -29,7 +29,7 @@ Ohai.plugin(:Virtualization) do
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     # Grab system DMI data from WMI to determine vendor information
-    dmi = wmi.first_of("Win32_ComputerSystemProduct")
+
     dmi_results = shell_out('Get-WmiObject "Win32_ComputerSystemProduct" | ForEach-Object { Write-Host "$($_.Vendor),$($_.Name),$($_.Version)" }').stdout.strip
     dmi_vendor, dmi_name, dmi_version = dmi_results.split(',',3)
     

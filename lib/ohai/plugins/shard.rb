@@ -87,17 +87,14 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-    wmi = WmiLite::Wmi.new
-
     create_seed do |src|
       case src
       when :serial
-        wmi.first_of("Win32_BIOS")["SerialNumber"]
+        shell_out('Get-WmiObject "Win32_BIOS" | Select-Object -ExpandProperty SerialNumber').stdout.strip
       when :os_serial
         kernel["os_info"]["serial_number"]
       when :uuid
-        wmi.first_of("Win32_ComputerSystemProduct")["UUID"]
+        shell_out('Get-WmiObject "Win32_ComputerSystemProduct" | Select-Object -ExpandProperty UUID').stdout.strip
       else
         raise "No such shard_seed source: #{src}"
       end

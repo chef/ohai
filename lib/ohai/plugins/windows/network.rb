@@ -83,7 +83,7 @@ Ohai.plugin(:Network) do
         arr << { index: v["index"],
                  interface_index: v["interface_index"],
                  default_ip_gateway: prefer_ipv4(v["default_ip_gateway"]),
-                 ip_connection_metric: v["ip_connection_metric"] }
+                 ip_connection_metric: v["ip_connection_metric"] } unless v["ip_connection_metric"].nil?
       end
       arr
     end.min_by { |r| r[:ip_connection_metric] }
@@ -106,7 +106,6 @@ Ohai.plugin(:Network) do
       index, interface_index, property_name, property_type, is_array, property_value = line.strip.split(',',6)
       true_index = index || interface_index
       iface_config[true_index] ||= Mash.new
-
       is_array = (is_array == 'True' ? true : false)
 
       if is_array
@@ -122,13 +121,19 @@ Ohai.plugin(:Network) do
       else
         property_value = true if property_type == 'Boolean' && property_value == 'True'
         property_value = false if property_type == 'Boolean' && property_value == 'False'
-        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+        if property_type =~ /UInt(?:64|32|16|8)/
+          if property_value.to_s != ''
+            property_value = property_value.to_i
+          else
+            property_value = nil
+          end
+        end
+        property_value = nil if property_type == 'String' && property_value.to_s == ''
       end
 
       iface_config[true_index][property_name.wmi_underscore.to_sym] ||= property_value
     end
-
+  
     # @see https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-networkadapter
     adpter_cmd = 'Get-WmiObject Win32_NetworkAdapter | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($adptr.Name),$($_.Name),$($_.Type),$($_.IsArray),$($_.Value)" } }'
     adapter_properties = shell_out(adpter_cmd).stdout.strip
@@ -153,10 +158,16 @@ Ohai.plugin(:Network) do
       else
         property_value = true if property_type == 'Boolean' && property_value == 'True'
         property_value = false if property_type == 'Boolean' && property_value == 'False'
-        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+        if property_type =~ /UInt(?:64|32|16|8)/
+          if property_value.to_s != ''
+            property_value = property_value.to_i
+          else
+            property_value = nil
+          end
+        end
+        property_value = nil if property_type == 'String' && property_value.to_s == ''
       end
-
+  
       # TODO: check to see if this is even necessary
       next if %w{creation_class_name system_creation_class_name}.include?(property_name.wmi_underscore)
       iface_instance[true_index][property_name.wmi_underscore.to_sym] = property_value
@@ -164,7 +175,6 @@ Ohai.plugin(:Network) do
 
     iface_instance.each_key do |i|
       if iface_instance[i][:name] && iface_config[i] && iface_config[i][:ip_address][0]
-        
         cint = interface_code(iface_instance[i][:interface_index], iface_instance[i][:index])
         iface[cint] = Mash.new
         iface[cint][:configuration] = iface_config[i]

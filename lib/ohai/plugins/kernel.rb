@@ -310,8 +310,14 @@ Ohai.plugin(:Kernel) do
       else
         property_value = true if property_type == 'Boolean' && property_value == 'True'
         property_value = false if property_type == 'Boolean' && property_value == 'False'
-        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+        if property_type =~ /UInt(?:64|32|16|8)/
+          if property_value.to_s != ''
+            property_value = property_value.to_i
+          else
+            property_value = nil
+          end
+        end
+        property_value = nil if property_type == 'String' && property_value.to_s == ''
       end
 
       kernel[:cs_info][property_name.wmi_underscore.to_sym] = property_value

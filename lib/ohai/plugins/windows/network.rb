@@ -98,40 +98,68 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
-    adptr_config_cmd = 'Get-WmiObject Win32_NetworkAdapterConfiguration | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($_.Name),$($_.Type),$($_.Value)" } }'
+    # @see https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-networkadapterconfiguration
+    adptr_config_cmd = 'Get-WmiObject Win32_NetworkAdapterConfiguration | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($_.Name),$($_.Type),$($_.IsArray),$($_.Value)" } }'
     adapter_config_properties = shell_out(adptr_config_cmd).stdout.strip
 
     adapter_config_properties.lines.each do |line|
-      index, interface_index, property_name, property_type, property_value = line.strip.split(',',6)
+      index, interface_index, property_name, property_type, is_array, property_value = line.strip.split(',',6)
       true_index = index || interface_index
       iface_config[true_index] ||= Mash.new
-      if property_name.wmi_underscore.to_sym == :ip_address
-        property_value = Array(property_value.to_s.split(' '))
+
+      is_array = (is_array == 'True' ? true : false)
+
+      if is_array
+        property_value = property_value.to_s.split(" ").map do |subvalue|
+          if property_type == 'Boolean'
+            subvalue == 'True' ? true : false
+          elsif property_type =~ /UInt(?:64|32|16|8)/
+            subvalue.to_i
+          else
+            subvalue
+          end
+        end
+      else
+        property_value = true if property_type == 'Boolean' && property_value == 'True'
+        property_value = false if property_type == 'Boolean' && property_value == 'False'
+        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
       end
-      
-      property_value = true if property_type == 'Boolean' && property_value == 'True'
-      property_value = false if property_type == 'Boolean' && property_value == 'False'
-      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
-      # TODO Missing DateTime (e.g. 20190405153817.498853+000)
 
       iface_config[true_index][property_name.wmi_underscore.to_sym] ||= property_value
     end
 
-    adpter_cmd = 'Get-WmiObject Win32_NetworkAdapter | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($adptr.Name),$($_.Name),$($_.Type),$($_.Value)" } }'
+    # @see https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-networkadapter
+    adpter_cmd = 'Get-WmiObject Win32_NetworkAdapter | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($adptr.Name),$($_.Name),$($_.Type),$($_.IsArray),$($_.Value)" } }'
     adapter_properties = shell_out(adpter_cmd).stdout.strip
 
     adapter_properties.lines.each do |line|
-      index, interface_index, adapter_name, property_name, property_type, property_value = line.strip.split(',',6)
+      index, interface_index, adapter_name, property_name, property_type, is_array, property_value = line.strip.split(',',7)
+      is_array = (is_array == 'True' ? true : false)
+
       true_index = index || interface_index
       iface_instance[true_index] ||= Mash.new
 
-      property_value = true if property_type == 'Boolean' && property_value == 'True'
-      property_value = false if property_type == 'Boolean' && property_value == 'False'
-      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
-      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
-      # TODO Missing DateTime (e.g. 20190405153817.498853+000)
+      is_array = (is_array == 'True' ? true : false)
 
+      if is_array
+        property_value = property_value.to_s.split(" ").map do |subvalue|
+          if property_type == 'Boolean'
+            subvalue == 'True' ? true : false
+          elsif property_type =~ /UInt(?:64|32|16|8)/
+            subvalue.to_i
+          else
+            subvalue
+          end
+        end
+      else
+        property_value = true if property_type == 'Boolean' && property_value == 'True'
+        property_value = false if property_type == 'Boolean' && property_value == 'False'
+        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      end
+
+      # TODO: check to see if this is even necessary
       next if %w{creation_class_name system_creation_class_name}.include?(property_name.wmi_underscore)
       iface_instance[true_index][property_name.wmi_underscore.to_sym] = property_value
     end

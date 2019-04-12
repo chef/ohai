@@ -81,34 +81,25 @@ Ohai.plugin(:Packages) do
   end
 
   def collect_programs_from_registry_key(key_path)
-    # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
-    if ::RbConfig::CONFIG["target_cpu"] == "i386"
-      reg_type = Win32::Registry::KEY_READ | 0x100
-    elsif ::RbConfig::CONFIG["target_cpu"] == "x86_64"
-      reg_type = Win32::Registry::KEY_READ | 0x200
-    else
-      reg_type = Win32::Registry::KEY_READ
-    end
-    Win32::Registry::HKEY_LOCAL_MACHINE.open(key_path, reg_type) do |reg|
-      reg.each_key do |key, _wtime|
-        pkg = reg.open(key)
-        name = pkg["DisplayName"] rescue nil
-        next if name.nil?
-        package = packages[name] = Mash.new
-        WINDOWS_ATTRIBUTE_ALIASES.each do |registry_attr, package_attr|
-          value = pkg[registry_attr] rescue nil
-          package[package_attr] = value unless value.nil?
-        end
-      end
+    # @see https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.registrykey?view=netframework-4.7.2
+    # EXAMPLE: Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" | ForEach-Object { Write-Host "$($_.GetValue('DisplayName')),$($_.GetValue('DisplayVersion')),$($_.GetValue('Publisher')),$($_.GetValue('InstallDate'))" }
+    package_properties = %w[ DisplayName DisplayVersion InstallDate Publisher ]
+    package_query_partial = package_properties.map { |p| "$($_.GetValue('#{p}'))" }.join(",")
+    package_cmd = "Get-ChildItem -Path \"#{key_path}\" | ForEach-Object { Write-Host \"#{package_query_partial}\" } "
+    results = shell_out(package_cmd).stdout.strip
+    
+    results.lines.each do |line|
+      display_name, display_version, install_date, publisher = line.strip.split(",",4)
+      next if display_name.to_s == ""
+      packages[display_name] = Mash.new(version: display_version, publisher: publisher, install_date: install_date.to_i)
     end
   end
 
   collect_data(:windows) do
-    require "win32/registry"
     packages Mash.new
-    collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key('HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here
-    collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key('HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
   end
 
   collect_data(:aix) do

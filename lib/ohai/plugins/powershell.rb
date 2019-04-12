@@ -21,7 +21,7 @@ Ohai.plugin(:Powershell) do
 
   collect_data(:windows) do
 
-    so = shell_out("powershell.exe -NoLogo -NonInteractive -NoProfile -command $PSVersionTable")
+    so = shell_out("$PSVersionTable")
     # Sample output:
     #
     # Name                           Value

@@ -251,21 +251,22 @@ Ohai.plugin(:Kernel) do
     kernel[:modules] = modules
   end
 
-  collect_data(:windows) do
-    require "win32ole"
-    require "wmi-lite/wmi"
-
-    WIN32OLE.codepage = WIN32OLE::CP_UTF8
-
-    wmi = WmiLite::Wmi.new
-
+  collect_data(:windows) do    
+    # WIN32OLE.codepage = WIN32OLE::CP_UTF8
     kernel Mash.new
-
-    host = wmi.first_of("Win32_OperatingSystem")
     kernel[:os_info] = Mash.new
-    host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
-      kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
+
+    host = shell_out('Get-WmiObject Win32_OperatingSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
+
+    host.lines.each do |line|
+      property_name, property_type, property_value = line.strip.split(',')
+      next if blacklisted_wmi_name?(property_name.wmi_underscore)
+      property_value = true if property_type == 'Boolean' && property_value == 'True'
+      property_value = false if property_type == 'Boolean' && property_value == 'False'
+      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+
+      kernel[:os_info][property_name.wmi_underscore.to_sym] = property_value
     end
 
     kernel[:name] = (kernel[:os_info][:caption]).to_s
@@ -276,10 +277,17 @@ Ohai.plugin(:Kernel) do
     kernel[:server_core] = server_core?(kernel[:os_info][:operating_system_sku])
 
     kernel[:cs_info] = Mash.new
-    host = wmi.first_of("Win32_ComputerSystem")
-    host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
-      kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
+
+    host = shell_out('Get-WmiObject Win32_ComputerSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
+    host.lines.each do |line|
+      property_name, property_type, property_value = line.strip.split(',')
+      next if blacklisted_wmi_name?(property_name.wmi_underscore)
+      property_value = true if property_type == 'Boolean' && property_value == 'True'
+      property_value = false if property_type == 'Boolean' && property_value == 'False'
+      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+
+      kernel[:cs_info][property_name.wmi_underscore.to_sym] = property_value
     end
 
     kernel[:machine] = arch_lookup((kernel[:cs_info][:system_type]).to_s)

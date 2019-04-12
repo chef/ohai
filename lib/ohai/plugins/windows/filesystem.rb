@@ -26,27 +26,6 @@ Ohai.plugin(:Filesystem) do
   CONVERSION_STATUS = %w{FullyDecrypted FullyEncrypted EncryptionInProgress
                          DecryptionInProgress EncryptionPaused DecryptionPaused}.freeze
 
-  # Returns a Mash loaded with logical details
-  #
-  # Uses Win32_LogicalDisk and logical_properties to return encryption details of volumes.
-  #
-  # Returns an empty Mash in case of any WMI exception.
-  #
-  # @see https://docs.microsoft.com/en-us/windows/desktop/CIMWin32Prov/win32-logicaldisk
-  #
-  # @return [Mash]
-  #
-  def logical_info
-    wmi = WmiLite::Wmi.new("Root\\CIMV2")
-
-    # Note: we should really be parsing Win32_Volume and Win32_Mapped drive.
-    disks = wmi.instances_of("Win32_LogicalDisk")
-    logical_properties(disks)
-  rescue WmiLite::WmiException
-    Ohai::Log.debug("Unable to access Win32_LogicalDisk. Skipping logical details")
-    Mash.new
-  end
-
   # Returns a Mash loaded with encryption details
   #
   # Uses Win32_EncryptableVolume and encryption_properties to return encryption details of volumes.
@@ -66,37 +45,6 @@ Ohai.plugin(:Filesystem) do
   rescue WmiLite::WmiException
     Ohai::Log.debug("Unable to access Win32_EncryptableVolume. Skipping encryptable details")
     Mash.new
-  end
-
-  # Refines and calculates logical properties out of given instances
-  #
-  # @param [WmiLite::Wmi::Instance] disks
-  #
-  # @return [Mash] Each drive containing following properties:
-  #
-  #  * :kb_size (Integer)
-  #  * :kb_available (Integer)
-  #  * :kb_used (Integer)
-  #  * :percent_used (Integer)
-  #  * :mount (String)
-  #  * :fs_type (String)
-  #  * :volume_name (String)
-  #
-  def logical_properties(disks)
-    properties = Mash.new
-    disks.each do |disk|
-      property = Mash.new
-      drive = disk["deviceid"]
-      property[:kb_size] = disk["size"].to_i / 1000
-      property[:kb_available] = disk["freespace"].to_i / 1000
-      property[:kb_used] = property[:kb_size] - property[:kb_available]
-      property[:percent_used] = (property[:kb_size] == 0 ? 0 : (property[:kb_used] * 100 / property[:kb_size]))
-      property[:mount] = disk["name"]
-      property[:fs_type] = disk["filesystem"].to_s.downcase
-      property[:volume_name] = disk["volumename"].to_s.downcase
-      properties[drive] = property
-    end
-    properties
   end
 
   # Refines and calculates encryption properties out of given instances
@@ -140,8 +88,37 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-    filesystem merge_info([logical_info,
-                           encryptable_info])
+    disks = Mash.new
+    # @see https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-logicaldisk
+    disk_properties = %w[ DeviceID FileSystem FreeSpace Name Size VolumeName ]
+
+    disks_results = shell_out("Get-WmiObject \"Win32_LogicalDisk\" | ForEach-Object { Write-Host \"#{ disk_properties.map {|p| "$($_.#{p})"}.join(',') }\" }").stdout.strip
+
+    disks_results.lines.each do |line|
+      device_id, file_system, free_space, name, size, volume_name = line.strip.split(',')
+      disks[device_id] ||= Mash.new
+      disk = disks[device_id]
+      disk[:fs_type] = file_system.to_s.downcase
+      disk[:mount] = name
+      disk[:volume_name] = volumne_name.to_s.downcase
+      disk[:kb_size] = size.to_i / 1000
+      disk[:kb_available] = freespace.to_i / 1000
+      disk[:kb_used] = disk[:kb_size] - disk[:kb_available]
+      disk[:percent_used] = (disk[:kb_size] == 0 ? 0 : (disk[:kb_used] * 100 / disk[:kb_size]))
+    end
+
+    # @see https://docs.microsoft.com/en-us/windows/desktop/secprov/win32-encryptablevolume
+    encrypted_properties %w[ DeviceID DriveLetter ProtectionStatus GetConversionStatus() ]
+    
+    encrypted_results = shell_out("Get-WmiObject -Namespace \"Root\\CIMV2\\Security\\MicrosoftVolumeEncryption\" -ClassName \"Win32_Encryptablevolume\" | ForEach-Object { Write-Host \"#{ disk_properties.map {|p| "$($_.#{p}"}.join(',') }\" } }").stdout.strip
+
+    encrypted_results.lines.each do |line|
+      device_id, drive_letter, protection_status, conversion_status = line.strip.split(',')
+      disks[device_id] ||= Mash.new
+      disk = disks[device_id]
+      disk[:encryption_status] = conversion_status ? CONVERSION_STATUS[conversion_status] : ""
+    end
+
+    filesystem disks
   end
 end

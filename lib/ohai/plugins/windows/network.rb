@@ -98,26 +98,40 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] = Mash.new unless counters[:network]
 
-    adptr_config_cmd = '(Get-WmiObject Win32_NetworkAdapterConfiguration) | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($_.Name),$($_.Value)" } }'
-    adapter_config_properties = shell_out(adptr_config_cmd).stdout
+    adptr_config_cmd = 'Get-WmiObject Win32_NetworkAdapterConfiguration | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($_.Name),$($_.Type),$($_.Value)" } }'
+    adapter_config_properties = shell_out(adptr_config_cmd).stdout.strip
 
     adapter_config_properties.lines.each do |line|
-      index, interface_index, property_name, property_value = line.strip.split(",")
+      index, interface_index, property_name, property_type, property_value = line.strip.split(",")
       true_index = index || interface_index
       iface_config[true_index] ||= Mash.new
       if property_name.wmi_underscore.to_sym == :ip_address
         property_value = Array(property_value.to_s.split(' '))
       end
+      
+      property_value = true if property_type == 'Boolean' && property_value == 'True'
+      property_value = false if property_type == 'Boolean' && property_value == 'False'
+      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      # TODO Missing DateTime (e.g. 20190405153817.498853+000)
+
       iface_config[true_index][property_name.wmi_underscore.to_sym] ||= property_value
     end
 
-    adpter_cmd = '(Get-WmiObject Win32_NetworkAdapter) | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($adptr.Name),$($_.Name),$($_.Value)" } }'
-    adapter_properties = shell_out(adpter_cmd).stdout
+    adpter_cmd = 'Get-WmiObject Win32_NetworkAdapter | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.Index),$($adptr.InterfaceIndex),$($adptr.Name),$($_.Name),$($_.Type),$($_.Value)" } }'
+    adapter_properties = shell_out(adpter_cmd).stdout.strip
 
     adapter_properties.lines.each do |line|
-      index, interface_index, adapter_name, property_name, property_value = line.strip.split(",")
+      index, interface_index, adapter_name, property_name, property_type, property_value = line.strip.split(",")
       true_index = index || interface_index
       iface_instance[true_index] ||= Mash.new
+
+      property_value = true if property_type == 'Boolean' && property_value == 'True'
+      property_value = false if property_type == 'Boolean' && property_value == 'False'
+      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+      # TODO Missing DateTime (e.g. 20190405153817.498853+000)
+
       next if %w{creation_class_name system_creation_class_name}.include?(property_name.wmi_underscore)
       iface_instance[true_index][property_name.wmi_underscore.to_sym] = property_value
     end

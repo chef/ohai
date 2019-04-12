@@ -22,24 +22,27 @@ Ohai.plugin(:Drivers) do
   collect_data(:windows) do
     if configuration(:enabled)
 
-      require "wmi-lite/wmi"
-
       kext = Mash.new
       pnp_drivers = Mash.new
 
-      wmi = WmiLite::Wmi.new
+      drivers_cmd = 'Get-WmiObject Win32_PnPSignedDriver | ForEach-Object { $adptr = $_ ; $adptr.Properties | ForEach-Object { Write-Host "$($adptr.DeviceID),$($adptr.DeviceName),$($_.Name),$($_.Type),$($_.Value)" } }'
+      drivers = shell_out(drivers_cmd).stdout
 
-      drivers = wmi.instances_of("Win32_PnPSignedDriver")
-      drivers.each do |driver|
-        pnp_drivers[driver["deviceid"]] = Mash.new
-        driver.wmi_ole_object.properties_.each do |p|
-          pnp_drivers[driver["deviceid"]][p.name.wmi_underscore.to_sym] = driver[p.name.downcase]
-        end
-        if driver["devicename"]
-          kext[driver["devicename"]] = pnp_drivers[driver["deviceid"]]
-          kext[driver["devicename"]][:version] = pnp_drivers[driver["deviceid"]][:driver_version]
-          kext[driver["devicename"]][:date] = pnp_drivers[driver["deviceid"]][:driver_date] ? pnp_drivers[driver["deviceid"]][:driver_date].to_s[0..7] : nil
-        end
+      drivers.lines.each do |line|
+        device_id, device_name, property_name, property_type, property_value = line.strip.split(',')
+        pnp_drivers[device_id] ||= Mash.new
+
+        property_value = true if property_type == 'Boolean' && property_value == 'True'
+        property_value = false if property_type == 'Boolean' && property_value == 'False'
+        property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+        property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+        pnp_drivers[device_id][property_name.wmi_underscore.to_sym] = property_value
+
+        if device_name
+          kext[device_name] = pnp_drivers[device_id]
+          kext[device_name][:version] = pnp_drivers[device_id][:driver_version]
+          kext[device_name][:date] = pnp_drivers[device_id][:driver_date] ? pnp_drivers[device_id][:driver_date].to_s[0..7] : nil
+        end        
       end
 
       kernel[:pnp_drivers] = pnp_drivers

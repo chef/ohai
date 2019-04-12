@@ -102,7 +102,7 @@ Ohai.plugin(:Network) do
     adapter_config_properties = shell_out(adptr_config_cmd).stdout.strip
 
     adapter_config_properties.lines.each do |line|
-      index, interface_index, property_name, property_type, property_value = line.strip.split(",")
+      index, interface_index, property_name, property_type, property_value = line.strip.split(',',6)
       true_index = index || interface_index
       iface_config[true_index] ||= Mash.new
       if property_name.wmi_underscore.to_sym == :ip_address
@@ -122,7 +122,7 @@ Ohai.plugin(:Network) do
     adapter_properties = shell_out(adpter_cmd).stdout.strip
 
     adapter_properties.lines.each do |line|
-      index, interface_index, adapter_name, property_name, property_type, property_value = line.strip.split(",")
+      index, interface_index, adapter_name, property_name, property_type, property_value = line.strip.split(',',6)
       true_index = index || interface_index
       iface_instance[true_index] ||= Mash.new
 

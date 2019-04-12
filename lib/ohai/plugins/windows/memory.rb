@@ -17,22 +17,15 @@ Ohai.plugin(:Memory) do
   provides "memory"
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-
     memory Mash.new
     memory[:swap] = Mash.new
 
-    wmi = WmiLite::Wmi.new
-
-    os = wmi.first_of("Win32_OperatingSystem")
-
-    # MemTotal
-    memory[:total] = os["TotalVisibleMemorySize"] + "kB"
-    # MemFree
-    memory[:free] = os["FreePhysicalMemory"] + "kB"
-    # SwapTotal
-    memory[:swap][:total] = os["SizeStoredInPagingFiles"] + "kB"
-    # SwapFree
-    memory[:swap][:free] = os["FreeSpaceInPagingFiles"] + "kB"
+    os_results = shell_out('Get-WmiObject "Win32_OperatingSystem" | ForEach-Object { Write-Host "$($_.TotalVisibleMemorySize)kB,$($_.FreePhysicalMemory)kB,$($_.SizeStoredInPagingFiles)kB,$($_.FreeSpaceInPagingFiles)kB" }').stdout.strip
+    total_memory, free_memory, swap_total, swap_free = os_results.split(',',4)
+    
+    memory[:total] = total_memory
+    memory[:free] = free_memory
+    memory[:swap][:total] = swap_total
+    memory[:swap][:free] = swap_free
   end
 end

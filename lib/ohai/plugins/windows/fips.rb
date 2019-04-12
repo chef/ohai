@@ -28,8 +28,10 @@ Ohai.plugin(:Fips) do
   collect_data(:windows) do
     fips Mash.new
 
-    require "openssl"
-    if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode && !$FIPS_TEST_MODE
+    # @see https://www.stigviewer.com/stig/windows_10/2017-02-21/finding/V-63811
+    fips_enabled = shell_out('Get-ItemPropertyValue -Path "HKLM:\System\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy" -Name Enabled').stdout.strip
+
+    if fips_enabled == "1"
       fips["kernel"] = { "enabled" => true }
     else
       fips["kernel"] = { "enabled" => false }

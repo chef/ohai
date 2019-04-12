@@ -252,14 +252,13 @@ Ohai.plugin(:Kernel) do
   end
 
   collect_data(:windows) do    
-    # WIN32OLE.codepage = WIN32OLE::CP_UTF8
     kernel Mash.new
     kernel[:os_info] = Mash.new
 
     host = shell_out('Get-WmiObject Win32_OperatingSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
-
+    
     host.lines.each do |line|
-      property_name, property_type, property_value = line.strip.split(',')
+      property_name, property_type, property_value = line.strip.split(',',3)
       next if blacklisted_wmi_name?(property_name.wmi_underscore)
       property_value = true if property_type == 'Boolean' && property_value == 'True'
       property_value = false if property_type == 'Boolean' && property_value == 'False'
@@ -280,7 +279,7 @@ Ohai.plugin(:Kernel) do
 
     host = shell_out('Get-WmiObject Win32_ComputerSystem | ForEach-Object { $_.Properties | ForEach-Object { Write-Host "$($_.Name),$($_.Type),$($_.Value)" } }').stdout
     host.lines.each do |line|
-      property_name, property_type, property_value = line.strip.split(',')
+      property_name, property_type, property_value = line.strip.split(',',3)
       next if blacklisted_wmi_name?(property_name.wmi_underscore)
       property_value = true if property_type == 'Boolean' && property_value == 'True'
       property_value = false if property_type == 'Boolean' && property_value == 'False'

@@ -24,16 +24,16 @@ Ohai.plugin(:Virtualization) do
   include Ohai::Mixin::DmiDecode
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-
+    
     virtualization Mash.new unless virtualization
     virtualization[:systems] = Mash.new unless virtualization[:systems]
 
     # Grab system DMI data from WMI to determine vendor information
-    wmi = WmiLite::Wmi.new
     dmi = wmi.first_of("Win32_ComputerSystemProduct")
-
-    guest = guest_from_dmi_data(dmi["vendor"], dmi["name"], dmi["version"])
+    dmi_results = shell_out('Get-WmiObject "Win32_ComputerSystemProduct" | ForEach-Object { Write-Host "$($_.Vendor),$($_.Name),$($_.Version)" }').stdout.strip
+    dmi_vendor, dmi_name, dmi_version = dmi_results.split(',',3)
+    
+    guest = guest_from_dmi_data(dmi_vendor, dmi_name, dmi_version)
     if guest
       logger.trace("Plugin Virtualization: DMI data in Win32_ComputerSystemProduct indicates #{guest} guest")
       virtualization[:system] = guest

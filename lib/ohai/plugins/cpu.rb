@@ -377,36 +377,51 @@ Ohai.plugin(:CPU) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
-
     cpu Mash.new
     cores = 0
     logical_processors = 0
 
-    wmi = WmiLite::Wmi.new
-    processors = wmi.instances_of("Win32_Processor")
+    # @see https://docs.microsoft.com/en-us/windows/desktop/cimwin32prov/win32-processor
+    processors_results = shell_out('Get-WmiObject "Win32_Processor" | ForEach-Object { $cpu = $_ ; $cpu.Properties | ForEach-Object { Write-Host "$($cpu.DeviceID),$($_.Name),$($_.Type),$($_.Value)" } }').stdout.strip
+    
+    processor_properties = %w[ Description DeviceID Family Name L2CacheSize MaxClockSpeed NumberOfCores NumberOfLogicalProcessors Manufacturer Revision Stepping ]
 
-    processors.each_with_index do |processor, index|
-      current_cpu = index.to_s
-      cpu[current_cpu] = Mash.new
+    processors = Mash.new
 
-      cpu[current_cpu]["cores"] = processor["numberofcores"]
-      cores += processor["numberofcores"]
+    processors_results.lines.each do |line|
+      device_id, property_name, property_type, property_value = line.to_s.strip.split(',',4)
+      
+      current_cpu = device_id.to_s.gsub('CPU','').to_i
+      processors[current_cpu] ||= Mash.new
+      next unless processor_properties.include?(property_name)
 
-      logical_processors += processor["numberoflogicalprocessors"]
-      cpu[current_cpu]["vendor_id"] = processor["manufacturer"]
-      cpu[current_cpu]["family"] = processor["family"].to_s
-      cpu[current_cpu]["model"] = processor["revision"].to_s
-      cpu[current_cpu]["stepping"] = if processor["stepping"].nil?
-                                       processor["description"].match(/Stepping\s+(\d+)/)[1]
-                                     else
-                                       processor["stepping"]
-                                     end
-      cpu[current_cpu]["physical_id"] = processor["deviceid"]
-      cpu[current_cpu]["model_name"] = processor["name"]
-      cpu[current_cpu]["description"] = processor["description"]
-      cpu[current_cpu]["mhz"] = processor["maxclockspeed"].to_s
-      cpu[current_cpu]["cache_size"] = "#{processor['l2cachesize']} KB"
+      property_value = true if property_type == 'Boolean' && property_value == 'True'
+      property_value = false if property_type == 'Boolean' && property_value == 'False'
+      property_value = property_value.to_i if property_type =~ /UInt(?:64|32|16|8)/ && !property_value.nil?
+      property_value = nil if property_type == 'String' && property_value.to_s.strip == ''
+
+      processors[current_cpu][property_name.wmi_underscore.to_sym] = property_value
+    end
+
+    processors.each do |device_id, data|
+      cpu[device_id] ||= Mash.new
+      current = cpu[device_id]
+
+      current[:cores] = data[:number_of_cores]
+      current[:vendor_id] = data[:manufacturer]
+      current[:family] = data[:family]
+      current[:model] = data[:revision]
+
+      current[:physical_id] = data[:device_id]
+      current[:model_name] = data[:name]
+      current[:description] = data[:description]
+      current[:mhz] = data[:max_clock_speed]
+      current[:cache_size] = "#{data[:l2_cache_size]}kB"
+      
+      current[:stepping] = data[:stepping] || data[:description].match(/Stepping\s+(\d+)/)[1]
+      
+      cores += data[:number_of_cores]
+      logical_processors += data[:number_of_logical_processors]
     end
 
     cpu[:total] = logical_processors

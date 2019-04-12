@@ -29,7 +29,7 @@ Ohai.plugin(:Drivers) do
       drivers = shell_out(drivers_cmd).stdout
 
       drivers.lines.each do |line|
-        device_id, device_name, property_name, property_type, property_value = line.strip.split(',')
+        device_id, device_name, property_name, property_type, property_value = line.strip.split(',',5)
         pnp_drivers[device_id] ||= Mash.new
 
         property_value = true if property_type == 'Boolean' && property_value == 'True'

@@ -20,11 +20,13 @@ Ohai.plugin :SystemEnclosure do
   provides "system_enclosure"
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
     system_enclosure Mash.new
-    wmi = WmiLite::Wmi.new
-    wmi_object = wmi.first_of("Win32_SystemEnclosure").wmi_ole_object
-    system_enclosure[:manufacturer] = wmi_object.invoke("manufacturer")
-    system_enclosure[:serialnumber] = wmi_object.invoke("serialnumber")
+    
+    enclosure_results = shell_out('Get-WmiObject "Win32_SystemEnclosure" | ForEach-Object { Write-Host "$($_.Manufacturer),$($_.SerialNumber)" }').stdout.strip
+    
+    manufacturer, serial_number = enclosure_results.split(',')
+
+    system_enclosure[:manufacturer] = manufacturer
+    system_enclosure[:serialnumber] = serial_number
   end
 end

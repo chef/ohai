@@ -108,9 +108,9 @@ Ohai.plugin(:Filesystem) do
     end
 
     # @see https://docs.microsoft.com/en-us/windows/desktop/secprov/win32-encryptablevolume
-    encrypted_properties %w[ DeviceID DriveLetter ProtectionStatus GetConversionStatus() ]
+    encrypted_properties = %w[ DeviceID DriveLetter ProtectionStatus GetConversionStatus() ]
     
-    encrypted_results = shell_out("Get-WmiObject -Namespace \"Root\\CIMV2\\Security\\MicrosoftVolumeEncryption\" -ClassName \"Win32_Encryptablevolume\" | ForEach-Object { Write-Host \"#{ disk_properties.map {|p| "$($_.#{p}"}.join(',') }\" } }").stdout.strip
+    encrypted_results = shell_out("Get-WmiObject -Namespace \"Root\\CIMV2\\Security\\MicrosoftVolumeEncryption\" -ClassName \"Win32_Encryptablevolume\" | ForEach-Object { Write-Host \"#{ encrypted_properties.map {|p| "$($_.#{p}"}.join(',') }\" } }").stdout.strip
 
     encrypted_results.lines.each do |line|
       device_id, drive_letter, protection_status, conversion_status = line.strip.split(',')

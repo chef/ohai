@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "Windows kernel plugin", :windows_only do
   let(:plugin) { get_plugin("kernel") }

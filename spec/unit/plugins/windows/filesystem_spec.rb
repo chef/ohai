@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "wmi-lite/wmi"
 
 describe Ohai::System, "Windows Filesystem Plugin", :windows_only do

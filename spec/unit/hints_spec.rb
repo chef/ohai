@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe "Ohai::Hints" do
   # We are using the plugins directory infrastructure to test hints

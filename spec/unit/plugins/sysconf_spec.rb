@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "sysconf plugin", :unix_only do
   let(:plugin) { get_plugin("sysconf") }

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "FreeBSD kernel plugin" do
   before(:each) do

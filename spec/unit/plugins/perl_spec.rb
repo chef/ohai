@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "plugin perl" do
   let(:plugin) { get_plugin("perl") }

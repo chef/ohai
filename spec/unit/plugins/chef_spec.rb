@@ -19,7 +19,7 @@
 #
 
 begin
-  require 'spec_helper'
+  require "spec_helper"
   require "chef/version"
 
   describe Ohai::System, "plugin chef" do

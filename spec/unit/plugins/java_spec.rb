@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "plugin java (Java5 Client VM)" do
   let(:plugin) { get_plugin("java") }

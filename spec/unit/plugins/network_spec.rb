@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 def it_doesnt_fail
   it "doesnt fail" do

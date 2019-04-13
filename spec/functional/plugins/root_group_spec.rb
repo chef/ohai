@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "root_group plugin" do
   let(:plugin) { get_plugin("root_group") }

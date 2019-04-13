@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "open-uri"
 
 describe Ohai::System, "plugin eucalyptus" do

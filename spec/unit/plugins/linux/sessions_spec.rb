@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "Linux sessions plugin" do
   let(:plugin) { get_plugin("linux/sessions") }

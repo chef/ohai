@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "Machine id plugin" do
   let(:plugin) { get_plugin("linux/machineid") }

@@ -17,7 +17,7 @@
 #  limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "ipaddress"
 
 describe Ohai::System, "Linux Network Plugin" do

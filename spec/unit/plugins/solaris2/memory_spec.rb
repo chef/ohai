@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "Solaris2.X memory plugin" do
   before(:each) do

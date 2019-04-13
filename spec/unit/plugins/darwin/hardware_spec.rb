@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require_relative "hardware_system_profiler_output"
 
 describe Ohai::System, "Darwin hardware plugin", :unix_only do

@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "plugin softlayer" do
   let(:plugin) { get_plugin("softlayer") }

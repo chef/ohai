@@ -17,7 +17,7 @@
 #
 
 require "tempfile"
-require 'spec_helper'
+require "spec_helper"
 
 shared_examples "Common cpu info" do |total_cpu, real_cpu|
   describe "cpu" do

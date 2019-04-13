@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 SOLARIS_DMI_OUT = <<~EOS.freeze
   ID    SIZE TYPE

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "ohai/mixin/os"
 
 describe "Ohai::System" do

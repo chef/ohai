@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "ohai/mixin/azure_metadata"
 
 describe Ohai::Mixin::AzureMetadata do

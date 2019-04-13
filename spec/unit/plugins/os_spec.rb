@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 ORIGINAL_CONFIG_HOST_OS = ::RbConfig::CONFIG["host_os"]
 

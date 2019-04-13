@@ -16,7 +16,7 @@
 #  limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 describe Ohai::System, "Darwin Network Plugin" do
   before(:each) do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 require "ohai/mixin/ec2_metadata"
 
 describe Ohai::Mixin::Ec2Metadata do

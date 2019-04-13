@@ -48,18 +48,15 @@ Ohai.plugin(:GCE) do
   # looks at the Manufacturer and Model WMI values to see if they starts with Google.
   # @return [Boolean] Are the manufacturer and model Google?
   def has_gce_system_info?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-      require "wmi-lite/wmi"
-      wmi = WmiLite::Wmi.new
-      computer_system = wmi.first_of("Win32_ComputerSystem")
-      if computer_system["Manufacturer"] =~ /^Google/ && computer_system["Model"] =~ /^Google/
+    if collect_os == 'windows'
+      if shell_out('Get-WmiObject Win32_ComputerSystemProduct | Select-Object -ExpandProperty Manufacturer').stdout.chomp =~ /^Google/ &&
+        shell_out('Get-WmiObject Win32_ComputerSystemProduct | Select-Object -ExpandProperty Model').stdout.chomp =~ /^Google/
         logger.trace("Plugin GCE: has_gce_system_info? == true")
         return true
       end
-    else
-      logger.trace("Plugin GCE: has_gce_system_info? == false")
-      false
     end
+    logger.trace("Plugin GCE: has_gce_system_info? == false")
+    return false
   end
 
   # Identifies gce

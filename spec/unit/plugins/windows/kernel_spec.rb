@@ -21,8 +21,6 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
   let(:plugin) { get_plugin("kernel") }
 
   before do
-    require "wmi-lite/wmi"
-
     # Mock a Win32_OperatingSystem OLE32 WMI object
     caption = double("WIN32OLE", name: "Caption")
     version = double("WIN32OLE", name: "Version")

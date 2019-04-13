@@ -20,7 +20,6 @@ require_relative "../../../spec_helper.rb"
 
 describe Ohai::System, "System Enclosure", :windows_only do
   before do
-    require "wmi-lite/wmi"
     @plugin = get_plugin("windows/system_enclosure")
     manufacturer = double("WIN32OLE", name: "manufacturer", value: "My Fake Manufacturer")
     serialnumber = double("WIN32OLE", name: "serialnumber", value: "1234123412341234")

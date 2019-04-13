@@ -8,7 +8,6 @@ $:.unshift(File.dirname(__FILE__) + "/../lib")
 
 require "spec/support/platform_helpers"
 require "spec/support/integration_helper"
-require "wmi-lite"
 require "ohai"
 Ohai.config[:log_level] = :error
 

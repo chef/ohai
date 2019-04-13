@@ -17,7 +17,6 @@
 #
 
 require_relative "../../spec_helper.rb"
-require "wmi-lite/wmi"
 require "socket"
 
 describe Ohai::System, "hostname plugin" do

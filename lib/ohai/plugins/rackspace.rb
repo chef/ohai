@@ -48,13 +48,14 @@ Ohai.plugin(:Rackspace) do
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def has_rackspace_manufacturer?
-    return false unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
-    require "wmi-lite/wmi"
-    wmi = WmiLite::Wmi.new
-    if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"
-      logger.trace("Plugin Rackspace: has_rackspace_manufacturer? == true")
-      return true
+    if collect_os == 'windows'
+      if shell_out('Get-WmiObject Win32_ComputerSystemProduct | Select-Object -ExpandProperty PrimaryOwnerName').stdout.chomp == "Rackspace"
+        logger.trace("Plugin Rackspace: has_rackspace_manufacturer? == true")
+        return true
+      end
     end
+
+    return false
   end
 
   # Identifies the rackspace cloud

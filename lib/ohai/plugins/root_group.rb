@@ -19,9 +19,6 @@ Ohai.plugin(:RootGroup) do
   provides "root_group"
 
   collect_data(:windows) do
-    # require "wmi-lite/wmi"
-
-    # wmi = WmiLite::Wmi.new
     # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the
     # internal name for the Administrators group, which lets us work
     # properly in environments with a renamed or localized name for the

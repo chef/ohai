@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-shellout", ">= 2.0", "< 4.0"
   s.add_dependency "plist", "~> 3.1"
   s.add_dependency "ipaddress"
-  s.add_dependency "wmi-lite", "~> 1.0"
   s.add_dependency "ffi", "~> 1.9"
   s.add_dependency "chef-config", ">= 12.8", "< 16"
   s.add_dependency "train", ">= 2.0.2"

@@ -16,8 +16,8 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper.rb"
-require_relative "hardware_system_profiler_output.rb"
+require 'spec_helper'
+require_relative "hardware_system_profiler_output"
 
 describe Ohai::System, "Darwin hardware plugin", :unix_only do
   let(:plugin) { get_plugin("darwin/hardware") }

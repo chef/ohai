@@ -17,7 +17,7 @@
 # limitations under the License
 #
 
-require_relative "../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::Runner, "run_plugin" do
   let(:safe_run) { true }

@@ -17,7 +17,7 @@
 #
 
 require "digest/md5"
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "shard plugin" do
   let(:plugin) { get_plugin("shard") }

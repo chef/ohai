@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 tmp = ENV["TMPDIR"] || ENV["TMP"] || ENV["TEMP"] || "/tmp"
 

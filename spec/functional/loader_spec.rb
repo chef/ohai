@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require_relative "../spec_helper"
+require "spec_helper"
 
 RSpec.describe "Ohai::Loader" do
   let(:loader) { Ohai::Loader.new(Ohai::System.new) }

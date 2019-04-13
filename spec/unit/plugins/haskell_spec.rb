@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "plugin haskell" do
 

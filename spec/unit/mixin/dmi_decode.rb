@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 require "ohai/mixin/dmi_decode"
 
 describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do

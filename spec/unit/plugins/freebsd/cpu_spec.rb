@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
   before(:each) do

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 # NOTE: These data lines must be prefixed with one or two tabs, not spaces.
 DMI_OUT = <<~EOS.freeze

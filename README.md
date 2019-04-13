@@ -79,6 +79,14 @@ Issues:
 
 For information on contributing to this project see <https://github.com/chef/chef/blob/master/CONTRIBUTING.md>
 
+1. Fork it
+1. Create your feature branch (git checkout -b my-new-feature)
+1. Commit your changes (git commit -am 'Add some feature')
+1. Run the tests `bundle exec rake spec`
+1. Run the style tests `bundle exec rake style`
+1. Push to the branch (git push origin my-new-feature)
+1. Create new Pull Request
+
 ## License
 
 Ohai - system information application

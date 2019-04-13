@@ -83,9 +83,13 @@ Ohai.plugin(:Uptime) do
     end
   end
 
+  def time_now
+    Time.new
+  end
+
   collect_data(:windows) do
     last_boot_up_time = shell_out('Get-WmiObject "Win32_OperatingSystem" | ForEach-Object { Write-Host "$($_.LastBootUptime)" }').stdout.strip
-    uptime_seconds Time.new.to_i - Time.parse(last_boot_up_time).to_i
+    uptime_seconds time_now.to_i - Time.parse(last_boot_up_time).to_i
     uptime seconds_to_human(uptime_seconds)
   end
 

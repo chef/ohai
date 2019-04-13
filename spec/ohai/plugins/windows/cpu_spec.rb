@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
+require "spec_helper"
 
 shared_examples "a cpu" do |cpu_no|
   describe "cpu #{cpu_no}" do

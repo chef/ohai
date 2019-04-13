@@ -31,12 +31,26 @@ You can run individual test files by running the rspec executable:
 bundle exec rspec spec/unit/FILE.rb
 ```
 
+## Style:
+
+We use [Chefstyle](https://github.com/chef/chefstyle), as a code [linter](https://en.wikipedia.org/wiki/Lint_(software)), to enforce style guidelines. To run:
+
+```
+bundle exec rake style
+```
+
+You can run and automatically correct the issues:
+
+```
+bundle exec rake style:auto_correct
+```
+
 ## Rake Tasks
 
 Ohai has some Rake tasks for doing various things.
 
 ```
-rake -T
+bundle exec rake -T
 rake build               # Build ohai-$VERSION.gem into the pkg directory
 rake clean               # Remove any temporary products
 rake clobber             # Remove any generated files

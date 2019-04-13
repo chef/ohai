@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::Mixin::Command, "shell_out" do
   let(:cmd) { "sparkle-dream --version" }

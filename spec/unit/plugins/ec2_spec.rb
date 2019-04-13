@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 require "open-uri"
 require "base64"
 

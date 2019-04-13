@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 vbox_output = <<~EOF
   Oracle VM VirtualBox Guest Additions Command Line Management Interface Version 5.0.2

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 require "ipaddr"
 
 describe "CloudAttrs object" do

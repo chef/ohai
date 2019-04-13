@@ -17,7 +17,7 @@
 # limitations under the License
 #
 
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 shared_examples "Ohai::DSL::Plugin" do
   context "#initialize" do

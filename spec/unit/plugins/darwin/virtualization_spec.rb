@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "Darwin virtualization platform" do
   let(:plugin) { get_plugin("darwin/virtualization") }

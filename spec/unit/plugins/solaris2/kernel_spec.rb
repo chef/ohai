@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "Solaris2.X kernel plugin" do
   # NOTE: Solaris will report the same module loaded multiple times

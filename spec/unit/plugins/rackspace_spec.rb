@@ -16,7 +16,7 @@
 #
 
 require "resolv"
-require_relative "../../spec_helper.rb"
+require 'spec_helper'
 
 describe Ohai::System, "plugin rackspace" do
   let(:plugin) { get_plugin("rackspace") }

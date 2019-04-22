@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.32 -->
-## [v15.0.32](https://github.com/chef/ohai/tree/v15.0.32) (2019-04-13)
+<!-- latest_release 15.0.33 -->
+## [v15.0.33](https://github.com/chef/ohai/tree/v15.0.33) (2019-04-22)
 
 #### Merged Pull Requests
-- Adds mention of the style task [#1351](https://github.com/chef/ohai/pull/1351) ([burtlo](https://github.com/burtlo))
+- Replaces require_relative with require [#1349](https://github.com/chef/ohai/pull/1349) ([burtlo](https://github.com/burtlo))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Replaces require_relative with require [#1349](https://github.com/chef/ohai/pull/1349) ([burtlo](https://github.com/burtlo)) <!-- 15.0.33 -->
 - Adds mention of the style task [#1351](https://github.com/chef/ohai/pull/1351) ([burtlo](https://github.com/burtlo)) <!-- 15.0.32 -->
 - Ohai::Util::FileHelper does not need to be loaded in this systemd_paths plugin [#1347](https://github.com/chef/ohai/pull/1347) ([burtlo](https://github.com/burtlo)) <!-- 15.0.31 -->
 - Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50)) <!-- 15.0.30 -->

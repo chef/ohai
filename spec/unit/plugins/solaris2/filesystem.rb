@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-require_relative "../../../spec_helper"
+require_relative "spec_helper"
 
 describe Ohai::System, "Solaris2.X filesystem plugin" do
   let(:plugin) { get_plugin("filesystem") }

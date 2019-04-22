@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require_relative "../spec_helper"
+require "spec_helper"
 require "ohai/application"
 
 RSpec.describe "Ohai::Application" do

@@ -1,0 +1,9 @@
+steps:
+
+- label: lint-chefstyle
+  command:
+    - bundle install
+    - bundle exec chefstyle
+  expeditor:
+    executor:
+      docker:

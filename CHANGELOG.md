@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.34 -->
-## [v15.0.34](https://github.com/chef/ohai/tree/v15.0.34) (2019-04-22)
+<!-- latest_release unreleased -->
+## Unreleased
 
 #### Merged Pull Requests
-- Update the repo for the new governance [#1348](https://github.com/chef/ohai/pull/1348) ([tas50](https://github.com/tas50))
+- Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=14.6.2 -->
 ### Changes since 14.6.2 release
 
 #### Merged Pull Requests
+- Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50)) <!-- 15.0.34 -->
 - Update the repo for the new governance [#1348](https://github.com/chef/ohai/pull/1348) ([tas50](https://github.com/tas50)) <!-- 15.0.34 -->
 - Replaces require_relative with require [#1349](https://github.com/chef/ohai/pull/1349) ([burtlo](https://github.com/burtlo)) <!-- 15.0.33 -->
 - Adds mention of the style task [#1351](https://github.com/chef/ohai/pull/1351) ([burtlo](https://github.com/burtlo)) <!-- 15.0.32 -->

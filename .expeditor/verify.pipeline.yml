@@ -3,7 +3,15 @@ steps:
 - label: lint-chefstyle
   command:
     - bundle install
-    - bundle exec chefstyle
+    - bundle exec chefstyle -v
+  expeditor:
+    executor:
+      docker:
+
+- label: run-ohai
+  command:
+    - bundle install
+    - bundle exec ohai
   expeditor:
     executor:
       docker:

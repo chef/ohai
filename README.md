@@ -1,14 +1,14 @@
 # ohai
 
-[![Build Status Master](https://travis-ci.org/chef/ohai.svg?branch=master)](https://travis-ci.org/chef/ohai) [![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/ohai?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/ohai/branch/master) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
+[![Build Status](https://badge.buildkite.com/aa0b961fc3e5bed315c7035c6d60a4aaee57af9610cbde9a15.svg?branch=master)](https://buildkite.com/chef-oss/chef-ohai-master-verify) [![Build Status Master](https://ci.appveyor.com/api/projects/status/github/chef/ohai?branch=master&svg=true&passingText=master%20-%20Ok&pendingText=master%20-%20Pending&failingText=master%20-%20Failing)](https://ci.appveyor.com/project/Chef/ohai/branch/master) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
-**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/master/teams/chef-infra.md)
+**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/master/projects/chef-infra.md)
 
 **Project State**: [Active](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#active)
 
-**Issues Response SLA**: 10 business days
+**Issues [Response Time Maximum](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md)**: 14 days
 
-**Pull Request Response SLA**: 10 business days
+**Pull Request [Response Time Maximum](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md)**: 14 days
 
 ## Description
 

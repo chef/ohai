@@ -1,0 +1,53 @@
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+- master
+pr:
+- master
+
+jobs:
+- job: windows
+  displayName: 'Windows'
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.4'
+      addToPath: true
+  - script: |
+      CALL gem install bundler
+      bundle install --retry=3 --jobs=4
+  - script: bundle exec rake
+
+- job: linux
+  displayName: 'Linux'
+  pool:
+    vmImage: 'ubuntu-16.04'
+
+  steps:
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.4'
+      addToPath: true
+  - script: |
+      CALL gem install bundler
+      bundle install --retry=3 --jobs=4
+  - script: bundle exec rake
+
+
+- job: macos
+  displayName: 'MacOS'
+  pool:
+    vmImage: 'macOS-10.13'
+
+  steps:
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.4'
+      addToPath: true
+  - script: |
+      CALL gem install bundler
+      bundle install --retry=3 --jobs=4
+  - script: bundle exec rake

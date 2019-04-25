@@ -159,11 +159,7 @@ Ohai.plugin(:Filesystem) do
       # free information. This is rarely useful. Turn on this option to
       # disable remote filesystem enumeration in df. Note that device +
       # mountpoint will still be obtained from mount and /proc/mounts.
-      params = if Ohai.config[:plugin][:filesystem][:no_df_remote]
-        ' -l'
-      else
-        ''
-      end
+      params = if Ohai.config[:plugin][:filesystem][:no_df_remote] ? 'l' : ''
       so = shell_out("df -P#{params}")
       fs.merge!(parse_common_df(so.stdout))
 

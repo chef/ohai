@@ -1,12 +1,85 @@
-# Unreleased (Ohai 15)
+# Ohai Release Notes 15.0
 
 This will be updated as the development of Ohai 15 progresses.
 
-## Cloud Plugin Improvements
+## Improvements
 
-Use system information (e.g., DMI/SMBIOS or System Information (msinfo)) to determine whether a system is running on Google Compute Engine (GCE).  In the absence of an [Ohai hint](https://docs.chef.io/ohai.html#hints), system information will be consulted to make the determination.
+### Improved Linux Platform / Platform Family Detection
 
-The GCE plugin now identifies `chef-ohai` as the User-Agent making requests to the Google Cloud metadata server (metadata.google.internal).
+Platform and plaform_family detection on Linux has been rewritten to utilize the latest config files on modern Linux distributions before falling back to slower and fragile legacy detection methods. Ohai will now begin by parsing the contents of /etc/os-release for OS information if available. This improves the reliability of detection on modern distros and allows detection of new distros as they're released.
+
+With this change we now detect `sles_sap` as a member of the `suse` platform_family. Additionally this change corrects our detection of the platform_version on Cisco Nexus switches where we previously incorrectly appended the build number to the version string.
+
+### Improved Virtualization Detection
+
+Hypervisor detection on multiple platforms has been updated to use DMI data and a single set of hypervisors. This greatly improves the detection of hypervisors on Windows, BSD and Solaris platforms. It also means that as new hypervisors detection is added in the future we will automatically support the majority of platforms.
+
+### Fix Windows 2016 FQDN Detection
+
+Ohai 14 incorrectly detected a Windows 2016 node's `fqdn` as the node's `hostname`. Ohai 15 now correctly reports the FQDN value.
+
+### Improved Memory Usage
+
+Ohai now uses less memory due to internal optimizations of how we track plugin information.
+
+### FIPS Detection Improvements
+
+The FIPS plugin now uses the built-in FIPS detection in Ruby for improved detection.
+
+## Breaking Changes
+
+### system_profiler plugin removal
+
+The `system_profiler` plugin which ran on macOS systems has been removed. This plugin took longer to run than all other plugins on macOS combined and no longer produced usable information on modern macOS releases. If you're looking for similar information it can now be found in the `hardware` plugin.
+
+### Ohai::Util::Win32::GroupHelper helper removal
+
+The deprecated `Ohai::Util::Win32::GroupHelper` helper has been removed from Ohai. Any custom Ohai plugins using this helper will need to be updated.
+
+### Ohai::System.refresh_plugins method removal
+
+The `refresh_plugins` method in the `Ohai::System` class has been removed as it has been unused for multiple major Ohai releases. If you are programatically using Ohai in your own Ruby application you will need to update your code to use the `load_plugins` method instead.
+
+### Microsoft VirtualPC / VirtualServer detection removal
+
+The Virtualization plugin will no longer detect systems running on the circa ~2005 VirtualPC or VirtualServer hypervisors. These hypervisors were long ago deprecated by Microsoft and support can no longer be tested.
+
+# Ohai Release Notes 14.8
+
+## Improved Virtualization Detection
+
+### Hyper-V Hypervisor Detection
+
+Detection of Linux guests running on Hyper-V has been improved. In addition, Linux guests on Hyper-V hypervisors will also now detect their hypervisor's hostname. Thank you [@safematix](https://github.com/safematix) for contributing this enhancement.
+
+Example `node['virtualization']` data:
+```json
+{
+  "systems": {
+    "hyperv": "guest"
+  },
+  "system": "hyperv",
+  "role": "guest",
+  "hypervisor_host": "hyper_v.example.com"
+}
+```
+
+### LXC / LXD Detection
+
+On Linux systems running lxc or lxd containers, the lxc/lxd virtualization system will now properly populate the `node['virtualization']['systems']` attribute.
+
+### BSD Hypervisor Detection
+
+BSD-based systems can now detect guests running on KVM and Amazon's hypervisor without the need for the dmidecode package.
+
+## New Platform Support
+
+- Ohai now properly detects the openSUSE 15.X platform. Thank you [@megamorf](https://github.com/megamorf) for reporting this issue.
+- Suse Linux Enterprise Desktop now identified as platform_family 'suse'
+- XCP-NG is now identified as platform 'xcp' and platform_family 'rhel'. Thank you [@heyjodom](http://github.com/heyjodom) for submitting this enhancement.
+- Mangeia Linux is now identified as platform 'mangeia' and platform_family 'mandriva'
+- Antergos Linux now identified as platform_family 'arch'
+- Manjaro Linux now identified as platform_family 'arch'
 
 # Ohai Release Notes 14.6
 

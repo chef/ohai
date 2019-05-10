@@ -1,0 +1,35 @@
+steps:
+
+- label: lint-chefstyle
+  command:
+    - bundle install --jobs=7 --retry=3
+    - bundle exec chefstyle
+  expeditor:
+    executor:
+      docker:
+
+- label: run-ohai
+  command:
+    - bundle install --jobs=7 --retry=3
+    - bundle exec ohai
+  expeditor:
+    executor:
+      docker:
+
+- label: run-specs-ruby-2.5
+  command:
+    - asdf local ruby 2.5.5
+    - bundle install --jobs=7 --retry=3
+    - bundle exec rake
+  expeditor:
+    executor:
+      docker:
+
+- label: run-specs-ruby-2.6
+  command:
+    - asdf local ruby 2.6.2
+    - bundle install --jobs=7 --retry=3
+    - bundle exec rake
+  expeditor:
+    executor:
+      docker:

@@ -1,57 +1,54 @@
 # Change Log
 
-<!-- latest_release 15.0.35 -->
-## [v15.0.35](https://github.com/chef/ohai/tree/v15.0.35) (2019-05-10)
-
-#### Merged Pull Requests
-- Require ohai/version where we use it [#1361](https://github.com/chef/ohai/pull/1361) ([tas50](https://github.com/tas50))
-- Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=14.6.2 -->
-### Changes since 14.6.2 release
-
-#### Merged Pull Requests
-- Require ohai/version where we use it [#1361](https://github.com/chef/ohai/pull/1361) ([tas50](https://github.com/tas50)) <!-- 15.0.35 -->
-- Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50)) <!-- 15.0.34 -->
-- Update the repo for the new governance [#1348](https://github.com/chef/ohai/pull/1348) ([tas50](https://github.com/tas50)) <!-- 15.0.34 -->
-- Replaces require_relative with require [#1349](https://github.com/chef/ohai/pull/1349) ([burtlo](https://github.com/burtlo)) <!-- 15.0.33 -->
-- Adds mention of the style task [#1351](https://github.com/chef/ohai/pull/1351) ([burtlo](https://github.com/burtlo)) <!-- 15.0.32 -->
-- Ohai::Util::FileHelper does not need to be loaded in this systemd_paths plugin [#1347](https://github.com/chef/ohai/pull/1347) ([burtlo](https://github.com/burtlo)) <!-- 15.0.31 -->
-- Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50)) <!-- 15.0.30 -->
-- Parse new /proc/meminfo fields [#1340](https://github.com/chef/ohai/pull/1340) ([davide125](https://github.com/davide125)) <!-- 15.0.29 -->
-- Chefstyle fixes for Chefstyle 0.12 [#1337](https://github.com/chef/ohai/pull/1337) ([tas50](https://github.com/tas50)) <!-- 15.0.28 -->
-- Fully remove support for HP-UX [#1336](https://github.com/chef/ohai/pull/1336) ([tas50](https://github.com/tas50)) <!-- 15.0.27 -->
-- Remove V6 plugin Struct to reduce memory consumption [#1333](https://github.com/chef/ohai/pull/1333) ([tas50](https://github.com/tas50)) <!-- 15.0.26 -->
-- Add support for XCP-ng platform [#1283](https://github.com/chef/ohai/pull/1283) ([heyjodom](https://github.com/heyjodom)) <!-- 15.0.25 -->
-- Unify virtualization detection on a single helper [#1317](https://github.com/chef/ohai/pull/1317) ([tas50](https://github.com/tas50)) <!-- 15.0.24 -->
-- Require Ruby 2.5 or later [#1300](https://github.com/chef/ohai/pull/1300) ([tas50](https://github.com/tas50)) <!-- 15.0.23 -->
-- Back out SLES -&gt; SUSE remapping and instead fix the platform_family [#1322](https://github.com/chef/ohai/pull/1322) ([tas50](https://github.com/tas50)) <!-- 15.0.22 -->
-- Don&#39;t ship the readme with ohai [#1321](https://github.com/chef/ohai/pull/1321) ([tas50](https://github.com/tas50)) <!-- 15.0.21 -->
-- Add support for antergos linux and fix opensuseleap platform_family [#1320](https://github.com/chef/ohai/pull/1320) ([tas50](https://github.com/tas50)) <!-- 15.0.20 -->
-- platform: Identify sles_sap as the suse platform [#1313](https://github.com/chef/ohai/pull/1313) ([tas50](https://github.com/tas50)) <!-- 15.0.19 -->
-- bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1319](https://github.com/chef/ohai/pull/1319) ([tas50](https://github.com/tas50)) <!-- 15.0.18 -->
-- Fix arista platform detection [#1312](https://github.com/chef/ohai/pull/1312) ([tas50](https://github.com/tas50)) <!-- 15.0.17 -->
-- Add support for SUSE Linux Enterprise Desktop [#1314](https://github.com/chef/ohai/pull/1314) ([tas50](https://github.com/tas50)) <!-- 15.0.16 -->
-- Add mangeia platform with madriva platform_family [#1316](https://github.com/chef/ohai/pull/1316) ([tas50](https://github.com/tas50)) <!-- 15.0.15 -->
-- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50)) <!-- 15.0.14 -->
-- Windows: Fix for fqdn is being set as the machine name instead of fqdn [#1310](https://github.com/chef/ohai/pull/1310) ([vijaymmali1990](https://github.com/vijaymmali1990)) <!-- 15.0.13 -->
-- /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50)) <!-- 15.0.12 -->
-- Correctly detect openSUSE leap 15+ [#1297](https://github.com/chef/ohai/pull/1297) ([tas50](https://github.com/tas50)) <!-- 15.0.11 -->
-- Remove circa ~2005 virtualization hypervisor detection [#1305](https://github.com/chef/ohai/pull/1305) ([tas50](https://github.com/tas50)) <!-- 15.0.10 -->
-- Remove old spec files [#1301](https://github.com/chef/ohai/pull/1301) ([tas50](https://github.com/tas50)) <!-- 15.0.9 -->
-- Plugin to load hyper_v hostname from guest [#1303](https://github.com/chef/ohai/pull/1303) ([safematix](https://github.com/safematix)) <!-- 15.0.8 -->
-- Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.7 -->
-- Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey)) <!-- 15.0.6 -->
-- Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.0.5 -->
-- Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50)) <!-- 15.0.4 -->
-- Remove the deprecated Ohai::Util::Win32::GroupHelper class [#1279](https://github.com/chef/ohai/pull/1279) ([tas50](https://github.com/tas50)) <!-- 15.0.3 -->
-- Remove the deprecated system_profiler plugin [#1278](https://github.com/chef/ohai/pull/1278) ([tas50](https://github.com/tas50)) <!-- 15.0.2 -->
-- Remove the chdir to / when running ohai [#1250](https://github.com/chef/ohai/pull/1250) ([tas50](https://github.com/tas50)) <!-- 15.0.1 -->
-- Update master branch for Ohai 15 development [#1277](https://github.com/chef/ohai/pull/1277) ([tas50](https://github.com/tas50)) <!-- 15.0.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.0.35](https://github.com/chef/ohai/tree/v15.0.35) (2019-05-10)
+
+#### Merged Pull Requests
+- Update master branch for Ohai 15 development [#1277](https://github.com/chef/ohai/pull/1277) ([tas50](https://github.com/tas50))
+- Remove the chdir to / when running ohai [#1250](https://github.com/chef/ohai/pull/1250) ([tas50](https://github.com/tas50))
+- Remove the deprecated system_profiler plugin [#1278](https://github.com/chef/ohai/pull/1278) ([tas50](https://github.com/tas50))
+- Remove the deprecated Ohai::Util::Win32::GroupHelper class [#1279](https://github.com/chef/ohai/pull/1279) ([tas50](https://github.com/tas50))
+- Removed unused refresh_plugins method in System class [#1280](https://github.com/chef/ohai/pull/1280) ([tas50](https://github.com/tas50))
+- Ignore empty metadata openstack [#1290](https://github.com/chef/ohai/pull/1290) ([sawanoboly](https://github.com/sawanoboly))
+- Set User-Agent in HTTP header for GCE plugin [#1291](https://github.com/chef/ohai/pull/1291) ([nathenharvey](https://github.com/nathenharvey))
+- Adds more resilient GCE checking [#1292](https://github.com/chef/ohai/pull/1292) ([nathenharvey](https://github.com/nathenharvey))
+- Plugin to load hyper_v hostname from guest [#1303](https://github.com/chef/ohai/pull/1303) ([safematix](https://github.com/safematix))
+- Remove old spec files [#1301](https://github.com/chef/ohai/pull/1301) ([tas50](https://github.com/tas50))
+- Remove circa ~2005 virtualization hypervisor detection [#1305](https://github.com/chef/ohai/pull/1305) ([tas50](https://github.com/tas50))
+- Correctly detect openSUSE leap 15+ [#1297](https://github.com/chef/ohai/pull/1297) ([tas50](https://github.com/tas50))
+- /etc/os-release based OS detection [#1299](https://github.com/chef/ohai/pull/1299) ([tas50](https://github.com/tas50))
+- Windows: Fix for fqdn is being set as the machine name instead of fqdn [#1310](https://github.com/chef/ohai/pull/1310) ([vijaymmali1990](https://github.com/vijaymmali1990))
+- Linux Virtualization: Use the new nests `systems` format for lxd / lxc [#1309](https://github.com/chef/ohai/pull/1309) ([tas50](https://github.com/tas50))
+- Add mangeia platform with madriva platform_family [#1316](https://github.com/chef/ohai/pull/1316) ([tas50](https://github.com/tas50))
+- Add support for SUSE Linux Enterprise Desktop [#1314](https://github.com/chef/ohai/pull/1314) ([tas50](https://github.com/tas50))
+- Fix arista platform detection [#1312](https://github.com/chef/ohai/pull/1312) ([tas50](https://github.com/tas50))
+- bsd virtualization: Detect amazonec2 hypervisor + kvm without dmidecode [#1319](https://github.com/chef/ohai/pull/1319) ([tas50](https://github.com/tas50))
+- platform: Identify sles_sap as the suse platform [#1313](https://github.com/chef/ohai/pull/1313) ([tas50](https://github.com/tas50))
+- Add support for antergos linux and fix opensuseleap platform_family [#1320](https://github.com/chef/ohai/pull/1320) ([tas50](https://github.com/tas50))
+- Don&#39;t ship the readme with ohai [#1321](https://github.com/chef/ohai/pull/1321) ([tas50](https://github.com/tas50))
+- Back out SLES -&gt; SUSE remapping and instead fix the platform_family [#1322](https://github.com/chef/ohai/pull/1322) ([tas50](https://github.com/tas50))
+- Require Ruby 2.5 or later [#1300](https://github.com/chef/ohai/pull/1300) ([tas50](https://github.com/tas50))
+- Unify virtualization detection on a single helper [#1317](https://github.com/chef/ohai/pull/1317) ([tas50](https://github.com/tas50))
+- Add support for XCP-ng platform [#1283](https://github.com/chef/ohai/pull/1283) ([heyjodom](https://github.com/heyjodom))
+- Remove V6 plugin Struct to reduce memory consumption [#1333](https://github.com/chef/ohai/pull/1333) ([tas50](https://github.com/tas50))
+- Fully remove support for HP-UX [#1336](https://github.com/chef/ohai/pull/1336) ([tas50](https://github.com/tas50))
+- Chefstyle fixes for Chefstyle 0.12 [#1337](https://github.com/chef/ohai/pull/1337) ([tas50](https://github.com/tas50))
+- Parse new /proc/meminfo fields [#1340](https://github.com/chef/ohai/pull/1340) ([davide125](https://github.com/davide125))
+- Loosen the mixlib pins to allow for new major releases [#1341](https://github.com/chef/ohai/pull/1341) ([tas50](https://github.com/tas50))
+- Ohai::Util::FileHelper does not need to be loaded in this systemd_paths plugin [#1347](https://github.com/chef/ohai/pull/1347) ([burtlo](https://github.com/burtlo))
+- Adds mention of the style task [#1351](https://github.com/chef/ohai/pull/1351) ([burtlo](https://github.com/burtlo))
+- Replaces require_relative with require [#1349](https://github.com/chef/ohai/pull/1349) ([burtlo](https://github.com/burtlo))
+- Update the repo for the new governance [#1348](https://github.com/chef/ohai/pull/1348) ([tas50](https://github.com/tas50))
+- Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50))
+- Require ohai/version where we use it [#1361](https://github.com/chef/ohai/pull/1361) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-11)
 
 #### Merged Pull Requests
@@ -64,7 +61,6 @@
 - [filesystem] Convert rest of unix to fs2 [#1266](https://github.com/chef/ohai/pull/1266) ([jaymzh](https://github.com/jaymzh))
 - Correctly detect SLES 15 systems as &quot;suse&quot; platform [#1272](https://github.com/chef/ohai/pull/1272) ([tas50](https://github.com/tas50))
 - Deprecate the system_profile plugin [#1264](https://github.com/chef/ohai/pull/1264) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.5.4](https://github.com/chef/ohai/tree/v14.5.4) (2018-09-17)
 

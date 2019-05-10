@@ -1,25 +1,22 @@
 # Change Log
 
-<!-- latest_release 14.8.12 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v14.8.12](https://github.com/chef/ohai/tree/v14.8.12) (2019-05-10)
 
 #### Merged Pull Requests
 - Require ohai/version where we use it [#1362](https://github.com/chef/ohai/pull/1362) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=15.0.35 -->
-### Changes not yet released to rubygems.orgs
-
-#### Merged Pull Requests
-- Require ohai/version where we use it [#1362](https://github.com/chef/ohai/pull/1362) ([tas50](https://github.com/tas50)) <!-- 14.8.12 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.8.11](https://github.com/chef/ohai/tree/v14.8.11) (2019-03-19)
 
 #### Merged Pull Requests
 - Loosen the mixlib version dependencies [#1342](https://github.com/chef/ohai/pull/1342) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.8.10](https://github.com/chef/ohai/tree/v14.8.10) (2018-12-05)
 

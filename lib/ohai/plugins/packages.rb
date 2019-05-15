@@ -104,7 +104,7 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:windows) do
-    require "win32/registry"
+    require "win32/registry" unless defined?(Win32::Registry)
     packages Mash.new
     collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here

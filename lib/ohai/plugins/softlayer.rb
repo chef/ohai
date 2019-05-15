@@ -19,7 +19,7 @@
 # limitations under the License.
 
 Ohai.plugin(:Softlayer) do
-  require "ohai/mixin/softlayer_metadata"
+  require_relative "../mixin/softlayer_metadata"
   include ::Ohai::Mixin::SoftlayerMetadata
 
   provides "softlayer"

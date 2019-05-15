@@ -16,8 +16,8 @@
 # limitations under the License.
 
 Ohai.plugin(:DigitalOcean) do
-  require "ohai/mixin/do_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/do_metadata"
+  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::DOMetadata
   include Ohai::Mixin::HttpHelper

@@ -22,7 +22,7 @@ Ohai.plugin(:DMI) do
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
   collect_data do
-    require "ohai/common/dmi"
+    require_relative "../common/dmi"
     dmi Mash.new
 
     # all output lines should fall within one of these patterns

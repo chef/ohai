@@ -18,11 +18,11 @@
 # limitations under the License.
 #
 
-require "ohai/mixin/os"
-require "ohai/mixin/command"
-require "ohai/mixin/seconds_to_human"
-require "ohai/hints"
-require "ohai/util/file_helper"
+require_relative "../mixin/os"
+require_relative "../mixin/command"
+require_relative "../mixin/seconds_to_human"
+require_relative "../hints"
+require_relative "../util/file_helper"
 
 module Ohai
 

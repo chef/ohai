@@ -18,7 +18,7 @@
 # limitations under the License.
 
 require "net/https"
-require "uri"
+require "uri" unless defined?(URI)
 
 # https://softlayer.github.io/reference/services/SoftLayer_Resource_Metadata/
 module ::Ohai::Mixin::SoftlayerMetadata

@@ -15,8 +15,8 @@
 # limitations under the License.
 
 Ohai.plugin(:Scaleway) do
-  require "ohai/mixin/scaleway_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/scaleway_metadata"
+  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::ScalewayMetadata
   include Ohai::Mixin::HttpHelper

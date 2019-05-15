@@ -26,8 +26,8 @@
 # 4. Kernel data mentioned Amazon. This catches Windows HVM & paravirt instances
 
 Ohai.plugin(:EC2) do
-  require "ohai/mixin/ec2_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/ec2_metadata"
+  require_relative "../mixin/http_helper"
   require "base64"
 
   include Ohai::Mixin::Ec2Metadata

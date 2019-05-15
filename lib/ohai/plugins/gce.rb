@@ -15,8 +15,8 @@
 # limitations under the License.
 
 Ohai.plugin(:GCE) do
-  require "ohai/mixin/gce_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/gce_metadata"
+  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::GCEMetadata
   include Ohai::Mixin::HttpHelper

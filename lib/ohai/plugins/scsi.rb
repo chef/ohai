@@ -21,7 +21,7 @@ Ohai.plugin(:Lsscsi) do
   provides "scsi"
   optional true
 
-  require "mixlib/shellout"
+  require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
 
   collect_data(:linux) do
     devices = Mash.new

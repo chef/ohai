@@ -16,21 +16,21 @@
 # limitations under the License.
 #
 
-require "ohai/version"
-require "ohai/loader"
-require "ohai/log"
-require "ohai/mash"
-require "ohai/runner"
-require "ohai/dsl"
-require "ohai/mixin/command"
-require "ohai/mixin/os"
-require "ohai/mixin/string"
-require "ohai/mixin/constant_helper"
-require "ohai/provides_map"
-require "ohai/hints"
-require "mixlib/shellout"
-require "ohai/config"
-require "ffi_yajl"
+require_relative "version"
+require_relative "loader"
+require_relative "log"
+require_relative "mash"
+require_relative "runner"
+require_relative "dsl"
+require_relative "mixin/command"
+require_relative "mixin/os"
+require_relative "mixin/string"
+require_relative "mixin/constant_helper"
+require_relative "provides_map"
+require_relative "hints"
+require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
+require_relative "config"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 
 module Ohai
   # The class used by Ohai::Application and Chef to actually collect data

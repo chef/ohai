@@ -17,10 +17,10 @@
 # limitations under the License.
 #
 
-require "ohai/mash"
-require "ohai/exception"
-require "ohai/mixin/os"
-require "ohai/dsl"
+require_relative "mash"
+require_relative "exception"
+require_relative "mixin/os"
+require_relative "dsl"
 
 module Ohai
   class ProvidesMap

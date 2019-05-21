@@ -19,7 +19,7 @@
 #
 
 Ohai.plugin(:Virtualization) do
-  require "ohai/mixin/dmi_decode"
+  require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
   provides "virtualization"
   depends "dmi"

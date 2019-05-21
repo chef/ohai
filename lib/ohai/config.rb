@@ -18,8 +18,8 @@
 #
 
 require "chef-config/config"
-require "ohai/exception"
-require "ohai/plugin_config"
+require_relative "exception"
+require_relative "plugin_config"
 
 module Ohai
   Config = ChefConfig::Config

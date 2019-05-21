@@ -1,6 +1,6 @@
 
 Ohai.plugin(:Passwd) do
-  require "etc"
+  require "etc" unless defined?(Etc)
   provides "etc", "current_user"
   optional true
 

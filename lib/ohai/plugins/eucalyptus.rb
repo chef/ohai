@@ -19,8 +19,8 @@
 
 Ohai.plugin(:Eucalyptus) do
   # eucalyptus metadata service is compatible with the ec2 service calls
-  require "ohai/mixin/ec2_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/ec2_metadata"
+  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper

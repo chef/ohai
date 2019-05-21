@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require "ffi_yajl"
+require "ffi_yajl" unless defined?(FFI_Yajl)
 
 module Ohai
   # Ohai hints are json files on disk that give ohai a hint to things that are often

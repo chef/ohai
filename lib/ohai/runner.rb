@@ -17,7 +17,7 @@
 # limitations under the License
 #
 
-require "ohai/dsl"
+require_relative "dsl"
 require "benchmark"
 
 module Ohai

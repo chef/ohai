@@ -21,7 +21,7 @@ module Ohai
     module Win32
       if RUBY_PLATFORM =~ /mswin|mingw|windows/
 
-        require "ffi"
+        require "ffi" unless defined?(FFI)
 
         extend FFI::Library
 

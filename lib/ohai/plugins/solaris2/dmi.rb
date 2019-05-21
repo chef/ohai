@@ -20,7 +20,7 @@ Ohai.plugin(:DMI) do
   provides "dmi"
 
   collect_data(:solaris2) do
-    require "ohai/common/dmi"
+    require_relative "../../common/dmi"
 
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version

@@ -18,7 +18,7 @@
 
 Ohai.plugin(:NetworkAddresses) do
   require "ipaddress"
-  require "ohai/mixin/network_constants"
+  require_relative "../mixin/network_constants"
   include Ohai::Mixin::NetworkConstants
 
   provides "ipaddress", "ip6address", "macaddress"

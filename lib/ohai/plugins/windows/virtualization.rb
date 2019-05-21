@@ -20,7 +20,7 @@
 
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
-  require "ohai/mixin/dmi_decode"
+  require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
   collect_data(:windows) do

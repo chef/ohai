@@ -15,8 +15,8 @@
 #
 
 Ohai.plugin(:Azure) do
-  require "ohai/mixin/azure_metadata"
-  require "ohai/mixin/http_helper"
+  require_relative "../mixin/azure_metadata"
+  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::AzureMetadata
   include Ohai::Mixin::HttpHelper

@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "ohai/version"
-require "ohai/config"
-require "ohai/system"
-require "ohai/exception"
+require_relative "ohai/version"
+require_relative "ohai/config"
+require_relative "ohai/system"
+require_relative "ohai/exception"

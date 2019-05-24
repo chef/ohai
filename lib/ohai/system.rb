@@ -28,7 +28,7 @@ require_relative "mixin/string"
 require_relative "mixin/constant_helper"
 require_relative "provides_map"
 require_relative "hints"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
+require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 require_relative "config"
 require "ffi_yajl" unless defined?(FFI_Yajl)
 

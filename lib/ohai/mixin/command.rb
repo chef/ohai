@@ -19,7 +19,7 @@
 
 require_relative "../exception"
 require_relative "../log"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut)
+require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 
 module Ohai
   module Mixin

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.36 -->
-## [v15.0.36](https://github.com/chef/ohai/tree/v15.0.36) (2019-05-21)
+<!-- latest_release 15.0.37 -->
+## [v15.0.37](https://github.com/chef/ohai/tree/v15.0.37) (2019-05-24)
 
 #### Merged Pull Requests
-- Apply require speedups to ohai [#1363](https://github.com/chef/ohai/pull/1363) ([lamont-granquist](https://github.com/lamont-granquist))
+- fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.37 -->
 - Apply require speedups to ohai [#1363](https://github.com/chef/ohai/pull/1363) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.36 -->
 <!-- release_rollup -->
 

@@ -44,6 +44,9 @@ describe Ohai::System, "Solaris2.X network plugin" do
     ARP_RN
 
     @solaris_ifconfig = <<~ENDIFCONFIG
+      ipmp0: flags=108000000843<UP,BROADCAST,RUNNING,MULTICAST,IPMP,PHYSRUNNING> mtu 1500
+              inet 10.10.130.103 netmask fffffe00 broadcast 10.10.131.255
+              groupname ipmp0
       lo0:3: flags=2001000849<UP,LOOPBACK,RUNNING,MULTICAST,IPv4,VIRTUAL> mtu 8232 index 1
               inet 127.0.0.1 netmask ff000000
       e1000g0:3: flags=201000843<UP,BROADCAST,RUNNING,MULTICAST,IPv4,CoS> mtu 1500 index 3
@@ -143,7 +146,7 @@ describe Ohai::System, "Solaris2.X network plugin" do
     end
 
     it "detects the interfaces" do
-      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "ip6.tun0", "lo0", "lo0:3", "net0", "net1:1", "qfe1", "vni0"])
+      expect(@plugin["network"]["interfaces"].keys.sort).to eq(["e1000g0:3", "e1000g2:1", "eri0", "ip.tun0", "ip.tun0:1", "ip6.tun0", "ipmp0", "lo0", "lo0:3", "net0", "net1:1", "qfe1", "vni0"])
     end
 
     it "detects the ip addresses of the interfaces" do
@@ -157,6 +160,12 @@ describe Ohai::System, "Solaris2.X network plugin" do
     it "detects the L3PROTECT network flag" do
       expect(@plugin["network"]["interfaces"]["net0"]["flags"]).to include("L3PROTECT")
     end
+
+    it "detects the an interface with no index number" do
+      expect(@plugin["network"]["interfaces"]["ipmp0"]["index"]).to eq(nil)
+      expect(@plugin["network"]["interfaces"]["ipmp0"]["mtu"]).to eq("1500")
+    end
+
   end
 
   describe "gathering solaris 11 zone IP layer address info" do

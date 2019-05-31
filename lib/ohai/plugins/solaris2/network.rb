@@ -104,7 +104,8 @@ Ohai.plugin(:Network) do
 
     so.stdout.lines do |line|
       # regex: http://rubular.com/r/Iag7JLVTVe
-      if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/
+      if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+) index (\d+)/ ||
+          line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)/
         cint = $1
         iface[cint] = Mash.new unless iface[cint]
         iface[cint][:mtu] = $2

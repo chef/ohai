@@ -161,7 +161,7 @@ describe Ohai::System, "Solaris2.X network plugin" do
       expect(@plugin["network"]["interfaces"]["net0"]["flags"]).to include("L3PROTECT")
     end
 
-    it "detects the an interface with no index number" do
+    it "detects an interface with no index number" do
       expect(@plugin["network"]["interfaces"]["ipmp0"]["index"]).to eq(nil)
       expect(@plugin["network"]["interfaces"]["ipmp0"]["mtu"]).to eq("1500")
     end

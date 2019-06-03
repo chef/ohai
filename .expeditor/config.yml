@@ -4,6 +4,7 @@
 slack:
   notify_channel: chef-infra-notify
 
+# Which Ruby Gems, built when the Omnibus package is built, to publish to rubygems.org
 # This publish is triggered by the `built_in:publish_rubygems` artifact_action.
 rubygems:
   - ohai
@@ -11,8 +12,6 @@ rubygems:
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
   delete_branch_on_merge: true
-  # The tag format to use (e.g. v1.0.0)
-  version_tag_format: "v{{version}}"
   # allow bumping the minor release via label
   minor_bump_labels:
     - "Expeditor: Bump Version Minor"
@@ -27,16 +26,9 @@ github:
         version_constraint: 15.*
     - 14-stable:
         version_constraint: 14.*
-    - 13-stable:
-        version_constraint: 13.*
 
 changelog:
-  rollup_header: Changes not yet released to rubygems.orgs
-
-promote:
-  actions:
-    - built_in:rollover_changelog
-    - built_in:publish_rubygems
+  rollup_header: Changes not yet released to rubygems.org
 
 # These actions are taken, in order they are specified, anytime a Pull Request is merged.
 merge_actions:
@@ -52,6 +44,11 @@ merge_actions:
         - "Expeditor: Skip All"
   - built_in:build_gem:
       only_if: built_in:bump_version
+
+promote:
+  actions:
+    - built_in:rollover_changelog
+    - built_in:publish_rubygems
 
 pipelines:
   - verify:

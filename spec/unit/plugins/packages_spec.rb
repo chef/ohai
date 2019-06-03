@@ -100,6 +100,20 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["tzdata"][:installdate]).to eq("1463486618")
       expect(plugin[:packages]["tzdata"][:arch]).to eq("noarch")
     end
+
+    it "handles multiple packages with the same name" do
+      expect(plugin[:packages]["kernel"][:version]).to eq("3.10.0")
+      expect(plugin[:packages]["kernel"][:release]).to eq("862.2.3.el7")
+      expect(plugin[:packages]["kernel"][:epoch]).to eq("0")
+      expect(plugin[:packages]["kernel"][:installdate]).to eq("1526310781")
+      expect(plugin[:packages]["kernel"][:arch]).to eq("x86_64")
+      # and now the "other" version installed:
+      expect(plugin[:packages]["kernel"]["other_versions"].first[:version]).to eq("3.10.0")
+      expect(plugin[:packages]["kernel"]["other_versions"].first[:release]).to eq("862.el7")
+      expect(plugin[:packages]["kernel"]["other_versions"].first[:epoch]).to eq("0")
+      expect(plugin[:packages]["kernel"]["other_versions"].first[:installdate]).to eq("1521745632")
+      expect(plugin[:packages]["kernel"]["other_versions"].first[:arch]).to eq("x86_64")
+    end
   end
 
   context "on arch" do

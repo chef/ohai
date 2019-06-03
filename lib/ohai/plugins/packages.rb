@@ -48,7 +48,16 @@ Ohai.plugin(:Packages) do
 
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        if packages[name]
+          # We have more than one package with this exact name!
+          # Create an "other_versions" array for tracking all versions of packages with this name.
+          # The top-level package information will be the first one returned by rpm -qa,
+          # all others go in this list, with the same information they'd normally have.
+          packages[name]["other_versions"] = [] unless packages[name]["other_versions"]
+          packages[name]["other_versions"] << Mash.new({ "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch })
+        else
+          packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        end
       end
 
     when "arch"

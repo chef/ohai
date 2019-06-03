@@ -23,8 +23,8 @@ Ohai.plugin(:Filesystem) do
   #
   # @see https://docs.microsoft.com/en-us/windows/desktop/SecProv/getconversionstatus-win32-encryptablevolume#parameters
   #
-  CONVERSION_STATUS = %w{FullyDecrypted FullyEncrypted EncryptionInProgress
-                         DecryptionInProgress EncryptionPaused DecryptionPaused}.freeze unless defined?(CONVERSION_STATUS)
+  CONVERSION_STATUS ||= %w{FullyDecrypted FullyEncrypted EncryptionInProgress
+                         DecryptionInProgress EncryptionPaused DecryptionPaused}.freeze
 
   # Returns a Mash loaded with logical details
   #

@@ -22,13 +22,11 @@ Ohai.plugin(:Packages) do
   provides "packages"
   depends "platform_family"
 
-  unless defined?(WINDOWS_ATTRIBUTE_ALIASES)
-    WINDOWS_ATTRIBUTE_ALIASES = {
-      "DisplayVersion" => "version",
-      "Publisher" => "publisher",
-      "InstallDate" => "installdate",
-    }.freeze
-  end
+  WINDOWS_ATTRIBUTE_ALIASES ||= {
+    "DisplayVersion" => "version",
+    "Publisher" => "publisher",
+    "InstallDate" => "installdate",
+  }.freeze
 
   collect_data(:linux) do
     packages Mash.new

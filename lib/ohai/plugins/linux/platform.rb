@@ -23,8 +23,7 @@ Ohai.plugin(:Platform) do
   # the platform mappings between the 'ID' field in /etc/os-release and the value
   # ohai uses. If you're adding a new platform here and you want to change the name
   # you'll want to add it here and then add a spec for the platform_id_remap method
-  unless defined?(PLATFORM_MAPPINGS)
-    PLATFORM_MAPPINGS = {
+  PLATFORM_MAPPINGS ||= {
       "rhel" => "redhat",
       "amzn" => "amazon",
       "ol" => "oracle",
@@ -34,7 +33,6 @@ Ohai.plugin(:Platform) do
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",
     }.freeze
-  end
 
   # @deprecated
   def get_redhatish_platform(contents)

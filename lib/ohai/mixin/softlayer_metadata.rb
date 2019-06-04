@@ -22,7 +22,7 @@ require "uri" unless defined?(URI)
 
 # https://softlayer.github.io/reference/services/SoftLayer_Resource_Metadata/
 module ::Ohai::Mixin::SoftlayerMetadata
-  SOFTLAYER_API_QUERY_URL = "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata".freeze unless defined?(SOFTLAYER_API_QUERY_URL)
+  SOFTLAYER_API_QUERY_URL ||= "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata".freeze
 
   # fetch metadata items and build out hash of data
   #

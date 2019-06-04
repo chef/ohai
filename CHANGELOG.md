@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.38 -->
-## [v15.0.38](https://github.com/chef/ohai/tree/v15.0.38) (2019-06-03)
+<!-- latest_release 15.0.39 -->
+## [15.0.39](https://github.com/chef/ohai/tree/15.0.39) (2019-06-04)
 
 #### Merged Pull Requests
-- Solaris network plugin fix for issue https://github.com/chef/ohai/iss… [#1367](https://github.com/chef/ohai/pull/1367) ([devoptimist](https://github.com/devoptimist))
+- Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50)) <!-- 15.0.39 -->
 - Solaris network plugin fix for issue https://github.com/chef/ohai/iss… [#1367](https://github.com/chef/ohai/pull/1367) ([devoptimist](https://github.com/devoptimist)) <!-- 15.0.38 -->
 - fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.37 -->
 - Apply require speedups to ohai [#1363](https://github.com/chef/ohai/pull/1363) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.36 -->

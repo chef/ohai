@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Author:: "Christian Höltje" <choltje@us.ibm.com>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
@@ -53,7 +54,7 @@ Ohai.plugin(:Packages) do
           # Create an "other_versions" array for tracking all versions of packages with this name.
           # The top-level package information will be the first one returned by rpm -qa,
           # all others go in this list, with the same information they'd normally have.
-          packages[name]["other_versions"] = [] unless packages[name]["other_versions"]
+          packages[name]["other_versions"] ||= []
           packages[name]["other_versions"] << Mash.new({ "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch })
         else
           packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }

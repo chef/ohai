@@ -7,6 +7,7 @@ steps:
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-stretch
 
 - label: run-ohai
   command:
@@ -15,24 +16,33 @@ steps:
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-stretch
 
 - label: run-specs-ruby-2.5
   command:
-    - asdf local ruby 2.5.5
     - bundle install --jobs=7 --retry=3 --without docs debug
     - bundle exec rake spec
   expeditor:
     executor:
       docker:
+        environment:
+          - "LANG=en_US.UTF-8"
+          - "LANGUAGE=en_US.UTF-8"
+          - "LC_ALL=en_US.UTF-8"
+        image: ruby:2.5-stretch
 
 - label: run-specs-ruby-2.6
   command:
-    - asdf local ruby 2.6.3
     - bundle install --jobs=7 --retry=3 --without docs debug
     - bundle exec rake spec
   expeditor:
     executor:
       docker:
+        environment:
+          - "LANG=en_US.UTF-8"
+          - "LANGUAGE=en_US.UTF-8"
+          - "LC_ALL=en_US.UTF-8"
+        image: ruby:2.6-stretch
 
 - label: run-specs-windows
   command:

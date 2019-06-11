@@ -81,6 +81,10 @@ BSD-based systems can now detect guests running on KVM and Amazon's hypervisor w
 - Antergos Linux now identified as platform_family 'arch'
 - Manjaro Linux now identified as platform_family 'arch'
 
+## VboxHost (VirtualBox) plugin added
+
+Added VboxHost plugin to detect VirtualBox running as a virtualization host. Provides the 'vbox' attribute tree.
+
 # Ohai Release Notes 14.6
 
 ## Filesystem Plugin on AIX and Solaris

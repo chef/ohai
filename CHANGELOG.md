@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.0.39 -->
-## [15.0.39](https://github.com/chef/ohai/tree/15.0.39) (2019-06-04)
+<!-- latest_release 15.0.40 -->
+## [15.0.40](https://github.com/chef/ohai/tree/15.0.40) (2019-06-11)
 
 #### Merged Pull Requests
-- Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50))
+- Add VboxHost plugin to support VirtualBox as a virtualization host [#1339](https://github.com/chef/ohai/pull/1339) ([freakinhippie](https://github.com/freakinhippie))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- Add VboxHost plugin to support VirtualBox as a virtualization host [#1339](https://github.com/chef/ohai/pull/1339) ([freakinhippie](https://github.com/freakinhippie)) <!-- 15.0.40 -->
 - Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50)) <!-- 15.0.39 -->
 - Solaris network plugin fix for issue https://github.com/chef/ohai/iss… [#1367](https://github.com/chef/ohai/pull/1367) ([devoptimist](https://github.com/devoptimist)) <!-- 15.0.38 -->
 - fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.37 -->

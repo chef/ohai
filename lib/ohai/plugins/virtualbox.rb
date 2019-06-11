@@ -1,6 +1,6 @@
 #
-# Author:: "Tim Smith" <tsmith@chef.io>
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Author:: Tim Smith <tsmith@chef.io>
+# Copyright:: Copyright (c) 2015-2019 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,33 +17,38 @@
 #
 
 Ohai.plugin(:Virtualbox) do
+  depends "virtualization"
   provides "virtualbox"
 
-  collect_data do
+  collect_data(:default) do
+    if virtualization["systems"].key?("vbox") && virtualization["systems"]["vbox"] == "guest"
+      begin
+        so = shell_out("VBoxControl guestproperty enumerate")
 
-    so = shell_out("VBoxControl guestproperty enumerate")
-
-    if so.exitstatus == 0
-      virtualbox Mash.new
-      virtualbox[:host] = Mash.new
-      virtualbox[:guest] = Mash.new
-      so.stdout.lines.each do |line|
-        case line
-        when /LanguageID, value: (\S*),/
-          virtualbox[:host][:language] = Regexp.last_match(1)
-        when /VBoxVer, value: (\S*),/
-          virtualbox[:host][:version] = Regexp.last_match(1)
-        when /VBoxRev, value: (\S*),/
-          virtualbox[:host][:revision] = Regexp.last_match(1)
-        when /GuestAdd\/VersionExt, value: (\S*),/
-          virtualbox[:guest][:guest_additions_version] = Regexp.last_match(1)
-        when /GuestAdd\/Revision, value: (\S*),/
-          virtualbox[:guest][:guest_additions_revision] = Regexp.last_match(1)
+        if so.exitstatus == 0
+          virtualbox Mash.new
+          virtualbox[:host] = Mash.new
+          virtualbox[:guest] = Mash.new
+          so.stdout.lines.each do |line|
+            case line
+            when /LanguageID, value: (\S*),/
+              virtualbox[:host][:language] = Regexp.last_match(1)
+            when /VBoxVer, value: (\S*),/
+              virtualbox[:host][:version] = Regexp.last_match(1)
+            when /VBoxRev, value: (\S*),/
+              virtualbox[:host][:revision] = Regexp.last_match(1)
+            when /GuestAdd\/VersionExt, value: (\S*),/
+              virtualbox[:guest][:guest_additions_version] = Regexp.last_match(1)
+            when /GuestAdd\/Revision, value: (\S*),/
+              virtualbox[:guest][:guest_additions_revision] = Regexp.last_match(1)
+            end
+          end
         end
+      rescue Ohai::Exceptions::Exec
+        logger.trace('Plugin Virtualbox: Could not execute "VBoxControl guestproperty enumerate". Skipping plugin.')
       end
+    else
+      logger.trace("Plugin Virtualbox: Not on a Virtualbox guest. Skipping plugin.")
     end
-  rescue Ohai::Exceptions::Exec
-    logger.trace('Plugin Virtualbox: Could not execute "VBoxControl guestproperty enumerate". Skipping data')
-
   end
 end

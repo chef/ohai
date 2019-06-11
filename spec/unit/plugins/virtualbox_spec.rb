@@ -1,5 +1,5 @@
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2015-2019 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,9 +48,23 @@ vbox_output = <<~EOF
 EOF
 
 describe Ohai::System, "plugin virtualbox" do
+  let(:plugin) { get_plugin("virtualbox") }
+
+  before(:each) do
+    plugin[:virtualization] = Mash.new
+    plugin[:virtualization][:systems] = Mash.new
+    plugin[:virtualization][:systems][:vbox] = "guest"
+  end
+
+  context "when not on a virtualbox guest" do
+    it "should not set the virtualbox attribute" do
+      plugin[:virtualization][:systems][:vbox] = "host"
+      plugin.run
+      expect(plugin).not_to have_key(:virtualbox)
+    end
+  end
   context "when VBoxControl shellout fails" do
     it "should not set the virtualbox attribute" do
-      plugin = get_plugin("virtualbox")
       allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin).not_to have_key(:virtualbox)
@@ -58,8 +72,6 @@ describe Ohai::System, "plugin virtualbox" do
   end
 
   context "when VBoxControl shellout succeeds" do
-    let(:plugin) { get_plugin("virtualbox") }
-
     before(:each) do
       allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(0, vbox_output, ""))
       plugin.run

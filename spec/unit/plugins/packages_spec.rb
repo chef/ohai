@@ -118,7 +118,7 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["kernel"]["versions"].last[:epoch]).to eq("0")
       expect(plugin[:packages]["kernel"]["versions"].last[:installdate]).to eq("1521745632")
       expect(plugin[:packages]["kernel"]["versions"].last[:arch]).to eq("x86_64")
-            
+
     end
   end
 

@@ -45,7 +45,7 @@ Ohai.plugin(:Packages) do
       format = '%{NAME}\t%|EPOCH?{%{EPOCH}}:{0}|\t%{VERSION}\t%{RELEASE}\t%{INSTALLTIME}\t%{ARCH}\n'
       so = shell_out("rpm -qa --qf '#{format}'")
       pkgs = so.stdout.lines
-      
+
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
         if packages[name]
@@ -73,7 +73,7 @@ Ohai.plugin(:Packages) do
           packages[name]["version"] = version
           packages[name]["release"] = release
           packages[name]["installdate"] = installdate
-          packages[name]["arch"] =arch 
+          packages[name]["arch"] = arch
         else
           packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
         end

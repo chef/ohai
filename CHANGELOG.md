@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.8.13 -->
+## [v14.8.13](https://github.com/chef/ohai/tree/v14.8.13) (2019-06-12)
+
+#### Merged Pull Requests
+- Define CONVERSION_STATUS only if it wasn&#39;t defined earlier [#1375](https://github.com/chef/ohai/pull/1375) ([balasankarc](https://github.com/balasankarc))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.0.35 -->
+### Changes not yet released to rubygems.orgs
+
+#### Merged Pull Requests
+- Define CONVERSION_STATUS only if it wasn&#39;t defined earlier [#1375](https://github.com/chef/ohai/pull/1375) ([balasankarc](https://github.com/balasankarc)) <!-- 14.8.13 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

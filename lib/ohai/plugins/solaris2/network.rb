@@ -95,9 +95,9 @@ Ohai.plugin(:Network) do
 
     iface = Mash.new
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     so = shell_out("ifconfig -a")
     cint = nil
@@ -106,7 +106,7 @@ Ohai.plugin(:Network) do
       # regex: https://rubular.com/r/ZiIHbsnfiWPW1p
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)(?: index (\d+))?/
         cint = $1
-        iface[cint] = Mash.new unless iface[cint]
+        iface[cint] ||= Mash.new
         iface[cint][:mtu] = $2
         iface[cint][:index] = $3
         if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|PHYSRUNNING|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
@@ -122,15 +122,15 @@ Ohai.plugin(:Network) do
         end
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
       end
     end
@@ -141,7 +141,7 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)?\s+([a-zA-Z0-9\.\:\-]+)/
         next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
-        iface[arpname_to_ifname(iface, $1)][:arp] = Mash.new unless iface[arpname_to_ifname(iface, $1)][:arp]
+        iface[arpname_to_ifname(iface, $1)][:arp] ||= Mash.new
         iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
       end
     end

@@ -22,9 +22,9 @@ Ohai.plugin(:Network) do
 
   collect_data(:netbsd) do
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     so = shell_out("route -n get default")
     so.stdout.lines do |line|
@@ -52,11 +52,11 @@ Ohai.plugin(:Network) do
       end
       # call the family lladdr to match linux for consistency
       if line =~ /\s+address: (.+?)\s/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "lladdr" }
       end
       if line =~ /\s+inet ([\d.]+) netmask ([\da-fx]+)\s*\w*\s*([\d.]*)/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         # convert the netmask to decimal for consistency
         netmask = "#{$2[2, 2].hex}.#{$2[4, 2].hex}.#{$2[6, 2].hex}.#{$2[8, 2].hex}"
         if $3.empty?
@@ -67,7 +67,7 @@ Ohai.plugin(:Network) do
         end
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)%?(\w*)\s+prefixlen\s+(\d+)\s*\w*\s*([\da-fx]*)/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         if $4.empty?
           iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }
         else
@@ -89,7 +89,7 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ /\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([0-9a-zA-Z\.\:\-]+)/
         next unless iface[$3] # this should never happen
-        iface[$3][:arp] = Mash.new unless iface[$3][:arp]
+        iface[$3][:arp] ||= Mash.new
         iface[$3][:arp][$1] = $2.downcase
       end
     end
@@ -107,9 +107,9 @@ Ohai.plugin(:Network) do
       # em0     1500  <Link>      00:11:25:2d:90:be  3719557     0  3369969     0     0    0
       # $1                        $2                      $3    $4    $5       $6    $7   $8
       if line =~ /^([\w\.\*]+)\s+\d+\s+<Link>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
-        net_counters[$1] = Mash.new unless net_counters[$1]
-        net_counters[$1]["rx"] = Mash.new unless net_counters[$1]["rx"]
-        net_counters[$1]["tx"] = Mash.new unless net_counters[$1]["tx"]
+        net_counters[$1] ||= Mash.ne
+        net_counters[$1]["rx"] ||= Mash.new
+        net_counters[$1]["tx"] ||= Mash.new
         net_counters[$1]["rx"]["packets"] = $3
         net_counters[$1]["rx"]["errors"] = $4
         net_counters[$1]["tx"]["packets"] = $5

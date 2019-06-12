@@ -135,9 +135,9 @@ Ohai.plugin(:NetworkAddresses) do
     results = {}
 
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     # inet family is processed before inet6 to give ipv4 precedence
     Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|

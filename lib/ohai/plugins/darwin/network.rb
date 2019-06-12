@@ -87,9 +87,9 @@ Ohai.plugin(:Network) do
     require "scanf"
 
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     so = shell_out("route -n get default")
     so.stdout.lines do |line|
@@ -109,7 +109,8 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)$/
         cint = $1
-        iface[cint] = Mash.new unless iface[cint]; iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint] ||= Mash.new
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:mtu] = $2
         if line =~ /\sflags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
           flags = $1.split(",")
@@ -124,37 +125,37 @@ Ohai.plugin(:Network) do
         end
       end
       if line =~ /^\s+ether ([0-9a-f\:]+)/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "lladdr" }
         iface[cint][:encapsulation] = "Ethernet"
       end
       if line =~ /^\s+lladdr ([0-9a-f\:]+)\s/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "lladdr" }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8})\s*$/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => scope_lookup($1) }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+) scopeid 0x([a-f0-9]+)/
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 , "scope" => scope_lookup($1) }
       end
       if line =~ /^\s+media: ((\w+)|(\w+ [a-zA-Z0-9\-\<\>]+)) status: (\w+)/
-        iface[cint][:media] = Mash.new unless iface[cint][:media]
+        iface[cint][:media] ||= Mash.new
         iface[cint][:media][:selected] = parse_media($1)
         iface[cint][:status] = $4
       end
       if line =~ /^\s+supported media: (.*)/
-        iface[cint][:media] = Mash.new unless iface[cint][:media]
+        iface[cint][:media] ||= Mash.new
         iface[cint][:media][:supported] = parse_media($1)
       end
     end
@@ -164,7 +165,7 @@ Ohai.plugin(:Network) do
       if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+).*\[(\w+)\]/
         # MAC addr really should be normalized to include all the zeroes.
         next if iface[$3].nil? # this should never happen
-        iface[$3][:arp] = Mash.new unless iface[$3][:arp]
+        iface[$3][:arp] ||= Mash.new
         iface[$3][:arp][$1] = $2
       end
     end
@@ -188,7 +189,7 @@ Ohai.plugin(:Network) do
           line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case
-        net_counters[ifname] = Mash.new unless net_counters[ifname]
+        net_counters[ifname] ||= Mash.new
         net_counters[ifname] = { rx: { bytes: $5, packets: $3, errors: $4, drop: 0, overrun: 0, frame: 0, compressed: 0, multicast: 0 },
                                  tx: { bytes: $8, packets: $6, errors: $7, drop: 0, overrun: 0, collisions: $9, carrier: 0, compressed: 0 },
         }

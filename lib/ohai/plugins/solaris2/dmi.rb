@@ -142,7 +142,7 @@ Ohai.plugin(:DMI) do
           next
         end
 
-        dmi[dmi_record[:type]] = Mash.new unless dmi.key?(dmi_record[:type])
+        dmi[dmi_record[:type]] ||= Mash.new
         dmi[dmi_record[:type]][:all_records] = [] unless dmi[dmi_record[:type]].key?(:all_records)
         dmi_record[:position] = dmi[dmi_record[:type]][:all_records].length
         dmi[dmi_record[:type]][:all_records].push(Mash.new)

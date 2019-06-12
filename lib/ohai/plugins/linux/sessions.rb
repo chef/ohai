@@ -28,8 +28,8 @@ Ohai.plugin(:Sessions) do
       loginctl = shell_out(cmd)
 
       sessions Mash.new unless sessions
-      sessions[:by_session] = Mash.new unless sessions[:by_session]
-      sessions[:by_user] = Mash.new unless sessions[:by_user]
+      sessions[:by_session] ||= Mash.new
+      sessions[:by_user] ||= Mash.new
 
       loginctl.stdout.split("\n").each do |line|
         session, uid, user, seat = line.split

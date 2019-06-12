@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Author:: "Christian Höltje" <choltje@us.ibm.com>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)

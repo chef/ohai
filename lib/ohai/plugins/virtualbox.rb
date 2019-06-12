@@ -21,7 +21,7 @@ Ohai.plugin(:Virtualbox) do
   provides "virtualbox"
 
   collect_data(:default) do
-    if virtualization["systems"].key?("vbox") && virtualization["systems"]["vbox"] == "guest"
+    if virtualization.dig("systems", "vbox") == "guest"
       begin
         so = shell_out("VBoxControl guestproperty enumerate")
 

@@ -21,11 +21,7 @@ Ohai.plugin(:VboxHost) do
   # determine if this host is configured with virtualbox or not
   # the determination is ultimately controlled by the "virtualization" plugin
   def vbox_host?
-    host = false
-    if !virtualization.nil? && (virtualization["system"] == "vbox" || virtualization["systems"]["vbox"] == "host")
-      host = true if which("VBoxManage")
-    end
-    host
+    virtualization.dig("systems", "vbox") == "host"
   end
 
   # query virtualbox for each configured vm, as well as

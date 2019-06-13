@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.1.2 -->
-## [15.1.2](https://github.com/chef/ohai/tree/15.1.2) (2019-06-13)
+<!-- latest_release 15.1.3 -->
+## [15.1.3](https://github.com/chef/ohai/tree/15.1.3) (2019-06-13)
 
 #### Merged Pull Requests
-- Simplify how we create empty mashes in the plugins [#1374](https://github.com/chef/ohai/pull/1374) ([tas50](https://github.com/tas50))
+- Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50)) <!-- 15.1.3 -->
 - Simplify how we create empty mashes in the plugins [#1374](https://github.com/chef/ohai/pull/1374) ([tas50](https://github.com/tas50)) <!-- 15.1.2 -->
 - Use virtualization attributes to run or skip the virtualbox plugin [#1373](https://github.com/chef/ohai/pull/1373) ([tas50](https://github.com/tas50)) <!-- 15.1.1 -->
 - Test on ruby 2.6 in Appveyor and remove the travis config [#1372](https://github.com/chef/ohai/pull/1372) ([tas50](https://github.com/tas50)) <!-- 15.1.0 -->

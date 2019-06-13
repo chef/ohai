@@ -107,7 +107,7 @@ Ohai.plugin(:Network) do
       # em0     1500  <Link>      00:11:25:2d:90:be  3719557     0  3369969     0     0    0
       # $1                        $2                      $3    $4    $5       $6    $7   $8
       if line =~ /^([\w\.\*]+)\s+\d+\s+<Link>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
-        net_counters[$1] ||= Mash.ne
+        net_counters[$1] ||= Mash.new
         net_counters[$1]["rx"] ||= Mash.new
         net_counters[$1]["tx"] ||= Mash.new
         net_counters[$1]["rx"]["packets"] = $3

@@ -58,7 +58,7 @@ Ohai.plugin(:Network) do
           logger.warn("neighbor list has entries for unknown interface #{interface}")
           next
         end
-        interface[neigh_attr] = Mash.new unless interface[neigh_attr]
+        interface[neigh_attr] ||= Mash.new
         interface[neigh_attr][$1] = $3.downcase
       end
     end
@@ -208,8 +208,8 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ IPROUTE_INT_REGEX
         tmp_int = $2
-        iface[tmp_int] = Mash.new unless iface[tmp_int]
-        net_counters[tmp_int] = Mash.new unless net_counters[tmp_int]
+        iface[tmp_int] ||= Mash.new
+        net_counters[tmp_int] ||= Mash.new
       end
 
       if line =~ /^\s+(ip6tnl|ipip)/
@@ -239,7 +239,7 @@ Ohai.plugin(:Network) do
 
       if line =~ /(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         int = on_rx ? :rx : :tx
-        net_counters[tmp_int][int] = Mash.new unless net_counters[tmp_int][int]
+        net_counters[tmp_int][int] ||= Mash.new
         net_counters[tmp_int][int][:bytes] = $1
         net_counters[tmp_int][int][:packets] = $2
         net_counters[tmp_int][int][:errors] = $3
@@ -255,7 +255,7 @@ Ohai.plugin(:Network) do
       end
 
       if line =~ /qlen (\d+)/
-        net_counters[tmp_int][:tx] = Mash.new unless net_counters[tmp_int][:tx]
+        net_counters[tmp_int][:tx] ||= Mash.new
         net_counters[tmp_int][:tx][:queuelen] = $1
       end
 
@@ -266,7 +266,7 @@ Ohai.plugin(:Network) do
         else
           tmp_id = $1
         end
-        iface[tmp_int][:vlan] = Mash.new unless iface[tmp_int][:vlan]
+        iface[tmp_int][:vlan] ||= Mash.new
         iface[tmp_int][:vlan][:id] = tmp_id
         iface[tmp_int][:vlan][:protocol] = tmp_prot if tmp_prot
 
@@ -320,7 +320,7 @@ Ohai.plugin(:Network) do
     if line =~ /link\/(\w+) ([\da-f\:]+) /
       iface[cint][:encapsulation] = linux_encaps_lookup($1)
       unless $2 == "00:00:00:00:00:00"
-        iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+        iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$2.upcase] = { "family" => "lladdr" }
       end
     end
@@ -340,8 +340,8 @@ Ohai.plugin(:Network) do
         cint = alias_int
       end
 
-      iface[cint] = Mash.new unless iface[cint] # Create the fake alias interface if needed
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint] ||= Mash.new # Create the fake alias interface if needed
+      iface[cint][:addresses] ||= Mash.new
       iface[cint][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
       iface[cint][:addresses][tmp_addr][:netmask] = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
 
@@ -365,7 +365,7 @@ Ohai.plugin(:Network) do
 
   def parse_ip_addr_inet6_line(cint, iface, line)
     if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)( .*)?/
-      iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+      iface[cint][:addresses] ||= Mash.new
       tmp_addr = $1
       tags = $4 || ""
       tags = tags.split(" ")
@@ -476,9 +476,9 @@ Ohai.plugin(:Network) do
     net_counters = Mash.new
 
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     # ohai.plugin[:network][:default_route_table] = 'default'
     if configuration(:default_route_table).nil? || configuration(:default_route_table).empty?
@@ -597,16 +597,16 @@ Ohai.plugin(:Network) do
           iface[cint][:encapsulation] = linux_encaps_lookup($1)
         end
         if line =~ /HWaddr (.+?)\s/
-          iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+          iface[cint][:addresses] ||= Mash.new
           iface[cint][:addresses][$1] = { "family" => "lladdr" }
         end
         if line =~ /inet addr:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
-          iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+          iface[cint][:addresses] ||= Mash.new
           iface[cint][:addresses][$1] = { "family" => "inet" }
           tmp_addr = $1
         end
         if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
-          iface[cint][:addresses] = Mash.new unless iface[cint][:addresses]
+          iface[cint][:addresses] ||= Mash.new
           iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
         end
         if line =~ /Bcast:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
@@ -626,7 +626,7 @@ Ohai.plugin(:Network) do
           iface[cint][:peer] = $1
         end
         if line =~ /RX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) frame:(\d+)/
-          net_counters[cint] = Mash.new unless net_counters[cint]
+          net_counters[cint] ||= Mash.new
           net_counters[cint][:rx] = { "packets" => $1, "errors" => $2, "drop" => $3, "overrun" => $4, "frame" => $5 }
         end
         if line =~ /TX packets:(\d+) errors:(\d+) dropped:(\d+) overruns:(\d+) carrier:(\d+)/
@@ -650,7 +650,7 @@ Ohai.plugin(:Network) do
       so.stdout.lines do |line|
         if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/
           next unless iface[$4] # this should never happen
-          iface[$4][:arp] = Mash.new unless iface[$4][:arp]
+          iface[$4][:arp] ||= Mash.new
           iface[$4][:arp][$1] = $2.downcase
         end
       end

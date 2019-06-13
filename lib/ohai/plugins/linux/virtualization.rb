@@ -36,7 +36,7 @@ Ohai.plugin(:Virtualization) do
 
   collect_data(:linux) do
     virtualization Mash.new unless virtualization
-    virtualization[:systems] = Mash.new unless virtualization[:systems]
+    virtualization[:systems] ||= Mash.new
 
     # Docker hosts
     if docker_exists?

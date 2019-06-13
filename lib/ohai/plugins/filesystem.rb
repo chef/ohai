@@ -65,7 +65,7 @@ Ohai.plugin(:Filesystem) do
   def generate_device_view(fs)
     view = {}
     fs.each_value do |entry|
-      view[entry[:device]] = Mash.new unless view[entry[:device]]
+      view[entry[:device]] ||= Mash.new
       entry.each do |key, val|
         next if %w{device mount}.include?(key)
         view[entry[:device]][key] = val
@@ -82,7 +82,7 @@ Ohai.plugin(:Filesystem) do
     view = {}
     fs.each_value do |entry|
       next unless entry[:mount]
-      view[entry[:mount]] = Mash.new unless view[entry[:mount]]
+      view[entry[:mount]] ||= Mash.new
       entry.each do |key, val|
         next if %w{mount device}.include?(key)
         view[entry[:mount]][key] = val
@@ -182,7 +182,7 @@ Ohai.plugin(:Filesystem) do
       so.stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
           key = "#{$1},#{$2}"
-          fs[key] = Mash.new unless fs.key?(key)
+          fs[key] ||= Mash.new
           fs[key][:device] = $1
           fs[key][:mount] = $2
           fs[key][:fs_type] = $3
@@ -380,7 +380,7 @@ Ohai.plugin(:Filesystem) do
       so.stdout.lines do |line|
         if line =~ /^(.+?) on (.+?) \((.+?), (.+?)\)$/
           key = "#{$1},#{$2}"
-          fs[key] = Mash.new unless fs.key?(key)
+          fs[key] ||= Mash.new
           fs[key][:mount] = $2
           fs[key][:fs_type] = $3
           fs[key][:mount_options] = $4.split(/,\s*/)
@@ -426,7 +426,7 @@ Ohai.plugin(:Filesystem) do
       so.stdout.lines do |line|
         next unless line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/
         key = "#{$2},#{$1}"
-        fs[key] = Mash.new unless fs.key?(key)
+        fs[key] ||= Mash.new
         fs[key][:mount] = $1
         fs[key][:mount_time] = $4 # $4 must come before "split", else it becomes nil
         fs[key][:mount_options] = $3.split("/")

@@ -44,7 +44,7 @@ Ohai.plugin(:Network) do
     iface = Mash.new
 
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
 
     # We unfortunately have to do things a bit different here, if ohai is running
     # within a WPAR. For instance, the WPAR isn't aware of some of its own networking
@@ -89,7 +89,7 @@ Ohai.plugin(:Network) do
               netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
             end
 
-            iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+            iface[interface][:addresses] ||= Mash.new
             iface[interface][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
             iface[interface][:addresses][tmp_addr][:netmask] = netmask
 
@@ -98,7 +98,7 @@ Ohai.plugin(:Network) do
             end
           elsif lin =~ /inet6 ([a-f0-9\:]+)%?([\d]*)\/?(\d*)?/
             # TODO do we have more properties on inet6 in aix? broadcast
-            iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+            iface[interface][:addresses] ||= Mash.new
             iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
           else
             # load all key-values, example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
@@ -113,7 +113,7 @@ Ohai.plugin(:Network) do
 
       # Query macaddress
       e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
-      iface[interface][:addresses] = Mash.new unless iface[interface][:addresses]
+      iface[interface][:addresses] ||= Mash.new
       e_so.stdout.lines.each do |l|
         if l =~ /Hardware Address: (\S+)/
           iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" }
@@ -139,9 +139,9 @@ Ohai.plugin(:Network) do
     so = shell_out("arp -an")
     count = 0
     so.stdout.lines.each do |line|
-      network[:arp] = Mash.new unless network[:arp]
+      network[:arp] ||= Mash.new
       if line =~ /\s*(\S+) \((\S+)\) at ([a-fA-F0-9\:]+) \[(\w+)\] stored in bucket/
-        network[:arp][count] = Mash.new unless network[:arp][count]
+        network[:arp][count] ||= Mash.new
         network[:arp][count][:remote_host] = $1
         network[:arp][count][:remote_ip] = $2
         network[:arp][count][:remote_mac] = $3.downcase

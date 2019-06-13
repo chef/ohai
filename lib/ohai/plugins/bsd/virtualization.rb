@@ -26,7 +26,7 @@ Ohai.plugin(:Virtualization) do
   collect_data(:freebsd, :openbsd, :netbsd, :dragonflybsd) do
 
     virtualization Mash.new unless virtualization
-    virtualization[:systems] = Mash.new unless virtualization[:systems]
+    virtualization[:systems] ||= Mash.new
 
     # detect when in a jail or when a jail is actively running (not in stopped state)
     so = shell_out("sysctl -n security.jail.jailed")

@@ -120,13 +120,13 @@ Ohai.plugin(:Network) do
     iface_config = Mash.new
     iface_instance = Mash.new
     network Mash.new unless network
-    network[:interfaces] = Mash.new unless network[:interfaces]
+    network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
-    counters[:network] = Mash.new unless counters[:network]
+    counters[:network] ||= Mash.new
 
     network_data[:addresses].each do |adapter|
       i = adapter["index"] || adapter["InterfaceIndex"]
-      iface_config[i] = Mash.new unless iface_config[i]
+      iface_config[i] ||= Mash.new
       iface_config[i][:ip_address] ||= []
       iface_config[i][:ip_address] << adapter["IPAddress"]
 

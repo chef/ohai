@@ -27,7 +27,7 @@ Ohai.plugin(:Virtualization) do
     require "wmi-lite/wmi"
 
     virtualization Mash.new unless virtualization
-    virtualization[:systems] = Mash.new unless virtualization[:systems]
+    virtualization[:systems] ||= Mash.new
 
     # Grab system DMI data from WMI to determine vendor information
     wmi = WmiLite::Wmi.new

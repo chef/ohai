@@ -61,27 +61,12 @@ Ohai.plugin(:Virtualbox) do
         left, right = line.split("=")
 
         # remove enclosing quotes, if needed
-        key =
-          case left
-          when /^"(.*)"$/
-            Regexp.last_match(1)
-          else
-            left
-          end
+        key = left.delete_prefix('"').delete_suffix('"')
 
         # skip the name attribute since that is the parent key
         next if left == "name"
 
-        # remove enclosing quotes, if needed
-        value =
-          case right
-          when /^"(.*)"$/
-            Regexp.last_match(1)
-          else
-            right
-          end
-
-        vm[key.downcase] = value
+        vm[key.downcase] = right.delete_prefix('"').delete_suffix('"')
       end
     end
     vm

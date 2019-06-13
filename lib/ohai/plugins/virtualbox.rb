@@ -64,7 +64,7 @@ Ohai.plugin(:Virtualbox) do
         key = left.delete_prefix('"').delete_suffix('"')
 
         # skip the name attribute since that is the parent key
-        next if left == "name"
+        next if key == "name"
 
         vm[key.downcase] = right.delete_prefix('"').delete_suffix('"')
       end

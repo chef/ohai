@@ -1,28 +1,26 @@
 # Change Log
 
-<!-- latest_release 15.1.3 -->
-## [15.1.3](https://github.com/chef/ohai/tree/15.1.3) (2019-06-13)
-
-#### Merged Pull Requests
-- Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.0.35 -->
-### Changes not yet released to rubygems.orgs
-
-#### Merged Pull Requests
-- Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50)) <!-- 15.1.3 -->
-- Simplify how we create empty mashes in the plugins [#1374](https://github.com/chef/ohai/pull/1374) ([tas50](https://github.com/tas50)) <!-- 15.1.2 -->
-- Use virtualization attributes to run or skip the virtualbox plugin [#1373](https://github.com/chef/ohai/pull/1373) ([tas50](https://github.com/tas50)) <!-- 15.1.1 -->
-- Test on ruby 2.6 in Appveyor and remove the travis config [#1372](https://github.com/chef/ohai/pull/1372) ([tas50](https://github.com/tas50)) <!-- 15.1.0 -->
-- Add VboxHost plugin to support VirtualBox as a virtualization host [#1339](https://github.com/chef/ohai/pull/1339) ([freakinhippie](https://github.com/freakinhippie)) <!-- 15.0.40 -->
-- Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50)) <!-- 15.0.39 -->
-- Solaris network plugin fix for issue https://github.com/chef/ohai/iss… [#1367](https://github.com/chef/ohai/pull/1367) ([devoptimist](https://github.com/devoptimist)) <!-- 15.0.38 -->
-- fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.37 -->
-- Apply require speedups to ohai [#1363](https://github.com/chef/ohai/pull/1363) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.0.36 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [15.1.3](https://github.com/chef/ohai/tree/15.1.3) (2019-06-14)
+
+#### Merged Pull Requests
+- Apply require speedups to ohai [#1363](https://github.com/chef/ohai/pull/1363) ([lamont-granquist](https://github.com/lamont-granquist))
+- fix shellout require idempotency [#1365](https://github.com/chef/ohai/pull/1365) ([lamont-granquist](https://github.com/lamont-granquist))
+- Solaris network plugin fix for issue https://github.com/chef/ohai/iss… [#1367](https://github.com/chef/ohai/pull/1367) ([devoptimist](https://github.com/devoptimist))
+- Avoid constant warnings in windows/filesystem plugin [#1360](https://github.com/chef/ohai/pull/1360) ([tas50](https://github.com/tas50))
+- Add VboxHost plugin to support VirtualBox as a virtualization host [#1339](https://github.com/chef/ohai/pull/1339) ([freakinhippie](https://github.com/freakinhippie))
+- Test on ruby 2.6 in Appveyor and remove the travis config [#1372](https://github.com/chef/ohai/pull/1372) ([tas50](https://github.com/tas50))
+- Use virtualization attributes to run or skip the virtualbox plugin [#1373](https://github.com/chef/ohai/pull/1373) ([tas50](https://github.com/tas50))
+- Simplify how we create empty mashes in the plugins [#1374](https://github.com/chef/ohai/pull/1374) ([tas50](https://github.com/tas50))
+- Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.0.35](https://github.com/chef/ohai/tree/v15.0.35) (2019-05-10)
 
 #### Merged Pull Requests
@@ -63,7 +61,6 @@
 - Update the repo for the new governance [#1348](https://github.com/chef/ohai/pull/1348) ([tas50](https://github.com/tas50))
 - Run ohai in Buildkite [#1355](https://github.com/chef/ohai/pull/1355) ([tas50](https://github.com/tas50))
 - Require ohai/version where we use it [#1361](https://github.com/chef/ohai/pull/1361) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v14.6.2](https://github.com/chef/ohai/tree/v14.6.2) (2018-10-11)
 

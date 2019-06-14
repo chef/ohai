@@ -266,7 +266,8 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/alpine-release")
       platform "alpine"
       platform_version File.read("/etc/alpine-release").strip
-    elsif File.exist?("/usr/lib/os-release")
+    # If /etc/os-release file exists, we take that as source of truth
+    elsif File.exist?("/usr/lib/os-release") && !File.exist?("/etc/os-release")
       contents = File.read("/usr/lib/os-release")
       if /Clear Linux/ =~ contents
         platform "clearlinux"
@@ -300,6 +301,8 @@ Ohai.plugin(:Platform) do
         platform "suse" # SLES is wrong. We call it SUSE
       when "opensuse-leap"
         platform "opensuseleap"
+      when "clear-linux-os"
+        platform "clearlinux"
       else
         platform os_release_info["ID"]
       end

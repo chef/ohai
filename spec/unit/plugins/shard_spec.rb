@@ -27,7 +27,7 @@ describe Ohai::System, "shard plugin" do
   let(:machine_id) { "0a1f869f457a4c8080ab19faf80af9cc" }
   let(:machinename) { "somehost004" }
   let(:fips) { false }
-  let(:os) { :linux }
+  let(:os) { "linux" }
 
   subject do
     plugin.run
@@ -66,7 +66,7 @@ describe Ohai::System, "shard plugin" do
   end
 
   context "with Darwin OS" do
-    let(:os) { :darwin }
+    let(:os) { "darwin" }
     before do
       plugin["hardware"] = { "serial_number" => serial, "platform_UUID" => uuid }
     end
@@ -77,7 +77,7 @@ describe Ohai::System, "shard plugin" do
   end
 
   context "with Windows OS" do
-    let(:os) { :windows }
+    let(:os) { "windows" }
     before do
       wmi = double("WmiLite::Wmi")
       allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
@@ -99,7 +99,7 @@ describe Ohai::System, "shard plugin" do
   end
 
   context "with a weird OS" do
-    let(:os) { :aix }
+    let(:os) { "aix" }
 
     it "should provide a shard with a default-safe set of sources" do
       # Note: this is different than the other defaults.

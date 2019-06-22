@@ -38,7 +38,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   def default_digest_algorithm
-    if fips["kernel"]["enabled"]
+    if fips && fips["kernel"]["enabled"]
       # Even though it is being used safely, FIPS-mode will still blow up on
       # any use of MD5 so default to SHA2 instead.
       "sha256"

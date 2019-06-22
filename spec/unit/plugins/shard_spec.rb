@@ -68,6 +68,7 @@ describe Ohai::System, "shard plugin" do
   context "with Darwin OS" do
     let(:os) { "darwin" }
     before do
+      plugin.data.delete("fips") # FIPS is undefined on Macs, make sure this still work
       plugin["hardware"] = { "serial_number" => serial, "platform_UUID" => uuid }
     end
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.1.4 -->
-## [15.1.4](https://github.com/chef/ohai/tree/15.1.4) (2019-06-22)
+<!-- latest_release 15.1.5 -->
+## [15.1.5](https://github.com/chef/ohai/tree/15.1.5) (2019-06-22)
 
 #### Merged Pull Requests
-- [shard_seed] fix default_sources for linux, darwin and windows [#1379](https://github.com/chef/ohai/pull/1379) ([michel-slm](https://github.com/michel-slm))
+- [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm)) <!-- 15.1.5 -->
 - [shard_seed] fix default_sources for linux, darwin and windows [#1379](https://github.com/chef/ohai/pull/1379) ([michel-slm](https://github.com/michel-slm)) <!-- 15.1.4 -->
 <!-- release_rollup -->
 

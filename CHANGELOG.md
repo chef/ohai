@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 15.1.5 -->
-## [15.1.5](https://github.com/chef/ohai/tree/15.1.5) (2019-06-22)
-
-#### Merged Pull Requests
-- [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.1.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm)) <!-- 15.1.5 -->
-- [shard_seed] fix default_sources for linux, darwin and windows [#1379](https://github.com/chef/ohai/pull/1379) ([michel-slm](https://github.com/michel-slm)) <!-- 15.1.4 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [15.1.5](https://github.com/chef/ohai/tree/15.1.5) (2019-06-22)
+
+#### Merged Pull Requests
+- [shard_seed] fix default_sources for linux, darwin and windows [#1379](https://github.com/chef/ohai/pull/1379) ([michel-slm](https://github.com/michel-slm))
+- [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm))
+<!-- latest_stable_release -->
+
 ## [15.1.3](https://github.com/chef/ohai/tree/15.1.3) (2019-06-14)
 
 #### Merged Pull Requests
@@ -28,7 +26,6 @@
 - Use virtualization attributes to run or skip the virtualbox plugin [#1373](https://github.com/chef/ohai/pull/1373) ([tas50](https://github.com/tas50))
 - Simplify how we create empty mashes in the plugins [#1374](https://github.com/chef/ohai/pull/1374) ([tas50](https://github.com/tas50))
 - Merge the new vbox plugin into the existing virtualbox plugin [#1376](https://github.com/chef/ohai/pull/1376) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v15.0.35](https://github.com/chef/ohai/tree/v15.0.35) (2019-05-10)
 

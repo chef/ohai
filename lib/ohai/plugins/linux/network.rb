@@ -276,7 +276,7 @@ Ohai.plugin(:Network) do
         end
       end
 
-      if line =~ /state (\w+)/
+      if line =~ /\sstate (\w+)/
         iface[tmp_int]["state"] = $1.downcase
       end
     end

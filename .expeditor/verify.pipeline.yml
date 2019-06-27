@@ -33,3 +33,15 @@ steps:
   expeditor:
     executor:
       docker:
+
+- label: "run-specs-windows"
+  command:
+    - bundle install --jobs=7 --retry=3
+    - bundle exec rake spec
+  expeditor:
+    executor:
+      docker:
+        environment:
+          - BUILDKITE
+        host_os: windows
+        shell: ["powershell", "-Command"]

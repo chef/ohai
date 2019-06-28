@@ -44,4 +44,3 @@ steps:
         environment:
           - BUILDKITE
         host_os: windows
-        shell: ["powershell", "-Command"]

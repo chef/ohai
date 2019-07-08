@@ -77,7 +77,7 @@ Ohai.plugin(:Network) do
           iface[interface][:metric] = $1 if lin =~ /metric\s(\S+)/
         else
           # We have key value pairs.
-          if lin =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
+          if lin =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
             tmp_addr, tmp_prefix = $1, $3
             if tmp_prefix.nil?
               netmask = hex_to_dec_netmask($1) if lin =~ /netmask\s(\S+)\s/
@@ -96,7 +96,7 @@ Ohai.plugin(:Network) do
             if lin =~ /broadcast\s(\S+)\s/
               iface[interface][:addresses][tmp_addr][:broadcast] = $1
             end
-          elsif lin =~ /inet6 ([a-f0-9\:]+)%?([\d]*)\/?(\d*)?/
+          elsif lin =~ %r{inet6 ([a-f0-9\:]+)%?([\d]*)/?(\d*)?}
             # TODO do we have more properties on inet6 in aix? broadcast
             iface[interface][:addresses] ||= Mash.new
             iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
@@ -128,7 +128,7 @@ Ohai.plugin(:Network) do
       so_n.stdout.lines.each do |line|
         if line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\d+)\s+(\S+)/
           interface = $6
-          iface[interface][:routes] = Array.new unless iface[interface][:routes]
+          iface[interface][:routes] = [] unless iface[interface][:routes]
           iface[interface][:routes] << Mash.new( destination: $1, family: family,
                                                  via: $2, flags: $3)
         end

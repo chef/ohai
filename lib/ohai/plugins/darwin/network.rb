@@ -21,14 +21,14 @@ Ohai.plugin(:Network) do
   provides "counters/network", "counters/network/interfaces"
 
   def parse_media(media_string)
-    media = Hash.new
+    media = {}
     line_array = media_string.split(" ")
 
     0.upto(line_array.length - 1) do |i|
       unless line_array[i].eql?("none")
 
         if line_array[i + 1] =~ /^\<([a-zA-Z\-\,]+)\>$/
-          media[line_array[i]] = Hash.new unless media.key?(line_array[i])
+          media[line_array[i]] = {} unless media.key?(line_array[i])
           if media[line_array[i]].key?("options")
             $1.split(",").each do |opt|
               media[line_array[i]]["options"] << opt unless media[line_array[i]]["options"].include?(opt)
@@ -38,7 +38,7 @@ Ohai.plugin(:Network) do
           end
         else
           if line_array[i].eql?("autoselect")
-            media["autoselect"] = Hash.new unless media.key?("autoselect")
+            media["autoselect"] = {} unless media.key?("autoselect")
             media["autoselect"]["options"] = []
           end
         end
@@ -56,6 +56,7 @@ Ohai.plugin(:Network) do
     return "IPIP" if ifname.eql?("gif")
     return "6to4" if ifname.eql?("stf")
     return "dot1q" if ifname.eql?("vlan")
+
     "Unknown"
   end
 
@@ -63,6 +64,7 @@ Ohai.plugin(:Network) do
     return "Node" if scope.eql?("::1")
     return "Link" if scope =~ /^fe80\:/
     return "Site" if scope =~ /^fec0\:/
+
     "Global"
   end
 
@@ -74,6 +76,7 @@ Ohai.plugin(:Network) do
     return ifname unless ifaces[ifname].nil?
     # oh well, time to go hunting!
     return ifname.chop if ifname =~ /\*$/
+
     ifaces.each_key do |ifc|
       ifaces[ifc][:addresses].each_key do |addr|
         return ifc if addr.eql? mac
@@ -115,7 +118,7 @@ Ohai.plugin(:Network) do
         if line =~ /\sflags\=\d+\<((UP|BROADCAST|DEBUG|SMART|SIMPLEX|LOOPBACK|POINTOPOINT|NOTRAILERS|RUNNING|NOARP|PROMISC|ALLMULTI|SLAVE|MASTER|MULTICAST|DYNAMIC|,)+)\>\s/
           flags = $1.split(",")
         else
-          flags = Array.new
+          flags = []
         end
         iface[cint][:flags] = flags.flatten
         if cint =~ /^(\w+)(\d+.*)/
@@ -165,6 +168,7 @@ Ohai.plugin(:Network) do
       if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([a-zA-Z0-9\.\:\-]+).*\[(\w+)\]/
         # MAC addr really should be normalized to include all the zeroes.
         next if iface[$3].nil? # this should never happen
+
         iface[$3][:arp] ||= Mash.new
         iface[$3][:arp][$1] = $2
       end
@@ -189,6 +193,7 @@ Ohai.plugin(:Network) do
           line =~ /^([a-zA-Z0-9\.\:\-\*]+)\s+\d+\s+\<[a-zA-Z0-9\#]+\>(\s+)(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
         ifname = locate_interface(iface, $1, $2)
         next if iface[ifname].nil? # this shouldn't happen, but just in case
+
         net_counters[ifname] ||= Mash.new
         net_counters[ifname] = { rx: { bytes: $5, packets: $3, errors: $4, drop: 0, overrun: 0, frame: 0, compressed: 0, multicast: 0 },
                                  tx: { bytes: $8, packets: $6, errors: $7, drop: 0, overrun: 0, collisions: $9, carrier: 0, compressed: 0 },

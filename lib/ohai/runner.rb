@@ -39,7 +39,7 @@ module Ohai
     # will be run even if they have been run before.
     def run_plugin(plugin)
       elapsed = Benchmark.measure do
-        unless plugin.kind_of?(Ohai::DSL::Plugin)
+        unless plugin.is_a?(Ohai::DSL::Plugin)
           raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
         end
 

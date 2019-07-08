@@ -34,6 +34,7 @@ module Ohai
         if object.respond_to?(:constants)
           object.constants.each do |const|
             next unless strict_const_defined?(object, const)
+
             recursive_remove_constants(object.const_get(const))
             object.send(:remove_const, const)
           end

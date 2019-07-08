@@ -220,7 +220,7 @@ shared_examples "Ohai::DSL::Plugin" do
               it "returns nil" do
                 expect(
                   plugin.get_attribute("the_monarch", "henchmen",
-                                       "corky_knightrider")
+                    "corky_knightrider")
                 ).to be nil
               end
             end
@@ -229,9 +229,9 @@ shared_examples "Ohai::DSL::Plugin" do
               it "raises a TypeError" do
                 expect do
                   plugin.get_attribute("the_monarch", "arch_rival",
-                                       "dr_venture", "since")
+                    "dr_venture", "since")
                 end.to raise_error(TypeError,
-                                 "Expected Hash but got String.")
+                  "Expected Hash but got String.")
               end
             end
           end
@@ -254,7 +254,7 @@ shared_examples "Ohai::DSL::Plugin" do
               it "returns nil" do
                 expect(
                   plugin.get_attribute(:the_monarch, :henchmen,
-                                       :corky_knightrider)
+                    :corky_knightrider)
                 ).to be nil
               end
             end
@@ -263,9 +263,9 @@ shared_examples "Ohai::DSL::Plugin" do
               it "raises a TypeError" do
                 expect do
                   plugin.get_attribute(:the_monarch, :arch_rival,
-                                       :dr_venture, :since)
+                    :dr_venture, :since)
                 end.to raise_error(TypeError,
-                                 "Expected Hash but got String.")
+                  "Expected Hash but got String.")
               end
             end
           end
@@ -327,7 +327,7 @@ shared_examples "Ohai::DSL::Plugin" do
               it "returns false" do
                 expect(
                   plugin.attribute?("the_monarch", "henchmen",
-                                    "corky_knightrider")
+                    "corky_knightrider")
                 ).to be false
               end
             end
@@ -336,9 +336,9 @@ shared_examples "Ohai::DSL::Plugin" do
               it "raises a TypeError" do
                 expect do
                   plugin.attribute?("the_monarch", "arch_rival",
-                                    "dr_venture", "since")
+                    "dr_venture", "since")
                 end.to raise_error(TypeError,
-                                 "Expected Hash but got String.")
+                  "Expected Hash but got String.")
               end
             end
           end
@@ -360,7 +360,7 @@ shared_examples "Ohai::DSL::Plugin" do
               it "returns false" do
                 expect(
                   plugin.attribute?(:the_monarch, :henchmen,
-                                    :corky_knightrider)
+                    :corky_knightrider)
                 ).to be false
               end
             end
@@ -369,9 +369,9 @@ shared_examples "Ohai::DSL::Plugin" do
               it "raises a TypeError" do
                 expect do
                   plugin.attribute?(:the_monarch, :arch_rival,
-                                    :dr_venture, :since)
+                    :dr_venture, :since)
                 end.to raise_error(TypeError,
-                                 "Expected Hash but got String.")
+                  "Expected Hash but got String.")
               end
             end
           end
@@ -494,7 +494,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "saves a list of platforms" do
       plugin = Ohai.plugin(:Test) { collect_data(:freebsd, :netbsd, :openbsd) {} }
-      [:freebsd, :netbsd, :openbsd].each do |platform|
+      %i{freebsd netbsd openbsd}.each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
     end
@@ -505,7 +505,7 @@ describe Ohai::DSL::Plugin::VersionVII do
         collect_data(:windows) {}
         collect_data(:darwin) {}
       end
-      [:darwin, :default, :windows].each do |platform|
+      %i{darwin default windows}.each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
     end
@@ -513,7 +513,7 @@ describe Ohai::DSL::Plugin::VersionVII do
     it "saves platforms across multiple plugins" do
       plugin = Ohai.plugin(:Test) { collect_data {} }
       plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) {} }
-      [:aix, :default, :sigar].each do |platform|
+      %i{aix default sigar}.each do |platform|
         expect(plugin.data_collector).to have_key(platform)
       end
     end

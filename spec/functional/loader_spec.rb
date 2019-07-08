@@ -45,7 +45,7 @@ RSpec.describe "Ohai::Loader" do
       it "loads all the plugins" do
         loader.load_all
         loaded_plugins = loader.instance_variable_get(:@v7_plugin_classes)
-        loaded_plugins_names = loaded_plugins.map { |plugin| plugin.name }
+        loaded_plugins_names = loaded_plugins.map(&:name)
         expect(loaded_plugins_names).to eq(["Ohai::NamedPlugin::Foo"])
       end
     end

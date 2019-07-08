@@ -124,6 +124,7 @@ Ohai.plugin(:EC2) do
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
         next if k == "iam" && !hint?("iam")
+
         ec2[k] = v
       end
       ec2[:userdata] = fetch_userdata

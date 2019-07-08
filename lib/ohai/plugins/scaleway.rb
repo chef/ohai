@@ -39,6 +39,7 @@ Ohai.plugin(:Scaleway) do
   def looks_like_scaleway?
     return true if hint?("scaleway")
     return true if has_scaleway_cmdline? && can_socket_connect?(Ohai::Mixin::ScalewayMetadata::SCALEWAY_METADATA_ADDR, 80)
+
     false
   end
 

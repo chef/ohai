@@ -61,7 +61,7 @@ Ohai.plugin(:CPU) do
         cpu_number += 1
       when /vendor_id\s+:\s(.+)/
         vendor_id = $1
-        if vendor_id =~ (/IBM\/S390/)
+        if vendor_id =~ (%r{IBM/S390})
           cpuinfo["vendor_id"] = vendor_id
         else
           cpuinfo[current_cpu]["vendor_id"] = vendor_id
@@ -173,9 +173,9 @@ Ohai.plugin(:CPU) do
         cpuinfo["model"] = $3.to_i(16).to_s
         cpuinfo["stepping"] = $4
         # These _should_ match /AMD Features2?/ lines as well
-      when /FreeBSD\/SMP: Multiprocessor System Detected: (\d*) CPUs/
+      when %r{FreeBSD/SMP: Multiprocessor System Detected: (\d*) CPUs}
         cpuinfo["total"] = $1.to_i
-      when /FreeBSD\/SMP: (\d*) package\(s\) x (\d*) core\(s\)/
+      when %r{FreeBSD/SMP: (\d*) package\(s\) x (\d*) core\(s\)}
         cpuinfo["real"] = $1.to_i
         cpuinfo["cores"] = $1.to_i * $2.to_i
       end
@@ -336,8 +336,8 @@ Ohai.plugin(:CPU) do
     cpu["cpustates"] = Mash.new
 
     currentcpu = 0
-    cpucores = Array.new
-    cpusockets = Array.new
+    cpucores = []
+    cpusockets = []
     processor_info.each do |processor|
       _desc, instance, _record, keyvalue = processor.split(":")
       cpu[instance] ||= Mash.new
@@ -406,7 +406,7 @@ Ohai.plugin(:CPU) do
       cpu[current_cpu]["model_name"] = processor["name"]
       cpu[current_cpu]["description"] = processor["description"]
       cpu[current_cpu]["mhz"] = processor["maxclockspeed"].to_s
-      cpu[current_cpu]["cache_size"] = "#{processor['l2cachesize']} KB"
+      cpu[current_cpu]["cache_size"] = "#{processor["l2cachesize"]} KB"
     end
 
     cpu[:total] = logical_processors

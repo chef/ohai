@@ -160,6 +160,7 @@ module Ohai
         data = data[part]
       end
       raise ArgumentError, "I cannot find an attribute named #{a}!" if data.nil?
+
       case data
       when Hash, Mash, Array, Integer
         json_pretty_print(data)
@@ -184,6 +185,7 @@ module Ohai
         # make sure the directory config is an array since it could be a string set in client.rb
         Array(Ohai.config[:directory]).each do |dir|
           next if Ohai.config[:plugin_path].include?(dir)
+
           Ohai.config[:plugin_path] << dir
         end
       end

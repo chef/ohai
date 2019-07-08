@@ -47,17 +47,17 @@ macvlan
 null
 overlay},
     "Authorization" => nil,
-    "Log" => [
-      "awslogs",
-      "fluentd",
-      "gcplogs",
-      "gelf",
-      "journald",
-      "json-file",
-      "logentries",
-      "splunk",
-      "syslog",
-    ],
+    "Log" => %w{
+      awslogs
+      fluentd
+      gcplogs
+      gelf
+      journald
+      json-file
+      logentries
+      splunk
+      syslog
+    },
   },
   "networking" => {
     "ipv4_forwarding" => true,

@@ -58,6 +58,7 @@ Ohai.plugin(:Virtualization) do
             case title
             when "network"
               next if line =~ /^Interface|^---/
+
               splat = line.strip.split
               key   = splat[0].downcase
               value = {
@@ -68,6 +69,7 @@ Ohai.plugin(:Virtualization) do
               wpars[wpar_name][title][key] = value
             when "user-specified routes"
               next if line =~ /^Type|^---/
+
               splat = line.strip.split
               key   = splat[2].downcase
               value = {
@@ -77,6 +79,7 @@ Ohai.plugin(:Virtualization) do
               wpars[wpar_name][title][key] = value
             when "file systems"
               next if line =~ /^MountPoint|^---/
+
               splat = line.strip.split
               key = splat[1].downcase
               value = {
@@ -99,6 +102,7 @@ Ohai.plugin(:Virtualization) do
               wpars[wpar_name][title]["Privileges"] += privileges.split(",")
             when "device exports"
               next if line =~ /^Name|^---/
+
               splat = line.strip.split
               key = splat[0].downcase
               value = {

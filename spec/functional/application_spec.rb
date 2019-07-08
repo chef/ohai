@@ -81,7 +81,7 @@ RSpec.describe "Ohai::Application" do
 
       it "loads the workstation configuration file" do
         app.configure_ohai
-        expect(Ohai.config[:disabled_plugins]).to eq([ :Foo, :Baz ])
+        expect(Ohai.config[:disabled_plugins]).to eq(%i{Foo Baz})
       end
     end
 

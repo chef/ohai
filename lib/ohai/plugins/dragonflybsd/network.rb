@@ -89,6 +89,7 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ /\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([0-9a-zA-Z\.\:\-]+)/
         next unless iface[$3] # this should never happen
+
         iface[$3][:arp] ||= Mash.new
         iface[$3][:arp][$1] = $2.downcase
       end

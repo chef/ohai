@@ -37,9 +37,9 @@ describe "Ohai::System" do
 
     it "merges provided configuration options into the ohai config context" do
       config = {
-        disabled_plugins: [ :Foo, :Baz ],
+        disabled_plugins: %i{Foo Baz},
         directory: ["/some/extra/plugins"],
-        critical_plugins: [ :Foo, :Bar ],
+        critical_plugins: %i{Foo Bar},
       }
       Ohai::System.new(config)
       config.each do |option, value|
@@ -249,7 +249,7 @@ describe "Ohai::System" do
         it "should fail when critical plugins fail" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::CriticalPluginFailure,
-                                                     "The following Ohai plugins marked as critical failed: [:Fails]. Failing Chef run.")
+            "The following Ohai plugins marked as critical failed: [:Fails]. Failing Chef run.")
         end
       end
 

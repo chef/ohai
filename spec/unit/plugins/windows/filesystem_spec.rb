@@ -43,7 +43,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "freespace" => "100000",
         "name" => "D:",
         # Lets not pass "volumename" for this drive
-      }
+      },
     ]
   end
 
@@ -56,7 +56,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
       {
         "conversionstatus" => 2,
         "driveletter" => "D:",
-      }
+      },
     ]
   end
 

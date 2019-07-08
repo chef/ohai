@@ -49,6 +49,7 @@ Ohai.plugin(:Rackspace) do
   # false:: Otherwise
   def has_rackspace_manufacturer?
     return false unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+
     require "wmi-lite/wmi"
     wmi = WmiLite::Wmi.new
     if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"

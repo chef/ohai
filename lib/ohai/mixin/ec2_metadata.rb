@@ -68,6 +68,7 @@ module Ohai
           if versions.empty?
             raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"
           end
+
           versions.last
         end
       end
@@ -134,7 +135,7 @@ module Ohai
       end
 
       def fetch_dir_metadata(id, api_version)
-        metadata = Hash.new
+        metadata = {}
         retrieved_metadata = metadata_get(id, api_version)
         if retrieved_metadata
           retrieved_metadata.split("\n").each do |o|
@@ -195,11 +196,11 @@ module Ohai
         # ignore "./" and "../"
         path.gsub(%r{/\.\.?(?:/|$)}, "/")
           .sub(%r{^\.\.?(?:/|$)}, "")
-          .sub(%r{^$}, "/")
+          .sub(/^$/, "/")
       end
 
       def metadata_key(key)
-        key.gsub(/\-|\//, "_")
+        key.gsub(%r{\-|/}, "_")
       end
 
     end

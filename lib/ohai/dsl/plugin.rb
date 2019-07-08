@@ -145,6 +145,7 @@ module Ohai
       def from(cmd)
         _status, stdout, _stderr = run_command(command: cmd)
         return "" if stdout.nil? || stdout.empty?
+
         stdout.strip
       end
 
@@ -155,6 +156,7 @@ module Ohai
         regex_list.flatten.each do |regex|
           _status, stdout, _stderr = run_command(command: cmd)
           return "" if stdout.nil? || stdout.empty?
+
           stdout.chomp!.strip
           md = stdout.match(regex)
           return md[1]
@@ -210,6 +212,7 @@ module Ohai
           unless attrs.nil? || attrs.is_a?(Array) || attrs.is_a?(Hash)
             raise TypeError.new("Expected Hash but got #{attrs.class}.")
           end
+
           attrs[key]
         end
       rescue NoMethodError

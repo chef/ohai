@@ -87,6 +87,7 @@ Ohai.plugin(:Virtualbox) do
       hostfloppies hostonlyifs natnets
     }
     return nil unless supported_queries.include? query_type
+
     results = Mash.new
 
     so_cmd = "VBoxManage list --sorted #{query_type}"
@@ -103,8 +104,9 @@ Ohai.plugin(:Virtualbox) do
         # initialize a blank record hash
         record = Mash.new
         # parse the record block into key/value pairs
-        blk.each_line() do |line|
+        blk.each_line do |line|
           next unless line.include? ":"
+
           # split the line into key/value pair
           key, right = line.split(":", 2)
 
@@ -144,9 +146,9 @@ Ohai.plugin(:Virtualbox) do
               virtualbox[:host][:version] = Regexp.last_match(1)
             when /VBoxRev, value: (\S*),/
               virtualbox[:host][:revision] = Regexp.last_match(1)
-            when /GuestAdd\/VersionExt, value: (\S*),/
+            when %r{GuestAdd/VersionExt, value: (\S*),}
               virtualbox[:guest][:guest_additions_version] = Regexp.last_match(1)
-            when /GuestAdd\/Revision, value: (\S*),/
+            when %r{GuestAdd/Revision, value: (\S*),}
               virtualbox[:guest][:guest_additions_revision] = Regexp.last_match(1)
             end
           end

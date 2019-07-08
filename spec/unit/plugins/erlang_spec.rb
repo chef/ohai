@@ -27,9 +27,9 @@ describe Ohai::System, "plugin erlang" do
     erl_v_output = "Erlang (SMP,ASYNC_THREADS,HIPE) (BEAM) emulator version 7.3\n"
     erl_systeminfo_output = "19.1,8.1,2.11"
     allow(plugin).to receive(:shell_out).with("erl +V")
-                                        .and_return(mock_shell_out(0, "", erl_v_output))
+      .and_return(mock_shell_out(0, "", erl_v_output))
     allow(plugin).to receive(:shell_out).with("erl -eval '{ok, Ver} = file:read_file(filename:join([code:root_dir(), \"releases\", erlang:system_info(otp_release), \"OTP_VERSION\"])), Vsn = binary:bin_to_list(Ver, {0, byte_size(Ver) - 1}), io:format(\"~s,~s,~s\", [Vsn, erlang:system_info(version), erlang:system_info(nif_version)]), halt().' -noshell")
-                                        .and_return(mock_shell_out(0, erl_systeminfo_output, ""))
+      .and_return(mock_shell_out(0, erl_systeminfo_output, ""))
   end
 
   it "sets languages[:erlang][:options]" do

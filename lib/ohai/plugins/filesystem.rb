@@ -68,6 +68,7 @@ Ohai.plugin(:Filesystem) do
       view[entry[:device]] ||= Mash.new
       entry.each do |key, val|
         next if %w{device mount}.include?(key)
+
         view[entry[:device]][key] = val
       end
       view[entry[:device]][:mounts] ||= []
@@ -82,9 +83,11 @@ Ohai.plugin(:Filesystem) do
     view = {}
     fs.each_value do |entry|
       next unless entry[:mount]
+
       view[entry[:mount]] ||= Mash.new
       entry.each do |key, val|
         next if %w{mount device}.include?(key)
+
         view[entry[:mount]][key] = val
       end
       view[entry[:mount]][:devices] ||= []
@@ -146,6 +149,7 @@ Ohai.plugin(:Filesystem) do
     unless Ohai.config[:plugin][:filesystem][:allow_partial_data]
       raise e
     end
+
     logger.warn("Plugin Filesystem: #{bin} binary is not available. Some data will not be available.")
   end
 
@@ -218,6 +222,7 @@ Ohai.plugin(:Filesystem) do
         so.stdout.each_line do |line|
           parsed = parse_line(line, cmdtype)
           next if parsed.nil?
+
           # lsblk lists each device once, so we need to update all entries
           # in the hash that are related to this device
           keys_to_update = []
@@ -233,7 +238,7 @@ Ohai.plugin(:Filesystem) do
           end
 
           keys_to_update.each do |k|
-            [:fs_type, :uuid, :label].each do |subkey|
+            %i{fs_type uuid label}.each do |subkey|
               if parsed[subkey] && !parsed[subkey].empty?
                 fs[k][subkey] = parsed[subkey]
               end
@@ -266,6 +271,7 @@ Ohai.plugin(:Filesystem) do
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           key = "#{$1},#{$2}"
           next if fs.key?(key)
+
           fs[key] = Mash.new
           fs[key][:device] = $1
           fs[key][:mount] = $2
@@ -412,9 +418,11 @@ Ohai.plugin(:Filesystem) do
       so = shell_out("df -na")
       so.stdout.lines do |line|
         next unless line =~ /^(.+?)\s*: (\S+)\s*$/
+
         mount = $1
         fs.each do |key, fs_attributes|
           next unless fs_attributes[:mount] == mount
+
           fs[key][:fs_type] = $2
         end
       end
@@ -425,6 +433,7 @@ Ohai.plugin(:Filesystem) do
       so = shell_out("mount")
       so.stdout.lines do |line|
         next unless line =~ /^(.+?) on (.+?) (.+?) on (.+?)$/
+
         key = "#{$2},#{$1}"
         fs[key] ||= Mash.new
         fs[key][:mount] = $1
@@ -441,6 +450,7 @@ Ohai.plugin(:Filesystem) do
       so = shell_out(zfs_get)
       so.stdout.lines do |line|
         next unless line =~ /^([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)$/
+
         filesystem = $1
         property = $2
         value = $3
@@ -524,7 +534,7 @@ Ohai.plugin(:Filesystem) do
           oldie[key][:mount] = mountpoint
           oldie[key][:device] = dev
         # an entry starting with 'G' or / (E.G. /tmp or /var)
-        when /^\s*(G.*?|\/\w)/
+        when %r{^\s*(G.*?|/\w)}
           if fields[0] == "Global"
             dev = fields[0] + ":" + fields[1]
           else

@@ -64,9 +64,11 @@ describe Ohai::System, "hostname plugin" do
     before(:each) do
       allow(@plugin).to receive(:collect_os).and_return(:linux)
       allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
-        mock_shell_out(0, "katie", ""))
+        mock_shell_out(0, "katie", "")
+      )
       allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
-        mock_shell_out(0, "", ""), mock_shell_out(0, "katie.local", ""))
+        mock_shell_out(0, "", ""), mock_shell_out(0, "katie.local", "")
+      )
     end
 
     it "should be called twice" do
@@ -79,9 +81,11 @@ describe Ohai::System, "hostname plugin" do
     before(:each) do
       allow(@plugin).to receive(:collect_os).and_return(:linux)
       allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
-        mock_shell_out(0, "katie", ""))
+        mock_shell_out(0, "katie", "")
+      )
       allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
-        mock_shell_out(0, "katie.local", ""))
+        mock_shell_out(0, "katie.local", "")
+      )
     end
 
     it "should be not be called twice" do
@@ -109,7 +113,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
       "address1",
       "address2",
       "address3",
-      "address4"
+      "address4",
     ]
   end
 
@@ -118,7 +122,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
       "local",
       [],
       23,
-      "address"
+      "address",
     ]
   end
 
@@ -127,7 +131,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
       "local.dx.internal.cloudapp.net",
       [],
       23,
-      "address"
+      "address",
     ]
   end
 
@@ -136,12 +140,12 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
     allow(WmiLite::Wmi).to receive(:new).and_return(success)
     allow(success).to receive(:first_of).with("Win32_ComputerSystem").and_return(host)
     allow(Socket).to receive(:gethostname).and_return("local")
-    allow(Socket).to receive(:gethostbyname).with(anything()).and_return(info)
+    allow(Socket).to receive(:gethostbyname).with(anything).and_return(info)
   end
 
   context "when hostname is not set for the machine" do
     it "should return short machine name" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything()).and_return(local_hostent)
+      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(local_hostent)
       @plugin.run
       expect(@plugin[:fqdn]).to eq("local")
     end
@@ -149,7 +153,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
 
   context "when hostname is set for the machine" do
     it "should return the fqdn of the machine" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything()).and_return(fqdn_hostent)
+      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(fqdn_hostent)
       @plugin.run
       expect(@plugin[:fqdn]).to eq("local.dx.internal.cloudapp.net")
     end

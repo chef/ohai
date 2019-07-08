@@ -400,7 +400,8 @@ describe Ohai::System, "plugin ec2" do
           "skunumber" => nil,
           "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
           "vendor" => "Xen",
-          "version" => "4.2.amazon" })
+          "version" => "4.2.amazon" }
+      )
     end
   end
 
@@ -416,7 +417,8 @@ describe Ohai::System, "plugin ec2" do
           "skunumber" => nil,
           "uuid" => "5A352AEC-CD91-E85F-BBFC-CC891D0BF9D6",
           "vendor" => "Xen",
-          "version" => "1.2.3" })
+          "version" => "1.2.3" }
+      )
     end
   end
 

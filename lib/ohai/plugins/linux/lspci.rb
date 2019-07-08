@@ -30,7 +30,7 @@ Ohai.plugin(:Lspci) do
     hh = /#{h}#{h}/ # any 2 hex digits
     hhhh = /#{h}#{h}#{h}#{h}/ # any 4 hex digits
 
-    d_id = String.new # This identifies our pci devices
+    d_id = "" # This identifies our pci devices
 
     def standard_form(devices, d_id, hhhh, tag, line)
       tmp = line.scan(/(.*)\s\[(#{hhhh})\]/)[0]
@@ -39,7 +39,7 @@ Ohai.plugin(:Lspci) do
     end
 
     def standard_array(devices, d_id, tag, line)
-      if !devices[d_id][tag].kind_of?(Array)
+      if !devices[d_id][tag].is_a?(Array)
         devices[d_id][tag] = [line]
       else
         devices[d_id][tag].push(line)
@@ -49,6 +49,7 @@ Ohai.plugin(:Lspci) do
     lspci.stdout.split("\n").each do |line|
       dev = line.scan(/^(.*):\s(.*)$/)[0]
       next if dev.nil?
+
       case dev[0]
       when "Device" # There are two different Device tags
         if ( tmp = dev[1].match(/(#{hh}:#{hh}.#{h})/) )

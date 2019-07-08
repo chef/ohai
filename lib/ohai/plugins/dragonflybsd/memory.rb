@@ -46,7 +46,7 @@ Ohai.plugin(:Memory) do
     so.stdout.lines do |line|
       # Device          1K-blocks     Used    Avail Capacity
       # /dev/ad0s1b        253648        0   253648     0%
-      if line =~ /^([\d\w\/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)/
+      if line =~ %r{^([\d\w/]+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d\%]+)}
         mdev = $1
         memory[:swap][mdev] = Mash.new
         memory[:swap][mdev][:total] = $2

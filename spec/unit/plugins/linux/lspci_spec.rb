@@ -87,7 +87,8 @@ describe Ohai::System, "Linux lspci plugin" do
       NUMANode:	0
     LSPCI
     allow(plugin).to receive(:shell_out).with("lspci -vnnmk").and_return(
-      mock_shell_out(0, @stdout, ""))
+      mock_shell_out(0, @stdout, "")
+    )
   end
 
   describe "when gathering data from lspci" do

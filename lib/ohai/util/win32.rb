@@ -28,18 +28,18 @@ module Ohai
         ffi_lib "advapi32"
 
         attach_function :lookup_account_sid,
-        :LookupAccountSidA, [ :pointer, :pointer, :pointer, :pointer, :pointer, :pointer, :pointer ], :long
+          :LookupAccountSidA, %i{pointer pointer pointer pointer pointer pointer pointer}, :long
 
         attach_function :convert_string_sid_to_sid,
-        :ConvertStringSidToSidA, [ :pointer, :pointer ], :long
+          :ConvertStringSidToSidA, %i{pointer pointer}, :long
 
         ffi_lib "kernel32"
 
         attach_function :local_free,
-        :LocalFree, [ :pointer ], :long
+          :LocalFree, [ :pointer ], :long
 
         attach_function :get_last_error,
-        :GetLastError, [], :long
+          :GetLastError, [], :long
       end
     end
   end

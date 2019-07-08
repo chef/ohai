@@ -31,7 +31,7 @@ Ohai.plugin(:ShardSeed) do
   def default_sources
     case collect_os
     when "linux", "darwin", "windows"
-      [:machinename, :serial, :uuid]
+      %i{machinename serial uuid}
     else
       [:machinename]
     end

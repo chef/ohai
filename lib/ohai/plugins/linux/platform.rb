@@ -64,6 +64,7 @@ Ohai.plugin(:Platform) do
   #
   def read_os_release_info(file)
     return nil unless File.exist?(file)
+
     File.read(file).split.inject({}) do |map, line|
       key, value = line.split("=")
       map[key] = value.gsub(/\A"|"\Z/, "") if value

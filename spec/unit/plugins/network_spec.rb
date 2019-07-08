@@ -421,8 +421,8 @@ describe Ohai::System, "Network Plugin" do
           end
 
           it "warns about this conflict" do
-            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no ipaddress\/mask on eth1/).once
-            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no ipaddress\/mask on eth1/).once
+            expect(@plugin.logger).to receive(:trace).with(%r{\[inet\] no ipaddress/mask on eth1}).once
+            expect(@plugin.logger).to receive(:trace).with(%r{\[inet6\] no ipaddress/mask on eth1}).once
             allow(@plugin.logger).to receive(:trace)
             @plugin.run
           end
@@ -822,6 +822,7 @@ describe Ohai::System, "Network Plugin" do
           @plugin["network"]["default_interface"] = nil
           @plugin["network"]["interfaces"].each do |i, iv|
             next if i == "lo"
+
             iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
           end
         end

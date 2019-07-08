@@ -92,6 +92,7 @@ Ohai.plugin(:Packages) do
         pkg = reg.open(key)
         name = pkg["DisplayName"] rescue nil
         next if name.nil?
+
         package = packages[name] = Mash.new
         WINDOWS_ATTRIBUTE_ALIASES.each do |registry_attr, package_attr|
           value = pkg[registry_attr] rescue nil

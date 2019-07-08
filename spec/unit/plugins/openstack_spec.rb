@@ -114,8 +114,8 @@ describe Ohai::System, "plugin openstack" do
 
         it "overwrite timout by setting" do
           allow(plugin).to receive(:can_socket_connect?)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, override_timout)
-          .and_return(false)
+            .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, override_timout)
+            .and_return(false)
           allow(plugin).to receive(:hint?).with("openstack").and_return(true)
           plugin.run
         end

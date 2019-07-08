@@ -30,6 +30,7 @@ Ohai.plugin(:Network) do
     return "IPIP" if encap.eql?("IPIP Tunnel")
     return "6to4" if encap.eql?("IPv6-in-IPv4")
     return "Ethernet" if encap.eql?("ether")
+
     encap
   end
 
@@ -120,7 +121,7 @@ Ohai.plugin(:Network) do
           end
         end
 
-        iface[route_int][:routes] = Array.new unless iface[route_int][:routes]
+        iface[route_int][:routes] = [] unless iface[route_int][:routes]
         iface[route_int][:routes] << route_entry
       end
     end
@@ -149,9 +150,11 @@ Ohai.plugin(:Network) do
   # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
     return iface unless ethtool_binary_path
+
     keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
       so = shell_out("#{ethtool_binary_path} #{tmp_int}")
       so.stdout.lines do |line|
         line.chomp!
@@ -159,6 +162,7 @@ Ohai.plugin(:Network) do
         line.lstrip!
         k, v = line.split(": ")
         next unless keys.include? k
+
         k.downcase!.tr!("-", "_")
         if k == "speed"
           k = "link_speed" # This is not necessarily the maximum speed the NIC supports
@@ -173,8 +177,10 @@ Ohai.plugin(:Network) do
   # determine ring parameters for the interface using ethtool
   def ethernet_ring_parameters(iface)
     return iface unless ethtool_binary_path
+
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
       so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
@@ -182,6 +188,7 @@ Ohai.plugin(:Network) do
       so.stdout.lines.each do |line|
         next if line.start_with?("Ring parameters for")
         next if line.strip.nil?
+
         if line =~ /Pre-set maximums/
           type = "max"
           next
@@ -192,7 +199,7 @@ Ohai.plugin(:Network) do
         end
         key, val = line.split(/:\s+/)
         if type && val
-          ring_key = "#{type}_#{key.downcase.tr(' ', '_')}"
+          ring_key = "#{type}_#{key.downcase.tr(" ", "_")}"
           iface[tmp_int]["ring_params"][ring_key] = val.to_i
         end
       end
@@ -317,7 +324,7 @@ Ohai.plugin(:Network) do
   end
 
   def parse_ip_addr_link_line(cint, iface, line)
-    if line =~ /link\/(\w+) ([\da-f\:]+) /
+    if line =~ %r{link/(\w+) ([\da-f\:]+) }
       iface[cint][:encapsulation] = linux_encaps_lookup($1)
       unless $2 == "00:00:00:00:00:00"
         iface[cint][:addresses] ||= Mash.new
@@ -327,7 +334,7 @@ Ohai.plugin(:Network) do
   end
 
   def parse_ip_addr_inet_line(cint, iface, line)
-    if line =~ /inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(\/(\d{1,2}))?/
+    if line =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
       tmp_addr, tmp_prefix = $1, $3
       tmp_prefix ||= "32"
       original_int = nil
@@ -364,7 +371,7 @@ Ohai.plugin(:Network) do
   end
 
   def parse_ip_addr_inet6_line(cint, iface, line)
-    if line =~ /inet6 ([a-f0-9\:]+)\/(\d+) scope (\w+)( .*)?/
+    if line =~ %r{inet6 ([a-f0-9\:]+)/(\d+) scope (\w+)( .*)?}
       iface[cint][:addresses] ||= Mash.new
       tmp_addr = $1
       tags = $4 || ""
@@ -395,11 +402,13 @@ Ohai.plugin(:Network) do
 
   def interface_has_no_addresses_in_family?(iface, family)
     return true if iface[:addresses].nil?
+
     iface[:addresses].values.all? { |addr| addr["family"] != family }
   end
 
   def interface_have_address?(iface, address)
     return false if iface[:addresses].nil?
+
     iface[:addresses].key?(address)
   end
 
@@ -605,7 +614,7 @@ Ohai.plugin(:Network) do
           iface[cint][:addresses][$1] = { "family" => "inet" }
           tmp_addr = $1
         end
-        if line =~ /inet6 addr: ([a-f0-9\:]+)\/(\d+) Scope:(\w+)/
+        if line =~ %r{inet6 addr: ([a-f0-9\:]+)/(\d+) Scope:(\w+)}
           iface[cint][:addresses] ||= Mash.new
           iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $2, "scope" => ($3.eql?("Host") ? "Node" : $3) }
         end
@@ -650,6 +659,7 @@ Ohai.plugin(:Network) do
       so.stdout.lines do |line|
         if line =~ /^\S+ \((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) \[(\w+)\] on ([0-9a-zA-Z\.\:\-]+)/
           next unless iface[$4] # this should never happen
+
           iface[$4][:arp] ||= Mash.new
           iface[$4][:arp][$1] = $2.downcase
         end

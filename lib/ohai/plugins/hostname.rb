@@ -115,7 +115,8 @@ Ohai.plugin(:Hostname) do
       end
     rescue
       logger.trace(
-        "Plugin Hostname: hostname returned an error, probably no domain set")
+        "Plugin Hostname: hostname returned an error, probably no domain set"
+      )
     end
     domain collect_domain
   end

@@ -49,7 +49,6 @@ Ohai.plugin(:Packages) do
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
         if packages[name]
-          puts "we are in the special block with #{packages[name]}"
           # We have more than one package with this exact name!
           # Create an "versions" array for tracking all versions of packages with this name.
           # The top-level package information will be the first one returned by rpm -qa,

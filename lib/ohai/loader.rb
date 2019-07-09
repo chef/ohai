@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -164,7 +164,7 @@ module Ohai
 
         logger.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
       end
-    rescue Exception, Errno::ENOENT => e
+    rescue Exception => e
       logger.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
       logger.trace("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
     end

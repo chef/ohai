@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -53,7 +53,7 @@ module Ohai
           raise
         rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
           raise
-        rescue Exception, Errno::ENOENT => e
+        rescue Exception => e
           logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end

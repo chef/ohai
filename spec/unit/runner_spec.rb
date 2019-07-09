@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -34,7 +34,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when running a plugin" do
-    let(:plugin) { double("Ohai::DSL::Plugin", kind_of?: true, version: version, name: :Test, has_run?: has_run, dependencies: [ ]) }
+    let(:plugin) { double("Ohai::DSL::Plugin", is_a?: true, version: version, name: :Test, has_run?: has_run, dependencies: [ ]) }
     let(:version) { :version7 }
     let(:has_run) { false }
 

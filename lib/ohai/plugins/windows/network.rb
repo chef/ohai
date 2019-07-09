@@ -22,6 +22,7 @@ Ohai.plugin(:Network) do
 
   def windows_encaps_lookup(encap)
     return "Ethernet" if encap.eql?("Ethernet 802.3")
+
     encap
   end
 
@@ -40,6 +41,7 @@ Ohai.plugin(:Network) do
       # that does not populate the deprecated win32_* WMI classes, then we should
       # grab data from the newer MSFT_* classes
       return msft_adapter_data if data[:addresses].count == 0
+
       data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
       data
     end
@@ -84,6 +86,7 @@ Ohai.plugin(:Network) do
   #
   def prefer_ipv4(addresses)
     return nil unless addresses.is_a?(Array)
+
     addresses.find { |ip| IPAddress.valid_ipv4?(ip) } ||
       addresses.find { |ip| IPAddress.valid_ipv6?(ip) }
   end
@@ -99,6 +102,7 @@ Ohai.plugin(:Network) do
   #
   def favored_default_route_windows(configuration)
     return nil unless configuration.is_a?(Hash)
+
     config = configuration.dup
 
     config.inject([]) do |arr, (k, v)|
@@ -143,6 +147,7 @@ Ohai.plugin(:Network) do
       adapter.wmi_ole_object.properties_.each do |p|
         # skip wmi class name fields which make no sense in ohai
         next if %w{creation_class_name system_creation_class_name}.include?(p.name.wmi_underscore)
+
         iface_instance[i][p.name.wmi_underscore.to_sym] = adapter[p.name.downcase]
       end
     end
@@ -204,6 +209,7 @@ Ohai.plugin(:Network) do
           cint = $2.downcase
         end
         next unless iface[cint]
+
         if line =~ /^\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+([a-fA-F0-9\:-]+)/
           iface[cint][:arp][$1] = $2.tr("-", ":").downcase
         end

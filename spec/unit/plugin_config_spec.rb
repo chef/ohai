@@ -54,7 +54,7 @@ describe "Ohai::PluginConfig" do
           let(:value) do
             {
               bar0: true,
-              bar1: [ :baz0, :baz1, :baz2 ],
+              bar1: %i{baz0 baz1 baz2},
               bar2: { qux0: true, qux1: false },
             }
           end
@@ -68,7 +68,7 @@ describe "Ohai::PluginConfig" do
           let(:value) do
             {
               :bar0 => true,
-              "bar1" => [ :baz0, :baz1, :baz2 ],
+              "bar1" => %i{baz0 baz1 baz2},
               :bar2 => { qux0: true, qux1: false },
             }
           end
@@ -82,7 +82,7 @@ describe "Ohai::PluginConfig" do
           let(:value) do
             {
               bar0: true,
-              bar1: [ :baz0, :baz1, :baz2 ],
+              bar1: %i{baz0 baz1 baz2},
               bar2: { :qux0 => true, "qux1" => false },
             }
           end

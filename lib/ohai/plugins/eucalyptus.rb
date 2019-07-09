@@ -71,6 +71,7 @@ Ohai.plugin(:Eucalyptus) do
         # to the server.
         # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
         next if k == "iam" && !hint?("iam")
+
         eucalyptus[k] = v
       end
       eucalyptus[:userdata] = fetch_userdata

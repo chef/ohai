@@ -145,9 +145,11 @@ module Ohai
 
         def configuration(option, *options)
           return nil if plugin_config.nil? || !plugin_config.key?(option)
+
           value = plugin_config[option]
           options.each do |opt|
             return nil unless value.key?(opt)
+
             value = value[opt]
           end
           value
@@ -169,12 +171,12 @@ module Ohai
           # ["", "Memory"] => ["Memory"]
           # ["", "Network", "", "Listeners"] => ["Network", "Listeners"]
           # ["SSH", "Host", "", "Key"] => ["SSH", "Host", "Key"]
-          parts.delete_if { |part| part.empty? }
+          parts.delete_if(&:empty?)
           # ["DMI"] => :dmi
           # ["Memory"] => :memory
           # ["Network", "Listeners"] => :network_listeners
           # ["SSH", "Host", "Key"] => :ssh_host_key
-          snake_case_name = parts.map { |part| part.downcase }.join("_").to_sym
+          snake_case_name = parts.map(&:downcase).join("_").to_sym
 
           # Plugin names in config hashes are auto-vivified, so we check with
           # key? to avoid falsely instantiating a configuration hash.

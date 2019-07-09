@@ -32,9 +32,9 @@ Ohai.plugin(:Kernel) do
     [["uname -s", :name], ["uname -r", :release],
      ["uname -v", :version], ["uname -m", :machine],
      ["uname -p", :processor]].each do |cmd, property|
-      so = shell_out(cmd)
-      kernel[property] = so.stdout.split($/)[0]
-    end
+       so = shell_out(cmd)
+       kernel[property] = so.stdout.split($/)[0]
+     end
     kernel
   end
 
@@ -71,8 +71,9 @@ Ohai.plugin(:Kernel) do
       43, # Storage Server Express Core
       44, # Storage Server Standard Core
       45, # Storage Server Workgroup Core
-      29 # Web Server Core
+      29, # Web Server Core
     ].include?(sku)
+
     false
   end
 
@@ -84,6 +85,7 @@ Ohai.plugin(:Kernel) do
   def arch_lookup(sys_type)
     return "x86_64" if sys_type == "x64-based PC"
     return "i386" if sys_type == "X86-based PC"
+
     sys_type
   end
 
@@ -94,6 +96,7 @@ Ohai.plugin(:Kernel) do
   # @return [String] Workstation or Server
   def product_type_decode(type)
     return "Workstation" if type == 1
+
     "Server"
   end
 
@@ -226,7 +229,7 @@ Ohai.plugin(:Kernel) do
     so = shell_out("uname -s")
     kernel[:os] = so.stdout.split($/)[0]
 
-    so = File.open("/etc/release") { |file| file.gets }
+    so = File.open("/etc/release", &:gets)
     md = /(?<update>\d.*\d)/.match(so)
     kernel[:update] = md[:update] if md
 
@@ -260,6 +263,7 @@ Ohai.plugin(:Kernel) do
     kernel[:os_info] = Mash.new
     host.wmi_ole_object.properties_.each do |p|
       next if blacklisted_wmi_name?(p.name.wmi_underscore)
+
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 
@@ -274,6 +278,7 @@ Ohai.plugin(:Kernel) do
     host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
       next if blacklisted_wmi_name?(p.name.wmi_underscore)
+
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
 

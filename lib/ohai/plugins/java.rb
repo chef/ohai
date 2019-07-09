@@ -63,6 +63,7 @@ Ohai.plugin(:Java) do
   # workaround for this particular annoyance.
   def has_real_java?
     return true unless on_darwin?
+
     shell_out("/usr/libexec/java_home").status.success?
   end
 

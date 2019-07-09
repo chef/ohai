@@ -51,14 +51,16 @@ module Ohai
     def self.hint?(name)
       @hints ||= {}
       return @hints[name] if @hints[name]
+
       Ohai.config[:hints_path].each do |path|
         filename = File.join(path, "#{name}.json")
         next unless File.exist?(filename)
+
         Ohai::Log.trace("Found hint #{name}.json at #{filename}")
         @hints[name] = parse_hint_file(filename)
       end
 
-      Ohai::Log.trace("Did not find hint #{name}.json in the hint path(s): #{Ohai.config[:hints_path].join(', ')} ") unless @hints.key?(name)
+      Ohai::Log.trace("Did not find hint #{name}.json in the hint path(s): #{Ohai.config[:hints_path].join(", ")} ") unless @hints.key?(name)
       @hints[name]
     end
   end

@@ -70,6 +70,7 @@ Ohai.plugin(:Network) do
     return "Ethernet" if ETHERNET_ENCAPS.include?(ifname)
     return "Ethernet" if ifname.eql?("net")
     return "Loopback" if ifname.eql?("lo")
+
     "Unknown"
   end
 
@@ -129,7 +130,7 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
       end
-      if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)\/(\d+)\s*$/
+      if line =~ %r{\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)/(\d+)\s*$}
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
       end
@@ -141,6 +142,7 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       if line =~ /([0-9a-zA-Z]+)\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(\w+)?\s+([a-zA-Z0-9\.\:\-]+)/
         next unless iface[arpname_to_ifname(iface, $1)] # this should never happen, except on solaris because sun hates you.
+
         iface[arpname_to_ifname(iface, $1)][:arp] ||= Mash.new
         iface[arpname_to_ifname(iface, $1)][:arp][$2] = $5
       end

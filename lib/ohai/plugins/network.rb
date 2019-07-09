@@ -37,8 +37,10 @@ Ohai.plugin(:NetworkAddresses) do
     ipaddresses = []
     Mash[network["interfaces"]].each do |iface, iface_v|
       next if iface_v.nil? || !iface_v.key?("addresses")
+
       iface_v["addresses"].each do |addr, addr_v|
         next if addr_v.nil? || (not addr_v.key? "family") || addr_v["family"] != family
+
         ipaddresses << {
           ipaddress: addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
           scope: addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,

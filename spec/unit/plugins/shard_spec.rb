@@ -93,7 +93,7 @@ describe Ohai::System, "shard plugin" do
     end
 
     it "should allow os_serial source" do
-      Ohai.config[:plugin][:shard_seed][:sources] = [:machinename, :os_serial, :uuid]
+      Ohai.config[:plugin][:shard_seed][:sources] = %i{machinename os_serial uuid}
       # Different from above.
       expect(subject).to eq(178738102)
     end

@@ -32,7 +32,7 @@ module Ohai
     end
 
     def set_providers_for(plugin, provided_attributes)
-      unless plugin.kind_of?(Ohai::DSL::Plugin)
+      unless plugin.is_a?(Ohai::DSL::Plugin)
         raise ArgumentError, "set_providers_for only accepts Ohai Plugin classes (got: #{plugin})"
       end
 
@@ -55,6 +55,7 @@ module Ohai
         attrs = select_subtree(@map, attribute)
         raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
         raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs[:_plugins]
+
         plugins += attrs[:_plugins]
       end
       plugins.uniq
@@ -95,8 +96,10 @@ module Ohai
       attributes.each do |attribute|
         parts = normalize_and_validate(attribute)
         raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless @map[parts[0]]
+
         attrs = select_closest_subtree(@map, attribute)
         raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs
+
         plugins += attrs[:_plugins]
       end
       plugins.uniq
@@ -114,8 +117,8 @@ module Ohai
     private
 
     def normalize_and_validate(attribute)
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute =~ /\/\/+/
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute =~ /\/$/
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute =~ %r{//+}
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute =~ %r{/$}
 
       parts = attribute.split("/")
       parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'
@@ -127,6 +130,7 @@ module Ohai
       parts = normalize_and_validate(attribute)
       parts.each do |part|
         return nil unless subtree[part]
+
         subtree = subtree[part]
       end
       subtree

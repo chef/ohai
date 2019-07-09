@@ -119,12 +119,14 @@ module Ohai
           in_common = Mash.new
           next unless records.class.to_s == "Mash"
           next unless records.key?("all_records")
+
           records[:all_records].each do |record|
             record.each do |field, value|
               next if value.class.to_s == "Mash"
               next if field.to_s == "application_identifier"
               next if field.to_s == "size"
               next if field.to_s == "record_id"
+
               translated = field.downcase.gsub(/[^a-z0-9]/, "_")
               value      = value.strip
               if in_common.key?(translated)
@@ -136,6 +138,7 @@ module Ohai
           end
           in_common.each do |field, value|
             next if value.nil?
+
             dmi[type][field] = value.strip
           end
         end

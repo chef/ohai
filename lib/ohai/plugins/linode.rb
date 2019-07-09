@@ -57,7 +57,7 @@ Ohai.plugin(:Linode) do
       linode Mash.new
       get_ip_address(:public_ip, :eth0)
       get_ip_address(:private_ip, "eth0:1")
-      hint?("linode").each { |k, v| linode[k] = v } if hint?("linode").kind_of?(Hash)
+      hint?("linode").each { |k, v| linode[k] = v } if hint?("linode").is_a?(Hash)
     else
       logger.trace("Plugin Linode: looks_like_linode? == false")
     end

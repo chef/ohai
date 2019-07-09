@@ -31,8 +31,7 @@ module Ohai
         conn.get(uri, {
                         "Metadata-Flavor" => "Google",
                         "User-Agent" => "chef-ohai/#{Ohai::VERSION}",
-                      }
-                )
+                      })
       end
 
       def fetch_metadata(id = "")
@@ -76,7 +75,7 @@ module Ohai
       end
 
       def sanitize_key(key)
-        key.gsub(/\-|\//, "_")
+        key.gsub(%r{\-|/}, "_")
       end
     end
   end

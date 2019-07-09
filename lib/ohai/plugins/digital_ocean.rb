@@ -44,6 +44,7 @@ Ohai.plugin(:DigitalOcean) do
   def looks_like_digital_ocean?
     return true if hint?("digital_ocean")
     return true if has_do_dmi? && can_socket_connect?(Ohai::Mixin::DOMetadata::DO_METADATA_ADDR, 80)
+
     false
   end
 
@@ -53,6 +54,7 @@ Ohai.plugin(:DigitalOcean) do
       digital_ocean Mash.new
       fetch_metadata.each do |k, v|
         next if k == "vendor_data" # this may have sensitive data we shouldn't store
+
         digital_ocean[k] = v
       end
     else

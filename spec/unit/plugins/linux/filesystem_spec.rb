@@ -410,6 +410,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(@double_file).to receive(:read_nonblock) do
         @counter += 1
         raise EOFError if @counter == 2
+
         @mounts
       end
       allow(@double_file).to receive(:close)

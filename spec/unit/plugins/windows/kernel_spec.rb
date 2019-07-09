@@ -34,7 +34,7 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     os_properties = [ caption, version, build_number, csd_version, os_type, product_type, operating_system_sku ]
 
     os = double( "WIN32OLE",
-                  properties_: os_properties)
+      properties_: os_properties)
 
     allow(os).to receive(:invoke).with(build_number.name).and_return("7601")
     allow(os).to receive(:invoke).with(csd_version.name).and_return("Service Pack 1")
@@ -53,7 +53,7 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     cs_properties = [ system_type, pc_system_type, free_virtual_memory]
 
     cs = double("WIN32OLE",
-                properties_: cs_properties)
+      properties_: cs_properties)
 
     allow(cs).to receive(:invoke).with(system_type.name).and_return("x64-based PC")
     allow(cs).to receive(:invoke).with(pc_system_type.name).and_return(2)

@@ -17,10 +17,10 @@
 Ohai.plugin(:Haskell) do
 
   provides "languages/haskell",
-           "languages/haskell/ghc",
-           "languages/haskell/ghci",
-           "languages/haskell/cabal",
-           "languages/haskell/stack"
+    "languages/haskell/ghc",
+    "languages/haskell/ghci",
+    "languages/haskell/cabal",
+    "languages/haskell/stack"
 
   depends "languages"
 

@@ -53,14 +53,15 @@ Ohai.plugin(:Cloud) do
 
     def add_ipv4_addr(ip, accessibility)
       return if ip.nil? # just skip if ip is nil
+
       ipaddr = validate_ip_addr(ip, :ipv4)
 
       case accessibility
       when :public
-        @cloud[:public_ipv4_addrs] ||= Array.new
+        @cloud[:public_ipv4_addrs] ||= []
         @cloud[:public_ipv4_addrs] << ipaddr.to_s
       when :private
-        @cloud[:local_ipv4_addrs] ||= Array.new
+        @cloud[:local_ipv4_addrs] ||= []
         @cloud[:local_ipv4_addrs] << ipaddr.to_s
       else
         raise "ERROR: invalid accessibility param of '#{accessibility}'. must be :public or :private."
@@ -69,15 +70,17 @@ Ohai.plugin(:Cloud) do
 
     def add_ipv6_addr(ip, accessibility)
       return if ip.nil? # just skip if ip is nil
+
       ipaddr = validate_ip_addr(ip, :ipv6)
 
       raise "ERROR: invalid ipv6 address of '#{ip}' detected. " unless ipaddr.ipv6?
+
       case accessibility
       when :public
-        @cloud[:public_ipv6_addrs] ||= Array.new
+        @cloud[:public_ipv6_addrs] ||= []
         @cloud[:public_ipv6_addrs] << ipaddr.to_s
       when :private
-        @cloud[:local_ipv6_addrs] ||= Array.new
+        @cloud[:local_ipv6_addrs] ||= []
         @cloud[:local_ipv6_addrs] << ipaddr.to_s
       else
         raise "ERROR: invalid accessibility param of '#{accessibility}'. must be :public or :private."

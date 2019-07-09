@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -83,7 +83,8 @@ module Ohai
     # @param plugin_path [String]
     def load_plugin(plugin_path)
       plugin_class = load_plugin_class(plugin_path)
-      return nil unless plugin_class.kind_of?(Class)
+      return nil unless plugin_class.is_a?(Class)
+
       if plugin_class < Ohai::DSL::Plugin::VersionVII
         load_v7_plugin(plugin_class)
       else
@@ -137,9 +138,10 @@ module Ohai
     # @return [Ohai::DSL::Plugin::VersionVII] Ohai plugin object
     def load_v7_plugin_class(contents, plugin_path)
       plugin_class = eval(contents, TOPLEVEL_BINDING, plugin_path) # rubocop: disable Security/Eval
-      unless plugin_class.kind_of?(Class) && plugin_class < Ohai::DSL::Plugin
+      unless plugin_class.is_a?(Class) && plugin_class < Ohai::DSL::Plugin
         raise Ohai::Exceptions::IllegalPluginDefinition, "Plugin file cannot contain any statements after the plugin definition"
       end
+
       plugin_class.sources << plugin_path
       @v7_plugin_classes << plugin_class unless @v7_plugin_classes.include?(plugin_class)
       plugin_class
@@ -159,9 +161,10 @@ module Ohai
       parts = e.message.split(/<.*>[:[0-9]+]*: syntax error, /)
       parts.each do |part|
         next if part.length == 0
+
         logger.warn("Plugin Syntax Error: <#{plugin_path}>: #{part}")
       end
-    rescue Exception, Errno::ENOENT => e
+    rescue Exception => e
       logger.warn("Plugin Error: <#{plugin_path}>: #{e.message}")
       logger.trace("Plugin Error: <#{plugin_path}>: #{e.inspect}, #{e.backtrace.join('\n')}")
     end

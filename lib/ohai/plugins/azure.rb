@@ -97,6 +97,7 @@ Ohai.plugin(:Azure) do
 
     endpoint_data = fetch_metadata
     return nil if endpoint_data.nil?
+
     metadata = initialize_metadata_mash_compute
 
     # blindly add everything in compute to our data structure

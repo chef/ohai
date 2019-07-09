@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.1.6 -->
+## [15.1.6](https://github.com/chef/ohai/tree/15.1.6) (2019-07-09)
+
+#### Merged Pull Requests
+- new chefstyle rules for 0.13.2 [#1384](https://github.com/chef/ohai/pull/1384) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.1.5 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- new chefstyle rules for 0.13.2 [#1384](https://github.com/chef/ohai/pull/1384) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.1.6 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

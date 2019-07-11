@@ -283,7 +283,8 @@ Ohai.plugin(:Network) do
         end
       end
 
-      if line =~ /state (\w+)/
+      # https://rubular.com/r/JRp6lNANmpcLV5
+      if line =~ /\sstate (\w+)/
         iface[tmp_int]["state"] = $1.downcase
       end
     end

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.1.7 -->
-## [15.1.7](https://github.com/chef/ohai/tree/15.1.7) (2019-07-11)
+<!-- latest_release 15.1.8 -->
+## [15.1.8](https://github.com/chef/ohai/tree/15.1.8) (2019-07-16)
 
 #### Merged Pull Requests
-- Feature - Change regex for detecting interface&#39;s state [#1382](https://github.com/chef/ohai/pull/1382) ([josephmilla](https://github.com/josephmilla))
+- Switch from Appveyor to Buildkite for Windows PR testing [#1383](https://github.com/chef/ohai/pull/1383) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.1.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Switch from Appveyor to Buildkite for Windows PR testing [#1383](https://github.com/chef/ohai/pull/1383) ([tas50](https://github.com/tas50)) <!-- 15.1.8 -->
 - Feature - Change regex for detecting interface&#39;s state [#1382](https://github.com/chef/ohai/pull/1382) ([josephmilla](https://github.com/josephmilla)) <!-- 15.1.7 -->
 - new chefstyle rules for 0.13.2 [#1384](https://github.com/chef/ohai/pull/1384) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.1.6 -->
 <!-- release_rollup -->

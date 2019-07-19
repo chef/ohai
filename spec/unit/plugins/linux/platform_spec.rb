@@ -250,7 +250,7 @@ OS_RELEASE
     end
 
     it "should set platform_version to kernel release" do
-      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
+      expect(@plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
       @plugin.run
       expect(@plugin[:platform_version]).to eq("3.18.2-2-ARCH")
     end
@@ -271,7 +271,7 @@ OS_RELEASE
     end
 
     it "should set platform_version to kernel release" do
-      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.7-gentoo")
+      expect(@plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.7-gentoo\n", ""))
       @plugin.run
       expect(@plugin[:platform_version]).to eq("3.18.7-gentoo")
     end
@@ -345,7 +345,7 @@ OS_RELEASE
     end
 
     it "should set platform_version to kernel release" do
-      expect(@plugin).to receive(:`).with("uname -r").and_return("3.18.2-2-ARCH")
+      expect(@plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH", ""))
       @plugin.run
       expect(@plugin[:platform_version]).to eq("3.18.2-2-ARCH")
     end

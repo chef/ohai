@@ -98,6 +98,7 @@ describe Ohai::System, "plugin fips", :windows_only do
   end
 
   context "with Ruby 2.5 or newer", if: defined?(OpenSSL.fips_mode) do
+    let(:arch) { Win32::Registry::KEY_READ }
     let(:openssl_test_mode) { false }
 
     context "with OpenSSL.fips_mode == false" do

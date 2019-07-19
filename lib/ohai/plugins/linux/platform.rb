@@ -32,6 +32,7 @@ Ohai.plugin(:Platform) do
       "opensuse-leap" => "opensuseleap",
       "xenenterprise" => "xenserver",
       "cumulus-linux" => "cumulus",
+      "archarm" => "arch",
     }.freeze
 
   # @deprecated

@@ -50,7 +50,34 @@ Ohai.plugin(:Packages) do
 
       pkgs.each do |pkg|
         name, epoch, version, release, installdate, arch = pkg.split
-        packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        if packages[name]
+          # We have more than one package with this exact name!
+          # Create an "versions" array for tracking all versions of packages with this name.
+          # The top-level package information will be the first one returned by rpm -qa,
+          # all versions go in this list, with the same information they'd normally have.
+          if packages[name]["versions"].nil?
+            # add the data of the first package to the list, so that all versions are in the list.
+            packages[name]["versions"] = []
+            packages[name]["versions"] << Mash.new({ "epoch" => packages[name]["epoch"],
+                                                     "version" => packages[name]["version"],
+                                                     "release" => packages[name]["release"],
+                                                     "installdate" => packages[name]["installdate"],
+                                                     "arch" => packages[name]["arch"] })
+          end
+          packages[name]["versions"] << Mash.new({ "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }) # Add this package version to the list
+          # When this was originally written, it didn't account for multiple versions of the same package
+          # so it just kept clobbering the package data if it encountered multiple versions
+          # of the same package. As a result, the last duplicate returned by rpm -qa was what was present;
+          # here we clobber that data for compatibility. Note that we can't overwrite the entire hash
+          # without losing the versions array.
+          packages[name]["epoch"] = epoch
+          packages[name]["version"] = version
+          packages[name]["release"] = release
+          packages[name]["installdate"] = installdate
+          packages[name]["arch"] = arch
+        else
+          packages[name] = { "epoch" => epoch, "version" => version, "release" => release, "installdate" => installdate, "arch" => arch }
+        end
       end
 
     when "arch"

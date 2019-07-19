@@ -28,16 +28,9 @@ github:
         version_constraint: 15.*
     - 14-stable:
         version_constraint: 14.*
-    - 13-stable:
-        version_constraint: 13.*
 
 changelog:
-  rollup_header: Changes not yet released to rubygems.orgs
-
-promote:
-  actions:
-    - built_in:rollover_changelog
-    - built_in:publish_rubygems
+  rollup_header: Changes not yet released to rubygems.org
 
 # These actions are taken, in order they are specified, anytime a Pull Request is merged.
 merge_actions:
@@ -53,6 +46,11 @@ merge_actions:
         - "Expeditor: Skip All"
   - built_in:build_gem:
       only_if: built_in:bump_version
+
+promote:
+  actions:
+    - built_in:rollover_changelog
+    - built_in:publish_rubygems
 
 pipelines:
   - verify:

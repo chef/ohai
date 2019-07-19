@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.14 -->
-## [v14.8.14](https://github.com/chef/ohai/tree/v14.8.14) (2019-07-19)
+<!-- latest_release 14.8.15 -->
+## [v14.8.15](https://github.com/chef/ohai/tree/v14.8.15) (2019-07-19)
 
 #### Merged Pull Requests
-- Backport the fix for multiple versions of a package being installed. [#1386](https://github.com/chef/ohai/pull/1386) ([jjustice6](https://github.com/jjustice6))
+- Speed up Buildkite PR tests + add windows testing + refactors from master [#1389](https://github.com/chef/ohai/pull/1389) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- Speed up Buildkite PR tests + add windows testing + refactors from master [#1389](https://github.com/chef/ohai/pull/1389) ([tas50](https://github.com/tas50)) <!-- 14.8.15 -->
 - Backport the fix for multiple versions of a package being installed. [#1386](https://github.com/chef/ohai/pull/1386) ([jjustice6](https://github.com/jjustice6)) <!-- 14.8.14 -->
 - Define CONVERSION_STATUS only if it wasn&#39;t defined earlier [#1375](https://github.com/chef/ohai/pull/1375) ([balasankarc](https://github.com/balasankarc)) <!-- 14.8.13 -->
 <!-- release_rollup -->

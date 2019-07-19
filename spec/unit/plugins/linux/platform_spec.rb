@@ -101,6 +101,11 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("sles_sap")).to eq("suse")
     end
 
+    # https://github.com/chef/os_release/blob/master/archarm
+    it "returns arch for archarm" do
+      expect(plugin.platform_id_remap("archarm")).to eq("arch")
+    end
+
     # https://github.com/chef/os_release/blob/master/sles_15_0
     it "returns suse for sles os-release id" do
       expect(plugin.platform_id_remap("sles")).to eq("suse")

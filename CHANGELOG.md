@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 14.8.15 -->
-## [v14.8.15](https://github.com/chef/ohai/tree/v14.8.15) (2019-07-19)
+<!-- latest_release 14.8.16 -->
+## [v14.8.16](https://github.com/chef/ohai/tree/v14.8.16) (2019-07-20)
 
 #### Merged Pull Requests
-- Speed up Buildkite PR tests + add windows testing + refactors from master [#1389](https://github.com/chef/ohai/pull/1389) ([tas50](https://github.com/tas50))
+- Fix openSUSE leap and SLES detection in Chef 14 [#1377](https://github.com/chef/ohai/pull/1377) ([balasankarc](https://github.com/balasankarc))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.0.35 -->
 ### Changes not yet released to rubygems.orgs
 
 #### Merged Pull Requests
+- Fix openSUSE leap and SLES detection in Chef 14 [#1377](https://github.com/chef/ohai/pull/1377) ([balasankarc](https://github.com/balasankarc)) <!-- 14.8.16 -->
 - Speed up Buildkite PR tests + add windows testing + refactors from master [#1389](https://github.com/chef/ohai/pull/1389) ([tas50](https://github.com/tas50)) <!-- 14.8.15 -->
 - Backport the fix for multiple versions of a package being installed. [#1386](https://github.com/chef/ohai/pull/1386) ([jjustice6](https://github.com/jjustice6)) <!-- 14.8.14 -->
 - Define CONVERSION_STATUS only if it wasn&#39;t defined earlier [#1375](https://github.com/chef/ohai/pull/1375) ([balasankarc](https://github.com/balasankarc)) <!-- 14.8.13 -->

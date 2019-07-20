@@ -705,6 +705,7 @@ CISCO_RELEASE
   describe "on suse" do
     context "on openSUSE 15+" do
 
+      let(:have_usr_lib_os_release) { true }
       let(:have_suse_release) { false }
       let(:have_os_release) { true }
 
@@ -992,33 +993,69 @@ OS_RELEASE
   end
 
   describe "on clearlinux" do
-    let(:have_usr_lib_os_release) { true }
-    let(:usr_lib_os_release_content) do
-      <<~CLEARLINUX_RELEASE
-        NAME="Clear Linux Software for Intel Architecture"
-        VERSION=1
-        ID=clear-linux-os
-        VERSION_ID=16140
-        PRETTY_NAME="Clear Linux OS for Intel Architecture"
-        ANSI_COLOR="1;35"
-        HOME_URL="https://clearlinux.org"
-        SUPPORT_URL="https://clearlinux.org"
-        BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
-        PRIVACY_POLICY_URL="http://www.intel.com/privacy"
-CLEARLINUX_RELEASE
+    context "without /etc/os-release file" do
+      let(:have_os_release) { false }
+      let(:have_usr_lib_os_release) { true }
+      let(:usr_lib_os_release_content) do
+        <<~CLEARLINUX_RELEASE
+          NAME="Clear Linux Software for Intel Architecture"
+          VERSION=1
+          ID=clear-linux-os
+          VERSION_ID=16140
+          PRETTY_NAME="Clear Linux OS for Intel Architecture"
+          ANSI_COLOR="1;35"
+          HOME_URL="https://clearlinux.org"
+          SUPPORT_URL="https://clearlinux.org"
+          BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+          PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+  CLEARLINUX_RELEASE
+      end
+
+      before do
+        expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
+      end
+
+      it "should set platform to clearlinux and platform_family to clearlinux" do
+        @plugin.lsb = nil
+        @plugin.run
+
+        expect(@plugin[:platform]).to eq("clearlinux")
+        expect(@plugin[:platform_family]).to eq("clearlinux")
+        expect(@plugin[:platform_version]).to eq("16140")
+      end
     end
 
-    before do
-      expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
-    end
+    context "with /etc/os-release file" do
+      let(:have_os_release) { true }
+      let(:have_usr_lib_os_release) { true }
+      let(:os_release_content) do
+        <<~CLEARLINUX_RELEASE
+          NAME="Clear Linux Software for Intel Architecture"
+          VERSION=1
+          ID=clear-linux-os
+          VERSION_ID=16140
+          PRETTY_NAME="Clear Linux OS for Intel Architecture"
+          ANSI_COLOR="1;35"
+          HOME_URL="https://clearlinux.org"
+          SUPPORT_URL="https://clearlinux.org"
+          BUG_REPORT_URL="mailto:dev@lists.clearlinux.org"
+          PRIVACY_POLICY_URL="http://www.intel.com/privacy"
+  CLEARLINUX_RELEASE
+      end
 
-    it "should set platform to clearlinux and platform_family to clearlinux" do
-      @plugin.lsb = nil
-      @plugin.run
+      before do
+        expect(File).to receive(:read).with("/etc/os-release").and_return(os_release_content)
+        expect(File).not_to receive(:read).with("/usr/lib/os-release")
+      end
 
-      expect(@plugin[:platform]).to eq("clearlinux")
-      expect(@plugin[:platform_family]).to eq("clearlinux")
-      expect(@plugin[:platform_version]).to eq("16140")
+      it "should set platform to clearlinux and platform_family to clearlinux" do
+        @plugin.lsb = nil
+        @plugin.run
+
+        expect(@plugin[:platform]).to eq("clearlinux")
+        expect(@plugin[:platform_family]).to eq("clearlinux")
+        expect(@plugin[:platform_version]).to eq("16140")
+      end
     end
   end
 end

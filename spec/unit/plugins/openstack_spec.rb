@@ -302,4 +302,24 @@ describe Ohai::System, "plugin openstack" do
       end
     end
   end
+
+  context "when openstack virtualization is present" do
+    context "and the metadata service is not available" do
+      before do
+        allow(plugin).to receive(:can_socket_connect?)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
+          .and_return(false)
+        plugin[:virtualization] = { system: { guest: "openstack" } }
+        plugin.run
+      end
+
+      it "sets openstack provider attribute since virtualization is present" do
+        expect(plugin[:openstack][:provider]).to eq("openstack")
+      end
+
+      it "doesn't set metadata attributes" do
+        expect(plugin[:openstack][:instance_id]).to be_nil
+      end
+    end
+  end
 end

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.2.1 -->
-## [15.2.1](https://github.com/chef/ohai/tree/15.2.1) (2019-07-19)
+<!-- latest_release 15.2.2 -->
+## [15.2.2](https://github.com/chef/ohai/tree/15.2.2) (2019-08-01)
 
 #### Merged Pull Requests
-- Translating platform &quot;archarm&quot; to &quot;arch&quot; [#1388](https://github.com/chef/ohai/pull/1388) ([BackSlasher](https://github.com/BackSlasher))
+- Display elapsed real time instead of total cpu time [#1392](https://github.com/chef/ohai/pull/1392) ([teknofire](https://github.com/teknofire))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.1.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Display elapsed real time instead of total cpu time [#1392](https://github.com/chef/ohai/pull/1392) ([teknofire](https://github.com/teknofire)) <!-- 15.2.2 -->
 - Translating platform &quot;archarm&quot; to &quot;arch&quot; [#1388](https://github.com/chef/ohai/pull/1388) ([BackSlasher](https://github.com/BackSlasher)) <!-- 15.2.1 -->
 - Add other_versions subfield for RPM packages. [#1369](https://github.com/chef/ohai/pull/1369) ([jjustice6](https://github.com/jjustice6)) <!-- 15.2.0 -->
 - Switch from Appveyor to Buildkite for Windows PR testing [#1383](https://github.com/chef/ohai/pull/1383) ([tas50](https://github.com/tas50)) <!-- 15.1.8 -->

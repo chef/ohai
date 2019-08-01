@@ -38,7 +38,7 @@ module Ohai
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
     def run_plugin(plugin)
-      elapsed = Benchmark.measure do
+      elapsed = Benchmark.realtime do
         unless plugin.is_a?(Ohai::DSL::Plugin)
           raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
         end
@@ -57,7 +57,7 @@ module Ohai
           logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end
-      logger.trace("Plugin #{plugin.name} took #{elapsed.total} seconds to run.")
+      logger.trace("Plugin #{plugin.name} took #{elapsed} seconds to run.")
     end
 
     def run_v7_plugin(plugin)

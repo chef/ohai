@@ -25,6 +25,7 @@ Ohai.plugin(:Openstack) do
   provides "openstack"
   depends "dmi"
   depends "etc"
+  depends "virtualization"
 
   # do we have the openstack dmi data
   def openstack_dmi?
@@ -38,6 +39,14 @@ Ohai.plugin(:Openstack) do
     else
       logger.trace("Plugin Openstack: has_openstack_dmi? == false")
       false
+    end
+  end
+
+  # use virtualization data
+  def openstack_virtualization?
+    if get_attribute(:virtualization, :system, :guest) == "openstack"
+      logger.trace("Plugin Openstack: has_openstack_virtualization? == true")
+      true
     end
   end
 
@@ -61,7 +70,7 @@ Ohai.plugin(:Openstack) do
 
   collect_data do
     # fetch data if we look like openstack
-    if openstack_hint? || openstack_dmi?
+    if openstack_hint? || openstack_dmi? || openstack_virtualization?
       openstack Mash.new
       openstack[:provider] = openstack_provider
 

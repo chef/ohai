@@ -1,7 +1,7 @@
 #
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) 2012-2019 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,24 +23,8 @@ Ohai.plugin(:Openstack) do
   include Ohai::Mixin::HttpHelper
 
   provides "openstack"
-  depends "dmi"
   depends "etc"
   depends "virtualization"
-
-  # do we have the openstack dmi data
-  def openstack_dmi?
-    # detect a manufacturer of OpenStack Foundation
-    if get_attribute(:dmi, :system, :all_records, 0, :Manufacturer) =~ /OpenStack/
-      logger.trace("Plugin Openstack: has_openstack_dmi? == true")
-      true
-    elsif get_attribute(:dmi, :system, :product_name) == "OpenStack Compute"
-      logger.trace("Plugin Openstack: has_openstack_dmi? == true")
-      true
-    else
-      logger.trace("Plugin Openstack: has_openstack_dmi? == false")
-      false
-    end
-  end
 
   # use virtualization data
   def openstack_virtualization?
@@ -70,7 +54,7 @@ Ohai.plugin(:Openstack) do
 
   collect_data do
     # fetch data if we look like openstack
-    if openstack_hint? || openstack_dmi? || openstack_virtualization?
+    if openstack_hint? || openstack_virtualization?
       openstack Mash.new
       openstack[:provider] = openstack_provider
 

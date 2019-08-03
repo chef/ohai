@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.2.3 -->
-## [15.2.3](https://github.com/chef/ohai/tree/15.2.3) (2019-08-02)
+<!-- latest_release 15.2.4 -->
+## [v15.2.4](https://github.com/chef/ohai/tree/v15.2.4) (2019-08-03)
 
 #### Merged Pull Requests
-- Use virtualization plugin to detect if we&#39;re on openstack on Windows. [#1391](https://github.com/chef/ohai/pull/1391) ([jjustice6](https://github.com/jjustice6))
+- Simplify the Openstack plugin by not polling DMI data [#1394](https://github.com/chef/ohai/pull/1394) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.1.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Simplify the Openstack plugin by not polling DMI data [#1394](https://github.com/chef/ohai/pull/1394) ([tas50](https://github.com/tas50)) <!-- 15.2.4 -->
 - Use virtualization plugin to detect if we&#39;re on openstack on Windows. [#1391](https://github.com/chef/ohai/pull/1391) ([jjustice6](https://github.com/jjustice6)) <!-- 15.2.3 -->
 - Display elapsed real time instead of total cpu time [#1392](https://github.com/chef/ohai/pull/1392) ([teknofire](https://github.com/teknofire)) <!-- 15.2.2 -->
 - Translating platform &quot;archarm&quot; to &quot;arch&quot; [#1388](https://github.com/chef/ohai/pull/1388) ([BackSlasher](https://github.com/BackSlasher)) <!-- 15.2.1 -->

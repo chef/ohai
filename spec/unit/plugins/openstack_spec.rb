@@ -25,51 +25,32 @@ describe Ohai::System, "plugin openstack" do
 
   before(:each) do
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
-    plugin[:dmi] = nil
+    plugin[:virtualization] = { system: {} }
   end
 
-  context "when there is no relevant hint or dmi data" do
+  context "when there is no relevant hint or virtualization data" do
     it "does not set any openstack data" do
       plugin.run
       expect(plugin[:openstack]).to be_nil
     end
   end
 
-  context "when DMI data is Openstack" do
+  context "when virtualization data is Openstack" do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
-        plugin[:dmi] = dmi_data
+        plugin[:virtualization] = { system: { guest: "openstack" } }
         plugin.run
       end
 
-      context "with normal openstack metadata" do
-        let(:dmi_data) do
-          { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
-        end
-
-        it "sets openstack attribute" do
-          expect(plugin[:openstack][:provider]).to eq("openstack")
-        end
-
-        it "doesn't set metadata attributes" do
-          expect(plugin[:openstack][:instance_id]).to be_nil
-        end
+      it "sets openstack attribute" do
+        expect(plugin[:openstack][:provider]).to eq("openstack")
       end
-      context "with Red Hat openstack metadata" do
-        let(:dmi_data) do
-          { system: { manufacturer: "Red Hat", product_name: "OpenStack Compute" } }
-        end
 
-        it "sets openstack attribute" do
-          expect(plugin[:openstack][:provider]).to eq("openstack")
-        end
-
-        it "doesn't set metadata attributes" do
-          expect(plugin[:openstack][:instance_id]).to be_nil
-        end
+      it "doesn't set metadata attributes" do
+        expect(plugin[:openstack][:instance_id]).to be_nil
       end
     end
   end
@@ -80,7 +61,7 @@ describe Ohai::System, "plugin openstack" do
       allow(plugin).to receive(:can_socket_connect?)
         .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
-      plugin[:dmi] = { system: { all_records: [ { Manufacturer: "OpenStack Foundation" } ] } }
+      plugin[:virtualization] = { system: { guest: "openstack" } }
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")
     end

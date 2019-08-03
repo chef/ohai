@@ -19,11 +19,11 @@
 Ohai.plugin(:Openstack) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
+  require "etc" unless defined?(Etc)
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 
   provides "openstack"
-  depends "etc"
   depends "virtualization"
 
   # use virtualization data
@@ -47,8 +47,10 @@ Ohai.plugin(:Openstack) do
 
   # dreamhost systems have the dhc-user on them
   def openstack_provider
-    return "dreamhost" if get_attribute("etc", "passwd", "dhc-user")
-
+    if Etc.getpwnam("dhc-user")
+      "dreamhost"
+    end
+  rescue ArgumentError # getpwnam raises ArgumentError if the user is not found
     "openstack"
   end
 

@@ -1,10 +1,10 @@
 ### Chef is proud of our community!
 
-Every release of Chef and Ohai we pick someone from the community to name as the Most Valuable Player for that release. It could be someone who provided a big feature, reported a security vulnerability, or someone doing great things in the community that we want to highlight.
+Every release of Ohai we pick someone from the community to name as the Most Valuable Player for that release. It could be someone who provided a big feature, reported a security vulnerability, or someone doing great things in the community that we want to highlight.
 
 #### Hall of Fame
 
-After receiving three MVP awards from Chef and Ohai releases, we add someone to the hall of fame. We want to express our gratitude to their continuing participation and give newer community members the opportunity to be recognized.
+After receiving three MVP awards, we add someone to the hall of fame. We want to express our gratitude to their continuing participation and give newer community members the opportunity to be recognized.
 
 The [MVP list](https://github.com/chef/chef/blob/master/CHEF_MVPS.md) is kept in the Chef project.
 
@@ -56,4 +56,3 @@ The [MVP list](https://github.com/chef/chef/blob/master/CHEF_MVPS.md) is kept in
 | [Ohai 0.3.0](http://www.chef.io/blog/2009/06/18/ohai-0-3-0-release/) | 2009-06-18 | Bryan McLellan |
 | [Ohai 0.2.0](http://www.chef.io/blog/2009/03/06/ohai-0-2-0/) | 2009-03-06 | Thom May |
 | [Ohai 0.1.4](http://www.chef.io/blog/2009/02/01/chef-0-5-2-and-ohai-0-1-4/) | 2009-02-01 | Bryan McLellan |
-

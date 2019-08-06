@@ -37,6 +37,11 @@ module Ohai
     # Runs plugins and any un-run dependencies.
     # If force is set to true, then this plugin and its dependencies
     # will be run even if they have been run before.
+    #
+    # @param [Ohai::DSL::Plugin] plugin
+    #
+    # @return void
+    #
     def run_plugin(plugin)
       elapsed = Benchmark.realtime do
         unless plugin.is_a?(Ohai::DSL::Plugin)
@@ -60,6 +65,10 @@ module Ohai
       logger.trace("Plugin #{plugin.name} took #{elapsed} seconds to run.")
     end
 
+    # @param [Ohai::DSL::Plugin] plugin
+    #
+    # @return void
+    #
     def run_v7_plugin(plugin)
       return true if plugin.optional? &&
         !Ohai.config[:run_all_plugins] &&
@@ -94,6 +103,10 @@ module Ohai
       end
     end
 
+    # @param [Array] attributes
+    #
+    # @return [Array]
+    #
     def fetch_plugins(attributes)
       @provides_map.find_closest_providers_for(attributes)
     end

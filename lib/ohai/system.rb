@@ -84,6 +84,7 @@ module Ohai
     # to run the system.
     #
     # @param [Array<String>] attribute_filter the attributes to run. All will be run if not specified
+    #
     # @return [void]
     def all_plugins(attribute_filter = nil)
       # Reset the system when all_plugins is called since this function
@@ -96,6 +97,7 @@ module Ohai
     end
 
     # load all plugins by calling Ohai::Loader.load_all
+    #
     # @see Ohai::Loader.load_all
     def load_plugins
       @loader.load_all
@@ -131,6 +133,11 @@ module Ohai
       freeze_strings!
     end
 
+
+    # @param [String] plugin_path
+    #
+    # @return [void]
+    #
     def run_additional_plugins(plugin_path)
       @loader.load_additional(plugin_path).each do |plugin|
         logger.trace "Running plugin #{plugin}"

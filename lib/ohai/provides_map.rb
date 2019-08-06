@@ -31,6 +31,12 @@ module Ohai
       @map = Mash.new
     end
 
+
+    # @param [Ohai::DSL::Plugin] plugin
+    # @param [Array] provided_attributes
+    #
+    # @return void
+    #
     def set_providers_for(plugin, provided_attributes)
       unless plugin.is_a?(Ohai::DSL::Plugin)
         raise ArgumentError, "set_providers_for only accepts Ohai Plugin classes (got: #{plugin})"
@@ -48,7 +54,13 @@ module Ohai
       end
     end
 
+    #
     # gather plugins providing exactly the attributes listed
+    #
+    # @param [Array] attributes
+    #
+    # @return [Array] plugin names
+    #
     def find_providers_for(attributes)
       plugins = []
       attributes.each do |attribute|
@@ -68,6 +80,10 @@ module Ohai
     # If it can't find any, it looks for plugins that might
     # provide the parents of a given attribute and returns the
     # first parent found.
+    #
+    # @param [Array] attributes
+    #
+    # @return [Array] plugin names
     def deep_find_providers_for(attributes)
       plugins = []
       attributes.each do |attribute|
@@ -91,6 +107,10 @@ module Ohai
     # 'depends "languages"' statements in plugins.
     # It gathers plugins providing each of the attributes listed, or the
     # plugins providing the closest parent attribute
+    #
+    # @param [Array] attributes
+    #
+    # @return [Array] plugin names
     def find_closest_providers_for(attributes)
       plugins = []
       attributes.each do |attribute|

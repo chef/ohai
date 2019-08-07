@@ -4,6 +4,10 @@ Ohai.plugin(:Passwd) do
   provides "etc", "current_user"
   optional true
 
+  # @param [String] str
+  #
+  # @return [String]
+  #
   def fix_encoding(str)
     str.force_encoding(Encoding.default_external) if str.respond_to?(:force_encoding)
     str

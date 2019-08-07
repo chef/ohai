@@ -31,7 +31,6 @@ module Ohai
       @map = Mash.new
     end
 
-
     # @param [Ohai::DSL::Plugin] plugin
     # @param [Array] provided_attributes
     #

@@ -133,7 +133,6 @@ module Ohai
       freeze_strings!
     end
 
-
     # @param [String] plugin_path
     #
     # @return [void]

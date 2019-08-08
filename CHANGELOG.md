@@ -1,34 +1,31 @@
 # Change Log
 
-<!-- latest_release 15.2.5 -->
-## [v15.2.5](https://github.com/chef/ohai/tree/v15.2.5) (2019-08-08)
-
-#### Merged Pull Requests
-- Fix platform_version detection on Fedora rawhide [#1396](https://github.com/chef/ohai/pull/1396) ([ritzk](https://github.com/ritzk))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.1.5 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Fix platform_version detection on Fedora rawhide [#1396](https://github.com/chef/ohai/pull/1396) ([ritzk](https://github.com/ritzk)) <!-- 15.2.5 -->
-- Simplify the Openstack plugin by not polling DMI data [#1394](https://github.com/chef/ohai/pull/1394) ([tas50](https://github.com/tas50)) <!-- 15.2.4 -->
-- Use virtualization plugin to detect if we&#39;re on openstack on Windows. [#1391](https://github.com/chef/ohai/pull/1391) ([jjustice6](https://github.com/jjustice6)) <!-- 15.2.3 -->
-- Display elapsed real time instead of total cpu time [#1392](https://github.com/chef/ohai/pull/1392) ([teknofire](https://github.com/teknofire)) <!-- 15.2.2 -->
-- Translating platform &quot;archarm&quot; to &quot;arch&quot; [#1388](https://github.com/chef/ohai/pull/1388) ([BackSlasher](https://github.com/BackSlasher)) <!-- 15.2.1 -->
-- Add other_versions subfield for RPM packages. [#1369](https://github.com/chef/ohai/pull/1369) ([jjustice6](https://github.com/jjustice6)) <!-- 15.2.0 -->
-- Switch from Appveyor to Buildkite for Windows PR testing [#1383](https://github.com/chef/ohai/pull/1383) ([tas50](https://github.com/tas50)) <!-- 15.1.8 -->
-- Feature - Change regex for detecting interface&#39;s state [#1382](https://github.com/chef/ohai/pull/1382) ([josephmilla](https://github.com/josephmilla)) <!-- 15.1.7 -->
-- new chefstyle rules for 0.13.2 [#1384](https://github.com/chef/ohai/pull/1384) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 15.1.6 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.2.5](https://github.com/chef/ohai/tree/v15.2.5) (2019-08-08)
+
+#### Merged Pull Requests
+- new chefstyle rules for 0.13.2 [#1384](https://github.com/chef/ohai/pull/1384) ([lamont-granquist](https://github.com/lamont-granquist))
+- Feature - Change regex for detecting interface&#39;s state [#1382](https://github.com/chef/ohai/pull/1382) ([josephmilla](https://github.com/josephmilla))
+- Switch from Appveyor to Buildkite for Windows PR testing [#1383](https://github.com/chef/ohai/pull/1383) ([tas50](https://github.com/tas50))
+- Add other_versions subfield for RPM packages. [#1369](https://github.com/chef/ohai/pull/1369) ([jjustice6](https://github.com/jjustice6))
+- Translating platform &quot;archarm&quot; to &quot;arch&quot; [#1388](https://github.com/chef/ohai/pull/1388) ([BackSlasher](https://github.com/BackSlasher))
+- Display elapsed real time instead of total cpu time [#1392](https://github.com/chef/ohai/pull/1392) ([teknofire](https://github.com/teknofire))
+- Use virtualization plugin to detect if we&#39;re on openstack on Windows. [#1391](https://github.com/chef/ohai/pull/1391) ([jjustice6](https://github.com/jjustice6))
+- Simplify the Openstack plugin by not polling DMI data [#1394](https://github.com/chef/ohai/pull/1394) ([tas50](https://github.com/tas50))
+- Fix platform_version detection on Fedora rawhide [#1396](https://github.com/chef/ohai/pull/1396) ([ritzk](https://github.com/ritzk))
+<!-- latest_stable_release -->
+
 ## [15.1.5](https://github.com/chef/ohai/tree/15.1.5) (2019-06-22)
 
 #### Merged Pull Requests
 - [shard_seed] fix default_sources for linux, darwin and windows [#1379](https://github.com/chef/ohai/pull/1379) ([michel-slm](https://github.com/michel-slm))
 - [shard_seed] fix default_digest_algorithm on darwin [#1381](https://github.com/chef/ohai/pull/1381) ([michel-slm](https://github.com/michel-slm))
-<!-- latest_stable_release -->
 
 ## [15.1.3](https://github.com/chef/ohai/tree/15.1.3) (2019-06-14)
 

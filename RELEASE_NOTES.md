@@ -1,6 +1,31 @@
-# Ohai Release Notes 15.0
+# Ohai Release Notes 15.2
 
-This will be updated as the development of Ohai 15 progresses.
+## Openstack Plugin Enhancements
+
+The Openstack plugin now uses data from the Virtualization plugin to determine if a host is running on Openstack. This not only speeds up the plugin, but also better detects when running on Openstack. The plugin has also been updated to run on Windows hosts. Thanks @jjustice6
+
+## other_versions in Packages Plugin
+
+Since multiple versions of the same package can exist on RPM based systems a new `other_versions` field has been introduced to list other versions of packages such as the Linux kernel. Thanks @jjustice6
+
+## Other Enhancements
+
+- When debugging Ohai the elapsed time for plugins will include time spent waiting for programs to shell out, not just time the plugin spent executing Ruby code
+- The Linux Network plugin has been improved to not mark interfaces down if stp_state is marked as down. Thanks @josephmilla
+- Arch running on Arm processors is now detected as the `arm` platform. Thanks @BackSlasher
+
+# Ohai Release Notes 15.1
+
+## Virtualbox Plugin Enhancements
+
+The Virtualbox plugin now gathers a large amount of data on Virtualbox hosts. Additionally the plugin has been updated to better detect when running on a Virtualbox guest or host.
+
+## Other Enhancements
+
+- Ohai performance improved by changing how Ruby requires libraries
+- Multiple fixes to the Shard plugin to ensure the hash is created
+
+# Ohai Release Notes 15.0
 
 ## Improvements
 
@@ -80,10 +105,6 @@ BSD-based systems can now detect guests running on KVM and Amazon's hypervisor w
 - Mangeia Linux is now identified as platform 'mangeia' and platform_family 'mandriva'
 - Antergos Linux now identified as platform_family 'arch'
 - Manjaro Linux now identified as platform_family 'arch'
-
-## VboxHost (VirtualBox) plugin added
-
-Added VboxHost plugin to detect VirtualBox running as a virtualization host. Provides the 'vbox' attribute tree.
 
 # Ohai Release Notes 14.6
 

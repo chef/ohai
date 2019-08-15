@@ -77,11 +77,11 @@ class Ohai::Application
   #
   # @return void
   def run
-    elapsed = Benchmark.measure do
+    elapsed = Benchmark.realtime do
       configure_ohai
       run_application
     end
-    Ohai::Log.debug("Ohai took #{elapsed.total} total seconds to run.")
+    Ohai::Log.debug("Ohai took #{elapsed} total seconds to run.")
   end
 
   # parses the CLI options, loads the config file if present, and initializes logging

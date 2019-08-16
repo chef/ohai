@@ -21,7 +21,7 @@ require "spec_helper"
 describe Ohai::System, "plugin groovy" do
   let(:plugin) { get_plugin("groovy") }
 
-  before(:each) do
+  before do
     plugin[:languages] = Mash.new
   end
 

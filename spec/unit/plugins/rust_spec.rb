@@ -25,17 +25,17 @@ describe Ohai::System, "plugin rust" do
     plugin
   end
 
-  it "should get the rust version" do
+  it "gets the rust version" do
     expect(plugin).to receive(:shell_out).with("rustc --version").and_return(mock_shell_out(0, stdout, ""))
     plugin.run
   end
 
-  it "should set languages[:rust][:version]" do
+  it "sets languages[:rust][:version]" do
     plugin.run
     expect(plugin.languages[:rust][:version]).to eql("1.0.0-nightly")
   end
 
-  it "should not set the languages[:rust] if rust command fails" do
+  it "does not set the languages[:rust] if rust command fails" do
     allow(plugin).to receive(:shell_out).with("rustc --version").and_return(mock_shell_out(1, stdout, ""))
     plugin.run
     expect(plugin.languages).not_to have_key(:rust)

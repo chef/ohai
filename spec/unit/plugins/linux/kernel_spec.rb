@@ -20,7 +20,7 @@
 require "spec_helper"
 
 describe Ohai::System, "Linux kernel plugin" do
-  before(:each) do
+  before do
     @env_lsmod = <<~ENV_LSMOD
       Module                  Size  Used by
       dm_crypt               22321  0

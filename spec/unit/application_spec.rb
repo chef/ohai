@@ -24,12 +24,12 @@ RSpec.describe "Ohai::Application" do
   let(:argv) { [] }
   let(:app) { Ohai::Application.new }
 
-  before(:each) do
+  before do
     @original_argv = ARGV
     ARGV.replace(argv)
   end
 
-  after(:each) do
+  after do
     ARGV.replace(@original_argv)
   end
 
@@ -41,7 +41,7 @@ RSpec.describe "Ohai::Application" do
       context "when specified on the command line" do
         let(:argv) { [ "-c", config_file ] }
 
-        before(:each) do
+        before do
           if windows?
             expect(ChefConfig::WorkstationConfigLoader).to receive(:new)
               .with("C:#{config_file}", Ohai::Log)
@@ -68,7 +68,7 @@ RSpec.describe "Ohai::Application" do
       end
 
       context "when a local workstation config exists" do
-        before(:each) do
+        before do
           expect(ChefConfig::WorkstationConfigLoader).to receive(:new)
             .with(nil, Ohai::Log)
             .and_return(config_loader)
@@ -86,7 +86,7 @@ RSpec.describe "Ohai::Application" do
       let(:directory) { "/some/fantastic/plugins" }
 
       it "does not generate deprecated config warnings for cli options" do
-        expect(Ohai::Log).to_not receive(:warn)
+        expect(Ohai::Log).not_to receive(:warn)
           .with(/Ohai::Config\[:directory\] is deprecated/)
         app.configure_ohai
       end

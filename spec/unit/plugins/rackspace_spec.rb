@@ -21,7 +21,7 @@ require "spec_helper"
 describe Ohai::System, "plugin rackspace" do
   let(:plugin) { get_plugin("rackspace") }
 
-  before(:each) do
+  before do
     allow(Resolv).to receive(:getname).and_return("1.2.3.4")
 
     plugin[:hostname] = "katie"
@@ -184,14 +184,14 @@ describe Ohai::System, "plugin rackspace" do
   end
 
   describe "with rackspace hint file" do
-    it_behaves_like "rackspace"
-
-    before(:each) do
+    before do
       allow(Resolv).to receive(:getname).and_raise(Resolv::ResolvError)
       allow(File).to receive(:exist?).with("/etc/resolv.conf").and_return(true)
       allow(File).to receive(:read).with("/etc/resolv.conf").and_return("")
       allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
     end
+
+    it_behaves_like "rackspace"
 
     describe "with no public interfaces (empty eth0)" do
       before do
@@ -216,55 +216,60 @@ describe Ohai::System, "plugin rackspace" do
   end
 
   describe "without hint file" do
-    it_behaves_like "!rackspace"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
     end
+
+    it_behaves_like "!rackspace"
+
   end
 
   describe "with Rackspace windows manufacturer data" do
+    before do
+      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
+      allow(plugin).to receive(:has_rackspace_manufacturer?).and_return(true)
+    end
+
     it "has rackspace attribute" do
       plugin.run
       expect(plugin[:rackspace]).not_to be_nil
     end
 
-    before(:each) do
-      allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
-      allow(plugin).to receive(:has_rackspace_manufacturer?).and_return(true)
-    end
   end
 
   describe "xenstore provider returns rackspace" do
-    it_behaves_like "rackspace"
-
-    before(:each) do
+    before do
       stdout = "Rackspace\n"
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
+
+    it_behaves_like "rackspace"
+
   end
 
   describe "xenstore provider does not return rackspace" do
-    it_behaves_like "!rackspace"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       stdout = "cumulonimbus\n"
       allow(plugin).to receive(:shell_out).with("xenstore-read vm-data/provider_data/provider").and_return(mock_shell_out(0, stdout, "" ))
     end
+
+    it_behaves_like "!rackspace"
+
   end
 
   describe "xenstore provider does not exist" do
-    it_behaves_like "!rackspace"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(false)
       allow(plugin)
         .to receive(:shell_out)
         .with("xenstore-read vm-data/provider_data/provider")
         .and_raise(Ohai::Exceptions::Exec)
     end
+
+    it_behaves_like "!rackspace"
+
   end
 
   describe "when private networks shell out fails" do

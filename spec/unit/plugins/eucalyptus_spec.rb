@@ -31,7 +31,7 @@ describe Ohai::System, "plugin eucalyptus" do
   end
 
   shared_examples_for "eucalyptus" do
-    before(:each) do
+    before do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)
 
@@ -69,37 +69,41 @@ describe Ohai::System, "plugin eucalyptus" do
   end
 
   describe "with eucalyptus mac and metadata address connected" do
-    it_behaves_like "eucalyptus"
-
-    before(:each) do
+    before do
       allow(IO).to receive(:select).and_return([[], [1], []])
       plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
+
+    it_behaves_like "eucalyptus"
+
   end
 
   describe "without eucalyptus mac and metadata address connected" do
-    it_behaves_like "!eucalyptus"
-
-    before(:each) do
+    before do
       plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } } } }
     end
+
+    it_behaves_like "!eucalyptus"
+
   end
 
   describe "with eucalyptus hint file" do
-    it_behaves_like "eucalyptus"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("eucalyptus").and_return(true)
     end
+
+    it_behaves_like "eucalyptus"
+
   end
 
   describe "without hint file" do
-    it_behaves_like "!eucalyptus"
-
-    before(:each) do
+    before do
       plugin[:network] = { interfaces: {} }
       allow(plugin).to receive(:hint?).with("eucalyptus").and_return(false)
     end
+
+    it_behaves_like "!eucalyptus"
+
   end
 
 end

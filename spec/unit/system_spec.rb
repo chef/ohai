@@ -152,7 +152,7 @@ describe "Ohai::System" do
         end
       EOF
 
-      it "should collect platform specific" do
+      it "collects platform specific" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:message]).to eq("platform_specific_message")
@@ -199,7 +199,7 @@ describe "Ohai::System" do
         end
       EOF
 
-      it "should collect data from all the plugins" do
+      it "collects data from all the plugins" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         ohai.all_plugins
         expect(ohai.data[:zoo]).to eq("animals")
@@ -208,7 +208,7 @@ describe "Ohai::System" do
         expect(ohai.data[:park]).to be_frozen
       end
 
-      it "should write an error to Ohai::Log" do
+      it "writes an error to Ohai::Log" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
@@ -226,7 +226,7 @@ describe "Ohai::System" do
           Ohai.config[:disabled_plugins] = [ ]
         end
 
-        it "shouldn't run disabled plugins" do
+        it "does not run disabled plugins" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:zoo]).to be_nil
@@ -246,7 +246,7 @@ describe "Ohai::System" do
           Ohai.config[:critical_plugins] = []
         end
 
-        it "should fail when critical plugins fail" do
+        it "fails when critical plugins fail" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::CriticalPluginFailure,
             "The following Ohai plugins marked as critical failed: [:Fails]. Failing Chef run.")
@@ -254,20 +254,20 @@ describe "Ohai::System" do
       end
 
       describe "when using :optional_plugins" do
-        it "should not run optional plugins by default" do
+        it "does not run optional plugins by default" do
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:optional]).to be_nil
         end
 
-        it "should run optional plugins when specifically enabled" do
+        it "runs optional plugins when specifically enabled" do
           Ohai.config[:optional_plugins] = [ :Optional ]
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
           expect(ohai.data[:optional]).to eq("canteloupe")
         end
 
-        it "should run optional plugins when all plugins are enabled" do
+        it "runs optional plugins when all plugins are enabled" do
           Ohai.config[:run_all_plugins] = true
           Ohai.config[:plugin_path] = [ path_to(".") ]
           ohai.all_plugins
@@ -294,7 +294,7 @@ describe "Ohai::System" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should rerun the plugin providing the desired attributes" do
+      it "reruns the plugin providing the desired attributes" do
         ohai.all_plugins
         initial_value = ohai.data["random"]
         ohai.all_plugins
@@ -347,19 +347,19 @@ describe "Ohai::System" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
       end
 
-      it "should run all the plugins when a top level attribute is specified" do
+      it "runs all the plugins when a top level attribute is specified" do
         ohai.all_plugins("languages")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french][:version]).to eq(2012)
       end
 
-      it "should run the first parent when a non-existent child is specified" do
+      it "runs the first parent when a non-existent child is specified" do
         ohai.all_plugins("languages/english/version")
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french]).to be_nil
       end
 
-      it "should be able to run multiple plugins" do
+      it "is able to run multiple plugins" do
         ohai.all_plugins(["languages/english", "languages/french"])
         expect(ohai.data[:languages][:english][:version]).to eq(2014)
         expect(ohai.data[:languages][:french][:version]).to eq(2012)
@@ -406,7 +406,7 @@ describe "Ohai::System" do
         end
       E
 
-      it "should run all the plugins" do
+      it "runs all the plugins" do
         ohai.run_additional_plugins(@plugins_directory)
         expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
         expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)

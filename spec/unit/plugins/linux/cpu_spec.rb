@@ -86,12 +86,12 @@ describe Ohai::System, "General Linux cpu plugin" do
     tempfile
   end
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(tempfile_handle)
   end
 
-  after(:each) do
+  after do
 
     tempfile.close
     tempfile.unlink
@@ -154,15 +154,15 @@ describe Ohai::System, "General Linux cpu plugin" do
       EOF
     end
 
-    it_behaves_like "Common cpu info", 1, 1
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
     end
 
+    it_behaves_like "Common cpu info", 1, 1
+
     it "gets total cores" do
       plugin.run
-      expect(plugin[:cpu][:cores]).to eql(1)
+      expect(plugin[:cpu][:cores]).to be(1)
     end
 
     it "doesn't have a cpu 1" do
@@ -233,6 +233,7 @@ describe Ohai::System, "General Linux cpu plugin" do
       expect(plugin[:cpu]["0"]["flags"]).to eq(%w{fpu pse tsc msr mce cx8 sep mtrr pge cmov})
     end
   end
+
   context "with a dual-core hyperthreaded /proc/cpuinfo" do
     let(:cpuinfo_contents) do
       <<~EOF
@@ -363,7 +364,7 @@ end
 describe Ohai::System, "S390 linux cpu plugin" do
   let(:plugin) { get_plugin("cpu") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
 
@@ -410,7 +411,7 @@ end
 describe Ohai::System, "arm64 linux cpu plugin" do
   let(:plugin) { get_plugin("cpu") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
 

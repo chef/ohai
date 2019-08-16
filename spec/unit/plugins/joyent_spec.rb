@@ -20,7 +20,7 @@ describe Ohai::System, "plugin joyent" do
   let(:plugin) { get_plugin("joyent") }
 
   describe "without joyent" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:is_smartos?).and_return(false)
     end
 
@@ -31,7 +31,7 @@ describe Ohai::System, "plugin joyent" do
   end
 
   describe "with joyent" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:is_smartos?).and_return(true)
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:guest_uuid] = "global"
@@ -43,7 +43,7 @@ describe Ohai::System, "plugin joyent" do
     end
 
     describe "under global zone" do
-      before(:each) do
+      before do
         plugin.run
       end
 
@@ -57,7 +57,7 @@ describe Ohai::System, "plugin joyent" do
     end
 
     describe "under smartmachine" do
-      before(:each) do
+      before do
         plugin[:virtualization][:guest_uuid] = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx"
         plugin[:virtualization][:guest_id] = "30"
 

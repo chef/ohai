@@ -25,7 +25,7 @@ describe Ohai::System, "plugin ec2" do
 
   let(:plugin) { get_plugin("ec2") }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
     allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
@@ -41,7 +41,7 @@ describe Ohai::System, "plugin ec2" do
   end
 
   shared_examples_for "ec2" do
-    before(:each) do
+    before do
       @http_client = double("Net::HTTP client")
       allow(plugin).to receive(:http_client).and_return(@http_client)
       allow(IO).to receive(:select).and_return([[], [1], []])
@@ -335,62 +335,66 @@ describe Ohai::System, "plugin ec2" do
   end # shared examples for ec2
 
   describe "with amazon dmi bios version data" do
-    it_behaves_like "ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
       allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
     end
+
+    it_behaves_like "ec2"
+
   end
 
   describe "with non-amazon dmi bios version data" do
-    it_behaves_like "!ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
       allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
     end
+
+    it_behaves_like "!ec2"
+
   end
 
   describe "with amazon dmi bios vendor data" do
-    it_behaves_like "ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
       allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
     end
+
+    it_behaves_like "ec2"
+
   end
 
   describe "with non-amazon dmi bios vendor data" do
-    it_behaves_like "!ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
       allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
+
+    it_behaves_like "!ec2"
+
   end
 
   describe "with EC2 Xen UUID" do
-    it_behaves_like "ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
       allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
+
+    it_behaves_like "ec2"
+
   end
 
   describe "with non-EC2 Xen UUID" do
-    it_behaves_like "!ec2"
-
-    before(:each) do
+    before do
       allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
       allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
+
+    it_behaves_like "!ec2"
+
   end
 
   describe "with EC2 Identifying Number", :windows_only do
-    it_behaves_like "ec2"
-
     before do
       allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
         { "caption" => "Computer System Product",
@@ -403,11 +407,12 @@ describe Ohai::System, "plugin ec2" do
           "version" => "4.2.amazon" }
       )
     end
+
+    it_behaves_like "ec2"
+
   end
 
   describe "without EC2 Identifying Number", :windows_only do
-    it_behaves_like "!ec2"
-
     before do
       allow_any_instance_of(WmiLite::Wmi).to receive(:first_of).and_return(
         { "caption" => "Computer System Product",
@@ -420,22 +425,28 @@ describe Ohai::System, "plugin ec2" do
           "version" => "1.2.3" }
       )
     end
+
+    it_behaves_like "!ec2"
+
   end
 
   describe "with ec2 hint file" do
-    it_behaves_like "ec2"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("ec2").and_return({})
     end
-  end
-  describe "without any hints that it is an ec2 system" do
-    it_behaves_like "!ec2"
 
-    before(:each) do
+    it_behaves_like "ec2"
+
+  end
+
+  describe "without any hints that it is an ec2 system" do
+    before do
       allow(plugin).to receive(:hint?).with("ec2").and_return(false)
       plugin[:dmi] = nil
     end
+
+    it_behaves_like "!ec2"
+
   end
 
 end

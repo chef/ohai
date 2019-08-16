@@ -66,6 +66,7 @@ describe Ohai::System, "zpools plugin" do
   errors: No known data errors
       EOSR
     end
+
     before do
       allow(plugin).to receive(:platform_family).and_return("rhel")
       allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -177,6 +178,7 @@ describe Ohai::System, "zpools plugin" do
         errors: No known data errors
       EOSR
     end
+
     before do
       allow(plugin).to receive(:platform_family).and_return("solaris2")
       allow(plugin).to receive(:collect_os).and_return(:solaris2)

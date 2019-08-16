@@ -22,52 +22,58 @@ describe Ohai::System, "languages plugin" do
   VERSION_MATCHING_REGEX = /^(?:[\d]+\.)+[\d]+$/.freeze
   describe "powershell plugin", :windows_only do
     RSpec.shared_examples "a version looking thing" do
-      it "should be present" do
+      it "is present" do
         expect(subject).not_to be_nil
       end
-      it "should look like a version" do
+      it "looks like a version" do
         expect(subject).to match(VERSION_MATCHING_REGEX)
       end
     end
+    subject { @plugin[:languages][:powershell] }
+
     before(:all) do
       @plugin = get_plugin("powershell")
       @plugin[:languages] = Mash.new
       @plugin.run
     end
 
-    subject { @plugin[:languages][:powershell] }
-
-    it "should have information about powershell" do
+    it "has information about powershell" do
       expect(subject).not_to be_nil
     end
 
     describe :version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 
     describe :ws_man_stack_version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 
     describe :serialization_version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 
     describe :clr_version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 
     describe :build_version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 
     describe :remoting_protocol_version do
       subject { @plugin.languages[:powershell][described_class] }
+
       it_behaves_like "a version looking thing"
     end
 

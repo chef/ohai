@@ -19,7 +19,7 @@
 require "spec_helper"
 
 describe Ohai::System, "Linux Mdadm Plugin" do
-  before(:each) do
+  before do
     @md0 = <<~MD
       /dev/md0:
               Version : 1.2
@@ -67,46 +67,46 @@ describe Ohai::System, "Linux Mdadm Plugin" do
 
   describe "gathering Mdadm information via /proc/mdstat and mdadm" do
 
-    it "should not raise an error" do
+    it "does not raise an error" do
       expect { @plugin.run }.not_to raise_error
     end
 
-    it "should detect raid level" do
+    it "detects raid level" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:level]).to eq(10)
     end
 
-    it "should detect raid state" do
+    it "detects raid state" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:state]).to eq("clean")
     end
 
-    it "should detect raid size" do
+    it "detects raid size" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:size]).to eq(2794.16)
     end
 
-    it "should detect raid metadata level" do
+    it "detects raid metadata level" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:version]).to eq(1.2)
     end
 
     device_counts = { raid: 6, total: 6, active: 6, working: 6, failed: 0, spare: 0 }
     device_counts.each_pair do |item, expected_value|
-      it "should detect device count of \"#{item}\"" do
+      it "detects device count of \"#{item}\"" do
         @plugin.run
         expect(@plugin[:mdadm][:md0][:device_counts][item]).to eq(expected_value)
       end
     end
 
-    it "should detect member devices" do
+    it "detects member devices" do
       @plugin.run
       expect(@plugin[:mdadm][:md0][:members].sort).to eq(
         %w{sdc sdd sde sdf sdg sdh}
       )
     end
 
-    it "should detect member devices even if there are multi-digit numbers" do
+    it "detects member devices even if there are multi-digit numbers" do
       new_mdstat = double("/proc/mdstat2")
       allow(new_mdstat).to receive(:each)
         .and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]")
@@ -120,7 +120,7 @@ describe Ohai::System, "Linux Mdadm Plugin" do
       )
     end
 
-    it "should detect member devices even if mdstat has extra entries" do
+    it "detects member devices even if mdstat has extra entries" do
       new_mdstat = double("/proc/mdstat2")
       allow(new_mdstat).to receive(:each)
         .and_yield("Personalities : [raid1] [raid6] [raid5] [raid4] [linear] [multipath] [raid0] [raid10]")
@@ -134,7 +134,7 @@ describe Ohai::System, "Linux Mdadm Plugin" do
       )
     end
 
-    it "should accurately report inactive arrays" do
+    it "accuratelies report inactive arrays" do
       new_mdstat = double("/proc/mdstat_inactive")
       allow(new_mdstat).to receive(:each)
         .and_yield("Personalities :")
@@ -145,7 +145,7 @@ describe Ohai::System, "Linux Mdadm Plugin" do
       expect(@plugin[:mdadm][:md0][:spares]).to eq(%w{nvme2n1p3})
     end
 
-    it "should report journal devices" do
+    it "reports journal devices" do
       new_mdstat = double("/proc/mdstat_journal")
       allow(new_mdstat).to receive(:each)
         .and_yield("Personalies : [raid6]")
@@ -156,7 +156,7 @@ describe Ohai::System, "Linux Mdadm Plugin" do
       expect(@plugin[:mdadm][:md0][:journal]).to eq("nvme2n1p3")
     end
 
-    it "should report spare devices" do
+    it "reports spare devices" do
       new_mdstat = double("/proc/mdstat_spare")
       allow(new_mdstat).to receive(:each)
         .and_yield("Personalies : [raid6]")

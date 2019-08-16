@@ -23,7 +23,7 @@ describe Ohai::System, "plugin openstack" do
   let(:plugin) { get_plugin("openstack") }
   let(:default_timeout) { 2 }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
     plugin[:virtualization] = { system: {} }
   end
@@ -86,9 +86,11 @@ describe Ohai::System, "plugin openstack" do
       end
       context "when timout was set" do
         let(:override_timout) { 10 }
+
         before do
           Ohai::Config.ohai[:openstack_metadata_timeout] = override_timout
         end
+
         after do
           Ohai::Config.ohai[:openstack_metadata_timeout] = nil
         end

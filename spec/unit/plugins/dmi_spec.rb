@@ -104,7 +104,7 @@ describe Ohai::System, "plugin dmi" do
   let(:plugin) { get_plugin("dmi") }
   let(:stdout) { DMI_OUT }
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:shell_out).with("dmidecode").and_return(mock_shell_out(0, stdout, ""))
   end
 

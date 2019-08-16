@@ -34,7 +34,7 @@ describe Ohai::System, "plugin gce" do
   end
 
   shared_examples_for "gce" do
-    before(:each) do
+    before do
       @http_get = double("Net::HTTP client")
       allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", body: '{"instance":{"hostname":"test-host"}}', code: "200"))
       allow(IO).to receive(:select).and_return([[], [1], []])
@@ -54,17 +54,16 @@ describe Ohai::System, "plugin gce" do
   end
 
   describe "with hint file and with metadata connection" do
-    it_behaves_like "gce"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("gce").and_return({})
     end
+
+    it_behaves_like "gce"
+
   end
 
   describe "without hint file and without metadata connection" do
-    it_behaves_like "!gce"
-
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("gce").and_return(false)
 
       # Raise Errno::ENOENT to simulate the scenario in which metadata server
@@ -74,6 +73,9 @@ describe Ohai::System, "plugin gce" do
       allow(Socket).to receive(:new).and_return(t)
       allow(Socket).to receive(:pack_sockaddr_in).and_return(nil)
     end
+
+    it_behaves_like "!gce"
+
   end
 
 end

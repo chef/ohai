@@ -66,7 +66,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
     WmiLite::WmiException.new(exception, :ConnectServer, @namespace)
   end
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:windows)
   end
 

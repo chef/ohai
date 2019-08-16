@@ -29,22 +29,22 @@ describe Ohai::System, "Windows memory plugin", :windows_only do
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_OperatingSystem").and_return(mock_os)
   end
 
-  it "should get total memory" do
+  it "gets total memory" do
     @plugin.run
     expect(@plugin["memory"]["total"]).to eql("10485760kB")
   end
 
-  it "should get free memory" do
+  it "gets free memory" do
     @plugin.run
     expect(@plugin["memory"]["free"]).to eql("5242880kB")
   end
 
-  it "should get total swap" do
+  it "gets total swap" do
     @plugin.run
     expect(@plugin["memory"]["swap"]["total"]).to eql("20971520kB")
   end
 
-  it "should get free memory" do
+  it "gets free memory" do
     @plugin.run
     expect(@plugin["memory"]["swap"]["free"]).to eql("15728640kB")
   end

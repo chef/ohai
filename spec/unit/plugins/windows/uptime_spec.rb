@@ -23,7 +23,7 @@ describe Ohai::System, "Windows plugin uptime" do
   let(:plugin) { get_plugin("uptime") }
   let(:wmi) { double("wmi", { first_of: "" }) }
 
-  before(:each) do
+  before do
     allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
     allow(plugin).to receive(:collect_os).and_return(:windows)
   end

@@ -74,7 +74,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "with azure hint file" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return(hint)
     end
 
@@ -90,7 +90,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "without azure hint file or agent or dhcp options" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
@@ -123,7 +123,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "with rackspace hint file, no agent, and no dhcp lease" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
@@ -135,7 +135,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "without azure hint file but with agent on linux" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(true)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
@@ -145,7 +145,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "without azure hint file but with agent on windows" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(true)
@@ -155,7 +155,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "without azure hint or agent but with dhcp option" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
       allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
@@ -188,7 +188,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "with non-responsive metadata endpoint" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return({})
     end
 
@@ -205,7 +205,7 @@ describe Ohai::System, "plugin azure" do
   end
 
   describe "with responsive metadata endpoint" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:hint?).with("azure").and_return({})
       allow(plugin).to receive(:can_socket_connect?)
         .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)

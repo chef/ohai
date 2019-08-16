@@ -19,7 +19,7 @@
 require "spec_helper"
 
 describe Ohai::System, "plugin kernel" do
-  before(:each) do
+  before do
     @plugin = get_plugin("kernel")
     allow(@plugin).to receive(:collect_os).and_return(:default) # for debugging
     allow(@plugin).to receive(:shell_out).with("uname -s").and_return(mock_shell_out(0, "Darwin\n", ""))

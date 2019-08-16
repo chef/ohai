@@ -20,7 +20,8 @@ require "spec_helper"
 
 describe Ohai::System, "lsscsi plugin" do
   let(:plugin) { get_plugin("scsi") }
-  before(:each) do
+
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     @stdout = <<~LSSCSI
       [5:0:0:0]    disk    ATA      Hitachi HUA72205 A3EA  /dev/sda

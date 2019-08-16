@@ -41,7 +41,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
     tmp_double
   end
 
-  before(:each) do
+  before do
     @plugin = get_plugin("linux/block_device")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
 
@@ -66,7 +66,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
     end
   end
 
-  it "should collect all relevant data from disks" do
+  it "collects all relevant data from disks" do
     @plugin.run
     DISKS.each do |disk, checks|
       expect(@plugin[:block_device][disk.to_sym]).to include(checks)

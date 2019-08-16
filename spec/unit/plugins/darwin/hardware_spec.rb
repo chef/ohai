@@ -21,7 +21,8 @@ require_relative "hardware_system_profiler_output"
 
 describe Ohai::System, "Darwin hardware plugin", :unix_only do
   let(:plugin) { get_plugin("darwin/hardware") }
-  before(:each) do
+
+  before do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
     # Make sure it always runs correct commands and mock the data as it calls them
     allow(plugin).to receive(:shell_out).with(

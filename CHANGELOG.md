@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.2.6 -->
-## [v15.2.6](https://github.com/chef/ohai/tree/v15.2.6) (2019-08-15)
+<!-- latest_release 15.2.7 -->
+## [v15.2.7](https://github.com/chef/ohai/tree/v15.2.7) (2019-08-26)
 
 #### Merged Pull Requests
-- Use Benchmark.realtime for the main application time as well [#1397](https://github.com/chef/ohai/pull/1397) ([tas50](https://github.com/tas50))
+- rspec updates from rubocop-rspec [#1399](https://github.com/chef/ohai/pull/1399) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.2.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- rspec updates from rubocop-rspec [#1399](https://github.com/chef/ohai/pull/1399) ([tas50](https://github.com/tas50)) <!-- 15.2.7 -->
 - Use Benchmark.realtime for the main application time as well [#1397](https://github.com/chef/ohai/pull/1397) ([tas50](https://github.com/tas50)) <!-- 15.2.6 -->
 <!-- release_rollup -->
 

@@ -30,7 +30,7 @@ describe Ohai::System, "plugin ruby" do
     @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
   end
 
-  before(:each) do
+  before do
     @ruby_ohai_data = @ruby_ohai_data_pristine.dup
   end
 
@@ -52,7 +52,7 @@ describe Ohai::System, "plugin ruby" do
     end.find { |bin| ::File.exist? bin },
     ruby_bin: ruby_bin,
   }.each do |attribute, value|
-    it "should have #{attribute} set to #{value.inspect}" do
+    it "has #{attribute} set to #{value.inspect}" do
       expect(@ruby_ohai_data[attribute]).to eql(value)
     end
   end

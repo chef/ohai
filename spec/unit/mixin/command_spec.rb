@@ -30,14 +30,14 @@ describe Ohai::Mixin::Command, "shell_out" do
 
   let(:logger) { instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil) }
 
-  before(:each) do
+  before do
     allow(Ohai::Mixin::Command).to receive(:logger).and_return(logger)
     allow(Ohai::Mixin::Command).to receive(:name).and_return(plugin_name)
     @original_env = ENV.to_hash
     ENV.clear
   end
 
-  after(:each) do
+  after do
     ENV.clear
     ENV.update(@original_env)
   end

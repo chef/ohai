@@ -21,7 +21,7 @@ require "spec_helper"
 describe Ohai::System, "Solaris virtualization platform" do
   let(:plugin) { get_plugin("solaris2/virtualization") }
 
-  before(:each) do
+  before do
     @psrinfo_pv = <<~PSRINFO_PV
       The physical processor has 1 virtual processor (0)
         x86 (GenuineIntel family 6 model 2 step 3 clock 2667 MHz)
@@ -39,16 +39,16 @@ describe Ohai::System, "Solaris virtualization platform" do
   end
 
   describe "when we are checking for kvm" do
-    before(:each) do
+    before do
       expect(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(true)
     end
 
-    it "should run psrinfo -pv" do
+    it "runs psrinfo -pv" do
       expect(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv")
       plugin.run
     end
 
-    it "Should set kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
+    it "sets kvm guest if psrinfo -pv contains QEMU Virtual CPU" do
       allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "QEMU Virtual CPU", ""))
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -56,7 +56,7 @@ describe Ohai::System, "Solaris virtualization platform" do
       expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
-    it "should not set virtualization if kvm isn't there" do
+    it "does not set virtualization if kvm isn't there" do
       expect(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, @psrinfo_pv, ""))
       plugin.run
       expect(plugin[:virtualization][:systems]).to eq({})
@@ -90,7 +90,7 @@ describe Ohai::System, "Solaris virtualization platform" do
     end
   end
 
-  it "should not set virtualization if no tests match" do
+  it "does not set virtualization if no tests match" do
     plugin.run
     expect(plugin[:virtualization][:systems]).to eq({})
   end

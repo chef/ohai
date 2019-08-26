@@ -33,7 +33,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(plugin).to receive(:shell_out)
         .with("dpkg-query -W -f='#{format}'")
@@ -72,7 +72,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "rpmquery.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(plugin).to receive(:shell_out).with("rpm -qa --qf '#{format}'").and_return(mock_shell_out(0, stdout, ""))
       plugin.run
@@ -133,7 +133,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "pacman.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(plugin).to receive(:shell_out).with("LANG=C pacman -Qi").and_return(mock_shell_out(0, stdout, ""))
       plugin.run
@@ -209,7 +209,7 @@ describe Ohai::System, "plugin packages" do
       end
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:windows)
       allow(win_reg_double).to receive(:open).with(win_reg_keys[0]).and_return(win_reg_output[0])
       allow(win_reg_double).to receive(:open).with(win_reg_keys[1]).and_return(win_reg_output[1])
@@ -222,6 +222,7 @@ describe Ohai::System, "plugin packages" do
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', i386_reg_type).and_yield(win_reg_double)
       end
+
       it_behaves_like "windows_package_plugin"
     end
 
@@ -231,6 +232,7 @@ describe Ohai::System, "plugin packages" do
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', x86_64_reg_type).and_yield(win_reg_double)
       end
+
       it_behaves_like "windows_package_plugin"
     end
 
@@ -240,6 +242,7 @@ describe Ohai::System, "plugin packages" do
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
         allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall', Win32::Registry::KEY_READ).and_yield(win_reg_double)
       end
+
       it_behaves_like "windows_package_plugin"
     end
   end
@@ -251,7 +254,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "lslpp.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:aix)
       allow(plugin).to receive(:shell_out).with("lslpp -L -q -c").and_return(mock_shell_out(0, stdout, ""))
       plugin.run
@@ -280,7 +283,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "pkg-query.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:freebsd)
       allow(plugin).to receive(:shell_out).with('pkg query -a "%n %v"').and_return(mock_shell_out(0, stdout, ""))
       plugin.run
@@ -309,7 +312,7 @@ describe Ohai::System, "plugin packages" do
       File.read(File.join(SPEC_PLUGIN_PATH, "pkginfo.output"))
     end
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:solaris2)
       allow(plugin).to receive(:shell_out).with("pkg list -H").and_return(mock_shell_out(0, pkglist_output, ""))
       allow(plugin).to receive(:shell_out).with("pkginfo -l").and_return(mock_shell_out(0, pkginfo_output, ""))

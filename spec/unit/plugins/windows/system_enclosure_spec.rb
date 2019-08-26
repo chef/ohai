@@ -33,12 +33,12 @@ describe Ohai::System, "System Enclosure", :windows_only do
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with(("Win32_SystemEnclosure")).and_return(wmi_object)
   end
 
-  it "should return the manufacturer" do
+  it "returns the manufacturer" do
     @plugin.run
     expect(@plugin["system_enclosure"]["manufacturer"]).to eql("My Fake Manufacturer")
   end
 
-  it "should return a serial number" do
+  it "returns a serial number" do
     @plugin.run
     expect(@plugin["system_enclosure"]["serialnumber"]).to eql("1234123412341234")
   end

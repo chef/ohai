@@ -24,7 +24,7 @@ describe Ohai::System, "Windows virtualization platform" do
   let(:plugin) { get_plugin("windows/virtualization") }
   let(:wmi) { double("WmiLite::Wmi") }
 
-  before(:each) do
+  before do
     allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
     allow(plugin).to receive(:collect_os).and_return(:windows)
   end

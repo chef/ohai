@@ -23,6 +23,7 @@ describe Ohai::System, "Linux plugin platform" do
 
   describe "#read_os_release_info" do
     let(:file_contents) { "COW=MOO\nDOG=\"BARK\"" }
+
     it "returns nil if the file does not exist" do
       allow(File).to receive(:exist?).with("/etc/test-release").and_return(false)
       expect(plugin.read_os_release_info("/etc/test-release")).to be nil
@@ -211,7 +212,7 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "on system with /etc/os-release" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(::File).to receive(:exist?).with("/etc/os-release").and_return(true)
     end
@@ -228,11 +229,11 @@ describe Ohai::System, "Linux plugin platform" do
         OS_DATA
       end
 
-      before(:each) do
+      before do
         expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
       end
 
-      it "should set platform, platform_family, and platform_version from os-release" do
+      it "sets platform, platform_family, and platform_version from os-release" do
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
         expect(plugin[:platform_family]).to eq("debian")
@@ -250,11 +251,11 @@ describe Ohai::System, "Linux plugin platform" do
         OS_DATA
       end
 
-      before(:each) do
+      before do
         expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
       end
 
-      it "should set platform_version using kernel version from uname" do
+      it "sets platform_version using kernel version from uname" do
         allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
         plugin.run
         expect(plugin[:platform]).to eq("arch")
@@ -275,11 +276,11 @@ describe Ohai::System, "Linux plugin platform" do
         OS_DATA
       end
 
-      before(:each) do
+      before do
         expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
       end
 
-      it "should set platform, platform_family, and platform_version from os-release" do
+      it "sets platform, platform_family, and platform_version from os-release" do
         plugin.run
         expect(plugin[:platform]).to eq("opensuseleap")
         expect(plugin[:platform_family]).to eq("suse")
@@ -299,12 +300,12 @@ describe Ohai::System, "Linux plugin platform" do
         OS_DATA
       end
 
-      before(:each) do
+      before do
         expect(File).to receive(:read).with("/etc/os-release").and_return(os_data)
         expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS Linux release 7.5.1804 (Core)")
       end
 
-      it "should set platform, platform_family, and platform_version from os-release" do
+      it "sets platform, platform_family, and platform_version from os-release" do
         plugin.run
         expect(plugin[:platform]).to eq("centos")
         expect(plugin[:platform_family]).to eq("rhel")
@@ -330,7 +331,7 @@ describe Ohai::System, "Linux plugin platform" do
     let(:have_cisco_release) { false }
     let(:have_f5_release) { false }
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       plugin[:lsb] = Mash.new
       allow(File).to receive(:exist?).with("/etc/debian_version").and_return(have_debian_version)
@@ -352,36 +353,36 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     describe "on lsb compliant distributions" do
-      before(:each) do
+      before do
         plugin[:lsb][:id] = "Ubuntu"
         plugin[:lsb][:release] = "18.04"
       end
 
-      it "should set platform to lowercased lsb[:id]" do
+      it "sets platform to lowercased lsb[:id]" do
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
       end
 
-      it "should set platform_version to lsb[:release]" do
+      it "sets platform_version to lsb[:release]" do
         plugin.run
         expect(plugin[:platform_version]).to eq("18.04")
       end
 
-      it "should set platform to ubuntu and platform_family to debian [:lsb][:id] contains Ubuntu" do
+      it "sets platform to ubuntu and platform_family to debian [:lsb][:id] contains Ubuntu" do
         plugin[:lsb][:id] = "Ubuntu"
         plugin.run
         expect(plugin[:platform]).to eq("ubuntu")
         expect(plugin[:platform_family]).to eq("debian")
       end
 
-      it "should set platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
+      it "sets platform to debian and platform_family to debian [:lsb][:id] contains Debian" do
         plugin[:lsb][:id] = "Debian"
         plugin.run
         expect(plugin[:platform]).to eq("debian")
         expect(plugin[:platform_family]).to eq("debian")
       end
 
-      it "should set platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
+      it "sets platform to redhat and platform_family to rhel when [:lsb][:id] contains Redhat" do
         plugin[:lsb][:id] = "RedHatEnterpriseServer"
         plugin[:lsb][:release] = "7.5"
         plugin.run
@@ -389,7 +390,7 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin[:platform_family]).to eq("rhel")
       end
 
-      it "should set platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
+      it "sets platform to amazon and platform_family to rhel when [:lsb][:id] contains Amazon" do
         plugin[:lsb][:id] = "AmazonAMI"
         plugin[:lsb][:release] = "2018.03"
         plugin.run
@@ -397,14 +398,14 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin[:platform_family]).to eq("amazon")
       end
 
-      it "should set platform to scientific when [:lsb][:id] contains ScientificSL" do
+      it "sets platform to scientific when [:lsb][:id] contains ScientificSL" do
         plugin[:lsb][:id] = "ScientificSL"
         plugin[:lsb][:release] = "7.5"
         plugin.run
         expect(plugin[:platform]).to eq("scientific")
       end
 
-      it "should set platform to ibm_powerkvm and platform_family to rhel when [:lsb][:id] contains IBM_PowerKVM" do
+      it "sets platform to ibm_powerkvm and platform_family to rhel when [:lsb][:id] contains IBM_PowerKVM" do
         plugin[:lsb][:id] = "IBM_PowerKVM"
         plugin[:lsb][:release] = "2.1"
         plugin.run
@@ -417,24 +418,24 @@ describe Ohai::System, "Linux plugin platform" do
 
       let(:have_debian_version) { true }
 
-      before(:each) do
+      before do
         plugin.lsb = nil
       end
 
-      it "should read the version from /etc/debian_version" do
+      it "reads the version from /etc/debian_version" do
         expect(File).to receive(:read).with("/etc/debian_version").and_return("9.5")
         plugin.run
         expect(plugin[:platform_version]).to eq("9.5")
       end
 
-      it "should correctly strip any newlines" do
+      it "correctlies strip any newlines" do
         expect(File).to receive(:read).with("/etc/debian_version").and_return("9.5\n")
         plugin.run
         expect(plugin[:platform_version]).to eq("9.5")
       end
 
       # Ubuntu has /etc/debian_version as well
-      it "should detect Ubuntu as itself rather than debian" do
+      it "detects Ubuntu as itself rather than debian" do
         plugin[:lsb][:id] = "Ubuntu"
         plugin[:lsb][:release] = "18.04"
         plugin.run
@@ -446,18 +447,18 @@ describe Ohai::System, "Linux plugin platform" do
 
       let(:have_slackware_version) { true }
 
-      before(:each) do
+      before do
         plugin.lsb = nil
       end
 
-      it "should set platform and platform_family to slackware" do
+      it "sets platform and platform_family to slackware" do
         expect(File).to receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
         plugin.run
         expect(plugin[:platform]).to eq("slackware")
         expect(plugin[:platform_family]).to eq("slackware")
       end
 
-      it "should set platform_version on slackware" do
+      it "sets platform_version on slackware" do
         expect(File).to receive(:read).with("/etc/slackware-version").and_return("Slackware 12.0.0")
         plugin.run
         expect(plugin[:platform_version]).to eq("12.0.0")
@@ -470,11 +471,11 @@ describe Ohai::System, "Linux plugin platform" do
       let(:have_redhat_release) { true }
       let(:have_eos_release) { true }
 
-      before(:each) do
+      before do
         plugin.lsb = nil
       end
 
-      it "should set platform to arista_eos" do
+      it "sets platform to arista_eos" do
         expect(File).to receive(:read).with("/etc/Eos-release").and_return("Arista Networks EOS 4.21.1.1F")
         plugin.run
         expect(plugin[:platform]).to eq("arista_eos")
@@ -487,11 +488,11 @@ describe Ohai::System, "Linux plugin platform" do
 
       let(:have_f5_release) { true }
 
-      before(:each) do
+      before do
         plugin.lsb = nil
       end
 
-      it "should set platform to bigip" do
+      it "sets platform to bigip" do
         expect(File).to receive(:read).with("/etc/f5-release").and_return("BIG-IP release 13.0.0 (Final)")
         plugin.run
         expect(plugin[:platform]).to eq("bigip")
@@ -504,18 +505,18 @@ describe Ohai::System, "Linux plugin platform" do
 
       let(:have_exherbo_release) { true }
 
-      before(:each) do
+      before do
         allow(plugin).to receive(:shell_out).with("/bin/uname -r").and_return(mock_shell_out(0, "3.18.2-2-ARCH\n", ""))
         plugin.lsb = nil
       end
 
-      it "should set platform and platform_family to exherbo" do
+      it "sets platform and platform_family to exherbo" do
         plugin.run
         expect(plugin[:platform]).to eq("exherbo")
         expect(plugin[:platform_family]).to eq("exherbo")
       end
 
-      it "should set platform_version to kernel release" do
+      it "sets platform_version to kernel release" do
         plugin.run
         expect(plugin[:platform_version]).to eq("3.18.2-2-ARCH")
       end
@@ -524,7 +525,7 @@ describe Ohai::System, "Linux plugin platform" do
 
     describe "on redhat breeds" do
       describe "with lsb_release results" do
-        it "should set the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
+        it "sets the platform to redhat and platform_family to rhel even if the LSB name is something absurd but redhat like" do
           plugin[:lsb][:id] = "RedHatEnterpriseServer"
           plugin[:lsb][:release] = "7.5"
           plugin.run
@@ -533,7 +534,7 @@ describe Ohai::System, "Linux plugin platform" do
           expect(plugin[:platform_family]).to eq("rhel")
         end
 
-        it "should set the platform to centos and platform_family to rhel" do
+        it "sets the platform to centos and platform_family to rhel" do
           plugin[:lsb][:id] = "CentOS"
           plugin[:lsb][:release] = "7.5"
           plugin.run
@@ -547,11 +548,11 @@ describe Ohai::System, "Linux plugin platform" do
 
         let(:have_redhat_release) { true }
 
-        before(:each) do
+        before do
           plugin.lsb = nil
         end
 
-        it "should read the platform as centos and version as 7.5" do
+        it "reads the platform as centos and version as 7.5" do
           expect(File).to receive(:read).with("/etc/redhat-release").and_return("CentOS Linux release 7.5.1804 (Core)")
           plugin.run
           expect(plugin[:platform]).to eq("centos")
@@ -564,7 +565,7 @@ describe Ohai::System, "Linux plugin platform" do
           expect(plugin[:platform]).to eq("redhat")
         end
 
-        it "should read the platform as redhat without a space" do
+        it "reads the platform as redhat without a space" do
           expect(File).to receive(:read).with("/etc/redhat-release").and_return("RedHat release 5.3")
           plugin.run
           expect(plugin[:platform]).to eq("redhat")
@@ -581,7 +582,7 @@ describe Ohai::System, "Linux plugin platform" do
 
       describe "with lsb_result" do
 
-        it "should read the platform as parallels and version as 6.0.5" do
+        it "reads the platform as parallels and version as 6.0.5" do
           plugin[:lsb][:id] = "CloudLinuxServer"
           plugin[:lsb][:release] = "6.5"
           allow(File).to receive(:read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
@@ -595,11 +596,11 @@ describe Ohai::System, "Linux plugin platform" do
 
       describe "without lsb_results" do
 
-        before(:each) do
+        before do
           plugin.lsb = nil
         end
 
-        it "should read the platform as parallels and version as 6.0.5" do
+        it "reads the platform as parallels and version as 6.0.5" do
           allow(File).to receive(:read).with("/etc/redhat-release").and_return("CloudLinux Server release 6.5 (Pavel Popovich)")
           expect(File).to receive(:read).with("/etc/parallels-release").and_return("Parallels Cloud Server 6.0.5 (20007)")
           plugin.run
@@ -620,7 +621,7 @@ describe Ohai::System, "Linux plugin platform" do
 
           let(:have_enterprise_release) { true }
 
-          it "should read the platform as oracle and version as 5.7" do
+          it "reads the platform as oracle and version as 5.7" do
             plugin[:lsb][:id] = "EnterpriseEnterpriseServer"
             plugin[:lsb][:release] = "5.7"
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
@@ -635,7 +636,7 @@ describe Ohai::System, "Linux plugin platform" do
 
           let(:have_oracle_release) { true }
 
-          it "should read the platform as oracle and version as 6.1" do
+          it "reads the platform as oracle and version as 6.1" do
             plugin[:lsb][:id] = "OracleServer"
             plugin[:lsb][:release] = "6.1"
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
@@ -649,7 +650,7 @@ describe Ohai::System, "Linux plugin platform" do
       end
 
       context "without lsb_results" do
-        before(:each) do
+        before do
           plugin.lsb = nil
         end
 
@@ -657,7 +658,7 @@ describe Ohai::System, "Linux plugin platform" do
 
           let(:have_enterprise_release) { true }
 
-          it "should read the platform as oracle and version as 5" do
+          it "reads the platform as oracle and version as 5" do
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
             expect(File).to receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5 (Carthage)")
             plugin.run
@@ -665,7 +666,7 @@ describe Ohai::System, "Linux plugin platform" do
             expect(plugin[:platform_version]).to eq("5")
           end
 
-          it "should read the platform as oracle and version as 5.1" do
+          it "reads the platform as oracle and version as 5.1" do
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
             expect(File).to receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.1 (Carthage)")
             plugin.run
@@ -673,7 +674,7 @@ describe Ohai::System, "Linux plugin platform" do
             expect(plugin[:platform_version]).to eq("5.1")
           end
 
-          it "should read the platform as oracle and version as 5.7" do
+          it "reads the platform as oracle and version as 5.7" do
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 5.7 (Tikanga)")
             expect(File).to receive(:read).with("/etc/enterprise-release").and_return("Enterprise Linux Enterprise Linux Server release 5.7 (Carthage)")
             plugin.run
@@ -687,7 +688,7 @@ describe Ohai::System, "Linux plugin platform" do
 
           let(:have_oracle_release) { true }
 
-          it "should read the platform as oracle and version as 6.0" do
+          it "reads the platform as oracle and version as 6.0" do
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.0 (Santiago)")
             expect(File).to receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.0")
             plugin.run
@@ -695,7 +696,7 @@ describe Ohai::System, "Linux plugin platform" do
             expect(plugin[:platform_version]).to eq("6.0")
           end
 
-          it "should read the platform as oracle and version as 6.1" do
+          it "reads the platform as oracle and version as 6.1" do
             allow(File).to receive(:read).with("/etc/redhat-release").and_return("Red Hat Enterprise Linux Server release 6.1 (Santiago)")
             expect(File).to receive(:read).with("/etc/oracle-release").and_return("Oracle Linux Server release 6.1")
             plugin.run
@@ -712,11 +713,11 @@ describe Ohai::System, "Linux plugin platform" do
         let(:have_os_release) { false }
 
         describe "with lsb_release results" do
-          before(:each) do
+          before do
             plugin[:lsb][:id] = "SUSE LINUX"
           end
 
-          it "should read the platform as opensuse on openSUSE" do
+          it "reads the platform as opensuse on openSUSE" do
             plugin[:lsb][:release] = "12.1"
             expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.1 (x86_64)\nVERSION = 12.1\nCODENAME = Asparagus\n")
             plugin.run
@@ -730,18 +731,18 @@ describe Ohai::System, "Linux plugin platform" do
         let(:have_suse_release) { true }
 
         describe "without lsb_release results" do
-          before(:each) do
+          before do
             plugin.lsb = nil
           end
 
-          it "should set platform and platform_family to suse and bogus verion to 10.0" do
+          it "sets platform and platform_family to suse and bogus verion to 10.0" do
             expect(File).to receive(:read).with("/etc/SuSE-release").at_least(:once).and_return("VERSION = 10.0")
             plugin.run
             expect(plugin[:platform]).to eq("suse")
             expect(plugin[:platform_family]).to eq("suse")
           end
 
-          it "should read the version as 11.2" do
+          it "reads the version as 11.2" do
             expect(File).to receive(:read).with("/etc/SuSE-release").and_return("SUSE Linux Enterprise Server 11.2 (i586)\nVERSION = 11\nPATCHLEVEL = 2\n")
             plugin.run
             expect(plugin[:platform]).to eq("suse")
@@ -765,14 +766,14 @@ describe Ohai::System, "Linux plugin platform" do
             expect(plugin[:platform_family]).to eq("suse")
           end
 
-          it "should read the platform as opensuse on openSUSE" do
+          it "reads the platform as opensuse on openSUSE" do
             expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 12.2 (x86_64)\nVERSION = 12.2\nCODENAME = Mantis\n")
             plugin.run
             expect(plugin[:platform]).to eq("opensuse")
             expect(plugin[:platform_family]).to eq("suse")
           end
 
-          it "should read the platform as opensuseleap on openSUSE Leap" do
+          it "reads the platform as opensuseleap on openSUSE Leap" do
             expect(File).to receive(:read).with("/etc/SuSE-release").and_return("openSUSE 42.1 (x86_64)\nVERSION = 42.1\nCODENAME = Malachite\n")
             plugin.run
             expect(plugin[:platform]).to eq("opensuseleap")
@@ -794,10 +795,12 @@ describe Ohai::System, "Linux plugin platform" do
           PRETTY_NAME="Clear Linux OS"
         CLEARLINUX_RELEASE
       end
+
       before do
         expect(File).to receive(:read).with("/usr/lib/os-release").and_return(usr_lib_os_release_content)
       end
-      it "should set platform to clearlinux and platform_family to clearlinux" do
+
+      it "sets platform to clearlinux and platform_family to clearlinux" do
         plugin.lsb = nil
         plugin.run
         expect(plugin[:platform]).to eq("clearlinux")

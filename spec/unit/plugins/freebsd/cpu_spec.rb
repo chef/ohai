@@ -19,7 +19,7 @@
 require "spec_helper"
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
-  before(:each) do
+  before do
     @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     @double_file = double("/var/run/dmesg.boot")
@@ -94,7 +94,7 @@ describe Ohai::System, "FreeBSD cpu plugin on FreeBSD >=10.2" do
 end
 
 describe Ohai::System, "FreeBSD cpu plugin on FreeBSD <=10.1" do
-  before(:each) do
+  before do
     @plugin = get_plugin("cpu")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
     allow(@plugin).to receive(:shell_out).with("sysctl -n hw.ncpu").and_return(mock_shell_out(0, "2", ""))

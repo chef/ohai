@@ -299,13 +299,13 @@ EOF
 describe Ohai::System, "plugin virtualbox" do
   let(:plugin) { get_plugin("virtualbox") }
 
-  before(:each) do
+  before do
     plugin[:virtualization] = Mash.new
     plugin[:virtualization][:systems] = Mash.new
   end
 
   context "when not on a virtualbox guest" do
-    it "should not set the virtualbox attribute" do
+    it "does not set the virtualbox attribute" do
       plugin[:virtualization][:systems][:vmware] = "host"
       plugin.run
       expect(plugin).not_to have_key(:virtualbox)
@@ -314,7 +314,7 @@ describe Ohai::System, "plugin virtualbox" do
 
   context "when on a vbox guest" do
     context "when VBoxControl shellout fails" do
-      it "should not set the virtualbox attribute" do
+      it "does not set the virtualbox attribute" do
         plugin[:virtualization][:systems][:vbox] = "guest"
         allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(1, "", ""))
         plugin.run
@@ -323,29 +323,29 @@ describe Ohai::System, "plugin virtualbox" do
     end
 
     context "when VBoxControl shellout succeeds" do
-      before(:each) do
+      before do
         plugin[:virtualization][:systems][:vbox] = "guest"
         allow(plugin).to receive(:shell_out).with("VBoxControl guestproperty enumerate").and_return(mock_shell_out(0, vbox_output, ""))
         plugin.run
       end
 
-      it "should set the host version" do
+      it "sets the host version" do
         expect(plugin[:virtualbox][:host][:version]).to eql("5.0.10")
       end
 
-      it "should set the host revision" do
+      it "sets the host revision" do
         expect(plugin[:virtualbox][:host][:revision]).to eql("104061")
       end
 
-      it "should set the host language" do
+      it "sets the host language" do
         expect(plugin[:virtualbox][:host][:language]).to eql("en_US")
       end
 
-      it "should set the guest additions version" do
+      it "sets the guest additions version" do
         expect(plugin[:virtualbox][:guest][:guest_additions_version]).to eql("5.0.2")
       end
 
-      it "should set the guest additions revision" do
+      it "sets the guest additions revision" do
         expect(plugin[:virtualbox][:guest][:guest_additions_revision]).to eql("102096")
       end
     end
@@ -353,7 +353,7 @@ describe Ohai::System, "plugin virtualbox" do
 
   context "when on a vbox host" do
     context "if the host has virtualbox installed" do
-      it "should create a vbox attribute with accurate data" do
+      it "creates a vbox attribute with accurate data" do
         plugin[:virtualization][:systems][:vbox] = "host"
         allow(plugin).to receive(:which).with("VBoxManage").and_return("/usr/bin/VBoxManage")
         allow(plugin).to receive(:shell_out).with("VBoxManage list --sorted vms").and_return(mock_shell_out(0, vbox_list_vms_stdout, ""))

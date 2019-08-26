@@ -65,7 +65,7 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
     plugin.run
   end
 
-  it "should set the correct system information" do
+  it "sets the correct system information" do
     expect(plugin[:kernel][:name]).to eq("Microsoft Windows 7 Ultimate")
     expect(plugin[:kernel][:release]).to eq("6.1.7601")
     expect(plugin[:kernel][:version]).to eq("6.1.7601 Service Pack 1 Build 7601")

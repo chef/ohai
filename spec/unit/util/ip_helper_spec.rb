@@ -78,12 +78,12 @@ describe "Ohai::Util::IpHelper" do
       allow(ip_helper).to receive(:private_address?)
     end
 
-    it "should call #private_address?" do
+    it "calls #private_address?" do
       expect(ip_helper).to receive(:private_address?)
       ip_helper.public_address?(address)
     end
 
-    it "should return the inverse of #private_address?" do
+    it "returns the inverse of #private_address?" do
       expect(ip_helper.public_address?(address)).to equal !ip_helper.private_address?(address)
     end
   end
@@ -93,7 +93,7 @@ describe "Ohai::Util::IpHelper" do
       context "that is a loopback address" do
         let(:address) { "127.0.0.1" }
 
-        it "should identify the address as a loopback address" do
+        it "identifies the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_truthy
         end
       end
@@ -101,7 +101,7 @@ describe "Ohai::Util::IpHelper" do
       context "that is not a loopback address" do
         let(:address) { "1.2.3.4" }
 
-        it "should not identify the address as a loopback address" do
+        it "does not identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_falsey
         end
       end
@@ -111,7 +111,7 @@ describe "Ohai::Util::IpHelper" do
       context "that is a loopback address" do
         let(:address) { "0:0:0:0:0:0:0:1" }
 
-        it "should identify the address as a loopback address" do
+        it "identifies the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_truthy
         end
       end
@@ -119,7 +119,7 @@ describe "Ohai::Util::IpHelper" do
       context "that is not a loopback address" do
         let(:address) { "2400:6180:0000:00D0:0000:0000:0009:7001" }
 
-        it "should not identify the address as a loopback address" do
+        it "does not identify the address as a loopback address" do
           expect(ip_helper.loopback?(address)).to be_falsey
         end
       end

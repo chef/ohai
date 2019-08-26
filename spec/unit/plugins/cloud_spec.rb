@@ -19,7 +19,7 @@ require "spec_helper"
 require "ipaddr"
 
 describe "CloudAttrs object" do
-  before(:each) do
+  before do
     @plugin = get_plugin("cloud")
   end
 
@@ -73,7 +73,7 @@ describe "CloudAttrs object" do
 end
 
 describe Ohai::System, "plugin cloud" do
-  before(:each) do
+  before do
     @plugin = get_plugin("cloud")
   end
 
@@ -335,7 +335,7 @@ describe Ohai::System, "plugin cloud" do
       expect(@plugin[:cloud][:public_ssh_port]).to be_nil
     end
 
-    it "should not populate cloud public_ssh_port when winrm is used" do
+    it "does not populate cloud public_ssh_port when winrm is used" do
       @plugin[:azure]["public_winrm_port"] = "5985"
       @plugin.run
       expect(@plugin[:cloud][:public_ssh_port]).to be_nil
@@ -399,7 +399,7 @@ describe Ohai::System, "plugin cloud" do
         }
     end
 
-    before(:each) do
+    before do
       @plugin.run
     end
 

@@ -20,7 +20,7 @@ require "spec_helper"
 
 describe Ohai::System, "ssh_host_key plugin" do
 
-  before(:each) do
+  before do
     @plugin = get_plugin("ssh_host_key")
     @plugin[:keys] = Mash.new
 
@@ -83,6 +83,7 @@ describe Ohai::System, "ssh_host_key plugin" do
         HostKey /etc/ssh/ssh_host_ed25519_key
       EOS
     end
+
     it_behaves_like "loads keys"
   end
 
@@ -96,6 +97,7 @@ describe Ohai::System, "ssh_host_key plugin" do
         #HostKey /etc/ssh/ssh_host_ed25519_key
       EOS
     end
+
     it_behaves_like "loads keys"
   end
 
@@ -103,6 +105,7 @@ describe Ohai::System, "ssh_host_key plugin" do
     let :sshd_config_file do
       nil
     end
+
     before do
       allow(File).to receive(:exist?).with("/etc/ssh/sshd_config").and_return(false)
       allow(File).to receive(:exist?).with("/etc/sshd_config").and_return(false)

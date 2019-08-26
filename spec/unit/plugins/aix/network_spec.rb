@@ -20,7 +20,7 @@ require "spec_helper"
 
 describe Ohai::System, "AIX network plugin" do
 
-  before(:each) do
+  before do
     @netstat_rn_grep_default = <<~NETSTAT_RN_GREP_DEFAULT
       default            172.31.8.1        UG        2    121789 en0      -      -
     NETSTAT_RN_GREP_DEFAULT
@@ -232,6 +232,7 @@ describe Ohai::System, "AIX network plugin" do
         @plugin.run
         @inet_interface_addresses = @plugin["network"]["interfaces"]["en0"][:addresses]["BE:42:80:00:B0:05"]
       end
+
       it "detects the family" do
         expect(@inet_interface_addresses[:family]).to eq("lladdr")
       end
@@ -286,6 +287,7 @@ describe Ohai::System, "AIX network plugin" do
     before do
       @plugin.run
     end
+
     it "supresses the hostname entries" do
       expect(@plugin["network"]["arp"][0][:remote_host]).to eq("?")
     end
@@ -303,6 +305,7 @@ describe Ohai::System, "AIX network plugin" do
     before do
       @plugin.run
     end
+
     it "converts a netmask from hexadecimal form to decimal form" do
       expect(@plugin.hex_to_dec_netmask("0xffff0000")).to eq("255.255.0.0")
     end

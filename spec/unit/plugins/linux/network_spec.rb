@@ -371,7 +371,7 @@ describe Ohai::System, "Linux Network Plugin" do
     EOM
   end
 
-  before(:each) do
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, linux_ip_addr, ""))
@@ -545,7 +545,7 @@ describe Ohai::System, "Linux Network Plugin" do
 
   %w{ifconfig iproute2}.each do |network_method|
     describe "gathering IP layer address info via #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:which).with("ip").and_return( network_method == "iproute2" ? "/sbin/ip" : false )
         allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
         plugin.run
@@ -688,7 +688,7 @@ describe Ohai::System, "Linux Network Plugin" do
     end
 
     describe "gathering interface counters via #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
         allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
@@ -727,7 +727,7 @@ describe Ohai::System, "Linux Network Plugin" do
     end
 
     describe "setting the node's default IP address attribute with #{network_method}" do
-      before(:each) do
+      before do
         allow(plugin).to receive(:which).with("ip").and_return(network_method == "iproute2" ? "/sbin/ip" : false)
         allow(plugin).to receive(:which).with("ethtool").and_return("/sbin/ethtool")
         plugin.run
@@ -760,7 +760,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -790,7 +790,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -806,7 +806,7 @@ describe Ohai::System, "Linux Network Plugin" do
   end
 
   describe "for newer network features using iproute2 only" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:which).with("ip").and_return("/sbin/ip")
       allow(plugin).to receive(:which).with("ethtool").and_return( "/sbin/ethtool" )
       allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(true) # ipv6 is enabled
@@ -860,7 +860,7 @@ describe Ohai::System, "Linux Network Plugin" do
     end
 
     describe "when IPv6 is disabled" do
-      before :each do
+      before do
         allow(File).to receive(:exist?).with("/proc/net/if_inet6").and_return(false)
         plugin.run
       end
@@ -891,7 +891,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -929,7 +929,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -970,7 +970,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1013,7 +1013,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1114,7 +1114,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1135,7 +1135,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1160,7 +1160,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1185,7 +1185,8 @@ describe Ohai::System, "Linux Network Plugin" do
             default via fe80::21c:eff:fe12:3456 dev eth0.153  src fe80::2e0:81ff:fe2b:48e7  metric 1024
           EOM
         end
-        before(:each) do
+
+        before do
           plugin.run
         end
 
@@ -1219,7 +1220,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 
@@ -1258,7 +1259,7 @@ describe Ohai::System, "Linux Network Plugin" do
         let(:linux_ip_route_inet6) { "" }
         let(:linux_ip_inet6_neighbor_show) { "" }
 
-        before(:each) do
+        before do
           allow(plugin).to receive(:is_openvz?).and_return true
           allow(plugin).to receive(:is_openvz_host?).and_return false
           plugin.run
@@ -1303,7 +1304,7 @@ describe Ohai::System, "Linux Network Plugin" do
           EOM
         end
 
-        before(:each) do
+        before do
           plugin.run
         end
 

@@ -26,7 +26,7 @@ end
 describe "Ohai::Util::FileHelper" do
   let(:file_helper) { FileHelperMock.new }
 
-  before(:each) do
+  before do
     allow(file_helper).to receive(:name).and_return("Fakeclass")
     logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
     allow(file_helper).to receive(:logger).and_return(logger)

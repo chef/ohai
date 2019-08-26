@@ -74,7 +74,7 @@ describe Ohai::System, "plugin c" do
 
   let(:plugin) { get_plugin("c") }
 
-  before(:each) do
+  before do
 
     plugin[:languages] = Mash.new
     # gcc
@@ -82,7 +82,7 @@ describe Ohai::System, "plugin c" do
   end
 
   context "on AIX" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:aix)
       allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
     end
@@ -123,8 +123,9 @@ describe Ohai::System, "plugin c" do
     end
 
   end
+
   context "on Darwin" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out).with("/usr/bin/xcode-select -p").and_return(mock_shell_out(0, "", ""))
       allow(plugin).to receive(:collect_os).and_return(:darwin)
     end
@@ -143,7 +144,7 @@ describe Ohai::System, "plugin c" do
   end
 
   context "on Windows" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:windows)
       allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
       allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
@@ -209,7 +210,7 @@ describe Ohai::System, "plugin c" do
   end
 
   context "on Linux" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       # glibc
       allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))

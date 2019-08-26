@@ -47,7 +47,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell/ghc is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -63,7 +63,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell/ghci is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -79,7 +79,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell/cabal is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -95,7 +95,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell/stack is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       plugin.run
     end
@@ -111,7 +111,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell/stack prerelease is installed" do
 
-    before(:each) do
+    before do
       setup_plugin
       allow(plugin).to receive(:shell_out)
         .with("stack --version")
@@ -130,7 +130,7 @@ describe Ohai::System, "plugin haskell" do
 
   context "if haskell is NOT installed" do
 
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .and_raise( Ohai::Exceptions::Exec )
       plugin.run
@@ -142,7 +142,7 @@ describe Ohai::System, "plugin haskell" do
   end
 
   context "if haskell/ghc is NOT installed" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .with("ghc --version")
         .and_raise( Ohai::Exceptions::Exec )
@@ -164,7 +164,7 @@ describe Ohai::System, "plugin haskell" do
   end
 
   context "if haskell/ghci is NOT installed" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .with("ghc --version")
         .and_return(mock_shell_out(0, ghc_out, ""))
@@ -186,7 +186,7 @@ describe Ohai::System, "plugin haskell" do
   end
 
   context "if haskell/cabal is NOT installed" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .with("ghc --version")
         .and_return(mock_shell_out(0, ghc_out, ""))
@@ -208,7 +208,7 @@ describe Ohai::System, "plugin haskell" do
   end
 
   context "if haskell/stack is NOT installed" do
-    before(:each) do
+    before do
       allow(plugin).to receive(:shell_out)
         .with("ghc --version")
         .and_return(mock_shell_out(0, ghc_out, ""))

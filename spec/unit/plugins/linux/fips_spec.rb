@@ -20,16 +20,16 @@ require "spec_helper"
 require "openssl"
 
 describe Ohai::System, "plugin fips" do
-  let(:enabled) { "0" }
-  let(:plugin) { get_plugin("linux/fips") }
-  let(:openssl_test_mode) { false }
-
   subject do
     plugin.run
     plugin["fips"]["kernel"]["enabled"]
   end
 
-  before(:each) do
+  let(:enabled) { "0" }
+  let(:plugin) { get_plugin("linux/fips") }
+  let(:openssl_test_mode) { false }
+
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
@@ -44,6 +44,7 @@ describe Ohai::System, "plugin fips" do
 
   context "with OpenSSL.fips_mode == false" do
     before { allow(OpenSSL).to receive(:fips_mode).and_return(false) }
+
     it "does not set fips plugin" do
       expect(subject).to be(false)
     end
@@ -51,6 +52,7 @@ describe Ohai::System, "plugin fips" do
 
   context "with OpenSSL.fips_mode == true" do
     before { allow(OpenSSL).to receive(:fips_mode).and_return(true) }
+
     it "sets fips plugin" do
       expect(subject).to be(true)
     end

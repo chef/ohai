@@ -155,7 +155,7 @@ shared_examples "Ohai::DSL::Plugin" do
   end
 
   context "when getting attributes" do
-    before(:each) do
+    before do
       plugin.set_attribute(:tea, "is soothing")
     end
 
@@ -170,7 +170,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a top-level attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:tea, "is soothing")
       end
 
@@ -196,7 +196,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a nested attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:the_monarch, { arch_rival: "dr_venture" })
       end
 
@@ -304,7 +304,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
 
     describe "a nested attribute" do
-      before(:each) do
+      before do
         plugin.set_attribute(:the_monarch, { arch_rival: "dr_venture" })
       end
 
@@ -383,9 +383,10 @@ end
 
 describe Ohai::DSL::Plugin::VersionVII do
   let(:logger) { Ohai::Log }
+
   it "does not modify the plugin name when the plugin is named correctly" do
     plugin = Ohai.plugin(:FunkyVALIDpluginName) {}.new({}, logger)
-    expect(plugin.name).to eql(:FunkyVALIDpluginName)
+    expect(plugin.name).to be(:FunkyVALIDpluginName)
   end
 
   describe "when the plugin is named incorrectly" do
@@ -411,7 +412,7 @@ describe Ohai::DSL::Plugin::VersionVII do
   describe "#version" do
     it "saves the plugin version as :version7" do
       plugin = Ohai.plugin(:Test) {}
-      expect(plugin.version).to eql(:version7)
+      expect(plugin.version).to be(:version7)
     end
   end
 
@@ -575,7 +576,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
       it "does not auto-vivify an un-configured plugin" do
         plugin.configuration(:foo)
-        expect(Ohai.config[:plugin]).to_not have_key(:test)
+        expect(Ohai.config[:plugin]).not_to have_key(:test)
       end
 
       it "returns nil when the option is not configured" do

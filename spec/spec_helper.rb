@@ -16,8 +16,8 @@ PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
 SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
 
 RSpec.configure do |config|
-  config.before(:each) { @object_pristine = Object.clone }
-  config.after(:each) { remove_constants }
+  config.before { @object_pristine = Object.clone }
+  config.after { remove_constants }
 end
 
 include Ohai::Mixin::ConstantHelper
@@ -36,19 +36,19 @@ def convert_windows_output(stdout)
 end
 
 def it_should_check_from(plugin, attribute, from, value)
-  it "should set the #{attribute} to the value from '#{from}'" do
+  it "sets the #{attribute} to the value from '#{from}'" do
     @plugin.run
     expect(@plugin[attribute]).to eq(value)
   end
 end
 
 def it_should_check_from_mash(plugin, attribute, from, value)
-  it "should get the #{plugin}[:#{attribute}] value from '#{from}'" do
+  it "gets the #{plugin}[:#{attribute}] value from '#{from}'" do
     expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
-  it "should set the #{plugin}[:#{attribute}] to the value from '#{from}'" do
+  it "sets the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
     expect(@plugin[plugin][attribute]).to eq(value[1].split($/)[0])
   end
@@ -64,12 +64,12 @@ end
 
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
-  it "should get the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
+  it "gets the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
     expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
     @plugin.run
   end
 
-  it "should set the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
+  it "sets the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
     value = value[1].split($/)[0]
     if mash.is_a?(String)
@@ -114,7 +114,7 @@ RSpec.configure do |config|
 
   config.run_all_when_everything_filtered = true
 
-  config.before :each do
+  config.before do
     # TODO: Change to Ohai.config once Ohai::Config is deprecated fully. Needs
     # to stay Ohai::Config for now so that top-level attributes will get cleared
     # out between tests (config_spec should be the only place where top-level

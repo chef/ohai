@@ -20,7 +20,8 @@ require "spec_helper"
 
 describe Ohai::System, "Linux lspci plugin" do
   let(:plugin) { get_plugin("linux/lspci") }
-  before(:each) do
+
+  before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     @stdout = <<~LSPCI
       Device:	00:1f.3

@@ -47,6 +47,9 @@ Ohai.plugin(:Openstack) do
 
   # dreamhost systems have the dhc-user on them
   def openstack_provider
+    # dream host doesn't support windows so bail early if we're on windows
+    return "openstack" if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+
     if Etc.getpwnam("dhc-user")
       "dreamhost"
     end

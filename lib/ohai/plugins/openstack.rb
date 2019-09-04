@@ -28,7 +28,7 @@ Ohai.plugin(:Openstack) do
 
   # use virtualization data
   def openstack_virtualization?
-    if get_attribute(:virtualization, :system, :guest) == "openstack"
+    if get_attribute(:virtualization, :systems, :openstack)
       logger.trace("Plugin Openstack: has_openstack_virtualization? == true")
       true
     end

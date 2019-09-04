@@ -26,7 +26,7 @@ describe Ohai::System, "plugin openstack" do
   before do
     PasswdEntry = Struct.new(:name, :uid, :gid, :dir, :shell, :gecos)
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
-    plugin[:virtualization] = { system: {} }
+    plugin[:virtualization] = { systems: {} }
   end
 
   context "when there is no relevant hint or virtualization data" do
@@ -42,7 +42,7 @@ describe Ohai::System, "plugin openstack" do
         allow(plugin).to receive(:can_socket_connect?)
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
-        plugin[:virtualization] = { system: { guest: "openstack" } }
+        plugin[:virtualization] = { systems: { openstack: "guest" } }
         expect(Etc).to receive(:getpwnam).and_raise(ArgumentError)
         plugin.run
       end
@@ -63,7 +63,7 @@ describe Ohai::System, "plugin openstack" do
       allow(plugin).to receive(:can_socket_connect?)
         .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
-      plugin[:virtualization] = { system: { guest: "openstack" } }
+      plugin[:virtualization] = { systems: { openstack: "guest" } }
       expect(Etc).to receive(:getpwnam).and_return(PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user"))
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")
@@ -295,7 +295,7 @@ describe Ohai::System, "plugin openstack" do
         allow(plugin).to receive(:can_socket_connect?)
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
-        plugin[:virtualization] = { system: { guest: "openstack" } }
+        plugin[:virtualization] = { systems: { openstack: "guest" } }
         plugin.run
       end
 

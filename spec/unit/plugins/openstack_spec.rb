@@ -36,7 +36,7 @@ describe Ohai::System, "plugin openstack" do
     end
   end
 
-  context "when virtualization data is Openstack" do
+  context "when virtualization data is Openstack", :unix_only do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
@@ -57,7 +57,7 @@ describe Ohai::System, "plugin openstack" do
     end
   end
 
-  context "when running on dreamhost" do
+  context "when running on dreamhost", :unix_only do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
       allow(plugin).to receive(:can_socket_connect?)

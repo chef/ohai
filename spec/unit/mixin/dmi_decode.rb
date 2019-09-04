@@ -23,6 +23,7 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
   let(:mixin) { Object.new.extend(Ohai::Mixin::DmiDecode) }
 
   # for the full DMI data used in these tests see https://github.com/chef/dmidecode_collection
+  # the fields here are manufacturer, product, and version as passed to #guest_from_dmi_data
   {
     xen: ["Xen", "HVM domU", "4.2.amazon"],
     vmware: ["VMware, Inc.", "VMware Virtual Platform", "None"],
@@ -31,7 +32,7 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
     veertu: ["Veertu", "Veertu", "Not Specified"],
     parallels: ["Parallels Software International Inc.", "Parallels Virtual Platform", "None"],
     vbox: ["Oracle Corporation", "VirtualBox", "1.2"],
-    openstack: ["Red Hat Inc.", "OpenStack Nova", "2014.1.2-1.el6"],
+    openstack: ["OpenStack Foundation", "", "15.1.5"],
     kvm: ["Red Hat", "KVM", "RHEL 7.0.0 PC (i440FX + PIIX, 1996"],
     bhyve: ["", "BHYVE", "1.0"],
   }.each_pair do |hypervisor, values|
@@ -39,6 +40,12 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
       it "returns '#{hypervisor}'" do
         expect(mixin.guest_from_dmi_data(values[0], values[1], values[2])).to eq("#{hypervisor}")
       end
+    end
+  end
+
+  describe "when passed Redhat's Openstack varient dmi data" do
+    it "returns 'openstack'" do
+      expect(mixin.guest_from_dmi_data("Red Hat Inc.", "OpenStack Nova", "2014.1.2-1.el6")).to eq("openstack")
     end
   end
 

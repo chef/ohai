@@ -18,5 +18,5 @@
 
 module Ohai
   OHAI_ROOT = File.expand_path(File.dirname(__FILE__))
-  VERSION = "15.2.7".freeze
+  VERSION = "15.2.8".freeze
 end

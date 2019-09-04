@@ -116,6 +116,17 @@ Ohai.plugin(:Virtualization) do
       end
     end
 
+    # parse dmi to discover various virtualization guests
+    # we do this *after* the kvm detection so that OpenStack isn't detected as KVM
+    logger.trace("Looking up DMI data manufacturer: '#{get_attribute(:dmi, :system, :manufacturer)}' product: '#{get_attribute(:dmi, :system, :product)}' version: '#{get_attribute(:dmi, :system, :version)}'")
+    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
+    if guest
+      logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
+      virtualization[:system] = guest
+      virtualization[:role] = "guest"
+      virtualization[:systems][guest.to_sym] = "guest"
+    end
+
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
     if File.exist?("/proc/bc/0")
@@ -128,16 +139,6 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "openvz"
       virtualization[:role] = "guest"
       virtualization[:systems][:openvz] = "guest"
-    end
-
-    # parse dmi to discover various virtualization guests
-    logger.trace("Looking up #{get_attribute(:dmi, :system, :manufacturer)}, #{get_attribute(:dmi, :system, :product)} #{get_attribute(:dmi, :system, :version)}")
-    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product), get_attribute(:dmi, :system, :version))
-    if guest
-      logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
-      virtualization[:system] = guest
-      virtualization[:role] = "guest"
-      virtualization[:systems][guest.to_sym] = "guest"
     end
 
     # Detect Hyper-V guest and the hostname of the host

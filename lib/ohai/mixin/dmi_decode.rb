@@ -19,6 +19,8 @@
 module ::Ohai::Mixin::DmiDecode
   def guest_from_dmi_data(manufacturer, product, version)
     case manufacturer
+    when /OpenStack/
+      return "openstack"
     when /Xen/
       return "xen"
     when /VMware/
@@ -38,13 +40,14 @@ module ::Ohai::Mixin::DmiDecode
     case product
     when /VirtualBox/
       return "vbox"
-    when /OpenStack/
+    when /OpenStack/ # yes this is here twice. Product catches Redhat's version
       return "openstack"
     when /(KVM|RHEV)/
       return "kvm"
     when /BHYVE/
       return "bhyve"
     end
+
     nil # doesn't look like a virt
   end
 end

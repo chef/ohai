@@ -19,16 +19,16 @@
 Ohai.plugin(:Openstack) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
+  require "etc" unless defined?(Etc)
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 
   provides "openstack"
-  depends "etc"
   depends "virtualization"
 
   # use virtualization data
   def openstack_virtualization?
-    if get_attribute(:virtualization, :system, :guest) == "openstack"
+    if get_attribute(:virtualization, :systems, :openstack)
       logger.trace("Plugin Openstack: has_openstack_virtualization? == true")
       true
     end
@@ -47,8 +47,13 @@ Ohai.plugin(:Openstack) do
 
   # dreamhost systems have the dhc-user on them
   def openstack_provider
-    return "dreamhost" if get_attribute("etc", "passwd", "dhc-user")
+    # dream host doesn't support windows so bail early if we're on windows
+    return "openstack" if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
+    if Etc.getpwnam("dhc-user")
+      "dreamhost"
+    end
+  rescue ArgumentError # getpwnam raises ArgumentError if the user is not found
     "openstack"
   end
 

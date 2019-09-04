@@ -24,8 +24,9 @@ describe Ohai::System, "plugin openstack" do
   let(:default_timeout) { 2 }
 
   before do
+    PasswdEntry = Struct.new(:name, :uid, :gid, :dir, :shell, :gecos)
     allow(plugin).to receive(:hint?).with("openstack").and_return(false)
-    plugin[:virtualization] = { system: {} }
+    plugin[:virtualization] = { systems: {} }
   end
 
   context "when there is no relevant hint or virtualization data" do
@@ -35,17 +36,18 @@ describe Ohai::System, "plugin openstack" do
     end
   end
 
-  context "when virtualization data is Openstack" do
+  context "when virtualization data is Openstack", :unix_only do
     context "and the metadata service is not available" do
       before do
         allow(plugin).to receive(:can_socket_connect?)
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
-        plugin[:virtualization] = { system: { guest: "openstack" } }
+        plugin[:virtualization] = { systems: { openstack: "guest" } }
+        expect(Etc).to receive(:getpwnam).and_raise(ArgumentError)
         plugin.run
       end
 
-      it "sets openstack attribute" do
+      it "sets provider attribute to openstack" do
         expect(plugin[:openstack][:provider]).to eq("openstack")
       end
 
@@ -55,13 +57,14 @@ describe Ohai::System, "plugin openstack" do
     end
   end
 
-  context "when running on dreamhost" do
+  context "when running on dreamhost", :unix_only do
     it "sets openstack provider attribute to dreamhost" do
       plugin["etc"] = { "passwd" => { "dhc-user" => {} } }
       allow(plugin).to receive(:can_socket_connect?)
         .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
-      plugin[:virtualization] = { system: { guest: "openstack" } }
+      plugin[:virtualization] = { systems: { openstack: "guest" } }
+      expect(Etc).to receive(:getpwnam).and_return(PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user"))
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")
     end
@@ -292,7 +295,7 @@ describe Ohai::System, "plugin openstack" do
         allow(plugin).to receive(:can_socket_connect?)
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
-        plugin[:virtualization] = { system: { guest: "openstack" } }
+        plugin[:virtualization] = { systems: { openstack: "guest" } }
         plugin.run
       end
 

@@ -18,6 +18,7 @@
 
 Ohai.plugin(:Sysctl) do
   provides "sysctl"
+  optional true
 
   collect_data(:linux) do
     sysctl_path = which("sysctl")

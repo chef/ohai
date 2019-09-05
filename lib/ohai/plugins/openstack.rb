@@ -45,7 +45,8 @@ Ohai.plugin(:Openstack) do
     end
   end
 
-  # dreamhost systems have the dhc-user on them
+  # dreamhost systems *had* the dhc-user on them < 2016. We should probably remove all this logic
+  # https://help.dreamhost.com/hc/en-us/articles/228377408-How-to-find-the-default-user-of-an-image
   def openstack_provider
     # dream host doesn't support windows so bail early if we're on windows
     return "openstack" if RUBY_PLATFORM =~ /mswin|mingw32|windows/

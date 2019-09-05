@@ -1,24 +1,22 @@
 # Change Log
 
-<!-- latest_release 15.3.1 -->
-## [v15.3.1](https://github.com/chef/ohai/tree/v15.3.1) (2019-09-04)
-
-#### Merged Pull Requests
-- Simplify and fix Openstack detection on Linux [#1395](https://github.com/chef/ohai/pull/1395) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.2.5 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Simplify and fix Openstack detection on Linux [#1395](https://github.com/chef/ohai/pull/1395) ([tas50](https://github.com/tas50)) <!-- 15.3.1 -->
-- Make the new sysctl plugin optional [#1402](https://github.com/chef/ohai/pull/1402) ([tas50](https://github.com/tas50)) <!-- 15.3.0 -->
-- Add sysctl ohai plugin [#1401](https://github.com/chef/ohai/pull/1401) ([joshuamiller01](https://github.com/joshuamiller01)) <!-- 15.2.8 -->
-- rspec updates from rubocop-rspec [#1399](https://github.com/chef/ohai/pull/1399) ([tas50](https://github.com/tas50)) <!-- 15.2.7 -->
-- Use Benchmark.realtime for the main application time as well [#1397](https://github.com/chef/ohai/pull/1397) ([tas50](https://github.com/tas50)) <!-- 15.2.6 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.3.1](https://github.com/chef/ohai/tree/v15.3.1) (2019-09-05)
+
+#### Merged Pull Requests
+- Use Benchmark.realtime for the main application time as well [#1397](https://github.com/chef/ohai/pull/1397) ([tas50](https://github.com/tas50))
+- rspec updates from rubocop-rspec [#1399](https://github.com/chef/ohai/pull/1399) ([tas50](https://github.com/tas50))
+- Add sysctl ohai plugin [#1401](https://github.com/chef/ohai/pull/1401) ([joshuamiller01](https://github.com/joshuamiller01))
+- Make the new sysctl plugin optional [#1402](https://github.com/chef/ohai/pull/1402) ([tas50](https://github.com/tas50))
+- Simplify and fix Openstack detection on Linux [#1395](https://github.com/chef/ohai/pull/1395) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.2.5](https://github.com/chef/ohai/tree/v15.2.5) (2019-08-08)
 
 #### Merged Pull Requests
@@ -31,7 +29,6 @@
 - Use virtualization plugin to detect if we&#39;re on openstack on Windows. [#1391](https://github.com/chef/ohai/pull/1391) ([jjustice6](https://github.com/jjustice6))
 - Simplify the Openstack plugin by not polling DMI data [#1394](https://github.com/chef/ohai/pull/1394) ([tas50](https://github.com/tas50))
 - Fix platform_version detection on Fedora rawhide [#1396](https://github.com/chef/ohai/pull/1396) ([ritzk](https://github.com/ritzk))
-<!-- latest_stable_release -->
 
 ## [15.1.5](https://github.com/chef/ohai/tree/15.1.5) (2019-06-22)
 

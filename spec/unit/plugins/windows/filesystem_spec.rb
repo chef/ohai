@@ -72,7 +72,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
   describe "#logical_properties" do
     let(:disks) { logical_disks_instances }
-    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type volume_namei drive_type} }
+    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type volume_name drive_type} }
 
     it "Returns a mash" do
       expect(plugin.logical_properties(disks)).to be_a(Mash)

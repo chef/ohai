@@ -94,6 +94,7 @@ Ohai.plugin(:Filesystem) do
       property[:mount] = disk["name"]
       property[:fs_type] = disk["filesystem"].to_s.downcase
       property[:volume_name] = disk["volumename"].to_s.downcase
+      property[:drive_type] = disk["drivetype"].to_i
       properties[drive] = property
     end
     properties

@@ -19,6 +19,9 @@
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
+  # Drive types
+  DRIVE_TYPE ||= %W{unknown no_root_dir removable local network cd ram}.freeze
+
   # Volume encryption or decryption status
   #
   # @see https://docs.microsoft.com/en-us/windows/desktop/SecProv/getconversionstatus-win32-encryptablevolume#parameters
@@ -95,6 +98,8 @@ Ohai.plugin(:Filesystem) do
       property[:fs_type] = disk["filesystem"].to_s.downcase
       property[:volume_name] = disk["volumename"].to_s.downcase
       property[:drive_type] = disk["drivetype"].to_i
+      property[:drive_type_string] = DRIVE_TYPE[disk["drivetype"].to_i]
+      property[:drive_type_human] = disk["description"].to_s
       properties[drive] = property
     end
     properties

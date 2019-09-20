@@ -20,7 +20,7 @@ Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
   # Drive types
-  DRIVE_TYPE ||= %W{unknown no_root_dir removable local network cd ram}.freeze
+  DRIVE_TYPE ||= %w{unknown no_root_dir removable local network cd ram}.freeze
 
   # Volume encryption or decryption status
   #

@@ -39,7 +39,7 @@ module Ohai
       # causes all optional plugins to be run.
       default :run_all_plugins, false
       # optional plugins are the set of plugins that are marked optional but you wish to run.
-      default :optional_plugins, []
+      default(:optional_plugins, []).writes_value { |arr| arr.map(&:to_sym) }
       default :shellout_timeout, 30
     end
   end

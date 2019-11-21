@@ -32,7 +32,7 @@ rescue LoadError
 end
 
 task :run_ohai do
-  sh "bundle exec ohai"
+  sh "bin/ohai"
 end
 
 task :console do

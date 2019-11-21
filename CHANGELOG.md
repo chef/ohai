@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.3.2 -->
-## [v15.3.2](https://github.com/chef/ohai/tree/v15.3.2) (2019-11-21)
+<!-- latest_release 15.6.0 -->
+## [v15.6.0](https://github.com/chef/ohai/tree/v15.6.0) (2019-11-21)
 
 #### Merged Pull Requests
-- Use s3 caching / smaller conntainers in BK &amp; add Ruby 2.7 testing [#1410](https://github.com/chef/ohai/pull/1410) ([tas50](https://github.com/tas50))
+- Strip the Rakefile and specs from our gem artifact [#1409](https://github.com/chef/ohai/pull/1409) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.3.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Strip the Rakefile and specs from our gem artifact [#1409](https://github.com/chef/ohai/pull/1409) ([tas50](https://github.com/tas50)) <!-- 15.6.0 -->
 - Use s3 caching / smaller conntainers in BK &amp; add Ruby 2.7 testing [#1410](https://github.com/chef/ohai/pull/1410) ([tas50](https://github.com/tas50)) <!-- 15.3.2 -->
 <!-- release_rollup -->
 

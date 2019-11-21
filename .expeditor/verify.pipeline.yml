@@ -1,38 +1,52 @@
-steps:
+---
+expeditor:
+  defaults:
+    buildkite:
+      retry:
+        automatic:
+          limit: 1
+      timeout_in_minutes: 30
 
+steps:
 - label: lint-chefstyle
   command:
-    - bundle install --jobs=7 --retry=3 --without docs debug
-    - bundle exec rake style
+    - .expeditor/run_linux_tests.sh "rake style"
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-buster
 
 - label: run-ohai
   command:
-    - bundle install --jobs=7 --retry=3 --without docs debug
-    - bundle exec ohai
+    - .expeditor/run_linux_tests.sh "bundle exec ohai"
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-buster
 
 - label: run-specs-ruby-2.5
   command:
-    - asdf local ruby 2.5.5
-    - bundle install --jobs=7 --retry=3 --without docs debug
-    - bundle exec rake spec
+    - .expeditor/run_linux_tests.sh rspec
   expeditor:
     executor:
       docker:
+        image: ruby:2.5-buster
 
 - label: run-specs-ruby-2.6
   command:
-    - asdf local ruby 2.6.3
-    - bundle install --jobs=7 --retry=3 --without docs debug
-    - bundle exec rake spec
+    - .expeditor/run_linux_tests.sh rspec
   expeditor:
     executor:
       docker:
+        image: ruby:2.6-buster
+
+- label: run-specs-ruby-2.7-rc
+  command:
+    - .expeditor/run_linux_tests.sh rspec
+  expeditor:
+    executor:
+      docker:
+        image: ruby:2.7-rc-buster
 
 - label: run-specs-windows
   command:

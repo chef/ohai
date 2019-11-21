@@ -1,3 +1,15 @@
+# Ohai Release Notes 15.3
+
+## Passwd Is Once Again Optional
+
+The Passwd plugin, which provides information on all users and groups on a node, was intented to be made optional with the release of Ohai/Chef 14.0. Howerver, due to the way data was used in the OpenStack plugin, the Passwd plugin was never actually disabled. The Passwd plugin has been historically problematic for users with nodes that are connected to LDAP or Active Directory. Due to this we've chosen to fix our OpenStack bug and once again disable the Passwd plugin. If you relied on the data in node['etc'] you'll need to set the `optional_plugins` configuration value in your `client.rb` config.
+
+Example segment of client.rb
+
+```ruby
+ohai.optional_plugins = [ :Passwd ]
+```
+
 # Ohai Release Notes 15.2
 
 ## Openstack Plugin Enhancements

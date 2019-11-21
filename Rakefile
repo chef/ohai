@@ -31,10 +31,6 @@ rescue LoadError
   puts "yard is not available. bundle install first to make sure all dependencies are installed."
 end
 
-task :run_ohai do
-  sh "bin/ohai"
-end
-
 task :console do
   require "irb"
   require "irb/completion"

@@ -17,8 +17,12 @@
 #
 
 Ohai.plugin(:Network) do
+  require_relative "../../mixin/network_helper"
+
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
+
+  include Ohai::Mixin::NetworkHelper
 
   def parse_media(media_string)
     media = {}
@@ -87,8 +91,6 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:darwin) do
-    require "scanf"
-
     network Mash.new unless network
     network[:interfaces] ||= Mash.new
     counters Mash.new unless counters
@@ -138,11 +140,11 @@ Ohai.plugin(:Network) do
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8})\s*$/
         iface[cint][:addresses] ||= Mash.new
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2) }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask 0x(([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] ||= Mash.new
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2) , "broadcast" => $4 }
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*) prefixlen (\d+)\s*/
         iface[cint][:addresses] ||= Mash.new

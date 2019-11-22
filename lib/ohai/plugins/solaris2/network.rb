@@ -63,8 +63,12 @@ unless defined?(ETHERNET_ENCAPS)
 end
 
 Ohai.plugin(:Network) do
+  require_relative "../../mixin/network_helper"
+
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
+
+  include Ohai::Mixin::NetworkHelper
 
   def solaris_encaps_lookup(ifname)
     return "Ethernet" if ETHERNET_ENCAPS.include?(ifname)
@@ -92,8 +96,6 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:solaris2) do
-    require "scanf"
-
     iface = Mash.new
     network Mash.new unless network
     network[:interfaces] ||= Mash.new
@@ -124,11 +126,11 @@ Ohai.plugin(:Network) do
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8})\s*$/
         iface[cint][:addresses] ||= Mash.new
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * "." }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2) }
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] ||= Mash.new
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => $2.scanf("%2x" * 4) * ".", "broadcast" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2) , "broadcast" => $4 }
       end
       if line =~ %r{\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)/(\d+)\s*$}
         iface[cint][:addresses] ||= Mash.new

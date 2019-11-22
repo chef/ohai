@@ -20,16 +20,11 @@
 
 Ohai.plugin(:Network) do
   require "ipaddr"
+  require_relative "../../mixin/network_helper"
 
   provides "network", "counters/network", "macaddress"
 
-  # Helpers
-  def hex_to_dec_netmask(netmask)
-    # example 'ffff0000' -> '255.255.0.0'
-    dec = netmask[0..1].to_i(16).to_s(10)
-    [2, 4, 6].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
-    dec
-  end
+  include Ohai::Mixin::NetworkHelper
 
   collect_data(:aix) do
     # Loads following information.

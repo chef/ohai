@@ -300,14 +300,4 @@ describe Ohai::System, "AIX network plugin" do
       expect(@plugin["network"]["arp"][0][:remote_mac]).to eq("6e:87:70:0:40:3")
     end
   end
-
-  describe "hex_to_dec_netmask method" do
-    before do
-      @plugin.run
-    end
-
-    it "converts a netmask from hexadecimal form to decimal form" do
-      expect(@plugin.hex_to_dec_netmask("ffff0000")).to eq("255.255.0.0")
-    end
-  end
 end

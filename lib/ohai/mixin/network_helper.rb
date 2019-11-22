@@ -24,6 +24,13 @@ module Ohai
         "inet" => "default",
         "inet6" => "default_inet6",
       }.freeze
+
+      def hex_to_dec_netmask(netmask)
+        # example 'ffff0000' -> '255.255.0.0'
+        dec = netmask[0..1].to_i(16).to_s(10)
+        [2, 4, 6].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
+        dec
+      end
     end
   end
 end

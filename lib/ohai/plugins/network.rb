@@ -18,8 +18,8 @@
 
 Ohai.plugin(:NetworkAddresses) do
   require "ipaddress"
-  require_relative "../mixin/network_constants"
-  include Ohai::Mixin::NetworkConstants
+  require_relative "../mixin/network_helper"
+  include Ohai::Mixin::NetworkHelper
 
   provides "ipaddress", "ip6address", "macaddress"
 
@@ -69,8 +69,8 @@ Ohai.plugin(:NetworkAddresses) do
     return [ nil, nil ] if ips.empty?
 
     # shortcuts to access default #{family} interface and gateway
-    int_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_interface"
-    gw_attr = Ohai::Mixin::NetworkConstants::FAMILIES[family] + "_gateway"
+    int_attr = Ohai::Mixin::NetworkHelper::FAMILIES[family] + "_interface"
+    gw_attr = Ohai::Mixin::NetworkHelper::FAMILIES[family] + "_gateway"
 
     if network[int_attr]
       # working with the address(es) of the default network interface
@@ -142,7 +142,7 @@ Ohai.plugin(:NetworkAddresses) do
     counters[:network] ||= Mash.new
 
     # inet family is processed before inet6 to give ipv4 precedence
-    Ohai::Mixin::NetworkConstants::FAMILIES.keys.sort.each do |family|
+    Ohai::Mixin::NetworkHelper::FAMILIES.keys.sort.each do |family|
       r = {}
       # find the ip/interface with the default route for this family
       (r["ip"], r["iface"]) = find_ip(family)

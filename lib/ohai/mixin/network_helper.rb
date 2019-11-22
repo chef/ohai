@@ -19,7 +19,7 @@
 
 module Ohai
   module Mixin
-    module NetworkConstants
+    module NetworkHelper
       FAMILIES = {
         "inet" => "default",
         "inet6" => "default_inet6",

@@ -307,7 +307,7 @@ describe Ohai::System, "AIX network plugin" do
     end
 
     it "converts a netmask from hexadecimal form to decimal form" do
-      expect(@plugin.hex_to_dec_netmask("0xffff0000")).to eq("255.255.0.0")
+      expect(@plugin.hex_to_dec_netmask("ffff0000")).to eq("255.255.0.0")
     end
   end
 end

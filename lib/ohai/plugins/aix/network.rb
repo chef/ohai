@@ -20,16 +20,11 @@
 
 Ohai.plugin(:Network) do
   require "ipaddr"
+  require_relative "../../mixin/network_helper"
 
   provides "network", "counters/network", "macaddress"
 
-  # Helpers
-  def hex_to_dec_netmask(netmask)
-    # example '0xffff0000' -> '255.255.0.0'
-    dec = netmask[2..3].to_i(16).to_s(10)
-    [4, 6, 8].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
-    dec
-  end
+  include Ohai::Mixin::NetworkHelper
 
   collect_data(:aix) do
     # Loads following information.
@@ -80,7 +75,7 @@ Ohai.plugin(:Network) do
           if lin =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
             tmp_addr, tmp_prefix = $1, $3
             if tmp_prefix.nil?
-              netmask = hex_to_dec_netmask($1) if lin =~ /netmask\s(\S+)\s/
+              netmask = hex_to_dec_netmask($1) if lin =~ /netmask\s0x(\S+)\s/
               unless netmask
                 tmp_prefix ||= "32"
                 netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s

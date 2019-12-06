@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.6.2 -->
-## [v15.6.2](https://github.com/chef/ohai/tree/v15.6.2) (2019-11-23)
+<!-- latest_release 15.6.3 -->
+## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-06)
 
 #### Merged Pull Requests
-- Fix failures under Ruby 2.7 [#1412](https://github.com/chef/ohai/pull/1412) ([KrisShannon](https://github.com/KrisShannon))
+- [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.3.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh)) <!-- 15.6.3 -->
 - Fix failures under Ruby 2.7 [#1412](https://github.com/chef/ohai/pull/1412) ([KrisShannon](https://github.com/KrisShannon)) <!-- 15.6.2 -->
 - Rename Ohai::Mixin::DmiDecode spec file to end in `_spec.rb` [#1413](https://github.com/chef/ohai/pull/1413) ([KrisShannon](https://github.com/KrisShannon)) <!-- 15.6.1 -->
 - Strip the Rakefile and specs from our gem artifact [#1409](https://github.com/chef/ohai/pull/1409) ([tas50](https://github.com/tas50)) <!-- 15.6.0 -->

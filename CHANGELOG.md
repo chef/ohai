@@ -1,24 +1,22 @@
 # Change Log
 
-<!-- latest_release 15.6.3 -->
-## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-06)
-
-#### Merged Pull Requests
-- [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.3.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh)) <!-- 15.6.3 -->
-- Fix failures under Ruby 2.7 [#1412](https://github.com/chef/ohai/pull/1412) ([KrisShannon](https://github.com/KrisShannon)) <!-- 15.6.2 -->
-- Rename Ohai::Mixin::DmiDecode spec file to end in `_spec.rb` [#1413](https://github.com/chef/ohai/pull/1413) ([KrisShannon](https://github.com/KrisShannon)) <!-- 15.6.1 -->
-- Strip the Rakefile and specs from our gem artifact [#1409](https://github.com/chef/ohai/pull/1409) ([tas50](https://github.com/tas50)) <!-- 15.6.0 -->
-- Use s3 caching / smaller conntainers in BK &amp; add Ruby 2.7 testing [#1410](https://github.com/chef/ohai/pull/1410) ([tas50](https://github.com/tas50)) <!-- 15.3.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-10)
+
+#### Merged Pull Requests
+- Use s3 caching / smaller conntainers in BK &amp; add Ruby 2.7 testing [#1410](https://github.com/chef/ohai/pull/1410) ([tas50](https://github.com/tas50))
+- Strip the Rakefile and specs from our gem artifact [#1409](https://github.com/chef/ohai/pull/1409) ([tas50](https://github.com/tas50))
+- Rename Ohai::Mixin::DmiDecode spec file to end in `_spec.rb` [#1413](https://github.com/chef/ohai/pull/1413) ([KrisShannon](https://github.com/KrisShannon))
+- Fix failures under Ruby 2.7 [#1412](https://github.com/chef/ohai/pull/1412) ([KrisShannon](https://github.com/KrisShannon))
+- [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh))
+<!-- latest_stable_release -->
+
 ## [v15.3.1](https://github.com/chef/ohai/tree/v15.3.1) (2019-09-05)
 
 #### Merged Pull Requests
@@ -27,7 +25,6 @@
 - Add sysctl ohai plugin [#1401](https://github.com/chef/ohai/pull/1401) ([joshuamiller01](https://github.com/joshuamiller01))
 - Make the new sysctl plugin optional [#1402](https://github.com/chef/ohai/pull/1402) ([tas50](https://github.com/tas50))
 - Simplify and fix Openstack detection on Linux [#1395](https://github.com/chef/ohai/pull/1395) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v15.2.5](https://github.com/chef/ohai/tree/v15.2.5) (2019-08-08)
 

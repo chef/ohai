@@ -1,3 +1,10 @@
+
+# Ohai Release Notes 15.6
+
+## filesystem2 Ohai Data on Windows
+
+Ohai 15.6 includes new `node['filesystem2']` data on Windows hosts. Fileystem2 presents filesystem data by both mountpoint and by device name. This data structure matches that of the filesystem plugin on Linux and other *nix operating systems. Thanks [@jaymzh](https://github.com/jaymzh) for this new data structure.
+
 # Ohai Release Notes 15.3
 
 ## Passwd Is Once Again Optional

@@ -747,7 +747,7 @@ Ohai.plugin(:Filesystem) do
 
   collect_data(:windows) do
     require "wmi-lite/wmi"
-    require "ohai/mash"
+    require_relative "../mash"
 
     fs = merge_info(logical_info, encryptable_info)
 

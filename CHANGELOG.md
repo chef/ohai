@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.7.0 -->
+## [v15.7.0](https://github.com/chef/ohai/tree/v15.7.0) (2019-12-20)
+
+#### Merged Pull Requests
+- Substitute require for require_relative [#1415](https://github.com/chef/ohai/pull/1415) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.6.3 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Substitute require for require_relative [#1415](https://github.com/chef/ohai/pull/1415) ([tas50](https://github.com/tas50)) <!-- 15.7.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

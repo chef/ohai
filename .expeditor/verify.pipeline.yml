@@ -40,13 +40,13 @@ steps:
       docker:
         image: ruby:2.6-buster
 
-- label: run-specs-ruby-2.7-rc
+- label: run-specs-ruby-2.7
   command:
     - .expeditor/run_linux_tests.sh rspec
   expeditor:
     executor:
       docker:
-        image: ruby:2.7-rc-buster
+        image: ruby:2.7-buster
 
 - label: run-specs-windows
   command:

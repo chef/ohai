@@ -131,7 +131,7 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
     end
 
-    context "on a centos subshell on a nexus switch" do
+    context "when on a centos subshell on a nexus switch" do
       let(:os_release_content) do
         <<~OS_RELEASE
           NAME="CentOS Linux"
@@ -314,7 +314,7 @@ describe Ohai::System, "Linux plugin platform" do
     end
   end
 
-  context "on system without /etc/os-release (legacy)" do
+  context "when on system without /etc/os-release (legacy)" do
     let(:have_debian_version) { false }
     let(:have_redhat_release) { false }
     let(:have_exherbo_release) { false }
@@ -617,7 +617,7 @@ describe Ohai::System, "Linux plugin platform" do
 
       context "with lsb_results" do
 
-        context "on version 5.x" do
+        context "when on version 5.x" do
 
           let(:have_enterprise_release) { true }
 
@@ -632,7 +632,7 @@ describe Ohai::System, "Linux plugin platform" do
           end
         end
 
-        context "on version 6.x" do
+        context "when on version 6.x" do
 
           let(:have_oracle_release) { true }
 
@@ -654,7 +654,7 @@ describe Ohai::System, "Linux plugin platform" do
           plugin.lsb = nil
         end
 
-        context "on version 5.x" do
+        context "when on version 5.x" do
 
           let(:have_enterprise_release) { true }
 
@@ -684,7 +684,7 @@ describe Ohai::System, "Linux plugin platform" do
 
         end
 
-        context "on version 6.x" do
+        context "when on version 6.x" do
 
           let(:have_oracle_release) { true }
 
@@ -708,7 +708,7 @@ describe Ohai::System, "Linux plugin platform" do
     end
 
     describe "on suse" do
-      context "on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES12.1)" do
+      context "when on versions that have no /etc/os-release but /etc/SuSE-release (e.g. SLES12.1)" do
         let(:have_suse_release) { true }
         let(:have_os_release) { false }
 
@@ -727,7 +727,7 @@ describe Ohai::System, "Linux plugin platform" do
         end
       end
 
-      context "on openSUSE and older SLES versions" do
+      context "when on openSUSE and older SLES versions" do
         let(:have_suse_release) { true }
 
         describe "without lsb_release results" do
@@ -751,7 +751,7 @@ describe Ohai::System, "Linux plugin platform" do
           end
 
           it "[OHAI-272] should read the version as 11.3" do
-            expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
+            expect(File).to receive(:read).with("/etc/SuSE-release").once.and_return("openSUSE 11.3 (x86_64)\nVERSION = 11.3")
             plugin.run
             expect(plugin[:platform]).to eq("opensuse")
             expect(plugin[:platform_version]).to eq("11.3")
@@ -759,7 +759,7 @@ describe Ohai::System, "Linux plugin platform" do
           end
 
           it "[OHAI-272] should read the version as 11.4" do
-            expect(File).to receive(:read).with("/etc/SuSE-release").exactly(1).times.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
+            expect(File).to receive(:read).with("/etc/SuSE-release").once.and_return("openSUSE 11.4 (i586)\nVERSION = 11.4\nCODENAME = Celadon")
             plugin.run
             expect(plugin[:platform]).to eq("opensuse")
             expect(plugin[:platform_version]).to eq("11.4")

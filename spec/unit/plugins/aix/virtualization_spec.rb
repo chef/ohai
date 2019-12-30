@@ -20,7 +20,7 @@ require "spec_helper"
 
 describe Ohai::System, "AIX virtualization plugin" do
 
-  context "inside an LPAR" do
+  context "when inside an LPAR" do
 
     let(:plugin) do
       p = get_plugin("aix/virtualization")
@@ -301,7 +301,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     end
   end
 
-  context "inside a WPAR" do
+  context "when inside a WPAR" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
       allow(p).to receive(:collect_os).and_return(:aix)

@@ -20,7 +20,7 @@ require "spec_helper"
 require "ohai/mixin/dmi_decode"
 
 describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
-  let(:mixin) { Object.new.extend(Ohai::Mixin::DmiDecode) }
+  let(:mixin) { Object.new.extend(described_class) }
 
   # for the full DMI data used in these tests see https://github.com/chef/dmidecode_collection
   # the fields here are manufacturer, product, and version as passed to #guest_from_dmi_data

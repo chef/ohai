@@ -22,7 +22,7 @@ require "spec_helper"
 describe Ohai::ProvidesMap do
 
   let(:ohai_system) { Ohai::System.new }
-  let(:provides_map) { Ohai::ProvidesMap.new }
+  let(:provides_map) { described_class.new }
   let(:plugin_1) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
   let(:plugin_2) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
   let(:plugin_3) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }

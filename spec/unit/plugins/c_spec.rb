@@ -81,7 +81,7 @@ describe Ohai::System, "plugin c" do
     allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
   end
 
-  context "on AIX" do
+  context "when on AIX" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:aix)
       allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
@@ -124,7 +124,7 @@ describe Ohai::System, "plugin c" do
 
   end
 
-  context "on Darwin" do
+  context "when on Darwin" do
     before do
       allow(plugin).to receive(:shell_out).with("/usr/bin/xcode-select -p").and_return(mock_shell_out(0, "", ""))
       allow(plugin).to receive(:collect_os).and_return(:darwin)
@@ -143,7 +143,7 @@ describe Ohai::System, "plugin c" do
 
   end
 
-  context "on Windows" do
+  context "when on Windows" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:windows)
       allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
@@ -209,7 +209,7 @@ describe Ohai::System, "plugin c" do
     end
   end
 
-  context "on Linux" do
+  context "when on Linux" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       # glibc

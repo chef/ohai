@@ -31,8 +31,8 @@ describe Ohai::Mixin::Command, "shell_out" do
   let(:logger) { instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil) }
 
   before do
-    allow(Ohai::Mixin::Command).to receive(:logger).and_return(logger)
-    allow(Ohai::Mixin::Command).to receive(:name).and_return(plugin_name)
+    allow(described_class).to receive(:logger).and_return(logger)
+    allow(described_class).to receive(:name).and_return(plugin_name)
     @original_env = ENV.to_hash
     ENV.clear
   end
@@ -59,7 +59,7 @@ describe Ohai::Mixin::Command, "shell_out" do
       expect(logger).to receive(:trace)
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and returned 256")
 
-      Ohai::Mixin::Command.shell_out(cmd)
+      described_class.shell_out(cmd)
     end
   end
 
@@ -79,7 +79,7 @@ describe Ohai::Mixin::Command, "shell_out" do
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and failed " \
              "#<Errno::ENOENT: No such file or directory - sparkle-dream>")
 
-      expect { Ohai::Mixin::Command.shell_out(cmd) }
+      expect { described_class.shell_out(cmd) }
         .to raise_error(Ohai::Exceptions::Exec)
     end
   end
@@ -100,7 +100,7 @@ describe Ohai::Mixin::Command, "shell_out" do
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
              "out after 30 seconds")
 
-      expect { Ohai::Mixin::Command.shell_out(cmd) }
+      expect { described_class.shell_out(cmd) }
         .to raise_error(Ohai::Exceptions::Exec)
     end
   end
@@ -124,7 +124,7 @@ describe Ohai::Mixin::Command, "shell_out" do
       expect(logger).to receive(:trace)
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and returned 256")
 
-      Ohai::Mixin::Command.shell_out(cmd, options)
+      described_class.shell_out(cmd, options)
     end
 
     describe "when the command times out" do
@@ -143,7 +143,7 @@ describe Ohai::Mixin::Command, "shell_out" do
           .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
                "out after 10 seconds")
 
-        expect { Ohai::Mixin::Command.shell_out(cmd, options) }
+        expect { described_class.shell_out(cmd, options) }
           .to raise_error(Ohai::Exceptions::Exec)
       end
     end

@@ -24,26 +24,26 @@ RSpec.describe Ohai::Config do
   describe "config_context :ohai" do
     describe "option :plugin" do
       it "gets configured with a value" do
-        Ohai::Config.ohai[:plugin][:foo] = true
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to be true
+        described_class.ohai[:plugin][:foo] = true
+        expect(described_class.ohai[:plugin]).to have_key(:foo)
+        expect(described_class.ohai[:plugin][:foo]).to be true
       end
 
       it "gets configured with a Hash" do
         value = { bar: true, baz: true }
-        Ohai::Config.ohai[:plugin][:foo] = value
-        expect(Ohai::Config.ohai[:plugin]).to have_key(:foo)
-        expect(Ohai::Config.ohai[:plugin][:foo]).to eq(value)
+        described_class.ohai[:plugin][:foo] = value
+        expect(described_class.ohai[:plugin]).to have_key(:foo)
+        expect(described_class.ohai[:plugin][:foo]).to eq(value)
       end
 
       it "raises an error if the plugin name is not a symbol" do
-        expect { Ohai::Config.ohai[:plugin]["foo"] = false }
+        expect { described_class.ohai[:plugin]["foo"] = false }
           .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
 
       it "raises an error if the value Hash has non-Symbol key" do
         value = { :bar => true, "baz" => true }
-        expect { Ohai::Config.ohai[:plugin][:foo] = value }
+        expect { described_class.ohai[:plugin][:foo] = value }
           .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe Ohai::Config do
 
   describe "Ohai.config" do
     it "returns the ohai config context" do
-      expect(Ohai.config).to eq(Ohai::Config.ohai)
+      expect(Ohai.config).to eq(described_class.ohai)
     end
   end
 end

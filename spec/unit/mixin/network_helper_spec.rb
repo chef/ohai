@@ -20,7 +20,7 @@ require "spec_helper"
 require "ohai/mixin/network_helper"
 
 describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
-  let(:mixin) { Object.new.extend(Ohai::Mixin::NetworkHelper) }
+  let(:mixin) { Object.new.extend(described_class) }
 
   describe "hex_to_dec_netmask method" do
     it "converts a netmask from hexadecimal form to decimal form" do

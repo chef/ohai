@@ -576,7 +576,7 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
 
-    context "/proc/self/cgroup only has / mounts" do
+    context "when /proc/self/cgroup only has / mounts" do
       before do
         self_cgroup = <<~CGROUP
           8:blkio:/

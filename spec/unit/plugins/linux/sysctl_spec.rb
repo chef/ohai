@@ -21,7 +21,7 @@ require_relative "../../../spec_helper.rb"
 describe Ohai::System, "sysctl plugin", :unix_only do
   let(:plugin) { get_plugin("linux/sysctl") }
 
-  it "should populate sysctl if sysctl is found" do
+  it "populates sysctl if sysctl is found" do
     sysctl_out = <<-SYSCTL_OUT
   vm.nr_overcommit_hugepages = 0
   vm.numa_stat = 1
@@ -44,7 +44,7 @@ describe Ohai::System, "sysctl plugin", :unix_only do
     })
   end
 
-  it "should not populate sysctl if sysctl is not found" do
+  it "does not populate sysctl if sysctl is not found" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:which).with("sysctl").and_return(false)
     plugin.run

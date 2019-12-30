@@ -447,23 +447,23 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
     end
 
     it "gets the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to eql(16)
+      expect(@plugin["cpu"]["total"]).to be(16)
     end
 
     it "gets the total processor count" do
-      expect(@plugin["cpu"]["real"]).to eql(2)
+      expect(@plugin["cpu"]["real"]).to be(2)
     end
 
     it "gets the number of threads per core" do
-      expect(@plugin["cpu"]["corethreads"]).to eql(2)
+      expect(@plugin["cpu"]["corethreads"]).to be(2)
     end
 
     it "gets the total number of online cores" do
-      expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql(8)
+      expect(@plugin["cpu"]["cpustates"]["on-line"]).to be(8)
     end
 
     it "gets the total number of offline cores" do
-      expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql(8)
+      expect(@plugin["cpu"]["cpustates"]["off-line"]).to be(8)
     end
 
     describe "per-cpu information" do
@@ -2813,27 +2813,27 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
     end
 
     it "gets the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to eql(128)
+      expect(@plugin["cpu"]["total"]).to be(128)
     end
 
     it "gets the total processor count" do
-      expect(@plugin["cpu"]["real"]).to eql(1)
+      expect(@plugin["cpu"]["real"]).to be(1)
     end
 
     it "gets the total core count" do
-      expect(@plugin["cpu"]["cores"]).to eql(16)
+      expect(@plugin["cpu"]["cores"]).to be(16)
     end
 
     it "gets the number of threads per core" do
-      expect(@plugin["cpu"]["corethreads"]).to eql(8)
+      expect(@plugin["cpu"]["corethreads"]).to be(8)
     end
 
     it "gets the total number of online cores" do
-      expect(@plugin["cpu"]["cpustates"]["on-line"]).to eql(124)
+      expect(@plugin["cpu"]["cpustates"]["on-line"]).to be(124)
     end
 
     it "gets the total number of offline cores" do
-      expect(@plugin["cpu"]["cpustates"]["off-line"]).to eql(4)
+      expect(@plugin["cpu"]["cpustates"]["off-line"]).to be(4)
     end
 
     describe "per-cpu information" do

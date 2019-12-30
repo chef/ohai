@@ -77,7 +77,7 @@ overlay},
 describe Ohai::System, "plugin docker" do
   let(:plugin) { get_plugin("docker") }
 
-  context "if the machine does not have docker installed" do
+  context "without docker installed" do
     it "does not create a docker attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
@@ -86,7 +86,7 @@ describe Ohai::System, "plugin docker" do
     end
   end
 
-  context "if the machine has docker installed" do
+  context "with docker installed" do
     it "creates a docker attribute with correct data" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new

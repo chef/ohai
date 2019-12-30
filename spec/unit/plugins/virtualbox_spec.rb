@@ -352,7 +352,7 @@ describe Ohai::System, "plugin virtualbox" do
   end
 
   context "when on a vbox host" do
-    context "if the host has virtualbox installed" do
+    context "when the host has virtualbox installed" do
       it "creates a vbox attribute with accurate data" do
         plugin[:virtualization][:systems][:vbox] = "host"
         allow(plugin).to receive(:which).with("VBoxManage").and_return("/usr/bin/VBoxManage")

@@ -20,7 +20,7 @@
 require "spec_helper"
 
 describe Ohai::System, "plugin packages" do
-  context "on debian" do
+  context "when on debian" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "debian"
@@ -59,7 +59,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on fedora" do
+  context "when on fedora" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "fedora"
@@ -122,7 +122,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on arch" do
+  context "when on arch" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "arch"
@@ -159,7 +159,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on windows", :windows_only do
+  context "when on windows", :windows_only do
 
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
@@ -247,7 +247,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on aix" do
+  context "when on aix" do
     let(:plugin) { get_plugin("packages") }
 
     let(:stdout) do
@@ -276,7 +276,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on freebsd" do
+  context "when on freebsd" do
     let(:plugin) { get_plugin("packages") }
 
     let(:stdout) do
@@ -301,7 +301,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on solaris2" do
+  context "when on solaris2" do
     let(:plugin) { get_plugin("packages") }
 
     let(:pkglist_output) do

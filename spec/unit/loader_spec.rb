@@ -22,14 +22,14 @@ require "spec_helper"
 describe Ohai::Loader do
   extend IntegrationSupport
 
-  let(:loader) { Ohai::Loader.new(ohai) }
+  let(:loader) { described_class.new(ohai) }
   let(:ohai) { double("Ohai::System", data: Mash.new, provides_map: provides_map, logger: Ohai::Log) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
     it "returns an Ohai::Loader object" do
-      loader = Ohai::Loader.new(ohai)
-      expect(loader).to be_a_kind_of(Ohai::Loader)
+      loader = described_class.new(ohai)
+      expect(loader).to be_a_kind_of(described_class)
     end
   end
 

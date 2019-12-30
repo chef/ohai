@@ -25,6 +25,7 @@ describe Ohai::System, "languages plugin" do
       it "is present" do
         expect(subject).not_to be_nil
       end
+
       it "looks like a version" do
         expect(subject).to match(VERSION_MATCHING_REGEX)
       end

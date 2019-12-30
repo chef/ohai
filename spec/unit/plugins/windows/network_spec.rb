@@ -29,12 +29,14 @@ describe Ohai::System, "Windows Network Plugin" do
   describe "#interface_code" do
     let(:interface_idx) { 1 }
     let(:index) { 2 }
+
     context "when interface index is given" do
       it "Returns a valid string having hexadecimal interface_index" do
         index = nil
         expect(plugin.interface_code(interface_idx, index)).to eq("0x1")
       end
     end
+
     context "when interface index is not given" do
       it "Returns a valid string having hexadecimal index" do
         interface_idx = nil
@@ -46,35 +48,43 @@ describe Ohai::System, "Windows Network Plugin" do
   describe "#prefer_ipv4" do
     let(:inet4) { "192.168.1.1" }
     let(:inet6) { "fe80::2fe:c8ff:fef5:c88f" }
-    context "When Array is not passed" do
+
+    context "when Array is not passed" do
       it "Returns nil" do
         expect(plugin.prefer_ipv4("Invalid")).to be_nil
       end
     end
-    context "When no address is passed in Array" do
+
+    context "when no address is passed in Array" do
       it "Returns nil" do
         expect(plugin.prefer_ipv4([])).to be_nil
       end
     end
-    context "Preferred chances of IPV4 address" do
+
+    context "preferred chances of IPV4 address" do
       it "Returns the address when only IPV4 address is passed" do
         expect(plugin.prefer_ipv4([inet4])).to eq(inet4)
       end
-      it "Returns the address when IPV6 is also present at latter place" do
+
+      it "returns the address when IPV6 is also present at latter place" do
         expect(plugin.prefer_ipv4([inet4, inet6])).to eq(inet4)
       end
-      it "Returns the address when IPV6 is also present at former place" do
+
+      it "returns the address when IPV6 is also present at former place" do
         expect(plugin.prefer_ipv4([inet6, inet4])).to eq(inet4)
       end
     end
+
     context "Preferred chances of IPV6 address" do
-      it "Returns the address when only IPV6 address is passed" do
+      it "returns the address when only IPV6 address is passed" do
         expect(plugin.prefer_ipv4([inet4])).to eq(inet4)
       end
-      it "Does not return the address if IPV4 is also present at former place" do
+
+      it "does not return the address if IPV4 is also present at former place" do
         expect(plugin.prefer_ipv4([inet4, inet6])).not_to eq(inet6)
       end
-      it "Does not return the address if IPV4 is also present at latter place" do
+
+      it "does not return the address if IPV4 is also present at latter place" do
         expect(plugin.prefer_ipv4([inet6, inet4])).not_to eq(inet6)
       end
     end
@@ -88,34 +98,40 @@ describe Ohai::System, "Windows Network Plugin" do
         "default_ip_gateway" => ["fe80::2fe:c8ff:fef5:c88f", "192.168.1.1"] }
     end
     let(:iface_config) { { 1 => interface1 } }
-    context "When a hash is not passed" do
-      it "Returns nil" do
+
+    context "when a hash is not passed" do
+      it "returns nil" do
         expect(plugin.favored_default_route_windows("Invalid")).to be_nil
       end
     end
-    context "When no interface is passed in Hash" do
-      it "Returns nil" do
+
+    context "when no interface is passed in Hash" do
+      it "returns nil" do
         expect(plugin.favored_default_route_windows({})).to be_nil
       end
     end
-    context "When an interface configuration is passed" do
+
+    context "when an interface configuration is passed" do
       context "without default_ip_gateway" do
-        it "Returns nil" do
+        it "returns nil" do
           interface1["default_ip_gateway"] = nil
           expect(plugin.favored_default_route_windows(iface_config)).to be_nil
         end
       end
+
       context "with default_ip_gateway" do
-        it "Returns a hash with details" do
+        it "returns a hash with details" do
           expect(plugin.favored_default_route_windows(iface_config)).to be_a(Hash)
           expect(plugin.favored_default_route_windows(iface_config)).not_to be_empty
         end
-        it "Returns the default_gateway in IPV4 format" do
+
+        it "returns the default_gateway in IPV4 format" do
           expect(plugin.favored_default_route_windows(iface_config)).to include(default_ip_gateway: "192.168.1.1")
         end
       end
     end
-    context "When multiple interfaces are passed" do
+
+    context "when multiple interfaces are passed" do
       let(:interface2) do
         { "index" => 2,
           "interface_index" => 3,
@@ -126,10 +142,12 @@ describe Ohai::System, "Windows Network Plugin" do
         { 1 => interface1,
           2 => interface2 }
       end
-      it "Returns the default route as least metric interface" do
+
+      it "returns the default route as least metric interface" do
         expect(plugin.favored_default_route_windows(iface_config)).to include(interface_index: 1)
       end
-      it "Returns its default_gateway in IPV4 format" do
+
+      it "returns its default_gateway in IPV4 format" do
         expect(plugin.favored_default_route_windows(iface_config)).to include(default_ip_gateway: "192.168.1.1")
       end
     end

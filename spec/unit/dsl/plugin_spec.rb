@@ -20,7 +20,7 @@
 require "spec_helper"
 
 shared_examples "Ohai::DSL::Plugin" do
-  context "#initialize" do
+  describe "#initialize" do
     it "sets has_run? to false" do
       expect(plugin.has_run?).to be false
     end
@@ -30,7 +30,7 @@ shared_examples "Ohai::DSL::Plugin" do
     end
   end
 
-  context "#run" do
+  describe "#run" do
     before do
       allow(plugin).to receive(:run_plugin).and_return(true)
       allow(plugin).to receive(:name).and_return(:TestPlugin)
@@ -282,12 +282,12 @@ shared_examples "Ohai::DSL::Plugin" do
     describe "a top-level attribute" do
       describe "as a string" do
         it "returns false when the attribute does not exist" do
-          expect(plugin.attribute?("alice in chains")).to eql(false)
+          expect(plugin.attribute?("alice in chains")).to be(false)
         end
 
         it "returns true if an attribute exists with the given name" do
           plugin.metallica("death magnetic")
-          expect(plugin.attribute?("metallica")).to eql(true)
+          expect(plugin.attribute?("metallica")).to be(true)
         end
       end
 

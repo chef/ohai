@@ -24,7 +24,7 @@ describe Ohai::Runner, "run_plugin" do
 
   before do
     @ohai = Ohai::System.new
-    @runner = Ohai::Runner.new(@ohai, safe_run)
+    @runner = described_class.new(@ohai, safe_run)
   end
 
   describe "when running an invalid plugin" do
@@ -180,7 +180,7 @@ describe Ohai::Runner, "run_plugin" do
   describe "when running a plugin with many dependencies" do
     before do
       @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+      @runner = described_class.new(@ohai, true)
 
       klass1 = Ohai.plugin(:One) do
         provides("one")
@@ -220,7 +220,7 @@ describe Ohai::Runner, "run_plugin" do
   end
 
   describe "when a cycle is detected" do
-    let(:runner) { Ohai::Runner.new(@ohai, true) }
+    let(:runner) { described_class.new(@ohai, true) }
 
     context "when there are no edges in the cycle (A->A)" do
       let(:plugin_class) do
@@ -278,7 +278,7 @@ describe Ohai::Runner, "run_plugin" do
   describe "when A depends on B and C, and B depends on C" do
     before do
       @ohai = Ohai::System.new
-      @runner = Ohai::Runner.new(@ohai, true)
+      @runner = described_class.new(@ohai, true)
 
       klass_a = Ohai.plugin(:A) do
         provides("A")
@@ -335,7 +335,7 @@ describe Ohai::Runner, "fetch_plugins" do
     @provides_map = Ohai::ProvidesMap.new
     @data = Mash.new
     @ohai = double("Ohai::System", data: @data, provides_map: @provides_map, logger: Ohai::Log.with_child)
-    @runner = Ohai::Runner.new(@ohai, true)
+    @runner = described_class.new(@ohai, true)
   end
 
   it "collects the provider" do
@@ -373,7 +373,7 @@ end
 describe Ohai::Runner, "#get_cycle" do
   before do
     @ohai = Ohai::System.new
-    @runner = Ohai::Runner.new(@ohai, true)
+    @runner = described_class.new(@ohai, true)
 
     klass1 = Ohai.plugin(:One) do
       provides("one")

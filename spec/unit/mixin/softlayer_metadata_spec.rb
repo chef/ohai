@@ -23,7 +23,7 @@ require "ohai/mixin/softlayer_metadata"
 describe ::Ohai::Mixin::SoftlayerMetadata do
 
   let(:mixin) do
-    mixin = Object.new.extend(::Ohai::Mixin::SoftlayerMetadata)
+    mixin = Object.new.extend(described_class)
     mixin
   end
 

@@ -18,7 +18,7 @@ require "spec_helper"
 describe Ohai::System, "zpools plugin" do
   let(:plugin) { get_plugin("zpools") }
 
-  context "on Linux" do
+  context "when on Linux" do
     let(:zpool_status_tank) do
       <<-EOST
   pool: tank
@@ -130,7 +130,7 @@ describe Ohai::System, "zpools plugin" do
     end
   end
 
-  context "on Solaris2" do
+  context "when on Solaris2" do
     let(:zpool_status_tank) do
       <<~EOST
         pool: tank

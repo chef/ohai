@@ -236,7 +236,7 @@ Ohai.plugin(:Filesystem) do
       property = Mash.new
       # In windows the closet thing we have to a device is the volume_name
       # and the "mountpoint" is the drive letter...
-      device = disk["volume_name"].to_s.downcase
+      device = disk["volumename"].to_s.downcase
       mount = disk["deviceid"]
       property[:kb_size] = disk["size"] ? disk["size"].to_i / 1000 : 0
       property[:kb_available] = disk["freespace"].to_i / 1000

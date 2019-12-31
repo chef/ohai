@@ -33,7 +33,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "filesystem" => "NTFS",
         "freespace" => "100000",
         "name" => "C:",
-        "volumename " => "",
+        # omit "volumename"; it will be added in (some) tests below
       },
       {
         "caption" => "D:",
@@ -42,7 +42,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "filesystem" => "FAT32",
         "freespace" => "100000",
         "name" => "D:",
-        # Lets not pass "volumename" for this drive
+        # omit "volumename"; it will be added in (some) tests below
       },
     ]
   end
@@ -116,7 +116,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
     context "when there are volume names" do
       before do
         ldi = logical_disks_instances
-        ldi.each_with_index { |d, i| d["volume_name"] = "Volume #{i}" }
+        ldi.each_with_index { |d, i| d["volumename"] = "Volume #{i}" }
         allow(plugin).to receive(:logical_info).and_return(plugin.logical_properties(ldi))
         allow(plugin).to receive(:encryptable_info).and_return(plugin.encryption_properties(encryptable_volume_instances))
         plugin.run

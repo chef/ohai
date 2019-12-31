@@ -31,6 +31,8 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "deviceid" => "C:",
         "size" => "10000000",
         "filesystem" => "NTFS",
+        "drivetype" => 3,
+        "description" => "Local Fixed Disk",
         "freespace" => "100000",
         "name" => "C:",
         # omit "volumename"; it will be added in (some) tests below
@@ -40,6 +42,8 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "deviceid" => "D:",
         "size" => "10000000",
         "filesystem" => "FAT32",
+        "drivetype" => 2,
+        "description" => "Removable Disk",
         "freespace" => "100000",
         "name" => "D:",
         # omit "volumename"; it will be added in (some) tests below
@@ -95,6 +99,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
       it "returns disk information" do
         {
           "fs_type" => "ntfs",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
           "volume_name" => "",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
@@ -104,6 +111,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
         {
           "fs_type" => "fat32",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
           "volume_name" => "",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
@@ -139,6 +149,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
       it "returns disk information" do
         {
           "fs_type" => "ntfs",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
           "volume_name" => "volume 0",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
@@ -148,6 +161,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
         {
           "fs_type" => "fat32",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
           "volume_name" => "volume 1",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
@@ -160,7 +176,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
   describe "#logical_properties" do
     let(:disks) { logical_disks_instances }
-    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type volume_name device} }
+    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type drive_type drive_type_string drive_type_human volume_name device} }
 
     it "Returns a mash" do
       expect(plugin.logical_properties(disks)).to be_a(Mash)

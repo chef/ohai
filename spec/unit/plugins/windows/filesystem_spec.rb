@@ -31,18 +31,22 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "deviceid" => "C:",
         "size" => "10000000",
         "filesystem" => "NTFS",
+        "drivetype" => 3,
+        "description" => "Local Fixed Disk",
         "freespace" => "100000",
         "name" => "C:",
-        "volumename " => "",
+        # omit "volumename"; it will be added in (some) tests below
       },
       {
         "caption" => "D:",
         "deviceid" => "D:",
         "size" => "10000000",
         "filesystem" => "FAT32",
+        "drivetype" => 2,
+        "description" => "Removable Disk",
         "freespace" => "100000",
         "name" => "D:",
-        # Lets not pass "volumename" for this drive
+        # omit "volumename"; it will be added in (some) tests below
       },
     ]
   end
@@ -95,6 +99,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
       it "returns disk information" do
         {
           "fs_type" => "ntfs",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
           "volume_name" => "",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
@@ -104,6 +111,9 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
         {
           "fs_type" => "fat32",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
           "volume_name" => "",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
@@ -116,7 +126,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
     context "when there are volume names" do
       before do
         ldi = logical_disks_instances
-        ldi.each_with_index { |d, i| d["volume_name"] = "Volume #{i}" }
+        ldi.each_with_index { |d, i| d["volumename"] = "Volume #{i}" }
         allow(plugin).to receive(:logical_info).and_return(plugin.logical_properties(ldi))
         allow(plugin).to receive(:encryptable_info).and_return(plugin.encryption_properties(encryptable_volume_instances))
         plugin.run
@@ -139,7 +149,10 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
       it "returns disk information" do
         {
           "fs_type" => "ntfs",
-          "volume_name" => "volume 0",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
+          "volume_name" => "Volume 0",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
           expect(plugin[:filesystem]["C:"][k]).to eq(v)
@@ -148,7 +161,10 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
         {
           "fs_type" => "fat32",
-          "volume_name" => "volume 1",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
+          "volume_name" => "Volume 1",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
           expect(plugin[:filesystem]["D:"][k]).to eq(v)
@@ -160,7 +176,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
   describe "#logical_properties" do
     let(:disks) { logical_disks_instances }
-    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type volume_name device} }
+    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type drive_type drive_type_string drive_type_human volume_name device} }
 
     it "Returns a mash" do
       expect(plugin.logical_properties(disks)).to be_a(Mash)

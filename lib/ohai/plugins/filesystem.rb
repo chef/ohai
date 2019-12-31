@@ -162,6 +162,9 @@ Ohai.plugin(:Filesystem) do
   end
 
   ### Windows specific methods BEGINS
+  # Drive types
+  DRIVE_TYPE ||= %w{unknown no_root_dir removable local network cd ram}.freeze
+
   # Volume encryption or decryption status
   #
   # @see https://docs.microsoft.com/en-us/windows/desktop/SecProv/getconversionstatus-win32-encryptablevolume#parameters
@@ -173,7 +176,7 @@ Ohai.plugin(:Filesystem) do
 
   # Returns a Mash loaded with logical details
   #
-  # Uses Win32_LogicalDisk and logical_properties to return encryption details of volumes.
+  # Uses Win32_LogicalDisk and logical_properties to return general details of volumes.
   #
   # Returns an empty Mash in case of any WMI exception.
   #
@@ -184,7 +187,7 @@ Ohai.plugin(:Filesystem) do
   def logical_info
     wmi = WmiLite::Wmi.new("Root\\CIMV2")
 
-    # Note: we should really be parsing Win32_Volume and Win32_Mapped drive.
+    # TODO: We should really be parsing Win32_Volume and Win32_MountPoint.
     disks = wmi.instances_of("Win32_LogicalDisk")
     logical_properties(disks)
   rescue WmiLite::WmiException
@@ -234,9 +237,9 @@ Ohai.plugin(:Filesystem) do
     properties = Mash.new
     disks.each do |disk|
       property = Mash.new
-      # In windows the closet thing we have to a device is the volume_name
+      # In windows the closest thing we have to a device is the volume name
       # and the "mountpoint" is the drive letter...
-      device = disk["volume_name"].to_s.downcase
+      device = disk["volumename"].to_s.downcase
       mount = disk["deviceid"]
       property[:kb_size] = disk["size"] ? disk["size"].to_i / 1000 : 0
       property[:kb_available] = disk["freespace"].to_i / 1000
@@ -244,7 +247,10 @@ Ohai.plugin(:Filesystem) do
       property[:percent_used] = (property[:kb_size] == 0 ? 0 : (property[:kb_used] * 100 / property[:kb_size]))
       property[:mount] = mount
       property[:fs_type] = disk["filesystem"].to_s.downcase
-      property[:volume_name] = device
+      property[:drive_type] = disk["drivetype"].to_i
+      property[:drive_type_string] = DRIVE_TYPE[disk["drivetype"].to_i]
+      property[:drive_type_human] = disk["description"].to_s
+      property[:volume_name] = disk["volumename"].to_s
       property[:device] = device
 
       key = "#{device},#{mount}"

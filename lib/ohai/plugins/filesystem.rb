@@ -237,7 +237,7 @@ Ohai.plugin(:Filesystem) do
     properties = Mash.new
     disks.each do |disk|
       property = Mash.new
-      # In windows the closet thing we have to a device is the volume_name
+      # In windows the closest thing we have to a device is the volume name
       # and the "mountpoint" is the drive letter...
       device = disk["volumename"].to_s.downcase
       mount = disk["deviceid"]
@@ -250,7 +250,7 @@ Ohai.plugin(:Filesystem) do
       property[:drive_type] = disk["drivetype"].to_i
       property[:drive_type_string] = DRIVE_TYPE[disk["drivetype"].to_i]
       property[:drive_type_human] = disk["description"].to_s
-      property[:volume_name] = device
+      property[:volume_name] = disk["volumename"].to_s
       property[:device] = device
 
       key = "#{device},#{mount}"

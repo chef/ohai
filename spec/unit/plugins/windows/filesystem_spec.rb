@@ -152,7 +152,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "drive_type" => 3,
           "drive_type_string" => "local",
           "drive_type_human" => "Local Fixed Disk",
-          "volume_name" => "volume 0",
+          "volume_name" => "Volume 0",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
           expect(plugin[:filesystem]["C:"][k]).to eq(v)
@@ -164,7 +164,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "drive_type" => 2,
           "drive_type_string" => "removable",
           "drive_type_human" => "Removable Disk",
-          "volume_name" => "volume 1",
+          "volume_name" => "Volume 1",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
           expect(plugin[:filesystem]["D:"][k]).to eq(v)

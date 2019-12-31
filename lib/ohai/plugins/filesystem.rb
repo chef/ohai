@@ -173,7 +173,7 @@ Ohai.plugin(:Filesystem) do
 
   # Returns a Mash loaded with logical details
   #
-  # Uses Win32_LogicalDisk and logical_properties to return encryption details of volumes.
+  # Uses Win32_LogicalDisk and logical_properties to return general details of volumes.
   #
   # Returns an empty Mash in case of any WMI exception.
   #
@@ -184,7 +184,7 @@ Ohai.plugin(:Filesystem) do
   def logical_info
     wmi = WmiLite::Wmi.new("Root\\CIMV2")
 
-    # Note: we should really be parsing Win32_Volume and Win32_Mapped drive.
+    # TODO: We should really be parsing Win32_Volume and Win32_MountPoint.
     disks = wmi.instances_of("Win32_LogicalDisk")
     logical_properties(disks)
   rescue WmiLite::WmiException

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.7.2 -->
-## [v15.7.2](https://github.com/chef/ohai/tree/v15.7.2) (2019-12-30)
+<!-- latest_release 15.7.3 -->
+## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2019-12-31)
 
 #### Merged Pull Requests
-- Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50))
+- Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.6.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock)) <!-- 15.7.3 -->
 - Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50)) <!-- 15.7.2 -->
 - Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50)) <!-- 15.7.1 -->
 - Substitute require for require_relative [#1415](https://github.com/chef/ohai/pull/1415) ([tas50](https://github.com/tas50)) <!-- 15.7.0 -->

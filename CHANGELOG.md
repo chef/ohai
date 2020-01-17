@@ -1,23 +1,21 @@
 # Change Log
 
-<!-- latest_release 15.7.3 -->
-## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2019-12-31)
-
-#### Merged Pull Requests
-- Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.6.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock)) <!-- 15.7.3 -->
-- Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50)) <!-- 15.7.2 -->
-- Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50)) <!-- 15.7.1 -->
-- Substitute require for require_relative [#1415](https://github.com/chef/ohai/pull/1415) ([tas50](https://github.com/tas50)) <!-- 15.7.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2020-01-17)
+
+#### Merged Pull Requests
+- Substitute require for require_relative [#1415](https://github.com/chef/ohai/pull/1415) ([tas50](https://github.com/tas50))
+- Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50))
+- Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50))
+- Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
+<!-- latest_stable_release -->
+
 ## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-10)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Rename Ohai::Mixin::DmiDecode spec file to end in `_spec.rb` [#1413](https://github.com/chef/ohai/pull/1413) ([KrisShannon](https://github.com/KrisShannon))
 - Fix failures under Ruby 2.7 [#1412](https://github.com/chef/ohai/pull/1412) ([KrisShannon](https://github.com/KrisShannon))
 - [filesystem] Convert windows to filesystem2 [#1267](https://github.com/chef/ohai/pull/1267) ([jaymzh](https://github.com/jaymzh))
-<!-- latest_stable_release -->
 
 ## [v15.3.1](https://github.com/chef/ohai/tree/v15.3.1) (2019-09-05)
 

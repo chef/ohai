@@ -24,7 +24,7 @@ Ohai.plugin(:DMI) do
 
     # if we already have a "dmi" with keys (presumably from dmidecode), don't try smbios
     # note that a single key just means dmidecode exited with its version
-    if (dmi.class.to_s == "Mash") && (dmi.keys.length > 1)
+    if dmi.is_a?(Mash) && dmi.keys.length > 1
       logger.trace("Plugin DMI: skipping smbios output, since DMI information has already been provided")
       return
     end
@@ -177,7 +177,7 @@ Ohai.plugin(:DMI) do
           next
         end
         # overwrite "raw" value with a new Mash
-        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].class.to_s == "Mash"
+        dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field] = Mash.new unless dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field].is_a?(Mash)
         dmi[dmi_record[:type]][:all_records][dmi_record[:position]][field][extended_data[1]] = extended_data[2]
 
       else

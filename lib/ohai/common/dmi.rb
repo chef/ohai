@@ -117,12 +117,12 @@ module Ohai
       def convenience_keys(dmi)
         dmi.each do |type, records|
           in_common = Mash.new
-          next unless records.class.to_s == "Mash"
+          next unless records.is_a?(Mash)
           next unless records.key?("all_records")
 
           records[:all_records].each do |record|
             record.each do |field, value|
-              next if value.class.to_s == "Mash"
+              next if value.is_a?(Mash)
               next if field.to_s == "application_identifier"
               next if field.to_s == "size"
               next if field.to_s == "record_id"

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.1 -->
-## [v16.0.1](https://github.com/chef/ohai/tree/v16.0.1) (2020-01-17)
+<!-- latest_release 16.0.2 -->
+## [v16.0.2](https://github.com/chef/ohai/tree/v16.0.2) (2020-01-20)
 
 #### Merged Pull Requests
-- Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50))
+- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50)) <!-- 16.0.2 -->
 - Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50)) <!-- 16.0.1 -->
 - Bump to version 16.0.0 [#1420](https://github.com/chef/ohai/pull/1420) ([tas50](https://github.com/tas50)) <!-- 16.0.0 -->
 <!-- release_rollup -->

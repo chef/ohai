@@ -1,20 +1,18 @@
 # Change Log
 
-<!-- latest_release 15.7.4 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v15.7.4](https://github.com/chef/ohai/tree/v15.7.4) (2020-01-21)
 
 #### Merged Pull Requests
 - Use is_a? to check the class in the DMI plugin [#1424](https://github.com/chef/ohai/pull/1424) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=15.7.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Use is_a? to check the class in the DMI plugin [#1424](https://github.com/chef/ohai/pull/1424) ([tas50](https://github.com/tas50)) <!-- 15.7.4 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2020-01-17)
 
 #### Merged Pull Requests
@@ -22,7 +20,6 @@
 - Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50))
 - Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50))
 - Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
-<!-- latest_stable_release -->
 
 ## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-10)
 

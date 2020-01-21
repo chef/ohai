@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.7.4 -->
+## [v15.7.4](https://github.com/chef/ohai/tree/v15.7.4) (2020-01-21)
+
+#### Merged Pull Requests
+- Use is_a? to check the class in the DMI plugin [#1424](https://github.com/chef/ohai/pull/1424) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.7.3 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Use is_a? to check the class in the DMI plugin [#1424](https://github.com/chef/ohai/pull/1424) ([tas50](https://github.com/tas50)) <!-- 15.7.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

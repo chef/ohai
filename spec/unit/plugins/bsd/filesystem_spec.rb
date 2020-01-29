@@ -1,7 +1,7 @@
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2011-2018, Chef Software Inc.
+# Copyright:: Copyright (c) 2011-2020, Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,49 +55,49 @@ describe Ohai::System, "BSD filesystem plugin" do
 
     it "sets kb_size to value from df" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:kb_size]).to eq("9637788")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:kb_size]).to eq("9637788")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_size]).to eq("9637788")
     end
 
     it "sets kb_used to value from df" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:kb_used]).to eq("3313504")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:kb_used]).to eq("3313504")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_used]).to eq("3313504")
     end
 
     it "sets kb_available to value from df" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:kb_available]).to eq("5553264")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:kb_available]).to eq("5553264")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:kb_available]).to eq("5553264")
     end
 
     it "sets percent_used to value from df" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:percent_used]).to eq("37%")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:percent_used]).to eq("37%")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:percent_used]).to eq("37%")
     end
 
     it "sets mount to value from df" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
     end
 
     it "sets total_inodes to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:total_inodes]).to eq("1043326")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:total_inodes]).to eq("1043326")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:total_inodes]).to eq("1043326")
     end
 
     it "sets inodes_used to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_used]).to eq("252576")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:inodes_used]).to eq("252576")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:inodes_used]).to eq("252576")
     end
 
     it "sets inodes_available to value from df -iP" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:inodes_available]).to eq("790750")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:inodes_available]).to eq("790750")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:inodes_available]).to eq("790750")
     end
   end
@@ -118,19 +118,19 @@ describe Ohai::System, "BSD filesystem plugin" do
 
     it "sets mount to value from mount" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:mount]).to eq("/")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount]).to eq("/")
     end
 
     it "sets fs_type to value from mount" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:fs_type]).to eq("ufs")
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:fs_type]).to eq("ufs")
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:fs_type]).to eq("ufs")
     end
 
     it "sets mount_options to an array of values from mount" do
       plugin.run
-      expect(plugin[:filesystem]["/dev/ada0p2"][:mount_options]).to eq(["local", "journaled soft-updates"])
+      expect(plugin[:filesystem]["by_pair"]["/dev/ada0p2,/"][:mount_options]).to eq(["local", "journaled soft-updates"])
       expect(plugin[:filesystem2]["by_pair"]["/dev/ada0p2,/"][:mount_options]).to eq(["local", "journaled soft-updates"])
     end
   end

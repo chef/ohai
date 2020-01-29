@@ -47,6 +47,13 @@ RSpec.describe Ohai::Config do
           .to raise_error(Ohai::Exceptions::PluginConfigError, /Expected Symbol/)
       end
     end
+
+    describe "option :optional_plugins" do
+      it "Converts string values to symbols" do
+        described_class.ohai[:optional_plugins] = [ "Foo" ]
+        expect(described_class.ohai[:optional_plugins]).to eq([:Foo])
+      end
+    end
   end
 
   describe "Ohai.config" do

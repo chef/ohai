@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.3 -->
-## [v16.0.3](https://github.com/chef/ohai/tree/v16.0.3) (2020-01-29)
+<!-- latest_release 16.0.4 -->
+## [v16.0.4](https://github.com/chef/ohai/tree/v16.0.4) (2020-01-30)
 
 #### Merged Pull Requests
-- fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig))
+- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50)) <!-- 16.0.4 -->
 - fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig)) <!-- 16.0.3 -->
 - Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50)) <!-- 16.0.2 -->
 - Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50)) <!-- 16.0.1 -->

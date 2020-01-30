@@ -118,6 +118,16 @@ describe Ohai::System, "Linux Network Plugin" do
                 RX bytes:1325650573 (1.2 GiB)  TX bytes:1666310189 (1.5 GiB)
                 Interrupt:36 Memory:f4800000-f4ffffff
 
+      eth13     Link encap:Ethernet  HWaddr 00:ba:ba:10:21:21
+                inet addr:10.21.21.21  Bcast:10.21.21.255  Mask:255.255.255.0
+                inet6 addr: fe80::2ba:baff:fe10:2121/64 Scope:Link
+                UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+                RX packets:21 errors:0 dropped:0 overruns:0 frame:0
+                TX packets:21 errors:0 dropped:0 overruns:0 carrier:0
+                collisions:0 txqueuelen:1000
+                RX bytes:21 (2.1 GiB)  TX bytes:21 (2.1 GiB)
+                Interrupt:21
+
       ovs-system Link encap:Ethernet  HWaddr 7A:7A:80:80:6C:24
                 BROADCAST MULTICAST  MTU:1500  Metric:1
                 RX packets:0 errors:0 dropped:0 overruns:0 frame:0
@@ -227,6 +237,10 @@ describe Ohai::System, "Linux Network Plugin" do
           link/void
           inet 127.0.0.2/32 scope host venet0
           inet 172.16.19.48/32 scope global venet0:0
+      10: eth13: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+          link/ether 00:ba:ba:10:21:21 brd ff:ff:ff:ff:ff:ff
+          inet 10.21.21.21/24 brd 10.21.21.255 scope global eth3
+          inet6 fe80::2ba:baff:fe10:2121/64 scope link
       12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
           link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
           inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
@@ -279,25 +293,31 @@ describe Ohai::System, "Linux Network Plugin" do
           1321907045 13357087 0       0       0       3126613
           TX: bytes  packets  errors  dropped carrier collsns
           1661526184 9467091  0       0       0       0
-      11: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+      11: eth13: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master ovs-system state UP mode DEFAULT qlen 1000
+          link/ether ba:ba:10:21:21:21 brd ff:ff:ff:ff:ff:ff
+          RX: bytes  packets  errors  dropped overrun mcast
+          21         21       0       0       0       21
+          TX: bytes  packets  errors  dropped carrier collsns
+          21         21       0       0       0       0
+      12: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
           link/ether 7a:7a:80:80:6c:24 brd ff:ff:ff:ff:ff:ff
           RX: bytes  packets  errors  dropped overrun mcast
           0          0        0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           0          0        0       0       0       0
-      12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
+      13: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
           link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
           RX: bytes  packets  errors  dropped overrun mcast
           21468183   159866   0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           2052       6        0       0       0       0
-      13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
+      14: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
           link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff promiscuity 0
           RX: bytes  packets  errors  dropped overrun mcast
           0          0        0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           140        2        0       1       0       0
-      14: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      15: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN mode DEFAULT group default qlen 1
           link/tunnel6 :: brd :: promiscuity 0
           ip6tnl ip6ip6 remote :: local :: encaplimit 0 hoplimit 0 tclass 0x00 flowlabel 0x00000 (flowinfo 0x00000000) addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
           RX: bytes  packets  errors  dropped overrun mcast
@@ -634,9 +654,9 @@ describe Ohai::System, "Linux Network Plugin" do
 
       it "detects the interfaces" do
         if network_method == "iproute2"
-          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         else
-          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         end
       end
 
@@ -747,6 +767,10 @@ describe Ohai::System, "Linux Network Plugin" do
 
       it "detects the number of the ethernet interface" do
         expect(plugin["network"]["interfaces"]["eth0"]["number"]).to eq("0")
+      end
+
+      it "detects the number of an ethernet interface greater than 10" do
+        expect(plugin["network"]["interfaces"]["eth13"]["number"]).to eq("13")
       end
 
       it "detects the mtu of the ethernet interface" do
@@ -955,6 +979,12 @@ describe Ohai::System, "Linux Network Plugin" do
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"].keys).to include("192.168.212.2")
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["netmask"]).to eq("255.255.255.0")
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["family"]).to eq("inet")
+    end
+
+    it "detects the ipv4 addresses of an ethernet interface with a number greater than 10" do
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"].keys).to include("10.21.21.21")
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"]["10.21.21.21"]["netmask"]).to eq("255.255.255.0")
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"]["10.21.21.21"]["family"]).to eq("inet")
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do

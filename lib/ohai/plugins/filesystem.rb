@@ -6,7 +6,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) 2008-2020 Chef Software, Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -98,35 +98,10 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
-  def generate_deprecated_view(fs)
-    view = generate_device_view(fs)
-    view.each do |device, entry|
-      view[device][:mount] = entry[:mounts].first
-      view[device].delete(:mounts)
-    end
-    view
-  end
-
   def generate_deprecated_windows_view(fs)
     view = generate_mountpoint_view(fs)
     view.each do |mp, entry|
       view[mp].delete("devices")
-    end
-    view
-  end
-
-  def generate_deprecated_solaris_view(fs, old_zfs)
-    view = generate_deprecated_view(fs)
-    old_zfs.each do |fsname, attributes|
-      view[fsname] ||= Mash.new
-      view[fsname][:fs_type] = "zfs"
-      view[fsname][:mount] = attributes[:values][:mountpoint] if attributes[:values].key?("mountpoint")
-      view[fsname][:device] = fsname
-      view[fsname][:zfs_values] = attributes[:values]
-      view[fsname][:zfs_sources] = attributes[:sources]
-      # parents will already be here
-      # but we want to nuke "zfs_properties"
-      view[fsname].delete("zfs_properties")
     end
     view
   end
@@ -496,9 +471,8 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - BSD didn't do the conversion when everyone else
-    # did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_view(fs)
+    # @todo in Chef 17 the filesystem2 part of this goes away
+    filesystem fs_data
     filesystem2 fs_data
   end
 
@@ -595,7 +569,6 @@ Ohai.plugin(:Filesystem) do
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    old_zfs = Mash.new
     zfs_get = "zfs get -p -H all"
     run_with_check("zfs") do
       so = shell_out(zfs_get)
@@ -612,13 +585,6 @@ Ohai.plugin(:Filesystem) do
           value: value,
           source: source,
         }
-        # needed for old v1 view
-        old_zfs[filesystem] ||= Mash.new
-        old_zfs[filesystem][:values] ||= Mash.new
-        old_zfs[filesystem][:sources] ||= Mash.new
-        old_zfs[filesystem][:values][property] = value
-        old_zfs[filesystem][:values][property] = value
-        old_zfs[filesystem][:sources][property] = source
       end
     end
 
@@ -652,9 +618,8 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - Solaris didn't do the conversion when everyone
-    # else did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_solaris_view(fs, old_zfs)
+    # @todo in Chef 17 the filesystem2 plugin goes away
+    filesystem fs_data
     filesystem2 fs_data
   end
 
@@ -745,9 +710,8 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - AIX didn't do the conversion when everyone
-    # else did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_view(fs)
+    # @todo in Chef 17 the filesystem2 plugin goes away here
+    filesystem fs_data
     filesystem2 fs_data
   end
 

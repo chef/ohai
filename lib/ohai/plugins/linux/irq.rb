@@ -26,8 +26,12 @@ Ohai.plugin(:Irq) do
     cpus = cpu['total']
 
     File.open("/proc/interrupts").each do |line|
+      # Documentation: https://www.kernel.org/doc/Documentation/filesystems/proc.txt
+      # format is "{irqn}: {CPUn...} [type] [vector] [device]"
       irqn, fields = line.split(":", 2)
+      # skip the header
       next if fields.nil?
+
       irqn.strip!
       Ohai::Log.debug("irq: processing #{irqn}")
 
@@ -42,9 +46,13 @@ Ohai.plugin(:Irq) do
           irq[irqn][:events_by_cpu][cpu] = 0
         end
       end
+      # Only regular IRQs have extra fields and affinity settings
       if /\d+/.match(irqn)
         irq[irqn][:type], irq[irqn][:vector], irq[irqn][:device] = fields[cpus].split
 
+        # Documentation: https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
+        # format: comma-separate list of 32bit bitmask in hex
+        # each bit is a CPU, right to left ordering (i.e. CPU0 is rightmost)
         if File.exists?("/proc/irq/#{irqn}/smp_affinity")
           masks = File.read("/proc/irq/#{irqn}/smp_affinity").strip
           bit_masks = []
@@ -61,6 +69,7 @@ Ohai.plugin(:Irq) do
             irq[irqn][:affinitize_by_cpu][cpu] = affinitize_by_cpu[cpu].to_i == 1 ? true : false
           end
         end
+      # ERR and MIS do not have any extra fields
       elsif fields[cpus]
         irq[irqn][:type] = fields[cpus].strip
       end

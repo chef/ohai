@@ -29,6 +29,7 @@ Ohai.plugin(:Irq) do
       irqn, fields = line.split(":", 2)
       next if fields.nil?
       irqn.strip!
+      Ohai::Log.debug("irq: processing #{irqn}")
 
       irq[irqn] = Mash.new
       irq[irqn][:events_by_cpu] = Mash.new
@@ -43,7 +44,24 @@ Ohai.plugin(:Irq) do
       end
       if /\d+/.match(irqn)
         irq[irqn][:type], irq[irqn][:vector], irq[irqn][:device] = fields[cpus].split
-      else
+
+        if File.exists?("/proc/irq/#{irqn}/smp_affinity")
+          masks = File.read("/proc/irq/#{irqn}/smp_affinity").strip
+          bit_masks = []
+          masks.split(",").each do |mask|
+	    if mask.length != 8
+              mask = "0" * (8 - mask.length) + mask
+            end
+            bit_masks << mask.to_i(16).to_s(2)
+          end
+          affinitize_mask = bit_masks.join()
+          affinitize_by_cpu = affinitize_mask.split('').reverse()
+          irq[irqn][:affinitize_by_cpu] = Mash.new
+          (0..cpus-1).each do |cpu|
+            irq[irqn][:affinitize_by_cpu][cpu] = affinitize_by_cpu[cpu].to_i == 1 ? true : false
+          end
+        end
+      elsif fields[cpus]
         irq[irqn][:type] = fields[cpus].strip
       end
     end

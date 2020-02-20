@@ -32,9 +32,9 @@ Ohai.plugin(:Eucalyptus) do
   def get_mac_address(addresses)
     detected_addresses = addresses.detect { |address, keypair| keypair == { "family" => "lladdr" } }
     if detected_addresses
-      return detected_addresses.first
+      detected_addresses.first
     else
-      return ""
+      ""
     end
   end
 

@@ -86,7 +86,7 @@ Ohai.plugin(:EC2) do
       wmi = WmiLite::Wmi.new
       if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
         logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
-        return true
+        true
       end
     else
       logger.trace("Plugin EC2: has_ec2_identifying_number? == false")

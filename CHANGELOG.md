@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.5 -->
-## [v16.0.5](https://github.com/chef/ohai/tree/v16.0.5) (2020-02-20)
+<!-- latest_release 16.0.6 -->
+## [v16.0.6](https://github.com/chef/ohai/tree/v16.0.6) (2020-02-20)
 
 #### Merged Pull Requests
-- Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50))
+- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50)) <!-- 16.0.6 -->
 - Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50)) <!-- 16.0.5 -->
 - Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50)) <!-- 16.0.4 -->
 - fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig)) <!-- 16.0.3 -->

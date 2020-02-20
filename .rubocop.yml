@@ -10,7 +10,3 @@ Layout/Tab:
   Exclude:
     - "lib/ohai/plugins/mono.rb"
     - "lib/ohai/plugins/darwin/hardware.rb"
-
-# this can cause failures that we need to look at one by one
-Performance/RegexpMatch:
-  Enabled: false

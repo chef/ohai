@@ -13,10 +13,6 @@ group :development do
   gem "ipaddr_extensions"
 end
 
-group :ci do
-  gem "rspec_junit_formatter"
-end
-
 group :docs do
   gem "yard"
   gem "redcarpet"

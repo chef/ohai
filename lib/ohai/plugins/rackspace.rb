@@ -54,7 +54,7 @@ Ohai.plugin(:Rackspace) do
     wmi = WmiLite::Wmi.new
     if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"
       logger.trace("Plugin Rackspace: has_rackspace_manufacturer? == true")
-      return true
+      true
     end
   end
 

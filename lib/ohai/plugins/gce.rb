@@ -54,7 +54,7 @@ Ohai.plugin(:GCE) do
       computer_system = wmi.first_of("Win32_ComputerSystem")
       if computer_system["Manufacturer"] =~ /^Google/ && computer_system["Model"] =~ /^Google/
         logger.trace("Plugin GCE: has_gce_system_info? == true")
-        return true
+        true
       end
     else
       logger.trace("Plugin GCE: has_gce_system_info? == false")

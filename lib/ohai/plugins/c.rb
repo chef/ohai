@@ -36,10 +36,10 @@ Ohai.plugin(:C) do
     so = shell_out("/usr/bin/xcode-select -p")
     if so.exitstatus == 0
       logger.trace("Plugin C: Xcode Command Line Tools found.")
-      return true
+      true
     else
       logger.trace("Plugin C: Xcode Command Line Tools not found.")
-      return false
+      false
     end
   rescue Ohai::Exceptions::Exec
     logger.trace("Plugin C: xcode-select binary could not be found. Skipping data.")

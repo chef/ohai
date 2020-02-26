@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Irq) do
+Ohai.plugin(:Interrupts) do
   depends "cpu"
-  provides "irq"
+  provides "interrupts", "interrupts/irq", "interrupts/smp_affinity_by_cpu"
 
   # Documentation: https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
   # format: comma-separate list of 32bit bitmask in hex
@@ -42,7 +42,8 @@ Ohai.plugin(:Irq) do
   end
 
   collect_data(:linux) do
-    irq Mash.new
+    interrupts Mash.new
+    interrupts[:irq] = Mash.new
 
     cpus = cpu['total']
 
@@ -56,27 +57,27 @@ Ohai.plugin(:Irq) do
       irqn.strip!
       Ohai::Log.debug("irq: processing #{irqn}")
 
-      irq[irqn] = Mash.new
-      irq[irqn][:events_by_cpu] = Mash.new
+      interrupts[:irq][irqn] = Mash.new
+      interrupts[:irq][irqn][:events_by_cpu] = Mash.new
 
       fields = fields.split(' ', cpus+1)
       (0..cpus-1).each do |cpu|
         if /\d+/.match(fields[cpu])
-          irq[irqn][:events_by_cpu][cpu] = fields[cpu].to_i
+          interrupts[:irq][irqn][:events_by_cpu][cpu] = fields[cpu].to_i
         else
-          irq[irqn][:events_by_cpu][cpu] = 0
+          interrupts[:irq][irqn][:events_by_cpu][cpu] = 0
         end
       end
       # Only regular IRQs have extra fields and affinity settings
       if /\d+/.match(irqn)
-        irq[irqn][:type], irq[irqn][:vector], irq[irqn][:device] = fields[cpus].split
+        interrupts[:irq][irqn][:type], interrupts[:irq][irqn][:vector], interrupts[:irq][irqn][:device] = fields[cpus].split
         if File.exists?("/proc/irq/#{irqn}/smp_affinity")
-          irq[irqn][:smp_affinity_by_cpu] =
+          interrupts[:irq][irqn][:smp_affinity_by_cpu] =
             parse_smp_affinity("/proc/irq/#{irqn}/smp_affinity", cpus)
         end
       # ERR and MIS do not have any extra fields
       elsif fields[cpus]
-        irq[irqn][:type] = fields[cpus].strip
+        interrupts[:irq][irqn][:type] = fields[cpus].strip
       end
     end
   end

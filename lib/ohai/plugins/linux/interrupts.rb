@@ -43,10 +43,11 @@ Ohai.plugin(:Interrupts) do
 
   collect_data(:linux) do
     interrupts Mash.new
-    interrupts[:irq] = Mash.new
 
     cpus = cpu['total']
+    interrupts[:smp_affinity_by_cpu] = parse_smp_affinity("/proc/irq/default_smp_affinity", cpus)
 
+    interrupts[:irq] = Mash.new
     File.open("/proc/interrupts").each do |line|
       # Documentation: https://www.kernel.org/doc/Documentation/filesystems/proc.txt
       # format is "{irqn}: {CPUn...} [type] [vector] [device]"

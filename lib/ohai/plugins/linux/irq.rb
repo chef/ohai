@@ -20,6 +20,27 @@ Ohai.plugin(:Irq) do
   depends "cpu"
   provides "irq"
 
+  # Documentation: https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
+  # format: comma-separate list of 32bit bitmask in hex
+  # each bit is a CPU, right to left ordering (i.e. CPU0 is rightmost)
+  def parse_smp_affinity(path, cpus)
+    masks = File.read(path).strip
+    bit_masks = []
+    masks.split(",").each do |mask|
+      if mask.length != 8
+        mask = "0" * (8 - mask.length) + mask
+      end
+      bit_masks << mask.to_i(16).to_s(2)
+    end
+    affinity_mask = bit_masks.join()
+    affinity_by_cpu = affinity_mask.split('').reverse()
+    smp_affinity_by_cpu = Mash.new
+    (0..cpus-1).each do |cpu|
+      smp_affinity_by_cpu[cpu] = affinity_by_cpu[cpu].to_i == 1 ? true : false
+    end
+    smp_affinity_by_cpu
+  end
+
   collect_data(:linux) do
     irq Mash.new
 
@@ -49,25 +70,9 @@ Ohai.plugin(:Irq) do
       # Only regular IRQs have extra fields and affinity settings
       if /\d+/.match(irqn)
         irq[irqn][:type], irq[irqn][:vector], irq[irqn][:device] = fields[cpus].split
-
-        # Documentation: https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
-        # format: comma-separate list of 32bit bitmask in hex
-        # each bit is a CPU, right to left ordering (i.e. CPU0 is rightmost)
         if File.exists?("/proc/irq/#{irqn}/smp_affinity")
-          masks = File.read("/proc/irq/#{irqn}/smp_affinity").strip
-          bit_masks = []
-          masks.split(",").each do |mask|
-	    if mask.length != 8
-              mask = "0" * (8 - mask.length) + mask
-            end
-            bit_masks << mask.to_i(16).to_s(2)
-          end
-          affinitize_mask = bit_masks.join()
-          affinitize_by_cpu = affinitize_mask.split('').reverse()
-          irq[irqn][:affinitize_by_cpu] = Mash.new
-          (0..cpus-1).each do |cpu|
-            irq[irqn][:affinitize_by_cpu][cpu] = affinitize_by_cpu[cpu].to_i == 1 ? true : false
-          end
+          irq[irqn][:smp_affinity_by_cpu] =
+            parse_smp_affinity("/proc/irq/#{irqn}/smp_affinity", cpus)
         end
       # ERR and MIS do not have any extra fields
       elsif fields[cpus]

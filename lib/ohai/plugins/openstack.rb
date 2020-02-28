@@ -51,7 +51,7 @@ Ohai.plugin(:Openstack) do
     # dream host doesn't support windows so bail early if we're on windows
     return "openstack" if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
-    if Etc::Passwd.map{|a| a.name}.include?("dhc-user")
+    if Etc::Passwd.map(&:name).include?("dhc-user")
       "dreamhost"
     else
       "openstack"

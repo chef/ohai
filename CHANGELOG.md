@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.7.5 -->
+## [v15.7.5](https://github.com/chef/ohai/tree/v15.7.5) (2020-02-28)
+
+#### Merged Pull Requests
+- backport #1434 for 15 stable [#1435](https://github.com/chef/ohai/pull/1435) ([sawanoboly](https://github.com/sawanoboly))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.7.4 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- backport #1434 for 15 stable [#1435](https://github.com/chef/ohai/pull/1435) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.7.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

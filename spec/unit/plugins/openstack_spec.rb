@@ -63,7 +63,6 @@ describe Ohai::System, "plugin openstack" do
         .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
       plugin[:virtualization] = { systems: { openstack: "guest" } }
-      # expect(Etc).to receive(:getpwnam).and_return(PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user"))
       expect(Etc::Passwd).to receive(:entries).and_return([PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user")])
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")

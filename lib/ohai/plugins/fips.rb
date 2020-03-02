@@ -25,7 +25,7 @@
 Ohai.plugin(:Fips) do
   provides "fips"
 
-  collect_data(:windows) do
+  collect_data(:linux, :windows) do
     fips Mash.new
 
     require "openssl" unless defined?(OpenSSL)

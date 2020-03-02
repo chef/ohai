@@ -207,6 +207,93 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine channel parameters for the interface using ethtool
+  def ethernet_channel_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -l #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      type = nil
+      iface[tmp_int]["channel_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Channel parameters for")
+        next if line.strip.nil?
+
+        if line =~ /Pre-set maximums/
+          type = "max"
+          next
+        end
+        if line =~ /Current hardware settings/
+          type = "current"
+          next
+        end
+        key, val = line.split(/:\s+/)
+        if type && val
+          channel_key = "#{type}_#{key.downcase.tr(" ", "_")}"
+          iface[tmp_int]["channel_params"][channel_key] = val.to_i
+        end
+      end
+    end
+    iface
+  end
+
+  # determine coalesce parameters for the interface using ethtool
+  def ethernet_coalesce_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -c #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["coalesce_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Coalesce parameters for")
+        next if line.strip.nil?
+
+        if line.start_with?("Adaptive")
+          _, adaptive_rx, _, adaptive_tx = line.split(/:\s+|\s+TX|\n/)
+          iface[tmp_int]["coalesce_params"]["adaptive_rx"] = adaptive_rx
+          iface[tmp_int]["coalesce_params"]["adaptive_tx"] = adaptive_tx
+          next
+        end
+        key, val = line.split(/:\s+/)
+        if val
+          coalesce_key = "#{key.downcase.tr(" ", "_")}"
+          iface[tmp_int]["coalesce_params"][coalesce_key] = val.to_i
+        end
+      end
+    end
+    iface
+  end
+
+  # determine driver info for the interface using ethtool
+  def ethernet_driver_info(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -i #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["driver_info"] = {}
+      so.stdout.lines.each do |line|
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val.nil?
+          val = ""
+        end
+        driver_key = "#{key.downcase.tr(" ", "_")}"
+        iface[tmp_int]["driver_info"][driver_key] = val.chomp
+      end
+    end
+    iface
+  end
+
   # determine link stats, vlans, queue length, and state for an interface using ip
   def link_statistics(iface, net_counters)
     so = shell_out("ip -d -s link")
@@ -669,6 +756,9 @@ Ohai.plugin(:Network) do
 
     iface = ethernet_layer_one(iface)
     iface = ethernet_ring_parameters(iface)
+    iface = ethernet_channel_parameters(iface)
+    iface = ethernet_coalesce_parameters(iface)
+    iface = ethernet_driver_info(iface)
     counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
   end

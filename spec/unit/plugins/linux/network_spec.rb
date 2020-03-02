@@ -371,6 +371,71 @@ describe Ohai::System, "Linux Network Plugin" do
     EOM
   end
 
+  let(:linux_ethtool_l) do
+    <<~EOM
+      Channel parameters for eth0:
+      Pre-set maximums:
+      RX:		16
+      TX:	  16
+      Other:	0
+      Combined:		32
+      Current hardware settings:
+      RX:		0
+      TX:	0
+      Other:	0
+      Combined:		16
+
+    EOM
+  end
+
+  let(:linux_ethtool_c) do
+    <<~EOM
+      Coalesce parameters for eth0:
+      Adaptive RX: on  TX: off
+      stats-block-usecs: 0
+      sample-interval: 0
+      pkt-rate-low: 0
+      pkt-rate-high: 0
+
+      rx-usecs: 33
+      rx-frames: 88
+      rx-usecs-irq: 0
+      rx-frames-irq: 0
+
+      tx-usecs: 8
+      tx-frames: 128
+      tx-usecs-irq: 0
+      tx-frames-irq: 0
+
+      rx-usecs-low: 0
+      rx-frame-low: 0
+      tx-usecs-low: 0
+      tx-frame-low: 0
+
+      rx-usecs-high: 0
+      rx-frame-high: 0
+      tx-usecs-high: 0
+      tx-frame-high: 0
+
+    EOM
+  end
+
+  let(:linux_ethtool_i) do
+    <<~EOM
+      driver: mlx5_core
+      version: 5.0-0
+      firmware-version: 14.23.8012
+      expansion-rom-version:
+      bus-info: 0000:02:00.0
+      supports-statistics: yes
+      supports-test: yes
+      supports-eeprom-access: no
+      supports-register-dump: no
+      supports-priv-flags: yes
+
+    EOM
+  end
+
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -385,6 +450,9 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
@@ -575,6 +643,51 @@ describe Ohai::System, "Linux Network Plugin" do
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["max_rx"]).to eq(8192)
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_tx"]).to eq(8192)
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_rx"]).to eq(8192)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_tx"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_rx"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_other"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_combined"]).to eq(32)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_tx"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_rx"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_other"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_combined"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["adaptive_rx"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["adaptive_tx"]).to eq("off")
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["stats-block-usecs"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["sample-interval"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["pkt-rate-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["pkt-rate-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs"]).to eq(33)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frames"]).to eq(88)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frames-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs"]).to eq(8)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frames"]).to eq(128)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frames-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frame-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frame-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frame-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frame-high"]).to eq(0)
+
+      end
+
+      it "detects the driver info of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["driver"]).to eq("mlx5_core")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["version"]).to eq("5.0-0")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["firmware-version"]).to eq("14.23.8012")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["expansion-rom-version"]).to eq("")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["bus-info"]).to eq("0000:02:00.0")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-statistics"]).to eq("yes")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-test"]).to eq("yes")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-eeprom-access"]).to eq("no")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-register-dump"]).to eq("no")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-priv-flags"]).to eq("yes")
+
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do

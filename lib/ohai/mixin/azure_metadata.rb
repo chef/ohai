@@ -86,7 +86,7 @@ module Ohai
       #
       # @return [Hash]
       def parse_json(response_body)
-        data = StringIO.new(response_body)
+        data = String(response_body)
         parser = FFI_Yajl::Parser.new
         parser.parse(data)
       rescue FFI_Yajl::ParseError

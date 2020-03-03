@@ -27,11 +27,9 @@
 
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
-  require_relative "../mixin/http_helper"
   require "base64"
 
   include Ohai::Mixin::Ec2Metadata
-  include Ohai::Mixin::HttpHelper
 
   provides "ec2"
 

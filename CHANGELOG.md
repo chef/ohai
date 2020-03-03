@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.7 -->
-## [v16.0.7](https://github.com/chef/ohai/tree/v16.0.7) (2020-02-28)
+<!-- latest_release 16.0.8 -->
+## [v16.0.8](https://github.com/chef/ohai/tree/v16.0.8) (2020-03-03)
 
 #### Merged Pull Requests
-- use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly))
+- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50)) <!-- 16.0.8 -->
 - use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly)) <!-- 16.0.7 -->
 - Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50)) <!-- 16.0.6 -->
 - Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50)) <!-- 16.0.5 -->

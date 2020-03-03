@@ -43,7 +43,7 @@ module Ohai
           logger.trace("Mixin AzureMetadata: Fetching http://#{AZURE_METADATA_ADDR}/metadata/instance to determine the latest supported metadata release")
           response = http_get("/metadata/instance")
           if response.code == "404"
-            logger.trace("Mixin AzureMetadata: Received HTTP 404 from metadata server while determining API version, assuming #{AZURE_SUPPORTED_VERSIONS[-1]}")
+            logger.trace("Mixin AzureMetadata: Received HTTP 404 from metadata server while determining API version, assuming #{AZURE_SUPPORTED_VERSIONS.last}")
             return AZURE_SUPPORTED_VERSIONS.last
           elsif response.code != "400" # 400 is actually what we want
             raise "Mixin AzureMetadata: Unable to determine Azure metadata version (returned #{response.code} response)"

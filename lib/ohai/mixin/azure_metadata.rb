@@ -74,10 +74,9 @@ module Ohai
       #
       # @return [Net::HTTP]
       def http_get(uri)
-        full_uri = URI.join("http://#{AZURE_METADATA_ADDR}", uri)
         conn = Net::HTTP.start(AZURE_METADATA_ADDR)
         conn.read_timeout = 6
-        conn.get(full_uri, { "Metadata" => "true" })
+        conn.get(uri, { "Metadata" => "true" })
       end
 
       # parse JSON data from a String to a Hash

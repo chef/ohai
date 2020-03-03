@@ -50,7 +50,7 @@ module Ohai
           end
 
           # azure returns a list of the 3 latest versions it supports
-          versions = parse_json(response.body)["newest-versions"]
+          versions = parse_json(response.body).fetch("newest-versions", [])
           versions.sort!
 
           until versions.empty? || AZURE_SUPPORTED_VERSIONS.include?(versions.last)

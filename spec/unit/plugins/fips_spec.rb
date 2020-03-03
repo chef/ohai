@@ -1,6 +1,6 @@
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
-# Copyright:: Copyright (c) 2016-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) 2016-2020 Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,11 +26,11 @@ describe Ohai::System, "plugin fips" do
   end
 
   let(:enabled) { 0 }
-  let(:plugin) { get_plugin("windows/fips") }
+  let(:plugin) { get_plugin("fips") }
   let(:openssl_test_mode) { false }
 
   before do
-    allow(plugin).to receive(:collect_os).and_return(:windows)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
   around do |ex|

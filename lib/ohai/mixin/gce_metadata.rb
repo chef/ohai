@@ -39,7 +39,7 @@ module Ohai
         return nil unless response.code == "200"
 
         if json?(response.body)
-          data = StringIO.new(response.body)
+          data = String(response.body)
           parser = FFI_Yajl::Parser.new
           parser.parse(data)
         elsif has_trailing_slash?(id) || (id == "")
@@ -57,7 +57,7 @@ module Ohai
       #
       # @return [Boolean] is the data JSON or not?
       def json?(data)
-        data = StringIO.new(data)
+        data = String(data)
         parser = FFI_Yajl::Parser.new
         begin
           parser.parse(data)

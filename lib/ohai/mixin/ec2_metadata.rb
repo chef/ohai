@@ -160,7 +160,7 @@ module Ohai
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
               data = retr_meta ? retr_meta : ""
-              json = StringIO.new(data)
+              json = String(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)
             elsif not key.eql?("/")

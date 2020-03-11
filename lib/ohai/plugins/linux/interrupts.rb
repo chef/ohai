@@ -27,16 +27,13 @@ Ohai.plugin(:Interrupts) do
     masks = File.read(path).strip
     bit_masks = []
     masks.split(",").each do |mask|
-      if mask.length != 8
-        mask = "0" * (8 - mask.length) + mask
-      end
-      bit_masks << mask.to_i(16).to_s(2)
+      bit_masks << mask.rjust(8, "0").to_i(16).to_s(2)
     end
     affinity_mask = bit_masks.join()
     affinity_by_cpu = affinity_mask.split('').reverse()
     smp_affinity_by_cpu = Mash.new
     (0..cpus-1).each do |cpu|
-      smp_affinity_by_cpu[cpu] = affinity_by_cpu[cpu].to_i == 1 ? true : false
+      smp_affinity_by_cpu[cpu] = affinity_by_cpu[cpu].to_i == 1
     end
     smp_affinity_by_cpu
   end

@@ -19,6 +19,7 @@
 Ohai.plugin(:Interrupts) do
   depends "cpu"
   provides "interrupts", "interrupts/irq", "interrupts/smp_affinity_by_cpu"
+  optional true
 
   # Documentation: https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
   # format: comma-separate list of 32bit bitmask in hex

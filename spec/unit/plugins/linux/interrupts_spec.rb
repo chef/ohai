@@ -25,7 +25,7 @@ describe Ohai::System, "Linux interrupts plugin" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  it 'populates interrupts' do
+  it "populates interrupts" do
     @proc_interrupts = double("/proc/interrupts")
     allow(@proc_interrupts).to receive(:each)
       .and_yield("            CPU0       CPU1       CPU2       CPU3       ")
@@ -90,14 +90,470 @@ describe Ohai::System, "Linux interrupts plugin" do
       .and_yield(" PIN:          0          0          0          0   Posted-interrupt notification event")
       .and_yield(" NPI:          0          0          0          0   Nested posted-interrupt event")
       .and_yield(" PIW:          0          0          0          0   Posted-interrupt wakeup event")
-    interrupts = {"irq" => {"0"=>{"device"=>"timer", "events_by_cpu"=>{0=>10, 1=>0, 2=>0, 3=>0}, "type"=>"IR-IO-APIC", "vector"=>"2-edge"}, "1"=>{"device"=>"i8042", "events_by_cpu"=>{0=>23893, 1=>0, 2=>0, 3=>47577}, "smp_affinity_by_cpu"=>{0=>true, 1=>true, 2=>true, 3=>true}, "type"=>"IR-IO-APIC", "vector"=>"1-edge"}, "12"=>{"device"=>"i8042", "events_by_cpu"=>{0=>6, 1=>0, 2=>191, 3=>0}, "type"=>"IR-IO-APIC", "vector"=>"12-edge"}, "120"=>{"device"=>"dmar0", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"DMAR-MSI", "vector"=>"0-edge"}, "121"=>{"device"=>"dmar1", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"DMAR-MSI", "vector"=>"1-edge"}, "122"=>{"device"=>"rtsx_pci", "events_by_cpu"=>{0=>31, 1=>0, 2=>26, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"1048576-edge"}, "123"=>{"device"=>"mei_me", "events_by_cpu"=>{0=>0, 1=>40, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"360448-edge"}, "124"=>{"device"=>"nvme0q0", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>11}, "type"=>"IR-PCI-MSI", "vector"=>"2621440-edge"}, "125"=>{"device"=>"snd_hda_intel:card0", "events_by_cpu"=>{0=>0, 1=>0, 2=>3226, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"514048-edge"}, "126"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>184403}, "type"=>"IR-PCI-MSI", "vector"=>"5767168-edge"}, "127"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"5767169-edge"}, "128"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"5767170-edge"}, "129"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"5767171-edge"}, "130"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"5767172-edge"}, "131"=>{"device"=>"thunderbolt", "events_by_cpu"=>{0=>3345, 1=>3732, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"4194304-edge"}, "132"=>{"device"=>"thunderbolt", "events_by_cpu"=>{0=>3345, 1=>0, 2=>3727, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"4194305-edge"}, "141"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>15573, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"327680-edge"}, "148"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>289071}, "type"=>"IR-PCI-MSI", "vector"=>"6815744-edge"}, "149"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"6815745-edge"}, "150"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"6815746-edge"}, "151"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"6815747-edge"}, "152"=>{"device"=>"xhci_hcd", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"6815748-edge"}, "153"=>{"device"=>"enp0s31f6", "events_by_cpu"=>{0=>0, 1=>4641, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"520192-edge"}, "154"=>{"device"=>"nvme0q1", "events_by_cpu"=>{0=>49453, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"2621441-edge"}, "155"=>{"device"=>"nvme0q2", "events_by_cpu"=>{0=>0, 1=>51007, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"2621442-edge"}, "156"=>{"device"=>"nvme0q3", "events_by_cpu"=>{0=>0, 1=>0, 2=>45975, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"2621443-edge"}, "157"=>{"device"=>"rmi4_smbus", "events_by_cpu"=>{0=>2579, 1=>0, 2=>0, 3=>2019}, "type"=>"dummy", "vector"=>"44"}, "158"=>{"device"=>"rmi4-00.fn34", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"rmi4", "vector"=>"0"}, "159"=>{"device"=>"rmi4-00.fn01", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"rmi4", "vector"=>"1"}, "16"=>{"device"=>"i801_smbus", "events_by_cpu"=>{0=>10054, 1=>0, 2=>0, 3=>7570}, "type"=>"IR-IO-APIC", "vector"=>"16-fasteoi"}, "160"=>{"device"=>"iwlwifi", "events_by_cpu"=>{0=>1784676, 1=>0, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"2097152-edge"}, "161"=>{"device"=>"rmi4-00.fn03", "events_by_cpu"=>{0=>0, 1=>0, 2=>1016, 3=>1}, "type"=>"rmi4", "vector"=>"2"}, "162"=>{"device"=>"rmi4-00.fn11", "events_by_cpu"=>{0=>0, 1=>0, 2=>3580, 3=>0}, "type"=>"rmi4", "vector"=>"3"}, "163"=>{"device"=>"rmi4-00.fn11", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"rmi4", "vector"=>"4"}, "164"=>{"device"=>"rmi4-00.fn30", "events_by_cpu"=>{0=>0, 1=>0, 2=>2, 3=>0}, "type"=>"rmi4", "vector"=>"5"}, "165"=>{"device"=>"i915", "events_by_cpu"=>{0=>2008273, 1=>3789134, 2=>0, 3=>0}, "type"=>"IR-PCI-MSI", "vector"=>"32768-edge"}, "166"=>{"device"=>"nvme0q4", "events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>46740}, "type"=>"IR-PCI-MSI", "vector"=>"2621444-edge"}, "8"=>{"device"=>"rtc0", "events_by_cpu"=>{0=>0, 1=>1, 2=>0, 3=>0}, "type"=>"IR-IO-APIC", "vector"=>"8-edge"}, "9"=>{"device"=>"acpi", "events_by_cpu"=>{0=>2550, 1=>8705, 2=>0, 3=>0}, "type"=>"IR-IO-APIC", "vector"=>"9-fasteoi"}, "CAL"=>{"events_by_cpu"=>{0=>1441625, 1=>1446396, 2=>1447611, 3=>1432443}, "type"=>"Function call interrupts"}, "DFR"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Deferred Error APIC interrupts"}, "ERR"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}}, "HRE"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Hyper-V reenlightenment interrupts"}, "HVS"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Hyper-V stimer0 interrupts"}, "HYP"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Hypervisor callback interrupts"}, "IWI"=>{"events_by_cpu"=>{0=>142355, 1=>234400, 2=>224, 3=>88}, "type"=>"IRQ work interrupts"}, "LOC"=>{"events_by_cpu"=>{0=>8860101, 1=>9203856, 2=>8779117, 3=>8664864}, "type"=>"Local timer interrupts"}, "MCE"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Machine check exceptions"}, "MCP"=>{"events_by_cpu"=>{0=>134, 1=>134, 2=>134, 3=>134}, "type"=>"Machine check polls"}, "MIS"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}}, "NMI"=>{"events_by_cpu"=>{0=>319, 1=>444, 2=>439, 3=>436}, "type"=>"Non-maskable interrupts"}, "NPI"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Nested posted-interrupt event"}, "PIN"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Posted-interrupt notification event"}, "PIW"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Posted-interrupt wakeup event"}, "PMI"=>{"events_by_cpu"=>{0=>319, 1=>444, 2=>439, 3=>436}, "type"=>"Performance monitoring interrupts"}, "RES"=>{"events_by_cpu"=>{0=>1342987, 1=>1237722, 2=>1430670, 3=>1111989}, "type"=>"Rescheduling interrupts"}, "RTR"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"APIC ICR read retries"}, "SPU"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Spurious interrupts"}, "THR"=>{"events_by_cpu"=>{0=>0, 1=>0, 2=>0, 3=>0}, "type"=>"Threshold APIC interrupts"}, "TLB"=>{"events_by_cpu"=>{0=>1468833, 1=>1470049, 2=>1470021, 3=>1452257}, "type"=>"TLB shootdowns"}, "TRM"=>{"events_by_cpu"=>{0=>282150, 1=>282150, 2=>282150, 3=>282150}, "type"=>"Thermal event interrupts"}},"smp_affinity_by_cpu" => {0=>true, 1=>true, 2=>true, 3=>true}}
+    interrupts = {
+      "irq" => {
+        "0" => {
+          "device" => "timer",
+          "events_by_cpu" => {
+            0 => 10,
+              1 => 0,
+              2 => 0,
+              3 => 0,
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "2-edge",
+        },
+        "1" => {
+          "device" => "i8042",
+          "events_by_cpu" => {
+            0 => 23893, 1 => 0, 2 => 0, 3 => 47577
+          },
+          "smp_affinity_by_cpu" => {
+            0 => true, 1 => true, 2 => true, 3 => true
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "1-edge",
+        },
+        "12" => {
+          "device" => "i8042",
+          "events_by_cpu" => {
+            0 => 6, 1 => 0, 2 => 191, 3 => 0
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "12-edge",
+        },
+        "120" => {
+          "device" => "dmar0",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "DMAR-MSI",
+          "vector" => "0-edge",
+        },
+        "121" => {
+          "device" => "dmar1",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "DMAR-MSI",
+          "vector" => "1-edge",
+        },
+        "122" => {
+          "device" => "rtsx_pci",
+          "events_by_cpu" => {
+            0 => 31, 1 => 0, 2 => 26, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "1048576-edge",
+        },
+        "123" => {
+          "device" => "mei_me",
+          "events_by_cpu" => {
+            0 => 0, 1 => 40, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "360448-edge",
+        },
+        "124" => {
+          "device" => "nvme0q0",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 11
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2621440-edge",
+        },
+        "125" => {
+          "device" => "snd_hda_intel:card0",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 3226, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "514048-edge",
+        },
+        "126" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 184403
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "5767168-edge",
+        },
+        "127" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "5767169-edge",
+        },
+        "128" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "5767170-edge",
+        },
+        "129" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "5767171-edge",
+        },
+        "130" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "5767172-edge",
+        },
+        "131" => {
+          "device" => "thunderbolt",
+          "events_by_cpu" => {
+            0 => 3345, 1 => 3732, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "4194304-edge",
+        },
+        "132" => {
+          "device" => "thunderbolt",
+          "events_by_cpu" => {
+            0 => 3345, 1 => 0, 2 => 3727, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "4194305-edge",
+        },
+        "141" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 15573, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "327680-edge",
+        },
+        "148" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 289071
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "6815744-edge",
+        },
+        "149" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "6815745-edge",
+        },
+        "150" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "6815746-edge",
+        },
+        "151" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "6815747-edge",
+        },
+        "152" => {
+          "device" => "xhci_hcd",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "6815748-edge",
+        },
+        "153" => {
+          "device" => "enp0s31f6",
+          "events_by_cpu" => {
+            0 => 0, 1 => 4641, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "520192-edge",
+        },
+        "154" => {
+          "device" => "nvme0q1",
+          "events_by_cpu" => {
+            0 => 49453, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2621441-edge",
+        },
+        "155" => {
+          "device" => "nvme0q2",
+          "events_by_cpu" => {
+            0 => 0, 1 => 51007, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2621442-edge",
+        },
+        "156" => {
+          "device" => "nvme0q3",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 45975, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2621443-edge",
+        },
+        "157" => {
+          "device" => "rmi4_smbus",
+          "events_by_cpu" => {
+            0 => 2579, 1 => 0, 2 => 0, 3 => 2019
+          },
+          "type" => "dummy",
+          "vector" => "44",
+        },
+        "158" => {
+          "device" => "rmi4-00.fn34",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "rmi4",
+          "vector" => "0",
+        },
+        "159" => {
+          "device" => "rmi4-00.fn01",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "rmi4",
+          "vector" => "1",
+        },
+        "16" => {
+          "device" => "i801_smbus",
+          "events_by_cpu" => {
+            0 => 10054, 1 => 0, 2 => 0, 3 => 7570
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "16-fasteoi",
+        },
+        "160" => {
+          "device" => "iwlwifi",
+          "events_by_cpu" => {
+            0 => 1784676, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2097152-edge",
+        },
+        "161" => {
+          "device" => "rmi4-00.fn03",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 1016, 3 => 1
+          },
+          "type" => "rmi4",
+          "vector" => "2",
+        },
+        "162" => {
+          "device" => "rmi4-00.fn11",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 3580, 3 => 0
+          },
+          "type" => "rmi4",
+          "vector" => "3",
+        },
+        "163" => {
+          "device" => "rmi4-00.fn11",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "rmi4",
+          "vector" => "4",
+        },
+        "164" => {
+          "device" => "rmi4-00.fn30",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 2, 3 => 0
+          },
+          "type" => "rmi4",
+          "vector" => "5",
+        },
+        "165" => {
+          "device" => "i915",
+          "events_by_cpu" => {
+            0 => 2008273, 1 => 3789134, 2 => 0, 3 => 0
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "32768-edge",
+        },
+        "166" => {
+          "device" => "nvme0q4",
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 46740
+          },
+          "type" => "IR-PCI-MSI",
+          "vector" => "2621444-edge",
+        },
+        "8" => {
+          "device" => "rtc0",
+          "events_by_cpu" => {
+            0 => 0, 1 => 1, 2 => 0, 3 => 0
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "8-edge",
+        },
+        "9" => {
+          "device" => "acpi",
+          "events_by_cpu" => {
+            0 => 2550, 1 => 8705, 2 => 0, 3 => 0
+          },
+          "type" => "IR-IO-APIC",
+          "vector" => "9-fasteoi",
+        },
+        "CAL" => {
+          "events_by_cpu" => {
+            0 => 1441625, 1 => 1446396, 2 => 1447611, 3 => 1432443
+          },
+          "type" => "Function call interrupts",
+        },
+        "DFR" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Deferred Error APIC interrupts",
+        },
+        "ERR" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+        },
+        "HRE" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Hyper-V reenlightenment interrupts",
+        },
+        "HVS" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Hyper-V stimer0 interrupts",
+        },
+        "HYP" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Hypervisor callback interrupts",
+        },
+        "IWI" => {
+          "events_by_cpu" => {
+            0 => 142355, 1 => 234400, 2 => 224, 3 => 88
+          },
+          "type" => "IRQ work interrupts",
+        },
+        "LOC" => {
+          "events_by_cpu" => {
+            0 => 8860101, 1 => 9203856, 2 => 8779117, 3 => 8664864
+          },
+          "type" => "Local timer interrupts",
+        },
+        "MCE" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Machine check exceptions",
+        },
+        "MCP" => {
+          "events_by_cpu" => {
+            0 => 134, 1 => 134, 2 => 134, 3 => 134
+          },
+          "type" => "Machine check polls",
+        },
+        "MIS" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+        },
+        "NMI" => {
+          "events_by_cpu" => {
+            0 => 319, 1 => 444, 2 => 439, 3 => 436
+          },
+          "type" => "Non-maskable interrupts",
+        },
+        "NPI" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Nested posted-interrupt event",
+        },
+        "PIN" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Posted-interrupt notification event",
+        },
+        "PIW" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Posted-interrupt wakeup event",
+        },
+        "PMI" => {
+          "events_by_cpu" => {
+            0 => 319, 1 => 444, 2 => 439, 3 => 436
+          },
+          "type" => "Performance monitoring interrupts",
+        },
+        "RES" => {
+          "events_by_cpu" => {
+            0 => 1342987, 1 => 1237722, 2 => 1430670, 3 => 1111989
+          },
+          "type" => "Rescheduling interrupts",
+        },
+        "RTR" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "APIC ICR read retries",
+        },
+        "SPU" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Spurious interrupts",
+        },
+        "THR" => {
+          "events_by_cpu" => {
+            0 => 0, 1 => 0, 2 => 0, 3 => 0
+          },
+          "type" => "Threshold APIC interrupts",
+        },
+        "TLB" => {
+          "events_by_cpu" => {
+            0 => 1468833, 1 => 1470049, 2 => 1470021, 3 => 1452257
+          },
+          "type" => "TLB shootdowns",
+        },
+        "TRM" => {
+          "events_by_cpu" => {
+            0 => 282150, 1 => 282150, 2 => 282150, 3 => 282150
+          },
+          "type" => "Thermal event interrupts",
+        },
+      },
+      "smp_affinity_by_cpu" => {
+        0 => true, 1 => true, 2 => true, 3 => true
+      },
+    }
 
-    plugin[:cpu] = {'total' => 4}
-    allow(File).to receive(:exists?).and_return(false)
+    plugin[:cpu] = {
+      "total" => 4,
+    }
+    allow(File).to receive(:exist?).and_return(false)
     allow(File).to receive(:open).with("/proc/interrupts").and_return(@proc_interrupts)
-    allow(File).to receive(:exists?).with("/proc/irq/default_smp_affinity").and_return(true)
+    allow(File).to receive(:exist?).with("/proc/irq/default_smp_affinity").and_return(true)
     allow(File).to receive(:read).with("/proc/irq/default_smp_affinity").and_return("ff")
-    allow(File).to receive(:exists?).with("/proc/irq/1/smp_affinity").and_return(true)
+    allow(File).to receive(:exist?).with("/proc/irq/1/smp_affinity").and_return(true)
     allow(File).to receive(:read).with("/proc/irq/1/smp_affinity").and_return("ff")
     plugin.run
     expect(plugin[:interrupts]).to eq(interrupts)

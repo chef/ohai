@@ -29,10 +29,10 @@ Ohai.plugin(:Interrupts) do
     masks.split(",").each do |mask|
       bit_masks << mask.rjust(8, "0").to_i(16).to_s(2)
     end
-    affinity_mask = bit_masks.join()
-    affinity_by_cpu = affinity_mask.split('').reverse()
+    affinity_mask = bit_masks.join
+    affinity_by_cpu = affinity_mask.split("").reverse
     smp_affinity_by_cpu = Mash.new
-    (0..cpus-1).each do |cpu|
+    (0..cpus - 1).each do |cpu|
       smp_affinity_by_cpu[cpu] = affinity_by_cpu[cpu].to_i == 1
     end
     smp_affinity_by_cpu
@@ -41,8 +41,9 @@ Ohai.plugin(:Interrupts) do
   collect_data(:linux) do
     interrupts Mash.new
 
-    cpus = cpu['total']
-    interrupts[:smp_affinity_by_cpu] = parse_smp_affinity("/proc/irq/default_smp_affinity", cpus)
+    cpus = cpu["total"]
+    interrupts[:smp_affinity_by_cpu] =
+      parse_smp_affinity("/proc/irq/default_smp_affinity", cpus)
 
     interrupts[:irq] = Mash.new
     File.open("/proc/interrupts").each do |line|
@@ -58,8 +59,8 @@ Ohai.plugin(:Interrupts) do
       interrupts[:irq][irqn] = Mash.new
       interrupts[:irq][irqn][:events_by_cpu] = Mash.new
 
-      fields = fields.split(' ', cpus+1)
-      (0..cpus-1).each do |cpu|
+      fields = fields.split(" ", cpus + 1)
+      (0..cpus - 1).each do |cpu|
         if /\d+/.match(fields[cpu])
           interrupts[:irq][irqn][:events_by_cpu][cpu] = fields[cpu].to_i
         else
@@ -68,8 +69,11 @@ Ohai.plugin(:Interrupts) do
       end
       # Only regular IRQs have extra fields and affinity settings
       if /\d+/.match(irqn)
-        interrupts[:irq][irqn][:type], interrupts[:irq][irqn][:vector], interrupts[:irq][irqn][:device] = fields[cpus].split
-        if File.exists?("/proc/irq/#{irqn}/smp_affinity")
+        interrupts[:irq][irqn][:type],
+        interrupts[:irq][irqn][:vector],
+        interrupts[:irq][irqn][:device] =
+          fields[cpus].split
+        if File.exist?("/proc/irq/#{irqn}/smp_affinity")
           interrupts[:irq][irqn][:smp_affinity_by_cpu] =
             parse_smp_affinity("/proc/irq/#{irqn}/smp_affinity", cpus)
         end

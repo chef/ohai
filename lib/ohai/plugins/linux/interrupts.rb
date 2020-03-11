@@ -59,16 +59,12 @@ Ohai.plugin(:Interrupts) do
       interrupts[:irq][irqn] = Mash.new
       interrupts[:irq][irqn][:events_by_cpu] = Mash.new
 
-      fields = fields.split(" ", cpus + 1)
+      fields = fields.split(nil, cpus + 1)
       (0..cpus - 1).each do |cpu|
-        if /\d+/.match(fields[cpu])
-          interrupts[:irq][irqn][:events_by_cpu][cpu] = fields[cpu].to_i
-        else
-          interrupts[:irq][irqn][:events_by_cpu][cpu] = 0
-        end
+        interrupts[:irq][irqn][:events_by_cpu][cpu] = fields[cpu].to_i
       end
       # Only regular IRQs have extra fields and affinity settings
-      if /\d+/.match(irqn)
+      if /^\d+$/.match(irqn)
         interrupts[:irq][irqn][:type],
         interrupts[:irq][irqn][:vector],
         interrupts[:irq][irqn][:device] =

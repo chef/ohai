@@ -17,32 +17,32 @@
 #
 
 Ohai.plugin(:IPC) do
-  provides 'ipc'
+  provides "ipc"
 
   collect_data(:linux) do
-    ipcs_path = which('ipcs')
+    ipcs_path = which("ipcs")
     if ipcs_path
       # NOTE: currently only supports shared memory
       cmd = "#{ipcs_path} -m"
       ipcs = shell_out(cmd)
 
       ipc Mash.new unless ipc
-      ipc['shm'] = Mash.new unless ipc['shm']
+      ipc["shm"] = Mash.new unless ipc["shm"]
 
       ipcs.stdout.split("\n").each do |line|
-        next unless line.start_with?('0x')
+        next unless line.start_with?("0x")
 
         parts = line.split
         segment = {
-          'key' => parts[0],
-          'owner' => parts[2],
-          'perms' => parts[3],
-          'bytes' => parts[4].to_i,
-          'nattch' => parts[5].to_i,
-          'status' => parts[6] ? parts[6] : '',
+          "key" => parts[0],
+          "owner" => parts[2],
+          "perms" => parts[3],
+          "bytes" => parts[4].to_i,
+          "nattch" => parts[5].to_i,
+          "status" => parts[6] ? parts[6] : "",
         }
 
-        ipc['shm'][parts[1].to_i] = segment
+        ipc["shm"][parts[1].to_i] = segment
       end
     end
   end

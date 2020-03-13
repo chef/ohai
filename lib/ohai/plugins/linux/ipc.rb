@@ -1,6 +1,7 @@
 #
 # Author:: Jay Vana <jsvana@fb.com>
-# Copyright:: Copyright (c) 2016 Facebook, Inc.
+# Author:: Davide Cavalca <dcavalca@fb.com>
+# Copyright:: Copyright (c) 2016-2020 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,7 @@
 
 Ohai.plugin(:IPC) do
   provides "ipc"
+  optional true
 
   collect_data(:linux) do
     ipcs_path = which("ipcs")

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.9 -->
-## [v16.0.9](https://github.com/chef/ohai/tree/v16.0.9) (2020-03-03)
+<!-- latest_release 16.0.10 -->
+## [v16.0.10](https://github.com/chef/ohai/tree/v16.0.10) (2020-03-13)
 
 #### Merged Pull Requests
-- Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50))
+- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark)) <!-- 16.0.10 -->
 - Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50)) <!-- 16.0.9 -->
 - Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50)) <!-- 16.0.8 -->
 - use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly)) <!-- 16.0.7 -->

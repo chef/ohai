@@ -1,26 +1,23 @@
 # Change Log
 
-<!-- latest_release 15.8.0 -->
-## [v15.8.0](https://github.com/chef/ohai/tree/v15.8.0) (2020-02-28)
-
-#### Merged Pull Requests
-- fix: ensure optional_plugins to be array of symbols [#1436](https://github.com/chef/ohai/pull/1436) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.7.4 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- fix: ensure optional_plugins to be array of symbols [#1436](https://github.com/chef/ohai/pull/1436) ([tas50](https://github.com/tas50)) <!-- 15.8.0 -->
-- backport #1434 for 15 stable [#1435](https://github.com/chef/ohai/pull/1435) ([sawanoboly](https://github.com/sawanoboly)) <!-- 15.7.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.8.0](https://github.com/chef/ohai/tree/v15.8.0) (2020-03-31)
+
+#### Merged Pull Requests
+- backport #1434 for 15 stable [#1435](https://github.com/chef/ohai/pull/1435) ([sawanoboly](https://github.com/sawanoboly))
+- fix: ensure optional_plugins to be array of symbols [#1436](https://github.com/chef/ohai/pull/1436) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.7.4](https://github.com/chef/ohai/tree/v15.7.4) (2020-01-21)
 
 #### Merged Pull Requests
 - Use is_a? to check the class in the DMI plugin [#1424](https://github.com/chef/ohai/pull/1424) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2020-01-17)
 

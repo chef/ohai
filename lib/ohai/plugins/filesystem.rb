@@ -23,6 +23,8 @@
 # limitations under the License.
 #
 
+require "set"
+
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 

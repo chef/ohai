@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.12 -->
-## [v16.0.12](https://github.com/chef/ohai/tree/v16.0.12) (2020-03-13)
+<!-- latest_release 16.0.13 -->
+## [v16.0.13](https://github.com/chef/ohai/tree/v16.0.13) (2020-04-01)
 
 #### Merged Pull Requests
-- Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125))
+- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins)) <!-- 16.0.13 -->
 - Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125)) <!-- 16.0.12 -->
 - Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125)) <!-- 16.0.11 -->
 - Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark)) <!-- 16.0.10 -->

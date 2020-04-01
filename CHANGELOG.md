@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.13 -->
-## [v16.0.13](https://github.com/chef/ohai/tree/v16.0.13) (2020-04-01)
+<!-- latest_release 16.0.14 -->
+## [v16.0.14](https://github.com/chef/ohai/tree/v16.0.14) (2020-04-01)
 
 #### Merged Pull Requests
-- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins))
+- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50)) <!-- 16.0.14 -->
 - Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins)) <!-- 16.0.13 -->
 - Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125)) <!-- 16.0.12 -->
 - Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125)) <!-- 16.0.11 -->

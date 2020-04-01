@@ -52,7 +52,8 @@ steps:
 
 - label: run-specs-windows
   command:
-    - bundle install --jobs=7 --retry=3 --without docs debug
+    - bundle config --local path vendor/bundle
+    - bundle install --jobs=7 --retry=3
     - bundle exec rake spec
   expeditor:
     executor:

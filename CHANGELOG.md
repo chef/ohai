@@ -1,20 +1,18 @@
 # Change Log
 
-<!-- latest_release 14.15.0 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v14.15.0](https://github.com/chef/ohai/tree/v14.15.0) (2020-04-07)
 
 #### Merged Pull Requests
 - fix: ensure optional_plugins to be array of symbols [#1447](https://github.com/chef/ohai/pull/1447) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=15.8.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- fix: ensure optional_plugins to be array of symbols [#1447](https://github.com/chef/ohai/pull/1447) ([tas50](https://github.com/tas50)) <!-- 14.15.0 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v14.14.0](https://github.com/chef/ohai/tree/v14.14.0) (2019-08-15)
 
 #### Merged Pull Requests
@@ -23,7 +21,6 @@
 - Speed up Buildkite PR tests + add windows testing + refactors from master [#1389](https://github.com/chef/ohai/pull/1389) ([tas50](https://github.com/tas50))
 - Fix openSUSE leap and SLES detection in Chef 14 [#1377](https://github.com/chef/ohai/pull/1377) ([balasankarc](https://github.com/balasankarc))
 - Bump version to 14.14.0 to match chef release [#1398](https://github.com/chef/ohai/pull/1398) ([christopher-snapp](https://github.com/christopher-snapp))
-<!-- latest_stable_release -->
 
 ## [v14.8.12](https://github.com/chef/ohai/tree/v14.8.12) (2019-05-10)
 

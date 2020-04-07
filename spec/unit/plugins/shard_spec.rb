@@ -79,7 +79,6 @@ describe Ohai::System, "shard plugin" do
     expect { subject }.to raise_error(RuntimeError)
   end
 
-
   context "with Darwin OS" do
     let(:os) { "darwin" }
 

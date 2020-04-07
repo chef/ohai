@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 14.15.0 -->
+## [v14.15.0](https://github.com/chef/ohai/tree/v14.15.0) (2020-04-07)
+
+#### Merged Pull Requests
+- fix: ensure optional_plugins to be array of symbols [#1447](https://github.com/chef/ohai/pull/1447) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.8.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- fix: ensure optional_plugins to be array of symbols [#1447](https://github.com/chef/ohai/pull/1447) ([tas50](https://github.com/tas50)) <!-- 14.15.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

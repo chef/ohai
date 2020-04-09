@@ -122,7 +122,7 @@ module Ohai
 
           records[:all_records].each do |record|
             record.each do |field, value|
-              next if value.is_a?(Mash)
+              next unless value.is_a?(String)
               next if field.to_s == "application_identifier"
               next if field.to_s == "size"
               next if field.to_s == "record_id"

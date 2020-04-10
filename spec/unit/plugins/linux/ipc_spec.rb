@@ -26,14 +26,14 @@ describe Ohai::System, "Linux ipc plugin" do
   end
 
   it "populates ipc if ipcs is available" do
-    ipcs_out = <<-IPCS_OUT
+    ipcs_out = <<~IPCS_OUT
 
------- Shared Memory Segments --------
-key        shmid      owner      perms      bytes      nattch     status
-0x00000000 131072     dcavalca   600        524288     2          dest
-0x00000000 38993921   dcavalca   600        393216     2          dest
-0x00000000 39092226   dcavalca   600        524288     2          dest
-0x00000000 9437188    dcavalca   600        524288     2          dest
+      ------ Shared Memory Segments --------
+      key        shmid      owner      perms      bytes      nattch     status
+      0x00000000 131072     dcavalca   600        524288     2          dest
+      0x00000000 38993921   dcavalca   600        393216     2          dest
+      0x00000000 39092226   dcavalca   600        524288     2          dest
+      0x00000000 9437188    dcavalca   600        524288     2          dest
 
     IPCS_OUT
 

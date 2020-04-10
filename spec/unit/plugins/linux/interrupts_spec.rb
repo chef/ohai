@@ -96,9 +96,9 @@ describe Ohai::System, "Linux interrupts plugin" do
           "device" => "timer",
           "events_by_cpu" => {
             0 => 10,
-              1 => 0,
-              2 => 0,
-              3 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
           },
           "type" => "IR-IO-APIC",
           "vector" => "2-edge",

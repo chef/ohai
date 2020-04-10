@@ -53,31 +53,25 @@ Ohai.plugin(:DMI) do
     DMI_TO_WIN32OLE.each do |dmi_key, ole_key|
       wmi_object = wmi.first_of("Win32_#{ole_key}").wmi_ole_object
 
-      properties = wmi_object.properties_.each.with_object({}) do |property, hash|
-        split_name = property.name.scan(SPLIT_REGEX).join(" ")
+      split_name_properties = Mash.new
+      properties = Mash.new
 
-        hash[split_name] = wmi_object.invoke(property.name)
+      wmi_object.properties_.each do |property|
+        property_name = property.name
+        value = wmi_object.invoke(property_name)
+
+        split_name = property_name.scan(SPLIT_REGEX).join(" ")
+        split_name_properties[split_name] = value
+        properties[property_name] = value
       end
 
-      dmi[dmi_key] = Mash.new(all_records: [Mash.new(properties)])
+      dmi[dmi_key] = Mash.new(all_records: [split_name_properties], _all_records: [properties])
     end
 
     Ohai::Common::DMI.convenience_keys(dmi)
 
     dmi.each_value do |records|
-      new_all_records = []
-
-      records[:all_records].each do |record|
-        new_record = Mash.new
-
-        record.each do |key, value|
-          new_record[key.split(/\s+/).join] = value
-        end
-
-        new_all_records << new_record
-      end
-
-      records[:all_records] = new_all_records
+      records[:all_records] = records.delete(:_all_records)
     end
   end
 end

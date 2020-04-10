@@ -25,9 +25,9 @@ Ohai.plugin(:DMI) do
     bios: "Bios",
     system: "ComputerSystemProduct",
     base_board: "BaseBoard",
-  }
+  }.freeze
 
-  SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/
+  SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
 
   collect_data(:windows) do
     require "ohai/common/dmi"

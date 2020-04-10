@@ -22,14 +22,14 @@ describe Ohai::System, "DMI", :windows_only do
   let(:plugin) { get_plugin("windows/dmi") }
 
   CASES = [
-    ["Depth",               "depth",                  "aaa",],
-    ["PartNumber",          "part_number",            "bbb",],
-    ["NumberOfPowerCords",  "number_of_power_cords",  "ccc",],
-    ["SKU",                 "sku",                    "ddd",],
-    ["SMBIOSAssetTag",      "smbios_asset_tag",       "eee",],
-    ["DeviceID",            "device_id",              "fff",],
-    ["L2CacheSize",         "l2_cache_size",          "ggg",],
-  ]
+    %w{Depth depth aaa},
+    %w{PartNumber part_number bbb},
+    %w{NumberOfPowerCords number_of_power_cords ccc},
+    %w{SKU sku ddd},
+    %w{SMBIOSAssetTag smbios_asset_tag eee},
+    %w{DeviceID device_id fff},
+    %w{L2CacheSize l2_cache_size ggg},
+  ].freeze
 
   before do
     require "wmi-lite/wmi"
@@ -48,7 +48,7 @@ describe Ohai::System, "DMI", :windows_only do
     expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_SystemEnclosure").and_return(wmi_object)
 
     empty_wmi_object = WmiLite::Wmi::Instance.new(double(properties_: []))
-    %w[Processor Bios ComputerSystemProduct BaseBoard].each do |type|
+    %w{Processor Bios ComputerSystemProduct BaseBoard}.each do |type|
       expect_any_instance_of(WmiLite::Wmi).to receive(:first_of).with("Win32_#{type}").and_return(empty_wmi_object)
     end
 

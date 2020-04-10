@@ -19,6 +19,7 @@
 Ohai.plugin(:DMI) do
   provides "dmi"
 
+  # Map the linux component types to their rough Windows API equivalents
   DMI_TO_WIN32OLE = {
     chassis: "SystemEnclosure",
     processor: "Processor",
@@ -27,6 +28,13 @@ Ohai.plugin(:DMI) do
     base_board: "BaseBoard",
   }.freeze
 
+  # This regex is in 3 parts for the different supported patterns in camel
+  # case names coming from the Windows API:
+  # * Typical camelcase, eg Depth, PartNumber, NumberOfPowerCords
+  # * Acronyms preceding camelcase, eg SMBIOSAssetTag
+  # * Acronyms that occur at the end of the name, eg SKU, DeviceID
+  #
+  # This cannot handle some property names, eg SMBIOSBIOSVersion.
   SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
 
   collect_data(:windows) do
@@ -36,6 +44,13 @@ Ohai.plugin(:DMI) do
 
     dmi Mash.new
 
+    # The Windows API returns property names in camel case, eg "SerialNumber",
+    # while `dmi` returns them as space separated strings, eg "Serial Number".
+    # `Ohai::Common::DMI.convenience_keys` expects property names in `dmi`'s
+    # format, so build two parallel hashes with the keys as they come from the
+    # Windows API and in a faked-out `dmi` version. After the call to
+    # `Ohai::Common::CMI.convenience_keys` replace the faked-out `dmi`
+    # collection with the one with the original property names.
     DMI_TO_WIN32OLE.each do |dmi_key, ole_key|
       wmi_object = wmi.first_of("Win32_#{ole_key}").wmi_ole_object
 

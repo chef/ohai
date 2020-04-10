@@ -21,6 +21,10 @@ require "spec_helper"
 describe Ohai::System, "DMI", :windows_only do
   let(:plugin) { get_plugin("windows/dmi") }
 
+  # Each test case has 3 elements:
+  # * The name of the property as it comes from the Windows APIs
+  # * The transformed snake-case version of the property name
+  # * A unique dummy value per test case
   CASES = [
     %w{Depth depth aaa},
     %w{PartNumber part_number bbb},

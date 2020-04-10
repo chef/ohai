@@ -16,20 +16,6 @@
 # limitations under the License.
 #
 
-=begin
-Here are the 5 sections of node['dmi'] that are returned on my Ubuntu workstation, and what I believe are the Win32 equivalents.
-
-chassis: https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure
-processor: https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-processor
-bios: https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios
-system: https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystemproduct
-base_board: https://docs.microsoft.com/en-us/windows/win32/cimwin32prov/win32-baseboard
-
-I think these are the equivalents.
-
-Note the first one is what is in the system_enclosure plugin today. We can copy that pattern into the dmi plugin and use it to pull all of the sections. The system_enclosure plugin should then be set for future deprecation.
-=end
-
 Ohai.plugin(:DMI) do
   provides "dmi"
 

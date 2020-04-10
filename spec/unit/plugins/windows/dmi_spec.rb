@@ -16,11 +16,6 @@
 # limitations under the License.
 #
 
-=begin
-CASES = {
-}
-=end
-
 require "spec_helper"
 
 describe Ohai::System, "DMI", :windows_only do

@@ -35,6 +35,7 @@ Ohai.plugin(:DMI) do
   # * Acronyms that occur at the end of the name, eg SKU, DeviceID
   #
   # This cannot handle some property names, eg SMBIOSBIOSVersion.
+  # https://rubular.com/r/FBNtXod4wkZGAG
   SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
 
   collect_data(:windows) do

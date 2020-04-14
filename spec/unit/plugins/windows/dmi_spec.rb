@@ -38,10 +38,7 @@ describe Ohai::System, "DMI", :windows_only do
   before do
     require "wmi-lite/wmi"
 
-    properties = CASES.map do |name, _, value|
-      double(name: name, value: value)
-    end
-
+    properties = CASES.map {|name, _, _| double(name: name) }
     wmi_ole_object = double properties_: properties
 
     CASES.each do |name, _, value|

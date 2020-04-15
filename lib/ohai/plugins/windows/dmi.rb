@@ -53,21 +53,26 @@ Ohai.plugin(:DMI) do
     # `Ohai::Common::CMI.convenience_keys` replace the faked-out `dmi`
     # collection with the one with the original property names.
     DMI_TO_WIN32OLE.each do |dmi_key, ole_key|
-      wmi_object = wmi.first_of("Win32_#{ole_key}").wmi_ole_object
+      wmi_objects = wmi.instances_of("Win32_#{ole_key}").map(&:wmi_ole_object)
 
-      split_name_properties = Mash.new
-      properties = Mash.new
+      split_name_properties = []
+      properties = []
 
-      wmi_object.properties_.each do |property|
-        property_name = property.name
-        value = wmi_object.invoke(property_name)
+      wmi_objects.each do |wmi_object|
+        split_name_properties << Mash.new
+        properties << Mash.new
 
-        split_name = property_name.scan(SPLIT_REGEX).join(" ")
-        split_name_properties[split_name] = value
-        properties[property_name] = value
+        wmi_object.properties_.each do |property|
+          property_name = property.name
+          value = wmi_object.invoke(property_name)
+
+          split_name = property_name.scan(SPLIT_REGEX).join(" ")
+          split_name_properties.last[split_name] = value
+          properties.last[property_name] = value
+        end
       end
 
-      dmi[dmi_key] = Mash.new(all_records: [split_name_properties], _all_records: [properties])
+      dmi[dmi_key] = Mash.new(all_records: split_name_properties, _all_records: properties)
     end
 
     Ohai::Common::DMI.convenience_keys(dmi)

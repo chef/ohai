@@ -99,4 +99,36 @@ describe Ohai::System, "DMI", :windows_only do
       expect(plugin[:dmi][:chassis]["shared_property"]).to eq("Taco Bell")
     end
   end
+
+  context "with extra information that should be filtered out" do
+    FILTERED_KEYS = [
+      %w{Caption caption aaa},
+      %w{CreationClassName creation_class_name bbb},
+      %w{SystemCreationClassName system_creation_class_name ccc},
+    ].freeze
+
+    before do
+      properties = FILTERED_KEYS.map { |name, _, _| double(name: name) }
+      wmi_ole_object = double properties_: properties
+
+      FILTERED_KEYS.each do |name, _, value|
+        allow(wmi_ole_object).to receive(:invoke).with(name).and_return(value)
+      end
+
+      wmi_object = WmiLite::Wmi::Instance.new(wmi_ole_object)
+      expect_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_SystemEnclosure").and_return([wmi_object])
+
+      plugin.run
+    end
+
+    FILTERED_KEYS.each do |name, transformed_name, value|
+      it "adds #{name} to :all_records" do
+        expect(plugin[:dmi][:chassis][:all_records].first[name]).to eq(value)
+      end
+
+      it "does not add #{transformed_name} to the root" do
+        expect(plugin[:dmi][:chassis]).not_to have_key(transformed_name)
+      end
+    end
+  end
 end

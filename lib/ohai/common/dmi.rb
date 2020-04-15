@@ -136,7 +136,7 @@ module Ohai
               translated = field.downcase.gsub(/[^a-z0-9]/, "_")
               next if SKIPPED_CONVENIENCE_KEYS.include?(translated.to_s)
 
-              value      = value.strip
+              value = value.strip
               if in_common.key?(translated)
                 in_common[translated] = nil unless in_common[translated] == value
               else

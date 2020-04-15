@@ -87,7 +87,7 @@ Ohai.plugin(:DMI) do
       records[:all_records] = records.delete(:_all_records)
 
       WINDOWS_TO_UNIX_KEYS.each do |windows_key, unix_key|
-        records[unix_key] = records.delete(windows_key) if records.has_key?(windows_key)
+        records[unix_key] = records.delete(windows_key) if records.key?(windows_key)
       end
     end
   end

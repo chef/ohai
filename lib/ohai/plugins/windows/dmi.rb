@@ -56,7 +56,7 @@ Ohai.plugin(:DMI) do
     # `Ohai::Common::DMI.convenience_keys` expects property names in `dmi`'s
     # format, so build two parallel hashes with the keys as they come from the
     # Windows API and in a faked-out `dmi` version. After the call to
-    # `Ohai::Common::CMI.convenience_keys` replace the faked-out `dmi`
+    # `Ohai::Common::DMI.convenience_keys` replace the faked-out `dmi`
     # collection with the one with the original property names.
     DMI_TO_WIN32OLE.each do |dmi_key, ole_key|
       wmi_objects = wmi.instances_of("Win32_#{ole_key}").map(&:wmi_ole_object)

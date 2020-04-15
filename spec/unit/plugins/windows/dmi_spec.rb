@@ -131,4 +131,40 @@ describe Ohai::System, "DMI", :windows_only do
       end
     end
   end
+
+  context "with information that should be made to match other platforms" do
+    RENAMED_KEYS = [
+      %w{Vendor vendor manufacturer aaa},
+      %w{IdentifyingNumber identifying_number serial_number bbb},
+      %w{Name name family ccc},
+    ].freeze
+
+    before do
+      properties = RENAMED_KEYS.map { |name, _, _, _| double(name: name) }
+      wmi_ole_object = double properties_: properties
+
+      RENAMED_KEYS.each do |name, _, _, value|
+        allow(wmi_ole_object).to receive(:invoke).with(name).and_return(value)
+      end
+
+      wmi_object = WmiLite::Wmi::Instance.new(wmi_ole_object)
+      expect_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_SystemEnclosure").and_return([wmi_object])
+
+      plugin.run
+    end
+
+    RENAMED_KEYS.each do |name, transformed_name, renamed_name, value|
+      it "adds #{name} to :all_records" do
+        expect(plugin[:dmi][:chassis][:all_records].first[name]).to eq(value)
+      end
+
+      it "adds #{renamed_name} to the root" do
+        expect(plugin[:dmi][:chassis][renamed_name]).to eq(value)
+      end
+
+      it "does not add #{transformed_name} to the root" do
+        expect(plugin[:dmi][:chassis]).not_to have_key(transformed_name)
+      end
+    end
+  end
 end

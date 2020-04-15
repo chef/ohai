@@ -38,6 +38,12 @@ Ohai.plugin(:DMI) do
   # https://rubular.com/r/FBNtXod4wkZGAG
   SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
 
+  WINDOWS_TO_UNIX_KEYS = [
+    %w{vendor manufacturer},
+    %w{identifying_number serial_number},
+    %w{name family},
+  ].freeze
+
   collect_data(:windows) do
     require "ohai/common/dmi"
     require "wmi-lite/wmi"
@@ -79,6 +85,10 @@ Ohai.plugin(:DMI) do
 
     dmi.each_value do |records|
       records[:all_records] = records.delete(:_all_records)
+
+      WINDOWS_TO_UNIX_KEYS.each do |windows_key, unix_key|
+        records[unix_key] = records.delete(windows_key) if records.has_key?(windows_key)
+      end
     end
   end
 end

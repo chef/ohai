@@ -46,7 +46,7 @@ describe Ohai::System, "DMI", :windows_only do
     ].freeze
 
     before do
-      properties = CASES.map {|name, _, _| double(name: name) }
+      properties = CASES.map { |name, _, _| double(name: name) }
       wmi_ole_object = double properties_: properties
 
       CASES.each do |name, _, value|
@@ -77,22 +77,22 @@ describe Ohai::System, "DMI", :windows_only do
         double(name: "SharedProperty"),
       ]
 
-      wmi_ole_objects = %w[tacos nachos].map do |value|
+      wmi_ole_objects = %w{tacos nachos}.map do |value|
         object = double properties_: properties
         allow(object).to receive(:invoke).with("UniqueProperty").and_return(value)
         allow(object).to receive(:invoke).with("SharedProperty").and_return("Taco Bell")
         object
       end
 
-      wmi_objects = wmi_ole_objects.map {|o| WmiLite::Wmi::Instance.new(o) }
+      wmi_objects = wmi_ole_objects.map { |o| WmiLite::Wmi::Instance.new(o) }
       expect_any_instance_of(WmiLite::Wmi).to receive(:instances_of).with("Win32_SystemEnclosure").and_return(wmi_objects)
 
       plugin.run
     end
 
     it "adds unique values to :all_records" do
-      values = plugin[:dmi][:chassis][:all_records].map {|r| r["UniqueProperty"] }
-      expect(values).to eq(%w[tacos nachos])
+      values = plugin[:dmi][:chassis][:all_records].map { |r| r["UniqueProperty"] }
+      expect(values).to eq(%w{tacos nachos})
     end
 
     it "adds shared values to the root with snake case key" do

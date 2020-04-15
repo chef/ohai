@@ -1,6 +1,6 @@
 #
 # Author:: Pete Higgins (pete@peterhiggins.org)
-# Copyright:: Copyright (c) 2020 Kurt Yoder
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

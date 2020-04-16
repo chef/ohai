@@ -101,6 +101,10 @@ describe Ohai::System, "DMI", :windows_only do
   end
 
   context "with extra information that should be filtered out" do
+    # Each test case has 3 elements:
+    # * The name of the property as it comes from the Windows APIs
+    # * The transformed snake-case version of the property name
+    # * A unique dummy value per test case
     FILTERED_KEYS = [
       %w{Caption caption aaa},
       %w{CreationClassName creation_class_name bbb},
@@ -133,6 +137,11 @@ describe Ohai::System, "DMI", :windows_only do
   end
 
   context "with information that should be made to match other platforms" do
+    # Each test case has 4 elements:
+    # * The name of the property as it comes from the Windows APIs
+    # * The transformed snake-case version of the property name
+    # * The Unix equivalent of the property name
+    # * A unique dummy value per test case
     RENAMED_KEYS = [
       %w{Vendor vendor manufacturer aaa},
       %w{IdentifyingNumber identifying_number serial_number bbb},

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.17 -->
-## [v16.0.17](https://github.com/chef/ohai/tree/v16.0.17) (2020-04-10)
+<!-- latest_release 16.0.18 -->
+## [v16.0.18](https://github.com/chef/ohai/tree/v16.0.18) (2020-04-17)
 
 #### Merged Pull Requests
-- Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins))
+- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins)) <!-- 16.0.18 -->
 - Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins)) <!-- 16.0.17 -->
 - Make shard plugin more resilient and throw better errors [#1446](https://github.com/chef/ohai/pull/1446) ([jaymzh](https://github.com/jaymzh)) <!-- 16.0.16 -->
 - Cache gem installs in Buildkite on Windows as well [#1444](https://github.com/chef/ohai/pull/1444) ([tas50](https://github.com/tas50)) <!-- 16.0.15 -->

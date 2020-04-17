@@ -232,6 +232,127 @@ describe Ohai::System, "General Linux cpu plugin" do
       expect(plugin[:cpu]["0"]).to have_key("flags")
       expect(plugin[:cpu]["0"]["flags"]).to eq(%w{fpu pse tsc msr mce cx8 sep mtrr pge cmov})
     end
+
+    it "lscpu: has architecture" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
+      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("x86_64")
+    end
+    it "lscpu: has cpu_opmodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpu_opmodes")
+      expect(plugin[:cpu]["lscpu"]["cpu_opmodes"]).to eq(%w{32-bit 64-bit})
+    end
+    it "lscpu: has byte_order" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("byte_order")
+      expect(plugin[:cpu]["lscpu"]["byte_order"]).to eq("little endian")
+    end
+    it "lscpu: has cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
+      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("x86_64")
+    end
+    it "lscpu: has cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus")
+      expect(plugin[:cpu]["lscpu"]["cpus"]).to eq(1)
+    end
+    it "lscpu: has cpus_online" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
+      expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(0)
+    end
+    it "lscpu: has threads" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
+      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+    end
+    it "lscpu: has cores" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
+      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(1)
+    end
+    it "lscpu: has numa_nodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_nodes")
+      expect(plugin[:cpu]["lscpu"]["numa_nodes"]).to eq(1)
+    end
+    it "lscpu: has vendor_id" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("vendor_id")
+      expect(plugin[:cpu]["lscpu"]["vendor_id"]).to eq("GenuineIntel")
+    end
+    it "lscpu: has family" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("family")
+      expect(plugin[:cpu]["lscpu"]["family"]).to eq("6")
+    end
+    it "lscpu: has model" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("model")
+      expect(plugin[:cpu]["lscpu"]["model"]).to eq("23")
+    end
+    it "lscpu: has model_name" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("model_name")
+      expect(plugin[:cpu]["lscpu"]["model_name"]).to eq("Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz")
+    end
+    it "lscpu: has stepping" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("stepping")
+      expect(plugin[:cpu]["lscpu"]["stepping"]).to eq("2")
+    end
+    it "lscpu: has mhz" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz")
+      expect(plugin[:cpu]["lscpu"]["mhz"]).to eq("1968.770")
+    end
+    it "lscpu: has bogomips" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("bogomips")
+      expect(plugin[:cpu]["lscpu"]["bogomips"]).to eq("2575.86")
+    end
+    it "lscpu: has hypervisor_vendor" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("hypervisor_vendor")
+      expect(plugin[:cpu]["lscpu"]["hypervisor_vendor"]).to eq("Xen")
+    end
+    it "lscpu: has virtualization_type" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("virtualization_type")
+      expect(plugin[:cpu]["lscpu"]["virtualization_type"]).to eq("full")
+    end
+    it "lscpu: has l1d_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1d_cache")
+      expect(plugin[:cpu]["lscpu"]["l1d_cache"]).to eq("32K")
+    end
+    it "lscpu: has l1i_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1i_cache")
+      expect(plugin[:cpu]["lscpu"]["l1i_cache"]).to eq("32K")
+    end
+    it "lscpu: has l2_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l2_cache")
+      expect(plugin[:cpu]["lscpu"]["l2_cache"]).to eq("256K")
+    end
+    it "lscpu: has l3_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l3_cache")
+      expect(plugin[:cpu]["lscpu"]["l3_cache"]).to eq("30720K")
+    end
+    it "lscpu: has flags" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("flags")
+      expect(plugin[:cpu]["lscpu"]["flags"]).to eq(%w{abm aes apic avx avx2 bmi1 bmi2 clflush cmov constant_tsc cx16 cx8 de erms f16c fma fpu fsgsbase fxsr ht hypervisor invpcid lahf_lm lm mca mce mmx movbe msr mtrr nopl nx pae pat pcid pclmulqdq pge pni popcnt pse pse36 rdrand rdtscp rep_good sep smep sse sse2 sse4_1 sse4_2 ssse3 syscall tsc tsc_deadline_timer vme x2apic xsave xsaveopt xtopology})
+    end
+    it "lscpu: has numa_node_cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_node_cpus")
+      expect(plugin[:cpu]["lscpu"]["numa_node_cpus"]).to eq({ "0" => [0] })
+    end
   end
 
   context "with a dual-core hyperthreaded /proc/cpuinfo" do

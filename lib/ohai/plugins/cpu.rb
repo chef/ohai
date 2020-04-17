@@ -46,6 +46,128 @@ Ohai.plugin(:CPU) do
     cpuinfo
   end
 
+  def range_to_a(range)
+    range_array = []
+    range.split(",").each do |cpu|
+      if /\d+-\d+/.match?(cpu.to_s)
+        range_array << Range.new(*cpu.split("-").map(&:to_i)).to_a
+      else
+        range_array << cpu.to_i
+      end
+    end
+    range_array.flatten
+  end
+
+  def parse_lscpu
+    lscpu_info = Mash.new
+    lscpu_info[:numa_node_cpus] = Mash.new
+    begin
+      so = shell_out("lscpu")
+      if so.exitstatus == 0
+        so.stdout.each_line do |line|
+          case line
+          when /^Architecture:\s+(.+)/
+            lscpu_info[:architecture] = $1.to_s
+          when /^CPU op-mode\(s\):\s+(.+)/
+            lscpu_info[:cpu_opmodes] = $1.split(", ")
+          when /^Byte Order:\s+(.+)/
+            lscpu_info[:byte_order] = $1.downcase.to_s
+          when /^Address sizes:\s+(.+)/
+            lscpu_info[:address_sizes] = $1.split(", ")
+          when /^CPU\(s\):\s+(.+)/
+            lscpu_info[:cpus] = $1.to_i
+          when /^On-line CPU\(s\) list:\s+(.+)/
+            if range_to_a($1) == [0]
+              lscpu_info[:cpus_online] = 0
+            else
+              lscpu_info[:cpus_online] = range_to_a($1).length
+            end
+          when /^Off-line CPU\(s\) list:\s+(.+)/
+            if range_to_a($1) == [0]
+              lscpu_info[:cpus_offline] = 0
+            else
+              lscpu_info[:cpus_offline] = range_to_a($1).length
+            end
+          when /^Thread\(s\) per core:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
+            lscpu_info[:threads] = $1.to_i
+          when /^Core\(s\) per socket:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
+            lscpu_info[:cores] = $1.to_i
+          when /^Socket\(s\):\s+(.+)/ # http://rubular.com/r/DIzmPtJFvK
+            lscpu_info[:sockets] = $1.to_i
+          when /^Socket\(s\) per book:\s+(.+)/
+            lscpu_info[:sockets] = $1.to_i
+          when /^Book\(s\) per drawer:\s+(.+)/
+            lscpu_info[:books] = $1.to_i
+          when /^Drawer\(s\):\s+(.+)/
+            lscpu_info[:drawers] = $1.to_i
+          when /^NUMA node\(s\):\s+(.+)/
+            lscpu_info[:numa_nodes] = $1.to_i
+          when /^Vendor ID:\s+(.+)/
+            lscpu_info[:vendor_id] = $1.to_s
+          when /^CPU family:\s+(.+)/
+            lscpu_info[:family] = $1.to_s
+          when /^Model:\s+(.+)/
+            lscpu_info[:model] = $1.to_s
+          when /^Model name:\s+(.+)/
+            lscpu_info[:model_name] = $1.to_s
+          when /^Stepping:\s+(.+)/
+            lscpu_info[:stepping] = $1.to_s
+          when /^CPU MHz:\s+(.+)/
+            lscpu_info[:mhz] = $1.to_s
+          when /^CPU static MHz:\s+(.+)/
+            lscpu_info[:mhz] = $1.to_s
+          when /^CPU max MHz:\s+(.+)/
+            lscpu_info[:mhz_max] = $1.to_s
+          when /^CPU min MHz:\s+(.+)/
+            lscpu_info[:mhz_min] = $1.to_s
+          when /^CPU dynamic MHz:\s+(.+)/
+            lscpu_info[:mhz_dyanmic] = $1.to_s
+          when /^BogoMIPS:\s+(.+)/
+            lscpu_info[:bogomips] = $1.to_s
+          when /^Virtualization:\s+(.+)/
+            lscpu_info[:virtualization] = $1.to_s
+          when /^Virtualization type:\s+(.+)/
+            lscpu_info[:virtualization_type] = $1.to_s
+          when /^Hypervisor vendor:\s+(.+)/
+            lscpu_info[:hypervisor_vendor] = $1.to_s
+          when /^Dispatching mode:\s+(.+)/
+            lscpu_info[:dispatching_mode] = $1.to_s
+          when /^L1d cache:\s+(.+)/
+            lscpu_info[:l1d_cache] = $1.to_s
+          when /^L1i cache:\s+(.+)/
+            lscpu_info[:l1i_cache] = $1.to_s
+          when /^L2 cache:\s+(.+)/
+            lscpu_info[:l2_cache] = $1.to_s
+          when /^L2d cache:\s+(.+)/
+            lscpu_info[:l2d_cache] = $1.to_s
+          when /^L2i cache:\s+(.+)/
+            lscpu_info[:l2i_cache] = $1.to_s
+          when /^L3 cache:\s+(.+)/
+            lscpu_info[:l3_cache] = $1.to_s
+          when /^L4 cache:\s+(.+)/
+            lscpu_info[:l4_cache] = $1.to_s
+          when /^NUMA node(\d+) CPU\(s\):\s+(.+)/
+            numa_node = $1
+            cpus = $2
+            lscpu_info[:numa_node_cpus][numa_node] = range_to_a(cpus)
+          when /^Flags:\s+(.+)/
+            lscpu_info[:flags] = $1.split(" ").sort.to_a
+          end
+        end
+      else
+        logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
+      end
+    rescue Ohai::Exceptions::Exec # util-linux isn't installed most likely
+      logger.trace("Plugin CPU: Error executing lscpu. util-linux may not be installed.")
+    end
+    # Make sure we return an empty hash if we don't have architecture set
+    if lscpu_info[:architecture].nil?
+      Mash.new
+    else
+      lscpu_info
+    end
+  end
+
   collect_data(:linux) do
     cpuinfo = Mash.new
     real_cpu = Mash.new
@@ -111,38 +233,27 @@ Ohai.plugin(:CPU) do
     cpu cpuinfo
 
     cpu[:total] = cpu_number
+    lscpu = parse_lscpu
 
     # use data we collected unless cpuinfo is lacking core information
     # which is the case on older linux distros
-    if !real_cpu.empty? && cpu["0"]["cores"]
+    if !lscpu.empty?
+      if lscpu[:architecture] == "s390x"
+        cpu[:total] = lscpu[:sockets] * lscpu[:cores] * lscpu[:threads] *
+          lscpu[:books] * lscpu[:drawers]
+      else
+        cpu[:total] = lscpu[:sockets] * lscpu[:cores] * lscpu[:threads]
+      end
+      cpu[:real] = lscpu[:sockets]
+      cpu[:cores] = lscpu[:sockets] * lscpu[:cores]
+    elsif !real_cpu.empty? && cpu["0"]["cores"]
+      logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
       cpu[:real] = real_cpu.keys.length
       cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
     else
-      begin
-        logger.trace("Plugin CPU: Falling back to aggregate data from lscpu as real cpu & core data is missing in /proc/cpuinfo")
-        so = shell_out("lscpu")
-        if so.exitstatus == 0
-          lscpu_data = Mash.new
-          so.stdout.each_line do |line|
-            case line
-            when /^Thread\(s\) per core:\s(.+)/ # http://rubular.com/r/lOw2pRrw1q
-              lscpu_data[:threads] = $1.to_i
-            when /^Core\(s\) per socket:\s(.+)/ # http://rubular.com/r/lOw2pRrw1q
-              lscpu_data[:cores] = $1.to_i
-            when /^Socket\(s\):\s(.+)/ # http://rubular.com/r/DIzmPtJFvK
-              lscpu_data[:sockets] = $1.to_i
-            end
-          end
-          cpu[:total] = lscpu_data[:sockets] * lscpu_data[:cores] * lscpu_data[:threads]
-          cpu[:real] = lscpu_data[:sockets]
-          cpu[:cores] = lscpu_data[:sockets] * lscpu_data[:cores]
-        else
-          logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
-        end
-      rescue Ohai::Exceptions::Exec # util-linux isn't installed most likely
-        logger.trace("Plugin CPU: Error executing lscpu. util-linux may not be installed.")
-      end
+      logger.trace("Plugin CPU: real cpu & core data is missing in /proc/cpuinfo and lscpu")
     end
+    cpu[:lscpu] = lscpu
   end
 
   collect_data(:freebsd) do

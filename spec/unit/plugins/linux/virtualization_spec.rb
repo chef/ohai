@@ -190,7 +190,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "sets virtualization attributes if the appropriate DMI data is present" do
       plugin[:dmi] = { system: {
                                   manufacturer: "Amazon EC2",
-                                  product: "c5n.large",
+                                  product_name: "c5n.large",
                                   version: nil,
                                },
                      }
@@ -203,7 +203,7 @@ describe Ohai::System, "Linux virtualization platform" do
     it "sets empty virtualization attributes if nothing is detected" do
       plugin[:dmi] = { system: {
                                   manufacturer: "Supermicro",
-                                  product: "X10SLH-N6-ST031",
+                                  product_name: "X10SLH-N6-ST031",
                                   version: "0123456789",
                                },
                      }

@@ -18,13 +18,11 @@
 
 Ohai.plugin :SystemEnclosure do
   provides "system_enclosure"
+  depends "dmi"
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
     system_enclosure Mash.new
-    wmi = WmiLite::Wmi.new
-    wmi_object = wmi.first_of("Win32_SystemEnclosure").wmi_ole_object
-    system_enclosure[:manufacturer] = wmi_object.invoke("manufacturer")
-    system_enclosure[:serialnumber] = wmi_object.invoke("serialnumber")
+    system_enclosure[:manufacturer] = get_attribute(:dmi, :chassis, :manufacturer)
+    system_enclosure[:serialnumber] = get_attribute(:dmi, :chassis, :serial_number)
   end
 end

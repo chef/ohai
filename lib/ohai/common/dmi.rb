@@ -111,6 +111,15 @@ module Ohai
         id
       end
 
+      SKIPPED_CONVENIENCE_KEYS = %w{
+        application_identifier
+        caption
+        creation_class_name
+        size
+        system_creation_class_name
+        record_id
+      }.freeze
+
       # create simplified convenience access keys for each record type
       # for single occurrences of one type, copy to top level all fields and values
       # for multiple occurrences of same type, copy to top level all fields and values that are common to all records
@@ -122,13 +131,12 @@ module Ohai
 
           records[:all_records].each do |record|
             record.each do |field, value|
-              next if value.is_a?(Mash)
-              next if field.to_s == "application_identifier"
-              next if field.to_s == "size"
-              next if field.to_s == "record_id"
+              next unless value.is_a?(String)
 
               translated = field.downcase.gsub(/[^a-z0-9]/, "_")
-              value      = value.strip
+              next if SKIPPED_CONVENIENCE_KEYS.include?(translated.to_s)
+
+              value = value.strip
               if in_common.key?(translated)
                 in_common[translated] = nil unless in_common[translated] == value
               else

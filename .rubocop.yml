@@ -6,7 +6,7 @@ AllCops:
     - "pkg/**/*"
 
 # these have shellout examples that need to have the tabs that come with the shellout
-Layout/Tab:
+Layout/IndentationStyle:
   Exclude:
     - "lib/ohai/plugins/mono.rb"
     - "lib/ohai/plugins/darwin/hardware.rb"

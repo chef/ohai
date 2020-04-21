@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 15.9.0 -->
+## [v15.9.0](https://github.com/chef/ohai/tree/v15.9.0) (2020-04-21)
+
+#### Merged Pull Requests
+- Make shard plugin more resilient and throw better errors [#1452](https://github.com/chef/ohai/pull/1452) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=15.8.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Make shard plugin more resilient and throw better errors [#1452](https://github.com/chef/ohai/pull/1452) ([tas50](https://github.com/tas50)) <!-- 15.9.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -20,6 +20,7 @@
 Ohai.plugin(:Virtualization) do
   provides "virtualization"
   depends "dmi"
+  depends "cpu"
   require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
@@ -125,6 +126,14 @@ Ohai.plugin(:Virtualization) do
         logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo does not list the hypervisor feature. Detecting as kvm host")
         virtualization[:role] = "host"
         virtualization[:systems][:kvm] = "host"
+      end
+    elsif get_attribute(:cpu, :lscpu)
+      if get_attribute(:cpu, :lscpu, :hypervisor_vendor) == "KVM"
+        virtualization[:system] = "kvm"
+        if /(para|full)/.match?(get_attribute(:cpu, :lscpu, :virtualization_type))
+          virtualization[:role] = "guest"
+          virtualization[:systems][:kvm] = "guest"
+        end
       end
     end
 

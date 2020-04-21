@@ -163,6 +163,33 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
     end
 
+    it "sets kvm guest if /proc/cpuinfo contains nested CPU w/ lscpu and full virt" do
+      expect(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(true)
+      allow(plugin).to receive(:read).with("/proc/cpuinfo").and_return("Intel Core Processor (Haswell, no TSX, IBRS)")
+      plugin[:cpu] = { lscpu: {
+                                  hypervisor_vendor: "KVM",
+                                  virtualization_type: "full",
+                               },
+                     }
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "sets kvm guest if /proc/cpuinfo contains nested CPU w/ lscpu and para virt" do
+      expect(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(true)
+      allow(plugin).to receive(:read).with("/proc/cpuinfo").and_return("Intel Core Processor (Haswell, no TSX, IBRS)")
+      plugin[:cpu] = { lscpu: {
+                                  hypervisor_vendor: "KVM",
+                                  virtualization_type: "para",
+                               },
+                     }
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
     it "does not set virtualization if kvm isn't there" do
       expect(plugin).to receive(:file_exist?).at_least(:once).and_return(false)
       plugin.run

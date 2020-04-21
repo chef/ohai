@@ -250,11 +250,6 @@ describe Ohai::System, "General Linux cpu plugin" do
     end
     it "lscpu: has cpus" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
-      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("x86_64")
-    end
-    it "lscpu: has cpus" do
-      plugin.run
       expect(plugin[:cpu]["lscpu"]).to have_key("cpus")
       expect(plugin[:cpu]["lscpu"]["cpus"]).to eq(1)
     end
@@ -272,6 +267,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]["lscpu"]).to have_key("cores")
       expect(plugin[:cpu]["lscpu"]["cores"]).to eq(1)
+    end
+    it "lscpu: has sockets" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("sockets")
+      expect(plugin[:cpu]["lscpu"]["sockets"]).to eq(1)
     end
     it "lscpu: has numa_nodes" do
       plugin.run
@@ -527,6 +527,204 @@ describe Ohai::System, "S390 linux cpu plugin" do
 
   it_behaves_like "S390 processor info", 0, "EE", "06E276", "2717"
   it_behaves_like "S390 processor info", 1, "FF", "06E278", "2818"
+
+  context "with lscpu data" do
+    let(:lscpu) do
+      <<~EOF
+        Architecture:        s390x
+        CPU op-mode(s):      32-bit, 64-bit
+        Byte Order:          Big Endian
+        CPU(s):              4
+        On-line CPU(s) list: 0-3
+        Thread(s) per core:  1
+        Core(s) per socket:  1
+        Socket(s) per book:  1
+        Book(s) per drawer:  1
+        Drawer(s):           4
+        NUMA node(s):        1
+        Vendor ID:           IBM/S390
+        Machine type:        8561
+        CPU dynamic MHz:     5200
+        CPU static MHz:      5200
+        BogoMIPS:            3241.00
+        Hypervisor:          KVM/Linux
+        Hypervisor vendor:   KVM
+        Virtualization type: full
+        Dispatching mode:    horizontal
+        L1d cache:           128K
+        L1i cache:           128K
+        L2d cache:           4096K
+        L2i cache:           4096K
+        L3 cache:            262144K
+        L4 cache:            983040K
+        NUMA node0 CPU(s):   0-3
+        Flags:               esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx vxd vxe gs vxe2 vxp sort dflt
+      EOF
+    end
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+    end
+    it_behaves_like "Common cpu info", 4, 1
+
+    it "has a cpu 1" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("1")
+    end
+
+    it "has a vendor_id" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("vendor_id")
+      expect(plugin[:cpu]["vendor_id"]).to eql("IBM/S390")
+    end
+
+    it "has a bogomips per cpu" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("bogomips_per_cpu")
+      expect(plugin[:cpu]["bogomips_per_cpu"]).to eql("9328.00")
+    end
+
+    it "has features" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("features")
+      expect(plugin[:cpu]["features"]).to eq(%w{esan3 zarch stfle msa ldisp eimm dfp etf3eh highgprs})
+    end
+
+    it_behaves_like "S390 processor info", 0, "EE", "06E276", "2717"
+    it_behaves_like "S390 processor info", 1, "FF", "06E278", "2818"
+
+    it "lscpu: has architecture" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
+      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("s390x")
+    end
+    it "lscpu: has cpu_opmodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpu_opmodes")
+      expect(plugin[:cpu]["lscpu"]["cpu_opmodes"]).to eq(%w{32-bit 64-bit})
+    end
+    it "lscpu: has byte_order" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("byte_order")
+      expect(plugin[:cpu]["lscpu"]["byte_order"]).to eq("big endian")
+    end
+    it "lscpu: has cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus")
+      expect(plugin[:cpu]["lscpu"]["cpus"]).to eq(4)
+    end
+    it "lscpu: has cpus_online" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
+      expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(4)
+    end
+    it "lscpu: has threads" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
+      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+    end
+    it "lscpu: has cores" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
+      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(1)
+    end
+    it "lscpu: has sockets" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("sockets")
+      expect(plugin[:cpu]["lscpu"]["sockets"]).to eq(1)
+    end
+    it "lscpu: has books" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("books")
+      expect(plugin[:cpu]["lscpu"]["books"]).to eq(1)
+    end
+    it "lscpu: has drawers" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("drawers")
+      expect(plugin[:cpu]["lscpu"]["drawers"]).to eq(4)
+    end
+    it "lscpu: has numa_nodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_nodes")
+      expect(plugin[:cpu]["lscpu"]["numa_nodes"]).to eq(1)
+    end
+    it "lscpu: has vendor_id" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("vendor_id")
+      expect(plugin[:cpu]["lscpu"]["vendor_id"]).to eq("IBM/S390")
+    end
+    it "lscpu: has machine_type" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("machine_type")
+      expect(plugin[:cpu]["lscpu"]["machine_type"]).to eq("8561")
+    end
+    it "lscpu: has mhz" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz")
+      expect(plugin[:cpu]["lscpu"]["mhz"]).to eq("5200")
+    end
+    it "lscpu: has mhz_dynamic" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz_dynamic")
+      expect(plugin[:cpu]["lscpu"]["mhz_dynamic"]).to eq("5200")
+    end
+    it "lscpu: has bogomips" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("bogomips")
+      expect(plugin[:cpu]["lscpu"]["bogomips"]).to eq("3241.00")
+    end
+    it "lscpu: has hypervisor_vendor" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("hypervisor_vendor")
+      expect(plugin[:cpu]["lscpu"]["hypervisor_vendor"]).to eq("KVM")
+    end
+    it "lscpu: has virtualization_type" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("virtualization_type")
+      expect(plugin[:cpu]["lscpu"]["virtualization_type"]).to eq("full")
+    end
+    it "lscpu: has dispatching_mode" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("dispatching_mode")
+      expect(plugin[:cpu]["lscpu"]["dispatching_mode"]).to eq("horizontal")
+    end
+    it "lscpu: has l1d_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1d_cache")
+      expect(plugin[:cpu]["lscpu"]["l1d_cache"]).to eq("128K")
+    end
+    it "lscpu: has l1i_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1i_cache")
+      expect(plugin[:cpu]["lscpu"]["l1i_cache"]).to eq("128K")
+    end
+    it "lscpu: has l2d_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l2d_cache")
+      expect(plugin[:cpu]["lscpu"]["l2d_cache"]).to eq("4096K")
+    end
+    it "lscpu: has l2i_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l2i_cache")
+      expect(plugin[:cpu]["lscpu"]["l2i_cache"]).to eq("4096K")
+    end
+    it "lscpu: has l3_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l3_cache")
+      expect(plugin[:cpu]["lscpu"]["l3_cache"]).to eq("262144K")
+    end
+    it "lscpu: has flags" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("flags")
+      expect(plugin[:cpu]["lscpu"]["flags"]).to eq(%w{dflt dfp edat eimm esan3 etf3eh gs highgprs ldisp msa sort stfle te vx vxd vxe vxe2 vxp zarch})
+    end
+    it "lscpu: has numa_node_cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_node_cpus")
+      expect(plugin[:cpu]["lscpu"]["numa_node_cpus"]).to eq({ "0" => [0, 1, 2, 3] })
+    end
+  end
 end
 
 describe Ohai::System, "arm64 linux cpu plugin" do

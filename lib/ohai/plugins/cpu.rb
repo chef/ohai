@@ -104,6 +104,8 @@ Ohai.plugin(:CPU) do
             lscpu_info[:numa_nodes] = $1.to_i
           when /^Vendor ID:\s+(.+)/
             lscpu_info[:vendor_id] = $1.to_s
+          when /^Machine type:\s+(.+)/
+            lscpu_info[:machine_type] = $1.to_s
           when /^CPU family:\s+(.+)/
             lscpu_info[:family] = $1.to_s
           when /^Model:\s+(.+)/
@@ -121,7 +123,7 @@ Ohai.plugin(:CPU) do
           when /^CPU min MHz:\s+(.+)/
             lscpu_info[:mhz_min] = $1.to_s
           when /^CPU dynamic MHz:\s+(.+)/
-            lscpu_info[:mhz_dyanmic] = $1.to_s
+            lscpu_info[:mhz_dynamic] = $1.to_s
           when /^BogoMIPS:\s+(.+)/
             lscpu_info[:bogomips] = $1.to_s
           when /^Virtualization:\s+(.+)/

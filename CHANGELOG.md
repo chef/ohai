@@ -1,27 +1,24 @@
 # Change Log
 
-<!-- latest_release 15.9.1 -->
-## [v15.9.1](https://github.com/chef/ohai/tree/v15.9.1) (2020-04-21)
-
-#### Merged Pull Requests
-- Use correct DMI attribute name for product name to fix Openstack detection [#1453](https://github.com/chef/ohai/pull/1453) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.8.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Use correct DMI attribute name for product name to fix Openstack detection [#1453](https://github.com/chef/ohai/pull/1453) ([tas50](https://github.com/tas50)) <!-- 15.9.1 -->
-- Make shard plugin more resilient and throw better errors [#1452](https://github.com/chef/ohai/pull/1452) ([tas50](https://github.com/tas50)) <!-- 15.9.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.9.1](https://github.com/chef/ohai/tree/v15.9.1) (2020-04-21)
+
+#### Merged Pull Requests
+- Make shard plugin more resilient and throw better errors [#1452](https://github.com/chef/ohai/pull/1452) ([tas50](https://github.com/tas50))
+- Use correct DMI attribute name for product name to fix Openstack detection [#1453](https://github.com/chef/ohai/pull/1453) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.8.0](https://github.com/chef/ohai/tree/v15.8.0) (2020-03-31)
 
 #### Merged Pull Requests
 - backport #1434 for 15 stable [#1435](https://github.com/chef/ohai/pull/1435) ([sawanoboly](https://github.com/sawanoboly))
 - fix: ensure optional_plugins to be array of symbols [#1436](https://github.com/chef/ohai/pull/1436) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v15.7.4](https://github.com/chef/ohai/tree/v15.7.4) (2020-01-21)
 

@@ -192,7 +192,14 @@ Ohai.plugin(:CPU) do
       when /cpu family\s+:\s(.+)/
         cpuinfo[current_cpu]["family"] = $1
       when /model\s+:\s(.+)/
-        cpuinfo[current_cpu]["model"] = $1
+        model = $1
+        # ppc has "model" at the end of /proc/cpuinfo. In addition it should always include a include a dash. So let's
+        # put this in cpu/model on ppc
+        if model.include? "-"
+          cpuinfo["model"] = model
+        else
+          cpuinfo[current_cpu]["model"] = model
+        end
       when /stepping\s+:\s(.+)/
         cpuinfo[current_cpu]["stepping"] = $1
       when /physical id\s+:\s(.+)/
@@ -218,6 +225,24 @@ Ohai.plugin(:CPU) do
         cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/
         cpuinfo["features"] = $1.split
+      # ppc64le
+      when /revision\s+:\s(.+)/
+        cpuinfo[current_cpu]["model"] = $1
+      when /cpu\s+:\s(.+)/
+        cpuinfo[current_cpu]["model_name"] = $1
+      when /clock\s+:\s(.+)/
+        cpuinfo[current_cpu]["mhz"] = $1
+      when /timebase\s+:\s(.+)/
+        cpuinfo["timebase"] = $1
+      when /platform\s+:\s(.+)/
+        cpuinfo["platform"] = $1
+      when /machine\s+:\s(.+)/
+        cpuinfo["machine"] = $1
+      when /firmware\s+:\s(.+)/
+        cpuinfo["firmware"] = $1
+      when /MMU\s+:\s(.+)/
+        cpuinfo["mmu"] = $1
+      # s390x
       when /processor\s(\d):\s(.+)/
         current_cpu = $1
         cpu_number += 1

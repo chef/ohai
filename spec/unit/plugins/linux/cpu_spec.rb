@@ -76,6 +76,28 @@ shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
   end
 end
 
+shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz|
+  describe "ppc64le processor" do
+    it "has model_name for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to have_key("model_name")
+      expect(plugin[:cpu][cpu_no.to_s]["model_name"]).to eql(model_name)
+    end
+
+    it "has model for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to have_key("model")
+      expect(plugin[:cpu][cpu_no.to_s]["model"]).to eql(model)
+    end
+
+    it "has mhz for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to have_key("mhz")
+      expect(plugin[:cpu][cpu_no.to_s]["mhz"]).to eql(mhz)
+    end
+  end
+end
+
 describe Ohai::System, "General Linux cpu plugin" do
   let(:plugin) { get_plugin("cpu") }
 
@@ -982,6 +1004,44 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("0")
     end
+
+    it "has timebase" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("timebase")
+      expect(plugin[:cpu]["timebase"]).to eq("512000000")
+    end
+
+    it "has platform" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("platform")
+      expect(plugin[:cpu]["platform"]).to eq("PowerNV")
+    end
+
+    it "has model" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("model")
+      expect(plugin[:cpu]["model"]).to eq("9006-12P")
+    end
+
+    it "has machine" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("machine")
+      expect(plugin[:cpu]["machine"]).to eq("PowerNV 9006-12P")
+    end
+
+    it "has firmware" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("firmware")
+      expect(plugin[:cpu]["firmware"]).to eq("OPAL")
+    end
+
+    it "has mmu" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mmu")
+      expect(plugin[:cpu]["mmu"]).to eq("Radix")
+    end
+
+    it_behaves_like "ppc64le processor info", 0, "POWER9, altivec supported", "2.2 (pvr 004e 1202)", "3383.000000MHz"
 
     it "lscpu: has architecture" do
       plugin.run

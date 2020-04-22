@@ -486,6 +486,9 @@ describe Ohai::System, "General Linux cpu plugin" do
 
       EOF
     end
+    before do
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+    end
 
     it "has 1 physical socket" do
       plugin.run

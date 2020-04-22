@@ -51,8 +51,9 @@ Ohai.plugin(:Selinux) do
           end
         end
 
-        key, val = line.split(%r{:?\s\s+}, 2)
+        key, val = line.split(/:?\s\s+/, 2)
         next if key.nil?
+
         unless key.start_with?("/")
           key.downcase!
           key.tr!(" ", "_")

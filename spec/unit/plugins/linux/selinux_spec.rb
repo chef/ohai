@@ -69,7 +69,7 @@ Controlling terminal:           system_u:object_r:file_t
          "/sbin/agetty" => "user_u:object_r:file_t",
          "/sbin/init" => "user_u:object_r:file_t -> user_u:object_r:init_exec_t",
          "/usr/sbin/sshd" => "user_u:object_r:file_t",
-         "controlling_terminal" => "system_u:object_r:file_t"
+         "controlling_terminal" => "system_u:object_r:file_t",
        },
        "policy_booleans" => {
          "secure_mode_policyload" => "off",
@@ -77,7 +77,7 @@ Controlling terminal:           system_u:object_r:file_t
        "process_contexts" => {
          "/usr/sbin/sshd" => "system_u:base_r:base_t",
          "current_context" => "user_u:base_r:admin_t",
-         "init_context" => "system_u:system_r:init_t"
+         "init_context" => "system_u:system_r:init_t",
        },
        "status" => {
          "current_mode" => "permissive",

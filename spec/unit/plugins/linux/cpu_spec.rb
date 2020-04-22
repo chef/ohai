@@ -258,15 +258,15 @@ describe Ohai::System, "General Linux cpu plugin" do
       expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
       expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(0)
     end
-    it "lscpu: has threads" do
+    it "lscpu: has threads_per_core" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
-      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads_per_core")
+      expect(plugin[:cpu]["lscpu"]["threads_per_core"]).to eq(1)
     end
-    it "lscpu: has cores" do
+    it "lscpu: has cores_per_socket" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
-      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores_per_socket")
+      expect(plugin[:cpu]["lscpu"]["cores_per_socket"]).to eq(1)
     end
     it "lscpu: has sockets" do
       plugin.run
@@ -619,25 +619,25 @@ describe Ohai::System, "S390 linux cpu plugin" do
       expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
       expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(4)
     end
-    it "lscpu: has threads" do
+    it "lscpu: has threads_per_core" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
-      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads_per_core")
+      expect(plugin[:cpu]["lscpu"]["threads_per_core"]).to eq(1)
     end
-    it "lscpu: has cores" do
+    it "lscpu: has cores_per_socket" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
-      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores_per_socket")
+      expect(plugin[:cpu]["lscpu"]["cores_per_socket"]).to eq(1)
     end
-    it "lscpu: has sockets" do
+    it "lscpu: has sockets_per_book" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("sockets")
-      expect(plugin[:cpu]["lscpu"]["sockets"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("sockets_per_book")
+      expect(plugin[:cpu]["lscpu"]["sockets_per_book"]).to eq(1)
     end
-    it "lscpu: has books" do
+    it "lscpu: has books_per_drawer" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("books")
-      expect(plugin[:cpu]["lscpu"]["books"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("books_per_drawer")
+      expect(plugin[:cpu]["lscpu"]["books_per_drawer"]).to eq(1)
     end
     it "lscpu: has drawers" do
       plugin.run
@@ -828,15 +828,15 @@ describe Ohai::System, "arm64 linux cpu plugin" do
       expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
       expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(32)
     end
-    it "lscpu: has threads" do
+    it "lscpu: has threads_per_core" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
-      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads_per_core")
+      expect(plugin[:cpu]["lscpu"]["threads_per_core"]).to eq(1)
     end
-    it "lscpu: has cores" do
+    it "lscpu: has cores_per_socket" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
-      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(32)
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores_per_socket")
+      expect(plugin[:cpu]["lscpu"]["cores_per_socket"]).to eq(32)
     end
     it "lscpu: has sockets" do
       plugin.run
@@ -1008,15 +1008,15 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
       expect(plugin[:cpu]["lscpu"]).to have_key("cpus_offline")
       expect(plugin[:cpu]["lscpu"]["cpus_offline"]).to eq(96)
     end
-    it "lscpu: has threads" do
+    it "lscpu: has threads_per_core" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
-      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads_per_core")
+      expect(plugin[:cpu]["lscpu"]["threads_per_core"]).to eq(1)
     end
-    it "lscpu: has cores" do
+    it "lscpu: has cores_per_socket" do
       plugin.run
-      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
-      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(16)
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores_per_socket")
+      expect(plugin[:cpu]["lscpu"]["cores_per_socket"]).to eq(16)
     end
     it "lscpu: has sockets" do
       plugin.run

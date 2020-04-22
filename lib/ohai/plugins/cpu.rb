@@ -89,15 +89,15 @@ Ohai.plugin(:CPU) do
               lscpu_info[:cpus_offline] = range_to_a($1).length
             end
           when /^Thread\(s\) per core:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
-            lscpu_info[:threads] = $1.to_i
+            lscpu_info[:threads_per_core] = $1.to_i
           when /^Core\(s\) per socket:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
-            lscpu_info[:cores] = $1.to_i
+            lscpu_info[:cores_per_socket] = $1.to_i
           when /^Socket\(s\):\s+(.+)/ # http://rubular.com/r/DIzmPtJFvK
             lscpu_info[:sockets] = $1.to_i
           when /^Socket\(s\) per book:\s+(.+)/
-            lscpu_info[:sockets] = $1.to_i
+            lscpu_info[:sockets_per_book] = $1.to_i
           when /^Book\(s\) per drawer:\s+(.+)/
-            lscpu_info[:books] = $1.to_i
+            lscpu_info[:books_per_drawer] = $1.to_i
           when /^Drawer\(s\):\s+(.+)/
             lscpu_info[:drawers] = $1.to_i
           when /^NUMA node\(s\):\s+(.+)/
@@ -241,13 +241,15 @@ Ohai.plugin(:CPU) do
     # which is the case on older linux distros
     if !lscpu.empty?
       if lscpu[:architecture] == "s390x"
-        cpu[:total] = lscpu[:sockets] * lscpu[:cores] * lscpu[:threads] *
-          lscpu[:books] * lscpu[:drawers]
+        cpu[:total] = lscpu[:sockets_per_book] * lscpu[:cores_per_socket] * lscpu[:threads_per_core] *
+          lscpu[:books_per_drawer] * lscpu[:drawers]
+        cpu[:real] = lscpu[:sockets_per_book]
+        cpu[:cores] = lscpu[:sockets_per_book] * lscpu[:cores_per_socket] * lscpu[:books_per_drawer] * lscpu[:drawers]
       else
-        cpu[:total] = lscpu[:sockets] * lscpu[:cores] * lscpu[:threads]
+        cpu[:total] = lscpu[:sockets] * lscpu[:cores_per_socket] * lscpu[:threads_per_core]
+        cpu[:real] = lscpu[:sockets]
+        cpu[:cores] = lscpu[:sockets] * lscpu[:cores_per_socket]
       end
-      cpu[:real] = lscpu[:sockets]
-      cpu[:cores] = lscpu[:sockets] * lscpu[:cores]
     elsif !real_cpu.empty? && cpu["0"]["cores"]
       logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
       cpu[:real] = real_cpu.keys.length

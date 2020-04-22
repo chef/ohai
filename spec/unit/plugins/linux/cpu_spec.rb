@@ -757,4 +757,137 @@ describe Ohai::System, "arm64 linux cpu plugin" do
   features = %w{fp asimd evtstrm aes pmull sha1 sha2 crc32}
   it_behaves_like "arm64 processor info", 0, "40.00", features
   it_behaves_like "arm64 processor info", 1, "40.00", features
+
+  context "with lscpu data" do
+    let(:lscpu) do
+      <<~EOF
+        Architecture:          aarch64
+        Byte Order:            Little Endian
+        CPU(s):                32
+        On-line CPU(s) list:   0-31
+        Thread(s) per core:    1
+        Core(s) per socket:    32
+        Socket(s):             1
+        NUMA node(s):          1
+        Model:                 2
+        CPU max MHz:           3300.0000
+        CPU min MHz:           363.9700
+        BogoMIPS:              80.00
+        L1d cache:             32K
+        L1i cache:             32K
+        L2 cache:              256K
+        NUMA node0 CPU(s):     0-31
+        Flags:                 fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
+      EOF
+    end
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      @double_file = double("/proc/cpuinfo")
+      allow(@double_file).to receive(:each)
+        .and_yield("processor : 0")
+        .and_yield("BogoMIPS  : 40.00")
+        .and_yield("Features  : fp asimd evtstrm aes pmull sha1 sha2 crc32")
+        .and_yield("")
+        .and_yield("processor      : 1")
+        .and_yield("BogoMIPS       : 40.00")
+        .and_yield("Features       : fp asimd evtstrm aes pmull sha1 sha2 crc32")
+        .and_yield("")
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
+    end
+
+    it_behaves_like "Common cpu info", 32, 1
+
+    it "has a cpu 1" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("1")
+    end
+
+    features = %w{fp asimd evtstrm aes pmull sha1 sha2 crc32}
+    it_behaves_like "arm64 processor info", 0, "40.00", features
+    it_behaves_like "arm64 processor info", 1, "40.00", features
+
+    it "lscpu: has architecture" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
+      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("aarch64")
+    end
+    it "lscpu: has byte_order" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("byte_order")
+      expect(plugin[:cpu]["lscpu"]["byte_order"]).to eq("little endian")
+    end
+    it "lscpu: has cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus")
+      expect(plugin[:cpu]["lscpu"]["cpus"]).to eq(32)
+    end
+    it "lscpu: has cpus_online" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
+      expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(32)
+    end
+    it "lscpu: has threads" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
+      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+    end
+    it "lscpu: has cores" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
+      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(32)
+    end
+    it "lscpu: has sockets" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("sockets")
+      expect(plugin[:cpu]["lscpu"]["sockets"]).to eq(1)
+    end
+    it "lscpu: has numa_nodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_nodes")
+      expect(plugin[:cpu]["lscpu"]["numa_nodes"]).to eq(1)
+    end
+    it "lscpu: has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz_max")
+      expect(plugin[:cpu]["lscpu"]["mhz_max"]).to eq("3300.0000")
+    end
+    it "lscpu: has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz_min")
+      expect(plugin[:cpu]["lscpu"]["mhz_min"]).to eq("363.9700")
+    end
+    it "lscpu: has bogomips" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("bogomips")
+      expect(plugin[:cpu]["lscpu"]["bogomips"]).to eq("80.00")
+    end
+    it "lscpu: has l1d_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1d_cache")
+      expect(plugin[:cpu]["lscpu"]["l1d_cache"]).to eq("32K")
+    end
+    it "lscpu: has l1i_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1i_cache")
+      expect(plugin[:cpu]["lscpu"]["l1i_cache"]).to eq("32K")
+    end
+    it "lscpu: has l2_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l2_cache")
+      expect(plugin[:cpu]["lscpu"]["l2_cache"]).to eq("256K")
+    end
+    it "lscpu: has flags" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("flags")
+      expect(plugin[:cpu]["lscpu"]["flags"]).to eq(%w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2})
+    end
+    it "lscpu: has numa_node_cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_node_cpus")
+      cpus = Range.new(0, 31).to_a
+      expect(plugin[:cpu]["lscpu"]["numa_node_cpus"]).to eq({ "0" => cpus })
+    end
+  end
 end

@@ -891,3 +891,188 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     end
   end
 end
+
+describe Ohai::System, "ppc64le linux cpu plugin" do
+  let(:plugin) { get_plugin("cpu") }
+
+  before do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+
+    @double_file = double("/proc/cpuinfo")
+    allow(@double_file).to receive(:each)
+      .and_yield("processor       : 0")
+      .and_yield("cpu             : POWER9, altivec supported")
+      .and_yield("clock           : 3383.000000MHz")
+      .and_yield("revision        : 2.2 (pvr 004e 1202)")
+      .and_yield("")
+      .and_yield("processor       : 4")
+      .and_yield("cpu             : POWER9, altivec supported")
+      .and_yield("clock           : 3383.000000MHz")
+      .and_yield("revision        : 2.2 (pvr 004e 1202)")
+      .and_yield("")
+      .and_yield("timebase        : 512000000")
+      .and_yield("platform        : PowerNV")
+      .and_yield("model           : 9006-12P")
+      .and_yield("machine         : PowerNV 9006-12P")
+      .and_yield("firmware        : OPAL")
+      .and_yield("MMU             : Radix")
+    allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
+  end
+
+  it_behaves_like "Common cpu info", 2, nil
+
+  it "has a cpu 0" do
+    plugin.run
+    expect(plugin[:cpu]).to have_key("0")
+  end
+
+  it "has a cpu 4" do
+    plugin.run
+    expect(plugin[:cpu]).to have_key("4")
+  end
+
+  context "with lscpu data" do
+    let(:lscpu) do
+      <<~EOF
+        Architecture:          ppc64le
+        Byte Order:            Little Endian
+        CPU(s):                128
+        On-line CPU(s) list:   0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,124
+        Off-line CPU(s) list:  1-3,5-7,9-11,13-15,17-19,21-23,25-27,29-31,33-35,37-39,41-43,45-47,49-51,53-55,57-59,61-63,65-67,69-71,73-75,77-79,81-83,85-87,89-91,93-95,97-99,101-103,105-107,109-111,113-115,117-119,121-123,125-127
+        Thread(s) per core:    1
+        Core(s) per socket:    16
+        Socket(s):             2
+        NUMA node(s):          2
+        Model:                 2.2 (pvr 004e 1202)
+        Model name:            POWER9, altivec supported
+        CPU max MHz:           3800.0000
+        CPU min MHz:           2166.0000
+        L1d cache:             32K
+        L1i cache:             32K
+        L2 cache:              512K
+        L3 cache:              10240K
+        NUMA node0 CPU(s):     0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60
+        NUMA node8 CPU(s):     64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,124
+      EOF
+    end
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      @double_file = double("/proc/cpuinfo")
+      allow(@double_file).to receive(:each)
+        .and_yield("processor       : 0")
+        .and_yield("cpu             : POWER9, altivec supported")
+        .and_yield("clock           : 3383.000000MHz")
+        .and_yield("revision        : 2.2 (pvr 004e 1202)")
+        .and_yield("")
+        .and_yield("timebase        : 512000000")
+        .and_yield("platform        : PowerNV")
+        .and_yield("model           : 9006-12P")
+        .and_yield("machine         : PowerNV 9006-12P")
+        .and_yield("firmware        : OPAL")
+        .and_yield("MMU             : Radix")
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(@double_file)
+    end
+
+    it_behaves_like "Common cpu info", 32, 2
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+
+    it "lscpu: has architecture" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("architecture")
+      expect(plugin[:cpu]["lscpu"]["architecture"]).to eq("ppc64le")
+    end
+    it "lscpu: has byte_order" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("byte_order")
+      expect(plugin[:cpu]["lscpu"]["byte_order"]).to eq("little endian")
+    end
+    it "lscpu: has cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus")
+      expect(plugin[:cpu]["lscpu"]["cpus"]).to eq(128)
+    end
+    it "lscpu: has cpus_online" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus_online")
+      expect(plugin[:cpu]["lscpu"]["cpus_online"]).to eq(32)
+    end
+    it "lscpu: has cpus_offline" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cpus_offline")
+      expect(plugin[:cpu]["lscpu"]["cpus_offline"]).to eq(96)
+    end
+    it "lscpu: has threads" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("threads")
+      expect(plugin[:cpu]["lscpu"]["threads"]).to eq(1)
+    end
+    it "lscpu: has cores" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("cores")
+      expect(plugin[:cpu]["lscpu"]["cores"]).to eq(16)
+    end
+    it "lscpu: has sockets" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("sockets")
+      expect(plugin[:cpu]["lscpu"]["sockets"]).to eq(2)
+    end
+    it "lscpu: has numa_nodes" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_nodes")
+      expect(plugin[:cpu]["lscpu"]["numa_nodes"]).to eq(2)
+    end
+    it "lscpu: has model" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("model")
+      expect(plugin[:cpu]["lscpu"]["model"]).to eq("2.2 (pvr 004e 1202)")
+    end
+    it "lscpu: has model_name" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("model_name")
+      expect(plugin[:cpu]["lscpu"]["model_name"]).to eq("POWER9, altivec supported")
+    end
+    it "lscpu: has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz_max")
+      expect(plugin[:cpu]["lscpu"]["mhz_max"]).to eq("3800.0000")
+    end
+    it "lscpu: has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("mhz_min")
+      expect(plugin[:cpu]["lscpu"]["mhz_min"]).to eq("2166.0000")
+    end
+    it "lscpu: has l1d_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1d_cache")
+      expect(plugin[:cpu]["lscpu"]["l1d_cache"]).to eq("32K")
+    end
+    it "lscpu: has l1i_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l1i_cache")
+      expect(plugin[:cpu]["lscpu"]["l1i_cache"]).to eq("32K")
+    end
+    it "lscpu: has l2_cache" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("l2_cache")
+      expect(plugin[:cpu]["lscpu"]["l2_cache"]).to eq("512K")
+    end
+    it "lscpu: has numa_node_cpus" do
+      plugin.run
+      expect(plugin[:cpu]["lscpu"]).to have_key("numa_node_cpus")
+      expect(plugin[:cpu]["lscpu"]["numa_node_cpus"]).to \
+        eq(
+          {
+            "0" => [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60],
+            "8" => [64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124],
+          }
+        )
+    end
+  end
+end

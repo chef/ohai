@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.0.19 -->
-## [v16.0.19](https://github.com/chef/ohai/tree/v16.0.19) (2020-04-20)
+<!-- latest_release 16.0.20 -->
+## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-25)
 
 #### Merged Pull Requests
-- Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth))
+- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=15.7.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50)) <!-- 16.0.20 -->
 - Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth)) <!-- 16.0.19 -->
 - Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins)) <!-- 16.0.18 -->
 - Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins)) <!-- 16.0.17 -->

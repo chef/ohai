@@ -20,7 +20,7 @@ Ohai.plugin(:DMI) do
   provides "dmi"
 
   # Map the linux component types to their rough Windows API equivalents
-  DMI_TO_WIN32OLE = {
+  DMI_TO_WIN32OLE ||= {
     chassis: "SystemEnclosure",
     processor: "Processor",
     bios: "Bios",
@@ -36,9 +36,9 @@ Ohai.plugin(:DMI) do
   #
   # This cannot handle some property names, eg SMBIOSBIOSVersion.
   # https://rubular.com/r/FBNtXod4wkZGAG
-  SPLIT_REGEX = /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
+  SPLIT_REGEX ||= /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
 
-  WINDOWS_TO_UNIX_KEYS = [
+  WINDOWS_TO_UNIX_KEYS ||= [
     %w{vendor manufacturer},
     %w{identifying_number serial_number},
     %w{name family},

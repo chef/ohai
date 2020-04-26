@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 require "spec_helper"
 require "ohai/mixin/ec2_metadata"
 
@@ -23,6 +22,7 @@ describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) do
     metadata_object = Object.new.extend(described_class)
     http_client = double("Net::HTTP client")
+    allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: "xxxxxxxxxxxxxxxxxxxxxxxx==", code: "200") }
     allow(http_client).to receive(:get).and_return(response)
     allow(metadata_object).to receive(:http_client).and_return(http_client)
     metadata_object
@@ -35,15 +35,14 @@ describe Ohai::Mixin::Ec2Metadata do
 
   describe "#best_api_version" do
     context "with a sorted list of metadata versions" do
-      let(:response) { double("Net::HTTP Response", body: "1.0\n2011-05-01\n2012-01-12\nUnsupported", code: "200") }
-
+      let(:response) { double("Net::HTTP::GET Response", body: "1.0\n2011-05-01\n2012-01-12\nUnsupported", code: "200") }
       it "returns the most recent version" do
         expect(mixin.best_api_version).to eq("2012-01-12")
       end
     end
 
     context "with an unsorted list of metadata versions" do
-      let(:response) { double("Net::HTTP Response", body: "1.0\n2009-04-04\n2007-03-01\n2011-05-01\n2008-09-01\nUnsupported", code: "200") }
+      let(:response) { double("Net::HTTP::GET Response", body: "1.0\n2009-04-04\n2007-03-01\n2011-05-01\n2008-09-01\nUnsupported", code: "200") }
 
       it "returns the most recent version (using string sort)" do
         expect(mixin.best_api_version).to eq("2011-05-01")
@@ -51,7 +50,7 @@ describe Ohai::Mixin::Ec2Metadata do
     end
 
     context "when no supported versions are found" do
-      let(:response) { double("Net::HTTP Response", body: "2020-01-01\nUnsupported", code: "200") }
+      let(:response) { double("Net::HTTP::GET Response", body: "2020-01-01\nUnsupported", code: "200") }
 
       it "raises an error" do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)
@@ -60,7 +59,7 @@ describe Ohai::Mixin::Ec2Metadata do
 
     # Presume 'latest' when we get a 404 for Eucalyptus back-compat
     context "when the response code is 404" do
-      let(:response) { double("Net::HTTP Response", code: "404") }
+      let(:response) { double("Net::HTTP::GET Response", code: "404") }
 
       it "returns 'latest' as the version" do
         expect(mixin.best_api_version).to eq("latest")
@@ -68,7 +67,7 @@ describe Ohai::Mixin::Ec2Metadata do
     end
 
     context "when the response code is unexpected" do
-      let(:response) { double("Net::HTTP Response", body: "1.0\n2011-05-01\n2012-01-12\nUnsupported", code: "418") }
+      let(:response) { double("Net::HTTP::GET Response", body: "1.0\n2011-05-01\n2012-01-12\nUnsupported", code: "418") }
 
       it "raises an error" do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)
@@ -78,7 +77,7 @@ describe Ohai::Mixin::Ec2Metadata do
 
   describe "#metadata_get" do
     context "when the response code is unexpected" do
-      let(:response) { double("Net::HTTP Response", body: "", code: "418") }
+      let(:response) { double("Net::HTTP::GET Response", body: "", code: "418") }
 
       it "raises an error" do
         expect { mixin.metadata_get("", "2012-01-12") }.to raise_error(RuntimeError)

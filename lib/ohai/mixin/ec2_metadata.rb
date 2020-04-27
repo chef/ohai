@@ -52,7 +52,7 @@ module Ohai
       def best_api_version
         @api_version ||= begin
           logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")
-          response = http_client.get("/", {:'X-aws-ec2-metadata-token' => v2_token})
+          response = http_client.get("/", { 'X-aws-ec2-metadata-token': v2_token })
           if response.code == "404"
             logger.trace("Mixin EC2: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
             return "latest"
@@ -86,8 +86,9 @@ module Ohai
       end
 
       def v2_token
-        http_client.put('/latest/api/token/', nil, {:'X-aws-ec2-metadata-token-ttl-seconds' => '60'})&.body
+        http_client.put("/latest/api/token/", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })&.body
       end
+
       # Get metadata for a given path and API version
       #
       # Typically, a 200 response is expected for valid metadata.
@@ -97,7 +98,7 @@ module Ohai
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
         logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
-        response = http_client.get(path, {:'X-aws-ec2-metadata-token' => v2_token})
+        response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
         case response.code
         when "200"
           response.body
@@ -178,13 +179,13 @@ module Ohai
 
       def fetch_userdata
         logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/#{best_api_version}/user-data/")
-        response = http_client.get("/#{best_api_version}/user-data/", {:'X-aws-ec2-metadata-token' => v2_token})
+        response = http_client.get("/#{best_api_version}/user-data/", { 'X-aws-ec2-metadata-token': v2_token })
         response.code == "200" ? response.body : nil
       end
 
       def fetch_dynamic_data
         @fetch_dynamic_data ||= begin
-          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/", {:'X-aws-ec2-metadata-token' => v2_token})
+          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/", { 'X-aws-ec2-metadata-token': v2_token })
 
           if json?(response.body) && response.code == "200"
             FFI_Yajl::Parser.parse(response.body)

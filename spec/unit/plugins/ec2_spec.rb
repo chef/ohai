@@ -46,7 +46,7 @@ describe Ohai::System, "plugin ec2" do
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
-      @token = "xxxxxxxxxxxxxxxxxxxxxxxx=="
+      @token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
       @get_token_header = {:'X-aws-ec2-metadata-token' => @token}
       allow(@http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: @token, code: "200") }
       expect(@http_client).to receive(:get)
@@ -88,14 +88,14 @@ describe Ohai::System, "plugin ec2" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
             .with("/2012-01-12/#{name}", @get_token_header)
-            .and_return(double("Net::HTTP Response", body: body, code: "200"))
+            .and_return(double("Net::HTTP::GET Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
 
@@ -110,14 +110,14 @@ describe Ohai::System, "plugin ec2" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
             .with("/2012-01-12/#{name}", @get_token_header)
-            .and_return(double("Net::HTTP Response", body: body, code: "200"))
+            .and_return(double("Net::HTTP::GET Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
 
@@ -132,14 +132,14 @@ describe Ohai::System, "plugin ec2" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
             .with("/2012-01-12/#{name}", @get_token_header)
-            .and_return(double("Net::HTTP Response", body: body, code: "200"))
+            .and_return(double("Net::HTTP::GET Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"region\":\"us-east-1\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"region\":\"us-east-1\"}", code: "200"))
 
         plugin.run
 
@@ -154,14 +154,14 @@ describe Ohai::System, "plugin ec2" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
             .with("/2012-01-12/#{name}", @get_token_header)
-            .and_return(double("Net::HTTP Response", body: body, code: "200"))
+            .and_return(double("Net::HTTP::GET Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"availabilityZone\":\"us-east-1d\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"availabilityZone\":\"us-east-1d\"}", code: "200"))
 
         plugin.run
 
@@ -213,22 +213,22 @@ describe Ohai::System, "plugin ec2" do
       it "parses ec2 iam/ directory and collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "security-credentials/", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "security-credentials/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "MyRole", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "By the pricking of my thumb...", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
 
@@ -246,22 +246,22 @@ describe Ohai::System, "plugin ec2" do
       it "parses ec2 iam/ directory and collect info and role_name and NOT collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "security-credentials/", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "security-credentials/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "MyRole", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/user-data/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "By the pricking of my thumb...", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-          .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+          .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
 
@@ -275,7 +275,7 @@ describe Ohai::System, "plugin ec2" do
     it "ignores \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: ".\n./\n..\n../\npath1/.\npath2/./\npath3/..\npath4/../", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: ".\n./\n..\n../\npath1/.\npath2/./\npath3/..\npath4/../", code: "200"))
       expect(@http_client).not_to receive(:get)
         .with("/2012-01-12/meta-data/.", @get_token_header)
       expect(@http_client).not_to receive(:get)
@@ -289,22 +289,22 @@ describe Ohai::System, "plugin ec2" do
 
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/path1/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/path2/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/path3/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/path4/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/user-data/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "By the pricking of my thumb...", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
       plugin.run
 
@@ -314,19 +314,19 @@ describe Ohai::System, "plugin ec2" do
     it "completes the run despite unavailable metadata" do
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "metrics/", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "metrics/", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/metrics/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "vhostmd", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "vhostmd", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/metrics/vhostmd", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "", code: "404"))
+        .and_return(double("Net::HTTP::GET Response", body: "", code: "404"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/user-data/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "By the pricking of my thumb...", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/dynamic/instance-identity/document/", @get_token_header)
-        .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
+        .and_return(double("Net::HTTP::GET Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
       plugin.run
 

@@ -22,7 +22,7 @@ describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) do
     metadata_object = Object.new.extend(described_class)
     http_client = double("Net::HTTP client")
-    allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: "xxxxxxxxxxxxxxxxxxxxxxxx==", code: "200") }
+    allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg==", code: "200") }
     allow(http_client).to receive(:get).and_return(response)
     allow(metadata_object).to receive(:http_client).and_return(http_client)
     metadata_object

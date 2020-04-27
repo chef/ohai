@@ -34,7 +34,7 @@ describe Ohai::System, "plugin eucalyptus" do
     before do
       @http_client = double("Net::HTTP client")
       @token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
-      @get_req_token_header = {:'X-aws-ec2-metadata-token' => @token}
+      @get_req_token_header = { 'X-aws-ec2-metadata-token': @token }
       allow(plugin).to receive(:http_client).and_return(@http_client)
       allow(@http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: @token, code: "200") }
 

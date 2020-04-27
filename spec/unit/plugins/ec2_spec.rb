@@ -49,7 +49,7 @@ describe Ohai::System, "plugin ec2" do
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
       token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
-      @get_req_token_header = {:'X-aws-ec2-metadata-token' => token}
+      @get_req_token_header = { 'X-aws-ec2-metadata-token': token }
       allow(@http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
       expect(@http_client).to receive(:get)
         .with("/", @get_req_token_header)

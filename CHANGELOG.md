@@ -1,40 +1,38 @@
 # Change Log
 
-<!-- latest_release 16.0.20 -->
-## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-25)
-
-#### Merged Pull Requests
-- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=15.7.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50)) <!-- 16.0.20 -->
-- Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth)) <!-- 16.0.19 -->
-- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins)) <!-- 16.0.18 -->
-- Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins)) <!-- 16.0.17 -->
-- Make shard plugin more resilient and throw better errors [#1446](https://github.com/chef/ohai/pull/1446) ([jaymzh](https://github.com/jaymzh)) <!-- 16.0.16 -->
-- Cache gem installs in Buildkite on Windows as well [#1444](https://github.com/chef/ohai/pull/1444) ([tas50](https://github.com/tas50)) <!-- 16.0.15 -->
-- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50)) <!-- 16.0.14 -->
-- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins)) <!-- 16.0.13 -->
-- Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125)) <!-- 16.0.12 -->
-- Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125)) <!-- 16.0.11 -->
-- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark)) <!-- 16.0.10 -->
-- Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50)) <!-- 16.0.9 -->
-- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50)) <!-- 16.0.8 -->
-- use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly)) <!-- 16.0.7 -->
-- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50)) <!-- 16.0.6 -->
-- Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50)) <!-- 16.0.5 -->
-- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50)) <!-- 16.0.4 -->
-- fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig)) <!-- 16.0.3 -->
-- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50)) <!-- 16.0.2 -->
-- Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50)) <!-- 16.0.1 -->
-- Bump to version 16.0.0 [#1420](https://github.com/chef/ohai/pull/1420) ([tas50](https://github.com/tas50)) <!-- 16.0.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-28)
+
+#### Merged Pull Requests
+- Bump to version 16.0.0 [#1420](https://github.com/chef/ohai/pull/1420) ([tas50](https://github.com/tas50))
+- Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50))
+- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50))
+- fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig))
+- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50))
+- Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50))
+- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50))
+- use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly))
+- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50))
+- Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50))
+- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark))
+- Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125))
+- Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125))
+- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins))
+- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50))
+- Cache gem installs in Buildkite on Windows as well [#1444](https://github.com/chef/ohai/pull/1444) ([tas50](https://github.com/tas50))
+- Make shard plugin more resilient and throw better errors [#1446](https://github.com/chef/ohai/pull/1446) ([jaymzh](https://github.com/jaymzh))
+- Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins))
+- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins))
+- Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth))
+- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2020-01-17)
 
 #### Merged Pull Requests
@@ -42,7 +40,6 @@
 - Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50))
 - Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50))
 - Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
-<!-- latest_stable_release -->
 
 ## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-10)
 

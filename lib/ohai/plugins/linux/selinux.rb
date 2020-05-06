@@ -62,7 +62,7 @@ Ohai.plugin(:Selinux) do
         selinux[section][key] = val
       end
     else
-      logger.trace("Plugin Selinux: Could not find sestatus. Skipping plugin.")
+      logger.debug("Plugin Selinux: Could not find sestatus. Skipping plugin.")
     end
   end
 end

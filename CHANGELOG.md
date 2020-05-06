@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.1.0 -->
+## [v16.1.0](https://github.com/chef/ohai/tree/v16.1.0) (2020-05-06)
+
+#### Merged Pull Requests
+- Add new selinux plugin for Linux [#1455](https://github.com/chef/ohai/pull/1455) ([davide125](https://github.com/davide125))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.0.20 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Add new selinux plugin for Linux [#1455](https://github.com/chef/ohai/pull/1455) ([davide125](https://github.com/davide125)) <!-- 16.1.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

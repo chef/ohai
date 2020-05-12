@@ -26,7 +26,7 @@ shared_examples "a v7 loading failure" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -44,7 +44,7 @@ shared_examples "a v7 loading failure" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 
@@ -70,7 +70,7 @@ shared_examples "a v7 loading success" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -88,7 +88,7 @@ shared_examples "a v7 loading success" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 
@@ -113,7 +113,7 @@ shared_examples "a v7 run failure" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -131,7 +131,7 @@ shared_examples "a v7 run failure" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 

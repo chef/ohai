@@ -93,8 +93,8 @@ Ohai.plugin(:Virtualbox) do
     so_cmd = "VBoxManage list --sorted #{query_type}"
     logger.trace(so_cmd)
     so = shell_out(so_cmd)
-      # raise an exception if the command fails
-      # so.error!
+    # raise an exception if the command fails
+    # so.error!
 
     if so.exitstatus == 0
       # break the result into paragraph blocks, on successive newlines

@@ -142,8 +142,8 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
     EOM
-# Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
-# This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
+    # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
+    # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
   end
 
   let(:linux_ip_route) do

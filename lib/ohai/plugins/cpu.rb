@@ -364,7 +364,7 @@ Ohai.plugin(:CPU) do
           cpu["cpustates"][value] += 1
         when /core_id/
           cpu[instance]["core_id"] = value
-           # Detect hyperthreading/multithreading
+          # Detect hyperthreading/multithreading
           cpucores.push(value) if cpucores.index(value).nil?
         when /family|fpu_type|model|stepping|vendor_id/
           cpu[instance][key] = value

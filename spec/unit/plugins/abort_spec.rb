@@ -34,7 +34,7 @@ describe "a plug-in that aborts execution" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -52,7 +52,7 @@ describe "a plug-in that aborts execution" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 

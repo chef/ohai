@@ -96,7 +96,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     tempfile.close
     tempfile.unlink
   rescue
-      # really do not care
+    # really do not care
 
   end
 

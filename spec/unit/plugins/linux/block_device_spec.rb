@@ -18,6 +18,8 @@
 require "spec_helper"
 
 describe Ohai::System, "Linux Block Device Plugin" do
+  let(:plugin) { get_plugin("linux/block_device") }
+
   DISKS = {
     "sda" => {
       "size" => "7814037168",
@@ -42,8 +44,7 @@ describe Ohai::System, "Linux Block Device Plugin" do
   end
 
   before do
-    @plugin = get_plugin("linux/block_device")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(File).to receive(:exist?).with("/sys/block").and_return(true)
     allow(Dir).to receive(:[]).with("/sys/block/*") do
@@ -67,9 +68,9 @@ describe Ohai::System, "Linux Block Device Plugin" do
   end
 
   it "collects all relevant data from disks" do
-    @plugin.run
+    plugin.run
     DISKS.each do |disk, checks|
-      expect(@plugin[:block_device][disk.to_sym]).to include(checks)
+      expect(plugin[:block_device][disk.to_sym]).to include(checks)
     end
   end
 end

@@ -29,9 +29,7 @@ describe Ohai::System, "plugin packages" do
 
     let(:format) { '${Package}\t${Version}\t${Architecture}\n' }
 
-    let(:stdout) do
-      File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
-    end
+    let(:stdout) { File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output")) }
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)

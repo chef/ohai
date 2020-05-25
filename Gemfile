@@ -22,6 +22,6 @@ end
 group :debug do
   gem "pry"
   gem "pry-byebug"
-  gem "pry-stack_explorer"
+  gem "pry-stack_explorer", "~> 0.4.0" # 0.4 allows us to still test Ruby 2.5
   gem "rb-readline"
 end

@@ -19,10 +19,11 @@
 require "spec_helper"
 
 describe Ohai::System, "Solaris plugin platform" do
+  let(:plugin) { get_plugin("solaris2/platform") }
+
   before do
-    @plugin = get_plugin("solaris2/platform")
-    allow(@plugin).to receive(:collect_os).and_return(:solaris2)
-    allow(@plugin).to receive(:shell_out).with("/sbin/uname -X")
+    allow(plugin).to receive(:collect_os).and_return(:solaris2)
+    allow(plugin).to receive(:shell_out).with("/sbin/uname -X")
   end
 
   describe "on SmartOS" do
@@ -42,25 +43,25 @@ describe Ohai::System, "Solaris plugin platform" do
       UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
-      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+      allow(plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
 
       @release = StringIO.new("  SmartOS 20120130T201844Z x86_64\n")
       allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
     it "runs uname and set platform and build" do
-      @plugin.run
-      expect(@plugin[:platform_build]).to eq("joyent_20120130T201844Z")
+      plugin.run
+      expect(plugin[:platform_build]).to eq("joyent_20120130T201844Z")
     end
 
     it "sets the platform" do
-      @plugin.run
-      expect(@plugin[:platform]).to eq("smartos")
+      plugin.run
+      expect(plugin[:platform]).to eq("smartos")
     end
 
     it "sets the platform_version" do
-      @plugin.run
-      expect(@plugin[:platform_version]).to eq("5.11")
+      plugin.run
+      expect(plugin[:platform_version]).to eq("5.11")
     end
 
   end
@@ -82,25 +83,25 @@ describe Ohai::System, "Solaris plugin platform" do
       UNAME_X
 
       allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
-      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+      allow(plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
 
       @release = StringIO.new("                             Oracle Solaris 11.1 X86\n")
       allow(File).to receive(:open).with("/etc/release").and_yield(@release)
     end
 
     it "runs uname and set platform and build" do
-      @plugin.run
-      expect(@plugin[:platform_build]).to eq("11.1")
+      plugin.run
+      expect(plugin[:platform_build]).to eq("11.1")
     end
 
     it "sets the platform" do
-      @plugin.run
-      expect(@plugin[:platform]).to eq("solaris2")
+      plugin.run
+      expect(plugin[:platform]).to eq("solaris2")
     end
 
     it "sets the platform_version" do
-      @plugin.run
-      expect(@plugin[:platform_version]).to eq("5.11")
+      plugin.run
+      expect(plugin[:platform_version]).to eq("5.11")
     end
 
   end

@@ -23,13 +23,11 @@ begin
   require "chef/version"
 
   describe Ohai::System, "plugin chef" do
-    before do
-      @plugin = get_plugin("chef")
-    end
+    let(:plugin) { get_plugin("chef") }
 
     it "sets [:chef_packages][:chef][:version] to the current chef version", if: defined?(Chef) do
-      @plugin.run
-      expect(@plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
+      plugin.run
+      expect(plugin[:chef_packages][:chef][:version]).to eq(Chef::VERSION)
     end
 
     pending "would set [:chef_packages][:chef][:version] if chef was available", unless: defined?(Chef)

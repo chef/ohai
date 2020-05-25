@@ -21,49 +21,50 @@ require "spec_helper"
 shared_examples "a cpu" do |cpu_no|
   describe "cpu #{cpu_no}" do
     it "sets physical_id to CPU#{cpu_no}" do
-      expect(@plugin[:cpu][cpu_no.to_s][:physical_id]).to eq("CPU#{cpu_no}")
+      expect(plugin[:cpu][cpu_no.to_s][:physical_id]).to eq("CPU#{cpu_no}")
     end
 
     it "sets mhz to 2793" do
-      expect(@plugin[:cpu][cpu_no.to_s][:mhz]).to eq("2793")
+      expect(plugin[:cpu][cpu_no.to_s][:mhz]).to eq("2793")
     end
 
     it "sets vendor_id to GenuineIntel" do
-      expect(@plugin[:cpu][cpu_no.to_s][:vendor_id]).to eq("GenuineIntel")
+      expect(plugin[:cpu][cpu_no.to_s][:vendor_id]).to eq("GenuineIntel")
     end
 
     it "sets model_name to Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz" do
-      expect(@plugin[:cpu][cpu_no.to_s][:model_name])
+      expect(plugin[:cpu][cpu_no.to_s][:model_name])
         .to eq("Intel(R) Core(TM) i7-4500U CPU @ 1.80GHz")
     end
 
     it "sets description to Intel64 Family 6 Model 70 Stepping 1" do
-      expect(@plugin[:cpu][cpu_no.to_s][:description])
+      expect(plugin[:cpu][cpu_no.to_s][:description])
         .to eq("Intel64 Family 6 Model 70 Stepping 1")
     end
 
     it "sets model to 17921" do
-      expect(@plugin[:cpu][cpu_no.to_s][:model]).to eq("17921")
+      expect(plugin[:cpu][cpu_no.to_s][:model]).to eq("17921")
     end
 
     it "sets family to 2" do
-      expect(@plugin[:cpu][cpu_no.to_s][:family]).to eq("2")
+      expect(plugin[:cpu][cpu_no.to_s][:family]).to eq("2")
     end
 
     it "sets stepping to 9" do
-      expect(@plugin[:cpu][cpu_no.to_s][:stepping]).to eq(9)
+      expect(plugin[:cpu][cpu_no.to_s][:stepping]).to eq(9)
     end
 
     it "sets cache_size to 64 KB" do
-      expect(@plugin[:cpu][cpu_no.to_s][:cache_size]).to eq("64 KB")
+      expect(plugin[:cpu][cpu_no.to_s][:cache_size]).to eq("64 KB")
     end
   end
 end
 
 describe Ohai::System, "Windows cpu plugin" do
+  let(:plugin) { get_plugin("cpu") }
+
   before do
-    @plugin = get_plugin("cpu")
-    allow(@plugin).to receive(:collect_os).and_return(:windows)
+    allow(plugin).to receive(:collect_os).and_return(:windows)
 
     @double_wmi_instance = instance_double(WmiLite::Wmi)
 
@@ -97,20 +98,20 @@ describe Ohai::System, "Windows cpu plugin" do
       .with("Win32_Processor")
       .and_return(@processors)
 
-    @plugin.run
+    plugin.run
   end
 
   it "sets total cpu to 2" do
-    expect(@plugin[:cpu][:total]).to eq(4)
+    expect(plugin[:cpu][:total]).to eq(4)
   end
 
   it "sets real cpu to 2" do
-    expect(@plugin[:cpu][:real]).to eq(2)
+    expect(plugin[:cpu][:real]).to eq(2)
   end
 
   it "sets 2 distinct cpus numbered 0 and 1" do
-    expect(@plugin[:cpu]).to have_key("0")
-    expect(@plugin[:cpu]).to have_key("1")
+    expect(plugin[:cpu]).to have_key("0")
+    expect(plugin[:cpu]).to have_key("1")
   end
 
   it_behaves_like "a cpu", 0

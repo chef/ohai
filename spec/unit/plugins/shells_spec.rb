@@ -19,8 +19,9 @@ require "spec_helper"
 
 describe Ohai::System, "plugin shells" do
   let(:plugin) { get_plugin("shells") }
+  let(:shell_file_content) { shell_file }
 
-  # content from OS X 10.11
+  # content from macOS 10.15
   shell_file = ["# List of acceptable shells for chpass(1).\n",
                 "# Ftpd will not allow users to connect who are not using\n",
                 "# one of these shells.\n",
@@ -31,8 +32,6 @@ describe Ohai::System, "plugin shells" do
                 "/bin/sh\n",
                 "/bin/tcsh\n",
                 "/bin/zsh\n"]
-
-  let(:shell_file_content) { shell_file }
 
   it "does not set shells attribute if /etc/shells does not exist" do
     allow(::File).to receive(:exist?).with("/etc/shells").and_return(false)

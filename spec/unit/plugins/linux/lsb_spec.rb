@@ -21,9 +21,10 @@ require "spec_helper"
 # We do not alter case for lsb attributes and consume them as provided
 
 describe Ohai::System, "Linux lsb plugin" do
+  let(:plugin) { get_plugin("linux/lsb") }
+
   before do
-    @plugin = get_plugin("linux/lsb")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
   describe "on systems with /etc/lsb-release" do
@@ -40,23 +41,23 @@ describe Ohai::System, "Linux lsb plugin" do
     end
 
     it "sets lsb[:id]" do
-      @plugin.run
-      expect(@plugin[:lsb][:id]).to eq("Ubuntu")
+      plugin.run
+      expect(plugin[:lsb][:id]).to eq("Ubuntu")
     end
 
     it "sets lsb[:release]" do
-      @plugin.run
-      expect(@plugin[:lsb][:release]).to eq("8.04")
+      plugin.run
+      expect(plugin[:lsb][:release]).to eq("8.04")
     end
 
     it "sets lsb[:codename]" do
-      @plugin.run
-      expect(@plugin[:lsb][:codename]).to eq("hardy")
+      plugin.run
+      expect(plugin[:lsb][:codename]).to eq("hardy")
     end
 
     it "sets lsb[:description]" do
-      @plugin.run
-      expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
+      plugin.run
+      expect(plugin[:lsb][:description]).to eq("Ubuntu 8.04")
     end
   end
 
@@ -81,27 +82,27 @@ describe Ohai::System, "Linux lsb plugin" do
           Release:  5.4
           Codename: Final
         LSB_RELEASE
-        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
       it "sets lsb[:id]" do
-        @plugin.run
-        expect(@plugin[:lsb][:id]).to eq("CentOS")
+        plugin.run
+        expect(plugin[:lsb][:id]).to eq("CentOS")
       end
 
       it "sets lsb[:release]" do
-        @plugin.run
-        expect(@plugin[:lsb][:release]).to eq("5.4")
+        plugin.run
+        expect(plugin[:lsb][:release]).to eq("5.4")
       end
 
       it "sets lsb[:codename]" do
-        @plugin.run
-        expect(@plugin[:lsb][:codename]).to eq("Final")
+        plugin.run
+        expect(plugin[:lsb][:codename]).to eq("Final")
       end
 
       it "sets lsb[:description]" do
-        @plugin.run
-        expect(@plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
+        plugin.run
+        expect(plugin[:lsb][:description]).to eq("CentOS release 5.4 (Final)")
       end
     end
 
@@ -114,27 +115,27 @@ describe Ohai::System, "Linux lsb plugin" do
           Release:        14
           Codename:       Laughlin
         LSB_RELEASE
-        allow(@plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
+        allow(plugin).to receive(:shell_out).with("lsb_release -a").and_return(mock_shell_out(0, @stdout, ""))
       end
 
       it "sets lsb[:id]" do
-        @plugin.run
-        expect(@plugin[:lsb][:id]).to eq("Fedora")
+        plugin.run
+        expect(plugin[:lsb][:id]).to eq("Fedora")
       end
 
       it "sets lsb[:release]" do
-        @plugin.run
-        expect(@plugin[:lsb][:release]).to eq("14")
+        plugin.run
+        expect(plugin[:lsb][:release]).to eq("14")
       end
 
       it "sets lsb[:codename]" do
-        @plugin.run
-        expect(@plugin[:lsb][:codename]).to eq("Laughlin")
+        plugin.run
+        expect(plugin[:lsb][:codename]).to eq("Laughlin")
       end
 
       it "sets lsb[:description]" do
-        @plugin.run
-        expect(@plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
+        plugin.run
+        expect(plugin[:lsb][:description]).to eq("Fedora release 14 (Laughlin)")
       end
     end
   end
@@ -142,6 +143,6 @@ describe Ohai::System, "Linux lsb plugin" do
   it "does not set any lsb values if /etc/lsb-release or /usr/bin/lsb_release do not exist " do
     allow(File).to receive(:exist?).with("/etc/lsb-release").and_return(false)
     allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(false)
-    expect(@plugin.attribute?(:lsb)).to be(false)
+    expect(plugin.attribute?(:lsb)).to be(false)
   end
 end

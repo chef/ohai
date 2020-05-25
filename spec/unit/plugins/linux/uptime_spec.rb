@@ -19,30 +19,31 @@
 require "spec_helper"
 
 describe Ohai::System, "Linux plugin uptime" do
+  let(:plugin) { get_plugin("uptime") }
+
   before do
-    @plugin = get_plugin("uptime")
-    allow(@plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     @double_file = double("/proc/uptime", { gets: "18423 989" })
     allow(File).to receive(:open).with("/proc/uptime").and_return(@double_file)
   end
 
   it "sets uptime_seconds to uptime" do
-    @plugin.run
-    expect(@plugin[:uptime_seconds]).to eq(18423)
+    plugin.run
+    expect(plugin[:uptime_seconds]).to eq(18423)
   end
 
   it "sets uptime to a human readable date" do
-    @plugin.run
-    expect(@plugin[:uptime]).to eq("5 hours 07 minutes 03 seconds")
+    plugin.run
+    expect(plugin[:uptime]).to eq("5 hours 07 minutes 03 seconds")
   end
 
   it "sets idletime_seconds to uptime" do
-    @plugin.run
-    expect(@plugin[:idletime_seconds]).to eq(989)
+    plugin.run
+    expect(plugin[:idletime_seconds]).to eq(989)
   end
 
   it "sets idletime to a human readable date" do
-    @plugin.run
-    expect(@plugin[:idletime]).to eq("16 minutes 29 seconds")
+    plugin.run
+    expect(plugin[:idletime]).to eq("16 minutes 29 seconds")
   end
 end

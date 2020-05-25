@@ -16,10 +16,11 @@
 
 require "spec_helper"
 
-describe Ohai::System, "Solaris2.X cpu plugin" do
+describe Ohai::System, "Solaris2 cpu plugin" do
+  let(:plugin) { get_plugin("cpu") }
+
   before do
-    @plugin = get_plugin("cpu")
-    allow(@plugin).to receive(:collect_os).and_return("solaris2")
+    allow(plugin).to receive(:collect_os).and_return("solaris2")
   end
 
   describe "on x86 processors" do
@@ -442,188 +443,188 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
         cpu_info:15:cpu_info15:supported_max_cstates    1
         cpu_info:15:cpu_info15:vendor_id        GenuineIntel
       END
-      allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
-      @plugin.run
+      allow(plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
+      plugin.run
     end
 
     it "gets the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to be(16)
+      expect(plugin["cpu"]["total"]).to be(16)
     end
 
     it "gets the total processor count" do
-      expect(@plugin["cpu"]["real"]).to be(2)
+      expect(plugin["cpu"]["real"]).to be(2)
     end
 
     it "gets the number of threads per core" do
-      expect(@plugin["cpu"]["corethreads"]).to be(2)
+      expect(plugin["cpu"]["corethreads"]).to be(2)
     end
 
     it "gets the total number of online cores" do
-      expect(@plugin["cpu"]["cpustates"]["on-line"]).to be(8)
+      expect(plugin["cpu"]["cpustates"]["on-line"]).to be(8)
     end
 
     it "gets the total number of offline cores" do
-      expect(@plugin["cpu"]["cpustates"]["off-line"]).to be(8)
+      expect(plugin["cpu"]["cpustates"]["off-line"]).to be(8)
     end
 
     describe "per-cpu information" do
       it "includes processor vendor_ids" do
         # CPU Socket 0
-        expect(@plugin["cpu"]["15"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["13"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["11"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["9"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["7"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["5"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["3"]["vendor_id"]).to eql("GenuineIntel")
-        expect(@plugin["cpu"]["1"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["15"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["13"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["11"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["9"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["7"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["5"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["3"]["vendor_id"]).to eql("GenuineIntel")
+        expect(plugin["cpu"]["1"]["vendor_id"]).to eql("GenuineIntel")
         # CPU Socket 1
-        expect(@plugin["cpu"]["14"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["12"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["10"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["8"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["6"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["4"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["2"]["vendor_id"]).to eql("CrazyTown")
-        expect(@plugin["cpu"]["0"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["14"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["12"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["10"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["8"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["6"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["4"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["2"]["vendor_id"]).to eql("CrazyTown")
+        expect(plugin["cpu"]["0"]["vendor_id"]).to eql("CrazyTown")
       end
 
       it "includes processor families" do
-        expect(@plugin["cpu"]["15"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["13"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["11"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["9"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["7"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["5"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["3"]["family"]).to eql("6")
-        expect(@plugin["cpu"]["1"]["family"]).to eql("6")
+        expect(plugin["cpu"]["15"]["family"]).to eql("6")
+        expect(plugin["cpu"]["13"]["family"]).to eql("6")
+        expect(plugin["cpu"]["11"]["family"]).to eql("6")
+        expect(plugin["cpu"]["9"]["family"]).to eql("6")
+        expect(plugin["cpu"]["7"]["family"]).to eql("6")
+        expect(plugin["cpu"]["5"]["family"]).to eql("6")
+        expect(plugin["cpu"]["3"]["family"]).to eql("6")
+        expect(plugin["cpu"]["1"]["family"]).to eql("6")
 
-        expect(@plugin["cpu"]["14"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["12"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["10"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["8"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["6"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["4"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["2"]["family"]).to eql("12")
-        expect(@plugin["cpu"]["0"]["family"]).to eql("12")
+        expect(plugin["cpu"]["14"]["family"]).to eql("12")
+        expect(plugin["cpu"]["12"]["family"]).to eql("12")
+        expect(plugin["cpu"]["10"]["family"]).to eql("12")
+        expect(plugin["cpu"]["8"]["family"]).to eql("12")
+        expect(plugin["cpu"]["6"]["family"]).to eql("12")
+        expect(plugin["cpu"]["4"]["family"]).to eql("12")
+        expect(plugin["cpu"]["2"]["family"]).to eql("12")
+        expect(plugin["cpu"]["0"]["family"]).to eql("12")
       end
 
       it "includes processor models" do
-        expect(@plugin["cpu"]["15"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["13"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["11"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["9"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["7"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["5"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["3"]["model"]).to eql("26")
-        expect(@plugin["cpu"]["1"]["model"]).to eql("26")
+        expect(plugin["cpu"]["15"]["model"]).to eql("26")
+        expect(plugin["cpu"]["13"]["model"]).to eql("26")
+        expect(plugin["cpu"]["11"]["model"]).to eql("26")
+        expect(plugin["cpu"]["9"]["model"]).to eql("26")
+        expect(plugin["cpu"]["7"]["model"]).to eql("26")
+        expect(plugin["cpu"]["5"]["model"]).to eql("26")
+        expect(plugin["cpu"]["3"]["model"]).to eql("26")
+        expect(plugin["cpu"]["1"]["model"]).to eql("26")
 
-        expect(@plugin["cpu"]["14"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["12"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["10"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["8"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["6"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["4"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["2"]["model"]).to eql("93")
-        expect(@plugin["cpu"]["0"]["model"]).to eql("93")
+        expect(plugin["cpu"]["14"]["model"]).to eql("93")
+        expect(plugin["cpu"]["12"]["model"]).to eql("93")
+        expect(plugin["cpu"]["10"]["model"]).to eql("93")
+        expect(plugin["cpu"]["8"]["model"]).to eql("93")
+        expect(plugin["cpu"]["6"]["model"]).to eql("93")
+        expect(plugin["cpu"]["4"]["model"]).to eql("93")
+        expect(plugin["cpu"]["2"]["model"]).to eql("93")
+        expect(plugin["cpu"]["0"]["model"]).to eql("93")
       end
 
       it "includs processor architecture" do
-        expect(@plugin["cpu"]["15"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["13"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["11"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["9"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["7"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["5"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["3"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["1"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["15"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["13"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["11"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["9"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["7"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["5"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["3"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["1"]["arch"]).to eql("i386")
 
-        expect(@plugin["cpu"]["14"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["12"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["10"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["8"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["6"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["4"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["2"]["arch"]).to eql("i386")
-        expect(@plugin["cpu"]["0"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["14"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["12"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["10"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["8"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["6"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["4"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["2"]["arch"]).to eql("i386")
+        expect(plugin["cpu"]["0"]["arch"]).to eql("i386")
       end
 
       it "includes processor stepping" do
-        expect(@plugin["cpu"]["15"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["13"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["11"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["9"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["7"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["5"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["3"]["stepping"]).to eql("5")
-        expect(@plugin["cpu"]["1"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["15"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["13"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["11"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["9"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["7"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["5"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["3"]["stepping"]).to eql("5")
+        expect(plugin["cpu"]["1"]["stepping"]).to eql("5")
 
-        expect(@plugin["cpu"]["14"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["12"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["10"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["8"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["6"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["4"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["2"]["stepping"]).to eql("9")
-        expect(@plugin["cpu"]["0"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["14"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["12"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["10"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["8"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["6"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["4"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["2"]["stepping"]).to eql("9")
+        expect(plugin["cpu"]["0"]["stepping"]).to eql("9")
 
       end
 
       it "includes processor model names" do
-        expect(@plugin["cpu"]["15"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["13"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["11"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["9"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["7"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["5"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["3"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["1"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
-        expect(@plugin["cpu"]["14"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["12"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["10"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["8"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["6"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["4"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["2"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
-        expect(@plugin["cpu"]["0"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["15"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["13"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["11"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["9"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["7"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["5"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["3"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["1"]["model_name"]).to eql("Intel(r) Xeon(r) CPU X5570 @ 2.93GHz")
+        expect(plugin["cpu"]["14"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["12"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["10"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["8"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["6"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["4"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["2"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
+        expect(plugin["cpu"]["0"]["model_name"]).to eql("Crazy(r) Argon(r) CPU Y5570 @ 1.93GHz")
       end
 
       it "includes processor speed in MHz" do
-        expect(@plugin["cpu"]["15"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["13"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["11"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["9"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["7"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["5"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["3"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["1"]["mhz"]).to eql("2926")
-        expect(@plugin["cpu"]["14"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["12"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["10"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["8"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["6"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["4"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["2"]["mhz"]).to eql("1933")
-        expect(@plugin["cpu"]["0"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["15"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["13"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["11"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["9"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["7"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["5"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["3"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["1"]["mhz"]).to eql("2926")
+        expect(plugin["cpu"]["14"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["12"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["10"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["8"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["6"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["4"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["2"]["mhz"]).to eql("1933")
+        expect(plugin["cpu"]["0"]["mhz"]).to eql("1933")
       end
 
       it "includes processor state" do
-        expect(@plugin["cpu"]["15"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["13"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["11"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["9"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["7"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["5"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["3"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["1"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["14"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["12"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["10"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["8"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["6"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["4"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["2"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["0"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["15"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["13"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["11"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["9"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["7"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["5"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["3"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["1"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["14"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["12"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["10"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["8"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["6"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["4"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["2"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["0"]["state"]).to eql("off-line")
       end
     end
   end
@@ -2808,118 +2809,118 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
         cpu_info:127:cpu_info127:state_begin	1430258903
         cpu_info:127:cpu_info127:supported_frequencies_Hz	1648762500
       END
-      allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
-      @plugin.run
+      allow(plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstatinfo_output, ""))
+      plugin.run
     end
 
     it "gets the total virtual processor count" do
-      expect(@plugin["cpu"]["total"]).to be(128)
+      expect(plugin["cpu"]["total"]).to be(128)
     end
 
     it "gets the total processor count" do
-      expect(@plugin["cpu"]["real"]).to be(1)
+      expect(plugin["cpu"]["real"]).to be(1)
     end
 
     it "gets the total core count" do
-      expect(@plugin["cpu"]["cores"]).to be(16)
+      expect(plugin["cpu"]["cores"]).to be(16)
     end
 
     it "gets the number of threads per core" do
-      expect(@plugin["cpu"]["corethreads"]).to be(8)
+      expect(plugin["cpu"]["corethreads"]).to be(8)
     end
 
     it "gets the total number of online cores" do
-      expect(@plugin["cpu"]["cpustates"]["on-line"]).to be(124)
+      expect(plugin["cpu"]["cpustates"]["on-line"]).to be(124)
     end
 
     it "gets the total number of offline cores" do
-      expect(@plugin["cpu"]["cpustates"]["off-line"]).to be(4)
+      expect(plugin["cpu"]["cpustates"]["off-line"]).to be(4)
     end
 
     describe "per-cpu information" do
       it "includes processor model names" do
-        expect(@plugin["cpu"]["0"]["model_name"]).to eql("SPARC-T3")
-        expect(@plugin["cpu"]["1"]["model_name"]).to eql("SPARC-T3")
-        expect(@plugin["cpu"]["2"]["model_name"]).to eql("SPARC-T3")
-        expect(@plugin["cpu"]["3"]["model_name"]).to eql("SPARC-T3")
-        expect(@plugin["cpu"]["124"]["model_name"]).to eql("SPARC-T4")
-        expect(@plugin["cpu"]["125"]["model_name"]).to eql("SPARC-T4")
-        expect(@plugin["cpu"]["126"]["model_name"]).to eql("SPARC-T4")
-        expect(@plugin["cpu"]["127"]["model_name"]).to eql("SPARC-T4")
+        expect(plugin["cpu"]["0"]["model_name"]).to eql("SPARC-T3")
+        expect(plugin["cpu"]["1"]["model_name"]).to eql("SPARC-T3")
+        expect(plugin["cpu"]["2"]["model_name"]).to eql("SPARC-T3")
+        expect(plugin["cpu"]["3"]["model_name"]).to eql("SPARC-T3")
+        expect(plugin["cpu"]["124"]["model_name"]).to eql("SPARC-T4")
+        expect(plugin["cpu"]["125"]["model_name"]).to eql("SPARC-T4")
+        expect(plugin["cpu"]["126"]["model_name"]).to eql("SPARC-T4")
+        expect(plugin["cpu"]["127"]["model_name"]).to eql("SPARC-T4")
       end
 
       it "includes processor sockets" do
-        expect(@plugin["cpu"]["0"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["1"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["2"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["3"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["124"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["125"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["126"]["socket"]).to eql("0")
-        expect(@plugin["cpu"]["127"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["0"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["1"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["2"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["3"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["124"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["125"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["126"]["socket"]).to eql("0")
+        expect(plugin["cpu"]["127"]["socket"]).to eql("0")
       end
 
       it "includes processor MHz" do
-        expect(@plugin["cpu"]["0"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["1"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["2"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["3"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["124"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["125"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["126"]["mhz"]).to eql("1649")
-        expect(@plugin["cpu"]["127"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["0"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["1"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["2"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["3"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["124"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["125"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["126"]["mhz"]).to eql("1649")
+        expect(plugin["cpu"]["127"]["mhz"]).to eql("1649")
       end
 
       it "includes processor core IDs" do
-        expect(@plugin["cpu"]["0"]["core_id"]).to eql("1026")
-        expect(@plugin["cpu"]["8"]["core_id"]).to eql("1033")
-        expect(@plugin["cpu"]["16"]["core_id"]).to eql("1040")
-        expect(@plugin["cpu"]["24"]["core_id"]).to eql("1047")
-        expect(@plugin["cpu"]["32"]["core_id"]).to eql("1054")
-        expect(@plugin["cpu"]["40"]["core_id"]).to eql("1061")
-        expect(@plugin["cpu"]["48"]["core_id"]).to eql("1068")
-        expect(@plugin["cpu"]["56"]["core_id"]).to eql("1075")
-        expect(@plugin["cpu"]["64"]["core_id"]).to eql("1082")
-        expect(@plugin["cpu"]["72"]["core_id"]).to eql("1089")
-        expect(@plugin["cpu"]["80"]["core_id"]).to eql("1096")
-        expect(@plugin["cpu"]["88"]["core_id"]).to eql("1103")
-        expect(@plugin["cpu"]["96"]["core_id"]).to eql("1110")
-        expect(@plugin["cpu"]["104"]["core_id"]).to eql("1117")
-        expect(@plugin["cpu"]["112"]["core_id"]).to eql("1124")
-        expect(@plugin["cpu"]["120"]["core_id"]).to eql("1131")
+        expect(plugin["cpu"]["0"]["core_id"]).to eql("1026")
+        expect(plugin["cpu"]["8"]["core_id"]).to eql("1033")
+        expect(plugin["cpu"]["16"]["core_id"]).to eql("1040")
+        expect(plugin["cpu"]["24"]["core_id"]).to eql("1047")
+        expect(plugin["cpu"]["32"]["core_id"]).to eql("1054")
+        expect(plugin["cpu"]["40"]["core_id"]).to eql("1061")
+        expect(plugin["cpu"]["48"]["core_id"]).to eql("1068")
+        expect(plugin["cpu"]["56"]["core_id"]).to eql("1075")
+        expect(plugin["cpu"]["64"]["core_id"]).to eql("1082")
+        expect(plugin["cpu"]["72"]["core_id"]).to eql("1089")
+        expect(plugin["cpu"]["80"]["core_id"]).to eql("1096")
+        expect(plugin["cpu"]["88"]["core_id"]).to eql("1103")
+        expect(plugin["cpu"]["96"]["core_id"]).to eql("1110")
+        expect(plugin["cpu"]["104"]["core_id"]).to eql("1117")
+        expect(plugin["cpu"]["112"]["core_id"]).to eql("1124")
+        expect(plugin["cpu"]["120"]["core_id"]).to eql("1131")
       end
 
       it "includes processor architecture" do
-        expect(@plugin["cpu"]["0"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["1"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["2"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["3"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["124"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["125"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["126"]["arch"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["127"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["0"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["1"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["2"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["3"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["124"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["125"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["126"]["arch"]).to eql("sparcv9")
+        expect(plugin["cpu"]["127"]["arch"]).to eql("sparcv9")
       end
 
       it "includes processor FPU type" do
-        expect(@plugin["cpu"]["0"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["1"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["2"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["3"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["124"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["125"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["126"]["fpu_type"]).to eql("sparcv9")
-        expect(@plugin["cpu"]["127"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["0"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["1"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["2"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["3"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["124"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["125"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["126"]["fpu_type"]).to eql("sparcv9")
+        expect(plugin["cpu"]["127"]["fpu_type"]).to eql("sparcv9")
       end
 
       it "includes processor state" do
-        expect(@plugin["cpu"]["0"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["1"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["2"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["3"]["state"]).to eql("on-line")
-        expect(@plugin["cpu"]["124"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["125"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["126"]["state"]).to eql("off-line")
-        expect(@plugin["cpu"]["127"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["0"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["1"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["2"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["3"]["state"]).to eql("on-line")
+        expect(plugin["cpu"]["124"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["125"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["126"]["state"]).to eql("off-line")
+        expect(plugin["cpu"]["127"]["state"]).to eql("off-line")
       end
     end
   end

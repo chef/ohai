@@ -17,9 +17,10 @@
 require "spec_helper"
 
 describe Ohai::System, "Windows memory plugin", :windows_only do
+  let(:plugin) { get_plugin("windows/memory") }
+
   before do
     require "wmi-lite/wmi"
-    @plugin = get_plugin("windows/memory")
     mock_os = {
                 "TotalVisibleMemorySize" => "10485760",
                 "FreePhysicalMemory" => "5242880",
@@ -30,23 +31,23 @@ describe Ohai::System, "Windows memory plugin", :windows_only do
   end
 
   it "gets total memory" do
-    @plugin.run
-    expect(@plugin["memory"]["total"]).to eql("10485760kB")
+    plugin.run
+    expect(plugin["memory"]["total"]).to eql("10485760kB")
   end
 
   it "gets free memory" do
-    @plugin.run
-    expect(@plugin["memory"]["free"]).to eql("5242880kB")
+    plugin.run
+    expect(plugin["memory"]["free"]).to eql("5242880kB")
   end
 
   it "gets total swap" do
-    @plugin.run
-    expect(@plugin["memory"]["swap"]["total"]).to eql("20971520kB")
+    plugin.run
+    expect(plugin["memory"]["swap"]["total"]).to eql("20971520kB")
   end
 
   it "gets free memory" do
-    @plugin.run
-    expect(@plugin["memory"]["swap"]["free"]).to eql("15728640kB")
+    plugin.run
+    expect(plugin["memory"]["swap"]["free"]).to eql("15728640kB")
   end
 
 end

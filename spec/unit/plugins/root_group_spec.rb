@@ -19,9 +19,7 @@
 require "spec_helper"
 
 describe Ohai::System, "root_group" do
-  before do
-    @plugin = get_plugin("root_group")
-  end
+  let(:plugin) { get_plugin("root_group") }
 
   describe "unix platform", :unix_only do
     before do
@@ -41,8 +39,8 @@ describe Ohai::System, "root_group" do
       end
 
       it "has a root_group of wheel" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("wheel")
+        plugin.run
+        expect(plugin[:root_group]).to eq("wheel")
       end
     end
 
@@ -52,8 +50,8 @@ describe Ohai::System, "root_group" do
       end
 
       it "has a root_group of root" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("root")
+        plugin.run
+        expect(plugin[:root_group]).to eq("root")
       end
     end
 
@@ -63,8 +61,8 @@ describe Ohai::System, "root_group" do
       end
 
       it "has a root_group of system" do
-        @plugin.run
-        expect(@plugin[:root_group]).to eq("system")
+        plugin.run
+        expect(plugin[:root_group]).to eq("system")
       end
     end
   end
@@ -75,7 +73,7 @@ describe Ohai::System, "root_group" do
 
     before do
       allow(WmiLite::Wmi).to receive(:new).and_return(wmi)
-      allow(@plugin).to receive(:collect_os).and_return(:windows)
+      allow(plugin).to receive(:collect_os).and_return(:windows)
     end
 
     it "returns the group Administrators" do
@@ -84,7 +82,7 @@ describe Ohai::System, "root_group" do
         .with("select * from Win32_Group where sid like 'S-1-5-32-544' and LocalAccount=True")
         .and_return("Administrators")
 
-      @plugin.run
+      plugin.run
     end
   end
 end

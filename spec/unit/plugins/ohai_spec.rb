@@ -21,12 +21,10 @@
 require "spec_helper"
 
 describe Ohai::System, "plugin ohai" do
-  before do
-    @plugin = get_plugin("ohai")
-  end
+  let(:plugin) { get_plugin("ohai") }
 
   it "sets [:chef_packages][:ohai][:version] to the current version" do
-    @plugin.run
-    expect(@plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
+    plugin.run
+    expect(plugin[:chef_packages][:ohai][:version]).to eq(Ohai::VERSION)
   end
 end

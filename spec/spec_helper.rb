@@ -37,20 +37,20 @@ end
 
 def it_should_check_from(plugin, attribute, from, value)
   it "sets the #{attribute} to the value from '#{from}'" do
-    @plugin.run
-    expect(@plugin[attribute]).to eq(value)
+    plugin.run
+    expect(plugin[attribute]).to eq(value)
   end
 end
 
 def it_should_check_from_mash(plugin, attribute, from, value)
   it "gets the #{plugin}[:#{attribute}] value from '#{from}'" do
-    expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
-    @plugin.run
+    expect(plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
+    plugin.run
   end
 
   it "sets the #{plugin}[:#{attribute}] to the value from '#{from}'" do
-    @plugin.run
-    expect(@plugin[plugin][attribute]).to eq(value[1].split($/)[0])
+    plugin.run
+    expect(plugin[plugin][attribute]).to eq(value[1].split($/)[0])
   end
 end
 
@@ -65,20 +65,20 @@ end
 # the mash variable may be an array listing multiple levels of Mash hierarchy
 def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
   it "gets the #{mash.inspect}[:#{attribute}] value from '#{from}'" do
-    expect(@plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
-    @plugin.run
+    expect(plugin).to receive(:shell_out).with(from).and_return(mock_shell_out(value[0], value[1], value[2]))
+    plugin.run
   end
 
   it "sets the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
-    @plugin.run
+    plugin.run
     value = value[1].split($/)[0]
     if mash.is_a?(String)
-      expect(@plugin[mash][attribute]).to eq(value)
+      expect(plugin[mash][attribute]).to eq(value)
     elsif mash.is_a?(Array)
       if mash.length == 2
-        expect(@plugin[mash[0]][mash[1]][attribute]).to eq value
+        expect(plugin[mash[0]][mash[1]][attribute]).to eq value
       elsif mash.length == 3
-        expect(@plugin[mash[0]][mash[1]][mash[2]][attribute]).to eq value
+        expect(plugin[mash[0]][mash[1]][mash[2]][attribute]).to eq value
       else
         return nil
       end

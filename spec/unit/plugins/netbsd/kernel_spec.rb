@@ -20,16 +20,16 @@ require "spec_helper"
 
 describe Ohai::System, "NetBSD kernel plugin" do
   before do
-    @plugin = get_plugin("kernel")
-    allow(@plugin).to receive(:collect_os).and_return(:netbsd)
-    allow(@plugin).to receive(:init_kernel).and_return({})
-    allow(@plugin).to receive(:shell_out).with("uname -i").and_return(mock_shell_out(0, "foo", ""))
-    allow(@plugin).to receive(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1\n", ""))
-    allow(@plugin).to receive(:shell_out).with((Ohai.abs_path( "/usr/bin/modstat" )).to_s).and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
+    plugin = get_plugin("kernel")
+    allow(plugin).to receive(:collect_os).and_return(:netbsd)
+    allow(plugin).to receive(:init_kernel).and_return({})
+    allow(plugin).to receive(:shell_out).with("uname -i").and_return(mock_shell_out(0, "foo", ""))
+    allow(plugin).to receive(:shell_out).with("sysctl kern.securelevel").and_return(mock_shell_out(0, "kern.securelevel: 1\n", ""))
+    allow(plugin).to receive(:shell_out).with((Ohai.abs_path( "/usr/bin/modstat" )).to_s).and_return(mock_shell_out(0, "  1    7 0xc0400000 97f830   kernel", ""))
   end
 
   it "sets the kernel_os to the kernel_name value" do
-    @plugin.run
-    expect(@plugin[:kernel][:os]).to eq(@plugin[:kernel][:name])
+    plugin.run
+    expect(plugin[:kernel][:os]).to eq(plugin[:kernel][:name])
   end
 end

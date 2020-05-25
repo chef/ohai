@@ -18,8 +18,9 @@ require "spec_helper"
 
 describe Ohai::System, "plugin rust" do
   let(:stdout) { "rustc 1.0.0-nightly (29bd9a06e 2015-01-20 23:03:09 +0000)" }
+  let(:plugin) { get_plugin("rust") }
+
   let(:plugin) do
-    plugin = get_plugin("rust")
     plugin[:languages] = Mash.new
     allow(plugin).to receive(:shell_out).with("rustc --version").and_return(mock_shell_out(0, stdout, ""))
     plugin

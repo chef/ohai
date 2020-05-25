@@ -19,26 +19,24 @@
 require "spec_helper"
 
 describe Ohai::System, "plugin ohai_time" do
-  before do
-    @plugin = get_plugin("ohai_time")
-  end
+  let(:plugin) { get_plugin("ohai_time") }
 
   it "gets the current time" do
     expect(Time).to receive(:now)
-    @plugin.run
+    plugin.run
   end
 
   it "turns the time into a floating point number" do
     time = Time.now
     expect(time).to receive(:to_f)
     allow(Time).to receive(:now).and_return(time)
-    @plugin.run
+    plugin.run
   end
 
   it "sets ohai_time to the current time" do
     time = Time.now
     allow(Time).to receive(:now).and_return(time)
-    @plugin.run
-    expect(@plugin[:ohai_time]).to eq(time.to_f)
+    plugin.run
+    expect(plugin[:ohai_time]).to eq(time.to_f)
   end
 end

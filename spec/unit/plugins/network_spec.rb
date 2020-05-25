@@ -20,9 +20,9 @@ require "spec_helper"
 
 def it_doesnt_fail
   it "doesnt fail" do
-    allow(@plugin.logger).to receive(:warn)
-    expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
-    @plugin.run
+    allow(plugin.logger).to receive(:warn)
+    expect(plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
+    plugin.run
   end
 end
 
@@ -32,11 +32,11 @@ def it_populates_ipaddress_attributes
 
   it "populates ipaddress, macaddress and ip6address" do
 
-    allow(@plugin.logger).to receive(:warn)
-    expect(@plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
-    @plugin.run
+    allow(plugin.logger).to receive(:warn)
+    expect(plugin.logger).not_to receive(:trace).with(/^Plugin network threw exception/)
+    plugin.run
     %w{ ipaddress macaddress ip6address }.each do |attribute|
-      expect(@plugin).to have_key(attribute)
+      expect(plugin).to have_key(attribute)
     end
   rescue Exception
     puts "RSpec context: #{source}"
@@ -46,7 +46,6 @@ def it_populates_ipaddress_attributes
 end
 
 describe Ohai::System, "Network Plugin" do
-
   # output of network plugins on particular platforms to mock plugin runs
   basic_data = {
     "freebsd" => {
@@ -329,9 +328,10 @@ describe Ohai::System, "Network Plugin" do
   }
 
   describe "on linux" do
+    let(:plugin) { get_plugin("network") }
+
     before do
-      @plugin = get_plugin("network")
-      @plugin["network"] = basic_data["linux"]["network"]
+      plugin["network"] = basic_data["linux"]["network"]
     end
 
     describe "when the linux::network plugin hasn't set any of {ip,ip6,mac}address attributes" do
@@ -339,66 +339,66 @@ describe Ohai::System, "Network Plugin" do
         it_populates_ipaddress_attributes
 
         it "detects {ip,ip6,mac}address" do
-          @plugin.run
-          expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-          expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-          expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("192.168.66.33")
+          expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+          expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
         end
       end
 
       describe "default ipv4 and ipv6 gateway on different interfaces" do
         describe "both interfaces have an ARP" do
           before do
-            @plugin["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
-            @plugin["network"]["default_inet6_interface"] = "eth1"
+            plugin["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
+            plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
           it_populates_ipaddress_attributes
 
           it "detects {ip,ip6}address" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.33")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
           it "set macaddress from the ipv4 setup" do
-            @plugin.run
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            plugin.run
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
           end
 
           it "informs about this setup" do
-            expect(@plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
-            allow(@plugin.logger).to receive(:trace)
-            @plugin.run
+            expect(plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
+            allow(plugin.logger).to receive(:trace)
+            plugin.run
           end
         end
 
         describe "ipv4 interface has no ARP" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, kv| kv["family"] == "lladdr" }
+            plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, kv| kv["family"] == "lladdr" }
             # not really checked by this pluging
-            @plugin["network"]["interfaces"]["eth0"]["flags"] << "NOARP"
-            @plugin["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
-            @plugin["network"]["default_inet6_interface"] = "eth1"
+            plugin["network"]["interfaces"]["eth0"]["flags"] << "NOARP"
+            plugin["network"]["default_inet6_gateway"] = "3ffe:1111:3333::"
+            plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
           it_populates_ipaddress_attributes
 
           it "detects {ip,ip6}address" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.33")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
           it "sets macaddress to the ipv6 interface because it hadn't set one for ipv4 first" do
-            @plugin.run
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            plugin.run
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
           end
 
           it "informs about this setup" do
-            expect(@plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
-            allow(@plugin.logger).to receive(:trace)
-            @plugin.run
+            expect(plugin.logger).to receive(:trace).with(/ipaddress and ip6address are set from different interfaces/)
+            allow(plugin.logger).to receive(:trace)
+            plugin.run
           end
         end
       end
@@ -406,76 +406,76 @@ describe Ohai::System, "Network Plugin" do
       describe "conflicting results from the linux::network plugin" do
         describe "default interface doesn't match the default_gateway" do
           before do
-            @plugin["network"]["default_interface"] = "eth1"
-            @plugin["network"]["default_inet6_interface"] = "eth1"
+            plugin["network"]["default_interface"] = "eth1"
+            plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
           it_populates_ipaddress_attributes
 
           it "picks {ip,ip6,mac}address" do
-            allow(@plugin.logger).to receive(:warn)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            allow(plugin.logger).to receive(:warn)
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
 
           it "warns about this conflict" do
-            expect(@plugin.logger).to receive(:trace).with(%r{\[inet\] no ipaddress/mask on eth1}).once
-            expect(@plugin.logger).to receive(:trace).with(%r{\[inet6\] no ipaddress/mask on eth1}).once
-            allow(@plugin.logger).to receive(:trace)
-            @plugin.run
+            expect(plugin.logger).to receive(:trace).with(%r{\[inet\] no ipaddress/mask on eth1}).once
+            expect(plugin.logger).to receive(:trace).with(%r{\[inet6\] no ipaddress/mask on eth1}).once
+            allow(plugin.logger).to receive(:trace)
+            plugin.run
           end
         end
 
         describe "there's a default gateway, none of the configured ip/mask theorically allows to reach it" do
           before do
-            @plugin["network"]["default_gateway"] = "172.16.12.42"
-            @plugin["network"]["default_inet6_gateway"] = "3ffe:12:42::7070"
+            plugin["network"]["default_gateway"] = "172.16.12.42"
+            plugin["network"]["default_inet6_gateway"] = "3ffe:12:42::7070"
           end
 
           it "picks {ip,ip6,mac}address" do
-            allow(@plugin.logger).to receive(:warn)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+            allow(plugin.logger).to receive(:warn)
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.33")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           end
 
         end
 
         describe "no ip address for the given default interface/gateway" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
+            plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
           end
 
           it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            allow(@plugin.logger).to receive(:warn)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to be_nil
-            expect(@plugin["macaddress"]).to be_nil
-            expect(@plugin["ip6address"]).to be_nil
+            allow(plugin.logger).to receive(:warn)
+            plugin.run
+            expect(plugin["ipaddress"]).to be_nil
+            expect(plugin["macaddress"]).to be_nil
+            expect(plugin["ip6address"]).to be_nil
           end
 
           it "warns about this conflict" do
-            expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
-            expect(@plugin.logger).to receive(:warn).with(/\[inet\] no ip address on eth0/).once
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
-            expect(@plugin.logger).to receive(:warn).with(/\[inet6\] no ip address on eth0/).once
-            @plugin.run
+            expect(plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+            expect(plugin.logger).to receive(:warn).with(/\[inet\] no ip address on eth0/).once
+            expect(plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
+            expect(plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
+            expect(plugin.logger).to receive(:warn).with(/\[inet6\] no ip address on eth0/).once
+            plugin.run
           end
         end
 
         describe "no ip at all" do
           before do
-            @plugin["network"]["default_gateway"] = nil
-            @plugin["network"]["default_interface"] = nil
-            @plugin["network"]["default_inet6_gateway"] = nil
-            @plugin["network"]["default_inet6_interface"] = nil
-            @plugin["network"]["interfaces"].each_value do |val|
+            plugin["network"]["default_gateway"] = nil
+            plugin["network"]["default_interface"] = nil
+            plugin["network"]["default_inet6_gateway"] = nil
+            plugin["network"]["default_inet6_interface"] = nil
+            plugin["network"]["interfaces"].each_value do |val|
               val["addresses"].delete_if { |k, kv| %w{inet inet6}.include? kv["family"] }
             end
           end
@@ -483,18 +483,18 @@ describe Ohai::System, "Network Plugin" do
           it_doesnt_fail
 
           it "doesn't detect {ip,ip6,mac}address" do
-            allow(@plugin.logger).to receive(:warn)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to be_nil
-            expect(@plugin["macaddress"]).to be_nil
-            expect(@plugin["ip6address"]).to be_nil
+            allow(plugin.logger).to receive(:warn)
+            plugin.run
+            expect(plugin["ipaddress"]).to be_nil
+            expect(plugin["macaddress"]).to be_nil
+            expect(plugin["ip6address"]).to be_nil
           end
 
           it "warns about it" do
-            expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
-            expect(@plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
-            @plugin.run
+            expect(plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+            expect(plugin.logger).to receive(:trace).with(/unable to detect macaddress/).twice # for each family
+            expect(plugin.logger).to receive(:trace).with(/unable to detect ip6address/).once
+            plugin.run
           end
         end
       end
@@ -502,7 +502,7 @@ describe Ohai::System, "Network Plugin" do
       describe "several ipaddresses matching the default route" do
         describe "bigger prefix not set on the default interface" do
           before do
-            @plugin["network"]["interfaces"]["eth2"] = {
+            plugin["network"]["interfaces"]["eth2"] = {
               "flags" => %w{BROADCAST MULTICAST UP},
               "number" => "2",
               "addresses" => {
@@ -531,23 +531,23 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.33")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           end
         end
 
         describe "bigger prefix set on the default interface" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.99"] = {
+            plugin["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.99"] = {
               "scope" => "Global",
               "netmask" => "255.255.255.128",
               "broadcast" => "192.168.66.127",
               "prefixlen" => "25",
               "family" => "inet",
             }
-            @plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222:0:4444::1"] = {
+            plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222:0:4444::1"] = {
               "prefixlen" => "64",
               "family" => "inet6",
               "scope" => "Global",
@@ -557,16 +557,16 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.99")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222:0:4444::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.99")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222:0:4444::1")
           end
         end
 
         describe "smallest ip not set on the default_interface" do
           before do
-            @plugin["network"]["interfaces"]["eth2"] = {
+            plugin["network"]["interfaces"]["eth2"] = {
               "flags" => %w{BROADCAST MULTICAST UP},
               "number" => "2",
               "addresses" => {
@@ -595,23 +595,23 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.33")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.33")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           end
         end
 
         describe "smallest ip set on the default_interface" do
           before do
-            @plugin["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.32"] = {
+            plugin["network"]["interfaces"]["eth0"]["addresses"]["192.168.66.32"] = {
               "scope" => "Global",
               "netmask" => "255.255.255.0",
               "broadcast" => "192.168.66.255",
               "prefixlen" => "24",
               "family" => "inet",
             }
-            @plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222::32"] = {
+            plugin["network"]["interfaces"]["eth0"]["addresses"]["3ffe:1111:2222::32"] = {
               "prefixlen" => "48",
               "family" => "inet6",
               "scope" => "Global",
@@ -621,10 +621,10 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "sets {ip,ip6,mac}address correctly" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.66.32")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::32")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.66.32")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222::32")
           end
         end
       end
@@ -632,47 +632,47 @@ describe Ohai::System, "Network Plugin" do
       describe "no default route" do
         describe "first interface is not the best choice" do
           before do
-            @plugin["network"]["default_gateway"] = nil
-            @plugin["network"]["default_interface"] = nil
-            @plugin["network"]["default_inet6_gateway"] = nil
-            @plugin["network"]["default_inet6_interface"] = nil
+            plugin["network"]["default_gateway"] = nil
+            plugin["network"]["default_interface"] = nil
+            plugin["network"]["default_inet6_gateway"] = nil
+            plugin["network"]["default_inet6_interface"] = nil
             # removing inet* addresses from eth0, to complicate things a bit
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
+            plugin["network"]["interfaces"]["eth0"]["addresses"].delete_if { |k, v| %w{inet inet6}.include? v["family"] }
           end
 
           it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the first interface" do
-            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
-            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
-            allow(@plugin.logger).to receive(:trace)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            expect(plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
+            expect(plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
+            allow(plugin.logger).to receive(:trace)
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
         end
 
         describe "can choose from addresses with different scopes" do
           before do
-            @plugin["network"]["default_gateway"] = nil
-            @plugin["network"]["default_interface"] = nil
-            @plugin["network"]["default_inet6_gateway"] = nil
-            @plugin["network"]["default_inet6_interface"] = nil
+            plugin["network"]["default_gateway"] = nil
+            plugin["network"]["default_interface"] = nil
+            plugin["network"]["default_inet6_gateway"] = nil
+            plugin["network"]["default_inet6_interface"] = nil
             # just changing scopes to lInK for eth0 addresses
-            @plugin["network"]["interfaces"]["eth0"]["addresses"].each_value { |v| v[:scope] = "lInK" if %w{inet inet6}.include? v["family"] }
+            plugin["network"]["interfaces"]["eth0"]["addresses"].each_value { |v| v[:scope] = "lInK" if %w{inet inet6}.include? v["family"] }
           end
 
           it_populates_ipaddress_attributes
 
           it "prefers global scope addressses to set {ip,mac,ip6}address" do
-            expect(@plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
-            expect(@plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
-            allow(@plugin.logger).to receive(:trace)
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            expect(plugin.logger).to receive(:trace).with(/\[inet\] no default interface/).once
+            expect(plugin.logger).to receive(:trace).with(/\[inet6\] no default interface/).once
+            allow(plugin.logger).to receive(:trace)
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
         end
       end
@@ -680,42 +680,42 @@ describe Ohai::System, "Network Plugin" do
       describe "link level default route" do
         describe "simple setup" do
           before do
-            @plugin["network"]["default_gateway"] = "0.0.0.0"
-            @plugin["network"]["default_interface"] = "eth1"
-            @plugin["network"]["default_inet6_gateway"] = "::"
-            @plugin["network"]["default_inet6_interface"] = "eth1"
+            plugin["network"]["default_gateway"] = "0.0.0.0"
+            plugin["network"]["default_interface"] = "eth1"
+            plugin["network"]["default_inet6_gateway"] = "::"
+            plugin["network"]["default_inet6_interface"] = "eth1"
           end
 
           it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
         end
 
         describe "fe80::1 as a default gateway" do
           before do
-            @plugin["network"]["default_inet6_gateway"] = "fe80::1"
+            plugin["network"]["default_inet6_gateway"] = "fe80::1"
           end
 
           it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
-            @plugin.run
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+            plugin.run
+            expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
           end
         end
 
         describe "can choose from addresses with different scopes" do
           before do
-            @plugin["network"]["default_gateway"] = "0.0.0.0"
-            @plugin["network"]["default_interface"] = "eth1"
-            @plugin["network"]["default_inet6_gateway"] = "::"
-            @plugin["network"]["default_inet6_interface"] = "eth1"
-            @plugin["network"]["interfaces"]["eth1"]["addresses"]["127.0.0.2"] = {
+            plugin["network"]["default_gateway"] = "0.0.0.0"
+            plugin["network"]["default_interface"] = "eth1"
+            plugin["network"]["default_inet6_gateway"] = "::"
+            plugin["network"]["default_inet6_interface"] = "eth1"
+            plugin["network"]["interfaces"]["eth1"]["addresses"]["127.0.0.2"] = {
               "scope" => "host",
               "netmask" => "255.255.255.255",
               "prefixlen" => "32",
@@ -726,17 +726,17 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "picks {ip,mac,ip6}address from the default interface" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("192.168.99.11")
-            expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
-            expect(@plugin["ip6address"]).to eq("3ffe:1111:3333::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("192.168.99.11")
+            expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:80")
+            expect(plugin["ip6address"]).to eq("3ffe:1111:3333::1")
           end
         end
       end
 
       describe "point to point address" do
         before do
-          @plugin["network"]["interfaces"]["eth2"] = {
+          plugin["network"]["interfaces"]["eth2"] = {
             "flags" => %w{POINTOPOINT BROADCAST MULTICAST UP},
             "number" => "2",
             "addresses" => {
@@ -761,27 +761,27 @@ describe Ohai::System, "Network Plugin" do
               },
             },
           }
-          @plugin["network"]["default_gateway"] = "192.168.99.126"
-          @plugin["network"]["default_interface"] = "eth2"
-          @plugin["network"]["default_inet6_gateway"] = "3ffe:1111:2222:0:4444::2"
-          @plugin["network"]["default_inet6_interface"] = "eth2"
+          plugin["network"]["default_gateway"] = "192.168.99.126"
+          plugin["network"]["default_interface"] = "eth2"
+          plugin["network"]["default_inet6_gateway"] = "3ffe:1111:2222:0:4444::2"
+          plugin["network"]["default_inet6_interface"] = "eth2"
         end
 
         it_populates_ipaddress_attributes
 
         it "picks {ip,mac,ip6}address from the default interface" do
-          @plugin.run
-          expect(@plugin["ipaddress"]).to eq("192.168.66.99")
-          expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:81")
-          expect(@plugin["ip6address"]).to eq("3ffe:1111:2222:0:4444::1")
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("192.168.66.99")
+          expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:81")
+          expect(plugin["ip6address"]).to eq("3ffe:1111:2222:0:4444::1")
         end
       end
 
       describe "ipv6 only node" do
         before do
-          @plugin["network"]["default_gateway"] = nil
-          @plugin["network"]["default_interface"] = nil
-          @plugin["network"]["interfaces"].each_value do |val|
+          plugin["network"]["default_gateway"] = nil
+          plugin["network"]["default_interface"] = nil
+          plugin["network"]["interfaces"].each_value do |val|
             val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
           end
         end
@@ -789,38 +789,38 @@ describe Ohai::System, "Network Plugin" do
         it_doesnt_fail
 
         it "can't detect ipaddress" do
-          allow(@plugin.logger).to receive(:warn)
-          @plugin.run
-          expect(@plugin["ipaddress"]).to be_nil
+          allow(plugin.logger).to receive(:warn)
+          plugin.run
+          expect(plugin["ipaddress"]).to be_nil
         end
 
         it "warns about not being able to set {ip,mac}address (ipv4)" do
-          expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
-          expect(@plugin.logger).to receive(:trace).with(/unable to detect macaddress/) # for ipv4
-          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to/) # for ipv6
-          expect(@plugin.logger).to receive(:trace).with(/\[inet6\] Using default interface eth0 and default gateway/) # for ipv6
-          @plugin.run
+          expect(plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+          expect(plugin.logger).to receive(:trace).with(/unable to detect macaddress/) # for ipv4
+          expect(plugin.logger).to receive(:trace).with(/setting macaddress to/) # for ipv6
+          expect(plugin.logger).to receive(:trace).with(/\[inet6\] Using default interface eth0 and default gateway/) # for ipv6
+          plugin.run
         end
 
         it "sets {ip6,mac}address" do
-          allow(@plugin.logger).to receive(:warn)
-          @plugin.run
-          expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
-          expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+          allow(plugin.logger).to receive(:warn)
+          plugin.run
+          expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+          expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
-          allow(@plugin.logger).to receive(:trace)
-          @plugin.run
+          expect(plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
+          allow(plugin.logger).to receive(:trace)
+          plugin.run
         end
       end
 
       describe "ipv6 only with ipv4 loopback" do
         before do
-          @plugin["network"]["default_gateway"] = nil
-          @plugin["network"]["default_interface"] = nil
-          @plugin["network"]["interfaces"].each do |i, iv|
+          plugin["network"]["default_gateway"] = nil
+          plugin["network"]["default_interface"] = nil
+          plugin["network"]["interfaces"].each do |i, iv|
             next if i == "lo"
 
             iv["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
@@ -830,22 +830,22 @@ describe Ohai::System, "Network Plugin" do
         it_doesnt_fail
 
         it "can't detect ipaddress" do
-          allow(@plugin.logger).to receive(:warn)
-          @plugin.run
-          expect(@plugin["ipaddress"]).to eq("127.0.0.1")
+          allow(plugin.logger).to receive(:warn)
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("127.0.0.1")
         end
 
         it "sets {ip6,mac}address" do
-          allow(@plugin.logger).to receive(:warn)
-          @plugin.run
-          expect(@plugin["ip6address"]).to eq("3ffe:1111:2222::33")
-          expect(@plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
+          allow(plugin.logger).to receive(:warn)
+          plugin.run
+          expect(plugin["ip6address"]).to eq("3ffe:1111:2222::33")
+          expect(plugin["macaddress"]).to eq("00:16:3E:2F:36:79")
         end
 
         it "informs about macaddress being set using the ipv6 setup" do
-          expect(@plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
-          allow(@plugin.logger).to receive(:trace)
-          @plugin.run
+          expect(plugin.logger).to receive(:trace).with(/setting macaddress to '00:16:3E:2F:36:79'/)
+          allow(plugin.logger).to receive(:trace)
+          plugin.run
         end
       end
     end
@@ -854,13 +854,13 @@ describe Ohai::System, "Network Plugin" do
     basic_data.keys.sort.each do |os|
       describe "the #{os}::network has already set some of the {ip,mac,ip6}address attributes" do
         before do
-          @plugin["network"] = basic_data[os]["network"]
+          plugin["network"] = basic_data[os]["network"]
         end
 
         describe "{ip,mac}address are already set" do
           before do
-            @plugin["ipaddress"] = "10.11.12.13"
-            @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
+            plugin["ipaddress"] = "10.11.12.13"
+            plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
             @expected_results = {
               "freebsd" => {
                 "ip6address" => "2001:470:d:cb4::1",
@@ -880,21 +880,21 @@ describe Ohai::System, "Network Plugin" do
           it_populates_ipaddress_attributes
 
           it "detects ip6address" do
-            @plugin.run
-            expect(@plugin["ip6address"]).to eq(@expected_results[os]["ip6address"])
+            plugin.run
+            expect(plugin["ip6address"]).to eq(@expected_results[os]["ip6address"])
           end
 
           it "doesn't overwrite {ip,mac}address" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("10.11.12.13")
-            expect(@plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("10.11.12.13")
+            expect(plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
           end
         end
 
         describe "ip6address is already set" do
           describe "node has ipv4 and ipv6" do
             before do
-              @plugin["ip6address"] = "3ffe:8888:9999::1"
+              plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
                 "freebsd" => {
                   "ipaddress" => "76.91.1.255",
@@ -914,27 +914,27 @@ describe Ohai::System, "Network Plugin" do
             it_populates_ipaddress_attributes
 
             it "detects {ip,mac}address" do
-              @plugin.run
-              expect(@plugin["ipaddress"]).to eq(@expected_results[os]["ipaddress"])
-              expect(@plugin["macaddress"]).to eq(@expected_results[os]["macaddress"])
+              plugin.run
+              expect(plugin["ipaddress"]).to eq(@expected_results[os]["ipaddress"])
+              expect(plugin["macaddress"]).to eq(@expected_results[os]["macaddress"])
             end
 
             it "doesn't overwrite ip6address" do
-              @plugin.run
-              expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+              plugin.run
+              expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
             end
           end
 
           describe "ipv6 only node" do
             before do
-              @plugin["network"]["default_gateway"] = nil
-              @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each_value do |val|
+              plugin["network"]["default_gateway"] = nil
+              plugin["network"]["default_interface"] = nil
+              plugin["network"]["interfaces"].each_value do |val|
                 if val.key? "addresses"
                   val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
-              @plugin["ip6address"] = "3ffe:8888:9999::1"
+              plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
                 "freebsd" => {
                   "macaddress" => "02:20:6f:d2:c4:00",
@@ -951,26 +951,26 @@ describe Ohai::System, "Network Plugin" do
             it_doesnt_fail
 
             it "can't detect ipaddress (ipv4)" do
-              allow(@plugin.logger).to receive(:warn)
-              @plugin.run
-              expect(@plugin["ipaddress"]).to be_nil
+              allow(plugin.logger).to receive(:warn)
+              plugin.run
+              expect(plugin["ipaddress"]).to be_nil
             end
 
             it "takes the macaddress from ipv6" do
-              allow(@plugin.logger).to receive(:warn)
-              @plugin.run
-              expect(@plugin["macaddress"]).to eq(@expected_results[os]["macaddress"])
+              allow(plugin.logger).to receive(:warn)
+              plugin.run
+              expect(plugin["macaddress"]).to eq(@expected_results[os]["macaddress"])
             end
 
             it "warns about not being able to set ipaddress" do
-              expect(@plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
-              @plugin.run
+              expect(plugin.logger).to receive(:warn).with(/unable to detect ipaddress/).once
+              plugin.run
             end
 
             it "doesn't overwrite ip6address" do
-              allow(@plugin.logger).to receive(:warn)
-              @plugin.run
-              expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+              allow(plugin.logger).to receive(:warn)
+              plugin.run
+              expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
             end
           end
         end
@@ -978,8 +978,8 @@ describe Ohai::System, "Network Plugin" do
         describe "{mac,ip6}address are already set" do
           describe "valid ipv4 setup" do
             before do
-              @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
-              @plugin["ip6address"] = "3ffe:8888:9999::1"
+              plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
+              plugin["ip6address"] = "3ffe:8888:9999::1"
               @expected_results = {
                 "freebsd" => {
                   "ipaddress" => "76.91.1.255",
@@ -999,76 +999,76 @@ describe Ohai::System, "Network Plugin" do
             it_populates_ipaddress_attributes
 
             it "detects ipaddress and does not overwrite macaddress" do
-              @plugin.run
-              expect(@plugin["ipaddress"]).to eq(@expected_results[os]["ipaddress"])
-              expect(@plugin["macaddress"]).to eq(@plugin["macaddress"])
+              plugin.run
+              expect(plugin["ipaddress"]).to eq(@expected_results[os]["ipaddress"])
+              expect(plugin["macaddress"]).to eq(plugin["macaddress"])
             end
 
             it "doesn't overwrite ip6address" do
-              @plugin.run
-              expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+              plugin.run
+              expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
             end
           end
 
           describe "ipv6 only node" do
             before do
-              @plugin["network"]["default_gateway"] = nil
-              @plugin["network"]["default_interface"] = nil
-              @plugin["network"]["interfaces"].each_value do |val|
+              plugin["network"]["default_gateway"] = nil
+              plugin["network"]["default_interface"] = nil
+              plugin["network"]["interfaces"].each_value do |val|
                 if val.key? "addresses"
                   val["addresses"].delete_if { |k, kv| kv["family"] == "inet" }
                 end
               end
-              @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
-              @plugin["ip6address"] = "3ffe:8888:9999::1"
+              plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
+              plugin["ip6address"] = "3ffe:8888:9999::1"
             end
 
             it_doesnt_fail
 
             it "can't set ipaddress" do
-              allow(@plugin.logger).to receive(:warn)
-              @plugin.run
-              expect(@plugin["ipaddress"]).to be_nil
+              allow(plugin.logger).to receive(:warn)
+              plugin.run
+              expect(plugin["ipaddress"]).to be_nil
             end
 
             it "doesn't overwrite {ip6,mac}address" do
-              allow(@plugin.logger).to receive(:warn)
-              @plugin.run
-              expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
-              expect(@plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
+              allow(plugin.logger).to receive(:warn)
+              plugin.run
+              expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+              expect(plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
             end
           end
         end
 
         describe "{ip,mac,ip6}address are already set" do
           before do
-            @plugin["ipaddress"] = "10.11.12.13"
-            @plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
-            @plugin["ip6address"] = "3ffe:8888:9999::1"
+            plugin["ipaddress"] = "10.11.12.13"
+            plugin["macaddress"] = "00:AA:BB:CC:DD:EE"
+            plugin["ip6address"] = "3ffe:8888:9999::1"
           end
 
           it_populates_ipaddress_attributes
 
           it "doesn't overwrite {ip,mac,ip6}address" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("10.11.12.13")
-            expect(@plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
-            expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("10.11.12.13")
+            expect(plugin["macaddress"]).to eq("00:AA:BB:CC:DD:EE")
+            expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
           end
         end
 
         describe "{ip,ip6}address are already set" do
           before do
-            @plugin["ipaddress"] = "10.11.12.13"
-            @plugin["ip6address"] = "3ffe:8888:9999::1"
+            plugin["ipaddress"] = "10.11.12.13"
+            plugin["ip6address"] = "3ffe:8888:9999::1"
           end
 
           it_doesnt_fail
 
           it "doesn't overwrite {ip,ip6}address" do
-            @plugin.run
-            expect(@plugin["ipaddress"]).to eq("10.11.12.13")
-            expect(@plugin["ip6address"]).to eq("3ffe:8888:9999::1")
+            plugin.run
+            expect(plugin["ipaddress"]).to eq("10.11.12.13")
+            expect(plugin["ip6address"]).to eq("3ffe:8888:9999::1")
           end
         end
 

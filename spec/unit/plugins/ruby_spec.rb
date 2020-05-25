@@ -21,13 +21,16 @@ require "spec_helper"
 ruby_bin = File.join(::RbConfig::CONFIG["bindir"], ::RbConfig::CONFIG["ruby_install_name"])
 
 describe Ohai::System, "plugin ruby" do
+  let(:plugin) do
+    plugin_data = get_plugin("ruby")
+    plugin_data[:languages] = Mash.new
+    plugin_data
+  end
 
   before(:all) do
-    @plugin = get_plugin("ruby")
-    @plugin[:languages] = Mash.new
-    @plugin.run
+    plugin.run
 
-    @ruby_ohai_data_pristine = @plugin[:languages][:ruby]
+    @ruby_ohai_data_pristine = plugin[:languages][:ruby]
   end
 
   before do

@@ -30,12 +30,16 @@ describe Ohai::System, "languages plugin" do
         expect(subject).to match(VERSION_MATCHING_REGEX)
       end
     end
-    subject { @plugin[:languages][:powershell] }
+    subject { plugin[:languages][:powershell] }
+
+    let(:plugin) do
+      plugin_data = get_plugin("powershell")
+      plugin_data[:languages] = Mash.new
+      plugin_data
+    end
 
     before(:all) do
-      @plugin = get_plugin("powershell")
-      @plugin[:languages] = Mash.new
-      @plugin.run
+      plugin.run
     end
 
     it "has information about powershell" do
@@ -43,44 +47,44 @@ describe Ohai::System, "languages plugin" do
     end
 
     describe :version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :ws_man_stack_version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :serialization_version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :clr_version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :build_version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :remoting_protocol_version do
-      subject { @plugin.languages[:powershell][described_class] }
+      subject { plugin.languages[:powershell][described_class] }
 
       it_behaves_like "a version looking thing"
     end
 
     describe :compatible_versions do
       it "has compatible_versions that look like versions" do
-        @plugin.languages[:powershell][described_class].each do |version|
+        plugin.languages[:powershell][described_class].each do |version|
           expect(version).to match(VERSION_MATCHING_REGEX)
         end
       end

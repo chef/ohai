@@ -4,7 +4,7 @@
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
 # Author:: Claire McQuin (<claire@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software, Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -137,11 +137,12 @@ Ohai.plugin(:Kernel) do
     end
   end
 
-  # see if a WMI name is blacklisted so we can avoid writing out
-  # useless data to ohai
+  # see if a WMI name is in the blocked list so we can avoid writing
+  # out useless data to ohai
+  #
   # @param [String] name the wmi name to check
-  # @return [Boolean] is the wmi name blacklisted
-  def blacklisted_wmi_name?(name)
+  # @return [Boolean] is the wmi name in the blocked list
+  def blocked_wmi_name?(name)
     [
      "creation_class_name", # this is just the wmi name
      "cs_creation_class_name", # this is just the wmi name
@@ -262,7 +263,7 @@ Ohai.plugin(:Kernel) do
     host = wmi.first_of("Win32_OperatingSystem")
     kernel[:os_info] = Mash.new
     host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
+      next if blocked_wmi_name?(p.name.wmi_underscore)
 
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
@@ -277,7 +278,7 @@ Ohai.plugin(:Kernel) do
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
+      next if blocked_wmi_name?(p.name.wmi_underscore)
 
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end

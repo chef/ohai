@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.2.0 -->
+## [v16.2.0](https://github.com/chef/ohai/tree/v16.2.0) (2020-06-17)
+
+#### Merged Pull Requests
+- Remove an internal reference to blacklist [#1468](https://github.com/chef/ohai/pull/1468) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.1.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Remove an internal reference to blacklist [#1468](https://github.com/chef/ohai/pull/1468) ([tas50](https://github.com/tas50)) <!-- 16.2.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

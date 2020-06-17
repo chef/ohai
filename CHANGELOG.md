@@ -1,26 +1,23 @@
 # Change Log
 
-<!-- latest_release 16.2.0 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v16.2.0](https://github.com/chef/ohai/tree/v16.2.0) (2020-06-17)
 
 #### Merged Pull Requests
 - Remove an internal reference to blacklist [#1468](https://github.com/chef/ohai/pull/1468) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=16.1.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Remove an internal reference to blacklist [#1468](https://github.com/chef/ohai/pull/1468) ([tas50](https://github.com/tas50)) <!-- 16.2.0 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v16.1.1](https://github.com/chef/ohai/tree/v16.1.1) (2020-05-15)
 
 #### Merged Pull Requests
 - Add new selinux plugin for Linux [#1455](https://github.com/chef/ohai/pull/1455) ([davide125](https://github.com/davide125))
 - Depend on chef-utils gem so we can use ChefUtils::Mash [#1462](https://github.com/chef/ohai/pull/1462) ([lamont-granquist](https://github.com/lamont-granquist))
-<!-- latest_stable_release -->
 
 ## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-28)
 

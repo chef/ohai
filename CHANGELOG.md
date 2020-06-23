@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.2.1 -->
+## [v16.2.1](https://github.com/chef/ohai/tree/v16.2.1) (2020-06-23)
+
+#### Merged Pull Requests
+- Make sure Darwin hosts are always mac_os_x [#1470](https://github.com/chef/ohai/pull/1470) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.2.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Make sure Darwin hosts are always mac_os_x [#1470](https://github.com/chef/ohai/pull/1470) ([tas50](https://github.com/tas50)) <!-- 16.2.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 15.9.2 -->
-## [v15.9.2](https://github.com/chef/ohai/tree/v15.9.2) (2020-06-23)
+<!-- latest_release 15.9.3 -->
+## [v15.9.3](https://github.com/chef/ohai/tree/v15.9.3) (2020-06-23)
 
 #### Merged Pull Requests
-- Remove an internal reference to blacklist [#1471](https://github.com/chef/ohai/pull/1471) ([tas50](https://github.com/tas50))
+- Make sure Darwin hosts are always mac_os_x [#1472](https://github.com/chef/ohai/pull/1472) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.2.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Make sure Darwin hosts are always mac_os_x [#1472](https://github.com/chef/ohai/pull/1472) ([tas50](https://github.com/tas50)) <!-- 15.9.3 -->
 - Remove an internal reference to blacklist [#1471](https://github.com/chef/ohai/pull/1471) ([tas50](https://github.com/tas50)) <!-- 15.9.2 -->
 <!-- release_rollup -->
 

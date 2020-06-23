@@ -3,13 +3,13 @@
 
 ## filesystem2 Ohai Data on Windows
 
-Ohai 15.6 includes new `node['filesystem2']` data on Windows hosts. Fileystem2 presents filesystem data by both mountpoint and by device name. This data structure matches that of the filesystem plugin on Linux and other *nix operating systems. Thanks [@jaymzh](https://github.com/jaymzh) for this new data structure.
+Ohai 15.6 includes new `node['filesystem2']` data on Windows hosts. Filesystem2 presents filesystem data by both mountpoint and by device name. This data structure matches that of the filesystem plugin on Linux and other *nix operating systems. Thanks [@jaymzh](https://github.com/jaymzh) for this new data structure.
 
 # Ohai Release Notes 15.3
 
 ## Passwd Is Once Again Optional
 
-The Passwd plugin, which provides information on all users and groups on a node, was intented to be made optional with the release of Ohai/Chef 14.0. Howerver, due to the way data was used in the OpenStack plugin, the Passwd plugin was never actually disabled. The Passwd plugin has been historically problematic for users with nodes that are connected to LDAP or Active Directory. Due to this we've chosen to fix our OpenStack bug and once again disable the Passwd plugin. If you relied on the data in node['etc'] you'll need to set the `optional_plugins` configuration value in your `client.rb` config.
+The Passwd plugin, which provides information on all users and groups on a node, was intented to be made optional with the release of Ohai/Chef 14.0. However, due to the way data was used in the OpenStack plugin, the Passwd plugin was never actually disabled. The Passwd plugin has been historically problematic for users with nodes that are connected to LDAP or Active Directory. Due to this we've chosen to fix our OpenStack bug and once again disable the Passwd plugin. If you relied on the data in node['etc'] you'll need to set the `optional_plugins` configuration value in your `client.rb` config.
 
 Example segment of client.rb
 
@@ -50,7 +50,7 @@ The Virtualbox plugin now gathers a large amount of data on Virtualbox hosts. Ad
 
 ### Improved Linux Platform / Platform Family Detection
 
-Platform and plaform_family detection on Linux has been rewritten to utilize the latest config files on modern Linux distributions before falling back to slower and fragile legacy detection methods. Ohai will now begin by parsing the contents of /etc/os-release for OS information if available. This improves the reliability of detection on modern distros and allows detection of new distros as they're released.
+Platform and platform_family detection on Linux has been rewritten to utilize the latest config files on modern Linux distributions before falling back to slower and fragile legacy detection methods. Ohai will now begin by parsing the contents of /etc/os-release for OS information if available. This improves the reliability of detection on modern distros and allows detection of new distros as they're released.
 
 With this change we now detect `sles_sap` as a member of the `suse` platform_family. Additionally this change corrects our detection of the platform_version on Cisco Nexus switches where we previously incorrectly appended the build number to the version string.
 
@@ -129,7 +129,7 @@ BSD-based systems can now detect guests running on KVM and Amazon's hypervisor w
 
 ## Filesystem Plugin on AIX and Solaris
 
-AIX and Solaris now ship with a filesystem2 plugin that updates the filesystem data to match that of Linux, macOS, amd BSD hosts. This new data structure makes accessing filesystem data in recipes easier and especially improves the layout and depth of data on ZFS filesystems. In Chef 15 (April 2019) we will begin wrting this same format of data to the existing `node['filesystem']` namespace. In Chef 16 (April 2020) we will remove the `node['filesystem2']` namspace, completing the transition to the new format. Thank you @jaymzh for continuing the updates to our filesystem plugins with this change.
+AIX and Solaris now ship with a filesystem2 plugin that updates the filesystem data to match that of Linux, macOS, amd BSD hosts. This new data structure makes accessing filesystem data in recipes easier and especially improves the layout and depth of data on ZFS filesystems. In Chef 15 (April 2019) we will begin wrting this same format of data to the existing `node['filesystem']` namespace. In Chef 16 (April 2020) we will remove the `node['filesystem2']` namespace, completing the transition to the new format. Thank you @jaymzh for continuing the updates to our filesystem plugins with this change.
 
 ## macOS Improvements
 

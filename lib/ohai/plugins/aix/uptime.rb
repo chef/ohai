@@ -30,7 +30,7 @@ Ohai.plugin(:Uptime) do
     so = shell_out("LC_ALL=POSIX ps -o etime= -p 1").stdout.strip
 
     # Here we'll check our shell_out for a dash, which indicates there is a # of days involved
-    # We'll chunk off the days, hours (where applicable), minutes, seconds into seperate vars
+    # We'll chunk off the days, hours (where applicable), minutes, seconds into separate vars
     # We also need to do this because ps -o etime= will not display days if the machine has been up for less than 24 hours
     # If the machine has been up for less than one hour, the shell_out will not output hours hence our else
     # see here: https://www.ibm.com/support/knowledgecenter/en/ssw_aix_72/com.ibm.aix.cmds4/ps.htm#ps__row-d3e109655

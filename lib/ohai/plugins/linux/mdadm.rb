@@ -105,7 +105,7 @@ Ohai.plugin(:Mdadm) do
           # gather detailed information on the array
           so = shell_out("mdadm --detail /dev/#{device}")
 
-          # if the mdadm command was sucessful pass so.stdout to create_raid_device_mash to grab the tidbits we want
+          # if the mdadm command was successful pass so.stdout to create_raid_device_mash to grab the tidbits we want
           mdadm[device] = create_raid_device_mash(so.stdout) if so.stdout
           mdadm[device]["members"] = devices[device]["active"]
           mdadm[device]["spares"] = devices[device]["spare"]

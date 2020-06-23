@@ -2,6 +2,7 @@ require "bundler/gem_tasks"
 
 begin
   require "rspec/core/rake_task"
+  require_relative "tasks/spellcheck"
 
   RSpec::Core::RakeTask.new do |t|
     t.pattern = "spec/**/*_spec.rb"

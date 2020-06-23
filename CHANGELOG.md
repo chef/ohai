@@ -1,28 +1,25 @@
 # Change Log
 
-<!-- latest_release 15.12.0 -->
-## [v15.12.0](https://github.com/chef/ohai/tree/v15.12.0) (2020-06-23)
-
-#### Merged Pull Requests
-- Bump version to 15.12 to match client [#1473](https://github.com/chef/ohai/pull/1473) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.2.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Bump version to 15.12 to match client [#1473](https://github.com/chef/ohai/pull/1473) ([tas50](https://github.com/tas50)) <!-- 15.12.0 -->
-- Make sure Darwin hosts are always mac_os_x [#1472](https://github.com/chef/ohai/pull/1472) ([tas50](https://github.com/tas50)) <!-- 15.9.3 -->
-- Remove an internal reference to blacklist [#1471](https://github.com/chef/ohai/pull/1471) ([tas50](https://github.com/tas50)) <!-- 15.9.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v15.12.0](https://github.com/chef/ohai/tree/v15.12.0) (2020-06-23)
+
+#### Merged Pull Requests
+- Remove an internal reference to blacklist [#1471](https://github.com/chef/ohai/pull/1471) ([tas50](https://github.com/tas50))
+- Make sure Darwin hosts are always mac_os_x [#1472](https://github.com/chef/ohai/pull/1472) ([tas50](https://github.com/tas50))
+- Bump version to 15.12 to match client [#1473](https://github.com/chef/ohai/pull/1473) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v15.9.1](https://github.com/chef/ohai/tree/v15.9.1) (2020-04-21)
 
 #### Merged Pull Requests
 - Make shard plugin more resilient and throw better errors [#1452](https://github.com/chef/ohai/pull/1452) ([tas50](https://github.com/tas50))
 - Use correct DMI attribute name for product name to fix Openstack detection [#1453](https://github.com/chef/ohai/pull/1453) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v15.8.0](https://github.com/chef/ohai/tree/v15.8.0) (2020-03-31)
 

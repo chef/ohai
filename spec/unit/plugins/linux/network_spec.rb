@@ -1512,8 +1512,8 @@ describe Ohai::System, "Linux Network Plugin" do
         it "expect an IPv6 next hop and not keyword inet6" do
           expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq(
             [
-              {"destination"=>"default", "family"=>"inet", "metric" => "69", "via"=>"fe80::69"},
-              {"destination"=>"fe80::/64", "family"=>"inet6", "metric"=>"256", "proto"=>"kernel"},
+              { "destination" => "default", "family" => "inet", "metric" => "69", "via" => "fe80::69" },
+              { "destination" => "fe80::/64", "family" => "inet6", "metric" => "256", "proto" => "kernel" },
             ]
           )
         end

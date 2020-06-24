@@ -105,7 +105,7 @@ Ohai.plugin(:Network) do
         route_entry = Mash.new(destination: route_dest,
                                family: family[:name])
         %w{via scope metric proto src}.each do |k|
-          if k == 'via' && route_ending =~ /\bvia\sinet6\s+([^\s]+)/
+          if k == "via" && route_ending =~ /\bvia\sinet6\s+([^\s]+)/
             route_entry[k] = $1
             next
           end

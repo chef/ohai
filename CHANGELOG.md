@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.2.2 -->
-## [v16.2.2](https://github.com/chef/ohai/tree/v16.2.2) (2020-06-30)
+<!-- latest_release 16.2.3 -->
+## [v16.2.3](https://github.com/chef/ohai/tree/v16.2.3) (2020-06-30)
 
 #### Merged Pull Requests
-- Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh))
+- Linux network plugin: Handle IPv6 next hops for IPv4 routes [#1475](https://github.com/chef/ohai/pull/1475) ([cooperlees](https://github.com/cooperlees))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.2.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Linux network plugin: Handle IPv6 next hops for IPv4 routes [#1475](https://github.com/chef/ohai/pull/1475) ([cooperlees](https://github.com/cooperlees)) <!-- 16.2.3 -->
 - Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh)) <!-- 16.2.2 -->
 <!-- release_rollup -->
 

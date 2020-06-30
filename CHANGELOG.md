@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.2.2 -->
+## [v16.2.2](https://github.com/chef/ohai/tree/v16.2.2) (2020-06-30)
+
+#### Merged Pull Requests
+- Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.2.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh)) <!-- 16.2.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

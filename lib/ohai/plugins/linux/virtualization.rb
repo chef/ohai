@@ -190,8 +190,11 @@ Ohai.plugin(:Virtualization) do
     # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
     if File.exist?("/proc/self/cgroup")
       cgroup_content = File.read("/proc/self/cgroup")
-      if cgroup_content =~ %r{^\d+:[^:]+:/(lxc|docker)/.+$} ||
-          cgroup_content =~ %r{^\d+:[^:]+:/[^/]+/(lxc|docker)-?.+$}
+      # These two REs catch many different examples. Here's a specific one
+      # from when it is docker and there is no subsystem name.
+      # https://rubular.com/r/dV13hiU9KxmiWB
+      if cgroup_content =~ %r{^\d+:[^:]*:/(lxc|docker)/.+$} ||
+          cgroup_content =~ %r{^\d+:[^:]*:/[^/]+/(lxc|docker)-?.+$}
         logger.trace("Plugin Virtualization: /proc/self/cgroup indicates #{$1} container. Detecting as #{$1} guest")
         virtualization[:system] = $1
         virtualization[:role] = "guest"

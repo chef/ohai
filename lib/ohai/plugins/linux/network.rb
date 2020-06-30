@@ -108,6 +108,8 @@ Ohai.plugin(:Network) do
           # http://rubular.com/r/pwTNp65VFf
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
         end
+        # https://rubular.com/r/k1sMrRn5yLjgVi
+        route_entry["via"] = $1 if route_ending =~ /\bvia\s+inet6\s+([^\s]+)/
 
         # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
         # don't report the route entry if the src address isn't set on the node

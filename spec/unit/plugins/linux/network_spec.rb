@@ -1500,6 +1500,24 @@ describe Ohai::System, "Linux Network Plugin" do
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["flags"]).to eq([ "REORDER_HDR" ])
         end
       end
+
+      # Test we can handle IPv4 with inet6 IPv6 next hops
+      describe "using IPv6 next hops for IPv4 routes" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default via inet6 fe80::69 dev eth0 metric 69
+          EOM
+        end
+
+        it "expect an IPv6 next hop and not keyword inet6" do
+          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq(
+            [
+              { "destination" => "default", "family" => "inet", "metric" => "69", "via" => "fe80::69" },
+              { "destination" => "fe80::/64", "family" => "inet6", "metric" => "256", "proto" => "kernel" },
+            ]
+          )
+        end
+      end
     end
   end
 end

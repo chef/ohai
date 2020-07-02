@@ -25,13 +25,6 @@ Ohai.plugin(:NetworkAddresses) do
 
   depends "network/interfaces"
 
-  # Try to u32 an IPv4 and fallback to u128 if it fails before throwing
-  def int_an_ip(ipaddress)
-    ipaddress.to_u32
-  rescue NoMethodError
-    ipaddress.to_u128
-  end
-
   # from interface data create array of hashes with ipaddress, scope, and iface
   # sorted by scope, prefixlen and then ipaddress where longest prefixes first
   def sorted_ips(family = "inet")
@@ -61,7 +54,7 @@ Ohai.plugin(:NetworkAddresses) do
     ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope]) || 999999 ),
         128 - v[:ipaddress].prefix.to_i,
-        int_an_ip(v[:ipaddress]),
+        ipaddress.respond_to?(:to_u32) ? ipaddress.to_u32 : ipaddress.to_u128,
       ]
     end
   end

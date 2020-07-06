@@ -54,7 +54,7 @@ Ohai.plugin(:NetworkAddresses) do
     ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope]) || 999999 ),
         128 - v[:ipaddress].prefix.to_i,
-        v[:ipaddress].respond_to?(:to_u32) ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128,
+        v[:ipaddress].to_i,
       ]
     end
   end

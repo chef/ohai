@@ -19,7 +19,7 @@
 module Ohai
   module Util
     module Win32
-      if RUBY_PLATFORM =~ /mswin|mingw|windows/
+      if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
         require "ffi" unless defined?(FFI)
 

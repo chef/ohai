@@ -41,7 +41,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_vendor") =~ /Amazon/
+    if /Amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_vendor"))
       logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
@@ -56,7 +56,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_version") =~ /amazon/
+    if /amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_version"))
       logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else
@@ -68,7 +68,7 @@ Ohai.plugin(:EC2) do
   # looks for a xen UUID that starts with ec2 from within the Linux sys tree
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if file_val_if_exists("/sys/hypervisor/uuid") =~ /^ec2/
+    if /^ec2/.match?(file_val_if_exists("/sys/hypervisor/uuid"))
       logger.trace("Plugin EC2: has_ec2_xen_uuid? == true")
       return true
     end
@@ -81,10 +81,10 @@ Ohai.plugin(:EC2) do
   # linux hosts
   # @return [Boolean] do we have a Xen Identifying Number or not?
   def has_ec2_identifying_number?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
       require "wmi-lite/wmi"
       wmi = WmiLite::Wmi.new
-      if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
+      if /^ec2/.match?(wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"])
         logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
         true
       end

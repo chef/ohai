@@ -136,8 +136,8 @@ module Ohai
     private
 
     def normalize_and_validate(attribute)
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if attribute =~ %r{//+}
-      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if attribute =~ %r{/$}
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains duplicate '/' characters: #{attribute}" if %r{//+}.match?(attribute)
+      raise Ohai::Exceptions::AttributeSyntaxError, "Attribute contains a trailing '/': #{attribute}" if %r{/$}.match?(attribute)
 
       parts = attribute.split("/")
       parts.shift if parts.length != 0 && parts[0].length == 0 # attribute begins with a '/'

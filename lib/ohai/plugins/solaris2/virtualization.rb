@@ -38,7 +38,7 @@ Ohai.plugin(:Virtualization) do
     psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
     if File.exist?(psrinfo_path)
       so = shell_out("#{psrinfo_path} -pv")
-      if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+      if /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/.match?(so.stdout)
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"

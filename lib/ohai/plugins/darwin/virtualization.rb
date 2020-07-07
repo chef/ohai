@@ -82,7 +82,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:parallels] = "host"
     elsif ioreg_exists?
       so = shell_out("ioreg -l")
-      if so.stdout =~ /pci1ab8,4000/
+      if /pci1ab8,4000/.match?(so.stdout)
         virtualization[:system] = "parallels"
         virtualization[:role] = "guest"
         virtualization[:systems][:parallels] = "guest"

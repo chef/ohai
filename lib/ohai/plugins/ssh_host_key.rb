@@ -51,7 +51,7 @@ Ohai.plugin(:SSHHostKey) do
     if sshd_config
       File.open(sshd_config) do |conf|
         conf.each_line do |line|
-          if line =~ /^hostkey\s/i
+          if /^hostkey\s/i.match?(line)
             pub_file = "#{line.split[1]}.pub"
             content = IO.read(pub_file).split
             key_type, key_subtype = extract_keytype?(content)

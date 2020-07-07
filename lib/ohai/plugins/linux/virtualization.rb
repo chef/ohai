@@ -59,7 +59,7 @@ Ohai.plugin(:Virtualization) do
 
       # This file should exist on most Xen systems, normally empty for guests
       if File.exist?("/proc/xen/capabilities")
-        if File.read("/proc/xen/capabilities") =~ /control_d/i
+        if /control_d/i.match?(File.read("/proc/xen/capabilities"))
           logger.trace("Plugin Virtualization: /proc/xen/capabilities contains control_d. Detecting as Xen host")
           virtualization[:role] = "host"
           virtualization[:systems][:xen] = "host"
@@ -70,12 +70,12 @@ Ohai.plugin(:Virtualization) do
     # Detect Virtualbox from kernel module
     if File.exist?("/proc/modules")
       modules = File.read("/proc/modules")
-      if modules =~ /^vboxdrv/
+      if /^vboxdrv/.match?(modules)
         logger.trace("Plugin Virtualization: /proc/modules contains vboxdrv. Detecting as vbox host")
         virtualization[:system] = "vbox"
         virtualization[:role] = "host"
         virtualization[:systems][:vbox] = "host"
-      elsif modules =~ /^vboxguest/
+      elsif /^vboxguest/.match?(modules)
         logger.trace("Plugin Virtualization: /proc/modules contains vboxguest. Detecting as vbox guest")
         virtualization[:system] = "vbox"
         virtualization[:role] = "guest"
@@ -93,7 +93,7 @@ Ohai.plugin(:Virtualization) do
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     if File.exist?("/proc/cpuinfo")
-      if File.read("/proc/cpuinfo") =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+      if /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/.match?(File.read("/proc/cpuinfo"))
         logger.trace("Plugin Virtualization: /proc/cpuinfo lists a KVM paravirt CPU string. Detecting as kvm guest")
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
@@ -105,7 +105,7 @@ Ohai.plugin(:Virtualization) do
     # guests will have the hypervisor cpu feature that hosts don't have
     if File.exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
-      if File.read("/proc/cpuinfo") =~ /hypervisor/
+      if /hypervisor/.match?(File.read("/proc/cpuinfo"))
         logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
@@ -199,12 +199,12 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif File.read("/proc/1/environ") =~ /container=lxc/
+      elsif /container=lxc/.match?(File.read("/proc/1/environ"))
         logger.trace("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
-      elsif File.read("/proc/1/environ") =~ /container=systemd-nspawn/
+      elsif /container=systemd-nspawn/.match?(File.read("/proc/1/environ"))
         logger.trace("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"

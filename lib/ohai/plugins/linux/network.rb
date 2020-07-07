@@ -78,7 +78,7 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
-      if line =~ /\\/
+      if /\\/.match?(line)
         parts = line.split('\\')
         route_dest = parts.shift.strip
         route_endings = parts
@@ -191,11 +191,11 @@ Ohai.plugin(:Network) do
         next if line.start_with?("Ring parameters for")
         next if line.strip.nil?
 
-        if line =~ /Pre-set maximums/
+        if /Pre-set maximums/.match?(line)
           type = "max"
           next
         end
-        if line =~ /Current hardware settings/
+        if /Current hardware settings/.match?(line)
           type = "current"
           next
         end
@@ -224,11 +224,11 @@ Ohai.plugin(:Network) do
         next if line.start_with?("Channel parameters for")
         next if line.strip.nil?
 
-        if line =~ /Pre-set maximums/
+        if /Pre-set maximums/.match?(line)
           type = "max"
           next
         end
-        if line =~ /Current hardware settings/
+        if /Current hardware settings/.match?(line)
           type = "current"
           next
         end
@@ -308,7 +308,7 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int] ||= Mash.new
       end
 
-      if line =~ /^\s+(ip6tnl|ipip)/
+      if /^\s+(ip6tnl|ipip)/.match?(line)
         iface[tmp_int][:tunnel_info] = {}
         words = line.split
         words.each_with_index do |word, index|

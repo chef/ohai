@@ -48,7 +48,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def has_rackspace_manufacturer?
-    return false unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    return false unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
 
     require "wmi-lite/wmi"
     wmi = WmiLite::Wmi.new
@@ -102,7 +102,7 @@ Ohai.plugin(:Rackspace) do
     so = shell_out("xenstore-ls vm-data/provider_data")
     if so.exitstatus == 0
       so.stdout.split("\n").each do |line|
-        rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
+        rackspace[:region] = line.split[2].delete('\"') if /^region/.match?(line)
       end
     end
   rescue Ohai::Exceptions::Exec

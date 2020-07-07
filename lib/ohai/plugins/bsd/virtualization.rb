@@ -76,7 +76,7 @@ Ohai.plugin(:Virtualization) do
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out("sysctl -n hw.model")
-    if so.stdout =~ /QEMU Virtual CPU|KVM processor/
+    if /QEMU Virtual CPU|KVM processor/.match?(so.stdout)
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
@@ -96,7 +96,7 @@ Ohai.plugin(:Virtualization) do
                    "xen"
                  when /kvm/
                    so = shell_out("sysctl -n kern.hostuuid")
-                   so.stdout =~ /^ec2/ ? "amazonec2" : "kvm"
+                   /^ec2/.match?(so.stdout) ? "amazonec2" : "kvm"
                  when /bhyve/
                    "bhyve"
                  end

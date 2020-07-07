@@ -30,7 +30,7 @@ module Ohai
         options = options.dup
         # unless specified by the caller timeout after configured timeout (default 30 seconds)
         options[:timeout] ||= Ohai::Config.ohai[:shellout_timeout]
-        unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+        unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
           options[:env] = options.key?(:env) ? options[:env].dup : {}
           options[:env]["PATH"] ||= ((ENV["PATH"] || "").split(":") + %w{/usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin}).join(":")
         end

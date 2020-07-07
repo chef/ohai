@@ -42,7 +42,7 @@ Ohai.plugin(:Eucalyptus) do
   def has_euca_mac?
     network[:interfaces].each_value do |iface|
       mac = get_mac_address(iface[:addresses])
-      if mac =~ /^[dD]0:0[dD]:/
+      if /^[dD]0:0[dD]:/.match?(mac)
         logger.trace("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")
         return true
       end

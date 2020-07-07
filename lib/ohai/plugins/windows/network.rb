@@ -171,7 +171,7 @@ Ohai.plugin(:Network) do
           iface[cint][:addresses][ip] = Mash.new(prefixlen: ip2.prefix)
           if ip2.ipv6?
             iface[cint][:addresses][ip][:family] = "inet6"
-            iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
+            iface[cint][:addresses][ip][:scope] = "Link" if /^fe80/i.match?(ip)
           else
             if iface[cint][:configuration][:ip_subnet]
               iface[cint][:addresses][ip][:netmask] = ip2.netmask.to_s

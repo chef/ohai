@@ -195,7 +195,7 @@ Ohai.plugin(:Platform) do
     elsif File.exist?("/etc/debian_version")
       # Ubuntu and Debian both have /etc/debian_version
       # Ubuntu should always have a working lsb, debian does not by default
-      if lsb[:id] =~ /Ubuntu/i
+      if /Ubuntu/i.match?(lsb[:id])
         platform "ubuntu"
         platform_version lsb[:release]
       else
@@ -222,7 +222,7 @@ Ohai.plugin(:Platform) do
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
       platform_version suse_version
-      if suse_release =~ /^openSUSE/
+      if /^openSUSE/.match?(suse_release)
         # opensuse releases >= 42 are openSUSE Leap
         if platform_version.to_i < 42
           platform "opensuse"
@@ -256,23 +256,23 @@ Ohai.plugin(:Platform) do
       platform_version shell_out("/bin/uname -r").stdout.strip
     elsif File.exist?("/usr/lib/os-release")
       contents = File.read("/usr/lib/os-release")
-      if /clear-linux-os/ =~ contents # Clear Linux https://clearlinux.org/
+      if /clear-linux-os/.match?(contents) # Clear Linux https://clearlinux.org/
         platform "clearlinux"
         platform_version contents[/VERSION_ID=(\d+)/, 1]
       end
-    elsif lsb[:id] =~ /RedHat/i
+    elsif /RedHat/i.match?(lsb[:id])
       platform "redhat"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /Amazon/i
+    elsif /Amazon/i.match?(lsb[:id])
       platform "amazon"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /ScientificSL/i
+    elsif /ScientificSL/i.match?(lsb[:id])
       platform "scientific"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /XenServer/i
+    elsif /XenServer/i.match?(lsb[:id])
       platform "xenserver"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /XCP/i
+    elsif /XCP/i.match?(lsb[:id])
       platform "xcp"
       platform_version lsb[:release]
     elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties

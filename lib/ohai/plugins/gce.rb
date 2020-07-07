@@ -27,7 +27,7 @@ Ohai.plugin(:GCE) do
   # this works even if the system lacks dmidecode use by the Dmi plugin
   # @return [Boolean] do we have Google Compute Engine DMI data?
   def has_gce_dmi?
-    if file_val_if_exists("/sys/class/dmi/id/product_name") =~ /Google Compute Engine/
+    if /Google Compute Engine/.match?(file_val_if_exists("/sys/class/dmi/id/product_name"))
       logger.trace("Plugin GCE: has_gce_dmi? == true")
       true
     else
@@ -48,7 +48,7 @@ Ohai.plugin(:GCE) do
   # looks at the Manufacturer and Model WMI values to see if they starts with Google.
   # @return [Boolean] Are the manufacturer and model Google?
   def has_gce_system_info?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
       require "wmi-lite/wmi"
       wmi = WmiLite::Wmi.new
       computer_system = wmi.first_of("Win32_ComputerSystem")

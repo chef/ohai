@@ -51,7 +51,7 @@ Ohai.plugin(:VMware) do
         # to attribute "vmware[:<parameter>]"
         %w{hosttime speed sessionid balloon swap memlimit memres cpures cpulimit}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} stat #{param}")
-          if vmware[param] =~ /UpdateInfo failed/
+          if /UpdateInfo failed/.match?(vmware[param])
             vmware[param] = nil
           end
         end

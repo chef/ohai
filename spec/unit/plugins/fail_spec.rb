@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
 # Author:: Claire McQuin (claire@chef.io)

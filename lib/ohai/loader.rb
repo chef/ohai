@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Claire McQuin (<claire@chef.io>)
 # Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
@@ -98,7 +99,7 @@ module Ohai
     # @return [Object] class object for the ohai plugin defined in the file
     def load_plugin_class(plugin_path)
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
-      contents = ""
+      contents = String.new
       begin
         logger.trace("Loading plugin at #{plugin_path}")
         contents << IO.read(plugin_path)

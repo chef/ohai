@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Daniel DeLeo <dan@kallistec.com>
 # Copyright:: Copyright (c) 2009 Daniel DeLeo

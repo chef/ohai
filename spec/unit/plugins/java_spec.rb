@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Theodore Nordsieck (<theo@chef.io>)

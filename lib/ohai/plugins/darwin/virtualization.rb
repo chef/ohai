@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Pavel Yudin (<pyudin@parallels.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)

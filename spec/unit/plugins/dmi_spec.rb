@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
@@ -19,7 +20,7 @@
 require "spec_helper"
 
 # NOTE: These data lines must be prefixed with one or two tabs, not spaces.
-DMI_OUT = <<~EOS.freeze
+DMI_OUT = <<~EOS
   # dmidecode 2.9
   SMBIOS 2.4 present.
   98 structures occupying 3699 bytes.

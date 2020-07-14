@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)

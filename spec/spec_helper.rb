@@ -1,7 +1,6 @@
-require "rspec/collection_matchers"
+# frozen_string_literal: true
 
-# require 'pry-debugger'
-# require 'pry-stack_explorer'
+require "rspec/collection_matchers"
 
 $:.unshift(File.expand_path("../..", __FILE__))
 $:.unshift(File.dirname(__FILE__) + "/../lib")

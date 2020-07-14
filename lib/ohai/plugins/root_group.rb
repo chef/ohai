@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joseph Anthony Pasquale Holsten (<joseph@josephholsten.com>)
 # Copyright:: Copyright (c) 2013 Joseph Anthony Pasquale Holsten

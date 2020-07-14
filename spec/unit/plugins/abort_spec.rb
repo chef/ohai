@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Salim Alam (salam@chef.io)
 # Copyright:: Copyright (c) 2015 Chef Software Inc.

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jonathan Amiez (<jonathan.amiez@gmail.com>)
 # License:: Apache License, Version 2.0
@@ -20,8 +21,8 @@ module Ohai
   module Mixin
     module ScalewayMetadata
 
-      SCALEWAY_METADATA_ADDR ||= "169.254.42.42".freeze
-      SCALEWAY_METADATA_URL ||= "/conf?format=json".freeze
+      SCALEWAY_METADATA_ADDR ||= "169.254.42.42"
+      SCALEWAY_METADATA_URL ||= "/conf?format=json"
 
       # @return [Net::HTTP] net/http object without timeout set to 6
       def http_client

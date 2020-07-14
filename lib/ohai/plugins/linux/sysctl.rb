@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joshua Miller <joshmiller@fb.com>
 # Copyright:: Copyright (c) 2019 Facebook

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Serdar Sutay (<serdar@chef.io>)
 # Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.

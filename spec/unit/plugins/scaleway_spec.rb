@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jonathan Amiez (<jonathan.amiez@gmail.com>)
 # License:: Apache License, Version 2.0

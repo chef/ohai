@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Jennifer Marie Howard-Brown <jm.howardbrown@gmail.com>
 #  License:: Apache License, Version 2.0

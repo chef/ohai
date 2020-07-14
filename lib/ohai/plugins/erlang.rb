@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joe Williams (<joe@joetify.com>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.

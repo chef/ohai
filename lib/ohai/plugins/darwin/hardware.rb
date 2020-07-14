@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Nate Walck (<nate.walck@gmail.com>)
 # Copyright:: Copyright (c) 2016-present Facebook, Inc.

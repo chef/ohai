@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+#
 # Author:: Bryan McLellan <btm@loftninjas.org>
 #
 # Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.

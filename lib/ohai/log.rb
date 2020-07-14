@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) 2008-2017, Chef Software Inc.

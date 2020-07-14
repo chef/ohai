@@ -10,3 +10,7 @@ Layout/IndentationStyle:
   Exclude:
     - "lib/ohai/plugins/mono.rb"
     - "lib/ohai/plugins/darwin/hardware.rb"
+
+# reduces memory usage
+Style/FrozenStringLiteralComment:
+  Enabled: true

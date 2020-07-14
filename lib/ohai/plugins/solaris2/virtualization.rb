@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)

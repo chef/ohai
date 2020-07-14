@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
 # Author:: Theodore Nordsieck (<theo@chef.io>)

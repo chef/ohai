@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Nathan L Smith (<nlloyds@gmail.com>)
 # Copyright:: Copyright (c) 2013-2018 Chef Software, Inc.

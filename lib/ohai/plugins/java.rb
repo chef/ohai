@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<bb@chef.io>)
 # Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.

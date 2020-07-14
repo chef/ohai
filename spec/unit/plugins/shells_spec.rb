@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith (<tsmith@chef.io>)
 # License:: Apache License, Version 2.0

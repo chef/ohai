@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Matthew Kent (<mkent@magoazul.com>)
 # Copyright:: Copyright (c) 2011-2018, Chef Software Inc.

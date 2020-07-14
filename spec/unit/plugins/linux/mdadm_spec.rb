@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Tim Smith <tsmith@limelight.com>
 #  Copyright:: Copyright (c) 2014 Limelight Networks, Inc.

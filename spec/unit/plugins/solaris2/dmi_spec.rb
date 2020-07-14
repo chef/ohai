@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Thom May (<thom@chef.io>)
 # Copyright:: Copyright (c) 2015 Chef Software
@@ -18,7 +19,7 @@
 
 require "spec_helper"
 
-SOLARIS_DMI_OUT = <<~EOS.freeze
+SOLARIS_DMI_OUT = <<~EOS
   ID    SIZE TYPE
   0     64   SMB_TYPE_BIOS (type 0) (BIOS information)
 

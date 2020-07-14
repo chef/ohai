@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Aliasgar Batterywala (<aliasgar.batterywala@msystechnologies.com>)
 # Copyright:: Copyright (c) 2016 Chef Software, Inc.

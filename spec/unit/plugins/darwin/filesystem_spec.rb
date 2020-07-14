@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Phil Dibowitz (<phil@ipom.com>)
 # Copyright:: Copyright (c) 2015 Facebook, Inc.

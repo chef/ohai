@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Dylan Page (<dpage@digitalocean.com>)
 # Author:: Stafford Brunk (<stafford.brunk@gmail.com>)

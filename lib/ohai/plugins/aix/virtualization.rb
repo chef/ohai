@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Julian C. Dunn (<jdunn@chef.io>)
 # Author:: Isa Farnik (<isa@chef.io>)

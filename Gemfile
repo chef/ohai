@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 source "https://rubygems.org"
 
 gemspec
 
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
-  gem "chefstyle", git: "https://github.com/chef/chefstyle.git", branch: "master"
+  gem "chefstyle", "= 1.1.3"
   gem "rake", ">= 10.1.0"
   gem "rspec-core", "~> 3.0"
   gem "rspec-expectations", "~> 3.0"

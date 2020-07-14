@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 Ohai.plugin(:Passwd) do
   require "etc" unless defined?(Etc)

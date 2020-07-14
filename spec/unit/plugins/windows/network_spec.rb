@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Nimesh Pathi <nimesh.patni@msystechnologies.com>
 #  Copyright:: Copyright (c) 2018 Chef Software, Inc.

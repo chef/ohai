@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)

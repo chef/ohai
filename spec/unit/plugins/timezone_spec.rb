@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: John Bellone (<jbellone@bloomberg.net>)
 # License:: Apache License, Version 2.0

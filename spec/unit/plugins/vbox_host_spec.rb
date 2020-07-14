@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+#
 # Author:: "Joshua Colson" <joshua.colson@gmail.com>
 # License:: Apache License, Version 2.0
 #

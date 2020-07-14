@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
 # Author:: Isa Farnik (<isa@chef.io>)

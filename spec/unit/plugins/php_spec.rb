@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Author:: Theodore Nordsieck (<theo@chef.io>)

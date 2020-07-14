@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+#
 # Author:: Christopher M Luciano (<cmlucian@us.ibm.com>)
 # License:: Apache License, Version 2.0
 #
@@ -21,7 +23,7 @@ Ohai.plugin(:Rust) do
 
     so = shell_out("rustc --version")
     # Sample output:
-    # rustc 1.7.0
+    # rustc 1.44.1
     if so.exitstatus == 0
       rust = Mash.new
       rust[:version] = so.stdout.split[1]

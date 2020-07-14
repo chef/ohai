@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Laurent Desarmes <laurent.desarmes@u-picardie.fr>
 #  Copyright:: Copyright (c) 2012 Laurent Desarmes

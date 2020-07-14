@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jay Vana <jsvana@fb.com>
 # Author:: Davide Cavalca <dcavalca@fb.com>

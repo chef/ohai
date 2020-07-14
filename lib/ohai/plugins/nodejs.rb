@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
 # Copyright:: Copyright (c) 2012 Jacques Marneweck.  All rights reserved.

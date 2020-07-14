@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Pete Higgins (pete@peterhiggins.org)
 # Copyright:: Copyright (c) Chef Software Inc.

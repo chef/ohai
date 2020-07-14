@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Caleb Tennis <caleb.tennis@gmail.com>
 #  Author:: Chris Read <chris.read@gmail.com>

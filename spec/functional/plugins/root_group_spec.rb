@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Edwards (<adamed@chef.io>)
 #

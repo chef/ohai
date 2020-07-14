@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan <btm@chef.io>
 # Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.

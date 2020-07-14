@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module HardwareSystemProfilerOutput
-  HARDWARE = <<~HARDWARE_OUTPUT.freeze
+  HARDWARE = <<~HARDWARE_OUTPUT
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -289,7 +291,7 @@ module HardwareSystemProfilerOutput
     </plist>
   HARDWARE_OUTPUT
 
-  STORAGE = <<~STORAGE_OUTPUT.freeze
+  STORAGE = <<~STORAGE_OUTPUT
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
@@ -600,7 +602,7 @@ module HardwareSystemProfilerOutput
     </plist>
   STORAGE_OUTPUT
 
-  POWER = <<~POWER_OUTPUT.freeze
+  POWER = <<~POWER_OUTPUT
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">

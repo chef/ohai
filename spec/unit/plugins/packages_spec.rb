@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+#
 # Author:: Christopher M. Luciano (<cmlucian@us.ibm.com>)
 # Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
 # Copyright (C) 2015 IBM Corp.

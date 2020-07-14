@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jason J. W. Williams (williamsjj@digitar.com)
 # Copyright:: Copyright (c) 2011-2017 Chef Software, Inc.

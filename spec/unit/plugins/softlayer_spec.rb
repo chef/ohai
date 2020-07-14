@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Alexey Karpik <alexey.karpik@rightscale.com>
 # Author:: Peter Schroeter <peter.schroeter@rightscale.com>

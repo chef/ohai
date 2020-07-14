@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author:: Lamont Granquist (<lamont@chef.io>)
 #
 # Copyright:: Copyright (c) 2013-14 Chef Software, Inc.

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
 # Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.

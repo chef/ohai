@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Isa Farnik (<isa@chef.io>)
 # Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.

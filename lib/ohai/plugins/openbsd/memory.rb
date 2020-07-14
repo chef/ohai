@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Mathieu Sauve-Frankel <msf@kisoku.net>
 # Copyright:: Copyright (c) 2009 Bryan McLellan

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Cary Penniman (<cary@rightscale.com>)
 # License:: Apache License, Version 2.0

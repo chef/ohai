@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Claire McQuin (<claire@chef.io>)
 # Copyright:: Copyright (c) 2013-2019, Chef Software Inc.

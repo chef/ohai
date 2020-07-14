@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # License:: Apache License, Version 2.0
 # Copyright:: 2019 Chef Software, Inc.

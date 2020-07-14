@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kris Shannon <k.shannon@amaze.com.au>
 # Copyright:: Copyright (c) 2019 Amaze Communication.

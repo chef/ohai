@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith (tsmith@chef.io)
 # Copyright:: Copyright (c) 2018 Chef Software, Inc.

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 #  Author:: Daniel DeLeo <dan@chef.io>
 #  Copyright:: Copyright (c) 2010-2018, Chef Software Inc.

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Copyright:: Copyright (c) 2010 VMware, Inc.
@@ -18,7 +19,7 @@
 
 require "spec_helper"
 
-C_GCC = <<~EOF.freeze
+C_GCC = <<~EOF
   Using built-in specs.
   COLLECT_GCC=gcc
   COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper
@@ -28,7 +29,7 @@ C_GCC = <<~EOF.freeze
   gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4)
 EOF
 
-C_GLIBC = <<~EOF.freeze
+C_GLIBC = <<~EOF
   GNU C Library stable release version 2.5, by Roland McGrath et al.
   Copyright (C) 2006 Free Software Foundation, Inc.
   This is free software; see the source for copying conditions.
@@ -50,23 +51,23 @@ C_GLIBC = <<~EOF.freeze
   <http://www.gnu.org/software/libc/bugs.html>.
 EOF
 
-C_CL = <<~EOF.freeze
+C_CL = <<~EOF
   Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 14.00.50727.762 for 80x86
   Copyright (C) Microsoft Corporation.  All rights reserved.
 EOF
 
-C_VS = <<~EOF.freeze
+C_VS = <<~EOF
 
   Microsoft (R) Visual Studio Version 8.0.50727.762.
   Copyright (C) Microsoft Corp 1984-2005. All rights reserved.
 EOF
 
-C_XLC = <<~EOF.freeze
+C_XLC = <<~EOF
   IBM XL C/C++ Enterprise Edition for AIX, V9.0
   Version: 09.00.0000.0000
 EOF
 
-C_SUN = <<~EOF.freeze
+C_SUN = <<~EOF
   cc: Sun C 5.8 Patch 121016-06 2007/08/01
 EOF
 

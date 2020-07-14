@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author: sawanoboriyu@higanworks.com
 # Copyright (C) 2014 HiganWorks LLC

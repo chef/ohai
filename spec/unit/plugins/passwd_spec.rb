@@ -56,7 +56,7 @@ describe Ohai::System, "plugin etc", :unix_only do
   if "".respond_to?(:force_encoding)
     it "sets the encoding of strings to the default external encoding" do
       fields = ["root", 1, 1, "/root", "/bin/zsh", "BOFH"]
-      fields.each { |f| f.force_encoding(Encoding::ASCII_8BIT) if f.respond_to?(:force_encoding) }
+      fields.each { |f| f.dup.force_encoding(Encoding::ASCII_8BIT) if f.respond_to?(:force_encoding) }
       allow(Etc).to receive(:passwd).and_yield(PasswdEntry.new(*fields))
       plugin.run
       root = plugin[:etc][:passwd]["root"]

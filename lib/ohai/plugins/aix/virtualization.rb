@@ -2,7 +2,7 @@
 #
 # Author:: Julian C. Dunn (<jdunn@chef.io>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,7 +91,7 @@ Ohai.plugin(:Virtualization) do
                       }
               wpars[wpar_name][title][key] = value
             when "security settings"
-              privileges ||= ""
+              privileges = String.new
               wpars[wpar_name][title]["Privileges"] ||= []
 
               if /^Privileges/.match?(line)
@@ -140,7 +140,8 @@ Ohai.plugin(:Virtualization) do
         ]
 
         top_level.each do |attribute|
-          evalstr = "wpars['#{wpar_name}']"
+          evalstr = String.new
+          evalstr << "wpars['#{wpar_name}']"
           breadcrumb = attribute.split(".")
           breadcrumb.each do |node|
             evalstr << "[\'#{node}\']"

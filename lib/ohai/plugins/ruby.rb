@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,7 @@ Ohai.plugin(:Ruby) do
 
   def run_ruby(command)
     cmd = "ruby -e \"require 'rbconfig'; #{command}\""
-    so = shell_out(cmd)
-    so.stdout.strip
+    shell_out(cmd).stdout.strip
   end
 
   collect_data do
@@ -47,13 +46,13 @@ Ohai.plugin(:Ruby) do
     }
 
     # Create a query string from above hash
-    env_string = ""
-    values.each_key do |v|
-      env_string << "#{v}=\#{#{values[v]}},"
+    env_string = []
+    values.each_pair do |k,v|
+      env_string << "#{k}=\#{#{v}}"
     end
 
     # Query the system ruby
-    result = run_ruby "puts %Q(#{env_string})"
+    result = run_ruby "puts %Q(#{env_string.join(',')})"
 
     # Parse results to plugin hash
     result.split(",").each do |entry|

@@ -10,7 +10,7 @@ Ohai.plugin(:Passwd) do
   # @return [String]
   #
   def fix_encoding(str)
-    str.force_encoding(Encoding.default_external) if str.respond_to?(:force_encoding)
+    str.dup.force_encoding(Encoding.default_external) if str.respond_to?(:force_encoding)
     str
   end
 

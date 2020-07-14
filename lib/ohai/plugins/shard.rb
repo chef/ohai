@@ -65,7 +65,7 @@ Ohai.plugin(:ShardSeed) do
   # under their collect_data block.
   def create_seed(&block)
     sources = Ohai.config[:plugin][:shard_seed][:sources] || default_sources
-    data = ""
+    data = String.new
     sources.each do |src|
       data << case src
               when :fqdn

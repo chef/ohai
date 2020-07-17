@@ -56,6 +56,12 @@ class Ohai::Application
     description: "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     proc: nil
 
+  option :target,
+    short: "-t TARGET",
+    long: "--target TARGET",
+    description: "Target a remote location to invoke Ohai",
+    on: :on
+
   option :help,
     short: "-h",
     long: "--help",

@@ -1,6 +1,6 @@
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Author:: Thomas Heinen <theinen@tecracer.de>
+# Copyright:: Copyright (c) 2020 tecRacer Consulting.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,14 +16,21 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family", "family_hierarchy"
-  depends "os", "os_version"
+Ohai.plugin(:OhaiRemote) do
+  provides "ohai_remote"
 
-  collect_data(:default) do
-    platform os unless attribute?("platform")
-    platform_version os_version unless attribute?("platform_version")
-    platform_family platform unless attribute?("platform_family")
-    family_hierarchy os_hierarchy
+  collect_data do
+    if remote_ohai?
+      logger.trace("Plugin Ohai Remote: remote_ohai? == true")
+      ohai_remote Mash.new
+
+      ohai_remote['backend'] = connection.backend_type
+      if connection.respond_to? :uri
+        ohai_remote['backend'] = connection.uri.split(':').first
+        ohai_remote['uri'] = connection.uri
+      end
+    else
+      logger.trace("Plugin Ohai Remote: remote_ohai? == false")
+    end
   end
 end

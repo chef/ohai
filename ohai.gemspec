@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ffi", "~> 1.9"
   s.add_dependency "chef-config", ">= 12.8", "< 17"
   s.add_dependency "chef-utils", ">= 16.0", "< 17"
+  s.add_dependency "train", ">= 3.3.2"
   # Note for ohai developers: If chef-config causes you grief, try:
   #     bundle install --with development
   # this should work as long as chef is a development dependency in Gemfile.

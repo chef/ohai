@@ -20,7 +20,6 @@
 #
 
 Ohai.plugin(:OS) do
-  require_relative "../mixin/os"
   provides "os", "os_version"
   depends "kernel"
 

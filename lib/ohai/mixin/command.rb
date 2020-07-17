@@ -19,7 +19,6 @@
 
 require_relative "../exception"
 require_relative "../log"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 
 module Ohai
   module Mixin
@@ -27,25 +26,21 @@ module Ohai
       # DISCLAIMER: Logging only works in the context of a plugin!!
       # accept a command and any of the mixlib-shellout options
       def shell_out(cmd, **options)
-        options = options.dup
-        # unless specified by the caller timeout after configured timeout (default 30 seconds)
-        options[:timeout] ||= Ohai::Config.ohai[:shellout_timeout]
-        unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
-          options[:env] = options.key?(:env) ? options[:env].dup : {}
-          options[:env]["PATH"] ||= ((ENV["PATH"] || "").split(":") + %w{/usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin}).join(":")
-        end
-        so = Mixlib::ShellOut.new(cmd, options)
-        begin
-          so.run_command
-          logger.trace("Plugin #{name}: ran '#{cmd}' and returned #{so.exitstatus}")
-          so
-        rescue Errno::ENOENT => e
-          logger.trace("Plugin #{name}: ran '#{cmd}' and failed #{e.inspect}")
-          raise Ohai::Exceptions::Exec, e
-        rescue Mixlib::ShellOut::CommandTimeout => e
-          logger.trace("Plugin #{name}: ran '#{cmd}' and timed out after #{options[:timeout]} seconds")
-          raise Ohai::Exceptions::Exec, e
-        end
+        execution = connection.run_command(cmd)
+        logger.trace("Plugin #{name}: ran '#{cmd}' and returned #{execution.exit_status}")
+
+        OpenStruct.new({
+          stdout: execution.stdout,
+          stderr: execution.stderr,
+          exit_status: execution.exit_status,
+
+          # Compatibility for old shell_out usage
+          exitstatus: execution.exit_status,
+        })
+
+      rescue Errno::ENOENT => e
+        logger.trace("Plugin #{name}: ran '#{cmd}' and failed #{e.inspect}")
+        raise Ohai::Exceptions::Exec, e
       end
 
       module_function :shell_out

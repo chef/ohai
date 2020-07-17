@@ -16,22 +16,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Copied from chef/lib/chef/util/selinux.rb
-
 module Ohai
   module Util
     module FileHelper
       def which(cmd)
-        paths = ENV["PATH"].split(File::PATH_SEPARATOR) + [ "/bin", "/usr/bin", "/sbin", "/usr/sbin" ]
-        paths.each do |path|
-          filename = File.join(path, cmd)
-          if File.executable?(filename)
+        path_cmd = (collect_os == :windows) ? "echo %PATH%" : "echo $PATH"
+        path = connection.run_command(path_cmd).stdout
+        paths = path.split(File::PATH_SEPARATOR) + %w{/bin /usr/bin /sbin /usr/sbin}
+
+        paths.each do |pathdir|
+          filename = File.join(pathdir, cmd)
+          backend_file_stat = connection.file(filename).stat
+
+          # Train does not return stat information for Windows yet
+          next if collect_os != :windows && backend_file_stat.empty?
+
+          # Blanket accept for Windows or octal mode check for others
+          if collect_os == :windows || (backend_file_stat[:mode] & 0111) > 0
             logger.trace("Plugin #{name}: found #{cmd} at #{filename}")
             return filename
           end
         end
+
         logger.trace("Plugin #{name}: did not find #{cmd}")
         false
+      end
+
+      def file_exist?(path)
+        connection.file(path).exist?
+      end
+
+      def file_read(path)
+        connection.file(path).content
       end
     end
   end

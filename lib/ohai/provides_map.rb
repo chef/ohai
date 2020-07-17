@@ -19,7 +19,6 @@
 
 require_relative "mash"
 require_relative "exception"
-require_relative "mixin/os"
 require_relative "dsl"
 
 module Ohai

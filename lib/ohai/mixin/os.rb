@@ -23,40 +23,36 @@ module Ohai
   module Mixin
     module OS
 
-      # Using ruby configuration determine the OS we're running on
+      # Using train determine the OS we're running on
       #
       # @return [String] the OS
       def collect_os
-        case ::RbConfig::CONFIG["host_os"]
-        when /aix(.+)$/
-          "aix"
-        when /darwin(.+)$/
-          "darwin"
-        when /linux/
-          "linux"
-        when /freebsd(.+)$/
-          "freebsd"
-        when /openbsd(.+)$/
-          "openbsd"
-        when /netbsd(.*)$/
-          "netbsd"
-        when /dragonfly(.*)$/
-          "dragonflybsd"
-        when /solaris2/
-          "solaris2"
-        when /mswin|mingw32|windows/
-          # After long discussion in IRC the "powers that be" have come to a consensus
-          # that no Windows platform exists that was not based on the
-          # Windows_NT kernel, so we herby decree that "windows" will refer to all
-          # platforms built upon the Windows_NT kernel and have access to win32 or win64
-          # subsystems.
-          "windows"
-        else
-          ::RbConfig::CONFIG["host_os"]
-        end
+        # Compatibility between Train and Ohai
+        return "solaris2" if os_family == "solaris"
+
+        ohai_family = os_hierarchy & %w{aix darwin linux freebsd openbsd netbsd windows}
+        return ohai_family.first unless ohai_family.empty?
+
+        os_family
+      end
+
+      # Using train determine the os family we're running on
+      #
+      # @return [String] the OS family
+      def os_family
+        connection.os.family
+      end
+
+      # Using train determine the platform we're running on and its ancestors
+      #
+      # @return [Array] the OS family hierarchy
+      def os_hierarchy
+        connection.os.family_hierarchy
       end
 
       module_function :collect_os
+      module_function :os_family
+      module_function :os_hierarchy
     end
   end
 end

@@ -19,6 +19,7 @@
 
 require_relative "dsl"
 require "benchmark"
+require "train"
 
 module Ohai
   class Runner
@@ -32,6 +33,15 @@ module Ohai
       @failed_plugins = []
       @logger = controller.logger.with_child
       @logger.metadata = { subsystem: "runner" }
+    end
+
+    attr_writer :backend
+
+    # Active backend for execution.
+    #
+    # @return [Train::Plugins::Transport]
+    def backend
+      @backend || Train.create("local")
     end
 
     # Runs plugins and any un-run dependencies.
@@ -93,7 +103,9 @@ module Ohai
         end
 
         if dependency_providers.empty?
+          next_plugin.connection = backend.connection
           @safe_run ? next_plugin.safe_run : next_plugin.run
+
           if next_plugin.failed
             @failed_plugins << next_plugin.name
           end

@@ -22,15 +22,13 @@ require_relative "log"
 require_relative "mash"
 require_relative "runner"
 require_relative "dsl"
-require_relative "mixin/command"
-require_relative "mixin/os"
 require_relative "mixin/string"
 require_relative "mixin/constant_helper"
 require_relative "provides_map"
 require_relative "hints"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 require_relative "config"
 require "ffi_yajl" unless defined?(FFI_Yajl)
+require "cgi"
 
 module Ohai
   # The class used by Ohai::Application and Chef to actually collect data
@@ -41,6 +39,7 @@ module Ohai
     attr_reader :config
     attr_reader :provides_map
     attr_reader :logger
+    attr_writer :backend
 
     # the cli flag is used to determine if we're being constructed by
     # something like chef-client (which doesn't set this flag) and
@@ -69,6 +68,7 @@ module Ohai
 
       @loader = Ohai::Loader.new(self)
       @runner = Ohai::Runner.new(self, true)
+      @runner.backend = backend unless @backend
 
       Ohai::Hints.refresh_hints
 
@@ -103,6 +103,26 @@ module Ohai
       @loader.load_all
     end
 
+    # get backend parameters for target mode
+    #
+    # @return [Train::Transport]
+    def backend
+      @backend ||= begin
+        if config[:target].nil?
+          Train.create("local")
+        else
+          options = Train.unpack_target_from_uri(config[:target])
+          options.merge!(config)
+          options.merge!(backend_parameters)
+          options[:logger] = Ohai::Log
+
+          Train.create(options[:backend], options)
+        end
+      rescue Train::PluginLoadError => err
+        fail err.message
+      end
+    end
+
     # run all plugins or those that match the attribute filter is provided
     #
     # @param safe [Boolean]
@@ -114,6 +134,9 @@ module Ohai
         @provides_map.all_plugins(attribute_filter).each do |plugin|
           @runner.run_plugin(plugin)
         end
+
+        backend.connection.close
+
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         logger.error("Encountered error while running plugins: #{e.inspect}")
         raise
@@ -225,6 +248,17 @@ module Ohai
         end
       end
       visitor.call(@data)
+    end
+
+    # Extract additional backend parameters from Target Mode URL.
+    #
+    # @api private
+    # @return [Hash]
+    def backend_parameters
+      uri = URI.parse(config[:target])
+      return {} unless uri.query
+
+      CGI.parse(uri.query).map { |k, v| [k.to_sym, v.first] }.to_h
     end
   end
 end

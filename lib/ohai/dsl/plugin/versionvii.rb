@@ -120,10 +120,11 @@ module Ohai
 
         def run_plugin
           collector = self.class.data_collector
-          platform = collect_os
+          plugin_platforms = collector.keys
+          matched_platforms = plugin_platforms.intersection(os_hierarchy)
 
-          if collector.key?(platform)
-            instance_eval(&collector[platform])
+          if matched_platforms.any?
+            matched_platforms.each { |platform| instance_eval(&collector[platform]) }
           elsif collector.key?(:default)
             instance_eval(&collector[:default])
           else

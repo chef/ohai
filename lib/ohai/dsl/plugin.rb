@@ -23,6 +23,7 @@ require_relative "../mixin/command"
 require_relative "../mixin/seconds_to_human"
 require_relative "../hints"
 require_relative "../util/file_helper"
+require "train"
 
 module Ohai
 
@@ -90,12 +91,21 @@ module Ohai
       attr_reader :data
       attr_reader :failed
       attr_reader :logger
+      attr_writer :connection
 
       def initialize(data, logger)
         @data = data
         @logger = logger.with_child({ subsystem: "plugin", plugin: name })
         @has_run = false
         @failed = false
+      end
+
+      def connection
+        @connection ||= Train.create("local")
+      end
+
+      def remote_ohai?
+        !@connection.uri.start_with? "local"
       end
 
       def run

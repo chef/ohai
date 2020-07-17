@@ -21,9 +21,21 @@ Chef distributes ohai as a RubyGem. This README is for developers who want to mo
 - General documentation: <https://docs.chef.io/ohai.html>
 - Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom.html>
 
+## Remote Ohai
+
+Use `--target` mode to execute Ohai and collect data on external systems. For example:
+
+```shell
+ohai --target ssh://user@198.51.100.23/?key_files=/etc/chef/remote_ohai.pem
+```
+
+Remote Ohai uses Train backends, which include SSH, WinRM, Docker and local execution by default. In addition, you can use third-party Train plugins to extend support.
+
+The URL and query parameters depend on the used backend.
+
 ## Development Environment:
 
-Ohai's development dependencies should be installed with bundler. Just run `bundle install` in the root of the repo.
+Install Ohai's development dependencies with bundler. Just run `bundle install` in the root of the repository.
 
 ## Spec Testing:
 

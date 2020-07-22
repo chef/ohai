@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.2.4 -->
-## [v16.2.4](https://github.com/chef/ohai/tree/v16.2.4) (2020-07-07)
+<!-- latest_release 16.2.5 -->
+## [v16.2.5](https://github.com/chef/ohai/tree/v16.2.5) (2020-07-22)
 
 #### Merged Pull Requests
-- Use .match? when we don&#39;t need the result [#1478](https://github.com/chef/ohai/pull/1478) ([tas50](https://github.com/tas50))
+- Handle IP to int conversion for inet + inet6 [#1477](https://github.com/chef/ohai/pull/1477) ([cooperlees](https://github.com/cooperlees))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.2.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Handle IP to int conversion for inet + inet6 [#1477](https://github.com/chef/ohai/pull/1477) ([cooperlees](https://github.com/cooperlees)) <!-- 16.2.5 -->
 - Use .match? when we don&#39;t need the result [#1478](https://github.com/chef/ohai/pull/1478) ([tas50](https://github.com/tas50)) <!-- 16.2.4 -->
 <!-- release_rollup -->
 

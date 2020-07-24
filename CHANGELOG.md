@@ -1,28 +1,25 @@
 # Change Log
 
-<!-- latest_release 16.3.0 -->
-## [v16.3.0](https://github.com/chef/ohai/tree/v16.3.0) (2020-07-24)
-
-#### Merged Pull Requests
-- Readme updates [#1482](https://github.com/chef/ohai/pull/1482) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.2.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Readme updates [#1482](https://github.com/chef/ohai/pull/1482) ([tas50](https://github.com/tas50)) <!-- 16.3.0 -->
-- Handle IP to int conversion for inet + inet6 [#1477](https://github.com/chef/ohai/pull/1477) ([cooperlees](https://github.com/cooperlees)) <!-- 16.2.5 -->
-- Use .match? when we don&#39;t need the result [#1478](https://github.com/chef/ohai/pull/1478) ([tas50](https://github.com/tas50)) <!-- 16.2.4 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.3.0](https://github.com/chef/ohai/tree/v16.3.0) (2020-07-24)
+
+#### Merged Pull Requests
+- Use .match? when we don&#39;t need the result [#1478](https://github.com/chef/ohai/pull/1478) ([tas50](https://github.com/tas50))
+- Handle IP to int conversion for inet + inet6 [#1477](https://github.com/chef/ohai/pull/1477) ([cooperlees](https://github.com/cooperlees))
+- Readme updates [#1482](https://github.com/chef/ohai/pull/1482) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.2.3](https://github.com/chef/ohai/tree/v16.2.3) (2020-06-30)
 
 #### Merged Pull Requests
 - Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh))
 - Linux network plugin: Handle IPv6 next hops for IPv4 routes [#1475](https://github.com/chef/ohai/pull/1475) ([cooperlees](https://github.com/cooperlees))
-<!-- latest_stable_release -->
 
 ## [v16.2.1](https://github.com/chef/ohai/tree/v16.2.1) (2020-06-23)
 

@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.3.1 -->
+## [v16.3.1](https://github.com/chef/ohai/tree/v16.3.1) (2020-07-24)
+
+#### Merged Pull Requests
+- Remove redundant file encoding in spec [#1483](https://github.com/chef/ohai/pull/1483) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.3.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Remove redundant file encoding in spec [#1483](https://github.com/chef/ohai/pull/1483) ([tas50](https://github.com/tas50)) <!-- 16.3.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

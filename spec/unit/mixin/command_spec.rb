@@ -1,4 +1,3 @@
-# encoding: utf-8
 #
 # Author:: Diego Algorta (diego@oboxodo.com)
 # Copyright:: Copyright (c) 2009 Diego Algorta

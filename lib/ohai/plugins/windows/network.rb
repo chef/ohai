@@ -93,7 +93,7 @@ Ohai.plugin(:Network) do
 
   # Selects default interface and returns its information
   #
-  # @note Interface with least metric value should be prefered as default_route
+  # @note Interface with least metric value should be preferred as default_route
   #
   # @param configuration [Mash] Configuration of interfaces as iface_config
   #   [<interface_index> => {<interface_configurations>}]

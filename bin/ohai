@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 #
-# ./ohai - I'm in ur serverz, showin you the daters
-#
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
 # License:: Apache License, Version 2.0

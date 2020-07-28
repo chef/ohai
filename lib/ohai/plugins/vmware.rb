@@ -56,7 +56,7 @@ Ohai.plugin(:VMware) do
           end
         end
         # vmware-toolbox-cmd <param> status commands
-        # Iterate through each parameter supported by the "vwware-toolbox-cmd status" command, assign value
+        # Iterate through each parameter supported by the "vmware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
         %w{upgrade timesync}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} #{param} status")

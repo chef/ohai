@@ -40,7 +40,7 @@ module ::Ohai::Mixin::DmiDecode
     case product
     when /VirtualBox/
       return "vbox"
-    when /OpenStack/ # yes this is here twice. Product catches Redhat's version
+    when /OpenStack/ # yes this is here twice. Product catches Red Hat's version
       return "openstack"
     when /(KVM|RHEV)/
       return "kvm"

@@ -99,19 +99,19 @@ Ohai.plugin(:Hostname) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
     begin
-      ourfqdn = resolve_fqdn
+      our_fqdn = resolve_fqdn
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname returned an empty string, retrying once.")
-        ourfqdn = resolve_fqdn
+        our_fqdn = resolve_fqdn
       end
 
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname returned an empty string twice and will" +
                         "not be set.")
       else
-        fqdn ourfqdn
+        fqdn our_fqdn
       end
     rescue
       logger.trace(
@@ -132,20 +132,20 @@ Ohai.plugin(:Hostname) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
     begin
-      ourfqdn = from_cmd("hostname --fqdn")
+      our_fqdn = from_cmd("hostname --fqdn")
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname --fqdn returned an empty string, retrying " +
                         "once.")
-        ourfqdn = from_cmd("hostname --fqdn")
+        our_fqdn = from_cmd("hostname --fqdn")
       end
 
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname --fqdn returned an empty string twice and " +
                         "will not be set.")
       else
-        fqdn ourfqdn
+        fqdn our_fqdn
       end
     rescue
       logger.trace("Plugin Hostname: hostname --fqdn returned an error, probably no domain set")

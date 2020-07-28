@@ -137,7 +137,7 @@ Ohai.plugin(:C) do
     logger.trace("Plugin C: 'xlc' binary could not be found. Skipping data.")
   end
 
-  def collect_sunpro
+  def collect_sun_pro
     # sun pro
     collect("cc -V -flags") do |so|
       output = so.stderr.split
@@ -173,7 +173,7 @@ Ohai.plugin(:C) do
     @c = Mash.new
     collect_gcc
     collect_glibc
-    collect_sunpro
+    collect_sun_pro
     languages[:c] = @c unless @c.empty?
   end
 end

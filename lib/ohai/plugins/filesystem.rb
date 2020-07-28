@@ -590,16 +590,16 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    zfs.each do |fsname, attributes|
+    zfs.each do |fs_name, attributes|
       mountpoint = attributes[:mountpoint][:value] if attributes[:mountpoint]
-      key = "#{fsname},#{mountpoint}"
+      key = "#{fs_name},#{mountpoint}"
       fs[key] ||= Mash.new
       fs[key][:fs_type] = "zfs"
       fs[key][:mount] = mountpoint if mountpoint
-      fs[key][:device] = fsname
+      fs[key][:device] = fs_name
       fs[key][:zfs_properties] = attributes
       # find all zfs parents
-      parents = fsname.split("/")
+      parents = fs_name.split("/")
       zfs_parents = []
       (0..parents.length - 1).to_a.each do |parent_index|
         next_parent = parents[0..parent_index].join("/")

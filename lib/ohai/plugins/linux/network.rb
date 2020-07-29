@@ -516,8 +516,16 @@ Ohai.plugin(:Network) do
     # if the route destination is a default route, it's good
     return true if route[:destination] == "default"
 
+    return false if default_route[:via].nil?
+
+    dest_ipaddr = IPAddress(route[:destination])
+    default_route_via = IPAddress(default_route[:via])
+
+    # check if nexthop is the same address family
+    return false if dest_ipaddr.ipv4? != default_route_via.ipv4?
+
     # the default route has a gateway and the route matches the gateway
-    !default_route[:via].nil? && IPAddress(route[:destination]).include?(IPAddress(default_route[:via]))
+    dest_ipaddr.include?(default_route_via)
   end
 
   # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity

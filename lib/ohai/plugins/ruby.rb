@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,6 +43,8 @@ Ohai.plugin(:Ruby) do
       host_vendor: "RbConfig::CONFIG['host_vendor']",
       bin_dir: "RbConfig::CONFIG['bindir']",
       ruby_bin: "::File.join(RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'])",
+      gem_bin: "::File.join(RbConfig::CONFIG['bindir'], ::Gem.default_exec_format % 'gem')",
+      gems_dir: "::Gem.dir",
     }
 
     # Create a query string from above hash
@@ -52,25 +54,12 @@ Ohai.plugin(:Ruby) do
     end
 
     # Query the system ruby
-    result = run_ruby "puts %Q(#{env_string})"
+    result = run_ruby "require 'rubygems'; puts %Q(#{env_string})"
 
     # Parse results to plugin hash
     result.split(",").each do |entry|
       key, value = entry.split("=")
       languages[:ruby][key.to_sym] = value || ""
-    end
-
-    # Perform one more (conditional) query
-    bin_dir = languages[:ruby][:bin_dir]
-    ruby_bin = languages[:ruby][:ruby_bin]
-    gem_binaries = [
-                    run_ruby("require 'rubygems'; puts ::Gem.default_exec_format % 'gem'"),
-                    "gem",
-                   ].map { |bin| ::File.join(bin_dir, bin) }
-    gem_binary = gem_binaries.find { |bin| ::File.exist? bin }
-    if gem_binary
-      languages[:ruby][:gems_dir] = run_ruby "puts %x{#{ruby_bin} #{gem_binary} env gemdir}.chomp!"
-      languages[:ruby][:gem_bin] = gem_binary
     end
   end
 end

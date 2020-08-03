@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.4.0 -->
+## [v16.4.0](https://github.com/chef/ohai/tree/v16.4.0) (2020-08-03)
+
+#### Merged Pull Requests
+- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.3.2 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

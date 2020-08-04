@@ -478,7 +478,7 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
-    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
+    interfaces[interface][:addresses].find { |k, v| v["family"] == "lladdr" }.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
   end
 
   # returns the default route with the lowest metric (unspecified metric is 0)

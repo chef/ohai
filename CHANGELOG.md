@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.1 -->
-## [v16.4.1](https://github.com/chef/ohai/tree/v16.4.1) (2020-08-04)
+<!-- latest_release 16.4.2 -->
+## [v16.4.2](https://github.com/chef/ohai/tree/v16.4.2) (2020-08-04)
 
 #### Merged Pull Requests
-- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50))
+- Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.3.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees)) <!-- 16.4.2 -->
 - Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50)) <!-- 16.4.1 -->
 - Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.0 -->
 <!-- release_rollup -->

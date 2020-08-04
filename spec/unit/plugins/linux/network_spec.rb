@@ -608,6 +608,15 @@ describe Ohai::System, "Linux Network Plugin" do
           expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
         end
       end
+
+      context "when route and default_route via have different address family" do
+        let(:route) { { destination: "10.0.0.0/24" } }
+        let(:default_route) { { via: "fe80::69" } }
+
+        it "returns false" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
     end
   end
 

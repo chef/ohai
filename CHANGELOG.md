@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.0 -->
-## [v16.4.0](https://github.com/chef/ohai/tree/v16.4.0) (2020-08-03)
+<!-- latest_release 16.4.1 -->
+## [v16.4.1](https://github.com/chef/ohai/tree/v16.4.1) (2020-08-04)
 
 #### Merged Pull Requests
-- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist))
+- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.3.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50)) <!-- 16.4.1 -->
 - Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.0 -->
 <!-- release_rollup -->
 

@@ -88,9 +88,9 @@ Ohai.plugin(:NetworkAddresses) do
           r = gw_if_ips.first
         else
           # checking network masks
-          r = gw_if_ips.select do |v|
+          r = gw_if_ips.find do |v|
             network_contains_address(network[gw_attr], v[:ipaddress], v[:iface])
-          end.first
+          end
           if r.nil?
             r = gw_if_ips.first
             logger.trace("Plugin Network: [#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")

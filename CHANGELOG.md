@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.7 -->
-## [v16.4.7](https://github.com/chef/ohai/tree/v16.4.7) (2020-08-10)
+<!-- latest_release 16.4.8 -->
+## [v16.4.8](https://github.com/chef/ohai/tree/v16.4.8) (2020-08-10)
 
 #### Merged Pull Requests
-- Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50))
+- Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.3.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50)) <!-- 16.4.8 -->
 - Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50)) <!-- 16.4.7 -->
 - Remove unused systemu dependency [#1490](https://github.com/chef/ohai/pull/1490) ([tas50](https://github.com/tas50)) <!-- 16.4.6 -->
 - Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50)) <!-- 16.4.5 -->

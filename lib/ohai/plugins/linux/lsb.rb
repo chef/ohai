@@ -24,8 +24,7 @@ Ohai.plugin(:LSB) do
 
     if File.exist?("/usr/bin/lsb_release")
       # From package redhat-lsb on Fedora/Redhat, lsb-release on Debian/Ubuntu
-      so = shell_out("lsb_release -a")
-      so.stdout.lines do |line|
+      shell_out("lsb_release -a").stdout.lines do |line|
         case line
         when /^Distributor ID:\s+(.+)$/
           lsb[:id] = $1

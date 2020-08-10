@@ -102,10 +102,8 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] ||= Mash.new
 
-    so = shell_out("ifconfig -a")
     cint = nil
-
-    so.stdout.lines do |line|
+    shell_out("ifconfig -a").stdout.lines do |line|
       # regex: https://rubular.com/r/ZiIHbsnfiWPW1p
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)(?: index (\d+))?/
         cint = $1

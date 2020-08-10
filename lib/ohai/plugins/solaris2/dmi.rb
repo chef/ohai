@@ -99,7 +99,6 @@ Ohai.plugin(:DMI) do
     dmi_record = nil
     field = nil
 
-    so = shell_out("smbios")
     # ==== EXAMPLE: ====
     # ID    SIZE TYPE
     # 0     40   SMB_TYPE_BIOS (BIOS information)
@@ -111,7 +110,7 @@ Ohai.plugin(:DMI) do
     #         SMB_BIOSFL_PCI (PCI is supported)
     # ... similar lines trimmed
     # note the second level of indentation is via a *tab*
-    so.stdout.lines do |raw_line|
+    shell_out("smbios").stdout.lines do |raw_line|
       next if header_type_line.match(raw_line)
       next if blank_line.match(raw_line)
 

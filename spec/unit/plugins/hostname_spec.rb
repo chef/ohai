@@ -17,8 +17,6 @@
 #
 
 require "spec_helper"
-require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
-require "socket"
 
 describe Ohai::System, "hostname plugin" do
   before do

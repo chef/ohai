@@ -17,7 +17,6 @@
 #
 
 require "spec_helper"
-require "open-uri"
 
 describe Ohai::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }

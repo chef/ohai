@@ -17,7 +17,7 @@ Ohai.plugin(:Memory) do
   provides "memory"
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     memory Mash.new
     memory[:swap] = Mash.new

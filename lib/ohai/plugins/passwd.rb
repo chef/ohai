@@ -1,6 +1,5 @@
 
 Ohai.plugin(:Passwd) do
-  require "etc" unless defined?(Etc)
   provides "etc", "current_user"
   optional true
 
@@ -14,6 +13,8 @@ Ohai.plugin(:Passwd) do
   end
 
   collect_data do
+    require "etc" unless defined?(Etc)
+
     unless etc
       etc Mash.new
 

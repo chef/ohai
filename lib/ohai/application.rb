@@ -18,9 +18,9 @@
 require "chef-config/path_helper"
 require "chef-config/workstation_config_loader"
 require_relative "../ohai"
-require_relative "log"
+require_relative "log" unless defined?(Ohai::Log)
 require "mixlib/cli" unless defined?(Mixlib::CLI)
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 # The Application class is what is called by the Ohai CLI binary. It handles:
 #  - CLI options and attribute arguments

@@ -377,7 +377,7 @@ Ohai.plugin(:CPU) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     cpu Mash.new
     cores = 0

@@ -18,7 +18,7 @@
 #
 
 require "spec_helper"
-require "ipaddress"
+require "ipaddress" unless defined?(IPAddress)
 
 describe Ohai::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }

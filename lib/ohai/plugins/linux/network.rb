@@ -577,7 +577,7 @@ Ohai.plugin(:Network) do
   # If the 'ip' binary is available, this plugin may set {ip,mac,ip6}address. The network plugin should not overwrite these.
   # The older code section below that relies on the deprecated net-tools, e.g. netstat and ifconfig, provides less functionality.
   collect_data(:linux) do
-    require "ipaddr"
+    require "ipaddr" unless defined?(IPAddr)
 
     iface = Mash.new
     net_counters = Mash.new

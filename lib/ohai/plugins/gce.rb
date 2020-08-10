@@ -49,7 +49,7 @@ Ohai.plugin(:GCE) do
   # @return [Boolean] Are the manufacturer and model Google?
   def has_gce_system_info?
     if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
-      require "wmi-lite/wmi"
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
       wmi = WmiLite::Wmi.new
       computer_system = wmi.first_of("Win32_ComputerSystem")
       if computer_system["Manufacturer"] =~ /^Google/ && computer_system["Model"] =~ /^Google/

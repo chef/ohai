@@ -26,9 +26,6 @@
 #
 
 Ohai.plugin(:Hostname) do
-  require "socket" unless defined?(Socket)
-  require "ipaddr"
-
   provides "domain", "hostname", "fqdn", "machinename"
 
   # hostname : short hostname
@@ -47,6 +44,9 @@ Ohai.plugin(:Hostname) do
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
   # this is ipv6-safe, works on ruby 1.8.7+
   def resolve_fqdn
+    require "socket" unless defined?(Socket)
+    require "ipaddr" unless defined?(IPAddr)
+
     hostname = from_cmd("hostname")
     addrinfo = Socket.getaddrinfo(hostname, nil).first
     iaddr = IPAddr.new(addrinfo[3])
@@ -161,7 +161,7 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require "socket" unless defined?(Socket)
 
     wmi = WmiLite::Wmi.new

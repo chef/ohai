@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-require "rbconfig"
+require "rbconfig" unless defined?(RbConfig)
 
 module Ohai
   module Mixin

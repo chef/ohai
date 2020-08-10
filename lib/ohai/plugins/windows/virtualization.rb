@@ -24,7 +24,7 @@ Ohai.plugin(:Virtualization) do
   include Ohai::Mixin::DmiDecode
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new

@@ -18,7 +18,7 @@
 #
 
 require_relative "dsl"
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 module Ohai
   class Runner

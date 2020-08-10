@@ -17,7 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "net/https"
+require "net/http" unless defined?(Net::HTTP)
 require "uri" unless defined?(URI)
 
 # https://softlayer.github.io/reference/services/SoftLayer_Resource_Metadata/

@@ -19,7 +19,6 @@
 #
 
 Ohai.plugin(:Network) do
-  require "ipaddr"
   require_relative "../../mixin/network_helper"
 
   provides "network", "counters/network", "macaddress"
@@ -27,6 +26,8 @@ Ohai.plugin(:Network) do
   include Ohai::Mixin::NetworkHelper
 
   collect_data(:aix) do
+    require "ipaddr" unless defined?(IPAddr)
+
     # Loads following information.
     # :default_interface, :default_gateway - route -n get 0
     # :interfaces

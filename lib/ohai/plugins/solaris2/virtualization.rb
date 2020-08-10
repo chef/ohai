@@ -25,9 +25,7 @@ Ohai.plugin(:Virtualization) do
   depends "dmi"
 
   def collect_solaris_guestid
-    command = "/usr/sbin/zoneadm list -p"
-    so = shell_out(command)
-    so.stdout.split(":").first
+    shell_out("/usr/sbin/zoneadm list -p").stdout.split(":").first
   end
 
   collect_data(:solaris2) do
@@ -56,8 +54,7 @@ Ohai.plugin(:Virtualization) do
 
     if File.executable?("/usr/sbin/zoneadm")
       zones = Mash.new
-      so = shell_out("zoneadm list -pc")
-      so.stdout.lines do |line|
+      shell_out("zoneadm list -pc").stdout.lines do |line|
         info = line.chomp.split(/:/)
         zones[info[1]] = {
           "id" => info[0],

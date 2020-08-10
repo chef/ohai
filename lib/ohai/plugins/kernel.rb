@@ -252,7 +252,7 @@ Ohai.plugin(:Kernel) do
 
   collect_data(:windows) do
     require "win32ole" unless defined?(WIN32OLE)
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 

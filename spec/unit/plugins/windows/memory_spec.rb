@@ -18,7 +18,7 @@ require "spec_helper"
 
 describe Ohai::System, "Windows memory plugin", :windows_only do
   before do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     @plugin = get_plugin("windows/memory")
     mock_os = {
                 "TotalVisibleMemorySize" => "10485760",

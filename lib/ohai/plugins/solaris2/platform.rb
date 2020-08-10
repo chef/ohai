@@ -26,8 +26,7 @@ Ohai.plugin(:Platform) do
       uname_exec = "uname"
     end
 
-    so = shell_out("#{uname_exec} -X")
-    so.stdout.lines do |line|
+    shell_out("#{uname_exec} -X").stdout.lines do |line|
       case line
       when /^Release =\s+(.+)$/
         platform_version $1

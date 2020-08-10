@@ -21,7 +21,7 @@ Ohai.plugin(:Uptime) do
   provides "uptime", "uptime_seconds"
 
   collect_data(:aix) do
-    require "date"
+    require "date" unless defined?(DateTime)
     # below we're going to assume that PID 1 is init (this is true 99.99999% of the time)
     # output will look like this
     # 1148-20:54:50

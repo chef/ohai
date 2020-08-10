@@ -54,13 +54,11 @@
 #  inet6 fe80::203:baff:fe17:4444/128
 
 # Extracted from http://illumos.org/hcl/
-unless defined?(ETHERNET_ENCAPS)
-  ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+ETHERNET_ENCAPS ||= %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
                         dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
                         iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
                         nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
                         rwn sfe tavor vr wpi xge yge aggr}.freeze
-end
 
 Ohai.plugin(:Network) do
   require_relative "../../mixin/network_helper"
@@ -102,10 +100,8 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] ||= Mash.new
 
-    so = shell_out("ifconfig -a")
     cint = nil
-
-    so.stdout.lines do |line|
+    shell_out("ifconfig -a").stdout.lines do |line|
       # regex: https://rubular.com/r/ZiIHbsnfiWPW1p
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)(?: index (\d+))?/
         cint = $1

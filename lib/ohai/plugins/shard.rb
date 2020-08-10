@@ -94,7 +94,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 
     create_seed do |src|

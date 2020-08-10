@@ -20,12 +20,12 @@ Ohai.plugin(:Machineid) do
   provides "machine_id"
 
   collect_data(:linux) do
-    mid = nil
-
     if ::File.exist?("/etc/machine-id")
       mid = ::File.read("/etc/machine-id").chomp
     elsif ::File.exist?("/var/lib/dbus/machine-id")
       mid = ::File.read("/var/lib/dbus/machine-id").chomp
+    else
+      mid = nil
     end
 
     if mid

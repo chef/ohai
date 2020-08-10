@@ -20,10 +20,8 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
   collect_data(:dragonflybsd) do
-    so = shell_out("uname -s")
-    platform so.stdout.split($/)[0].downcase
-    so = shell_out("uname -r")
-    platform_version so.stdout.split($/)[0]
+    platform shell_out("uname -s").stdout.split($/)[0].downcase
+    platform_version shell_out("uname -r").stdout.split($/)[0]
     platform_family "dragonflybsd"
   end
 end

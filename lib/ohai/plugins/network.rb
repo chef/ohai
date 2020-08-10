@@ -17,7 +17,6 @@
 #
 
 Ohai.plugin(:NetworkAddresses) do
-  require "ipaddress"
   require_relative "../mixin/network_helper"
   include Ohai::Mixin::NetworkHelper
 
@@ -134,6 +133,8 @@ Ohai.plugin(:NetworkAddresses) do
   # time as ipaddress. if ipaddress is set and macaddress is nil, that means
   # the interface ipaddress is bound to has the NOARP flag
   collect_data do
+    require "ipaddress" unless defined?(IPAddress)
+
     results = {}
 
     network Mash.new unless network

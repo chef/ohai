@@ -15,7 +15,6 @@
 # limitations under the License.
 
 Ohai.plugin(:Rackspace) do
-  require "resolv"
   provides "rackspace"
 
   depends "kernel", "network/interfaces"
@@ -50,7 +49,7 @@ Ohai.plugin(:Rackspace) do
   def has_rackspace_manufacturer?
     return false unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
 
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
     if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"
       logger.trace("Plugin Rackspace: has_rackspace_manufacturer? == true")
@@ -147,6 +146,8 @@ Ohai.plugin(:Rackspace) do
   end
 
   collect_data do
+    require "resolv"
+
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new

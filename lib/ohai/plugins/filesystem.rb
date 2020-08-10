@@ -23,8 +23,6 @@
 # limitations under the License.
 #
 
-require "set"
-
 Ohai.plugin(:Filesystem) do
   provides "filesystem"
 
@@ -718,6 +716,7 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
+    require "set"
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 

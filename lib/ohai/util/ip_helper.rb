@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ipaddress" unless defined?(IPAddress)
-
 module Ohai
   module Util
     module IpHelper
+      require "ipaddress" unless defined?(IPAddress)
+
       # Corresponding to RFC 4192 + RFC 4193
       IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress("fe80::/10")
       IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress("fc00::/7")

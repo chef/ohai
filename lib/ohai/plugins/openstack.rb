@@ -19,7 +19,6 @@
 Ohai.plugin(:Openstack) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
-  require "etc" unless defined?(Etc)
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 
@@ -59,6 +58,8 @@ Ohai.plugin(:Openstack) do
   end
 
   collect_data do
+    require "etc" unless defined?(Etc)
+
     # fetch data if we look like openstack
     if openstack_hint? || openstack_virtualization?
       openstack Mash.new

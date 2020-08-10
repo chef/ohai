@@ -15,7 +15,6 @@
 # limitations under the License.
 
 Ohai.plugin(:Rackspace) do
-  require "resolv"
   provides "rackspace"
 
   depends "kernel", "network/interfaces"
@@ -147,6 +146,8 @@ Ohai.plugin(:Rackspace) do
   end
 
   collect_data do
+    require "resolv"
+
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new

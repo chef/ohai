@@ -16,8 +16,6 @@
 #
 
 Ohai.plugin(:Docker) do
-  require "json" unless defined?(JSON)
-
   provides "docker"
   depends "virtualization"
 
@@ -50,6 +48,8 @@ Ohai.plugin(:Docker) do
   end
 
   collect_data do
+    require "json" unless defined?(JSON)
+
     if virtualization[:systems][:docker]
       docker_ohai_data(docker_info_json)
     end

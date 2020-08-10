@@ -28,7 +28,6 @@
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
-  require "base64"
 
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
@@ -115,6 +114,8 @@ Ohai.plugin(:EC2) do
   end
 
   collect_data do
+    require "base64"
+
     if looks_like_ec2?
       logger.trace("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new

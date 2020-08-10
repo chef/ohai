@@ -20,21 +20,6 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
 
-  # the platform mappings between the 'ID' field in /etc/os-release and the value
-  # ohai uses. If you're adding a new platform here and you want to change the name
-  # you'll want to add it here and then add a spec for the platform_id_remap method
-  PLATFORM_MAPPINGS ||= {
-      "rhel" => "redhat",
-      "amzn" => "amazon",
-      "ol" => "oracle",
-      "sles" => "suse",
-      "sles_sap" => "suse",
-      "opensuse-leap" => "opensuseleap",
-      "xenenterprise" => "xenserver",
-      "cumulus-linux" => "cumulus",
-      "archarm" => "arch",
-    }.freeze
-
   # @deprecated
   def get_redhatish_platform(contents)
     contents[/^Red Hat/i] ? "redhat" : contents[/(\w+)/i, 1].downcase
@@ -122,8 +107,20 @@ Ohai.plugin(:Platform) do
     # this catches the centos guest shell in the nexus switch which identifies itself as centos
     return "nexus_centos" if id == "centos" && os_release_file_is_cisco?
 
-    # remap based on the hash of platforms
-    PLATFORM_MAPPINGS[id] || id
+    # the platform mappings between the 'ID' field in /etc/os-release and the value
+    # ohai uses. If you're adding a new platform here and you want to change the name
+    # you'll want to add it here and then add a spec for the platform_id_remap method
+    {
+      "rhel" => "redhat",
+      "amzn" => "amazon",
+      "ol" => "oracle",
+      "sles" => "suse",
+      "sles_sap" => "suse",
+      "opensuse-leap" => "opensuseleap",
+      "xenenterprise" => "xenserver",
+      "cumulus-linux" => "cumulus",
+      "archarm" => "arch",
+    }[id] || id
   end
 
   #

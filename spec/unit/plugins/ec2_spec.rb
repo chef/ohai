@@ -18,8 +18,6 @@
 #
 
 require "spec_helper"
-require "open-uri"
-require "base64"
 
 describe Ohai::System, "plugin ec2" do
 

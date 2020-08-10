@@ -17,7 +17,6 @@
 #
 
 require "spec_helper"
-require "ipaddress" unless defined?(IPAddress)
 
 describe Ohai::System, "Windows Network Plugin" do
   let(:plugin) { get_plugin("windows/network") }

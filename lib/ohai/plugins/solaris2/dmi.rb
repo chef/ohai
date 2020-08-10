@@ -86,7 +86,7 @@ Ohai.plugin(:DMI) do
       "SUN_OEM_EXT_MEMARRAY" => 144, # phys memory array extended info
       "SUN_OEM_EXT_MEMDEVICE" => 145, # memory device extended info
       "SMB_TYPE_OEM_HI" => 256, # end of OEM-specific type range
-    }
+    }.freeze
 
     # all output lines should fall within one of these patterns
     header_type_line = /^ID\s+SIZE\s+TYPE/

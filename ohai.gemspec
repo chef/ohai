@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.5"
 
-  s.add_dependency "systemu", "~> 2.6.4"
   s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "mixlib-cli", ">= 1.7.0" # 1.7+ needed to support passing multiple options
   s.add_dependency "mixlib-config", ">= 2.0", "< 4.0"

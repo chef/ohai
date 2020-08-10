@@ -284,12 +284,10 @@ Ohai.plugin(:Filesystem) do
 
     # Grab filesystem data from df
     run_with_check("df") do
-      so = shell_out("df -P")
-      fs.merge!(parse_common_df(so.stdout))
+      fs.merge!(parse_common_df(shell_out("df -P").stdout))
 
       # Grab filesystem inode data from df
-      so = shell_out("df -iP")
-      so.stdout.each_line do |line|
+      shell_out("df -iP").stdout.each_line do |line|
         case line
         when /^Filesystem\s+Inodes/
           next
@@ -308,8 +306,7 @@ Ohai.plugin(:Filesystem) do
 
     # Grab mount information from /bin/mount
     run_with_check("mount") do
-      so = shell_out("mount")
-      so.stdout.each_line do |line|
+      shell_out("mount").stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
           key = "#{$1},#{$2}"
           fs[key] ||= Mash.new
@@ -344,8 +341,7 @@ Ohai.plugin(:Filesystem) do
       # this is to allow machines with large amounts of attached LUNs
       # to respond back to the command successfully
       run_with_check(cmdtype) do
-        so = shell_out(cmd, timeout: 60)
-        so.stdout.each_line do |line|
+        shell_out(cmd, timeout: 60).stdout.each_line do |line|
           parsed = parse_line(line, cmdtype)
           next if parsed.nil?
 
@@ -381,7 +377,6 @@ Ohai.plugin(:Filesystem) do
       # we have to non-block read dev files. Ew.
       f = File.open("/proc/mounts")
       loop do
-
         data = f.read_nonblock(4096)
         mounts << data
       # We should just catch EOFError, but the kernel had a period of
@@ -390,9 +385,9 @@ Ohai.plugin(:Filesystem) do
       # whatever data we might have
       rescue Exception
         break
-
       end
       f.close
+
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           key = "#{$1},#{$2}"

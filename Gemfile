@@ -24,5 +24,8 @@ group :debug do
   gem "pry-byebug"
   gem "pry-stack_explorer", "~> 0.4.0" # pin until we drop ruby < 2.6
   gem "rb-readline"
+end
+
+group :profile do
   gem "stackprof"
 end

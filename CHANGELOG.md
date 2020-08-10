@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.4 -->
-## [v16.4.4](https://github.com/chef/ohai/tree/v16.4.4) (2020-08-08)
+<!-- latest_release 16.4.5 -->
+## [v16.4.5](https://github.com/chef/ohai/tree/v16.4.5) (2020-08-10)
 
 #### Merged Pull Requests
-- Simplify FIPS plugin and use system fips status [#1489](https://github.com/chef/ohai/pull/1489) ([tas50](https://github.com/tas50))
+- Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.3.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50)) <!-- 16.4.5 -->
 - Simplify FIPS plugin and use system fips status [#1489](https://github.com/chef/ohai/pull/1489) ([tas50](https://github.com/tas50)) <!-- 16.4.4 -->
 - Use match? instead of =~ when MatchData is not used [#1488](https://github.com/chef/ohai/pull/1488) ([tas50](https://github.com/tas50)) <!-- 16.4.3 -->
 - Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees)) <!-- 16.4.2 -->

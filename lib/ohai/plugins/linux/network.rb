@@ -518,8 +518,8 @@ Ohai.plugin(:Network) do
 
     return false if default_route[:via].nil?
 
-    dest_ipaddr = IPAddress(route[:destination])
-    default_route_via = IPAddress(default_route[:via])
+    dest_ipaddr = IPAddr.new(route[:destination])
+    default_route_via = IPAddr.new(default_route[:via])
 
     # check if nexthop is the same address family
     return false if dest_ipaddr.ipv4? != default_route_via.ipv4?

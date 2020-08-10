@@ -84,7 +84,7 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
     last_boot_up_time = wmi.first_of("Win32_OperatingSystem")["lastbootuptime"]
     uptime_seconds Time.new.to_i - Time.parse(last_boot_up_time).to_i

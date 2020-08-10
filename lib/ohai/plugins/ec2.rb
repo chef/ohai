@@ -82,7 +82,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have a Xen Identifying Number or not?
   def has_ec2_identifying_number?
     if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
-      require "wmi-lite/wmi"
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
       wmi = WmiLite::Wmi.new
       if /^ec2/.match?(wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"])
         logger.trace("Plugin EC2: has_ec2_identifying_number? == true")

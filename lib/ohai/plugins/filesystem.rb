@@ -718,7 +718,7 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 
     fs = merge_info(logical_info, encryptable_info)

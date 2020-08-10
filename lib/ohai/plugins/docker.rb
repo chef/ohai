@@ -16,7 +16,7 @@
 #
 
 Ohai.plugin(:Docker) do
-  require "json"
+  require "json" unless defined?(JSON)
 
   provides "docker"
   depends "virtualization"

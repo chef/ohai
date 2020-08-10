@@ -22,7 +22,7 @@ Ohai.plugin(:Drivers) do
   collect_data(:windows) do
     if configuration(:enabled)
 
-      require "wmi-lite/wmi"
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
       kext = Mash.new
       pnp_drivers = Mash.new

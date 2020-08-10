@@ -46,7 +46,7 @@ Ohai.plugin(:DMI) do
 
   collect_data(:windows) do
     require "ohai/common/dmi"
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 
     dmi Mash.new

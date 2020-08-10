@@ -27,7 +27,7 @@
 
 Ohai.plugin(:Hostname) do
   require "socket" unless defined?(Socket)
-  require "ipaddr"
+  require "ipaddr" unless defined?(IPAddr)
 
   provides "domain", "hostname", "fqdn", "machinename"
 
@@ -161,7 +161,7 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require "socket" unless defined?(Socket)
 
     wmi = WmiLite::Wmi.new

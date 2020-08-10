@@ -19,7 +19,7 @@
 #
 
 Ohai.plugin(:Network) do
-  require "ipaddr"
+  require "ipaddr" unless defined?(IPAddr)
   require_relative "../../mixin/network_helper"
 
   provides "network", "counters/network", "macaddress"

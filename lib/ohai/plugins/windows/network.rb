@@ -118,7 +118,7 @@ Ohai.plugin(:Network) do
 
   collect_data(:windows) do
 
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     iface = Mash.new
     iface_config = Mash.new

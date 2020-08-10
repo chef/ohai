@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require "mixlib/log"
+require "mixlib/log" unless defined?(Mixlib::Log)
 
 module Ohai
   # the Ohai Logger which is just Mixlib::Log defaulting to STDERR and :info level

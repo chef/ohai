@@ -320,7 +320,7 @@ Ohai.plugin(:Cloud) do
   end
 
   collect_data do
-    require "ipaddr"
+    require "ipaddr" unless defined?(IPAddr)
 
     @cloud_attr_obj = CloudAttrs.new
 

@@ -17,7 +17,7 @@
 #
 
 Ohai.plugin(:NetworkAddresses) do
-  require "ipaddress"
+  require "ipaddress" unless defined?(IPAddress)
   require_relative "../mixin/network_helper"
   include Ohai::Mixin::NetworkHelper
 

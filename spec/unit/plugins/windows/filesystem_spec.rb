@@ -17,7 +17,7 @@
 #
 
 require "spec_helper"
-require "wmi-lite/wmi"
+require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
 describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
   let(:plugin) { get_plugin("filesystem") }

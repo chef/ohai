@@ -79,7 +79,7 @@ Ohai.plugin(:Packages) do
       end
 
     when "arch"
-      require "date"
+      require "date" unless defined?(DateTime)
 
       # Set LANG=C to force an easy to parse date format
       so = shell_out("LANG=C pacman -Qi")

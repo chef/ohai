@@ -711,7 +711,7 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "set"
+    require "set" unless defined?(Set)
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 

@@ -45,7 +45,7 @@ Ohai.plugin(:DMI) do
   ].freeze
 
   collect_data(:windows) do
-    require "ohai/common/dmi"
+    require_relative "../../common/dmi"
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 

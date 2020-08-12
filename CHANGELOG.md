@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.9 -->
-## [v16.4.9](https://github.com/chef/ohai/tree/v16.4.9) (2020-08-12)
+<!-- latest_release 16.4.10 -->
+## [v16.4.10](https://github.com/chef/ohai/tree/v16.4.10) (2020-08-12)
 
 #### Merged Pull Requests
-- Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50))
+- Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.3.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50)) <!-- 16.4.10 -->
 - Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50)) <!-- 16.4.9 -->
 - Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50)) <!-- 16.4.8 -->
 - Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50)) <!-- 16.4.7 -->

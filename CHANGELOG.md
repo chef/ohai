@@ -1,37 +1,34 @@
 # Change Log
 
-<!-- latest_release 16.4.11 -->
-## [v16.4.11](https://github.com/chef/ohai/tree/v16.4.11) (2020-08-12)
-
-#### Merged Pull Requests
-- Optimize 2 of our requires [#1497](https://github.com/chef/ohai/pull/1497) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.3.2 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Optimize 2 of our requires [#1497](https://github.com/chef/ohai/pull/1497) ([tas50](https://github.com/tas50)) <!-- 16.4.11 -->
-- Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50)) <!-- 16.4.10 -->
-- Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50)) <!-- 16.4.9 -->
-- Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50)) <!-- 16.4.8 -->
-- Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50)) <!-- 16.4.7 -->
-- Remove unused systemu dependency [#1490](https://github.com/chef/ohai/pull/1490) ([tas50](https://github.com/tas50)) <!-- 16.4.6 -->
-- Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50)) <!-- 16.4.5 -->
-- Simplify FIPS plugin and use system fips status [#1489](https://github.com/chef/ohai/pull/1489) ([tas50](https://github.com/tas50)) <!-- 16.4.4 -->
-- Use match? instead of =~ when MatchData is not used [#1488](https://github.com/chef/ohai/pull/1488) ([tas50](https://github.com/tas50)) <!-- 16.4.3 -->
-- Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees)) <!-- 16.4.2 -->
-- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50)) <!-- 16.4.1 -->
-- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.4.11](https://github.com/chef/ohai/tree/v16.4.11) (2020-08-14)
+
+#### Merged Pull Requests
+- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist))
+- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50))
+- Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees))
+- Use match? instead of =~ when MatchData is not used [#1488](https://github.com/chef/ohai/pull/1488) ([tas50](https://github.com/tas50))
+- Simplify FIPS plugin and use system fips status [#1489](https://github.com/chef/ohai/pull/1489) ([tas50](https://github.com/tas50))
+- Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50))
+- Remove unused systemu dependency [#1490](https://github.com/chef/ohai/pull/1490) ([tas50](https://github.com/tas50))
+- Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50))
+- Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50))
+- Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50))
+- Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50))
+- Optimize 2 of our requires [#1497](https://github.com/chef/ohai/pull/1497) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.3.2](https://github.com/chef/ohai/tree/v16.3.2) (2020-07-29)
 
 #### Merged Pull Requests
 - Remove redundant file encoding in spec [#1483](https://github.com/chef/ohai/pull/1483) ([tas50](https://github.com/tas50))
 - Spelling fixes [#1484](https://github.com/chef/ohai/pull/1484) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.3.0](https://github.com/chef/ohai/tree/v16.3.0) (2020-07-24)
 

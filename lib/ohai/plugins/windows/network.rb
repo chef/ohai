@@ -117,7 +117,7 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:windows) do
-
+    require "ipaddress" unless defined?(IPAddress)
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     iface = Mash.new

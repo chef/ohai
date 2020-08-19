@@ -1,20 +1,18 @@
 # Change Log
 
-<!-- latest_release 16.4.12 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v16.4.12](https://github.com/chef/ohai/tree/v16.4.12) (2020-08-19)
 
 #### Merged Pull Requests
 - Add missing require for windows network plugin [#1500](https://github.com/chef/ohai/pull/1500) ([tas50](https://github.com/tas50))
-<!-- latest_release -->
-
-<!-- release_rollup since=16.4.11 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add missing require for windows network plugin [#1500](https://github.com/chef/ohai/pull/1500) ([tas50](https://github.com/tas50)) <!-- 16.4.12 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v16.4.11](https://github.com/chef/ohai/tree/v16.4.11) (2020-08-14)
 
 #### Merged Pull Requests
@@ -30,7 +28,6 @@
 - Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50))
 - Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50))
 - Optimize 2 of our requires [#1497](https://github.com/chef/ohai/pull/1497) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.3.2](https://github.com/chef/ohai/tree/v16.3.2) (2020-07-29)
 

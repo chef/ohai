@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.4.12 -->
+## [v16.4.12](https://github.com/chef/ohai/tree/v16.4.12) (2020-08-19)
+
+#### Merged Pull Requests
+- Add missing require for windows network plugin [#1500](https://github.com/chef/ohai/pull/1500) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.4.11 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Add missing require for windows network plugin [#1500](https://github.com/chef/ohai/pull/1500) ([tas50](https://github.com/tas50)) <!-- 16.4.12 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

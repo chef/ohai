@@ -19,7 +19,7 @@
 Ohai.plugin(:OhaiRemote) do
   provides "ohai_remote"
 
-  collect_data do
+  collect_data(:meta) do
     if remote_ohai?
       logger.trace("Plugin Ohai Remote: remote_ohai? == true")
       ohai_remote Mash.new

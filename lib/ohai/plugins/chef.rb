@@ -19,7 +19,7 @@
 Ohai.plugin(:Chef) do
   provides "chef_packages/chef"
 
-  collect_data do
+  collect_data(:meta) do
     begin
       require "chef/version"
     rescue Gem::LoadError

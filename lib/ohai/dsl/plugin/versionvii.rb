@@ -125,8 +125,10 @@ module Ohai
 
           if matched_platforms.any?
             matched_platforms.each { |platform| instance_eval(&collector[platform]) }
-          elsif collector.key?(:default)
+          elsif collector.key?(:default) && os_hierarchy.include?("os")
             instance_eval(&collector[:default])
+          elsif collector.key?(:meta)
+            instance_eval(&collector[:meta])
           else
             logger.trace("Plugin #{name}: No data to collect. Skipping...")
           end

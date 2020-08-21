@@ -37,7 +37,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
           "LANG" => "en_US.UTF-8",
           "LANGUAGE" => "en_US.UTF-8",
           "LC_ALL" => "en_US.UTF-8",
-          "PATH" => "/Users/lamont/.asdf/installs/ruby/2.7.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "PATH" => "#{RbConfig::CONFIG["bindir"]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
         },
       }
     end

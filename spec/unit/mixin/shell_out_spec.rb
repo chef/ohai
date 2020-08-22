@@ -37,7 +37,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
           "LANG" => "en_US.UTF-8",
           "LANGUAGE" => "en_US.UTF-8",
           "LC_ALL" => "en_US.UTF-8",
-          "PATH" => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin", RbConfig::CONFIG["bindir"] ].uniq.reverse.join(':')
+          "PATH" => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin", RbConfig::CONFIG["bindir"] ].uniq.reverse.join(":"),
         },
       }
     end

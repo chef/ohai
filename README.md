@@ -33,7 +33,7 @@ Remote Ohai uses Train backends, which include SSH, WinRM, Docker and local exec
 
 The URL and query parameters depend on the used backend.
 
-## Development Environment:
+## Development Environment
 
 Install Ohai's development dependencies with bundler. Just run `bundle install` in the root of the repository.
 

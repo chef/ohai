@@ -24,10 +24,10 @@ Ohai.plugin(:OhaiRemote) do
       logger.trace("Plugin Ohai Remote: remote_ohai? == true")
       ohai_remote Mash.new
 
-      ohai_remote['backend'] = connection.backend_type
+      ohai_remote["backend"] = connection.backend_type
       if connection.respond_to? :uri
-        ohai_remote['backend'] = connection.uri.split(':').first
-        ohai_remote['uri'] = connection.uri
+        ohai_remote["backend"] = connection.uri.split(":").first
+        ohai_remote["uri"] = connection.uri
       end
     else
       logger.trace("Plugin Ohai Remote: remote_ohai? == false")

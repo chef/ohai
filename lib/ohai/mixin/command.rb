@@ -29,14 +29,16 @@ module Ohai
         execution = connection.run_command(cmd)
         logger.trace("Plugin #{name}: ran '#{cmd}' and returned #{execution.exit_status}")
 
-        OpenStruct.new({
+        Struct.new("OutResult", :stdout, :stderr, :exit_status, :exitstatus, keyword_init: true)
+
+        Struct::OutResult.new(
           stdout: execution.stdout,
           stderr: execution.stderr,
           exit_status: execution.exit_status,
 
           # Compatibility for old shell_out usage
           exitstatus: execution.exit_status,
-        })
+        )
 
       rescue Errno::ENOENT => e
         logger.trace("Plugin #{name}: ran '#{cmd}' and failed #{e.inspect}")

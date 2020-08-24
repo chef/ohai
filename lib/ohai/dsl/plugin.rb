@@ -106,7 +106,7 @@ module Ohai
       end
 
       def remote_ohai?
-        !@connection.uri.start_with? "local"
+        !connection.uri.start_with? "local"
       end
 
       def run

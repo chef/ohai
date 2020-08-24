@@ -49,14 +49,12 @@ Ohai.plugin(:SSHHostKey) do
                   end
 
     if sshd_config
-      file_read(sshd_config).each_line do |line|
-        if /^hostkey\s/i.match?(line)
-          pub_file = "#{line.split[1]}.pub"
-          content = file_read(pub_file).split
-          key_type, key_subtype = extract_keytype?(content)
-          keys[:ssh]["host_#{key_type}_public"] = content[1] unless key_type.nil?
-          keys[:ssh]["host_#{key_type}_type"] = key_subtype unless key_subtype.nil?
-        end
+      file_read(sshd_config).each_line.grep(/^hostkey\s/i) do |line|
+        pub_file = "#{line.split[1]}.pub"
+        content = file_read(pub_file).split
+        key_type, key_subtype = extract_keytype?(content)
+        keys[:ssh]["host_#{key_type}_public"] = content[1] unless key_type.nil?
+        keys[:ssh]["host_#{key_type}_type"] = key_subtype unless key_subtype.nil?
       end
     end
 

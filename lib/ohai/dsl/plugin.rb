@@ -22,7 +22,8 @@ require_relative "../mixin/os"
 require_relative "../mixin/command"
 require_relative "../mixin/seconds_to_human"
 require_relative "../hints"
-require_relative "../util/file_helper"
+require "chef-utils/dsl/train_helpers"
+require "chef-utils/dsl/which"
 require "train"
 
 module Ohai
@@ -83,10 +84,10 @@ module Ohai
   module DSL
     class Plugin
 
+      include ChefUtils::DSL::TrainHelpers
       include Ohai::Mixin::OS
       include Ohai::Mixin::Command
       include Ohai::Mixin::SecondsToHuman
-      include Ohai::Util::FileHelper
 
       attr_reader :data
       attr_reader :failed
@@ -228,6 +229,10 @@ module Ohai
       rescue NoMethodError
         # NoMethodError occurs when trying to access a key on nil
         nil
+      end
+
+      def file_read(path)
+        file_open(path).readlines.join("\n")
       end
     end
   end

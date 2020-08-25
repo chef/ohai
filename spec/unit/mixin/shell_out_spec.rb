@@ -28,22 +28,25 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
   let(:timeout) { 30 }
 
   let(:options) do
+    # this just replicates the behavior of default_paths in chef-utils
+    default_paths = [ Gem.bindir, RbConfig::CONFIG["bindir"] ].compact.uniq
+
     if windows?
-      { timeout: timeout }
+      default_paths = default_paths.join(";")
     else
-      # this just replicates the behavior of default_paths in chef-utils
-      default_paths = ( [ ENV["PATH"] ? ENV["PATH"].split(":").reverse : nil, RbConfig::CONFIG["bindir"] ].uniq.reverse + [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ] ).compact.uniq.join(":")
-      default_locale = ChefConfig::Config.guess_internal_locale
-      {
-        timeout: timeout,
-        environment: {
-          "LANG" => default_locale,
-          "LANGUAGE" => default_locale,
-          "LC_ALL" => default_locale,
-          "PATH" => default_paths,
-        },
-      }
+      default_paths = ( default_paths + [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ] ).compact.uniq.join(":")
     end
+
+    default_locale = ChefConfig::Config.guess_internal_locale
+    {
+      timeout: timeout,
+      environment: {
+        "LANG" => default_locale,
+        "LANGUAGE" => default_locale,
+        "LC_ALL" => default_locale,
+        "PATH" => default_paths,
+      },
+    }
   end
 
   let(:logger) { instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil, debug?: false) }
@@ -101,7 +104,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
       expect(logger)
         .to receive(:trace)
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and failed " \
-             "#<Errno::ENOENT: No such file or directory - sparkle-dream>")
+              "#<Errno::ENOENT: No such file or directory - sparkle-dream>")
 
       expect { instance.shell_out(cmd) }
         .to raise_error(Ohai::Exceptions::Exec)
@@ -122,7 +125,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
       expect(logger)
         .to receive(:trace)
         .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
-             "out after 30 seconds")
+              "out after 30 seconds")
 
       expect { instance.shell_out(cmd) }
         .to raise_error(Ohai::Exceptions::Exec)
@@ -165,7 +168,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
         expect(logger)
           .to receive(:trace)
           .with("Plugin OSSparkleDream: ran 'sparkle-dream --version' and timed " \
-               "out after 10 seconds")
+                "out after 10 seconds")
 
         expect { instance.shell_out(cmd, timeout: 10) }
           .to raise_error(Ohai::Exceptions::Exec)

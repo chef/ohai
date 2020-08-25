@@ -37,6 +37,8 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
       default_paths = ( default_paths + [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ] ).compact.uniq.join(":")
     end
 
+    path_var = windows? ? "Path" : "PATH"
+
     default_locale = ChefConfig::Config.guess_internal_locale
     {
       timeout: timeout,
@@ -44,7 +46,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
         "LANG" => default_locale,
         "LANGUAGE" => default_locale,
         "LC_ALL" => default_locale,
-        "PATH" => default_paths,
+        path_var => default_paths,
       },
     }
   end

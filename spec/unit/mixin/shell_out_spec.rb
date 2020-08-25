@@ -32,7 +32,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
       { timeout: timeout }
     else
       # this just replicates the behavior of default_paths in chef-utils
-      default_paths = ( [ ENV['PATH'] ? ENV['PATH'].split(':').reverse : nil, RbConfig::CONFIG["bindir"] ].uniq.reverse + [ "/usr/local/sbin",  "/usr/local/bin", "/usr/sbin", "/usr/bin",  "/sbin", "/bin" ] ).compact.uniq.join(":")
+      default_paths = ( [ ENV["PATH"] ? ENV["PATH"].split(":").reverse : nil, RbConfig::CONFIG["bindir"] ].uniq.reverse + [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ] ).compact.uniq.join(":")
       default_locale = ChefConfig::Config.guess_internal_locale
       {
         timeout: timeout,

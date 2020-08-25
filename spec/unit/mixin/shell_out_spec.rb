@@ -31,13 +31,15 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
     if windows?
       { timeout: timeout }
     else
+      # this just replicates the behavior of default_paths in chef-utils
+      default_paths = ( [ ENV['PATH'] ? ENV['PATH'].split(':').reverse : nil, RbConfig::CONFIG["bindir"] ].uniq.reverse + [ "/usr/local/sbin",  "/usr/local/bin", "/usr/sbin", "/usr/bin",  "/sbin", "/bin" ] ).compact.uniq.join(":")
       {
         timeout: timeout,
         environment: {
           "LANG" => "en_US.UTF-8",
           "LANGUAGE" => "en_US.UTF-8",
           "LC_ALL" => "en_US.UTF-8",
-          "PATH" => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin", RbConfig::CONFIG["bindir"] ].uniq.reverse.join(":"),
+          "PATH" => default_paths,
         },
       }
     end

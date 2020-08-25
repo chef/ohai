@@ -15,9 +15,7 @@
 # limitations under the License.
 #
 
-# require_relative "../log"
-# require_relative "../config"
-# require_relative "../chef_class"
+require_relative "../config"
 
 module Ohai
   module Mixin

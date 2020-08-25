@@ -52,7 +52,7 @@ Ohai.plugin(:ShardSeed) do
   def digest_algorithm
     case Ohai.config[:plugin][:shard_seed][:digest_algorithm] || default_digest_algorithm
     when "md5"
-      require "digest/md5"
+      require "digest/md5" unless defined?(Digest::MD5)
       Digest::MD5
     when "sha256"
       require "openssl/digest"

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2019, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,12 @@ require_relative "log"
 require_relative "mash"
 require_relative "runner"
 require_relative "dsl"
-require_relative "mixin/command"
+require_relative "mixin/shell_out"
 require_relative "mixin/os"
 require_relative "mixin/string"
 require_relative "mixin/constant_helper"
 require_relative "provides_map"
 require_relative "hints"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 require_relative "config"
 require "ffi_yajl" unless defined?(FFI_Yajl)
 

@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +19,10 @@
 #
 
 require_relative "../mixin/os"
-require_relative "../mixin/command"
+require_relative "../mixin/shell_out"
 require_relative "../mixin/seconds_to_human"
+require_relative "../mixin/which"
 require_relative "../hints"
-require_relative "../util/file_helper"
 
 module Ohai
 
@@ -83,9 +83,9 @@ module Ohai
     class Plugin
 
       include Ohai::Mixin::OS
-      include Ohai::Mixin::Command
+      include Ohai::Mixin::ShellOut
       include Ohai::Mixin::SecondsToHuman
-      include Ohai::Util::FileHelper
+      include Ohai::Mixin::Which
 
       attr_reader :data
       attr_reader :failed

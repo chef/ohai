@@ -1,6 +1,6 @@
 # Author:: Bryan McLellan <btm@loftninjas.org>
 #
-# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #
 # License:: Apache License, Version 2.0
 #
@@ -17,26 +17,27 @@
 # limitations under the License.
 
 require "spec_helper"
-require "ohai/util/file_helper"
 
 class FileHelperMock
-  include Ohai::Util::FileHelper
+  include Ohai::Mixin::Which
 end
 
-describe "Ohai::Util::FileHelper" do
+describe "Ohai::Mixin::Which" do
   let(:file_helper) { FileHelperMock.new }
 
   before do
+    old_env = ENV
+    ENV["Path"] = ENV["PATH"] = "/usr/bin"
     allow(file_helper).to receive(:name).and_return("Fakeclass")
     logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
     allow(file_helper).to receive(:logger).and_return(logger)
     allow(File).to receive(:executable?).and_return(false)
+    ENV = old_env
   end
 
   describe "which" do
     it "returns the path to an executable that is in the path" do
       allow(File).to receive(:executable?).with("/usr/bin/skyhawk").and_return(true)
-
       expect(file_helper.which("skyhawk")).to eql "/usr/bin/skyhawk"
     end
 

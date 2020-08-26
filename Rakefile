@@ -40,4 +40,4 @@ task :console do
   IRB.start
 end
 
-task default: %i{style spec}
+task default: %i{spec style}

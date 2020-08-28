@@ -1,7 +1,7 @@
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2010 Kurt Yoder
 # License:: Apache License, Version 2.0
 #

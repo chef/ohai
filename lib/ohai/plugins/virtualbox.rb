@@ -1,7 +1,7 @@
 #
 # Author:: Tim Smith <tsmith@chef.io>
 # Author:: Joshua Colson <joshua.colson@gmail.com>
-# Copyright:: 2015-2019 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: 2019 Joshua Colson
 # License:: Apache License, Version 2.0
 #

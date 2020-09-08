@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.13 -->
-## [v16.4.13](https://github.com/chef/ohai/tree/v16.4.13) (2020-08-26)
+<!-- latest_release 16.4.14 -->
+## [v16.4.14](https://github.com/chef/ohai/tree/v16.4.14) (2020-09-08)
 
 #### Merged Pull Requests
-- Migrate to the chef-utils helpers for which/shell_out [#1501](https://github.com/chef/ohai/pull/1501) ([lamont-granquist](https://github.com/lamont-granquist))
+- Resolve new chefstyle warnings &amp; use safe navigators [#1507](https://github.com/chef/ohai/pull/1507) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.4.12 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Resolve new chefstyle warnings &amp; use safe navigators [#1507](https://github.com/chef/ohai/pull/1507) ([tas50](https://github.com/tas50)) <!-- 16.4.14 -->
 - Migrate to the chef-utils helpers for which/shell_out [#1501](https://github.com/chef/ohai/pull/1501) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.13 -->
 <!-- release_rollup -->
 

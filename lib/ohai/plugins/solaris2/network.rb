@@ -86,7 +86,7 @@ Ohai.plugin(:Network) do
 
   def full_interface_name(iface, part_name, index)
     iface.each do |name, attrs|
-      next unless attrs&.respond_to?(:[])
+      next unless attrs.respond_to?(:[])
       return name if /^#{part_name}($|:)/.match(name) && attrs[:index] == index
     end
 

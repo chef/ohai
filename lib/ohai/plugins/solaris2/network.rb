@@ -86,7 +86,7 @@ Ohai.plugin(:Network) do
 
   def full_interface_name(iface, part_name, index)
     iface.each do |name, attrs|
-      next unless attrs && attrs.respond_to?(:[])
+      next unless attrs&.respond_to?(:[])
       return name if /^#{part_name}($|:)/.match(name) && attrs[:index] == index
     end
 
@@ -155,12 +155,10 @@ Ohai.plugin(:Network) do
             break
           end
         end
-        if iface[ifn][:arp]
-          iface[ifn][:arp].each_key do |addr|
-            if addr.eql?(iaddr)
-              iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
-              break
-            end
+        iface[ifn][:arp]&.each_key do |addr|
+          if addr.eql?(iaddr)
+            iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
+            break
           end
         end
       end

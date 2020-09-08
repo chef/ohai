@@ -141,11 +141,9 @@ Ohai.plugin(:Network) do
   # using a temporary var to hold routes and their interface name
   def parse_routes(family, iface)
     iface.collect do |i, iv|
-      if iv[:routes]
-        iv[:routes].collect do |r|
-          r.merge(dev: i) if r[:family] == family[:name]
-        end.compact
-      end
+      iv[:routes]&.collect do |r|
+        r.merge(dev: i) if r[:family] == family[:name]
+      end&.compact
     end.compact.flatten
   end
 

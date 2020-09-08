@@ -24,15 +24,15 @@ def unix?
 end
 
 def os_x?
-  !!(RUBY_PLATFORM =~ /darwin/)
+  RUBY_PLATFORM.include?('darwin')
 end
 
 def solaris?
-  !!(RUBY_PLATFORM =~ /solaris/)
+  RUBY_PLATFORM.include?('solaris')
 end
 
 def freebsd?
-  !!(RUBY_PLATFORM =~ /freebsd/)
+  RUBY_PLATFORM.include?('freebsd')
 end
 
 DEV_NULL = windows? ? "NUL" : "/dev/null"

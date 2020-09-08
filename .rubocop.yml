@@ -1,6 +1,7 @@
 require: rubocop-performance
 
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.5
   Exclude:
     - "spec/data/**/*"
@@ -14,4 +15,7 @@ Layout/IndentationStyle:
     - "lib/ohai/plugins/darwin/hardware.rb"
 
 Performance/Caller:
+  Enabled: false
+
+Performance/CollectionLiteralInLoop:
   Enabled: false

@@ -23,16 +23,4 @@ def unix?
   !windows?
 end
 
-def os_x?
-  RUBY_PLATFORM.include?('darwin')
-end
-
-def solaris?
-  RUBY_PLATFORM.include?('solaris')
-end
-
-def freebsd?
-  RUBY_PLATFORM.include?('freebsd')
-end
-
 DEV_NULL = windows? ? "NUL" : "/dev/null"

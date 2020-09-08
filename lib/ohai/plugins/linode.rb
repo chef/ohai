@@ -25,7 +25,7 @@ Ohai.plugin(:Linode) do
   # Returns true or false
   def has_linode_kernel?
     if ( kernel_data = kernel )
-      kernel_data[:release].split("-").last.include?('linode')
+      kernel_data[:release].split("-").last.include?("linode")
     end
   end
 

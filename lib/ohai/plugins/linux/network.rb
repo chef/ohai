@@ -264,7 +264,7 @@ Ohai.plugin(:Network) do
         end
         key, val = line.split(/:\s+/)
         if val
-          coalesce_key = "#{key.downcase.tr(" ", "_")}"
+          coalesce_key = key.downcase.tr(" ", "_").to_s
           iface[tmp_int]["coalesce_params"][coalesce_key] = val.to_i
         end
       end
@@ -289,7 +289,7 @@ Ohai.plugin(:Network) do
         if val.nil?
           val = ""
         end
-        driver_key = "#{key.downcase.tr(" ", "_")}"
+        driver_key = key.downcase.tr(" ", "_").to_s
         iface[tmp_int]["driver_info"][driver_key] = val.chomp
       end
     end

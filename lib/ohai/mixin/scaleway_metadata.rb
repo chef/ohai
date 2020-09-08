@@ -32,7 +32,7 @@ module Ohai
       #
       # @return [Hash]
       def fetch_metadata
-        uri = (SCALEWAY_METADATA_URL).to_s
+        uri = SCALEWAY_METADATA_URL.to_s
         response = http_client.get(uri)
         case response.code
         when "200"

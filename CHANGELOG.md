@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.16 -->
-## [v16.4.16](https://github.com/chef/ohai/tree/v16.4.16) (2020-09-09)
+<!-- latest_release 16.5.0 -->
+## [v16.5.0](https://github.com/chef/ohai/tree/v16.5.0) (2020-09-09)
 
 #### Merged Pull Requests
-- Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50))
+- Add MacOS packages support [#1505](https://github.com/chef/ohai/pull/1505) ([mattray](https://github.com/mattray))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.4.12 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add MacOS packages support [#1505](https://github.com/chef/ohai/pull/1505) ([mattray](https://github.com/mattray)) <!-- 16.5.0 -->
 - Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50)) <!-- 16.4.16 -->
 - Update rubocop-performance from 1.7.1 to 1.8.0 &amp; cleanup spec helpers [#1506](https://github.com/chef/ohai/pull/1506) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 16.4.15 -->
 - Resolve new chefstyle warnings &amp; use safe navigators [#1507](https://github.com/chef/ohai/pull/1507) ([tas50](https://github.com/tas50)) <!-- 16.4.14 -->

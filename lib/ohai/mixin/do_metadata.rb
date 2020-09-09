@@ -28,7 +28,7 @@ module Ohai
       end
 
       def fetch_metadata
-        uri = (DO_METADATA_URL).to_s
+        uri = DO_METADATA_URL.to_s
         response = http_client.get(uri)
         case response.code
         when "200"

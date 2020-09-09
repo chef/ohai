@@ -100,7 +100,7 @@ Ohai.plugin(:Cloud) do
       @cloud[:local_ipv6] = @cloud[:local_ipv6_addrs][0] if @cloud[:local_ipv6_addrs]
 
       # if empty, return nil
-      (@cloud.empty?) ? nil : @cloud
+      @cloud.empty? ? nil : @cloud
     end
 
     private

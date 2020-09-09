@@ -30,7 +30,7 @@ Ohai.plugin(:Memory) do
     memory[:free] = "#{free_in_mb.to_i * 1024}kB"
 
     swap_info = shell_out("swap -s").stdout.split # returns swap info in 4K blocks
-    memory[:swap]["total"] = "#{(swap_info[2].to_i) * 4}kB"
-    memory[:swap]["free"] = "#{(swap_info[10].to_i) * 4}kB"
+    memory[:swap]["total"] = "#{swap_info[2].to_i * 4}kB"
+    memory[:swap]["free"] = "#{swap_info[10].to_i * 4}kB"
   end
 end

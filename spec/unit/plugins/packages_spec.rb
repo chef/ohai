@@ -350,4 +350,53 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["mqm"][:version]).to eq("7.0.1.4")
     end
   end
+
+  context "when on darwin" do
+    let(:plugin) { get_plugin("packages") }
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "system_profiler_spapplicationsdatatype.output"))
+    end
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:darwin)
+      allow(plugin).to receive(:shell_out).with("system_profiler SPApplicationsDataType -xml").and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it "calls system_profiler SPApplicationsDataType -xml" do
+      expect(plugin).to receive(:shell_out)
+        .with("system_profiler SPApplicationsDataType -xml")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    # apple
+    it "gets 'Install macOS Catalina' details" do
+      expect(plugin[:packages]["Install macOS Catalina"][:version]).to eq("15.6.00")
+      expect(plugin[:packages]["Install macOS Catalina"][:source]).to eq("apple")
+      expect(plugin[:packages]["Install macOS Catalina"][:lastmodified].to_s).to eq("2020-09-04T04:54:33+00:00")
+    end
+
+    # app store
+    it "gets 'Slack' details" do
+      expect(plugin[:packages]["Slack"][:version]).to eq("4.8.0")
+      expect(plugin[:packages]["Slack"][:source]).to eq("mac_app_store")
+      expect(plugin[:packages]["Slack"][:lastmodified].to_s).to eq("2020-08-12T22:24:32+00:00")
+    end
+
+    # chef
+    it "gets 'Chef Workstation' details" do
+      expect(plugin[:packages]["Chef Workstation App"][:version]).to eq("0.1.82")
+      expect(plugin[:packages]["Chef Workstation App"][:source]).to eq("identified_developer")
+      expect(plugin[:packages]["Chef Workstation App"][:lastmodified].to_s).to eq("2020-09-03T03:16:22+00:00")
+    end
+
+    # homebrew
+    it "gets 'Emacs' details" do
+      expect(plugin[:packages]["Emacs"][:version]).to eq("27.1")
+      expect(plugin[:packages]["Emacs"][:source]).to eq("unknown")
+      expect(plugin[:packages]["Emacs"][:lastmodified].to_s).to eq("2020-08-19T07:08:51+00:00")
+    end
+  end
 end

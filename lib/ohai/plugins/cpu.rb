@@ -61,7 +61,7 @@ Ohai.plugin(:CPU) do
         cpu_number += 1
       when /vendor_id\s+:\s(.+)/
         vendor_id = $1
-        if vendor_id =~ %r{IBM/S390}
+        if vendor_id.include?("IBM/S390")
           cpuinfo["vendor_id"] = vendor_id
         else
           cpuinfo[current_cpu]["vendor_id"] = vendor_id

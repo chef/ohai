@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.4.15 -->
-## [v16.4.15](https://github.com/chef/ohai/tree/v16.4.15) (2020-09-08)
+<!-- latest_release 16.4.16 -->
+## [v16.4.16](https://github.com/chef/ohai/tree/v16.4.16) (2020-09-09)
 
 #### Merged Pull Requests
-- Update rubocop-performance from 1.7.1 to 1.8.0 &amp; cleanup spec helpers [#1506](https://github.com/chef/ohai/pull/1506) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.4.12 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50)) <!-- 16.4.16 -->
 - Update rubocop-performance from 1.7.1 to 1.8.0 &amp; cleanup spec helpers [#1506](https://github.com/chef/ohai/pull/1506) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 16.4.15 -->
 - Resolve new chefstyle warnings &amp; use safe navigators [#1507](https://github.com/chef/ohai/pull/1507) ([tas50](https://github.com/tas50)) <!-- 16.4.14 -->
 - Migrate to the chef-utils helpers for which/shell_out [#1501](https://github.com/chef/ohai/pull/1501) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.4.13 -->

@@ -3,8 +3,8 @@ require "rspec/collection_matchers"
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 
-$:.unshift(File.expand_path("../..", __FILE__))
-$:.unshift(File.dirname(__FILE__) + "/../lib")
+$:.unshift(File.expand_path("..", __dir__))
+$:.unshift(__dir__ + "/../lib")
 
 require "spec/support/platform_helpers"
 require "spec/support/integration_helper"
@@ -12,8 +12,8 @@ require "wmi-lite"
 require "ohai"
 Ohai.config[:log_level] = :error
 
-PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
-SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
+PLUGIN_PATH = File.expand_path("../lib/ohai/plugins", __dir__)
+SPEC_PLUGIN_PATH = File.expand_path("data/plugins", __dir__)
 
 RSpec.configure do |config|
   config.before { @object_pristine = Object.clone }

@@ -51,7 +51,7 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
     }
   end
 
-  let(:logger) { instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil, debug?: false) }
+  let(:logger) { instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil, trace?: false) }
 
   class DummyPlugin
     include Ohai::Mixin::ShellOut

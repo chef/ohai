@@ -42,6 +42,7 @@ describe Ohai::System, "plugin shells" do
 
   it "sets shells to an array of shells if /etc/shells exists" do
     allow(::File).to receive(:readlines).with("/etc/shells").and_return(shell_file_content)
+    allow(::File).to receive(:exist?).and_call_original
     allow(::File).to receive(:exist?).with("/etc/shells").and_return(true)
     plugin.run
     expect(plugin.shells).to match_array([

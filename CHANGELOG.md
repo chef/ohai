@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.5.2 -->
-## [v16.5.2](https://github.com/chef/ohai/tree/v16.5.2) (2020-09-10)
+<!-- latest_release 16.5.3 -->
+## [v16.5.3](https://github.com/chef/ohai/tree/v16.5.3) (2020-09-11)
 
 #### Merged Pull Requests
-- Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50))
+- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.5.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins)) <!-- 16.5.3 -->
 - Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50)) <!-- 16.5.2 -->
 - Prefer __dir__ to __FILE__ used to get the dir [#1510](https://github.com/chef/ohai/pull/1510) ([tas50](https://github.com/tas50)) <!-- 16.5.1 -->
 <!-- release_rollup -->

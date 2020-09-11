@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-require File.expand_path(__dir__ + "/../../../spec_helper.rb")
+require "spec_helper"
 
 describe Ohai::System, "Linux systemd paths plugin" do
   let(:plugin) { get_plugin("linux/systemd_paths") }

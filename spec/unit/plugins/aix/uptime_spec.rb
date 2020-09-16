@@ -19,7 +19,6 @@
 require "spec_helper"
 
 describe Ohai::System, "Aix plugin uptime" do
-
   before do
     @plugin = get_plugin("aix/uptime")
     allow(@plugin).to receive(:collect_os).and_return(:aix)

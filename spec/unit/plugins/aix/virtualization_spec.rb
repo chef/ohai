@@ -19,9 +19,7 @@
 require "spec_helper"
 
 describe Ohai::System, "AIX virtualization plugin" do
-
   context "when inside an LPAR" do
-
     let(:plugin) do
       p = get_plugin("aix/virtualization")
       allow(p).to receive(:collect_os).and_return(:aix)
@@ -245,7 +243,6 @@ describe Ohai::System, "AIX virtualization plugin" do
 
 
       LSWPAR_L
-
     end
 
     it "uname -L detects the LPAR number and name" do
@@ -315,5 +312,4 @@ describe Ohai::System, "AIX virtualization plugin" do
       expect(plugin[:virtualization][:wpar_no]).to eq("42")
     end
   end
-
 end

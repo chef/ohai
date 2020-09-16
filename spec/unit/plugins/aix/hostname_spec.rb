@@ -22,6 +22,7 @@ describe Ohai::System, "AIX hostname plugin" do
   before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
+    allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
     allow(@plugin).to receive(:from_cmd).with("hostname -s").and_return("aix_admin")
     allow(@plugin).to receive(:from_cmd).with("hostname").and_return("aix_admin.ponyville.com")
     @plugin.run

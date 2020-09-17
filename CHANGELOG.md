@@ -1,23 +1,21 @@
 # Change Log
 
-<!-- latest_release 16.5.4 -->
-## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
-
-#### Merged Pull Requests
-- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.5.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50)) <!-- 16.5.4 -->
-- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins)) <!-- 16.5.3 -->
-- Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50)) <!-- 16.5.2 -->
-- Prefer __dir__ to __FILE__ used to get the dir [#1510](https://github.com/chef/ohai/pull/1510) ([tas50](https://github.com/tas50)) <!-- 16.5.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
+
+#### Merged Pull Requests
+- Prefer __dir__ to __FILE__ used to get the dir [#1510](https://github.com/chef/ohai/pull/1510) ([tas50](https://github.com/tas50))
+- Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50))
+- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins))
+- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.5.0](https://github.com/chef/ohai/tree/v16.5.0) (2020-09-09)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Update rubocop-performance from 1.7.1 to 1.8.0 &amp; cleanup spec helpers [#1506](https://github.com/chef/ohai/pull/1506) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 - Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50))
 - Add MacOS packages support [#1505](https://github.com/chef/ohai/pull/1505) ([mattray](https://github.com/mattray))
-<!-- latest_stable_release -->
 
 ## [v16.4.12](https://github.com/chef/ohai/tree/v16.4.12) (2020-08-19)
 

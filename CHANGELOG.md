@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.5.5 -->
+## [v16.5.5](https://github.com/chef/ohai/tree/v16.5.5) (2020-09-17)
+
+#### Merged Pull Requests
+- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.5.4 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.5.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

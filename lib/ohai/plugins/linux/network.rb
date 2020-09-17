@@ -646,7 +646,7 @@ Ohai.plugin(:Network) do
           logger.trace("Plugin Network: #{default_prefix}_interface set to #{default_route[:dev]}")
 
           # setting gateway to 0.0.0.0 or :: if the default route is a link level one
-          network["#{default_prefix}_gateway"] = default_route[:via] ? default_route[:via] : family[:default_route].chomp("/0")
+          network["#{default_prefix}_gateway"] = default_route[:via] || family[:default_route].chomp("/0")
           logger.trace("Plugin Network: #{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
 
           # deduce the default route the user most likely cares about to pick {ip,mac,ip6}address below

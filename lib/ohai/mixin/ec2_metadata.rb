@@ -142,7 +142,7 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              metadata[metadata_key(key)] = retr_meta ? retr_meta : ""
+              metadata[metadata_key(key)] = retr_meta || ""
             elsif not key.eql?("/")
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
@@ -159,7 +159,7 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              data = retr_meta ? retr_meta : ""
+              data = retr_meta || ""
               json = String(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)

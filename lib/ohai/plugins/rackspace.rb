@@ -161,8 +161,8 @@ Ohai.plugin(:Rackspace) do
       unless rackspace[:public_ip].nil?
         rackspace[:public_hostname] = begin
                                         Resolv.getname(rackspace[:public_ip])
-                                      rescue Resolv::ResolvError, Resolv::ResolvTimeout
-                                        rackspace[:public_ip]
+        rescue Resolv::ResolvError, Resolv::ResolvTimeout
+          rackspace[:public_ip]
                                       end
       end
       rackspace[:local_ipv4] = rackspace[:private_ip]

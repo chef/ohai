@@ -19,7 +19,6 @@
 require "spec_helper"
 
 describe Ohai::System, "AIX network plugin" do
-
   before do
     @netstat_rn_grep_default = <<~NETSTAT_RN_GREP_DEFAULT
       default            172.31.8.1        UG        2    121789 en0      -      -
@@ -107,7 +106,6 @@ describe Ohai::System, "AIX network plugin" do
   end
 
   describe "when running on an LPAR" do
-
     describe "sets the top-level attribute correctly" do
       before do
         @plugin.run
@@ -264,7 +262,6 @@ describe Ohai::System, "AIX network plugin" do
     end
 
     context "inet6" do
-
       it "detects the route destinations" do
         expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:destination]).to eq("::1%1")
       end

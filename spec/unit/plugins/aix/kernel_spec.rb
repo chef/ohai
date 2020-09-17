@@ -56,6 +56,5 @@ describe Ohai::System, "AIX kernel plugin" do
     expect(@plugin[:kernel][:modules]["/usr/lib/drivers/cluster"]["data"]).to eq({ "address" => "f1000000c0390000", "size" => "1ec8c" })
     expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["text"]).to eq({ "address" => "6390000", "size" => "20000" })
     expect(@plugin[:kernel][:modules]["/usr/lib/drivers/if_en"]["data"]).to eq({ "address" => "63a0000", "size" => "ba8" })
-
   end
 end

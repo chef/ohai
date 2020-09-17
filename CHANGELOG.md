@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.5.3 -->
-## [v16.5.3](https://github.com/chef/ohai/tree/v16.5.3) (2020-09-11)
+<!-- latest_release 16.5.4 -->
+## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
 
 #### Merged Pull Requests
-- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins))
+- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.5.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50)) <!-- 16.5.4 -->
 - Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins)) <!-- 16.5.3 -->
 - Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50)) <!-- 16.5.2 -->
 - Prefer __dir__ to __FILE__ used to get the dir [#1510](https://github.com/chef/ohai/pull/1510) ([tas50](https://github.com/tas50)) <!-- 16.5.1 -->

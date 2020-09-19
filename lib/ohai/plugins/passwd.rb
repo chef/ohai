@@ -12,6 +12,10 @@ Ohai.plugin(:Passwd) do
     str
   end
 
+  def powershell_out(ps)
+    Mixlib::ShellOut.new("powershell.exe", "-c", ps).run_command
+  end
+
   collect_data do
     require "etc" unless defined?(Etc)
 
@@ -42,6 +46,44 @@ Ohai.plugin(:Passwd) do
   end
 
   collect_data(:windows) do
-    # Etc returns nil on Windows
+    unless etc
+      etc Mash.new
+
+      etc[:passwd] = Mash.new
+      s = powershell_out("get-localuser | convertto-json")
+      users = JSON.parse(s.stdout)
+      users.each do |user|
+        uname = user["Name"].strip.downcase
+        Ohai::Log.debug("processing user #{uname}")
+        etc[:passwd][uname] = Mash.new
+        user.each do |key, val|
+          etc[:passwd][uname][key.downcase] = val
+        end
+      end
+
+      etc[:group] = Mash.new
+      s = powershell_out("get-localgroup | convertto-json")
+      groups = JSON.parse(s.stdout)
+      groups.each do |group|
+        gname = group["Name"].strip.downcase
+        Ohai::Log.debug("processing group #{gname}")
+        etc[:group][gname] = Mash.new
+        group.each do |key, val|
+          etc[:group][gname][key.downcase] = val
+        end
+        # calling this for each group is slow, but it requires
+        # a specific group, soooooo....
+        g = powershell_out(
+          "get-localgroupmember -name '#{gname}' | convertto-json"
+        )
+        out = g.stdout
+        if !out.empty?
+          gmem = JSON.parse(g.stdout)
+          etc[:group][gname]["members"] = gmem
+        else
+          etc[:group][gname]["members"] = []
+        end
+      end
+    end
   end
 end

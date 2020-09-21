@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.5.5 -->
-## [v16.5.5](https://github.com/chef/ohai/tree/v16.5.5) (2020-09-17)
+<!-- latest_release 16.5.6 -->
+## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-21)
 
 #### Merged Pull Requests
-- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.5.4 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 16.5.6 -->
 - chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.5.5 -->
 <!-- release_rollup -->
 

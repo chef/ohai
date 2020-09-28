@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 16.5.6 -->
-## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-21)
-
-#### Merged Pull Requests
-- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.5.4 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot])) <!-- 16.5.6 -->
-- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.5.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-28)
+
+#### Merged Pull Requests
+- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+<!-- latest_stable_release -->
+
 ## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
 
 #### Merged Pull Requests
@@ -23,7 +21,6 @@
 - Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50))
 - Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins))
 - Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.5.0](https://github.com/chef/ohai/tree/v16.5.0) (2020-09-09)
 

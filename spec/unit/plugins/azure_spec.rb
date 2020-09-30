@@ -72,6 +72,49 @@ describe Ohai::System, "plugin azure" do
     end
   end
 
+  context "when on windows", :windows_only do
+    let(:plugin) do
+      get_plugin("azure").tap do |plugin|
+        plugin[:platform_family] = "windows"
+      end
+    end
+
+    let(:tcpip_reg_key) { "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" }
+    let(:win_reg_double) { instance_double("Win32::Registry") }
+
+    before do
+      allow(Win32::Registry::HKEY_LOCAL_MACHINE)
+        .to receive(:open)
+        .with(tcpip_reg_key)
+        .and_return(win_reg_double)
+      allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("domain.com")
+    end
+
+    context "without azure hint file or agent" do
+      before do
+        allow(plugin).to receive(:hint?).with("azure").and_return(false)
+        allow(plugin).to receive(:has_waagent?).and_return(false)
+        allow(plugin).to receive(:has_dhcp_option_245?).and_return(false)
+      end
+
+      context "DHCP option 15 is set to reddog.microsoft.com" do
+        before do
+          allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("reddog.microsoft.com")
+        end
+
+        it_behaves_like "azure"
+      end
+
+      context "DHCP option 15 is not set to reddog.microsoft.com" do
+        before do
+          allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("domain.com")
+        end
+
+        it_behaves_like "!azure"
+      end
+    end
+  end
+
   describe "with azure hint file" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(hint)

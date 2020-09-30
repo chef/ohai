@@ -34,7 +34,7 @@ Ohai.plugin(:Azure) do
       azure Mash.new
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
       azure["metadata"] = parse_metadata
-    elsif has_waagent? || has_dhcp_option_245?
+    elsif has_waagent? || has_dhcp_option_245? || has_reddog_dhcp_domain?
       logger.trace("Plugin Azure: No hints present, but system appears to be on Azure.")
       azure Mash.new
       azure["metadata"] = parse_metadata
@@ -65,6 +65,26 @@ Ohai.plugin(:Azure) do
       end
     end
     has_245
+  end
+
+  def has_reddog_dhcp_domain?
+    tcp_ip_dhcp_domain == "reddog.microsoft.com"
+  end
+
+  def tcp_ip_dhcp_domain
+    return unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+
+    require "win32/registry" unless defined?(Win32::Registry)
+
+    begin
+      key = Win32::Registry::HKEY_LOCAL_MACHINE.open("SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters")
+      dhcp_domain = key["DhcpDomain"]
+      Ohai::Log.trace("Plugin Azure: DhcpDomain registry value is #{dhcp_domain}")
+    rescue Win32::Registry::Error
+      Ohai::Log.trace("Plugin Azure: DhcpDomain registry value cannot be found")
+    end
+
+    dhcp_domain
   end
 
   # create the basic structure we'll store our data in

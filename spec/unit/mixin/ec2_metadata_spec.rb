@@ -73,6 +73,13 @@ describe Ohai::Mixin::Ec2Metadata do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)
       end
     end
+
+    context "when metadata service is disabled" do
+      let(:response) { double("Net::HTTP::PUT Response", body: "403 - Forbidden", code: "403") }
+      it "raises an error" do
+        expect { mixin.best_api_version }.to raise_error(RuntimeError)
+      end
+    end
   end
 
   describe "#metadata_get" do

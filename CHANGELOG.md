@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.6.0 -->
+## [v16.6.0](https://github.com/chef/ohai/tree/v16.6.0) (2020-09-30)
+
+#### Merged Pull Requests
+- Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.5.6 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett)) <!-- 16.6.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

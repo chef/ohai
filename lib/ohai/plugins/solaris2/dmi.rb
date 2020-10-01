@@ -128,7 +128,7 @@ Ohai.plugin(:DMI) do
           id = smb_to_id[header_information[3]]
 
           # Don't overcapture for now (OHAI-260)
-          unless Ohai::Common::DMI.whitelisted_ids.include?(id)
+          unless Ohai::Common::DMI.allowlisted_ids.include?(id)
             dmi_record = nil
             next
           end

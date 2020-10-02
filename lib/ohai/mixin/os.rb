@@ -73,7 +73,7 @@ module Ohai
           # if it was not caught above, we MUST translate whatever train uses as the 'os' into the proper ruby host_os
           # string.  If it is not unix and not caught above we assume it is something like a REST API which cannot run
           # ruby.  If these assumptions are incorrect then it is a bug, which should be submitted to fix it, and the
-          # values should not be relied upon until that bug is fixed.  The train os is NEVER considered authoritataive
+          # values should not be relied upon until that bug is fixed.  The train os is NEVER considered authoritative
           # for any target which can run ruby.
           #
         when transport_connection.os.unix?

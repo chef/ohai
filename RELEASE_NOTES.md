@@ -1,3 +1,12 @@
+# Unreleased
+
+## etc Ohai Data on Windows
+
+Ohai's 'passwd' plugin that provides `node['etc']['passwd']` and `node['etc']['group']` now populates data on Windows. Data for all local users and groups is present. A few things to note:
+
+  * If you are on a domain controller, you will get all domain users as domain controllers see domain users as local
+  * If you are not on a domain controller you will only get actual local users
+  * Group members are not recursed, so you if groups are nested, you will simply see the group that is directly a member of the group.
 
 # Ohai Release Notes 15.6
 

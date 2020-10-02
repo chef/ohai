@@ -73,102 +73,90 @@ describe Ohai::System, "plugin etc" do
       end
     end
 
-    let(:user_info) do
-      [
-        {
-          "Name" => "UserOne",
-          "FullName" => "User One",
-          "SID" => {
-            "BinaryLength" => 28,
-            "AccountDomainSid" => "bla",
-            "Value" => "blabla",
-          },
-          "ObjectClass" => "User",
-          "Enabled" => false,
-        },
-        {
-          "Name" => "UserTwo",
-          "FullName" => "User Two",
-          "SID" => {
-            "BinaryLength" => 28,
-            "AccountDomainSid" => "doo",
-            "Value" => "doodoo",
-          },
-          "ObjectClass" => "User",
-          "Enabled" => true,
-        },
-      ]
-    end
+    USERS = [
+      {
+        "AccountType" => 512,
+        "Disabled" => false,
+        "Name" => "userone",
+        "FullName" => "User One",
+        "SID" => "bla bla bla",
+        "SIDType" => 1,
+        "Status" => "OK",
+      },
+      {
+        "AccountType" => 512,
+        "Disabled" => false,
+        "FullName" => "User Two",
+        "Name" => "usertwo",
+        "SID" => "bla bla bla2",
+        "SIDType" => 1,
+        "Status" => "OK",
+      },
+    ].freeze
 
-    let(:group_info) do
-      [
-        {
-          "Description" => "Group One",
-          "Name" => "GroupOne",
-          "SID" => {
-            "BinaryLength" => 16,
-            "AccountDomainSid" => nil,
-            "Value" => "foo",
-          },
-          "ObjectClass" => "Group",
-        },
-        {
-          "Description" => "Group Two",
-          "Name" => "GroupTwo",
-          "SID" => {
-            "BinaryLength" => 16,
-            "AccountDomainSid" => nil,
-            "Value" => "foo",
-          },
-          "ObjectClass" => "Group",
-        },
-      ]
-    end
+    GROUPS = [
+      {
+        "Description" => "Group One",
+        "Domain" => "THIS-MACHINE",
+        "Name" => "GroupOne",
+        "SID" => "foo foo foo",
+        "SidType" => 4,
+        "Status" => "OK",
+      },
+      {
+        "Description" => "Group Two",
+        "Domain" => "THIS-MACHINE",
+        "Name" => "GroupTwo",
+        "SID" => "foo foo foo2",
+        "SidType" => 4,
+        "Status" => "OK",
+      },
+    ].freeze
 
-    let(:group_one_info) do
-      [
-        {
-          "Name" => "UserOne",
-          "SID" => {
-            "BinaryLength" => 28,
-            "AccountDomainSid" => nil,
-            "Value" => "bar",
-          },
-          "ObjectClass" => "User",
-        },
-        {
-          "Name" => "UserTwo",
-          "SID" => {
-            "BinaryLength" => 28,
-            "AccountDomainSid" => nil,
-            "Value" => "bar",
-          },
-          "ObjectClass" => "User",
-        },
-      ]
-    end
+    GROUP_ONE_MEMBERS = [
+      {
+        "groupcomponent" => "Win32_Group.Domain=\"THIS-MACHINE\",Name=\"GroupOne\"",
+        "partcomponent" => "\\\\VCRS-PRODWIN05\\root\\cimv2:Win32_UserAccount.Domain=\"THIS-MACHINE\",Name=\"UserOne\"",
+      },
+      {
+        "groupcomponent" => "Win32_Group.Domain=\"THIS-MACHINE\",Name=\"GroupOne\"",
+        "partcomponent" => "\\\\VCRS-PRODWIN05\\root\\cimv2:Win32_UserAccount.Domain=\"THIS-MACHINE\",Name=\"UserTwo\"",
+      },
+    ].freeze
 
-    let(:group_two_info) do
-      [
-        {
-          "Name" => "UserTwo",
-          "SID" => {
-            "BinaryLength" => 28,
-            "AccountDomainSid" => nil,
-            "Value" => "bar",
-          },
-          "ObjectClass" => "User",
-        },
-      ]
-    end
+    GROUP_TWO_MEMBERS = [
+      {
+        "groupcomponent" => "Win32_Group.Domain=\"THIS-MACHINE\",Name=\"GroupOne\"",
+        "partcomponent" => "\\\\VCRS-PRODWIN05\\root\\cimv2:Win32_SystemAccount.Domain=\"THIS-MACHINE\",Name=\"GroupOne\"",
+      },
+    ].freeze
 
     before do
-      expect(plugin).to receive(:powershell_out)
-        .with("get-localuser | convertto-json")
-        .and_return(mock_shell_out(0, user_info.to_json, ""))
-      expect(plugin).to receive(:powershell_out)
-        .with("get-localgroup | convertto-json")
-        .and_return(mock_shell_out(0, group_info.to_json, ""))
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
+      properties = USERS[0].map { |k, v| double(name: k) }
+      wmi_user_list = USERS.map do |user|
+        wmi_ole_object = double properties_: properties
+        user.each do |key, val|
+          allow(wmi_ole_object).to receive(:invoke).with(key).and_return(val)
+        end
+        WmiLite::Wmi::Instance.new(wmi_ole_object)
+      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_UserAccount WHERE LocalAccount = True")
+        .and_return(wmi_user_list)
+
+      properties = GROUPS[0].map { |k, v| double(name: k) }
+      wmi_group_list = GROUPS.map do |group|
+        wmi_ole_object = double properties_: properties
+        group.each do |key, val|
+          allow(wmi_ole_object).to receive(:invoke).with(key).and_return(val)
+        end
+        WmiLite::Wmi::Instance.new(wmi_ole_object)
+      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_Group WHERE LocalAccount = True")
+        .and_return(wmi_group_list)
+
     end
 
     def transform(user_data)
@@ -180,71 +168,91 @@ describe Ohai::System, "plugin etc" do
     end
 
     it "returns lower-cased passwd keys for each local user" do
-      {
-        "groupone" => group_one_info.to_json,
-        "grouptwo" => group_two_info.to_json,
-      }.each do |gname, info|
-        expect(plugin).to receive(:powershell_out)
-          .with("get-localgroupmember -name '#{gname}' | convertto-json")
-          .and_return(mock_shell_out(0, "[]", ""))
-      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupOne'\"")
+        .and_return([])
+
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupTwo'\"")
+        .and_return([])
+
       plugin.run
       expect(plugin[:etc][:passwd].keys.sort).to eq(%w{userone usertwo}.sort)
     end
 
     it "returns preserved-case passwd entries for local users" do
-      {
-        "groupone" => group_one_info.to_json,
-        "grouptwo" => group_two_info.to_json,
-      }.each do |gname, info|
-        expect(plugin).to receive(:powershell_out)
-          .with("get-localgroupmember -name '#{gname}' | convertto-json")
-          .and_return(mock_shell_out(0, "[]", ""))
-      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupOne'\"")
+        .and_return([])
+
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupTwo'\"")
+        .and_return([])
+
       plugin.run
-      expect(plugin[:etc][:passwd]["userone"]).to eq(transform(user_info[0]))
+      expect(plugin[:etc][:passwd]["userone"]).to eq(transform(USERS[0]))
     end
 
     it "returns lower-cased group entries for each local group" do
-      {
-        "groupone" => group_one_info.to_json,
-        "grouptwo" => group_two_info.to_json,
-      }.each do |gname, info|
-        expect(plugin).to receive(:powershell_out)
-          .with("get-localgroupmember -name '#{gname}' | convertto-json")
-          .and_return(mock_shell_out(0, "[]", ""))
-      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupOne'\"")
+        .and_return([])
+
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupTwo'\"")
+        .and_return([])
+
       plugin.run
       expect(plugin[:etc][:group].keys.sort).to eq(%w{groupone grouptwo}.sort)
     end
 
     it "returns preserved-cased group entries for local groups" do
-      {
-        "groupone" => group_one_info.to_json,
-        "grouptwo" => group_two_info.to_json,
-      }.each do |gname, info|
-        expect(plugin).to receive(:powershell_out)
-          .with("get-localgroupmember -name '#{gname}' | convertto-json")
-          .and_return(mock_shell_out(0, "[]", ""))
-      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupOne'\"")
+        .and_return([])
+
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupTwo'\"")
+        .and_return([])
+
       plugin.run
       expect(plugin[:etc][:group]["grouptwo"]).to eq(
-        transform(group_info[1]).merge({ "members" => [] })
+        transform(GROUPS[1]).merge({ "members" => [] })
       )
     end
 
     it "returns members for groups" do
-      {
-        "groupone" => group_one_info.to_json,
-        "grouptwo" => group_two_info.to_json,
-      }.each do |gname, info|
-        expect(plugin).to receive(:powershell_out)
-          .with("get-localgroupmember -name '#{gname}' | convertto-json")
-          .and_return(mock_shell_out(0, info, ""))
+      properties = GROUP_ONE_MEMBERS[0].map { |k, v| double(name: k) }
+      g1_members = GROUP_ONE_MEMBERS.map do |member|
+        wmi_ole_object = double properties_: properties
+        member.each do |key, val|
+          allow(wmi_ole_object).to receive(:invoke).with(key).and_return(val)
+        end
+        WmiLite::Wmi::Instance.new(wmi_ole_object)
       end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupOne'\"")
+        .and_return(g1_members)
+
+      g2_members = GROUP_TWO_MEMBERS.map do |member|
+        wmi_ole_object = double properties_: properties
+        member.each do |key, val|
+          allow(wmi_ole_object).to receive(:invoke).with(key).and_return(val)
+        end
+        WmiLite::Wmi::Instance.new(wmi_ole_object)
+      end
+      allow_any_instance_of(WmiLite::Wmi).to receive(:query)
+        .with("SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"Win32_Group.Domain='THIS-MACHINE',Name='GroupTwo'\"")
+        .and_return(g2_members)
+
       plugin.run
-      expect(plugin[:etc][:group]["groupone"]["members"]).to eq(group_one_info)
-      expect(plugin[:etc][:group]["grouptwo"]["members"]).to eq(group_two_info)
+      expect(plugin[:etc][:group]["groupone"]["members"]).to eq([
+        { "name" => "UserOne", "type" => :user },
+        { "name" => "UserTwo", "type" => :user },
+      ])
+      expect(plugin[:etc][:group]["grouptwo"]["members"]).to eq([
+        { "name" => "GroupOne", "type" => :group },
+      ])
     end
   end
 end

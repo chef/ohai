@@ -30,7 +30,7 @@ Ohai.plugin(:CPU) do
   def parse_bsd_dmesg(&block)
     cpuinfo = Mash.new
     cpuinfo["flags"] = []
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /CPU:\s+(.+) \(([\d.]+).+\)/
         cpuinfo["model_name"] = $1
@@ -53,7 +53,7 @@ Ohai.plugin(:CPU) do
     cpu_number = 0
     current_cpu = nil
 
-    File.open("/proc/cpuinfo").each do |line|
+    file_open("/proc/cpuinfo").each do |line|
       case line
       when /processor\s+:\s(.+)/
         cpuinfo[$1] = Mash.new
@@ -212,7 +212,7 @@ Ohai.plugin(:CPU) do
     # to scrape from dmesg.boot is the cpu feature list.
     # cpu0: FPU,V86,DE,PSE,TSC,MSR,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,TM,SBF,EST,TM2
 
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /cpu\d+:\s+([A-Z]+$|[A-Z]+,.*$)/
         cpuinfo["flags"] = $1.downcase.split(",")
@@ -235,7 +235,7 @@ Ohai.plugin(:CPU) do
     # available instruction set
     # cpu0 at mainbus0 apid 0: Intel 686-class, 2134MHz, id 0x6f6
 
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /cpu[\d\w\s]+:\s([\w\s\-]+),\s+(\w+),/
         cpuinfo[:model_name] = $1

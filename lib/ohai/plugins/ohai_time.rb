@@ -19,7 +19,7 @@
 Ohai.plugin(:OhaiTime) do
   provides "ohai_time"
 
-  collect_data do
+  collect_data(:default, :target) do
     ohai_time Time.now.to_f
   end
 end

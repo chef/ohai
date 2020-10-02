@@ -25,7 +25,7 @@ Ohai.plugin(:Joyent) do
   depends "os", "platform", "virtualization"
 
   def collect_product_file
-    data = ::File.read("/etc/product") rescue nil
+    data = file_read("/etc/product") rescue nil
     if data
       data.strip.split("\n")
     else
@@ -34,7 +34,7 @@ Ohai.plugin(:Joyent) do
   end
 
   def collect_pkgsrc
-    data = ::File.read("/opt/local/etc/pkg_install.conf") rescue nil
+    data = file_read("/opt/local/etc/pkg_install.conf") rescue nil
     if data
       /PKG_PATH=(.*)/.match(data)[1] rescue nil
     end

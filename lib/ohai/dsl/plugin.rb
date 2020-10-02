@@ -22,6 +22,7 @@ require_relative "../mixin/os"
 require_relative "../mixin/shell_out"
 require_relative "../mixin/seconds_to_human"
 require_relative "../mixin/which"
+require_relative "../mixin/train_helpers"
 require_relative "../hints"
 
 module Ohai
@@ -86,16 +87,22 @@ module Ohai
       include Ohai::Mixin::ShellOut
       include Ohai::Mixin::SecondsToHuman
       include Ohai::Mixin::Which
+      include Ohai::Mixin::TrainHelpers
 
       attr_reader :data
       attr_reader :failed
       attr_reader :logger
+      attr_accessor :transport_connection
 
       def initialize(data, logger)
         @data = data
         @logger = logger.with_child({ subsystem: "plugin", plugin: name })
         @has_run = false
         @failed = false
+      end
+
+      def target_mode?
+        !!@transport_connection
       end
 
       def run

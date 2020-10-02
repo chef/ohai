@@ -56,8 +56,8 @@ describe Ohai::System, "Linux kernel plugin" do
     allow(@plugin).to receive(:shell_out).with("uname -o").and_return(mock_shell_out(0, "Linux", ""))
     allow(@plugin).to receive(:shell_out).with("env lsmod").and_return(mock_shell_out(0, @env_lsmod, ""))
     @version_module.each do |mod, vers|
-      allow(File).to receive(:exist?).with("/sys/module/#{mod}/version").and_return(true)
-      allow(File).to receive(:read).with("/sys/module/#{mod}/version").and_return(vers)
+      allow(@plugin).to receive(:file_exist?).with("/sys/module/#{mod}/version").and_return(true)
+      allow(@plugin).to receive(:file_read).with("/sys/module/#{mod}/version").and_return(vers)
     end
     expect(@plugin).to receive(:shell_out).with("env lsmod").at_least(:once)
     @plugin.run

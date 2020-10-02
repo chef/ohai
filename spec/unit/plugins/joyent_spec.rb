@@ -74,8 +74,8 @@ describe Ohai::System, "plugin joyent" do
           VERIFIED_INSTALLATION=trusted
         EOS
 
-        allow(::File).to receive(:read).with("/etc/product").and_return(etc_product)
-        allow(::File).to receive(:read).with("/opt/local/etc/pkg_install.conf").and_return(pkg_install_conf)
+        allow(plugin).to receive(:file_read).with("/etc/product").and_return(etc_product)
+        allow(plugin).to receive(:file_read).with("/opt/local/etc/pkg_install.conf").and_return(pkg_install_conf)
         plugin.run
       end
 

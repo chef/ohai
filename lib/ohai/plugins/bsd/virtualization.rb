@@ -66,7 +66,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect bhyve by presence of /dev/vmm
-    if File.exist?("/dev/vmm")
+    if file_exist?("/dev/vmm")
       virtualization[:system] = "bhyve"
       virtualization[:role] = "host"
       virtualization[:systems][:bhyve] = "host"

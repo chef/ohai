@@ -1,5 +1,4 @@
 #
-# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
@@ -14,17 +13,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-Ohai.plugin(:Shells) do
-  provides "shells"
+require "chef-utils/dsl/train_helpers" unless defined?(ChefUtils::DSL::TrainHelpers)
+require_relative "chef_utils_wiring" unless defined?(Ohai::Mixin::ChefUtilsWiring)
 
-  collect_data do
-    if file_exist?("/etc/shells")
-      shells []
-      file_open("/etc/shells").readlines.each do |line|
-        # remove carriage returns and skip over comments / empty lines
-        shells << line.chomp if line[0] == "/"
+module Ohai
+  module Mixin
+    module TrainHelpers
+      include ChefUtils::DSL::TrainHelpers
+      include ChefUtilsWiring
+
+      # anything added to this file temporarily should be pushed back up
+      # into ChefUtils::DSL::TrainHelpers
+
+      # XXX: this needs better support directly in train
+      def dir_glob(path)
+        shell_out!("ls -d #{path}").stdout.split
       end
     end
   end

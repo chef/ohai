@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.6.1 -->
-## [v16.6.1](https://github.com/chef/ohai/tree/v16.6.1) (2020-10-03)
+<!-- latest_release 16.6.2 -->
+## [v16.6.2](https://github.com/chef/ohai/tree/v16.6.2) (2020-10-08)
 
 #### Merged Pull Requests
-- Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh))
+- Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.5.6 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins)) <!-- 16.6.2 -->
 - Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh)) <!-- 16.6.1 -->
 - Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett)) <!-- 16.6.0 -->
 <!-- release_rollup -->

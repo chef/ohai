@@ -54,7 +54,7 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:linux) do
-    uptime, idletime = File.open("/proc/uptime").gets.split(" ")
+    uptime, idletime = file_open("/proc/uptime").gets.split(" ")
     uptime_seconds uptime.to_i
     uptime seconds_to_human(uptime.to_i)
     idletime_seconds idletime.to_i

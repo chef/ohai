@@ -41,7 +41,7 @@ Ohai.plugin(:VMware) do
   end
 
   def get_vm_attributes(vmtools_path)
-    if !File.exist?(vmtools_path)
+    if !file_exist?(vmtools_path)
       logger.trace("Plugin VMware: #{vmtools_path} not found")
     else
       vmware Mash.new

@@ -37,6 +37,10 @@ Ohai.plugin(:OS) do
     os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
   end
 
+  collect_data(:target) do
+    os collect_os
+  end
+
   collect_data do
     os collect_os
     os_version kernel[:release]

@@ -56,6 +56,15 @@ class Ohai::Application
     description: "Set the log file location, defaults to STDOUT - recommended for daemonizing",
     proc: nil
 
+  option :target,
+    short: "-t TARGET",
+    long: "--target TARGET",
+    description: "Target Ohai against a remote system or device",
+    proc: lambda { |target|
+      Ohai::Log.warn "-- EXPERIMENTAL -- Target mode activated -- EXPERIMENTAL --"
+      target
+    }
+
   option :help,
     short: "-h",
     long: "--help",
@@ -93,7 +102,37 @@ class Ohai::Application
 
     load_workstation_config
 
+    merge_configs
+
+    if config[:target]
+      Ohai::Config.target_mode.host = config[:target]
+      if URI.parse(Ohai::Config.target_mode.host).scheme
+        train_config = Train.unpack_target_from_uri(Ohai::Config.target_mode.host)
+        Ohai::Config.target_mode = train_config
+      end
+      Ohai::Config.target_mode.enabled = true
+      Ohai::Config.node_name = Ohai::Config.target_mode.host unless Ohai::Config.node_name
+    end
+
     Ohai::Log.init(Ohai.config[:log_location])
+  end
+
+  # @api private
+  def config_file_defaults
+    Ohai::Config.save(true)
+  end
+
+  # @api private
+  def config_file_settings
+    Ohai::Config.save(false)
+  end
+
+  # See lib/chef/knife.rb in the chef/chef github repo
+  #
+  # @api private
+  def merge_configs
+    config.replace(config_file_defaults.merge(default_config).merge(config_file_settings).merge(config))
+    Ohai::Config.merge!(config) # make them both the same
   end
 
   # Passes config and attributes arguments to Ohai::System then prints the results.

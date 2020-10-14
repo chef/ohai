@@ -549,12 +549,12 @@ describe Ohai::System, "Linux interrupts plugin" do
     plugin[:cpu] = {
       "total" => 4,
     }
-    allow(File).to receive(:exist?).and_return(false)
-    allow(File).to receive(:open).with("/proc/interrupts").and_return(@proc_interrupts)
-    allow(File).to receive(:exist?).with("/proc/irq/default_smp_affinity").and_return(true)
-    allow(File).to receive(:read).with("/proc/irq/default_smp_affinity").and_return("ff")
-    allow(File).to receive(:exist?).with("/proc/irq/1/smp_affinity").and_return(true)
-    allow(File).to receive(:read).with("/proc/irq/1/smp_affinity").and_return("ff")
+    allow(plugin).to receive(:file_exist?).and_return(false)
+    allow(plugin).to receive(:file_open).with("/proc/interrupts").and_return(@proc_interrupts)
+    allow(plugin).to receive(:file_exist?).with("/proc/irq/default_smp_affinity").and_return(true)
+    allow(plugin).to receive(:file_read).with("/proc/irq/default_smp_affinity").and_return("ff")
+    allow(plugin).to receive(:file_exist?).with("/proc/irq/1/smp_affinity").and_return(true)
+    allow(plugin).to receive(:file_read).with("/proc/irq/1/smp_affinity").and_return("ff")
     plugin.run
     expect(plugin[:interrupts]).to eq(interrupts)
   end

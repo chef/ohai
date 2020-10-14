@@ -24,6 +24,9 @@ module Ohai
   class Runner
 
     attr_reader :failed_plugins, :logger
+
+    attr_accessor :transport_connection
+
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
@@ -93,6 +96,7 @@ module Ohai
         end
 
         if dependency_providers.empty?
+          next_plugin.transport_connection = transport_connection
           @safe_run ? next_plugin.safe_run : next_plugin.run
           if next_plugin.failed
             @failed_plugins << next_plugin.name

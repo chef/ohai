@@ -40,8 +40,8 @@ Ohai.plugin(:GCE) do
   # @param path[String] abs path to the file
   # @return [String] contents of the file if it exists
   def file_val_if_exists(path)
-    if ::File.exist?(path)
-      ::File.read(path)
+    if file_exist?(path)
+      file_read(path)
     end
   end
 

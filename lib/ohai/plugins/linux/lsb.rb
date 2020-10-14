@@ -22,7 +22,7 @@ Ohai.plugin(:LSB) do
   collect_data(:linux) do
     lsb Mash.new
 
-    if File.exist?("/usr/bin/lsb_release")
+    if file_exist?("/usr/bin/lsb_release")
       # From package redhat-lsb on Fedora/Redhat, lsb-release on Debian/Ubuntu
       shell_out("lsb_release -a").stdout.lines do |line|
         case line
@@ -38,9 +38,9 @@ Ohai.plugin(:LSB) do
           lsb[:id] = line
         end
       end
-    elsif File.exist?("/etc/lsb-release")
+    elsif file_exist?("/etc/lsb-release")
       # Old, non-standard Debian support
-      File.open("/etc/lsb-release").each do |line|
+      file_open("/etc/lsb-release").each do |line|
         case line
         when /^DISTRIB_ID=["']?(.+?)["']?$/
           lsb[:id] = $1

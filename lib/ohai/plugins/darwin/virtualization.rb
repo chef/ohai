@@ -35,7 +35,7 @@ Ohai.plugin(:Virtualization) do
   end
 
   def fusion_exists?
-    ::File.exist?("/Applications/VMware\ Fusion.app/")
+    file_exist?("/Applications/VMware\ Fusion.app/")
   end
 
   def docker_exists?

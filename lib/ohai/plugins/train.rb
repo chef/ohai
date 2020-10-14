@@ -1,5 +1,4 @@
 #
-# Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
@@ -16,15 +15,20 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Shells) do
-  provides "shells"
+Ohai.plugin(:Train) do
+  provides "train"
 
   collect_data do
-    if file_exist?("/etc/shells")
-      shells []
-      file_open("/etc/shells").readlines.each do |line|
-        # remove carriage returns and skip over comments / empty lines
-        shells << line.chomp if line[0] == "/"
+    if transport_connection
+      train Mash.new
+      train["family_hierarchy"] = transport_connection.platform.family_hierarchy
+      train["family"] = transport_connection.platform.family
+      train["platform"] = transport_connection.platform.platform
+      train["backend"] = transport_connection.backend_type
+      if transport_connection.respond_to?(:uri)
+        train["scheme"] = URI.parse(transport_connection.uri).scheme
+        train["uri"] = transport_connection.uri
+      else
       end
     end
   end

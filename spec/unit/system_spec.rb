@@ -146,7 +146,7 @@ describe "Ohai::System" do
             message("default")
           end
 
-          collect_data(:#{Ohai::Mixin::OS.collect_os}) do
+          collect_data(:#{Ohai::Mixin::OS.collect_os_local}) do
             message("platform_specific_message")
           end
         end
@@ -212,7 +212,7 @@ describe "Ohai::System" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
-        allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
+        allow(ohai.runner).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
         expect(ohai.logger).to receive(:error).with(/Encountered error while running plugins/)
         expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end

@@ -25,9 +25,9 @@ describe Ohai::System, "plugin ec2" do
 
   before do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -334,8 +334,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
     end
 
     it_behaves_like "ec2"
@@ -344,8 +344,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
     end
 
     it_behaves_like "!ec2"
@@ -354,8 +354,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
     end
 
     it_behaves_like "ec2"
@@ -364,8 +364,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
 
     it_behaves_like "!ec2"
@@ -374,8 +374,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "ec2"
@@ -384,8 +384,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "!ec2"

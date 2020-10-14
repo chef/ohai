@@ -22,7 +22,7 @@ describe Ohai::System, "plugin scaleway" do
 
   before do
     allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
-    allow(File).to receive(:exist?).with("/proc/cmdline").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(false)
   end
 
   shared_examples_for "!scaleway" do
@@ -84,8 +84,8 @@ describe Ohai::System, "plugin scaleway" do
 
   describe "with scaleway cmdline" do
     before do
-      allow(File).to receive(:exist?).with("/proc/cmdline").and_return(true)
-      allow(File).to receive(:read).with("/proc/cmdline").and_return("initrd=initrd showopts console=ttyS0,115200 nousb vga=0 root=/dev/vda scaleway boot=local")
+      allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/cmdline").and_return("initrd=initrd showopts console=ttyS0,115200 nousb vga=0 root=/dev/vda scaleway boot=local")
     end
 
     it_behaves_like "scaleway"

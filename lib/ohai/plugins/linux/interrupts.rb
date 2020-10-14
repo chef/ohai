@@ -25,7 +25,7 @@ Ohai.plugin(:Interrupts) do
   # format: comma-separate list of 32bit bitmask in hex
   # each bit is a CPU, right to left ordering (i.e. CPU0 is rightmost)
   def parse_smp_affinity(path, cpus)
-    masks = File.read(path).strip
+    masks = file_read(path).strip
     bit_masks = []
     masks.split(",").each do |mask|
       bit_masks << mask.rjust(8, "0").to_i(16).to_s(2)
@@ -47,7 +47,7 @@ Ohai.plugin(:Interrupts) do
       parse_smp_affinity("/proc/irq/default_smp_affinity", cpus)
 
     interrupts[:irq] = Mash.new
-    File.open("/proc/interrupts").each do |line|
+    file_open("/proc/interrupts").each do |line|
       # Documentation: https://www.kernel.org/doc/Documentation/filesystems/proc.txt
       # format is "{irqn}: {CPUn...} [type] [vector] [device]"
       irqn, fields = line.split(":", 2)
@@ -70,7 +70,7 @@ Ohai.plugin(:Interrupts) do
         interrupts[:irq][irqn][:vector],
         interrupts[:irq][irqn][:device] =
           fields[cpus].split
-        if File.exist?("/proc/irq/#{irqn}/smp_affinity")
+        if file_exist?("/proc/irq/#{irqn}/smp_affinity")
           interrupts[:irq][irqn][:smp_affinity_by_cpu] =
             parse_smp_affinity("/proc/irq/#{irqn}/smp_affinity", cpus)
         end

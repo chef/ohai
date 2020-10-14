@@ -1,5 +1,4 @@
-#
-# Author:: Tim Smith (<tsmith@chef.io>)
+# Author:: Bryan McLellan <btm@loftninjas.org>
 # Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
@@ -16,16 +15,14 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Shells) do
-  provides "shells"
+require "chef-config/mixin/train_transport" unless defined?(ChefConfig::Mixin::TrainTransport)
 
-  collect_data do
-    if file_exist?("/etc/shells")
-      shells []
-      file_open("/etc/shells").readlines.each do |line|
-        # remove carriage returns and skip over comments / empty lines
-        shells << line.chomp if line[0] == "/"
-      end
+module Ohai
+  class TrainTransport
+    include ChefConfig::Mixin::TrainTransport
+
+    def config
+      Ohai::Config
     end
   end
 end

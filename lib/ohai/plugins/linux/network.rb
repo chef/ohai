@@ -35,7 +35,7 @@ Ohai.plugin(:Network) do
   end
 
   def ipv6_enabled?
-    File.exist? "/proc/net/if_inet6"
+    file_exist? "/proc/net/if_inet6"
   end
 
   def ethtool_binary_path
@@ -43,11 +43,11 @@ Ohai.plugin(:Network) do
   end
 
   def is_openvz?
-    @openvz ||= ::File.directory?("/proc/vz")
+    @openvz ||= file_directory?("/proc/vz")
   end
 
   def is_openvz_host?
-    is_openvz? && ::File.directory?("/proc/bc")
+    is_openvz? && file_directory?("/proc/bc")
   end
 
   def extract_neighbors(family, iface, neigh_attr)

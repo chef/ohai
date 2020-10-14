@@ -20,19 +20,20 @@ require "spec_helper"
 
 class FileHelperMock
   include Ohai::Mixin::Which
+  def transport_connection
+    nil
+  end
 end
 
 describe "Ohai::Mixin::Which" do
   let(:file_helper) { FileHelperMock.new }
 
   before do
-    old_env = ENV
-    ENV["Path"] = ENV["PATH"] = "/usr/bin"
+    Ohai::Mixin::ChefUtilsWiring::PathCache.instance.path_cache = "/usr/bin"
     allow(file_helper).to receive(:name).and_return("Fakeclass")
     logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
     allow(file_helper).to receive(:logger).and_return(logger)
     allow(File).to receive(:executable?).and_return(false)
-    ENV = old_env
   end
 
   describe "which" do

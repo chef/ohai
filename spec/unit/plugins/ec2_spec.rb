@@ -240,13 +240,16 @@ describe Ohai::System, "plugin ec2" do
         allow(plugin).to receive(:hint?).with("iam").and_return(false)
       end
 
-      it "parses ec2 iam/ directory and NOT collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and collect info and role_name and NOT collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/")
           .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/")
-          .and_return(double("Net::HTTP Response", body: "security-credentials/", code: "200"))
+          .and_return(double("Net::HTTP Response", body: "info\nsecurity-credentials/", code: "200"))
+        expect(@http_client).to receive(:get)
+          .with("/2012-01-12/meta-data/iam/info")
+          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2020-10-08T20:47:08Z\",\n  \"InstanceProfileArn\" : \"arn:aws:iam::111111111111:instance-profile/my_profile\",\n  \"InstanceProfileId\" : \"AAAAAAAAAAAAAAAAAAAAA\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/")
           .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
@@ -263,7 +266,9 @@ describe Ohai::System, "plugin ec2" do
         plugin.run
 
         expect(plugin[:ec2]).not_to be_nil
-        expect(plugin[:ec2]["iam"]).to be_nil
+        expect(plugin[:ec2]["iam"]["info"]["InstanceProfileId"]).to eql "AAAAAAAAAAAAAAAAAAAAA"
+        expect(plugin[:ec2]["iam"]["security-credentials"]).to be_nil
+        expect(plugin[:ec2]["iam"]["role_name"]).to eql "MyRole"
       end
     end
 

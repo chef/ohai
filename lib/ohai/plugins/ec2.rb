@@ -122,11 +122,17 @@ Ohai.plugin(:EC2) do
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
         # secret access key. We'd rather not have ohai send this information
-        # to the server.
-        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
-        next if k == "iam" && !hint?("iam")
-
-        ec2[k] = v
+        # to the server. If the instance is associated with an IAM role we grab
+        # only the "info" key and the IAM role name.
+        # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
+        if k == "iam" && !hint?("iam")
+          ec2[:iam] = v.select { |key, value| key == "info" }
+          if v["security-credentials"] && v["security-credentials"].keys.length == 1
+            ec2[:iam]["role_name"] = v["security-credentials"].keys[0]
+          end
+        else
+          ec2[k] = v
+        end
       end
       ec2[:userdata] = fetch_userdata
       ec2[:account_id] = fetch_dynamic_data["accountId"]

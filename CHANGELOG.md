@@ -1,31 +1,28 @@
 # Change Log
 
-<!-- latest_release 16.6.5 -->
-## [v16.6.5](https://github.com/chef/ohai/tree/v16.6.5) (2020-10-14)
-
-#### Merged Pull Requests
-- Include IAM role in ec2 data (issue #1524) [#1525](https://github.com/chef/ohai/pull/1525) ([kcbraunschweig](https://github.com/kcbraunschweig))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.5.6 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Include IAM role in ec2 data (issue #1524) [#1525](https://github.com/chef/ohai/pull/1525) ([kcbraunschweig](https://github.com/kcbraunschweig)) <!-- 16.6.5 -->
-- Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.6.4 -->
-- Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam)) <!-- 16.6.3 -->
-- Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins)) <!-- 16.6.2 -->
-- Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh)) <!-- 16.6.1 -->
-- Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett)) <!-- 16.6.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.6.5](https://github.com/chef/ohai/tree/v16.6.5) (2020-10-14)
+
+#### Merged Pull Requests
+- Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett))
+- Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh))
+- Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins))
+- Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam))
+- Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist))
+- Include IAM role in ec2 data (issue #1524) [#1525](https://github.com/chef/ohai/pull/1525) ([kcbraunschweig](https://github.com/kcbraunschweig))
+<!-- latest_stable_release -->
+
 ## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-28)
 
 #### Merged Pull Requests
 - chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist))
 - Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
-<!-- latest_stable_release -->
 
 ## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
 

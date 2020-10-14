@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.6.3 -->
-## [v16.6.3](https://github.com/chef/ohai/tree/v16.6.3) (2020-10-12)
+<!-- latest_release 16.6.4 -->
+## [v16.6.4](https://github.com/chef/ohai/tree/v16.6.4) (2020-10-14)
 
 #### Merged Pull Requests
-- Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam))
+- Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.5.6 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 16.6.4 -->
 - Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam)) <!-- 16.6.3 -->
 - Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins)) <!-- 16.6.2 -->
 - Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh)) <!-- 16.6.1 -->

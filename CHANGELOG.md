@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.7.0 -->
+## [v16.7.0](https://github.com/chef/ohai/tree/v16.7.0) (2020-10-20)
+
+#### Merged Pull Requests
+- Remove the yard task for generating docs [#1536](https://github.com/chef/ohai/pull/1536) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.6.5 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Remove the yard task for generating docs [#1536](https://github.com/chef/ohai/pull/1536) ([tas50](https://github.com/tas50)) <!-- 16.7.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

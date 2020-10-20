@@ -62,7 +62,6 @@ bundle exec rake -T
 rake build               # Build ohai-$VERSION.gem into the pkg directory
 rake clean               # Remove any temporary products
 rake clobber             # Remove any generated files
-rake docs                # Generate YARD Documentation
 rake install             # Build and install ohai-$VERSION.gem into system gems
 rake install:local       # Build and install ohai-$VERSION.gem into system gems without network access
 rake release[remote]     # Create tag $VERSION and build and push ohai-$VERSION.gem to rubygems.org

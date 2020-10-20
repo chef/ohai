@@ -15,12 +15,6 @@ group :development do
   gem "rubocop-rspec"
 end
 
-group :docs do
-  gem "github-markup"
-  gem "redcarpet"
-  gem "yard"
-end
-
 group :debug do
   gem "pry"
   gem "pry-byebug"

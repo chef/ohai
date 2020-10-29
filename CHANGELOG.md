@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.3 -->
-## [v16.7.3](https://github.com/chef/ohai/tree/v16.7.3) (2020-10-29)
+<!-- latest_release 16.7.4 -->
+## [v16.7.4](https://github.com/chef/ohai/tree/v16.7.4) (2020-10-29)
 
 #### Merged Pull Requests
-- Remove detection of EOL NexentaCore [#1544](https://github.com/chef/ohai/pull/1544) ([tas50](https://github.com/tas50))
+- Properly detect OpenIndiana and its version numbers [#1545](https://github.com/chef/ohai/pull/1545) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.6.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Properly detect OpenIndiana and its version numbers [#1545](https://github.com/chef/ohai/pull/1545) ([tas50](https://github.com/tas50)) <!-- 16.7.4 -->
 - Remove detection of EOL NexentaCore [#1544](https://github.com/chef/ohai/pull/1544) ([tas50](https://github.com/tas50)) <!-- 16.7.3 -->
 - Add unit testing for omnios platform detection [#1543](https://github.com/chef/ohai/pull/1543) ([tas50](https://github.com/tas50)) <!-- 16.7.2 -->
 - Remove detection of opensolaris platform [#1542](https://github.com/chef/ohai/pull/1542) ([tas50](https://github.com/tas50)) <!-- 16.7.1 -->

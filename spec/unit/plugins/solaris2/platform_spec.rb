@@ -139,4 +139,75 @@ describe Ohai::System, "Solaris plugin platform" do
 
   end
 
+  describe "on OpenIndiana Hipster" do
+    before do
+      @uname_x = <<~UNAME_X
+        System = SunOS
+        Node = openindiana
+        Release = 5.11
+        KernelID = illumos-c3e16711de
+        Machine = i86pc
+        BusType = <unknown>
+        Serial = <unknown>
+        Users = <unknown>
+        OEM# = 0
+        Origin# = 1
+        NumCPU = 1
+      UNAME_X
+
+      allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
+      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+
+      @release = StringIO.new("             OpenIndiana Hipster 2020.04 (powered by illumos)\n        OpenIndiana Project, part of The Illumos Foundation (C) 2010-2020\n                        Use is subject to license terms.\n                           Assembled 03 May 2020")
+      allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+      @plugin.run
+    end
+
+    it "runs uname and set platform and build" do
+      expect(@plugin[:platform_build]).to eq("illumos-c3e16711de")
+    end
+
+    it "sets the platform" do
+      expect(@plugin[:platform]).to eq("openindiana")
+    end
+
+    it "sets the platform_version" do
+      expect(@plugin[:platform_version]).to eq("2020.04")
+    end
+
+  end
+
+  describe "on OpenIndiana pre-Hipster" do
+    before do
+      @uname_x = <<~UNAME_X
+        System = SunOS
+        Node = openindiana
+        Release = 5.11
+        KernelID = illumos-cf2fa55
+        Machine = i86pc
+        BusType = <unknown>
+        Serial = <unknown>
+        Users = <unknown>
+        OEM# = 0
+        Origin# = 1
+        NumCPU = 2
+      UNAME_X
+
+      allow(File).to receive(:exist?).with("/sbin/uname").and_return(true)
+      allow(@plugin).to receive(:shell_out).with("/sbin/uname -X").and_return(mock_shell_out(0, @uname_x, ""))
+      @release = StringIO.new("             OpenIndiana Development oi_151.1.8 (powered by illumos)\n        Copyright 2011 Oracle and/or its affiliates. All rights reserved\n                        Use is subject to license terms.\n                           Assembled 20 July 2013")
+      allow(File).to receive(:open).with("/etc/release").and_yield(@release)
+      @plugin.run
+    end
+
+    it "sets the platform" do
+      expect(@plugin[:platform]).to eq("openindiana")
+    end
+
+    it "sets the platform_version" do
+      expect(@plugin[:platform_version]).to eq("151.1.8")
+    end
+
+  end
+
 end

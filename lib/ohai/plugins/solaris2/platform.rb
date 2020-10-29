@@ -46,9 +46,7 @@ Ohai.plugin(:Platform) do
         when /^\s*OpenIndiana.*(Development oi_|Hipster )(\d\S*)/ # https://rubular.com/r/iMtOBwbnyqDz7u
           platform "openindiana"
           platform_version $2
-        when /^\s*Oracle Solaris/
-          platform "solaris2"
-        when /^\s*Solaris\s.*$/
+        when /^\s*(Oracle Solaris|Solaris)/
           platform "solaris2"
         end
       end

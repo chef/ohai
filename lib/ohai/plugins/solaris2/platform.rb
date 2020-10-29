@@ -38,17 +38,15 @@ Ohai.plugin(:Platform) do
     file_open("/etc/release") do |file|
       while ( line = file.gets )
         case line
-        when /^.*(SmartOS).*$/
+        when /.*SmartOS.*/
           platform "smartos"
-        when /^\s*(OmniOS).*r(\d+).*$/
+        when /^\s*OmniOS.*r(\d+).*$/
           platform "omnios"
-          platform_version $2
-        when /^\s*(OpenIndiana).*oi_(\d+).*$/
+          platform_version $1
+        when /^\s*OpenIndiana.*(Development oi_|Hipster )(\d\S*)/ # https://rubular.com/r/iMtOBwbnyqDz7u
           platform "openindiana"
           platform_version $2
-        when /^\s*(Oracle Solaris)/
-          platform "solaris2"
-        when /^\s*(Solaris)\s.*$/
+        when /^\s*(Oracle Solaris|Solaris)/
           platform "solaris2"
         end
       end

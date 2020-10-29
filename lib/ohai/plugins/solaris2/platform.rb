@@ -46,9 +46,6 @@ Ohai.plugin(:Platform) do
         when /^\s*(OpenIndiana).*oi_(\d+).*$/
           platform "openindiana"
           platform_version $2
-        when /^\s*(OpenSolaris).*snv_(\d+).*$/
-          platform "opensolaris"
-          platform_version $2
         when /^\s*(Oracle Solaris)/
           platform "solaris2"
         when /^\s*(Solaris)\s.*$/

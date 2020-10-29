@@ -50,8 +50,6 @@ Ohai.plugin(:Platform) do
           platform "solaris2"
         when /^\s*(Solaris)\s.*$/
           platform "solaris2"
-        when /^\s*(NexentaCore)\s.*$/
-          platform "nexentacore"
         end
       end
     end

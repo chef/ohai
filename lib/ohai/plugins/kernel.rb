@@ -244,7 +244,7 @@ Ohai.plugin(:Kernel) do
     # EXAMPLE:
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
-    module_description = /[\s]*([\d]+)[\s]+([a-f\d]+)[\s]+([a-f\d]+)[\s]+(?:[\-\d]+)[\s]+(?:[\d]+)[\s]+([\S]+)[\s]+\((.+)\)$/
+    module_description = /\s*(\d+)\s+([a-f\d]+)\s+([a-f\d]+)\s+(?:[\-\d]+)\s+(?:\d+)\s+(\S+)\s+\((.+)\)$/
     so.stdout.lines do |line|
       if ( mod = module_description.match(line) )
         modules[mod[4]] = { id: mod[1].to_i, loadaddr: mod[2], size: mod[3].to_i(16), description: mod[5] }

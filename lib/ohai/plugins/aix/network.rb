@@ -92,7 +92,7 @@ Ohai.plugin(:Network) do
             if lin =~ /broadcast\s(\S+)\s/
               iface[interface][:addresses][tmp_addr][:broadcast] = $1
             end
-          elsif lin =~ %r{inet6 ([a-f0-9\:]+)%?([\d]*)/?(\d*)?}
+          elsif lin =~ %r{inet6 ([a-f0-9\:]+)%?(\d*)/?(\d*)?}
             # TODO do we have more properties on inet6 in aix? broadcast
             iface[interface][:addresses] ||= Mash.new
             iface[interface][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }

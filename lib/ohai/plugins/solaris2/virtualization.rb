@@ -55,7 +55,7 @@ Ohai.plugin(:Virtualization) do
     if File.executable?("/usr/sbin/zoneadm")
       zones = Mash.new
       shell_out("zoneadm list -pc").stdout.lines do |line|
-        info = line.chomp.split(/:/)
+        info = line.chomp.split(":")
         zones[info[1]] = {
           "id" => info[0],
           "state" => info[2],

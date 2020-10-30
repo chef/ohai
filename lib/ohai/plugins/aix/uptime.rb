@@ -41,9 +41,9 @@ Ohai.plugin(:Uptime) do
     when /^\d+-\d/
       (d, h, m, s) = so.split(/[-:]/)
     when /^\d+:\d+:\d/
-      (h, m, s) = so.split(/:/)
+      (h, m, s) = so.split(":")
     else
-      (m, s) = so.split(/:/)
+      (m, s) = so.split(":")
     end
     elapsed_seconds = ((d.to_i * 86400) + (h.to_i * 3600) + (m.to_i * 60) + s.to_i)
 

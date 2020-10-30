@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
 # Copyright:: Copyright (c) Chef Software Inc.

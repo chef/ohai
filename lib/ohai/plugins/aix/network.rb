@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)

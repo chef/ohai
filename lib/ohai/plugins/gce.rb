@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Ranjib Dey (<dey.ranjib@google.com>)
 # License:: Apache License, Version 2.0

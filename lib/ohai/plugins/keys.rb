@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Cookbook Name:: apache2
 # Recipe:: default

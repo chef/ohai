@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Thom May (<thom@clearairturbulence.org>)
 # Copyright:: Copyright (c) Chef Software Inc.

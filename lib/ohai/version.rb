@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) Chef Software Inc.
@@ -18,5 +19,5 @@
 
 module Ohai
   OHAI_ROOT = File.expand_path(__dir__)
-  VERSION = "16.7.8".freeze
+  VERSION = "16.7.8"
 end

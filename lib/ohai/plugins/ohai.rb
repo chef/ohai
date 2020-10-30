@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tollef Fog Heen <tfheen@err.no>
 # Copyright:: Copyright (c) 2010 Tollef Fog Heen

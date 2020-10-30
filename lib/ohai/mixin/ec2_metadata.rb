@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
@@ -39,7 +40,7 @@ module Ohai
     #
     module Ec2Metadata
 
-      EC2_METADATA_ADDR ||= "169.254.169.254".freeze
+      EC2_METADATA_ADDR ||= "169.254.169.254"
       EC2_SUPPORTED_VERSIONS ||= %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
                                    2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze

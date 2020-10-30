@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: James Gartrell (<jgartrel@gmail.com>)
 # Copyright:: Copyright (c) Chef Software Inc.

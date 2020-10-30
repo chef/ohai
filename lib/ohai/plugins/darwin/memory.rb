@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Patrick Collins (<pat@burned.com>)
 # Copyright:: Copyright (c) Chef Software Inc.

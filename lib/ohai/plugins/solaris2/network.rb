@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<nostromo@gmail.com>)
 # Copyright:: Copyright (c) Chef Software Inc.

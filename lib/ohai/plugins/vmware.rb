@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: "Dan Robinson" <drobinson@chef.io>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>

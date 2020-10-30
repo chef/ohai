@@ -36,12 +36,12 @@ describe Ohai::System, "zpools plugin" do
         sdg                    ONLINE       0     0     0
         sdh                    ONLINE       0     0     0
       raidz2-1                 ONLINE       0     0     0
-        sdi                    ONLINE       0     0     0
-        sdj                    ONLINE       0     0     0
-        sdk                    ONLINE       0     0     0
-        sdl                    ONLINE       0     0     0
-        sdm                    ONLINE       0     0     0
-        sdn                    ONLINE       0     0     0
+        nvme0n1                ONLINE       0     0     0
+        nvme1n1                ONLINE       0     0     0
+        nvme2n1                ONLINE       0     0     0
+        nvme3n1                ONLINE       0     0     0
+        nvme4n1                ONLINE       0     0     0
+        nvme5n1                ONLINE       0     0     0
       EOST
     end
     let(:zpool_out) do
@@ -117,10 +117,10 @@ describe Ohai::System, "zpools plugin" do
       expect(plugin[:zpools][:tank][:health]).to match("ONLINE")
     end
 
-    it "Has the correct number of devices" do
+    it "Has the correct devices per zpool" do
       plugin.run
-      expect(plugin[:zpools][:rpool][:devices].keys.size).to match(2)
-      expect(plugin[:zpools][:tank][:devices].keys.size).to match(12)
+      expect(plugin[:zpools][:rpool][:devices].keys).to match(%w{sda sdb})
+      expect(plugin[:zpools][:tank][:devices].keys).to match(%w{sdc sdd sde sdf sdg sdh nvme0n1 nvme1n1 nvme2n1 nvme3n1 nvme4n1 nvme5n1})
     end
 
     it "Won't have a version number" do

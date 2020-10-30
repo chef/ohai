@@ -76,7 +76,7 @@ Ohai.plugin(:Zpools) do
         # linux: http://rubular.com/r/J3wQC6E2lH
         # solaris: http://rubular.com/r/FqOBzUQQ4p
         # freebsd: http://rubular.com/r/RYkMNlytXl
-        when /^\s+((sd|c|ad|da)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+        when /^\s+((sd|c|ad|da|nvme)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
           logger.trace("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
           pools[pool][:devices][$1][:state] = $3

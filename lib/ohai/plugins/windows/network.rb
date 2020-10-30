@@ -205,7 +205,7 @@ Ohai.plugin(:Network) do
     so = shell_out("arp -a")
     if so.exitstatus == 0
       so.stdout.lines do |line|
-        if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
+        if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+-+\s+(0x\S+)/
           cint = $2.downcase
         end
         next unless iface[cint]

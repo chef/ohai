@@ -21,8 +21,8 @@ module Ohai
   module Mixin
     module DOMetadata
 
-      DO_METADATA_ADDR ||= "169.254.169.254".freeze
-      DO_METADATA_URL ||= "/metadata/v1.json".freeze
+      DO_METADATA_ADDR ||= "169.254.169.254"
+      DO_METADATA_URL ||= "/metadata/v1.json"
 
       def http_client
         Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }

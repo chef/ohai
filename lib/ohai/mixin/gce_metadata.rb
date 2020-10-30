@@ -22,8 +22,8 @@ module Ohai
     module GCEMetadata
 
       # Trailing dot to host is added to avoid DNS search path
-      GCE_METADATA_ADDR ||= "metadata.google.internal.".freeze
-      GCE_METADATA_URL ||= "/computeMetadata/v1/?recursive=true".freeze
+      GCE_METADATA_ADDR ||= "metadata.google.internal."
+      GCE_METADATA_URL ||= "/computeMetadata/v1/?recursive=true"
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)

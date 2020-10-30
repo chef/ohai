@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.7 -->
-## [v16.7.7](https://github.com/chef/ohai/tree/v16.7.7) (2020-10-30)
+<!-- latest_release 16.7.8 -->
+## [v16.7.8](https://github.com/chef/ohai/tree/v16.7.8) (2020-10-30)
 
 #### Merged Pull Requests
-- Split on strings intead of regex for 3x speedup [#1550](https://github.com/chef/ohai/pull/1550) ([tas50](https://github.com/tas50))
+- Properly detect NVME/XVD devices in ZFS zpools [#1549](https://github.com/chef/ohai/pull/1549) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.6.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Properly detect NVME/XVD devices in ZFS zpools [#1549](https://github.com/chef/ohai/pull/1549) ([tas50](https://github.com/tas50)) <!-- 16.7.8 -->
 - Split on strings intead of regex for 3x speedup [#1550](https://github.com/chef/ohai/pull/1550) ([tas50](https://github.com/tas50)) <!-- 16.7.7 -->
 - Gather zpool disks even if zpools uses disk labels/guids [#1547](https://github.com/chef/ohai/pull/1547) ([tas50](https://github.com/tas50)) <!-- 16.7.6 -->
 - Simplify regexes by removing extra character classes [#1548](https://github.com/chef/ohai/pull/1548) ([tas50](https://github.com/tas50)) <!-- 16.7.5 -->

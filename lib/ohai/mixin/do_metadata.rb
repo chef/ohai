@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # Author:: Dylan Page (<dpage@digitalocean.com>)
 # License:: Apache License, Version 2.0

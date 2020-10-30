@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joerg Herzinger <joerg.herzinger@oiml.at>
 # Author:: Phil Dibowitz <phil@ipom.com>

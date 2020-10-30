@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Copyright:: Copyright (c) 2010 VMware, Inc.

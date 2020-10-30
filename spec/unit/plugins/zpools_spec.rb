@@ -71,8 +71,8 @@ describe Ohai::System, "zpools plugin" do
       allow(plugin).to receive(:platform_family).and_return("rhel")
       allow(plugin).to receive(:collect_os).and_return(:linux)
       allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, zpool_out, ""))
-      allow(plugin).to receive(:shell_out).with("zpool status rpool").and_return(mock_shell_out(0, zpool_status_rpool, ""))
-      allow(plugin).to receive(:shell_out).with("zpool status tank").and_return(mock_shell_out(0, zpool_status_tank, ""))
+      allow(plugin).to receive(:shell_out).with("zpool status rpool -L").and_return(mock_shell_out(0, zpool_status_rpool, ""))
+      allow(plugin).to receive(:shell_out).with("zpool status tank -L").and_return(mock_shell_out(0, zpool_status_tank, ""))
     end
 
     it "Has entries for both zpools" do

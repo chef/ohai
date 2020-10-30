@@ -65,7 +65,9 @@ Ohai.plugin(:Zpools) do
       if platform_family == "solaris2"
         command = "su adm -c \"zpool status #{pool}\""
       else
-        command = "zpool status #{pool}"
+        # -L is used to give us real device names not label or uuid
+        # for example sda instead of ata-WDC_WD60EZAZ-00SF3B0_WD-WX32D203UXYK
+        command = "zpool status #{pool} -L"
       end
 
       so = shell_out(command)

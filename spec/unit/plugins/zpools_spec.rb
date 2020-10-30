@@ -60,8 +60,8 @@ describe Ohai::System, "zpools plugin" do
     NAME          STATE     READ WRITE CKSUM
     rpool         ONLINE       0     0     0
       mirror-0    ONLINE       0     0     0
-        sda       ONLINE       0     0     0
-        sdb       ONLINE       0     0     0
+        xvda      ONLINE       0     0     0
+        xvdb      ONLINE       0     0     0
 
   errors: No known data errors
       EOSR
@@ -119,7 +119,7 @@ describe Ohai::System, "zpools plugin" do
 
     it "Has the correct devices per zpool" do
       plugin.run
-      expect(plugin[:zpools][:rpool][:devices].keys).to match(%w{sda sdb})
+      expect(plugin[:zpools][:rpool][:devices].keys).to match(%w{xvda xvdb})
       expect(plugin[:zpools][:tank][:devices].keys).to match(%w{sdc sdd sde sdf sdg sdh nvme0n1 nvme1n1 nvme2n1 nvme3n1 nvme4n1 nvme5n1})
     end
 

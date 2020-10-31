@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Mono) do
   provides "languages/mono"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Lua) do
   provides "languages/lua"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

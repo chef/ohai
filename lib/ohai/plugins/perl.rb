@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Perl) do
   provides "languages/perl"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

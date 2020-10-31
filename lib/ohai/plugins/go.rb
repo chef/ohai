@@ -15,7 +15,7 @@
 
 Ohai.plugin(:Go) do
   provides "languages/go"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

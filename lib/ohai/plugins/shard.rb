@@ -18,7 +18,7 @@
 
 Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
-  provides "shard_seed"
+  provides "shard_seed".freeze
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|

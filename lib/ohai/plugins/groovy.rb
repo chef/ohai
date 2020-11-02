@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Groovy) do
   provides "languages/groovy"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

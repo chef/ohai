@@ -26,7 +26,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If kernel name matches
   # false:: Otherwise
   def has_rackspace_kernel?
-    kernel[:release].split("-").last.eql?("rscloud")
+    kernel[:release].end_with?("-rscloud")
   end
 
   # Checks for rackspace provider attribute

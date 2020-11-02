@@ -24,7 +24,7 @@
 #
 
 Ohai.plugin(:Filesystem) do
-  provides "filesystem"
+  provides "filesystem".freeze
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|

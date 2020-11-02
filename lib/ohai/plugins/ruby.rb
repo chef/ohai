@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) Chef Software Inc.
@@ -48,13 +49,13 @@ Ohai.plugin(:Ruby) do
     }
 
     # Create a query string from above hash
-    env_string = ""
+    env_string = []
     values.each_key do |v|
       env_string << "#{v}=\#{#{values[v]}},"
     end
 
     # Query the system ruby
-    result = run_ruby "require 'rubygems'; puts %Q(#{env_string})"
+    result = run_ruby "require 'rubygems'; puts %Q(#{env_string.join})"
 
     # Parse results to plugin hash
     result.split(",").each do |entry|

@@ -17,7 +17,7 @@
 
 Ohai.plugin(:Powershell) do
   provides "languages/powershell"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data(:windows) do
 

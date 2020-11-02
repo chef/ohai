@@ -19,7 +19,7 @@
 Ohai.plugin(:Python) do
   provides "languages/python"
 
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

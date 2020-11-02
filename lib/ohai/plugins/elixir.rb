@@ -15,7 +15,7 @@
 
 Ohai.plugin(:Elixir) do
   provides "languages/elixir"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

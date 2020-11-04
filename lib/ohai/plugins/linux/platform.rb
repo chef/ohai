@@ -133,7 +133,7 @@ Ohai.plugin(:Platform) do
   #
   def platform_family_from_platform(plat)
     case plat
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
     when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"

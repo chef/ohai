@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.11 -->
-## [v16.7.11](https://github.com/chef/ohai/tree/v16.7.11) (2020-11-04)
+<!-- latest_release 16.7.12 -->
+## [v16.7.12](https://github.com/chef/ohai/tree/v16.7.12) (2020-11-05)
 
 #### Merged Pull Requests
-- pop_os is a derivative of ubuntu [#1555](https://github.com/chef/ohai/pull/1555) ([chasebolt](https://github.com/chasebolt))
+- Better format the elapsed plugin time [#1557](https://github.com/chef/ohai/pull/1557) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.6.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Better format the elapsed plugin time [#1557](https://github.com/chef/ohai/pull/1557) ([tas50](https://github.com/tas50)) <!-- 16.7.12 -->
 - pop_os is a derivative of ubuntu [#1555](https://github.com/chef/ohai/pull/1555) ([chasebolt](https://github.com/chasebolt)) <!-- 16.7.11 -->
 - Minor memory optimizations [#1553](https://github.com/chef/ohai/pull/1553) ([tas50](https://github.com/tas50)) <!-- 16.7.10 -->
 - Freeze the strings we&#39;re not later modifying [#1551](https://github.com/chef/ohai/pull/1551) ([tas50](https://github.com/tas50)) <!-- 16.7.9 -->

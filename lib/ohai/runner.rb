@@ -66,7 +66,7 @@ module Ohai
           logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end
-      logger.trace("Plugin #{plugin.name} took #{elapsed} seconds to run.")
+      logger.trace("Plugin #{plugin.name} took #{"%f" % elapsed.truncate(6)} seconds to run.")
     end
 
     # @param [Ohai::DSL::Plugin] plugin

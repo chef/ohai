@@ -407,6 +407,8 @@ describe "Ohai::System" do
       E
 
       it "runs all the plugins" do
+        # disable a few slow running plugins
+        Ohai.config[:disabled_plugins] = %i{Packages Virtualbox Ruby}
         ohai.run_additional_plugins(@plugins_directory)
         expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
         expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)

@@ -34,6 +34,7 @@ describe Ohai::System, "Linux hostnamectl plugin" do
            Boot ID: e085ae9e65e245a8a7b62912adeebe97
   Operating System: Debian GNU/Linux 8 (jessie)
             Kernel: Linux 4.3.0-0.bpo.1-amd64
+       CPE OS Name: cpe:/o:foo:bar:8
       Architecture: x86-64
     HOSTNAMECTL_OUT
 
@@ -44,6 +45,7 @@ describe Ohai::System, "Linux hostnamectl plugin" do
       "static_hostname" => "foo",
       "icon_name" => "computer-laptop",
       "chassis" => "laptop",
+      "cpe_os_name" => "cpe:/o:foo:bar:8",
       "machine_id" => "6f702523e2fc7499eb1dc68e5314dacf",
       "boot_id" => "e085ae9e65e245a8a7b62912adeebe97",
       "operating_system" => "Debian GNU/Linux 8 (jessie)",

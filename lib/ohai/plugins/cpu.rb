@@ -36,11 +36,9 @@ Ohai.plugin(:CPU) do
       when /CPU:\s+(.+) \(([\d.]+).+\)/
         cpuinfo["model_name"] = $1
         cpuinfo["mhz"] = $2
-      when /Features=.+<(.+)>/
+      when /Features=.+<(.+)>/, /Features2=[a-f\dx]+<(.+)>/
         cpuinfo["flags"].concat($1.downcase.split(","))
         # Features2=0x80000001<SSE3,<b31>>
-      when /Features2=[a-f\dx]+<(.+)>/
-        cpuinfo["flags"].concat($1.downcase.split(","))
       else
         yield(cpuinfo, line)
       end

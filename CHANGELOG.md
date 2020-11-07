@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.17 -->
-## [v16.7.17](https://github.com/chef/ohai/tree/v16.7.17) (2020-11-07)
+<!-- latest_release 16.7.18 -->
+## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-07)
 
 #### Merged Pull Requests
-- Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50))
+- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.6.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50)) <!-- 16.7.18 -->
 - Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50)) <!-- 16.7.17 -->
 - Remove regex anchors in the Linux Memory plugin [#1563](https://github.com/chef/ohai/pull/1563) ([tas50](https://github.com/tas50)) <!-- 16.7.16 -->
 - Fix parsing of hostnamectl to support values with colons [#1560](https://github.com/chef/ohai/pull/1560) ([tas50](https://github.com/tas50)) <!-- 16.7.15 -->

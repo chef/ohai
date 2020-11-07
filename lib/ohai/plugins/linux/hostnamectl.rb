@@ -26,8 +26,8 @@ Ohai.plugin(:Hostnamectl) do
     hostnamectl_path = which("hostnamectl")
     if hostnamectl_path
       shell_out(hostnamectl_path).stdout.split("\n").each do |line|
-        key, val = line.split(":")
-        hostnamectl[key.chomp.lstrip.tr(" ", "_").downcase] = val.chomp.lstrip
+        key, val = line.split(": ", 2)
+        hostnamectl[key.chomp.lstrip.tr(" ", "_").downcase] = val
       end
     end
   end

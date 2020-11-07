@@ -39,22 +39,8 @@ Ohai.plugin(:LSB) do
           lsb[:id] = line
         end
       end
-    elsif file_exist?("/etc/lsb-release")
-      # Old, non-standard Debian support
-      file_open("/etc/lsb-release").each do |line|
-        case line
-        when /^DISTRIB_ID=["']?(.+?)["']?$/
-          lsb[:id] = $1
-        when /^DISTRIB_RELEASE=["']?(.+?)["']?$/
-          lsb[:release] = $1
-        when /^DISTRIB_CODENAME=["']?(.+?)["']?$/
-          lsb[:codename] = $1
-        when /^DISTRIB_DESCRIPTION=["']?(.+?)["']?$/
-          lsb[:description] = $1
-        end
-      end
     else
-      logger.trace("Plugin LSB: Skipping LSB, cannot find /etc/lsb-release or /usr/bin/lsb_release")
+      logger.trace("Plugin LSB: Skipping LSB, cannot find /usr/bin/lsb_release")
     end
   end
 end

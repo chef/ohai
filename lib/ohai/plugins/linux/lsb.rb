@@ -27,13 +27,13 @@ Ohai.plugin(:LSB) do
       # From package redhat-lsb on Fedora/Redhat, lsb-release on Debian/Ubuntu
       shell_out("lsb_release -a").stdout.lines do |line|
         case line
-        when /^Distributor ID:\s+(.+)$/
+        when /^Distributor ID:\s+(.+)/
           lsb[:id] = $1
-        when /^Description:\s+(.+)$/
+        when /^Description:\s+(.+)/
           lsb[:description] = $1
-        when /^Release:\s+(.+)$/
+        when /^Release:\s+(.+)/
           lsb[:release] = $1
-        when /^Codename:\s+(.+)$/
+        when /^Codename:\s+(.+)/
           lsb[:codename] = $1
         else
           lsb[:id] = line

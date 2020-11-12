@@ -1,38 +1,36 @@
 # Change Log
 
-<!-- latest_release 16.7.18 -->
-## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-07)
-
-#### Merged Pull Requests
-- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.6.5 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50)) <!-- 16.7.18 -->
-- Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50)) <!-- 16.7.17 -->
-- Remove regex anchors in the Linux Memory plugin [#1563](https://github.com/chef/ohai/pull/1563) ([tas50](https://github.com/tas50)) <!-- 16.7.16 -->
-- Fix parsing of hostnamectl to support values with colons [#1560](https://github.com/chef/ohai/pull/1560) ([tas50](https://github.com/tas50)) <!-- 16.7.15 -->
-- Collapse duplicate branches in case statements [#1558](https://github.com/chef/ohai/pull/1558) ([tas50](https://github.com/tas50)) <!-- 16.7.14 -->
-- Speedup the slowest spec by running fewer plugins [#1556](https://github.com/chef/ohai/pull/1556) ([tas50](https://github.com/tas50)) <!-- 16.7.13 -->
-- Better format the elapsed plugin time [#1557](https://github.com/chef/ohai/pull/1557) ([tas50](https://github.com/tas50)) <!-- 16.7.12 -->
-- pop_os is a derivative of ubuntu [#1555](https://github.com/chef/ohai/pull/1555) ([chasebolt](https://github.com/chasebolt)) <!-- 16.7.11 -->
-- Minor memory optimizations [#1553](https://github.com/chef/ohai/pull/1553) ([tas50](https://github.com/tas50)) <!-- 16.7.10 -->
-- Freeze the strings we&#39;re not later modifying [#1551](https://github.com/chef/ohai/pull/1551) ([tas50](https://github.com/tas50)) <!-- 16.7.9 -->
-- Properly detect NVME/XVD devices in ZFS zpools [#1549](https://github.com/chef/ohai/pull/1549) ([tas50](https://github.com/tas50)) <!-- 16.7.8 -->
-- Split on strings intead of regex for 3x speedup [#1550](https://github.com/chef/ohai/pull/1550) ([tas50](https://github.com/tas50)) <!-- 16.7.7 -->
-- Gather zpool disks even if zpools uses disk labels/guids [#1547](https://github.com/chef/ohai/pull/1547) ([tas50](https://github.com/tas50)) <!-- 16.7.6 -->
-- Simplify regexes by removing extra character classes [#1548](https://github.com/chef/ohai/pull/1548) ([tas50](https://github.com/tas50)) <!-- 16.7.5 -->
-- Properly detect OpenIndiana and its version numbers [#1545](https://github.com/chef/ohai/pull/1545) ([tas50](https://github.com/tas50)) <!-- 16.7.4 -->
-- Remove detection of EOL NexentaCore [#1544](https://github.com/chef/ohai/pull/1544) ([tas50](https://github.com/tas50)) <!-- 16.7.3 -->
-- Add unit testing for omnios platform detection [#1543](https://github.com/chef/ohai/pull/1543) ([tas50](https://github.com/tas50)) <!-- 16.7.2 -->
-- Remove detection of opensolaris platform [#1542](https://github.com/chef/ohai/pull/1542) ([tas50](https://github.com/tas50)) <!-- 16.7.1 -->
-- Remove the yard task for generating docs [#1536](https://github.com/chef/ohai/pull/1536) ([tas50](https://github.com/tas50)) <!-- 16.7.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-12)
+
+#### Merged Pull Requests
+- Remove the yard task for generating docs [#1536](https://github.com/chef/ohai/pull/1536) ([tas50](https://github.com/tas50))
+- Remove detection of opensolaris platform [#1542](https://github.com/chef/ohai/pull/1542) ([tas50](https://github.com/tas50))
+- Add unit testing for omnios platform detection [#1543](https://github.com/chef/ohai/pull/1543) ([tas50](https://github.com/tas50))
+- Remove detection of EOL NexentaCore [#1544](https://github.com/chef/ohai/pull/1544) ([tas50](https://github.com/tas50))
+- Properly detect OpenIndiana and its version numbers [#1545](https://github.com/chef/ohai/pull/1545) ([tas50](https://github.com/tas50))
+- Simplify regexes by removing extra character classes [#1548](https://github.com/chef/ohai/pull/1548) ([tas50](https://github.com/tas50))
+- Gather zpool disks even if zpools uses disk labels/guids [#1547](https://github.com/chef/ohai/pull/1547) ([tas50](https://github.com/tas50))
+- Split on strings intead of regex for 3x speedup [#1550](https://github.com/chef/ohai/pull/1550) ([tas50](https://github.com/tas50))
+- Properly detect NVME/XVD devices in ZFS zpools [#1549](https://github.com/chef/ohai/pull/1549) ([tas50](https://github.com/tas50))
+- Freeze the strings we&#39;re not later modifying [#1551](https://github.com/chef/ohai/pull/1551) ([tas50](https://github.com/tas50))
+- Minor memory optimizations [#1553](https://github.com/chef/ohai/pull/1553) ([tas50](https://github.com/tas50))
+- pop_os is a derivative of ubuntu [#1555](https://github.com/chef/ohai/pull/1555) ([chasebolt](https://github.com/chasebolt))
+- Better format the elapsed plugin time [#1557](https://github.com/chef/ohai/pull/1557) ([tas50](https://github.com/tas50))
+- Speedup the slowest spec by running fewer plugins [#1556](https://github.com/chef/ohai/pull/1556) ([tas50](https://github.com/tas50))
+- Collapse duplicate branches in case statements [#1558](https://github.com/chef/ohai/pull/1558) ([tas50](https://github.com/tas50))
+- Fix parsing of hostnamectl to support values with colons [#1560](https://github.com/chef/ohai/pull/1560) ([tas50](https://github.com/tas50))
+- Remove regex anchors in the Linux Memory plugin [#1563](https://github.com/chef/ohai/pull/1563) ([tas50](https://github.com/tas50))
+- Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50))
+- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.6.5](https://github.com/chef/ohai/tree/v16.6.5) (2020-10-14)
 
 #### Merged Pull Requests
@@ -42,7 +40,6 @@
 - Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam))
 - Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist))
 - Include IAM role in ec2 data (issue #1524) [#1525](https://github.com/chef/ohai/pull/1525) ([kcbraunschweig](https://github.com/kcbraunschweig))
-<!-- latest_stable_release -->
 
 ## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-28)
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.19 -->
-## [v16.7.19](https://github.com/chef/ohai/tree/v16.7.19) (2020-11-16)
+<!-- latest_release 16.7.20 -->
+## [v16.7.20](https://github.com/chef/ohai/tree/v16.7.20) (2020-11-16)
 
 #### Merged Pull Requests
-- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins))
+- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50)) <!-- 16.7.20 -->
 - Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins)) <!-- 16.7.19 -->
 <!-- release_rollup -->
 

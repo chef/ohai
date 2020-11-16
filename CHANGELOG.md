@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.7.19 -->
+## [v16.7.19](https://github.com/chef/ohai/tree/v16.7.19) (2020-11-16)
+
+#### Merged Pull Requests
+- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.7.18 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins)) <!-- 16.7.19 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

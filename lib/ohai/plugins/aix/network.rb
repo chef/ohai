@@ -41,7 +41,6 @@ Ohai.plugin(:Network) do
     iface = Mash.new
 
     network Mash.new unless network
-    network[:interfaces] ||= Mash.new
 
     # We unfortunately have to do things a bit different here, if ohai is running
     # within a WPAR. For instance, the WPAR isn't aware of some of its own networking

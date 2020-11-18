@@ -40,8 +40,11 @@ Ohai.plugin(:Virtualization) do
       so = shell_out("lswpar -L").stdout.scan(/={65}.*?(?:EXPORTED\n\n)+/m)
       wpars = Mash.new
       so.each do |wpar|
-        wpar_name = wpar.lines[1].chomp
+        wpar_heading = wpar.lines[1].split
+        wpar_name = wpar_heading[0]
+
         wpars[wpar_name] = Mash.new
+        wpars[wpar_name][:state] = wpar_heading[2].downcase
 
         wpar.scan(/^[A-Z]{4,}.*?[A-Z\:0-9]$.*?\n\n/m).each do |section|
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.24 -->
-## [v16.7.24](https://github.com/chef/ohai/tree/v16.7.24) (2020-11-18)
+<!-- latest_release 16.7.25 -->
+## [v16.7.25](https://github.com/chef/ohai/tree/v16.7.25) (2020-11-18)
 
 #### Merged Pull Requests
-- Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50))
+- Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50)) <!-- 16.7.25 -->
 - Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50)) <!-- 16.7.24 -->
 - Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50)) <!-- 16.7.23 -->
 - Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50)) <!-- 16.7.22 -->

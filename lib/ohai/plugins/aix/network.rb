@@ -61,6 +61,7 @@ Ohai.plugin(:Network) do
       int_name, int_data = int_lines.split(":", 2)
 
       ifaces[int_name] = Mash.new
+      ifaces[int_name][:addresses] ||= Mash.new
       ifaces[int_name][:state] = (int_data.include?("<UP,") ? "up" : "down")
 
       int_data.each_line do |lin|
@@ -82,7 +83,6 @@ Ohai.plugin(:Network) do
               netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
             end
 
-            ifaces[int_name][:addresses] ||= Mash.new
             ifaces[int_name][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
             ifaces[int_name][:addresses][tmp_addr][:netmask] = netmask
 
@@ -107,7 +107,6 @@ Ohai.plugin(:Network) do
 
       # Query macaddress
       e_so = shell_out("entstat -d #{int_name} | grep \"Hardware Address\"")
-      ifaces[int_name][:addresses] ||= Mash.new
       e_so.stdout.each_line do |l|
         if l =~ /Hardware Address: (\S+)/
           ifaces[int_name][:addresses][$1.upcase] = { "family" => "lladdr" }

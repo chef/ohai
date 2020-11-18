@@ -49,11 +49,12 @@ Ohai.plugin(:Network) do
       # :default_interface, :default_gateway - route -n get 0
       netstat_so = shell_out("netstat -rn").stdout
       netstat_so.each_line do |line|
-        next unless line.start_with?('default')
+        next unless line.start_with?("default")
+
         items = line.split(" ")
         network[:default_gateway] = items[1]
         network[:default_interface] = items[5]
-        return
+        break
       end
     end
 

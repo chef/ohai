@@ -27,7 +27,7 @@ Ohai.plugin(:Network) do
 
   def parse_media(media_string)
     media = {}
-    line_array = media_string.split(" ")
+    line_array = media_string.split
 
     0.upto(line_array.length - 1) do |i|
       unless line_array[i].eql?("none")

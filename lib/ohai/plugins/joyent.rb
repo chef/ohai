@@ -61,11 +61,11 @@ Ohai.plugin(:Joyent) do
       collect_product_file.each do |line|
         case line
         when /^Image/
-          sm_image = line.split(" ")
+          sm_image = line.split
           joyent[:sm_image_id] = sm_image[1]
           joyent[:sm_image_ver] = sm_image[2]
         when /^Base Image/
-          sm_baseimage = line.split(" ")
+          sm_baseimage = line.split
           joyent[:sm_baseimage_id] = sm_baseimage[2]
           joyent[:sm_baseimage_ver] = sm_baseimage[3]
         end

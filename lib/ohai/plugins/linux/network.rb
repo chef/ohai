@@ -466,7 +466,7 @@ Ohai.plugin(:Network) do
       iface[cint][:addresses] ||= Mash.new
       tmp_addr = $1
       tags = $4 || ""
-      tags = tags.split(" ")
+      tags = tags.split
 
       iface[cint][:addresses][tmp_addr] = {
         "family" => "inet6",

@@ -25,10 +25,10 @@ Ohai.plugin(:Memory) do
     memory Mash.new
     memory[:swap] = Mash.new
 
-    meminfo = shell_out("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").stdout
+    meminfo = shell_out("svmon -G -O unit=KB,summary=longreal | grep '[0-9]'").stdout
     total_in_mb, _u, free_in_mb = meminfo.split
-    memory[:total] = "#{total_in_mb.to_i * 1024}kB"
-    memory[:free] = "#{free_in_mb.to_i * 1024}kB"
+    memory[:total] = "#{total_in_mb.to_i}kB"
+    memory[:free] = "#{free_in_mb.to_i}kB"
 
     swap_info = shell_out("swap -s").stdout.split # returns swap info in 4K blocks
     memory[:swap]["total"] = "#{swap_info[2].to_i * 4}kB"

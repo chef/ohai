@@ -64,17 +64,17 @@ Ohai.plugin(:Network) do
       ifaces[int_name][:addresses] ||= Mash.new
       ifaces[int_name][:state] = (int_data.include?("<UP,") ? "up" : "down")
 
-      int_data.each_line do |lin|
-        case lin
+      int_data.each_line do |line|
+        case line
         when /flags=\S+<(\S+)>/
           ifaces[int_name][:flags] = $1.split(",")
-          ifaces[int_name][:metric] = $1 if lin =~ /metric\s(\S+)/
+          ifaces[int_name][:metric] = $1 if line =~ /metric\s(\S+)/
         else
           # We have key value pairs.
-          if lin =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
+          if line =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
             tmp_addr, tmp_prefix = $1, $3
             if tmp_prefix.nil?
-              netmask = hex_to_dec_netmask($1) if lin =~ /netmask\s0x(\S+)\s/
+              netmask = hex_to_dec_netmask($1) if line =~ /netmask\s0x(\S+)\s/
               unless netmask
                 tmp_prefix ||= "32"
                 netmask = IPAddr.new("255.255.255.255").mask(tmp_prefix.to_i).to_s
@@ -86,10 +86,10 @@ Ohai.plugin(:Network) do
             ifaces[int_name][:addresses][tmp_addr] = { "family" => "inet", "prefixlen" => tmp_prefix }
             ifaces[int_name][:addresses][tmp_addr][:netmask] = netmask
 
-            if lin =~ /broadcast\s(\S+)\s/
+            if line =~ /broadcast\s(\S+)\s/
               ifaces[int_name][:addresses][tmp_addr][:broadcast] = $1
             end
-          elsif lin =~ %r{inet6 ([a-f0-9\:]+)%?(\d*)/?(\d*)?}
+          elsif line =~ %r{inet6 ([a-f0-9\:]+)%?(\d*)/?(\d*)?}
             # TODO do we have more properties on inet6 in aix? broadcast
             ifaces[int_name][:addresses] ||= Mash.new
             ifaces[int_name][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
@@ -97,7 +97,7 @@ Ohai.plugin(:Network) do
             # add all key value data into the interface mash
             # for example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
             # has keys tcp_sendspace, tcp_recvspace, and rfc1323
-            properties = lin.split
+            properties = line.split
             (properties.size / 2).times do
               ifaces[int_name][properties.shift] = properties.shift
             end

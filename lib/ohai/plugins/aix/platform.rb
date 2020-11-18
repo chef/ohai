@@ -23,8 +23,8 @@ Ohai.plugin(:Platform) do
   depends "kernel"
 
   collect_data(:aix) do
-    platform kernel[:name]
+    platform "aix"
+    platform_family "aix"
     platform_version [kernel[:version], kernel[:release]].join(".")
-    platform_family platform
   end
 end

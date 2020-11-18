@@ -18,12 +18,11 @@
 
 require "spec_helper"
 
-describe Ohai::System, "Aix plugin platform" do
+describe Ohai::System, "AIX plugin platform" do
   before do
     @plugin = get_plugin("aix/platform")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     kernel = Mash.new
-    kernel[:name] = "aix"
     kernel[:version] = "7"
     kernel[:release] = "1"
     allow(@plugin).to receive(:kernel).and_return(kernel)

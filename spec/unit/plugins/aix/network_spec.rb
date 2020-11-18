@@ -128,7 +128,7 @@ describe Ohai::System, "AIX network plugin" do
       end
     end
 
-    describe "netstat -rn |grep default" do
+    describe "netstat -rn" do
       before do
         @plugin.run
       end

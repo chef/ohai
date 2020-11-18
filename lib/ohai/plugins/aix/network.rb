@@ -44,16 +44,16 @@ Ohai.plugin(:Network) do
 
     # We unfortunately have to do things a bit different here, if ohai is running
     # within a WPAR. For instance, the WPAR isn't aware of some of its own networking
-    # minutia such as default gateway/route.
+    # minutia such as default gateway/route. lpars return 0 here. wpars return > 0
     unless shell_out("uname -W").stdout.to_i > 0
       # :default_interface, :default_gateway - route -n get 0
-      so = shell_out("netstat -rn |grep default")
-      so.stdout.lines.each do |line|
+      netstat_so = shell_out("netstat -rn").stdout
+      netstat_so.each_line do |line|
+        next unless line.start_with?('default')
         items = line.split(" ")
-        if items[0] == "default"
-          network[:default_gateway] = items[1]
-          network[:default_interface] = items[5]
-        end
+        network[:default_gateway] = items[1]
+        network[:default_interface] = items[5]
+        return
       end
     end
 

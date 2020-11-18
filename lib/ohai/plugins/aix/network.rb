@@ -47,15 +47,13 @@ Ohai.plugin(:Network) do
     # minutia such as default gateway/route. lpars return 0 here. wpars return > 0
     unless shell_out("uname -W").stdout.to_i > 0
       # :default_interface, :default_gateway - route -n get 0
-      netstat_so = shell_out("netstat -rn").stdout
-      netstat_so.each_line do |line|
-        next unless line.start_with?("default")
-
-        items = line.split(" ")
-        network[:default_gateway] = items[1]
-        network[:default_interface] = items[5]
-        break
-      end
+      default_line = shell_out("netstat -rn")
+        .stdout
+        .each_line
+        .detect { |l| l.start_with?("default") }
+        .split(" ")
+      network[:default_gateway] = default_line[1]
+      network[:default_interface] = default_line[5]
     end
 
     # Splits the ifconfig output to 1 line per interface

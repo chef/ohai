@@ -20,9 +20,21 @@ require "spec_helper"
 
 describe Ohai::System, "AIX network plugin" do
   before do
-    @netstat_rn_grep_default = <<~NETSTAT_RN_GREP_DEFAULT
-      default            172.31.8.1        UG        2    121789 en0      -      -
-    NETSTAT_RN_GREP_DEFAULT
+    @netstat_rn = <<~NETSTAT_RN
+    Destination      Gateway            Flags  Refcnt Use       Interface
+    Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
+    Only the root user can specify the Z flag
+     (Internet):
+    default            172.31.0.1        UG        2   1652046 en0      -      -   =>
+    127/8              127.0.0.1         U         5   2455591 lo0      -      -   =>
+    172.31.0.0         172.31.10.23      UHSb      0         0 en0      -      -   =>
+    172.31/20          172.31.10.23      U         1   1015674 en0      -      -   =>
+    172.31.10.23       127.0.0.1         UGHS      0         1 lo0      -      -
+    172.31.15.255      172.31.10.23      UHSb      0         1 en0      -      -   =>
+    Only the root user can specify the Z flag
+     (Internet v6):
+    ::1%1              ::1%1             UH        1    677032 lo0      -      -   =>
+    NETSTAT_RN
 
     @ifconfig = <<~IFCONFIG
       en0: flags=1e080863,480<UP,BROADCAST,NOTRAILERS,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,CHECKSUM_OFFLOAD(ACTIVE),CHAIN> metric 1
@@ -77,7 +89,7 @@ describe Ohai::System, "AIX network plugin" do
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
     allow(@plugin).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
-    allow(@plugin).to receive(:shell_out).with("netstat -rn |grep default").and_return(mock_shell_out(0, @netstat_rn_grep_default, nil))
+    allow(@plugin).to receive(:shell_out).with("netstat -rn").and_return(mock_shell_out(0, @netstat_rn, nil))
     allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @ifconfig, nil))
     allow(@plugin).to receive(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
     allow(@plugin).to receive(:shell_out).with("entstat -d en1 | grep \"Hardware Address\"").and_return(mock_shell_out(0, @entstat_err, nil))
@@ -116,13 +128,13 @@ describe Ohai::System, "AIX network plugin" do
       end
     end
 
-    describe "netstat -rn |grep default" do
+    describe "netstat -rn" do
       before do
         @plugin.run
       end
 
       it "returns the default gateway of the system's network" do
-        expect(@plugin[:network][:default_gateway]).to eq("172.31.8.1")
+        expect(@plugin[:network][:default_gateway]).to eq("172.31.0.1")
       end
 
       it "returns the default interface of the system's network" do

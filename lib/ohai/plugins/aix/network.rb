@@ -51,7 +51,7 @@ Ohai.plugin(:Network) do
         .stdout
         .each_line
         .detect { |l| l.start_with?("default") }
-        .split(" ")
+        .split
       network[:default_gateway] = default_line[1]
       network[:default_interface] = default_line[5]
     end

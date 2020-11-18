@@ -97,9 +97,8 @@ Ohai.plugin(:Network) do
             # add all key value data into the interface mash
             # for example "tcp_sendspace 131072 tcp_recvspace 131072 rfc1323 1"
             # has keys tcp_sendspace, tcp_recvspace, and rfc1323
-            properties = line.split
-            (properties.size / 2).times do
-              ifaces[int_name][properties.shift] = properties.shift
+            line.split.each_slice(2) do |key, value|
+              ifaces[int_name][key] = value
             end
           end
         end

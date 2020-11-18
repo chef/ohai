@@ -164,7 +164,7 @@ Ohai.plugin(:Packages) do
     # Output format is
     # name version
     so.stdout.lines do |pkg|
-      name, version = pkg.split(" ")
+      name, version = pkg.split
       packages[name] = { "version" => version }
     end
   end

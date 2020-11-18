@@ -85,15 +85,15 @@ Ohai.plugin(:CPU) do
       when /cache size\s+:\s(.+)/
         cpuinfo[current_cpu]["cache_size"] = $1
       when /flags\s+:\s(.+)/
-        cpuinfo[current_cpu]["flags"] = $1.split(" ")
+        cpuinfo[current_cpu]["flags"] = $1.split
       when /BogoMIPS\s+:\s(.+)/
         cpuinfo[current_cpu]["bogomips"] = $1
       when /Features\s+:\s(.+)/
-        cpuinfo[current_cpu]["features"] = $1.split(" ")
+        cpuinfo[current_cpu]["features"] = $1.split
       when /bogomips per cpu:\s(.+)/
         cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/
-        cpuinfo["features"] = $1.split(" ")
+        cpuinfo["features"] = $1.split
       when /processor\s(\d):\s(.+)/
         current_cpu = $1
         cpu_number += 1
@@ -278,7 +278,7 @@ Ohai.plugin(:CPU) do
       when /^machdep.cpu.stepping: (.*)$/
         cpu[:stepping] = Regexp.last_match[1].to_i
       when /^machdep.cpu.features: (.*)$/
-        cpu[:flags] = Regexp.last_match[1].downcase.split(" ")
+        cpu[:flags] = Regexp.last_match[1].downcase.split
       end
     end
   end

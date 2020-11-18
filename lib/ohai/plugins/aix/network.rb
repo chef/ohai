@@ -105,12 +105,10 @@ Ohai.plugin(:Network) do
       end
 
       # Query macaddress
-      e_so = shell_out("entstat -d #{int_name} | grep \"Hardware Address\"")
-      e_so.stdout.each_line do |l|
-        if l =~ /Hardware Address: (\S+)/
-          ifaces[int_name][:addresses][$1.upcase] = { "family" => "lladdr" }
-          macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
-        end
+      shell_out("entstat -d #{int_name}").stdout =~ /Hardware Address: (\S+)/
+      if $1
+        ifaces[int_name][:addresses][$1.upcase] = { "family" => "lladdr" }
+        macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
       end
     end # ifconfig stdout
 
@@ -128,8 +126,8 @@ Ohai.plugin(:Network) do
 
     # List the arp entries in system.
     count = 0
+    network[:arp] ||= Mash.new
     shell_out("arp -an").stdout.each_line do |line|
-      network[:arp] ||= Mash.new
       if line =~ /\s*(\S+) \((\S+)\) at ([a-fA-F0-9\:]+) \[(\w+)\] stored in bucket/
         network[:arp][count] ||= Mash.new
         network[:arp][count][:remote_host] = $1

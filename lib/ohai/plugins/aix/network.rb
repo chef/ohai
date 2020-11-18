@@ -121,7 +121,7 @@ Ohai.plugin(:Network) do
       so_n.stdout.each_line do |line|
         if line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\d+)\s+(\S+)/
           interface = $6
-          ifaces[interface][:routes] = [] unless ifaces[interface][:routes]
+          ifaces[interface][:routes] ||= []
           ifaces[interface][:routes] << Mash.new( destination: $1, family: family,
                                                  via: $2, flags: $3)
         end

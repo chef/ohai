@@ -137,7 +137,7 @@ describe Ohai::System, "AIX virtualization plugin" do
         /dev/nvram         pseudo                               EXPORTED
 
         =================================================================
-        fluttershy-5c969f - Active
+        fluttershy-5c969f - Defined
         =================================================================
         GENERAL
         Type:                    S
@@ -262,6 +262,11 @@ describe Ohai::System, "AIX virtualization plugin" do
 
       let(:wpar2) do
         plugin[:virtualization][:wpars]["fluttershy-5c969f"]
+      end
+
+      it "detects WPAR states" do
+        expect(wpar1[:state]).to eq("active")
+        expect(wpar2[:state]).to eq("defined")
       end
 
       it "detects all WPARs present (2)" do

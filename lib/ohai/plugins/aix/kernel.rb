@@ -24,10 +24,12 @@ Ohai.plugin(:Kernel) do
   collect_data(:aix) do
     kernel Mash.new
 
-    kernel[:name] =    shell_out("uname -s").stdout.split($/)[0].downcase
-    kernel[:release] = shell_out("uname -r").stdout.split($/)[0]
-    kernel[:version] = shell_out("uname -v").stdout.split($/)[0]
-    kernel[:machine] = shell_out("uname -p").stdout.split($/)[0]
+    uname_so = shell_out("uname -srvp").stdout.split
+
+    kernel[:name] =    uname_so[0].downcase
+    kernel[:release] = uname_so[1]
+    kernel[:version] = uname_so[2]
+    kernel[:machine] = uname_so[3]
     kernel[:bits] =    shell_out("getconf KERNEL_BITMODE").stdout.strip
 
     modules = Mash.new

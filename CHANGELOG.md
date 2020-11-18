@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.20 -->
-## [v16.7.20](https://github.com/chef/ohai/tree/v16.7.20) (2020-11-16)
+<!-- latest_release 16.7.21 -->
+## [v16.7.21](https://github.com/chef/ohai/tree/v16.7.21) (2020-11-18)
 
 #### Merged Pull Requests
-- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50))
+- Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50)) <!-- 16.7.21 -->
 - Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50)) <!-- 16.7.20 -->
 - Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins)) <!-- 16.7.19 -->
 <!-- release_rollup -->

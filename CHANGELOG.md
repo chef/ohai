@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.28 -->
-## [v16.7.28](https://github.com/chef/ohai/tree/v16.7.28) (2020-11-18)
+<!-- latest_release 16.7.29 -->
+## [v16.7.29](https://github.com/chef/ohai/tree/v16.7.29) (2020-11-18)
 
 #### Merged Pull Requests
-- Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50))
+- Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50)) <!-- 16.7.29 -->
 - Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50)) <!-- 16.7.28 -->
 - More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50)) <!-- 16.7.27 -->
 - Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50)) <!-- 16.7.26 -->

@@ -117,8 +117,7 @@ Ohai.plugin(:Network) do
 
     # Query routes information
     %w{inet inet6}.each do |family|
-      so_n = shell_out("netstat -nrf #{family}")
-      so_n.stdout.each_line do |line|
+      shell_out("netstat -nrf #{family}").stdout.each_line do |line|
         if line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\d+)\s+(\S+)/
           interface = $6
           ifaces[interface][:routes] ||= []
@@ -129,9 +128,8 @@ Ohai.plugin(:Network) do
     end
 
     # List the arp entries in system.
-    so = shell_out("arp -an")
     count = 0
-    so.stdout.each_line do |line|
+    shell_out("arp -an").stdout.each_line do |line|
       network[:arp] ||= Mash.new
       if line =~ /\s*(\S+) \((\S+)\) at ([a-fA-F0-9\:]+) \[(\w+)\] stored in bucket/
         network[:arp][count] ||= Mash.new

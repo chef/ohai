@@ -58,15 +58,15 @@ Ohai.plugin(:Network) do
     end
 
     # Splits the ifconfig output to 1 line per interface
-    if_so = shell_out("ifconfig -a")
-    if_so.stdout.gsub(/\n(\w+\d+)/, '___\1').split("___").each do |intraface|
+    if_so = shell_out("ifconfig -a").stdout
+    if_so.gsub(/\n(\w+\d+)/, '___\1').split("___").each do |intraface|
       splat = intraface.split(":")
       interface = splat[0]
       line = splat[1..-1][0]
       iface[interface] = Mash.new
       iface[interface][:state] = (line.include?("<UP,") ? "up" : "down")
 
-      intraface.lines.each do |lin|
+      intraface.each_line do |lin|
         case lin
         when /flags=\S+<(\S+)>/
           iface[interface][:flags] = $1.split(",")
@@ -110,7 +110,7 @@ Ohai.plugin(:Network) do
       # Query macaddress
       e_so = shell_out("entstat -d #{interface} | grep \"Hardware Address\"")
       iface[interface][:addresses] ||= Mash.new
-      e_so.stdout.lines.each do |l|
+      e_so.stdout.each_line do |l|
         if l =~ /Hardware Address: (\S+)/
           iface[interface][:addresses][$1.upcase] = { "family" => "lladdr" }
           macaddress $1.upcase unless shell_out("uname -W").stdout.to_i > 0
@@ -121,7 +121,7 @@ Ohai.plugin(:Network) do
     # Query routes information
     %w{inet inet6}.each do |family|
       so_n = shell_out("netstat -nrf #{family}")
-      so_n.stdout.lines.each do |line|
+      so_n.stdout.each_line do |line|
         if line =~ /(\S+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(\d+)\s+(\S+)/
           interface = $6
           iface[interface][:routes] = [] unless iface[interface][:routes]
@@ -134,7 +134,7 @@ Ohai.plugin(:Network) do
     # List the arp entries in system.
     so = shell_out("arp -an")
     count = 0
-    so.stdout.lines.each do |line|
+    so.stdout.each_line do |line|
       network[:arp] ||= Mash.new
       if line =~ /\s*(\S+) \((\S+)\) at ([a-fA-F0-9\:]+) \[(\w+)\] stored in bucket/
         network[:arp][count] ||= Mash.new

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.22 -->
-## [v16.7.22](https://github.com/chef/ohai/tree/v16.7.22) (2020-11-18)
+<!-- latest_release 16.7.23 -->
+## [v16.7.23](https://github.com/chef/ohai/tree/v16.7.23) (2020-11-18)
 
 #### Merged Pull Requests
-- Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50))
+- Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50)) <!-- 16.7.23 -->
 - Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50)) <!-- 16.7.22 -->
 - Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50)) <!-- 16.7.21 -->
 - Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50)) <!-- 16.7.20 -->

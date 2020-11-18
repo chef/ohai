@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.26 -->
-## [v16.7.26](https://github.com/chef/ohai/tree/v16.7.26) (2020-11-18)
+<!-- latest_release 16.7.27 -->
+## [v16.7.27](https://github.com/chef/ohai/tree/v16.7.27) (2020-11-18)
 
 #### Merged Pull Requests
-- Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50))
+- More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50)) <!-- 16.7.27 -->
 - Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50)) <!-- 16.7.26 -->
 - Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50)) <!-- 16.7.25 -->
 - Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50)) <!-- 16.7.24 -->

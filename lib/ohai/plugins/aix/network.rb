@@ -22,7 +22,7 @@
 Ohai.plugin(:Network) do
   require_relative "../../mixin/network_helper"
 
-  provides "network", "counters/network", "macaddress"
+  provides "network", "network/interfaces", "counters/network", "macaddress"
 
   include Ohai::Mixin::NetworkHelper
 

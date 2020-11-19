@@ -21,8 +21,8 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
   collect_data(:freebsd) do
-    platform shell_out("uname -s").stdout.split($/)[0].downcase
-    platform_version shell_out("uname -r").stdout.split($/)[0]
+    platform shell_out("uname -s").stdout.strip.downcase
+    platform_version shell_out("uname -r").stdout.strip
     platform_family "freebsd"
   end
 end

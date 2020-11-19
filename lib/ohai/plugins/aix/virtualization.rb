@@ -23,16 +23,16 @@ Ohai.plugin(:Virtualization) do
   collect_data(:aix) do
     virtualization Mash.new
 
-    so = shell_out("uname -L")
-    lpar_no = so.stdout.split($/)[0].split(/\s/)[0]
-    lpar_name = so.stdout.split($/)[0].split(/\s/)[1]
+    uname_data = shell_out("uname -L").stdout.split
+    lpar_no = uname_data[0]
+    lpar_name = uname_data[1]
 
     unless lpar_no.to_i == -1 || (lpar_no.to_i == 1 && lpar_name == "NULL")
       virtualization[:lpar_no] = lpar_no
       virtualization[:lpar_name] = lpar_name
     end
 
-    wpar_no = shell_out("uname -W").stdout.chomp
+    wpar_no = shell_out("uname -W").stdout.strip
     if wpar_no.to_i > 0
       virtualization[:wpar_no] = wpar_no
     else

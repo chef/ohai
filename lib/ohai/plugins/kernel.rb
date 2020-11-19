@@ -34,7 +34,7 @@ Ohai.plugin(:Kernel) do
      ["uname -v", :version], ["uname -m", :machine],
      ["uname -p", :processor]].each do |cmd, property|
        so = shell_out(cmd)
-       kernel[property] = so.stdout.split($/)[0]
+       kernel[property] = so.stdout.strip
      end
     kernel
   end
@@ -170,7 +170,7 @@ Ohai.plugin(:Kernel) do
     kernel[:os] = kernel[:name]
 
     so = shell_out("sysctl -n hw.optional.x86_64")
-    if so.stdout.split($/)[0].to_i == 1
+    if so.stdout.strip.to_i == 1
       kernel[:machine] = "x86_64"
     end
 
@@ -190,7 +190,7 @@ Ohai.plugin(:Kernel) do
     kernel[:os] = kernel[:name]
 
     so = shell_out("uname -i")
-    kernel[:ident] = so.stdout.split($/)[0]
+    kernel[:ident] = so.stdout.strip
     so = shell_out("sysctl kern.securelevel")
     kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel: (.+)$/ }
 
@@ -201,7 +201,7 @@ Ohai.plugin(:Kernel) do
     kernel init_kernel
 
     so = shell_out("uname -o")
-    kernel[:os] = so.stdout.split($/)[0]
+    kernel[:os] = so.stdout.strip
 
     modules = Mash.new
     so = shell_out("env lsmod")
@@ -233,7 +233,7 @@ Ohai.plugin(:Kernel) do
     kernel init_kernel
 
     so = shell_out("uname -s")
-    kernel[:os] = so.stdout.split($/)[0]
+    kernel[:os] = so.stdout.strip
 
     so = file_open("/etc/release", &:gets)
     md = /(?<update>\d.*\d)/.match(so)

@@ -46,7 +46,7 @@ def it_should_check_from_mash(plugin, attribute, from, value)
 
   it "sets the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    expect(@plugin[plugin][attribute]).to eq(value[1].split($/)[0])
+    expect(@plugin[plugin][attribute]).to eq(value[1].strip)
   end
 end
 
@@ -67,7 +67,7 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
 
   it "sets the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    value = value[1].split($/)[0]
+    value = value[1].strip
     if mash.is_a?(String)
       expect(@plugin[mash][attribute]).to eq(value)
     elsif mash.is_a?(Array)

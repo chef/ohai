@@ -38,7 +38,7 @@ Ohai.plugin(:VMware) do
 
   def from_cmd(cmd)
     so = shell_out(cmd)
-    so.stdout.split($/)[0]
+    so.stdout.strip
   end
 
   def get_vm_attributes(vmtools_path)

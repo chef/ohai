@@ -31,7 +31,7 @@ Ohai.plugin(:Virtualization) do
 
     # detect when in a jail or when a jail is actively running (not in stopped state)
     so = shell_out("sysctl -n security.jail.jailed")
-    if so.stdout.split($/)[0].to_i == 1
+    if so.stdout.strip.to_i == 1
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
       virtualization[:systems][:jail] = "guest"

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.31 -->
-## [v16.7.31](https://github.com/chef/ohai/tree/v16.7.31) (2020-11-19)
+<!-- latest_release 16.7.32 -->
+## [v16.7.32](https://github.com/chef/ohai/tree/v16.7.32) (2020-11-19)
 
 #### Merged Pull Requests
-- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50))
+- Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50)) <!-- 16.7.32 -->
 - Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50)) <!-- 16.7.31 -->
 - Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50)) <!-- 16.7.30 -->
 - Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50)) <!-- 16.7.29 -->

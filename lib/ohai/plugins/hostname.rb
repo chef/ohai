@@ -38,8 +38,7 @@ Ohai.plugin(:Hostname) do
   # fqdn and domain may be broken if DNS is broken on the host
 
   def from_cmd(cmd)
-    so = shell_out(cmd)
-    so.stdout.split($/)[0]
+    shell_out(cmd).stdout.strip
   end
 
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)

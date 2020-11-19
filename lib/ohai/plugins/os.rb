@@ -35,7 +35,7 @@ Ohai.plugin(:OS) do
 
     # This is __DragonFly_version / __FreeBSD_version. See sys/param.h or
     # http://www.freebsd.org/doc/en/books/porters-handbook/freebsd-versions.html.
-    os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
+    os_version shell_out("sysctl -n kern.osreldate").stdout.strip
   end
 
   collect_data(:target) do

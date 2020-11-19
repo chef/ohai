@@ -200,7 +200,7 @@ Ohai.plugin(:CPU) do
     end
 
     so = shell_out("sysctl -n hw.ncpu")
-    info[:total] = so.stdout.split($/)[0].to_i
+    info[:total] = so.stdout.strip.to_i
     cpu info
   end
 
@@ -220,7 +220,7 @@ Ohai.plugin(:CPU) do
 
     [["hw.model", :model_name], ["hw.ncpu", :total], ["hw.cpuspeed", :mhz]].each do |param, node|
       so = shell_out("sysctl -n #{param}")
-      cpuinfo[node] = so.stdout.split($/)[0]
+      cpuinfo[node] = so.stdout.strip
     end
 
     cpu cpuinfo

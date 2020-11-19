@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.30 -->
-## [v16.7.30](https://github.com/chef/ohai/tree/v16.7.30) (2020-11-18)
+<!-- latest_release 16.7.31 -->
+## [v16.7.31](https://github.com/chef/ohai/tree/v16.7.31) (2020-11-19)
 
 #### Merged Pull Requests
-- Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50))
+- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50)) <!-- 16.7.31 -->
 - Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50)) <!-- 16.7.30 -->
 - Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50)) <!-- 16.7.29 -->
 - Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50)) <!-- 16.7.28 -->

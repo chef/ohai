@@ -22,7 +22,7 @@ describe Ohai::System, "AIX kernel plugin" do
   before do
     @plugin = get_plugin("aix/kernel")
     allow(@plugin).to receive(:collect_os).and_return(:aix)
-    allow(@plugin).to receive(:shell_out).with("uname -srvp").and_return(mock_shell_out(0, "AIX 2 7 powerpc", nil))
+    allow(@plugin).to receive(:shell_out).with("uname -rvp").and_return(mock_shell_out(0, "2 7 powerpc", nil))
     allow(@plugin).to receive(:shell_out).with("genkex -d").and_return(mock_shell_out(0, "    Text address     Size     Data address     Size File\nf1000000c0338000    77000 f1000000c0390000    1ec8c /usr/lib/drivers/cluster\n         6390000    20000          63a0000      ba8 /usr/lib/drivers/if_en", nil))
     allow(@plugin).to receive(:shell_out).with("getconf KERNEL_BITMODE").and_return(mock_shell_out(0, "64", nil))
     @plugin.run

@@ -23,7 +23,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
       allow(p).to receive(:collect_os).and_return(:aix)
-      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
+      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 virtlpar03 - 7.1 testers", nil))
       allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
       allow(p).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, @lswpar_l, nil))
       p
@@ -248,7 +248,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     it "uname -L detects the LPAR number and name" do
       plugin.run
       expect(plugin[:virtualization][:lpar_no]).to eq("29")
-      expect(plugin[:virtualization][:lpar_name]).to eq("l273pp027")
+      expect(plugin[:virtualization][:lpar_name]).to eq("virtlpar03 - 7.1 testers")
     end
 
     context "when WPARs exist on the LPAR" do

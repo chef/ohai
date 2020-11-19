@@ -23,9 +23,7 @@ Ohai.plugin(:Virtualization) do
   collect_data(:aix) do
     virtualization Mash.new
 
-    uname_data = shell_out("uname -L").stdout.split
-    lpar_no = uname_data[0]
-    lpar_name = uname_data[1]
+    lpar_no, lpar_name = shell_out("uname -L").stdout.split(nil, 2)
 
     unless lpar_no.to_i == -1 || (lpar_no.to_i == 1 && lpar_name == "NULL")
       virtualization[:lpar_no] = lpar_no

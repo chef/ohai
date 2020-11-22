@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author:: "Christian Höltje" <choltje@us.ibm.com>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
@@ -79,7 +80,7 @@ Ohai.plugin(:Packages) do
       end
 
     when "arch"
-      require "date"
+      require "date" unless defined?(DateTime)
 
       # Set LANG=C to force an easy to parse date format
       so = shell_out("LANG=C pacman -Qi")
@@ -163,7 +164,7 @@ Ohai.plugin(:Packages) do
     # Output format is
     # name version
     so.stdout.lines do |pkg|
-      name, version = pkg.split(" ")
+      name, version = pkg.split
       packages[name] = { "version" => version }
     end
   end
@@ -209,4 +210,24 @@ Ohai.plugin(:Packages) do
     collect_ips_packages
     collect_sysv_packages
   end
+
+  def collect_system_profiler_apps
+    require "plist"
+    sp_std = shell_out("system_profiler SPApplicationsDataType -xml")
+    results = Plist.parse_xml(sp_std.stdout)
+    sw_array = results[0]["_items"]
+    sw_array.each do |pkg|
+      packages[pkg["_name"]] = {
+        "version" => pkg["version"],
+        "lastmodified" => pkg["lastModified"],
+        "source" => pkg["obtained_from"],
+      }
+    end
+  end
+
+  collect_data(:darwin) do
+    packages Mash.new
+    collect_system_profiler_apps
+  end
+
 end

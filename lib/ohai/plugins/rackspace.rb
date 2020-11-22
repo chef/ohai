@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Cary Penniman (<cary@rightscale.com>)
 # License:: Apache License, Version 2.0
@@ -15,7 +16,6 @@
 # limitations under the License.
 
 Ohai.plugin(:Rackspace) do
-  require "resolv"
   provides "rackspace"
 
   depends "kernel", "network/interfaces"
@@ -26,7 +26,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If kernel name matches
   # false:: Otherwise
   def has_rackspace_kernel?
-    kernel[:release].split("-").last.eql?("rscloud")
+    kernel[:release].end_with?("-rscloud")
   end
 
   # Checks for rackspace provider attribute
@@ -48,9 +48,9 @@ Ohai.plugin(:Rackspace) do
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def has_rackspace_manufacturer?
-    return false unless RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    return false unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
 
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
     if wmi.first_of("Win32_ComputerSystem")["PrimaryOwnerName"] == "Rackspace"
       logger.trace("Plugin Rackspace: has_rackspace_manufacturer? == true")
@@ -102,7 +102,7 @@ Ohai.plugin(:Rackspace) do
     so = shell_out("xenstore-ls vm-data/provider_data")
     if so.exitstatus == 0
       so.stdout.split("\n").each do |line|
-        rackspace[:region] = line.split[2].delete('\"') if line =~ /^region/
+        rackspace[:region] = line.split[2].delete('\"') if /^region/.match?(line)
       end
     end
   rescue Ohai::Exceptions::Exec
@@ -147,6 +147,8 @@ Ohai.plugin(:Rackspace) do
   end
 
   collect_data do
+    require "resolv"
+
     # Adds rackspace Mash
     if looks_like_rackspace?
       rackspace Mash.new
@@ -160,8 +162,8 @@ Ohai.plugin(:Rackspace) do
       unless rackspace[:public_ip].nil?
         rackspace[:public_hostname] = begin
                                         Resolv.getname(rackspace[:public_ip])
-                                      rescue Resolv::ResolvError, Resolv::ResolvTimeout
-                                        rackspace[:public_ip]
+        rescue Resolv::ResolvError, Resolv::ResolvTimeout
+          rackspace[:public_ip]
                                       end
       end
       rackspace[:local_ipv4] = rackspace[:private_ip]

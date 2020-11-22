@@ -1,6 +1,6 @@
+# frozen_string_literal: true
 
 Ohai.plugin(:Passwd) do
-  require "etc" unless defined?(Etc)
   provides "etc", "current_user"
   optional true
 
@@ -14,6 +14,8 @@ Ohai.plugin(:Passwd) do
   end
 
   collect_data do
+    require "etc" unless defined?(Etc)
+
     unless etc
       etc Mash.new
 
@@ -41,6 +43,62 @@ Ohai.plugin(:Passwd) do
   end
 
   collect_data(:windows) do
-    # Etc returns nil on Windows
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
+
+    unless etc
+      etc Mash.new
+
+      wmi = WmiLite::Wmi.new
+
+      etc[:passwd] = Mash.new
+      users = wmi.query("SELECT * FROM Win32_UserAccount WHERE LocalAccount = True")
+      users.each do |user|
+        uname = user["Name"].strip.downcase
+        Ohai::Log.debug("processing user #{uname}")
+        etc[:passwd][uname] = Mash.new
+        wmi_obj = user.wmi_ole_object
+        wmi_obj.properties_.each do |key|
+          etc[:passwd][uname][key.name.downcase] = user[key.name]
+        end
+      end
+
+      etc[:group] = Mash.new
+      groups = wmi.query("SELECT * FROM Win32_Group WHERE LocalAccount = True")
+      groups.each do |group|
+        gname = group["Name"].strip.downcase
+        Ohai::Log.debug("processing group #{gname}")
+        etc[:group][gname] = Mash.new
+        wmi_obj = group.wmi_ole_object
+        wmi_obj.properties_.each do |key|
+          etc[:group][gname][key.name.downcase] = group[key.name]
+        end
+
+        # This is the primary reason that we're using WMI instead of powershell
+        # cmdlets - the powershell start up cost is huge, and you *must* do this
+        # query for every. single. group. individually.
+
+        # The query returns nothing unless you specify domain *and* name, it's
+        # a path, not a set of queries.
+        subq = "Win32_Group.Domain='#{group["Domain"]}',Name='#{group["Name"]}'"
+        members = wmi.query(
+          "SELECT * FROM Win32_GroupUser WHERE GroupComponent=\"#{subq}\""
+        )
+        etc[:group][gname]["members"] = members.map do |member|
+          mi = {}
+          info = Hash[
+            member["partcomponent"].split(",").map { |x| x.split("=") }.map { |a, b| [a, b.undump] }
+          ]
+          if info.keys.any? { |x| x.match?("Win32_UserAccount") }
+            mi["type"] = :user
+          else
+            # Note: the type here is actually Win32_SystemAccount, because,
+            # that's what groups are in the Windows universe.
+            mi["type"] = :group
+          end
+          mi["name"] = info["Name"]
+          mi
+        end
+      end
+    end
   end
 end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
@@ -25,22 +26,22 @@ Ohai.plugin(:Memory) do
 
     # /usr/src/sys/sys/vmmeter.h
     so = shell_out("sysctl -n vm.stats.vm.v_page_size")
-    memory[:page_size] = so.stdout.split($/)[0]
+    memory[:page_size] = so.stdout.strip
     so = shell_out("sysctl -n vm.stats.vm.v_page_count")
-    memory[:page_count] = so.stdout.split($/)[0]
+    memory[:page_count] = so.stdout.strip
     memory[:total] = memory[:page_size].to_i * memory[:page_count].to_i
     so = shell_out("sysctl -n vm.stats.vm.v_free_count")
-    memory[:free] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    memory[:free] = memory[:page_size].to_i * so.stdout.strip.to_i
     so = shell_out("sysctl -n vm.status.vm.v_active_count")
-    memory[:active] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    memory[:active] = memory[:page_size].to_i * so.stdout.strip.to_i
     so = shell_out("sysctl -n vm.status.vm.v_inactive_count")
-    memory[:inactive] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    memory[:inactive] = memory[:page_size].to_i * so.stdout.strip.to_i
     so = shell_out("sysctl -n vm.stats.vm.v_cache_count")
-    memory[:cache] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    memory[:cache] = memory[:page_size].to_i * so.stdout.strip.to_i
     so = shell_out("sysctl -n vm.stats.vm.v_wire_count")
-    memory[:wired] = memory[:page_size].to_i * so.stdout.split($/)[0].to_i
+    memory[:wired] = memory[:page_size].to_i * so.stdout.strip.to_i
     so = shell_out("sysctl -n vfs.bufspace")
-    memory[:buffers] = so.stdout.split($/)[0]
+    memory[:buffers] = so.stdout.strip
 
     so = shell_out("swapinfo")
     so.stdout.lines do |line|

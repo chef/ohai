@@ -18,7 +18,7 @@
 
 Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
-  provides "shard_seed"
+  provides "shard_seed".freeze
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
@@ -52,7 +52,7 @@ Ohai.plugin(:ShardSeed) do
   def digest_algorithm
     case Ohai.config[:plugin][:shard_seed][:digest_algorithm] || default_digest_algorithm
     when "md5"
-      require "digest/md5"
+      require "digest/md5" unless defined?(Digest::MD5)
       Digest::MD5
     when "sha256"
       require "openssl/digest"
@@ -94,7 +94,7 @@ Ohai.plugin(:ShardSeed) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 
     create_seed do |src|

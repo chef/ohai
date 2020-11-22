@@ -9,7 +9,8 @@ export LANG=C.UTF-8 LANGUAGE=C.UTF-8
 
 echo "--- bundle install"
 
-bundle config --local path vendor/bundle
+# we need the ruby 2.7 version of bundler, the 2.5/2.6 versions cannot pull our Gemfile correctly
+gem install bundler
 bundle install --jobs=7 --retry=3
 
 echo "+++ bundle exec task"

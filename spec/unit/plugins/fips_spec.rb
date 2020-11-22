@@ -1,6 +1,6 @@
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
-# Copyright:: Copyright (c) 2016-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,36 +25,23 @@ describe Ohai::System, "plugin fips" do
     plugin["fips"]["kernel"]["enabled"]
   end
 
-  let(:enabled) { 0 }
   let(:plugin) { get_plugin("fips") }
-  let(:openssl_test_mode) { false }
 
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  around do |ex|
-
-    $FIPS_TEST_MODE = openssl_test_mode
-    ex.run
-  ensure
-    $FIPS_TEST_MODE = false
-
-  end
-
-  context "with OpenSSL.fips_mode == false" do
-    before { allow(OpenSSL).to receive(:fips_mode).and_return(false) }
-
-    it "does not set fips plugin" do
-      expect(subject).to be(false)
+  context "when OpenSSL reports FIPS mode true" do
+    it "sets fips enabled true" do
+      stub_const("OpenSSL::OPENSSL_FIPS", true)
+      expect(subject).to be(true)
     end
   end
 
-  context "with OpenSSL.fips_mode == true" do
-    before { allow(OpenSSL).to receive(:fips_mode).and_return(true) }
-
-    it "sets fips plugin" do
-      expect(subject).to be(true)
+  context "when OpenSSL reports FIPS mode false" do
+    it "sets fips enabled false" do
+      stub_const("OpenSSL::OPENSSL_FIPS", false)
+      expect(subject).to be(false)
     end
   end
 end

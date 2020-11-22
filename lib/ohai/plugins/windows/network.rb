@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -93,7 +94,7 @@ Ohai.plugin(:Network) do
 
   # Selects default interface and returns its information
   #
-  # @note Interface with least metric value should be prefered as default_route
+  # @note Interface with least metric value should be preferred as default_route
   #
   # @param configuration [Mash] Configuration of interfaces as iface_config
   #   [<interface_index> => {<interface_configurations>}]
@@ -117,8 +118,8 @@ Ohai.plugin(:Network) do
   end
 
   collect_data(:windows) do
-
-    require "wmi-lite/wmi"
+    require "ipaddress" unless defined?(IPAddress)
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     iface = Mash.new
     iface_config = Mash.new
@@ -171,7 +172,7 @@ Ohai.plugin(:Network) do
           iface[cint][:addresses][ip] = Mash.new(prefixlen: ip2.prefix)
           if ip2.ipv6?
             iface[cint][:addresses][ip][:family] = "inet6"
-            iface[cint][:addresses][ip][:scope] = "Link" if ip =~ /^fe80/i
+            iface[cint][:addresses][ip][:scope] = "Link" if /^fe80/i.match?(ip)
           else
             if iface[cint][:configuration][:ip_subnet]
               iface[cint][:addresses][ip][:netmask] = ip2.netmask.to_s
@@ -205,7 +206,7 @@ Ohai.plugin(:Network) do
     so = shell_out("arp -a")
     if so.exitstatus == 0
       so.stdout.lines do |line|
-        if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+[-]+\s+(0x\S+)/
+        if line =~ /^Interface:\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+-+\s+(0x\S+)/
           cint = $2.downcase
         end
         next unless iface[cint]

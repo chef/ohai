@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: 2017-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +32,7 @@ module Ohai
     #
     module AzureMetadata
 
-      AZURE_METADATA_ADDR ||= "169.254.169.254".freeze
+      AZURE_METADATA_ADDR ||= "169.254.169.254"
 
       # it's important that the newer versions are at the end of this array so we can skip sorting it
       AZURE_SUPPORTED_VERSIONS ||= %w{ 2017-04-02 2017-08-01 2017-12-01 2018-02-01 2018-04-02

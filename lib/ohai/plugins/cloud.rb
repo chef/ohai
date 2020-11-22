@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Cary Penniman (<cary@rightscale.com>)
 # License:: Apache License, Version 2.0
@@ -100,7 +101,7 @@ Ohai.plugin(:Cloud) do
       @cloud[:local_ipv6] = @cloud[:local_ipv6_addrs][0] if @cloud[:local_ipv6_addrs]
 
       # if empty, return nil
-      (@cloud.empty?) ? nil : @cloud
+      @cloud.empty? ? nil : @cloud
     end
 
     private
@@ -320,7 +321,7 @@ Ohai.plugin(:Cloud) do
   end
 
   collect_data do
-    require "ipaddr"
+    require "ipaddr" unless defined?(IPAddr)
 
     @cloud_attr_obj = CloudAttrs.new
 

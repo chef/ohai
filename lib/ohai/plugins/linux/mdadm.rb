@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith <tsmith@limelight.com>
 # Author:: Phil Dibowitz <phild@ipomc.com>
@@ -53,9 +54,9 @@ Ohai.plugin(:Mdadm) do
 
   collect_data(:linux) do
     # gather a list of all raid arrays
-    if File.exist?("/proc/mdstat")
+    if file_exist?("/proc/mdstat")
       devices = {}
-      File.open("/proc/mdstat").each do |line|
+      file_open("/proc/mdstat").each do |line|
         if line =~ /(md[0-9]+)/
           device = Regexp.last_match[1]
           pieces = line.split(/\s+/)
@@ -105,7 +106,7 @@ Ohai.plugin(:Mdadm) do
           # gather detailed information on the array
           so = shell_out("mdadm --detail /dev/#{device}")
 
-          # if the mdadm command was sucessful pass so.stdout to create_raid_device_mash to grab the tidbits we want
+          # if the mdadm command was successful pass so.stdout to create_raid_device_mash to grab the tidbits we want
           mdadm[device] = create_raid_device_mash(so.stdout) if so.stdout
           mdadm[device]["members"] = devices[device]["active"]
           mdadm[device]["spares"] = devices[device]["spare"]

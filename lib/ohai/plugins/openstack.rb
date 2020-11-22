@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Matt Ray (<matt@chef.io>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2012-2019 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,6 @@
 Ohai.plugin(:Openstack) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
-  require "etc" unless defined?(Etc)
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
 
@@ -49,7 +49,7 @@ Ohai.plugin(:Openstack) do
   # https://help.dreamhost.com/hc/en-us/articles/228377408-How-to-find-the-default-user-of-an-image
   def openstack_provider
     # dream host doesn't support windows so bail early if we're on windows
-    return "openstack" if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    return "openstack" if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
 
     if Etc::Passwd.entries.map(&:name).include?("dhc-user")
       "dreamhost"
@@ -59,6 +59,8 @@ Ohai.plugin(:Openstack) do
   end
 
   collect_data do
+    require "etc" unless defined?(Etc)
+
     # fetch data if we look like openstack
     if openstack_hint? || openstack_virtualization?
       openstack Mash.new

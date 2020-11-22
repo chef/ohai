@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -130,7 +130,7 @@ describe Ohai::Loader do
 
       describe "when the plugin defines collect_data on the same platform more than once" do
         it "shoud log an illegal plugin definition warning" do
-          expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/)
+          expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on os/)
           loader.load_plugin(path_to("illegal_def.rb"))
         end
 

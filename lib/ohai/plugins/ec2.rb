@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +29,6 @@
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
   require_relative "../mixin/http_helper"
-  require "base64"
 
   include Ohai::Mixin::Ec2Metadata
   include Ohai::Mixin::HttpHelper
@@ -41,7 +41,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_vendor") =~ /Amazon/
+    if /Amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_vendor"))
       logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
@@ -56,7 +56,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_version") =~ /amazon/
+    if /amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_version"))
       logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else
@@ -68,7 +68,7 @@ Ohai.plugin(:EC2) do
   # looks for a xen UUID that starts with ec2 from within the Linux sys tree
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if file_val_if_exists("/sys/hypervisor/uuid") =~ /^ec2/
+    if /^ec2/.match?(file_val_if_exists("/sys/hypervisor/uuid"))
       logger.trace("Plugin EC2: has_ec2_xen_uuid? == true")
       return true
     end
@@ -81,10 +81,10 @@ Ohai.plugin(:EC2) do
   # linux hosts
   # @return [Boolean] do we have a Xen Identifying Number or not?
   def has_ec2_identifying_number?
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-      require "wmi-lite/wmi"
+    if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
       wmi = WmiLite::Wmi.new
-      if wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"] =~ /^ec2/
+      if /^ec2/.match?(wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"])
         logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
         true
       end
@@ -98,8 +98,8 @@ Ohai.plugin(:EC2) do
   # @param path[String] abs path to the file
   # @return [String] contents of the file if it exists
   def file_val_if_exists(path)
-    if ::File.exist?(path)
-      ::File.read(path)
+    if file_exist?(path)
+      file_read(path)
     end
   end
 
@@ -115,17 +115,25 @@ Ohai.plugin(:EC2) do
   end
 
   collect_data do
+    require "base64" unless defined?(Base64)
+
     if looks_like_ec2?
       logger.trace("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
         # fetch_metadata returns IAM security credentials, including the IAM user's
         # secret access key. We'd rather not have ohai send this information
-        # to the server.
-        # http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AESDG-chapter-instancedata.html#instancedata-data-categories
-        next if k == "iam" && !hint?("iam")
-
-        ec2[k] = v
+        # to the server. If the instance is associated with an IAM role we grab
+        # only the "info" key and the IAM role name.
+        # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
+        if k == "iam" && !hint?("iam")
+          ec2[:iam] = v.select { |key, value| key == "info" }
+          if v["security-credentials"] && v["security-credentials"].keys.length == 1
+            ec2[:iam]["role_name"] = v["security-credentials"].keys[0]
+          end
+        else
+          ec2[k] = v
+        end
       end
       ec2[:userdata] = fetch_userdata
       ec2[:account_id] = fetch_dynamic_data["accountId"]

@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Joshua Timberman <joshua@chef.io>
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +23,8 @@ Ohai.plugin(:Platform) do
   depends "kernel"
 
   collect_data(:aix) do
-    platform kernel[:name]
+    platform "aix"
+    platform_family "aix"
     platform_version [kernel[:version], kernel[:release]].join(".")
-    platform_family platform
   end
 end

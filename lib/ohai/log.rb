@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@
 # limitations under the License.
 #
 
-require "mixlib/log"
+require "mixlib/log" unless defined?(Mixlib::Log)
 
 module Ohai
   # the Ohai Logger which is just Mixlib::Log defaulting to STDERR and :info level

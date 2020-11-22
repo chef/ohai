@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<nostromo@gmail.com>)
-# Copyright:: Copyright (c) 2008-2018, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,13 +55,11 @@
 #  inet6 fe80::203:baff:fe17:4444/128
 
 # Extracted from http://illumos.org/hcl/
-unless defined?(ETHERNET_ENCAPS)
-  ETHERNET_ENCAPS = %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
+ETHERNET_ENCAPS ||= %w{ afe amd8111s arn atge ath bfe bge bnx bnxe ce cxgbe
                         dmfe e1000g efe elxl emlxs eri hermon hme hxge igb
                         iprb ipw iwh iwi iwk iwp ixgb ixgbe mwl mxfe myri10ge
                         nge ntxn nxge pcn platform qfe qlc ral rge rtls rtw rwd
                         rwn sfe tavor vr wpi xge yge aggr}.freeze
-end
 
 Ohai.plugin(:Network) do
   require_relative "../../mixin/network_helper"
@@ -88,7 +87,7 @@ Ohai.plugin(:Network) do
 
   def full_interface_name(iface, part_name, index)
     iface.each do |name, attrs|
-      next unless attrs && attrs.respond_to?(:[])
+      next unless attrs.respond_to?(:[])
       return name if /^#{part_name}($|:)/.match(name) && attrs[:index] == index
     end
 
@@ -102,10 +101,8 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] ||= Mash.new
 
-    so = shell_out("ifconfig -a")
     cint = nil
-
-    so.stdout.lines do |line|
+    shell_out("ifconfig -a").stdout.lines do |line|
       # regex: https://rubular.com/r/ZiIHbsnfiWPW1p
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)(?: index (\d+))?/
         cint = $1
@@ -159,12 +156,10 @@ Ohai.plugin(:Network) do
             break
           end
         end
-        if iface[ifn][:arp]
-          iface[ifn][:arp].each_key do |addr|
-            if addr.eql?(iaddr)
-              iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
-              break
-            end
+        iface[ifn][:arp]&.each_key do |addr|
+          if addr.eql?(iaddr)
+            iface[ifn][:addresses][iface[ifn][:arp][iaddr]] = { "family" => "lladdr" }
+            break
           end
         end
       end

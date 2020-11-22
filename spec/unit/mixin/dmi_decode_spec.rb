@@ -1,6 +1,6 @@
 #
 # Author:: Tim Smith (tsmith@chef.io)
-# Copyright:: Copyright (c) 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ describe Ohai::Mixin::DmiDecode, "guest_from_dmi_data" do
   }.each_pair do |hypervisor, values|
     describe "when passed #{hypervisor} dmi data" do
       it "returns '#{hypervisor}'" do
-        expect(mixin.guest_from_dmi_data(values[0], values[1], values[2])).to eq("#{hypervisor}")
+        expect(mixin.guest_from_dmi_data(values[0], values[1], values[2])).to eq(hypervisor.to_s)
       end
     end
   end

@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2015-2017, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +20,6 @@
 Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
   depends "lsb"
-
-  # the platform mappings between the 'ID' field in /etc/os-release and the value
-  # ohai uses. If you're adding a new platform here and you want to change the name
-  # you'll want to add it here and then add a spec for the platform_id_remap method
-  PLATFORM_MAPPINGS ||= {
-      "rhel" => "redhat",
-      "amzn" => "amazon",
-      "ol" => "oracle",
-      "sles" => "suse",
-      "sles_sap" => "suse",
-      "opensuse-leap" => "opensuseleap",
-      "xenenterprise" => "xenserver",
-      "cumulus-linux" => "cumulus",
-      "archarm" => "arch",
-    }.freeze
 
   # @deprecated
   def get_redhatish_platform(contents)
@@ -58,9 +44,9 @@ Ohai.plugin(:Platform) do
   # @returns [Hash] the file parsed into a Hash or nil
   #
   def read_os_release_info(file)
-    return nil unless File.exist?(file)
+    return nil unless file_exist?(file)
 
-    File.read(file).split.inject({}) do |map, line|
+    file_read(file).split.inject({}) do |map, line|
       key, value = line.split("=")
       map[key] = value.gsub(/\A"|"\Z/, "") if value
       map
@@ -79,7 +65,7 @@ Ohai.plugin(:Platform) do
       begin
         os_release_info = read_os_release_info("/etc/os-release")
         cisco_release_info = os_release_info["CISCO_RELEASE_INFO"] if os_release_info
-        if cisco_release_info && File.exist?(cisco_release_info)
+        if cisco_release_info && file_exist?(cisco_release_info)
           os_release_info.merge!(read_os_release_info(cisco_release_info))
         end
         os_release_info
@@ -92,7 +78,7 @@ Ohai.plugin(:Platform) do
   # @returns [Boolean] if we are Cisco according to /etc/os-release
   #
   def os_release_file_is_cisco?
-    File.exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
+    file_exist?("/etc/os-release") && os_release_info["CISCO_RELEASE_INFO"]
   end
 
   #
@@ -103,7 +89,7 @@ Ohai.plugin(:Platform) do
   # @returns [String] bigip Linux version from /etc/f5-release
   #
   def bigip_version
-    release_contents = File.read("/etc/f5-release")
+    release_contents = file_read("/etc/f5-release")
     release_contents.match(/BIG-IP release (\S*)/)[1] # http://rubular.com/r/O8nlrBVqSb
   rescue NoMethodError, Errno::ENOENT, Errno::EACCES # rescue regex failure, file missing, or permission denied
     logger.warn("Detected F5 Big-IP, but /etc/f5-release could not be parsed to determine platform_version")
@@ -122,8 +108,20 @@ Ohai.plugin(:Platform) do
     # this catches the centos guest shell in the nexus switch which identifies itself as centos
     return "nexus_centos" if id == "centos" && os_release_file_is_cisco?
 
-    # remap based on the hash of platforms
-    PLATFORM_MAPPINGS[id] || id
+    # the platform mappings between the 'ID' field in /etc/os-release and the value
+    # ohai uses. If you're adding a new platform here and you want to change the name
+    # you'll want to add it here and then add a spec for the platform_id_remap method
+    {
+      "rhel" => "redhat",
+      "amzn" => "amazon",
+      "ol" => "oracle",
+      "sles" => "suse",
+      "sles_sap" => "suse",
+      "opensuse-leap" => "opensuseleap",
+      "xenenterprise" => "xenserver",
+      "cumulus-linux" => "cumulus",
+      "archarm" => "arch",
+    }[id] || id
   end
 
   #
@@ -135,7 +133,7 @@ Ohai.plugin(:Platform) do
   #
   def platform_family_from_platform(plat)
     case plat
-    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/
+    when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
     when /oracle/, /centos/, /redhat/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
@@ -181,48 +179,48 @@ Ohai.plugin(:Platform) do
   # @deprecated
   def legacy_platform_detection
     # platform [ and platform_version ? ] should be lower case to avoid dealing with RedHat/Redhat/redhat matching
-    if File.exist?("/etc/oracle-release")
-      contents = File.read("/etc/oracle-release").chomp
+    if file_exist?("/etc/oracle-release")
+      contents = file_read("/etc/oracle-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/enterprise-release")
-      contents = File.read("/etc/enterprise-release").chomp
+    elsif file_exist?("/etc/enterprise-release")
+      contents = file_read("/etc/enterprise-release").chomp
       platform "oracle"
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/f5-release")
+    elsif file_exist?("/etc/f5-release")
       platform "bigip"
       platform_version bigip_version
-    elsif File.exist?("/etc/debian_version")
+    elsif file_exist?("/etc/debian_version")
       # Ubuntu and Debian both have /etc/debian_version
       # Ubuntu should always have a working lsb, debian does not by default
-      if lsb[:id] =~ /Ubuntu/i
+      if /Ubuntu/i.match?(lsb[:id])
         platform "ubuntu"
         platform_version lsb[:release]
       else
         platform "debian"
-        platform_version File.read("/etc/debian_version").chomp
+        platform_version file_read("/etc/debian_version").chomp
       end
-    elsif File.exist?("/etc/parallels-release")
-      contents = File.read("/etc/parallels-release").chomp
+    elsif file_exist?("/etc/parallels-release")
+      contents = file_read("/etc/parallels-release").chomp
       platform get_redhatish_platform(contents)
       platform_version contents.match(/(\d\.\d\.\d)/)[0]
-    elsif File.exist?("/etc/Eos-release")
+    elsif file_exist?("/etc/Eos-release")
       platform "arista_eos"
-      platform_version File.read("/etc/Eos-release").strip.split[-1]
-    elsif File.exist?("/etc/redhat-release")
-      contents = File.read("/etc/redhat-release").chomp
+      platform_version file_read("/etc/Eos-release").strip.split[-1]
+    elsif file_exist?("/etc/redhat-release")
+      contents = file_read("/etc/redhat-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/system-release")
-      contents = File.read("/etc/system-release").chomp
+    elsif file_exist?("/etc/system-release")
+      contents = file_read("/etc/system-release").chomp
       platform get_redhatish_platform(contents)
       platform_version get_redhatish_version(contents)
-    elsif File.exist?("/etc/SuSE-release")
-      suse_release = File.read("/etc/SuSE-release")
+    elsif file_exist?("/etc/SuSE-release")
+      suse_release = file_read("/etc/SuSE-release")
       suse_version = suse_release.scan(/VERSION = (\d+)\nPATCHLEVEL = (\d+)/).flatten.join(".")
       suse_version = suse_release[/VERSION = ([\d\.]{2,})/, 1] if suse_version == ""
       platform_version suse_version
-      if suse_release =~ /^openSUSE/
+      if /^openSUSE/.match?(suse_release)
         # opensuse releases >= 42 are openSUSE Leap
         if platform_version.to_i < 42
           platform "opensuse"
@@ -246,33 +244,33 @@ Ohai.plugin(:Platform) do
       end
 
       platform_version os_release_info["VERSION"]
-    elsif File.exist?("/etc/slackware-version")
+    elsif file_exist?("/etc/slackware-version")
       platform "slackware"
-      platform_version File.read("/etc/slackware-version").scan(/(\d+|\.+)/).join
-    elsif File.exist?("/etc/exherbo-release")
+      platform_version file_read("/etc/slackware-version").scan(/(\d+|\.+)/).join
+    elsif file_exist?("/etc/exherbo-release")
       platform "exherbo"
       # no way to determine platform_version in a rolling release distribution
       # kernel release will be used - ex. 3.13
       platform_version shell_out("/bin/uname -r").stdout.strip
-    elsif File.exist?("/usr/lib/os-release")
-      contents = File.read("/usr/lib/os-release")
-      if /clear-linux-os/ =~ contents # Clear Linux https://clearlinux.org/
+    elsif file_exist?("/usr/lib/os-release")
+      contents = file_read("/usr/lib/os-release")
+      if /clear-linux-os/.match?(contents) # Clear Linux https://clearlinux.org/
         platform "clearlinux"
         platform_version contents[/VERSION_ID=(\d+)/, 1]
       end
-    elsif lsb[:id] =~ /RedHat/i
+    elsif /RedHat/i.match?(lsb[:id])
       platform "redhat"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /Amazon/i
+    elsif /Amazon/i.match?(lsb[:id])
       platform "amazon"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /ScientificSL/i
+    elsif /ScientificSL/i.match?(lsb[:id])
       platform "scientific"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /XenServer/i
+    elsif /XenServer/i.match?(lsb[:id])
       platform "xenserver"
       platform_version lsb[:release]
-    elsif lsb[:id] =~ /XCP/i
+    elsif /XCP/i.match?(lsb[:id])
       platform "xcp"
       platform_version lsb[:release]
     elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
@@ -288,14 +286,14 @@ Ohai.plugin(:Platform) do
   def determine_os_version
     # centos only includes the major version in os-release for some reason
     if os_release_info["ID"] == "centos"
-      get_redhatish_version(File.read("/etc/redhat-release").chomp)
+      get_redhatish_version(file_read("/etc/redhat-release").chomp)
     else
       os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
     end
   end
 
   collect_data(:linux) do
-    if ::File.exist?("/etc/os-release")
+    if file_exist?("/etc/os-release")
       logger.trace("Plugin platform: Using /etc/os-release for platform detection")
 
       # fixup os-release names to ohai platform names

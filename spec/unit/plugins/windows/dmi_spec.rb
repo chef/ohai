@@ -22,7 +22,7 @@ describe Ohai::System, "DMI", :windows_only do
   let(:plugin) { get_plugin("windows/dmi") }
 
   before do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     empty_wmi_object = WmiLite::Wmi::Instance.new(double(properties_: []))
     %w{Processor Bios ComputerSystemProduct BaseBoard}.each do |type|

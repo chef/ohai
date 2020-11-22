@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
@@ -5,7 +6,7 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
 # Author:: Paul Mooring (<paul@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
@@ -54,7 +55,7 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:linux) do
-    uptime, idletime = File.open("/proc/uptime").gets.split(" ")
+    uptime, idletime = file_open("/proc/uptime").gets.split
     uptime_seconds uptime.to_i
     uptime seconds_to_human(uptime.to_i)
     idletime_seconds idletime.to_i
@@ -84,7 +85,7 @@ Ohai.plugin(:Uptime) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
     last_boot_up_time = wmi.first_of("Win32_OperatingSystem")["lastbootuptime"]
     uptime_seconds Time.new.to_i - Time.parse(last_boot_up_time).to_i

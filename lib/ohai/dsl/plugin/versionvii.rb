@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Serdar Sutay (<serdar@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,7 +47,8 @@ module Ohai
           :version7
         end
 
-        # the source of the plugin on disk. This is an array since a plugin may exist for multiple platforms and this would include each of those platform specific file paths
+        # The source of the plugin on disk. This is an array since a plugin may exist for multiple
+        # oses and this would include each of those os specific file paths
         #
         # @return [Array]
         def self.sources
@@ -61,7 +63,7 @@ module Ohai
           @depends_attrs ||= []
         end
 
-        # A block per platform for actually performing data collection constructed
+        # A block per os for actually performing data collection constructed
         # by the collect_data method
         #
         # @return [Mash]
@@ -101,15 +103,16 @@ module Ohai
           !!@optional
         end
 
-        # define data collection methodology per platform
+        # define data collection methodology per os
         #
-        # @param platform [Symbol] the platform to collect data for
-        # @param other_platforms [Array] additional platforms to collect data for
-        # @param block [block] the actual code to collect data for the specified platforms
-        def self.collect_data(platform = :default, *other_platforms, &block)
-          [platform, other_platforms].flatten.each do |plat|
-            Ohai::Log.warn("collect_data already defined on platform '#{plat}' for #{self}, last plugin seen will be used") if data_collector.key?(plat)
-            data_collector[plat] = block
+        # @param os [Array<Symbol>] the list of oses to collect data for
+        # @param block [block] the actual code to collect data for the specified os
+        #
+        def self.collect_data(*os_list, &block)
+          os_list = [ :default ] if os_list.empty?
+          os_list.flatten.each do |os|
+            Ohai::Log.warn("collect_data already defined on os '#{os}' for #{self}, last plugin seen will be used") if data_collector.key?(os)
+            data_collector[os] = block
           end
         end
 
@@ -120,12 +123,22 @@ module Ohai
 
         def run_plugin
           collector = self.class.data_collector
-          platform = collect_os
+          os = collect_os
 
-          if collector.key?(platform)
-            instance_eval(&collector[platform])
-          elsif collector.key?(:default)
+          # :default - means any remote or local unix or windows host
+          # :target  - means any remote API which is not unix/windows or otherwise rubyable (cisco switches, IPMI console, HTTP API, etc)
+          #
+          # Do not be confused by the fact that collectors tagged :target do not run against e.g. target-mode ubuntu boxes, that is not
+          # what :target is intended for.  Also, do not be confused by the fact that collectors tagged :default do not run by default against
+          # pure-target mode targets like switches.  That is all intended behavior, the names are problematic.  The :default nomenclature was
+          # invented 10 years before target mode and we are stuck with it.
+          #
+          if collector.key?(os)
+            instance_eval(&collector[os])
+          elsif collector.key?(:default) && !nonruby_target?
             instance_eval(&collector[:default])
+          elsif collector.key?(:target) && nonruby_target?
+            instance_eval(&collector[:target])
           else
             logger.trace("Plugin #{name}: No data to collect. Skipping...")
           end

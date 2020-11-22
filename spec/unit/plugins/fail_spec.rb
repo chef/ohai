@@ -1,7 +1,7 @@
 #
 # Author:: Toomas Pelberg (toomas.pelberg@playtech.com>)
 # Author:: Claire McQuin (claire@chef.io)
-# Copyright:: Copyright (c) 2011, 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ shared_examples "a v7 loading failure" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -44,7 +44,7 @@ shared_examples "a v7 loading failure" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 
@@ -70,7 +70,7 @@ shared_examples "a v7 loading success" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -88,7 +88,7 @@ shared_examples "a v7 loading success" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 
@@ -113,7 +113,7 @@ shared_examples "a v7 run failure" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -131,7 +131,7 @@ shared_examples "a v7 run failure" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 

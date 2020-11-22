@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joerg Herzinger <joerg.herzinger@oiml.at>
 # Author:: Phil Dibowitz <phil@ipom.com>
@@ -24,7 +25,6 @@ Ohai.plugin(:Lspci) do
 
   collect_data(:linux) do
     devices = Mash.new
-    lspci = shell_out("lspci -vnnmk")
 
     h = /[0-9a-fA-F]/ # any hex digit
     hh = /#{h}#{h}/ # any 2 hex digits
@@ -46,7 +46,7 @@ Ohai.plugin(:Lspci) do
       end
     end
 
-    lspci.stdout.split("\n").each do |line|
+    shell_out("lspci -vnnmk").stdout.split("\n").each do |line|
       dev = line.scan(/^(.*):\s(.*)$/)[0]
       next if dev.nil?
 

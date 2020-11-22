@@ -1,6 +1,6 @@
 #
 # Author:: Thom May (<thom@clearairturbulence.org>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 Ohai.plugin(:Python) do
   provides "languages/python"
 
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

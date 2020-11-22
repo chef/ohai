@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Jason J. W. Williams (williamsjj@digitar.com)
-# Copyright:: Copyright (c) 2011-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,7 +66,9 @@ Ohai.plugin(:Zpools) do
       if platform_family == "solaris2"
         command = "su adm -c \"zpool status #{pool}\""
       else
-        command = "zpool status #{pool}"
+        # -L is used to give us real device names not label or uuid
+        # for example sda instead of ata-WDC_WD60EZAZ-00SF3B0_WD-WX32D203UXYK
+        command = "zpool status #{pool} -L"
       end
 
       so = shell_out(command)
@@ -74,7 +77,7 @@ Ohai.plugin(:Zpools) do
         # linux: http://rubular.com/r/J3wQC6E2lH
         # solaris: http://rubular.com/r/FqOBzUQQ4p
         # freebsd: http://rubular.com/r/RYkMNlytXl
-        when /^\s+((sd|c|ad|da)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
+        when /^\s+((sd|c|ad|da|nvme|xvd)[-_a-zA-Z0-9]+)\s+([-_a-zA-Z0-9]+)\s+(\d+)\s+(\d+)\s+(\d+)$/
           logger.trace("Plugin Zpools: Parsing zpool status line: #{line.chomp}")
           pools[pool][:devices][$1] = Mash.new
           pools[pool][:devices][$1][:state] = $3

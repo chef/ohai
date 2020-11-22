@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,40 +24,6 @@ describe Ohai::System, "Linux lsb plugin" do
   before do
     @plugin = get_plugin("linux/lsb")
     allow(@plugin).to receive(:collect_os).and_return(:linux)
-  end
-
-  describe "on systems with /etc/lsb-release" do
-    before do
-      @double_file = double("/etc/lsb-release")
-      allow(@double_file).to receive(:each)
-        .and_yield("DISTRIB_ID=Ubuntu")
-        .and_yield("DISTRIB_RELEASE=8.04")
-        .and_yield("DISTRIB_CODENAME=hardy")
-        .and_yield('DISTRIB_DESCRIPTION="Ubuntu 8.04"')
-      allow(File).to receive(:open).with("/etc/lsb-release").and_return(@double_file)
-      allow(File).to receive(:exist?).with("/usr/bin/lsb_release").and_return(false)
-      allow(File).to receive(:exist?).with("/etc/lsb-release").and_return(true)
-    end
-
-    it "sets lsb[:id]" do
-      @plugin.run
-      expect(@plugin[:lsb][:id]).to eq("Ubuntu")
-    end
-
-    it "sets lsb[:release]" do
-      @plugin.run
-      expect(@plugin[:lsb][:release]).to eq("8.04")
-    end
-
-    it "sets lsb[:codename]" do
-      @plugin.run
-      expect(@plugin[:lsb][:codename]).to eq("hardy")
-    end
-
-    it "sets lsb[:description]" do
-      @plugin.run
-      expect(@plugin[:lsb][:description]).to eq("Ubuntu 8.04")
-    end
   end
 
   describe "on systems with /usr/bin/lsb_release" do

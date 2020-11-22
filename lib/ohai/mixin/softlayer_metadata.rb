@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Alexey Karpik <alexey.karpik@rightscale.com>
 # Author:: Peter Schroeter <peter.schroeter@rightscale.com>
@@ -17,12 +18,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "net/https"
+require "net/http" unless defined?(Net::HTTP)
 require "uri" unless defined?(URI)
 
 # https://softlayer.github.io/reference/services/SoftLayer_Resource_Metadata/
 module ::Ohai::Mixin::SoftlayerMetadata
-  SOFTLAYER_API_QUERY_URL ||= "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata".freeze
+  SOFTLAYER_API_QUERY_URL ||= "https://api.service.softlayer.com/rest/v3.1/SoftLayer_Resource_Metadata"
 
   # fetch metadata items and build out hash of data
   #

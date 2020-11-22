@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@
 # limitations under the License.
 #
 
-# After long discussion in IRC the "powers that be" have come to a concensus
+# After long discussion in IRC the "powers that be" have come to a consensus
 # that there is no other Windows platforms exist that were not based on the
 # Windows_NT kernel, so we herby decree that "windows" will refer to all
 # platforms built upon the Windows_NT kernel and have access to win32 or win64

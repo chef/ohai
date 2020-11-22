@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@
 Ohai.plugin(:OhaiTime) do
   provides "ohai_time"
 
-  collect_data do
+  collect_data(:default, :target) do
     ohai_time Time.now.to_f
   end
 end

@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +29,8 @@ Ohai.plugin(:Eucalyptus) do
   provides "eucalyptus"
   depends "network/interfaces"
 
+  MAC_MATCH = /^[dD]0:0[dD]:/.freeze
+
   # returns the mac address from the collection of all address types
   def get_mac_address(addresses)
     detected_addresses = addresses.detect { |address, keypair| keypair == { "family" => "lladdr" } }
@@ -42,7 +45,7 @@ Ohai.plugin(:Eucalyptus) do
   def has_euca_mac?
     network[:interfaces].each_value do |iface|
       mac = get_mac_address(iface[:addresses])
-      if mac =~ /^[dD]0:0[dD]:/
+      if MAC_MATCH.match?(mac)
         logger.trace("Plugin Eucalyptus: has_euca_mac? == true (#{mac})")
         return true
       end

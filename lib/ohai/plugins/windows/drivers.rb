@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 #
-# Copyright:: Copyright (c) 2015 Chef Software
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +23,7 @@ Ohai.plugin(:Drivers) do
   collect_data(:windows) do
     if configuration(:enabled)
 
-      require "wmi-lite/wmi"
+      require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
       kext = Mash.new
       pnp_drivers = Mash.new

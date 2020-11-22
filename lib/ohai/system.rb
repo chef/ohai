@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2019, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,15 +23,16 @@ require_relative "log"
 require_relative "mash"
 require_relative "runner"
 require_relative "dsl"
-require_relative "mixin/command"
+require_relative "mixin/shell_out"
 require_relative "mixin/os"
 require_relative "mixin/string"
 require_relative "mixin/constant_helper"
 require_relative "provides_map"
 require_relative "hints"
-require "mixlib/shellout" unless defined?(Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
 require_relative "config"
+require_relative "train_transport"
 require "ffi_yajl" unless defined?(FFI_Yajl)
+require "cgi" unless defined?(CGI)
 
 module Ohai
   # The class used by Ohai::Application and Chef to actually collect data
@@ -41,6 +43,7 @@ module Ohai
     attr_reader :config
     attr_reader :provides_map
     attr_reader :logger
+    attr_writer :transport_connection
 
     # the cli flag is used to determine if we're being constructed by
     # something like chef-client (which doesn't set this flag) and
@@ -68,12 +71,18 @@ module Ohai
       configure_logging if @cli
 
       @loader = Ohai::Loader.new(self)
-      @runner = Ohai::Runner.new(self, true)
 
       Ohai::Hints.refresh_hints
 
       # Remove the previously defined plugins
       recursive_remove_constants(Ohai::NamedPlugin)
+    end
+
+    def runner
+      @runner ||=
+        Ohai::Runner.new(self, true).tap do |runner|
+          runner.transport_connection = transport_connection unless transport_connection.nil?
+        end
     end
 
     def [](key)
@@ -103,6 +112,13 @@ module Ohai
       @loader.load_all
     end
 
+    # get backend parameters for target mode
+    #
+    # @return [Train::Transport]
+    def transport_connection
+      @transport_connection ||= Ohai::TrainTransport.new(logger).build_transport&.connection
+    end
+
     # run all plugins or those that match the attribute filter is provided
     #
     # @param safe [Boolean]
@@ -112,13 +128,14 @@ module Ohai
     def run_plugins(safe = false, attribute_filter = nil)
       begin
         @provides_map.all_plugins(attribute_filter).each do |plugin|
-          @runner.run_plugin(plugin)
+          runner.run_plugin(plugin)
         end
+        transport_connection.close unless transport_connection.nil?
       rescue Ohai::Exceptions::AttributeNotFound, Ohai::Exceptions::DependencyCycle => e
         logger.error("Encountered error while running plugins: #{e.inspect}")
         raise
       end
-      critical_failed = Ohai::Config.ohai[:critical_plugins] & @runner.failed_plugins
+      critical_failed = Ohai::Config.ohai[:critical_plugins] & runner.failed_plugins
       unless critical_failed.empty?
         msg = "The following Ohai plugins marked as critical failed: #{critical_failed}"
         if @cli
@@ -140,7 +157,7 @@ module Ohai
     def run_additional_plugins(plugin_path)
       @loader.load_additional(plugin_path).each do |plugin|
         logger.trace "Running plugin #{plugin}"
-        @runner.run_plugin(plugin)
+        runner.run_plugin(plugin)
       end
 
       freeze_strings!
@@ -225,6 +242,17 @@ module Ohai
         end
       end
       visitor.call(@data)
+    end
+
+    # Extract additional backend parameters from Target Mode URL.
+    #
+    # @api private
+    # @return [Hash]
+    def backend_parameters
+      uri = URI.parse(config[:target])
+      return {} unless uri.query
+
+      CGI.parse(uri.query).map { |k, v| [k.to_sym, v.first] }.to_h
     end
   end
 end

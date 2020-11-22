@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Pete Higgins (pete@peterhiggins.org)
 # Copyright:: Copyright (c) Chef Software Inc.
@@ -45,8 +46,8 @@ Ohai.plugin(:DMI) do
   ].freeze
 
   collect_data(:windows) do
-    require "ohai/common/dmi"
-    require "wmi-lite/wmi"
+    require_relative "../../common/dmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 
     dmi Mash.new

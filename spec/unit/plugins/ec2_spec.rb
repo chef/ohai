@@ -1,7 +1,7 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Christopher Brown (cb@chef.io)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,6 @@
 #
 
 require "spec_helper"
-require "open-uri"
-require "base64"
 
 describe Ohai::System, "plugin ec2" do
 
@@ -27,9 +25,9 @@ describe Ohai::System, "plugin ec2" do
 
   before do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -245,13 +243,16 @@ describe Ohai::System, "plugin ec2" do
         allow(plugin).to receive(:hint?).with("iam").and_return(false)
       end
 
-      it "parses ec2 iam/ directory and NOT collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and collect info and role_name and NOT collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/", @get_req_token_header)
           .and_return(double("Net::HTTP::GET Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/", @get_req_token_header)
           .and_return(double("Net::HTTP::GET Response", body: "security-credentials/", code: "200"))
+        expect(@http_client).to receive(:get)
+          .with("/2012-01-12/meta-data/iam/info")
+          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2020-10-08T20:47:08Z\",\n  \"InstanceProfileArn\" : \"arn:aws:iam::111111111111:instance-profile/my_profile\",\n  \"InstanceProfileId\" : \"AAAAAAAAAAAAAAAAAAAAA\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
           .with("/2012-01-12/meta-data/iam/security-credentials/", @get_req_token_header)
           .and_return(double("Net::HTTP::GET Response", body: "MyRole", code: "200"))
@@ -268,7 +269,9 @@ describe Ohai::System, "plugin ec2" do
         plugin.run
 
         expect(plugin[:ec2]).not_to be_nil
-        expect(plugin[:ec2]["iam"]).to be_nil
+        expect(plugin[:ec2]["iam"]["info"]["InstanceProfileId"]).to eql "AAAAAAAAAAAAAAAAAAAAA"
+        expect(plugin[:ec2]["iam"]["security-credentials"]).to be_nil
+        expect(plugin[:ec2]["iam"]["role_name"]).to eql "MyRole"
       end
     end
 
@@ -338,8 +341,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
     end
 
     it_behaves_like "ec2"
@@ -348,8 +351,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
     end
 
     it_behaves_like "!ec2"
@@ -358,8 +361,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
     end
 
     it_behaves_like "ec2"
@@ -368,8 +371,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
 
     it_behaves_like "!ec2"
@@ -378,8 +381,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "ec2"
@@ -388,8 +391,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "!ec2"

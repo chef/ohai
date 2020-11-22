@@ -1,7 +1,7 @@
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,22 @@
 require "spec_helper"
 
 describe Ohai::System, "AIX network plugin" do
-
   before do
-    @netstat_rn_grep_default = <<~NETSTAT_RN_GREP_DEFAULT
-      default            172.31.8.1        UG        2    121789 en0      -      -
-    NETSTAT_RN_GREP_DEFAULT
+    @netstat_rn = <<~NETSTAT_RN
+    Destination      Gateway            Flags  Refcnt Use       Interface
+    Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
+    Only the root user can specify the Z flag
+     (Internet):
+    default            172.31.0.1        UG        2   1652046 en0      -      -   =>
+    127/8              127.0.0.1         U         5   2455591 lo0      -      -   =>
+    172.31.0.0         172.31.10.23      UHSb      0         0 en0      -      -   =>
+    172.31/20          172.31.10.23      U         1   1015674 en0      -      -   =>
+    172.31.10.23       127.0.0.1         UGHS      0         1 lo0      -      -
+    172.31.15.255      172.31.10.23      UHSb      0         1 en0      -      -   =>
+    Only the root user can specify the Z flag
+     (Internet v6):
+    ::1%1              ::1%1             UH        1    677032 lo0      -      -   =>
+    NETSTAT_RN
 
     @ifconfig = <<~IFCONFIG
       en0: flags=1e080863,480<UP,BROADCAST,NOTRAILERS,RUNNING,SIMPLEX,MULTICAST,GROUPRT,64BIT,CHECKSUM_OFFLOAD(ACTIVE),CHAIN> metric 1
@@ -49,6 +60,120 @@ describe Ohai::System, "AIX network plugin" do
       172.29.128/18      172.29.174.58     U         7   1035485 en0      -      -
       172.29.191.255     172.29.174.58     UHSb      0         1 en0      -      -
     NETSTAT_NRF_INET
+
+    @entstat = <<~ENTSTAT
+      -------------------------------------------------------------
+      ETHERNET STATISTICS (en0) :
+      Device Type: Virtual I/O Ethernet Adapter (l-lan)
+      Hardware Address: 62:c5:1c:3a:5d:03
+      Elapsed Time: 141 days 2 hours 15 minutes 31 seconds
+
+      Transmit Statistics:                          Receive Statistics:
+      --------------------                          -------------------
+      Packets: 34322371                             Packets: 116444596
+      Bytes: 2746892822                             Bytes: 122798204927
+      Interrupts: 0                                 Interrupts: 72980222
+      Transmit Errors: 0                            Receive Errors: 0
+      Packets Dropped: 0                            Packets Dropped: 0
+                                                    Bad Packets: 0
+      Max Packets on S/W Transmit Queue: 0
+      S/W Transmit Queue Overflow: 0
+      Current S/W+H/W Transmit Queue Length: 0
+
+      Broadcast Packets: 11                         Broadcast Packets: 25084677
+      Multicast Packets: 2                          Multicast Packets: 0
+      No Carrier Sense: 0                           CRC Errors: 0
+      DMA Underrun: 0                               DMA Overrun: 0
+      Lost CTS Errors: 0                            Alignment Errors: 0
+      Max Collision Errors: 0                       No Resource Errors: 0
+      Late Collision Errors: 0                      Receive Collision Errors: 0
+      Deferred: 0                                   Packet Too Short Errors: 0
+      SQE Test: 0                                   Packet Too Long Errors: 0
+      Timeout Errors: 0                             Packets Discarded by Adapter: 0
+      Single Collision Count: 0                     Receiver Start Count: 0
+      Multiple Collision Count: 0
+      Current HW Transmit Queue Length: 0
+
+      General Statistics:
+      -------------------
+      No mbuf Errors: 0
+      Adapter Reset Count: 0
+      Adapter Data Rate: 20000
+      Driver Flags: Up Broadcast Running
+              Simplex 64BitSupport ChecksumOffload
+              DataRateSet VIOENT
+
+      Virtual I/O Ethernet Adapter (l-lan) Specific Statistics:
+      ---------------------------------------------------------
+      RQ Length: 4545
+      Trunk Adapter: False
+      Filter MCast Mode: False
+      Filters: 255
+        Enabled: 1  Queued: 0  Overflow: 0
+      LAN State: Operational
+
+      LPAR Active Memory Sharing: Disabled
+
+      Hypervisor Send Failures: 0
+        Receiver Failures: 0
+        Send Errors: 0
+      Hypervisor Receive Failures: 0
+
+      Invalid VLAN ID Packets: 0
+
+      ILLAN Attributes: 0000000000003002 [0000000000002000]
+
+      Port VLAN ID:     1
+      VLAN Tag IDs:  None
+
+
+      Switch ID: ETHERNET0
+
+      Hypervisor Information
+        Virtual Memory
+          Total (KB)                 80
+        I/O Memory
+          VRM Minimum (KB)          100
+          VRM Desired (KB)          100
+          DMA Max Min (KB)          128
+
+      Transmit Information
+        Transmit Buffers
+          Buffer Size             65536
+          Buffers                    32
+          History
+            No Buffers                0
+        Virtual Memory
+          Total (KB)               2048
+        I/O Memory
+          VRM Minimum (KB)         2176
+          VRM Desired (KB)        16384
+          DMA Max Min (KB)        16384
+
+      Receive Information
+        Receive Buffers
+          Buffer Type              Tiny    Small   Medium    Large     Huge
+          Min Buffers              2048     2048      256       64       64
+          Max Buffers              2048     2048      256       64       64
+          Allocated                2048     2048      256       64       64
+          Registered               2048     2048      256       64       64
+          History
+            Max Allocated          2048     2048      256       64       64
+            Lowest Registered      2047     1849      256       64       64
+        Virtual Memory
+          Minimum (KB)             1024     4096     4096     2048     4096
+          Maximum (KB)             1024     4096     4096     2048     4096
+        I/O Memory
+          VRM Minimum (KB)        16384    16384     5120     2304     4352
+          VRM Desired (KB)        16384    16384     5120     2304     4352
+          DMA Max Min (KB)        16384    16384     8192     4096     8192
+        Buffer Mode: Max Min
+
+      I/O Memory Information
+        Total VRM Minimum (KB)    46820
+        Total VRM Desired (KB)    61028
+        Total DMA Max Min (KB)    69760
+    ENTSTAT
 
     @entstat_err = <<~ENSTAT_ERR
 
@@ -78,11 +203,11 @@ describe Ohai::System, "AIX network plugin" do
     allow(@plugin).to receive(:collect_os).and_return(:aix)
     @plugin[:network] = Mash.new
     allow(@plugin).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
-    allow(@plugin).to receive(:shell_out).with("netstat -rn |grep default").and_return(mock_shell_out(0, @netstat_rn_grep_default, nil))
+    allow(@plugin).to receive(:shell_out).with("netstat -rn").and_return(mock_shell_out(0, @netstat_rn, nil))
     allow(@plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, @ifconfig, nil))
-    allow(@plugin).to receive(:shell_out).with("entstat -d en0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, "Hardware Address: be:42:80:00:b0:05", nil))
-    allow(@plugin).to receive(:shell_out).with("entstat -d en1 | grep \"Hardware Address\"").and_return(mock_shell_out(0, @entstat_err, nil))
-    allow(@plugin).to receive(:shell_out).with("entstat -d lo0 | grep \"Hardware Address\"").and_return(mock_shell_out(0, @entstat_err, nil))
+    allow(@plugin).to receive(:shell_out).with("entstat -d en0").and_return(mock_shell_out(0, @entstat, nil))
+    allow(@plugin).to receive(:shell_out).with("entstat -d en1").and_return(mock_shell_out(0, @entstat_err, nil))
+    allow(@plugin).to receive(:shell_out).with("entstat -d lo0").and_return(mock_shell_out(0, @entstat_err, nil))
     allow(@plugin).to receive(:shell_out).with("netstat -nrf inet").and_return(mock_shell_out(0, @netstat_nrf_inet, nil))
     allow(@plugin).to receive(:shell_out).with("netstat -nrf inet6").and_return(mock_shell_out(0, "::1%1  ::1%1  UH 1 109392 en0  -  -", nil))
     allow(@plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, @aix_arp_an, nil))
@@ -107,24 +232,23 @@ describe Ohai::System, "AIX network plugin" do
   end
 
   describe "when running on an LPAR" do
-
     describe "sets the top-level attribute correctly" do
       before do
         @plugin.run
       end
 
       it "for 'macaddress'" do
-        expect(@plugin[:macaddress]).to eq("BE:42:80:00:B0:05")
+        expect(@plugin[:macaddress]).to eq("62:C5:1C:3A:5D:03")
       end
     end
 
-    describe "netstat -rn |grep default" do
+    describe "netstat -rn" do
       before do
         @plugin.run
       end
 
       it "returns the default gateway of the system's network" do
-        expect(@plugin[:network][:default_gateway]).to eq("172.31.8.1")
+        expect(@plugin[:network][:default_gateway]).to eq("172.31.0.1")
       end
 
       it "returns the default interface of the system's network" do
@@ -230,7 +354,7 @@ describe Ohai::System, "AIX network plugin" do
     context "entstat -d interface" do
       before do
         @plugin.run
-        @inet_interface_addresses = @plugin["network"]["interfaces"]["en0"][:addresses]["BE:42:80:00:B0:05"]
+        @inet_interface_addresses = @plugin["network"]["interfaces"]["en0"][:addresses]["62:C5:1C:3A:5D:03"]
       end
 
       it "detects the family" do
@@ -264,7 +388,6 @@ describe Ohai::System, "AIX network plugin" do
     end
 
     context "inet6" do
-
       it "detects the route destinations" do
         expect(@plugin["network"]["interfaces"]["en0"][:routes][4][:destination]).to eq("::1%1")
       end

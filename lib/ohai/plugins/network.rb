@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,6 @@
 #
 
 Ohai.plugin(:NetworkAddresses) do
-  require "ipaddress"
   require_relative "../mixin/network_helper"
   include Ohai::Mixin::NetworkHelper
 
@@ -54,7 +54,7 @@ Ohai.plugin(:NetworkAddresses) do
     ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope]) || 999999 ),
         128 - v[:ipaddress].prefix.to_i,
-        ( family == "inet" ? v[:ipaddress].to_u32 : v[:ipaddress].to_u128 ),
+        v[:ipaddress].to_i,
       ]
     end
   end
@@ -88,9 +88,9 @@ Ohai.plugin(:NetworkAddresses) do
           r = gw_if_ips.first
         else
           # checking network masks
-          r = gw_if_ips.select do |v|
+          r = gw_if_ips.find do |v|
             network_contains_address(network[gw_attr], v[:ipaddress], v[:iface])
-          end.first
+          end
           if r.nil?
             r = gw_if_ips.first
             logger.trace("Plugin Network: [#{family}] no ipaddress/mask on #{network[int_attr]} matching the gateway #{network[gw_attr]}, picking #{r[:ipaddress]}")
@@ -134,6 +134,8 @@ Ohai.plugin(:NetworkAddresses) do
   # time as ipaddress. if ipaddress is set and macaddress is nil, that means
   # the interface ipaddress is bound to has the NOARP flag
   collect_data do
+    require "ipaddress" unless defined?(IPAddress)
+
     results = {}
 
     network Mash.new unless network

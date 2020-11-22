@@ -18,7 +18,6 @@
 #
 
 require "spec_helper"
-require "ipaddress"
 
 describe Ohai::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }
@@ -142,8 +141,8 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
     EOM
-# Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
-# This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
+    # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
+    # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
   end
 
   let(:linux_ip_route) do
@@ -603,6 +602,15 @@ describe Ohai::System, "Linux Network Plugin" do
 
       context "when the gateway is not within the destination" do
         let(:default_route) { { via: "20.0.0.1" } }
+
+        it "returns false" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
+
+      context "when route and default_route via have different address family" do
+        let(:route) { { destination: "10.0.0.0/24" } }
+        let(:default_route) { { via: "fe80::69" } }
 
         it "returns false" do
           expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
@@ -1498,6 +1506,24 @@ describe Ohai::System, "Linux Network Plugin" do
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["id"]).to eq("11")
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["protocol"]).to eq("802.1Q")
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["flags"]).to eq([ "REORDER_HDR" ])
+        end
+      end
+
+      # Test we can handle IPv4 with inet6 IPv6 next hops
+      describe "using IPv6 next hops for IPv4 routes" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default via inet6 fe80::69 dev eth0 metric 69
+          EOM
+        end
+
+        it "expect an IPv6 next hop and not keyword inet6" do
+          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq(
+            [
+              { "destination" => "default", "family" => "inet", "metric" => "69", "via" => "fe80::69" },
+              { "destination" => "fe80::/64", "family" => "inet6", "metric" => "256", "proto" => "kernel" },
+            ]
+          )
         end
       end
     end

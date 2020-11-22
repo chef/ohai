@@ -6,7 +6,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -23,15 +23,13 @@
 # limitations under the License.
 #
 
-require "set"
-
 Ohai.plugin(:Filesystem) do
-  provides "filesystem"
+  provides "filesystem".freeze
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
       path = File.join(dir, name)
-      return path if File.exist?(path)
+      return path if file_exist?(path)
     end
     name
   end
@@ -286,12 +284,10 @@ Ohai.plugin(:Filesystem) do
 
     # Grab filesystem data from df
     run_with_check("df") do
-      so = shell_out("df -P")
-      fs.merge!(parse_common_df(so.stdout))
+      fs.merge!(parse_common_df(shell_out("df -P").stdout))
 
       # Grab filesystem inode data from df
-      so = shell_out("df -iP")
-      so.stdout.each_line do |line|
+      shell_out("df -iP").stdout.each_line do |line|
         case line
         when /^Filesystem\s+Inodes/
           next
@@ -310,8 +306,7 @@ Ohai.plugin(:Filesystem) do
 
     # Grab mount information from /bin/mount
     run_with_check("mount") do
-      so = shell_out("mount")
-      so.stdout.each_line do |line|
+      shell_out("mount").stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
           key = "#{$1},#{$2}"
           fs[key] ||= Mash.new
@@ -346,8 +341,7 @@ Ohai.plugin(:Filesystem) do
       # this is to allow machines with large amounts of attached LUNs
       # to respond back to the command successfully
       run_with_check(cmdtype) do
-        so = shell_out(cmd, timeout: 60)
-        so.stdout.each_line do |line|
+        shell_out(cmd, timeout: 60).stdout.each_line do |line|
           parsed = parse_line(line, cmdtype)
           next if parsed.nil?
 
@@ -377,13 +371,12 @@ Ohai.plugin(:Filesystem) do
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exist?("/proc/mounts")
+    if file_exist?("/proc/mounts")
       mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.
-      f = File.open("/proc/mounts")
+      f = file_open("/proc/mounts")
       loop do
-
         data = f.read_nonblock(4096)
         mounts << data
       # We should just catch EOFError, but the kernel had a period of
@@ -392,9 +385,9 @@ Ohai.plugin(:Filesystem) do
       # whatever data we might have
       rescue Exception
         break
-
       end
       f.close
+
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           key = "#{$1},#{$2}"
@@ -590,16 +583,16 @@ Ohai.plugin(:Filesystem) do
       end
     end
 
-    zfs.each do |fsname, attributes|
+    zfs.each do |fs_name, attributes|
       mountpoint = attributes[:mountpoint][:value] if attributes[:mountpoint]
-      key = "#{fsname},#{mountpoint}"
+      key = "#{fs_name},#{mountpoint}"
       fs[key] ||= Mash.new
       fs[key][:fs_type] = "zfs"
       fs[key][:mount] = mountpoint if mountpoint
-      fs[key][:device] = fsname
+      fs[key][:device] = fs_name
       fs[key][:zfs_properties] = attributes
       # find all zfs parents
-      parents = fsname.split("/")
+      parents = fs_name.split("/")
       zfs_parents = []
       (0..parents.length - 1).to_a.each do |parent_index|
         next_parent = parents[0..parent_index].join("/")
@@ -718,7 +711,8 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "set" unless defined?(Set)
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 
     fs = merge_info(logical_info, encryptable_info)

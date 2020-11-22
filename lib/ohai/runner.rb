@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -18,12 +19,15 @@
 #
 
 require_relative "dsl"
-require "benchmark"
+require "benchmark" unless defined?(Benchmark)
 
 module Ohai
   class Runner
 
     attr_reader :failed_plugins, :logger
+
+    attr_accessor :transport_connection
+
     # safe_run: set to true if this runner will run plugins in
     # safe-mode. default false.
     def initialize(controller, safe_run = false)
@@ -54,15 +58,13 @@ module Ohai
           else
             raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
           end
-        rescue Ohai::Exceptions::Error # rubocop: disable Lint/ShadowedException
-          raise
-        rescue SystemExit # abort or exit from plug-in should exit Ohai with failure code
+        rescue Ohai::Exceptions::Error, SystemExit # SystemExit: abort or exit from plug-in should exit Ohai with failure code
           raise
         rescue Exception => e
           logger.trace("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
         end
       end
-      logger.trace("Plugin #{plugin.name} took #{elapsed} seconds to run.")
+      logger.trace("Plugin #{plugin.name} took #{"%f" % elapsed.truncate(6)} seconds to run.")
     end
 
     # @param [Ohai::DSL::Plugin] plugin
@@ -93,6 +95,7 @@ module Ohai
         end
 
         if dependency_providers.empty?
+          next_plugin.transport_connection = transport_connection
           @safe_run ? next_plugin.safe_run : next_plugin.run
           if next_plugin.failed
             @failed_plugins << next_plugin.name

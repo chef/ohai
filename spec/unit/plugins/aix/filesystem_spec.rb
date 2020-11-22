@@ -1,7 +1,7 @@
 #
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2020 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,7 +98,6 @@ describe Ohai::System, "AIX filesystem plugin" do
     end
 
     describe "df -Pk" do
-
       it "returns the filesystem block size" do
         expect(@plugin[:filesystem]["by_pair"]["/dev/hd4,/"]["kb_size"]).to eq("2097152")
         expect(@plugin[:filesystem2]["by_pair"]["/dev/hd4,/"]["kb_size"]).to eq("2097152")
@@ -126,7 +125,6 @@ describe Ohai::System, "AIX filesystem plugin" do
     end
 
     describe "mount" do
-
       it "returns the filesystem mount location" do
         expect(@plugin[:filesystem]["by_pair"]["/dev/hd4,/"]["mount"]).to eq("/")
         expect(@plugin[:filesystem2]["by_pair"]["/dev/hd4,/"]["mount"]).to eq("/")
@@ -144,7 +142,6 @@ describe Ohai::System, "AIX filesystem plugin" do
 
       # For entries like 192.168.1.11 /stage/middleware1 /stage/middleware2 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
-
         it "returns the filesystem mount location" do
           expect(@plugin[:filesystem]["by_pair"]["192.168.1.11:/stage/middleware1,/stage/middleware2"]["mount"]).to eq("/stage/middleware2")
           expect(@plugin[:filesystem2]["by_pair"]["192.168.1.11:/stage/middleware1,/stage/middleware2"]["mount"]).to eq("/stage/middleware2")
@@ -171,7 +168,6 @@ describe Ohai::System, "AIX filesystem plugin" do
     end
 
     describe "df -Pk" do
-
       it "returns the filesystem block size" do
         expect(@plugin[:filesystem]["by_pair"]["Global:/,/"]["kb_size"]).to eq("10485760")
         expect(@plugin[:filesystem2]["by_pair"]["Global:/,/"]["kb_size"]).to eq("10485760")
@@ -199,7 +195,6 @@ describe Ohai::System, "AIX filesystem plugin" do
     end
 
     describe "mount" do
-
       it "returns the filesystem mount location" do
         expect(@plugin[:filesystem]["by_pair"]["Global:/,/"]["mount"]).to eq("/")
         expect(@plugin[:filesystem2]["by_pair"]["Global:/,/"]["mount"]).to eq("/")
@@ -217,7 +212,6 @@ describe Ohai::System, "AIX filesystem plugin" do
 
       # For entries like 192.168.1.11 /stage/middleware3 /stage/middleware4 nfs3   Jul 17 13:24 ro,bg,hard,intr,sec=sys
       context "having node values" do
-
         it "returns the filesystem mount location" do
           expect(@plugin[:filesystem]["by_pair"]["192.168.1.11:/stage/middleware3,/stage/middleware4"]["mount"]).to eq("/stage/middleware4")
           expect(@plugin[:filesystem2]["by_pair"]["192.168.1.11:/stage/middleware3,/stage/middleware4"]["mount"]).to eq("/stage/middleware4")

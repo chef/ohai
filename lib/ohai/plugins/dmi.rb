@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kurt Yoder (ktyopscode@yoderhome.com)
 # Copyright:: Copyright (c) 2010 Kurt Yoder
@@ -76,7 +77,7 @@ Ohai.plugin(:DMI) do
           dmi[:table_location] = table_location[1]
 
         elsif ( handle = handle_line.match(line) )
-          unless Ohai::Common::DMI.whitelisted_ids.include?(handle[2].to_i)
+          unless Ohai::Common::DMI.allowlisted_ids.include?(handle[2].to_i)
             dmi_record = nil
             next
           end

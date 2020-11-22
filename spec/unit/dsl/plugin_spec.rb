@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -521,7 +521,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "fails a platform has already been defined in the same plugin" do
       Ohai.plugin(:Test) { collect_data {} }
-      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/).twice
+      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on os/).twice
       Ohai.plugin(:Test) do
         collect_data {}
         collect_data {}
@@ -530,7 +530,7 @@ describe Ohai::DSL::Plugin::VersionVII do
 
     it "fails if a platform has already been defined in another plugin file" do
       Ohai.plugin(:Test) { collect_data {} }
-      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/)
+      expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on os/)
       Ohai.plugin(:Test) do
         collect_data {}
       end

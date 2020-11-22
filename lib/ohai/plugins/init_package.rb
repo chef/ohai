@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Caleb Tennis (<caleb.tennis@gmail.com>)
-# Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +21,6 @@ Ohai.plugin(:InitPackage) do
   provides "init_package"
 
   collect_data(:linux) do
-    init_package File.exist?("/proc/1/comm") ? File.open("/proc/1/comm").gets.chomp : "init"
+    init_package file_exist?("/proc/1/comm") ? file_open("/proc/1/comm").gets.chomp : "init"
   end
 end

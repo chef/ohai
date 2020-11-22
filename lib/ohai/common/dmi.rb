@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kurt Yoder (ktyopscode@yoderhome.com)
 # Copyright:: Copyright (c) 2010 Kurt Yoder
@@ -76,11 +77,11 @@ module Ohai
       # away some of the less useful IDs
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ].freeze
 
-      # the whitelisted DMI IDs. This is combination of the defaults + any additional
+      # the allowlisted DMI IDs. This is combination of the defaults + any additional
       # IDs defined in the :additional_dmi_ids config
       #
       # @return [Array] the list of DMI IDs to capture
-      def whitelisted_ids
+      def allowlisted_ids
         if Ohai.config[:additional_dmi_ids]
           if [ Integer, Array ].include?(Ohai.config[:additional_dmi_ids].class)
             return ID_TO_CAPTURE + Array(Ohai.config[:additional_dmi_ids])
@@ -90,6 +91,10 @@ module Ohai
         end
         ID_TO_CAPTURE
       end
+
+      ##
+      # @deprecated Use the `allowlisted_ids` method instead.
+      alias whitelisted_ids allowlisted_ids
 
       # the human readable description from a DMI ID
       #
@@ -152,7 +157,7 @@ module Ohai
         end
       end
 
-      module_function :id_lookup, :convenience_keys, :whitelisted_ids
+      module_function :id_lookup, :convenience_keys, :allowlisted_ids, :whitelisted_ids
     end
   end
 end

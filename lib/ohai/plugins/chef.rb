@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Tollef Fog Heen <tfheen@err.no>
 # Copyright:: Copyright (c) 2010 Tollef Fog Heen
@@ -19,7 +20,7 @@
 Ohai.plugin(:Chef) do
   provides "chef_packages/chef"
 
-  collect_data do
+  collect_data(:default, :target) do
     begin
       require "chef/version"
     rescue Gem::LoadError

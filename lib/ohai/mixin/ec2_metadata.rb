@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
-# Copyright:: 2009-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +40,7 @@ module Ohai
     #
     module Ec2Metadata
 
-      EC2_METADATA_ADDR ||= "169.254.169.254".freeze
+      EC2_METADATA_ADDR ||= "169.254.169.254"
       EC2_SUPPORTED_VERSIONS ||= %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
                                    2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
                                    2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze
@@ -146,7 +147,7 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              metadata[metadata_key(key)] = retr_meta ? retr_meta : ""
+              metadata[metadata_key(key)] = retr_meta || ""
             elsif not key.eql?("/")
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
@@ -163,7 +164,7 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              data = retr_meta ? retr_meta : ""
+              data = retr_meta || ""
               json = String(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)

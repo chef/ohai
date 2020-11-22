@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,14 +28,13 @@ module Ohai
   # Reopens ChefConfig::Config to add Ohai configuration settings.
   # see: https://github.com/chef/chef/blob/master/lib/chef/config.rb
   class Config
-
     config_context :ohai do
       default :disabled_plugins, []
       default :hints_path, [ ChefConfig::Config.platform_specific_path("/etc/chef/ohai/hints") ]
       default :log_level, :auto
       default :log_location, STDERR
       default :plugin, ( Ohai::PluginConfig.new { |h, k| h[k] = Ohai::PluginConfig.new } )
-      default :plugin_path, [ File.expand_path(File.join(File.dirname(__FILE__), "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
+      default :plugin_path, [ File.expand_path(File.join(__dir__, "plugins")), ChefConfig::Config.platform_specific_path("/etc/chef/ohai/plugins") ]
       default :critical_plugins, []
       # causes all optional plugins to be run.
       default :run_all_plugins, false

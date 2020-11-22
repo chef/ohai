@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,24 +21,24 @@ Ohai.plugin(:BlockDevice) do
   provides "block_device"
 
   collect_data(:linux) do
-    if File.exist?("/sys/block")
+    if file_exist?("/sys/block")
       block = Mash.new
-      Dir["/sys/block/*"].each do |block_device_dir|
+      dir_glob("/sys/block/*").each do |block_device_dir|
         dir = File.basename(block_device_dir)
         block[dir] = Mash.new
         %w{size removable}.each do |check|
-          if File.exist?("/sys/block/#{dir}/#{check}")
-            File.open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          if file_exist?("/sys/block/#{dir}/#{check}")
+            file_open("/sys/block/#{dir}/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{model rev state timeout vendor queue_depth}.each do |check|
-          if File.exist?("/sys/block/#{dir}/device/#{check}")
-            File.open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          if file_exist?("/sys/block/#{dir}/device/#{check}")
+            file_open("/sys/block/#{dir}/device/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
         %w{rotational physical_block_size logical_block_size}.each do |check|
-          if File.exist?("/sys/block/#{dir}/queue/#{check}")
-            File.open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
+          if file_exist?("/sys/block/#{dir}/queue/#{check}")
+            file_open("/sys/block/#{dir}/queue/#{check}") { |f| block[dir][check] = f.read_nonblock(1024).strip }
           end
         end
       end

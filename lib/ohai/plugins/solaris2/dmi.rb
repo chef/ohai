@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kurt Yoder (ktyopscode@yoderhome.com)
 # Copyright:: Copyright (c) 2010 Kurt Yoder
@@ -86,7 +87,7 @@ Ohai.plugin(:DMI) do
       "SUN_OEM_EXT_MEMARRAY" => 144, # phys memory array extended info
       "SUN_OEM_EXT_MEMDEVICE" => 145, # memory device extended info
       "SMB_TYPE_OEM_HI" => 256, # end of OEM-specific type range
-    }
+    }.freeze
 
     # all output lines should fall within one of these patterns
     header_type_line = /^ID\s+SIZE\s+TYPE/
@@ -99,7 +100,6 @@ Ohai.plugin(:DMI) do
     dmi_record = nil
     field = nil
 
-    so = shell_out("smbios")
     # ==== EXAMPLE: ====
     # ID    SIZE TYPE
     # 0     40   SMB_TYPE_BIOS (BIOS information)
@@ -111,7 +111,7 @@ Ohai.plugin(:DMI) do
     #         SMB_BIOSFL_PCI (PCI is supported)
     # ... similar lines trimmed
     # note the second level of indentation is via a *tab*
-    so.stdout.lines do |raw_line|
+    shell_out("smbios").stdout.lines do |raw_line|
       next if header_type_line.match(raw_line)
       next if blank_line.match(raw_line)
 
@@ -129,7 +129,7 @@ Ohai.plugin(:DMI) do
           id = smb_to_id[header_information[3]]
 
           # Don't overcapture for now (OHAI-260)
-          unless Ohai::Common::DMI.whitelisted_ids.include?(id)
+          unless Ohai::Common::DMI.allowlisted_ids.include?(id)
             dmi_record = nil
             next
           end

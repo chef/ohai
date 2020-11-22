@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Benjamin Black (<nostromo@gmail.com>)
@@ -6,7 +7,7 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2008-2018, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2009 Daniel DeLeo
 # Copyright:: Copyright (c) 2010 VMware, Inc.
@@ -26,9 +27,6 @@
 #
 
 Ohai.plugin(:Hostname) do
-  require "socket" unless defined?(Socket)
-  require "ipaddr"
-
   provides "domain", "hostname", "fqdn", "machinename"
 
   # hostname : short hostname
@@ -40,13 +38,15 @@ Ohai.plugin(:Hostname) do
   # fqdn and domain may be broken if DNS is broken on the host
 
   def from_cmd(cmd)
-    so = shell_out(cmd)
-    so.stdout.split($/)[0]
+    shell_out(cmd).stdout.strip
   end
 
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
   # this is ipv6-safe, works on ruby 1.8.7+
   def resolve_fqdn
+    require "socket" unless defined?(Socket)
+    require "ipaddr" unless defined?(IPAddr)
+
     hostname = from_cmd("hostname")
     addrinfo = Socket.getaddrinfo(hostname, nil).first
     iaddr = IPAddr.new(addrinfo[3])
@@ -99,19 +99,19 @@ Ohai.plugin(:Hostname) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
     begin
-      ourfqdn = resolve_fqdn
+      our_fqdn = resolve_fqdn
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname returned an empty string, retrying once.")
-        ourfqdn = resolve_fqdn
+        our_fqdn = resolve_fqdn
       end
 
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname returned an empty string twice and will" +
                         "not be set.")
       else
-        fqdn ourfqdn
+        fqdn our_fqdn
       end
     rescue
       logger.trace(
@@ -132,20 +132,20 @@ Ohai.plugin(:Hostname) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
     begin
-      ourfqdn = from_cmd("hostname --fqdn")
+      our_fqdn = from_cmd("hostname --fqdn")
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
       # returns a blank string. WTF.
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname --fqdn returned an empty string, retrying " +
                         "once.")
-        ourfqdn = from_cmd("hostname --fqdn")
+        our_fqdn = from_cmd("hostname --fqdn")
       end
 
-      if ourfqdn.nil? || ourfqdn.empty?
+      if our_fqdn.nil? || our_fqdn.empty?
         logger.trace("Plugin Hostname: hostname --fqdn returned an empty string twice and " +
                         "will not be set.")
       else
-        fqdn ourfqdn
+        fqdn our_fqdn
       end
     rescue
       logger.trace("Plugin Hostname: hostname --fqdn returned an error, probably no domain set")
@@ -161,7 +161,7 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require "socket" unless defined?(Socket)
 
     wmi = WmiLite::Wmi.new
@@ -171,14 +171,14 @@ Ohai.plugin(:Hostname) do
     machinename host["name"].to_s
 
     info = Socket.gethostbyname(Socket.gethostname)
-    if info.first =~ /.+?\.(.*)/
+    if /.+?\.(.*)/.match?(info.first)
       fqdn info.first
     else
       # host is not in dns. optionally use:
       # C:\WINDOWS\system32\drivers\etc\hosts
       info[3..info.length].reverse_each do |addr|
         hostent = Socket.gethostbyaddr(addr)
-        if hostent.first =~ /.+?\.(.*)/
+        if /.+?\.(.*)/.match?(hostent.first)
           fqdn hostent.first
           break
         end

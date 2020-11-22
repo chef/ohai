@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Pavel Yudin (<pyudin@parallels.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2015 Pavel Yudin
-# Copyright:: Copyright (c) 2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +36,7 @@ Ohai.plugin(:Virtualization) do
   end
 
   def fusion_exists?
-    ::File.exist?("/Applications/VMware\ Fusion.app/")
+    file_exist?("/Applications/VMware\ Fusion.app/")
   end
 
   def docker_exists?
@@ -82,7 +83,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:parallels] = "host"
     elsif ioreg_exists?
       so = shell_out("ioreg -l")
-      if so.stdout =~ /pci1ab8,4000/
+      if /pci1ab8,4000/.match?(so.stdout)
         virtualization[:system] = "parallels"
         virtualization[:role] = "guest"
         virtualization[:systems][:parallels] = "guest"

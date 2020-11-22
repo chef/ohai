@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # Author:: Dylan Page (<dpage@digitalocean.com>)
 # License:: Apache License, Version 2.0
@@ -20,15 +21,15 @@ module Ohai
   module Mixin
     module DOMetadata
 
-      DO_METADATA_ADDR ||= "169.254.169.254".freeze
-      DO_METADATA_URL ||= "/metadata/v1.json".freeze
+      DO_METADATA_ADDR ||= "169.254.169.254"
+      DO_METADATA_URL ||= "/metadata/v1.json"
 
       def http_client
         Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
       end
 
       def fetch_metadata
-        uri = (DO_METADATA_URL).to_s
+        uri = DO_METADATA_URL.to_s
         response = http_client.get(uri)
         case response.code
         when "200"

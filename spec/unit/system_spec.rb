@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -146,7 +146,7 @@ describe "Ohai::System" do
             message("default")
           end
 
-          collect_data(:#{Ohai::Mixin::OS.collect_os}) do
+          collect_data(:#{Ohai::Mixin::OS.collect_os_local}) do
             message("platform_specific_message")
           end
         end
@@ -212,7 +212,7 @@ describe "Ohai::System" do
         Ohai.config[:plugin_path] = [ path_to(".") ]
         # Make sure the stubbing of runner is not overriden with reset_system during test
         allow(ohai).to receive(:reset_system)
-        allow(ohai.instance_variable_get("@runner")).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
+        allow(ohai.runner).to receive(:run_plugin).and_raise(Ohai::Exceptions::AttributeNotFound)
         expect(ohai.logger).to receive(:error).with(/Encountered error while running plugins/)
         expect { ohai.all_plugins }.to raise_error(Ohai::Exceptions::AttributeNotFound)
       end
@@ -407,6 +407,8 @@ describe "Ohai::System" do
       E
 
       it "runs all the plugins" do
+        # disable a few slow running plugins
+        Ohai.config[:disabled_plugins] = %i{Packages Virtualbox Ruby}
         ohai.run_additional_plugins(@plugins_directory)
         expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
         expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)

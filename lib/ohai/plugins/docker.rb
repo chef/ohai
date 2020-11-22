@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 #
-# Copyright:: 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +17,6 @@
 #
 
 Ohai.plugin(:Docker) do
-  require "json"
-
   provides "docker"
   depends "virtualization"
 
@@ -50,6 +49,8 @@ Ohai.plugin(:Docker) do
   end
 
   collect_data do
+    require "json" unless defined?(JSON)
+
     if virtualization[:systems][:docker]
       docker_ohai_data(docker_info_json)
     end

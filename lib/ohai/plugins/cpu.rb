@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Bryan McLellan (btm@loftninjas.org)
@@ -8,7 +9,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: Doug MacEachern <dougm@vmware.com>
-# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,16 +31,14 @@ Ohai.plugin(:CPU) do
   def parse_bsd_dmesg(&block)
     cpuinfo = Mash.new
     cpuinfo["flags"] = []
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /CPU:\s+(.+) \(([\d.]+).+\)/
         cpuinfo["model_name"] = $1
         cpuinfo["mhz"] = $2
-      when /Features=.+<(.+)>/
+      when /Features=.+<(.+)>/, /Features2=[a-f\dx]+<(.+)>/
         cpuinfo["flags"].concat($1.downcase.split(","))
         # Features2=0x80000001<SSE3,<b31>>
-      when /Features2=[a-f\dx]+<(.+)>/
-        cpuinfo["flags"].concat($1.downcase.split(","))
       else
         yield(cpuinfo, line)
       end
@@ -53,7 +52,7 @@ Ohai.plugin(:CPU) do
     cpu_number = 0
     current_cpu = nil
 
-    File.open("/proc/cpuinfo").each do |line|
+    file_open("/proc/cpuinfo").each do |line|
       case line
       when /processor\s+:\s(.+)/
         cpuinfo[$1] = Mash.new
@@ -61,7 +60,7 @@ Ohai.plugin(:CPU) do
         cpu_number += 1
       when /vendor_id\s+:\s(.+)/
         vendor_id = $1
-        if vendor_id =~ (%r{IBM/S390})
+        if vendor_id.include?("IBM/S390")
           cpuinfo["vendor_id"] = vendor_id
         else
           cpuinfo[current_cpu]["vendor_id"] = vendor_id
@@ -86,15 +85,15 @@ Ohai.plugin(:CPU) do
       when /cache size\s+:\s(.+)/
         cpuinfo[current_cpu]["cache_size"] = $1
       when /flags\s+:\s(.+)/
-        cpuinfo[current_cpu]["flags"] = $1.split(" ")
+        cpuinfo[current_cpu]["flags"] = $1.split
       when /BogoMIPS\s+:\s(.+)/
         cpuinfo[current_cpu]["bogomips"] = $1
       when /Features\s+:\s(.+)/
-        cpuinfo[current_cpu]["features"] = $1.split(" ")
+        cpuinfo[current_cpu]["features"] = $1.split
       when /bogomips per cpu:\s(.+)/
         cpuinfo["bogomips_per_cpu"] = $1
       when /features\s+:\s(.+)/
-        cpuinfo["features"] = $1.split(" ")
+        cpuinfo["features"] = $1.split
       when /processor\s(\d):\s(.+)/
         current_cpu = $1
         cpu_number += 1
@@ -201,7 +200,7 @@ Ohai.plugin(:CPU) do
     end
 
     so = shell_out("sysctl -n hw.ncpu")
-    info[:total] = so.stdout.split($/)[0].to_i
+    info[:total] = so.stdout.strip.to_i
     cpu info
   end
 
@@ -212,7 +211,7 @@ Ohai.plugin(:CPU) do
     # to scrape from dmesg.boot is the cpu feature list.
     # cpu0: FPU,V86,DE,PSE,TSC,MSR,MCE,CX8,SEP,MTRR,PGE,MCA,CMOV,PAT,CFLUSH,DS,ACPI,MMX,FXSR,SSE,SSE2,SS,TM,SBF,EST,TM2
 
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /cpu\d+:\s+([A-Z]+$|[A-Z]+,.*$)/
         cpuinfo["flags"] = $1.downcase.split(",")
@@ -221,7 +220,7 @@ Ohai.plugin(:CPU) do
 
     [["hw.model", :model_name], ["hw.ncpu", :total], ["hw.cpuspeed", :mhz]].each do |param, node|
       so = shell_out("sysctl -n #{param}")
-      cpuinfo[node] = so.stdout.split($/)[0]
+      cpuinfo[node] = so.stdout.strip
     end
 
     cpu cpuinfo
@@ -235,7 +234,7 @@ Ohai.plugin(:CPU) do
     # available instruction set
     # cpu0 at mainbus0 apid 0: Intel 686-class, 2134MHz, id 0x6f6
 
-    File.open("/var/run/dmesg.boot").each do |line|
+    file_open("/var/run/dmesg.boot").each do |line|
       case line
       when /cpu[\d\w\s]+:\s([\w\s\-]+),\s+(\w+),/
         cpuinfo[:model_name] = $1
@@ -279,7 +278,7 @@ Ohai.plugin(:CPU) do
       when /^machdep.cpu.stepping: (.*)$/
         cpu[:stepping] = Regexp.last_match[1].to_i
       when /^machdep.cpu.features: (.*)$/
-        cpu[:flags] = Regexp.last_match[1].downcase.split(" ")
+        cpu[:flags] = Regexp.last_match[1].downcase.split
       end
     end
   end
@@ -305,7 +304,7 @@ Ohai.plugin(:CPU) do
         cpu[index] = Mash.new
         cpu[index][:status] = status
         cpu[index][:location] = location
-        if status =~ /Available/
+        if /Available/.match?(status)
           cpu[:available] += 1
           lsattr = shell_out("lsattr -El #{name}").stdout.lines
           lsattr.each do |attribute|
@@ -364,7 +363,7 @@ Ohai.plugin(:CPU) do
           cpu["cpustates"][value] += 1
         when /core_id/
           cpu[instance]["core_id"] = value
-           # Detect hyperthreading/multithreading
+          # Detect hyperthreading/multithreading
           cpucores.push(value) if cpucores.index(value).nil?
         when /family|fpu_type|model|stepping|vendor_id/
           cpu[instance][key] = value
@@ -377,7 +376,7 @@ Ohai.plugin(:CPU) do
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     cpu Mash.new
     cores = 0

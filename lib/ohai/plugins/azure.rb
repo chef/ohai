@@ -1,4 +1,5 @@
-# Copyright:: Copyright 2013-2017 Chef Software, Inc.
+# frozen_string_literal: true
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +35,7 @@ Ohai.plugin(:Azure) do
       azure Mash.new
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
       azure["metadata"] = parse_metadata
-    elsif has_waagent? || has_dhcp_option_245?
+    elsif has_waagent? || has_dhcp_option_245? || has_reddog_dhcp_domain?
       logger.trace("Plugin Azure: No hints present, but system appears to be on Azure.")
       azure Mash.new
       azure["metadata"] = parse_metadata
@@ -47,7 +48,7 @@ Ohai.plugin(:Azure) do
   # check for either the waagent or the unknown-245 DHCP option that Azure uses
   # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
   def has_waagent?
-    if File.exist?("/usr/sbin/waagent") || Dir.exist?('C:\WindowsAzure')
+    if file_exist?("/usr/sbin/waagent") || dir_exist?('C:\WindowsAzure')
       logger.trace("Plugin Azure: Found waagent used by Azure.")
       true
     end
@@ -55,9 +56,9 @@ Ohai.plugin(:Azure) do
 
   def has_dhcp_option_245?
     has_245 = false
-    if File.exist?("/var/lib/dhcp/dhclient.eth0.leases")
-      File.open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
-        if line =~ /unknown-245/
+    if file_exist?("/var/lib/dhcp/dhclient.eth0.leases")
+      file_open("/var/lib/dhcp/dhclient.eth0.leases").each do |line|
+        if /unknown-245/.match?(line)
           logger.trace("Plugin Azure: Found unknown-245 DHCP option used by Azure.")
           has_245 = true
           break
@@ -65,6 +66,26 @@ Ohai.plugin(:Azure) do
       end
     end
     has_245
+  end
+
+  def has_reddog_dhcp_domain?
+    tcp_ip_dhcp_domain == "reddog.microsoft.com"
+  end
+
+  def tcp_ip_dhcp_domain
+    return unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+
+    require "win32/registry" unless defined?(Win32::Registry)
+
+    begin
+      key = Win32::Registry::HKEY_LOCAL_MACHINE.open("SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters")
+      dhcp_domain = key["DhcpDomain"]
+      Ohai::Log.trace("Plugin Azure: DhcpDomain registry value is #{dhcp_domain}")
+    rescue Win32::Registry::Error
+      Ohai::Log.trace("Plugin Azure: DhcpDomain registry value cannot be found")
+    end
+
+    dhcp_domain
   end
 
   # create the basic structure we'll store our data in

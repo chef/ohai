@@ -16,7 +16,6 @@
 #
 
 require "spec_helper"
-require "ipaddr"
 
 describe "CloudAttrs object" do
   before do

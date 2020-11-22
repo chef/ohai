@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jay Vana <jsvana@fb.com>
 # Author:: Davide Cavalca <dcavalca@fb.com>
@@ -41,7 +42,7 @@ Ohai.plugin(:IPC) do
           "perms" => parts[3],
           "bytes" => parts[4].to_i,
           "nattch" => parts[5].to_i,
-          "status" => parts[6] ? parts[6] : "",
+          "status" => parts[6] || "",
         }
 
         ipc["shm"][parts[1].to_i] = segment

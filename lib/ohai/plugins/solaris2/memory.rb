@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # License:: Apache License, Version 2.0
 #
@@ -20,8 +21,7 @@ Ohai.plugin(:Memory) do
   collect_data(:solaris2) do
     memory Mash.new
     memory[:swap] = Mash.new
-    meminfo = shell_out("prtconf | grep Memory").stdout
-    memory[:total] = "#{meminfo.split[2].to_i * 1024}kB"
+    memory[:total] = "#{shell_out("prtconf | grep Memory").stdout.split[2].to_i * 1024}kB"
 
     tokens = shell_out("swap -s").stdout.strip.split
     used_swap = tokens[8][0..-1].to_i # strip k from end

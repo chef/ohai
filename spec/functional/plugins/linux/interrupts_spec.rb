@@ -26,7 +26,7 @@ describe Ohai::System, "Linux interrupts plugin" do
   end
 
   it "parses smp_affinity (partial mask, all)" do
-    allow(::File).to receive(:read).with("/affinity").and_return("f")
+    allow(plugin).to receive(:file_read).with("/affinity").and_return("f")
     expect(plugin.parse_smp_affinity("/affinity", 2)).to eq({
                                                               0 => true,
                                                               1 => true,
@@ -34,7 +34,7 @@ describe Ohai::System, "Linux interrupts plugin" do
   end
 
   it "parses smp_affinity (partial mask, one)" do
-    allow(::File).to receive(:read).with("/affinity").and_return("e")
+    allow(plugin).to receive(:file_read).with("/affinity").and_return("e")
     expect(plugin.parse_smp_affinity("/affinity", 2)).to eq({
                                                               0 => false,
                                                               1 => true,
@@ -42,7 +42,7 @@ describe Ohai::System, "Linux interrupts plugin" do
   end
 
   it "parses smp_affinity (full mask, all)" do
-    allow(::File).to receive(:read).with("/affinity").and_return("ff")
+    allow(plugin).to receive(:file_read).with("/affinity").and_return("ff")
     expect(plugin.parse_smp_affinity("/affinity", 2)).to eq({
                                                               0 => true,
                                                               1 => true,
@@ -50,7 +50,7 @@ describe Ohai::System, "Linux interrupts plugin" do
   end
 
   it "parses smp_affinity (full mask, one)" do
-    allow(::File).to receive(:read).with("/affinity").and_return("fe")
+    allow(plugin).to receive(:file_read).with("/affinity").and_return("fe")
     expect(plugin.parse_smp_affinity("/affinity", 2)).to eq({
                                                               0 => false,
                                                               1 => true,
@@ -62,7 +62,7 @@ describe Ohai::System, "Linux interrupts plugin" do
     (0..47).each do |i|
       cpus[i] = true
     end
-    allow(::File).to receive(:read).with("/affinity")
+    allow(plugin).to receive(:file_read).with("/affinity")
       .and_return("ffff,ffffffff")
     expect(plugin.parse_smp_affinity("/affinity", 48)).to eq(cpus)
   end
@@ -74,7 +74,7 @@ describe Ohai::System, "Linux interrupts plugin" do
     end
     cpus[12] = false
     cpus[32] = false
-    allow(::File).to receive(:read).with("/affinity")
+    allow(plugin).to receive(:file_read).with("/affinity")
       .and_return("fffe,ffffefff")
     expect(plugin.parse_smp_affinity("/affinity", 48)).to eq(cpus)
   end

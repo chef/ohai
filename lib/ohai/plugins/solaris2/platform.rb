@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<nostromo@gmail.com>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +21,13 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data(:solaris2) do
-    if File.exist?("/sbin/uname")
+    if file_exist?("/sbin/uname")
       uname_exec = "/sbin/uname"
     else
       uname_exec = "uname"
     end
 
-    so = shell_out("#{uname_exec} -X")
-    so.stdout.lines do |line|
+    shell_out("#{uname_exec} -X").stdout.lines do |line|
       case line
       when /^Release =\s+(.+)$/
         platform_version $1
@@ -36,26 +36,19 @@ Ohai.plugin(:Platform) do
       end
     end
 
-    File.open("/etc/release") do |file|
+    file_open("/etc/release") do |file|
       while ( line = file.gets )
         case line
-        when /^.*(SmartOS).*$/
+        when /.*SmartOS.*/
           platform "smartos"
-        when /^\s*(OmniOS).*r(\d+).*$/
+        when /^\s*OmniOS.*r(\d+).*$/
           platform "omnios"
-          platform_version $2
-        when /^\s*(OpenIndiana).*oi_(\d+).*$/
+          platform_version $1
+        when /^\s*OpenIndiana.*(Development oi_|Hipster )(\d\S*)/ # https://rubular.com/r/iMtOBwbnyqDz7u
           platform "openindiana"
           platform_version $2
-        when /^\s*(OpenSolaris).*snv_(\d+).*$/
-          platform "opensolaris"
-          platform_version $2
-        when /^\s*(Oracle Solaris)/
+        when /^\s*(Oracle Solaris|Solaris)/
           platform "solaris2"
-        when /^\s*(Solaris)\s.*$/
-          platform "solaris2"
-        when /^\s*(NexentaCore)\s.*$/
-          platform "nexentacore"
         end
       end
     end

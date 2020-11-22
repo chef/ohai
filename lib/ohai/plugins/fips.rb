@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Matt Wrock (<matt@mattwrock.com>)
-# Copyright:: Copyright (c) 2016-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,10 +30,6 @@ Ohai.plugin(:Fips) do
     fips Mash.new
 
     require "openssl" unless defined?(OpenSSL)
-    if defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode && !$FIPS_TEST_MODE
-      fips["kernel"] = { "enabled" => true }
-    else
-      fips["kernel"] = { "enabled" => false }
-    end
+    fips["kernel"] = { "enabled" => OpenSSL::OPENSSL_FIPS }
   end
 end

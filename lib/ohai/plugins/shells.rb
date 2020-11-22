@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +21,9 @@ Ohai.plugin(:Shells) do
   provides "shells"
 
   collect_data do
-    if ::File.exist?("/etc/shells")
+    if file_exist?("/etc/shells")
       shells []
-      ::File.readlines("/etc/shells").each do |line|
+      file_open("/etc/shells").readlines.each do |line|
         # remove carriage returns and skip over comments / empty lines
         shells << line.chomp if line[0] == "/"
       end

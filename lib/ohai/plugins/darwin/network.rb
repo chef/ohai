@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Benjamin Black (<bb@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +27,7 @@ Ohai.plugin(:Network) do
 
   def parse_media(media_string)
     media = {}
-    line_array = media_string.split(" ")
+    line_array = media_string.split
 
     0.upto(line_array.length - 1) do |i|
       unless line_array[i].eql?("none")
@@ -66,8 +67,8 @@ Ohai.plugin(:Network) do
 
   def scope_lookup(scope)
     return "Node" if scope.eql?("::1")
-    return "Link" if scope =~ /^fe80\:/
-    return "Site" if scope =~ /^fec0\:/
+    return "Link" if /^fe80\:/.match?(scope)
+    return "Site" if /^fec0\:/.match?(scope)
 
     "Global"
   end
@@ -79,7 +80,7 @@ Ohai.plugin(:Network) do
   def locate_interface(ifaces, ifname, mac)
     return ifname unless ifaces[ifname].nil?
     # oh well, time to go hunting!
-    return ifname.chop if ifname =~ /\*$/
+    return ifname.chop if /\*$/.match?(ifname)
 
     ifaces.each_key do |ifc|
       ifaces[ifc][:addresses].each_key do |addr|

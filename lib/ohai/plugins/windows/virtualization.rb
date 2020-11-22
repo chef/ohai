@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Pavel Yudin (<pyudin@parallels.com>)
 # Author:: Tim Smith (<tsmith@chef.io>)
 # Copyright:: Copyright (c) 2015 Pavel Yudin
-# Copyright:: Copyright (c) 2015-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +25,7 @@ Ohai.plugin(:Virtualization) do
   include Ohai::Mixin::DmiDecode
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new

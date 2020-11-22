@@ -1,40 +1,172 @@
 # Change Log
 
-<!-- latest_release 16.0.20 -->
-## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-25)
+<!-- latest_release 16.7.33 -->
+## [v16.7.33](https://github.com/chef/ohai/tree/v16.7.33) (2020-11-19)
 
 #### Merged Pull Requests
-- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50))
+- aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup since=15.7.3 -->
+<!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50)) <!-- 16.0.20 -->
-- Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth)) <!-- 16.0.19 -->
-- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins)) <!-- 16.0.18 -->
-- Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins)) <!-- 16.0.17 -->
-- Make shard plugin more resilient and throw better errors [#1446](https://github.com/chef/ohai/pull/1446) ([jaymzh](https://github.com/jaymzh)) <!-- 16.0.16 -->
-- Cache gem installs in Buildkite on Windows as well [#1444](https://github.com/chef/ohai/pull/1444) ([tas50](https://github.com/tas50)) <!-- 16.0.15 -->
-- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50)) <!-- 16.0.14 -->
-- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins)) <!-- 16.0.13 -->
-- Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125)) <!-- 16.0.12 -->
-- Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125)) <!-- 16.0.11 -->
-- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark)) <!-- 16.0.10 -->
-- Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50)) <!-- 16.0.9 -->
-- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50)) <!-- 16.0.8 -->
-- use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly)) <!-- 16.0.7 -->
-- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50)) <!-- 16.0.6 -->
-- Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50)) <!-- 16.0.5 -->
-- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50)) <!-- 16.0.4 -->
-- fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig)) <!-- 16.0.3 -->
-- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50)) <!-- 16.0.2 -->
-- Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50)) <!-- 16.0.1 -->
-- Bump to version 16.0.0 [#1420](https://github.com/chef/ohai/pull/1420) ([tas50](https://github.com/tas50)) <!-- 16.0.0 -->
+- aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50)) <!-- 16.7.33 -->
+- Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50)) <!-- 16.7.32 -->
+- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50)) <!-- 16.7.31 -->
+- Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50)) <!-- 16.7.30 -->
+- Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50)) <!-- 16.7.29 -->
+- Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50)) <!-- 16.7.28 -->
+- More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50)) <!-- 16.7.27 -->
+- Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50)) <!-- 16.7.26 -->
+- Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50)) <!-- 16.7.25 -->
+- Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50)) <!-- 16.7.24 -->
+- Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50)) <!-- 16.7.23 -->
+- Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50)) <!-- 16.7.22 -->
+- Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50)) <!-- 16.7.21 -->
+- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50)) <!-- 16.7.20 -->
+- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins)) <!-- 16.7.19 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-12)
+
+#### Merged Pull Requests
+- Remove the yard task for generating docs [#1536](https://github.com/chef/ohai/pull/1536) ([tas50](https://github.com/tas50))
+- Remove detection of opensolaris platform [#1542](https://github.com/chef/ohai/pull/1542) ([tas50](https://github.com/tas50))
+- Add unit testing for omnios platform detection [#1543](https://github.com/chef/ohai/pull/1543) ([tas50](https://github.com/tas50))
+- Remove detection of EOL NexentaCore [#1544](https://github.com/chef/ohai/pull/1544) ([tas50](https://github.com/tas50))
+- Properly detect OpenIndiana and its version numbers [#1545](https://github.com/chef/ohai/pull/1545) ([tas50](https://github.com/tas50))
+- Simplify regexes by removing extra character classes [#1548](https://github.com/chef/ohai/pull/1548) ([tas50](https://github.com/tas50))
+- Gather zpool disks even if zpools uses disk labels/guids [#1547](https://github.com/chef/ohai/pull/1547) ([tas50](https://github.com/tas50))
+- Split on strings intead of regex for 3x speedup [#1550](https://github.com/chef/ohai/pull/1550) ([tas50](https://github.com/tas50))
+- Properly detect NVME/XVD devices in ZFS zpools [#1549](https://github.com/chef/ohai/pull/1549) ([tas50](https://github.com/tas50))
+- Freeze the strings we&#39;re not later modifying [#1551](https://github.com/chef/ohai/pull/1551) ([tas50](https://github.com/tas50))
+- Minor memory optimizations [#1553](https://github.com/chef/ohai/pull/1553) ([tas50](https://github.com/tas50))
+- pop_os is a derivative of ubuntu [#1555](https://github.com/chef/ohai/pull/1555) ([chasebolt](https://github.com/chasebolt))
+- Better format the elapsed plugin time [#1557](https://github.com/chef/ohai/pull/1557) ([tas50](https://github.com/tas50))
+- Speedup the slowest spec by running fewer plugins [#1556](https://github.com/chef/ohai/pull/1556) ([tas50](https://github.com/tas50))
+- Collapse duplicate branches in case statements [#1558](https://github.com/chef/ohai/pull/1558) ([tas50](https://github.com/tas50))
+- Fix parsing of hostnamectl to support values with colons [#1560](https://github.com/chef/ohai/pull/1560) ([tas50](https://github.com/tas50))
+- Remove regex anchors in the Linux Memory plugin [#1563](https://github.com/chef/ohai/pull/1563) ([tas50](https://github.com/tas50))
+- Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50))
+- Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
+## [v16.6.5](https://github.com/chef/ohai/tree/v16.6.5) (2020-10-14)
+
+#### Merged Pull Requests
+- Detect Azure when DHCP domain is set to reddog.microsoft.com [#1521](https://github.com/chef/ohai/pull/1521) ([jasonwbarnett](https://github.com/jasonwbarnett))
+- Windows support for Passwd plugin [#1516](https://github.com/chef/ohai/pull/1516) ([jaymzh](https://github.com/jaymzh))
+- Remove ruby 2.5 from CI. [#1526](https://github.com/chef/ohai/pull/1526) ([phiggins](https://github.com/phiggins))
+- Renamed &#39;whitelist&#39; to &#39;allowlist&#39; in DMI plugin [#1522](https://github.com/chef/ohai/pull/1522) ([vraravam](https://github.com/vraravam))
+- Ohai Target Mode aka Remote Ohai [#1503](https://github.com/chef/ohai/pull/1503) ([lamont-granquist](https://github.com/lamont-granquist))
+- Include IAM role in ec2 data (issue #1524) [#1525](https://github.com/chef/ohai/pull/1525) ([kcbraunschweig](https://github.com/kcbraunschweig))
+
+## [v16.5.6](https://github.com/chef/ohai/tree/v16.5.6) (2020-09-28)
+
+#### Merged Pull Requests
+- chefstyle fixes [#1514](https://github.com/chef/ohai/pull/1514) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update rubocop-performance requirement from 1.8.0 to 1.8.1 [#1517](https://github.com/chef/ohai/pull/1517) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+
+## [v16.5.4](https://github.com/chef/ohai/tree/v16.5.4) (2020-09-17)
+
+#### Merged Pull Requests
+- Prefer __dir__ to __FILE__ used to get the dir [#1510](https://github.com/chef/ohai/pull/1510) ([tas50](https://github.com/tas50))
+- Order the gems in the gemspec and gemfile [#1509](https://github.com/chef/ohai/pull/1509) ([tas50](https://github.com/tas50))
+- Spec cleanup [#1512](https://github.com/chef/ohai/pull/1512) ([phiggins](https://github.com/phiggins))
+- Speed up the AIX hostname spec [#1513](https://github.com/chef/ohai/pull/1513) ([tas50](https://github.com/tas50))
+
+## [v16.5.0](https://github.com/chef/ohai/tree/v16.5.0) (2020-09-09)
+
+#### Merged Pull Requests
+- Migrate to the chef-utils helpers for which/shell_out [#1501](https://github.com/chef/ohai/pull/1501) ([lamont-granquist](https://github.com/lamont-granquist))
+- Resolve new chefstyle warnings &amp; use safe navigators [#1507](https://github.com/chef/ohai/pull/1507) ([tas50](https://github.com/tas50))
+- Update rubocop-performance from 1.7.1 to 1.8.0 &amp; cleanup spec helpers [#1506](https://github.com/chef/ohai/pull/1506) ([dependabot-preview[bot]](https://github.com/dependabot-preview[bot]))
+- Resolve RuboCop Style/RedundantParentheses warnings [#1508](https://github.com/chef/ohai/pull/1508) ([tas50](https://github.com/tas50))
+- Add MacOS packages support [#1505](https://github.com/chef/ohai/pull/1505) ([mattray](https://github.com/mattray))
+
+## [v16.4.12](https://github.com/chef/ohai/tree/v16.4.12) (2020-08-19)
+
+#### Merged Pull Requests
+- Add missing require for windows network plugin [#1500](https://github.com/chef/ohai/pull/1500) ([tas50](https://github.com/tas50))
+
+## [v16.4.11](https://github.com/chef/ohai/tree/v16.4.11) (2020-08-14)
+
+#### Merged Pull Requests
+- Faster ruby language plugin [#1486](https://github.com/chef/ohai/pull/1486) ([lamont-granquist](https://github.com/lamont-granquist))
+- Use .find instead of .select.first [#1487](https://github.com/chef/ohai/pull/1487) ([tas50](https://github.com/tas50))
+- Add Address Family Check to route_is_valid_default_route? [#1485](https://github.com/chef/ohai/pull/1485) ([cooperlees](https://github.com/cooperlees))
+- Use match? instead of =~ when MatchData is not used [#1488](https://github.com/chef/ohai/pull/1488) ([tas50](https://github.com/tas50))
+- Simplify FIPS plugin and use system fips status [#1489](https://github.com/chef/ohai/pull/1489) ([tas50](https://github.com/tas50))
+- Minor memory optimizations [#1491](https://github.com/chef/ohai/pull/1491) ([tas50](https://github.com/tas50))
+- Remove unused systemu dependency [#1490](https://github.com/chef/ohai/pull/1490) ([tas50](https://github.com/tas50))
+- Remove non-Ohai requires from specs to prevent false positives [#1494](https://github.com/chef/ohai/pull/1494) ([tas50](https://github.com/tas50))
+- Update network plugin to use ipaddr not ipaddress gem [#1493](https://github.com/chef/ohai/pull/1493) ([tas50](https://github.com/tas50))
+- Remove profile gemfile group for now [#1496](https://github.com/chef/ohai/pull/1496) ([tas50](https://github.com/tas50))
+- Use rubocop-performance to enforce some best practices [#1495](https://github.com/chef/ohai/pull/1495) ([tas50](https://github.com/tas50))
+- Optimize 2 of our requires [#1497](https://github.com/chef/ohai/pull/1497) ([tas50](https://github.com/tas50))
+
+## [v16.3.2](https://github.com/chef/ohai/tree/v16.3.2) (2020-07-29)
+
+#### Merged Pull Requests
+- Remove redundant file encoding in spec [#1483](https://github.com/chef/ohai/pull/1483) ([tas50](https://github.com/tas50))
+- Spelling fixes [#1484](https://github.com/chef/ohai/pull/1484) ([tas50](https://github.com/tas50))
+
+## [v16.3.0](https://github.com/chef/ohai/tree/v16.3.0) (2020-07-24)
+
+#### Merged Pull Requests
+- Use .match? when we don&#39;t need the result [#1478](https://github.com/chef/ohai/pull/1478) ([tas50](https://github.com/tas50))
+- Handle IP to int conversion for inet + inet6 [#1477](https://github.com/chef/ohai/pull/1477) ([cooperlees](https://github.com/cooperlees))
+- Readme updates [#1482](https://github.com/chef/ohai/pull/1482) ([tas50](https://github.com/tas50))
+
+## [v16.2.3](https://github.com/chef/ohai/tree/v16.2.3) (2020-06-30)
+
+#### Merged Pull Requests
+- Fix docker detection in ohai virtualization [#1476](https://github.com/chef/ohai/pull/1476) ([jaymzh](https://github.com/jaymzh))
+- Linux network plugin: Handle IPv6 next hops for IPv4 routes [#1475](https://github.com/chef/ohai/pull/1475) ([cooperlees](https://github.com/cooperlees))
+
+## [v16.2.1](https://github.com/chef/ohai/tree/v16.2.1) (2020-06-23)
+
+#### Merged Pull Requests
+- Make sure Darwin hosts are always mac_os_x [#1470](https://github.com/chef/ohai/pull/1470) ([tas50](https://github.com/tas50))
+
+## [v16.2.0](https://github.com/chef/ohai/tree/v16.2.0) (2020-06-17)
+
+#### Merged Pull Requests
+- Remove an internal reference to blacklist [#1468](https://github.com/chef/ohai/pull/1468) ([tas50](https://github.com/tas50))
+
+## [v16.1.1](https://github.com/chef/ohai/tree/v16.1.1) (2020-05-15)
+
+#### Merged Pull Requests
+- Add new selinux plugin for Linux [#1455](https://github.com/chef/ohai/pull/1455) ([davide125](https://github.com/davide125))
+- Depend on chef-utils gem so we can use ChefUtils::Mash [#1462](https://github.com/chef/ohai/pull/1462) ([lamont-granquist](https://github.com/lamont-granquist))
+
+## [v16.0.20](https://github.com/chef/ohai/tree/v16.0.20) (2020-04-28)
+
+#### Merged Pull Requests
+- Bump to version 16.0.0 [#1420](https://github.com/chef/ohai/pull/1420) ([tas50](https://github.com/tas50))
+- Allow chef-config 16 [#1422](https://github.com/chef/ohai/pull/1422) ([tas50](https://github.com/tas50))
+- Use is_a? to check the class in the DMI plugin [#1423](https://github.com/chef/ohai/pull/1423) ([tas50](https://github.com/tas50))
+- fix [#1406]: ensure optional_plugins to be array of symbols [#1408](https://github.com/chef/ohai/pull/1408) ([salzig](https://github.com/salzig))
+- Replace filesystem with filesystem2 on aix/solaris/bsd [#1426](https://github.com/chef/ohai/pull/1426) ([tas50](https://github.com/tas50))
+- Chefstyle fixes from Rubocop 0.80 [#1431](https://github.com/chef/ohai/pull/1431) ([tas50](https://github.com/tas50))
+- Minor testing updates [#1432](https://github.com/chef/ohai/pull/1432) ([tas50](https://github.com/tas50))
+- use bool instead of raise/rescue to detect linux user is exists [#1434](https://github.com/chef/ohai/pull/1434) ([sawanoboly](https://github.com/sawanoboly))
+- Combine Linux / Windows fips plugins into a single plugin [#1437](https://github.com/chef/ohai/pull/1437) ([tas50](https://github.com/tas50))
+- Add logic to fetch the latest azure metadata version [#1427](https://github.com/chef/ohai/pull/1427) ([tas50](https://github.com/tas50))
+- Expose NIC channel params, coalesce params, and driver info... [#1439](https://github.com/chef/ohai/pull/1439) ([matt-c-clark](https://github.com/matt-c-clark))
+- Add a new interrupts plugin for Linux [#1440](https://github.com/chef/ohai/pull/1440) ([davide125](https://github.com/davide125))
+- Add a new ipc plugin for Linux [#1441](https://github.com/chef/ohai/pull/1441) ([davide125](https://github.com/davide125))
+- Fix test failure from missing require. [#1442](https://github.com/chef/ohai/pull/1442) ([phiggins](https://github.com/phiggins))
+- Use native Expeditor gem caching &amp; fix code owners [#1443](https://github.com/chef/ohai/pull/1443) ([tas50](https://github.com/tas50))
+- Cache gem installs in Buildkite on Windows as well [#1444](https://github.com/chef/ohai/pull/1444) ([tas50](https://github.com/tas50))
+- Make shard plugin more resilient and throw better errors [#1446](https://github.com/chef/ohai/pull/1446) ([jaymzh](https://github.com/jaymzh))
+- Fix chefstyle violations. [#1449](https://github.com/chef/ohai/pull/1449) ([phiggins](https://github.com/phiggins))
+- Add a plugin for Windows mimicing the Unix dmi plugin [#1445](https://github.com/chef/ohai/pull/1445) ([phiggins](https://github.com/phiggins))
+- Use correct DMI attribute name for product name [#1451](https://github.com/chef/ohai/pull/1451) ([ramereth](https://github.com/ramereth))
+- Avoid constant warnings when reloading ohai plugins [#1456](https://github.com/chef/ohai/pull/1456) ([tas50](https://github.com/tas50))
+
 ## [v15.7.3](https://github.com/chef/ohai/tree/v15.7.3) (2020-01-17)
 
 #### Merged Pull Requests
@@ -42,7 +174,6 @@
 - Test on Ruby 2.7 final docker container and remove old Jenkins files [#1416](https://github.com/chef/ohai/pull/1416) ([tas50](https://github.com/tas50))
 - Minor spec cleanup from rubocop-rspec project [#1417](https://github.com/chef/ohai/pull/1417) ([tas50](https://github.com/tas50))
 - Fix missing volume name and re-implement adding drivetype to filesystem plugin [#1419](https://github.com/chef/ohai/pull/1419) ([sshock](https://github.com/sshock))
-<!-- latest_stable_release -->
 
 ## [v15.6.3](https://github.com/chef/ohai/tree/v15.6.3) (2019-12-10)
 

@@ -1,6 +1,6 @@
 #
 # Author:: Joshua Timberman (<joshua@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Perl) do
   provides "languages/perl"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

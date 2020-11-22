@@ -1,7 +1,7 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Tollef Fog Heen <tfheen@err.no>
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2010 Tollef Fog Heen <tfheen@err.no>
 # License:: Apache License, Version 2.0
 #
@@ -20,7 +20,6 @@
 
 begin
   require "spec_helper"
-  require "chef/version"
 
   describe Ohai::System, "plugin chef" do
     before do

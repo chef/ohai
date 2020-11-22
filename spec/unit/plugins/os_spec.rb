@@ -2,7 +2,7 @@
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #

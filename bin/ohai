@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
-#
-# ./ohai - I'm in ur serverz, showin you the daters
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
@@ -20,7 +19,7 @@
 #
 
 # if we're in a source code checkout, we want to run the code from that.
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../lib", __dir__)
 require "ohai/application"
 
 Ohai::Application.new.run

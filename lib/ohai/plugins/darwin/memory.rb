@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Patrick Collins (<pat@burned.com>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +44,7 @@ Ohai.plugin(:Memory) do
           megabyte_val = (pages * page_size) / 1024 / 1024.0
           total_consumed += megabyte_val
           case match
-          when "wired down"
-            active += megabyte_val.to_i
-          when "active"
+          when "wired down", "active"
             active += megabyte_val.to_i
           when "inactive"
             inactive += megabyte_val.to_i

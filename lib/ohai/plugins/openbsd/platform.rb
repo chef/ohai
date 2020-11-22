@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
@@ -20,10 +21,8 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_family"
 
   collect_data(:openbsd) do
-    so = shell_out("uname -s")
-    platform so.stdout.split($/)[0].downcase
-    so = shell_out("uname -r")
-    platform_version so.stdout.split($/)[0]
+    platform shell_out("uname -s").stdout.strip.downcase
+    platform_version shell_out("uname -r").stdout.strip
     platform_family "openbsd"
   end
 end

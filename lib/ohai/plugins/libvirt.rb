@@ -17,11 +17,11 @@
 # limitations under the License.
 #
 
-# Note: This plugin requires libvirt-bin/libvirt-dev as well as the ruby-libvirt
+# NOTE: This plugin requires libvirt-bin/libvirt-dev as well as the ruby-libvirt
 #       gem to be installed before it will properly parse data
 
 Ohai.plugin(:Libvirt) do
-  %w{ uri capabilities nodeinfo domains networks storage }.each do |info|
+  %w{uri capabilities nodeinfo domains networks storage}.each do |info|
     provides "libvirt/#{info}"
     depends "virtualization"
   end

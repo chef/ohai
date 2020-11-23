@@ -177,7 +177,7 @@ describe Ohai::System, "Solaris2.X network plugin" do
     end
 
     it "finds the flags for a PHYSRUNNING interface" do
-      expect(@plugin[:network][:interfaces]["net1:1"][:flags]).to eq(%w{ UP BROADCAST RUNNING MULTICAST IPv4 PHYSRUNNING })
+      expect(@plugin[:network][:interfaces]["net1:1"][:flags]).to eq(%w{UP BROADCAST RUNNING MULTICAST IPv4 PHYSRUNNING})
     end
 
     it "finds the default interface for a solaris 11 zone" do

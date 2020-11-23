@@ -29,7 +29,6 @@ Ohai.plugin(:Train) do
       if transport_connection.respond_to?(:uri)
         train["scheme"] = URI.parse(transport_connection.uri).scheme
         train["uri"] = transport_connection.uri
-      else
       end
     end
   end

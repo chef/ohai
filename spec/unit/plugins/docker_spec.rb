@@ -40,12 +40,13 @@ expected_output = {
       "local",
     ],
     "Network" => %w{
-bridge
-host
-ipvlan
-macvlan
-null
-overlay},
+      bridge
+      host
+      ipvlan
+      macvlan
+      null
+      overlay
+    },
     "Authorization" => nil,
     "Log" => %w{
       awslogs

@@ -110,7 +110,7 @@ Ohai.plugin(:Cloud) do
       ipaddr = ""
       begin
         ipaddr = IPAddr.new(ip)
-        raise ArgumentError, "not valid #{address_family} address" unless (address_family == :ipv4) ? ipaddr.ipv4? : ipaddr.ipv6?
+        raise ArgumentError, "not valid #{address_family} address" unless address_family == :ipv4 ? ipaddr.ipv4? : ipaddr.ipv6?
       rescue ArgumentError => e
         raise "ERROR: the ohai 'cloud' plugin failed with an IP address of '#{ip}' : #{e.message}"
       end

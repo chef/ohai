@@ -24,8 +24,8 @@ Gem::Specification.new do |s|
   s.add_dependency "mixlib-log", ">= 2.0.1", "< 4.0"
   s.add_dependency "mixlib-shellout", ">= 2.0", "< 4.0"
   s.add_dependency "plist", "~> 3.1"
-  s.add_dependency "wmi-lite", "~> 1.0"
   s.add_dependency "train-core"
+  s.add_dependency "wmi-lite", "~> 1.0"
   # Note for ohai developers: If chef-config causes you grief, try:
   #     bundle install --with development
   # this should work as long as chef is a development dependency in Gemfile.

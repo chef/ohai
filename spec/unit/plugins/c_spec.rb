@@ -1,4 +1,3 @@
-
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0

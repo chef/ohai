@@ -115,7 +115,6 @@ Ohai.plugin(:Kernel) do
     when 16 then "WIN95"
     when 17 then "WIN98"
     when 19 then "WINCE"
-    else nil
     end
   end
 
@@ -134,7 +133,6 @@ Ohai.plugin(:Kernel) do
     when 6 then "Appliance PC"
     when 7 then "Performance Server"
     when 8 then "Maximum"
-    else nil
     end
   end
 

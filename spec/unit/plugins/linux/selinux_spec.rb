@@ -26,35 +26,35 @@ describe Ohai::System, "Linux selinux plugin" do
   end
 
   it "populates selinux if sestatus is found" do
-    sestatus_out = <<-SESTATUS_OUT
-SELinux status:                 enabled
-SELinuxfs mount:                /sys/fs/selinux
-SELinux root directory:         /etc/selinux
-Loaded policy name:             test
-Current mode:                   permissive
-Mode from config file:          permissive
-Policy MLS status:              disabled
-Policy deny_unknown status:     allowed
-Max kernel policy version:      31
+    sestatus_out = <<~SESTATUS_OUT
+      SELinux status:                 enabled
+      SELinuxfs mount:                /sys/fs/selinux
+      SELinux root directory:         /etc/selinux
+      Loaded policy name:             test
+      Current mode:                   permissive
+      Mode from config file:          permissive
+      Policy MLS status:              disabled
+      Policy deny_unknown status:     allowed
+      Max kernel policy version:      31
 
-Policy booleans:
-secure_mode_policyload          off
+      Policy booleans:
+      secure_mode_policyload          off
 
-Process contexts:
-Current context:                user_u:base_r:admin_t
-Init context:                   system_u:system_r:init_t
-/usr/sbin/sshd                  system_u:base_r:base_t
+      Process contexts:
+      Current context:                user_u:base_r:admin_t
+      Init context:                   system_u:system_r:init_t
+      /usr/sbin/sshd                  system_u:base_r:base_t
 
-File contexts:
-Controlling terminal:           system_u:object_r:file_t
-/etc/passwd                     user_u:object_r:file_t
-/etc/shadow                     user_u:object_r:file_t
-/bin/bash                       user_u:object_r:file_t
-/bin/login                      user_u:object_r:file_t
-/bin/sh                         user_u:object_r:file_t -> user_u:object_r:file_t
-/sbin/agetty                    user_u:object_r:file_t
-/sbin/init                      user_u:object_r:file_t -> user_u:object_r:init_exec_t
-/usr/sbin/sshd                  user_u:object_r:file_t
+      File contexts:
+      Controlling terminal:           system_u:object_r:file_t
+      /etc/passwd                     user_u:object_r:file_t
+      /etc/shadow                     user_u:object_r:file_t
+      /bin/bash                       user_u:object_r:file_t
+      /bin/login                      user_u:object_r:file_t
+      /bin/sh                         user_u:object_r:file_t -> user_u:object_r:file_t
+      /sbin/agetty                    user_u:object_r:file_t
+      /sbin/init                      user_u:object_r:file_t -> user_u:object_r:init_exec_t
+      /usr/sbin/sshd                  user_u:object_r:file_t
     SESTATUS_OUT
     allow(plugin).to receive(:which).with("sestatus").and_return("/usr/sbin/sestatus")
     allow(plugin).to receive(:shell_out).with("/usr/sbin/sestatus -v -b").and_return(mock_shell_out(0, sestatus_out, ""))

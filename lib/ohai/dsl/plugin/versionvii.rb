@@ -195,8 +195,6 @@ module Ohai
           # key? to avoid falsely instantiating a configuration hash.
           if Ohai.config[:plugin].key?(snake_case_name)
             Ohai.config[:plugin][snake_case_name]
-          else
-            nil
           end
         end
       end

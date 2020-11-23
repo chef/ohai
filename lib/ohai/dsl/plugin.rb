@@ -218,7 +218,7 @@ module Ohai
       def safe_get_attribute(*keys)
         keys.inject(@data) do |attrs, key|
           unless attrs.nil? || attrs.is_a?(Array) || attrs.is_a?(Hash)
-            raise TypeError.new("Expected Hash but got #{attrs.class}.")
+            raise TypeError, "Expected Hash but got #{attrs.class}."
           end
 
           attrs[key]

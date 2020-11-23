@@ -39,7 +39,7 @@ Ohai.plugin(:NetworkAddresses) do
       next if iface_v.nil? || !iface_v.key?("addresses")
 
       iface_v["addresses"].each do |addr, addr_v|
-        next if addr_v.nil? || (not addr_v.key? "family") || addr_v["family"] != family
+        next if addr_v.nil? || (!addr_v.key? "family") || addr_v["family"] != family
 
         ipaddresses << {
           ipaddress: addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),

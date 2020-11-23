@@ -72,7 +72,8 @@ Ohai.plugin(:Network) do
         else
           # We have key value pairs.
           if line =~ %r{inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(/(\d{1,2}))?}
-            tmp_addr, tmp_prefix = $1, $3
+            tmp_addr = $1
+            tmp_prefix = $3
             if tmp_prefix.nil?
               netmask = hex_to_dec_netmask($1) if line =~ /netmask\s0x(\S+)\s/
               unless netmask
@@ -90,7 +91,7 @@ Ohai.plugin(:Network) do
               ifaces[int_name][:addresses][tmp_addr][:broadcast] = $1
             end
           elsif line =~ %r{inet6 ([a-f0-9\:]+)%?(\d*)/?(\d*)?}
-            # TODO do we have more properties on inet6 in aix? broadcast
+            # TODO: do we have more properties on inet6 in aix? broadcast
             ifaces[int_name][:addresses] ||= Mash.new
             ifaces[int_name][:addresses][$1] = { "family" => "inet6", "zone_index" => $2, "prefixlen" => $3 }
           else
@@ -119,7 +120,7 @@ Ohai.plugin(:Network) do
           interface = $6
           ifaces[interface][:routes] ||= []
           ifaces[interface][:routes] << Mash.new( destination: $1, family: family,
-                                                 via: $2, flags: $3)
+                                                  via: $2, flags: $3)
         end
       end
     end

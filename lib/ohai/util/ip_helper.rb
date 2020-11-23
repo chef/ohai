@@ -33,7 +33,7 @@ module Ohai
           IPV6_LINK_LOCAL_UNICAST_BLOCK.include?(ip) || IPV6_PRIVATE_ADDRESS_BLOCK.include?(ip)
         end
       end
-      alias :unique_local_address? :private_address?
+      alias unique_local_address? private_address?
 
       def public_address?(addr)
         !private_address?(addr)

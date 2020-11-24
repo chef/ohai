@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.35 -->
-## [v16.7.35](https://github.com/chef/ohai/tree/v16.7.35) (2020-11-24)
+<!-- latest_release 16.7.36 -->
+## [v16.7.36](https://github.com/chef/ohai/tree/v16.7.36) (2020-11-24)
 
 #### Merged Pull Requests
-- Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50))
+- Prevent docker plugin crashes on AIX [#1584](https://github.com/chef/ohai/pull/1584) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Prevent docker plugin crashes on AIX [#1584](https://github.com/chef/ohai/pull/1584) ([tas50](https://github.com/tas50)) <!-- 16.7.36 -->
 - Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50)) <!-- 16.7.35 -->
 - Misc RuboCop cleanup of the codebase [#1582](https://github.com/chef/ohai/pull/1582) ([tas50](https://github.com/tas50)) <!-- 16.7.34 -->
 - aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50)) <!-- 16.7.33 -->

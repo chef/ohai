@@ -78,10 +78,14 @@ expected_output = {
 describe Ohai::System, "plugin docker" do
   let(:plugin) { get_plugin("docker") }
 
+  before do
+    plugin[:virtualization] = Mash.new
+    plugin[:virtualization][:systems] = Mash.new
+    allow(plugin).to receive(:collect_os).and_return(:linux)
+  end
+
   context "without docker installed" do
     it "does not create a docker attribute" do
-      plugin[:virtualization] = Mash.new
-      plugin[:virtualization][:systems] = Mash.new
       plugin.run
       expect(plugin).not_to have_key(:docker)
     end
@@ -89,8 +93,6 @@ describe Ohai::System, "plugin docker" do
 
   context "with docker installed" do
     it "creates a docker attribute with correct data" do
-      plugin[:virtualization] = Mash.new
-      plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:docker] = "host"
       allow(plugin).to receive(:shell_out).with("docker info --format '{{json .}}'").and_return(mock_shell_out(0, docker_output, ""))
       plugin.run

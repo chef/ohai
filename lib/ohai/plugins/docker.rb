@@ -48,7 +48,7 @@ Ohai.plugin(:Docker) do
     docker[:swarm] = shellout_data["Swarm"]
   end
 
-  collect_data do
+  collect_data(:linux, :windows, :darwin) do
     require "json" unless defined?(JSON)
 
     if virtualization[:systems][:docker]

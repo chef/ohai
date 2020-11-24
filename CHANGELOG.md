@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.7.34 -->
-## [v16.7.34](https://github.com/chef/ohai/tree/v16.7.34) (2020-11-23)
+<!-- latest_release 16.7.35 -->
+## [v16.7.35](https://github.com/chef/ohai/tree/v16.7.35) (2020-11-24)
 
 #### Merged Pull Requests
-- Misc RuboCop cleanup of the codebase [#1582](https://github.com/chef/ohai/pull/1582) ([tas50](https://github.com/tas50))
+- Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50)) <!-- 16.7.35 -->
 - Misc RuboCop cleanup of the codebase [#1582](https://github.com/chef/ohai/pull/1582) ([tas50](https://github.com/tas50)) <!-- 16.7.34 -->
 - aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50)) <!-- 16.7.33 -->
 - Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50)) <!-- 16.7.32 -->

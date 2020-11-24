@@ -35,6 +35,7 @@ describe Ohai::System, "plugin digital_ocean" do
   end
 
   before do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:hint?).with("digital_ocean").and_return(false)
   end
 

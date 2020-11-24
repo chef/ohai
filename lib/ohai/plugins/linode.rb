@@ -51,7 +51,7 @@ Ohai.plugin(:Linode) do
     end
   end
 
-  collect_data do
+  collect_data(:linux) do
     # Setup linode mash if it is a linode system
     if looks_like_linode?
       logger.trace("Plugin Linode: looks_like_linode? == true")

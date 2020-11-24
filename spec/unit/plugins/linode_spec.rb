@@ -21,6 +21,7 @@ describe Ohai::System, "plugin linode" do
   let(:plugin) { get_plugin("linode") }
 
   before do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     plugin[:network] = {
       "interfaces" => {
         "eth0" => {

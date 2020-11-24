@@ -44,7 +44,7 @@ Ohai.plugin(:Scaleway) do
     false
   end
 
-  collect_data do
+  collect_data(:linux) do
     if looks_like_scaleway?
       logger.trace("Plugin Scaleway: looks_like_scaleway? == true")
       scaleway Mash.new

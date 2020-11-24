@@ -89,7 +89,7 @@ Ohai.plugin(:Libvirt) do
     storage_data
   end
 
-  collect_data do
+  collect_data(:linux) do
     if virtualization[:role].eql?("host")
       load_libvirt
       begin

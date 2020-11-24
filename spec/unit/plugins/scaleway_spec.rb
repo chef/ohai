@@ -21,6 +21,7 @@ describe Ohai::System, "plugin scaleway" do
   let(:plugin) { get_plugin("scaleway") }
 
   before do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(false)
   end

@@ -123,12 +123,12 @@ Ohai.plugin(:C) do
   end
 
   def collect_xlc
-    # ibm xlc
-
+    # IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)
+    # Version: 13.01.0003.0000
     so = shell_out("xlc -qversion")
     if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
       description = so.stdout.split($/).first
-      if description =~ /V(\d+\.\d+)/
+      if description =~ /V(\d+\.\d+(.\d+)?)/
         @c[:xlc] = Mash.new
         @c[:xlc][:version] = $1
         @c[:xlc][:description] = description.strip

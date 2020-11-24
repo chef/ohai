@@ -65,6 +65,11 @@ C_XLC = <<~EOF.freeze
   Version: 09.00.0000.0000
 EOF
 
+C_XLC_NEWER = <<~EOF.freeze
+  IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)
+  Version: 13.01.0003.0000
+EOF
+
 C_SUN = <<~EOF.freeze
   cc: Sun C 5.8 Patch 121016-06 2007/08/01
 EOF
@@ -106,6 +111,13 @@ describe Ohai::System, "plugin c" do
       allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:xlc)
+    end
+
+    it "properly parses 3 part version numbers in newer XLC releases" do
+      expect(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC_NEWER, ""))
+      plugin.run
+      expect(plugin.languages[:c][:xlc][:version]).to eql("13.1.3")
+      expect(plugin.languages[:c][:xlc][:description]).to eql("IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)")
     end
 
     it "does not set the languages[:c][:xlc] tree up if xlc command fails" do

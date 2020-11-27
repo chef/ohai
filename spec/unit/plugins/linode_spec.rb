@@ -20,8 +20,12 @@ require "spec_helper"
 describe Ohai::System, "plugin linode" do
   let(:plugin) { get_plugin("linode") }
 
+  let(:apt_sources) { "# \n\n# deb cdrom:[Ubuntu-Server 20.04.1 LTS _Focal Fossa_ - Release amd64 (20200731)]/ focal main restricted\n\n#deb cdrom:[Ubuntu-Server 20.04.1 LTS _Focal Fossa_ - Release amd64 (20200731)]/ focal main restricted\n\n# See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to\n# newer versions of the distribution.\ndeb http://mirrors.linode.com/ubuntu/ focal main restricted\n# deb-src http://mirrors.linode.com/ubuntu/ focal main restricted\n\n## Major bug fix updates produced after the final release of the\n## distribution.\ndeb http://mirrors.linode.com/ubuntu/ focal-updates main restricted\n# deb-src http://mirrors.linode.com/ubuntu/ focal-updates main restricted\n\n## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu\n## team. Also, please note that software in universe WILL NOT receive any\n## review or updates from the Ubuntu security team.\ndeb http://mirrors.linode.com/ubuntu/ focal universe\n# deb-src http://mirrors.linode.com/ubuntu/ focal universe\ndeb http://mirrors.linode.com/ubuntu/ focal-updates universe\n# deb-src http://mirrors.linode.com/ubuntu/ focal-updates universe\n\n## N.B. software from this repository is ENTIRELY UNSUPPORTED by the Ubuntu \n## team, and may not be under a free licence. Please satisfy yourself as to \n## your rights to use the software. Also, please note that software in \n## multiverse WILL NOT receive any review or updates from the Ubuntu\n## security team.\ndeb http://mirrors.linode.com/ubuntu/ focal multiverse\n# deb-src http://mirrors.linode.com/ubuntu/ focal multiverse\ndeb http://mirrors.linode.com/ubuntu/ focal-updates multiverse\n# deb-src http://mirrors.linode.com/ubuntu/ focal-updates multiverse\n\n## N.B. software from this repository may not have been tested as\n## extensively as that contained in the main release, although it includes\n## newer versions of some applications which may provide useful features.\n## Also, please note that software in backports WILL NOT receive any review\n## or updates from the Ubuntu security team.\ndeb http://mirrors.linode.com/ubuntu/ focal-backports main restricted universe multiverse\n# deb-src http://mirrors.linode.com/ubuntu/ focal-backports main restricted universe multiverse\n\n## Uncomment the following two lines to add software from Canonical's\n## 'partner' repository.\n## This software is not part of Ubuntu, but is offered by Canonical and the\n## respective vendors as a service to Ubuntu users.\n# deb http://archive.canonical.com/ubuntu focal partner\n# deb-src http://archive.canonical.com/ubuntu focal partner\n\ndeb http://security.ubuntu.com/ubuntu focal-security main restricted\n# deb-src http://security.ubuntu.com/ubuntu focal-security main restricted\ndeb http://security.ubuntu.com/ubuntu focal-security universe\n# deb-src http://security.ubuntu.com/ubuntu focal-security universe\ndeb http://security.ubuntu.com/ubuntu focal-security multiverse\n# deb-src http://security.ubuntu.com/ubuntu focal-security multiverse\n\n# This system was installed using small removable media\n# (e.g. netinst, live or single CD). The matching \"deb cdrom\"\n# entries were disabled at the end of the installation process.\n# For information about how to configure apt package sources,\n# see the sources.list(5) manual.\n" }
+
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(plugin).to receive(:file_exist?).with("/etc/apt/sources.list").and_return(false)
+    plugin[:domain] = "nope.example.com"
     plugin[:network] = {
       "interfaces" => {
         "eth0" => {
@@ -70,17 +74,13 @@ describe Ohai::System, "plugin linode" do
 
   end
 
-  context "without linode kernel" do
-    before do
-      plugin[:kernel] = { "release" => "3.5.2-x86_64" }
-    end
-
+  context "without linode domain or apt data" do
     it_behaves_like "!linode"
   end
 
-  context "with linode kernel" do
+  context "with linode domain" do
     before do
-      plugin[:kernel] = { "release" => "3.5.2-x86_64-linode24" }
+      plugin[:domain] = "members.linode.com"
     end
 
     it_behaves_like "linode"
@@ -115,6 +115,15 @@ describe Ohai::System, "plugin linode" do
       end
     end
 
+  end
+
+  describe "with linode apt sources" do
+    before do
+      allow(plugin).to receive(:file_exist?).with("/etc/apt/sources.list").and_return(true)
+      allow(plugin).to receive(:file_read).with("/etc/apt/sources.list").and_return(apt_sources)
+    end
+
+    it_behaves_like "linode"
   end
 
   describe "with linode hint file" do

@@ -18,23 +18,31 @@
 Ohai.plugin(:Linode) do
   provides "linode"
 
-  depends "kernel"
+  depends "domain"
   depends "network/interfaces"
 
-  # Checks for matching linode kernel name
+  # Checks to see if the node is in the members.linode.com domain
   #
-  # Returns true or false
-  def has_linode_kernel?
-    if ( kernel_data = kernel )
-      kernel_data[:release].split("-").last.include?("linode")
-    end
+  # @return [Boolean]
+  #
+  def has_linode_domain?
+    domain&.include?("linode")
+  end
+
+  # Checks for linode mirrors in the apt sources.list file
+  #
+  # @return [Boolean]
+  #
+  def has_linode_apt_repos?
+    file_exist?("/etc/apt/sources.list") && file_read("/etc/apt/sources.list").include?("linode")
   end
 
   # Identifies the linode cloud by preferring the hint, then
   #
-  # Returns true or false
+  # @return [Boolean]
+  #
   def looks_like_linode?
-    hint?("linode") || has_linode_kernel?
+    hint?("linode") || has_linode_domain? || has_linode_apt_repos?
   end
 
   # Alters linode mash with new interface based on name parameter

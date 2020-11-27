@@ -37,12 +37,11 @@ Ohai.plugin(:Linode) do
     hint?("linode") || has_linode_kernel?
   end
 
-  # Names linode ip address
-  #
-  # name - symbol of ohai name (e.g. :public_ip)
-  # eth - Interface name (e.g. :eth0)
-  #
   # Alters linode mash with new interface based on name parameter
+  #
+  # @param [Symbol] name Ohai name (e.g. :public_ip)
+  # @param [Symbol] eth Interface name (e.g. :eth0)
+  #
   def get_ip_address(name, eth)
     if ( eth_iface = network[:interfaces][eth] )
       eth_iface[:addresses].each do |key, info|

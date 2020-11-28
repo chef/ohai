@@ -19,7 +19,6 @@
 # limitations under the License.
 
 Ohai.plugin(:Lspci) do
-  depends "platform"
   provides "pci"
   optional true
 

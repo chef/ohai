@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.7.38 -->
+## [v16.7.38](https://github.com/chef/ohai/tree/v16.7.38) (2020-11-28)
+
+#### Merged Pull Requests
+- Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.7.37 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50)) <!-- 16.7.38 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.8.0 -->
-## [v16.8.0](https://github.com/chef/ohai/tree/v16.8.0) (2020-12-01)
+<!-- latest_release 16.8.1 -->
+## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-04)
 
 #### Merged Pull Requests
-- Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50))
+- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.7.37 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125)) <!-- 16.8.1 -->
 - Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50)) <!-- 16.8.0 -->
 - Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50)) <!-- 16.7.38 -->
 <!-- release_rollup -->

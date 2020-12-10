@@ -720,7 +720,7 @@ describe Ohai::System, "Linux Network Plugin" do
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        %w{ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 }.each  do |addr|
+        %w{1111:2222:3333:4444::2 1111:2222:3333:4444::3}.each do |addr|
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"].keys).to include(addr)
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["scope"]).to eq("Global")
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["prefixlen"]).to eq("64")

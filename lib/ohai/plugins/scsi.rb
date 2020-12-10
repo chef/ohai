@@ -18,7 +18,6 @@
 #
 
 Ohai.plugin(:Lsscsi) do
-  depends "platform"
   provides "scsi"
   optional true
 

@@ -127,7 +127,7 @@ Ohai.plugin(:Network) do
       end
       if line =~ /\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) netmask (([0-9a-f]){1,8}) broadcast (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/
         iface[cint][:addresses] ||= Mash.new
-        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2) , "broadcast" => $4 }
+        iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2), "broadcast" => $4 }
       end
       if line =~ %r{\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)/(\d+)\s*$}
         iface[cint][:addresses] ||= Mash.new

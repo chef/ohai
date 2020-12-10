@@ -348,25 +348,25 @@ Ohai.plugin(:CPU) do
       key = kv.shift
       value = kv.join(" ").chomp
       case key
-        when /chip_id/
-          cpu[instance]["socket"] = value
-          cpusockets.push(value) if cpusockets.index(value).nil?
-        when /cpu_type/
-          cpu[instance]["arch"] = value
-        when /clock_MHz/
-          cpu[instance]["mhz"] = value
-        when /brand/
-          cpu[instance]["model_name"] = value.sub(/\s+/, " ")
-        when /^state$/
-          cpu[instance]["state"] = value
-          cpu["cpustates"][value] ||= 0
-          cpu["cpustates"][value] += 1
-        when /core_id/
-          cpu[instance]["core_id"] = value
-          # Detect hyperthreading/multithreading
-          cpucores.push(value) if cpucores.index(value).nil?
-        when /family|fpu_type|model|stepping|vendor_id/
-          cpu[instance][key] = value
+      when /chip_id/
+        cpu[instance]["socket"] = value
+        cpusockets.push(value) if cpusockets.index(value).nil?
+      when /cpu_type/
+        cpu[instance]["arch"] = value
+      when /clock_MHz/
+        cpu[instance]["mhz"] = value
+      when /brand/
+        cpu[instance]["model_name"] = value.sub(/\s+/, " ")
+      when /^state$/
+        cpu[instance]["state"] = value
+        cpu["cpustates"][value] ||= 0
+        cpu["cpustates"][value] += 1
+      when /core_id/
+        cpu[instance]["core_id"] = value
+        # Detect hyperthreading/multithreading
+        cpucores.push(value) if cpucores.index(value).nil?
+      when /family|fpu_type|model|stepping|vendor_id/
+        cpu[instance][key] = value
       end
     end
     cpu["cores"] = cpucores.size

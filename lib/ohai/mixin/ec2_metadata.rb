@@ -42,8 +42,8 @@ module Ohai
 
       EC2_METADATA_ADDR ||= "169.254.169.254"
       EC2_SUPPORTED_VERSIONS ||= %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
-                                   2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
-                                   2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze
+                                     2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
+                                     2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze
       EC2_ARRAY_VALUES ||= %w{security-groups local_ipv4s}.freeze
       EC2_ARRAY_DIR    ||= %w{network/interfaces/macs}.freeze
       EC2_JSON_DIR     ||= %w{iam}.freeze
@@ -58,7 +58,7 @@ module Ohai
           elsif response.code != "200"
             raise "Mixin EC2: Unable to determine EC2 metadata version (returned #{response.code} response)"
           end
-          # Note: Sorting the list of versions may have unintended consequences in
+          # NOTE: Sorting the list of versions may have unintended consequences in
           # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
           versions = response.body.split("\n").sort
           until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
@@ -123,7 +123,7 @@ module Ohai
                 else
                   metadata_get(key, best_api_version)
                 end
-            elsif (not key.eql?(id)) && (not key.eql?("/"))
+            elsif (!key.eql?(id)) && (!key.eql?("/"))
               name = key[0..-2]
               sym = metadata_key(name)
               if EC2_ARRAY_DIR.include?(name)
@@ -148,7 +148,7 @@ module Ohai
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
               metadata[metadata_key(key)] = retr_meta || ""
-            elsif not key.eql?("/")
+            elsif !key.eql?("/")
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
           end
@@ -168,7 +168,7 @@ module Ohai
               json = String(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)
-            elsif not key.eql?("/")
+            elsif !key.eql?("/")
               metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)
             end
           end

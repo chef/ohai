@@ -46,7 +46,6 @@ Ohai.plugin(:Zpools) do
           pools[$1][:zpool_version] = sanitize_value($8)
         end
       end
-
     rescue Ohai::Exceptions::Exec
       Ohai::Log.debug('Plugin Zpools: Could not shell_out "zpool list -H -o name,size,alloc,free,cap,dedup,health,version". Skipping plugin.')
     end

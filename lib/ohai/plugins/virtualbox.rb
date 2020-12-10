@@ -128,7 +128,7 @@ Ohai.plugin(:Virtualbox) do
     logger.trace("Plugin VboxHost: Could not run '#{so_cmd}'. Skipping data")
   end
 
-  collect_data(:default) do
+  collect_data(:windows, :linux, :solaris2, :darwin) do
     case virtualization.dig("systems", "vbox")
     when "guest"
       logger.trace("Plugin Virtualbox: Node detected as vbox guest. Collecting guest data.")

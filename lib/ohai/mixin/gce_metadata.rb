@@ -72,7 +72,7 @@ module Ohai
       #
       # @return [Boolean] is there a trailing /?
       def has_trailing_slash?(data)
-        !! ( data =~ %r{/$} )
+        !!( data =~ %r{/$} )
       end
 
       def sanitize_key(key)

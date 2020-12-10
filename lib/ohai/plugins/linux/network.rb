@@ -154,7 +154,7 @@ Ohai.plugin(:Network) do
   def ethernet_layer_one(iface)
     return iface unless ethtool_binary_path
 
-    keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
+    keys = %w{Speed Duplex Port Transceiver Auto-negotiation MDI-X}
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 

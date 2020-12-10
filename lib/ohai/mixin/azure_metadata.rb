@@ -36,8 +36,8 @@ module Ohai
 
       # it's important that the newer versions are at the end of this array so we can skip sorting it
       AZURE_SUPPORTED_VERSIONS ||= %w{ 2017-04-02 2017-08-01 2017-12-01 2018-02-01 2018-04-02
-                                   2018-10-01 2019-02-01 2019-03-11 2019-04-30 2019-06-01
-                                   2019-06-04 2019-08-01 2019-08-15 2019-11-01 }.freeze
+                                       2018-10-01 2019-02-01 2019-03-11 2019-04-30 2019-06-01
+                                       2019-06-04 2019-08-01 2019-08-15 2019-11-01 }.freeze
 
       def best_api_version
         @api_version ||= begin

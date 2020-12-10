@@ -1,34 +1,46 @@
 # Change Log
 
-<!-- latest_release 16.7.33 -->
-## [v16.7.33](https://github.com/chef/ohai/tree/v16.7.33) (2020-11-19)
+<!-- latest_release 16.8.1 -->
+## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-04)
 
 #### Merged Pull Requests
-- aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50))
+- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
 <!-- latest_release -->
 
-<!-- release_rollup since=16.7.18 -->
+<!-- release_rollup since=16.7.37 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50)) <!-- 16.7.33 -->
-- Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50)) <!-- 16.7.32 -->
-- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50)) <!-- 16.7.31 -->
-- Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50)) <!-- 16.7.30 -->
-- Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50)) <!-- 16.7.29 -->
-- Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50)) <!-- 16.7.28 -->
-- More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50)) <!-- 16.7.27 -->
-- Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50)) <!-- 16.7.26 -->
-- Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50)) <!-- 16.7.25 -->
-- Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50)) <!-- 16.7.24 -->
-- Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50)) <!-- 16.7.23 -->
-- Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50)) <!-- 16.7.22 -->
-- Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50)) <!-- 16.7.21 -->
-- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50)) <!-- 16.7.20 -->
-- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins)) <!-- 16.7.19 -->
+- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125)) <!-- 16.8.1 -->
+- Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50)) <!-- 16.8.0 -->
+- Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50)) <!-- 16.7.38 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.7.37](https://github.com/chef/ohai/tree/v16.7.37) (2020-11-24)
+
+#### Merged Pull Requests
+- Update mock logger to fix shellout specs. [#1566](https://github.com/chef/ohai/pull/1566) ([phiggins](https://github.com/phiggins))
+- Update rubocop-performance to 1.9 [#1565](https://github.com/chef/ohai/pull/1565) ([tas50](https://github.com/tas50))
+- Minor performance optimizations in AIX Network plugin [#1567](https://github.com/chef/ohai/pull/1567) ([tas50](https://github.com/tas50))
+- Simplify all our splits [#1568](https://github.com/chef/ohai/pull/1568) ([tas50](https://github.com/tas50))
+- Remove the :Joyent plugin as Joyent cloud went EOL 11/2019 [#1569](https://github.com/chef/ohai/pull/1569) ([tas50](https://github.com/tas50))
+- Disable gem caching / rubygems updates in Buildkite [#1571](https://github.com/chef/ohai/pull/1571) ([tas50](https://github.com/tas50))
+- Refactor how we parse ifconfig in AIX [#1570](https://github.com/chef/ohai/pull/1570) ([tas50](https://github.com/tas50))
+- Simplify how we gather memory on AIX [#1572](https://github.com/chef/ohai/pull/1572) ([tas50](https://github.com/tas50))
+- More refactoring of the AIX network plugin [#1573](https://github.com/chef/ohai/pull/1573) ([tas50](https://github.com/tas50))
+- Avoid calling uname 4 times on aix [#1574](https://github.com/chef/ohai/pull/1574) ([tas50](https://github.com/tas50))
+- Simplify aix platform / platform_family detection [#1575](https://github.com/chef/ohai/pull/1575) ([tas50](https://github.com/tas50))
+- Gather WPAR state in the AIX virtualization plugin [#1576](https://github.com/chef/ohai/pull/1576) ([tas50](https://github.com/tas50))
+- Simplify the aix kernel plugin [#1577](https://github.com/chef/ohai/pull/1577) ([tas50](https://github.com/tas50))
+- Use strip instead of split($/) to cleanup shellout [#1578](https://github.com/chef/ohai/pull/1578) ([tas50](https://github.com/tas50))
+- aix virtualization: Fix lpar name detection [#1580](https://github.com/chef/ohai/pull/1580) ([tas50](https://github.com/tas50))
+- Misc RuboCop cleanup of the codebase [#1582](https://github.com/chef/ohai/pull/1582) ([tas50](https://github.com/tas50))
+- Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50))
+- Prevent docker plugin crashes on AIX [#1584](https://github.com/chef/ohai/pull/1584) ([tas50](https://github.com/tas50))
+- Fix XLC compiler detection to support 3 part version numbers [#1583](https://github.com/chef/ohai/pull/1583) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-12)
 
 #### Merged Pull Requests
@@ -51,7 +63,6 @@
 - Remove regex anchors in the Linux Memory plugin [#1563](https://github.com/chef/ohai/pull/1563) ([tas50](https://github.com/tas50))
 - Remove Linux LSB support for systems without lsb-release CLI [#1562](https://github.com/chef/ohai/pull/1562) ([tas50](https://github.com/tas50))
 - Remove the line anchor from the LSB plugin matches [#1561](https://github.com/chef/ohai/pull/1561) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.6.5](https://github.com/chef/ohai/tree/v16.6.5) (2020-10-14)
 

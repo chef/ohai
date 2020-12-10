@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 #
-# Copyright:: Copyright (c) Chef Software Inc.
+# Author:: Davide Cavalca <dcavalca@fb.com>
+# Copyright:: Copyright (c) 2020 Facebook
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,20 +17,24 @@
 # limitations under the License.
 #
 
-Ohai.plugin(:Train) do
-  provides "train"
+Ohai.plugin(:Grub2) do
+  provides "grub2/environment"
+  optional true
 
-  collect_data do
-    if transport_connection
-      train Mash.new
-      train["family_hierarchy"] = transport_connection.platform.family_hierarchy
-      train["family"] = transport_connection.platform.family
-      train["platform"] = transport_connection.platform.platform
-      train["backend"] = transport_connection.backend_type
-      if transport_connection.respond_to?(:uri)
-        train["scheme"] = URI.parse(transport_connection.uri).scheme
-        train["uri"] = transport_connection.uri
+  collect_data(:dragonflybsd, :freebsd, :linux, :netbsd) do
+    editenv_path = which("grub2-editenv")
+    if editenv_path
+      editenv_out = shell_out("#{editenv_path} list")
+
+      grub2 Mash.new unless grub2
+      grub2[:environment] ||= Mash.new
+
+      editenv_out.stdout.each_line do |line|
+        key, val = line.split("=", 2)
+        grub2[:environment][key] = val.strip
       end
+    else
+      logger.trace("Plugin Grub2: Could not find grub2-editenv. Skipping plugin.")
     end
   end
 end

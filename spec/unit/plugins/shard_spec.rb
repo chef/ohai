@@ -119,7 +119,7 @@ describe Ohai::System, "shard plugin" do
     let(:os) { "aix" }
 
     it "provides a shard with a default-safe set of sources" do
-      # Note: this is different than the other defaults.
+      # NOTE: this is different than the other defaults.
       expect(subject).to eq(253499154)
     end
   end

@@ -21,19 +21,19 @@ require "spec_helper"
 describe Ohai::System, "AIX network plugin" do
   before do
     @netstat_rn = <<~NETSTAT_RN
-    Destination      Gateway            Flags  Refcnt Use       Interface
-    Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
-    Only the root user can specify the Z flag
-     (Internet):
-    default            172.31.0.1        UG        2   1652046 en0      -      -   =>
-    127/8              127.0.0.1         U         5   2455591 lo0      -      -   =>
-    172.31.0.0         172.31.10.23      UHSb      0         0 en0      -      -   =>
-    172.31/20          172.31.10.23      U         1   1015674 en0      -      -   =>
-    172.31.10.23       127.0.0.1         UGHS      0         1 lo0      -      -
-    172.31.15.255      172.31.10.23      UHSb      0         1 en0      -      -   =>
-    Only the root user can specify the Z flag
-     (Internet v6):
-    ::1%1              ::1%1             UH        1    677032 lo0      -      -   =>
+      Destination      Gateway            Flags  Refcnt Use       Interface
+      Destination        Gateway           Flags   Refs     Use  If   Exp  Groups
+      Only the root user can specify the Z flag
+       (Internet):
+      default            172.31.0.1        UG        2   1652046 en0      -      -   =>
+      127/8              127.0.0.1         U         5   2455591 lo0      -      -   =>
+      172.31.0.0         172.31.10.23      UHSb      0         0 en0      -      -   =>
+      172.31/20          172.31.10.23      U         1   1015674 en0      -      -   =>
+      172.31.10.23       127.0.0.1         UGHS      0         1 lo0      -      -
+      172.31.15.255      172.31.10.23      UHSb      0         1 en0      -      -   =>
+      Only the root user can specify the Z flag
+       (Internet v6):
+      ::1%1              ::1%1             UH        1    677032 lo0      -      -   =>
     NETSTAT_RN
 
     @ifconfig = <<~IFCONFIG

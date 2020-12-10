@@ -91,7 +91,7 @@ Ohai.plugin(:Passwd) do
           if info.keys.any? { |x| x.match?("Win32_UserAccount") }
             mi["type"] = :user
           else
-            # Note: the type here is actually Win32_SystemAccount, because,
+            # NOTE: the type here is actually Win32_SystemAccount, because,
             # that's what groups are in the Windows universe.
             mi["type"] = :group
           end

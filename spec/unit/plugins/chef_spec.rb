@@ -33,7 +33,6 @@ begin
 
     pending "would set [:chef_packages][:chef][:version] if chef was available", unless: defined?(Chef)
   end
-
 rescue LoadError
   # the chef module is not available, ignoring.
 

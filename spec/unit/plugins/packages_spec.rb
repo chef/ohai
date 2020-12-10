@@ -190,10 +190,10 @@ describe Ohai::System, "plugin packages" do
          "Publisher" => "nxsec.com",
          "InstallDate" => "20150511",
         },
-        { "DisplayName" => "Chef Development Kit v0.7.0",
-          "DisplayVersion" => "0.7.0.1",
-          "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
-          "InstallDate" => "20150925" }]
+       { "DisplayName" => "Chef Development Kit v0.7.0",
+         "DisplayVersion" => "0.7.0.1",
+         "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
+         "InstallDate" => "20150925" }]
     end
 
     shared_examples "windows_package_plugin" do

@@ -40,22 +40,22 @@ describe Ohai::System, "plugin eucalyptus" do
 
       expect(@http_client).to receive(:get)
         .with("/", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "2012-01-12", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "2012-01-12", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "instance_type\nami_id\nsecurity-groups", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "instance_type\nami_id\nsecurity-groups", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/instance_type", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "c1.medium", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "c1.medium", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/ami_id", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "ami-5d2dc934", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "ami-5d2dc934", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/meta-data/security-groups", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "group1\ngroup2", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "group1\ngroup2", code: "200"))
       expect(@http_client).to receive(:get)
         .with("/2012-01-12/user-data/", @get_req_token_header)
-        .and_return(double("Net::HTTP::GET Response", body: "By the pricking of my thumb...", code: "200"))
+        .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
     end
 
     it "recursively fetches all the eucalyptus metadata" do

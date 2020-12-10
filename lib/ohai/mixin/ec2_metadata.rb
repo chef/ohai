@@ -86,7 +86,7 @@ module Ohai
       end
 
       def v2_token
-        @v2_token ||= http_client.put('/latest/api/token', nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })&.body
+        @v2_token ||= http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })&.body
       end
 
       # Get metadata for a given path and API version

@@ -1,22 +1,20 @@
 # Change Log
 
-<!-- latest_release 16.8.1 -->
-## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-04)
-
-#### Merged Pull Requests
-- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.7.37 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125)) <!-- 16.8.1 -->
-- Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50)) <!-- 16.8.0 -->
-- Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50)) <!-- 16.7.38 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-11)
+
+#### Merged Pull Requests
+- Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50))
+- Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50))
+- grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
+<!-- latest_stable_release -->
+
 ## [v16.7.37](https://github.com/chef/ohai/tree/v16.7.37) (2020-11-24)
 
 #### Merged Pull Requests
@@ -39,7 +37,6 @@
 - Limit several of the Cloud/VM plugins to certain platforms [#1585](https://github.com/chef/ohai/pull/1585) ([tas50](https://github.com/tas50))
 - Prevent docker plugin crashes on AIX [#1584](https://github.com/chef/ohai/pull/1584) ([tas50](https://github.com/tas50))
 - Fix XLC compiler detection to support 3 part version numbers [#1583](https://github.com/chef/ohai/pull/1583) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.7.18](https://github.com/chef/ohai/tree/v16.7.18) (2020-11-12)
 

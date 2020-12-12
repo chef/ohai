@@ -435,6 +435,16 @@ describe Ohai::System, "Linux Network Plugin" do
     EOM
   end
 
+  let(:linux_ethtool_a) do
+    <<~EOM
+      Pause parameters for eth0:
+      Autonegotiate:	on
+      RX:		off
+      TX:		on
+
+    EOM
+  end
+
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -452,6 +462,7 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -a/).and_return(mock_shell_out(0, linux_ethtool_a, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
@@ -695,6 +706,13 @@ describe Ohai::System, "Linux Network Plugin" do
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-eeprom-access"]).to eq("no")
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-register-dump"]).to eq("no")
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-priv-flags"]).to eq("yes")
+
+      end
+
+      it "detects the pause frame configuration of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["autonegotiate"]).to eq(true)
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["rx"]).to eq(false)
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["tx"]).to eq(true)
 
       end
 

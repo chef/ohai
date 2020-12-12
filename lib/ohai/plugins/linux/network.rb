@@ -273,6 +273,30 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine pause parameters for the interface using ethtool
+  def ethernet_pause_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -a #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["pause_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Pause parameters for")
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val
+          pause_key = "#{key.downcase.tr(" ", "_")}"
+          iface[tmp_int]["pause_params"][pause_key] = val.strip.eql? "on"
+        end
+      end
+    end
+    iface
+  end
+
   # determine driver info for the interface using ethtool
   def ethernet_driver_info(iface)
     return iface unless ethtool_binary_path
@@ -770,6 +794,7 @@ Ohai.plugin(:Network) do
     iface = ethernet_channel_parameters(iface)
     iface = ethernet_coalesce_parameters(iface)
     iface = ethernet_driver_info(iface)
+    iface = ethernet_pause_parameters(iface)
     counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
   end

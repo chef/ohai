@@ -346,13 +346,11 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
       end
 
       it "returns kb_used" do
-        expect(plugin[:filesystem]["rpool/VARSHARE"]["kb_used"]).to eq("1181")
-        expect(plugin[:filesystem2]["by_pair"]["rpool/VARSHARE,/var/share"]["kb_used"]).to eq("1181")
+        expect(plugin[:filesystem]["by_pair"]["rpool/VARSHARE,/var/share"]["kb_used"]).to eq("1181")
       end
 
       it "returns mount" do
-        expect(plugin[:filesystem]["rpool/VARSHARE"]["mount"]).to eq("/var/share")
-        expect(plugin[:filesystem2]["by_pair"]["rpool/VARSHARE,/var/share"]["mount"]).to eq("/var/share")
+        expect(plugin[:filesystem]["by_pair"]["rpool/VARSHARE,/var/share"]["mount"]).to eq("/var/share")
       end
 
       it "returns mount_opts" do
@@ -370,8 +368,7 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
           sharezone=151
           dev=4bd0b80
         }
-        expect(plugin[:filesystem]["rpool/VARSHARE"]["mount_options"]).to eq(opts)
-        expect(plugin[:filesystem2]["by_pair"]["rpool/VARSHARE,/var/share"]["mount_options"]).to eq(opts)
+        expect(plugin[:filesystem]["by_pair"]["rpool/VARSHARE,/var/share"]["mount_options"]).to eq(opts)
       end
     end
 
@@ -384,23 +381,13 @@ describe Ohai::System, "Solaris2.X filesystem plugin" do
       end
 
       it "returns top-level stats" do
-        # old API
-        expect(plugin[:filesystem]["data0"]["fs_type"]).to eq("zfs")
-        expect(plugin[:filesystem]["data0"]["mount"]).to eq("/data0")
-
-        # new API
-        expect(plugin[:filesystem2]["by_pair"]["data0,/data0"]["fs_type"]).to eq("zfs")
-        expect(plugin[:filesystem2]["by_pair"]["data0,/data0"]["mount"]).to eq("/data0")
+        expect(plugin[:filesystem]["by_pair"]["data0,/data0"]["fs_type"]).to eq("zfs")
+        expect(plugin[:filesystem]["by_pair"]["data0,/data0"]["mount"]).to eq("/data0")
       end
 
       it "returns zfs-specific properties" do
-        # old API
-        expect(plugin[:filesystem]["data0"]["zfs_values"]["used"]).to eq("7926803118480")
-        expect(plugin[:filesystem]["data0"]["zfs_sources"]["used"]).to eq("-")
-
-        # new API
-        expect(plugin[:filesystem2]["by_pair"]["data0,/data0"]["zfs_properties"]["used"]["value"]).to eq("7926803118480")
-        expect(plugin[:filesystem2]["by_pair"]["data0,/data0"]["zfs_properties"]["used"]["source"]).to eq("-")
+        expect(plugin[:filesystem]["by_pair"]["data0,/data0"]["zfs_properties"]["used"]["value"]).to eq("7926803118480")
+        expect(plugin[:filesystem]["by_pair"]["data0,/data0"]["zfs_properties"]["used"]["source"]).to eq("-")
       end
     end
   end

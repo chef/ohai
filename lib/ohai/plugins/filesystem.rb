@@ -466,9 +466,7 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # @todo in Chef 17 the filesystem2 part of this goes away
     filesystem fs_data
-    filesystem2 fs_data
   end
 
   collect_data(:darwin) do
@@ -613,9 +611,7 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # @todo in Chef 17 the filesystem2 plugin goes away
     filesystem fs_data
-    filesystem2 fs_data
   end
 
   collect_data(:aix) do
@@ -705,9 +701,7 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # @todo in Chef 17 the filesystem2 plugin goes away here
     filesystem fs_data
-    filesystem2 fs_data
   end
 
   collect_data(:windows) do

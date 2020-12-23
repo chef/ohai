@@ -409,7 +409,7 @@ Ohai.plugin(:Network) do
     if line =~ IPROUTE_INT_REGEX
       cint = $2
       iface[cint] = Mash.new
-      if cint =~ /^(\w+)(\d+.*)/
+      if cint =~ /^(\w+?)(\d+.*)/
         iface[cint][:type] = $1
         iface[cint][:number] = $2
       end
@@ -720,7 +720,7 @@ Ohai.plugin(:Network) do
         if line =~ /^([0-9a-zA-Z@\.\:\-_]+)\s+/
           cint = $1
           iface[cint] = Mash.new
-          if cint =~ /^(\w+)(\d+.*)/
+          if cint =~ /^(\w+?)(\d+.*)/
             iface[cint][:type] = $1
             iface[cint][:number] = $2
           end

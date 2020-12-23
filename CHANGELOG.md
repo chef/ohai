@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.0 -->
-## [v17.0.0](https://github.com/chef/ohai/tree/v17.0.0) (2020-12-17)
+<!-- latest_release 17.0.1 -->
+## [v17.0.1](https://github.com/chef/ohai/tree/v17.0.1) (2020-12-23)
 
 #### Merged Pull Requests
-- Bump Ohai to 17.0.0 [#1591](https://github.com/chef/ohai/pull/1591) ([tas50](https://github.com/tas50))
+- network: populate pause frame config [#1564](https://github.com/chef/ohai/pull/1564) ([kuba-moo](https://github.com/kuba-moo))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- network: populate pause frame config [#1564](https://github.com/chef/ohai/pull/1564) ([kuba-moo](https://github.com/kuba-moo)) <!-- 17.0.1 -->
 - Bump Ohai to 17.0.0 [#1591](https://github.com/chef/ohai/pull/1591) ([tas50](https://github.com/tas50)) <!-- 17.0.0 -->
 <!-- release_rollup -->
 

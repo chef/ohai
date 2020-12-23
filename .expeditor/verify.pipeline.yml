@@ -24,14 +24,6 @@ steps:
       docker:
         image: ruby:2.7-buster
 
-- label: run-specs-ruby-2.6
-  command:
-    - .expeditor/run_linux_tests.sh rspec
-  expeditor:
-    executor:
-      docker:
-        image: ruby:2.6-buster
-
 - label: run-specs-ruby-2.7
   command:
     - .expeditor/run_linux_tests.sh rspec
@@ -40,13 +32,20 @@ steps:
       docker:
         image: ruby:2.7-buster
 
+- label: run-specs-ruby-3.0
+  command:
+    - .expeditor/run_linux_tests.sh rspec
+  expeditor:
+    executor:
+      docker:
+        image: ruby:3.0-buster
+
 - label: run-specs-windows
   command:
-    # we need the ruby 2.7 version of bundler, the 2.5/2.6 versions cannot pull our Gemfile correctly
-    - gem install bundler
     - bundle install --jobs=7 --retry=3 --without=profile
     - bundle exec rake spec
   expeditor:
     executor:
       docker:
         host_os: windows
+        image: rubydistros/windows-2019:2.7

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.3 -->
-## [v17.0.3](https://github.com/chef/ohai/tree/v17.0.3) (2020-12-23)
+<!-- latest_release 17.0.4 -->
+## [v17.0.4](https://github.com/chef/ohai/tree/v17.0.4) (2021-01-05)
 
 #### Merged Pull Requests
-- Stop gathering filesystem2 data on BSD/Solaris/AIX [#1592](https://github.com/chef/ohai/pull/1592) ([tas50](https://github.com/tas50))
+- Fetch chef-utils and chef-config from chef-16 branch [#1594](https://github.com/chef/ohai/pull/1594) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fetch chef-utils and chef-config from chef-16 branch [#1594](https://github.com/chef/ohai/pull/1594) ([tas50](https://github.com/tas50)) <!-- 17.0.4 -->
 - Stop gathering filesystem2 data on BSD/Solaris/AIX [#1592](https://github.com/chef/ohai/pull/1592) ([tas50](https://github.com/tas50)) <!-- 17.0.3 -->
 - Support more than 10 interfaces [#1479](https://github.com/chef/ohai/pull/1479) ([Babar](https://github.com/Babar)) <!-- 17.0.2 -->
 - network: populate pause frame config [#1564](https://github.com/chef/ohai/pull/1564) ([kuba-moo](https://github.com/kuba-moo)) <!-- 17.0.1 -->

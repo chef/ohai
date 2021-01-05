@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.5 -->
-## [v17.0.5](https://github.com/chef/ohai/tree/v17.0.5) (2021-01-05)
+<!-- latest_release 17.0.6 -->
+## [v17.0.6](https://github.com/chef/ohai/tree/v17.0.6) (2021-01-05)
 
 #### Merged Pull Requests
-- Require Ruby 2.7 or later [#1593](https://github.com/chef/ohai/pull/1593) ([tas50](https://github.com/tas50))
+- Update master ohai to pull from master chef [#1595](https://github.com/chef/ohai/pull/1595) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update master ohai to pull from master chef [#1595](https://github.com/chef/ohai/pull/1595) ([tas50](https://github.com/tas50)) <!-- 17.0.6 -->
 - Require Ruby 2.7 or later [#1593](https://github.com/chef/ohai/pull/1593) ([tas50](https://github.com/tas50)) <!-- 17.0.5 -->
 - Fetch chef-utils and chef-config from chef-16 branch [#1594](https://github.com/chef/ohai/pull/1594) ([tas50](https://github.com/tas50)) <!-- 17.0.4 -->
 - Stop gathering filesystem2 data on BSD/Solaris/AIX [#1592](https://github.com/chef/ohai/pull/1592) ([tas50](https://github.com/tas50)) <!-- 17.0.3 -->

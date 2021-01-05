@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.8.2 -->
+## [v16.8.2](https://github.com/chef/ohai/tree/v16.8.2) (2021-01-05)
+
+#### Merged Pull Requests
+- Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.8.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50)) <!-- 16.8.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

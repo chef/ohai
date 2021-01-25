@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.8 -->
-## [v17.0.8](https://github.com/chef/ohai/tree/v17.0.8) (2021-01-25)
+<!-- latest_release 17.0.9 -->
+## [v17.0.9](https://github.com/chef/ohai/tree/v17.0.9) (2021-01-25)
 
 #### Merged Pull Requests
-- Update ec2_metadata to use IMDSV2 (Continued from  #1457) [#1520](https://github.com/chef/ohai/pull/1520) ([sawanoboly](https://github.com/sawanoboly))
+- Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz)) <!-- 17.0.9 -->
 - Update ec2_metadata to use IMDSV2 (Continued from  #1457) [#1520](https://github.com/chef/ohai/pull/1520) ([sawanoboly](https://github.com/sawanoboly)) <!-- 17.0.8 -->
 - suppress constant redefinition warning [#1597](https://github.com/chef/ohai/pull/1597) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.7 -->
 - Update master ohai to pull from master chef [#1595](https://github.com/chef/ohai/pull/1595) ([tas50](https://github.com/tas50)) <!-- 17.0.6 -->

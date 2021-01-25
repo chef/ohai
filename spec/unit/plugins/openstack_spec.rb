@@ -187,12 +187,16 @@ describe Ohai::System, "plugin openstack" do
       let(:http_client) { double("Net::HTTP", { :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
 
       def allow_get(url, response_body)
+        token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+        allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
         allow(http_client).to receive(:get)
-          .with(url)
+          .with(url, { 'X-aws-ec2-metadata-token': token })
           .and_return(double("HTTP Response", code: "200", body: response_body))
       end
 
       def allow_get_response(url, response_body)
+        token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+        allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
         allow(http_client).to receive(:get_response)
           .with(url, nil, nil)
           .and_return(double("HTTP Response", code: "200", body: response_body))

@@ -85,8 +85,21 @@ module Ohai
         end
       end
 
+      #
+      # Fetch an API token for use querying AWS IMDSv2 or return nil if no token if found
+      # AWS like systems (think OpenStack) will not respond with a token here
+      #
+      # @return [NilClass, String] API token or nil
+      #
       def v2_token
-        @v2_token ||= http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })&.body
+        @v2_token ||= begin
+            request = http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })
+            if request.code == "404" # not on AWS
+              nil
+            else
+              request.body
+            end
+          end
       end
 
       # Get metadata for a given path and API version

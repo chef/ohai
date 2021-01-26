@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.9 -->
-## [v17.0.9](https://github.com/chef/ohai/tree/v17.0.9) (2021-01-25)
+<!-- latest_release 17.0.10 -->
+## [v17.0.10](https://github.com/chef/ohai/tree/v17.0.10) (2021-01-26)
 
 #### Merged Pull Requests
-- Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz))
+- Fix fetching metadata on AWS compatible clouds [#1599](https://github.com/chef/ohai/pull/1599) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix fetching metadata on AWS compatible clouds [#1599](https://github.com/chef/ohai/pull/1599) ([tas50](https://github.com/tas50)) <!-- 17.0.10 -->
 - Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz)) <!-- 17.0.9 -->
 - Update ec2_metadata to use IMDSV2 (Continued from  #1457) [#1520](https://github.com/chef/ohai/pull/1520) ([sawanoboly](https://github.com/sawanoboly)) <!-- 17.0.8 -->
 - suppress constant redefinition warning [#1597](https://github.com/chef/ohai/pull/1597) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.7 -->

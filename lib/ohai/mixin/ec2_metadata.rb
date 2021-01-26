@@ -48,6 +48,13 @@ module Ohai
       EC2_ARRAY_DIR    ||= %w{network/interfaces/macs}.freeze
       EC2_JSON_DIR     ||= %w{iam}.freeze
 
+      #
+      # The latest metadata version in EC2_SUPPORTED_VERSIONS that this instance supports
+      # in AWS supported metadata versions are determined at instance start so we need to be
+      # cautious here in case an instance has been running for a long time
+      #
+      # @return [String] the version
+      #
       def best_api_version
         @api_version ||= begin
           logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")
@@ -84,8 +91,21 @@ module Ohai
         end
       end
 
+      #
+      # Fetch an API token for use querying AWS IMDSv2 or return nil if no token if found
+      # AWS like systems (think OpenStack) will not respond with a token here
+      #
+      # @return [NilClass, String] API token or nil
+      #
       def v2_token
-        @v2_token ||= http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })&.body
+        @v2_token ||= begin
+            request = http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })
+            if request.code == "404" # not on AWS
+              nil
+            else
+              request.body
+            end
+          end
       end
 
       # Get metadata for a given path and API version

@@ -48,6 +48,13 @@ module Ohai
       EC2_ARRAY_DIR    ||= %w{network/interfaces/macs}.freeze
       EC2_JSON_DIR     ||= %w{iam}.freeze
 
+      #
+      # The latest metadata version in EC2_SUPPORTED_VERSIONS that this instance supports
+      # in AWS supported metadata versions are determined at instance start so we need to be
+      # cautious here in case an instance has been running for a long time
+      #
+      # @return [String] the version
+      #
       def best_api_version
         @api_version ||= begin
           logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")

@@ -121,6 +121,9 @@ Ohai.plugin(:EC2) do
       logger.trace("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
       fetch_metadata.each do |k, v|
+        # this includes sensitive data we don't want to store on the node
+        next if k == "identity_credentials_ec2_security_credentials_ec2_instance"
+
         # fetch_metadata returns IAM security credentials, including the IAM user's
         # secret access key. We'd rather not have ohai send this information
         # to the server. If the instance is associated with an IAM role we grab

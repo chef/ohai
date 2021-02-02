@@ -1,32 +1,29 @@
 # Change Log
 
-<!-- latest_release 16.10.4 -->
-## [v16.10.4](https://github.com/chef/ohai/tree/v16.10.4) (2021-02-02)
-
-#### Merged Pull Requests
-- network: populate pause frame config [#1607](https://github.com/chef/ohai/pull/1607) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.8.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- network: populate pause frame config [#1607](https://github.com/chef/ohai/pull/1607) ([tas50](https://github.com/tas50)) <!-- 16.10.4 -->
-- Support more than 10 interfaces [#1606](https://github.com/chef/ohai/pull/1606) ([tas50](https://github.com/tas50)) <!-- 16.10.3 -->
-- Detect Alam Linux with platform_family of rhel [#1608](https://github.com/chef/ohai/pull/1608) ([tas50](https://github.com/tas50)) <!-- 16.10.2 -->
-- Update ec2_metadata to use IMDSV2 (Continued from #1457) [#1610](https://github.com/chef/ohai/pull/1610) ([tas50](https://github.com/tas50)) <!-- 16.10.1 -->
-- Support newer aws metadata versions [#1609](https://github.com/chef/ohai/pull/1609) ([tas50](https://github.com/tas50)) <!-- 16.10.0 -->
-- Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50)) <!-- 16.8.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.10.4](https://github.com/chef/ohai/tree/v16.10.4) (2021-02-02)
+
+#### Merged Pull Requests
+- Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50))
+- Support newer aws metadata versions [#1609](https://github.com/chef/ohai/pull/1609) ([tas50](https://github.com/tas50))
+- Update ec2_metadata to use IMDSV2 (Continued from #1457) [#1610](https://github.com/chef/ohai/pull/1610) ([tas50](https://github.com/tas50))
+- Detect Alam Linux with platform_family of rhel [#1608](https://github.com/chef/ohai/pull/1608) ([tas50](https://github.com/tas50))
+- Support more than 10 interfaces [#1606](https://github.com/chef/ohai/pull/1606) ([tas50](https://github.com/tas50))
+- network: populate pause frame config [#1607](https://github.com/chef/ohai/pull/1607) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-11)
 
 #### Merged Pull Requests
 - Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50))
 - Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50))
 - grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
-<!-- latest_stable_release -->
 
 ## [v16.7.37](https://github.com/chef/ohai/tree/v16.7.37) (2020-11-24)
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.10.1 -->
-## [v16.10.1](https://github.com/chef/ohai/tree/v16.10.1) (2021-02-02)
+<!-- latest_release 16.10.2 -->
+## [v16.10.2](https://github.com/chef/ohai/tree/v16.10.2) (2021-02-02)
 
 #### Merged Pull Requests
-- Update ec2_metadata to use IMDSV2 (Continued from #1457) [#1610](https://github.com/chef/ohai/pull/1610) ([tas50](https://github.com/tas50))
+- Detect Alam Linux with platform_family of rhel [#1608](https://github.com/chef/ohai/pull/1608) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Detect Alam Linux with platform_family of rhel [#1608](https://github.com/chef/ohai/pull/1608) ([tas50](https://github.com/tas50)) <!-- 16.10.2 -->
 - Update ec2_metadata to use IMDSV2 (Continued from #1457) [#1610](https://github.com/chef/ohai/pull/1610) ([tas50](https://github.com/tas50)) <!-- 16.10.1 -->
 - Support newer aws metadata versions [#1609](https://github.com/chef/ohai/pull/1609) ([tas50](https://github.com/tas50)) <!-- 16.10.0 -->
 - Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50)) <!-- 16.8.2 -->

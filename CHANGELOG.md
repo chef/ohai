@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.8.2 -->
-## [v16.8.2](https://github.com/chef/ohai/tree/v16.8.2) (2021-01-05)
+<!-- latest_release 16.10.0 -->
+## [v16.10.0](https://github.com/chef/ohai/tree/v16.10.0) (2021-02-02)
 
 #### Merged Pull Requests
-- Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50))
+- Support newer aws metadata versions [#1609](https://github.com/chef/ohai/pull/1609) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Support newer aws metadata versions [#1609](https://github.com/chef/ohai/pull/1609) ([tas50](https://github.com/tas50)) <!-- 16.10.0 -->
 - Pin chef-utils and chef-config to chef 16.x [#1596](https://github.com/chef/ohai/pull/1596) ([tas50](https://github.com/tas50)) <!-- 16.8.2 -->
 <!-- release_rollup -->
 

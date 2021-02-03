@@ -95,7 +95,7 @@ describe Ohai::System, "hostname plugin" do
 end
 
 describe Ohai::System, "hostname plugin for windows", :windows_only do
-  let(:success) { true }
+  let(:success) { double }
 
   let(:host) do
     {

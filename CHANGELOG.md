@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.14 -->
-## [v17.0.14](https://github.com/chef/ohai/tree/v17.0.14) (2021-02-03)
+<!-- latest_release 17.0.15 -->
+## [v17.0.15](https://github.com/chef/ohai/tree/v17.0.15) (2021-02-03)
 
 #### Merged Pull Requests
-- [linux/platform] fix platform_version on Debian testing and unstable [#1613](https://github.com/chef/ohai/pull/1613) ([michel-slm](https://github.com/michel-slm))
+- Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.15 -->
 - [linux/platform] fix platform_version on Debian testing and unstable [#1613](https://github.com/chef/ohai/pull/1613) ([michel-slm](https://github.com/michel-slm)) <!-- 17.0.14 -->
 - Don&#39;t track sensitive new ec2 metadata [#1605](https://github.com/chef/ohai/pull/1605) ([tas50](https://github.com/tas50)) <!-- 17.0.13 -->
 - Detect Alma Linux with platform_family of rhel [#1604](https://github.com/chef/ohai/pull/1604) ([tas50](https://github.com/tas50)) <!-- 17.0.12 -->

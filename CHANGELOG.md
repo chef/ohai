@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.10.5 -->
+## [v16.10.5](https://github.com/chef/ohai/tree/v16.10.5) (2021-02-03)
+
+#### Merged Pull Requests
+- Pin chefstyle for Ohai 16 to a known version [#1611](https://github.com/chef/ohai/pull/1611) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.10.4 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Pin chefstyle for Ohai 16 to a known version [#1611](https://github.com/chef/ohai/pull/1611) ([tas50](https://github.com/tas50)) <!-- 16.10.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

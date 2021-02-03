@@ -312,6 +312,31 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin[:platform_version]).to eq("7.5.1804")
       end
     end
+
+    context "when on debian and version data in os-release is missing" do
+      let(:os_data) do
+        <<~OS_DATA
+          PRETTY_NAME="Debian GNU/Linux bullseye/sid"
+          NAME="Debian GNU/Linux"
+          ID=debian
+          HOME_URL="https://www.debian.org/"
+          SUPPORT_URL="https://www.debian.org/support"
+          BUG_REPORT_URL="https://bugs.debian.org/"
+        OS_DATA
+      end
+
+      before do
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_data)
+        expect(plugin).to receive(:file_read).with("/etc/debian_version").and_return("bullseye/sid")
+      end
+
+      it "sets platform, platform_family from os-release and platform_version from debian_version" do
+        plugin.run
+        expect(plugin[:platform]).to eq("debian")
+        expect(plugin[:platform_family]).to eq("debian")
+        expect(plugin[:platform_version]).to eq("bullseye/sid")
+      end
+    end
   end
 
   context "when on system without /etc/os-release (legacy)" do

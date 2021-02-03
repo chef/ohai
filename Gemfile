@@ -9,14 +9,14 @@ gem "chef-utils", git: "https://github.com/chef/chef", branch: "chef-16", glob: 
 
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
-  gem "chefstyle", git: "https://github.com/chef/chefstyle.git", branch: "master"
+  gem "chefstyle", "1.6.2"
   gem "ipaddr_extensions"
   gem "rake", ">= 10.1.0"
   gem "rspec-collection_matchers", "~> 1.0"
   gem "rspec-core", "~> 3.0"
   gem "rspec-expectations", "~> 3.0"
   gem "rspec-mocks", "~> 3.0"
-  gem "rubocop-performance", "1.9.0"
+  gem "rubocop-performance", "1.9.2"
   gem "rubocop-rspec"
 end
 

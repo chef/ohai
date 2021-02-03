@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 16.10.6 -->
-## [v16.10.6](https://github.com/chef/ohai/tree/v16.10.6) (2021-02-03)
-
-#### Merged Pull Requests
-- [linux/platform] fix platform_version on Debian testing and unstable [#1614](https://github.com/chef/ohai/pull/1614) ([michel-slm](https://github.com/michel-slm))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.10.4 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- [linux/platform] fix platform_version on Debian testing and unstable [#1614](https://github.com/chef/ohai/pull/1614) ([michel-slm](https://github.com/michel-slm)) <!-- 16.10.6 -->
-- Pin chefstyle for Ohai 16 to a known version [#1611](https://github.com/chef/ohai/pull/1611) ([tas50](https://github.com/tas50)) <!-- 16.10.5 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.10.6](https://github.com/chef/ohai/tree/v16.10.6) (2021-02-03)
+
+#### Merged Pull Requests
+- Pin chefstyle for Ohai 16 to a known version [#1611](https://github.com/chef/ohai/pull/1611) ([tas50](https://github.com/tas50))
+- [linux/platform] fix platform_version on Debian testing and unstable [#1614](https://github.com/chef/ohai/pull/1614) ([michel-slm](https://github.com/michel-slm))
+<!-- latest_stable_release -->
+
 ## [v16.10.4](https://github.com/chef/ohai/tree/v16.10.4) (2021-02-02)
 
 #### Merged Pull Requests
@@ -25,7 +23,6 @@
 - Detect Alam Linux with platform_family of rhel [#1608](https://github.com/chef/ohai/pull/1608) ([tas50](https://github.com/tas50))
 - Support more than 10 interfaces [#1606](https://github.com/chef/ohai/pull/1606) ([tas50](https://github.com/tas50))
 - network: populate pause frame config [#1607](https://github.com/chef/ohai/pull/1607) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-11)
 

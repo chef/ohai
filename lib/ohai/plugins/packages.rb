@@ -106,7 +106,7 @@ Ohai.plugin(:Packages) do
     end
   end
 
-  def collect_programs_from_registry_key(key_path)
+  def collect_programs_from_registry_key(repo, key_path)
     # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
     if ::RbConfig::CONFIG["target_cpu"] == "i386"
       reg_type = Win32::Registry::KEY_READ | 0x100
@@ -115,7 +115,7 @@ Ohai.plugin(:Packages) do
     else
       reg_type = Win32::Registry::KEY_READ
     end
-    Win32::Registry::HKEY_LOCAL_MACHINE.open(key_path, reg_type) do |reg|
+    repo.open(key_path, reg_type) do |reg|
       reg.each_key do |key, _wtime|
         pkg = reg.open(key)
         name = pkg["DisplayName"] rescue nil
@@ -133,9 +133,10 @@ Ohai.plugin(:Packages) do
   collect_data(:windows) do
     require "win32/registry" unless defined?(Win32::Registry)
     packages Mash.new
-    collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here
-    collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
   end
 
   collect_data(:aix) do

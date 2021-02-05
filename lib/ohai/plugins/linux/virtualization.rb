@@ -35,6 +35,10 @@ Ohai.plugin(:Virtualization) do
     which("docker")
   end
 
+  def podman_exists?
+    which("podman")
+  end
+
   collect_data(:linux) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new
@@ -44,6 +48,13 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "docker"
       virtualization[:role] = "host"
       virtualization[:systems][:docker] = "host"
+    end
+
+    # Podman hosts
+    if podman_exists?
+      virtualization[:system] = "podman"
+      virtualization[:role] = "host"
+      virtualization[:systems][:podman] = "host"
     end
 
     # Xen Notes:
@@ -210,6 +221,20 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"
         virtualization[:systems][:nspawn] = "guest"
+      elsif /container=podman/.match?(file_read("/proc/1/environ"))
+        logger.trace("Plugin Virtualization: /proc/1/environ indicates podman container. Detecting as podman guest")
+        virtualization[:system] = "podman"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:podman] = "guest"
+      # Detect any containers that appear to be using docker such as those running on Github Actions virtual machines
+      # but aren't triggered by the cgroup regex above. It's pretty safe to assume if the cgroup contains containerd,
+      # it's likely using docker.
+      # https://rubular.com/r/qhSmV113cPmEBT
+      elsif %r{^\d+:[^:]*:/[^/]+/(containerd)-?.+$}.match?(cgroup_content)
+        logger.trace("Plugin Virtualization: /proc/self/cgroup indicates docker container. Detecting as docker guest")
+        virtualization[:system] = "docker"
+        virtualization[:role] = "guest"
+        virtualization[:systems][:docker] = "guest"
       elsif lxc_version_exists? && file_read("/proc/self/cgroup") =~ %r{\d:[^:]+:/$}
         # lxc-version shouldn't be installed by default
         # Even so, it is likely we are on an LXC capable host that is not being used as such

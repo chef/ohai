@@ -46,6 +46,7 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:which).with("lxc-version").and_return(nil)
     allow(plugin).to receive(:which).with("lxc-start").and_return(nil)
     allow(plugin).to receive(:which).with("docker").and_return(nil)
+    allow(plugin).to receive(:which).with("podman").and_return(nil)
     allow(plugin).to receive(:nova_exists?).and_return(false)
   end
 
@@ -93,6 +94,16 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:system]).to eq("docker")
       expect(plugin[:virtualization][:role]).to eq("host")
       expect(plugin[:virtualization][:systems][:docker]).to eq("host")
+    end
+  end
+
+  describe "when we are checking for podman" do
+    it "sets podman host if docker binary exists" do
+      allow(plugin).to receive(:which).with("podman").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("podman")
+      expect(plugin[:virtualization][:role]).to eq("host")
+      expect(plugin[:virtualization][:systems][:podman]).to eq("host")
     end
   end
 
@@ -474,6 +485,18 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when we are checking for podman" do
+    it "sets podman guest if /proc/1/environ has podman string in it" do
+      allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
+      one_environ = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/binTERM=xtermcontainer=podmanHOSTNAME=8a97c663f060HOME=/root".chomp
+      allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return(one_environ)
+      allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return("")
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("podman")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+    end
+  end
+
   describe "when we are checking for docker" do
     it "sets docker guest if /proc/self/cgroup exist and there are /docker/<hexadecimal> mounts" do
       self_cgroup = <<~CGROUP
@@ -552,6 +575,31 @@ describe Ohai::System, "Linux virtualization platform" do
       CGROUP
       allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
       allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return(self_cgroup)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
+    end
+
+    it "sets docker guest if /proc/self/cgroup exists and there is a /system.slice/containerd.service mount" do
+      self_cgroup = <<~CGROUP
+        12:freezer:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        11:perf_event:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        10:net_cls,net_prio:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        9:devices:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        8:memory:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        7:cpuset:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        6:pids:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        5:hugetlb:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        4:cpu,cpuacct:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        3:blkio:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        2:rdma:/
+        1:name=systemd:/actions_job/06f5c5298748c7418a34548cf0a2a5985b6064cc10cbc21fbaccb1d02242a89f
+        0::/system.slice/containerd.service
+      CGROUP
+      allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return(self_cgroup)
+      allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return("")
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("docker")
       expect(plugin[:virtualization][:role]).to eq("guest")

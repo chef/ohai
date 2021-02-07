@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.16 -->
-## [v17.0.16](https://github.com/chef/ohai/tree/v17.0.16) (2021-02-05)
+<!-- latest_release 17.0.17 -->
+## [v17.0.17](https://github.com/chef/ohai/tree/v17.0.17) (2021-02-07)
 
 #### Merged Pull Requests
-- Add support for Podman and fix docker guest detection on Github Actions [#1617](https://github.com/chef/ohai/pull/1617) ([ramereth](https://github.com/ramereth))
+- Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.17 -->
 - Add support for Podman and fix docker guest detection on Github Actions [#1617](https://github.com/chef/ohai/pull/1617) ([ramereth](https://github.com/ramereth)) <!-- 17.0.16 -->
 - Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.15 -->
 - [linux/platform] fix platform_version on Debian testing and unstable [#1613](https://github.com/chef/ohai/pull/1613) ([michel-slm](https://github.com/michel-slm)) <!-- 17.0.14 -->

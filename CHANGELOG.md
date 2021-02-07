@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.17 -->
-## [v17.0.17](https://github.com/chef/ohai/tree/v17.0.17) (2021-02-07)
+<!-- latest_release 17.0.18 -->
+## [v17.0.18](https://github.com/chef/ohai/tree/v17.0.18) (2021-02-07)
 
 #### Merged Pull Requests
-- Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh))
+- Add platform / platform_family detection for Alibaba Cloud Linux [#1618](https://github.com/chef/ohai/pull/1618) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add platform / platform_family detection for Alibaba Cloud Linux [#1618](https://github.com/chef/ohai/pull/1618) ([tas50](https://github.com/tas50)) <!-- 17.0.18 -->
 - Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.17 -->
 - Add support for Podman and fix docker guest detection on Github Actions [#1617](https://github.com/chef/ohai/pull/1617) ([ramereth](https://github.com/ramereth)) <!-- 17.0.16 -->
 - Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.15 -->

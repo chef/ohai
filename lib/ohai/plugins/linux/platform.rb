@@ -112,15 +112,16 @@ Ohai.plugin(:Platform) do
     # ohai uses. If you're adding a new platform here and you want to change the name
     # you'll want to add it here and then add a spec for the platform_id_remap method
     {
-      "rhel" => "redhat",
+      "alinux" => "alibabalinux",
       "amzn" => "amazon",
-      "ol" => "oracle",
-      "sles" => "suse",
-      "sles_sap" => "suse",
-      "opensuse-leap" => "opensuseleap",
-      "xenenterprise" => "xenserver",
-      "cumulus-linux" => "cumulus",
       "archarm" => "arch",
+      "cumulus-linux" => "cumulus",
+      "ol" => "oracle",
+      "opensuse-leap" => "opensuseleap",
+      "rhel" => "redhat",
+      "sles_sap" => "suse",
+      "sles" => "suse",
+      "xenenterprise" => "xenserver",
     }[id] || id
   end
 
@@ -136,7 +137,7 @@ Ohai.plugin(:Platform) do
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /oracle/, /centos/, /redhat/, /almalinux/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /almalinux/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/, /alibabalinux/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the

@@ -18,6 +18,7 @@
 Ohai.plugin(:Cloud) do
   provides "cloud"
 
+  depends "alibaba"
   depends "ec2"
   depends "gce"
   depends "rackspace"
@@ -118,7 +119,22 @@ Ohai.plugin(:Cloud) do
     end
   end
 
-  #---------------------------------------
+  #--------------------------------------
+  # Alibaba Cloud
+  #--------------------------------------
+
+  def on_alibaba?
+    alibaba != nil
+  end
+
+  def get_alibaba_values
+    @cloud_attr_obj.add_ipv4_addr(alibaba["metadata"]["eipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(alibaba["metadata"]["private_ipv4"], :private)
+    @cloud_attr_obj.local_hostname = alibaba["metadata"]["hostname"]
+    @cloud_attr_obj.provider = "alibaba"
+  end
+
+  #--------------------------------------
   # Google Compute Engine (gce)
   #--------------------------------------
 
@@ -334,6 +350,7 @@ Ohai.plugin(:Cloud) do
     get_azure_values if on_azure?
     get_digital_ocean_values if on_digital_ocean?
     get_softlayer_values if on_softlayer?
+    get_alibaba_values if on_alibaba?
 
     cloud @cloud_attr_obj.cloud_mash
   end

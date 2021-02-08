@@ -24,10 +24,9 @@ module Ohai
     # This code parses the Alibaba Instance Metadata API to provide details
     # of the running instance.
     #
-    # As of 2021-02-07 there is only one API release so this removes the
-    # API parsing logic in the ec2 metadata mixin. If that changes we
-    # may want to merge these two codebases
-    #
+    # Note: As of 2021-02-07 there is only one API release so we're not implementing
+    # logic like the ec2 or azure mixins where we have to find the latest supported
+    # release
     module AlibabaMetadata
 
       ALI_METADATA_ADDR ||= "100.100.100.200"

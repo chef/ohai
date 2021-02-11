@@ -49,7 +49,7 @@ module Ohai
         elsif response.body.include?("\n")
           temp = {}
           response.body.split("\n").each do |sub_attr|
-            temp[sanitize_key(sub_attr)] = fetch_metadata("#{id}#{sub_attr}")
+            temp[sanitize_key(sub_attr)] = fetch_metadata("#{id}/#{sub_attr}")
           end
           temp
         else

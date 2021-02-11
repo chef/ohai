@@ -128,9 +128,9 @@ Ohai.plugin(:Cloud) do
   end
 
   def get_alibaba_values
-    @cloud_attr_obj.add_ipv4_addr(alibaba["metadata"]["eipv4"], :public)
-    @cloud_attr_obj.add_ipv4_addr(alibaba["metadata"]["private_ipv4"], :private)
-    @cloud_attr_obj.local_hostname = alibaba["metadata"]["hostname"]
+    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["eipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["private_ipv4"], :private)
+    @cloud_attr_obj.local_hostname = alibaba["meta_data"]["hostname"]
     @cloud_attr_obj.provider = "alibaba"
   end
 

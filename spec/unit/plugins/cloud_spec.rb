@@ -78,6 +78,7 @@ describe Ohai::System, "plugin cloud" do
 
   describe "with no cloud mashes" do
     it "doesn't populate the cloud data" do
+      @plugin[:alibaba] = nil
       @plugin[:ec2] = nil
       @plugin[:rackspace] = nil
       @plugin[:eucalyptus] = nil
@@ -88,6 +89,36 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:softlayer] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
+    end
+  end
+
+  describe "with Alibaba mash" do
+    before do
+      @plugin[:alibaba] = Mash.new
+      @plugin[:alibaba]["meta_data"] = Mash.new
+    end
+
+    it "populates hostname" do
+      @plugin[:alibaba]["meta_data"]["hostname"] = "foo"
+      @plugin.run
+      expect(@plugin[:cloud][:local_hostname]).to eq("foo")
+    end
+
+    it "populates cloud public ip" do
+      @plugin[:alibaba]["meta_data"]["eipv4"] = "174.129.150.8"
+      @plugin.run
+      expect(@plugin[:cloud][:public_ipv4_addrs][0]).to eq("174.129.150.8")
+    end
+
+    it "populates cloud private ip" do
+      @plugin[:alibaba]["meta_data"]["private_ipv4"] = "10.252.42.149"
+      @plugin.run
+      expect(@plugin[:cloud][:local_ipv4_addrs][0]).to eq("10.252.42.149")
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("alibaba")
     end
   end
 

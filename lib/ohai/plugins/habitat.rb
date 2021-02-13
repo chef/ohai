@@ -19,7 +19,9 @@ Ohai.plugin(:Habitat) do
   provides "habitat"
 
   def fetch_habitat_version
-    shell_out("hab -V").stdout.gsub(/hab\s*/, "").strip || nil
+    shell_out("hab -V").stdout.gsub(/hab\s*/, "").strip
+  rescue Ohai::Exceptions::Exec
+    logger.trace("Plugin Habitat: No detected version of hab binary found in PATH, skipping collection.")
   end
 
   def fetch_habitat_packages

@@ -19,29 +19,29 @@ Ohai.plugin(:Habitat) do
   provides "habitat"
 
   def fetch_habitat_version
-    shell_out("hab -V").stdout.gsub(/hab\s*/, "").strip() || nil
+    shell_out("hab -V").stdout.gsub(/hab\s*/, "").strip || nil
   end
 
   def fetch_habitat_packages
     if Dir.exist?("C:/hab/pkgs")
-      Dir.glob("C:/hab/pkgs/*/*/*/*/").sort.map{ |pkg| pkg.gsub("C\:\/hab\/pkgs\/", "").chomp("/") }
+      Dir.glob("C:/hab/pkgs/*/*/*/*/").sort.map { |pkg| pkg.gsub("C\:\/hab\/pkgs\/", "").chomp("/") }
     elsif Dir.exist?("/hab/pkgs")
-      Dir.glob("/hab/pkgs/*/*/*/*/").sort.map{ |pkg| pkg.gsub("\/hab\/pkgs\/", "").chomp("/") }
+      Dir.glob("/hab/pkgs/*/*/*/*/").sort.map { |pkg| pkg.gsub("\/hab\/pkgs\/", "").chomp("/") }
     end
   end
 
   def fetch_habitat_services
     if Dir.exist?("C:/hab/svc")
-      Dir.glob("C:/hab/svc/*").sort.map{ |svc| svc.gsub("C\:\/hab\/svc\/", "").chomp("/") }
+      Dir.glob("C:/hab/svc/*").sort.map { |svc| svc.gsub("C\:\/hab\/svc\/", "").chomp("/") }
     elsif Dir.exist?("/hab/svc")
-      Dir.glob("/hab/svc/*").sort.map{ |svc| svc.gsub("\/hab\/svc\/", "").chomp("/") }
+      Dir.glob("/hab/svc/*").sort.map { |svc| svc.gsub("\/hab\/svc\/", "").chomp("/") }
     end
   end
 
   collect_data(:default) do
     habitat Mash.new
-    habitat["version"] = fetch_habitat_version()
-    habitat["packages"] = fetch_habitat_packages()
-    habitat["services"] = fetch_habitat_services()
+    habitat["version"] = fetch_habitat_version
+    habitat["packages"] = fetch_habitat_packages
+    habitat["services"] = fetch_habitat_services
   end
 end

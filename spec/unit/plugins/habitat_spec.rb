@@ -33,7 +33,7 @@ describe "plugin habitat" do
                                               ["-V"]).and_return(mock_shell_out(0, "hab 1.1.1/202001010000", ""))
     allow(plugin).to receive(:shell_out).with(["hab", "pkg", "list",
                                                "--all"]).and_return(mock_shell_out(0, pkg_result, ""))
-    allow(plugin).to receive(:shell_out).with(%w[hab svc status]).and_return(mock_shell_out(0, svc_result, ""))
+    allow(plugin).to receive(:shell_out).with(%w{hab svc status}).and_return(mock_shell_out(0, svc_result, ""))
     plugin.run
   end
 

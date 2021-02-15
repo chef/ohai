@@ -53,13 +53,13 @@ describe "plugin habitat" do
                                                    identity: "origin1/package1/version1/release1",
                                                    state_actual: "up",
                                                    state_desired: "up",
-                                                   topology: "standalone"
+                                                   topology: "standalone",
                                                  })
     expect(plugin.habitat[:services]).to include({
                                                    identity: "origin2/package2/version2/release2",
                                                    state_actual: "up",
                                                    state_desired: "up",
-                                                   topology: "standalone"
+                                                   topology: "standalone",
                                                  })
   end
 end

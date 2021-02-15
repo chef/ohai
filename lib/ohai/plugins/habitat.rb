@@ -39,6 +39,7 @@ Ohai.plugin(:Habitat) do
       @service = {}
       fields = line.split(/\s+/)
       next unless fields[0].match?(%r{.*/.*/.*/.*}) # ignore header line
+
       @service = {}
       @service[:identity] = fields[0]
       @service[:topology] = fields[1]
@@ -50,7 +51,7 @@ Ohai.plugin(:Habitat) do
   end
 
   def fetch_habitat_services
-    services_shell_out = shell_out(["hab", "svc", "status"]).stdout
+    services_shell_out = shell_out(%w(hab svc status)).stdout
     load_habitat_service_via_cli(services_shell_out) if services_shell_out
   rescue Ohai::Exceptions::Exec
     logger.trace("Plugin Habitat: No detected version of hab binary found in PATH, skipping collection.")

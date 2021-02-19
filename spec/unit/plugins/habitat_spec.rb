@@ -29,12 +29,12 @@ describe "plugin habitat" do
       origin1/package1/version1/release1  standalone  up       up     60       100  package1.default
       origin2/package2/version2/release2  standalone  up       up     60       101  package2.default
     SVC
-    allow(plugin).to receive(:shell_out).with(["hab"],
-                                              ["-V"]).and_return(mock_shell_out(0, "hab 1.1.1/202001010000", ""))
-    allow(plugin).to receive(:shell_out).with(["hab", "pkg", "list",
+    allow(plugin).to receive(:habitat_binary).and_return("/some/path/hab")
+    allow(plugin).to receive(:shell_out).with(["/some/path/hab",
+                                              "-V"]).and_return(mock_shell_out(0, "hab 1.1.1/202001010000", ""))
+    allow(plugin).to receive(:shell_out).with(["/some/path/hab", "pkg", "list",
                                                "--all"]).and_return(mock_shell_out(0, pkg_result, ""))
-    allow(plugin).to receive(:shell_out).with(%w{hab svc status}).and_return(mock_shell_out(0, svc_result, ""))
-    allow(plugin).to receive(:habitat_exists?).and_return(true)
+    allow(plugin).to receive(:shell_out).with(["/some/path/hab", "svc", "status"]).and_return(mock_shell_out(0, svc_result, ""))
     plugin.run
   end
 

@@ -17,7 +17,6 @@
 #
 Ohai.plugin(:Habitat) do
   provides "habitat"
-  optional true
 
   def habitat_binary
     which("hab")

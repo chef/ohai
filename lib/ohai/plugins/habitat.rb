@@ -19,7 +19,7 @@ Ohai.plugin(:Habitat) do
   provides "habitat"
 
   def habitat_exists?
-    which("habitat")
+    which("hab")
   end
 
   def fetch_habitat_version

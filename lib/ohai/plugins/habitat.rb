@@ -18,16 +18,20 @@
 Ohai.plugin(:Habitat) do
   provides "habitat"
 
+  def habitat_exists?
+    which("habitat")
+  end
+
   def fetch_habitat_version
     shell_out(["hab"], ["-V"]).stdout.gsub(/hab\s*/, "").strip
   rescue Ohai::Exceptions::Exec
-    logger.trace("Plugin Habitat: No detected version of hab binary found in PATH, skipping collection.")
+    logger.trace("Plugin Habitat: Unable to determine the installed version of Habitat, skipping collection.")
   end
 
   def fetch_habitat_packages
     shell_out(["hab", "pkg", "list", "--all"]).stdout.split.sort.select { |pkg| pkg.match?(%r{.*/.*/.*/.*}) }
   rescue Ohai::Exceptions::Exec
-    logger.trace("Plugin Habitat: No detected version of hab binary found in PATH, skipping collection.")
+    logger.trace("Plugin Habitat: Unable to determine the installed Habitat packages, skipping collection.")
   end
 
   def load_habitat_service_via_cli(status_stdout)
@@ -54,10 +58,12 @@ Ohai.plugin(:Habitat) do
     services_shell_out = shell_out(%w{hab svc status}).stdout
     load_habitat_service_via_cli(services_shell_out) if services_shell_out
   rescue Ohai::Exceptions::Exec
-    logger.trace("Plugin Habitat: No detected version of hab binary found in PATH, skipping collection.")
+    logger.trace("Plugin Habitat: Unable to determine the installed Habitat services, skipping collection.")
   end
 
   collect_data(:default) do
+    return unless habitat_exists?
+
     habitat Mash.new
     habitat["version"] = fetch_habitat_version
     habitat["packages"] = fetch_habitat_packages

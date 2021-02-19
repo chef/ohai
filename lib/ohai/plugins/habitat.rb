@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 #
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@ Ohai.plugin(:Habitat) do
   provides "habitat"
 
   def habitat_binary
-    which("hab")
+    @habitat_binary ||= which("hab")
   end
 
   def fetch_habitat_version
@@ -38,18 +39,16 @@ Ohai.plugin(:Habitat) do
     # package                           type        desired  state  elapsed (s)  pid   group
     # core/httpd/2.4.35/20190307151146  standalone  up       up     158169       1410  httpd.default
     @services = []
-    lines = status_stdout.split("\n")
-    lines.each do |line|
-      @service = {}
+    status_stdout.each_line do |line|
       fields = line.split(/\s+/)
       next unless fields[0].match?(%r{.*/.*/.*/.*}) # ignore header line
 
-      @service = {}
-      @service[:identity] = fields[0]
-      @service[:topology] = fields[1]
-      @service[:state_desired] = fields[2]
-      @service[:state_actual] = fields[2]
-      (@services).push(@service)
+      service = {}
+      service[:identity] = fields[0]
+      service[:topology] = fields[1]
+      service[:state_desired] = fields[2]
+      service[:state_actual] = fields[2]
+      (@services).push(service)
     end
     @services
   end

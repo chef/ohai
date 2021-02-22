@@ -20,9 +20,19 @@
 Ohai.plugin(:Chef) do
   provides "chef_packages/chef"
 
+  def chef_effortless?
+    # Determine if client is being run as a Habitat package.
+    if Chef::CHEF_ROOT.include?("hab/pkgs/chef/chef")
+      # Determine if client is running in zero mode which would show it is using the Effortless pattern.
+      # Explicitly set response to true or nil, not false
+      ChefConfig::Config["chef_server_url"].include?("chefzero://") || nil
+    end
+  end
+
   collect_data(:default, :target) do
     begin
       require "chef/version"
+      require "chef-config/config" unless defined?(ChefConfig::Config)
     rescue Gem::LoadError
       logger.trace("Plugin Chef: Unable to load the chef gem to determine the version")
       # this catches when you've done a major version bump of ohai, but
@@ -35,5 +45,6 @@ Ohai.plugin(:Chef) do
     chef_packages[:chef] = Mash.new
     chef_packages[:chef][:version] = Chef::VERSION
     chef_packages[:chef][:chef_root] = Chef::CHEF_ROOT
+    chef_packages[:chef][:chef_effortless] = chef_effortless?
   end
 end

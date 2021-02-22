@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.20 -->
-## [v17.0.20](https://github.com/chef/ohai/tree/v17.0.20) (2021-02-20)
+<!-- latest_release 17.0.21 -->
+## [v17.0.21](https://github.com/chef/ohai/tree/v17.0.21) (2021-02-22)
 
 #### Merged Pull Requests
-- adds Habitat plugin [#1623](https://github.com/chef/ohai/pull/1623) ([collinmcneese](https://github.com/collinmcneese))
+- Adds chef_effortless collection to chef plugin [#1624](https://github.com/chef/ohai/pull/1624) ([collinmcneese](https://github.com/collinmcneese))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Adds chef_effortless collection to chef plugin [#1624](https://github.com/chef/ohai/pull/1624) ([collinmcneese](https://github.com/collinmcneese)) <!-- 17.0.21 -->
 - adds Habitat plugin [#1623](https://github.com/chef/ohai/pull/1623) ([collinmcneese](https://github.com/collinmcneese)) <!-- 17.0.20 -->
 - Add Alibaba cloud plugin [#1620](https://github.com/chef/ohai/pull/1620) ([tas50](https://github.com/tas50)) <!-- 17.0.19 -->
 - Add platform / platform_family detection for Alibaba Cloud Linux [#1618](https://github.com/chef/ohai/pull/1618) ([tas50](https://github.com/tas50)) <!-- 17.0.18 -->

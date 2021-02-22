@@ -25,7 +25,7 @@ Ohai.plugin(:Chef) do
     if Chef::CHEF_ROOT.include?("hab/pkgs/chef/chef")
       # Determine if client is running in zero mode which would show it is using the Effortless pattern.
       # Explicitly set response to true or nil, not false
-      ChefConfig::Config["chef_server_url"].include?("chefzero://") || nil
+      ChefConfig::Config["chef_server_url"].include?("chefzero://")
     end
   end
 

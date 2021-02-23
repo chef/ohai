@@ -61,11 +61,13 @@ Ohai.plugin(:Habitat) do
   end
 
   collect_data(:default) do
-    return unless habitat_binary
-
-    habitat Mash.new
-    habitat["version"] = fetch_habitat_version
-    habitat["packages"] = fetch_habitat_packages
-    habitat["services"] = fetch_habitat_services
+    if habitat_binary
+      habitat Mash.new
+      habitat["version"] = fetch_habitat_version
+      habitat["packages"] = fetch_habitat_packages
+      habitat["services"] = fetch_habitat_services
+    else
+      logger.trace("Plugin Habitat: Could not find hab binary. Skipping plugin.")
+    end
   end
 end

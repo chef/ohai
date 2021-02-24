@@ -250,7 +250,11 @@ Ohai.plugin(:Virtualization) do
         # If so, we may need to look further for a differentiator (OHAI-573)
         virtualization[:systems][:lxc] = "host"
       end
-    elsif file_exist?("/.dockerenv") || file_exist?("/.dockerinit")
+    end
+
+    # regardless of what we found above, if we're a docker container inside
+    # of the above, lets report as a docker container
+    if file_exist?("/.dockerenv") || file_exist?("/.dockerinit")
       logger.trace("Plugin Virtualization: .dockerenv or .dockerinit exist. Detecting as docker guest")
       virtualization[:system] = "docker"
       virtualization[:role] = "guest"

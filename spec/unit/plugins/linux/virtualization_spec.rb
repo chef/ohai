@@ -626,6 +626,18 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
+    it "sets virtualization if /.dockerenv exists even if /proc/self/cgroup exists" do
+      allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/self/cgroup").and_return("")
+      allow(plugin).to receive(:file_read).with("/proc/1/environ").and_return("")
+      allow(plugin).to receive(:file_exist?).with("/.dockerenv").and_return(true)
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("docker")
+      expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
+    end
+
+
     it "sets virtualization if /.dockerinit exists" do
       allow(plugin).to receive(:file_exist?).with("/.dockerinit").and_return(true)
       plugin.run

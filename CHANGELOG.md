@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.10.7 -->
+## [v16.10.7](https://github.com/chef/ohai/tree/v16.10.7) (2021-02-27)
+
+#### Merged Pull Requests
+- suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.10.6 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth)) <!-- 16.10.7 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

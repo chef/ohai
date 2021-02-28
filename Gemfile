@@ -16,7 +16,7 @@ group :development do
   gem "rspec-core", "~> 3.0"
   gem "rspec-expectations", "~> 3.0"
   gem "rspec-mocks", "~> 3.0"
-  gem "rubocop-performance", "1.9.0"
+  gem "rubocop-performance", "1.10.0"
   gem "rubocop-rspec"
 end
 

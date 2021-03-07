@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.24 -->
-## [v17.0.24](https://github.com/chef/ohai/tree/v17.0.24) (2021-03-01)
+<!-- latest_release 17.0.25 -->
+## [v17.0.25](https://github.com/chef/ohai/tree/v17.0.25) (2021-03-07)
 
 #### Merged Pull Requests
-- Resolve new rubocop-performance warning [#1629](https://github.com/chef/ohai/pull/1629) ([tas50](https://github.com/tas50))
+- Update rubocop-performance to 1.10.1 and revert optimization [#1630](https://github.com/chef/ohai/pull/1630) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance to 1.10.1 and revert optimization [#1630](https://github.com/chef/ohai/pull/1630) ([tas50](https://github.com/tas50)) <!-- 17.0.25 -->
 - Resolve new rubocop-performance warning [#1629](https://github.com/chef/ohai/pull/1629) ([tas50](https://github.com/tas50)) <!-- 17.0.24 -->
 - Detect docker properly even if it&#39;s within virtualization [#1627](https://github.com/chef/ohai/pull/1627) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.23 -->
 - Don&#39;t return in the hab plugin [#1625](https://github.com/chef/ohai/pull/1625) ([tas50](https://github.com/tas50)) <!-- 17.0.22 -->

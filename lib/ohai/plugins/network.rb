@@ -82,7 +82,7 @@ Ohai.plugin(:NetworkAddresses) do
       elsif network[gw_attr] &&
           network["interfaces"][network[int_attr]] &&
           network["interfaces"][network[int_attr]]["addresses"]
-        if [ "0.0.0.0", "::", /^fe80:/ ].any?(network[gw_attr])
+        if [ "0.0.0.0", "::", /^fe80:/ ].any? { |pat| pat === network[gw_attr] } # rubocop: disable Performance/RedundantEqualityComparisonBlock
           # link level default route
           logger.trace("Plugin Network: link level default #{family} route, picking ip from #{network[gw_attr]}")
           r = gw_if_ips.first

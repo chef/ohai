@@ -54,7 +54,7 @@ Ohai.plugin(:Platform) do
   end
 
   #
-  # Cached /etc/os-release info Hash.  Also has logic for Cisco Nexus
+  # Cached /etc/os-release info Hash. Also has logic for Cisco Nexus
   # switches that pulls the chained CISCO_RELEASE_INFO file into the Hash (other
   # distros can also reuse this method safely).
   #
@@ -122,7 +122,7 @@ Ohai.plugin(:Platform) do
       "sles_sap" => "suse",
       "sles" => "suse",
       "xenenterprise" => "xenserver",
-    }[id] || id
+    }[id.downcase] || id.downcase
   end
 
   #
@@ -137,13 +137,15 @@ Ohai.plugin(:Platform) do
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /oracle/, /centos/, /redhat/, /almalinux/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/, /alibabalinux/, /sangoma/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /almalinux/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/, /alibabalinux/, /sangoma/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the
-      # oracle kernel version differences and tuning and extra packages are clearly acceptable.  Almost certainly some distros above (xenserver?)
-      # should not be in this list.  Please use fedora, below, instead.  Also note that this is the only platform_family with this strict of a rule,
+      # oracle kernel version differences and tuning and extra packages are clearly acceptable. Almost certainly some distros above (xenserver?)
+      # should not be in this list. Please use fedora, below, instead. Also note that this is the only platform_family with this strict of a rule,
       # see the example of the debian platform family for how the rest of the platform_family designations should be used.
+      #
+      # TODO: when XCP-NG 7.4 support ends we can remove the xcp-ng match. 7.5+ reports as xenenterprise which we remap to xenserver
       "rhel"
     when /amazon/
       "amazon"
@@ -270,9 +272,6 @@ Ohai.plugin(:Platform) do
       platform_version lsb[:release]
     elsif /XenServer/i.match?(lsb[:id])
       platform "xenserver"
-      platform_version lsb[:release]
-    elsif /XCP/i.match?(lsb[:id])
-      platform "xcp"
       platform_version lsb[:release]
     elsif lsb[:id] # LSB can provide odd data that changes between releases, so we currently fall back on it rather than dealing with its subtleties
       platform lsb[:id].downcase

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.26 -->
-## [v17.0.26](https://github.com/chef/ohai/tree/v17.0.26) (2021-03-09)
+<!-- latest_release 17.0.27 -->
+## [v17.0.27](https://github.com/chef/ohai/tree/v17.0.27) (2021-03-12)
 
 #### Merged Pull Requests
-- Fix support for Sangoma Linux [#1631](https://github.com/chef/ohai/pull/1631) ([hron84](https://github.com/hron84))
+- Remove support for discontinued antergos distro [#1634](https://github.com/chef/ohai/pull/1634) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Remove support for discontinued antergos distro [#1634](https://github.com/chef/ohai/pull/1634) ([tas50](https://github.com/tas50)) <!-- 17.0.27 -->
 - Fix support for Sangoma Linux [#1631](https://github.com/chef/ohai/pull/1631) ([hron84](https://github.com/hron84)) <!-- 17.0.26 -->
 - Update rubocop-performance to 1.10.1 and revert optimization [#1630](https://github.com/chef/ohai/pull/1630) ([tas50](https://github.com/tas50)) <!-- 17.0.25 -->
 - Resolve new rubocop-performance warning [#1629](https://github.com/chef/ohai/pull/1629) ([tas50](https://github.com/tas50)) <!-- 17.0.24 -->

@@ -159,7 +159,7 @@ Ohai.plugin(:Platform) do
       "gentoo"
     when /slackware/
       "slackware"
-    when /arch/, /manjaro/, /antergos/
+    when /arch/, /manjaro/
       "arch"
     when /exherbo/
       "exherbo"

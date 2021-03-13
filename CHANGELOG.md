@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.28 -->
-## [v17.0.28](https://github.com/chef/ohai/tree/v17.0.28) (2021-03-12)
+<!-- latest_release 17.0.29 -->
+## [v17.0.29](https://github.com/chef/ohai/tree/v17.0.29) (2021-03-13)
 
 #### Merged Pull Requests
-- Remove support for Pidora which is discontinued [#1633](https://github.com/chef/ohai/pull/1633) ([tas50](https://github.com/tas50))
+- Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50)) <!-- 17.0.29 -->
 - Remove support for Pidora which is discontinued [#1633](https://github.com/chef/ohai/pull/1633) ([tas50](https://github.com/tas50)) <!-- 17.0.28 -->
 - Remove support for discontinued antergos distro [#1634](https://github.com/chef/ohai/pull/1634) ([tas50](https://github.com/tas50)) <!-- 17.0.27 -->
 - Fix support for Sangoma Linux [#1631](https://github.com/chef/ohai/pull/1631) ([hron84](https://github.com/hron84)) <!-- 17.0.26 -->

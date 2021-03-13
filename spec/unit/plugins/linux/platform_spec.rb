@@ -127,6 +127,11 @@ describe Ohai::System, "Linux plugin platform" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
+    # See https://github.com/chef/os_release/blob/master/xcp-ng_7_4#L3 for an example of why we do this
+    it "returns a downcased ID value" do
+      expect(plugin.platform_id_remap("XCP-ng")).to eq("xcp-ng")
+    end
+
     it "does not transformation for any other platform" do
       expect(plugin.platform_id_remap("ubuntu")).to eq("ubuntu")
     end

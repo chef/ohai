@@ -1,26 +1,23 @@
 # Change Log
 
-<!-- latest_release 16.10.7 -->
-## [v16.10.7](https://github.com/chef/ohai/tree/v16.10.7) (2021-02-27)
-
-#### Merged Pull Requests
-- suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.10.6 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth)) <!-- 16.10.7 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.10.7](https://github.com/chef/ohai/tree/v16.10.7) (2021-03-17)
+
+#### Merged Pull Requests
+- suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth))
+<!-- latest_stable_release -->
+
 ## [v16.10.6](https://github.com/chef/ohai/tree/v16.10.6) (2021-02-03)
 
 #### Merged Pull Requests
 - Pin chefstyle for Ohai 16 to a known version [#1611](https://github.com/chef/ohai/pull/1611) ([tas50](https://github.com/tas50))
 - [linux/platform] fix platform_version on Debian testing and unstable [#1614](https://github.com/chef/ohai/pull/1614) ([michel-slm](https://github.com/michel-slm))
-<!-- latest_stable_release -->
 
 ## [v16.10.4](https://github.com/chef/ohai/tree/v16.10.4) (2021-02-02)
 

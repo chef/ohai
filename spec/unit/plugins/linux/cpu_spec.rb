@@ -191,6 +191,22 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture,
   end
 end
 
+shared_examples "virtualization info" do |virtualization_type, hypervisor_vendor|
+  describe "virtualization" do
+    it "has virtualization_type equal to #{virtualization_type}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("virtualization_type")
+      expect(plugin[:cpu]["virtualization_type"]).to eq(virtualization_type)
+    end
+
+    it "has hypervisor_vendor equal to #{hypervisor_vendor}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("hypervisor_vendor")
+      expect(plugin[:cpu]["hypervisor_vendor"]).to eq(hypervisor_vendor)
+    end
+  end
+end
+
 shared_examples "x86 processor info" do |family, stepping, mhz|
   describe "x86 processor" do
     it "has family equal to #{family}" do
@@ -451,13 +467,12 @@ describe Ohai::System, "General Linux cpu plugin" do
     #  expect(plugin[:cpu]).to have_key("hypervisor_vendor")
     #  expect(plugin[:cpu]["hypervisor_vendor"]).to eq("Xen")
     # end
-
-    # it "has virtualization_type" do
-    #  plugin.run
-    #  expect(plugin[:cpu]).to have_key("virtualization_type")
-    #  expect(plugin[:cpu]["virtualization_type"]).to eq("full")
-    # end
-
+    #
+    it "has virtualization" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("virtualization")
+      expect(plugin[:cpu]["virtualization"]).to eq("VT-x")
+    end
   end
 
   context "with a dual-core hyperthreaded /proc/cpuinfo" do
@@ -481,6 +496,104 @@ describe Ohai::System, "General Linux cpu plugin" do
     it "has 4 logical, hyper-threaded cores" do
       plugin.run
       expect(plugin[:cpu][:total]).to eq(4)
+    end
+  end
+
+  context "x86 guest on kvm" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-kvm.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{apic clflush cmov cx16 cx8 de eagerfpu fpu fxsr hypervisor lahf_lm lm mca mce mmx msr mtrr nopl nx pae pge pni pse pse36 rep_good sep sse sse2 syscall tsc x2apic xtopology}
+    numa_node_cpus = { "0" => [0, 1, 2, 3] }
+
+    it_behaves_like "Common cpu info",
+      4,                  # total_cpu
+      4,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      4,                  # cpus
+      4,                  # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      4,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "13",               # model
+      "QEMU Virtual CPU version 2.5+", # model_name
+      "6649.99",          # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "4096K",            # l2_cache
+      "16384K",           # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "x86 processor info",
+      "6",                # family
+      "3",                # stepping
+      "3324.998"          # mhz
+    it_behaves_like "virtualization info",
+      "full",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+  end
+
+  context "x86 guest on kvm (nested)" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-kvm-nested.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm-nested.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm-nested-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{abm aes apic arat avx avx2 bmi1 bmi2 clflush cmov constant_tsc cx16 cx8 de eagerfpu ept erms f16c flexpriority fma fpu fsgsbase fxsr hypervisor ibpb ibrs intel_stibp invpcid invpcid_single lahf_lm lm mca mce md_clear mmx movbe msr mtrr nopl nx pae pat pcid pclmulqdq pdpe1gb pge pni popcnt pse pse36 rdrand rdtscp rep_good sep smep spec_ctrl ss ssbd sse sse2 sse4_1 sse4_2 ssse3 stibp syscall tpr_shadow tsc tsc_adjust tsc_deadline_timer vme vmx vnmi vpid x2apic xsave xsaveopt xtopology}
+    numa_node_cpus = { "0" => [0] }
+
+    it_behaves_like "Common cpu info",
+      1,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      1,                  # cpus
+      0,                  # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "60",               # model
+      "Intel Core Processor (Haswell, no TSX, IBRS)", # model_name
+      "5193.98",          # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "4096K",            # l2_cache
+      "16384K",           # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "x86 processor info",
+      "6",                # family
+      "1",                # stepping
+      "2596.990"          # mhz
+    it_behaves_like "virtualization info",
+      "full",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+
+    it "has virtualization" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("virtualization")
+      expect(plugin[:cpu]["virtualization"]).to eq("VT-x")
     end
   end
 end

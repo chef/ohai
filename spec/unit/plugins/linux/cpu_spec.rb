@@ -462,12 +462,6 @@ describe Ohai::System, "General Linux cpu plugin" do
       "2",                # stepping
       "2927.000"          # mhz
 
-    # it "has hypervisor_vendor" do
-    #  plugin.run
-    #  expect(plugin[:cpu]).to have_key("hypervisor_vendor")
-    #  expect(plugin[:cpu]["hypervisor_vendor"]).to eq("Xen")
-    # end
-    #
     it "has virtualization" do
       plugin.run
       expect(plugin[:cpu]).to have_key("virtualization")
@@ -596,6 +590,53 @@ describe Ohai::System, "General Linux cpu plugin" do
       expect(plugin[:cpu]["virtualization"]).to eq("VT-x")
     end
   end
+
+  context "x86 guest on xen" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-xen.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-xen.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-xen-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{clflush cmov constant_tsc cx16 cx8 de eagerfpu fpu fxsr ht hypervisor lahf_lm lm mmx msr nonstop_tsc nopl nx pae pat pni popcnt rep_good sep ss sse sse2 sse4_1 sse4_2 ssse3 syscall tsc}
+    numa_node_cpus = { "0" => [0, 1, 2, 3] }
+
+    it_behaves_like "Common cpu info",
+      4,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      4,                  # cpus
+      4,                  # cpus_online
+      4,                  # threads_per_core
+      1,                  # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "26",               # model
+      "Intel(R) Xeon(R) CPU           L5520  @ 2.27GHz", # model_name
+      "4533.49",          # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "256K",             # l2_cache
+      "8192K",            # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "x86 processor info",
+      "6",                # family
+      "5",                # stepping
+      "2266.542"          # mhz
+    it_behaves_like "virtualization info",
+      "para",             # virtualization_type
+      "Xen"               # hypervisor_vendor
+  end
+
 end
 
 describe Ohai::System, "S390 linux cpu plugin" do

@@ -18,11 +18,18 @@
 
 require "spec_helper"
 
-shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu|
+shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture, cpu_opmodes, byte_order, cpus,
+  cpus_online, threads_per_core, cores_per_socket, sockets, numa_nodes, vendor_id, model, model_name, bogomips,
+  l1d_cache, l1i_cache, l2_cache, l3_cache, flags, numa_node_cpus|
   describe "cpu" do
     it "has cpu[:total] equals to #{total_cpu}" do
       plugin.run
       expect(plugin[:cpu][:total]).to eq(total_cpu)
+    end
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
     end
 
     if ls_cpu
@@ -30,11 +37,178 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu|
         plugin.run
         expect(plugin[:cpu][:real]).to eq(real_cpu)
       end
+
+      it "has architecture equal to #{architecture}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("architecture")
+        expect(plugin[:cpu]["architecture"]).to eq(architecture)
+      end
+
+      it "has cpu_opmodes equal to #{cpu_opmodes}" do
+        plugin.run
+        if cpu_opmodes
+          expect(plugin[:cpu]).to have_key("cpu_opmodes")
+          expect(plugin[:cpu]["cpu_opmodes"]).to eq(cpu_opmodes)
+        else
+          expect(plugin[:cpu]).to_not have_key("cpu_opmodes")
+        end
+      end
+
+      it "has byte_order equal to #{byte_order}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("byte_order")
+        expect(plugin[:cpu]["byte_order"]).to eq(byte_order)
+      end
+
+      it "has cpus equal to #{cpus}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("cpus")
+        expect(plugin[:cpu]["cpus"]).to eq(cpus)
+      end
+
+      it "has cpus_online equal to #{cpus_online}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("cpus_online")
+        expect(plugin[:cpu]["cpus_online"]).to eq(cpus_online)
+      end
+
+      it "has threads_per_core equal to #{threads_per_core}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("threads_per_core")
+        expect(plugin[:cpu]["threads_per_core"]).to eq(threads_per_core)
+      end
+
+      it "has cores_per_socket equal to #{cores_per_socket}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("cores_per_socket")
+        expect(plugin[:cpu]["cores_per_socket"]).to eq(cores_per_socket)
+      end
+
+      # s390x shows this differently
+      it "has sockets equal to #{sockets}" do
+        plugin.run
+        if sockets
+          expect(plugin[:cpu]).to have_key("sockets")
+          expect(plugin[:cpu]["sockets"]).to eq(sockets)
+        else
+          expect(plugin[:cpu]).to_not have_key("sockets")
+        end
+      end
+
+      it "has numa_nodes equal to #{numa_nodes}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("numa_nodes")
+        expect(plugin[:cpu]["numa_nodes"]).to eq(numa_nodes)
+      end
+
+      it "has vendor_id equal to #{vendor_id}" do
+        plugin.run
+        if vendor_id
+          expect(plugin[:cpu]).to have_key("vendor_id")
+          expect(plugin[:cpu]["vendor_id"]).to eq(vendor_id)
+        else
+          expect(plugin[:cpu]).to_not have_key("vendor_id")
+        end
+      end
+
+      it "has model equal to #{model}" do
+        plugin.run
+        if model
+          expect(plugin[:cpu]).to have_key("model")
+          expect(plugin[:cpu]["model"]).to eq(model)
+        else
+          expect(plugin[:cpu]).to_not have_key("model")
+        end
+      end
+
+      it "has model_name equal to #{model_name}" do
+        plugin.run
+        if model_name
+          expect(plugin[:cpu]).to have_key("model_name")
+          expect(plugin[:cpu]["model_name"]).to eq(model_name)
+        else
+          expect(plugin[:cpu]).to_not have_key("model_name")
+        end
+      end
+
+      it "has bogomips equal to #{bogomips}" do
+        plugin.run
+        if bogomips
+          expect(plugin[:cpu]).to have_key("bogomips")
+          expect(plugin[:cpu]["bogomips"]).to eq(bogomips)
+        else
+          expect(plugin[:cpu]).to_not have_key("bogomips")
+        end
+      end
+
+      it "has l1d_cache equal to #{l1d_cache}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("l1d_cache")
+        expect(plugin[:cpu]["l1d_cache"]).to eq(l1d_cache)
+      end
+
+      it "has l1i_cache equal to #{l1i_cache}" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("l1i_cache")
+        expect(plugin[:cpu]["l1i_cache"]).to eq(l1i_cache)
+      end
+
+      it "has l2_cache equal to #{l2_cache}" do
+        plugin.run
+        if l2_cache
+          expect(plugin[:cpu]).to have_key("l2_cache")
+          expect(plugin[:cpu]["l2_cache"]).to eq(l2_cache)
+        else
+          expect(plugin[:cpu]).to_not have_key("l2_cache")
+        end
+      end
+
+      it "has l3_cache equal to #{l3_cache}" do
+        plugin.run
+        if l3_cache
+          expect(plugin[:cpu]).to have_key("l3_cache")
+          expect(plugin[:cpu]["l3_cache"]).to eq(l3_cache)
+        else
+          expect(plugin[:cpu]).to_not have_key("l3_cache")
+        end
+      end
+
+      it "has flags" do
+        plugin.run
+        if flags
+          expect(plugin[:cpu]).to have_key("flags")
+          expect(plugin[:cpu]["flags"]).to eq(flags)
+        else
+          expect(plugin[:cpu]).to_not have_key("flags")
+        end
+      end
+      it "has numa_node_cpus" do
+        plugin.run
+        expect(plugin[:cpu]).to have_key("numa_node_cpus")
+        expect(plugin[:cpu]["numa_node_cpus"]).to eq(numa_node_cpus)
+      end
+    end
+  end
+end
+
+shared_examples "x86 processor info" do |family, stepping, mhz|
+  describe "x86 processor" do
+    it "has family equal to #{family}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("family")
+      expect(plugin[:cpu]["family"]).to eq(family)
     end
 
-    it "has a cpu 0" do
+    it "has stepping equal to #{stepping}" do
       plugin.run
-      expect(plugin[:cpu]).to have_key("0")
+      expect(plugin[:cpu]).to have_key("stepping")
+      expect(plugin[:cpu]["stepping"]).to eq(stepping)
+    end
+
+    it "has mhz equal to #{mhz}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz")
+      expect(plugin[:cpu]["mhz"]).to eq(mhz)
     end
   end
 end
@@ -77,7 +251,8 @@ shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
   end
 end
 
-shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz|
+shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz, timebase, platform, machine_model,
+  machine, firmware, mmu|
   describe "ppc64le processor" do
     it "has model_name for cpu #{cpu_no}" do
       plugin.run
@@ -96,6 +271,43 @@ shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz|
       expect(plugin[:cpu][cpu_no.to_s]).to have_key("mhz")
       expect(plugin[:cpu][cpu_no.to_s]["mhz"]).to eql(mhz)
     end
+
+    it "has timebase equal to #{timebase}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("timebase")
+      expect(plugin[:cpu]["timebase"]).to eq(timebase)
+    end
+
+    it "has platform equal to #{platform}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("platform")
+      expect(plugin[:cpu]["platform"]).to eq(platform)
+    end
+
+    it "has machine_model equal to #{machine_model}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("machine_model")
+      expect(plugin[:cpu]["machine_model"]).to eq(machine_model)
+    end
+
+    it "has machine equal to #{machine}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("machine")
+      expect(plugin[:cpu]["machine"]).to eq(machine)
+    end
+
+    it "has firmware equal to #{firmware}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("firmware")
+      expect(plugin[:cpu]["firmware"]).to eq(firmware)
+    end
+
+    it "has mmu equal to #{mmu}" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mmu")
+      expect(plugin[:cpu]["mmu"]).to eq(mmu)
+    end
+
   end
 end
 
@@ -113,7 +325,10 @@ describe Ohai::System, "General Linux cpu plugin" do
   context "with old kernel that doesn't include cores in /proc/cpuinfo and no lscpu" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
 
-    it_behaves_like "Common cpu info", 1, 1, false
+    it_behaves_like "Common cpu info",
+      1,    # total_cpu
+      1,    # real_cpu
+      false # ls_cpu
 
     it "doesn't get total cores" do
       plugin.run
@@ -200,103 +415,36 @@ describe Ohai::System, "General Linux cpu plugin" do
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
-    it_behaves_like "Common cpu info", 24, 2, true
+    flags = %w{acpi aes aperfmperf apic arat arch_perfmon bts clflush cmov constant_tsc cx16 cx8 dca de ds_cpl dtes64 dtherm dts eagerfpu epb ept est flexpriority flush_l1d fpu fxsr ht ibpb ibrs ida intel_stibp lahf_lm lm mca mce mmx monitor msr mtrr nonstop_tsc nopl nx pae pat pbe pcid pclmulqdq pdcm pdpe1gb pebs pge pni popcnt pse pse36 rdtscp rep_good sep smx spec_ctrl ss ssbd sse sse2 sse4_1 sse4_2 ssse3 stibp syscall tm tm2 tpr_shadow tsc vme vmx vnmi vpid xtopology xtpr}
+    numa_node_cpus = { "0" => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] }
 
-    it "has architecture" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("architecture")
-      expect(plugin[:cpu]["architecture"]).to eq("x86_64")
-    end
-
-    it "has cpu_opmodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpu_opmodes")
-      expect(plugin[:cpu]["cpu_opmodes"]).to eq(%w{32-bit 64-bit})
-    end
-
-    it "has byte_order" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("byte_order")
-      expect(plugin[:cpu]["byte_order"]).to eq("little endian")
-    end
-
-    it "has cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus")
-      expect(plugin[:cpu]["cpus"]).to eq(24)
-    end
-
-    it "has cpus_online" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus_online")
-      expect(plugin[:cpu]["cpus_online"]).to eq(24)
-    end
-
-    it "has threads_per_core" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("threads_per_core")
-      expect(plugin[:cpu]["threads_per_core"]).to eq(2)
-    end
-
-    it "has cores_per_socket" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cores_per_socket")
-      expect(plugin[:cpu]["cores_per_socket"]).to eq(6)
-    end
-
-    it "has sockets" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("sockets")
-      expect(plugin[:cpu]["sockets"]).to eq(2)
-    end
-
-    it "has numa_nodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_nodes")
-      expect(plugin[:cpu]["numa_nodes"]).to eq(1)
-    end
-
-    it "has vendor_id" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("vendor_id")
-      expect(plugin[:cpu]["vendor_id"]).to eq("GenuineIntel")
-    end
-
-    it "has family" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("family")
-      expect(plugin[:cpu]["family"]).to eq("6")
-    end
-
-    it "has model" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("model")
-      expect(plugin[:cpu]["model"]).to eq("44")
-    end
-
-    it "has model_name" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("model_name")
-      expect(plugin[:cpu]["model_name"]).to eq("Intel(R) Xeon(R) CPU           X5670  @ 2.93GHz")
-    end
-
-    it "has stepping" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("stepping")
-      expect(plugin[:cpu]["stepping"]).to eq("2")
-    end
-
-    it "has mhz" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("mhz")
-      expect(plugin[:cpu]["mhz"]).to eq("2927.000")
-    end
-
-    it "has bogomips" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("bogomips")
-      expect(plugin[:cpu]["bogomips"]).to eq("5851.68")
-    end
+    it_behaves_like "Common cpu info",
+      24,                 # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      24,                 # cpus
+      24,                 # cpus_online
+      2,                  # threads_per_core
+      6,                  # cores_per_socket
+      2,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "44",               # model
+      "Intel(R) Xeon(R) CPU           X5670  @ 2.93GHz", # model_name
+      "5851.68",          # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "256K",             # l2_cache
+      "12288K",           # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "x86 processor info",
+      "6",                # family
+      "2",                # stepping
+      "2927.000"          # mhz
 
     # it "has hypervisor_vendor" do
     #  plugin.run
@@ -310,41 +458,6 @@ describe Ohai::System, "General Linux cpu plugin" do
     #  expect(plugin[:cpu]["virtualization_type"]).to eq("full")
     # end
 
-    it "has l1d_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1d_cache")
-      expect(plugin[:cpu]["l1d_cache"]).to eq("32K")
-    end
-
-    it "has l1i_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1i_cache")
-      expect(plugin[:cpu]["l1i_cache"]).to eq("32K")
-    end
-
-    it "has l2_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l2_cache")
-      expect(plugin[:cpu]["l2_cache"]).to eq("256K")
-    end
-
-    it "has l3_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l3_cache")
-      expect(plugin[:cpu]["l3_cache"]).to eq("12288K")
-    end
-
-    it "has flags" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("flags")
-      expect(plugin[:cpu]["flags"]).to eq(%w{acpi aes aperfmperf apic arat arch_perfmon bts clflush cmov constant_tsc cx16 cx8 dca de ds_cpl dtes64 dtherm dts eagerfpu epb ept est flexpriority flush_l1d fpu fxsr ht ibpb ibrs ida intel_stibp lahf_lm lm mca mce mmx monitor msr mtrr nonstop_tsc nopl nx pae pat pbe pcid pclmulqdq pdcm pdpe1gb pebs pge pni popcnt pse pse36 rdtscp rep_good sep smx spec_ctrl ss ssbd sse sse2 sse4_1 sse4_2 ssse3 stibp syscall tm tm2 tpr_shadow tsc vme vmx vnmi vpid xtopology xtpr})
-    end
-
-    it "has numa_node_cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_node_cpus")
-      expect(plugin[:cpu]["numa_node_cpus"]).to eq({ "0" => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] })
-    end
   end
 
   context "with a dual-core hyperthreaded /proc/cpuinfo" do
@@ -383,7 +496,10 @@ describe Ohai::System, "S390 linux cpu plugin" do
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
-  it_behaves_like "Common cpu info", 4, nil, false
+  it_behaves_like "Common cpu info",
+    4,    # total_cpu
+    nil,  # real_cpu
+    false # ls_cpu
 
   it "has a cpu 1" do
     plugin.run
@@ -422,20 +538,51 @@ describe Ohai::System, "S390 linux cpu plugin" do
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
-    it_behaves_like "Common cpu info", 4, 1, true
+    flags = %w{dflt dfp edat eimm esan3 etf3eh gs highgprs ldisp msa sort stfle te vx vxd vxe vxe2 vxp zarch}
+    numa_node_cpus = { "0" => [0, 1, 2, 3] }
+
+    it_behaves_like "Common cpu info",
+      4,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "s390x",            # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "big endian",       # byte_order
+      4,                  # cpus
+      4,                  # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      nil,                # sockets
+      1,                  # numa_nodes
+      "IBM/S390",         # vendor_id
+      nil,                # model
+      nil,                # model_name
+      "3241.00",          # bogomips
+      "128K",             # l1d_cache
+      "128K",             # l1i_cache
+      nil,                # l2_cache
+      "262144K",          # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "S390 processor info",
+      0,        # cpu_no
+      "FF",     # version
+      "0618E8", # identification
+      "8561",   # machine
+      false
+    it_behaves_like "S390 processor info",
+      1,        # cpu_no
+      "FF",     # version
+      "0618E8", # identification
+      "8561",   # machine
+      false
 
     it "has a cpu 1" do
       plugin.run
       expect(plugin[:cpu]).to have_key("1")
     end
 
-    it "has a vendor_id" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("vendor_id")
-      expect(plugin[:cpu]["vendor_id"]).to eql("IBM/S390")
-    end
-
-    it "does not have a bogomips per cpu" do
+    it "has a bogomips per cpu" do
       plugin.run
       expect(plugin[:cpu]).to have_key("bogomips_per_cpu")
       expect(plugin[:cpu]["bogomips_per_cpu"]).to eql("3241.00")
@@ -444,52 +591,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
     it "has features" do
       plugin.run
       expect(plugin[:cpu]).to have_key("features")
-      expect(plugin[:cpu]["features"]).to eq(%w{dflt dfp edat eimm esan3 etf3eh gs highgprs ldisp msa sort stfle te vx vxd vxe vxe2 vxp zarch})
-    end
-
-    it_behaves_like "S390 processor info", 0, "FF", "0618E8", "8561", false
-    it_behaves_like "S390 processor info", 1, "FF", "0618E8", "8561", false
-
-    it "has architecture" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("architecture")
-      expect(plugin[:cpu]["architecture"]).to eq("s390x")
-    end
-
-    it "has cpu_opmodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpu_opmodes")
-      expect(plugin[:cpu]["cpu_opmodes"]).to eq(%w{32-bit 64-bit})
-    end
-
-    it "has byte_order" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("byte_order")
-      expect(plugin[:cpu]["byte_order"]).to eq("big endian")
-    end
-
-    it "has cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus")
-      expect(plugin[:cpu]["cpus"]).to eq(4)
-    end
-
-    it "has cpus_online" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus_online")
-      expect(plugin[:cpu]["cpus_online"]).to eq(4)
-    end
-
-    it "has threads_per_core" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("threads_per_core")
-      expect(plugin[:cpu]["threads_per_core"]).to eq(1)
-    end
-
-    it "has cores_per_socket" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cores_per_socket")
-      expect(plugin[:cpu]["cores_per_socket"]).to eq(1)
+      expect(plugin[:cpu]["features"]).to eq(flags)
     end
 
     it "has sockets_per_book" do
@@ -510,18 +612,6 @@ describe Ohai::System, "S390 linux cpu plugin" do
       expect(plugin[:cpu]["drawers"]).to eq(4)
     end
 
-    it "has numa_nodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_nodes")
-      expect(plugin[:cpu]["numa_nodes"]).to eq(1)
-    end
-
-    it "has vendor_id" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("vendor_id")
-      expect(plugin[:cpu]["vendor_id"]).to eq("IBM/S390")
-    end
-
     it "has machine_type" do
       plugin.run
       expect(plugin[:cpu]).to have_key("machine_type")
@@ -538,12 +628,6 @@ describe Ohai::System, "S390 linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz_dynamic")
       expect(plugin[:cpu]["mhz_dynamic"]).to eq("5200")
-    end
-
-    it "has bogomips" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("bogomips")
-      expect(plugin[:cpu]["bogomips"]).to eq("3241.00")
     end
 
     it "has hypervisor_vendor" do
@@ -564,18 +648,6 @@ describe Ohai::System, "S390 linux cpu plugin" do
       expect(plugin[:cpu]["dispatching_mode"]).to eq("horizontal")
     end
 
-    it "has l1d_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1d_cache")
-      expect(plugin[:cpu]["l1d_cache"]).to eq("128K")
-    end
-
-    it "has l1i_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1i_cache")
-      expect(plugin[:cpu]["l1i_cache"]).to eq("128K")
-    end
-
     it "has l2d_cache" do
       plugin.run
       expect(plugin[:cpu]).to have_key("l2d_cache")
@@ -586,24 +658,6 @@ describe Ohai::System, "S390 linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("l2i_cache")
       expect(plugin[:cpu]["l2i_cache"]).to eq("4096K")
-    end
-
-    it "has l3_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l3_cache")
-      expect(plugin[:cpu]["l3_cache"]).to eq("262144K")
-    end
-
-    it "has flags" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("flags")
-      expect(plugin[:cpu]["flags"]).to eq(%w{dflt dfp edat eimm esan3 etf3eh gs highgprs ldisp msa sort stfle te vx vxd vxe vxe2 vxp zarch})
-    end
-
-    it "has numa_node_cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_node_cpus")
-      expect(plugin[:cpu]["numa_node_cpus"]).to eq({ "0" => [0, 1, 2, 3] })
     end
   end
 end
@@ -627,8 +681,14 @@ describe Ohai::System, "arm64 linux cpu plugin" do
   end
 
   features = %w{fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid}
-  it_behaves_like "arm64 processor info", 0, "80.00", features
-  it_behaves_like "arm64 processor info", 1, "80.00", features
+  it_behaves_like "arm64 processor info",
+    0,        # cpu_no
+    "80.00",  # bogomips
+    features  # features
+  it_behaves_like "arm64 processor info",
+    1,        # cpu_no
+    "80.00",  # bogomips
+    features  # features
 
   context "with lscpu data" do
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-host.output")) }
@@ -640,63 +700,44 @@ describe Ohai::System, "arm64 linux cpu plugin" do
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
-    it_behaves_like "Common cpu info", 32, 1, true
+    flags = %w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2}
+    numa_node_cpus = { "0" => Range.new(0, 31).to_a }
+
+    it_behaves_like "Common cpu info",
+      32,                 # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "aarch64",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      32,                 # cpus
+      32,                 # cpus_online
+      1,                  # threads_per_core
+      32,                 # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      nil,                # vendor_id
+      "2",                # model
+      nil,                # model_name
+      "80.00",            # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "256K",             # l2_cache
+      nil,                # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "arm64 processor info",
+      0,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
+    it_behaves_like "arm64 processor info",
+      1,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
 
     it "has a cpu 1" do
       plugin.run
       expect(plugin[:cpu]).to have_key("1")
-    end
-
-    features = %w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2}
-    it_behaves_like "arm64 processor info", 0, "80.00", features
-    it_behaves_like "arm64 processor info", 1, "80.00", features
-
-    it "has architecture" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("architecture")
-      expect(plugin[:cpu]["architecture"]).to eq("aarch64")
-    end
-
-    it "has byte_order" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("byte_order")
-      expect(plugin[:cpu]["byte_order"]).to eq("little endian")
-    end
-
-    it "has cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus")
-      expect(plugin[:cpu]["cpus"]).to eq(32)
-    end
-
-    it "has cpus_online" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus_online")
-      expect(plugin[:cpu]["cpus_online"]).to eq(32)
-    end
-
-    it "has threads_per_core" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("threads_per_core")
-      expect(plugin[:cpu]["threads_per_core"]).to eq(1)
-    end
-
-    it "has cores_per_socket" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cores_per_socket")
-      expect(plugin[:cpu]["cores_per_socket"]).to eq(32)
-    end
-
-    it "has sockets" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("sockets")
-      expect(plugin[:cpu]["sockets"]).to eq(1)
-    end
-
-    it "has numa_nodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_nodes")
-      expect(plugin[:cpu]["numa_nodes"]).to eq(1)
     end
 
     it "has mhz_max" do
@@ -709,43 +750,6 @@ describe Ohai::System, "arm64 linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz_min")
       expect(plugin[:cpu]["mhz_min"]).to eq("363.9700")
-    end
-
-    it "has bogomips" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("bogomips")
-      expect(plugin[:cpu]["bogomips"]).to eq("80.00")
-    end
-
-    it "has l1d_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1d_cache")
-      expect(plugin[:cpu]["l1d_cache"]).to eq("32K")
-    end
-
-    it "has l1i_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1i_cache")
-      expect(plugin[:cpu]["l1i_cache"]).to eq("32K")
-    end
-
-    it "has l2_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l2_cache")
-      expect(plugin[:cpu]["l2_cache"]).to eq("256K")
-    end
-
-    it "has flags" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("flags")
-      expect(plugin[:cpu]["flags"]).to eq(%w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2})
-    end
-
-    it "has numa_node_cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_node_cpus")
-      cpus = Range.new(0, 31).to_a
-      expect(plugin[:cpu]["numa_node_cpus"]).to eq({ "0" => cpus })
     end
   end
 end
@@ -761,7 +765,10 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
-  it_behaves_like "Common cpu info", 2, nil, false
+  it_behaves_like "Common cpu info",
+    2,    # total_cpu
+    nil,  # real_cpu
+    false # ls_cpu
 
   it "has a cpu 0" do
     plugin.run
@@ -783,121 +790,56 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
-    it_behaves_like "Common cpu info", 32, 2, true
+    numa_node_cpus =
+      {
+        "0" => [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60],
+        "8" => [64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124],
+      }
+
+    it_behaves_like "Common cpu info",
+      32,                 # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      128,                # cpus
+      32,                 # cpus_online
+      1,                  # threads_per_core
+      16,                 # cores_per_socket
+      2,                  # sockets
+      2,                  # numa_nodes
+      nil,                # vendor_id
+      "2.2 (pvr 004e 1202)",        # model
+      "POWER9, altivec supported",  # model_name
+      nil,                # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "512K",             # l2_cache
+      "10240K",           # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0,                            # cpu_no
+      "POWER9, altivec supported",  # model_name
+      "2.2 (pvr 004e 1202)",        # model
+      "2166.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "PowerNV",                    # platform
+      "9006-12P",                   # machine_model
+      "PowerNV 9006-12P",           # machine
+      "OPAL",                       # firmware
+      "Radix"                       # mmu
 
     it "has a cpu 0" do
       plugin.run
       expect(plugin[:cpu]).to have_key("0")
     end
 
-    it "has timebase" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("timebase")
-      expect(plugin[:cpu]["timebase"]).to eq("512000000")
-    end
-
-    it "has platform" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("platform")
-      expect(plugin[:cpu]["platform"]).to eq("PowerNV")
-    end
-
-    it "has model" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("model")
-      expect(plugin[:cpu]["model"]).to eq("2.2 (pvr 004e 1202)")
-    end
-
-    it "has machine_model" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("machine_model")
-      expect(plugin[:cpu]["machine_model"]).to eq("9006-12P")
-    end
-
-    it "has machine" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("machine")
-      expect(plugin[:cpu]["machine"]).to eq("PowerNV 9006-12P")
-    end
-
-    it "has firmware" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("firmware")
-      expect(plugin[:cpu]["firmware"]).to eq("OPAL")
-    end
-
-    it "has mmu" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("mmu")
-      expect(plugin[:cpu]["mmu"]).to eq("Radix")
-    end
-
-    it_behaves_like "ppc64le processor info", 0, "POWER9, altivec supported", "2.2 (pvr 004e 1202)", "2166.000000MHz"
-
-    it "has architecture" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("architecture")
-      expect(plugin[:cpu]["architecture"]).to eq("ppc64le")
-    end
-
-    it "has byte_order" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("byte_order")
-      expect(plugin[:cpu]["byte_order"]).to eq("little endian")
-    end
-
-    it "has cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus")
-      expect(plugin[:cpu]["cpus"]).to eq(128)
-    end
-
-    it "has cpus_online" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cpus_online")
-      expect(plugin[:cpu]["cpus_online"]).to eq(32)
-    end
-
     it "has cpus_offline" do
       plugin.run
       expect(plugin[:cpu]).to have_key("cpus_offline")
       expect(plugin[:cpu]["cpus_offline"]).to eq(96)
-    end
-
-    it "has threads_per_core" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("threads_per_core")
-      expect(plugin[:cpu]["threads_per_core"]).to eq(1)
-    end
-
-    it "has cores_per_socket" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("cores_per_socket")
-      expect(plugin[:cpu]["cores_per_socket"]).to eq(16)
-    end
-
-    it "has sockets" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("sockets")
-      expect(plugin[:cpu]["sockets"]).to eq(2)
-    end
-
-    it "has numa_nodes" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_nodes")
-      expect(plugin[:cpu]["numa_nodes"]).to eq(2)
-    end
-
-    it "has model" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("model")
-      expect(plugin[:cpu]["model"]).to eq("2.2 (pvr 004e 1202)")
-    end
-
-    it "has model_name" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("model_name")
-      expect(plugin[:cpu]["model_name"]).to eq("POWER9, altivec supported")
     end
 
     it "has mhz_max" do
@@ -910,36 +852,6 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz_min")
       expect(plugin[:cpu]["mhz_min"]).to eq("2166.0000")
-    end
-
-    it "has l1d_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1d_cache")
-      expect(plugin[:cpu]["l1d_cache"]).to eq("32K")
-    end
-
-    it "has l1i_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l1i_cache")
-      expect(plugin[:cpu]["l1i_cache"]).to eq("32K")
-    end
-
-    it "has l2_cache" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("l2_cache")
-      expect(plugin[:cpu]["l2_cache"]).to eq("512K")
-    end
-
-    it "has numa_node_cpus" do
-      plugin.run
-      expect(plugin[:cpu]).to have_key("numa_node_cpus")
-      expect(plugin[:cpu]["numa_node_cpus"]).to \
-        eq(
-          {
-            "0" => [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60],
-            "8" => [64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124],
-          }
-        )
     end
   end
 end

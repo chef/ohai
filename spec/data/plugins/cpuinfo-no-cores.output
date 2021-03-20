@@ -1,0 +1,19 @@
+processor     : 0
+vendor_id     : GenuineIntel
+cpu family    : 6
+model         : 23
+model name    : Intel(R) Core(TM)2 Duo CPU     T8300   @ 2.40GHz
+stepping      : 6
+cpu MHz       : 1968.770
+cache size    : 64 KB
+fdiv_bug      : no
+hlt_bug       : no
+f00f_bug      : no
+coma_bug      : no
+fpu           : yes
+fpu_exception : yes
+cpuid level   : 10
+wp            : yes
+flags         : fpu pse tsc msr mce cx8 sep mtrr pge cmov
+bogomips      : 2575.86
+clflush size  : 32

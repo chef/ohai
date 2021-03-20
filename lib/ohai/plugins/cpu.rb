@@ -9,6 +9,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: Doug MacEachern <dougm@vmware.com>
+# Author:: Lance Albertson <lance@osuosl.org>
 # Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
@@ -58,12 +59,13 @@ Ohai.plugin(:CPU) do
     range_array.flatten
   end
 
-  def parse_lscpu
+  def parse_lscpu(cpu_info)
     lscpu_info = Mash.new
     lscpu_info[:numa_node_cpus] = Mash.new
     begin
       so = shell_out("lscpu")
-      if so.exitstatus == 0
+      cpu_cores = shell_out("lscpu -p=CPU,CORE,SOCKET")
+      if so.exitstatus == 0 && cpu_cores.exitstatus == 0
         so.stdout.each_line do |line|
           case line
           when /^Architecture:\s+(.+)/
@@ -154,8 +156,75 @@ Ohai.plugin(:CPU) do
             lscpu_info[:numa_node_cpus][numa_node] = range_to_a(cpus)
           when /^Flags:\s+(.+)/
             lscpu_info[:flags] = $1.split(" ").sort.to_a
+            lscpu_info[:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)
           end
         end
+
+        case lscpu_info[:architecture]
+        when "s390x"
+          lscpu_info[:bogomips_per_cpu] = cpu_info[:bogomips_per_cpu]
+          lscpu_info[:version] = cpu_info["0"][:version]
+          lscpu_info[:identification] = cpu_info["0"][:identification]
+          lscpu_info[:machine] = cpu_info["0"][:machine]
+          lscpu_total = lscpu_info[:sockets_per_book] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core] * lscpu_info[:books_per_drawer] * lscpu_info[:drawers]
+          lscpu_real = lscpu_info[:sockets_per_book]
+          lscpu_cores = lscpu_info[:sockets_per_book] * lscpu_info[:cores_per_socket] * lscpu_info[:books_per_drawer] * lscpu_info[:drawers]
+        when "ppc64le"
+          lscpu_info[:timebase] = cpu_info[:timebase]
+          lscpu_info[:platform] = cpu_info[:platform]
+          lscpu_info[:machine_model] = cpu_info[:machine_model]
+          lscpu_info[:machine] = cpu_info[:machine]
+          lscpu_info[:firmware] = cpu_info[:firmware]
+          lscpu_info[:mmu] = cpu_info[:mmu]
+          lscpu_info[:mhz] = cpu_info["0"][:mhz]
+          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core]
+          lscpu_real = lscpu_info[:sockets]
+          lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
+        else
+          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core]
+          lscpu_real = lscpu_info[:sockets]
+          lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
+        end
+
+        # Enumerate cpus and fill out data to provide backwards compatibility data
+        cpu_cores.stdout.each_line do |line|
+          current_cpu = nil
+          current_core = nil
+          current_socket = nil
+
+          case line
+          # skip comments
+          when /^#/
+            next
+          # Parse data from "lscpu -p=CPU,CORE,SOCKET"
+          when /(\d+),(\d+),(\d+)/
+            current_cpu = $1
+            current_core = $2
+            current_socket = $3
+          end
+          lscpu_info[current_cpu] = Mash.new
+          lscpu_info[current_cpu][:vendor_id] = lscpu_info[:vendor_id] if lscpu_info[:vendor_id]
+          lscpu_info[current_cpu][:family] = lscpu_info[:family] if lscpu_info[:family]
+          lscpu_info[current_cpu][:model] = lscpu_info[:model] if lscpu_info[:model]
+          lscpu_info[current_cpu][:model_name] = lscpu_info[:model_name] if lscpu_info[:model_name]
+          lscpu_info[current_cpu][:stepping] = lscpu_info[:stepping] if lscpu_info[:stepping]
+          lscpu_info[current_cpu][:mhz] = lscpu_info[:mhz] if lscpu_info[:mhz]
+          lscpu_info[current_cpu][:bogomips] = lscpu_info[:bogomips] if lscpu_info[:bogomips]
+          lscpu_info[current_cpu][:cache_size] = lscpu_info[:l3_cache] if lscpu_info[:l3_cache]
+          lscpu_info[current_cpu][:physical_id] = current_socket
+          lscpu_info[current_cpu][:core_id] = current_core
+          lscpu_info[current_cpu][:cores] = lscpu_cores
+          lscpu_info[current_cpu][:flags] = lscpu_info[:flags] if lscpu_info[:flags]
+          lscpu_info[current_cpu][:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)
+          if lscpu_info[:architecture] == "s390x"
+            lscpu_info[current_cpu][:version] = cpu_info[current_cpu][:version] if cpu_info[current_cpu][:version]
+            lscpu_info[current_cpu][:identification] = cpu_info[current_cpu][:identification] if cpu_info[current_cpu][:identification]
+            lscpu_info[current_cpu][:machine] = cpu_info[current_cpu][:machine] if cpu_info[current_cpu][:machine]
+          end
+        end
+        lscpu_info[:total] = lscpu_total
+        lscpu_info[:real] = lscpu_real
+        lscpu_info[:cores] = lscpu_cores
       else
         logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
       end
@@ -170,13 +239,13 @@ Ohai.plugin(:CPU) do
     end
   end
 
-  collect_data(:linux) do
+  def parse_cpuinfo
     cpuinfo = Mash.new
     real_cpu = Mash.new
     cpu_number = 0
     current_cpu = nil
 
-    file_open("/proc/cpuinfo").each do |line|
+    file_open("/proc/cpuinfo").each_line do |line|
       case line
       when /processor\s+:\s(.+)/
         cpuinfo[$1] = Mash.new
@@ -196,7 +265,7 @@ Ohai.plugin(:CPU) do
         # ppc has "model" at the end of /proc/cpuinfo. In addition it should always include a include a dash. So let's
         # put this in cpu/model on ppc
         if model.include? "-"
-          cpuinfo["model"] = model
+          cpuinfo["machine_model"] = model
         else
           cpuinfo[current_cpu]["model"] = model
         end
@@ -257,32 +326,29 @@ Ohai.plugin(:CPU) do
       end
     end
 
-    cpu cpuinfo
-
-    cpu[:total] = cpu_number
-    lscpu = parse_lscpu
-
     # use data we collected unless cpuinfo is lacking core information
     # which is the case on older linux distros
-    if !lscpu.empty?
-      if lscpu[:architecture] == "s390x"
-        cpu[:total] = lscpu[:sockets_per_book] * lscpu[:cores_per_socket] * lscpu[:threads_per_core] *
-          lscpu[:books_per_drawer] * lscpu[:drawers]
-        cpu[:real] = lscpu[:sockets_per_book]
-        cpu[:cores] = lscpu[:sockets_per_book] * lscpu[:cores_per_socket] * lscpu[:books_per_drawer] * lscpu[:drawers]
-      else
-        cpu[:total] = lscpu[:sockets] * lscpu[:cores_per_socket] * lscpu[:threads_per_core]
-        cpu[:real] = lscpu[:sockets]
-        cpu[:cores] = lscpu[:sockets] * lscpu[:cores_per_socket]
-      end
-    elsif !real_cpu.empty? && cpu["0"]["cores"]
+    if !real_cpu.empty? && cpuinfo["0"]["cores"]
       logger.trace("Plugin CPU: Error executing lscpu. CPU data may not be available.")
-      cpu[:real] = real_cpu.keys.length
-      cpu[:cores] = real_cpu.keys.length * cpu["0"]["cores"].to_i
+      cpuinfo[:real] = real_cpu.keys.length
+      cpuinfo[:cores] = real_cpu.keys.length * cpuinfo["0"]["cores"].to_i
     else
       logger.trace("Plugin CPU: real cpu & core data is missing in /proc/cpuinfo and lscpu")
     end
-    cpu[:lscpu] = lscpu
+    cpuinfo[:total] = cpu_number
+    cpuinfo
+  end
+
+  collect_data(:linux) do
+    cpuinfo = parse_cpuinfo
+    lscpu = parse_lscpu(cpuinfo)
+
+    # If we don't have any data from lscpu then get it from /proc/cpuinfo
+    if lscpu.empty?
+      cpu cpuinfo
+    else
+      cpu lscpu
+    end
   end
 
   collect_data(:freebsd) do

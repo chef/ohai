@@ -174,8 +174,8 @@ Ohai.plugin(:CPU) do
           lscpu_info[:platform] = cpu_info[:platform]
           lscpu_info[:machine_model] = cpu_info[:machine_model]
           lscpu_info[:machine] = cpu_info[:machine]
-          lscpu_info[:firmware] = cpu_info[:firmware]
-          lscpu_info[:mmu] = cpu_info[:mmu]
+          lscpu_info[:firmware] = cpu_info[:firmware] if cpu_info[:firmware]
+          lscpu_info[:mmu] = cpu_info[:mmu] if cpu_info[:mmu]
           lscpu_info[:mhz] = cpu_info["0"][:mhz]
           lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core]
           lscpu_real = lscpu_info[:sockets]
@@ -262,9 +262,9 @@ Ohai.plugin(:CPU) do
         cpuinfo[current_cpu]["family"] = $1
       when /model\s+:\s(.+)/
         model = $1
-        # ppc has "model" at the end of /proc/cpuinfo. In addition it should always include a include a dash. So let's
-        # put this in cpu/model on ppc
-        if model.include? "-"
+        # ppc has "model" at the end of /proc/cpuinfo. In addition it should always include a include a dash or "IBM".
+        # So let's put this in cpu/model on ppc
+        if model.match?(/-|IBM/)
           cpuinfo["machine_model"] = model
         else
           cpuinfo[current_cpu]["model"] = model

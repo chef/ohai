@@ -322,14 +322,22 @@ shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz, tim
 
     it "has firmware equal to #{firmware}" do
       plugin.run
-      expect(plugin[:cpu]).to have_key("firmware")
-      expect(plugin[:cpu]["firmware"]).to eq(firmware)
+      if firmware
+        expect(plugin[:cpu]).to have_key("firmware")
+        expect(plugin[:cpu]["firmware"]).to eq(firmware)
+      else
+        expect(plugin[:cpu]).to_not have_key("firmware")
+      end
     end
 
     it "has mmu equal to #{mmu}" do
       plugin.run
-      expect(plugin[:cpu]).to have_key("mmu")
-      expect(plugin[:cpu]["mmu"]).to eq(mmu)
+      if mmu
+        expect(plugin[:cpu]).to have_key("mmu")
+        expect(plugin[:cpu]["mmu"]).to eq(mmu)
+      else
+        expect(plugin[:cpu]).to_not have_key("mmu")
+      end
     end
 
   end
@@ -1008,9 +1016,9 @@ describe Ohai::System, "arm64 linux cpu plugin" do
   end
 end
 
-describe Ohai::System, "ppc64le linux cpu plugin" do
+describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
   let(:plugin) { get_plugin("cpu") }
-  let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le.output")) }
+  let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p9-host.output")) }
 
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -1106,6 +1114,200 @@ describe Ohai::System, "ppc64le linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz_min")
       expect(plugin[:cpu]["mhz_min"]).to eq("2166.0000")
+    end
+  end
+
+  context "POWER8 host" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p8-host.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-host.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-host-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus =
+      {
+        "0" => [0, 8, 16, 24, 32],
+        "1" => [40, 48, 56, 64, 72],
+        "16" => [80, 88, 96, 104, 112],
+        "17" => [120, 128, 136, 144, 152],
+      }
+
+    it_behaves_like "Common cpu info",
+      20,                 # total_cpu
+      4,                  # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      160,                # cpus
+      20,                 # cpus_online
+      1,                  # threads_per_core
+      5,                  # cores_per_socket
+      4,                  # sockets
+      4,                  # numa_nodes
+      nil,                # vendor_id
+      "2.1 (pvr 004b 0201)",              # model
+      "POWER8E (raw), altivec supported", # model_name
+      nil,                # bogomips
+      "64K",              # l1d_cache
+      "32K",              # l1i_cache
+      "512K",             # l2_cache
+      "8192K",            # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0, # cpu_no
+      "POWER8E (raw), altivec supported", # model_name
+      "2.1 (pvr 004b 0201)",        # model
+      "3690.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "PowerNV",                    # platform
+      "8247-22L",                   # machine_model
+      "PowerNV 8247-22L",           # machine
+      "OPAL",                       # firmware
+      "Hash"                        # mmu
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+
+    it "has cpus_offline" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("cpus_offline")
+      expect(plugin[:cpu]["cpus_offline"]).to eq(140)
+    end
+
+    it "has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_max")
+      expect(plugin[:cpu]["mhz_max"]).to eq("3690.0000")
+    end
+
+    it "has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_min")
+      expect(plugin[:cpu]["mhz_min"]).to eq("2061.0000")
+    end
+  end
+
+  context "POWER8 KVM guest" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p8-guest-kvm.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-guest-kvm.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-guest-kvm-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus = { "0" => Range.new(0, 15).to_a }
+
+    it_behaves_like "Common cpu info",
+      16,                 # total_cpu
+      16,                 # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      16,                 # cpus
+      16,                 # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      16,                 # sockets
+      1,                  # numa_nodes
+      nil,                # vendor_id
+      "2.1 (pvr 004b 0201)",                     # model
+      "POWER8 (architected), altivec supported", # model_name
+      nil,                # bogomips
+      "64K",              # l1d_cache
+      "32K",              # l1i_cache
+      nil,                # l2_cache
+      nil,                # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0, # cpu_no
+      "POWER8 (architected), altivec supported", # model_name
+      "2.1 (pvr 004b 0201)",        # model
+      "3425.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "pSeries",                    # platform
+      "IBM pSeries (emulated by qemu)",       # machine_model
+      "CHRP IBM pSeries (emulated by qemu)",  # machine
+      nil,                          # firmware
+      nil                           # mmu
+
+    it_behaves_like "virtualization info",
+      "para",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+  end
+
+  context "POWER9 KVM guest" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p9-guest-kvm.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-guest-kvm.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-guest-kvm-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus = { "0" => Range.new(0, 15).to_a }
+
+    it_behaves_like "Common cpu info",
+      16,                 # total_cpu
+      16,                 # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      16,                 # cpus
+      16,                 # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      16,                 # sockets
+      1,                  # numa_nodes
+      nil,                # vendor_id
+      "2.2 (pvr 004e 1202)",                     # model
+      "POWER9 (architected), altivec supported", # model_name
+      nil,                # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      nil,                # l2_cache
+      nil,                # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0, # cpu_no
+      "POWER9 (architected), altivec supported", # model_name
+      "2.2 (pvr 004e 1202)",        # model
+      "2200.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "pSeries",                    # platform
+      "IBM pSeries (emulated by qemu)",       # machine_model
+      "CHRP IBM pSeries (emulated by qemu)",  # machine
+      nil,                          # firmware
+      "Radix"                       # mmu
+
+    it_behaves_like "virtualization info",
+      "para",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
     end
   end
 end

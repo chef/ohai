@@ -1,0 +1,15 @@
+Architecture:          ppc64le
+Byte Order:            Little Endian
+CPU(s):                16
+On-line CPU(s) list:   0-15
+Thread(s) per core:    1
+Core(s) per socket:    1
+Socket(s):             16
+NUMA node(s):          1
+Model:                 2.1 (pvr 004b 0201)
+Model name:            POWER8 (architected), altivec supported
+Hypervisor vendor:     KVM
+Virtualization type:   para
+L1d cache:             64K
+L1i cache:             32K
+NUMA node0 CPU(s):     0-15

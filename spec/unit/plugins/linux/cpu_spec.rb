@@ -143,14 +143,22 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture,
 
       it "has l1d_cache equal to #{l1d_cache}" do
         plugin.run
-        expect(plugin[:cpu]).to have_key("l1d_cache")
-        expect(plugin[:cpu]["l1d_cache"]).to eq(l1d_cache)
+        if l1d_cache
+          expect(plugin[:cpu]).to have_key("l1d_cache")
+          expect(plugin[:cpu]["l1d_cache"]).to eq(l1d_cache)
+        else
+          expect(plugin[:cpu]).to_not have_key("l1d_cache")
+        end
       end
 
       it "has l1i_cache equal to #{l1i_cache}" do
         plugin.run
-        expect(plugin[:cpu]).to have_key("l1i_cache")
-        expect(plugin[:cpu]["l1i_cache"]).to eq(l1i_cache)
+        if l1i_cache
+          expect(plugin[:cpu]).to have_key("l1i_cache")
+          expect(plugin[:cpu]["l1i_cache"]).to eq(l1i_cache)
+        else
+          expect(plugin[:cpu]).to_not have_key("l1i_cache")
+        end
       end
 
       it "has l2_cache equal to #{l2_cache}" do
@@ -904,6 +912,98 @@ describe Ohai::System, "arm64 linux cpu plugin" do
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz_min")
       expect(plugin[:cpu]["mhz_min"]).to eq("363.9700")
+    end
+  end
+
+  context "aarch64 kvm guest" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-aarch64-guest-kvm.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-guest-kvm.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-guest-kvm-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2}
+    numa_node_cpus = { "0" => Range.new(0, 1).to_a }
+
+    it_behaves_like "Common cpu info",
+      2,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "aarch64",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      2,                  # cpus
+      2,                  # cpus_online
+      1,                  # threads_per_core
+      2,                  # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      nil,                # vendor_id
+      "2",                # model
+      nil,                # model_name
+      "80.00",            # bogomips
+      nil,                # l1d_cache
+      nil,                # l1i_cache
+      nil,                # l2_cache
+      nil,                # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "arm64 processor info",
+      0,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
+  end
+
+  context "aarch64 graviton2 guest" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-aarch64-graviton2.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-graviton2.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-graviton2-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{aes asimd asimddp asimdhp asimdrdm atomics cpuid crc32 dcpop evtstrm fp fphp lrcpc pmull sha1 sha2 ssbs}
+    numa_node_cpus = { "0" => Range.new(0, 1).to_a }
+
+    it_behaves_like "Common cpu info",
+      2,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "aarch64",          # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      2,                  # cpus
+      2,                  # cpus_online
+      1,                  # threads_per_core
+      2,                  # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      "ARM",              # vendor_id
+      "1",                # model
+      "Neoverse-N1",      # model_name
+      "243.75",           # bogomips
+      "128 KiB",          # l1d_cache
+      "128 KiB",          # l1i_cache
+      "2 MiB",            # l2_cache
+      "32 MiB",           # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "arm64 processor info",
+      0,        # cpu_no
+      "243.75", # bogomips
+      flags     # features
+
+    it "has stepping" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("stepping")
+      expect(plugin[:cpu]["stepping"]).to eq("r3p1")
     end
   end
 end

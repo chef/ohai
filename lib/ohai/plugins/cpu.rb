@@ -62,6 +62,7 @@ Ohai.plugin(:CPU) do
   def parse_lscpu(cpu_info)
     lscpu_info = Mash.new
     lscpu_info[:numa_node_cpus] = Mash.new
+    lscpu_info[:vulnerability] = Mash.new
     begin
       so = shell_out("lscpu")
       cpu_cores = shell_out("lscpu -p=CPU,CORE,SOCKET")
@@ -154,6 +155,11 @@ Ohai.plugin(:CPU) do
             numa_node = $1
             cpus = $2
             lscpu_info[:numa_node_cpus][numa_node] = range_to_a(cpus)
+          when /^Vulnerability (.+?):\s+(.+)/ # https://rubular.com/r/aKtSD1ypUlKbGm
+            name = $1.strip.downcase.tr(" ", "_")
+            description = $2.strip
+            lscpu_info[:vulnerability][name] = Mash.new
+            lscpu_info[:vulnerability][name] = description
           when /^Flags:\s+(.+)/
             lscpu_info[:flags] = $1.split(" ").sort.to_a
             lscpu_info[:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)

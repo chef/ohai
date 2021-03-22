@@ -346,6 +346,7 @@ end
 describe Ohai::System, "General Linux cpu plugin" do
   let(:plugin) { get_plugin("cpu") }
   let(:cpuinfo_contents) { "" }
+  let(:spectre_v2) { "Mitigation: Full generic retpoline, IBPB: conditional, IBRS_FW, STIBP: conditional, RSB filling" }
 
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
@@ -506,6 +507,66 @@ describe Ohai::System, "General Linux cpu plugin" do
     it "has 4 logical, hyper-threaded cores" do
       plugin.run
       expect(plugin[:cpu][:total]).to eq(4)
+    end
+  end
+
+  context "x86 host with vulnerability data" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-host-vuln.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-vuln.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-vuln-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{ac apic clflush cmov cx8 de dts fpu mca mce msr mtrr pae pat pge pse pse36 sep tsc vme}
+    numa_node_cpus = { "0" => [0, 1, 2, 3] }
+
+    it_behaves_like "Common cpu info",
+      4,                  # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      4,                  # cpus
+      4,                  # cpus_online
+      2,                  # threads_per_core
+      2,                  # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "61",               # model
+      "Intel(R) Core(TM) i5-5200U CPU @ 2.20GHz", # model_name
+      "4389.65",          # bogomips
+      "64 KiB",           # l1d_cache
+      "64 KiB",           # l1i_cache
+      "512 KiB",          # l2_cache
+      "3 MiB",            # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "x86 processor info",
+      "6",                # family
+      "4",                # stepping
+      "2494.232"          # mhz
+
+    it "has vulnerability" do
+      plugin.run
+      vuln = {
+        "itlb_multihit" => "KVM: Mitigation: Split huge pages",
+        "l1tf" => "Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable",
+        "mds" => "Mitigation; Clear CPU buffers; SMT vulnerable",
+        "meltdown" => "Mitigation; PTI",
+        "spec_store_bypass" => "Mitigation; Speculative Store Bypass disabled via prctl and seccomp",
+        "spectre_v1" => "Mitigation; usercopy/swapgs barriers and __user pointer sanitization",
+        "spectre_v2" => "Mitigation; Full generic retpoline, IBPB conditional, IBRS_FW, STIBP conditional, RSB",
+        "srbds" => "Mitigation; Microcode",
+        "tsx_async_abort" => "Not affected",
+      }
+      expect(plugin[:cpu]).to have_key("vulnerability")
+      expect(plugin[:cpu]["vulnerability"]).to eq(vuln)
     end
   end
 

@@ -127,10 +127,10 @@ Ohai.plugin(:Virtualization) do
         virtualization[:role] = "host"
         virtualization[:systems][:kvm] = "host"
       end
-    elsif get_attribute(:cpu, :lscpu)
-      if get_attribute(:cpu, :lscpu, :hypervisor_vendor) == "KVM"
+    elsif get_attribute(:cpu, :hypervisor_vendor)
+      if get_attribute(:cpu, :hypervisor_vendor) == "KVM"
         virtualization[:system] = "kvm"
-        if /(para|full)/.match?(get_attribute(:cpu, :lscpu, :virtualization_type))
+        if /(para|full)/.match?(get_attribute(:cpu, :virtualization_type))
           virtualization[:role] = "guest"
           virtualization[:systems][:kvm] = "guest"
         end

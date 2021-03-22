@@ -166,10 +166,9 @@ describe Ohai::System, "Linux virtualization platform" do
     it "sets kvm guest if /proc/cpuinfo contains nested CPU w/ lscpu and full virt" do
       expect(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(true)
       allow(plugin).to receive(:read).with("/proc/cpuinfo").and_return("Intel Core Processor (Haswell, no TSX, IBRS)")
-      plugin[:cpu] = { lscpu: {
-                                  hypervisor_vendor: "KVM",
-                                  virtualization_type: "full",
-                               },
+      plugin[:cpu] = {
+                        hypervisor_vendor: "KVM",
+                        virtualization_type: "full",
                      }
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")
@@ -180,10 +179,9 @@ describe Ohai::System, "Linux virtualization platform" do
     it "sets kvm guest if /proc/cpuinfo contains nested CPU w/ lscpu and para virt" do
       expect(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(true)
       allow(plugin).to receive(:read).with("/proc/cpuinfo").and_return("Intel Core Processor (Haswell, no TSX, IBRS)")
-      plugin[:cpu] = { lscpu: {
-                                  hypervisor_vendor: "KVM",
-                                  virtualization_type: "para",
-                               },
+      plugin[:cpu] = {
+                        hypervisor_vendor: "KVM",
+                        virtualization_type: "para",
                      }
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("kvm")

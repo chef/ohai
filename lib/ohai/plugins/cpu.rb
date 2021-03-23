@@ -47,6 +47,9 @@ Ohai.plugin(:CPU) do
     cpuinfo
   end
 
+  # Convert a range of CPUs to an array
+  # Given the following range: 1-7
+  # Convert it into an array: [1, 2, 3, 4, 5, 6, 7]
   def range_to_a(range)
     range_array = []
     range.split(",").each do |cpu|
@@ -80,16 +83,18 @@ Ohai.plugin(:CPU) do
           when /^CPU\(s\):\s+(.+)/
             lscpu_info[:cpus] = $1.to_i
           when /^On-line CPU\(s\) list:\s+(.+)/
-            if range_to_a($1) == [0]
+            cpu_range = range_to_a($1)
+            if cpu_range == [0]
               lscpu_info[:cpus_online] = 0
             else
-              lscpu_info[:cpus_online] = range_to_a($1).length
+              lscpu_info[:cpus_online] = cpu_range.length
             end
           when /^Off-line CPU\(s\) list:\s+(.+)/
-            if range_to_a($1) == [0]
+            cpu_range = range_to_a($1)
+            if cpu_range == [0]
               lscpu_info[:cpus_offline] = 0
             else
-              lscpu_info[:cpus_offline] = range_to_a($1).length
+              lscpu_info[:cpus_offline] = cpu_range.length
             end
           when /^Thread\(s\) per core:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
             lscpu_info[:threads_per_core] = $1.to_i

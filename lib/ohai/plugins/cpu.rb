@@ -167,12 +167,14 @@ Ohai.plugin(:CPU) do
             lscpu_info[:vulnerability][name] = description
           when /^Flags:\s+(.+)/
             lscpu_info[:flags] = $1.split(" ").sort
+            # flags are "features" on aarch64 and s390x so add it for backwards computability
             lscpu_info[:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)
           end
         end
 
         case lscpu_info[:architecture]
         when "s390x"
+          # Add data from /proc/cpuinfo that isn't available from lscpu
           lscpu_info[:bogomips_per_cpu] = cpu_info[:bogomips_per_cpu]
           lscpu_info[:version] = cpu_info["0"][:version]
           lscpu_info[:identification] = cpu_info["0"][:identification]
@@ -181,6 +183,7 @@ Ohai.plugin(:CPU) do
           lscpu_real = lscpu_info[:sockets_per_book]
           lscpu_cores = lscpu_info[:sockets_per_book] * lscpu_info[:cores_per_socket] * lscpu_info[:books_per_drawer] * lscpu_info[:drawers]
         when "ppc64le"
+          # Add data from /proc/cpuinfo that isn't available from lscpu
           lscpu_info[:timebase] = cpu_info[:timebase]
           lscpu_info[:platform] = cpu_info[:platform]
           lscpu_info[:machine_model] = cpu_info[:machine_model]

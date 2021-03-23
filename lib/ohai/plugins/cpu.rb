@@ -268,13 +268,10 @@ Ohai.plugin(:CPU) do
         cpuinfo[current_cpu]["family"] = $1
       when /model\s+:\s(.+)/
         model = $1
+        cpuinfo[current_cpu]["model"] = model
         # ppc has "model" at the end of /proc/cpuinfo. In addition it should always include a include a dash or "IBM".
         # So let's put this in cpu/model on ppc
-        if model.match?(/-|IBM/)
-          cpuinfo["machine_model"] = model
-        else
-          cpuinfo[current_cpu]["model"] = model
-        end
+        cpuinfo["machine_model"] = model if model.match?(/-|IBM/)
       when /stepping\s+:\s(.+)/
         cpuinfo[current_cpu]["stepping"] = $1
       when /physical id\s+:\s(.+)/

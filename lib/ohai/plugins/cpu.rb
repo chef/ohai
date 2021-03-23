@@ -161,7 +161,7 @@ Ohai.plugin(:CPU) do
             lscpu_info[:vulnerability][name] = Mash.new
             lscpu_info[:vulnerability][name] = description
           when /^Flags:\s+(.+)/
-            lscpu_info[:flags] = $1.split(" ").sort.to_a
+            lscpu_info[:flags] = $1.split(" ").sort
             lscpu_info[:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)
           end
         end

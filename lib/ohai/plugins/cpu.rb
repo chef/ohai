@@ -77,7 +77,7 @@ Ohai.plugin(:CPU) do
           when /^CPU op-mode\(s\):\s+(.+)/
             lscpu_info[:cpu_opmodes] = $1.split(", ")
           when /^Byte Order:\s+(.+)/
-            lscpu_info[:byte_order] = $1.downcase.to_s
+            lscpu_info[:byte_order] = $1.downcase
           when /^Address sizes:\s+(.+)/
             lscpu_info[:address_sizes] = $1.split(", ")
           when /^CPU\(s\):\s+(.+)/
@@ -111,51 +111,51 @@ Ohai.plugin(:CPU) do
           when /^NUMA node\(s\):\s+(.+)/
             lscpu_info[:numa_nodes] = $1.to_i
           when /^Vendor ID:\s+(.+)/
-            lscpu_info[:vendor_id] = $1.to_s
+            lscpu_info[:vendor_id] = $1
           when /^Machine type:\s+(.+)/
-            lscpu_info[:machine_type] = $1.to_s
+            lscpu_info[:machine_type] = $1
           when /^CPU family:\s+(.+)/
-            lscpu_info[:family] = $1.to_s
+            lscpu_info[:family] = $1
           when /^Model:\s+(.+)/
-            lscpu_info[:model] = $1.to_s
+            lscpu_info[:model] = $1
           when /^Model name:\s+(.+)/
-            lscpu_info[:model_name] = $1.to_s
+            lscpu_info[:model_name] = $1
           when /^Stepping:\s+(.+)/
-            lscpu_info[:stepping] = $1.to_s
+            lscpu_info[:stepping] = $1
           when /^CPU MHz:\s+(.+)/
-            lscpu_info[:mhz] = $1.to_s
+            lscpu_info[:mhz] = $1
           when /^CPU static MHz:\s+(.+)/
-            lscpu_info[:mhz] = $1.to_s
+            lscpu_info[:mhz] = $1
           when /^CPU max MHz:\s+(.+)/
-            lscpu_info[:mhz_max] = $1.to_s
+            lscpu_info[:mhz_max] = $1
           when /^CPU min MHz:\s+(.+)/
-            lscpu_info[:mhz_min] = $1.to_s
+            lscpu_info[:mhz_min] = $1
           when /^CPU dynamic MHz:\s+(.+)/
-            lscpu_info[:mhz_dynamic] = $1.to_s
+            lscpu_info[:mhz_dynamic] = $1
           when /^BogoMIPS:\s+(.+)/
-            lscpu_info[:bogomips] = $1.to_s
+            lscpu_info[:bogomips] = $1
           when /^Virtualization:\s+(.+)/
-            lscpu_info[:virtualization] = $1.to_s
+            lscpu_info[:virtualization] = $1
           when /^Virtualization type:\s+(.+)/
-            lscpu_info[:virtualization_type] = $1.to_s
+            lscpu_info[:virtualization_type] = $1
           when /^Hypervisor vendor:\s+(.+)/
-            lscpu_info[:hypervisor_vendor] = $1.to_s
+            lscpu_info[:hypervisor_vendor] = $1
           when /^Dispatching mode:\s+(.+)/
-            lscpu_info[:dispatching_mode] = $1.to_s
+            lscpu_info[:dispatching_mode] = $1
           when /^L1d cache:\s+(.+)/
-            lscpu_info[:l1d_cache] = $1.to_s
+            lscpu_info[:l1d_cache] = $1
           when /^L1i cache:\s+(.+)/
-            lscpu_info[:l1i_cache] = $1.to_s
+            lscpu_info[:l1i_cache] = $1
           when /^L2 cache:\s+(.+)/
-            lscpu_info[:l2_cache] = $1.to_s
+            lscpu_info[:l2_cache] = $1
           when /^L2d cache:\s+(.+)/
-            lscpu_info[:l2d_cache] = $1.to_s
+            lscpu_info[:l2d_cache] = $1
           when /^L2i cache:\s+(.+)/
-            lscpu_info[:l2i_cache] = $1.to_s
+            lscpu_info[:l2i_cache] = $1
           when /^L3 cache:\s+(.+)/
-            lscpu_info[:l3_cache] = $1.to_s
+            lscpu_info[:l3_cache] = $1
           when /^L4 cache:\s+(.+)/
-            lscpu_info[:l4_cache] = $1.to_s
+            lscpu_info[:l4_cache] = $1
           when /^NUMA node(\d+) CPU\(s\):\s+(.+)/
             numa_node = $1
             cpus = $2

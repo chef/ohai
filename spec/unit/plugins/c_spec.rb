@@ -267,12 +267,12 @@ describe Ohai::System, "plugin c" do
 
     it "sets languages[:c][:glibc][:version]", :unix_only do
       plugin.run
-      expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
+      expect(plugin.languages[:c][:glibc][:version]).to eql("2.17")
     end
 
     it "sets languages[:c][:glibc][:description]" do
       plugin.run
-      expect(plugin.languages[:c][:glibc][:description]).to eql("GNU C Library stable release version 2.5, by Roland McGrath et al.")
+      expect(plugin.languages[:c][:glibc][:description]).to eql("ldd (GNU libc) 2.17")
     end
 
     it "does not set the languages[:c][:glibc] tree up if glibc exits nonzero" do
@@ -292,7 +292,7 @@ describe Ohai::System, "plugin c" do
       allow(plugin).to receive(:shell_out).with("ldd --version").and_return(mock_shell_out(0, C_GLIBC, ""))
       expect(plugin).to receive(:shell_out).with("ldd --version")
       plugin.run
-      expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
+      expect(plugin.languages[:c][:glibc][:version]).to eql("2.17")
     end
 
     # sun pro

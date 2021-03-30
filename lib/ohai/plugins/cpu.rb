@@ -224,7 +224,8 @@ Ohai.plugin(:CPU) do
           lscpu_info[current_cpu][:stepping] = lscpu_info[:stepping] if lscpu_info[:stepping]
           lscpu_info[current_cpu][:mhz] = lscpu_info[:mhz] if lscpu_info[:mhz]
           lscpu_info[current_cpu][:bogomips] = lscpu_info[:bogomips] if lscpu_info[:bogomips]
-          lscpu_info[current_cpu][:cache_size] = lscpu_info[:l3_cache] if lscpu_info[:l3_cache]
+          # Per cpu cache_size is only really available from /proc/cpuinfo on x86
+          lscpu_info[current_cpu][:cache_size] = cpu_info[current_cpu][:cache_size] if cpu_info[current_cpu] && cpu_info[current_cpu][:cache_size]
           lscpu_info[current_cpu][:physical_id] = current_socket
           lscpu_info[current_cpu][:core_id] = current_core
           lscpu_info[current_cpu][:cores] = lscpu_info[:cores_per_socket]

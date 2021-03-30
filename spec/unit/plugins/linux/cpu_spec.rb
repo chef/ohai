@@ -221,7 +221,7 @@ shared_examples "virtualization info" do |virtualization_type, hypervisor_vendor
   end
 end
 
-shared_examples "x86 processor info" do |family, stepping, mhz|
+shared_examples "x86 processor info" do |cpu_no, family, stepping, mhz, cache_size|
   describe "x86 processor" do
     it "has family equal to #{family}" do
       plugin.run
@@ -239,6 +239,12 @@ shared_examples "x86 processor info" do |family, stepping, mhz|
       plugin.run
       expect(plugin[:cpu]).to have_key("mhz")
       expect(plugin[:cpu]["mhz"]).to eq(mhz)
+    end
+
+    it "has cache_size in cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to have_key("cache_size")
+      expect(plugin[:cpu][cpu_no.to_s]["cache_size"]).to eql(cache_size)
     end
   end
 end
@@ -262,6 +268,11 @@ shared_examples "S390 processor info" do |cpu_no, version, identification, machi
       expect(plugin[:cpu][cpu_no.to_s]).to have_key("machine")
       expect(plugin[:cpu][cpu_no.to_s]["machine"]).to eql(machine)
     end
+
+    it "does not have a cache_size for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to_not have_key("cache_size")
+    end
   end
 end
 
@@ -277,6 +288,11 @@ shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
       plugin.run
       expect(plugin[:cpu][cpu_no.to_s]).to have_key("features")
       expect(plugin[:cpu][cpu_no.to_s]["features"]).to eql(features)
+    end
+
+    it "does not have a cache_size for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to_not have_key("cache_size")
     end
   end
 end
@@ -346,6 +362,10 @@ shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz, tim
       end
     end
 
+    it "does not have a cache_size for cpu #{cpu_no}" do
+      plugin.run
+      expect(plugin[:cpu][cpu_no.to_s]).to_not have_key("cache_size")
+    end
   end
 end
 
@@ -481,9 +501,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       flags,              # flags
       numa_node_cpus      # numa_node_cpus
     it_behaves_like "x86 processor info",
+      0,                  # cpu number
       "6",                # family
       "2",                # stepping
-      "2927.000"          # mhz
+      "2927.000",         # mhz
+      "64 KB"             # cache_size
 
     it "has virtualization" do
       plugin.run
@@ -554,9 +576,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       flags,              # flags
       numa_node_cpus      # numa_node_cpus
     it_behaves_like "x86 processor info",
+      0,                  # cpu number
       "6",                # family
       "4",                # stepping
-      "2494.232"          # mhz
+      "2494.232",         # mhz
+      "3072 KB"           # cache_size
 
     it "has vulnerability" do
       plugin.run
@@ -614,9 +638,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       flags,              # flags
       numa_node_cpus      # numa_node_cpus
     it_behaves_like "x86 processor info",
+      0,                  # cpu number
       "6",                # family
       "3",                # stepping
-      "3324.998"          # mhz
+      "3324.998",         # mhz
+      "16384 KB"          # cache_size
     it_behaves_like "virtualization info",
       "full",             # virtualization_type
       "KVM"               # hypervisor_vendor
@@ -660,9 +686,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       flags,              # flags
       numa_node_cpus      # numa_node_cpus
     it_behaves_like "x86 processor info",
+      0,                  # cpu number
       "6",                # family
       "1",                # stepping
-      "2596.990"          # mhz
+      "2596.990",         # mhz
+      "16384 KB"          # cache_size
     it_behaves_like "virtualization info",
       "full",             # virtualization_type
       "KVM"               # hypervisor_vendor
@@ -712,9 +740,11 @@ describe Ohai::System, "General Linux cpu plugin" do
       flags,              # flags
       numa_node_cpus      # numa_node_cpus
     it_behaves_like "x86 processor info",
+      0,                  # cpu number
       "6",                # family
       "5",                # stepping
-      "2266.542"          # mhz
+      "2266.542",         # mhz
+      "8192 KB"           # cache_size
     it_behaves_like "virtualization info",
       "para",             # virtualization_type
       "Xen"               # hypervisor_vendor

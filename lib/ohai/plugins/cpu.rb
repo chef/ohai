@@ -227,7 +227,7 @@ Ohai.plugin(:CPU) do
           lscpu_info[current_cpu][:cache_size] = lscpu_info[:l3_cache] if lscpu_info[:l3_cache]
           lscpu_info[current_cpu][:physical_id] = current_socket
           lscpu_info[current_cpu][:core_id] = current_core
-          lscpu_info[current_cpu][:cores] = lscpu_cores
+          lscpu_info[current_cpu][:cores] = lscpu_info[:cores_per_socket]
           lscpu_info[current_cpu][:flags] = lscpu_info[:flags] if lscpu_info[:flags]
           lscpu_info[current_cpu][:features] = lscpu_info[:flags] if lscpu_info[:architecture].match?(/aarch64|s390x/)
           if lscpu_info[:architecture] == "s390x"

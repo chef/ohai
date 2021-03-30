@@ -87,7 +87,7 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture,
       it "cpu 0 has cores to #{cores_per_socket}" do
         plugin.run
         expect(plugin[:cpu]["0"]).to have_key("cores")
-        expect(plugin[:cpu]["0"]["cores"]).to eq(cores_per_socket)
+        expect(plugin[:cpu]["0"]["cores"]).to eq(cores_per_socket.to_s)
       end
 
       # s390x shows this differently

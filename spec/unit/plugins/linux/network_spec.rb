@@ -439,6 +439,17 @@ describe Ohai::System, "Linux Network Plugin" do
     EOM
   end
 
+  let(:linux_ethtool_k) do
+    <<~EOM
+      Features for eth0:
+      rx-checksumming: on
+      tx-checksumming: off
+      rx-vlan-offload: on [fixed]
+      rx-gro-hw: off [fixed]
+
+    EOM
+  end
+
   let(:linux_ethtool_i) do
     <<~EOM
       driver: mlx5_core
@@ -480,6 +491,7 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -k/).and_return(mock_shell_out(0, linux_ethtool_k, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -a/).and_return(mock_shell_out(0, linux_ethtool_a, ""))
@@ -727,6 +739,13 @@ describe Ohai::System, "Linux Network Plugin" do
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-register-dump"]).to eq("no")
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-priv-flags"]).to eq("yes")
 
+      end
+
+      it "detects the driver offload features of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-checksumming"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["tx-checksumming"]).to eq("off")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-vlan-offload"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-gro-hw"]).to eq("off")
       end
 
       it "detects the pause frame configuration of an ethernet interface" do

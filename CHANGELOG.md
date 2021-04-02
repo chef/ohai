@@ -1,29 +1,26 @@
 # Change Log
 
-<!-- latest_release 16.12.3 -->
-## [v16.12.3](https://github.com/chef/ohai/tree/v16.12.3) (2021-04-02)
-
-#### Merged Pull Requests
-- Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.10.7 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50)) <!-- 16.12.3 -->
-- Detect docker properly even if it&#39;s within virtualization [#1641](https://github.com/chef/ohai/pull/1641) ([tas50](https://github.com/tas50)) <!-- 16.12.2 -->
-- Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50)) <!-- 16.12.1 -->
-- Add platform / platform_family detection for Alibaba Cloud Linux [#1639](https://github.com/chef/ohai/pull/1639) ([tas50](https://github.com/tas50)) <!-- 16.12.0 -->
-- Update `packages` for Windows to be complete. [#1638](https://github.com/chef/ohai/pull/1638) ([tas50](https://github.com/tas50)) <!-- 16.11.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.12.3](https://github.com/chef/ohai/tree/v16.12.3) (2021-04-02)
+
+#### Merged Pull Requests
+- Update `packages` for Windows to be complete. [#1638](https://github.com/chef/ohai/pull/1638) ([tas50](https://github.com/tas50))
+- Add platform / platform_family detection for Alibaba Cloud Linux [#1639](https://github.com/chef/ohai/pull/1639) ([tas50](https://github.com/tas50))
+- Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50))
+- Detect docker properly even if it&#39;s within virtualization [#1641](https://github.com/chef/ohai/pull/1641) ([tas50](https://github.com/tas50))
+- Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.10.7](https://github.com/chef/ohai/tree/v16.10.7) (2021-03-17)
 
 #### Merged Pull Requests
 - suppress constant redefinition warning [#1628](https://github.com/chef/ohai/pull/1628) ([ramereth](https://github.com/ramereth))
-<!-- latest_stable_release -->
 
 ## [v16.10.6](https://github.com/chef/ohai/tree/v16.10.6) (2021-02-03)
 

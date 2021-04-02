@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.12.0 -->
-## [v16.12.0](https://github.com/chef/ohai/tree/v16.12.0) (2021-04-02)
+<!-- latest_release 16.12.1 -->
+## [v16.12.1](https://github.com/chef/ohai/tree/v16.12.1) (2021-04-02)
 
 #### Merged Pull Requests
-- Add platform / platform_family detection for Alibaba Cloud Linux [#1639](https://github.com/chef/ohai/pull/1639) ([tas50](https://github.com/tas50))
+- Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.10.7 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50)) <!-- 16.12.1 -->
 - Add platform / platform_family detection for Alibaba Cloud Linux [#1639](https://github.com/chef/ohai/pull/1639) ([tas50](https://github.com/tas50)) <!-- 16.12.0 -->
 - Update `packages` for Windows to be complete. [#1638](https://github.com/chef/ohai/pull/1638) ([tas50](https://github.com/tas50)) <!-- 16.11.0 -->
 <!-- release_rollup -->

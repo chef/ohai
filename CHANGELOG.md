@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.12.2 -->
-## [v16.12.2](https://github.com/chef/ohai/tree/v16.12.2) (2021-04-02)
+<!-- latest_release 16.12.3 -->
+## [v16.12.3](https://github.com/chef/ohai/tree/v16.12.3) (2021-04-02)
 
 #### Merged Pull Requests
-- Detect docker properly even if it&#39;s within virtualization [#1641](https://github.com/chef/ohai/pull/1641) ([tas50](https://github.com/tas50))
+- Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.10.7 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50)) <!-- 16.12.3 -->
 - Detect docker properly even if it&#39;s within virtualization [#1641](https://github.com/chef/ohai/pull/1641) ([tas50](https://github.com/tas50)) <!-- 16.12.2 -->
 - Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50)) <!-- 16.12.1 -->
 - Add platform / platform_family detection for Alibaba Cloud Linux [#1639](https://github.com/chef/ohai/pull/1639) ([tas50](https://github.com/tas50)) <!-- 16.12.0 -->

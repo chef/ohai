@@ -637,7 +637,6 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:systems][:docker]).to eq("guest")
     end
 
-
     it "sets virtualization if /.dockerinit exists" do
       allow(plugin).to receive(:file_exist?).with("/.dockerinit").and_return(true)
       plugin.run

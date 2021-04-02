@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.11.0 -->
+## [v16.11.0](https://github.com/chef/ohai/tree/v16.11.0) (2021-04-02)
+
+#### Merged Pull Requests
+- Update `packages` for Windows to be complete. [#1638](https://github.com/chef/ohai/pull/1638) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.10.7 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update `packages` for Windows to be complete. [#1638](https://github.com/chef/ohai/pull/1638) ([tas50](https://github.com/tas50)) <!-- 16.11.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

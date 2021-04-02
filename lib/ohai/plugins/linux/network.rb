@@ -273,6 +273,30 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine offload features for the interface using ethtool
+  def ethernet_offload_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -k #{tmp_int}")
+      Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["offload_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Features for")
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val
+          offload_key = key.downcase.strip.tr(" ", "_").to_s
+          iface[tmp_int]["offload_params"][offload_key] = val.downcase.gsub(/\[.*\]/, "").strip.to_s
+        end
+      end
+    end
+    iface
+  end
+
   # determine pause parameters for the interface using ethtool
   def ethernet_pause_parameters(iface)
     return iface unless ethtool_binary_path
@@ -793,6 +817,7 @@ Ohai.plugin(:Network) do
     iface = ethernet_ring_parameters(iface)
     iface = ethernet_channel_parameters(iface)
     iface = ethernet_coalesce_parameters(iface)
+    iface = ethernet_offload_parameters(iface)
     iface = ethernet_driver_info(iface)
     iface = ethernet_pause_parameters(iface)
     counters[:network][:interfaces] = net_counters

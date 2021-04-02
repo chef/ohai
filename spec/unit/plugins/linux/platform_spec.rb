@@ -172,6 +172,24 @@ describe Ohai::System, "Linux plugin platform" do
         expect(plugin.platform_id_remap("centos")).to eq("nexus_centos")
       end
     end
+    context "when on centos stream" do
+      let(:os_release_content) do
+        <<~OS_RELEASE
+          NAME="CentOS Stream"
+          VERSION="8"
+          ID="centos"
+          ID_LIKE="rhel fedora"
+          VERSION_ID="8"
+          PRETTY_NAME="CentOS Stream 8"
+        OS_RELEASE
+      end
+
+      it "returns centos_stream for centos os-release id" do
+        expect(plugin).to receive(:file_exist?).at_least(:once).with("/etc/os-release").and_return(true)
+        expect(plugin).to receive(:file_read).with("/etc/os-release").and_return(os_release_content)
+        expect(plugin.platform_id_remap("centos")).to eq("centos_stream")
+      end
+    end
   end
 
   describe "#platform_family_from_platform" do

@@ -46,8 +46,8 @@ Ohai.plugin(:Platform) do
   def read_os_release_info(file)
     return nil unless file_exist?(file)
 
-    file_read(file).split.inject({}) do |map, line|
-      key, value = line.split("=")
+    file_read(file).each_line.inject({}) do |map, line|
+      key, value = line.chomp.split("=")
       map[key] = value.gsub(/\A"|"\Z/, "") if value
       map
     end
@@ -82,6 +82,14 @@ Ohai.plugin(:Platform) do
   end
 
   #
+  # If /etc/os-release indicates we are CentOS Stream
+  #
+  # @returns [Boolean] if we are CentOS Stream according to /etc/os-release
+  def os_release_file_is_centos_stream?
+    file_exist?("/etc/os-release") && os_release_info["NAME"].match?("Stream")
+  end
+
+  #
   # Determines the platform version for F5 Big-IP systems
   #
   # @deprecated
@@ -107,6 +115,9 @@ Ohai.plugin(:Platform) do
   def platform_id_remap(id)
     # this catches the centos guest shell in the nexus switch which identifies itself as centos
     return "nexus_centos" if id == "centos" && os_release_file_is_cisco?
+
+    # this catches centos stream since the ID still says "centos"
+    return "centos_stream" if id == "centos" && os_release_file_is_centos_stream?
 
     # the platform mappings between the 'ID' field in /etc/os-release and the value
     # ohai uses. If you're adding a new platform here and you want to change the name
@@ -137,7 +148,7 @@ Ohai.plugin(:Platform) do
     when /ubuntu/, /debian/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /centos/, /redhat/, /oracle/, /almalinux/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /centos/, /centos_stream/, /redhat/, /oracle/, /almalinux/, /scientific/, /enterpriseenterprise/, /xenserver/, /xcp-ng/, /cloudlinux/, /alibabalinux/, /sangoma/, /clearos/, /parallels/, /ibm_powerkvm/, /nexus_centos/, /bigip/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the

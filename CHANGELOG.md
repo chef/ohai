@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.30 -->
-## [v17.0.30](https://github.com/chef/ohai/tree/v17.0.30) (2021-03-15)
+<!-- latest_release 17.0.31 -->
+## [v17.0.31](https://github.com/chef/ohai/tree/v17.0.31) (2021-04-02)
 
 #### Merged Pull Requests
-- Stick the common matched platforms first [#1635](https://github.com/chef/ohai/pull/1635) ([tas50](https://github.com/tas50))
+- network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan)) <!-- 17.0.31 -->
 - Stick the common matched platforms first [#1635](https://github.com/chef/ohai/pull/1635) ([tas50](https://github.com/tas50)) <!-- 17.0.30 -->
 - Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50)) <!-- 17.0.29 -->
 - Remove support for Pidora which is discontinued [#1633](https://github.com/chef/ohai/pull/1633) ([tas50](https://github.com/tas50)) <!-- 17.0.28 -->

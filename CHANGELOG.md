@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.31 -->
-## [v17.0.31](https://github.com/chef/ohai/tree/v17.0.31) (2021-04-02)
+<!-- latest_release 17.0.32 -->
+## [v17.0.32](https://github.com/chef/ohai/tree/v17.0.32) (2021-04-05)
 
 #### Merged Pull Requests
-- network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan))
+- Ohai: Change C language plugin for glibc version detection [#1636](https://github.com/chef/ohai/pull/1636) ([bhaveshdavda](https://github.com/bhaveshdavda))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Ohai: Change C language plugin for glibc version detection [#1636](https://github.com/chef/ohai/pull/1636) ([bhaveshdavda](https://github.com/bhaveshdavda)) <!-- 17.0.32 -->
 - network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan)) <!-- 17.0.31 -->
 - Stick the common matched platforms first [#1635](https://github.com/chef/ohai/pull/1635) ([tas50](https://github.com/tas50)) <!-- 17.0.30 -->
 - Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50)) <!-- 17.0.29 -->

@@ -85,14 +85,12 @@ Ohai.plugin(:C) do
 
   def collect_glibc
     # glibc
-    ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-      collect( Ohai.abs_path( glibc )) do |so|
-        description = so.stdout.split($/).first
-        if description =~ /(\d+\.\d+\.?\d*)/
-          @c[:glibc] = Mash.new
-          @c[:glibc][:version] = $1
-          @c[:glibc][:description] = description
-        end
+    collect("ldd --version") do |so|
+      description = so.stdout.split($/).first
+      if description =~ /(\d+\.\d+\.?\d*)/
+        @c[:glibc] = Mash.new
+        @c[:glibc][:version] = $1
+        @c[:glibc][:description] = description
       end
     end
   end

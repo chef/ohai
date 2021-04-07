@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.13.0 -->
+## [v16.13.0](https://github.com/chef/ohai/tree/v16.13.0) (2021-04-07)
+
+#### Merged Pull Requests
+- Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.12.3 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth)) <!-- 16.13.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

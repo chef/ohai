@@ -1,20 +1,18 @@
 # Change Log
 
-<!-- latest_release 16.13.0 -->
-## [v16.13.0](https://github.com/chef/ohai/tree/v16.13.0) (2021-04-07)
-
-#### Merged Pull Requests
-- Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.12.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth)) <!-- 16.13.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.13.0](https://github.com/chef/ohai/tree/v16.13.0) (2021-04-08)
+
+#### Merged Pull Requests
+- Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth))
+<!-- latest_stable_release -->
+
 ## [v16.12.3](https://github.com/chef/ohai/tree/v16.12.3) (2021-04-02)
 
 #### Merged Pull Requests
@@ -23,7 +21,6 @@
 - Identify effortless installs in the Chef plugin [#1640](https://github.com/chef/ohai/pull/1640) ([tas50](https://github.com/tas50))
 - Detect docker properly even if it&#39;s within virtualization [#1641](https://github.com/chef/ohai/pull/1641) ([tas50](https://github.com/tas50))
 - Add support for Sangoma Linux [#1642](https://github.com/chef/ohai/pull/1642) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.10.7](https://github.com/chef/ohai/tree/v16.10.7) (2021-03-17)
 

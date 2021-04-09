@@ -27,9 +27,8 @@ describe Ohai::System, "OpenBSD hostname plugin" do
     allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
   end
 
-  it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")
-
-  it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
+  it_should_check_from("openbsd::hostname", "hostname", "hostname -s", "katie")
+  it_should_check_from("openbsd::hostname", "machinename", "hostname", "katie.local")
 
   it "uses #resolve_fqdn to find the fqdn" do
     @plugin.run

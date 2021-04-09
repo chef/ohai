@@ -22,14 +22,13 @@ describe Ohai::System, "Darwin hostname plugin" do
   before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
+    allow(@plugin).to receive(:shell_out).with("scutil --get HostName").and_return(mock_shell_out(0, "katie", ""))
+    allow(@plugin).to receive(:shell_out).with("scutil --get ComputerName").and_return(mock_shell_out(0, "katie.local", ""))
     allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
   end
 
-  it_should_check_from("darwin::hostname", "hostname", "hostname -s", "katie")
-
-  it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
+  it_should_check_from("darwin::hostname", "hostname", "scutil --get HostName", "katie")
+  it_should_check_from("darwin::hostname", "machinename", "scutil --get ComputerName", "katie.local")
 
   it "uses #resolve_fqdn to find the fqdn" do
     @plugin.run

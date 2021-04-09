@@ -28,9 +28,7 @@ describe Ohai::System, "Linux hostname plugin" do
   end
 
   it_should_check_from("linux::hostname", "hostname", "hostname -s", "katie")
-
   it_should_check_from("linux::hostname", "fqdn", "hostname --fqdn", "katie.bethell")
-
   it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
   describe "when domain name is unset" do

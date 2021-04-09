@@ -28,8 +28,6 @@ describe Ohai::System, "FreeBSD hostname plugin" do
   end
 
   it_should_check_from("freebsd::hostname", "hostname", "hostname -s", "katie")
-
   it_should_check_from("freebsd::hostname", "fqdn", "hostname -f", "katie.bethell")
-
   it_should_check_from("freebsd::hostname", "machinename", "hostname", "katie.local")
 end

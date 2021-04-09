@@ -42,7 +42,7 @@ Ohai.plugin(:Hostname) do
   end
 
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
-  # this is ipv6-safe, works on ruby 1.8.7+
+  # this is ipv6-safe
   def resolve_fqdn
     require "socket" unless defined?(Socket)
     require "ipaddr" unless defined?(IPAddr)
@@ -96,8 +96,8 @@ Ohai.plugin(:Hostname) do
   end
 
   collect_data(:darwin) do
-    hostname from_cmd("hostname -s")
-    machinename from_cmd("hostname")
+    hostname from_cmd("scutil --get HostName")
+    machinename from_cmd("scutil --get ComputerName")
     begin
       our_fqdn = resolve_fqdn
       # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely

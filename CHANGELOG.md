@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.33 -->
-## [v17.0.33](https://github.com/chef/ohai/tree/v17.0.33) (2021-04-07)
+<!-- latest_release 17.0.34 -->
+## [v17.0.34](https://github.com/chef/ohai/tree/v17.0.34) (2021-04-12)
 
 #### Merged Pull Requests
-- Create os_release plugin for parsing data from /etc/os-release [#1645](https://github.com/chef/ohai/pull/1645) ([ramereth](https://github.com/ramereth))
+- lpar_no and wpar_no in AIX Virtualizatin plugin should be Integers [#1647](https://github.com/chef/ohai/pull/1647) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- lpar_no and wpar_no in AIX Virtualizatin plugin should be Integers [#1647](https://github.com/chef/ohai/pull/1647) ([tas50](https://github.com/tas50)) <!-- 17.0.34 -->
 - Create os_release plugin for parsing data from /etc/os-release [#1645](https://github.com/chef/ohai/pull/1645) ([ramereth](https://github.com/ramereth)) <!-- 17.0.33 -->
 - Ohai: Change C language plugin for glibc version detection [#1636](https://github.com/chef/ohai/pull/1636) ([bhaveshdavda](https://github.com/bhaveshdavda)) <!-- 17.0.32 -->
 - network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan)) <!-- 17.0.31 -->

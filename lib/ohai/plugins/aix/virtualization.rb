@@ -24,14 +24,15 @@ Ohai.plugin(:Virtualization) do
     virtualization Mash.new
 
     lpar_no, lpar_name = shell_out("uname -L").stdout.split(nil, 2)
+    lpar_no = lpar_no.to_i
 
-    unless lpar_no.to_i == -1 || (lpar_no.to_i == 1 && lpar_name == "NULL")
+    unless lpar_no == -1 || (lpar_no == 1 && lpar_name == "NULL")
       virtualization[:lpar_no] = lpar_no
       virtualization[:lpar_name] = lpar_name
     end
 
-    wpar_no = shell_out("uname -W").stdout.strip
-    if wpar_no.to_i > 0
+    wpar_no = shell_out("uname -W").stdout.strip.to_i
+    if wpar_no > 0
       virtualization[:wpar_no] = wpar_no
     else
       # the below parses the output of lswpar in the long format

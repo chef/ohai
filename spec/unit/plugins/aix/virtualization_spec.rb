@@ -247,7 +247,7 @@ describe Ohai::System, "AIX virtualization plugin" do
 
     it "uname -L detects the LPAR number and name" do
       plugin.run
-      expect(plugin[:virtualization][:lpar_no]).to eq("29")
+      expect(plugin[:virtualization][:lpar_no]).to eq(29)
       expect(plugin[:virtualization][:lpar_name]).to eq("virtlpar03 - 7.1 testers")
     end
 
@@ -314,7 +314,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     end
 
     it "uname -W detects the WPAR number" do
-      expect(plugin[:virtualization][:wpar_no]).to eq("42")
+      expect(plugin[:virtualization][:wpar_no]).to eq(42)
     end
   end
 end

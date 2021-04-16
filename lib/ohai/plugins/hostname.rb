@@ -48,7 +48,28 @@ Ohai.plugin(:Hostname) do
     require "ipaddr" unless defined?(IPAddr)
 
     hostname = from_cmd("hostname")
-    addrinfo = Socket.getaddrinfo(hostname, nil).first
+    begin
+      addrinfo = Socket.getaddrinfo(hostname, nil).first
+    rescue SocketError
+      # In the event that we got an exception from Socket, it's possible
+      # that it will work if we restrict it to IPv4 only either because of
+      # IPv6 misconfiguration or other bugs.
+      #
+      # Specifically it's worth noting that on macOS, getaddrinfo() will choke
+      # if it gets back a link-local address (say if you have 'fe80::1 myhost'
+      # in /etc/hosts). This will raise:
+      #    SocketError (getnameinfo: Non-recoverable failure in name resolution)
+      #
+      # But general misconfiguration could cause similar issues, so attempt to
+      # fall back to v4-only
+      begin
+        addrinfo = Socket.getaddrinfo(hostname, nil, :INET).first
+      rescue
+        # and if *that* fails, then try v6-only, in case we're in a v6-only
+        # environment with v4 config issues
+        addrinfo = Socket.getaddrinfo(hostname, nil, :INET6).first
+      end
+    end
     iaddr = IPAddr.new(addrinfo[3])
     Socket.gethostbyaddr(iaddr.hton)[0]
   rescue

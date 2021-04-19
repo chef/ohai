@@ -47,19 +47,17 @@ Ohai.plugin(:CPU) do
     cpuinfo
   end
 
-  # Convert a range of CPUs to an array
+  # Convert a string that looks like range of CPUs to an array
   # Given the following range: 1-7
   # Convert it into an array: [1, 2, 3, 4, 5, 6, 7]
-  def range_to_a(range)
-    range_array = []
-    range.split(",").each do |cpu|
+  def range_str_to_a(range)
+    range.split(",").each_with_object([]) do |cpu, arr|
       if /\d+-\d+/.match?(cpu.to_s)
-        range_array << Range.new(*cpu.split("-").map(&:to_i)).to_a
+        arr << Range.new(*cpu.split("-").map(&:to_i)).to_a
       else
-        range_array << cpu.to_i
+        arr << cpu.to_i
       end
-    end
-    range_array.flatten
+    end.flatten
   end
 
   def parse_lscpu(cpu_info)
@@ -83,14 +81,14 @@ Ohai.plugin(:CPU) do
           when /^CPU\(s\):\s+(.+)/
             lscpu_info[:cpus] = $1.to_i
           when /^On-line CPU\(s\) list:\s+(.+)/
-            cpu_range = range_to_a($1)
+            cpu_range = range_str_to_a($1)
             if cpu_range == [0]
               lscpu_info[:cpus_online] = 0
             else
               lscpu_info[:cpus_online] = cpu_range.length
             end
           when /^Off-line CPU\(s\) list:\s+(.+)/
-            cpu_range = range_to_a($1)
+            cpu_range = range_str_to_a($1)
             if cpu_range == [0]
               lscpu_info[:cpus_offline] = 0
             else
@@ -159,7 +157,7 @@ Ohai.plugin(:CPU) do
           when /^NUMA node(\d+) CPU\(s\):\s+(.+)/
             numa_node = $1
             cpus = $2
-            lscpu_info[:numa_node_cpus][numa_node] = range_to_a(cpus)
+            lscpu_info[:numa_node_cpus][numa_node] = range_str_to_a(cpus)
           when /^Vulnerability (.+?):\s+(.+)/ # https://rubular.com/r/aKtSD1ypUlKbGm
             name = $1.strip.downcase.tr(" ", "_")
             description = $2.strip

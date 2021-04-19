@@ -62,12 +62,12 @@ Ohai.plugin(:CPU) do
 
   def parse_lscpu(cpu_info)
     lscpu_info = Mash.new
-    lscpu_info[:numa_node_cpus] = Mash.new
-    lscpu_info[:vulnerability] = Mash.new
     begin
       so = shell_out("lscpu")
       cpu_cores = shell_out("lscpu -p=CPU,CORE,SOCKET")
       if so.exitstatus == 0 && cpu_cores.exitstatus == 0
+        lscpu_info[:numa_node_cpus] = Mash.new
+        lscpu_info[:vulnerability] = Mash.new
         so.stdout.each_line do |line|
           case line
           when /^Architecture:\s+(.+)/
@@ -244,12 +244,7 @@ Ohai.plugin(:CPU) do
     rescue Ohai::Exceptions::Exec # util-linux isn't installed most likely
       logger.trace("Plugin CPU: Error executing lscpu. util-linux may not be installed.")
     end
-    # Make sure we return an empty hash if we don't have architecture set
-    if lscpu_info[:architecture].nil?
-      Mash.new
-    else
-      lscpu_info
-    end
+    lscpu_info
   end
 
   def parse_cpuinfo

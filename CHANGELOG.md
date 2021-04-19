@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.36 -->
-## [v17.0.36](https://github.com/chef/ohai/tree/v17.0.36) (2021-04-16)
+<!-- latest_release 17.0.37 -->
+## [v17.0.37](https://github.com/chef/ohai/tree/v17.0.37) (2021-04-19)
 
 #### Merged Pull Requests
-- Fall back to v4-only getaddrinfo if we get socket errors [#1652](https://github.com/chef/ohai/pull/1652) ([jaymzh](https://github.com/jaymzh))
+- Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi)) <!-- 17.0.37 -->
 - Fall back to v4-only getaddrinfo if we get socket errors [#1652](https://github.com/chef/ohai/pull/1652) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.36 -->
 - Update rubocop-performance to 1.10.2 [#1651](https://github.com/chef/ohai/pull/1651) ([tas50](https://github.com/tas50)) <!-- 17.0.35 -->
 - lpar_no and wpar_no in AIX Virtualizatin plugin should be Integers [#1647](https://github.com/chef/ohai/pull/1647) ([tas50](https://github.com/tas50)) <!-- 17.0.34 -->

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.37 -->
-## [v17.0.37](https://github.com/chef/ohai/tree/v17.0.37) (2021-04-19)
+<!-- latest_release 17.0.38 -->
+## [v17.0.38](https://github.com/chef/ohai/tree/v17.0.38) (2021-04-20)
 
 #### Merged Pull Requests
-- Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi))
+- Gather CPU info from lscpu and merge data into cpu attribute namespace [#1454](https://github.com/chef/ohai/pull/1454) ([ramereth](https://github.com/ramereth))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Gather CPU info from lscpu and merge data into cpu attribute namespace [#1454](https://github.com/chef/ohai/pull/1454) ([ramereth](https://github.com/ramereth)) <!-- 17.0.38 -->
 - Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi)) <!-- 17.0.37 -->
 - Fall back to v4-only getaddrinfo if we get socket errors [#1652](https://github.com/chef/ohai/pull/1652) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.36 -->
 - Update rubocop-performance to 1.10.2 [#1651](https://github.com/chef/ohai/pull/1651) ([tas50](https://github.com/tas50)) <!-- 17.0.35 -->

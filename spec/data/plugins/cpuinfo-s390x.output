@@ -1,0 +1,32 @@
+vendor_id       : IBM/S390
+# processors    : 4
+bogomips per cpu: 3241.00
+max thread id   : 0
+features        : esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx vxd vxe gs vxe2 vxp sort dflt 
+facilities      : 0 1 2 3 4 6 7 8 9 10 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 30 31 32 33 34 35 36 37 38 40 41 42 43 44 45 47 48 49 50 51 52 53 54 57 58 59 60 61 64 69 71 73 74 75 76 77 78 80 81 82 129 130 131 133 134 135 138 139 146 147 148 150 151 152 155 156
+cache0          : level=1 type=Data scope=Private size=128K line_size=256 associativity=8
+cache1          : level=1 type=Instruction scope=Private size=128K line_size=256 associativity=8
+cache2          : level=2 type=Data scope=Private size=4096K line_size=256 associativity=8
+cache3          : level=2 type=Instruction scope=Private size=4096K line_size=256 associativity=8
+cache4          : level=3 type=Unified scope=Shared size=262144K line_size=256 associativity=32
+cache5          : level=4 type=Unified scope=Shared size=983040K line_size=256 associativity=60
+processor 0: version = FF,  identification = 0618E8,  machine = 8561
+processor 1: version = FF,  identification = 0618E8,  machine = 8561
+processor 2: version = FF,  identification = 0618E8,  machine = 8561
+processor 3: version = FF,  identification = 0618E8,  machine = 8561
+
+cpu number      : 0
+cpu MHz dynamic : 5200
+cpu MHz static  : 5200
+
+cpu number      : 1
+cpu MHz dynamic : 5200
+cpu MHz static  : 5200
+
+cpu number      : 2
+cpu MHz dynamic : 5200
+cpu MHz static  : 5200
+
+cpu number      : 3
+cpu MHz dynamic : 5200
+cpu MHz static  : 5200

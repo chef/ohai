@@ -208,7 +208,7 @@ Ohai.plugin(:Virtualization) do
     # <index #>:<subsystem>:/
     #
     # Full notes, https://tickets.opscode.com/browse/OHAI-551
-    # Kernel docs, https://www.kernel.org/doc/Documentation/cgroups
+    # Kernel docs, https://web.archive.org/web/20100514070914/http://www.kernel.org/doc/Documentation/cgroups/
     if file_exist?("/proc/self/cgroup")
       cgroup_content = file_read("/proc/self/cgroup")
       # These two REs catch many different examples. Here's a specific one

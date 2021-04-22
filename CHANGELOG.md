@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.13.1 -->
+## [v16.13.1](https://github.com/chef/ohai/tree/v16.13.1) (2021-04-22)
+
+#### Merged Pull Requests
+- Update minimum version of mixlib-shellout [#1658](https://github.com/chef/ohai/pull/1658) ([pravi](https://github.com/pravi))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=16.13.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update minimum version of mixlib-shellout [#1658](https://github.com/chef/ohai/pull/1658) ([pravi](https://github.com/pravi)) <!-- 16.13.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

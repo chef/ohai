@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.6"
 
-  s.add_dependency "chef-config", ">= 12.8", "< 17"
+  s.add_dependency "chef-config", ">= 14.12", "< 17"
   s.add_dependency "chef-utils", ">= 16.0", "< 17"
   s.add_dependency "ffi", "~> 1.9"
   s.add_dependency "ffi-yajl", "~> 2.2"

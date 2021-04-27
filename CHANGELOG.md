@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.41 -->
-## [v17.0.41](https://github.com/chef/ohai/tree/v17.0.41) (2021-04-27)
+<!-- latest_release 17.0.42 -->
+## [v17.0.42](https://github.com/chef/ohai/tree/v17.0.42) (2021-04-27)
 
 #### Merged Pull Requests
-- Use filter_map where we can [#1656](https://github.com/chef/ohai/pull/1656) ([tas50](https://github.com/tas50))
+- Chef 17: Set &#39;filesystem&#39; to be new-style data on Windows [#1662](https://github.com/chef/ohai/pull/1662) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.8.1 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Chef 17: Set &#39;filesystem&#39; to be new-style data on Windows [#1662](https://github.com/chef/ohai/pull/1662) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.42 -->
 - Use filter_map where we can [#1656](https://github.com/chef/ohai/pull/1656) ([tas50](https://github.com/tas50)) <!-- 17.0.41 -->
 - Update minimum version of chef-config [#1659](https://github.com/chef/ohai/pull/1659) ([pravi](https://github.com/pravi)) <!-- 17.0.40 -->
 - Dead links fixed [#1657](https://github.com/chef/ohai/pull/1657) ([craftsbyshuvro](https://github.com/craftsbyshuvro)) <!-- 17.0.39 -->

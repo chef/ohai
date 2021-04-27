@@ -89,8 +89,8 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "kb_used" => 9900,
           "percent_used" => 99,
         }.each do |k, v|
-          expect(plugin[:filesystem]["C:"][k]).to eq(v)
-          expect(plugin[:filesystem]["D:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
         end
@@ -105,7 +105,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "volume_name" => "",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
-          expect(plugin[:filesystem]["C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
         end
 
@@ -117,7 +117,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "volume_name" => "",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
-          expect(plugin[:filesystem]["D:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
         end
       end
@@ -139,8 +139,8 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "kb_used" => 9900,
           "percent_used" => 99,
         }.each do |k, v|
-          expect(plugin[:filesystem]["C:"][k]).to eq(v)
-          expect(plugin[:filesystem]["D:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
         end
@@ -155,7 +155,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "volume_name" => "Volume 0",
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
-          expect(plugin[:filesystem]["C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
         end
 
@@ -167,7 +167,7 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "volume_name" => "Volume 1",
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
-          expect(plugin[:filesystem]["D:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
           expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
         end
       end

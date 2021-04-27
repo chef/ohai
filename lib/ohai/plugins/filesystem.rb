@@ -98,14 +98,6 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
-  def generate_deprecated_windows_view(fs)
-    view = generate_mountpoint_view(fs)
-    view.each do |mp, entry|
-      view[mp].delete("devices")
-    end
-    view
-  end
-
   def parse_common_df(out)
     fs = {}
     out.each_line do |line|
@@ -720,9 +712,10 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - Windows didn't do the conversion when everyone
-    # else did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_windows_view(fs)
+    # Chef 16 added 'filesystem2'
+    # In Chef 17 we made 'filesystem' and 'filesystem2' match (both new-style)
+    # In Chef 18 we will drop 'filesystem2'
+    filesystem fs_data
     filesystem2 fs_data
   end
 end

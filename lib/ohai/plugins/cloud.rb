@@ -149,9 +149,9 @@ Ohai.plugin(:Cloud) do
       end
     end.flatten.compact
 
-    private_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+    private_ips = gce["instance"]["networkInterfaces"].filter_map do |interface|
       interface["ip"]
-    end.compact
+    end
 
     public_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
     private_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }

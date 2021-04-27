@@ -141,13 +141,13 @@ Ohai.plugin(:Network) do
 
   # using a temporary var to hold routes and their interface name
   def parse_routes(family, iface)
-    iface.collect do |i, iv|
+    iface.filter_map do |i, iv|
       next unless iv[:routes]
 
-      iv[:routes].collect do |r|
+      iv[:routes].filter_map do |r|
         r.merge(dev: i) if r[:family] == family[:name]
-      end.compact # @todo: when we drop ruby 2.6 this should be a filter_map
-    end.compact.flatten # @todo: when we drop ruby 2.6 this should be a filter_map
+      end
+    end.flatten
   end
 
   # determine layer 1 details for the interface using ethtool

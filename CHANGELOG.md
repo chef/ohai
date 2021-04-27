@@ -1,69 +1,66 @@
 # Change Log
 
-<!-- latest_release 17.0.42 -->
-## [v17.0.42](https://github.com/chef/ohai/tree/v17.0.42) (2021-04-27)
-
-#### Merged Pull Requests
-- Chef 17: Set &#39;filesystem&#39; to be new-style data on Windows [#1662](https://github.com/chef/ohai/pull/1662) ([jaymzh](https://github.com/jaymzh))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.8.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Chef 17: Set &#39;filesystem&#39; to be new-style data on Windows [#1662](https://github.com/chef/ohai/pull/1662) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.42 -->
-- Use filter_map where we can [#1656](https://github.com/chef/ohai/pull/1656) ([tas50](https://github.com/tas50)) <!-- 17.0.41 -->
-- Update minimum version of chef-config [#1659](https://github.com/chef/ohai/pull/1659) ([pravi](https://github.com/pravi)) <!-- 17.0.40 -->
-- Dead links fixed [#1657](https://github.com/chef/ohai/pull/1657) ([craftsbyshuvro](https://github.com/craftsbyshuvro)) <!-- 17.0.39 -->
-- Gather CPU info from lscpu and merge data into cpu attribute namespace [#1454](https://github.com/chef/ohai/pull/1454) ([ramereth](https://github.com/ramereth)) <!-- 17.0.38 -->
-- Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi)) <!-- 17.0.37 -->
-- Fall back to v4-only getaddrinfo if we get socket errors [#1652](https://github.com/chef/ohai/pull/1652) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.36 -->
-- Update rubocop-performance to 1.10.2 [#1651](https://github.com/chef/ohai/pull/1651) ([tas50](https://github.com/tas50)) <!-- 17.0.35 -->
-- lpar_no and wpar_no in AIX Virtualizatin plugin should be Integers [#1647](https://github.com/chef/ohai/pull/1647) ([tas50](https://github.com/tas50)) <!-- 17.0.34 -->
-- Create os_release plugin for parsing data from /etc/os-release [#1645](https://github.com/chef/ohai/pull/1645) ([ramereth](https://github.com/ramereth)) <!-- 17.0.33 -->
-- Ohai: Change C language plugin for glibc version detection [#1636](https://github.com/chef/ohai/pull/1636) ([bhaveshdavda](https://github.com/bhaveshdavda)) <!-- 17.0.32 -->
-- network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan)) <!-- 17.0.31 -->
-- Stick the common matched platforms first [#1635](https://github.com/chef/ohai/pull/1635) ([tas50](https://github.com/tas50)) <!-- 17.0.30 -->
-- Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50)) <!-- 17.0.29 -->
-- Remove support for Pidora which is discontinued [#1633](https://github.com/chef/ohai/pull/1633) ([tas50](https://github.com/tas50)) <!-- 17.0.28 -->
-- Remove support for discontinued antergos distro [#1634](https://github.com/chef/ohai/pull/1634) ([tas50](https://github.com/tas50)) <!-- 17.0.27 -->
-- Fix support for Sangoma Linux [#1631](https://github.com/chef/ohai/pull/1631) ([hron84](https://github.com/hron84)) <!-- 17.0.26 -->
-- Update rubocop-performance to 1.10.1 and revert optimization [#1630](https://github.com/chef/ohai/pull/1630) ([tas50](https://github.com/tas50)) <!-- 17.0.25 -->
-- Resolve new rubocop-performance warning [#1629](https://github.com/chef/ohai/pull/1629) ([tas50](https://github.com/tas50)) <!-- 17.0.24 -->
-- Detect docker properly even if it&#39;s within virtualization [#1627](https://github.com/chef/ohai/pull/1627) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.23 -->
-- Don&#39;t return in the hab plugin [#1625](https://github.com/chef/ohai/pull/1625) ([tas50](https://github.com/tas50)) <!-- 17.0.22 -->
-- Adds chef_effortless collection to chef plugin [#1624](https://github.com/chef/ohai/pull/1624) ([collinmcneese](https://github.com/collinmcneese)) <!-- 17.0.21 -->
-- adds Habitat plugin [#1623](https://github.com/chef/ohai/pull/1623) ([collinmcneese](https://github.com/collinmcneese)) <!-- 17.0.20 -->
-- Add Alibaba cloud plugin [#1620](https://github.com/chef/ohai/pull/1620) ([tas50](https://github.com/tas50)) <!-- 17.0.19 -->
-- Add platform / platform_family detection for Alibaba Cloud Linux [#1618](https://github.com/chef/ohai/pull/1618) ([tas50](https://github.com/tas50)) <!-- 17.0.18 -->
-- Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh)) <!-- 17.0.17 -->
-- Add support for Podman and fix docker guest detection on Github Actions [#1617](https://github.com/chef/ohai/pull/1617) ([ramereth](https://github.com/ramereth)) <!-- 17.0.16 -->
-- Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.15 -->
-- [linux/platform] fix platform_version on Debian testing and unstable [#1613](https://github.com/chef/ohai/pull/1613) ([michel-slm](https://github.com/michel-slm)) <!-- 17.0.14 -->
-- Don&#39;t track sensitive new ec2 metadata [#1605](https://github.com/chef/ohai/pull/1605) ([tas50](https://github.com/tas50)) <!-- 17.0.13 -->
-- Detect Alma Linux with platform_family of rhel [#1604](https://github.com/chef/ohai/pull/1604) ([tas50](https://github.com/tas50)) <!-- 17.0.12 -->
-- Support newer aws metadata versions [#1600](https://github.com/chef/ohai/pull/1600) ([tas50](https://github.com/tas50)) <!-- 17.0.11 -->
-- Fix fetching metadata on AWS compatible clouds [#1599](https://github.com/chef/ohai/pull/1599) ([tas50](https://github.com/tas50)) <!-- 17.0.10 -->
-- Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz)) <!-- 17.0.9 -->
-- Update ec2_metadata to use IMDSV2 (Continued from  #1457) [#1520](https://github.com/chef/ohai/pull/1520) ([sawanoboly](https://github.com/sawanoboly)) <!-- 17.0.8 -->
-- suppress constant redefinition warning [#1597](https://github.com/chef/ohai/pull/1597) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.0.7 -->
-- Update master ohai to pull from master chef [#1595](https://github.com/chef/ohai/pull/1595) ([tas50](https://github.com/tas50)) <!-- 17.0.6 -->
-- Require Ruby 2.7 or later [#1593](https://github.com/chef/ohai/pull/1593) ([tas50](https://github.com/tas50)) <!-- 17.0.5 -->
-- Fetch chef-utils and chef-config from chef-16 branch [#1594](https://github.com/chef/ohai/pull/1594) ([tas50](https://github.com/tas50)) <!-- 17.0.4 -->
-- Stop gathering filesystem2 data on BSD/Solaris/AIX [#1592](https://github.com/chef/ohai/pull/1592) ([tas50](https://github.com/tas50)) <!-- 17.0.3 -->
-- Support more than 10 interfaces [#1479](https://github.com/chef/ohai/pull/1479) ([Babar](https://github.com/Babar)) <!-- 17.0.2 -->
-- network: populate pause frame config [#1564](https://github.com/chef/ohai/pull/1564) ([kuba-moo](https://github.com/kuba-moo)) <!-- 17.0.1 -->
-- Bump Ohai to 17.0.0 [#1591](https://github.com/chef/ohai/pull/1591) ([tas50](https://github.com/tas50)) <!-- 17.0.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.0.42](https://github.com/chef/ohai/tree/v17.0.42) (2021-04-27)
+
+#### Merged Pull Requests
+- Bump Ohai to 17.0.0 [#1591](https://github.com/chef/ohai/pull/1591) ([tas50](https://github.com/tas50))
+- network: populate pause frame config [#1564](https://github.com/chef/ohai/pull/1564) ([kuba-moo](https://github.com/kuba-moo))
+- Support more than 10 interfaces [#1479](https://github.com/chef/ohai/pull/1479) ([Babar](https://github.com/Babar))
+- Stop gathering filesystem2 data on BSD/Solaris/AIX [#1592](https://github.com/chef/ohai/pull/1592) ([tas50](https://github.com/tas50))
+- Fetch chef-utils and chef-config from chef-16 branch [#1594](https://github.com/chef/ohai/pull/1594) ([tas50](https://github.com/tas50))
+- Require Ruby 2.7 or later [#1593](https://github.com/chef/ohai/pull/1593) ([tas50](https://github.com/tas50))
+- Update master ohai to pull from master chef [#1595](https://github.com/chef/ohai/pull/1595) ([tas50](https://github.com/tas50))
+- suppress constant redefinition warning [#1597](https://github.com/chef/ohai/pull/1597) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update ec2_metadata to use IMDSV2 (Continued from  #1457) [#1520](https://github.com/chef/ohai/pull/1520) ([sawanoboly](https://github.com/sawanoboly))
+- Update ec2_metadata to use IMDSV2 [#1457](https://github.com/chef/ohai/pull/1457) ([wilkosz](https://github.com/wilkosz))
+- Fix fetching metadata on AWS compatible clouds [#1599](https://github.com/chef/ohai/pull/1599) ([tas50](https://github.com/tas50))
+- Support newer aws metadata versions [#1600](https://github.com/chef/ohai/pull/1600) ([tas50](https://github.com/tas50))
+- Detect Alma Linux with platform_family of rhel [#1604](https://github.com/chef/ohai/pull/1604) ([tas50](https://github.com/tas50))
+- Don&#39;t track sensitive new ec2 metadata [#1605](https://github.com/chef/ohai/pull/1605) ([tas50](https://github.com/tas50))
+- [linux/platform] fix platform_version on Debian testing and unstable [#1613](https://github.com/chef/ohai/pull/1613) ([michel-slm](https://github.com/michel-slm))
+- Remove stubbing mock methods onto the frozen `true` value [#1615](https://github.com/chef/ohai/pull/1615) ([lamont-granquist](https://github.com/lamont-granquist))
+- Add support for Podman and fix docker guest detection on Github Actions [#1617](https://github.com/chef/ohai/pull/1617) ([ramereth](https://github.com/ramereth))
+- Update `packages` for Windows to be complete. [#1616](https://github.com/chef/ohai/pull/1616) ([jaymzh](https://github.com/jaymzh))
+- Add platform / platform_family detection for Alibaba Cloud Linux [#1618](https://github.com/chef/ohai/pull/1618) ([tas50](https://github.com/tas50))
+- Add Alibaba cloud plugin [#1620](https://github.com/chef/ohai/pull/1620) ([tas50](https://github.com/tas50))
+- adds Habitat plugin [#1623](https://github.com/chef/ohai/pull/1623) ([collinmcneese](https://github.com/collinmcneese))
+- Adds chef_effortless collection to chef plugin [#1624](https://github.com/chef/ohai/pull/1624) ([collinmcneese](https://github.com/collinmcneese))
+- Don&#39;t return in the hab plugin [#1625](https://github.com/chef/ohai/pull/1625) ([tas50](https://github.com/tas50))
+- Detect docker properly even if it&#39;s within virtualization [#1627](https://github.com/chef/ohai/pull/1627) ([jaymzh](https://github.com/jaymzh))
+- Resolve new rubocop-performance warning [#1629](https://github.com/chef/ohai/pull/1629) ([tas50](https://github.com/tas50))
+- Update rubocop-performance to 1.10.1 and revert optimization [#1630](https://github.com/chef/ohai/pull/1630) ([tas50](https://github.com/tas50))
+- Fix support for Sangoma Linux [#1631](https://github.com/chef/ohai/pull/1631) ([hron84](https://github.com/hron84))
+- Remove support for discontinued antergos distro [#1634](https://github.com/chef/ohai/pull/1634) ([tas50](https://github.com/tas50))
+- Remove support for Pidora which is discontinued [#1633](https://github.com/chef/ohai/pull/1633) ([tas50](https://github.com/tas50))
+- Update the XCP-ng Linux Detection [#1632](https://github.com/chef/ohai/pull/1632) ([tas50](https://github.com/tas50))
+- Stick the common matched platforms first [#1635](https://github.com/chef/ohai/pull/1635) ([tas50](https://github.com/tas50))
+- network: Add offload features to node. [#1637](https://github.com/chef/ohai/pull/1637) ([zalokhan](https://github.com/zalokhan))
+- Ohai: Change C language plugin for glibc version detection [#1636](https://github.com/chef/ohai/pull/1636) ([bhaveshdavda](https://github.com/bhaveshdavda))
+- Create os_release plugin for parsing data from /etc/os-release [#1645](https://github.com/chef/ohai/pull/1645) ([ramereth](https://github.com/ramereth))
+- lpar_no and wpar_no in AIX Virtualizatin plugin should be Integers [#1647](https://github.com/chef/ohai/pull/1647) ([tas50](https://github.com/tas50))
+- Update rubocop-performance to 1.10.2 [#1651](https://github.com/chef/ohai/pull/1651) ([tas50](https://github.com/tas50))
+- Fall back to v4-only getaddrinfo if we get socket errors [#1652](https://github.com/chef/ohai/pull/1652) ([jaymzh](https://github.com/jaymzh))
+- Update minimum version of mixlib-shellout [#1654](https://github.com/chef/ohai/pull/1654) ([pravi](https://github.com/pravi))
+- Gather CPU info from lscpu and merge data into cpu attribute namespace [#1454](https://github.com/chef/ohai/pull/1454) ([ramereth](https://github.com/ramereth))
+- Dead links fixed [#1657](https://github.com/chef/ohai/pull/1657) ([craftsbyshuvro](https://github.com/craftsbyshuvro))
+- Update minimum version of chef-config [#1659](https://github.com/chef/ohai/pull/1659) ([pravi](https://github.com/pravi))
+- Use filter_map where we can [#1656](https://github.com/chef/ohai/pull/1656) ([tas50](https://github.com/tas50))
+- Chef 17: Set &#39;filesystem&#39; to be new-style data on Windows [#1662](https://github.com/chef/ohai/pull/1662) ([jaymzh](https://github.com/jaymzh))
+<!-- latest_stable_release -->
+
 ## [v16.8.1](https://github.com/chef/ohai/tree/v16.8.1) (2020-12-11)
 
 #### Merged Pull Requests
 - Remove platform dependencies that aren&#39;t needed [#1586](https://github.com/chef/ohai/pull/1586) ([tas50](https://github.com/tas50))
 - Update Linode plugin to use domain / apt data to detect Linode  [#1587](https://github.com/chef/ohai/pull/1587) ([tas50](https://github.com/tas50))
 - grub2: add plugin to expose GRUB2 environment variables [#1590](https://github.com/chef/ohai/pull/1590) ([davide125](https://github.com/davide125))
-<!-- latest_stable_release -->
 
 ## [v16.7.37](https://github.com/chef/ohai/tree/v16.7.37) (2020-11-24)
 

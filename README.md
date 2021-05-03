@@ -99,7 +99,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2020 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2021 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.0.43 -->
-## [v17.0.43](https://github.com/chef/ohai/tree/v17.0.43) (2021-05-02)
+<!-- latest_release 17.1.0 -->
+## [v17.1.0](https://github.com/chef/ohai/tree/v17.1.0) (2021-05-03)
 
 #### Merged Pull Requests
-- Add Rocky Linux as RHEL platform_family [#1663](https://github.com/chef/ohai/pull/1663) ([tas50](https://github.com/tas50))
+- Update the readme copyright [#1664](https://github.com/chef/ohai/pull/1664) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.0.42 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update the readme copyright [#1664](https://github.com/chef/ohai/pull/1664) ([tas50](https://github.com/tas50)) <!-- 17.1.0 -->
 - Add Rocky Linux as RHEL platform_family [#1663](https://github.com/chef/ohai/pull/1663) ([tas50](https://github.com/tas50)) <!-- 17.0.43 -->
 <!-- release_rollup -->
 

@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 17.2.0 -->
+## [v17.2.0](https://github.com/chef/ohai/tree/v17.2.0) (2021-06-17)
+
+#### Merged Pull Requests
+- Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=17.1.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz)) <!-- 17.2.0 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

@@ -20,37 +20,40 @@ github:
   # allow bumping the major release via label
   major_bump_labels:
     - "Expeditor: Bump Version Major"
-  # Which Github branches to build Omnibus releases from, and what versions
-  # (as determined by the value in the VERSION file) those branches are responsible
-  # for building.
-  release_branch:
-    - master:
-        version_constraint: 16.*
-    - 15-stable:
-        version_constraint: 15.*
+
+# Which Github branches to build Omnibus releases from, and what versions
+# (as determined by the value in the VERSION file) those branches are responsible
+# for building.
+release_branches:
+  - master:
+      version_constraint: 16.*
+  - 15-stable:
+      version_constraint: 15.*
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org
 
-# These actions are taken, in order they are specified, anytime a Pull Request is merged.
-merge_actions:
-  - built_in:bump_version:
-      ignore_labels:
-        - "Expeditor: Skip Version Bump"
-        - "Expeditor: Skip All"
-  - bash:.expeditor/update_version.sh:
-      only_if: built_in:bump_version
-  - built_in:update_changelog:
-      ignore_labels:
-        - "Expeditor: Skip Changelog"
-        - "Expeditor: Skip All"
-  - built_in:build_gem:
-      only_if: built_in:bump_version
+subscriptions:
+  # These actions are taken, in order they are specified, anytime a Pull Request is merged.
+  - workload: pull_request_merged:{{github_repo}}:{{release_branch}}:*
+    actions:
+      - built_in:bump_version:
+          ignore_labels:
+            - "Expeditor: Skip Version Bump"
+            - "Expeditor: Skip All"
+      - bash:.expeditor/update_version.sh:
+          only_if: built_in:bump_version
+      - built_in:update_changelog:
+          ignore_labels:
+            - "Expeditor: Skip Changelog"
+            - "Expeditor: Skip All"
+      - built_in:build_gem:
+          only_if: built_in:bump_version
 
-promote:
-  actions:
-    - built_in:rollover_changelog
-    - built_in:publish_rubygems
+  - workload: project_promoted:{{agent_id}}:*
+    actions:
+      - built_in:rollover_changelog
+      - built_in:publish_rubygems
 
 pipelines:
   - verify:

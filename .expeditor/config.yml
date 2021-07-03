@@ -56,8 +56,3 @@ subscriptions:
     actions:
       - built_in:rollover_changelog
       - built_in:publish_rubygems
-
-pipelines:
-  - verify:
-      description: Pull Request validation tests
-      public: true

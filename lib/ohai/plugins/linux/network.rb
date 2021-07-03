@@ -80,7 +80,7 @@ Ohai.plugin(:Network) do
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
       if /\\/.match?(line)
-        parts = line.split('\\')
+        parts = line.split("\\")
         route_dest = parts.shift.strip
         route_endings = parts
       elsif line =~ /^([^\s]+)\s(.*)$/

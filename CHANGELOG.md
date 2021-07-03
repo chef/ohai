@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.2.0 -->
-## [v17.2.0](https://github.com/chef/ohai/tree/v17.2.0) (2021-06-17)
+<!-- latest_release 17.2.1 -->
+## [v17.2.1](https://github.com/chef/ohai/tree/v17.2.1) (2021-07-03)
 
 #### Merged Pull Requests
-- Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz))
+- Update rubocop-performance requirement from 1.10.2 to 1.11.3 [#1678](https://github.com/chef/ohai/pull/1678) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.10.2 to 1.11.3 [#1678](https://github.com/chef/ohai/pull/1678) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.2.1 -->
 - Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz)) <!-- 17.2.0 -->
 <!-- release_rollup -->
 

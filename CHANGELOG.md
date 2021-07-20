@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.3.0 -->
-## [v17.3.0](https://github.com/chef/ohai/tree/v17.3.0) (2021-07-20)
+<!-- latest_release 17.3.1 -->
+## [v17.3.1](https://github.com/chef/ohai/tree/v17.3.1) (2021-07-20)
 
 #### Merged Pull Requests
-- Update rubocop-performance requirement from 1.11.3 to 1.11.4 [#1682](https://github.com/chef/ohai/pull/1682) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.1 -->
 - Update rubocop-performance requirement from 1.11.3 to 1.11.4 [#1682](https://github.com/chef/ohai/pull/1682) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.0 -->
 - Add plugin for linux livepatch [#1672](https://github.com/chef/ohai/pull/1672) ([liu-song-6](https://github.com/liu-song-6)) <!-- 17.2.3 -->
 - Switch testing to GitHub Actions [#1679](https://github.com/chef/ohai/pull/1679) ([tas50](https://github.com/tas50)) <!-- 17.2.2 -->

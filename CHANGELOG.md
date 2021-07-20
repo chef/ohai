@@ -1,31 +1,28 @@
 # Change Log
 
-<!-- latest_release 17.3.1 -->
-## [v17.3.1](https://github.com/chef/ohai/tree/v17.3.1) (2021-07-20)
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.1.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.1 -->
-- Update rubocop-performance requirement from 1.11.3 to 1.11.4 [#1682](https://github.com/chef/ohai/pull/1682) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.0 -->
-- Add plugin for linux livepatch [#1672](https://github.com/chef/ohai/pull/1672) ([liu-song-6](https://github.com/liu-song-6)) <!-- 17.2.3 -->
-- Switch testing to GitHub Actions [#1679](https://github.com/chef/ohai/pull/1679) ([tas50](https://github.com/tas50)) <!-- 17.2.2 -->
-- Update rubocop-performance requirement from 1.10.2 to 1.11.3 [#1678](https://github.com/chef/ohai/pull/1678) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.2.1 -->
-- Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz)) <!-- 17.2.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.3.1](https://github.com/chef/ohai/tree/v17.3.1) (2021-07-20)
+
+#### Merged Pull Requests
+- Add Virtuozzo as RHEL platform_family [#1670](https://github.com/chef/ohai/pull/1670) ([robertmasztalerz](https://github.com/robertmasztalerz))
+- Update rubocop-performance requirement from 1.10.2 to 1.11.3 [#1678](https://github.com/chef/ohai/pull/1678) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Switch testing to GitHub Actions [#1679](https://github.com/chef/ohai/pull/1679) ([tas50](https://github.com/tas50))
+- Add plugin for linux livepatch [#1672](https://github.com/chef/ohai/pull/1672) ([liu-song-6](https://github.com/liu-song-6))
+- Update rubocop-performance requirement from 1.11.3 to 1.11.4 [#1682](https://github.com/chef/ohai/pull/1682) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_stable_release -->
+
 ## [v17.1.0](https://github.com/chef/ohai/tree/v17.1.0) (2021-05-13)
 
 #### Merged Pull Requests
 - Add Rocky Linux as RHEL platform_family [#1663](https://github.com/chef/ohai/pull/1663) ([tas50](https://github.com/tas50))
 - Update the readme copyright [#1664](https://github.com/chef/ohai/pull/1664) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v17.0.42](https://github.com/chef/ohai/tree/v17.0.42) (2021-04-27)
 

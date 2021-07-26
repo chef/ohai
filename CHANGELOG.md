@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 17.3.2 -->
+## [v17.3.2](https://github.com/chef/ohai/tree/v17.3.2) (2021-07-26)
+
+#### Merged Pull Requests
+- Update chefstyle requirement from 2.0.6 to 2.0.7 [#1683](https://github.com/chef/ohai/pull/1683) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=17.3.1 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update chefstyle requirement from 2.0.6 to 2.0.7 [#1683](https://github.com/chef/ohai/pull/1683) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.2 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

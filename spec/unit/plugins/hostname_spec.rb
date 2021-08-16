@@ -106,57 +106,28 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
     }
   end
 
-  let(:info) do
-    [
-      "local",
-      [],
-      23,
-      "address1",
-      "address2",
-      "address3",
-      "address4",
-    ]
-  end
-
-  let(:local_hostent) do
-    [
-      "local",
-      [],
-      23,
-      "address",
-    ]
-  end
-
-  let(:fqdn_hostent) do
-    [
-      "local.dx.internal.cloudapp.net",
-      [],
-      23,
-      "address",
-    ]
-  end
-
   before do
     @plugin = get_plugin("hostname")
     allow(WmiLite::Wmi).to receive(:new).and_return(success)
     allow(success).to receive(:first_of).with("Win32_ComputerSystem").and_return(host)
-    allow(Socket).to receive(:gethostname).and_return("local")
-    allow(Socket).to receive(:gethostbyname).with(anything).and_return(info)
   end
 
   context "when hostname is not set for the machine" do
     it "returns short machine name" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(local_hostent)
+      addr_object = Addrinfo.getaddrinfo("", nil)
+      unqualified_hostname = addr_object.first.getnameinfo.first
+      allow(Addrinfo).to receive(:getaddrinfo).with("local", nil).and_return(addr_object)
       @plugin.run
-      expect(@plugin[:fqdn]).to eq("local")
+      expect(@plugin[:fqdn]).to eq(unqualified_hostname)
     end
   end
 
   context "when hostname is set for the machine" do
     it "returns the fqdn of the machine" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(fqdn_hostent)
+      addr_object = Addrinfo.getaddrinfo("www.kame.net", nil)
+      allow(Addrinfo).to receive(:getaddrinfo).with("local", nil).and_return(addr_object)
       @plugin.run
-      expect(@plugin[:fqdn]).to eq("local.dx.internal.cloudapp.net")
+      expect(@plugin[:fqdn]).to eq("mango.itojun.org")
     end
   end
 end

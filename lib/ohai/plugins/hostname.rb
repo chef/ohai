@@ -170,21 +170,9 @@ Ohai.plugin(:Hostname) do
     hostname host["dnshostname"].to_s
     machinename host["name"].to_s
 
-    info = Socket.gethostbyname(Socket.gethostname)
-    if info.first =~ /.+?\.(.*)/
-      fqdn info.first
-    else
-      # host is not in dns. optionally use:
-      # C:\WINDOWS\system32\drivers\etc\hosts
-      info[3..info.length].reverse_each do |addr|
-        hostent = Socket.gethostbyaddr(addr)
-        if hostent.first =~ /.+?\.(.*)/
-          fqdn hostent.first
-          break
-        end
-      end
-      fqdn info.first unless fqdn
-    end
+    info = Addrinfo.getaddrinfo(hostname, nil).first.getnameinfo
+    fqdn info.first unless fqdn
+
     domain collect_domain
   end
 end

@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 #
-# Copyright:: 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +17,13 @@
 #
 
 Ohai.plugin(:Docker) do
-  require "json"
-
   provides "docker"
   depends "virtualization"
 
   def docker_info_json
     so = shell_out("docker info --format '{{json .}}'")
     if so.exitstatus == 0
-      return JSON.parse(so.stdout)
+      JSON.parse(so.stdout)
     end
   rescue Ohai::Exceptions::Exec
     logger.trace('Plugin Docker: Could not shell_out "docker info --format \'{{json .}}\'". Skipping plugin')
@@ -49,7 +48,9 @@ Ohai.plugin(:Docker) do
     docker[:swarm] = shellout_data["Swarm"]
   end
 
-  collect_data do
+  collect_data(:linux, :windows, :darwin) do
+    require "json" unless defined?(JSON)
+
     if virtualization[:systems][:docker]
       docker_ohai_data(docker_info_json)
     end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Dylan Page (<dpage@digitalocean.com>)
 # Author:: Stafford Brunk (<stafford.brunk@gmail.com>)
@@ -48,7 +49,8 @@ Ohai.plugin(:DigitalOcean) do
     false
   end
 
-  collect_data do
+  # linux and freebsd is all digitalocean supports
+  collect_data(:linux, :freebsd) do
     if looks_like_digital_ocean?
       logger.trace("Plugin Digitalocean: looks_like_digital_ocean? == true")
       digital_ocean Mash.new

@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Benjamin Black (<nostromo@gmail.com>)
 # Author:: Bryan McLellan (<btm@loftninjas.org>)
 # Author:: Claire McQuin (<claire@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # License:: Apache License, Version 2.0
 #
@@ -33,7 +34,7 @@ Ohai.plugin(:Kernel) do
      ["uname -v", :version], ["uname -m", :machine],
      ["uname -p", :processor]].each do |cmd, property|
        so = shell_out(cmd)
-       kernel[property] = so.stdout.split($/)[0]
+       kernel[property] = so.stdout.strip
      end
     kernel
   end
@@ -42,7 +43,7 @@ Ohai.plugin(:Kernel) do
   # @return [Mash]
   def bsd_modules(path)
     modules = Mash.new
-    so = shell_out((Ohai.abs_path(path)).to_s)
+    so = shell_out(Ohai.abs_path(path).to_s)
     so.stdout.lines do |line|
       #  1    7 0xc0400000 97f830   kernel
       if line =~ /(\d+)\s+(\d+)\s+([0-9a-fx]+)\s+([0-9a-fx]+)\s+([a-zA-Z0-9\_]+)/
@@ -114,7 +115,6 @@ Ohai.plugin(:Kernel) do
     when 16 then "WIN95"
     when 17 then "WIN98"
     when 19 then "WINCE"
-    else nil
     end
   end
 
@@ -133,15 +133,15 @@ Ohai.plugin(:Kernel) do
     when 6 then "Appliance PC"
     when 7 then "Performance Server"
     when 8 then "Maximum"
-    else nil
     end
   end
 
-  # see if a WMI name is blacklisted so we can avoid writing out
-  # useless data to ohai
+  # see if a WMI name is in the blocked list so we can avoid writing
+  # out useless data to ohai
+  #
   # @param [String] name the wmi name to check
-  # @return [Boolean] is the wmi name blacklisted
-  def blacklisted_wmi_name?(name)
+  # @return [Boolean] is the wmi name in the blocked list
+  def blocked_wmi_name?(name)
     [
      "creation_class_name", # this is just the wmi name
      "cs_creation_class_name", # this is just the wmi name
@@ -155,6 +155,10 @@ Ohai.plugin(:Kernel) do
     ].include?(name)
   end
 
+  collect_data(:target) do
+    # intentionally left blank
+  end
+
   collect_data(:default) do
     kernel init_kernel
   end
@@ -164,7 +168,7 @@ Ohai.plugin(:Kernel) do
     kernel[:os] = kernel[:name]
 
     so = shell_out("sysctl -n hw.optional.x86_64")
-    if so.stdout.split($/)[0].to_i == 1
+    if so.stdout.strip.to_i == 1
       kernel[:machine] = "x86_64"
     end
 
@@ -184,7 +188,7 @@ Ohai.plugin(:Kernel) do
     kernel[:os] = kernel[:name]
 
     so = shell_out("uname -i")
-    kernel[:ident] = so.stdout.split($/)[0]
+    kernel[:ident] = so.stdout.strip
     so = shell_out("sysctl kern.securelevel")
     kernel[:securelevel] = so.stdout.split($/).select { |e| e =~ /kern.securelevel: (.+)$/ }
 
@@ -195,7 +199,7 @@ Ohai.plugin(:Kernel) do
     kernel init_kernel
 
     so = shell_out("uname -o")
-    kernel[:os] = so.stdout.split($/)[0]
+    kernel[:os] = so.stdout.strip
 
     modules = Mash.new
     so = shell_out("env lsmod")
@@ -203,8 +207,8 @@ Ohai.plugin(:Kernel) do
       if line =~ /([a-zA-Z0-9\_]+)\s+(\d+)\s+(\d+)/
         modules[$1] = { size: $2, refcount: $3 }
         # Making sure to get the module version that has been loaded
-        if File.exist?("/sys/module/#{$1}/version")
-          version = File.read("/sys/module/#{$1}/version").chomp.strip
+        if file_exist?("/sys/module/#{$1}/version")
+          version = file_read("/sys/module/#{$1}/version").chomp.strip
           modules[$1]["version"] = version unless version.empty?
         end
       end
@@ -227,9 +231,9 @@ Ohai.plugin(:Kernel) do
     kernel init_kernel
 
     so = shell_out("uname -s")
-    kernel[:os] = so.stdout.split($/)[0]
+    kernel[:os] = so.stdout.strip
 
-    so = File.open("/etc/release", &:gets)
+    so = file_open("/etc/release", &:gets)
     md = /(?<update>\d.*\d)/.match(so)
     kernel[:update] = md[:update] if md
 
@@ -239,7 +243,7 @@ Ohai.plugin(:Kernel) do
     # EXAMPLE:
     # Id Loadaddr   Size Info Rev Module Name
     #  6  1180000   4623   1   1  specfs (filesystem for specfs)
-    module_description = /[\s]*([\d]+)[\s]+([a-f\d]+)[\s]+([a-f\d]+)[\s]+(?:[\-\d]+)[\s]+(?:[\d]+)[\s]+([\S]+)[\s]+\((.+)\)$/
+    module_description = /\s*(\d+)\s+([a-f\d]+)\s+([a-f\d]+)\s+(?:[\-\d]+)\s+(?:\d+)\s+(\S+)\s+\((.+)\)$/
     so.stdout.lines do |line|
       if ( mod = module_description.match(line) )
         modules[mod[4]] = { id: mod[1].to_i, loadaddr: mod[2], size: mod[3].to_i(16), description: mod[5] }
@@ -251,7 +255,7 @@ Ohai.plugin(:Kernel) do
 
   collect_data(:windows) do
     require "win32ole" unless defined?(WIN32OLE)
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     WIN32OLE.codepage = WIN32OLE::CP_UTF8
 
@@ -262,7 +266,7 @@ Ohai.plugin(:Kernel) do
     host = wmi.first_of("Win32_OperatingSystem")
     kernel[:os_info] = Mash.new
     host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
+      next if blocked_wmi_name?(p.name.wmi_underscore)
 
       kernel[:os_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end
@@ -277,7 +281,7 @@ Ohai.plugin(:Kernel) do
     kernel[:cs_info] = Mash.new
     host = wmi.first_of("Win32_ComputerSystem")
     host.wmi_ole_object.properties_.each do |p|
-      next if blacklisted_wmi_name?(p.name.wmi_underscore)
+      next if blocked_wmi_name?(p.name.wmi_underscore)
 
       kernel[:cs_info][p.name.wmi_underscore.to_sym] = host[p.name.downcase]
     end

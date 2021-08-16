@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith <tsmith@chef.io>
-# Copyright:: Copyright (c) 2015-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +27,7 @@ module ::Ohai::Mixin::DmiDecode
     when /VMware/
       return "vmware"
     when /Microsoft/
-      return "hyperv" if product =~ /Virtual Machine/
+      return "hyperv" if /Virtual Machine/.match?(product)
     when /Amazon EC2/
       return "amazonec2"
     when /QEMU/
@@ -40,7 +41,7 @@ module ::Ohai::Mixin::DmiDecode
     case product
     when /VirtualBox/
       return "vbox"
-    when /OpenStack/ # yes this is here twice. Product catches Redhat's version
+    when /OpenStack/ # yes this is here twice. Product catches Red Hat's version
       return "openstack"
     when /(KVM|RHEV)/
       return "kvm"

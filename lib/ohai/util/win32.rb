@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 # Author:: Adam Edwards (<adamed@chef.io>)
 #
-# Copyright:: Copyright (c) 2013-14 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #
 # License:: Apache License, Version 2.0
 #
@@ -19,7 +20,7 @@
 module Ohai
   module Util
     module Win32
-      if RUBY_PLATFORM =~ /mswin|mingw|windows/
+      if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
         require "ffi" unless defined?(FFI)
 

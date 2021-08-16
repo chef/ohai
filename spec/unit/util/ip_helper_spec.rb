@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ipaddress"
 require "spec_helper"
 require "ohai/util/ip_helper"
 

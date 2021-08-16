@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2014 Richard Manyanza.
 # License:: Apache License, Version 2.0
 #
@@ -34,7 +35,11 @@ Ohai.plugin(:OS) do
 
     # This is __DragonFly_version / __FreeBSD_version. See sys/param.h or
     # http://www.freebsd.org/doc/en/books/porters-handbook/freebsd-versions.html.
-    os_version shell_out("sysctl -n kern.osreldate").stdout.split($/)[0]
+    os_version shell_out("sysctl -n kern.osreldate").stdout.strip
+  end
+
+  collect_data(:target) do
+    os collect_os
   end
 
   collect_data do

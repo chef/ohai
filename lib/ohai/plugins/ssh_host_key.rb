@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan <btm@chef.io>
-# Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,9 +39,9 @@ Ohai.plugin(:SSHHostKey) do
   collect_data do
     keys[:ssh] = Mash.new
 
-    sshd_config = if File.exist?("/etc/ssh/sshd_config")
+    sshd_config = if file_exist?("/etc/ssh/sshd_config")
                     "/etc/ssh/sshd_config"
-                  elsif File.exist?("/etc/sshd_config")
+                  elsif file_exist?("/etc/sshd_config")
                     # Darwin
                     "/etc/sshd_config"
                   else
@@ -49,11 +50,11 @@ Ohai.plugin(:SSHHostKey) do
                   end
 
     if sshd_config
-      File.open(sshd_config) do |conf|
+      file_open(sshd_config) do |conf|
         conf.each_line do |line|
-          if line =~ /^hostkey\s/i
+          if /^hostkey\s/i.match?(line)
             pub_file = "#{line.split[1]}.pub"
-            content = IO.read(pub_file).split
+            content = file_read(pub_file).split
             key_type, key_subtype = extract_keytype?(content)
             keys[:ssh]["host_#{key_type}_public"] = content[1] unless key_type.nil?
             keys[:ssh]["host_#{key_type}_type"] = key_subtype unless key_subtype.nil?
@@ -62,22 +63,22 @@ Ohai.plugin(:SSHHostKey) do
       end
     end
 
-    if keys[:ssh][:host_dsa_public].nil? && File.exist?("/etc/ssh/ssh_host_dsa_key.pub")
-      keys[:ssh][:host_dsa_public] = IO.read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
+    if keys[:ssh][:host_dsa_public].nil? && file_exist?("/etc/ssh/ssh_host_dsa_key.pub")
+      keys[:ssh][:host_dsa_public] = file_read("/etc/ssh/ssh_host_dsa_key.pub").split[1]
     end
 
-    if keys[:ssh][:host_rsa_public].nil? && File.exist?("/etc/ssh/ssh_host_rsa_key.pub")
-      keys[:ssh][:host_rsa_public] = IO.read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
+    if keys[:ssh][:host_rsa_public].nil? && file_exist?("/etc/ssh/ssh_host_rsa_key.pub")
+      keys[:ssh][:host_rsa_public] = file_read("/etc/ssh/ssh_host_rsa_key.pub").split[1]
     end
 
-    if keys[:ssh][:host_ecdsa_public].nil? && File.exist?("/etc/ssh/ssh_host_ecdsa_key.pub")
-      content = IO.read("/etc/ssh/ssh_host_ecdsa_key.pub")
+    if keys[:ssh][:host_ecdsa_public].nil? && file_exist?("/etc/ssh/ssh_host_ecdsa_key.pub")
+      content = file_read("/etc/ssh/ssh_host_ecdsa_key.pub")
       keys[:ssh][:host_ecdsa_public] = content.split[1]
       keys[:ssh][:host_ecdsa_type] = content.split[0]
     end
 
-    if keys[:ssh][:host_ed25519_public].nil? && File.exist?("/etc/ssh/ssh_host_ed25519_key.pub")
-      keys[:ssh][:host_ed25519_public] = IO.read("/etc/ssh/ssh_host_ed25519_key.pub").split[1]
+    if keys[:ssh][:host_ed25519_public].nil? && file_exist?("/etc/ssh/ssh_host_ed25519_key.pub")
+      keys[:ssh][:host_ed25519_public] = file_read("/etc/ssh/ssh_host_ed25519_key.pub").split[1]
     end
   end
 end

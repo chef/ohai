@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Smith <tsmith@chef.io>
 # Author:: Joshua Colson <joshua.colson@gmail.com>
-# Copyright:: 2015-2019 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: 2019 Joshua Colson
 # License:: Apache License, Version 2.0
 #
@@ -93,8 +94,8 @@ Ohai.plugin(:Virtualbox) do
     so_cmd = "VBoxManage list --sorted #{query_type}"
     logger.trace(so_cmd)
     so = shell_out(so_cmd)
-      # raise an exception if the command fails
-      # so.error!
+    # raise an exception if the command fails
+    # so.error!
 
     if so.exitstatus == 0
       # break the result into paragraph blocks, on successive newlines
@@ -127,7 +128,7 @@ Ohai.plugin(:Virtualbox) do
     logger.trace("Plugin VboxHost: Could not run '#{so_cmd}'. Skipping data")
   end
 
-  collect_data(:default) do
+  collect_data(:windows, :linux, :solaris2, :darwin) do
     case virtualization.dig("systems", "vbox")
     when "guest"
       logger.trace("Plugin Virtualbox: Node detected as vbox guest. Collecting guest data.")

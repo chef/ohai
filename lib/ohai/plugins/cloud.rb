@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Cary Penniman (<cary@rightscale.com>)
 # License:: Apache License, Version 2.0
@@ -17,6 +18,7 @@
 Ohai.plugin(:Cloud) do
   provides "cloud"
 
+  depends "alibaba"
   depends "ec2"
   depends "gce"
   depends "rackspace"
@@ -100,7 +102,7 @@ Ohai.plugin(:Cloud) do
       @cloud[:local_ipv6] = @cloud[:local_ipv6_addrs][0] if @cloud[:local_ipv6_addrs]
 
       # if empty, return nil
-      (@cloud.empty?) ? nil : @cloud
+      @cloud.empty? ? nil : @cloud
     end
 
     private
@@ -109,7 +111,7 @@ Ohai.plugin(:Cloud) do
       ipaddr = ""
       begin
         ipaddr = IPAddr.new(ip)
-        raise ArgumentError, "not valid #{address_family} address" unless (address_family == :ipv4) ? ipaddr.ipv4? : ipaddr.ipv6?
+        raise ArgumentError, "not valid #{address_family} address" unless address_family == :ipv4 ? ipaddr.ipv4? : ipaddr.ipv6?
       rescue ArgumentError => e
         raise "ERROR: the ohai 'cloud' plugin failed with an IP address of '#{ip}' : #{e.message}"
       end
@@ -117,7 +119,22 @@ Ohai.plugin(:Cloud) do
     end
   end
 
-  #---------------------------------------
+  #--------------------------------------
+  # Alibaba Cloud
+  #--------------------------------------
+
+  def on_alibaba?
+    alibaba != nil
+  end
+
+  def get_alibaba_values
+    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["eipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["private_ipv4"], :private)
+    @cloud_attr_obj.local_hostname = alibaba["meta_data"]["hostname"]
+    @cloud_attr_obj.provider = "alibaba"
+  end
+
+  #--------------------------------------
   # Google Compute Engine (gce)
   #--------------------------------------
 
@@ -132,9 +149,9 @@ Ohai.plugin(:Cloud) do
       end
     end.flatten.compact
 
-    private_ips = gce["instance"]["networkInterfaces"].collect do |interface|
+    private_ips = gce["instance"]["networkInterfaces"].filter_map do |interface|
       interface["ip"]
-    end.compact
+    end
 
     public_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
     private_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
@@ -320,7 +337,7 @@ Ohai.plugin(:Cloud) do
   end
 
   collect_data do
-    require "ipaddr"
+    require "ipaddr" unless defined?(IPAddr)
 
     @cloud_attr_obj = CloudAttrs.new
 
@@ -333,6 +350,7 @@ Ohai.plugin(:Cloud) do
     get_azure_values if on_azure?
     get_digital_ocean_values if on_digital_ocean?
     get_softlayer_values if on_softlayer?
+    get_alibaba_values if on_alibaba?
 
     cloud @cloud_attr_obj.cloud_mash
   end

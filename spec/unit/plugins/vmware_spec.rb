@@ -25,7 +25,7 @@ describe Ohai::System, "plugin vmware" do
     allow(plugin).to receive(:collect_os).and_return(:linux)
   end
 
-  context "on vmware guest with toolbox installed" do
+  context "when on vmware guest with toolbox installed" do
     before do
       allow(File).to receive(:exist?).with("/usr/bin/vmware-toolbox-cmd").and_return(true)
       allow(plugin).to receive(:shell_out).with("#{path} stat speed").and_return(mock_shell_out(0, "2000 MHz", nil))
@@ -58,7 +58,7 @@ describe Ohai::System, "plugin vmware" do
     end
   end
 
-  context "on vmware guest without toolbox" do
+  context "when on vmware guest without toolbox" do
     it "does not create a vmware attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
@@ -69,7 +69,7 @@ describe Ohai::System, "plugin vmware" do
     end
   end
 
-  context "on vbox guest" do
+  context "when on vbox guest" do
     it "does not create a vmware attribute" do
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new

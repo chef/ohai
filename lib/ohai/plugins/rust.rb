@@ -15,7 +15,7 @@
 
 Ohai.plugin(:Rust) do
   provides "languages/rust"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

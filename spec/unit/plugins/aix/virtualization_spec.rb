@@ -1,7 +1,7 @@
 #
 # Author:: Julian C. Dunn (<jdunn@chef.iom>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,13 +19,11 @@
 require "spec_helper"
 
 describe Ohai::System, "AIX virtualization plugin" do
-
-  context "inside an LPAR" do
-
+  context "when inside an LPAR" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
       allow(p).to receive(:collect_os).and_return(:aix)
-      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 l273pp027", nil))
+      allow(p).to receive(:shell_out).with("uname -L").and_return(mock_shell_out(0, "29 virtlpar03 - 7.1 testers", nil))
       allow(p).to receive(:shell_out).with("uname -W").and_return(mock_shell_out(0, "0", nil))
       allow(p).to receive(:shell_out).with("lswpar -L").and_return(mock_shell_out(0, @lswpar_l, nil))
       p
@@ -139,7 +137,7 @@ describe Ohai::System, "AIX virtualization plugin" do
         /dev/nvram         pseudo                               EXPORTED
 
         =================================================================
-        fluttershy-5c969f - Active
+        fluttershy-5c969f - Defined
         =================================================================
         GENERAL
         Type:                    S
@@ -245,13 +243,12 @@ describe Ohai::System, "AIX virtualization plugin" do
 
 
       LSWPAR_L
-
     end
 
     it "uname -L detects the LPAR number and name" do
       plugin.run
-      expect(plugin[:virtualization][:lpar_no]).to eq("29")
-      expect(plugin[:virtualization][:lpar_name]).to eq("l273pp027")
+      expect(plugin[:virtualization][:lpar_no]).to eq(29)
+      expect(plugin[:virtualization][:lpar_name]).to eq("virtlpar03 - 7.1 testers")
     end
 
     context "when WPARs exist on the LPAR" do
@@ -265,6 +262,11 @@ describe Ohai::System, "AIX virtualization plugin" do
 
       let(:wpar2) do
         plugin[:virtualization][:wpars]["fluttershy-5c969f"]
+      end
+
+      it "detects WPAR states" do
+        expect(wpar1[:state]).to eq("active")
+        expect(wpar2[:state]).to eq("defined")
       end
 
       it "detects all WPARs present (2)" do
@@ -301,7 +303,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     end
   end
 
-  context "inside a WPAR" do
+  context "when inside a WPAR" do
     let(:plugin) do
       p = get_plugin("aix/virtualization")
       allow(p).to receive(:collect_os).and_return(:aix)
@@ -312,8 +314,7 @@ describe Ohai::System, "AIX virtualization plugin" do
     end
 
     it "uname -W detects the WPAR number" do
-      expect(plugin[:virtualization][:wpar_no]).to eq("42")
+      expect(plugin[:virtualization][:wpar_no]).to eq(42)
     end
   end
-
 end

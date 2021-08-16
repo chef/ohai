@@ -1,7 +1,7 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Christopher Brown (cb@chef.io)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,6 @@
 #
 
 require "spec_helper"
-require "open-uri"
-require "base64"
 
 describe Ohai::System, "plugin ec2" do
 
@@ -27,9 +25,9 @@ describe Ohai::System, "plugin ec2" do
 
   before do
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
-    allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -48,8 +46,11 @@ describe Ohai::System, "plugin ec2" do
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
       allow(Socket).to receive(:new).and_return(t)
+      token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+      @get_req_token_header = { 'X-aws-ec2-metadata-token': token }
+      allow(@http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
       expect(@http_client).to receive(:get)
-        .with("/")
+        .with("/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "2012-01-12", code: "200"))
     end
 
@@ -65,14 +66,14 @@ describe Ohai::System, "plugin ec2" do
       it "recursively fetches all the ec2 metadata" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
-            .with("/2012-01-12/#{name}")
+            .with("/2012-01-12/#{name}", @get_req_token_header)
             .and_return(double("Net::HTTP Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
@@ -86,14 +87,14 @@ describe Ohai::System, "plugin ec2" do
       it "fetches binary userdata opaquely" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
-            .with("/2012-01-12/#{name}")
+            .with("/2012-01-12/#{name}", @get_req_token_header)
             .and_return(double("Net::HTTP Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
@@ -108,14 +109,14 @@ describe Ohai::System, "plugin ec2" do
       it "fetches AWS account id" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
-            .with("/2012-01-12/#{name}")
+            .with("/2012-01-12/#{name}", @get_req_token_header)
             .and_return(double("Net::HTTP Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
@@ -130,14 +131,14 @@ describe Ohai::System, "plugin ec2" do
       it "fetches AWS region" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
-            .with("/2012-01-12/#{name}")
+            .with("/2012-01-12/#{name}", @get_req_token_header)
             .and_return(double("Net::HTTP Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"region\":\"us-east-1\"}", code: "200"))
 
         plugin.run
@@ -152,14 +153,14 @@ describe Ohai::System, "plugin ec2" do
       it "fetches AWS availability zone" do
         paths.each do |name, body|
           expect(@http_client).to receive(:get)
-            .with("/2012-01-12/#{name}")
+            .with("/2012-01-12/#{name}", @get_req_token_header)
             .and_return(double("Net::HTTP Response", body: body, code: "200"))
         end
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "^_<8B>^H^H<C7>U^@^Csomething^@KT<C8><C9>,)<C9>IU(I-.I<CB><CC>I<E5>^B^@^Qz<BF><B0>^R^@^@^@", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"availabilityZone\":\"us-east-1d\"}", code: "200"))
 
         plugin.run
@@ -174,28 +175,28 @@ describe Ohai::System, "plugin ec2" do
 
     it "parses ec2 network/ directory as a multi-level hash" do
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/")
+        .with("/2012-01-12/meta-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "network/", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/network/")
+        .with("/2012-01-12/meta-data/network/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "interfaces/", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/network/interfaces/")
+        .with("/2012-01-12/meta-data/network/interfaces/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "macs/", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/network/interfaces/macs/")
+        .with("/2012-01-12/meta-data/network/interfaces/macs/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "12:34:56:78:9a:bc/", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/")
+        .with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "public_hostname", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/public_hostname")
+        .with("/2012-01-12/meta-data/network/interfaces/macs/12:34:56:78:9a:bc/public_hostname", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "server17.opscode.com", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/user-data/")
+        .with("/2012-01-12/user-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/dynamic/instance-identity/document/")
+        .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
       plugin.run
@@ -211,22 +212,22 @@ describe Ohai::System, "plugin ec2" do
 
       it "parses ec2 iam/ directory and collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/")
+          .with("/2012-01-12/meta-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/")
+          .with("/2012-01-12/meta-data/iam/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "security-credentials/", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/security-credentials/")
+          .with("/2012-01-12/meta-data/iam/security-credentials/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole")
+          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
@@ -242,66 +243,69 @@ describe Ohai::System, "plugin ec2" do
         allow(plugin).to receive(:hint?).with("iam").and_return(false)
       end
 
-      it "parses ec2 iam/ directory and NOT collect iam/security-credentials/" do
+      it "parses ec2 iam/ directory and collect info and role_name and NOT collect iam/security-credentials/" do
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/")
+          .with("/2012-01-12/meta-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "iam/", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/")
-          .and_return(double("Net::HTTP Response", body: "security-credentials/", code: "200"))
+          .with("/2012-01-12/meta-data/iam/", @get_req_token_header)
+          .and_return(double("Net::HTTP Response", body: "info\nsecurity-credentials/", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/security-credentials/")
+          .with("/2012-01-12/meta-data/iam/info", @get_req_token_header)
+          .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2020-10-08T20:47:08Z\",\n  \"InstanceProfileArn\" : \"arn:aws:iam::111111111111:instance-profile/my_profile\",\n  \"InstanceProfileId\" : \"AAAAAAAAAAAAAAAAAAAAA\"\n}", code: "200"))
+        expect(@http_client).to receive(:get)
+          .with("/2012-01-12/meta-data/iam/security-credentials/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "MyRole", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole")
+          .with("/2012-01-12/meta-data/iam/security-credentials/MyRole", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2012-08-22T07:47:22Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"AAAAAAAA\",\n  \"SecretAccessKey\" : \"SSSSSSSS\",\n  \"Token\" : \"12345678\",\n  \"Expiration\" : \"2012-08-22T11:25:52Z\"\n}", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/user-data/")
+          .with("/2012-01-12/user-data/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
         expect(@http_client).to receive(:get)
-          .with("/2012-01-12/dynamic/instance-identity/document/")
+          .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
           .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
         plugin.run
-
         expect(plugin[:ec2]).not_to be_nil
-        expect(plugin[:ec2]["iam"]).to be_nil
+        expect(plugin[:ec2]["iam"]["info"]["InstanceProfileId"]).to eql "AAAAAAAAAAAAAAAAAAAAA"
+        expect(plugin[:ec2]["iam"]["security-credentials"]).to be_nil
+        expect(plugin[:ec2]["iam"]["role_name"]).to eql "MyRole"
       end
     end
 
     it "ignores \"./\" and \"../\" on ec2 metadata paths to avoid infinity loops" do
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/")
+        .with("/2012-01-12/meta-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: ".\n./\n..\n../\npath1/.\npath2/./\npath3/..\npath4/../", code: "200"))
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/.", @get_req_token_header)
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/./", @get_req_token_header)
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/..", @get_req_token_header)
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/../", @get_req_token_header)
+      expect(@http_client).not_to receive(:get)
+        .with("/2012-01-12/meta-data/path1/..", @get_req_token_header)
 
-      expect(@http_client).not_to receive(:get)
-        .with("/2012-01-12/meta-data/.")
-      expect(@http_client).not_to receive(:get)
-        .with("/2012-01-12/meta-data/./")
-      expect(@http_client).not_to receive(:get)
-        .with("/2012-01-12/meta-data/..")
-      expect(@http_client).not_to receive(:get)
-        .with("/2012-01-12/meta-data/../")
-      expect(@http_client).not_to receive(:get)
-        .with("/2012-01-12/meta-data/path1/..")
-
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/path1/")
+        .with("/2012-01-12/meta-data/path1/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/path2/")
+        .with("/2012-01-12/meta-data/path2/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/path3/")
+        .with("/2012-01-12/meta-data/path3/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/path4/")
+        .with("/2012-01-12/meta-data/path4/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/user-data/")
+        .with("/2012-01-12/user-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/dynamic/instance-identity/document/")
+        .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
       plugin.run
@@ -311,19 +315,19 @@ describe Ohai::System, "plugin ec2" do
 
     it "completes the run despite unavailable metadata" do
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/")
+        .with("/2012-01-12/meta-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "metrics/", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/metrics/")
+        .with("/2012-01-12/meta-data/metrics/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "vhostmd", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/metrics/vhostmd")
+        .with("/2012-01-12/meta-data/metrics/vhostmd", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "", code: "404"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/user-data/")
+        .with("/2012-01-12/user-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/dynamic/instance-identity/document/")
+        .with("/2012-01-12/dynamic/instance-identity/document/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "{\"accountId\":\"4815162342\"}", code: "200"))
 
       plugin.run
@@ -336,8 +340,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
     end
 
     it_behaves_like "ec2"
@@ -346,8 +350,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios version data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
     end
 
     it_behaves_like "!ec2"
@@ -356,8 +360,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
     end
 
     it_behaves_like "ec2"
@@ -366,8 +370,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios vendor data" do
     before do
-      allow(File).to receive(:exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
     end
 
     it_behaves_like "!ec2"
@@ -376,8 +380,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("ec2a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "ec2"
@@ -386,8 +390,8 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-EC2 Xen UUID" do
     before do
-      allow(File).to receive(:exist?).with("/sys/hypervisor/uuid").and_return(true)
-      allow(File).to receive(:read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(true)
+      allow(plugin).to receive(:file_read).with("/sys/hypervisor/uuid").and_return("123a0561-e4d6-8e15-d9c8-2e0e03adcde8\n")
     end
 
     it_behaves_like "!ec2"

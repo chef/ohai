@@ -1,6 +1,6 @@
 #
 # Author:: Kaustubh Deorukhkar (<kaustubh@clogeny.com>)
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,6 @@
 #
 
 require "spec_helper"
-require "open-uri"
 
 describe Ohai::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }
@@ -73,6 +72,49 @@ describe Ohai::System, "plugin azure" do
     end
   end
 
+  context "when on windows", :windows_only do
+    let(:plugin) do
+      get_plugin("azure").tap do |plugin|
+        plugin[:platform_family] = "windows"
+      end
+    end
+
+    let(:tcpip_reg_key) { "SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters" }
+    let(:win_reg_double) { instance_double("Win32::Registry") }
+
+    before do
+      allow(Win32::Registry::HKEY_LOCAL_MACHINE)
+        .to receive(:open)
+        .with(tcpip_reg_key)
+        .and_return(win_reg_double)
+      allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("domain.com")
+    end
+
+    context "without azure hint file or agent" do
+      before do
+        allow(plugin).to receive(:hint?).with("azure").and_return(false)
+        allow(plugin).to receive(:has_waagent?).and_return(false)
+        allow(plugin).to receive(:has_dhcp_option_245?).and_return(false)
+      end
+
+      context "DHCP option 15 is set to reddog.microsoft.com" do
+        before do
+          allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("reddog.microsoft.com")
+        end
+
+        it_behaves_like "azure"
+      end
+
+      context "DHCP option 15 is not set to reddog.microsoft.com" do
+        before do
+          allow(win_reg_double).to receive(:[]).with("DhcpDomain").and_return("domain.com")
+        end
+
+        it_behaves_like "!azure"
+      end
+    end
+  end
+
   describe "with azure hint file" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(hint)
@@ -92,9 +134,9 @@ describe Ohai::System, "plugin azure" do
   describe "without azure hint file or agent or dhcp options" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
-      allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
-      allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
+      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
       @double_file = double("/var/lib/dhcp/dhclient.eth0.leases")
       allow(@double_file).to receive(:each)
         .and_yield("lease {")
@@ -116,7 +158,7 @@ describe Ohai::System, "plugin azure" do
         .and_yield("  rebind 2 2016/03/01 13:22:07;")
         .and_yield("  expire 2 2016/03/01 16:40:56;")
         .and_yield("}")
-      allow(File).to receive(:open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
+      allow(plugin).to receive(:file_open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
     end
 
     it_behaves_like "!azure"
@@ -126,9 +168,9 @@ describe Ohai::System, "plugin azure" do
     before do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
-      allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
-      allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
+      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
     end
 
     it_behaves_like "!azure"
@@ -137,8 +179,8 @@ describe Ohai::System, "plugin azure" do
   describe "without azure hint file but with agent on linux" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
-      allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(true)
-      allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(true)
+      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
     end
 
     it_behaves_like "azure"
@@ -147,8 +189,8 @@ describe Ohai::System, "plugin azure" do
   describe "without azure hint file but with agent on windows" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
-      allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
+      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(true)
     end
 
     it_behaves_like "azure"
@@ -157,9 +199,9 @@ describe Ohai::System, "plugin azure" do
   describe "without azure hint or agent but with dhcp option" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
-      allow(File).to receive(:exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(Dir).to receive(:exist?).with('C:\WindowsAzure').and_return(false)
-      allow(File).to receive(:exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
+      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
       @double_file = double("/var/lib/dhcp/dhclient.eth0.leases")
       allow(@double_file).to receive(:each)
         .and_yield("lease {")
@@ -181,7 +223,7 @@ describe Ohai::System, "plugin azure" do
         .and_yield("  rebind 5 2152/03/10 09:03:39;")
         .and_yield("  expire 5 2152/03/10 09:03:39;")
         .and_yield("}")
-      allow(File).to receive(:open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
+      allow(plugin).to receive(:file_open).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(@double_file)
     end
 
     it_behaves_like "azure"

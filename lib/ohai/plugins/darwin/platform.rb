@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +21,9 @@ Ohai.plugin(:Platform) do
   provides "platform", "platform_version", "platform_build", "platform_family"
 
   collect_data(:darwin) do
-    so = shell_out((Ohai.abs_path( "/usr/bin/sw_vers" )).to_s)
+    so = shell_out(Ohai.abs_path( "/usr/bin/sw_vers" ).to_s)
     so.stdout.lines do |line|
       case line
-      when /^ProductName:\s+(.+)$/
-        macname = $1
-        macname.downcase!
-        macname.tr!(" ", "_")
-        platform macname
       when /^ProductVersion:\s+(.+)$/
         platform_version $1
       when /^BuildVersion:\s+(.+)$/
@@ -35,6 +31,8 @@ Ohai.plugin(:Platform) do
       end
     end
 
+    # if we're on darwin assume we're on mac_os_x
+    platform "mac_os_x"
     platform_family "mac_os_x"
   end
 end

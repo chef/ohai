@@ -1,4 +1,3 @@
-
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0
@@ -29,25 +28,11 @@ C_GCC = <<~EOF.freeze
 EOF
 
 C_GLIBC = <<~EOF.freeze
-  GNU C Library stable release version 2.5, by Roland McGrath et al.
-  Copyright (C) 2006 Free Software Foundation, Inc.
-  This is free software; see the source for copying conditions.
-  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-  PARTICULAR PURPOSE.
-  Compiled by GNU CC version 4.1.2 20080704 (Red Hat 4.1.2-44).
-  Compiled on a Linux 2.6.9 system on 2009-09-02.
-  Available extensions:
-    The C stubs add-on version 2.1.2.
-    crypt add-on version 2.1 by Michael Glad and others
-    GNU Libidn by Simon Josefsson
-    GNU libio by Per Bothner
-    NIS(YP)/NIS+ NSS modules 0.19 by Thorsten Kukuk
-    Native POSIX Threads Library by Ulrich Drepper et al
-    BIND-8.2.3-T5B
-    RT using linux kernel aio
-  Thread-local storage support included.
-  For bug reporting instructions, please see:
-  <http://www.gnu.org/software/libc/bugs.html>.
+  ldd (GNU libc) 2.17
+  Copyright (C) 2012 Free Software Foundation, Inc.
+  This is free software; see the source for copying conditions.  There is NO
+  warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  Written by Roland McGrath and Ulrich Drepper.
 EOF
 
 C_CL = <<~EOF.freeze
@@ -66,6 +51,11 @@ C_XLC = <<~EOF.freeze
   Version: 09.00.0000.0000
 EOF
 
+C_XLC_NEWER = <<~EOF.freeze
+  IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)
+  Version: 13.01.0003.0000
+EOF
+
 C_SUN = <<~EOF.freeze
   cc: Sun C 5.8 Patch 121016-06 2007/08/01
 EOF
@@ -81,7 +71,7 @@ describe Ohai::System, "plugin c" do
     allow(plugin).to receive(:shell_out).with("gcc -v").and_return(mock_shell_out(0, "", C_GCC))
   end
 
-  context "on AIX" do
+  context "when on AIX" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:aix)
       allow(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC, ""))
@@ -109,6 +99,13 @@ describe Ohai::System, "plugin c" do
       expect(plugin[:languages][:c]).not_to have_key(:xlc)
     end
 
+    it "properly parses 3 part version numbers in newer XLC releases" do
+      expect(plugin).to receive(:shell_out).with("xlc -qversion").and_return(mock_shell_out(0, C_XLC_NEWER, ""))
+      plugin.run
+      expect(plugin.languages[:c][:xlc][:version]).to eql("13.1.3")
+      expect(plugin.languages[:c][:xlc][:description]).to eql("IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)")
+    end
+
     it "does not set the languages[:c][:xlc] tree up if xlc command fails" do
       allow(plugin).to receive(:shell_out).with("xlc -qversion").and_raise(Ohai::Exceptions::Exec)
       plugin.run
@@ -124,7 +121,7 @@ describe Ohai::System, "plugin c" do
 
   end
 
-  context "on Darwin" do
+  context "when on Darwin" do
     before do
       allow(plugin).to receive(:shell_out).with("/usr/bin/xcode-select -p").and_return(mock_shell_out(0, "", ""))
       allow(plugin).to receive(:collect_os).and_return(:darwin)
@@ -143,7 +140,7 @@ describe Ohai::System, "plugin c" do
 
   end
 
-  context "on Windows" do
+  context "when on Windows" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:windows)
       allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
@@ -209,12 +206,11 @@ describe Ohai::System, "plugin c" do
     end
   end
 
-  context "on Linux" do
+  context "when on Linux" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
       # glibc
-      allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))
-      allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))
+      allow(plugin).to receive(:shell_out).with("ldd --version").and_return(mock_shell_out(0, C_GLIBC, ""))
       # sun pro
       allow(plugin).to receive(:shell_out).with("cc -V -flags").and_return(mock_shell_out(0, "", C_SUN))
     end
@@ -264,41 +260,39 @@ describe Ohai::System, "plugin c" do
     end
 
     # glibc
-    it "gets the glibc x.x.x version from running /lib/libc.so.6" do
-      expect(plugin).to receive(:shell_out).with("/lib/libc.so.6")
+    it "gets the glibc x.x.x version from running ldd" do
+      expect(plugin).to receive(:shell_out).with("ldd --version")
       plugin.run
     end
 
     it "sets languages[:c][:glibc][:version]", :unix_only do
       plugin.run
-      expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
+      expect(plugin.languages[:c][:glibc][:version]).to eql("2.17")
     end
 
     it "sets languages[:c][:glibc][:description]" do
       plugin.run
-      expect(plugin.languages[:c][:glibc][:description]).to eql("GNU C Library stable release version 2.5, by Roland McGrath et al.")
+      expect(plugin.languages[:c][:glibc][:description]).to eql("ldd (GNU libc) 2.17")
     end
 
     it "does not set the languages[:c][:glibc] tree up if glibc exits nonzero" do
-      allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(1, "", ""))
-      allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_return(mock_shell_out(1, "", ""))
+      allow(plugin).to receive(:shell_out).with("ldd --version").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:glibc)
     end
 
     it "does not set the languages[:c][:glibc] tree up if glibc fails" do
-      allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_raise(Ohai::Exceptions::Exec)
-      allow(plugin).to receive(:shell_out).with("/lib64/libc.so.6").and_raise(Ohai::Exceptions::Exec)
+      allow(plugin).to receive(:shell_out).with("ldd --version").and_raise(Ohai::Exceptions::Exec)
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:glibc)
       expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
     end
 
-    it "gets the glibc x.x version from running /lib/libc.so.6" do
-      allow(plugin).to receive(:shell_out).with("/lib/libc.so.6").and_return(mock_shell_out(0, C_GLIBC, ""))
-      expect(plugin).to receive(:shell_out).with("/lib/libc.so.6")
+    it "gets the glibc x.x version from running ldd" do
+      allow(plugin).to receive(:shell_out).with("ldd --version").and_return(mock_shell_out(0, C_GLIBC, ""))
+      expect(plugin).to receive(:shell_out).with("ldd --version")
       plugin.run
-      expect(plugin.languages[:c][:glibc][:version]).to eql("2.5")
+      expect(plugin.languages[:c][:glibc][:version]).to eql("2.17")
     end
 
     # sun pro

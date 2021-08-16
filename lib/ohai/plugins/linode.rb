@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Aaron Kalin (<akalin@martinisoftware.com>)
 # License:: Apache License, Version 2.0
@@ -17,31 +18,38 @@
 Ohai.plugin(:Linode) do
   provides "linode"
 
-  depends "kernel"
+  depends "domain"
   depends "network/interfaces"
 
-  # Checks for matching linode kernel name
+  # Checks to see if the node is in the members.linode.com domain
   #
-  # Returns true or false
-  def has_linode_kernel?
-    if ( kernel_data = kernel )
-      kernel_data[:release].split("-").last =~ /linode/
-    end
+  # @return [Boolean]
+  #
+  def has_linode_domain?
+    domain&.include?("linode")
+  end
+
+  # Checks for linode mirrors in the apt sources.list file
+  #
+  # @return [Boolean]
+  #
+  def has_linode_apt_repos?
+    file_exist?("/etc/apt/sources.list") && file_read("/etc/apt/sources.list").include?("linode")
   end
 
   # Identifies the linode cloud by preferring the hint, then
   #
-  # Returns true or false
+  # @return [Boolean]
+  #
   def looks_like_linode?
-    hint?("linode") || has_linode_kernel?
+    hint?("linode") || has_linode_domain? || has_linode_apt_repos?
   end
 
-  # Names linode ip address
-  #
-  # name - symbol of ohai name (e.g. :public_ip)
-  # eth - Interface name (e.g. :eth0)
-  #
   # Alters linode mash with new interface based on name parameter
+  #
+  # @param [Symbol] name Ohai name (e.g. :public_ip)
+  # @param [Symbol] eth Interface name (e.g. :eth0)
+  #
   def get_ip_address(name, eth)
     if ( eth_iface = network[:interfaces][eth] )
       eth_iface[:addresses].each do |key, info|
@@ -50,7 +58,7 @@ Ohai.plugin(:Linode) do
     end
   end
 
-  collect_data do
+  collect_data(:linux) do
     # Setup linode mash if it is a linode system
     if looks_like_linode?
       logger.trace("Plugin Linode: looks_like_linode? == true")

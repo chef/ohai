@@ -20,7 +20,7 @@
 require "spec_helper"
 
 describe Ohai::System, "plugin packages" do
-  context "on debian" do
+  context "when on debian" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "debian"
@@ -59,7 +59,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on fedora" do
+  context "when on fedora" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "fedora"
@@ -122,7 +122,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on arch" do
+  context "when on arch" do
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
         plugin[:platform_family] = "arch"
@@ -159,7 +159,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on windows", :windows_only do
+  context "when on windows", :windows_only do
 
     let(:plugin) do
       get_plugin("packages").tap do |plugin|
@@ -190,10 +190,10 @@ describe Ohai::System, "plugin packages" do
          "Publisher" => "nxsec.com",
          "InstallDate" => "20150511",
         },
-        { "DisplayName" => "Chef Development Kit v0.7.0",
-          "DisplayVersion" => "0.7.0.1",
-          "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
-          "InstallDate" => "20150925" }]
+       { "DisplayName" => "Chef Development Kit v0.7.0",
+         "DisplayVersion" => "0.7.0.1",
+         "Publisher" => "\"Chef Software, Inc. <maintainers@chef.io>\"",
+         "InstallDate" => "20150925" }]
     end
 
     shared_examples "windows_package_plugin" do
@@ -247,7 +247,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on aix" do
+  context "when on aix" do
     let(:plugin) { get_plugin("packages") }
 
     let(:stdout) do
@@ -276,7 +276,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on freebsd" do
+  context "when on freebsd" do
     let(:plugin) { get_plugin("packages") }
 
     let(:stdout) do
@@ -301,7 +301,7 @@ describe Ohai::System, "plugin packages" do
     end
   end
 
-  context "on solaris2" do
+  context "when on solaris2" do
     let(:plugin) { get_plugin("packages") }
 
     let(:pkglist_output) do
@@ -348,6 +348,55 @@ describe Ohai::System, "plugin packages" do
 
     it "gets sysv packages with version" do
       expect(plugin[:packages]["mqm"][:version]).to eq("7.0.1.4")
+    end
+  end
+
+  context "when on darwin" do
+    let(:plugin) { get_plugin("packages") }
+
+    let(:stdout) do
+      File.read(File.join(SPEC_PLUGIN_PATH, "system_profiler_spapplicationsdatatype.output"))
+    end
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:darwin)
+      allow(plugin).to receive(:shell_out).with("system_profiler SPApplicationsDataType -xml").and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    it "calls system_profiler SPApplicationsDataType -xml" do
+      expect(plugin).to receive(:shell_out)
+        .with("system_profiler SPApplicationsDataType -xml")
+        .and_return(mock_shell_out(0, stdout, ""))
+      plugin.run
+    end
+
+    # apple
+    it "gets 'Install macOS Catalina' details" do
+      expect(plugin[:packages]["Install macOS Catalina"][:version]).to eq("15.6.00")
+      expect(plugin[:packages]["Install macOS Catalina"][:source]).to eq("apple")
+      expect(plugin[:packages]["Install macOS Catalina"][:lastmodified].to_s).to eq("2020-09-04T04:54:33+00:00")
+    end
+
+    # app store
+    it "gets 'Slack' details" do
+      expect(plugin[:packages]["Slack"][:version]).to eq("4.8.0")
+      expect(plugin[:packages]["Slack"][:source]).to eq("mac_app_store")
+      expect(plugin[:packages]["Slack"][:lastmodified].to_s).to eq("2020-08-12T22:24:32+00:00")
+    end
+
+    # chef
+    it "gets 'Chef Workstation' details" do
+      expect(plugin[:packages]["Chef Workstation App"][:version]).to eq("0.1.82")
+      expect(plugin[:packages]["Chef Workstation App"][:source]).to eq("identified_developer")
+      expect(plugin[:packages]["Chef Workstation App"][:lastmodified].to_s).to eq("2020-09-03T03:16:22+00:00")
+    end
+
+    # homebrew
+    it "gets 'Emacs' details" do
+      expect(plugin[:packages]["Emacs"][:version]).to eq("27.1")
+      expect(plugin[:packages]["Emacs"][:source]).to eq("unknown")
+      expect(plugin[:packages]["Emacs"][:lastmodified].to_s).to eq("2020-08-19T07:08:51+00:00")
     end
   end
 end

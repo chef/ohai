@@ -54,8 +54,9 @@ describe Ohai::System, "shard plugin" do
     expect(subject).to eq(203669792)
   end
 
-  it "fails on an unrecognized source" do
+  it "logs and fails on an unrecognized source" do
     Ohai.config[:plugin][:shard_seed][:sources] = [:GreatGooglyMoogly]
+    expect(Ohai::Log).to receive(:error).with(/No such source/)
     expect { subject }.to raise_error(RuntimeError)
   end
 
@@ -63,6 +64,19 @@ describe Ohai::System, "shard plugin" do
     Ohai.config[:plugin][:shard_seed][:digest_algorithm] = "sha256"
     expect(Digest::MD5).not_to receive(:new)
     expect(subject).to eq(117055036)
+  end
+
+  it "logs and fails when dmidecode data is not available" do
+    plugin["dmi"] = {}
+    expect(Ohai::Log).to receive(:error).with(/Failed to get dmi/)
+    expect { subject }.to raise_error(RuntimeError)
+  end
+
+  it "logs and fails when no data sources were available" do
+    Ohai.config[:plugin][:shard_seed][:sources] = [:fqdn]
+    plugin["fqdn"] = ""
+    expect(Ohai::Log).to receive(:error).with(/Unable to generate seed/)
+    expect { subject }.to raise_error(RuntimeError)
   end
 
   context "with Darwin OS" do
@@ -105,7 +119,7 @@ describe Ohai::System, "shard plugin" do
     let(:os) { "aix" }
 
     it "provides a shard with a default-safe set of sources" do
-      # Note: this is different than the other defaults.
+      # NOTE: this is different than the other defaults.
       expect(subject).to eq(253499154)
     end
   end

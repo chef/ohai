@@ -1,7 +1,7 @@
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Christopher Brown (cb@chef.io)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,25 +33,28 @@ describe Ohai::System, "plugin eucalyptus" do
   shared_examples_for "eucalyptus" do
     before do
       @http_client = double("Net::HTTP client")
+      @token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+      @get_req_token_header = { 'X-aws-ec2-metadata-token': @token }
       allow(plugin).to receive(:http_client).and_return(@http_client)
+      allow(@http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: @token, code: "200") }
 
       expect(@http_client).to receive(:get)
-        .with("/")
+        .with("/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "2012-01-12", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/")
+        .with("/2012-01-12/meta-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "instance_type\nami_id\nsecurity-groups", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/instance_type")
+        .with("/2012-01-12/meta-data/instance_type", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "c1.medium", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/ami_id")
+        .with("/2012-01-12/meta-data/ami_id", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "ami-5d2dc934", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/meta-data/security-groups")
+        .with("/2012-01-12/meta-data/security-groups", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "group1\ngroup2", code: "200"))
       expect(@http_client).to receive(:get)
-        .with("/2012-01-12/user-data/")
+        .with("/2012-01-12/user-data/", @get_req_token_header)
         .and_return(double("Net::HTTP Response", body: "By the pricking of my thumb...", code: "200"))
     end
 

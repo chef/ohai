@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Nate Walck (<nate.walck@gmail.com>)
 # Copyright:: Copyright (c) 2016-present Facebook, Inc.
@@ -41,8 +42,8 @@ Ohai.plugin(:Hardware) do
     hardware.merge!(hw_hash[0]["_items"][0])
 
     # ProductName:	Mac OS X
-    # ProductVersion:	10.12.5
-    # BuildVersion:	16F73
+    # ProductVersion:	10.15.6
+    # BuildVersion:	19G46c
     shell_out("sw_vers").stdout.lines.each do |line|
       case line
       when /^ProductName:\s*(.*)$/

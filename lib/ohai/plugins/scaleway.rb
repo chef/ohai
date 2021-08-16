@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Jonathan Amiez (<jonathan.amiez@gmail.com>)
 # License:: Apache License, Version 2.0
@@ -26,7 +27,7 @@ Ohai.plugin(:Scaleway) do
   # looks for `scaleway` keyword in kernel command line
   # @return [Boolean] do we have the keyword or not?
   def has_scaleway_cmdline?
-    if ::File.read("/proc/cmdline") =~ /scaleway/
+    if file_exist?("/proc/cmdline") && /scaleway/.match?(file_read("/proc/cmdline"))
       logger.trace("Plugin Scaleway: has_scaleway_cmdline? == true")
       return true
     end
@@ -43,7 +44,7 @@ Ohai.plugin(:Scaleway) do
     false
   end
 
-  collect_data do
+  collect_data(:linux) do
     if looks_like_scaleway?
       logger.trace("Plugin Scaleway: looks_like_scaleway? == true")
       scaleway Mash.new

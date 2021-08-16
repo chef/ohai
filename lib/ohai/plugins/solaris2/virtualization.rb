@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2010 Kurt Yoder
 # License:: Apache License, Version 2.0
 #
@@ -25,9 +26,7 @@ Ohai.plugin(:Virtualization) do
   depends "dmi"
 
   def collect_solaris_guestid
-    command = "/usr/sbin/zoneadm list -p"
-    so = shell_out(command)
-    so.stdout.split(":").first
+    shell_out("/usr/sbin/zoneadm list -p").stdout.split(":").first
   end
 
   collect_data(:solaris2) do
@@ -36,9 +35,9 @@ Ohai.plugin(:Virtualization) do
 
     # Detect paravirt KVM/QEMU from cpuinfo, report as KVM
     psrinfo_path = Ohai.abs_path( "/usr/sbin/psrinfo" )
-    if File.exist?(psrinfo_path)
+    if file_exist?(psrinfo_path)
       so = shell_out("#{psrinfo_path} -pv")
-      if so.stdout =~ /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/
+      if /QEMU Virtual CPU|Common KVM processor|Common 32-bit KVM processor/.match?(so.stdout)
         virtualization[:system] = "kvm"
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
@@ -56,9 +55,8 @@ Ohai.plugin(:Virtualization) do
 
     if File.executable?("/usr/sbin/zoneadm")
       zones = Mash.new
-      so = shell_out("zoneadm list -pc")
-      so.stdout.lines do |line|
-        info = line.chomp.split(/:/)
+      shell_out("zoneadm list -pc").stdout.lines do |line|
+        info = line.chomp.split(":")
         zones[info[1]] = {
           "id" => info[0],
           "state" => info[2],
@@ -71,12 +69,11 @@ Ohai.plugin(:Virtualization) do
 
       if zones.length == 1
         first_zone = zones.keys[0]
+        virtualization[:system] = "zone"
         if first_zone == "global"
-          virtualization[:system] = "zone"
           virtualization[:role] = "host"
           virtualization[:systems][:zone] = "host"
         else
-          virtualization[:system] = "zone"
           virtualization[:role] = "guest"
           virtualization[:systems][:zone] = "guest"
           virtualization[:guest_uuid] = zones[first_zone]["uuid"]

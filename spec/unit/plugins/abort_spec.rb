@@ -1,6 +1,6 @@
 #
 # Author:: Salim Alam (salam@chef.io)
-# Copyright:: Copyright (c) 2015 Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ describe "a plug-in that aborts execution" do
 
     Dir.mkdir("#{tmp}/plugins")
   rescue Errno::EEXIST
-      # ignore
+    # ignore
 
   end
 
@@ -52,7 +52,7 @@ describe "a plug-in that aborts execution" do
 
     Dir.delete("#{tmp}/plugins")
   rescue
-      # ignore
+    # ignore
 
   end
 

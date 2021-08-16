@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2019, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,8 +71,7 @@ module Ohai
       from = [ Ohai.config[:plugin_path], from].flatten
       plugin_files_by_dir(from).collect do |plugin_file|
         logger.trace "Loading additional plugin: #{plugin_file}"
-        plugin = load_plugin_class(plugin_file)
-        load_v7_plugin(plugin)
+        load_v7_plugin(load_plugin_class(plugin_file))
       end
     end
 

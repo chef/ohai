@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Stafford Brunk (<stafford.brunk@gmail.com>)
 # License:: Apache License, Version 2.0
@@ -14,11 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "ipaddress"
-
 module Ohai
   module Util
     module IpHelper
+      require "ipaddress" unless defined?(IPAddress)
+
       # Corresponding to RFC 4192 + RFC 4193
       IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress("fe80::/10")
       IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress("fc00::/7")
@@ -32,7 +33,7 @@ module Ohai
           IPV6_LINK_LOCAL_UNICAST_BLOCK.include?(ip) || IPV6_PRIVATE_ADDRESS_BLOCK.include?(ip)
         end
       end
-      alias :unique_local_address? :private_address?
+      alias unique_local_address? private_address?
 
       def public_address?(addr)
         !private_address?(addr)

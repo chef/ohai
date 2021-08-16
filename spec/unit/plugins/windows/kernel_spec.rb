@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright (c) 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ describe Ohai::System, "Windows kernel plugin", :windows_only do
   let(:plugin) { get_plugin("kernel") }
 
   before do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     # Mock a Win32_OperatingSystem OLE32 WMI object
     caption = double("WIN32OLE", name: "Caption")

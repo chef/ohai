@@ -1,6 +1,6 @@
 #
 # Author:: Daniel DeLeo (<dan@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -22,7 +22,7 @@ require "spec_helper"
 describe Ohai::ProvidesMap do
 
   let(:ohai_system) { Ohai::System.new }
-  let(:provides_map) { Ohai::ProvidesMap.new }
+  let(:provides_map) { described_class.new }
   let(:plugin_1) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
   let(:plugin_2) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }
   let(:plugin_3) { Ohai::DSL::Plugin.new(ohai_system.data, ohai_system.logger) }

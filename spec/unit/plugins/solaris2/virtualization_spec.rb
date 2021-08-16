@@ -1,6 +1,6 @@
 #
 # Author:: Sean Walbran (<seanwalbran@gmail.com>)
-# Copyright:: Copyright (c) 2009-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,16 +31,16 @@ describe Ohai::System, "Solaris virtualization platform" do
     allow(plugin).to receive(:collect_os).and_return(:solaris2)
 
     # default to all requested Files not existing
-    allow(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(false)
-    allow(File).to receive(:exist?).with("/usr/sbin/smbios").and_return(false)
-    allow(File).to receive(:exist?).with("/usr/sbin/zoneadm").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/usr/sbin/psrinfo").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/usr/sbin/smbios").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/usr/sbin/zoneadm").and_return(false)
     allow(plugin).to receive(:shell_out).with("/usr/sbin/smbios").and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, "", ""))
   end
 
   describe "when we are checking for kvm" do
     before do
-      expect(File).to receive(:exist?).with("/usr/sbin/psrinfo").and_return(true)
+      expect(plugin).to receive(:file_exist?).with("/usr/sbin/psrinfo").and_return(true)
     end
 
     it "runs psrinfo -pv" do

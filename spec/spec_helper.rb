@@ -3,8 +3,8 @@ require "rspec/collection_matchers"
 # require 'pry-debugger'
 # require 'pry-stack_explorer'
 
-$:.unshift(File.expand_path("../..", __FILE__))
-$:.unshift(File.dirname(__FILE__) + "/../lib")
+$:.unshift(File.expand_path("..", __dir__))
+$:.unshift(__dir__ + "/../lib")
 
 require "spec/support/platform_helpers"
 require "spec/support/integration_helper"
@@ -12,8 +12,8 @@ require "wmi-lite"
 require "ohai"
 Ohai.config[:log_level] = :error
 
-PLUGIN_PATH = File.expand_path("../../lib/ohai/plugins", __FILE__)
-SPEC_PLUGIN_PATH = File.expand_path("../data/plugins", __FILE__)
+PLUGIN_PATH = File.expand_path("../lib/ohai/plugins", __dir__)
+SPEC_PLUGIN_PATH = File.expand_path("data/plugins", __dir__)
 
 RSpec.configure do |config|
   config.before { @object_pristine = Object.clone }
@@ -21,10 +21,6 @@ RSpec.configure do |config|
 end
 
 include Ohai::Mixin::ConstantHelper
-
-if Ohai::Mixin::OS.collect_os == /mswin|mingw32|windows/
-  ENV["PATH"] = ""
-end
 
 def get_plugin(plugin, ohai = Ohai::System.new, path = PLUGIN_PATH)
   loader = Ohai::Loader.new(ohai)
@@ -50,7 +46,7 @@ def it_should_check_from_mash(plugin, attribute, from, value)
 
   it "sets the #{plugin}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    expect(@plugin[plugin][attribute]).to eq(value[1].split($/)[0])
+    expect(@plugin[plugin][attribute]).to eq(value[1].strip)
   end
 end
 
@@ -71,7 +67,7 @@ def it_should_check_from_deep_mash(plugin, mash, attribute, from, value)
 
   it "sets the #{mash.inspect}[:#{attribute}] to the value from '#{from}'" do
     @plugin.run
-    value = value[1].split($/)[0]
+    value = value[1].strip
     if mash.is_a?(String)
       expect(@plugin[mash][attribute]).to eq(value)
     elsif mash.is_a?(Array)

@@ -6,7 +6,7 @@
 # Author:: Prabhu Das (<prabhu.das@clogeny.com>)
 # Author:: Isa Farnik (<isa@chef.io>)
 # Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) 2008-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright:: Copyright (c) 2015 Facebook, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -24,12 +24,12 @@
 #
 
 Ohai.plugin(:Filesystem) do
-  provides "filesystem"
+  provides "filesystem".freeze
 
   def find_device(name)
     %w{/dev /dev/mapper}.each do |dir|
       path = File.join(dir, name)
-      return path if File.exist?(path)
+      return path if file_exist?(path)
     end
     name
   end
@@ -98,31 +98,6 @@ Ohai.plugin(:Filesystem) do
     view
   end
 
-  def generate_deprecated_view(fs)
-    view = generate_device_view(fs)
-    view.each do |device, entry|
-      view[device][:mount] = entry[:mounts].first
-      view[device].delete(:mounts)
-    end
-    view
-  end
-
-  def generate_deprecated_solaris_view(fs, old_zfs)
-    view = generate_deprecated_view(fs)
-    old_zfs.each do |fsname, attributes|
-      view[fsname] ||= Mash.new
-      view[fsname][:fs_type] = "zfs"
-      view[fsname][:mount] = attributes[:values][:mountpoint] if attributes[:values].key?("mountpoint")
-      view[fsname][:device] = fsname
-      view[fsname][:zfs_values] = attributes[:values]
-      view[fsname][:zfs_sources] = attributes[:sources]
-      # parents will already be here
-      # but we want to nuke "zfs_properties"
-      view[fsname].delete("zfs_properties")
-    end
-    view
-  end
-
   def parse_common_df(out)
     fs = {}
     out.each_line do |line|
@@ -153,17 +128,158 @@ Ohai.plugin(:Filesystem) do
     logger.warn("Plugin Filesystem: #{bin} binary is not available. Some data will not be available.")
   end
 
+  ### Windows specific methods BEGINS
+  # Drive types
+  DRIVE_TYPE ||= %w{unknown no_root_dir removable local network cd ram}.freeze
+
+  # Volume encryption or decryption status
+  #
+  # @see https://docs.microsoft.com/en-us/windows/desktop/SecProv/getconversionstatus-win32-encryptablevolume#parameters
+  #
+  CONVERSION_STATUS ||= %w{
+    FullyDecrypted FullyEncrypted EncryptionInProgress
+    DecryptionInProgress EncryptionPaused DecryptionPaused
+  }.freeze
+
+  # Returns a Mash loaded with logical details
+  #
+  # Uses Win32_LogicalDisk and logical_properties to return general details of volumes.
+  #
+  # Returns an empty Mash in case of any WMI exception.
+  #
+  # @see https://docs.microsoft.com/en-us/windows/desktop/CIMWin32Prov/win32-logicaldisk
+  #
+  # @return [Mash]
+  #
+  def logical_info
+    wmi = WmiLite::Wmi.new("Root\\CIMV2")
+
+    # TODO: We should really be parsing Win32_Volume and Win32_MountPoint.
+    disks = wmi.instances_of("Win32_LogicalDisk")
+    logical_properties(disks)
+  rescue WmiLite::WmiException
+    Ohai::Log.debug("Unable to access Win32_LogicalDisk. Skipping logical details")
+    Mash.new
+  end
+
+  # Returns a Mash loaded with encryption details
+  #
+  # Uses Win32_EncryptableVolume and encryption_properties to return encryption details of volumes.
+  #
+  # Returns an empty Mash in case of any WMI exception.
+  #
+  # @note We are fetching Encryption Status only as of now
+  #
+  # @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa376483(v=vs.85).aspx
+  #
+  # @return [Mash]
+  #
+  def encryptable_info
+    wmi = WmiLite::Wmi.new("Root\\CIMV2\\Security\\MicrosoftVolumeEncryption")
+    disks = wmi.instances_of("Win32_EncryptableVolume")
+    encryption_properties(disks)
+  rescue WmiLite::WmiException
+    Ohai::Log.debug("Unable to access Win32_EncryptableVolume. Skipping encryptable details")
+    Mash.new
+  end
+
+  # Refines and calculates logical properties out of given instances.
+  #
+  # Note that :device here is the same as Volume name and there for compatibility with other OSes.
+  #
+  # @param [WmiLite::Wmi::Instance] disks
+  #
+  # @return [Mash] Each drive containing following properties:
+  #
+  #  * :kb_size (Integer)
+  #  * :kb_available (Integer)
+  #  * :kb_used (Integer)
+  #  * :percent_used (Integer)
+  #  * :mount (String)
+  #  * :fs_type (String)
+  #  * :volume_name (String)
+  #  * :device (String)
+  #
+  def logical_properties(disks)
+    properties = Mash.new
+    disks.each do |disk|
+      property = Mash.new
+      # In windows the closest thing we have to a device is the volume name
+      # and the "mountpoint" is the drive letter...
+      device = disk["volumename"].to_s.downcase
+      mount = disk["deviceid"]
+      property[:kb_size] = disk["size"] ? disk["size"].to_i / 1000 : 0
+      property[:kb_available] = disk["freespace"].to_i / 1000
+      property[:kb_used] = property[:kb_size] - property[:kb_available]
+      property[:percent_used] = (property[:kb_size] == 0 ? 0 : (property[:kb_used] * 100 / property[:kb_size]))
+      property[:mount] = mount
+      property[:fs_type] = disk["filesystem"].to_s.downcase
+      property[:drive_type] = disk["drivetype"].to_i
+      property[:drive_type_string] = DRIVE_TYPE[disk["drivetype"].to_i]
+      property[:drive_type_human] = disk["description"].to_s
+      property[:volume_name] = disk["volumename"].to_s
+      property[:device] = device
+
+      key = "#{device},#{mount}"
+      properties[key] = property
+    end
+    properties
+  end
+
+  # Refines and calculates encryption properties out of given instances
+  #
+  # @param [WmiLite::Wmi::Instance] disks
+  #
+  # @return [Mash] Each drive containing following properties:
+  #
+  #  * :encryption_status (String)
+  #
+  def encryption_properties(disks)
+    properties = Mash.new
+    disks.each do |disk|
+      property = Mash.new
+      property[:encryption_status] = disk["conversionstatus"] ? CONVERSION_STATUS[disk["conversionstatus"]] : ""
+      key = disk["driveletter"]
+      properties[key] = property
+    end
+    properties
+  end
+
+  # Merges all the various properties of filesystems
+  #
+  # @param [Array<Mash>] disks_info
+  #   Array of the Mashes containing disk properties
+  #
+  # @return [Mash]
+  #
+  def merge_info(logical_info, encryption_info)
+    fs = Mash.new
+
+    encryption_keys_used = Set.new
+    logical_info.each do |key, info|
+      if encryption_info[info["mount"]]
+        encryption_keys_used.add(info["mount"])
+        fs[key] = info.merge(encryption_info[info["mount"]])
+      else
+        fs[key] = info.dup
+      end
+    end
+    left_enc = encryption_info.reject { |x| encryption_keys_used.include?(x) }
+    left_enc.each do |key, info|
+      fs[",#{key}"] = info
+    end
+    fs
+  end
+
   collect_data(:linux) do
     fs = Mash.new
 
     # Grab filesystem data from df
     run_with_check("df") do
-      so = shell_out("df -P")
-      fs.merge!(parse_common_df(so.stdout))
+      fs.merge!(parse_common_df(shell_out("df -P").stdout))
 
       # Grab filesystem inode data from df
-      so = shell_out("df -iP")
-      so.stdout.each_line do |line|
+      shell_out("df -iP").stdout.each_line do |line|
         case line
         when /^Filesystem\s+Inodes/
           next
@@ -182,8 +298,7 @@ Ohai.plugin(:Filesystem) do
 
     # Grab mount information from /bin/mount
     run_with_check("mount") do
-      so = shell_out("mount")
-      so.stdout.each_line do |line|
+      shell_out("mount").stdout.each_line do |line|
         if line =~ /^(.+?) on (.+?) type (.+?) \((.+?)\)$/
           key = "#{$1},#{$2}"
           fs[key] ||= Mash.new
@@ -218,8 +333,7 @@ Ohai.plugin(:Filesystem) do
       # this is to allow machines with large amounts of attached LUNs
       # to respond back to the command successfully
       run_with_check(cmdtype) do
-        so = shell_out(cmd, timeout: 60)
-        so.stdout.each_line do |line|
+        shell_out(cmd, timeout: 60).stdout.each_line do |line|
           parsed = parse_line(line, cmdtype)
           next if parsed.nil?
 
@@ -249,13 +363,12 @@ Ohai.plugin(:Filesystem) do
     end
 
     # Grab any missing mount information from /proc/mounts
-    if File.exist?("/proc/mounts")
+    if file_exist?("/proc/mounts")
       mounts = ""
       # Due to https://tickets.opscode.com/browse/OHAI-196
       # we have to non-block read dev files. Ew.
-      f = File.open("/proc/mounts")
+      f = file_open("/proc/mounts")
       loop do
-
         data = f.read_nonblock(4096)
         mounts << data
       # We should just catch EOFError, but the kernel had a period of
@@ -264,9 +377,9 @@ Ohai.plugin(:Filesystem) do
       # whatever data we might have
       rescue Exception
         break
-
       end
       f.close
+
       mounts.each_line do |line|
         if line =~ /^(\S+) (\S+) (\S+) (\S+) \S+ \S+$/
           key = "#{$1},#{$2}"
@@ -345,10 +458,7 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - BSD didn't do the conversion when everyone else
-    # did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_view(fs)
-    filesystem2 fs_data
+    filesystem fs_data
   end
 
   collect_data(:darwin) do
@@ -444,7 +554,6 @@ Ohai.plugin(:Filesystem) do
 
     # Grab any zfs data from "zfs get"
     zfs = Mash.new
-    old_zfs = Mash.new
     zfs_get = "zfs get -p -H all"
     run_with_check("zfs") do
       so = shell_out(zfs_get)
@@ -461,26 +570,19 @@ Ohai.plugin(:Filesystem) do
           value: value,
           source: source,
         }
-        # needed for old v1 view
-        old_zfs[filesystem] ||= Mash.new
-        old_zfs[filesystem][:values] ||= Mash.new
-        old_zfs[filesystem][:sources] ||= Mash.new
-        old_zfs[filesystem][:values][property] = value
-        old_zfs[filesystem][:values][property] = value
-        old_zfs[filesystem][:sources][property] = source
       end
     end
 
-    zfs.each do |fsname, attributes|
+    zfs.each do |fs_name, attributes|
       mountpoint = attributes[:mountpoint][:value] if attributes[:mountpoint]
-      key = "#{fsname},#{mountpoint}"
+      key = "#{fs_name},#{mountpoint}"
       fs[key] ||= Mash.new
       fs[key][:fs_type] = "zfs"
       fs[key][:mount] = mountpoint if mountpoint
-      fs[key][:device] = fsname
+      fs[key][:device] = fs_name
       fs[key][:zfs_properties] = attributes
       # find all zfs parents
-      parents = fsname.split("/")
+      parents = fs_name.split("/")
       zfs_parents = []
       (0..parents.length - 1).to_a.each do |parent_index|
         next_parent = parents[0..parent_index].join("/")
@@ -501,10 +603,7 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - Solaris didn't do the conversion when everyone
-    # else did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_solaris_view(fs, old_zfs)
-    filesystem2 fs_data
+    filesystem fs_data
   end
 
   collect_data(:aix) do
@@ -594,9 +693,29 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Set the filesystem data - AIX didn't do the conversion when everyone
-    # else did, so 15 will have both be the new API and 16 will drop the old API
-    filesystem generate_deprecated_view(fs)
+    filesystem fs_data
+  end
+
+  collect_data(:windows) do
+    require "set" unless defined?(Set)
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
+    require_relative "../mash"
+
+    fs = merge_info(logical_info, encryptable_info)
+
+    by_pair = fs
+    by_device = generate_device_view(fs)
+    by_mountpoint = generate_mountpoint_view(fs)
+
+    fs_data = Mash.new
+    fs_data["by_device"] = by_device
+    fs_data["by_mountpoint"] = by_mountpoint
+    fs_data["by_pair"] = by_pair
+
+    # Chef 16 added 'filesystem2'
+    # In Chef 17 we made 'filesystem' and 'filesystem2' match (both new-style)
+    # In Chef 18 we will drop 'filesystem2'
+    filesystem fs_data
     filesystem2 fs_data
   end
 end

@@ -1,5 +1,5 @@
 #
-# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #
 # License:: Apache License, Version 2.0
 #
@@ -19,12 +19,13 @@
 require "spec_helper"
 
 describe Ohai::System, "languages plugin" do
-  VERSION_MATCHING_REGEX = /^(?:[\d]+\.)+[\d]+$/.freeze
+  VERSION_MATCHING_REGEX = /^(?:\d+\.)+\d+$/.freeze
   describe "powershell plugin", :windows_only do
     RSpec.shared_examples "a version looking thing" do
       it "is present" do
         expect(subject).not_to be_nil
       end
+
       it "looks like a version" do
         expect(subject).to match(VERSION_MATCHING_REGEX)
       end

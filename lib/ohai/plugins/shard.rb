@@ -18,14 +18,16 @@
 
 Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
-  provides "shard_seed"
+  provides "shard_seed".freeze
 
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
-      unless dmi[section][thing].strip.empty?
+      if dmi[section] && dmi[section][thing] && !dmi[section][thing].strip.empty?
         return dmi[section][thing]
       end
     end
+    Ohai::Log.error("shard_seed: Failed to get dmi property #{thing}: is dmidecode installed?")
+    raise "Failed to generate shard_seed"
   end
 
   def default_sources
@@ -50,7 +52,7 @@ Ohai.plugin(:ShardSeed) do
   def digest_algorithm
     case Ohai.config[:plugin][:shard_seed][:digest_algorithm] || default_digest_algorithm
     when "md5"
-      require "digest/md5"
+      require "digest/md5" unless defined?(Digest::MD5)
       Digest::MD5
     when "sha256"
       require "openssl/digest"
@@ -77,17 +79,22 @@ Ohai.plugin(:ShardSeed) do
                 yield(src)
               end
     end
+    if data.empty?
+      Ohai::Log.error("shard_seed: Unable to generate seed! Either ensure 'dmidecode' is installed, or use 'Ohai.config[:plugin][:shard_seed][:sources]' to set different sources.")
+      raise "Failed to generate shard_seed"
+    end
     shard_seed digest_algorithm.hexdigest(data)[0...7].to_i(16)
   end
 
   collect_data do
     create_seed do |src|
+      Ohai::Log.error("shard_seed: No such source #{src}")
       raise "No such shard_seed source: #{src}"
     end
   end
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new
 
     create_seed do |src|
@@ -99,6 +106,7 @@ Ohai.plugin(:ShardSeed) do
       when :uuid
         wmi.first_of("Win32_ComputerSystemProduct")["UUID"]
       else
+        Ohai::Log.error("shard_seed: No such source #{src}")
         raise "No such shard_seed source: #{src}"
       end
     end
@@ -112,6 +120,7 @@ Ohai.plugin(:ShardSeed) do
       when :uuid
         hardware["platform_UUID"]
       else
+        Ohai::Log.error("shard_seed: No such source #{src}")
         raise "No such shard_seed source: #{src}"
       end
     end
@@ -125,6 +134,7 @@ Ohai.plugin(:ShardSeed) do
       when :uuid
         get_dmi_property(dmi, :uuid)
       else
+        Ohai::Log.error("shard_seed: No such source #{src}")
         raise "No such shard_seed source: #{src}"
       end
     end

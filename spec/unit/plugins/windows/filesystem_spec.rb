@@ -1,6 +1,6 @@
 #
 #  Author:: Nimesh Pathi <nimesh.patni@msystechnologies.com>
-#  Copyright:: Copyright (c) 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +17,12 @@
 #
 
 require "spec_helper"
-require "wmi-lite/wmi"
+require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
 describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
-  let(:plugin) { get_plugin("windows/filesystem") }
+  let(:plugin) { get_plugin("filesystem") }
 
-  let(:success) { true }
+  let(:success) { double }
 
   let(:logical_disks_instances) do
     [
@@ -31,18 +31,22 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         "deviceid" => "C:",
         "size" => "10000000",
         "filesystem" => "NTFS",
+        "drivetype" => 3,
+        "description" => "Local Fixed Disk",
         "freespace" => "100000",
         "name" => "C:",
-        "volumename " => "",
+        # omit "volumename"; it will be added in (some) tests below
       },
       {
         "caption" => "D:",
         "deviceid" => "D:",
         "size" => "10000000",
         "filesystem" => "FAT32",
+        "drivetype" => 2,
+        "description" => "Removable Disk",
         "freespace" => "100000",
         "name" => "D:",
-        # Lets not pass "volumename" for this drive
+        # omit "volumename"; it will be added in (some) tests below
       },
     ]
   end
@@ -70,9 +74,109 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
     allow(plugin).to receive(:collect_os).and_return(:windows)
   end
 
+  describe "the plugin" do
+    context "when there are no volume names" do
+      before do
+        allow(plugin).to receive(:logical_info).and_return(plugin.logical_properties(logical_disks_instances))
+        allow(plugin).to receive(:encryptable_info).and_return(plugin.encryption_properties(encryptable_volume_instances))
+        plugin.run
+      end
+
+      it "returns space information" do
+        {
+          "kb_size" => 10000,
+          "kb_available" => 100,
+          "kb_used" => 9900,
+          "percent_used" => 99,
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
+        end
+      end
+
+      it "returns disk information" do
+        {
+          "fs_type" => "ntfs",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
+          "volume_name" => "",
+          "encryption_status" => "FullyDecrypted",
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
+        end
+
+        {
+          "fs_type" => "fat32",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
+          "volume_name" => "",
+          "encryption_status" => "EncryptionInProgress",
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
+        end
+      end
+    end
+
+    context "when there are volume names" do
+      before do
+        ldi = logical_disks_instances
+        ldi.each_with_index { |d, i| d["volumename"] = "Volume #{i}" }
+        allow(plugin).to receive(:logical_info).and_return(plugin.logical_properties(ldi))
+        allow(plugin).to receive(:encryptable_info).and_return(plugin.encryption_properties(encryptable_volume_instances))
+        plugin.run
+      end
+
+      it "returns space information" do
+        {
+          "kb_size" => 10000,
+          "kb_available" => 100,
+          "kb_used" => 9900,
+          "percent_used" => 99,
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
+          expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
+        end
+      end
+
+      it "returns disk information" do
+        {
+          "fs_type" => "ntfs",
+          "drive_type" => 3,
+          "drive_type_string" => "local",
+          "drive_type_human" => "Local Fixed Disk",
+          "volume_name" => "Volume 0",
+          "encryption_status" => "FullyDecrypted",
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
+        end
+
+        {
+          "fs_type" => "fat32",
+          "drive_type" => 2,
+          "drive_type_string" => "removable",
+          "drive_type_human" => "Removable Disk",
+          "volume_name" => "Volume 1",
+          "encryption_status" => "EncryptionInProgress",
+        }.each do |k, v|
+          expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
+          expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
+        end
+      end
+    end
+  end
+
   describe "#logical_properties" do
     let(:disks) { logical_disks_instances }
-    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type volume_name} }
+    let(:logical_props) { %i{kb_size kb_available kb_used percent_used mount fs_type drive_type drive_type_string drive_type_human volume_name device} }
 
     it "Returns a mash" do
       expect(plugin.logical_properties(disks)).to be_a(Mash)
@@ -85,23 +189,23 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
 
     it "Returns properties without values when there is no disk information" do
       data = plugin.logical_properties([{}])
-      expect(data[nil].symbolize_keys.keys).to eq(logical_props)
-      expect(data[nil]["kb_used"]).to eq(0)
-      expect(data[nil]["fs_type"]).to be_empty
+      expect(data[","].symbolize_keys.keys).to eq(logical_props)
+      expect(data[","]["kb_used"]).to eq(0)
+      expect(data[","]["fs_type"]).to be_empty
     end
 
     it "Refines required logical properties out of given instance" do
       data = plugin.logical_properties(disks)
-      expect(data["C:"].symbolize_keys.keys).to eq(logical_props)
-      expect(data["D:"].symbolize_keys.keys).to eq(logical_props)
+      expect(data[",C:"].symbolize_keys.keys).to eq(logical_props)
+      expect(data[",D:"].symbolize_keys.keys).to eq(logical_props)
     end
 
     it "Calculates logical properties out of given instance" do
       data = plugin.logical_properties(disks)
-      expect(data["C:"]["kb_used"]).to eq(data["D:"]["kb_used"]).and eq(9900)
-      expect(data["C:"]["percent_used"]).to eq(data["D:"]["percent_used"]).and eq(99)
-      expect(data["C:"]["fs_type"]).to eq("ntfs")
-      expect(data["D:"]["fs_type"]).to eq("fat32")
+      expect(data[",C:"]["kb_used"]).to eq(data[",D:"]["kb_used"]).and eq(9900)
+      expect(data[",C:"]["percent_used"]).to eq(data[",D:"]["percent_used"]).and eq(99)
+      expect(data[",C:"]["fs_type"]).to eq("ntfs")
+      expect(data[",D:"]["fs_type"]).to eq("fat32")
     end
   end
 
@@ -194,33 +298,33 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
   end
 
   describe "#merge_info" do
-    let(:info1) do
-      { "drive1" => { "x" => 10, "y" => "test1" },
-        "drive2" => { "x" => 20, "z" => "test2" } }
+    let(:logical_info) do
+      { "dev1,drive1" => { "mount" => "drive1", "x" => 10, "y" => "test1" },
+        "dev2,drive2" => { "mount" => "drive2", "x" => 20, "z" => "test2" },
+        "dev2,drive3" => { "mount" => "drive3", "x" => 20, "z" => "test3" } }
     end
-    let(:info2) do
+    let(:encryption_info) do
       { "drive1" => { "k" => 10, "l" => "test1" },
         "drive2" => { "l" => 20, "m" => "test2" } }
     end
-    let(:info3) { { "drive1" => { "o" => 10, "p" => "test1" } } }
-    let(:info4) { { "drive2" => { "q" => 10, "r" => "test1" } } }
-
-    it "Returns an empty mash when no info is passed" do
-      expect(plugin.merge_info([])).to be_a(Mash)
-      expect(plugin.merge_info([])).to be_empty
-    end
+    let(:logical_info2) { { ",drive1" => { "mount" => "drive1", "o" => 10, "p" => "test1" } } }
+    let(:encryption_info2) { { "drive2" => { "q" => 10, "r" => "test1" } } }
 
     it "Merges all the various properties of filesystems" do
-      expect(plugin.merge_info([info1, info2, info3, info4]))
-        .to eq("drive1" => { "x" => 10, "y" => "test1", "k" => 10, "l" => "test1", "o" => 10, "p" => "test1" },
-               "drive2" => { "x" => 20, "z" => "test2", "l" => 20, "m" => "test2", "q" => 10, "r" => "test1" })
+      expect(plugin.merge_info(logical_info, encryption_info)).to eq(
+        "dev1,drive1" => { "mount" => "drive1", "x" => 10, "y" => "test1", "k" => 10, "l" => "test1" },
+        "dev2,drive2" => { "mount" => "drive2", "x" => 20, "z" => "test2", "l" => 20, "m" => "test2" },
+        "dev2,drive3" => { "mount" => "drive3", "x" => 20, "z" => "test3" }
+      )
     end
 
     it "Does not affect any core information after processing" do
-      expect(plugin.merge_info([info3, info4])).to eq("drive1" => { "o" => 10, "p" => "test1" },
-                                                      "drive2" => { "q" => 10, "r" => "test1" })
-      expect(info3).to eq("drive1" => { "o" => 10, "p" => "test1" })
-      expect(info4).to eq("drive2" => { "q" => 10, "r" => "test1" })
+      expect(plugin.merge_info(logical_info2, encryption_info2)).to eq(
+        ",drive1" => { "mount" => "drive1", "o" => 10, "p" => "test1" },
+        ",drive2" => { "q" => 10, "r" => "test1" }
+      )
+      expect(logical_info2).to eq(",drive1" => { "mount" => "drive1", "o" => 10, "p" => "test1" })
+      expect(encryption_info2).to eq("drive2" => { "q" => 10, "r" => "test1" })
     end
   end
 end

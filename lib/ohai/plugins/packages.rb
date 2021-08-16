@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Author:: "Christian Höltje" <choltje@us.ibm.com>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
@@ -79,7 +80,7 @@ Ohai.plugin(:Packages) do
       end
 
     when "arch"
-      require "date"
+      require "date" unless defined?(DateTime)
 
       # Set LANG=C to force an easy to parse date format
       so = shell_out("LANG=C pacman -Qi")
@@ -105,7 +106,7 @@ Ohai.plugin(:Packages) do
     end
   end
 
-  def collect_programs_from_registry_key(key_path)
+  def collect_programs_from_registry_key(repo, key_path)
     # from http://msdn.microsoft.com/en-us/library/windows/desktop/aa384129(v=vs.85).aspx
     if ::RbConfig::CONFIG["target_cpu"] == "i386"
       reg_type = Win32::Registry::KEY_READ | 0x100
@@ -114,7 +115,7 @@ Ohai.plugin(:Packages) do
     else
       reg_type = Win32::Registry::KEY_READ
     end
-    Win32::Registry::HKEY_LOCAL_MACHINE.open(key_path, reg_type) do |reg|
+    repo.open(key_path, reg_type) do |reg|
       reg.each_key do |key, _wtime|
         pkg = reg.open(key)
         name = pkg["DisplayName"] rescue nil
@@ -132,9 +133,10 @@ Ohai.plugin(:Packages) do
   collect_data(:windows) do
     require "win32/registry" unless defined?(Win32::Registry)
     packages Mash.new
-    collect_programs_from_registry_key('Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here
-    collect_programs_from_registry_key('Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
   end
 
   collect_data(:aix) do
@@ -163,7 +165,7 @@ Ohai.plugin(:Packages) do
     # Output format is
     # name version
     so.stdout.lines do |pkg|
-      name, version = pkg.split(" ")
+      name, version = pkg.split
       packages[name] = { "version" => version }
     end
   end
@@ -191,7 +193,7 @@ Ohai.plugin(:Packages) do
     chunked_lines = so.stdout.lines.map(&:strip).chunk do |line|
       !line.empty? || nil
     end
-    chunked_lines.each do |_, lines| # rubocop: disable Performance/HashEachMethods
+    chunked_lines.each do |_, lines| # rubocop: disable Style/HashEachMethods
       package = {}
       lines.each do |line|
         key, value = line.split(":", 2)
@@ -209,4 +211,24 @@ Ohai.plugin(:Packages) do
     collect_ips_packages
     collect_sysv_packages
   end
+
+  def collect_system_profiler_apps
+    require "plist"
+    sp_std = shell_out("system_profiler SPApplicationsDataType -xml")
+    results = Plist.parse_xml(sp_std.stdout)
+    sw_array = results[0]["_items"]
+    sw_array.each do |pkg|
+      packages[pkg["_name"]] = {
+        "version" => pkg["version"],
+        "lastmodified" => pkg["lastModified"],
+        "source" => pkg["obtained_from"],
+      }
+    end
+  end
+
+  collect_data(:darwin) do
+    packages Mash.new
+    collect_system_profiler_apps
+  end
+
 end

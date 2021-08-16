@@ -18,7 +18,6 @@
 #
 
 require "spec_helper"
-require "ipaddress"
 
 describe Ohai::System, "Linux Network Plugin" do
   let(:plugin) { get_plugin("linux/network") }
@@ -119,6 +118,16 @@ describe Ohai::System, "Linux Network Plugin" do
                 RX bytes:1325650573 (1.2 GiB)  TX bytes:1666310189 (1.5 GiB)
                 Interrupt:36 Memory:f4800000-f4ffffff
 
+      eth13     Link encap:Ethernet  HWaddr 00:ba:ba:10:21:21
+                inet addr:10.21.21.21  Bcast:10.21.21.255  Mask:255.255.255.0
+                inet6 addr: fe80::2ba:baff:fe10:2121/64 Scope:Link
+                UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+                RX packets:21 errors:0 dropped:0 overruns:0 frame:0
+                TX packets:21 errors:0 dropped:0 overruns:0 carrier:0
+                collisions:0 txqueuelen:1000
+                RX bytes:21 (2.1 GiB)  TX bytes:21 (2.1 GiB)
+                Interrupt:21
+
       ovs-system Link encap:Ethernet  HWaddr 7A:7A:80:80:6C:24
                 BROADCAST MULTICAST  MTU:1500  Metric:1
                 RX packets:0 errors:0 dropped:0 overruns:0 frame:0
@@ -142,8 +151,8 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:0 (0.0 B)  TX bytes:140 (140.0 B)
     EOM
-# Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
-# This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
+    # Note that ifconfig shows foo:veth0@eth0 but fails to show any address information.
+    # This was not a mistake collecting the output and Apparently ifconfig is broken in this regard.
   end
 
   let(:linux_ip_route) do
@@ -228,6 +237,10 @@ describe Ohai::System, "Linux Network Plugin" do
           link/void
           inet 127.0.0.2/32 scope host venet0
           inet 172.16.19.48/32 scope global venet0:0
+      10: eth13: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+          link/ether 00:ba:ba:10:21:21 brd ff:ff:ff:ff:ff:ff
+          inet 10.21.21.21/24 brd 10.21.21.255 scope global eth3
+          inet6 fe80::2ba:baff:fe10:2121/64 scope link
       12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN
           link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
           inet 192.168.13.34/24 brd 192.168.13.255 scope global xapi1
@@ -280,25 +293,31 @@ describe Ohai::System, "Linux Network Plugin" do
           1321907045 13357087 0       0       0       3126613
           TX: bytes  packets  errors  dropped carrier collsns
           1661526184 9467091  0       0       0       0
-      11: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
+      11: eth13: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq master ovs-system state UP mode DEFAULT qlen 1000
+          link/ether ba:ba:10:21:21:21 brd ff:ff:ff:ff:ff:ff
+          RX: bytes  packets  errors  dropped overrun mcast
+          21         21       0       0       0       21
+          TX: bytes  packets  errors  dropped carrier collsns
+          21         21       0       0       0       0
+      12: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT
           link/ether 7a:7a:80:80:6c:24 brd ff:ff:ff:ff:ff:ff
           RX: bytes  packets  errors  dropped overrun mcast
           0          0        0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           0          0        0       0       0       0
-      12: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
+      13: xapi1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT
           link/ether e8:39:35:c5:c8:50 brd ff:ff:ff:ff:ff:ff
           RX: bytes  packets  errors  dropped overrun mcast
           21468183   159866   0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           2052       6        0       0       0       0
-      13: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
+      14: fwdintf: <MULTICAST,NOARP,UP,LOWER_UP> mtu 1496 qdisc pfifo_fast state UNKNOWN mode DEFAULT group default qlen 1000
           link/ether 00:00:00:00:00:0a brd ff:ff:ff:ff:ff:ff promiscuity 0
           RX: bytes  packets  errors  dropped overrun mcast
           0          0        0       0       0       0
           TX: bytes  packets  errors  dropped carrier collsns
           140        2        0       1       0       0
-      14: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN mode DEFAULT group default qlen 1
+      15: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN mode DEFAULT group default qlen 1
           link/tunnel6 :: brd :: promiscuity 0
           ip6tnl ip6ip6 remote :: local :: encaplimit 0 hoplimit 0 tclass 0x00 flowlabel 0x00000 (flowinfo 0x00000000) addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535
           RX: bytes  packets  errors  dropped overrun mcast
@@ -371,6 +390,92 @@ describe Ohai::System, "Linux Network Plugin" do
     EOM
   end
 
+  let(:linux_ethtool_l) do
+    <<~EOM
+      Channel parameters for eth0:
+      Pre-set maximums:
+      RX:		16
+      TX:	  16
+      Other:	0
+      Combined:		32
+      Current hardware settings:
+      RX:		0
+      TX:	0
+      Other:	0
+      Combined:		16
+
+    EOM
+  end
+
+  let(:linux_ethtool_c) do
+    <<~EOM
+      Coalesce parameters for eth0:
+      Adaptive RX: on  TX: off
+      stats-block-usecs: 0
+      sample-interval: 0
+      pkt-rate-low: 0
+      pkt-rate-high: 0
+
+      rx-usecs: 33
+      rx-frames: 88
+      rx-usecs-irq: 0
+      rx-frames-irq: 0
+
+      tx-usecs: 8
+      tx-frames: 128
+      tx-usecs-irq: 0
+      tx-frames-irq: 0
+
+      rx-usecs-low: 0
+      rx-frame-low: 0
+      tx-usecs-low: 0
+      tx-frame-low: 0
+
+      rx-usecs-high: 0
+      rx-frame-high: 0
+      tx-usecs-high: 0
+      tx-frame-high: 0
+
+    EOM
+  end
+
+  let(:linux_ethtool_k) do
+    <<~EOM
+      Features for eth0:
+      rx-checksumming: on
+      tx-checksumming: off
+      rx-vlan-offload: on [fixed]
+      rx-gro-hw: off [fixed]
+
+    EOM
+  end
+
+  let(:linux_ethtool_i) do
+    <<~EOM
+      driver: mlx5_core
+      version: 5.0-0
+      firmware-version: 14.23.8012
+      expansion-rom-version:
+      bus-info: 0000:02:00.0
+      supports-statistics: yes
+      supports-test: yes
+      supports-eeprom-access: no
+      supports-register-dump: no
+      supports-priv-flags: yes
+
+    EOM
+  end
+
+  let(:linux_ethtool_a) do
+    <<~EOM
+      Pause parameters for eth0:
+      Autonegotiate:	on
+      RX:		off
+      TX:		on
+
+    EOM
+  end
+
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
@@ -385,6 +490,11 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -k/).and_return(mock_shell_out(0, linux_ethtool_k, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -a/).and_return(mock_shell_out(0, linux_ethtool_a, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
@@ -540,6 +650,15 @@ describe Ohai::System, "Linux Network Plugin" do
           expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
         end
       end
+
+      context "when route and default_route via have different address family" do
+        let(:route) { { destination: "10.0.0.0/24" } }
+        let(:default_route) { { via: "fe80::69" } }
+
+        it "returns false" do
+          expect(plugin.route_is_valid_default_route?(route, default_route)).to eq(false)
+        end
+      end
     end
   end
 
@@ -558,9 +677,9 @@ describe Ohai::System, "Linux Network Plugin" do
 
       it "detects the interfaces" do
         if network_method == "iproute2"
-          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         else
-          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         end
       end
 
@@ -575,6 +694,65 @@ describe Ohai::System, "Linux Network Plugin" do
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["max_rx"]).to eq(8192)
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_tx"]).to eq(8192)
         expect(plugin["network"]["interfaces"]["eth0"]["ring_params"]["current_rx"]).to eq(8192)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_tx"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_rx"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_other"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["max_combined"]).to eq(32)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_tx"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_rx"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_other"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["channel_params"]["current_combined"]).to eq(16)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["adaptive_rx"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["adaptive_tx"]).to eq("off")
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["stats-block-usecs"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["sample-interval"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["pkt-rate-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["pkt-rate-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs"]).to eq(33)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frames"]).to eq(88)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frames-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs"]).to eq(8)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frames"]).to eq(128)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frames-irq"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frame-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frame-low"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-usecs-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["rx-frame-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-usecs-high"]).to eq(0)
+        expect(plugin["network"]["interfaces"]["eth0"]["coalesce_params"]["tx-frame-high"]).to eq(0)
+
+      end
+
+      it "detects the driver info of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["driver"]).to eq("mlx5_core")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["version"]).to eq("5.0-0")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["firmware-version"]).to eq("14.23.8012")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["expansion-rom-version"]).to eq("")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["bus-info"]).to eq("0000:02:00.0")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-statistics"]).to eq("yes")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-test"]).to eq("yes")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-eeprom-access"]).to eq("no")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-register-dump"]).to eq("no")
+        expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-priv-flags"]).to eq("yes")
+
+      end
+
+      it "detects the driver offload features of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-checksumming"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["tx-checksumming"]).to eq("off")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-vlan-offload"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-gro-hw"]).to eq("off")
+      end
+
+      it "detects the pause frame configuration of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["autonegotiate"]).to eq(true)
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["rx"]).to eq(false)
+        expect(plugin["network"]["interfaces"]["eth0"]["pause_params"]["tx"]).to eq(true)
+
       end
 
       it "detects the ipv4 addresses of the ethernet interface" do
@@ -599,7 +777,7 @@ describe Ohai::System, "Linux Network Plugin" do
       end
 
       it "detects the ipv6 addresses of an ethernet subinterface" do
-        %w{ 1111:2222:3333:4444::2 1111:2222:3333:4444::3 }.each  do |addr|
+        %w{1111:2222:3333:4444::2 1111:2222:3333:4444::3}.each do |addr|
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"].keys).to include(addr)
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["scope"]).to eq("Global")
           expect(plugin["network"]["interfaces"]["eth0.11"]["addresses"][addr]["prefixlen"]).to eq("64")
@@ -626,6 +804,10 @@ describe Ohai::System, "Linux Network Plugin" do
 
       it "detects the number of the ethernet interface" do
         expect(plugin["network"]["interfaces"]["eth0"]["number"]).to eq("0")
+      end
+
+      it "detects the number of an ethernet interface greater than 10" do
+        expect(plugin["network"]["interfaces"]["eth13"]["number"]).to eq("13")
       end
 
       it "detects the mtu of the ethernet interface" do
@@ -834,6 +1016,12 @@ describe Ohai::System, "Linux Network Plugin" do
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"].keys).to include("192.168.212.2")
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["netmask"]).to eq("255.255.255.0")
       expect(plugin["network"]["interfaces"]["foo:veth0@eth0"]["addresses"]["192.168.212.2"]["family"]).to eq("inet")
+    end
+
+    it "detects the ipv4 addresses of an ethernet interface with a number greater than 10" do
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"].keys).to include("10.21.21.21")
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"]["10.21.21.21"]["netmask"]).to eq("255.255.255.0")
+      expect(plugin["network"]["interfaces"]["eth13"]["addresses"]["10.21.21.21"]["family"]).to eq("inet")
     end
 
     it "generates a fake interface for ip aliases for backward compatibility" do
@@ -1385,6 +1573,24 @@ describe Ohai::System, "Linux Network Plugin" do
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["id"]).to eq("11")
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["protocol"]).to eq("802.1Q")
           expect(plugin["network"]["interfaces"]["eth0.11"]["vlan"]["flags"]).to eq([ "REORDER_HDR" ])
+        end
+      end
+
+      # Test we can handle IPv4 with inet6 IPv6 next hops
+      describe "using IPv6 next hops for IPv4 routes" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default via inet6 fe80::69 dev eth0 metric 69
+          EOM
+        end
+
+        it "expect an IPv6 next hop and not keyword inet6" do
+          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq(
+            [
+              { "destination" => "default", "family" => "inet", "metric" => "69", "via" => "fe80::69" },
+              { "destination" => "fe80::/64", "family" => "inet6", "metric" => "256", "proto" => "kernel" },
+            ]
+          )
         end
       end
     end

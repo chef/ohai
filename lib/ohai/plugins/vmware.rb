@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: "Dan Robinson" <drobinson@chef.io>
 # Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
-# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #
@@ -36,12 +37,11 @@ Ohai.plugin(:VMware) do
   depends "virtualization"
 
   def from_cmd(cmd)
-    so = shell_out(cmd)
-    so.stdout.split($/)[0]
+    shell_out(cmd).stdout.strip
   end
 
   def get_vm_attributes(vmtools_path)
-    if !File.exist?(vmtools_path)
+    if !file_exist?(vmtools_path)
       logger.trace("Plugin VMware: #{vmtools_path} not found")
     else
       vmware Mash.new
@@ -51,12 +51,12 @@ Ohai.plugin(:VMware) do
         # to attribute "vmware[:<parameter>]"
         %w{hosttime speed sessionid balloon swap memlimit memres cpures cpulimit}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} stat #{param}")
-          if vmware[param] =~ /UpdateInfo failed/
+          if /UpdateInfo failed/.match?(vmware[param])
             vmware[param] = nil
           end
         end
         # vmware-toolbox-cmd <param> status commands
-        # Iterate through each parameter supported by the "vwware-toolbox-cmd status" command, assign value
+        # Iterate through each parameter supported by the "vmware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
         %w{upgrade timesync}.each do |param|
           vmware[param] = from_cmd("#{vmtools_path} #{param} status")

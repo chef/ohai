@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Joshua Timberman <joshua@chef.io>
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,10 +24,12 @@ Ohai.plugin(:Kernel) do
   collect_data(:aix) do
     kernel Mash.new
 
-    kernel[:name] =    shell_out("uname -s").stdout.split($/)[0].downcase
-    kernel[:release] = shell_out("uname -r").stdout.split($/)[0]
-    kernel[:version] = shell_out("uname -v").stdout.split($/)[0]
-    kernel[:machine] = shell_out("uname -p").stdout.split($/)[0]
+    uname_so = shell_out("uname -rvp").stdout.split
+
+    kernel[:name] =    "aix" # this is here for historical reasons, but it's always aix
+    kernel[:release] = uname_so[0]
+    kernel[:version] = uname_so[1]
+    kernel[:machine] = uname_so[2]
     kernel[:bits] =    shell_out("getconf KERNEL_BITMODE").stdout.strip
 
     modules = Mash.new

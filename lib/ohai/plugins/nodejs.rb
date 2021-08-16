@@ -18,7 +18,7 @@
 
 Ohai.plugin(:Nodejs) do
   provides "languages/nodejs"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

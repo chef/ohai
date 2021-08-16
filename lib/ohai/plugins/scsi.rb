@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Phil Dibowitz <phil@ipom.com>
 # Copyright:: Copyright (c) 2018 Facebook, Inc.
@@ -17,7 +18,6 @@
 #
 
 Ohai.plugin(:Lsscsi) do
-  depends "platform"
   provides "scsi"
   optional true
 

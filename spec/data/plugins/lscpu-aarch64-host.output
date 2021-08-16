@@ -1,0 +1,17 @@
+Architecture:          aarch64
+Byte Order:            Little Endian
+CPU(s):                32
+On-line CPU(s) list:   0-31
+Thread(s) per core:    1
+Core(s) per socket:    32
+Socket(s):             1
+NUMA node(s):          1
+Model:                 2
+CPU max MHz:           3300.0000
+CPU min MHz:           363.9700
+BogoMIPS:              80.00
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+NUMA node0 CPU(s):     0-31
+Flags:                 fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid

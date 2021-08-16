@@ -1,7 +1,7 @@
 #
 # Author:: Julian C. Dunn (<jdunn@chef.io>)
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,26 +23,27 @@ Ohai.plugin(:Virtualization) do
   collect_data(:aix) do
     virtualization Mash.new
 
-    so = shell_out("uname -L")
-    lpar_no = so.stdout.split($/)[0].split(/\s/)[0]
-    lpar_name = so.stdout.split($/)[0].split(/\s/)[1]
+    lpar_no, lpar_name = shell_out("uname -L").stdout.split(nil, 2)
+    lpar_no = lpar_no.to_i
 
-    unless lpar_no.to_i == -1 || (lpar_no.to_i == 1 && lpar_name == "NULL")
+    unless lpar_no == -1 || (lpar_no == 1 && lpar_name == "NULL")
       virtualization[:lpar_no] = lpar_no
       virtualization[:lpar_name] = lpar_name
     end
 
-    so = shell_out("uname -W")
-    wpar_no = so.stdout.split($/)[0]
-    if wpar_no.to_i > 0
+    wpar_no = shell_out("uname -W").stdout.strip.to_i
+    if wpar_no > 0
       virtualization[:wpar_no] = wpar_no
     else
       # the below parses the output of lswpar in the long format
       so = shell_out("lswpar -L").stdout.scan(/={65}.*?(?:EXPORTED\n\n)+/m)
       wpars = Mash.new
       so.each do |wpar|
-        wpar_name = wpar.lines[1].split[0]
+        wpar_heading = wpar.lines[1].split
+        wpar_name = wpar_heading[0]
+
         wpars[wpar_name] = Mash.new
+        wpars[wpar_name][:state] = wpar_heading[2].downcase
 
         wpar.scan(/^[A-Z]{4,}.*?[A-Z\:0-9]$.*?\n\n/m).each do |section|
 
@@ -57,7 +58,7 @@ Ohai.plugin(:Virtualization) do
           sections.each do |line|
             case title
             when "network"
-              next if line =~ /^Interface|^---/
+              next if /^Interface|^---/.match?(line)
 
               splat = line.strip.split
               key   = splat[0].downcase
@@ -68,7 +69,7 @@ Ohai.plugin(:Virtualization) do
                       }
               wpars[wpar_name][title][key] = value
             when "user-specified routes"
-              next if line =~ /^Type|^---/
+              next if /^Type|^---/.match?(line)
 
               splat = line.strip.split
               key   = splat[2].downcase
@@ -78,7 +79,7 @@ Ohai.plugin(:Virtualization) do
                       }
               wpars[wpar_name][title][key] = value
             when "file systems"
-              next if line =~ /^MountPoint|^---/
+              next if /^MountPoint|^---/.match?(line)
 
               splat = line.strip.split
               key = splat[1].downcase
@@ -93,7 +94,7 @@ Ohai.plugin(:Virtualization) do
               privileges ||= ""
               wpars[wpar_name][title]["Privileges"] ||= []
 
-              if line =~ /^Privileges/
+              if /^Privileges/.match?(line)
                 privileges << line.split(":")[1].strip
               else
                 privileges << line.strip
@@ -101,7 +102,7 @@ Ohai.plugin(:Virtualization) do
 
               wpars[wpar_name][title]["Privileges"] += privileges.split(",")
             when "device exports"
-              next if line =~ /^Name|^---/
+              next if /^Name|^---/.match?(line)
 
               splat = line.strip.split
               key = splat[0].downcase

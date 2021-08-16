@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
@@ -26,8 +27,7 @@ Ohai.plugin(:Network) do
     counters Mash.new unless counters
     counters[:network] ||= Mash.new
 
-    so = shell_out("route -n get default")
-    so.stdout.lines do |line|
+    shell_out("route -n get default").stdout.lines do |line|
       if line =~ /(\w+): ([\w\.]+)/
         case $1
         when "gateway"
@@ -39,9 +39,8 @@ Ohai.plugin(:Network) do
     end
 
     iface = Mash.new
-    so = shell_out("#{Ohai.abs_path( "/sbin/ifconfig" )} -a")
     cint = nil
-    so.stdout.lines do |line|
+    shell_out("#{Ohai.abs_path( "/sbin/ifconfig" )} -a").stdout.lines do |line|
       if line =~ /^([0-9a-zA-Z\.]+):\s+/
         cint = $1
         iface[cint] = Mash.new
@@ -85,8 +84,7 @@ Ohai.plugin(:Network) do
       end
     end
 
-    so = shell_out("arp -an")
-    so.stdout.lines do |line|
+    shell_out("arp -an").stdout.lines do |line|
       if line =~ /\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\) at ([a-fA-F0-9\:]+) on ([0-9a-zA-Z\.\:\-]+)/
         next unless iface[$3] # this should never happen
 
@@ -102,8 +100,7 @@ Ohai.plugin(:Network) do
     # Show the state of all network interfaces or a single interface
     # which have been auto-configured (interfaces statically configured
     # into a system, but not located at boot time are not shown).
-    so = shell_out("netstat -idn")
-    so.stdout.lines do |line|
+    shell_out("netstat -idn").stdout.lines do |line|
       # Name    Mtu Network       Address              Ipkts Ierrs    Opkts Oerrs  Coll Drop
       # em0     1500  <Link>      00:11:25:2d:90:be  3719557     0  3369969     0     0    0
       # $1                        $2                      $3    $4    $5       $6    $7   $8

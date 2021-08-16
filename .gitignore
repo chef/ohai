@@ -13,3 +13,6 @@ vendor
 # yard
 .yardoc
 doc/*
+
+# our custom dictionary pulled from https://github.com/chef/chef_dictionary/
+chef_dictionary.txt

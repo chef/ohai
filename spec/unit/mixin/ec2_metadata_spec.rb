@@ -1,6 +1,6 @@
 #
 # Author:: Bryan McLellan <btm@loftninjas.org>
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 require "spec_helper"
 require "ohai/mixin/ec2_metadata"
 
 describe Ohai::Mixin::Ec2Metadata do
   let(:mixin) do
-    metadata_object = Object.new.extend(Ohai::Mixin::Ec2Metadata)
+    metadata_object = Object.new.extend(described_class)
     http_client = double("Net::HTTP client")
+    allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg==", code: "200") }
     allow(http_client).to receive(:get).and_return(response)
     allow(metadata_object).to receive(:http_client).and_return(http_client)
     metadata_object
@@ -33,10 +33,9 @@ describe Ohai::Mixin::Ec2Metadata do
     allow(mixin).to receive(:logger).and_return(logger)
   end
 
-  context "#best_api_version" do
+  describe "#best_api_version" do
     context "with a sorted list of metadata versions" do
       let(:response) { double("Net::HTTP Response", body: "1.0\n2011-05-01\n2012-01-12\nUnsupported", code: "200") }
-
       it "returns the most recent version" do
         expect(mixin.best_api_version).to eq("2012-01-12")
       end
@@ -74,9 +73,16 @@ describe Ohai::Mixin::Ec2Metadata do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)
       end
     end
+
+    context "when metadata service is disabled" do
+      let(:response) { double("Net::HTTP::PUT Response", body: "403 - Forbidden", code: "403") }
+      it "raises an error" do
+        expect { mixin.best_api_version }.to raise_error(RuntimeError)
+      end
+    end
   end
 
-  context "#metadata_get" do
+  describe "#metadata_get" do
     context "when the response code is unexpected" do
       let(:response) { double("Net::HTTP Response", body: "", code: "418") }
 

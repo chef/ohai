@@ -1,6 +1,6 @@
 #
 # Author:: Bryan McLellan <btm@chef.io>
-# Copyright:: Copyright (c) 2012-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,27 +24,23 @@ describe Ohai::System, "ssh_host_key plugin" do
     @plugin = get_plugin("ssh_host_key")
     @plugin[:keys] = Mash.new
 
-    allow(File).to receive(:exist?).with("/etc/ssh/sshd_config").and_return(true)
-    allow(File).to receive(:open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
-    allow(File).to receive(:exist?).and_return(true)
-    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
-    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(true)
-    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(true)
-    allow(File).to receive(:exist?).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(true)
-
-    # Ensure we can still use IO.read
-    io_read = IO.method(:read)
-    allow(IO).to receive(:read) { |file| io_read.call(file) }
+    allow(@plugin).to receive(:file_exist?).with("/etc/ssh/sshd_config").and_return(true)
+    allow(@plugin).to receive(:file_open).with("/etc/ssh/sshd_config").and_yield(sshd_config_file)
+    allow(@plugin).to receive(:file_exist?).and_return(true)
+    allow(@plugin).to receive(:file_exist?).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(true)
+    allow(@plugin).to receive(:file_exist?).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(true)
+    allow(@plugin).to receive(:file_exist?).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(true)
+    allow(@plugin).to receive(:file_exist?).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(true)
 
     # Return fake public key files so we don't have to go digging for them in unit tests
     @dsa_key = "ssh-dss AAAAB3NzaC1kc3MAAACBAMHlT02xN8kietxPfhcb98xHueTzKCOTz6dZlP/dmKILHrQOAExuSEeNiA2uvmhHNVQvs/cBsRiDxgSKux3ie2q8+MB6vHCiSpSkoPjrL75iT57YDilCB4/sytt6IJpj+H42wRDWTX0/QRybMHUvmnmEL0cwZXykSvrIum0BKB6hAAAAFQDsi6WUCClhtZIiTY9uh8eAre+SbQAAAIEAgNnuw0uEuqtcVif+AYd/bCZvL9FPqg7DrmTkamNEcVinhUGwsPGJTLJf+o5ens1X4RzQoi1R6Y6zCTL2FN/hZgINJNO0z9BN402wWrZmQd+Vb1U5DyDtveuvipqyQS+fm9neRwdLuv36Fc9f9nkZ7YHpkGPJp+yJpG4OoeREhwgAAACBAIf9kKLf2XiXnlByzlJ2Naa55d/hp2E059VKCRsBS++xFKYKvSqjnDQBFiMtAUhb8EdTyBGyalqOgqogDQVtwHfTZWZwqHAhry9aM06y92Eu/xSey4tWjKeknOsnRe640KC4zmKDBRTrjjkuAdrKPN9k3jl+OCc669JHlIfo6kqf oppa"
     @rsa_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAuhcVXV+nNapkyUC5p4TH1ymRxUjtMBKqYWmwyI29gVFnUNeHkKFHWon0KFeGJP2Rm8BfTiZa9ER9e8pRr4Nd+z1C1o0kVoxEEfB9tpSdTlpk1GG83D94l57fij8THRVIwuCEosViUlg1gDgC4SpxbqfdBkUN2qyf6JDOh7t2QpYh7berpDEWeBpb7BKdLEDT57uw7ijKzSNyaXqq8KkB9I+UFrRwpuos4W7ilX+PQ+mWLi2ZZJfTYZMxxVS+qJwiDtNxGCRwTOQZG03kI7eLBZG+igupr0uD4o6qeftPOr0kxgjoPU4nEKvYiGq8Rqd2vYrhiaJHLk9QB6xStQvS3Q== oppa"
     @ecdsa_key = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBx8VgvxmHxs/sIn/ATh0iUcuz1I2Xc0e1ejXCGHBMZ98IE3FBt1ezlqCpNMcHVV2skQQ8vyLbKxzweyZuNSDU8= oppa"
     @ed25519_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFYGnIM5K5JaRxbMCqz8cPMmLp57ZoJQvA5Tlj18EO6H djb"
-    allow(IO).to receive(:read).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(@dsa_key)
-    allow(IO).to receive(:read).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(@rsa_key)
-    allow(IO).to receive(:read).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(@ecdsa_key)
-    allow(IO).to receive(:read).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(@ed25519_key)
+    allow(@plugin).to receive(:file_read).with("/etc/ssh/ssh_host_dsa_key.pub").and_return(@dsa_key)
+    allow(@plugin).to receive(:file_read).with("/etc/ssh/ssh_host_rsa_key.pub").and_return(@rsa_key)
+    allow(@plugin).to receive(:file_read).with("/etc/ssh/ssh_host_ecdsa_key.pub").and_return(@ecdsa_key)
+    allow(@plugin).to receive(:file_read).with("/etc/ssh/ssh_host_ed25519_key.pub").and_return(@ed25519_key)
   end
 
   shared_examples "loads keys" do
@@ -107,8 +103,8 @@ describe Ohai::System, "ssh_host_key plugin" do
     end
 
     before do
-      allow(File).to receive(:exist?).with("/etc/ssh/sshd_config").and_return(false)
-      allow(File).to receive(:exist?).with("/etc/sshd_config").and_return(false)
+      allow(@plugin).to receive(:file_exist?).with("/etc/ssh/sshd_config").and_return(false)
+      allow(@plugin).to receive(:file_exist?).with("/etc/sshd_config").and_return(false)
     end
 
     it_behaves_like "loads keys"

@@ -1,6 +1,6 @@
 #
 # Author:: Adam Jacob (<adam@chef.io>)
-# Copyright:: Copyright (c) 2008-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
 #
 
 require "spec_helper"
-require "wmi-lite/wmi"
-require "socket"
 
 describe Ohai::System, "hostname plugin" do
   before do
@@ -97,7 +95,7 @@ describe Ohai::System, "hostname plugin" do
 end
 
 describe Ohai::System, "hostname plugin for windows", :windows_only do
-  let(:success) { true }
+  let(:success) { double }
 
   let(:host) do
     {

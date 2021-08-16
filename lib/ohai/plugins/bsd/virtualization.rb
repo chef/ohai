@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Bryan McLellan (btm@loftninjas.org)
 # Copyright:: Copyright (c) 2009 Bryan McLellan
-# Copyright:: Copyright (c) 2015-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +31,7 @@ Ohai.plugin(:Virtualization) do
 
     # detect when in a jail or when a jail is actively running (not in stopped state)
     so = shell_out("sysctl -n security.jail.jailed")
-    if so.stdout.split($/)[0].to_i == 1
+    if so.stdout.strip.to_i == 1
       virtualization[:system] = "jail"
       virtualization[:role] = "guest"
       virtualization[:systems][:jail] = "guest"
@@ -49,7 +50,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # detect from modules
-    so = shell_out((Ohai.abs_path("/sbin/kldstat")).to_s)
+    so = shell_out(Ohai.abs_path("/sbin/kldstat").to_s)
     so.stdout.lines do |line|
       case line
       when /vboxdrv/
@@ -66,7 +67,7 @@ Ohai.plugin(:Virtualization) do
     end
 
     # Detect bhyve by presence of /dev/vmm
-    if File.exist?("/dev/vmm")
+    if file_exist?("/dev/vmm")
       virtualization[:system] = "bhyve"
       virtualization[:role] = "host"
       virtualization[:systems][:bhyve] = "host"
@@ -76,7 +77,7 @@ Ohai.plugin(:Virtualization) do
     # Detect KVM/QEMU paravirt guests from cpu, report as KVM
     # hw.model: QEMU Virtual CPU version 0.9.1
     so = shell_out("sysctl -n hw.model")
-    if so.stdout =~ /QEMU Virtual CPU|KVM processor/
+    if /QEMU Virtual CPU|KVM processor/.match?(so.stdout)
       virtualization[:system] = "kvm"
       virtualization[:role] = "guest"
       virtualization[:systems][:kvm] = "guest"
@@ -96,7 +97,7 @@ Ohai.plugin(:Virtualization) do
                    "xen"
                  when /kvm/
                    so = shell_out("sysctl -n kern.hostuuid")
-                   so.stdout =~ /^ec2/ ? "amazonec2" : "kvm"
+                   /^ec2/.match?(so.stdout) ? "amazonec2" : "kvm"
                  when /bhyve/
                    "bhyve"
                  end

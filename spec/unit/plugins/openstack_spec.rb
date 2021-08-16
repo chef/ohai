@@ -1,6 +1,6 @@
 #
 # Author:: Daniel DeLeo (dan@chef.io)
-# Copyright:: Copyright (c) 2014-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,6 @@ describe Ohai::System, "plugin openstack" do
           .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
           .and_return(false)
         plugin[:virtualization] = { systems: { openstack: "guest" } }
-        expect(Etc).to receive(:getpwnam).and_raise(ArgumentError)
         plugin.run
       end
 
@@ -64,7 +63,7 @@ describe Ohai::System, "plugin openstack" do
         .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, default_timeout)
         .and_return(false)
       plugin[:virtualization] = { systems: { openstack: "guest" } }
-      expect(Etc).to receive(:getpwnam).and_return(PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user"))
+      expect(Etc::Passwd).to receive(:entries).and_return([PasswdEntry.new("dhc-user", 800, 800, "/var/www", "/bin/false", "The dreamhost user")])
       plugin.run
       expect(plugin[:openstack][:provider]).to eq("dreamhost")
     end
@@ -87,6 +86,7 @@ describe Ohai::System, "plugin openstack" do
       it "doesn't set metadata attributes" do
         expect(plugin[:openstack][:instance_id]).to be_nil
       end
+
       context "when timout was set" do
         let(:override_timout) { 10 }
 
@@ -187,12 +187,16 @@ describe Ohai::System, "plugin openstack" do
       let(:http_client) { double("Net::HTTP", { :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
 
       def allow_get(url, response_body)
+        token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+        allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
         allow(http_client).to receive(:get)
-          .with(url)
+          .with(url, { 'X-aws-ec2-metadata-token': token })
           .and_return(double("HTTP Response", code: "200", body: response_body))
       end
 
       def allow_get_response(url, response_body)
+        token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
+        allow(http_client).to receive(:put) { double("Net::HTTP::PUT Response", body: token, code: "200") }
         allow(http_client).to receive(:get_response)
           .with(url, nil, nil)
           .and_return(double("HTTP Response", code: "200", body: response_body))
@@ -226,63 +230,83 @@ describe Ohai::System, "plugin openstack" do
       it "reads the reservation_id from the metadata service" do
         expect(plugin["openstack"]["reservation_id"]).to eq("r-4tjvl99h")
       end
+
       it "reads the public_keys_0_openssh_key from the metadata service" do
         expect(plugin["openstack"]["public_keys_0_openssh_key"]).to eq("SSH KEY DATA")
       end
+
       it "reads the security_groups from the metadata service" do
         expect(plugin["openstack"]["security_groups"]).to eq(["default"])
       end
+
       it "reads the public_ipv4 from the metadata service" do
         expect(plugin["openstack"]["public_ipv4"]).to eq("172.31.7.2")
       end
+
       it "ignore the public_ipv6 from the metadata service when empty" do
         expect(plugin["openstack"]).not_to have_key("public_ipv6")
       end
+
       it "reads the ami_manifest_path from the metadata service" do
         expect(plugin["openstack"]["ami_manifest_path"]).to eq("FIXME")
       end
+
       it "reads the instance_type from the metadata service" do
         expect(plugin["openstack"]["instance_type"]).to eq("opc-tester")
       end
+
       it "reads the instance_id from the metadata service" do
         expect(plugin["openstack"]["instance_id"]).to eq("i-0000162a")
       end
+
       it "reads the local_ipv4 from the metadata service" do
         expect(plugin["openstack"]["local_ipv4"]).to eq("172.31.7.23")
       end
+
       it "reads the ari_id from the metadata service" do
         expect(plugin["openstack"]["ari_id"]).to eq("ari-00000037")
       end
+
       it "reads the local_hostname from the metadata service" do
         expect(plugin["openstack"]["local_hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
+
       it "reads the placement_availability_zone from the metadata service" do
         expect(plugin["openstack"]["placement_availability_zone"]).to eq("nova")
       end
+
       it "reads the ami_launch_index from the metadata service" do
         expect(plugin["openstack"]["ami_launch_index"]).to eq("0")
       end
+
       it "reads the public_hostname from the metadata service" do
         expect(plugin["openstack"]["public_hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
+
       it "reads the hostname from the metadata service" do
         expect(plugin["openstack"]["hostname"]).to eq("ohai-7-system-test.opscode.us")
       end
+
       it "reads the ami_id from the metadata service" do
         expect(plugin["openstack"]["ami_id"]).to eq("ami-00000035")
       end
+
       it "reads the instance_action from the metadata service" do
         expect(plugin["openstack"]["instance_action"]).to eq("none")
       end
+
       it "reads the aki_id from the metadata service" do
         expect(plugin["openstack"]["aki_id"]).to eq("aki-00000036")
       end
+
       it "reads the block_device_mapping_ami from the metadata service" do
         expect(plugin["openstack"]["block_device_mapping_ami"]).to eq("vda")
       end
+
       it "reads the block_device_mapping_root from the metadata service" do
         expect(plugin["openstack"]["block_device_mapping_root"]).to eq("/dev/vda")
       end
+
       it "sets the provider to openstack" do
         expect(plugin["openstack"]["provider"]).to eq("openstack")
       end

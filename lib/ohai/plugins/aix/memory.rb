@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Joshua Timberman <joshua@chef.io>
 # Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,13 +25,13 @@ Ohai.plugin(:Memory) do
     memory Mash.new
     memory[:swap] = Mash.new
 
-    meminfo = shell_out("svmon -G -O unit=MB,summary=longreal | grep '[0-9]'").stdout
+    meminfo = shell_out("svmon -G -O unit=KB,summary=longreal | grep '[0-9]'").stdout
     total_in_mb, _u, free_in_mb = meminfo.split
-    memory[:total] = "#{total_in_mb.to_i * 1024}kB"
-    memory[:free] = "#{free_in_mb.to_i * 1024}kB"
+    memory[:total] = "#{total_in_mb.to_i}kB"
+    memory[:free] = "#{free_in_mb.to_i}kB"
 
-    swapinfo = shell_out("swap -s").stdout.split # returns swap info in 4K blocks
-    memory[:swap]["total"] = "#{(swapinfo[2].to_i) * 4}kB"
-    memory[:swap]["free"] = "#{(swapinfo[10].to_i) * 4}kB"
+    swap_info = shell_out("swap -s").stdout.split # returns swap info in 4K blocks
+    memory[:swap]["total"] = "#{swap_info[2].to_i * 4}kB"
+    memory[:swap]["free"] = "#{swap_info[10].to_i * 4}kB"
   end
 end

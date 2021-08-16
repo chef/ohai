@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Kurt Yoder (ktyopscode@yoderhome.com)
 # Copyright:: Copyright (c) 2010 Kurt Yoder
@@ -76,11 +77,11 @@ module Ohai
       # away some of the less useful IDs
       ID_TO_CAPTURE = [ 0, 1, 2, 3, 4, 6, 11 ].freeze
 
-      # the whitelisted DMI IDs. This is combination of the defaults + any additional
+      # the allowlisted DMI IDs. This is combination of the defaults + any additional
       # IDs defined in the :additional_dmi_ids config
       #
       # @return [Array] the list of DMI IDs to capture
-      def whitelisted_ids
+      def allowlisted_ids
         if Ohai.config[:additional_dmi_ids]
           if [ Integer, Array ].include?(Ohai.config[:additional_dmi_ids].class)
             return ID_TO_CAPTURE + Array(Ohai.config[:additional_dmi_ids])
@@ -90,6 +91,10 @@ module Ohai
         end
         ID_TO_CAPTURE
       end
+
+      ##
+      # @deprecated Use the `allowlisted_ids` method instead.
+      alias whitelisted_ids allowlisted_ids
 
       # the human readable description from a DMI ID
       #
@@ -111,24 +116,32 @@ module Ohai
         id
       end
 
+      SKIPPED_CONVENIENCE_KEYS = %w{
+        application_identifier
+        caption
+        creation_class_name
+        size
+        system_creation_class_name
+        record_id
+      }.freeze
+
       # create simplified convenience access keys for each record type
       # for single occurrences of one type, copy to top level all fields and values
       # for multiple occurrences of same type, copy to top level all fields and values that are common to all records
       def convenience_keys(dmi)
         dmi.each do |type, records|
           in_common = Mash.new
-          next unless records.class.to_s == "Mash"
+          next unless records.is_a?(Mash)
           next unless records.key?("all_records")
 
           records[:all_records].each do |record|
             record.each do |field, value|
-              next if value.class.to_s == "Mash"
-              next if field.to_s == "application_identifier"
-              next if field.to_s == "size"
-              next if field.to_s == "record_id"
+              next unless value.is_a?(String)
 
               translated = field.downcase.gsub(/[^a-z0-9]/, "_")
-              value      = value.strip
+              next if SKIPPED_CONVENIENCE_KEYS.include?(translated.to_s)
+
+              value = value.strip
               if in_common.key?(translated)
                 in_common[translated] = nil unless in_common[translated] == value
               else
@@ -144,7 +157,7 @@ module Ohai
         end
       end
 
-      module_function :id_lookup, :convenience_keys, :whitelisted_ids
+      module_function :id_lookup, :convenience_keys, :allowlisted_ids, :whitelisted_ids
     end
   end
 end

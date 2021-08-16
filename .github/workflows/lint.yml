@@ -1,0 +1,20 @@
+---
+name: lint
+
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  chefstyle:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+        bundler-cache: true
+    - uses: r7kamura/rubocop-problem-matchers-action@v1 # this shows the failures in the PR
+    - run: bundle exec chefstyle

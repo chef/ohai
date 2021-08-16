@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 #
 # Author:: Tim Dysinger (<tim@dysinger.net>)
 # Author:: Benjamin Black (<bb@chef.io>)
 # Author:: Christopher Brown (<cb@chef.io>)
-# Copyright:: 2009-2017 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,25 +40,33 @@ module Ohai
     #
     module Ec2Metadata
 
-      EC2_METADATA_ADDR ||= "169.254.169.254".freeze
+      EC2_METADATA_ADDR ||= "169.254.169.254"
       EC2_SUPPORTED_VERSIONS ||= %w{ 1.0 2007-01-19 2007-03-01 2007-08-29 2007-10-10 2007-12-15
-                                   2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
-                                   2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02 }.freeze
+                                     2008-02-01 2008-09-01 2009-04-04 2011-01-01 2011-05-01 2012-01-12
+                                     2014-02-25 2014-11-05 2015-10-20 2016-04-19 2016-06-30 2016-09-02
+                                     2016-11-30 2018-08-17 2018-11-29 2019-10-01 2020-08-24 2020-11-01 }.freeze
       EC2_ARRAY_VALUES ||= %w{security-groups local_ipv4s}.freeze
       EC2_ARRAY_DIR    ||= %w{network/interfaces/macs}.freeze
       EC2_JSON_DIR     ||= %w{iam}.freeze
 
+      #
+      # The latest metadata version in EC2_SUPPORTED_VERSIONS that this instance supports
+      # in AWS supported metadata versions are determined at instance start so we need to be
+      # cautious here in case an instance has been running for a long time
+      #
+      # @return [String] the version
+      #
       def best_api_version
         @api_version ||= begin
           logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/ to determine the latest supported metadata release")
-          response = http_client.get("/")
+          response = http_client.get("/", { 'X-aws-ec2-metadata-token': v2_token })
           if response.code == "404"
             logger.trace("Mixin EC2: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
             return "latest"
           elsif response.code != "200"
             raise "Mixin EC2: Unable to determine EC2 metadata version (returned #{response.code} response)"
           end
-          # Note: Sorting the list of versions may have unintended consequences in
+          # NOTE: Sorting the list of versions may have unintended consequences in
           # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
           versions = response.body.split("\n").sort
           until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
@@ -83,6 +92,23 @@ module Ohai
         end
       end
 
+      #
+      # Fetch an API token for use querying AWS IMDSv2 or return nil if no token if found
+      # AWS like systems (think OpenStack) will not respond with a token here
+      #
+      # @return [NilClass, String] API token or nil
+      #
+      def v2_token
+        @v2_token ||= begin
+            request = http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })
+            if request.code == "404" # not on AWS
+              nil
+            else
+              request.body
+            end
+          end
+      end
+
       # Get metadata for a given path and API version
       #
       # Typically, a 200 response is expected for valid metadata.
@@ -92,7 +118,7 @@ module Ohai
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{id}"
         logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
-        response = http_client.get(path)
+        response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
         case response.code
         when "200"
           response.body
@@ -118,7 +144,7 @@ module Ohai
                 else
                   metadata_get(key, best_api_version)
                 end
-            elsif (not key.eql?(id)) && (not key.eql?("/"))
+            elsif (!key.eql?(id)) && (!key.eql?("/"))
               name = key[0..-2]
               sym = metadata_key(name)
               if EC2_ARRAY_DIR.include?(name)
@@ -142,8 +168,8 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              metadata[metadata_key(key)] = retr_meta ? retr_meta : ""
-            elsif not key.eql?("/")
+              metadata[metadata_key(key)] = retr_meta || ""
+            elsif !key.eql?("/")
               metadata[key[0..-2]] = fetch_dir_metadata("#{id}#{key}", api_version)
             end
           end
@@ -159,11 +185,11 @@ module Ohai
             key = expand_path(o)
             if key[-1..-1] != "/"
               retr_meta = metadata_get("#{id}#{key}", api_version)
-              data = retr_meta ? retr_meta : ""
-              json = StringIO.new(data)
+              data = retr_meta || ""
+              json = String(data)
               parser = FFI_Yajl::Parser.new
               metadata[metadata_key(key)] = parser.parse(json)
-            elsif not key.eql?("/")
+            elsif !key.eql?("/")
               metadata[key[0..-2]] = fetch_json_dir_metadata("#{id}#{key}", api_version)
             end
           end
@@ -173,13 +199,13 @@ module Ohai
 
       def fetch_userdata
         logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/#{best_api_version}/user-data/")
-        response = http_client.get("/#{best_api_version}/user-data/")
+        response = http_client.get("/#{best_api_version}/user-data/", { 'X-aws-ec2-metadata-token': v2_token })
         response.code == "200" ? response.body : nil
       end
 
       def fetch_dynamic_data
         @fetch_dynamic_data ||= begin
-          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/")
+          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/", { 'X-aws-ec2-metadata-token': v2_token })
 
           if json?(response.body) && response.code == "200"
             FFI_Yajl::Parser.parse(response.body)

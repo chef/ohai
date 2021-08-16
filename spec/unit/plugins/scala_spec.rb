@@ -33,7 +33,7 @@ describe Ohai::System, "plugin scala" do
       .and_return(mock_shell_out(0, "", scala_out))
   end
 
-  context "if scala is installed" do
+  context "when scala is installed" do
     before do
       setup_plugin
       plugin.run
@@ -44,7 +44,7 @@ describe Ohai::System, "plugin scala" do
     end
   end
 
-  context "if scala is not installed" do
+  context "when scala is not installed" do
     before do
       allow(plugin).to receive(:shell_out)
         .and_raise( Ohai::Exceptions::Exec )

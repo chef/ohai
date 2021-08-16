@@ -1,6 +1,6 @@
 #
 # Author:: Claire McQuin (<claire@chef.io>)
-# Copyright:: Copyright (c) 2013-2016 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,14 +22,14 @@ require "spec_helper"
 describe Ohai::Loader do
   extend IntegrationSupport
 
-  let(:loader) { Ohai::Loader.new(ohai) }
+  let(:loader) { described_class.new(ohai) }
   let(:ohai) { double("Ohai::System", data: Mash.new, provides_map: provides_map, logger: Ohai::Log) }
   let(:provides_map) { Ohai::ProvidesMap.new }
 
   describe "#initialize" do
     it "returns an Ohai::Loader object" do
-      loader = Ohai::Loader.new(ohai)
-      expect(loader).to be_a_kind_of(Ohai::Loader)
+      loader = described_class.new(ohai)
+      expect(loader).to be_a_kind_of(described_class)
     end
   end
 
@@ -130,7 +130,7 @@ describe Ohai::Loader do
 
       describe "when the plugin defines collect_data on the same platform more than once" do
         it "shoud log an illegal plugin definition warning" do
-          expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on platform/)
+          expect(Ohai::Log).to receive(:warn).with(/collect_data already defined on os/)
           loader.load_plugin(path_to("illegal_def.rb"))
         end
 

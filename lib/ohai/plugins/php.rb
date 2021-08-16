@@ -20,7 +20,7 @@
 
 Ohai.plugin(:PHP) do
   provides "languages/php"
-  depends "languages"
+  depends "languages".freeze
 
   collect_data do
 

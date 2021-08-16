@@ -18,14 +18,14 @@ Ohai will print out a JSON data blob for all the known data about your system. W
 
 Chef distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the docs:
 
-- General documentation: <https://docs.chef.io/ohai.html>
-- Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom.html>
+- General documentation: <https://docs.chef.io/ohai/>
+- Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom/>
 
-## Development Environment:
+## Development Environment
 
 Ohai's development dependencies should be installed with bundler. Just run `bundle install` in the root of the repo.
 
-## Spec Testing:
+## Spec Testing
 
 We use RSpec for unit/spec tests. To run the full suite, run:
 
@@ -39,7 +39,7 @@ You can run individual test files by running the rspec executable:
 bundle exec rspec spec/unit/FILE.rb
 ```
 
-## Style:
+## Style
 
 We use [Chefstyle](https://github.com/chef/chefstyle), as a code [linter](https://en.wikipedia.org/wiki/Lint_(software)), to enforce style guidelines. To run:
 
@@ -62,7 +62,6 @@ bundle exec rake -T
 rake build               # Build ohai-$VERSION.gem into the pkg directory
 rake clean               # Remove any temporary products
 rake clobber             # Remove any generated files
-rake docs                # Generate YARD Documentation
 rake install             # Build and install ohai-$VERSION.gem into system gems
 rake install:local       # Build and install ohai-$VERSION.gem into system gems without network access
 rake release[remote]     # Create tag $VERSION and build and push ohai-$VERSION.gem to rubygems.org
@@ -73,7 +72,7 @@ rake style:auto_correct  # Auto-correct RuboCop offenses
 ($VERSION is the current version, from the GemSpec in Rakefile)
 ```
 
-## Links:
+## Links
 
 Source:
 
@@ -100,7 +99,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2019 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2021 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

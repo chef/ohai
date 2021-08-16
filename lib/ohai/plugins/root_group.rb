@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Joseph Anthony Pasquale Holsten (<joseph@josephholsten.com>)
 # Copyright:: Copyright (c) 2013 Joseph Anthony Pasquale Holsten
@@ -19,7 +20,7 @@ Ohai.plugin(:RootGroup) do
   provides "root_group"
 
   collect_data(:windows) do
-    require "wmi-lite/wmi"
+    require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 
     wmi = WmiLite::Wmi.new
     # Per http://support.microsoft.com/kb/243330 SID: S-1-5-32-544 is the

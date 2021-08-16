@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 #
 # Author:: Adam Jacob (<adam@chef.io>)
 # Author:: Chris Read <chris.read@gmail.com>
-# Copyright:: Copyright (c) 2008-2017, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +36,7 @@ Ohai.plugin(:Network) do
   end
 
   def ipv6_enabled?
-    File.exist? "/proc/net/if_inet6"
+    file_exist? "/proc/net/if_inet6"
   end
 
   def ethtool_binary_path
@@ -43,11 +44,11 @@ Ohai.plugin(:Network) do
   end
 
   def is_openvz?
-    @openvz ||= ::File.directory?("/proc/vz")
+    @openvz ||= file_directory?("/proc/vz")
   end
 
   def is_openvz_host?
-    is_openvz? && ::File.directory?("/proc/bc")
+    is_openvz? && file_directory?("/proc/bc")
   end
 
   def extract_neighbors(family, iface, neigh_attr)
@@ -78,8 +79,8 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
-      if line =~ /\\/
-        parts = line.split('\\')
+      if /\\/.match?(line)
+        parts = line.split("\\")
         route_dest = parts.shift.strip
         route_endings = parts
       elsif line =~ /^([^\s]+)\s(.*)$/
@@ -108,6 +109,8 @@ Ohai.plugin(:Network) do
           # http://rubular.com/r/pwTNp65VFf
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
         end
+        # https://rubular.com/r/k1sMrRn5yLjgVi
+        route_entry["via"] = $1 if route_ending =~ /\bvia\s+inet6\s+([^\s]+)/
 
         # a sanity check, especially for Linux-VServer, OpenVZ and LXC:
         # don't report the route entry if the src address isn't set on the node
@@ -138,20 +141,20 @@ Ohai.plugin(:Network) do
 
   # using a temporary var to hold routes and their interface name
   def parse_routes(family, iface)
-    iface.collect do |i, iv|
-      if iv[:routes]
-        iv[:routes].collect do |r|
-          r.merge(dev: i) if r[:family] == family[:name]
-        end.compact
+    iface.filter_map do |i, iv|
+      next unless iv[:routes]
+
+      iv[:routes].filter_map do |r|
+        r.merge(dev: i) if r[:family] == family[:name]
       end
-    end.compact.flatten
+    end.flatten
   end
 
   # determine layer 1 details for the interface using ethtool
   def ethernet_layer_one(iface)
     return iface unless ethtool_binary_path
 
-    keys = %w{ Speed Duplex Port Transceiver Auto-negotiation MDI-X }
+    keys = %w{Speed Duplex Port Transceiver Auto-negotiation MDI-X}
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
@@ -189,11 +192,11 @@ Ohai.plugin(:Network) do
         next if line.start_with?("Ring parameters for")
         next if line.strip.nil?
 
-        if line =~ /Pre-set maximums/
+        if /Pre-set maximums/.match?(line)
           type = "max"
           next
         end
-        if line =~ /Current hardware settings/
+        if /Current hardware settings/.match?(line)
           type = "current"
           next
         end
@@ -202,6 +205,141 @@ Ohai.plugin(:Network) do
           ring_key = "#{type}_#{key.downcase.tr(" ", "_")}"
           iface[tmp_int]["ring_params"][ring_key] = val.to_i
         end
+      end
+    end
+    iface
+  end
+
+  # determine channel parameters for the interface using ethtool
+  def ethernet_channel_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -l #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      type = nil
+      iface[tmp_int]["channel_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Channel parameters for")
+        next if line.strip.nil?
+
+        if /Pre-set maximums/.match?(line)
+          type = "max"
+          next
+        end
+        if /Current hardware settings/.match?(line)
+          type = "current"
+          next
+        end
+        key, val = line.split(/:\s+/)
+        if type && val
+          channel_key = "#{type}_#{key.downcase.tr(" ", "_")}"
+          iface[tmp_int]["channel_params"][channel_key] = val.to_i
+        end
+      end
+    end
+    iface
+  end
+
+  # determine coalesce parameters for the interface using ethtool
+  def ethernet_coalesce_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -c #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["coalesce_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Coalesce parameters for")
+        next if line.strip.nil?
+
+        if line.start_with?("Adaptive")
+          _, adaptive_rx, _, adaptive_tx = line.split(/:\s+|\s+TX|\n/)
+          iface[tmp_int]["coalesce_params"]["adaptive_rx"] = adaptive_rx
+          iface[tmp_int]["coalesce_params"]["adaptive_tx"] = adaptive_tx
+          next
+        end
+        key, val = line.split(/:\s+/)
+        if val
+          coalesce_key = key.downcase.tr(" ", "_").to_s
+          iface[tmp_int]["coalesce_params"][coalesce_key] = val.to_i
+        end
+      end
+    end
+    iface
+  end
+
+  # determine offload features for the interface using ethtool
+  def ethernet_offload_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -k #{tmp_int}")
+      Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["offload_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Features for")
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val
+          offload_key = key.downcase.strip.tr(" ", "_").to_s
+          iface[tmp_int]["offload_params"][offload_key] = val.downcase.gsub(/\[.*\]/, "").strip.to_s
+        end
+      end
+    end
+    iface
+  end
+
+  # determine pause parameters for the interface using ethtool
+  def ethernet_pause_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -a #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["pause_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Pause parameters for")
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val
+          pause_key = "#{key.downcase.tr(" ", "_")}"
+          iface[tmp_int]["pause_params"][pause_key] = val.strip.eql? "on"
+        end
+      end
+    end
+    iface
+  end
+
+  # determine driver info for the interface using ethtool
+  def ethernet_driver_info(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -i #{tmp_int}")
+      logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["driver_info"] = {}
+      so.stdout.lines.each do |line|
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val.nil?
+          val = ""
+        end
+        driver_key = key.downcase.tr(" ", "_").to_s
+        iface[tmp_int]["driver_info"][driver_key] = val.chomp
       end
     end
     iface
@@ -219,7 +357,7 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int] ||= Mash.new
       end
 
-      if line =~ /^\s+(ip6tnl|ipip)/
+      if /^\s+(ip6tnl|ipip)/.match?(line)
         iface[tmp_int][:tunnel_info] = {}
         words = line.split
         words.each_with_index do |word, index|
@@ -295,7 +433,7 @@ Ohai.plugin(:Network) do
     if line =~ IPROUTE_INT_REGEX
       cint = $2
       iface[cint] = Mash.new
-      if cint =~ /^(\w+)(\d+.*)/
+      if cint =~ /^(\w+?)(\d+.*)/
         iface[cint][:type] = $1
         iface[cint][:number] = $2
       end
@@ -376,7 +514,7 @@ Ohai.plugin(:Network) do
       iface[cint][:addresses] ||= Mash.new
       tmp_addr = $1
       tags = $4 || ""
-      tags = tags.split(" ")
+      tags = tags.split
 
       iface[cint][:addresses][tmp_addr] = {
         "family" => "inet6",
@@ -389,7 +527,7 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
-    interfaces[interface][:addresses].select { |k, v| v["family"] == "lladdr" }.first.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
+    interfaces[interface][:addresses].find { |k, v| v["family"] == "lladdr" }.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
   end
 
   # returns the default route with the lowest metric (unspecified metric is 0)
@@ -427,8 +565,16 @@ Ohai.plugin(:Network) do
     # if the route destination is a default route, it's good
     return true if route[:destination] == "default"
 
+    return false if default_route[:via].nil?
+
+    dest_ipaddr = IPAddr.new(route[:destination])
+    default_route_via = IPAddr.new(default_route[:via])
+
+    # check if nexthop is the same address family
+    return false if dest_ipaddr.ipv4? != default_route_via.ipv4?
+
     # the default route has a gateway and the route matches the gateway
-    !default_route[:via].nil? && IPAddress(route[:destination]).include?(IPAddress(default_route[:via]))
+    dest_ipaddr.include?(default_route_via)
   end
 
   # ipv4/ipv6 routes are different enough that having a single algorithm to select the favored route for both creates unnecessary complexity
@@ -480,7 +626,7 @@ Ohai.plugin(:Network) do
   # If the 'ip' binary is available, this plugin may set {ip,mac,ip6}address. The network plugin should not overwrite these.
   # The older code section below that relies on the deprecated net-tools, e.g. netstat and ifconfig, provides less functionality.
   collect_data(:linux) do
-    require "ipaddr"
+    require "ipaddr" unless defined?(IPAddr)
 
     iface = Mash.new
     net_counters = Mash.new
@@ -549,7 +695,7 @@ Ohai.plugin(:Network) do
           logger.trace("Plugin Network: #{default_prefix}_interface set to #{default_route[:dev]}")
 
           # setting gateway to 0.0.0.0 or :: if the default route is a link level one
-          network["#{default_prefix}_gateway"] = default_route[:via] ? default_route[:via] : family[:default_route].chomp("/0")
+          network["#{default_prefix}_gateway"] = default_route[:via] || family[:default_route].chomp("/0")
           logger.trace("Plugin Network: #{default_prefix}_gateway set to #{network["#{default_prefix}_gateway"]}")
 
           # deduce the default route the user most likely cares about to pick {ip,mac,ip6}address below
@@ -598,7 +744,7 @@ Ohai.plugin(:Network) do
         if line =~ /^([0-9a-zA-Z@\.\:\-_]+)\s+/
           cint = $1
           iface[cint] = Mash.new
-          if cint =~ /^(\w+)(\d+.*)/
+          if cint =~ /^(\w+?)(\d+.*)/
             iface[cint][:type] = $1
             iface[cint][:number] = $2
           end
@@ -669,6 +815,11 @@ Ohai.plugin(:Network) do
 
     iface = ethernet_layer_one(iface)
     iface = ethernet_ring_parameters(iface)
+    iface = ethernet_channel_parameters(iface)
+    iface = ethernet_coalesce_parameters(iface)
+    iface = ethernet_offload_parameters(iface)
+    iface = ethernet_driver_info(iface)
+    iface = ethernet_pause_parameters(iface)
     counters[:network][:interfaces] = net_counters
     network["interfaces"] = iface
   end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Ranjib Dey (<dey.ranjib@gmail.com>)
 # License:: Apache License, Version 2.0
@@ -21,8 +22,8 @@ module Ohai
     module GCEMetadata
 
       # Trailing dot to host is added to avoid DNS search path
-      GCE_METADATA_ADDR ||= "metadata.google.internal.".freeze
-      GCE_METADATA_URL ||= "/computeMetadata/v1/?recursive=true".freeze
+      GCE_METADATA_ADDR ||= "metadata.google.internal."
+      GCE_METADATA_URL ||= "/computeMetadata/v1/?recursive=true"
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)
@@ -39,7 +40,7 @@ module Ohai
         return nil unless response.code == "200"
 
         if json?(response.body)
-          data = StringIO.new(response.body)
+          data = String(response.body)
           parser = FFI_Yajl::Parser.new
           parser.parse(data)
         elsif has_trailing_slash?(id) || (id == "")
@@ -57,7 +58,7 @@ module Ohai
       #
       # @return [Boolean] is the data JSON or not?
       def json?(data)
-        data = StringIO.new(data)
+        data = String(data)
         parser = FFI_Yajl::Parser.new
         begin
           parser.parse(data)
@@ -71,7 +72,7 @@ module Ohai
       #
       # @return [Boolean] is there a trailing /?
       def has_trailing_slash?(data)
-        !! ( data =~ %r{/$} )
+        !!( data =~ %r{/$} )
       end
 
       def sanitize_key(key)

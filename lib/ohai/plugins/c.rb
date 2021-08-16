@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Copyright:: Copyright (c) 2010 VMware, Inc.
@@ -36,10 +37,10 @@ Ohai.plugin(:C) do
     so = shell_out("/usr/bin/xcode-select -p")
     if so.exitstatus == 0
       logger.trace("Plugin C: Xcode Command Line Tools found.")
-      return true
+      true
     else
       logger.trace("Plugin C: Xcode Command Line Tools not found.")
-      return false
+      false
     end
   rescue Ohai::Exceptions::Exec
     logger.trace("Plugin C: xcode-select binary could not be found. Skipping data.")
@@ -84,14 +85,12 @@ Ohai.plugin(:C) do
 
   def collect_glibc
     # glibc
-    ["/lib/libc.so.6", "/lib64/libc.so.6"].each do |glibc|
-      collect( Ohai.abs_path( glibc )) do |so|
-        description = so.stdout.split($/).first
-        if description =~ /(\d+\.\d+\.?\d*)/
-          @c[:glibc] = Mash.new
-          @c[:glibc][:version] = $1
-          @c[:glibc][:description] = description
-        end
+    collect("ldd --version") do |so|
+      description = so.stdout.split($/).first
+      if description =~ /(\d+\.\d+\.?\d*)/
+        @c[:glibc] = Mash.new
+        @c[:glibc][:version] = $1
+        @c[:glibc][:description] = description
       end
     end
   end
@@ -122,12 +121,12 @@ Ohai.plugin(:C) do
   end
 
   def collect_xlc
-    # ibm xlc
-
+    # IBM XL C/C++ for AIX, V13.1.3 (5725-C72, 5765-J07)
+    # Version: 13.01.0003.0000
     so = shell_out("xlc -qversion")
     if so.exitstatus == 0 || (so.exitstatus >> 8) == 249
       description = so.stdout.split($/).first
-      if description =~ /V(\d+\.\d+)/
+      if description =~ /V(\d+\.\d+(.\d+)?)/
         @c[:xlc] = Mash.new
         @c[:xlc][:version] = $1
         @c[:xlc][:description] = description.strip
@@ -137,7 +136,7 @@ Ohai.plugin(:C) do
     logger.trace("Plugin C: 'xlc' binary could not be found. Skipping data.")
   end
 
-  def collect_sunpro
+  def collect_sun_pro
     # sun pro
     collect("cc -V -flags") do |so|
       output = so.stderr.split
@@ -173,7 +172,7 @@ Ohai.plugin(:C) do
     @c = Mash.new
     collect_gcc
     collect_glibc
-    collect_sunpro
+    collect_sun_pro
     languages[:c] = @c unless @c.empty?
   end
 end

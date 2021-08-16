@@ -193,7 +193,7 @@ Ohai.plugin(:Hostname) do
 
     info = Addrinfo.getaddrinfo(hostname, nil).first.getnameinfo
     fqdn info.first unless fqdn
-    
+
     domain collect_domain
   end
 end

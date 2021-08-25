@@ -71,7 +71,7 @@ RSpec.describe "Ohai::Application" do
 
       # env['KNIFE_HOME']/config.rb is the first config file the workstation
       # config loader looks for:
-      # https://github.com/chef/chef/blob/master/chef-config/lib/chef-config/workstation_config_loader.rb#L102
+      # https://github.com/chef/chef/blob/main/chef-config/lib/chef-config/workstation_config_loader.rb#L102
       let(:env) { { "KNIFE_HOME" => config_dir } }
 
       before do

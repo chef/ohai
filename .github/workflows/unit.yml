@@ -5,7 +5,7 @@ name: unit
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   test:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.7', '3.0']
-    name: Unit test on Ruby ${{ matrix.ruby }}
+    name: Unit test on ${{ matrix.os }} with Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1

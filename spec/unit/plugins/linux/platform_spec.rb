@@ -82,52 +82,52 @@ describe Ohai::System, "Linux plugin platform" do
   end
 
   describe "#platform_id_remap" do
-    # https://github.com/chef/os_release/blob/master/redhat_7
+    # https://github.com/chef/os_release/blob/main/redhat_7
     it "returns redhat for rhel os-release id" do
       expect(plugin.platform_id_remap("rhel")).to eq("redhat")
     end
 
-    # https://github.com/chef/os_release/blob/master/amazon_2018
+    # https://github.com/chef/os_release/blob/main/amazon_2018
     it "returns amazon for amzn os-release id" do
       expect(plugin.platform_id_remap("amzn")).to eq("amazon")
     end
 
-    # https://github.com/chef/os_release/blob/master/oracle_7
+    # https://github.com/chef/os_release/blob/main/oracle_7
     it "returns oracle for ol os-release id" do
       expect(plugin.platform_id_remap("ol")).to eq("oracle")
     end
 
-    # https://github.com/chef/os_release/blob/master/sles_sap_12_3
+    # https://github.com/chef/os_release/blob/main/sles_sap_12_3
     it "returns suse for sles_sap os-release id" do
       expect(plugin.platform_id_remap("sles_sap")).to eq("suse")
     end
 
-    # https://github.com/chef/os_release/blob/master/archarm
+    # https://github.com/chef/os_release/blob/main/archarm
     it "returns arch for archarm" do
       expect(plugin.platform_id_remap("archarm")).to eq("arch")
     end
 
-    # https://github.com/chef/os_release/blob/master/sles_15_0
+    # https://github.com/chef/os_release/blob/main/sles_15_0
     it "returns suse for sles os-release id" do
       expect(plugin.platform_id_remap("sles")).to eq("suse")
     end
 
-    # https://github.com/chef/os_release/blob/master/opensuseleap_15_0
+    # https://github.com/chef/os_release/blob/main/opensuseleap_15_0
     it "returns opensuseleap for opensuse-leap os-release id" do
       expect(plugin.platform_id_remap("opensuse-leap")).to eq("opensuseleap")
     end
 
-    # https://github.com/chef/os_release/blob/master/xenserver_7_6
+    # https://github.com/chef/os_release/blob/main/xenserver_7_6
     it "returns xenserver for xenenterprise os-release id" do
       expect(plugin.platform_id_remap("xenenterprise")).to eq("xenserver")
     end
 
-    # https://github.com/chef/os_release/blob/master/cumulus_3_7
+    # https://github.com/chef/os_release/blob/main/cumulus_3_7
     it "returns cumulus for cumulus-linux os-release id" do
       expect(plugin.platform_id_remap("cumulus-linux")).to eq("cumulus")
     end
 
-    # See https://github.com/chef/os_release/blob/master/xcp-ng_7_4#L3 for an example of why we do this
+    # See https://github.com/chef/os_release/blob/main/xcp-ng_7_4#L3 for an example of why we do this
     it "returns a downcased ID value" do
       expect(plugin.platform_id_remap("XCP-ng")).to eq("xcp-ng")
     end

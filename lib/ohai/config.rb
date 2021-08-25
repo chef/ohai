@@ -26,7 +26,7 @@ module Ohai
   Config = ChefConfig::Config
 
   # Reopens ChefConfig::Config to add Ohai configuration settings.
-  # see: https://github.com/chef/chef/blob/master/lib/chef/config.rb
+  # see: https://github.com/chef/chef/blob/main/lib/chef/config.rb
   class Config
     config_context :ohai do
       default :disabled_plugins, []

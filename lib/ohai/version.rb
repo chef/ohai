@@ -19,5 +19,5 @@
 
 module Ohai
   OHAI_ROOT = File.expand_path(__dir__)
-  VERSION = "17.5.1"
+  VERSION = "17.5.2"
 end

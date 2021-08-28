@@ -1,24 +1,22 @@
 # Change Log
 
-<!-- latest_release 17.5.2 -->
-## [v17.5.2](https://github.com/chef/ohai/tree/v17.5.2) (2021-08-27)
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.0.8 to 2.0.9 [#1692](https://github.com/chef/ohai/pull/1692) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.3.1 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.0.8 to 2.0.9 [#1692](https://github.com/chef/ohai/pull/1692) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.5.2 -->
-- Update the list of EC2 metadata versions we support [#1690](https://github.com/chef/ohai/pull/1690) ([tas50](https://github.com/tas50)) <!-- 17.5.1 -->
-- Update tests and links for the branch rename [#1691](https://github.com/chef/ohai/pull/1691) ([tas50](https://github.com/tas50)) <!-- 17.5.0 -->
-- Update chefstyle requirement from 2.0.7 to 2.0.8 [#1686](https://github.com/chef/ohai/pull/1686) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.4.0 -->
-- Update chefstyle requirement from 2.0.6 to 2.0.7 [#1683](https://github.com/chef/ohai/pull/1683) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.3.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.5.2](https://github.com/chef/ohai/tree/v17.5.2) (2021-08-28)
+
+#### Merged Pull Requests
+- Update chefstyle requirement from 2.0.6 to 2.0.7 [#1683](https://github.com/chef/ohai/pull/1683) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update chefstyle requirement from 2.0.7 to 2.0.8 [#1686](https://github.com/chef/ohai/pull/1686) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update tests and links for the branch rename [#1691](https://github.com/chef/ohai/pull/1691) ([tas50](https://github.com/tas50))
+- Update the list of EC2 metadata versions we support [#1690](https://github.com/chef/ohai/pull/1690) ([tas50](https://github.com/tas50))
+- Update chefstyle requirement from 2.0.8 to 2.0.9 [#1692](https://github.com/chef/ohai/pull/1692) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_stable_release -->
+
 ## [v17.3.1](https://github.com/chef/ohai/tree/v17.3.1) (2021-07-20)
 
 #### Merged Pull Requests
@@ -28,7 +26,6 @@
 - Add plugin for linux livepatch [#1672](https://github.com/chef/ohai/pull/1672) ([liu-song-6](https://github.com/liu-song-6))
 - Update rubocop-performance requirement from 1.11.3 to 1.11.4 [#1682](https://github.com/chef/ohai/pull/1682) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - Update chefstyle requirement from 2.0.5 to 2.0.6 [#1681](https://github.com/chef/ohai/pull/1681) ([dependabot[bot]](https://github.com/dependabot[bot]))
-<!-- latest_stable_release -->
 
 ## [v17.1.0](https://github.com/chef/ohai/tree/v17.1.0) (2021-05-13)
 

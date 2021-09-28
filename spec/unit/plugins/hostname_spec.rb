@@ -17,6 +17,7 @@
 #
 
 require "spec_helper"
+require "ohai/mixin/network_helper"
 
 describe Ohai::System, "hostname plugin" do
   before do

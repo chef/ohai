@@ -27,4 +27,10 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
       expect(mixin.hex_to_dec_netmask("ffff0000")).to eq("255.255.0.0")
     end
   end
+
+  describe 'Addrinfo #getaddrinfo' do
+    it "returns the hostname using Addrinfo" do
+      expect(mixin.get_addrinfo_hostname('www.kame.net')).to eq('mango.itojun.org')
+    end
+  end
 end

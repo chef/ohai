@@ -48,7 +48,7 @@ Ohai.plugin(:Hostname) do
     require "ipaddr" unless defined?(IPAddr)
 
     hostname = from_cmd("hostname")
-    
+
     addrinfo = get_addrinfo_hostname(hostname)
     addrinfo
   rescue

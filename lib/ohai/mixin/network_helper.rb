@@ -33,12 +33,12 @@ module Ohai
         dec
       end
 
-      def get_addrinfo_hostname(hostname, service=nil, family=nil)
+      def get_addrinfo_hostname(hostname, service = nil, family = nil)
         # The Addrinfo class maps struct addrinfo to ruby.
         # This structure identifies an Internet host and a service.
         # getaddrinfo returns a list of addrinfo objects as an array.
         # getnameinfo returns the hostname.
-        
+
         addrinfo = Addrinfo.getaddrinfo(hostname, nil).first.getnameinfo
         addrinfo.first
       end

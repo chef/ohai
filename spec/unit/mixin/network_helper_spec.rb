@@ -28,9 +28,9 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
     end
   end
 
-  describe 'Addrinfo #getaddrinfo' do
+  describe "Addrinfo #getaddrinfo" do
     it "returns the hostname using Addrinfo" do
-      expect(mixin.get_addrinfo_hostname('www.kame.net')).to eq('mango.itojun.org')
+      expect(mixin.get_addrinfo_hostname("www.kame.net")).to eq("mango.itojun.org")
     end
   end
 end

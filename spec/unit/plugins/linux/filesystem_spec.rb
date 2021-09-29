@@ -54,6 +54,30 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(File).to receive(:exist?).with("/dev/#{name}").and_return(false)
       allow(File).to receive(:exist?).with("/dev/mapper/#{name}").and_return(true)
     end
+
+    BTRFS_ALLOC = {
+      "data" => {
+        "total_bytes" => "10000000000",
+        "bytes_used" => "7000000000",
+      },
+      "metadata" => {
+        "total_bytes" => "2000000000",
+        "bytes_used" => "200000000",
+      },
+      "system" => {
+        "total_bytes" => "100000000",
+        "bytes_used" => "10000",
+      },
+    }.freeze
+
+    btrfs_sysfs_base = "/sys/fs/btrfs/d6efda02-1b73-453c-8c74-7d8dee78fa5e/allocation"
+    %w{data metadata system}.each do |bg_type|
+      allow(File).to receive(:exist?).with("#{btrfs_sysfs_base}/#{bg_type}/single").and_return(true)
+      allow(File).to receive(:exist?).with("#{btrfs_sysfs_base}/#{bg_type}/dup").and_return(false)
+      %w{total_bytes bytes_used}.each do |field|
+        allow(plugin).to receive(:file_read).with("#{btrfs_sysfs_base}/#{bg_type}/#{field}").and_return(BTRFS_ALLOC[bg_type][field])
+      end
+    end
   end
 
   describe "when gathering filesystem usage data from df" do
@@ -141,8 +165,8 @@ describe Ohai::System, "Linux filesystem plugin" do
         udev on /dev type tmpfs (rw,mode=0755)
         tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev)
         devpts on /dev/pts type devpts (rw,noexec,nosuid,gid=5,mode=620)
-        /dev/mapper/sys.vg-home.lv on /home type xfs (rw,noatime)
-        /dev/mapper/sys.vg-special.lv on /special type xfs (ro,noatime)
+        /dev/mapper/sys.vg-home.lv on /home type btrfs (rw,noatime)
+        /dev/mapper/sys.vg-special.lv on /special type btrfs (ro,noatime)
         /dev/mapper/sys.vg-tmp.lv on /tmp type ext4 (rw,noatime)
         /dev/mapper/sys.vg-usr.lv on /usr type ext4 (rw,noatime)
         /dev/mapper/sys.vg-var.lv on /var type ext4 (rw,noatime)
@@ -165,7 +189,7 @@ describe Ohai::System, "Linux filesystem plugin" do
 
     it "sets fs_type to value from mount" do
       plugin.run
-      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("btrfs")
     end
 
     it "sets mount_options to an array of values from mount" do
@@ -215,7 +239,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
+        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -229,6 +253,11 @@ describe Ohai::System, "Linux filesystem plugin" do
       expect(plugin[:filesystem]["by_pair"]["/dev/md1,"][:fs_type]).to eq("LVM2_member")
       expect(plugin[:filesystem]["by_pair"]["/dev/sda2,"][:uuid]).to eq("e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa")
       expect(plugin[:filesystem]["by_pair"]["/dev/md0,/boot"][:label]).to eq("/boot")
+    end
+
+    it "collects btrfs data by uuid" do
+      plugin.run
+      expect(plugin[:filesystem]["by_mountpoint"]["/home"][:btrfs]["allocation"]).to eq(BTRFS_ALLOC)
     end
   end
 
@@ -273,7 +302,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
         NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\" FSTYPE=\"ext4\"
         NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
         NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
@@ -340,7 +369,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
         NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\"
         NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/BADhome\" FSTYPE=\"xfs\"
+        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/BADhome\" FSTYPE=\"btrfs\"
         NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
@@ -358,7 +387,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"xfs\"
+        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -398,8 +427,8 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-root.lv / ext4 rw,noatime,errors=remount-ro,barrier=1,data=ordered 0 0
         tmpfs /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0
         tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
-        /dev/mapper/sys.vg-home.lv /home xfs rw,noatime,attr2,noquota 0 0
-        /dev/mapper/sys.vg-special.lv /special xfs ro,noatime,attr2,noquota 0 0
+        /dev/mapper/sys.vg-home.lv /home btrfs rw,noatime,attr2,noquota 0 0
+        /dev/mapper/sys.vg-special.lv /special btrfs ro,noatime,attr2,noquota 0 0
         /dev/mapper/sys.vg-tmp.lv /tmp ext4 rw,noatime,barrier=1,data=ordered 0 0
         /dev/mapper/sys.vg-usr.lv /usr ext4 rw,noatime,barrier=1,data=ordered 0 0
         /dev/mapper/sys.vg-var.lv /var ext4 rw,noatime,barrier=1,data=ordered 0 0
@@ -425,7 +454,7 @@ describe Ohai::System, "Linux filesystem plugin" do
 
     it "sets fs_type to value from /proc/mounts" do
       plugin.run
-      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("xfs")
+      expect(plugin[:filesystem]["by_pair"]["/dev/mapper/sys.vg-special.lv,/special"][:fs_type]).to eq("btrfs")
     end
 
     it "sets mount_options to an array of values from /proc/mounts" do
@@ -469,7 +498,7 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<~BLKID_TYPE
         NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
-        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
@@ -516,7 +545,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
         NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
         NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
-        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"xfs\"
+        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)

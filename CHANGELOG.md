@@ -1,21 +1,19 @@
 # Change Log
 
-<!-- latest_release 17.6.0 -->
-## [v17.6.0](https://github.com/chef/ohai/tree/v17.6.0) (2021-09-30)
-
-#### Merged Pull Requests
-- tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.5.2 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey)) <!-- 17.6.0 -->
-- Update chefstyle requirement from 2.0.9 to 2.1.0 [#1695](https://github.com/chef/ohai/pull/1695) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.5.3 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.6.0](https://github.com/chef/ohai/tree/v17.6.0) (2021-09-30)
+
+#### Merged Pull Requests
+- Update chefstyle requirement from 2.0.9 to 2.1.0 [#1695](https://github.com/chef/ohai/pull/1695) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey))
+<!-- latest_stable_release -->
+
 ## [v17.5.2](https://github.com/chef/ohai/tree/v17.5.2) (2021-08-28)
 
 #### Merged Pull Requests
@@ -24,7 +22,6 @@
 - Update tests and links for the branch rename [#1691](https://github.com/chef/ohai/pull/1691) ([tas50](https://github.com/tas50))
 - Update the list of EC2 metadata versions we support [#1690](https://github.com/chef/ohai/pull/1690) ([tas50](https://github.com/tas50))
 - Update chefstyle requirement from 2.0.8 to 2.0.9 [#1692](https://github.com/chef/ohai/pull/1692) ([dependabot[bot]](https://github.com/dependabot[bot]))
-<!-- latest_stable_release -->
 
 ## [v17.3.1](https://github.com/chef/ohai/tree/v17.3.1) (2021-07-20)
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.5.3 -->
-## [v17.5.3](https://github.com/chef/ohai/tree/v17.5.3) (2021-09-30)
+<!-- latest_release 17.6.0 -->
+## [v17.6.0](https://github.com/chef/ohai/tree/v17.6.0) (2021-09-30)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 2.0.9 to 2.1.0 [#1695](https://github.com/chef/ohai/pull/1695) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.5.2 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey)) <!-- 17.6.0 -->
 - Update chefstyle requirement from 2.0.9 to 2.1.0 [#1695](https://github.com/chef/ohai/pull/1695) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.5.3 -->
 <!-- release_rollup -->
 

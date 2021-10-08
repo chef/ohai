@@ -82,13 +82,13 @@ module Ohai
         else
           # now we have something like an IPMI console that isn't Unix-like or Windows, presumably cannot run ruby, and
           # so we just trust the train O/S information.
-          transport_connection.os
+          transport_connection.os.name
         end
       end
 
       # @api private
       def nonruby_target?
-        transport_connection && !transport_connection.os.unix? && !transport_connection.os.windows
+        transport_connection && !transport_connection.os.unix? && !transport_connection.os.windows?
       end
 
       # @api private

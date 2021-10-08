@@ -29,8 +29,6 @@ release_branches:
       version_constraint: 17.*
   - 16-stable:
       version_constraint: 16.*
-  - 15-stable:
-      version_constraint: 15.*
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org

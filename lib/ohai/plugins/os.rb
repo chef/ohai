@@ -40,6 +40,12 @@ Ohai.plugin(:OS) do
 
   collect_data(:target) do
     os collect_os
+    os_version "unknown"
+  end
+
+  collect_data(:api) do
+    os collect_os
+    os_version "unknown"
   end
 
   collect_data do

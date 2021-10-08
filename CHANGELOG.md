@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.0 -->
-## [v17.7.0](https://github.com/chef/ohai/tree/v17.7.0) (2021-10-05)
+<!-- latest_release 17.7.1 -->
+## [v17.7.1](https://github.com/chef/ohai/tree/v17.7.1) (2021-10-08)
 
 #### Merged Pull Requests
-- ohai/plugins/packages.rb - order change - present in both ohai 16 and 17 - impact chef 16/17 [#1669](https://github.com/chef/ohai/pull/1669) ([knightorc](https://github.com/knightorc))
+- Fix handling of remote targets for Ohai [#1698](https://github.com/chef/ohai/pull/1698) ([tecracer-theinen](https://github.com/tecracer-theinen))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.6.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix handling of remote targets for Ohai [#1698](https://github.com/chef/ohai/pull/1698) ([tecracer-theinen](https://github.com/tecracer-theinen)) <!-- 17.7.1 -->
 - ohai/plugins/packages.rb - order change - present in both ohai 16 and 17 - impact chef 16/17 [#1669](https://github.com/chef/ohai/pull/1669) ([knightorc](https://github.com/knightorc)) <!-- 17.7.0 -->
 <!-- release_rollup -->
 

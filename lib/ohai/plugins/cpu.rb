@@ -499,7 +499,7 @@ Ohai.plugin(:CPU) do
 
     cpu[:total] = shell_out("pmcycles -m").stdout.lines.length
 
-    # The below is only relevent on an LPAR
+    # The below is only relevant on an LPAR
     if shell_out("uname -W").stdout.strip == "0"
 
       # At least one CPU will be available, but we'll wait to increment this later.

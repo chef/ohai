@@ -9,11 +9,12 @@ name: exec
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: ['macos-latest', 'ubuntu-latest', 'windows-latest']
         ruby: ['2.7', '3.0']
     name: Exec Ohai on ${{ matrix.os }} with Ruby ${{ matrix.ruby }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1

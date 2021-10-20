@@ -25,35 +25,37 @@ describe Ohai::System, "hostname plugin" do
     allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 
-  context "default behavior"
-  before do
-    allow(@plugin).to receive(:resolve_fqdn).and_return("katie.bethell")
-  end
+  context "default behavior" do
+    before do
+      allow(@plugin).to receive(:canonicalize_hostname).with("katie.local").and_return("katie.bethell")
+    end
 
-  it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
+    it_should_check_from("linux::hostname", "machinename", "hostname", "katie.local")
 
-  it "uses #resolve_fqdn to find the fqdn" do
-    @plugin.run
-    expect(@plugin[:fqdn]).to eq("katie.bethell")
-  end
+    it "uses #resolve_fqdn to find the fqdn" do
+      @plugin.run
+      expect(@plugin[:fqdn]).to eq("katie.bethell")
+    end
 
-  it "sets the domain to everything after the first dot of the fqdn" do
-    @plugin.run
-    expect(@plugin[:domain]).to eq("bethell")
-  end
+    it "sets the domain to everything after the first dot of the fqdn" do
+      @plugin.run
+      expect(@plugin[:domain]).to eq("bethell")
+    end
 
-  it "sets the [short] hostname to everything before the first dot of the fqdn" do
-    @plugin.run
-    expect(@plugin[:hostname]).to eq("katie")
+    it "sets the [short] hostname to everything before the first dot of the fqdn" do
+      @plugin.run
+      expect(@plugin[:hostname]).to eq("katie")
+    end
   end
 
   context "when a system has a bare hostname without a FQDN" do
     before do
       allow(@plugin).to receive(:collect_os).and_return(:default)
       allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie", ""))
+      allow(@plugin).to receive(:canonicalize_hostname).with("katie").and_return("katie.bethell")
     end
 
-    it "correctlies set the [short] hostname" do
+    it "correctly sets the [short] hostname" do
       @plugin.run
       expect(@plugin[:hostname]).to eq("katie")
     end
@@ -65,9 +67,7 @@ describe Ohai::System, "hostname plugin" do
       allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
         mock_shell_out(0, "katie", "")
       )
-      allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
-        mock_shell_out(0, "", ""), mock_shell_out(0, "katie.local", "")
-      )
+      expect(@plugin).to receive(:canonicalize_hostname).with("katie.local").at_least(:once).and_raise(RuntimeError)
     end
 
     it "is called twice" do

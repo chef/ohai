@@ -32,6 +32,24 @@ module Ohai
         [2, 4, 6].each { |n| dec = dec + "." + netmask[n..n + 1].to_i(16).to_s(10) }
         dec
       end
+
+      # This does a forward and reverse lookup on the hostname to return what should be
+      # the FQDN for the host determined by name lookup (generally DNS)
+      #
+      def canonicalize_hostname(hostname)
+        Addrinfo.getaddrinfo(hostname, nil).first.getnameinfo.first
+      end
+
+      def canonicalize_hostname_with_retries(hostname)
+        retries = 3
+        begin
+          canonicalize_hostname(hostname)
+        rescue
+          retries -= 1
+          retry if retries > 0
+          hostname
+        end
+      end
     end
   end
 end

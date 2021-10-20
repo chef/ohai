@@ -72,7 +72,7 @@ describe Ohai::System, "hostname plugin" do
 
     it "is called twice" do
       @plugin.run
-      expect(@plugin[:fqdn]).to eq("katie.local")
+      expect(@plugin[:fqdn]).to eq(nil)
     end
   end
 
@@ -82,9 +82,7 @@ describe Ohai::System, "hostname plugin" do
       allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(
         mock_shell_out(0, "katie", "")
       )
-      allow(@plugin).to receive(:shell_out).with("hostname --fqdn").and_return(
-        mock_shell_out(0, "katie.local", "")
-      )
+      expect(@plugin).to receive(:canonicalize_hostname).with("katie.local").and_return("katie.local")
     end
 
     it "is not be called twice" do

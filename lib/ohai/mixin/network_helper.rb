@@ -47,7 +47,7 @@ module Ohai
         rescue
           retries -= 1
           retry if retries > 0
-          hostname
+          nil
         end
       end
     end

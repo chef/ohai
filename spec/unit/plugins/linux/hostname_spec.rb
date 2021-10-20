@@ -44,7 +44,7 @@ describe Ohai::System, "Linux hostname plugin" do
 
     it "does not set fqdn" do
       @plugin.run
-      expect(@plugin.fqdn).to eq("katie.local")
+      expect(@plugin.fqdn).to eq(nil)
     end
 
   end

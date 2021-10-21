@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.3 -->
-## [v17.7.3](https://github.com/chef/ohai/tree/v17.7.3) (2021-10-20)
+<!-- latest_release 17.7.4 -->
+## [v17.7.4](https://github.com/chef/ohai/tree/v17.7.4) (2021-10-21)
 
 #### Merged Pull Requests
-- Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50))
+- Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.6.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50)) <!-- 17.7.4 -->
 - Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50)) <!-- 17.7.3 -->
 - Run macos unit tests in GitHub Actions [#1700](https://github.com/chef/ohai/pull/1700) ([tas50](https://github.com/tas50)) <!-- 17.7.2 -->
 - Fix handling of remote targets for Ohai [#1698](https://github.com/chef/ohai/pull/1698) ([tecracer-theinen](https://github.com/tecracer-theinen)) <!-- 17.7.1 -->

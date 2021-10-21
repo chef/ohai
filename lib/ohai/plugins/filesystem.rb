@@ -697,7 +697,7 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "set" unless defined?(Set)
+    require "set" # rubocop: disable Chef/Ruby/UnlessDefinedRequire
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 

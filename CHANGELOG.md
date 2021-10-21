@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.4 -->
-## [v17.7.4](https://github.com/chef/ohai/tree/v17.7.4) (2021-10-21)
+<!-- latest_release 17.7.5 -->
+## [v17.7.5](https://github.com/chef/ohai/tree/v17.7.5) (2021-10-21)
 
 #### Merged Pull Requests
-- Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50))
+- Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.6.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.7.5 -->
 - Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50)) <!-- 17.7.4 -->
 - Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50)) <!-- 17.7.3 -->
 - Run macos unit tests in GitHub Actions [#1700](https://github.com/chef/ohai/pull/1700) ([tas50](https://github.com/tas50)) <!-- 17.7.2 -->

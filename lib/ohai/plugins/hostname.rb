@@ -26,7 +26,11 @@
 # limitations under the License.
 #
 
+require_relative "../mixin/network_helper"
+
 Ohai.plugin(:Hostname) do
+  include Ohai::Mixin::NetworkHelper
+
   provides "domain", "hostname", "fqdn", "machinename"
 
   # hostname : short hostname
@@ -42,38 +46,8 @@ Ohai.plugin(:Hostname) do
   end
 
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)
-  # this is ipv6-safe, works on ruby 1.8.7+
   def resolve_fqdn
-    require "socket" unless defined?(Socket)
-    require "ipaddr" unless defined?(IPAddr)
-
-    hostname = from_cmd("hostname")
-    begin
-      addrinfo = Socket.getaddrinfo(hostname, nil).first
-    rescue SocketError
-      # In the event that we got an exception from Socket, it's possible
-      # that it will work if we restrict it to IPv4 only either because of
-      # IPv6 misconfiguration or other bugs.
-      #
-      # Specifically it's worth noting that on macOS, getaddrinfo() will choke
-      # if it gets back a link-local address (say if you have 'fe80::1 myhost'
-      # in /etc/hosts). This will raise:
-      #    SocketError (getnameinfo: Non-recoverable failure in name resolution)
-      #
-      # But general misconfiguration could cause similar issues, so attempt to
-      # fall back to v4-only
-      begin
-        addrinfo = Socket.getaddrinfo(hostname, nil, :INET).first
-      rescue
-        # and if *that* fails, then try v6-only, in case we're in a v6-only
-        # environment with v4 config issues
-        addrinfo = Socket.getaddrinfo(hostname, nil, :INET6).first
-      end
-    end
-    iaddr = IPAddr.new(addrinfo[3])
-    Socket.gethostbyaddr(iaddr.hton)[0]
-  rescue
-    nil
+    canonicalize_hostname_with_retries(from_cmd("hostname"))
   end
 
   def collect_domain
@@ -119,58 +93,21 @@ Ohai.plugin(:Hostname) do
   collect_data(:darwin) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
-    begin
-      our_fqdn = resolve_fqdn
-      # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
-      # returns a blank string. WTF.
-      if our_fqdn.nil? || our_fqdn.empty?
-        logger.trace("Plugin Hostname: hostname returned an empty string, retrying once.")
-        our_fqdn = resolve_fqdn
-      end
-
-      if our_fqdn.nil? || our_fqdn.empty?
-        logger.trace("Plugin Hostname: hostname returned an empty string twice and will" +
-                        "not be set.")
-      else
-        fqdn our_fqdn
-      end
-    rescue
-      logger.trace(
-        "Plugin Hostname: hostname returned an error, probably no domain set"
-      )
-    end
+    fqdn resolve_fqdn
     domain collect_domain
   end
 
   collect_data(:freebsd) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
-    fqdn from_cmd("hostname -f")
+    fqdn resolve_fqdn
     collect_domain
   end
 
   collect_data(:linux) do
     hostname from_cmd("hostname -s")
     machinename from_cmd("hostname")
-    begin
-      our_fqdn = from_cmd("hostname --fqdn")
-      # Sometimes... very rarely, but sometimes, 'hostname --fqdn' falsely
-      # returns a blank string. WTF.
-      if our_fqdn.nil? || our_fqdn.empty?
-        logger.trace("Plugin Hostname: hostname --fqdn returned an empty string, retrying " +
-                        "once.")
-        our_fqdn = from_cmd("hostname --fqdn")
-      end
-
-      if our_fqdn.nil? || our_fqdn.empty?
-        logger.trace("Plugin Hostname: hostname --fqdn returned an empty string twice and " +
-                        "will not be set.")
-      else
-        fqdn our_fqdn
-      end
-    rescue
-      logger.trace("Plugin Hostname: hostname --fqdn returned an error, probably no domain set")
-    end
+    fqdn resolve_fqdn
     domain collect_domain
   end
 
@@ -190,22 +127,7 @@ Ohai.plugin(:Hostname) do
 
     hostname host["dnshostname"].to_s
     machinename host["name"].to_s
-
-    info = Socket.gethostbyname(Socket.gethostname)
-    if /.+?\.(.*)/.match?(info.first)
-      fqdn info.first
-    else
-      # host is not in dns. optionally use:
-      # C:\WINDOWS\system32\drivers\etc\hosts
-      info[3..info.length].reverse_each do |addr|
-        hostent = Socket.gethostbyaddr(addr)
-        if /.+?\.(.*)/.match?(hostent.first)
-          fqdn hostent.first
-          break
-        end
-      end
-      fqdn info.first unless fqdn
-    end
+    fqdn canonicalize_hostname_with_retries(Socket.gethostname)
     domain collect_domain
   end
 end

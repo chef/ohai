@@ -23,7 +23,7 @@ module Ohai
     module ConstantHelper
 
       def remove_constants
-        new_object_constants = Object.constants - @object_pristine.constants
+        new_object_constants = Object.constants - @object_pristine.constants - [ :SortedSet ]
         new_object_constants.each do |constant|
           Object.send(:remove_const, constant) unless Object.const_get(constant).is_a?(Module)
         end

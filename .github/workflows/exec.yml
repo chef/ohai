@@ -10,6 +10,7 @@ name: exec
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: ['macos-latest', 'ubuntu-latest', 'windows-latest']
         ruby: ['2.7', '3.0']

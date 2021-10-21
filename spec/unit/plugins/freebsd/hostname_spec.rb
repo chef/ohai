@@ -22,8 +22,8 @@ describe Ohai::System, "FreeBSD hostname plugin" do
   before do
     @plugin = get_plugin("hostname")
     allow(@plugin).to receive(:collect_os).and_return(:freebsd)
+    allow(@plugin).to receive(:canonicalize_hostname).with("katie.local").and_return("katie.bethell")
     allow(@plugin).to receive(:shell_out).with("hostname -s").and_return(mock_shell_out(0, "katie", ""))
-    allow(@plugin).to receive(:shell_out).with("hostname -f").and_return(mock_shell_out(0, "katie.bethell", ""))
     allow(@plugin).to receive(:shell_out).with("hostname").and_return(mock_shell_out(0, "katie.local", ""))
   end
 

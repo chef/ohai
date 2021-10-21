@@ -23,6 +23,8 @@
 # limitations under the License.
 #
 
+require "set" unless defined?(Set)
+
 Ohai.plugin(:Filesystem) do
   provides "filesystem".freeze
 
@@ -697,7 +699,6 @@ Ohai.plugin(:Filesystem) do
   end
 
   collect_data(:windows) do
-    require "set" # rubocop: disable Chef/Ruby/UnlessDefinedRequire
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     require_relative "../mash"
 

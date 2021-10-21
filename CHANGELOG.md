@@ -1,31 +1,28 @@
 # Change Log
 
-<!-- latest_release 17.7.5 -->
-## [v17.7.5](https://github.com/chef/ohai/tree/v17.7.5) (2021-10-21)
-
-#### Merged Pull Requests
-- Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.6.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.7.5 -->
-- Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50)) <!-- 17.7.4 -->
-- Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50)) <!-- 17.7.3 -->
-- Run macos unit tests in GitHub Actions [#1700](https://github.com/chef/ohai/pull/1700) ([tas50](https://github.com/tas50)) <!-- 17.7.2 -->
-- Fix handling of remote targets for Ohai [#1698](https://github.com/chef/ohai/pull/1698) ([tecracer-theinen](https://github.com/tecracer-theinen)) <!-- 17.7.1 -->
-- ohai/plugins/packages.rb - order change - present in both ohai 16 and 17 - impact chef 16/17 [#1669](https://github.com/chef/ohai/pull/1669) ([knightorc](https://github.com/knightorc)) <!-- 17.7.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.7.5](https://github.com/chef/ohai/tree/v17.7.5) (2021-10-21)
+
+#### Merged Pull Requests
+- ohai/plugins/packages.rb - order change - present in both ohai 16 and 17 - impact chef 16/17 [#1669](https://github.com/chef/ohai/pull/1669) ([knightorc](https://github.com/knightorc))
+- Fix handling of remote targets for Ohai [#1698](https://github.com/chef/ohai/pull/1698) ([tecracer-theinen](https://github.com/tecracer-theinen))
+- Run macos unit tests in GitHub Actions [#1700](https://github.com/chef/ohai/pull/1700) ([tas50](https://github.com/tas50))
+- Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50))
+- Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50))
+- Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist))
+<!-- latest_stable_release -->
+
 ## [v17.6.0](https://github.com/chef/ohai/tree/v17.6.0) (2021-09-30)
 
 #### Merged Pull Requests
 - Update chefstyle requirement from 2.0.9 to 2.1.0 [#1695](https://github.com/chef/ohai/pull/1695) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - tc qdisc plugin [#1696](https://github.com/chef/ohai/pull/1696) ([MatthewMassey](https://github.com/MatthewMassey))
-<!-- latest_stable_release -->
 
 ## [v17.5.2](https://github.com/chef/ohai/tree/v17.5.2) (2021-08-28)
 

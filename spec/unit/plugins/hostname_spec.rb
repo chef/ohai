@@ -142,7 +142,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
 
   context "when hostname is not set for the machine" do
     it "returns short machine name" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(local_hostent)
+      expect(@plugin).to receive(:canonicalize_hostname).with(anything).and_return("local")
       @plugin.run
       expect(@plugin[:fqdn]).to eq("local")
     end
@@ -150,7 +150,7 @@ describe Ohai::System, "hostname plugin for windows", :windows_only do
 
   context "when hostname is set for the machine" do
     it "returns the fqdn of the machine" do
-      allow(Socket).to receive(:gethostbyaddr).with(anything).and_return(fqdn_hostent)
+      expect(@plugin).to receive(:canonicalize_hostname).with(anything).and_return("local.dx.internal.cloudapp.net")
       @plugin.run
       expect(@plugin[:fqdn]).to eq("local.dx.internal.cloudapp.net")
     end

@@ -48,7 +48,7 @@ Ohai.plugin(:Azure) do
   # check for either the waagent or the unknown-245 DHCP option that Azure uses
   # http://blog.mszcool.com/index.php/2015/04/detecting-if-a-virtual-machine-runs-in-microsoft-azure-linux-windows-to-protect-your-software-when-distributed-via-the-azure-marketplace/
   def has_waagent?
-    if file_exist?("/usr/sbin/waagent") || dir_exist?('C:\WindowsAzure')
+    if file_exist?("/usr/sbin/waagent") || dir_exist?("C:\\WindowsAzure")
       logger.trace("Plugin Azure: Found waagent used by Azure.")
       true
     end

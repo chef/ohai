@@ -135,7 +135,7 @@ describe Ohai::System, "plugin azure" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
       @double_file = double("/var/lib/dhcp/dhclient.eth0.leases")
       allow(@double_file).to receive(:each)
@@ -169,7 +169,7 @@ describe Ohai::System, "plugin azure" do
       allow(plugin).to receive(:hint?).with("rackspace").and_return(true)
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(false)
     end
 
@@ -180,7 +180,7 @@ describe Ohai::System, "plugin azure" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(true)
-      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
     end
 
     it_behaves_like "azure"
@@ -190,7 +190,7 @@ describe Ohai::System, "plugin azure" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(true)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(true)
     end
 
     it_behaves_like "azure"
@@ -200,7 +200,7 @@ describe Ohai::System, "plugin azure" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(false)
-      allow(plugin).to receive(:dir_exist?).with('C:\WindowsAzure').and_return(false)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
       allow(plugin).to receive(:file_exist?).with("/var/lib/dhcp/dhclient.eth0.leases").and_return(true)
       @double_file = double("/var/lib/dhcp/dhclient.eth0.leases")
       allow(@double_file).to receive(:each)

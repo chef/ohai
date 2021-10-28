@@ -27,4 +27,16 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
       expect(mixin.hex_to_dec_netmask("ffff0000")).to eq("255.255.0.0")
     end
   end
+
+  describe "canonicalize hostname" do
+    # this is a brittle test deliberately intended to discourage modifying this API
+    # (see the node in the code on the necessity of manual testing)
+    it "uses the correct ruby API" do
+      hostname = "broken.example.org"
+      addrinfo = instance_double(Addrinfo)
+      expect(Addrinfo).to receive(:getaddrinfo).with(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).and_return([addrinfo])
+      expect(addrinfo).to receive(:canonname).and_return(hostname)
+      expect(mixin.canonicalize_hostname(hostname)).to eql(hostname)
+    end
+  end
 end

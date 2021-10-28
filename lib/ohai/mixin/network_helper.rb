@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+require "socket" unless defined?(Socket)
+
 module Ohai
   module Mixin
     module NetworkHelper
@@ -34,10 +36,16 @@ module Ohai
       end
 
       # This does a forward and reverse lookup on the hostname to return what should be
-      # the FQDN for the host determined by name lookup (generally DNS)
+      # the FQDN for the host determined by name lookup (generally DNS).  If the forward
+      # lookup fails this will throw.  If the reverse lookup fails this will return the
+      # hostname back.  The behavior on failure of the reverse lookup is both vitally important
+      # to this API, and completely untested, so changes to this method (not recommended) need
+      # to be manually validated by hand by setting up a DNS server with a broken A record to
+      # an IP without a PTR record (e.g. any RFC1918 space not served by the configured DNS
+      # server), and the method should return the hostname and not the IP address.
       #
       def canonicalize_hostname(hostname)
-        Addrinfo.getaddrinfo(hostname, nil).first.getnameinfo.first
+        Addrinfo.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first.canonname
       end
 
       def canonicalize_hostname_with_retries(hostname)

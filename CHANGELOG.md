@@ -1,22 +1,20 @@
 # Change Log
 
-<!-- latest_release 17.7.8 -->
-## [v17.7.8](https://github.com/chef/ohai/tree/v17.7.8) (2021-10-28)
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.1.1 to 2.1.2 [#1704](https://github.com/chef/ohai/pull/1704) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.7.5 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update chefstyle requirement from 2.1.1 to 2.1.2 [#1704](https://github.com/chef/ohai/pull/1704) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.8 -->
-- Fix node[&#39;fqdn&#39;] for broken reverse record lookup [#1705](https://github.com/chef/ohai/pull/1705) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.7.7 -->
-- Update chefstyle requirement from 2.1.0 to 2.1.1 [#1702](https://github.com/chef/ohai/pull/1702) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.6 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.7.8](https://github.com/chef/ohai/tree/v17.7.8) (2021-10-28)
+
+#### Merged Pull Requests
+- Update chefstyle requirement from 2.1.0 to 2.1.1 [#1702](https://github.com/chef/ohai/pull/1702) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fix node[&#39;fqdn&#39;] for broken reverse record lookup [#1705](https://github.com/chef/ohai/pull/1705) ([lamont-granquist](https://github.com/lamont-granquist))
+- Update chefstyle requirement from 2.1.1 to 2.1.2 [#1704](https://github.com/chef/ohai/pull/1704) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_stable_release -->
+
 ## [v17.7.5](https://github.com/chef/ohai/tree/v17.7.5) (2021-10-21)
 
 #### Merged Pull Requests
@@ -26,7 +24,6 @@
 - Exec ohai on macOS and Windows in tests [#1701](https://github.com/chef/ohai/pull/1701) ([tas50](https://github.com/tas50))
 - Add unit testing on windows [#1680](https://github.com/chef/ohai/pull/1680) ([tas50](https://github.com/tas50))
 - Fix hostname deprecation error [#1699](https://github.com/chef/ohai/pull/1699) ([lamont-granquist](https://github.com/lamont-granquist))
-<!-- latest_stable_release -->
 
 ## [v17.6.0](https://github.com/chef/ohai/tree/v17.6.0) (2021-09-30)
 

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.6 -->
-## [v17.7.6](https://github.com/chef/ohai/tree/v17.7.6) (2021-10-25)
+<!-- latest_release 17.7.7 -->
+## [v17.7.7](https://github.com/chef/ohai/tree/v17.7.7) (2021-10-28)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 2.1.0 to 2.1.1 [#1702](https://github.com/chef/ohai/pull/1702) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fix node[&#39;fqdn&#39;] for broken reverse record lookup [#1705](https://github.com/chef/ohai/pull/1705) ([lamont-granquist](https://github.com/lamont-granquist))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.7.5 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix node[&#39;fqdn&#39;] for broken reverse record lookup [#1705](https://github.com/chef/ohai/pull/1705) ([lamont-granquist](https://github.com/lamont-granquist)) <!-- 17.7.7 -->
 - Update chefstyle requirement from 2.1.0 to 2.1.1 [#1702](https://github.com/chef/ohai/pull/1702) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.6 -->
 <!-- release_rollup -->
 

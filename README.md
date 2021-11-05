@@ -1,10 +1,10 @@
 # ohai
 
-[![Build status](https://badge.buildkite.com/aa0b961fc3e5bed315c7035c6d60a4aaee57af9610cbde9a15.svg?branch=master)](https://buildkite.com/chef-oss/chef-ohai-master-verify) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
+[![Build status](https://badge.buildkite.com/aa0b961fc3e5bed315c7035c6d60a4aaee57af9610cbde9a15.svg?branch=main)](https://buildkite.com/chef-oss/chef-ohai-main-verify) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
-**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/master/projects/chef-infra.md)
+**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/main/projects/chef-infra.md)
 
-**Project State**: [Active](https://github.com/chef/chef-oss-practices/blob/master/repo-management/repo-states.md#active)
+**Project State**: [Active](https://github.com/chef/chef-oss-practices/blob/main/repo-management/repo-states.md#active)
 
 **Issues Response SLA**: 10 business days
 
@@ -76,7 +76,7 @@ rake style:auto_correct  # Auto-correct RuboCop offenses
 
 Source:
 
-- <https://github.com/chef/ohai/tree/master>
+- <https://github.com/chef/ohai/tree/main>
 
 Issues:
 
@@ -84,7 +84,7 @@ Issues:
 
 ## Contributing
 
-For information on contributing to this project see <https://github.com/chef/chef/blob/master/CONTRIBUTING.md>
+For information on contributing to this project see <https://github.com/chef/chef/blob/main/CONTRIBUTING.md>
 
 1. Fork it
 1. Create your feature branch (git checkout -b my-new-feature)
@@ -99,7 +99,7 @@ For information on contributing to this project see <https://github.com/chef/che
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2020 Chef Software, Inc.
+- Copyright:: Copyright (c) 2008-2021 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text

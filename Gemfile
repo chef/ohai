@@ -3,7 +3,7 @@ source "https://rubygems.org"
 
 gemspec
 
-# pull these gems from master of chef/chef so that we're testing against what we will release
+# pull these gems from chef-16 of chef/chef so that we're testing against what we will release
 gem "chef-config", git: "https://github.com/chef/chef", branch: "chef-16", glob: "chef-config/chef-config.gemspec"
 gem "chef-utils", git: "https://github.com/chef/chef", branch: "chef-16", glob: "chef-utils/chef-utils.gemspec"
 

@@ -1,6 +1,6 @@
 #
 #  Author:: Nimesh Pathi <nimesh.patni@msystechnologies.com>
-#  Copyright:: Copyright (c) 2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #  License:: Apache License, Version 2.0
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
 describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
   let(:plugin) { get_plugin("filesystem") }
 
-  let(:success) { true }
+  let(:success) { double }
 
   let(:logical_disks_instances) do
     [

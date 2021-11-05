@@ -137,7 +137,7 @@ Ohai.plugin(:Platform) do
     when /debian/, /ubuntu/, /linuxmint/, /raspbian/, /cumulus/, /kali/, /pop/
       # apt-get+dpkg almost certainly goes here
       "debian"
-    when /oracle/, /centos/, /redhat/, /almalinux/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/, /alibabalinux/, /sangoma/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
+    when /oracle/, /centos/, /redhat/, /almalinux/, /rocky/, /scientific/, /enterpriseenterprise/, /xcp/, /xenserver/, /cloudlinux/, /ibm_powerkvm/, /parallels/, /nexus_centos/, /clearos/, /bigip/, /alibabalinux/, /sangoma/ # Note that 'enterpriseenterprise' is oracle's LSB "distributor ID"
       # NOTE: "rhel" should be reserved exclusively for recompiled rhel versions that are nearly perfectly compatible down to the platform_version.
       # The operating systems that are "rhel" should all be as compatible as rhel7 = centos7 = oracle7 = scientific7 (98%-ish core RPM version compatibility
       # and the version numbers MUST track the upstream). The appropriate EPEL version repo should work nearly perfectly.  Some variation like the

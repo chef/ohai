@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 17.7.9 -->
+## [v17.7.9](https://github.com/chef/ohai/tree/v17.7.9) (2021-11-05)
+
+#### Merged Pull Requests
+- Update rubocop-performance requirement from 1.11.5 to 1.12.0 [#1707](https://github.com/chef/ohai/pull/1707) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=17.7.8 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update rubocop-performance requirement from 1.11.5 to 1.12.0 [#1707](https://github.com/chef/ohai/pull/1707) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.9 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

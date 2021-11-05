@@ -6,7 +6,7 @@ Every release of Ohai we pick someone from the community to name as the Most Val
 
 After receiving three MVP awards, we add someone to the hall of fame. We want to express our gratitude to their continuing participation and give newer community members the opportunity to be recognized.
 
-The [MVP list](https://github.com/chef/chef/blob/master/CHEF_MVPS.md) is kept in the Chef project.
+The [MVP list](https://github.com/chef/chef/blob/main/CHEF_MVPS.md) is kept in the Chef project.
 
 #### Ohai Release MVP Recipients
 

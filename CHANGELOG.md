@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.14.0 -->
-## [v16.14.0](https://github.com/chef/ohai/tree/v16.14.0) (2021-11-09)
+<!-- latest_release 16.17.0 -->
+## [v16.17.0](https://github.com/chef/ohai/tree/v16.17.0) (2021-11-09)
 
 #### Merged Pull Requests
-- Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50))
+- Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.13.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50)) <!-- 16.17.0 -->
 - Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50)) <!-- 16.14.0 -->
 - Backport 947a97d47daa1dce6aa7b91f2057b15451805b25 (Rocky Linux detection) [#1708](https://github.com/chef/ohai/pull/1708) ([mvangoor](https://github.com/mvangoor))
 - OHAI16 - Change order of collect_programs_from_registry_key [#1697](https://github.com/chef/ohai/pull/1697) ([knightorc](https://github.com/knightorc))

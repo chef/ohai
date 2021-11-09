@@ -12,6 +12,8 @@
 
 #### Merged Pull Requests
 - Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50)) <!-- 16.14.0 -->
+- Backport 947a97d47daa1dce6aa7b91f2057b15451805b25 (Rocky Linux detection) [#1708](https://github.com/chef/ohai/pull/1708) ([mvangoor](https://github.com/mvangoor))
+- OHAI16 - Change order of collect_programs_from_registry_key [#1697](https://github.com/chef/ohai/pull/1697) ([knightorc](https://github.com/knightorc))
 - Update minimum version of chef-config [#1660](https://github.com/chef/ohai/pull/1660) ([pravi](https://github.com/pravi)) <!-- 16.13.2 -->
 - Update minimum version of mixlib-shellout [#1658](https://github.com/chef/ohai/pull/1658) ([pravi](https://github.com/pravi)) <!-- 16.13.1 -->
 <!-- release_rollup -->

@@ -1,30 +1,25 @@
 # Change Log
 
-<!-- latest_release 16.17.0 -->
-## [v16.17.0](https://github.com/chef/ohai/tree/v16.17.0) (2021-11-09)
-
-#### Merged Pull Requests
-- Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=16.13.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50)) <!-- 16.17.0 -->
-- Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50)) <!-- 16.14.0 -->
-- Backport 947a97d47daa1dce6aa7b91f2057b15451805b25 (Rocky Linux detection) [#1708](https://github.com/chef/ohai/pull/1708) ([mvangoor](https://github.com/mvangoor))
-- OHAI16 - Change order of collect_programs_from_registry_key [#1697](https://github.com/chef/ohai/pull/1697) ([knightorc](https://github.com/knightorc))
-- Update minimum version of chef-config [#1660](https://github.com/chef/ohai/pull/1660) ([pravi](https://github.com/pravi)) <!-- 16.13.2 -->
-- Update minimum version of mixlib-shellout [#1658](https://github.com/chef/ohai/pull/1658) ([pravi](https://github.com/pravi)) <!-- 16.13.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v16.17.0](https://github.com/chef/ohai/tree/v16.17.0) (2021-11-09)
+
+#### Merged Pull Requests
+- Update minimum version of mixlib-shellout [#1658](https://github.com/chef/ohai/pull/1658) ([pravi](https://github.com/pravi))
+- Update minimum version of chef-config [#1660](https://github.com/chef/ohai/pull/1660) ([pravi](https://github.com/pravi))
+- Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50))
+- Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v16.13.0](https://github.com/chef/ohai/tree/v16.13.0) (2021-04-08)
 
 #### Merged Pull Requests
 - Create os_release plugin for parsing data from /etc/os-release [#1646](https://github.com/chef/ohai/pull/1646) ([ramereth](https://github.com/ramereth))
-<!-- latest_stable_release -->
 
 ## [v16.12.3](https://github.com/chef/ohai/tree/v16.12.3) (2021-04-02)
 

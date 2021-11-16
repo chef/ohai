@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.10 -->
-## [v17.7.10](https://github.com/chef/ohai/tree/v17.7.10) (2021-11-05)
+<!-- latest_release 17.7.11 -->
+## [v17.7.11](https://github.com/chef/ohai/tree/v17.7.11) (2021-11-16)
 
 #### Merged Pull Requests
-- Run the github actions test on 16-stable too [#1709](https://github.com/chef/ohai/pull/1709) ([tas50](https://github.com/tas50))
+- Update chefstyle requirement from 2.1.2 to 2.1.3 [#1717](https://github.com/chef/ohai/pull/1717) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.7.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update chefstyle requirement from 2.1.2 to 2.1.3 [#1717](https://github.com/chef/ohai/pull/1717) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.11 -->
 - Run the github actions test on 16-stable too [#1709](https://github.com/chef/ohai/pull/1709) ([tas50](https://github.com/tas50)) <!-- 17.7.10 -->
 - Update rubocop-performance requirement from 1.11.5 to 1.12.0 [#1707](https://github.com/chef/ohai/pull/1707) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.7.9 -->
 <!-- release_rollup -->

@@ -1,0 +1,2553 @@
+ARCHITECTURE AND OS:
+build arch            : x86_64
+compatible build archs: x86_64 noarch
+build os              : Linux
+compatible build os's : Linux
+install arch          : x86_64
+install os            : Linux
+compatible archs      : x86_64 amd64 em64t athlon noarch i686 i586 i486 i386 fat
+compatible os's       : Linux
+
+RPMRC VALUES:
+archcolor             : 2
+optflags              : %{__global_compiler_flags} -m64 %{__cflags_arch_x86_64} -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection
+
+Features supported by rpmlib:
+    rpmlib(BuiltinLuaScripts) = 4.2.2-1
+    rpmlib(CaretInVersions) = 4.15.0-1
+    rpmlib(CompressedFileNames) = 3.0.4-1
+    rpmlib(ConcurrentAccess) = 4.1-1
+    rpmlib(DynamicBuildRequires) = 4.15.0-1
+    rpmlib(ExplicitPackageProvide) = 4.0-1
+    rpmlib(FileCaps) = 4.6.1-1
+    rpmlib(FileDigests) = 4.6.0-1
+    rpmlib(HeaderLoadSortsTags) = 4.0.1-1
+    rpmlib(LargeFiles) = 4.12.0-1
+    rpmlib(PartialHardlinkSets) = 4.0.4-1
+    rpmlib(PayloadFilesHavePrefix) = 4.0-1
+    rpmlib(PayloadIsBzip2) = 3.0.5-1
+    rpmlib(PayloadIsLzma) = 4.4.2-1
+    rpmlib(PayloadIsXz) = 5.2-1
+    rpmlib(PayloadIsZstd) = 5.4.18-1
+    rpmlib(RichDependencies) = 4.12.0-1
+    rpmlib(ScriptletExpansion) = 4.9.0-1
+    rpmlib(ScriptletInterpreterArgs) = 4.0.3-1
+    rpmlib(TildeInVersions) = 4.10.0-1
+    rpmlib(VersionedDependencies) = 3.0.3-1
+
+Macro path: /usr/lib/rpm/macros:/usr/lib/rpm/macros.d/macros.*:/usr/lib/rpm/platform/%{_target}/macros:/usr/lib/rpm/fileattrs/*.attr:/usr/lib/rpm/redhat/macros:/etc/rpm/macros.*:/etc/rpm/macros:/etc/rpm/%{_target}/macros:~/.rpmmacros
+
+========================
+-13: GNAT_arches	%{GPRbuild_arches} ia64 ppc alpha
+-13: GPRbuild_arches	%{ix86} x86_64 %{power64} s390x %{arm} aarch64
+-20: P	<builtin>
+-20: S	<builtin>
+-13: __7zip	/usr/bin/7za
+-13: ___build_args	-e
+-13: ___build_cmd	%{?_sudo:%{_sudo} }%{?_remsh:%{_remsh} %{_remhost} }%{?_remsudo:%{_remsudo} }%{?_remchroot:%{_remchroot} %{_remroot} }%{___build_shell} %{___build_args}
+-13: ___build_post	
+  RPM_EC=$?
+  for pid in $(jobs -p); do kill -9 ${pid} || continue; done
+  exit ${RPM_EC}
+%{nil}
+-13: ___build_pre	
+  RPM_SOURCE_DIR="%{u2p:%{_sourcedir}}"
+  RPM_BUILD_DIR="%{u2p:%{_builddir}}"
+  RPM_OPT_FLAGS="%{optflags}"
+  RPM_LD_FLAGS="%{?build_ldflags}"
+  RPM_ARCH="%{_arch}"
+  RPM_OS="%{_os}"
+  RPM_BUILD_NCPUS="%{_smp_build_ncpus}"
+  export RPM_SOURCE_DIR RPM_BUILD_DIR RPM_OPT_FLAGS RPM_LD_FLAGS RPM_ARCH RPM_OS RPM_BUILD_NCPUS RPM_LD_FLAGS
+  RPM_DOC_DIR="%{_docdir}"
+  export RPM_DOC_DIR
+  RPM_PACKAGE_NAME="%{NAME}"
+  RPM_PACKAGE_VERSION="%{VERSION}"
+  RPM_PACKAGE_RELEASE="%{RELEASE}"
+  export RPM_PACKAGE_NAME RPM_PACKAGE_VERSION RPM_PACKAGE_RELEASE
+  LANG=C
+  export LANG
+  unset CDPATH DISPLAY ||:
+  %{?buildroot:RPM_BUILD_ROOT="%{u2p:%{buildroot}}"
+  export RPM_BUILD_ROOT}
+  %{?_javaclasspath:CLASSPATH="%{_javaclasspath}"
+  export CLASSPATH}
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:%{_libdir}/pkgconfig:%{_datadir}/pkgconfig"
+  export PKG_CONFIG_PATH
+  CONFIG_SITE=${CONFIG_SITE:-NONE}
+  export CONFIG_SITE
+  
+  %[%{verbose}?"set -x":""]
+  umask 022
+  cd "%{u2p:%{_builddir}}"
+-13: ___build_shell	%{?_buildshell:%{_buildshell}}%{!?_buildshell:/bin/sh}
+-13: ___build_template	#!%{___build_shell}
+%{___build_pre}
+%{nil}
+-13: __apply_patch(qp:m:)	
+%{lua:
+local file = rpm.expand("%{1}")
+local num = rpm.expand("%{2}")
+if posix.access(file, "r") then
+    local options = rpm.expand("%{-q} %{-p:-p%{-p*}} %{-m:-m%{-m*}}")
+    local scm_apply = rpm.expand("%__scm_apply_%{__scm}")
+    print(rpm.expand("%{uncompress:"..file.."} | "..scm_apply.." "..options.."  "..file.." "..num.."\n"))
+else
+    print("echo 'Cannot read "..file.."'; exit 1;".."\n")
+end}
+-13: __ar	ar
+-13: __arch_install_post	/usr/lib/rpm/check-buildroot
+-13: __as	as
+-13: __awk	gawk
+-13: __bootstrap	~bootstrap
+-13: __brp_boot_efi_times	/usr/lib/rpm/brp-boot-efi-times
+-13: __brp_check_rpaths	/usr/lib/rpm/check-rpaths
+-13: __brp_compress	/usr/lib/rpm/brp-compress
+-13: __brp_elfperms	%{_rpmconfigdir}/brp-elfperms
+-13: __brp_fix_pyc_reproducibility	%{_rpmconfigdir}/redhat/brp-fix-pyc-reproducibility
+-13: __brp_ldconfig	/usr/lib/rpm/redhat/brp-ldconfig
+-13: __brp_llvm_compile_lto_elf	/usr/lib/rpm/redhat/brp-llvm-compile-lto-elf %{build_cflags} %{build_ldflags}
+-13: __brp_mangle_shebangs	/usr/lib/rpm/redhat/brp-mangle-shebangs %{?__brp_mangle_shebangs_exclude:--shebangs "%{?__brp_mangle_shebangs_exclude}"} %{?__brp_mangle_shebangs_exclude_file:--shebangs-from "%{__brp_mangle_shebangs_exclude_file}"} %{?__brp_mangle_shebangs_exclude_from:--files "%{?__brp_mangle_shebangs_exclude_from}"} %{?__brp_mangle_shebangs_exclude_from_file:--files-from "%{__brp_mangle_shebangs_exclude_from_file}"}
+-13: __brp_python_bytecompile	%{_rpmconfigdir}/redhat/brp-python-bytecompile "" "%{?_python_bytecompile_errors_terminate_build}" "%{?_python_bytecompile_extra}"
+-13: __brp_python_hardlink	%{_rpmconfigdir}/redhat/brp-python-hardlink
+-13: __brp_remove_la_files	%{_rpmconfigdir}/brp-remove-la-files
+-13: __brp_strip	/usr/lib/rpm/brp-strip %{__strip}
+-13: __brp_strip_comment_note	/usr/lib/rpm/brp-strip-comment-note %{__strip} %{__objdump}
+-13: __brp_strip_lto	/usr/lib/rpm/redhat/brp-strip-lto %{__strip}
+-13: __brp_strip_static_archive	/usr/lib/rpm/brp-strip-static-archive %{__strip}
+-13: __bzip2	/usr/bin/bzip2
+-13: __bzr	/usr/bin/bzr
+-13: __cargo_skip_build	%{lua:
+local crate = rpm.expand('%{crate}')
+local build_crate = false
+for w in rpm.expand('%{?_build_crates}'):gmatch('%S+') do
+  if w == crate then
+    build_crate = true
+    break
+  end
+end
+if (rpm.expand('%{defined _module_build}') ~= '0' and not build_crate) then
+  print(1)
+else
+  print(0)
+end}
+-13: __cat	/usr/bin/cat
+-13: __cc	%{expand:%%{__cc_%{toolchain}}}
+-13: __cc_clang	clang
+-13: __cc_gcc	gcc
+-13: __cflags_arch_s390x	%[0%{?rhel} >= 8 ? "-march=z13 -mtune=z14" : "-march=zEC12 -mtune=z13"]
+-13: __cflags_arch_x86_64	%[0%{?rhel} >= 9 ? "-march=x86-64-v2" : ""]
+-13: __check_files	%{_rpmconfigdir}/check-files %{buildroot}
+-13: __chmod	/usr/bin/chmod
+-13: __chown	/usr/bin/chown
+-13: __cmake	/usr/bin/cmake
+-13: __cmake_builddir	%{!?__cmake_in_source_build:%{_vpath_builddir}}%{?__cmake_in_source_build:.}
+-13: __cmake_path	^(%{_libdir}|%{_datadir})/cmake/.*/.*(Config.cmake|-config.cmake)$
+-13: __cmake_provides	%{_rpmconfigdir}/cmake.prov
+-13: __cmake_requires	%{_rpmconfigdir}/cmake.req
+-13: __cp	/usr/bin/cp
+-13: __cpp	%{expand:%%{__cpp_%{toolchain}}}
+-13: __cpp_clang	clang-cpp
+-13: __cpp_gcc	gcc -E
+-13: __crates_url	https://crates.io/api/v1/crates/
+-13: __ctest	/usr/bin/ctest
+-13: __cxx	%{expand:%%{__cxx_%{toolchain}}}
+-13: __cxx_clang	clang++
+-13: __cxx_gcc	g++
+-13: __debug_install_post	
+    %{__find_debuginfo} \
+    %{?_smp_build_ncpus:-j%{_smp_build_ncpus}} \
+    %{?_missing_build_ids_terminate_build:--strict-build-id} \
+    %{?_no_recompute_build_ids:-n} \
+    %{?_include_minidebuginfo:-m} \
+    %{?_include_gdb_index:-i} \
+    %{?_unique_build_ids:--build-id-seed "%{VERSION}-%{RELEASE}"} \
+    %{?_unique_debug_names:--unique-debug-suffix "-%{VERSION}-%{RELEASE}.%{_arch}"} \
+    %{?_unique_debug_srcs:--unique-debug-src-base "%{name}-%{VERSION}-%{RELEASE}.%{_arch}"} \
+    %{?_find_debuginfo_dwz_opts} \
+    %{?_find_debuginfo_opts} \
+    %{?_debugsource_packages:-S debugsourcefiles.list} \
+    "%{_builddir}/%{?buildsubdir}"
+%{nil}
+-13: __debuginfo_path	^/usr/lib/debug/.build-id/[^/]+/[^/]+\.debug$
+-13: __debuginfo_provides	%{lua:
+  local file = rpm.expand("%1")
+  local b1, b2 = file:match("/([0-9a-f]+)/([0-9a-f]+).debug$")
+  print(string.format("debuginfo(build-id) = %s%s\n", b1, b2))
+}
+-13: __default_python3_pkgversion	%__default_python3_version
+-13: __default_python3_version	3.10
+-13: __desktop_path	^%{_datadir}/applications/.*\.desktop$
+-13: __desktop_provides	%{lua:
+  local executable = false
+  local mimetypes = nil
+  for line in io.lines(rpm.expand("%1")) do
+    if line:match("^Type%s*=%s*Application$") or line:match("^Exec%s*=") then
+      executable = true
+    elseif line:match("^MimeType%s*=") then
+      mimetypes = line:match("=%s*(.+)")
+    end
+  end
+  if executable then
+    print("application()\n")
+    print(string.format("application(%s)\n", rpm.expand("%{basename:%1}")))
+    if mimetypes then
+      for mimetype in mimetypes:gmatch("([^;]+)") do
+        print(string.format("mimehandler(%s)\n", mimetype))
+      end
+    end
+  end
+}
+-13: __docdir_path	%{_datadir}/doc:%{_datadir}/man:%{_datadir}/info:%{_datadir}/gtk-doc/html:%{_datadir}/gnome/help:%{?_docdir}:%{?_mandir}:%{?_infodir}:%{?_javadocdir}:/usr/doc:/usr/man:/usr/info:/usr/X11R6/man
+-13: __elf_magic	^(setuid,? )?(setgid,? )?(sticky )?ELF (32|64)-bit.*$
+-13: __elf_provides	%{_rpmconfigdir}/elfdeps --provides
+-13: __elf_requires	%{_rpmconfigdir}/elfdeps --requires
+-13: __extension_strip_flags	%{lua:
+local name = rpm.expand("%{1}")
+local value = " " .. rpm.expand("%{build_" .. name .. "}")
+local specs_pattern = "%s+-specs=[^%s]+"
+local lto_flags_pattern = rpm.expand("%{?_lto_cflags}"):gsub("[%-%.]", "%%%1")
+local result = value:gsub(specs_pattern, " "):gsub(lto_flags_pattern, "")
+print(result)
+}
+-13: __file	/usr/bin/file
+-13: __find_debuginfo	/usr/bin/find-debuginfo
+-13: __find_provides	%{_rpmconfigdir}/find-provides
+-13: __find_requires	%{_rpmconfigdir}/find-requires
+-13: __font_magic	[Ff]ont?( (program|collection))?( (text|data))
+-13: __font_provides	%{_rpmconfigdir}/fontconfig.prov
+-13: __font_requires	%{nil}
+-13: __gem	/usr/bin/gem
+-13: __git	/usr/bin/git
+-13: __global_cflags	%{build_cflags}
+-13: __global_compiler_flags	%{_general_options} %{_warning_options} %{_preprocessor_defines} %{_hardened_cflags} %{_annotation_cflags} %{_legacy_options}
+-13: __global_cxxflags	%{build_cxxflags}
+-13: __global_fcflags	%{build_fflags}
+-13: __global_fflags	%{build_fflags}
+-13: __global_ldflags	%{build_ldflags}
+-13: __global_provides_exclude_from	%{?_docdir:%{_docdir}}
+-13: __global_requires_exclude_from	%{?_docdir:%{_docdir}}
+-13: __go_flags	path
+-13: __go_path	^%{gopath}/src/.+/.goipath$
+-13: __go_provides	go-rpm-integration provides --prefix "%{buildroot}" --go-path "%{gopath}" %{?goprovflags}
+-13: __go_requires	go-rpm-integration requires --prefix "%{buildroot}" --go-path "%{gopath}" %{?goreqflags}
+-13: __goaltinstall	%{expand:
+install -m 0755 -d "%{buildroot}%{gopath}/src/%(dirname %{currentgoaltipath})"
+ln -rs             "%{buildroot}%{gopath}/src/%{currentgocanonipath}"   "%{buildroot}%{gopath}/src/%{currentgoaltipath}"
+echo               "%{gopath}/src/%{currentgoaltipath}" >>  "%{goworkdir}/%{currentgoaltfilelist}"
+}
+-13: __gobundled_flags	magic_and_path
+-13: __gobundled_magic	^(.*, )?directory$
+-13: __gobundled_path	^%{gopath}/src/.+/vendor/.+/.*$
+-13: __gobundled_provides	%{_rpmconfigdir}/gobundled.prov
+-13: __godevelinstall(-i:v)	%{expand:
+(
+%define __godevelinstall_ipath %{-i*}
+cd "%{gobuilddir}/src/%{__godevelinstall_ipath}"
+%define listfiles_include %{?currentgosupfiles}
+%define listfiles_exclude  %{?currentgosupfilesex}
+IFS= gosupfiles=$(%listfiles
+)
+mapfile -t gosupfilesA <<< "${gosupfiles}"
+go-rpm-integration install -i "%{__godevelinstall_ipath}"            \
+                           -b "%{gobuilddir}/bin"                    \
+                           -s "%{gobuilddir}"                        \
+                           -o "%{currentgodevelfilelist}"            \
+                           -O "%{goworkdir}"                         \
+                           -V "%{version}-%{release}"                \
+                           %{?currenttag:    -T "%{?currenttag}"}    \
+                           %{?currentcommit: -C "%{?currentcommit}"} \
+                           %{?currentbranch: -B "%{?currentbranch}"} \
+                           -p "%{buildroot}"                         \
+                           -g "%{gopath}"                            \
+                           %{?currentgoipathsex}                     \
+                           %{?currentgoextensions}                   \
+                           %{?goinstallflags}                        \
+                           %{-v} ${gosupfilesA[@]:+"${gosupfilesA[@]}"}
+)
+}
+-13: __godevelinstalldoc	%{expand:
+(
+%define listfiles_include %{?currentgodocs}
+%define listfiles_exclude  %{?currentgodocsex}
+IFS= godocs=$(%listfiles
+)
+if [[ -n "${godocs}" ]] ; then
+  while IFS= read -r f ; do
+    echo %doc \""${f}"\"     >> "%{goworkdir}/%{currentgodevelfilelist}"
+  done <<< "${godocs}"
+fi
+)
+(
+%define listfiles_include %{?currentgolicenses}
+%define listfiles_exclude %{?currentgolicensesex}
+IFS= golicenses=$(%listfiles
+)
+if [[ -n "${golicenses}" ]] ; then
+  while IFS= read -r f; do
+    echo "%"license \""${f}"\" >> "%{goworkdir}/%{currentgodevelfilelist}"
+  done <<< "${golicenses}"
+fi
+)
+}
+-13: __gosymlink_flags	magic_and_path
+-13: __gosymlink_magic	^(.*, )?(broken )?symbolic link to .*$
+-13: __gosymlink_path	^%{gopath}/src/.*$
+-13: __gosymlink_provides	%{_rpmconfigdir}/gosymlink.deps provides --prefix "%{buildroot}" --go-path "%{gopath}"
+-13: __gosymlink_requires	%{_rpmconfigdir}/gosymlink.deps requires --prefix "%{buildroot}" --go-path "%{gopath}"
+-13: __gpg	/usr/bin/gpg2
+-13: __gpg_reserved_space	4096
+-13: __gpg_sign_cmd	%{__gpg} 
+	gpg --no-verbose --no-armor 
+	%{?_gpg_digest_algo:--digest-algo %{_gpg_digest_algo}} 
+	--no-secmem-warning 
+	%{?_gpg_sign_cmd_extra_args:%{_gpg_sign_cmd_extra_args}} 
+	-u "%{_gpg_name}" -sbo %{__signature_filename} %{__plaintext_filename}
+-13: __grep	/usr/bin/grep
+-13: __gstreamer1_path	^%{_libdir}/gstreamer-1.*/.*.so$
+-13: __gstreamer1_provides	%{_rpmconfigdir}/gstreamer1.prov
+-13: __gzip	/usr/bin/gzip
+-13: __hg	/usr/bin/hg
+-13: __id	/usr/bin/id
+-13: __id_u	%{__id} -u
+-13: __install	/usr/bin/install
+-13: __isa	%{__isa_name}-%{__isa_bits}
+-13: __isa_bits	64
+-13: __isa_name	x86
+-13: __kmod_path	^/lib/modules/.*/(modules.builtin|.*ko)
+-13: __kmod_provides	%{lua:
+  function basename(fn)
+      return string.gsub(fn, "(.*/)(.*)", "%2")
+  end
+  function printdep(mod)
+      print("kmod("..mod..")")
+  end
+  local fn = rpm.expand("%{1}")
+  local bn = basename(fn)
+  if bn == "modules.builtin" then
+      for l in io.lines(fn) do
+          printdep(basename(l))
+      end
+  else
+      local mod = string.match(bn, "%g+.ko")
+      if mod then
+         printdep(mod)
+      end
+  end
+}
+-13: __ld	/usr/bin/ld
+-13: __libsymlink_flags	magic_and_path
+-13: __libsymlink_magic	^symbolic link to .*lib.*.so..*$
+-13: __libsymlink_path	^.*.so$
+-13: __libsymlink_requires	%{_rpmconfigdir}/elfdeps --provides --soname-only
+-13: __ln_s	ln -s
+-13: __lrzip	/usr/bin/lrzip
+-13: __lzip	/usr/bin/lzip
+-13: __make	/usr/bin/make
+-13: __meson	/usr/bin/meson
+-13: __meson_auto_features	enabled
+-13: __meson_wrap_mode	nodownload
+-13: __metainfo_path	^%{_datadir}/(appdata|metainfo)/.*\.(appdata|metainfo)\.xml$
+-13: __metainfo_provides	%{lua:
+  print("metainfo()\n")
+  print(string.format("metainfo(%s)\n", rpm.expand("%{basename:%1}")))
+}
+-13: __mkdir	/usr/bin/mkdir
+-13: __mkdir_p	/usr/bin/mkdir -p
+-13: __mv	/usr/bin/mv
+-13: __ninja	/usr/bin/ninja
+-13: __ninja_common_opts	-v %{?_smp_mflags}
+-13: __nodejs	%{_bindir}/node
+-13: __nodejs_native_path	^/usr/lib.*/node_modules/.*\.node$
+-13: __nodejs_native_requires	%{_rpmconfigdir}/nodejs_native.req
+-13: __nodejs_path	^/usr/lib(64)?/node_modules/[^/]+/package\.json$
+-13: __nodejs_provides	%{_rpmconfigdir}/nodejs.prov
+-13: __nodejs_requires	%{_rpmconfigdir}/nodejs.req
+-13: __nodejs_suggests	%{_rpmconfigdir}/nodejs.req --optional
+-13: __objdump	/usr/bin/objdump
+-13: __ocaml_flags	magic_and_path
+-13: __ocaml_magic	^(ELF|Objective caml|OCaml) .*$
+-13: __ocaml_path	.(cma|cmi|cmo|cmx|cmxa|cmxs)$
+-13: __ocaml_provides	%{_rpmconfigdir}/ocamldeps.sh --provides
+-13: __ocaml_requires	%{_rpmconfigdir}/ocamldeps.sh --requires
+-13: __os_install_post	
+    %[ "%{toolchain}" == "clang" ? "%{?__brp_llvm_compile_lto_elf}" : "%{nil}" ] 
+    %{?__brp_ldconfig} 
+    %{?__brp_compress} 
+    %{!?__debug_package:
+    %{?__brp_strip} 
+    %{?__brp_strip_comment_note} 
+    } 
+    %{?__brp_strip_lto} 
+    %{?__brp_strip_static_archive} 
+    %{?__brp_check_rpaths} 
+    %{?__brp_mangle_shebangs} 
+    %{__os_install_post_python} 
+%{nil}
+-13: __os_install_post_python	
+    %{?py_auto_byte_compile:%{?__brp_python_bytecompile}} 
+    %{?py_reproducible_pyc_path:%{?__brp_fix_pyc_reproducibility} "%{py_reproducible_pyc_path}"} 
+    %{?__brp_python_hardlink} 
+%{nil}
+-13: __patch	/usr/bin/patch
+-13: __perl	%{_bindir}/perl
+-13: __pkgconfig_path	^((%{_libdir}|%{_datadir})/pkgconfig/.*.pc|%{_bindir}/pkg-config)$
+-13: __pkgconfig_provides	%{_rpmconfigdir}/pkgconfigdeps.sh --provides
+-13: __pkgconfig_requires	%{_rpmconfigdir}/pkgconfigdeps.sh --requires
+-13: __plugindir	%{_libdir}/rpm-plugins
+-13: __psdriver_magic	^PPD file.*$
+-13: __psdriver_path	^(/usr/lib/cups/driver/.*|%{_datadir}/cups/drv/.*.drv)$
+-13: __psdriver_provides	%{_rpmconfigdir}/postscriptdriver.prov
+-13: __pypi_default_extension	tar.gz
+-13: __pypi_url	https://files.pythonhosted.org/packages/source/
+-13: __pytest	/usr/bin/pytest%(test %{python3_pkgversion} == 3 || echo -%{python3_version})
+-13: __python	%{error:attempt to use unversioned python, define %%__python to %{__python2} or %{__python3} explicitly}
+-13: __python2	/usr/bin/python2
+-13: __python3	/usr/bin/python3
+-13: __python_path	^((%{_prefix}/lib(64)?/python[[:digit:]]+\.[[:digit:]]+/.*\.(py[oc]?|so))|(%{_bindir}/python[[:digit:]]+\.[[:digit:]]+))$
+-13: __python_provides	%{lua:
+    -- Match buildroot/payload paths of the form
+    --    /PATH/OF/BUILDROOT/usr/bin/pythonMAJOR.MINOR
+    -- generating a line of the form
+    --    python(abi) = MAJOR.MINOR
+    -- (Don't match against -config tools e.g. /usr/bin/python2.6-config)
+    local path = rpm.expand('%1')
+    if path:match('/usr/bin/python%d+%.%d+$') then
+        local provides = path:gsub('.*/usr/bin/python(%d+%.%d+)', 'python(abi) = %1')
+        print(provides)
+    end
+}
+-13: __python_requires	%{lua:
+    -- Match buildroot paths of the form
+    --    /PATH/OF/BUILDROOT/usr/lib/pythonMAJOR.MINOR/  and
+    --    /PATH/OF/BUILDROOT/usr/lib64/pythonMAJOR.MINOR/
+    -- generating a line of the form:
+    --    python(abi) = MAJOR.MINOR
+    local path = rpm.expand('%1')
+    if path:match('/usr/lib%d*/python%d+%.%d+/.*') then
+        local requires = path:gsub('.*/usr/lib%d*/python(%d+%.%d+)/.*', 'python(abi) = %1')
+        print(requires)
+    end
+}
+-13: __pythondist_path	^/usr/lib(64)?/python[3-9]\.[[:digit:]]+/site-packages/[^/]+\.(dist-info|egg-info|egg-link)$
+-13: __pythondist_provides	%{_rpmconfigdir}/pythondistdeps.py --provides --normalized-names-format pep503 --package-name %{name} --normalized-names-provide-both --majorver-provides-versions %{__default_python3_version}
+-13: __pythondist_requires	%{_rpmconfigdir}/pythondistdeps.py --requires --normalized-names-format pep503 --package-name %{name} %{?!_python_no_extras_requires:--require-extras-subpackages} --console-scripts-nodep-setuptools-since 3.10
+-13: __pythonname_path	^/
+-13: __pythonname_provides	%{lua:
+    local python = require 'fedora.srpm.python'
+    -- this macro is called for each file in a package, the path being in %1
+    -- but we don't need to know the path, so we would get for each file: Macro %1 defined but not used within scope
+    -- in here, we expand %name conditionally on %1 to suppress the warning
+    local name = rpm.expand('%{?1:%{name}}')
+    local evr = rpm.expand('%{?epoch:%{epoch}:}%{version}-%{release}')
+    local provides = python.python_altprovides_once(name, evr)
+    -- provides is either an array/table or nil
+    -- nil means the function was already called with the same arguments:
+    --   either with another file in %1 or manually via %py_provide
+    if provides then
+      for i, provide in ipairs(provides) do
+          print(provide .. ' ')
+        end
+    end
+}
+-13: __quilt	/usr/bin/quilt
+-13: __rm	/usr/bin/rm
+-13: __scm	patch
+-13: __scm_apply_bzr(qp:m:)	
+%{__patch} %{-p:-p%{-p*}} %{-q:-s}
+%{__bzr} commit %{-q} -m %{-m*}
+-13: __scm_apply_gendiff(qp:m:)	
+%{__patch} %{-p:-p%{-p*}} %{-q:-s} --fuzz=%{_default_patch_fuzz} %{_default_patch_flags} -b --suffix ".%{2}"
+-13: __scm_apply_git(qp:m:)	
+%{__git} apply --index --reject %{-p:-p%{-p*}} -
+%{__git} commit %{-q} -m %{-m*} --author "%{__scm_author}"
+-13: __scm_apply_git_am(qp:m:)	
+%{__git} am --reject %{-q} %{-p:-p%{-p*}}
+-13: __scm_apply_hg(qp:m:)	
+%{__hg} import - %{-p:-p%{-p*}} %{-q} -m %{-m*} --user "%{__scm_author}"
+-13: __scm_apply_patch(qp:m:)	
+%{__patch} %{-p:-p%{-p*}} %{-q:-s} --fuzz=%{_default_patch_fuzz} %{_default_patch_flags}
+-13: __scm_apply_quilt(qp:m:)	
+%{__quilt} import %{-p:-p%{-p*}} %{1} && %{__quilt} push %{-q}
+-13: __scm_author	%{__scm_username} %{__scm_usermail}
+-13: __scm_setup_bzr(q)	
+%{__bzr} init %{-q}
+%{__bzr} whoami --branch "%{__scm_author}"
+%{__bzr} add .
+%{__bzr} commit %{-q} -m "%{NAME}-%{VERSION} base"
+-13: __scm_setup_gendiff(q)	%{nil}
+-13: __scm_setup_git(q)	
+%{__git} init %{-q}
+%{__git} config user.name "%{__scm_username}"
+%{__git} config user.email "%{__scm_usermail}"
+%{__git} config gc.auto 0
+%{__git} add --force .
+%{__git} commit %{-q} --allow-empty -a\
+	--author "%{__scm_author}" -m "%{NAME}-%{VERSION} base"
+-13: __scm_setup_git_am(q)	
+%{expand:%__scm_setup_git %{-q}}
+-13: __scm_setup_hg(q)	
+%{__hg} init %{-q} .
+%{__hg} add %{-q} .
+%{__hg} commit %{-q} --user "%{__scm_author}" -m "%{NAME}-%{VERSION} base"
+-13: __scm_setup_patch(q)	%{nil}
+-13: __scm_setup_quilt(q)	%{nil}
+-13: __scm_usermail	<rpm-build>
+-13: __scm_username	rpm-build
+-13: __script_flags	exeonly
+-13: __script_magic	^.* script[, ].*$
+-13: __script_requires	%{_rpmconfigdir}/script.req
+-13: __sed	/usr/bin/sed
+-13: __spec_build_args	%{___build_args}
+-13: __spec_build_body	%{___build_body}
+-13: __spec_build_cmd	%{___build_cmd}
+-13: __spec_build_post	%{___build_post}
+-13: __spec_build_pre	%{___build_pre}
+-13: __spec_build_shell	%{___build_shell}
+-13: __spec_build_template	#!%{__spec_build_shell}
+%{__spec_build_pre}
+%{nil}
+-13: __spec_buildrequires_args	%{___build_args}
+-13: __spec_buildrequires_body	%{___build_body}
+-13: __spec_buildrequires_cmd	%{___build_cmd}
+-13: __spec_buildrequires_post	%{___build_post}
+-13: __spec_buildrequires_pre	%{___build_pre}
+-13: __spec_buildrequires_shell	%{___build_shell}
+-13: __spec_buildrequires_template	#!%{__spec_buildrequires_shell}
+%{__spec_buildrequires_pre}
+%{nil}
+-13: __spec_check_args	%{___build_args}
+-13: __spec_check_body	%{___build_body}
+-13: __spec_check_cmd	%{___build_cmd}
+-13: __spec_check_post	%{___build_post}
+-13: __spec_check_pre	%{___build_pre}
+-13: __spec_check_shell	%{___build_shell}
+-13: __spec_check_template	#!%{__spec_check_shell}
+%{__spec_check_pre}
+%{nil}
+-13: __spec_clean_args	%{___build_args}
+-13: __spec_clean_body	%{___build_body}
+-13: __spec_clean_cmd	%{___build_cmd}
+-13: __spec_clean_post	%{___build_post}
+-13: __spec_clean_pre	%{___build_pre}
+-13: __spec_clean_shell	%{___build_shell}
+-13: __spec_clean_template	#!%{__spec_clean_shell}
+%{__spec_clean_pre}
+%{nil}
+-13: __spec_install_args	%{___build_args}
+-13: __spec_install_body	%{___build_body}
+-13: __spec_install_cmd	%{___build_cmd}
+-13: __spec_install_post	
+    %{?__debug_package:%{__debug_install_post}}
+    %{__arch_install_post}
+    %{__os_install_post}
+%{nil}
+-13: __spec_install_pre	%{___build_pre}
+    [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf "${RPM_BUILD_ROOT}"
+    mkdir -p "`dirname "$RPM_BUILD_ROOT"`"
+    mkdir "$RPM_BUILD_ROOT"
+%{nil}
+-13: __spec_install_shell	%{___build_shell}
+-13: __spec_install_template	#!%{__spec_install_shell}
+%{__spec_install_pre}
+%{nil}
+-13: __spec_prep_args	%{___build_args}
+-13: __spec_prep_body	%{___build_body}
+-13: __spec_prep_cmd	%{___build_cmd}
+-13: __spec_prep_post	%{___build_post}
+-13: __spec_prep_pre	%{___build_pre}
+-13: __spec_prep_shell	%{___build_shell}
+-13: __spec_prep_template	#!%{__spec_prep_shell}
+%{__spec_prep_pre}
+%{nil}
+-13: __spec_rmbuild_args	%{___build_args}
+-13: __spec_rmbuild_body	%{___build_body}
+-13: __spec_rmbuild_cmd	%{___build_cmd}
+-13: __spec_rmbuild_post	%{___build_post}
+-13: __spec_rmbuild_pre	%{___build_pre}
+-13: __spec_rmbuild_shell	%{___build_shell}
+-13: __spec_rmbuild_template	#!%{__spec_rmbuild_shell}
+%{__spec_rmbuild_pre}
+%{nil}
+-13: __strip	/usr/bin/strip
+-13: __systemd_someargs_0(:)	%{error:The %%%1 macro requires some arguments}
+-13: __systemd_twoargs_2	%{nil}
+-13: __sysusers_path	^%{_sysusersdir}/.*\.conf$
+-13: __sysusers_provides	%{_rpmconfigdir}/sysusers.prov
+-13: __tar	/usr/bin/tar
+-13: __transaction_audit	%{__plugindir}/audit.so
+-13: __transaction_dbus_announce	%{__plugindir}/dbus_announce.so
+-13: __transaction_fapolicyd	%{__plugindir}/fapolicyd.so
+-13: __transaction_fsverity	%{__plugindir}/fsverity.so
+-13: __transaction_ima	%{__plugindir}/ima.so
+-13: __transaction_prioreset	%{__plugindir}/prioreset.so
+-13: __transaction_selinux	%{__plugindir}/selinux.so
+-13: __transaction_syslog	%{__plugindir}/syslog.so
+-13: __transaction_systemd_inhibit	%{__plugindir}/systemd_inhibit.so
+-13: __unzip	/usr/bin/unzip
+-13: __urlhelper_proxyopts	%{?_httpproxy:--proxy %{_httpproxy}%{?_httpport::%{_httpport}}}%{!?_httpproxy:%{nil}}
+-13: __urlhelpercmd	/usr/bin/curl
+-13: __urlhelperopts	--silent --show-error --fail --globoff --location -o
+-13: __vsflags	0xf0000
+-13: __xz	/usr/bin/xz
+-13: __zstd	/usr/bin/zstd
+-13: _annobin_clang_plugin	%dnl-fplugin=/usr/lib64/clang/`clang -dumpversion`/lib/annobin.so
+-13: _annobin_gcc_plugin	-specs=/usr/lib/rpm/redhat/redhat-annobin-cc1
+-13: _annotated_build	1
+-13: _annotation_cflags	%[ "%{_target_cpu}" == "armv7hl" ? "" : "%{_annotation_plugin}" ]
+-13: _annotation_ldflags	%{?_lto_cflags:%{_annotation_cflags}}
+-13: _annotation_plugin	%{?_annotated_build:%{expand:%%{_annobin_%{toolchain}_plugin}}}
+-13: _arch	x86_64
+-13: _binaries_in_noarch_packages_terminate_build	1
+-13: _binary_filedigest_algorithm	8
+-13: _binary_payload	w19.zstdio
+-13: _bindir	%{_exec_prefix}/bin
+-13: _binfmtdir	/usr/lib/binfmt.d
+-13: _build	%{_host}
+-13: _build_alias	%{_host_alias}
+-13: _build_arch	x86_64
+-13: _build_cpu	%{_host_cpu}
+-13: _build_id_links	compat
+-13: _build_name_fmt	%%{ARCH}/%%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
+-13: _build_os	%{_host_os}
+-13: _build_vendor	%{_host_vendor}
+-13: _builddir	%{_topdir}/BUILD
+-13: _buildrootdir	%{_topdir}/BUILDROOT
+-13: _buildshell	/bin/sh
+-13: _changelog_trimage	%{expr:2*365*24*60*60}
+-13: _changelog_trimtime	0
+-13: _clang_lto_cflags	-flto
+-13: _cmake_lib_suffix64	-DLIB_SUFFIX=64
+-13: _cmake_shared_libs	-DBUILD_SHARED_LIBS:BOOL=ON
+-13: _cmake_skip_rpath	-DCMAKE_SKIP_RPATH:BOOL=ON
+-13: _cmake_version	3.21.3
+-13: _cmmscolordir	%_colordir/cmms
+-13: _color_output	never
+-13: _colordir	%_datadir/color
+-13: _configure	./configure
+-13: _configure_gnuconfig_hack	1
+-13: _configure_libtool_hardening_hack	1
+-13: _datadir	%{_datarootdir}
+-13: _datarootdir	%{_prefix}/share
+-13: _db_backend	sqlite
+-13: _dbpath	%{_var}/lib/rpm
+-13: _dbpath_rebuild	%{_dbpath}
+-13: _debuginfo_subpackages	1
+-13: _debuginfo_template	
+%package debuginfo
+Summary: Debug information for package %{name}
+Group: Development/Debug
+AutoReq: 0
+AutoProv: 1
+%description debuginfo
+This package provides debug information for package %{name}.
+Debug information is useful when developing applications that use this
+package or when debugging this package.
+%files debuginfo -f debugfiles.list
+%{nil}
+-13: _debugsource_packages	1
+-13: _debugsource_template	
+%package debugsource
+Summary: Debug sources for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+%description debugsource
+This package provides debug sources for package %{name}.
+Debug sources are useful when developing applications that use this
+package or when debugging this package.
+%files debugsource -f debugsourcefiles.list
+%{nil}
+-13: _default_patch_flags	--no-backup-if-mismatch -f
+-13: _default_patch_fuzz	0
+-13: _defaultdocdir	%{_datadir}/doc
+-13: _defaultlicensedir	%{_datadir}/licenses
+-13: _disable_source_fetch	1
+-13: _docdir_fmt	%%{NAME}
+-13: _duplicate_files_terminate_build	0
+-13: _dwz_limit	%{expand:%%{?%{1}_%{_arch}}%%{!?%{1}_%{_arch}:%%%{1}}}
+-13: _dwz_low_mem_die_limit	10000000
+-13: _dwz_low_mem_die_limit_armv5tel	4000000
+-13: _dwz_low_mem_die_limit_armv7hl	4000000
+-13: _dwz_max_die_limit	50000000
+-13: _dwz_max_die_limit_armv5tel	10000000
+-13: _dwz_max_die_limit_armv7hl	10000000
+-13: _dwz_max_die_limit_x86_64	110000000
+-13: _efi_srpm_macros_setup	%{expand:%{lua:
+  -- test if our arch matches
+  local function arch(archmacro)
+    local target = rpm.expand(" %{_target_cpu} ")
+    local arches = rpm.expand(" " .. archmacro .. " ")
+    local match = string.match(arches, target)
+    return (match ~= nil)
+  end
+  -- give us the arch...
+  local function getarch()
+    if arch("ia64") then
+      return("ia64")
+    elseif arch("x86_64") then
+      return("x64")
+    elseif arch("%{ix86}") then
+      return("ia32")
+    elseif arch("aarch64") then
+      return("aa64")
+    elseif arch("%{arm}") then
+      return("arm")
+    else
+      return("none")
+    end
+  end
+  -- alt arch
+  local function getaltarch()
+    if arch("x86_64") then
+      return("ia32")
+    else
+      return("none")
+    end
+  end
+  -- make some macros
+  local done = rpm.expand("%{?_efi}")
+  if done == nil or done == "" then
+    local arch = getarch()
+    local alt = getaltarch()
+    print("%global _efi x86_64 aarch64 armv3l armv4b armv4l armv4tl armv5tl armv5tel armv5tejl armv6l armv6hl armv7l armv7hl armv7hnl armv8l armv8hl armv8hnl armv8hcnl i386 i486 i586 i686 pentium3 pentium4 athlon geode\n")
+    print("%global _efi_vendor fedora\n")
+    if arch == "none" then
+      print("%global _efi_has_arch 0\n")
+    else
+      print("%global _efi_has_arch 1\n")
+    end
+    print("%global _efi_arch " .. getarch() .. "\n")
+    print("%global _efi_arch_upper " .. string.upper(getarch()) .. "\n")
+    if alt == "none" then
+      print("%global _efi_has_alt_arch 0\n")
+    else
+      print("%global _efi_has_alt_arch 1\n")
+    end
+    print("%global _efi_alt_arch " .. alt .. "\n")
+    print("%global _efi_alt_arch_upper " .. string.upper(alt) .. "\n")
+  end
+}}
+-13: _empty_manifest_terminate_build	1
+-13: _enable_debug_packages	1
+-13: _environmentdir	/usr/lib/environment.d
+-13: _environmnentdir	%{warn:Use %%_environmentdir instead}%_environmentdir
+-13: _exec_prefix	%{_prefix}
+-13: _file_context_file	%{_sysconfdir}/selinux/${SELINUXTYPE}/contexts/files/file_contexts
+-13: _file_context_file_pre	%{_localstatedir}/lib/rpm-state/file_contexts.pre
+-13: _file_custom_defined_booleans	%{_selinux_store_policy_path}/rpmbooleans.custom
+-13: _file_custom_defined_booleans_tmp	%{_selinux_store_policy_path}/rpmbooleans.custom.tmp
+-13: _fileattrsdir	%{_rpmconfigdir}/fileattrs
+-13: _find_debuginfo_dwz_opts	--run-dwz\
+   --dwz-low-mem-die-limit %{_dwz_limit _dwz_low_mem_die_limit}\
+   --dwz-max-die-limit %{_dwz_limit _dwz_max_die_limit}
+-13: _fix_broken_configure_for_lto	
+  for file in $(find . -type f -name configure -print); do 
+    %{__sed} -r --in-place=.backup 's/^char \(\*f\) \(\) = /__attribute__ ((used)) char (*f) () = /g' $file; 
+    diff -u $file.backup $file && mv $file.backup $file 
+    %{__sed} -r --in-place=.backup 's/^char \(\*f\) \(\);/__attribute__ ((used)) char (*f) ();/g' $file; 
+    diff -u $file.backup $file && mv $file.backup $file 
+    %{__sed} -r --in-place=.backup 's/^char \$2 \(\);/__attribute__ ((used)) char \$2 ();/g' $file; 
+    diff -u $file.backup $file && mv $file.backup $file 
+    %{__sed} --in-place=.backup '1{$!N;$!N};$!N;s/int x = 1;\nint y = 0;\nint z;\nint nan;/volatile int x = 1; volatile int y = 0; volatile int z, nan;/;P;D' $file; 
+    diff -u $file.backup $file && mv $file.backup $file 
+    %{__sed} --in-place=.backup 's#^lt_cv_sys_global_symbol_to_cdecl=.*#lt_cv_sys_global_symbol_to_cdecl="sed -n -e '"'"'s/^T .* \\(.*\\)$/extern int \\1();/p'"'"' -e '"'"'s/^$symcode* .* \\(.*\\)$/extern char \\1;/p'"'"'"#' $file; 
+    diff -u $file.backup $file && mv $file.backup $file 
+  done
+-13: _fixperms	%{__chmod} -Rf a+rX,u+w,g-w,o-w
+-13: _fmoddir	%{_libdir}/gfortran/modules
+-13: _fontbasedir	/usr/share/fonts
+-13: _fontconfig_confdir	/etc/fonts/conf.d
+-13: _fontconfig_masterdir	/etc/fonts
+-13: _fontconfig_templatedir	/usr/share/fontconfig/conf.avail
+-13: _gcc_lto_cflags	-flto=auto -ffat-lto-objects
+-13: _general_options	-O2 %{?_lto_cflags} -fexceptions -g -grecord-gcc-switches -pipe
+-13: _gnu	-gnu
+-13: _hardened_build	1
+-13: _hardened_cflags	%{?_hardened_build:%{_hardening_cflags}}
+-13: _hardened_ldflags	%{?_hardened_build:%{_hardening_ldflags}}
+-13: _hardening_cflags	%{expand:%%{_hardening_%{toolchain}_cflags}} -fstack-protector-strong
+-13: _hardening_clang_cflags	--config /usr/lib/rpm/redhat/redhat-hardened-clang.cfg
+-13: _hardening_gcc_cflags	-specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
+-13: _hardening_ldflags	-Wl,-z,now %[ "%{toolchain}" == "gcc" ? "-specs=/usr/lib/rpm/redhat/redhat-hardened-ld" : "" ]
+-13: _hkp_keyserver	http://pgp.mit.edu
+-13: _hkp_keyserver_query	%{_hkp_keyserver}:11371/pks/lookup?op=get&search=0x
+-13: _host	x86_64-redhat-linux-gnu
+-13: _host_alias	x86_64-redhat-linux-gnu%{nil}
+-13: _host_cpu	x86_64
+-13: _host_os	linux
+-13: _host_vendor	redhat
+-13: _icccolordir	%_colordir/icc
+-13: _include_gdb_index	1
+-13: _include_minidebuginfo	1
+-13: _includedir	%{_prefix}/include
+-13: _infodir	%{_datarootdir}/info
+-13: _initddir	%{_sysconfdir}/rc.d/init.d
+-13: _initrddir	%{_initddir}
+-13: _install_langs	all
+-13: _install_script_path	/sbin:/bin:/usr/sbin:/usr/bin:/usr/X11R6/bin
+-13: _invalid_encoding_terminates_build	1
+-13: _isa	%{?__isa:(%{__isa})}%{!?__isa:%{nil}}
+-13: _ivyxmldir	%{_datadir}/ivy-xmls
+-13: _javaconfdir	%{_sysconfdir}/java
+-13: _javadir	%{_datadir}/java
+-13: _javadocdir	%{_datadir}/javadoc
+-13: _jnidir	%{_prefix}/lib/java
+-13: _journalcatalogdir	/usr/lib/systemd/catalog
+-13: _jvmcommondatadir	%{_datadir}/jvm-common
+-13: _jvmcommonlibdir	%{_prefix}/lib/jvm-common
+-13: _jvmcommonsysconfdir	%{_sysconfdir}/jvm-common
+-13: _jvmdatadir	%{_datadir}/jvm
+-13: _jvmdir	%{_prefix}/lib/jvm
+-13: _jvmlibdir	%{_prefix}/lib/jvm
+-13: _jvmprivdir	%{_prefix}/lib/jvm-private
+-13: _jvmsysconfdir	%{_sysconfdir}/jvm
+-13: _keyring	rpmdb
+-13: _keyringpath	%{_dbpath}/pubkeys/
+-13: _keyringsdir	%_datadir/keyrings
+-13: _ld_as_needed	1
+-13: _ld_as_needed_flags	%{?_ld_as_needed:-Wl,--as-needed}
+-13: _ld_symbols_flags	%{?_ld_strict_symbol_defs:-Wl,-z,defs}
+-13: _legacy_options	%{?_legacy_common_support: -fcommon}
+-13: _lib	lib64
+-13: _libdir	%{_prefix}/lib64
+-13: _libexecdir	%{_exec_prefix}/libexec
+-13: _localstatedir	/var
+-13: _lto_cflags	%{expand:%%{_%{toolchain}_lto_cflags}}
+-13: _make_output_sync	%(! %{__make} --version -O >/dev/null 2>&1 || echo -O)
+-13: _make_verbose	V=1 VERBOSE=1
+-13: _mandir	%{_datarootdir}/man
+-13: _mavenpomdir	%{_datadir}/maven-poms
+-13: _metainfodir	%{_datadir}/metainfo
+-13: _missing_build_ids_terminate_build	1
+-13: _missing_doc_files_terminate_build	1
+-13: _modprobedir	/usr/lib/modprobe.d
+-13: _modulesloaddir	/usr/lib/modules-load.d
+-13: _monodir	%{_prefix}/lib/mono
+-13: _monogacdir	%{_monodir}/gac
+-13: _oldincludedir	/usr/include
+-13: _os	linux
+-13: _pam_confdir	%{_sysconfdir}/pam.d
+-13: _pam_libdir	%{_libdir}
+-13: _pam_moduledir	%{_libdir}/security
+-13: _pam_secconfdir	%{_sysconfdir}/security
+-13: _pam_vendordir	%{_datadir}/pam.d
+-13: _pkgdocdir	%{_docdir}/%{name}
+-13: _pkgverify_flags	0x0
+-13: _pkgverify_level	digest
+-13: _prefix	/usr
+-13: _preprocessor_defines	-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS
+-13: _presetdir	/usr/lib/systemd/system-preset
+-13: _pyproject_builddir	%{_builddir}%{?buildsubdir:/%{buildsubdir}}/.pyproject-builddir
+-13: _pyproject_ghost_distinfo	%{_builddir}/pyproject-ghost-distinfo
+-13: _pyproject_modules	%{_builddir}/pyproject-modules
+-13: _pyproject_record	%{_builddir}/pyproject-record
+-13: _pyproject_wheeldir	%{_builddir}%{?buildsubdir:/%{buildsubdir}}/pyproject-wheeldir
+-13: _python_bytecompile_errors_terminate_build	1
+-13: _python_bytecompile_extra	0
+-13: _qt5	qt5-qtbase
+-13: _qt5_epoch	0
+-13: _qt5_evr	5.15.2-28.fc35
+-13: _qt5_version	5.15.2
+-13: _query_all_fmt	%%{nvra}
+-13: _query_selector_match	default
+-13: _rpmconfigdir	%{getconfdir}
+-13: _rpmdir	%{_topdir}/RPMS
+-13: _rpmfilename	%{_build_name_fmt}
+-13: _rpmlock_path	%{_dbpath}/.rpm.lock
+-13: _rpmluadir	%{_rpmconfigdir}/lua
+-13: _rpmmacrodir	%{_rpmconfigdir}/macros.d
+-13: _rundir	/run
+-13: _sbindir	%{_exec_prefix}/sbin
+-13: _selinux_policy_version	35.5-1.fc35
+-13: _selinux_store_path	/var/lib/selinux
+-13: _selinux_store_policy_path	%{_selinux_store_path}/${_policytype}
+-13: _set_pytest_addopts	%global __pytest_addopts --ignore=%{_pyproject_builddir}
+-13: _settingscolordir	%_colordir/settings
+-13: _sharedstatedir	/var/lib
+-13: _smp_build_ncpus	%([ -z "$RPM_BUILD_NCPUS" ] \
+	&& RPM_BUILD_NCPUS="%{getncpus}"; \
+        ncpus_max=%{?_smp_ncpus_max}; \
+        if [ -n "$ncpus_max" ] && [ "$ncpus_max" -gt 0 ] && [ "$RPM_BUILD_NCPUS" -gt "$ncpus_max" ]; then RPM_BUILD_NCPUS="$ncpus_max"; fi; \
+        echo "$RPM_BUILD_NCPUS";)
+-13: _smp_build_nthreads	%{_smp_build_ncpus}
+-13: _smp_mflags	-j%{_smp_build_ncpus}
+-13: _source_filedigest_algorithm	8
+-13: _sourcedir	%{_topdir}/SOURCES
+-13: _specdir	%{_topdir}/SPECS
+-13: _srcrpmdir	%{_topdir}/SRPMS
+-13: _swidtagdir	%{_prefix}/lib/swidtag/fedoraproject.org
+-13: _syscolordir	%_colordir
+-13: _sysconfdir	/etc
+-13: _sysctldir	/usr/lib/sysctl.d
+-13: _systemd_system_env_generator_dir	/usr/lib/systemd/system-environment-generators
+-13: _systemd_user_env_generator_dir	/usr/lib/systemd/user-environment-generators
+-13: _systemd_util_dir	/usr/lib/systemd
+-13: _systemdgeneratordir	/usr/lib/systemd/system-generators
+-13: _systemdusergeneratordir	/usr/lib/systemd/user-generators
+-13: _sysusersdir	/usr/lib/sysusers.d
+-11: _target	x86_64-linux
+-13: _target_alias	%{_host_alias}
+-11= _target_cpu	x86_64
+-11= _target_os	linux
+-13: _target_platform	%{_target_cpu}-%{_vendor}-%{_target_os}%{?_gnu}
+-13: _target_vendor	%{_host_vendor}
+-13: _texmf	/usr/share/texlive/texmf-local
+-13: _texmf_conf	/usr/share/texlive/texmf-config
+-13: _texmf_main	/usr/share/texlive/texmf-dist
+-13: _texmf_var	/var/lib/texmf
+-13: _texmf_vendor	/usr/share/texlive/texmf-dist
+-13: _tmpfilesdir	/usr/lib/tmpfiles.d
+-13: _tmppath	%{_var}/tmp
+-13: _topdir	%{getenv:HOME}/rpmbuild
+-13: _transaction_color	3
+-13: _udevhwdbdir	/usr/lib/udev/hwdb.d
+-13: _udevrulesdir	/usr/lib/udev/rules.d
+-13: _unique_build_ids	1
+-13: _unique_debug_names	1
+-13: _unique_debug_srcs	1
+-13: _unitdir	/usr/lib/systemd/system
+-13: _unpackaged_files_terminate_build	1
+-13: _urlhelper	%{__urlhelpercmd} %{?__urlhelper_localopts} %{?__urlhelper_proxyopts} %{__urlhelperopts}
+-13: _use_internal_dependency_generator	1
+-13: _userpresetdir	/usr/lib/systemd/user-preset
+-13: _userunitdir	/usr/lib/systemd/user
+-13: _usr	/usr
+-13: _usrsrc	%{_usr}/src
+-13: _var	/var
+-13: _vendor	redhat
+-13: _vpath_builddir	%{_vendor}-%{_target_os}-build
+-13: _vpath_srcdir	.
+-13: _vsflags_build	%{__vsflags}
+-13: _vsflags_erase	%{__vsflags}
+-13: _vsflags_install	%{__vsflags}
+-13: _vsflags_query	%{__vsflags}
+-13: _vsflags_rebuilddb	0xc0c00
+-13: _vsflags_verify	%{__vsflags}
+-13: _warning_options	-Wall -Werror=format-security
+-13: _wrong_version_format_terminate_build	1
+-13: alpha	alpha alphaev56 alphaev6 alphaev67
+-13: ant	%{?jpb_env} JAVA_HOME=%{java_home} ant
+-13: arm	%{arm32}
+-13: arm32	armv3l armv4b armv4l armv4tl armv5tl armv5tel armv5tejl armv6l armv6hl armv7l armv7hl armv7hnl armv8l armv8hl armv8hnl armv8hcnl
+-13: arm64	aarch64
+-13: autochangelog	%{lua:
+    locale = os.setlocale(nil)
+    os.setlocale("C.utf8")
+    date = os.date("%a %b %d %Y")
+    os.setlocale(locale)
+    packager = rpm.expand("%{?packager}%{!?packager:John Doe <packager@example.com>}")
+    evr = rpm.expand("%{?epoch:%{epoch}:}%{version}-%{release}")
+    print("* " .. date .. " " .. packager .. " - " .. evr .. "\n")
+    print("- local build")
+}
+-13: autopatch(vp:m:M:)	%{lua:
+if #arg == 0 then
+    local lo = tonumber(rpm.expand("%{-m:%{-m*}}"))
+    local hi = tonumber(rpm.expand("%{-M:%{-M*}}"))
+    for i, n in ipairs(patch_nums) do
+        if ((not lo or n >= lo) and (not hi or n <= hi)) then
+            table.insert(arg, n)
+        end
+    end
+end
+local options = rpm.expand("%{!-v:-q} %{-p:-p%{-p*}} ")
+local bynum = {}
+for i, p in ipairs(patches) do
+    bynum[patch_nums[i]] = p
+end
+for i, a in ipairs(arg) do
+    local p = bynum[a]
+    if p then
+        print(rpm.expand("%__apply_patch -m %{basename:"..p.."}  "..options..p.." "..i.."\n"))
+    else
+        macros.error({"no such patch "..a})
+    end
+end
+}
+-13: autorelease(e:s:pb:)	%{?-p:0.}%{lua:
+    release_number = tonumber(rpm.expand("%{?_rpmautospec_release_number}%{!?_rpmautospec_release_number:1}"));
+    base_release_number = tonumber(rpm.expand("%{?-b*}%{!?-b:1}"));
+    print(release_number + base_release_number - 1);
+}%{?-e:.%{-e*}}%{?-s:.%{-s*}}%{?dist}
+-13: autosetup(a:b:cDn:TvNS:p:)	
+%setup %{-a} %{-b} %{-c} %{-D} %{-n} %{-T} %{!-v:-q}
+%{-S:%global __scm %{-S*}}
+%{expand:%__scm_setup_%{__scm} %{!-v:-q}}
+%{!-N:%autopatch %{-v} %{-p:-p%{-p*}}}
+-20: basename	<builtin>
+-13: bcond_with	%{expand:%%{?_with_%{1}:%%global with_%{1} 1}}
+-13: bcond_without	%{expand:%%{!?_without_%{1}:%%global with_%{1} 1}}
+-13: binfmt_apply	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# binfmt_apply}} 
+[ -x /usr/lib/systemd/systemd-binfmt ] && /usr/lib/systemd/systemd-binfmt %{?*} || : 
+%{nil}
+-13: build_cc	%{__cc}
+-13: build_cflags	%{optflags}
+-13: build_cpp	%{__cpp}
+-13: build_cxx	%{__cxx}
+-13: build_cxxflags	%{optflags}
+-13: build_fflags	%{optflags} -I%{_fmoddir}
+-13: build_ldflags	-Wl,-z,relro %{_ld_as_needed_flags} %{_ld_symbols_flags} %{_hardened_ldflags} %{_annotation_ldflags} %[ "%{toolchain}" == "clang" ? "%{?_lto_cflags}" : "" ]
+-13: buildroot	%{_buildrootdir}/%{NAME}-%{VERSION}-%{RELEASE}.%{_arch}
+-13: clamp_mtime_to_source_date_epoch	0
+-13: cmake	
+%if 0%{?set_build_flags:1} 
+  %set_build_flags 
+%else 
+  CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS ; 
+  CXXFLAGS="${CXXFLAGS:-%optflags}" ; export CXXFLAGS ; 
+  FFLAGS="${FFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FFLAGS ; 
+  FCFLAGS="${FCFLAGS:-%optflags%{?_fmoddir: -I%_fmoddir}}" ; export FCFLAGS ; 
+  %{?__global_ldflags:LDFLAGS="${LDFLAGS:-%__global_ldflags}" ; export LDFLAGS ;} 
+%endif 
+  %__cmake \
+        %{!?__cmake_in_source_build:-S "%{_vpath_srcdir}"} \
+        %{!?__cmake_in_source_build:-B "%{__cmake_builddir}"} \
+        -DCMAKE_C_FLAGS_RELEASE:STRING="-DNDEBUG" \
+        -DCMAKE_CXX_FLAGS_RELEASE:STRING="-DNDEBUG" \
+        -DCMAKE_Fortran_FLAGS_RELEASE:STRING="-DNDEBUG" \
+        -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+        -DCMAKE_INSTALL_DO_STRIP:BOOL=OFF \
+        -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
+        -DINCLUDE_INSTALL_DIR:PATH=%{_includedir} \
+        -DLIB_INSTALL_DIR:PATH=%{_libdir} \
+        -DSYSCONF_INSTALL_DIR:PATH=%{_sysconfdir} \
+        -DSHARE_INSTALL_PREFIX:PATH=%{_datadir} \
+%if "%{?_lib}" == "lib64" 
+        %{?_cmake_lib_suffix64} \
+%endif 
+        %{?_cmake_shared_libs}
+-13: cmake3	%cmake
+-13: cmake3_build	%cmake_build
+-13: cmake3_install	%cmake_install
+-13: cmake_build	
+  %__cmake --build "%{__cmake_builddir}" %{?_smp_mflags} --verbose
+-13: cmake_install	
+  DESTDIR="%{buildroot}" %__cmake --install "%{__cmake_builddir}"
+-13: configure	
+  %{set_build_flags}; 
+  [ "%{_lto_cflags}"x != x ] && %{_fix_broken_configure_for_lto}; 
+  [ "%_configure_gnuconfig_hack" = 1 ] && for i in $(find $(dirname %{_configure}) -name config.guess -o -name config.sub) ; do 
+      [ -f /usr/lib/rpm/redhat/$(basename $i) ] && %{__rm} -f $i && %{__cp} -fv /usr/lib/rpm/redhat/$(basename $i) $i ; 
+  done ; 
+  [ "%_configure_libtool_hardening_hack" = 1 ] && [ x != "x%{_hardened_ldflags}" ] && 
+      for i in $(find . -name ltmain.sh) ; do 
+        %{__sed} -i.backup -e 's~compiler_flags=$~compiler_flags="%{_hardened_ldflags}"~' $i 
+      done ; 
+  %{_configure} --build=%{_build} --host=%{_host} \
+	--program-prefix=%{?_program_prefix} \
+	--disable-dependency-tracking \
+	%{?_configure_disable_silent_rules:--disable-silent-rules} \
+	--prefix=%{_prefix} \
+	--exec-prefix=%{_exec_prefix} \
+	--bindir=%{_bindir} \
+	--sbindir=%{_sbindir} \
+	--sysconfdir=%{_sysconfdir} \
+	--datadir=%{_datadir} \
+	--includedir=%{_includedir} \
+	--libdir=%{_libdir} \
+	--libexecdir=%{_libexecdir} \
+	--localstatedir=%{_localstatedir} \
+	--sharedstatedir=%{_sharedstatedir} \
+	--mandir=%{_mandir} \
+	--infodir=%{_infodir}
+-13: crates_source	%{lua:
+    local crate = rpm.expand('%1')
+    local version = rpm.expand('%2')
+    local url = rpm.expand('%__crates_url')
+
+    if crate == '%1' then
+        crate = rpm.expand('%real_crate')
+    end
+    if crate == '%real_crate' then
+        crate = rpm.expand('%crate')
+    end
+    if crate == '%crate' then
+        crate = rpm.expand('%name')
+    end
+
+    if version == '%2' then
+        version = rpm.expand('%version')
+    end
+    version = version:gsub('~', '-')
+
+    print(url .. crate .. '/' .. version .. '/download#/' .. crate .. '-' .. version .. '.crate')
+}
+-13: ctest(:-:)	
+  cd "%{__cmake_builddir}" 
+  %__ctest --output-on-failure --force-new-ctest-process %{?_smp_mflags} %{**} 
+  cd -
+-13: ctest3(:-:)	%ctest %{**}
+-13: debug_package	
+%ifnarch noarch
+%global __debug_package 1
+%_debuginfo_template
+%{?_debugsource_packages:%_debugsource_template}
+%endif
+%{nil}
+-13: default_toxenv	py%{python3_version_nodots}
+-20: define	<builtin>
+-13: defined	%{expand:%%{?%{1}:1}%%{!?%{1}:0}}
+-20: dirname	<builtin>
+-13: dist	%{!?distprefix0:%{?distprefix}}%{expand:%{lua:for i=0,9999 do print("%{?distprefix" .. i .."}") end}}.fc%{fedora}%{?with_bootstrap:~bootstrap}
+-20: dnl	<builtin>
+-20: dump	<builtin>
+-20: echo	<builtin>
+-13: efi	%{expand:%{_efi_srpm_macros_setup}}%{expand:%{_efi}}
+-13: efi_alt_arch	%{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch}%{nil}
+-13: efi_alt_arch_upper	%{expand:%{_efi_srpm_macros_setup}}%{?_efi_alt_arch_upper}%{nil}
+-13: efi_arch	%{expand:%{_efi_srpm_macros_setup}}%{_efi_arch}
+-13: efi_arch_upper	%{expand:%{_efi_srpm_macros_setup}}%{_efi_arch_upper}
+-13: efi_build_requires	bash coreutils
+-13: efi_esp_boot	%{efi_esp_efi}/BOOT
+-13: efi_esp_dir	%{expand:%{_efi_srpm_macros_setup}}%{efi_esp_efi}/%{efi_vendor}
+-13: efi_esp_efi	%{efi_esp_root}/EFI
+-13: efi_esp_root	/boot/efi
+-13: efi_has_alt_arch	%{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_alt_arch}
+-13: efi_has_arch	%{expand:%{_efi_srpm_macros_setup}}0%{_efi_has_arch}
+-13: efi_srpm_macros_version	%{expand:%{_efi_srpm_macros_setup}}5
+-13: efi_vendor	%{expand:%{_efi_srpm_macros_setup}}%{expand:%{_efi_vendor}}
+-20: error	<builtin>
+-20: exists	<builtin>
+-20: expand	<builtin>
+-20: expr	<builtin>
+-13: extension_cflags	%{__extension_strip_flags cflags}
+-13: extension_cxxflags	%{__extension_strip_flags cxxflags}
+-13: extension_fflags	%{__extension_strip_flags fflags}
+-13: extension_ldflags	%{__extension_strip_flags ldflags}
+-13: fc35	1
+-13: fedora	35
+-13: filter_from_provides	%{expand: 
+%global __filter_from_prov %{?__filter_from_prov} | %{__sed} -e '%*' 
+}
+-13: filter_from_requires	%{expand: 
+%global __filter_from_req %{?__filter_from_req} | %{__sed} -e '%*' 
+}
+-13: filter_provides_in(P)	%{expand: 
+%global __filter_prov_cmd %{?__filter_prov_cmd} %{__grep} -v %{-P} '%*' | 
+}
+-13: filter_requires_in(P)	%{expand: 
+%global __filter_req_cmd %{?__filter_req_cmd} %{__grep} -v %{-P} '%*' | 
+}
+-13: filter_setup	%{expand: 
+%global _use_internal_dependency_generator 0 
+%global __deploop() while read FILE; do echo "${FILE}" | /usr/lib/rpm/rpmdeps -%{1}; done | /bin/sort -u 
+%global __find_provides /bin/sh -c "%{?__filter_prov_cmd} %{__deploop P} %{?__filter_from_prov}" 
+%global __find_requires /bin/sh -c "%{?__filter_req_cmd}  %{__deploop R} %{?__filter_from_req}" 
+}
+-13: find_lang	%{_rpmconfigdir}/find-lang.sh %{buildroot}
+-13: firewalld_reload	
+test -x %{_bindir}/firewall-cmd && firewall-cmd --reload --quiet || : 
+%{nil}
+-13: fontcontact	fonts@lists.fedoraproject.org
+-13: fontenv(z:vf:F:c:C:s:S:d:D:l:L:)	%{lua:
+local      fonts = require "fedora.srpm.fonts"
+local     suffix =  rpm.expand("%{?-z*}")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+local globvalues = {}
+for g,_ in pairs(fonts.globargs) do
+  globvalues[g] = rpm.expand("%{?-" .. fonts.globargs[g] .. "*}")
+end
+fonts.env(suffix, verbose, globvalues)
+}
+-13: fontmetapkg(n:s:d:z:)	%{lua:
+local        fonts = require "fedora.srpm.fonts"
+local         name = rpm.expand("%{?-n*}")
+local      summary = rpm.expand("%{?-s*}")
+if (summary ~= "") then
+           summary = "%{" .. summary .. "}"
+end
+local  description = rpm.expand("%{?-d*}")
+if (description ~= "") then
+       description = "%{" .. description .. "}"
+end
+local     suffixes = rpm.expand("%{?-z*}")
+fonts.metapkg(name, summary, description, suffixes)
+}
+-13: fontorg	org.fedoraproject
+-13: fontpkg(z:avms)	%{lua:
+local      fonts =  require "fedora.srpm.fonts"
+local     suffix =  rpm.expand("%{?-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+local  forcemain = (rpm.expand("%{-m}") ~= "")
+local   forcesub = (rpm.expand("%{-s}") ~= "")
+fonts.pkg(forcemain, forcesub, suffix, processall, verbose)
+}
+-13: fontrpmname	%{lua:
+local fonts = require "fedora.srpm.fonts"
+print(fonts.rpmname(rpm.expand("%1")))
+}
+-13: forgeautosetup(z:vNS:p:q)	%{lua:
+print(rpm.expand("%autosetup %{-v} %{-N} %{?-S} %{?-p} %{?forgesetupargs" .. rpm.expand("%{-z*}") .. "}\n"))
+}
+-13: forgemeta(z:isva)	%{lua:
+local      fedora = require "fedora.common"
+local       forge = require "fedora.srpm.forge"
+local     verbose =  rpm.expand("%{-v}") ~= ""
+local informative =  rpm.expand("%{-i}") ~= ""
+local      silent =  rpm.expand("%{-s}") ~= ""
+local  processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+if processall then
+  for _,s in pairs(fedora.getsuffixes("forgeurl")) do
+    forge.meta(s,verbose,informative,silent)
+  end
+else
+  forge.meta(rpm.expand("%{-z*}"),verbose,informative,silent)
+end
+}
+-13: forgesetup(z:va)	%{lua:
+local fedora = require "fedora.common"
+if (rpm.expand("%{-z}") == "") and (rpm.expand("%{-a}") ~= "") then
+  for _,s in pairs(fedora.getsuffixes("forgesetupargs")) do
+    print(rpm.expand("%setup %{!-v:-q} %{?forgesetupargs" .. s                     .. "}\n"))
+  end
+else
+  print(  rpm.expand("%setup %{!-v:-q} %{?forgesetupargs" .. rpm.expand("%{-z*}") .. "}\n"))
+end
+}
+-13: fpc_arches	%{ix86} %{arm} x86_64 ppc64le aarch64
+-13: gccgo_arches	mips mipsel mipsr6 mipsr6el mips64 mips64el mips64r6 mips64r6el
+-13: gccgo_min_vers	5.0.0
+-20: getconfdir	<builtin>
+-20: getenv	<builtin>
+-20: getncpus	<builtin>
+-13: ghc_arches	%{ix86} x86_64 armv7hl ppc64 ppc64le aarch64 s390 s390x
+-13: ghc_arches_with_ghci	%{ix86} x86_64 armv7hl ppc64 ppc64le aarch64 s390 s390x %{mips}
+-13: ghc_devel_prof	prof
+-20: global	<builtin>
+-13: go_arches	%{golang_arches} %{gccgo_arches}
+-13: go_compiler	1
+-13: go_generate_buildrequires(z:ai:)	%{lua:
+local        fedora =  require "fedora.common"
+local    processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local forcedgoipath =  rpm.expand("%{?-i}")
+local    golistargs = ""
+if processall then
+  for _, s in pairs(fedora.getsuffixes("goipath")) do
+    golistargs = golistargs .. " --package-path %{goipath" .. s .. "}"
+  end
+  golistargs   = string.gsub(golistargs, "^ ", "")
+elseif forcedgoipath ~= "" then
+  golistargs   = "--package-path " .. forcedgoipath
+else
+  golistargs   = "--package-path %{goipath" .. rpm.expand("%{?-z*}") .. "}"
+end
+print(rpm.expand('GOPATH="%{?gobuilddir:%{gobuilddir}:}${GOPATH:+${GOPATH}:}%{?gopath}" ' ..
+                 'GO111MODULE=off ' ..
+                 "golist --imported " .. golistargs ..
+                       " --template 'golang({{.}})\\n'" ..
+                       " --with-tests --skip-self\n"))
+}
+-13: goaltfiles(z:av)	%{lua:
+local         go =  require "fedora.srpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.files("alt", suffix, processall, verbose)
+}
+-13: goaltinstall(z:av)	%{lua:
+local         go =  require "fedora.rpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.install("alt", suffix, processall, verbose)
+}
+-13: goaltpkg(z:av)	%{lua:
+local         go =  require "fedora.srpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.pkg("alt", suffix, processall, verbose)
+}
+-13: gobuild(o:)	%{expand:
+  # https://bugzilla.redhat.com/show_bug.cgi?id=995136#c12
+  %global _dwz_low_mem_die_limit 0
+  %{?gobuilddir:GOPATH="%{gobuilddir}:${GOPATH:+${GOPATH}:}%{?gopath}"} %{?gomodulesmode} \
+  go build %{?gocompilerflags} -tags="rpm_crashtraceback ${BUILDTAGS:-}" -ldflags "${LDFLAGS:-} %{?currentgoldflags} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -compressdwarf=false -extldflags '%__global_ldflags %{?__golang_extldflags}'" -a -v -x %{?**};
+}
+-13: gobuildflags	%{expand:%{gocompilerflags} -tags=\"rpm_crashtraceback \" -ldflags \"${LDFLAGS:-} %{?currentgoldflags} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -compressdwarf=false -extldflags '%__global_ldflags %{?__golang_extldflags}'\" -a -v -x}
+-13: gobuildroot	%{expand:
+%{warn:%%gobuildroot is obsolete, use %%goprep in %%prep instead!}
+%goenv   -z 0
+%gomkdir -k
+ln -fs "%{gobuilddir}/bin" _bin
+}
+-13: gocheck(z:ai:b:s:vd:t:rV:T:C:B:p:g:w)	%{lua:
+local       fedora =  require "fedora.common"
+local   processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local   myenvflags =  rpm.expand('%{?-i} %{?-v} %{?-V} %{?-T} %{?-C} %{?-B}')
+local mycheckflags =  rpm.expand('%{!-i:-i "%%{currentgoipath}" }'                     ..
+                                 '%{!-b:-b "%%{gobuilddir}/bin" }'                     ..
+                                 '%{!-s:-s "%%{gobuilddir}" }'                         ..
+                                 '%{!-V:-V "%{version}-%{release}" }'                  ..
+                                 '%{!-T:%%{?currenttag:    -T "%%{?currenttag}" }}'    ..
+                                 '%{!-C:%%{?currentcommit: -C "%%{?currentcommit}" }}' ..
+                                 '%{!-B:%%{?currentbranch: -B "%%{?currentbranch}" }}' ..
+                                 '%{!-p:-p "%{buildroot}" }'                           ..
+                                 '%{!-g:-g "%{gopath}" }'                              ..
+                                 '%{?gocheckflags} %{?**}')
+-- Main function
+local function process(suffix)
+  local zsuffix = ""
+  if (suffix ~= "") and (suffix ~= nil) then
+        zsuffix = "-z " .. suffix .. " "
+  end
+  print(rpm.expand('%goenv ' .. zsuffix        .. myenvflags   .. '\n'               ..
+                   '%{?currentgoldflags:LDFLAGS="${LDFLAGS} %{?currentgoldflags}" }'   ..
+                   '%{?gotestflags:GO_TEST_FLAGS="%{gotestflags}" }'                  ..
+                   '%{?gotestextldflags:GO_TEST_EXT_LD_FLAGS="%{gotestextldflags}" }' ..
+                   'go-rpm-integration check ' .. mycheckflags .. '\n'))
+end
+-- Main loop
+if processall then
+  for _,s in pairs(fedora.getsuffixes("goipath")) do
+    process(s)
+  end
+else
+  process(rpm.expand("%{-z*}"))
+end
+}
+-13: gocheckflags	%{godefaultflags}
+-13: gochecks(z:ai:b:s:vd:t:rV:T:C:B:p:g:w)	%{expand:
+%{warn:%%gochecks is obsolete, use %%gocheck in %%check instead!}
+%gocheck %{-z} %{-a} %{-i} %{-b} %{-s} %{-v} %{-d} %{-t} %{-r} %{-V} %{-T} %{-C} %{-B} %{-p} %{-g} %{-w}
+}
+-13: gochecksflags	%{gocheckflags}
+-13: gocompilerflags	-buildmode pie -compiler gc
+-13: godefaultflags	%{goignoreflags_examples}
+-13: godevelfiles(z:av)	%{lua:
+local         go =  require "fedora.srpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.files("devel", suffix, processall, verbose)
+}
+-13: godevelinstall(z:av)	%{lua:
+local         go =  require "fedora.rpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.install("devel", suffix, processall, verbose)
+}
+-13: godevelpkg(z:av)	%{lua:
+local         go =  require "fedora.srpm.go"
+local     suffix =  rpm.expand("%{-z*}")
+local processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    verbose = (rpm.expand("%{-v}") ~= "")
+go.pkg("devel", suffix, processall, verbose)
+}
+-13: goenv(z:i:vV:T:C:B:)	%{lua:
+local       go =  require "fedora.rpm.go"
+local   suffix =  rpm.expand("%{?-z*}")
+local  goipath =  rpm.expand("%{?-i*}")
+local  verbose = (rpm.expand("%{-v}") ~= "")
+local    margs = { version = "V", tag = "T", commit = "C", branch = "B", }
+local  mvalues = {}
+for m,_ in pairs(margs) do
+  local v =  rpm.expand("%{?-" ..  margs[m] .. "*}")
+  if (v ~= "") then mvalues[m] = v end
+end
+go.env(suffix, goipath, verbose, mvalues)
+}
+-13: gofilelist	devel.file-list
+-13: goignoreflags_examples	-r '.*example.*'
+-13: goinstall(z:ai:b:s:o:O:ve:d:t:rV:T:C:B:p:g:)	%{lua:
+local         fedora =  require "fedora.common"
+local     processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local     myenvflags =  rpm.expand('%{?-i} %{?-v} %{?-V} %{?-T} %{?-C} %{?-B}')
+local myinstallflags =  rpm.expand('%{!-i:-i "%%{currentgoipath}" }'                     ..
+                                   '%{!-b:-b "%%{gobuilddir}/bin" }'                     ..
+                                   '%{!-s:-s "%%{gobuilddir}" }'                         ..
+                                   '%{!-o:-o "%%{thisgofilelist}" }'                     ..
+                                   '%{!-O:-O "%%{goworkdir}" }'                          ..
+                                   '%{!-V:-V "%{version}-%{release}" }'                  ..
+                                   '%{!-T:%%{?currenttag:    -T "%%{?currenttag}" }}'    ..
+                                   '%{!-C:%%{?currentcommit: -C "%%{?currentcommit}" }}' ..
+                                   '%{!-B:%%{?currentbranch: -B "%%{?currentbranch}" }}' ..
+                                   '%{!-p:-p "%{buildroot}" }'                           ..
+                                   '%{!-g:-g "%{gopath}" }'                              ..
+                                   '%{?goinstallflags} %{?**}')
+-- Main function
+local function process(suffix)
+  local zsuffix = ""
+  if (suffix ~= "") and (suffix ~= nil) then
+        zsuffix = "-z " .. suffix .. " "
+  end
+  print(rpm.expand('%goenv ' .. zsuffix          .. myenvflags     .. '\n' ..
+                   'go-rpm-integration install ' .. myinstallflags .. '\n'))
+end
+-- Main loop
+if processall then
+  for _,s in pairs(fedora.getsuffixes("goipath")) do
+    process(s)
+  end
+else
+  process(rpm.expand("%{-z*}"))
+end
+}
+-13: goinstallflags	%{godefaultflags}
+-13: golang_arches	i386 i486 i586 i686 pentium3 pentium4 athlon geode x86_64 armv3l armv4b armv4l armv4tl armv5tl armv5tel armv5tejl armv6l armv6hl armv7l armv7hl armv7hnl armv8l armv8hl armv8hnl armv8hcnl aarch64 ppc64le s390x
+-13: gometa(az:svi)	%{lua:
+print(           "BuildRequires: go-rpm-macros\n")
+print(rpm.expand("ExclusiveArch: %{go_arches}\n"))
+local      fedora =  require "fedora.common"
+local          go =  require "fedora.srpm.go"
+local     verbose =  rpm.expand("%{-v}") ~= ""
+local informative =  rpm.expand("%{-i}") ~= ""
+local      silent =  rpm.expand("%{-s}") ~= ""
+local  processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+if processall then
+  for _,s in pairs(fedora.getsuffixes("goipath")) do
+    go.meta(s,verbose,informative,silent)
+  end
+else
+  go.meta(rpm.expand("%{-z*}"),verbose,informative,silent)
+end
+}
+-13: gomkdir(z:i:b:s:kv)	%{expand:
+%goenv %{?-z} %{?-i} %{?-v}
+%define mybuilddir  %{?-b*}%{!-b:%{gobuilddir}}
+%define mygoipath   %{?-i*}%{!-i:%{currentgoipath}}
+%define mysourcedir %{?-s*}%{!-s:%{currentgosourcedir}}
+%{!?-k:rm -fr         "%{mysourcedir}/vendor"}
+if [[ ! -e            "%{mybuilddir}/bin" ]] ; then
+  install -m 0755 -vd "%{mybuilddir}/bin"
+  export GOPATH="%{mybuilddir}:${GOPATH:+${GOPATH}:}%{?gopath}"
+fi
+if [[ ! -e                      "%{mybuilddir}/src/%{mygoipath}" ]] ; then
+  install -m 0755 -vd "$(dirname %{mybuilddir}/src/%{mygoipath})"
+  ln -fs "%{mysourcedir}"       "%{mybuilddir}/src/%{mygoipath}"
+fi
+cd                              "%{mybuilddir}/src/%{mygoipath}"
+}
+-13: gomodulesmode	GO111MODULE=off
+-13: gopath	/usr/share/gocode
+-13: gopkg(av)	%{expand:
+%godevelpkg -a %{-v}
+%goaltpkg   -a %{-v}
+}
+-13: gopkgfiles(av)	%{expand:
+%godevelfiles -a %{-v}
+%goaltfiles   -a %{-v}
+}
+-13: gopkginstall(av)	%{expand:
+%godevelinstall -a %{-v}
+%goaltinstall   -a %{-v}
+}
+-13: goprep(z:ai:b:s:kerv)	%{lua:
+local        fedora =  require "fedora.common"
+local       extract = (rpm.expand("%{-e}") == "")
+local   installdeps = (rpm.expand("%{-r}") == "")
+local    processall = (rpm.expand("%{-a}") ~= "") and (rpm.expand("%{-z}") == "")
+local    setupflags =  rpm.expand("%{!-v:-q}")
+local  gomkdirflags =  rpm.expand("%{?-i} %{?-b} %{?-s} %{-k} %{-v}")
+local buildrequires = {}
+local function process(suffix)
+  local zsuffix = ""
+  if (suffix ~= "") and (suffix ~= nil) then
+        zsuffix = "-z " .. suffix .. " "
+  end
+  if extract then
+    print(rpm.expand("%setup " .. setupflags .. " %{?forgesetupargs" .. suffix .. "}\n"))
+  end
+  print(  rpm.expand("%gomkdir " .. zsuffix .. gomkdirflags .. "\n"))
+end
+-- Main loop
+if processall then
+  for _,s in pairs(fedora.getsuffixes("goipath")) do
+    process(s)
+  end
+else
+   process(rpm.expand("%{?-z*}"))
+end
+}
+-13: goprovflags	%{godefaultflags}
+-13: goreqflags	%{godefaultflags}
+-13: gorpmname(c:)	%{lua:
+local go = require "fedora.srpm.go"
+print(go.rpmname("%1", "%{-c*}"))
+}
+-13: gotest	%{?gomodulesmode} go test %{gotestflags} -ldflags "${LDFLAGS:-} %{?currentgoldflags} -extldflags '%{gotestextldflags}'" %{?**};
+-13: gotestextldflags	%__global_ldflags %{?__golang_extldflags}
+-13: gotestflags	%{gocompilerflags}
+-13: gpgverify(k:s:d:)	%{lua:
+local script = rpm.expand("%{_rpmconfigdir}/redhat/gpgverify ")
+local keyring = rpm.expand("%{-k*}")
+local signature = rpm.expand("%{-s*}")
+local data = rpm.expand("%{-d*}")
+print(script)
+if keyring ~= "" then
+  print(rpm.expand("--keyring='%{SOURCE" .. keyring ..  "}' "))
+end
+if signature ~= "" then
+  print(rpm.expand("--signature='%{SOURCE" .. signature ..  "}' "))
+end
+if data ~= "" then
+  print(rpm.expand("--data='%{SOURCE" .. data ..  "}' "))
+end
+}
+-13: install	%{?_enable_debug_packages:%{?buildsubdir:%{debug_package}}}
+%%install
+%{nil}
+-13: ix86	i386 i486 i586 i686 pentium3 pentium4 athlon geode
+-13: jar	%{java_home}/bin/jar
+-13: java	%(. /usr/share/java-utils/java-functions; set_javacmd; echo $JAVACMD)
+-13: java_home	%(. /usr/share/java-utils/java-functions; set_jvm; echo $JAVA_HOME)
+-13: javac	%{java_home}/bin/javac
+-13: javadoc	%{java_home}/bin/javadoc
+-13: journal_catalog_update	%{nil}
+-13: jpackage_script	
+install -d -m 755 %{buildroot}%{_bindir} 
+cat > %{buildroot}%{_bindir}/%5 << EOF 
+#!/bin/bash
+#
+# %{name} script
+# JPackage Project <http://www.jpackage.org/>
+
+# Source functions library
+_prefer_jre="%{?6}"
+. /usr/share/java-utils/java-functions
+
+# Source system prefs
+if [ -f %{_sysconfdir}/java/%{name}.conf ] ; then
+  . %{_sysconfdir}/java/%{name}.conf
+fi
+
+# Source user prefs
+if [ -f \$HOME/.%{name}rc ] ; then
+  . \$HOME/.%{name}rc
+fi
+
+# Configuration
+MAIN_CLASS=%1
+BASE_FLAGS=%2
+BASE_OPTIONS=%3
+BASE_JARS="%(echo %4 | sed -e 's,:, ,g')"
+
+# Set parameters
+set_jvm
+set_classpath \$BASE_JARS
+set_flags \$BASE_FLAGS
+set_options \$BASE_OPTIONS
+
+# Let's start
+run "\$@"
+EOF
+chmod 755 %{buildroot}%{_bindir}/%5
+%{nil}
+-13: kernel_arches	x86_64 s390x ppc64le aarch64 %{arm}
+-13: ldc_arches	%{ix86} x86_64 %{arm} aarch64
+-13: ldconfig_post(n:)	%{?ldconfig:%post -p %ldconfig %{?*} %{-n:-n %{-n*}}
+%end}
+-13: ldconfig_postun(n:)	%{?ldconfig:%postun -p %ldconfig %{?*} %{-n:-n %{-n*}}
+%end}
+-13: ldconfig_scriptlets(n:)	%{?ldconfig:
+%ldconfig_post %{?*} %{-n:-n %{-n*}}
+%ldconfig_postun %{?*} %{-n:-n %{-n*}}
+}
+-13: limit_build(m:)	%{lua:
+  local mem_per_process=rpm.expand("%{-m*}")
+  if mem_per_process == "" then
+    mem_per_process = 1024
+  else
+    mem_per_process = tonumber(mem_per_process)
+  end
+  local mem_total = 0
+  for line in io.lines('/proc/meminfo') do
+    if line:sub(1, 9) == "MemTotal:" then
+      local tokens = {}
+      for token in line:gmatch("%w+") do
+        tokens[#tokens + 1] = token
+      end
+      mem_total = tonumber(tokens[2])
+      break
+    end
+  end
+  local max_jobs = mem_total // (mem_per_process * 1024)
+  if max_jobs < 1 then
+    max_jobs = 1
+  end
+  cur_max_jobs=tonumber(rpm.expand("%{_smp_build_ncpus}"))
+  if cur_max_jobs > max_jobs then
+    print("-j" .. max_jobs)
+  end
+}
+-13: listfiles(i:x:)	%{expand:
+%if %{lua: print(string.len(rpm.expand("%{?-i*}%{?listfiles_include}%*")))}
+  listfiles_include=$(realpath -e --relative-base=. %{?-i*} %{?listfiles_include} %* | sort -u)
+  %if  %{lua: print(string.len(rpm.expand("%{?-x*}%{?listfiles_exclude}")))}
+    while IFS= read -r finc ; do
+      realpath -qe --relative-base=. %{?-x*} %{?listfiles_exclude} \
+        | sort -u | grep -q "${finc}" || echo "${finc}"
+    done <<< "${listfiles_include}"
+  %else
+    echo "${listfiles_include}"
+  %endif
+%endif
+}
+-20: load	<builtin>
+-20: lua	<builtin>
+-13: lua_requires	
+%if 0%{?fedora} || 0%{?rhel} >= 7 
+Requires: lua(abi) = %{lua_version} 
+%else 
+Requires: lua >= %{lua_version} 
+Requires: lua < %{lua: os.setlocale('C'); print(string.sub(_VERSION, 5) + 0.1)} 
+%endif 
+%{nil}
+-13: lua_version	%{lua: print(string.sub(_VERSION, 5))}
+-20: macrobody	<builtin>
+-13: make_build	%{__make} %{_make_output_sync} %{?_smp_mflags} %{_make_verbose}
+-13: make_install	%{__make} install DESTDIR=%{?buildroot} INSTALL="%{__install} -p"
+-13: makeinstall	
+  echo "warning: %%makeinstall is deprecated, try %%make_install instead" 1>&2
+  %{__make} \
+	prefix=%{?buildroot:%{buildroot}}%{_prefix} \
+	exec_prefix=%{?buildroot:%{buildroot}}%{_exec_prefix} \
+	bindir=%{?buildroot:%{buildroot}}%{_bindir} \
+	sbindir=%{?buildroot:%{buildroot}}%{_sbindir} \
+	sysconfdir=%{?buildroot:%{buildroot}}%{_sysconfdir} \
+	datadir=%{?buildroot:%{buildroot}}%{_datadir} \
+	includedir=%{?buildroot:%{buildroot}}%{_includedir} \
+	libdir=%{?buildroot:%{buildroot}}%{_libdir} \
+	libexecdir=%{?buildroot:%{buildroot}}%{_libexecdir} \
+	localstatedir=%{?buildroot:%{buildroot}}%{_localstatedir} \
+	sharedstatedir=%{?buildroot:%{buildroot}}%{_sharedstatedir} \
+	mandir=%{?buildroot:%{buildroot}}%{_mandir} \
+	infodir=%{?buildroot:%{buildroot}}%{_infodir} \
+  install
+-13: meson	
+    %set_build_flags 
+    %{shrink:%{__meson} 
+        --buildtype=plain 
+        --prefix=%{_prefix} 
+        --libdir=%{_libdir} 
+        --libexecdir=%{_libexecdir} 
+        --bindir=%{_bindir} 
+        --sbindir=%{_sbindir} 
+        --includedir=%{_includedir} 
+        --datadir=%{_datadir} 
+        --mandir=%{_mandir} 
+        --infodir=%{_infodir} 
+        --localedir=%{_datadir}/locale 
+        --sysconfdir=%{_sysconfdir} 
+        --localstatedir=%{_localstatedir} 
+        --sharedstatedir=%{_sharedstatedir} 
+        --wrap-mode=%{__meson_wrap_mode} 
+        --auto-features=%{__meson_auto_features} 
+        %{_vpath_srcdir} %{_vpath_builddir} 
+        %{nil}}
+-13: meson_build	
+    %{shrink:%{__meson} compile 
+        -C %{_vpath_builddir} 
+        -j %{_smp_build_ncpus} 
+        --verbose 
+        %{nil}}
+-13: meson_install	
+    %{shrink:DESTDIR=%{buildroot} %{__meson} install 
+        -C %{_vpath_builddir} 
+        --no-rebuild 
+        %{nil}}
+-13: meson_test	
+    %{shrink:%{__meson} test 
+        -C %{_vpath_builddir} 
+        --num-processes %{_smp_build_ncpus} 
+        --print-errorlogs 
+        %{nil}}
+-13: mips	%{mips32} %{mips64}
+-13: mips32	mips mipsel mipsr6 mipsr6el
+-13: mips64	mips64 mips64el mips64r6 mips64r6el
+-13: mipseb	mips mipsr6 mips64 mips64r6
+-13: mipsel	mipsel mipsr6el mips64el mips64r6el
+-13: mono_arches	%{ix86} x86_64 sparc sparcv9 ia64 %{arm} aarch64 alpha s390x ppc ppc64 ppc64le
+-13: new_package(n:v)	%{lua:
+local      fedora = require "fedora.common"
+local    pkg_name = fedora.readflag("n")
+local     verbose = fedora.hasflag("v")
+local name_suffix = fedora.read("1")
+local source_name = fedora.read("source_name")
+local       first = not ( fedora.read("name") or fedora.read("currentname") )
+fedora.new_package(source_name, pkg_name, name_suffix, first, verbose)
+}
+-13: nil	%{!?nil}
+-13: nim_arches	%{ix86} x86_64
+-13: ninja_build	
+    %{__ninja} %{__ninja_common_opts}
+-13: ninja_install	
+    DESTDIR=%{buildroot} %{__ninja} install %{__ninja_common_opts}
+-13: ninja_test	
+    %{__ninja} test %{__ninja_common_opts}
+-13: nodejs_arches	%{ix86} x86_64 %{arm} aarch64 %{power64} s390x
+-13: nodejs_default_filter	%{expand: 
+%global __provides_exclude_from ^%{nodejs_sitearch}/.*\.node$
+}
+-13: nodejs_find_provides_and_requires	%{nil}
+-13: nodejs_fixdep	%{_rpmconfigdir}/nodejs-fixdep
+-13: nodejs_setversion	%{_rpmconfigdir}/nodejs-setversion
+-13: nodejs_sitearch	%{nodejs_sitelib}
+-13: nodejs_sitelib	%{_prefix}/lib/node_modules
+-13: nodejs_symlink_deps	%{_rpmconfigdir}/nodejs-symlink-deps %{nodejs_sitelib}
+-13: nodejs_version	%(%{__nodejs} -v | sed s/v//)
+-13: ocaml_natdynlink	aarch64 %{arm} %{ix86} ppc ppc64 ppc64le riscv64 s390x sparc sparcv9 x86_64
+-13: ocaml_native_compiler	aarch64 %{arm} %{ix86} ppc ppc64 ppc64le riscv64 s390x sparc sparcv9 x86_64
+-13: ocaml_native_profiling	%{nil}
+-13: openblas_arches	x86_64 %{ix86} armv7hl %{power64} aarch64 s390x
+-11: optflags	%{__global_compiler_flags} -m64 %{__cflags_arch_x86_64} -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection
+-13: patches	%{lua: for i, p in ipairs(patches) do print(p.." ") end}
+-13: pkgconfig_personalitydir	/usr/share/pkgconfig/personality.d
+-13: power64	ppc64 ppc64p7 ppc64le
+-13: py2_build	%{expand:\
+  sleep 1
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python2} %{py_setup} %{?py_setup_args} build --executable="%{__python2} %{py2_shbang_opts}" %{?*}
+  sleep 1
+}
+-13: py2_build_egg	%{expand:\
+  sleep 1
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python2} %{py_setup} %{?py_setup_args} bdist_egg %{?*}
+  sleep 1
+}
+-13: py2_build_wheel	%{expand:\
+  sleep 1
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python2} %{py_setup} %{?py_setup_args} bdist_wheel %{?*}
+  sleep 1
+}
+-13: py2_dist	%{lua:
+        args = {}
+        arg = 1
+        while (true) do
+                name = rpm.expand("%{?" .. arg .. ":%{" .. arg .. "}}");
+                if (name == nil or name == '') then
+                        break
+                end
+                args[arg] = name
+                arg = arg + 1
+        end
+        for arg, name in ipairs(args) do
+                canonical = rpm.expand("%py_dist_name " .. name);
+                print("python2dist(" .. canonical .. ") ");
+        end
+}
+-13: py2_install	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python2} %{py_setup} %{?py_setup_args} install -O1 --skip-build --root %{buildroot} %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py2_install_egg	%{expand:\
+  mkdir -p %{buildroot}%{python2_sitelib}
+  %{__python2} -m easy_install  -m --prefix %{buildroot}%{_prefix} -Z dist/*-py%{python2_version}.egg %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py2_install_wheel	%{expand:\
+  %{__python2} -m pip install -I dist/%{1} --root %{buildroot} --no-deps --no-index --no-warn-script-location
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+  for distinfo in %{buildroot}%{python2_sitelib}/*.dist-info %{buildroot}%{python2_sitearch}/*.dist-info; do
+    if [ -f ${distinfo}/direct_url.json ]; then
+      rm -fv ${distinfo}/direct_url.json
+      sed -i '/direct_url.json/d' ${distinfo}/RECORD
+    fi
+  done
+}
+-13: py2_shbang_opts	-s
+-13: py2_shbang_opts_nodash	%(opts=%{py2_shbang_opts}; echo ${opts#-})
+-13: py2_shebang_fix	%{expand:\
+  if [ -z "%{?py_shebang_flags}" ]; then
+    shebang_flags="-k"
+  else
+    shebang_flags="-ka%{py2_shebang_flags}"
+  fi
+  /usr/bin/pathfix.py -pni %{__python2} $shebang_flags}
+-13: py2_shebang_flags	%(opts=%{py2_shbang_opts}; echo ${opts#-})
+-13: py3_build	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python3} %{py_setup} %{?py_setup_args} build --executable="%{__python3} %{py3_shbang_opts}" %{?*}
+}
+-13: py3_build_egg	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python3} %{py_setup} %{?py_setup_args} bdist_egg %{?*}
+}
+-13: py3_build_wheel	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python3} %{py_setup} %{?py_setup_args} bdist_wheel %{?*}
+}
+-13: py3_check_import(e:tf:)	%{expand:\
+  PATH="%{buildroot}%{_bindir}:$PATH"\
+  PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}}"\
+  _PYTHONSITE="%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}"\
+  PYTHONDONTWRITEBYTECODE=1\
+  %{lua:
+  local command = "%{__python3} "
+  if rpm.expand("%{?py3_shebang_flags}") ~= "" then
+    command = command .. "-%{py3_shebang_flags}"
+  end
+  command = command .. " %{_rpmconfigdir}/redhat/import_all_modules.py "
+  -- handle multiline arguments correctly, see https://bugzilla.redhat.com/2018809
+  local args=rpm.expand('%{?**}'):gsub("[%s\\]*%s+", " ")
+  print(command .. args)
+  }
+}
+-13: py3_dist	%{lua:
+        python3_pkgversion = rpm.expand("%python3_pkgversion");
+        args = {}
+        arg = 1
+        while (true) do
+                name = rpm.expand("%{?" .. arg .. ":%{" .. arg .. "}}");
+                if (name == nil or name == '') then
+                        break
+                end
+                args[arg] = name
+                arg = arg + 1
+        end
+        for arg, name in ipairs(args) do
+                canonical = rpm.expand("%py_dist_name " .. name);
+                print("python" .. python3_pkgversion .. "dist(" .. canonical .. ") ");
+        end
+}
+-13: py3_install	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python3} %{py_setup} %{?py_setup_args} install -O1 --skip-build --root %{buildroot} %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py3_install_egg	%{expand:\
+  mkdir -p %{buildroot}%{python3_sitelib}
+  %{__python3} -m easy_install -m --prefix %{buildroot}%{_prefix} -Z dist/*-py%{python3_version}.egg %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py3_install_wheel	%{expand:\
+  %{__python3} -m pip install -I dist/%{1} --root %{buildroot} --no-deps --no-index --no-warn-script-location
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+  for distinfo in %{buildroot}%{python3_sitelib}/*.dist-info %{buildroot}%{python3_sitearch}/*.dist-info; do
+    if [ -f ${distinfo}/direct_url.json ]; then
+      rm -fv ${distinfo}/direct_url.json
+      sed -i '/direct_url.json/d' ${distinfo}/RECORD
+    fi
+  done
+}
+-13: py3_shbang_opts	-s
+-13: py3_shbang_opts_nodash	%(opts=%{py3_shbang_opts}; echo ${opts#-})
+-13: py3_shebang_fix	%{expand:\
+  if [ -f /usr/bin/pathfix%{python3_version}.py ]; then
+    pathfix=/usr/bin/pathfix%{python3_version}.py
+  else
+    # older versions of Python don't have it and must BR /usr/bin/pathfix.py from python3-devel explicitly
+    pathfix=/usr/bin/pathfix.py
+  fi
+  if [ -z "%{?py3_shebang_flags}" ]; then
+    shebang_flags="-k"
+  else
+    shebang_flags="-ka%{py3_shebang_flags}"
+  fi
+  $pathfix -pni %{__python3} $shebang_flags}
+-13: py3_shebang_flags	%(opts=%{py3_shbang_opts}; echo ${opts#-})
+-13: py3dir	%{_builddir}/python3-%{name}-%{version}-%{release}
+-13: py_auto_byte_compile	1
+-13: py_build	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python} %{py_setup} %{?py_setup_args} build --executable="%{__python} %{py_shbang_opts}" %{?*}
+}
+-13: py_build_egg	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python} %{py_setup} %{?py_setup_args} bdist_egg %{?*}
+}
+-13: py_build_wheel	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python} %{py_setup} %{?py_setup_args} bdist_wheel %{?*}
+}
+-13: py_byte_compile	
+py2_byte_compile () {
+    python_binary="env PYTHONHASHSEED=0 %1"
+    bytecode_compilation_path="%2"
+    failure=0
+    find $bytecode_compilation_path -type f -a -name "*.py" -print0 | xargs -0 $python_binary -s -c 'import py_compile, sys; [py_compile.compile(f, dfile=f.partition("'"$RPM_BUILD_ROOT"'")[2], doraise=True) for f in sys.argv[1:]]' || failure=1
+    find $bytecode_compilation_path -type f -a -name "*.py" -print0 | xargs -0 $python_binary -s -O -c 'import py_compile, sys; [py_compile.compile(f, dfile=f.partition("'"$RPM_BUILD_ROOT"'")[2], doraise=True) for f in sys.argv[1:]]' || failure=1
+    test $failure -eq 0
+}
+
+py3_byte_compile () {
+    python_binary="env PYTHONHASHSEED=0 %1"
+    bytecode_compilation_path="%2"
+    PYTHONPATH="%{_rpmconfigdir}/redhat" $python_binary -s -B -m compileall2 -o 0 -o 1 -s $RPM_BUILD_ROOT -p / $bytecode_compilation_path 
+}
+
+py39_byte_compile () {
+    python_binary="env PYTHONHASHSEED=0 %1"
+    bytecode_compilation_path="%2"
+    $python_binary -s -B -m compileall -o 0 -o 1 -s $RPM_BUILD_ROOT -p / $bytecode_compilation_path 
+}
+
+# Path to intepreter should not contain any arguments 
+[[ "%1" =~ " -" ]] && echo "ERROR py_byte_compile: Path to interpreter should not contain any arguments" >&2 && exit 1 
+# Get version without a dot (36 instead of 3.6), bash doesn't compare floats well 
+python_version=$(%1 -c "import sys; sys.stdout.write('{0.major}{0.minor}'.format(sys.version_info))") 
+# compileall2 is an enhanced fork of stdlib compileall module for Python >= 3.4 
+# and it was merged back to stdlib in Python >= 3.9 
+if [ "$python_version" -ge 39 ]; then 
+py39_byte_compile "%1" "%2"; 
+elif [ "$python_version" -ge 34 ]; then 
+py3_byte_compile "%1" "%2"; 
+else 
+py2_byte_compile "%1" "%2"; 
+fi
+-13: py_check_import(e:tf:)	%{expand:\
+  PATH="%{buildroot}%{_bindir}:$PATH"\
+  PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python_sitearch}:%{buildroot}%{python_sitelib}}"\
+  _PYTHONSITE="%{buildroot}%{python_sitearch}:%{buildroot}%{python_sitelib}"\
+  PYTHONDONTWRITEBYTECODE=1\
+  %{lua:
+  local command = "%{__python} "
+  if rpm.expand("%{?py_shebang_flags}") ~= "" then
+    command = command .. "-%{py_shebang_flags}"
+  end
+  command = command .. " %{_rpmconfigdir}/redhat/import_all_modules.py "
+  -- handle multiline arguments correctly, see https://bugzilla.redhat.com/2018809
+  local args=rpm.expand('%{?**}'):gsub("[%s\\]*%s+", " ")
+  print(command .. args)
+  }
+}
+-13: py_dist_name	%{lua:
+        name = rpm.expand("%{?1:%{1}}");
+        canonical = string.gsub(string.lower(name), "[^%w%[%]]+", "-");
+        print(canonical);
+}
+-13: py_install	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  %{__python} %{py_setup} %{?py_setup_args} install -O1 --skip-build --root %{buildroot} %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py_install_egg	%{expand:\
+  mkdir -p %{buildroot}%{python_sitelib}
+  %{__python} -m easy_install -m --prefix %{buildroot}%{_prefix} -Z dist/*-py%{python_version}.egg %{?*}
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+}
+-13: py_install_wheel	%{expand:\
+  %{__python} -m pip install -I dist/%{1} --root %{buildroot} --no-deps --no-index --no-warn-script-location
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+  for distinfo in %{buildroot}%{python_sitelib}/*.dist-info %{buildroot}%{python_sitearch}/*.dist-info; do
+    if [ -f ${distinfo}/direct_url.json ]; then
+      rm -fv ${distinfo}/direct_url.json
+      sed -i '/direct_url.json/d' ${distinfo}/RECORD
+    fi
+  done
+}
+-13: py_provides	%{lua:
+    local python = require 'fedora.srpm.python'
+    local name = rpm.expand('%1')
+    if name == '%1' then
+        rpm.expand('%{error:%%py_provides requires at least 1 argument, the name to provide}')
+    end
+    local evr = rpm.expand('%2')
+    if evr == '%2' then
+        evr = rpm.expand('%{?epoch:%{epoch}:}%{version}-%{release}')
+    end
+    print('Provides: ' .. name .. ' = ' .. evr .. '\n')
+    local provides = python.python_altprovides(name, evr)
+    for i, provide in ipairs(provides) do
+        print('Provides: ' .. provide .. '\n')
+    end
+}
+-13: py_setup	setup.py
+-13: py_shbang_opts	-s
+-13: py_shbang_opts_nodash	%(opts=%{py_shbang_opts}; echo ${opts#-})
+-13: py_shebang_fix	%{expand:\
+  if [ -f /usr/bin/pathfix%{python_version}.py ]; then
+    pathfix=/usr/bin/pathfix%{python_version}.py
+  else
+    # older versions of Python don't have it and must BR /usr/bin/pathfix.py from python3-devel explicitly
+    pathfix=/usr/bin/pathfix.py
+  fi
+  if [ -z "%{?py_shebang_flags}" ]; then
+    shebang_flags="-k"
+  else
+    shebang_flags="-ka%{py_shebang_flags}"
+  fi
+  $pathfix -pni %{__python} $shebang_flags}
+-13: py_shebang_flags	%(opts=%{py_shbang_opts}; echo ${opts#-})
+-13: pycached	%{lua:
+  path = rpm.expand("%{?*}")
+  if (string.sub(path, "-3") ~= ".py") then
+    rpm.expand("%{error:%%pycached can only be used with paths explicitly ending with .py}")
+  else
+    print(path)
+    pyminor = path:match("/python3.(%d+)/") or "*"
+    dirname = path:match("(.*/)")
+    modulename = path:match(".*/([^/]+).py")
+    print("\n" .. dirname .. "__pycache__/" .. modulename .. ".cpython-3" .. pyminor .. "{,.opt-?}.pyc")
+  end
+}
+-13: pypi_source	%{lua:
+    local src = rpm.expand('%1')
+    local ver = rpm.expand('%2')
+    local ext = rpm.expand('%3')
+    local url = rpm.expand('%__pypi_url')
+
+    -- If no first argument, try %srcname, then %pypi_name, then %name
+    -- Note that rpm leaves macros unchanged if they are not defined.
+    if src == '%1' then
+        src = rpm.expand('%srcname')
+    end
+    if src == '%srcname' then
+        src = rpm.expand('%pypi_name')
+    end
+    if src == '%pypi_name' then
+        src = rpm.expand('%name')
+    end
+
+    -- If no second argument, use %version
+    if ver == '%2' then
+        ver = rpm.expand('%version'):gsub('~', '')
+    end
+
+    -- If no third argument, use the preset default extension
+    if ext == '%3' then
+        ext = rpm.expand('%__pypi_default_extension')
+    end
+
+    local first = string.sub(src, 1, 1)
+
+    print(url .. first .. '/' .. src .. '/' .. src .. '-' .. ver .. '.' .. ext)
+}
+-13: pyproject_buildrequires(rxtNe:)	%{expand:\
+%{-N:
+%{-r:%{error:The -N and -r options are mutually exclusive}}
+%{-x:%{error:The -N and -x options are mutually exclusive}}
+%{-e:%{error:The -N and -e options are mutually exclusive}}
+%{-t:%{error:The -N and -t options are mutually exclusive}}
+}
+%{-e:%{expand:%global toxenv %(%{__python3} -s %{_rpmconfigdir}/redhat/pyproject_construct_toxenv.py %{?**})}}
+echo 'python%{python3_pkgversion}-devel'
+echo 'python%{python3_pkgversion}dist(pip) >= 19'
+echo 'python%{python3_pkgversion}dist(packaging)'
+%{!-N:if [ -f pyproject.toml ]; then
+  echo 'python%{python3_pkgversion}dist(toml)'
+elif [ -f setup.py ]; then
+  # Note: If the default requirements change, also change them in the script!
+  echo 'python%{python3_pkgversion}dist(setuptools) >= 40.8'
+  echo 'python%{python3_pkgversion}dist(wheel)'
+else
+  echo 'ERROR: Neither pyproject.toml nor setup.py found, consider using %%%%pyproject_buildrequires -N <requirements-file> if this is not a Python package.' >&2
+  exit 1
+fi}
+# setuptools assumes no pre-existing dist-info
+rm -rfv *.dist-info/ >&2
+if [ -f %{__python3} ]; then
+  RPM_TOXENV="%{toxenv}" HOSTNAME="rpmbuild" %{__python3} -s %{_rpmconfigdir}/redhat/pyproject_buildrequires.py %{?!_python_no_extras_requires:--generate-extras} --python3_pkgversion %{python3_pkgversion} %{?**}
+fi
+}
+-13: pyproject_check_import(e:t)	%{expand:\
+if [ ! -f "%{_pyproject_modules}" ]; then
+  echo 'ERROR: %%%%pyproject_check_import only works when %%%%pyproject_save_files is used' >&2
+  exit 1
+fi
+%py3_check_import -f "%{_pyproject_modules}" %{?**}
+}
+-13: pyproject_extras_subpkg(n:i:f:F)	%{expand:%{?python_extras_subpkg:%{python_extras_subpkg%{?!-i:%{?!-f:%{?!-F: -f %{_pyproject_ghost_distinfo}}}} %**}}}
+-13: pyproject_files	%{_builddir}/pyproject-files
+-13: pyproject_install	%{expand:\
+specifier=$(ls %{_pyproject_wheeldir}/*.whl | xargs basename --multiple | sed -E 's/([^-]+)-([^-]+)-.+\.whl/\1==\2/')
+TMPDIR="%{_pyproject_builddir}" %{__python3} -m pip install --root %{buildroot} --no-deps --disable-pip-version-check --progress-bar off --verbose --ignore-installed --no-warn-script-location --no-index --no-cache-dir --find-links %{_pyproject_wheeldir} $specifier
+if [ -d %{buildroot}%{_bindir} ]; then
+  %py3_shebang_fix %{buildroot}%{_bindir}/*
+  rm -rfv %{buildroot}%{_bindir}/__pycache__
+fi
+rm -f %{_pyproject_ghost_distinfo}
+site_dirs=()
+# Process %%{python3_sitelib} if exists
+if [ -d %{buildroot}%{python3_sitelib} ]; then
+  site_dirs+=( "%{python3_sitelib}" )
+fi
+# Process %%{python3_sitearch} if exists and does not equal to %%{python3_sitelib}
+if [ %{buildroot}%{python3_sitearch} != %{buildroot}%{python3_sitelib} ] && [ -d %{buildroot}%{python3_sitearch} ]; then
+  site_dirs+=( "%{python3_sitearch}" )
+fi
+# Process all *.dist-info dirs in sitelib/sitearch
+for site_dir in ${site_dirs[@]}; do
+  for distinfo in %{buildroot}$site_dir/*.dist-info; do
+    echo "%ghost ${distinfo#%{buildroot}}" >> %{_pyproject_ghost_distinfo}
+    sed -i 's/pip/rpm/' ${distinfo}/INSTALLER
+    PYTHONPATH=%{_rpmconfigdir}/redhat \
+      %{__python3} -B %{_rpmconfigdir}/redhat/pyproject_preprocess_record.py \
+      --buildroot %{buildroot} --record ${distinfo}/RECORD --output %{_pyproject_record}
+    rm -fv ${distinfo}/RECORD
+    rm -fv ${distinfo}/REQUESTED
+  done
+done
+lines=$(wc -l %{_pyproject_ghost_distinfo} | cut -f1 -d" ")
+if [ $lines -ne 1 ]; then
+  echo -e "\n\nWARNING: %%%%pyproject_extras_subpkg won't work without explicit -i or -F, found $lines dist-info directories.\n\n" >&2
+  rm %{_pyproject_ghost_distinfo}  # any attempt to use this will fail
+fi
+}
+-13: pyproject_save_files	%{expand:\
+%{__python3} %{_rpmconfigdir}/redhat/pyproject_save_files.py \
+  --output-files "%{pyproject_files}" \
+  --output-modules "%{_pyproject_modules}" \
+  --buildroot "%{buildroot}" \
+  --sitelib "%{python3_sitelib}" \
+  --sitearch "%{python3_sitearch}" \
+  --python-version "%{python3_version}" \
+  --pyproject-record "%{_pyproject_record}" \
+  %{*}
+}
+-13: pyproject_wheel	%{expand:\
+%_set_pytest_addopts
+mkdir -p "%{_pyproject_builddir}"
+CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}" TMPDIR="%{_pyproject_builddir}" \
+%{__python3} -m pip wheel --wheel-dir %{_pyproject_wheeldir} --no-deps --use-pep517 --no-build-isolation --disable-pip-version-check --no-clean --progress-bar off --verbose .
+}
+-13: pytest	%{expand:\
+  CFLAGS="${CFLAGS:-${RPM_OPT_FLAGS}}" LDFLAGS="${LDFLAGS:-${RPM_LD_FLAGS}}"\
+  PATH="%{buildroot}%{_bindir}:$PATH"\
+  PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}}"\
+  PYTHONDONTWRITEBYTECODE=1\
+  %{?__pytest_addopts:PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} %{__pytest_addopts}"}\
+  %__pytest}
+-13: python	%__python
+-13: python2	%__python2
+-13: python2_platform	%(%{__python2} -Esc "import sysconfig; print(sysconfig.get_platform())")
+-13: python2_sitearch	%(%{__python2} -Esc "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
+-13: python2_sitelib	%(%{__python2} -Esc "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+-13: python2_version	%(%{__python2} -Esc "import sys; sys.stdout.write('{0.major}.{0.minor}'.format(sys.version_info))")
+-13: python2_version_nodots	%(%{__python2} -Esc "import sys; sys.stdout.write('{0.major}{0.minor}'.format(sys.version_info))")
+-13: python3	%__python3
+-13: python3_ext_suffix	%(%{__python3} -Ic "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))")
+-13: python3_pkgversion	3
+-13: python3_platform	%(%{__python3} -Ic "import sysconfig; print(sysconfig.get_platform())")
+-13: python3_platform_triplet	%(%{__python3} -Ic "import sysconfig; print(sysconfig.get_config_var('MULTIARCH'))")
+-13: python3_sitearch	%(%{__python3} -Ic "import sysconfig; print(sysconfig.get_path('platlib'))")
+-13: python3_sitelib	%(%{__python3} -Ic "import sysconfig; print(sysconfig.get_path('purelib'))")
+-13: python3_version	%(%{__python3} -Ic "import sys; sys.stdout.write('{0.major}.{0.minor}'.format(sys.version_info))")
+-13: python3_version_nodots	%(%{__python3} -Ic "import sys; sys.stdout.write('{0.major}{0.minor}'.format(sys.version_info))")
+-13: python_disable_dependency_generator	
+%undefine __pythondist_requires 
+%{nil}
+-13: python_ext_suffix	%(%{__python} -Esc "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))")
+-13: python_extras_subpkg(n:i:f:F)	%{expand:%{lua:
+    local option_n = '-n (name of the base package)'
+    local option_i = '-i (buildroot path to metadata)'
+    local option_f = '-f (builddir path to a filelist)'
+    local option_F = '-F (skip %%files section)'
+    local value_n = rpm.expand('%{-n*}')
+    local value_i = rpm.expand('%{-i*}')
+    local value_f = rpm.expand('%{-f*}')
+    local value_F = rpm.expand('%{-F}')
+    local args = rpm.expand('%{*}')
+    if value_n == '' then
+        rpm.expand('%{error:%%%0: missing option ' .. option_n .. '}')
+    end
+    if value_i == '' and value_f == '' and value_F == '' then
+        rpm.expand('%{error:%%%0: missing option ' .. option_i .. ' or ' .. option_f .. ' or ' .. option_F .. '}')
+    end
+    if value_i ~= '' and value_f ~= '' then
+        rpm.expand('%{error:%%%0: simultaneous ' .. option_i .. ' and ' .. option_f .. ' options are not possible}')
+    end
+    if value_i ~= '' and value_F ~= '' then
+        rpm.expand('%{error:%%%0: simultaneous ' .. option_i .. ' and ' .. option_F .. ' options are not possible}')
+    end
+    if value_f ~= '' and value_F ~= '' then
+        rpm.expand('%{error:%%%0: simultaneous ' .. option_f .. ' and ' .. option_F .. ' options are not possible}')
+    end
+    if args == '' then
+        rpm.expand('%{error:%%%0 requires at least one argument with "extras" name}')
+    end
+    local requires = 'Requires: ' .. value_n .. ' = %{?epoch:%{epoch}:}%{version}-%{release}'
+    for extras in args:gmatch('[^%s,]+') do
+        local rpmname = value_n .. '+' .. extras
+        local pkgdef = '%package -n ' .. rpmname
+        local summary = 'Summary: Metapackage for ' .. value_n .. ': ' .. extras .. ' extras'
+        local description = '%description -n ' .. rpmname .. '\n'
+        local current_line = 'This is a metapackage bringing in'
+        for _, word in ipairs({extras, 'extras', 'requires', 'for', value_n .. '.'}) do
+          local line = current_line .. ' ' .. word
+          if line:len() > 79 then
+            description = description .. current_line .. '\n'
+            current_line = word
+          else
+            current_line = line
+          end
+        end
+        description = description .. current_line .. '\n' ..
+                      'It makes sure the dependencies are installed.\n'
+        local files = ''
+        if value_i ~= '' then
+            files = '%files -n ' .. rpmname .. '\n' .. '%ghost ' .. value_i
+        elseif value_f ~= '' then
+            files = '%files -n ' .. rpmname .. ' -f ' .. value_f
+        end
+        for i, line in ipairs({pkgdef, summary, requires, description, files, ''}) do
+            print(line .. '\n')
+        end
+    end
+}}
+-13: python_platform	%(%{__python} -Esc "import sysconfig; print(sysconfig.get_platform())")
+-13: python_platform_triplet	%(%{__python} -Esc "import sysconfig; print(sysconfig.get_config_var('MULTIARCH'))")
+-13: python_provide	%{lua:
+  local python = require "fedora.srpm.python"
+  function string.starts(String,Start)
+    return string.sub(String,1,string.len(Start))==Start
+  end
+  local package = rpm.expand("%{?1}")
+  local vr = rpm.expand("%{?epoch:%{epoch}:}%{version}-%{release}")
+  local provides = python.python_altprovides(package, vr)
+  local default_python3_pkgversion = rpm.expand("%{__default_python3_pkgversion}")
+  if (string.starts(package, "python3-")) then
+    for i, provide in ipairs(provides) do
+      print("\nProvides: " .. provide)
+    end
+    --Obsoleting the previous default python package (if it doesn't have isa)
+    if (string.sub(package, "-1") ~= ")") then
+      print("\nObsoletes: python-")
+      print(string.sub(package,9,string.len(package)))
+      print(" < " .. vr)
+    end
+  elseif (string.starts(package, "python" .. default_python3_pkgversion .. "-")) then
+    for i, provide in ipairs(provides) do
+      print("\nProvides: " .. provide)
+    end
+    --Obsoleting the previous default python package (if it doesn't have isa)
+    if (string.sub(package, "-1") ~= ")") then
+      print("\nObsoletes: python-")
+      print(string.sub(package,8+string.len(default_python3_pkgversion),string.len(package)))
+      print(" < " .. vr)
+    end
+  elseif (string.starts(package, "python")) then
+    --No unversioned provides as other python3 cases are not the default
+  elseif (string.starts(package, "pypy")) then
+    --No unversioned provides as pypy is not default either
+  else
+    print("%python_provide: ERROR: ")
+    print(package)
+    print(" not recognized.")
+  end
+}
+-13: python_sitearch	%(%{__python} -Esc "import sysconfig; print(sysconfig.get_path('platlib'))")
+-13: python_sitelib	%(%{__python} -Esc "import sysconfig; print(sysconfig.get_path('purelib'))")
+-13: python_version	%(%{__python} -Esc "import sys; sys.stdout.write('{0.major}.{0.minor}'.format(sys.version_info))")
+-13: python_version_nodots	%(%{__python} -Esc "import sys; sys.stdout.write('{0.major}{0.minor}'.format(sys.version_info))")
+-13: python_wheel_dir	%{_datadir}/%{python_wheel_pkg_prefix}-wheels
+-13: python_wheel_pkg_prefix	python%{?rhel:%{!?eln:%{python3_pkgversion}}}
+-13: qt5_qtwebengine_arches	%{ix86} x86_64 %{arm} aarch64 mips mipsel mips64el
+-20: quote	<builtin>
+-13: riscv	%{riscv32} %{riscv64} %{riscv128}
+-13: riscv128	riscv128
+-13: riscv32	riscv32
+-13: riscv64	riscv64
+-13: rpmmacrodir	/usr/lib/rpm/macros.d
+-13: rust_arches	x86_64 %{ix86} armv7hl aarch64 ppc64 ppc64le riscv64 s390x
+-13: selinux_modules_install("s:p:")	
+if [ -e /etc/selinux/config ]; then 
+  . /etc/selinux/config 
+fi 
+_policytype=%{-s*} 
+if [ -z "${_policytype}" ]; then 
+  _policytype="targeted" 
+fi 
+if [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+  %{_sbindir}/semodule -n -s ${_policytype} -X %{!-p:200}%{-p*} -i %* || : 
+  %{_sbindir}/selinuxenabled && %{_sbindir}/load_policy || : 
+fi 
+%{nil}
+-13: selinux_modules_uninstall("s:p:")	
+if [ -e /etc/selinux/config ]; then 
+  . /etc/selinux/config 
+fi 
+_policytype=%{-s*} 
+if [ -z "${_policytype}" ]; then 
+  _policytype="targeted" 
+fi 
+if [ $1 -eq 0 ]; then 
+  if [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+    %{_sbindir}/semodule -n -X %{!-p:200}%{-p*} -s ${_policytype} -r %* &> /dev/null || : 
+    %{_sbindir}/selinuxenabled && %{_sbindir}/load_policy || : 
+  fi 
+fi 
+%{nil}
+-13: selinux_relabel_post("s:")	
+if [ -e /etc/selinux/config ]; then 
+  . /etc/selinux/config 
+fi 
+_policytype=%{-s*} 
+if [ -z "${_policytype}" ]; then 
+  _policytype="targeted" 
+fi 
+if %{_sbindir}/selinuxenabled && [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+   if [ -f %{_file_context_file_pre} ]; then 
+     %{_sbindir}/fixfiles -C %{_file_context_file_pre} restore &> /dev/null 
+     rm -f %{_file_context_file_pre} 
+   fi 
+fi 
+%{nil}
+-13: selinux_relabel_pre("s:")	
+if %{_sbindir}/selinuxenabled; then 
+  if [ -e /etc/selinux/config ]; then 
+    . /etc/selinux/config 
+  fi 
+  _policytype=%{-s*} 
+  if [ -z "${_policytype}" ]; then 
+    _policytype="targeted" 
+  fi 
+  if [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+    [ -f %{_file_context_file_pre} ] || cp -f %{_file_context_file} %{_file_context_file_pre} 
+  fi 
+fi 
+%{nil}
+-13: selinux_requires	
+Requires: selinux-policy >= %{_selinux_policy_version} 
+BuildRequires: pkgconfig(systemd) 
+BuildRequires: selinux-policy 
+BuildRequires: selinux-policy-devel 
+Requires(post): selinux-policy-base >= %{_selinux_policy_version} 
+Requires(post): libselinux-utils 
+Requires(post): policycoreutils 
+%if 0%{?fedora} || 0%{?rhel} > 7
+Requires(post): policycoreutils-python-utils 
+%else 
+Requires(post): policycoreutils-python 
+%endif 
+%{nil}
+-13: selinux_set_booleans("s:")	
+if [ -e /etc/selinux/config ]; then 
+  . /etc/selinux/config 
+fi 
+_policytype=%{-s*} 
+if [ -z "${_policytype}" ]; then 
+  _policytype="targeted" 
+fi 
+if [ -d "%{_selinux_store_policy_path}" ]; then 
+  LOCAL_MODIFICATIONS=$(%{_sbindir}/semanage boolean -E) 
+  if [ ! -f %_file_custom_defined_booleans ]; then 
+      /bin/echo "# This file is managed by macros.selinux-policy. Do not edit it manually" > %_file_custom_defined_booleans 
+  fi 
+  semanage_import='' 
+  for boolean in %*; do 
+      boolean_name=${boolean%=*} 
+      boolean_value=${boolean#*=} 
+      boolean_local_string=$(grep "$boolean_name$" <<<$LOCAL_MODIFICATIONS) 
+      if [ -n "$boolean_local_string" ]; then 
+          semanage_import="${semanage_import}\nboolean -m -$boolean_value $boolean_name" 
+          boolean_customized_string=$(grep "$boolean_name$" %_file_custom_defined_booleans | tail -n 1) 
+          if [ -n "$boolean_customized_string" ]; then 
+              /bin/echo $boolean_customized_string >> %_file_custom_defined_booleans 
+          else 
+              /bin/echo $boolean_local_string >> %_file_custom_defined_booleans 
+          fi 
+      else 
+          semanage_import="${semanage_import}\nboolean -m -$boolean_value $boolean_name" 
+          boolean_default_value=$(LC_ALL=C %{_sbindir}/semanage boolean -l | grep "^$boolean_name " | sed 's/[^(]*([^,]*, *\(on\|off\).*/\1/') 
+          /bin/echo "boolean -m --$boolean_default_value $boolean_name" >> %_file_custom_defined_booleans 
+      fi 
+  done; 
+  if %{_sbindir}/selinuxenabled && [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+      /bin/echo -e "$semanage_import" | %{_sbindir}/semanage import -S "${_policytype}" 
+  elif test -d /usr/share/selinux/"${_policytype}"/base.lst; then 
+      /bin/echo -e "$semanage_import" | %{_sbindir}/semanage import -S "${_policytype}" -N 
+  fi 
+fi 
+%{nil}
+-13: selinux_unset_booleans("s:")	
+if [ -e /etc/selinux/config ]; then 
+  . /etc/selinux/config 
+fi 
+_policytype=%{-s*} 
+if [ -z "${_policytype}" ]; then 
+  _policytype="targeted" 
+fi 
+if [ -d "%{_selinux_store_policy_path}" ]; then 
+  semanage_import='' 
+  for boolean in %*; do 
+      boolean_name=${boolean%=*} 
+      boolean_customized_string=$(grep "$boolean_name$" %_file_custom_defined_booleans | tail -n 1) 
+      if [ -n "$boolean_customized_string" ]; then 
+          awk "/$boolean_customized_string/ && !f{f=1; next} 1" %_file_custom_defined_booleans > %_file_custom_defined_booleans_tmp && mv %_file_custom_defined_booleans_tmp %_file_custom_defined_booleans 
+          if ! grep -q "$boolean_name$" %_file_custom_defined_booleans; then 
+              semanage_import="${semanage_import}\n${boolean_customized_string}" 
+          fi 
+      fi 
+  done; 
+  if %{_sbindir}/selinuxenabled && [ "${SELINUXTYPE}" = "${_policytype}" ]; then 
+      /bin/echo -e "$semanage_import" | %{_sbindir}/semanage import -S "${_policytype}" 
+  elif test -d /usr/share/selinux/"${_policytype}"/base.lst; then 
+      /bin/echo -e "$semanage_import" | %{_sbindir}/semanage import -S "${_policytype}" -N 
+  fi 
+fi 
+%{nil}
+-13: set_build_flags	
+  CFLAGS="${CFLAGS:-%{build_cflags}}" ; export CFLAGS ; 
+  CXXFLAGS="${CXXFLAGS:-%{build_cxxflags}}" ; export CXXFLAGS ; 
+  FFLAGS="${FFLAGS:-%{build_fflags}}" ; export FFLAGS ; 
+  FCFLAGS="${FCFLAGS:-%{build_fflags}}" ; export FCFLAGS ; 
+  LDFLAGS="${LDFLAGS:-%{build_ldflags}}" ; export LDFLAGS ; 
+  LT_SYS_LIBRARY_PATH="${LT_SYS_LIBRARY_PATH:-%_libdir:}" ; export LT_SYS_LIBRARY_PATH ; 
+  CC="${CC:-%{__cc}}" ; export CC ; 
+  CXX="${CXX:-%{__cxx}}" ; export CXX
+-20: shrink	<builtin>
+-13: source_date_epoch_from_changelog	1
+-13: sources	%{lua: for i, s in ipairs(sources) do print(s.." ") end}
+-13: sparc	sparc sparcv8 sparcv9 sparcv9v sparc64 sparc64v
+-20: suffix	<builtin>
+-13: sysctl_apply	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# sysctl_apply}} 
+[ -x /usr/lib/systemd/systemd-sysctl ] && /usr/lib/systemd/systemd-sysctl %{?*} || : 
+%{nil}
+-13: systemd_ordering	
+OrderWithRequires(post): systemd 
+OrderWithRequires(preun): systemd 
+OrderWithRequires(postun): systemd 
+%{nil}
+-13: systemd_post	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_post}} 
+if [ $1 -eq 1 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Initial installation 
+    /usr/lib/systemd/systemd-update-helper install-system-units %{?*} || : 
+fi 
+%{nil}
+-13: systemd_postun	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_postun}} 
+%{nil}
+-13: systemd_postun_with_restart	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_postun_with_restart}} 
+if [ $1 -ge 1 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Package upgrade, not uninstall 
+    /usr/lib/systemd/systemd-update-helper mark-restart-system-units %{?*} || : 
+fi 
+%{nil}
+-13: systemd_preun	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_preun}} 
+if [ $1 -eq 0 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Package removal, not upgrade 
+    /usr/lib/systemd/systemd-update-helper remove-system-units %{?*} || : 
+fi 
+%{nil}
+-13: systemd_requires	
+Requires(post): systemd 
+Requires(preun): systemd 
+Requires(postun): systemd 
+%{nil}
+-13: systemd_user_post	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_user_post}} 
+if [ $1 -eq 1 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Initial installation 
+    /usr/lib/systemd/systemd-update-helper install-user-units %{?*} || : 
+fi 
+%{nil}
+-13: systemd_user_postun	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_user_postun}} 
+%{nil}
+-13: systemd_user_postun_with_restart	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_user_postun_with_restart}} 
+if [ $1 -ge 1 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Package upgrade, not uninstall 
+    /usr/lib/systemd/systemd-update-helper mark-restart-user-units %{?*} || : 
+fi 
+%{nil}
+-13: systemd_user_preun	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# systemd_user_preun}} 
+if [ $1 -eq 0 ] && [ -x "/usr/lib/systemd/systemd-update-helper" ]; then 
+    # Package removal, not upgrade 
+    /usr/lib/systemd/systemd-update-helper remove-user-units %{?*} || : 
+fi 
+%{nil}
+-13: sysusers_create	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# sysusers_create}} 
+command -v systemd-sysusers >/dev/null && systemd-sysusers %{?*} || : 
+%{nil}
+-13: sysusers_create_compat	
+%(%{_rpmconfigdir}/sysusers.generate-pre.sh %{?*}) 
+%{nil}
+-13: sysusers_create_inline	
+command -v systemd-sysusers >/dev/null && systemd-sysusers - <<SYSTEMD_INLINE_EOF || : 
+%{?*} 
+SYSTEMD_INLINE_EOF
+%{nil}
+-13: sysusers_create_package	
+%{expand:%%{?!__systemd_twoargs_%#:%%{error:The %%%%sysusers_create_package macro requires two arguments}}} 
+systemd-sysusers --replace=%_sysusersdir/%1.conf - <<SYSTEMD_INLINE_EOF || : 
+%(cat %2) 
+SYSTEMD_INLINE_EOF
+%{nil}
+-13: sysusers_requires_compat	Requires(pre): shadow-utils
+-13: texlive_post	
+mkdir -p /var/run/texlive 
+touch /var/run/texlive/run-texhash 
+touch /var/run/texlive/run-mtxrun 
+:
+-13: texlive_posttrans	
+if [ -e /var/run/texlive/run-texhash ] && [ -e %{_bindir}/texhash ]; then %{_bindir}/texhash 2> /dev/null; rm -f /var/run/texlive/run-texhash; fi 
+if [ -e /var/run/texlive/run-mtxrun ]; then export TEXMF=/usr/share/texlive/texmf-dist; export TEXMFCNF=/usr/share/texlive/texmf-dist/web2c; export TEXMFCACHE=/var/lib/texmf; %{_bindir}/mtxrun --generate &> /dev/null; rm -f /var/run/texlive/run-mtxrun; fi 
+:
+-13: texlive_postun	
+if [ $1 == 1 ]; then 
+  mkdir -p /var/run/texlive 
+  touch /var/run/run-texhash 
+else 
+  %{_bindir}/texhash 2> /dev/null 
+fi 
+:
+-13: tmpfiles_create	
+%{expand:%%{?__systemd_someargs_%#:%%__systemd_someargs_%# tmpfiles_create}} 
+command -v systemd-tmpfiles >/dev/null && systemd-tmpfiles --create %{?*} || : 
+%{nil}
+-13: tmpfiles_create_package	
+%{expand:%%{?!__systemd_twoargs_%#:%%{error:The %%%%tmpfiles_create_package macro requires two arguments}}} 
+systemd-tmpfiles --replace=%_tmpfilesdir/%1.conf --create - <<SYSTEMD_INLINE_EOF || : 
+%(cat %2) 
+SYSTEMD_INLINE_EOF
+%{nil}
+-13: toolchain	gcc
+-13: tox(e:)	%{expand:\
+TOX_TESTENV_PASSENV="${TOX_TESTENV_PASSENV:-*}" \
+PYTHONDONTWRITEBYTECODE=1 \
+PATH="%{buildroot}%{_bindir}:$PATH" \
+PYTHONPATH="${PYTHONPATH:-%{buildroot}%{python3_sitearch}:%{buildroot}%{python3_sitelib}}" \
+%{?__pytest_addopts:PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} %{__pytest_addopts}"} \
+HOSTNAME="rpmbuild" \
+%{__python3} -m tox --current-env -q --recreate -e "%{-e:%{-e*}}%{!-e:%{toxenv}}" %{?*}
+}
+-13: toxenv	%{default_toxenv}
+-20: trace	<builtin>
+-20: u2p	<builtin>
+-13: udev_hwdb_update	%{nil}
+-13: udev_rules_update	%{nil}
+-20: uncompress	<builtin>
+-20: undefine	<builtin>
+-13: undefined	%{expand:%%{?%{1}:0}%%{!?%{1}:1}}
+-20: url2path	<builtin>
+-13: use_source_date_epoch_as_buildtime	0
+-13: valgrind_arches	%{ix86} x86_64 ppc ppc64 ppc64le s390x armv7hl aarch64
+-20: verbose	<builtin>
+-13: version_no_tilde	%{lua:
+    local sep = rpm.expand('%1')
+    local ver = rpm.expand('%2')
+
+    if sep == '%1' then
+        sep = '-'
+    end
+
+    if ver == '%2' then
+        ver = rpm.expand('%version')
+    end
+    ver = ver:gsub('~', sep)
+
+    print(ver)
+}
+-13: vimfiles_root	%{_datadir}/vim/vimfiles
+-20: warn	<builtin>
+-13: with	%{expand:%%{?with_%{1}:1}%%{!?with_%{1}:0}}
+-13: without	%{expand:%%{?with_%{1}:0}%%{!?with_%{1}:1}}
+-13: wordwrap(v:)	%{lua:
+local   fedora = require "fedora.common"
+local variable = "%{?" .. rpm.expand("%{-v*}%{!-v:_description}") .. "}"
+print(fedora.wordwrap(variable))
+}
+-13: writevars(f:)	%{lua:
+local    fedora = require "fedora.common"
+local macrofile = rpm.expand("%{-f*}")
+local   rpmvars = {}
+for i = 1, rpm.expand("%#") do
+  table.insert(rpmvars, rpm.expand("%" .. i))
+end
+fedora.writevars(macrofile,rpmvars)
+}
+======================== active 840 empty 0

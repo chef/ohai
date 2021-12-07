@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.7.13 -->
-## [v17.7.13](https://github.com/chef/ohai/tree/v17.7.13) (2021-12-06)
+<!-- latest_release 17.7.14 -->
+## [v17.7.14](https://github.com/chef/ohai/tree/v17.7.14) (2021-12-07)
 
 #### Merged Pull Requests
-- Fix parsing bug in the rpm plugin [#1719](https://github.com/chef/ohai/pull/1719) ([davide125](https://github.com/davide125))
+- log plugin exception at warn level [#1668](https://github.com/chef/ohai/pull/1668) ([andyjdavis](https://github.com/andyjdavis))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.7.12 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- log plugin exception at warn level [#1668](https://github.com/chef/ohai/pull/1668) ([andyjdavis](https://github.com/andyjdavis)) <!-- 17.7.14 -->
 - Fix parsing bug in the rpm plugin [#1719](https://github.com/chef/ohai/pull/1719) ([davide125](https://github.com/davide125)) <!-- 17.7.13 -->
 <!-- release_rollup -->
 

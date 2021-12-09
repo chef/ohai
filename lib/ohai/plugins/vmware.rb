@@ -45,12 +45,14 @@ Ohai.plugin(:VMware) do
       logger.trace("Plugin VMware: #{vmtools_path} not found")
     else
       vmware Mash.new
+      vmware[:host] = Mash.new
+      vmware[:guest] = Mash.new
       begin
         # vmware-toolbox-cmd stat <param> commands
         # Iterate through each parameter supported by the "vwware-toolbox-cmd stat" command, assign value
         # to attribute "vmware[:<parameter>]"
         %w{hosttime speed sessionid balloon swap memlimit memres cpures cpulimit}.each do |param|
-          vmware[param] = from_cmd("#{vmtools_path} stat #{param}")
+          vmware[param] = from_cmd([vmtools_path, "stat", param])
           if /UpdateInfo failed/.match?(vmware[param])
             vmware[param] = nil
           end
@@ -59,8 +61,23 @@ Ohai.plugin(:VMware) do
         # Iterate through each parameter supported by the "vmware-toolbox-cmd status" command, assign value
         # to attribute "vmware[:<parameter>]"
         %w{upgrade timesync}.each do |param|
-          vmware[param] = from_cmd("#{vmtools_path} #{param} status")
+          vmware[param] = from_cmd([vmtools_path, param, "status"])
         end
+        # Distinguish hypervisors by presence of raw session data (vSphere only)
+        raw_session = from_cmd([vmtools_path, "stat", "raw", "json", "session"])
+        if raw_session.empty?
+          vmware[:host] = {
+            type: "vmware_desktop",
+          }
+        else
+          require "json" unless defined?(JSON)
+          session = JSON.parse(raw_session)
+          vmware[:host] = {
+            type: "vmware_vsphere",
+            version: session["version"],
+          }
+        end
+        vmware[:guest][:vmware_tools_version] = from_cmd([vmtools_path, "-v"]).split(" ").first
       rescue
         logger.trace("Plugin VMware: Error while collecting VMware guest attributes")
       end
@@ -71,4 +88,7 @@ Ohai.plugin(:VMware) do
     get_vm_attributes("/usr/bin/vmware-toolbox-cmd") if virtualization[:systems][:vmware]
   end
 
+  collect_data(:windows) do
+    get_vm_attributes("C:/Program Files/VMWare/VMware Tools/VMwareToolboxCmd.exe") if virtualization[:systems][:vmware]
+  end
 end

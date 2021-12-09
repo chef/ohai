@@ -28,17 +28,19 @@ describe Ohai::System, "plugin vmware" do
   context "when on vmware guest with toolbox installed" do
     before do
       allow(File).to receive(:exist?).with("/usr/bin/vmware-toolbox-cmd").and_return(true)
-      allow(plugin).to receive(:shell_out).with("#{path} stat speed").and_return(mock_shell_out(0, "2000 MHz", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat hosttime").and_return(mock_shell_out(0, "04 Jun 2015 19:21:16", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat sessionid").and_return(mock_shell_out(0, "0x0000000000000000", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat balloon").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat swap").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat memlimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat memres").and_return(mock_shell_out(0, "0 MB", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat cpures").and_return(mock_shell_out(0, "0 MHz", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} stat cpulimit").and_return(mock_shell_out(0, "4000000000 MB", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} upgrade status").and_return(mock_shell_out(0, "VMware Tools are up-to-date.", nil))
-      allow(plugin).to receive(:shell_out).with("#{path} timesync status").and_return(mock_shell_out(0, "Disabled", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "speed"]).and_return(mock_shell_out(0, "2000 MHz", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "hosttime"]).and_return(mock_shell_out(0, "04 Jun 2015 19:21:16", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "sessionid"]).and_return(mock_shell_out(0, "0x0000000000000000", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "balloon"]).and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "swap"]).and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "memlimit"]).and_return(mock_shell_out(0, "4000000000 MB", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "memres"]).and_return(mock_shell_out(0, "0 MB", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "cpures"]).and_return(mock_shell_out(0, "0 MHz", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "cpulimit"]).and_return(mock_shell_out(0, "4000000000 MB", nil))
+      allow(plugin).to receive(:shell_out).with([path, "upgrade", "status"]).and_return(mock_shell_out(0, "VMware Tools are up-to-date.", nil))
+      allow(plugin).to receive(:shell_out).with([path, "timesync", "status"]).and_return(mock_shell_out(0, "Disabled", nil))
+      allow(plugin).to receive(:shell_out).with([path, "stat", "raw", "json", "session"]).and_return(mock_shell_out(0, '{ "version": "VMware ESX 7.0.0 build-15843807" }', nil))
+      allow(plugin).to receive(:shell_out).with([path, "-v"]).and_return(mock_shell_out(0, "10.3.0.5330", nil))
       plugin[:virtualization] = Mash.new
       plugin[:virtualization][:systems] = Mash.new
       plugin[:virtualization][:systems][:vmware] = Mash.new
@@ -55,6 +57,14 @@ describe Ohai::System, "plugin vmware" do
 
     it "gets tools update status" do
       expect(plugin[:vmware][:upgrade]).to eq("VMware Tools are up-to-date.")
+    end
+
+    it "gets tools version" do
+      expect(plugin[:vmware][:guest][:vmware_tools_version]).to eq("10.3.0.5330")
+    end
+
+    it "gets vSphere version" do
+      expect(plugin[:vmware][:host][:version]).to eq("VMware ESX 7.0.0 build-15843807")
     end
   end
 

@@ -64,7 +64,7 @@ Ohai.plugin(:VMware) do
           vmware[param] = from_cmd([vmtools_path, param, "status"])
         end
         # Distinguish hypervisors by presence of raw session data (vSphere only)
-        raw_session = from_cmd([vmtools_path, %w{stat raw json session}])
+        raw_session = from_cmd([vmtools_path, "stat", "raw", "json", "session"])
         if raw_session.empty?
           vmware[:host] = {
             type: "vmware_desktop",

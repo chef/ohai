@@ -33,7 +33,7 @@ Ohai.plugin(:Chef) do
     begin
       require "chef/version"
       require "chef-config/config" unless defined?(ChefConfig::Config)
-    rescue Gem::LoadError
+    rescue LoadError
       logger.trace("Plugin Chef: Unable to load the chef gem to determine the version")
       # this catches when you've done a major version bump of ohai, but
       # your chef gem is incompatible, so we can't load it in the same VM

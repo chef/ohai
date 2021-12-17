@@ -1,23 +1,21 @@
 # Change Log
 
-<!-- latest_release 17.9.0 -->
-## [v17.9.0](https://github.com/chef/ohai/tree/v17.9.0) (2021-12-10)
-
-#### Merged Pull Requests
-- Fix the exception handling in the chef plugin [#1721](https://github.com/chef/ohai/pull/1721) ([tas50](https://github.com/tas50))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.7.12 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Fix the exception handling in the chef plugin [#1721](https://github.com/chef/ohai/pull/1721) ([tas50](https://github.com/tas50)) <!-- 17.9.0 -->
-- Add support for VMware detection on Windows and details [#1720](https://github.com/chef/ohai/pull/1720) ([tecracer-theinen](https://github.com/tecracer-theinen)) <!-- 17.8.0 -->
-- log plugin exception at warn level [#1668](https://github.com/chef/ohai/pull/1668) ([andyjdavis](https://github.com/andyjdavis)) <!-- 17.7.14 -->
-- Fix parsing bug in the rpm plugin [#1719](https://github.com/chef/ohai/pull/1719) ([davide125](https://github.com/davide125)) <!-- 17.7.13 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.9.0](https://github.com/chef/ohai/tree/v17.9.0) (2021-12-17)
+
+#### Merged Pull Requests
+- Fix parsing bug in the rpm plugin [#1719](https://github.com/chef/ohai/pull/1719) ([davide125](https://github.com/davide125))
+- log plugin exception at warn level [#1668](https://github.com/chef/ohai/pull/1668) ([andyjdavis](https://github.com/andyjdavis))
+- Add support for VMware detection on Windows and details [#1720](https://github.com/chef/ohai/pull/1720) ([tecracer-theinen](https://github.com/tecracer-theinen))
+- Fix the exception handling in the chef plugin [#1721](https://github.com/chef/ohai/pull/1721) ([tas50](https://github.com/tas50))
+<!-- latest_stable_release -->
+
 ## [v17.7.12](https://github.com/chef/ohai/tree/v17.7.12) (2021-12-02)
 
 #### Merged Pull Requests
@@ -25,7 +23,6 @@
 - Run the github actions test on 16-stable too [#1709](https://github.com/chef/ohai/pull/1709) ([tas50](https://github.com/tas50))
 - Update chefstyle requirement from 2.1.2 to 2.1.3 [#1717](https://github.com/chef/ohai/pull/1717) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - Add new rpm plugin [#1718](https://github.com/chef/ohai/pull/1718) ([davide125](https://github.com/davide125))
-<!-- latest_stable_release -->
 
 ## [v17.7.8](https://github.com/chef/ohai/tree/v17.7.8) (2021-10-28)
 

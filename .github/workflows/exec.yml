@@ -6,6 +6,7 @@ name: exec
   push:
     branches:
       - main
+      - 1=7-stable
       - 16-stable
 
 jobs:

@@ -6,6 +6,7 @@ name: lint
   push:
     branches:
       - main
+      - 17-stable
       - 16-stable
 
 jobs:

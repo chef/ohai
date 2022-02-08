@@ -1593,6 +1593,108 @@ describe Ohai::System, "Linux Network Plugin" do
           )
         end
       end
+
+      describe "gathering xdp counters via ip_link_s_d" do
+        let(:linux_ip_link_s_d) do
+          <<~EOM
+            1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
+                link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
+                RX: bytes  packets  errors  dropped overrun mcast
+                35224      524      0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                35224      524      0       0       0       0
+            2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdp qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 9500 tag 1234567acde1892 jited
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            4: eth2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpgeneric qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 8400 tag 5234567acde1892 jited
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            5: eth3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpoffload qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 7400 tag 8234567acde1892
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            6: eth4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpmulti qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdpdrv id 7400 tag 8234567acde1892 jited
+                prog/xdpoffload id 5400 tag 5234567acde1892
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+          EOM
+        end
+        it "adds the xdp information of an interface" do
+          plugin.run
+          expect(plugin["network"]["interfaces"]["lo"]["xdp"]).to be_nil
+          expect(plugin["network"]["interfaces"]["eth0"]["xdp"]).to be_nil
+          expect(plugin["network"]["interfaces"]["eth1"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpdrv",
+                  id: "9500",
+                  tag: "1234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth2"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpgeneric",
+                  id: "8400",
+                  tag: "5234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth3"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpoffload",
+                  id: "7400",
+                  tag: "8234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth4"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpdrv",
+                  id: "7400",
+                  tag: "8234567acde1892",
+                },
+                {
+                  mode: "xdpoffload",
+                  id: "5400",
+                  tag: "5234567acde1892",
+                },
+              ],
+            }
+          )
+        end
+      end
     end
   end
 end

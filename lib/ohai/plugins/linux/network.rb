@@ -350,6 +350,7 @@ Ohai.plugin(:Network) do
     so = shell_out("ip -d -s link")
     tmp_int = nil
     on_rx = true
+    xdp_mode = nil
     so.stdout.lines do |line|
       if line =~ IPROUTE_INT_REGEX
         tmp_int = $2
@@ -424,6 +425,30 @@ Ohai.plugin(:Network) do
       # https://rubular.com/r/JRp6lNANmpcLV5
       if line =~ /\sstate (\w+)/
         iface[tmp_int]["state"] = $1.downcase
+      end
+
+      if line.include?("xdp")
+        mode = line.scan(/\s(xdp|xdpgeneric|xdpoffload|xdpmulti)\s/).flatten[0]
+        # Fetches and sets the mode from the first line.
+        unless mode.nil?
+          iface[tmp_int][:xdp] = {}
+          if mode.eql?("xdp")
+            # In case of xdpdrv, mode is xdp,
+            # to keep it consistent, keeping mode as xdpdrv.
+            mode = "xdpdrv"
+          end
+          xdp_mode = mode
+          iface[tmp_int][:xdp][:attached] = []
+        end
+
+        if line =~ %r{prog/(\w+) id (\d+) tag (\w+)}
+          mode = $1.eql?("xdp") ? xdp_mode : $1
+          iface[tmp_int][:xdp][:attached] << {
+            mode: mode,
+            id: $2,
+            tag: $3,
+          }
+        end
       end
     end
     iface

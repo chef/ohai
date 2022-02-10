@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.4 -->
-## [v18.0.4](https://github.com/chef/ohai/tree/v18.0.4) (2022-02-08)
+<!-- latest_release 18.0.5 -->
+## [v18.0.5](https://github.com/chef/ohai/tree/v18.0.5) (2022-02-10)
 
 #### Merged Pull Requests
-- Update chefstyle requirement from 2.2.0 to 2.2.1 [#1728](https://github.com/chef/ohai/pull/1728) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Add btrfs specific data to filesystem plugin [#1732](https://github.com/chef/ohai/pull/1732) ([boryas](https://github.com/boryas))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add btrfs specific data to filesystem plugin [#1732](https://github.com/chef/ohai/pull/1732) ([boryas](https://github.com/boryas)) <!-- 18.0.5 -->
 - Update chefstyle requirement from 2.2.0 to 2.2.1 [#1728](https://github.com/chef/ohai/pull/1728) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.4 -->
 - Network: Record xdp data from ip link. [#1730](https://github.com/chef/ohai/pull/1730) ([zalokhan](https://github.com/zalokhan)) <!-- 18.0.3 -->
 - Update rubocop-performance requirement from 1.13.1 to 1.13.2 [#1727](https://github.com/chef/ohai/pull/1727) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.2 -->

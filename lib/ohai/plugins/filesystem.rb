@@ -271,6 +271,30 @@ Ohai.plugin(:Filesystem) do
     fs
   end
 
+  def collect_btrfs_data(entry)
+    btrfs = Mash.new
+    if entry[:fs_type] == "btrfs" && entry["uuid"]
+      uuid = entry["uuid"]
+      alloc = "/sys/fs/btrfs/#{uuid}/allocation"
+      %w{data metadata system}.each do |bg_type|
+        dir = "#{alloc}/#{bg_type}"
+        %w{single dup}.each do |raid|
+          if file_exist?("#{dir}/#{raid}")
+            btrfs["raid"] = raid
+          end
+        end
+        logger.trace("Plugin Filesystem: reading btrfs allocation files at #{dir}")
+        btrfs["allocation"] ||= Mash.new
+        btrfs["allocation"][bg_type] ||= Mash.new
+        %w{total_bytes bytes_used}.each do |field|
+          bytes = file_read("#{dir}/#{field}").chomp.to_i
+          btrfs["allocation"][bg_type][field] = "#{bytes}"
+        end
+      end
+    end
+    btrfs
+  end
+
   collect_data(:linux) do
     fs = Mash.new
 
@@ -391,6 +415,12 @@ Ohai.plugin(:Filesystem) do
           fs[key][:fs_type] = $3
           fs[key][:mount_options] = $4.split(",")
         end
+      end
+    end
+
+    fs.each do |key, entry|
+      if entry[:fs_type] == "btrfs"
+        fs[key][:btrfs] = collect_btrfs_data(entry)
       end
     end
 

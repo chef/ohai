@@ -1219,6 +1219,46 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
+      describe "when there're multipath routes" do
+        let(:linux_ip_route) do
+          <<~EOM
+            10.5.4.0/24 proto static \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
+          EOM
+        end
+
+        let(:linux_ip_route_inet6) do
+          <<~EOM
+            default proto ra metric 1024 expires 1797sec \\        nexthop via fe80::c018:50ff:fe41:ca33 dev eth0.11 weight 1 \\        nexthop via fe80::c018:50ff:fe41:ca33 dev eth0 weight 1 pref medium
+            default proto ra metric 1050 expires 1796sec \\        nexthop via fe80::c018:50ff:fe3f:9184 dev eth3 weight 1 \\        nexthop via fe80::c018:50ff:fe3f:9184 dev eth13 weight 1 pref medium
+          EOM
+        end
+
+        before do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(plugin.logger).not_to receive(:trace).with(/Plugin linux::network threw exception/)
+          expect(plugin["network"]).not_to be_nil
+        end
+
+        it "sets default ipv6 interface and gateway" do
+          expect(plugin["network"]["default_inet6_interface"]).to eq("eth0")
+          expect(plugin["network"]["default_inet6_gateway"]).to eq("fe80::c018:50ff:fe41:ca33")
+        end
+
+        it "sets the routes properly" do
+          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq([
+            Mash.new( destination: "10.5.4.0/24", family: "inet", proto: "static", via: "10.5.4.1" ),
+            Mash.new( destination: "10.5.4.0/24", family: "inet", proto: "static", via: "10.5.4.2" ),
+            Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe41:ca33", metric: "1024" ),
+          ])
+          expect(plugin["network"]["interfaces"]["eth0.11"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe41:ca33", metric: "1024" )])
+          expect(plugin["network"]["interfaces"]["eth13"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe3f:9184", metric: "1050" )])
+          expect(plugin["network"]["interfaces"]["eth3"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe3f:9184", metric: "1050" )])
+        end
+      end
+
       describe "when there's a source field in a local route entry but it isnt in the default route" do
         let(:linux_ip_route) do
           <<~EOM

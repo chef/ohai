@@ -80,9 +80,22 @@ Ohai.plugin(:Network) do
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
       if /\\/.match?(line)
+        # If we have multipath routing, then the first part will be a normal
+        # looking route:
+        #   default proto ra metric 1024 <other options>
+        # Each successive part after that is a hop without those options.
+        # So the first thing we do is grab that first part, and split it into
+        # the route destination ("default"), and the route options.
         parts = line.split("\\")
-        route_dest = parts.shift.strip
-        route_endings = parts
+        route_dest, dest_opts = parts.first.split(nil, 2)
+        # Then all the route endings, generally just nexthops.
+        route_endings = parts[1..]
+        if dest_opts && !dest_opts.empty?
+          # Route options like proto, metric, etc. only appear once for each
+          # multipath configuration. Prepend this information to the route
+          # endings so the code below will assign the fields properly.
+          route_endings.map! { |e| e.include?("nexthop") ? "#{dest_opts} #{e}" : e }
+        end
       elsif line =~ /^([^\s]+)\s(.*)$/
         route_dest = $1
         route_endings = [$2]

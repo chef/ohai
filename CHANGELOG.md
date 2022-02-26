@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.7 -->
-## [v18.0.7](https://github.com/chef/ohai/tree/v18.0.7) (2022-02-25)
+<!-- latest_release 18.0.8 -->
+## [v18.0.8](https://github.com/chef/ohai/tree/v18.0.8) (2022-02-26)
 
 #### Merged Pull Requests
-- Network: Add support for parsing multipath routing [#1736](https://github.com/chef/ohai/pull/1736) ([anitazha](https://github.com/anitazha))
+- Stop checking encoding names [#1735](https://github.com/chef/ohai/pull/1735) ([casperisfine](https://github.com/casperisfine))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Stop checking encoding names [#1735](https://github.com/chef/ohai/pull/1735) ([casperisfine](https://github.com/casperisfine)) <!-- 18.0.8 -->
 - Network: Add support for parsing multipath routing [#1736](https://github.com/chef/ohai/pull/1736) ([anitazha](https://github.com/anitazha)) <!-- 18.0.7 -->
 - Update chefstyle requirement from 2.2.1 to 2.2.2 [#1737](https://github.com/chef/ohai/pull/1737) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.6 -->
 - Add btrfs specific data to filesystem plugin [#1732](https://github.com/chef/ohai/pull/1732) ([boryas](https://github.com/boryas)) <!-- 18.0.5 -->

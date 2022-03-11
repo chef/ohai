@@ -103,9 +103,20 @@ Ohai.plugin(:Network) do
         next
       end
       route_endings.each do |route_ending|
+        route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
-        else
+        end
+        # does any known interface own the src address?
+        # we want to override the interface set via nexthop but only if possible
+        if line =~ /\bsrc\s+([^\s]+)\b/ && (!route_int || line.include?("nexthop"))
+          # only clobber previously set route_int if we find a match
+          if (match = iface.select { |name, intf| intf.fetch("addresses", {}).any? { |addr, _| addr == $1 } }.keys.first)
+            route_int = match
+          end
+        end
+
+        unless route_int
           logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
           next
         end

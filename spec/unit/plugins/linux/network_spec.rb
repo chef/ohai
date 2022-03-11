@@ -1335,6 +1335,42 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
+      describe "when there's a source field in a local route entry but no dev" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.1 dev eth0 metric 10 src 10.116.201.1
+            10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+            192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+            default via 10.116.201.254 dev eth0 metric 20 src 10.116.201.74
+          EOM
+        end
+        let(:linux_ip_route_inet6) { "" }
+
+        it "maps the no-dev route and sets ipaddress" do
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("172.16.19.39")
+        end
+      end
+
+      describe "when there's a source field in a local route entry but no dev with a higher priority default route" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.1 dev eth0 metric 10 src 10.116.201.1
+            10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+            192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+            default via 10.116.201.254 dev eth0 metric 5 src 10.116.201.74
+          EOM
+        end
+        let(:linux_ip_route_inet6) { "" }
+
+        it "maps the no-dev route and sets ipaddress" do
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("10.116.201.74")
+        end
+      end
+
       describe "with a link level default route" do
         let(:linux_ip_route) do
           <<~EOM

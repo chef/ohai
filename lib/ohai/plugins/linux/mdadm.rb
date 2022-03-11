@@ -35,6 +35,8 @@ Ohai.plugin(:Mdadm) do
         device_mash[:size] = Regexp.last_match[1].to_f
       when /State\s+: ([a-z]+)/
         device_mash[:state] = Regexp.last_match[1]
+      when /UUID\s+: ([0-9a-z:]+)/
+        device_mash[:UUID] = Regexp.last_match[1]
       when /Total Devices\s+: ([0-9]+)/
         device_mash[:device_counts][:total] = Regexp.last_match[1].to_i
       when /Raid Devices\s+: ([0-9]+)/

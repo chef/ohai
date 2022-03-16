@@ -91,6 +91,11 @@ describe Ohai::System, "Linux Mdadm Plugin" do
       expect(@plugin[:mdadm][:md0][:version]).to eq(1.2)
     end
 
+    it "detects raid UUID" do
+      @plugin.run
+      expect(@plugin[:mdadm][:md0][:UUID]).to eq("5ed74d5b:70bfe21d:8cd57792:c1e13d65")
+    end
+
     device_counts = { raid: 6, total: 6, active: 6, working: 6, failed: 0, spare: 0 }
     device_counts.each_pair do |item, expected_value|
       it "detects device count of \"#{item}\"" do

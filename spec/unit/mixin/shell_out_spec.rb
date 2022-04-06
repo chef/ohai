@@ -17,7 +17,6 @@
 #
 
 require "spec_helper"
-require "pry"
 
 describe Ohai::Mixin::ShellOut, "shell_out" do
   let(:cmd) { "sparkle-dream --version" }

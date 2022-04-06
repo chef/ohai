@@ -17,6 +17,7 @@
 #
 
 require "spec_helper"
+require "win32/registry" unless defined?(Win32::Registry)
 
 describe Ohai::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }

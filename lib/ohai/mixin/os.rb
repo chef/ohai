@@ -110,7 +110,7 @@ module Ohai
           "dragonflybsd"
         when /solaris2/
           "solaris2"
-        when /mswin|mingw32|windows/
+        when /mswin|mingw|windows/
           # After long discussion in IRC the "powers that be" have come to a consensus
           # that no Windows platform exists that was not based on the
           # Windows_NT kernel, so we herby decree that "windows" will refer to all

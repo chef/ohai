@@ -48,7 +48,7 @@ Ohai.plugin(:Rackspace) do
   # true:: If the rackspace cloud can be identified
   # false:: Otherwise
   def has_rackspace_manufacturer?
-    return false unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+    return false unless RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
     require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
     wmi = WmiLite::Wmi.new

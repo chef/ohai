@@ -73,7 +73,7 @@ Ohai.plugin(:Azure) do
   end
 
   def tcp_ip_dhcp_domain
-    return unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+    return unless RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
     require "win32/registry" unless defined?(Win32::Registry)
 

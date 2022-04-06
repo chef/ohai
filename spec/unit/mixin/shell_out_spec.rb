@@ -17,6 +17,7 @@
 #
 
 require "spec_helper"
+require "pry"
 
 describe Ohai::Mixin::ShellOut, "shell_out" do
   let(:cmd) { "sparkle-dream --version" }
@@ -63,14 +64,14 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
 
   let(:instance) { DummyPlugin.new }
 
-  before do
+  before(:each) do
     allow(instance).to receive(:logger).and_return(logger)
     allow(instance).to receive(:name).and_return(plugin_name)
     @original_env = ENV.to_hash
     ENV.clear
   end
 
-  after do
+  after(:each) do
     ENV.clear
     ENV.update(@original_env)
   end
@@ -88,6 +89,10 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
 
   describe "when the command does not exist" do
     it "logs the command and error message" do
+      require "pry"
+        Pry.config.input = STDIN
+  Pry.config.output = STDOUT
+      binding.pry
       expect(Mixlib::ShellOut).to receive(:new).with(cmd, options).and_return(shell_out)
       expect(shell_out).to receive(:run_command).and_raise(Errno::ENOENT, "sparkle-dream")
       expect(logger).to receive(:trace)

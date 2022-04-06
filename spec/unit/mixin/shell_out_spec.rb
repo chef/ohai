@@ -89,10 +89,6 @@ describe Ohai::Mixin::ShellOut, "shell_out" do
 
   describe "when the command does not exist" do
     it "logs the command and error message" do
-      require "pry"
-        Pry.config.input = STDIN
-  Pry.config.output = STDOUT
-      binding.pry
       expect(Mixlib::ShellOut).to receive(:new).with(cmd, options).and_return(shell_out)
       expect(shell_out).to receive(:run_command).and_raise(Errno::ENOENT, "sparkle-dream")
       expect(logger).to receive(:trace)

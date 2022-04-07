@@ -6,7 +6,6 @@ gemspec
 # pull these gems from main of chef/chef so that we're testing against what we will release
 gem "chef-config", git: "https://github.com/chef/chef", branch: "main", glob: "chef-config/chef-config.gemspec"
 gem "chef-utils", git: "https://github.com/chef/chef", branch: "main", glob: "chef-utils/chef-utils.gemspec"
-# gem "chef-utils", path: "C:\\foo\\chef\\chef-utils"
 
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do

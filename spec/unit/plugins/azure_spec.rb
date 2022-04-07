@@ -17,6 +17,11 @@
 #
 
 require "spec_helper"
+begin
+  require "win32/registry" unless defined?(Win32::Registry)
+rescue LoadError => e
+  puts "Skipping missing rake dep: #{e}"
+end
 
 describe Ohai::System, "plugin azure" do
   let(:plugin) { get_plugin("azure") }

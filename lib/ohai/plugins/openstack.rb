@@ -49,7 +49,7 @@ Ohai.plugin(:Openstack) do
   # https://help.dreamhost.com/hc/en-us/articles/228377408-How-to-find-the-default-user-of-an-image
   def openstack_provider
     # dream host doesn't support windows so bail early if we're on windows
-    return "openstack" if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+    return "openstack" if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
     if Etc::Passwd.entries.map(&:name).include?("dhc-user")
       "dreamhost"

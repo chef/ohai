@@ -73,9 +73,11 @@ Ohai.plugin(:Azure) do
   end
 
   def tcp_ip_dhcp_domain
-    return unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+    return unless RUBY_PLATFORM.match?(/mswin|mingw|windows/)
 
-    require "win32/registry" unless defined?(Win32::Registry)
+    if ChefUtils.windows?
+      require "win32/registry" unless defined?(Win32::Registry)
+    end
 
     begin
       key = Win32::Registry::HKEY_LOCAL_MACHINE.open("SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters")

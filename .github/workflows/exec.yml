@@ -9,6 +9,9 @@ name: exec
       - 1=7-stable
       - 16-stable
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:

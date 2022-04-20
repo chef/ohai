@@ -55,10 +55,10 @@ describe Ohai::Mixin::AzureMetadata do
     end
 
     context "when azure doesn't return any versions we know about" do
-      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2021-01-02\",\"2020-08-01\",\"2020-07-15\"]}", code: "400") }
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2020-12-01\",\"2020-10-01\",\"2020-09-01\"]}", code: "400") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2019-11-01")
+        expect(mixin.best_api_version).to eq("2020-12-01")
       end
     end
 
@@ -66,12 +66,12 @@ describe Ohai::Mixin::AzureMetadata do
       let(:response) { double("Net::HTTP Response", code: "404") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2019-11-01")
+        expect(mixin.best_api_version).to eq("2021-10-01")
       end
     end
 
     context "when the response code is unexpected" do
-      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2021-01-02\",\"2020-08-01\",\"2020-07-15\"]}", code: "418") }
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2021-10-01\",\"2021-05-01\",\"2021-03-01\"]}", code: "418") }
 
       it "raises an error" do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)
@@ -81,7 +81,7 @@ describe Ohai::Mixin::AzureMetadata do
 
   describe "#fetch_metadata" do
     before do
-      allow(mixin).to receive(:best_api_version).and_return("2019-11-01")
+      allow(mixin).to receive(:best_api_version).and_return("2021-10-01")
     end
 
     it "returns an empty hash given a non-200 response" do

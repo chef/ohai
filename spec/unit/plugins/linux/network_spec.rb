@@ -477,6 +477,7 @@ describe Ohai::System, "Linux Network Plugin" do
   end
 
   before do
+    allow(File).to receive(:exist?).and_call_original
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, linux_ip_addr, ""))
@@ -1335,13 +1336,18 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
-      describe "when there's a source field in a local route entry but no dev" do
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 172.16.19.39 is chosen over 10.116.201.254 because its metric is lower (10 < 20)
+      describe "when there's a source field in a local route entry but no dev in the route" do
         let(:linux_ip_route) do
           <<~EOM
             default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.254 dev eth0 metric 20 src 10.116.201.74
             10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-            default via 10.116.201.254 dev eth0 metric 20 src 10.116.201.74
           EOM
         end
         let(:linux_ip_route_inet6) { "" }
@@ -1352,15 +1358,20 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
-      # note: default via 10.116.201.1 discarded because src not on eth0
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.1 discarded because src 192.116.201.1 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 10.116.201.254 is chosen over 172.16.19.39 because its metric is lower (5 < 10)
       describe "when there's a source field in a local route entry but no dev with a higher priority default route" do
         let(:linux_ip_route) do
           <<~EOM
+            default via 10.116.201.254 dev eth0 metric 5 src 10.116.201.74
             default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
             default via 10.116.201.1 dev eth0 metric 10 src 10.116.201.1
             10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
             192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
-            default via 10.116.201.254 dev eth0 metric 5 src 10.116.201.74
           EOM
         end
         let(:linux_ip_route_inet6) { "" }
@@ -1371,6 +1382,11 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 10.116.201.254 is chosen over 172.16.19.39 because routes with an explict device are preferred over ones that are inferred when metrics are equal
       describe "when there's a source field in a local route entry but no dev, but a dev route with the same metric" do
         let(:linux_ip_route) do
           <<~EOM

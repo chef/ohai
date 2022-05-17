@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.11 -->
-## [v18.0.11](https://github.com/chef/ohai/tree/v18.0.11) (2022-05-17)
+<!-- latest_release 18.0.12 -->
+## [v18.0.12](https://github.com/chef/ohai/tree/v18.0.12) (2022-05-17)
 
 #### Merged Pull Requests
-- Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan))
+- Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.12 -->
 - Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.11 -->
 - Updating For Ruby 3.1 [#1744](https://github.com/chef/ohai/pull/1744) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.0.10 -->
 - [mdadm] Record array UUID [#1742](https://github.com/chef/ohai/pull/1742) ([saravan2](https://github.com/saravan2)) <!-- 18.0.9 -->

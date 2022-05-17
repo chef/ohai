@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.10 -->
-## [v18.0.10](https://github.com/chef/ohai/tree/v18.0.10) (2022-04-07)
+<!-- latest_release 18.0.11 -->
+## [v18.0.11](https://github.com/chef/ohai/tree/v18.0.11) (2022-05-17)
 
 #### Merged Pull Requests
-- Updating For Ruby 3.1 [#1744](https://github.com/chef/ohai/pull/1744) ([johnmccrae](https://github.com/johnmccrae))
+- Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.11 -->
 - Updating For Ruby 3.1 [#1744](https://github.com/chef/ohai/pull/1744) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.0.10 -->
 - [mdadm] Record array UUID [#1742](https://github.com/chef/ohai/pull/1742) ([saravan2](https://github.com/saravan2)) <!-- 18.0.9 -->
 - Stop checking encoding names [#1735](https://github.com/chef/ohai/pull/1735) ([casperisfine](https://github.com/casperisfine)) <!-- 18.0.8 -->

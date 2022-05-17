@@ -9,6 +9,9 @@ name: unit
       - 17-stable
       - 16-stable
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:

@@ -103,9 +103,24 @@ Ohai.plugin(:Network) do
         next
       end
       route_endings.each do |route_ending|
+        route_entry = Mash.new(destination: route_dest,
+                               family: family[:name])
+        route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
-        else
+        end
+        # does any known interface own the src address?
+        # we try to infer the interface/device from its address if it isn't specified
+        # we want to override the interface set via nexthop but only if possible
+        if line =~ /\bsrc\s+([^\s]+)\b/ && (!route_int || line.include?("nexthop"))
+          # only clobber previously set route_int if we find a match
+          if (match = iface.select { |name, intf| intf.fetch("addresses", {}).any? { |addr, _| addr == $1 } }.keys.first)
+            route_int = match
+            route_entry[:inferred] = true
+          end
+        end
+
+        unless route_int
           logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
           next
         end
@@ -116,8 +131,6 @@ Ohai.plugin(:Network) do
           next
         end
 
-        route_entry = Mash.new(destination: route_dest,
-                               family: family[:name])
         %w{via scope metric proto src}.each do |k|
           # http://rubular.com/r/pwTNp65VFf
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
@@ -645,10 +658,12 @@ Ohai.plugin(:Network) do
       # sorting the selected routes:
       # - getting default routes first
       # - then sort by metric
+      # - then sort by if the device was inferred or not (preferring explicit to inferred)
       # - then by prefixlen
       [
        r[:destination] == "default" ? 0 : 1,
        r[:metric].nil? ? 0 : r[:metric].to_i,
+       r[:inferred] ? 1 : 0,
        # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
        # just a quick workaround: use 0 if IPAddress fails
        begin

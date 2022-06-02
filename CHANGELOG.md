@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.13 -->
-## [v18.0.13](https://github.com/chef/ohai/tree/v18.0.13) (2022-05-31)
+<!-- latest_release 18.0.14 -->
+## [v18.0.14](https://github.com/chef/ohai/tree/v18.0.14) (2022-06-02)
 
 #### Merged Pull Requests
-- networking/linux: map src only default routes accordingly [#1741](https://github.com/chef/ohai/pull/1741) ([mattp-](https://github.com/mattp-))
+- Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.0.14 -->
 - networking/linux: map src only default routes accordingly [#1741](https://github.com/chef/ohai/pull/1741) ([mattp-](https://github.com/mattp-)) <!-- 18.0.13 -->
 - Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.12 -->
 - Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.11 -->

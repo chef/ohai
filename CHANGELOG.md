@@ -1,36 +1,34 @@
 # Change Log
 
-<!-- latest_release 18.0.14 -->
-## [v18.0.14](https://github.com/chef/ohai/tree/v18.0.14) (2022-06-02)
-
-#### Merged Pull Requests
-- Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=17.9.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.0.14 -->
-- networking/linux: map src only default routes accordingly [#1741](https://github.com/chef/ohai/pull/1741) ([mattp-](https://github.com/mattp-)) <!-- 18.0.13 -->
-- Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.12 -->
-- Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.11 -->
-- Updating For Ruby 3.1 [#1744](https://github.com/chef/ohai/pull/1744) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.0.10 -->
-- [mdadm] Record array UUID [#1742](https://github.com/chef/ohai/pull/1742) ([saravan2](https://github.com/saravan2)) <!-- 18.0.9 -->
-- Stop checking encoding names [#1735](https://github.com/chef/ohai/pull/1735) ([casperisfine](https://github.com/casperisfine)) <!-- 18.0.8 -->
-- Network: Add support for parsing multipath routing [#1736](https://github.com/chef/ohai/pull/1736) ([anitazha](https://github.com/anitazha)) <!-- 18.0.7 -->
-- Update chefstyle requirement from 2.2.1 to 2.2.2 [#1737](https://github.com/chef/ohai/pull/1737) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.6 -->
-- Add btrfs specific data to filesystem plugin [#1732](https://github.com/chef/ohai/pull/1732) ([boryas](https://github.com/boryas)) <!-- 18.0.5 -->
-- Update chefstyle requirement from 2.2.0 to 2.2.1 [#1728](https://github.com/chef/ohai/pull/1728) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.4 -->
-- Network: Record xdp data from ip link. [#1730](https://github.com/chef/ohai/pull/1730) ([zalokhan](https://github.com/zalokhan)) <!-- 18.0.3 -->
-- Update rubocop-performance requirement from 1.13.1 to 1.13.2 [#1727](https://github.com/chef/ohai/pull/1727) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.2 -->
-- Update rubocop-performance requirement from 1.13.0 to 1.13.1 [#1724](https://github.com/chef/ohai/pull/1724) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.1 -->
-- Update version to 18 and allow chef-utils/config 18.x [#1722](https://github.com/chef/ohai/pull/1722) ([tas50](https://github.com/tas50)) <!-- 18.0.0 -->
-- Update chefstyle requirement from 2.1.3 to 2.2.0 [#1725](https://github.com/chef/ohai/pull/1725) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.9.2 -->
-- Update rubocop-performance requirement from 1.12.0 to 1.13.0 [#1723](https://github.com/chef/ohai/pull/1723) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 17.9.1 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v18.0.14](https://github.com/chef/ohai/tree/v18.0.14) (2022-06-06)
+
+#### Merged Pull Requests
+- Update rubocop-performance requirement from 1.12.0 to 1.13.0 [#1723](https://github.com/chef/ohai/pull/1723) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update chefstyle requirement from 2.1.3 to 2.2.0 [#1725](https://github.com/chef/ohai/pull/1725) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update version to 18 and allow chef-utils/config 18.x [#1722](https://github.com/chef/ohai/pull/1722) ([tas50](https://github.com/tas50))
+- Update rubocop-performance requirement from 1.13.0 to 1.13.1 [#1724](https://github.com/chef/ohai/pull/1724) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update rubocop-performance requirement from 1.13.1 to 1.13.2 [#1727](https://github.com/chef/ohai/pull/1727) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Network: Record xdp data from ip link. [#1730](https://github.com/chef/ohai/pull/1730) ([zalokhan](https://github.com/zalokhan))
+- Update chefstyle requirement from 2.2.0 to 2.2.1 [#1728](https://github.com/chef/ohai/pull/1728) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Add btrfs specific data to filesystem plugin [#1732](https://github.com/chef/ohai/pull/1732) ([boryas](https://github.com/boryas))
+- Update chefstyle requirement from 2.2.1 to 2.2.2 [#1737](https://github.com/chef/ohai/pull/1737) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Network: Add support for parsing multipath routing [#1736](https://github.com/chef/ohai/pull/1736) ([anitazha](https://github.com/anitazha))
+- Stop checking encoding names [#1735](https://github.com/chef/ohai/pull/1735) ([casperisfine](https://github.com/casperisfine))
+- [mdadm] Record array UUID [#1742](https://github.com/chef/ohai/pull/1742) ([saravan2](https://github.com/saravan2))
+- Updating For Ruby 3.1 [#1744](https://github.com/chef/ohai/pull/1744) ([johnmccrae](https://github.com/johnmccrae))
+- Set permissions for GitHub actions [#1746](https://github.com/chef/ohai/pull/1746) ([naveensrinivasan](https://github.com/naveensrinivasan))
+- Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- networking/linux: map src only default routes accordingly [#1741](https://github.com/chef/ohai/pull/1741) ([mattp-](https://github.com/mattp-))
+- Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_stable_release -->
+
 ## [v17.9.0](https://github.com/chef/ohai/tree/v17.9.0) (2021-12-17)
 
 #### Merged Pull Requests
@@ -38,7 +36,6 @@
 - log plugin exception at warn level [#1668](https://github.com/chef/ohai/pull/1668) ([andyjdavis](https://github.com/andyjdavis))
 - Add support for VMware detection on Windows and details [#1720](https://github.com/chef/ohai/pull/1720) ([tecracer-theinen](https://github.com/tecracer-theinen))
 - Fix the exception handling in the chef plugin [#1721](https://github.com/chef/ohai/pull/1721) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v17.7.12](https://github.com/chef/ohai/tree/v17.7.12) (2021-12-02)
 

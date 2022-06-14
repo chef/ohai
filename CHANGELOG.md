@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 18.0.15 -->
+## [v18.0.15](https://github.com/chef/ohai/tree/v18.0.15) (2022-06-14)
+
+#### Merged Pull Requests
+- chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=18.0.14 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.15 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

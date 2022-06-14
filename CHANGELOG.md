@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.15 -->
-## [v18.0.15](https://github.com/chef/ohai/tree/v18.0.15) (2022-06-14)
+<!-- latest_release 18.0.16 -->
+## [v18.0.16](https://github.com/chef/ohai/tree/v18.0.16) (2022-06-14)
 
 #### Merged Pull Requests
-- chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan))
+- Update rubocop-performance requirement from 1.13.3 to 1.14.2 [#1751](https://github.com/chef/ohai/pull/1751) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.13.3 to 1.14.2 [#1751](https://github.com/chef/ohai/pull/1751) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.16 -->
 - chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.15 -->
 <!-- release_rollup -->
 

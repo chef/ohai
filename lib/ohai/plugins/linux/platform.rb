@@ -149,7 +149,8 @@ Ohai.plugin(:Platform) do
       "rhel"
     when /amazon/
       "amazon"
-    when /suse/, /sles/, /opensuseleap/, /opensuse-tumbleweed/, /opensuse-leap-micro/, /opensuse-microos/, /suse-microos/, /opensuse/, /sled/, /sle-hpc/, /sle_hpc/, /sle_rt/
+    # suse matches opensuse, suse-* opensuse-*, etc. sle[sd\-_] intends to matches sles, sled, sle-*, sle_*
+    when /suse/, /sle[sd\-_]/
       "suse"
     when /fedora/, /arista_eos/
       # In the broadest sense:  RPM-based, fedora-derived distributions which are not strictly re-compiled RHEL (if it uses RPMs, and smells more like redhat and less like

@@ -149,7 +149,7 @@ Ohai.plugin(:Platform) do
       "rhel"
     when /amazon/
       "amazon"
-    # suse matches opensuse, suse-* opensuse-*, etc. sle[sd\-_] intends to matches sles, sled, sle-*, sle_*
+    # suse matches opensuse, suse-* opensuse-*, etc. sle[sd\-_] intends to match sles, sled, sle-*, sle_*
     when /suse/, /sle[sd\-_]/
       "suse"
     when /fedora/, /arista_eos/

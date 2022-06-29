@@ -30,6 +30,7 @@ Ohai.plugin(:Fips) do
     fips Mash.new
 
     require "openssl" unless defined?(OpenSSL)
-    fips["kernel"] = { "enabled" => OpenSSL::OPENSSL_FIPS }
+
+    fips["kernel"] = { "enabled" => defined?(OpenSSL.fips_mode) && OpenSSL.fips_mode }
   end
 end

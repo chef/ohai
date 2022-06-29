@@ -33,14 +33,14 @@ describe Ohai::System, "plugin fips" do
 
   context "when OpenSSL reports FIPS mode true" do
     it "sets fips enabled true" do
-      stub_const("OpenSSL::OPENSSL_FIPS", true)
+      allow(OpenSSL).to receive(:fips_mode).and_return(true)
       expect(subject).to be(true)
     end
   end
 
   context "when OpenSSL reports FIPS mode false" do
     it "sets fips enabled false" do
-      stub_const("OpenSSL::OPENSSL_FIPS", false)
+      allow(OpenSSL).to receive(:fips_mode).and_return(false)
       expect(subject).to be(false)
     end
   end

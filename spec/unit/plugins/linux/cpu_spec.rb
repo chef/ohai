@@ -18,7 +18,7 @@
 
 require "spec_helper"
 
-shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture, cpu_opmodes, byte_order, cpus,
+shared_examples "Common cpu info" do |default_cpu, total_cpu, real_cpu, ls_cpu, architecture, cpu_opmodes, byte_order, cpus,
   cpus_online, threads_per_core, cores_per_socket, sockets, numa_nodes, vendor_id, model, model_name, bogomips,
   l1d_cache, l1i_cache, l2_cache, l3_cache, flags, numa_node_cpus|
   describe "cpu" do
@@ -27,9 +27,9 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture,
       expect(plugin[:cpu][:total]).to eq(total_cpu)
     end
 
-    it "has a cpu 0" do
+    it "has a default CPU" do
       plugin.run
-      expect(plugin[:cpu]).to have_key("0")
+      expect(plugin[:cpu]).to have_key(default_cpu)
     end
 
     if ls_cpu
@@ -84,10 +84,10 @@ shared_examples "Common cpu info" do |total_cpu, real_cpu, ls_cpu, architecture,
         expect(plugin[:cpu]["cores_per_socket"]).to eq(cores_per_socket)
       end
 
-      it "cpu 0 has cores to #{cores_per_socket}" do
+      it "default CPU has cores to #{cores_per_socket}" do
         plugin.run
-        expect(plugin[:cpu]["0"]).to have_key("cores")
-        expect(plugin[:cpu]["0"]["cores"]).to eq(cores_per_socket.to_s)
+        expect(plugin[:cpu][default_cpu]).to have_key("cores")
+        expect(plugin[:cpu][default_cpu]["cores"]).to eq(cores_per_socket.to_s)
       end
 
       # s390x shows this differently
@@ -385,6 +385,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
 
     it_behaves_like "Common cpu info",
+      "0",  # default_cpu
       1,    # total_cpu
       1,    # real_cpu
       false # ls_cpu
@@ -478,6 +479,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     numa_node_cpus = { "0" => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       24,                 # total_cpu
       2,                  # real_cpu
       true,               # ls_cpu
@@ -553,6 +555,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     numa_node_cpus = { "0" => [0, 1, 2, 3] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       4,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -615,6 +618,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     numa_node_cpus = { "0" => [0, 1, 2, 3] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       4,                  # total_cpu
       4,                  # real_cpu
       true,               # ls_cpu
@@ -663,6 +667,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     numa_node_cpus = { "0" => [0] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       1,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -717,6 +722,7 @@ describe Ohai::System, "General Linux cpu plugin" do
     numa_node_cpus = { "0" => [0, 1, 2, 3] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       4,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -750,6 +756,65 @@ describe Ohai::System, "General Linux cpu plugin" do
       "Xen"               # hypervisor_vendor
   end
 
+  context "x86 guest on VT-x" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-vtx.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-vtx.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-vtx-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{acpi aperfmperf apic arch_perfmon bts clflush cmov constant_tsc cpuid cx16 cx8 dca de ds_cpl dtes64 dtherm dts ept est flexpriority fpu fxsr ht ida lahf_lm lm mca mce mmx monitor msr mtrr nonstop_tsc nopl nx pae pat pbe pdcm pebs pge pni popcnt pse pse36 pti rdtscp rep_good sep sse sse2 sse4_1 sse4_2 ssse3 syscall tm tm2 tpr_shadow tsc vme vmx vnmi vpid xtopology xtpr}
+    numa_node_cpus = {
+      "0" => [0, 2, 4, 6, 8, 10, 12, 14],
+      "1" => [1, 3, 5, 7, 9, 11, 13, 15],
+    }
+
+    it_behaves_like "Common cpu info",
+      "12",               # default_cpu
+      8,                  # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      16,                 # cpus
+      4,                  # cpus_online
+      0,                  # threads_per_core
+      4,                  # cores_per_socket
+      2,                  # sockets
+      2,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "26",               # model
+      "Intel(R) Xeon(R) CPU           X5570  @ 2.93GHz", # model_name
+      "5852.18",          # bogomips
+      "32K",              # l1d_cache
+      "32K",              # l1i_cache
+      "256K",             # l2_cache
+      "8192K",            # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+
+    it "VT-x x86 processor info" do
+      plugin.run
+
+      expect(plugin[:cpu]).to have_key("family")
+      expect(plugin[:cpu]["family"]).to eq("6")
+
+      expect(plugin[:cpu]).to have_key("stepping")
+      expect(plugin[:cpu]["stepping"]).to eq("5")
+
+      expect(plugin[:cpu]).to have_key("mhz")
+      expect(plugin[:cpu]["mhz"]).to eq("1596.085")
+
+      expect(plugin[:cpu].keys).to include("12", "13")
+      expect(plugin[:cpu]["12"]).not_to have_key("cache_size")
+      expect(plugin[:cpu]["13"]).not_to have_key("cache_size")
+    end
+  end
 end
 
 describe Ohai::System, "S390 linux cpu plugin" do
@@ -764,6 +829,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
   end
 
   it_behaves_like "Common cpu info",
+    "0",  # default_cpu
     4,    # total_cpu
     nil,  # real_cpu
     false # ls_cpu
@@ -809,6 +875,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
     numa_node_cpus = { "0" => [0, 1, 2, 3] }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       4,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -940,7 +1007,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
-  it_behaves_like "Common cpu info", 2, nil, false
+  it_behaves_like "Common cpu info", "0", 2, nil, false
 
   it "has a cpu 1" do
     plugin.run
@@ -971,6 +1038,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     numa_node_cpus = { "0" => Range.new(0, 31).to_a }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       32,                 # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -1035,6 +1103,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     numa_node_cpus = { "0" => Range.new(0, 1).to_a }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       2,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -1078,6 +1147,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     numa_node_cpus = { "0" => Range.new(0, 1).to_a }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       2,                  # total_cpu
       1,                  # real_cpu
       true,               # ls_cpu
@@ -1125,6 +1195,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
   end
 
   it_behaves_like "Common cpu info",
+    "0",  # default_cpu
     2,    # total_cpu
     nil,  # real_cpu
     false # ls_cpu
@@ -1156,6 +1227,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
       }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       32,                 # total_cpu
       2,                  # real_cpu
       true,               # ls_cpu
@@ -1234,6 +1306,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
       }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       20,                 # total_cpu
       4,                  # real_cpu
       true,               # ls_cpu
@@ -1306,6 +1379,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
     numa_node_cpus = { "0" => Range.new(0, 15).to_a }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       16,                 # total_cpu
       16,                 # real_cpu
       true,               # ls_cpu
@@ -1364,6 +1438,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
     numa_node_cpus = { "0" => Range.new(0, 15).to_a }
 
     it_behaves_like "Common cpu info",
+      "0",                # default_cpu
       16,                 # total_cpu
       16,                 # real_cpu
       true,               # ls_cpu

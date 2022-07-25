@@ -22,9 +22,9 @@ Ohai.plugin(:Rpm) do
   provides "rpm"
   optional "true"
 
-  MACROS_MARKER = /========================/.freeze
+  MACROS_MARKER ||= /========================/.freeze
 
-  DO_NOT_SPLIT = %w{
+  DO_NOT_SPLIT ||= %w{
     build_arch
     build_os
     install_arch

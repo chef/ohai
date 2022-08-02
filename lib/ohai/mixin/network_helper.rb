@@ -23,10 +23,12 @@ require "socket" unless defined?(Socket)
 module Ohai
   module Mixin
     module NetworkHelper
-      FAMILIES = {
-        "inet" => "default",
-        "inet6" => "default_inet6",
-      }.freeze
+      unless defined?(FAMILIES)
+        FAMILIES = {
+          "inet" => "default",
+          "inet6" => "default_inet6",
+        }.freeze
+      end
 
       def hex_to_dec_netmask(netmask)
         # example 'ffff0000' -> '255.255.0.0'

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.18 -->
-## [v18.0.18](https://github.com/chef/ohai/tree/v18.0.18) (2022-08-09)
+<!-- latest_release 18.0.19 -->
+## [v18.0.19](https://github.com/chef/ohai/tree/v18.0.19) (2022-08-09)
 
 #### Merged Pull Requests
-- Fix FIPS mode detection [#1754](https://github.com/chef/ohai/pull/1754) ([stanhu](https://github.com/stanhu))
+- Add additional SUSE and openSUSE platforms - micro, hpc [#1753](https://github.com/chef/ohai/pull/1753) ([jamesongithub](https://github.com/jamesongithub))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add additional SUSE and openSUSE platforms - micro, hpc [#1753](https://github.com/chef/ohai/pull/1753) ([jamesongithub](https://github.com/jamesongithub)) <!-- 18.0.19 -->
 - Fix FIPS mode detection [#1754](https://github.com/chef/ohai/pull/1754) ([stanhu](https://github.com/stanhu)) <!-- 18.0.18 -->
 - Do not attempt to reinitialize constants [#1758](https://github.com/chef/ohai/pull/1758) ([balasankarc](https://github.com/balasankarc)) <!-- 18.0.17 -->
 - Update rubocop-performance requirement from 1.13.3 to 1.14.2 [#1751](https://github.com/chef/ohai/pull/1751) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.16 -->

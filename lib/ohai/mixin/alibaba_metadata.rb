@@ -46,6 +46,8 @@ module Ohai
           data = String(response.body)
           parser = FFI_Yajl::Parser.new
           parser.parse(data)
+        elsif id == "/user-data"
+          response.body
         elsif response.body.include?("\n")
           temp = {}
           response.body.split("\n").each do |sub_attr|

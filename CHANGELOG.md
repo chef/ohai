@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.20 -->
-## [v18.0.20](https://github.com/chef/ohai/tree/v18.0.20) (2022-08-09)
+<!-- latest_release 18.0.21 -->
+## [v18.0.21](https://github.com/chef/ohai/tree/v18.0.21) (2022-08-23)
 
 #### Merged Pull Requests
-- Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update rubocop-performance requirement from 1.14.2 to 1.14.3 [#1757](https://github.com/chef/ohai/pull/1757) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.14.2 to 1.14.3 [#1757](https://github.com/chef/ohai/pull/1757) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.21 -->
 - Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.20 -->
 - Add additional SUSE and openSUSE platforms - micro, hpc [#1753](https://github.com/chef/ohai/pull/1753) ([jamesongithub](https://github.com/jamesongithub)) <!-- 18.0.19 -->
 - Fix FIPS mode detection [#1754](https://github.com/chef/ohai/pull/1754) ([stanhu](https://github.com/stanhu)) <!-- 18.0.18 -->

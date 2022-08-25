@@ -35,10 +35,10 @@ module Ohai
         conn = Net::HTTP.start(ALI_METADATA_ADDR)
         conn.read_timeout = 6
         conn.keep_alive_timeout = 6
-        conn.get("/2016-01-01/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
+        conn.get("/2016-01-01/meta-data/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
       end
 
-      def fetch_metadata(id = "", is_dir = true)
+      def fetch_metadata(id = "", is_directory = true)
         response = http_get(id)
         return nil unless response.code == "200"
 
@@ -46,13 +46,12 @@ module Ohai
           data = String(response.body)
           parser = FFI_Yajl::Parser.new
           parser.parse(data)
-        elsif id == "/user-data" || !is_dir
+        elsif !is_directory
           response.body
-        elsif response.body.include?("\n") || is_dir
+        elsif response.body.include?("\n") || is_directory
           temp = {}
           response.body.split("\n").each do |sub_attr|
-            # the top-level (when id == "") URL has no trailing slash, but apparently it's a directory (except user-data)
-            temp[sanitize_key(sub_attr).gsub(/_$/, "")] = fetch_metadata("#{id}/#{sub_attr}", id == "" || has_trailing_slash?(sub_attr))
+            temp[sanitize_key(sub_attr).gsub(/_$/, "")] = fetch_metadata("#{id}#{sub_attr}", has_trailing_slash?(sub_attr))
           end
           temp
         else

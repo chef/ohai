@@ -107,38 +107,41 @@ packages:
       end
     end
 
-    context "when fetching user-data" do
-      let(:response) { double("Net::HTTP Response", body: CONF_STR, code: "200") }
+    ### There's no more /user-data
+    #  context "when fetching user-data" do
+    #   let(:response) { double("Net::HTTP Response", body: CONF_STR, code: "200") }
+    #   it "should not to be continuously requested line by line, and equals to its content" do
+    #     expect { mixin.fetch_metadata("/user-data") }.not_to raise_error
+    #     expect(mixin.fetch_metadata("/user-data")).to eq(CONF_STR)
+    #   end
+    #  end
 
-      it "should not to be continuously requested line by line, and equals to its content" do
-        expect { mixin.fetch_metadata("/user-data") }.not_to raise_error
-        expect(mixin.fetch_metadata("/user-data")).to eq(CONF_STR)
-      end
-    end
+    api_tree = {
+      "meta-data" => {
+        # plain K-V
+        "a" => "b",
+        # nested structure
+        "c" => {
+          "d" => "e",
+        },
+        # has a new-line but not nested
+        "dns-conf" => "1.1.1.1\n1.0.0.1",
+        "eipv4" => nil,
+        "private_ipv4" => "192.168.2.1",
+        "hostname" => "some-host.example.com",
+      },
+      "json-data" => {
+        "dynamic" => JSON_STR,
+      },
+      "user-data" => CONF_STR,
+    }
 
     context "when recursively fetching a tree structure from root" do
       let(:response) { double("Net::HTTP Response", body: "", code: "200") }
 
-      meta_tree = {
-        "meta-data" => {
-          # plain K-V
-          "a" => "b",
-          # nested structure
-          "c" => {
-            "d" => "e",
-          },
-          # has a new-line but not nested
-          "dns-conf" => "1.1.1.1\n1.0.0.1",
-        },
-        "json-data" => {
-          "dynamic" => JSON_STR,
-        },
-        "user-data" => CONF_STR,
-      }
-
       it "should be a nested structure" do
         allow(mixin).to receive(:http_get) do |uri|
-          tree = meta_tree
+          tree = api_tree
 
           uri.split("/").each do |part|
             tree = tree[part] unless part == ""
@@ -158,7 +161,42 @@ packages:
 
         ret = mixin.fetch_metadata
 
-        expect(compare_tree(meta_tree, ret, true)).to eq(true)
+        expect(compare_tree(api_tree, ret, true)).to eq(true)
+      end
+    end
+
+    context "when fetching config from meta-data API" do
+      let(:response) { double("Net::HTTP Response", body: "", code: "200") }
+
+      it "should be accessible directly without 'meta_data' level" do
+        allow(mixin).to receive(:http_get) do |uri|
+          tree = api_tree["meta-data"]
+
+          uri.split("/").each do |part|
+            tree = tree[part] unless part == ""
+          end
+
+          output = [tree]
+          if tree.class == Hash
+            output = tree.keys.map do |key|
+              ret = key
+              ret += "/" if tree[key].class == Hash
+              ret
+            end
+          end
+
+          double("Net::HTTP Response", body: output.join("\n"), code: "200")
+        end
+
+        ret = mixin.fetch_metadata
+
+        expect(ret["meta_data"]).to eq(nil)
+
+        expect(ret["eipv4"]).to eq(nil)
+        expect(ret["private_ipv4"]).to eq(api_tree["meta-data"]["private_ipv4"])
+        expect(ret["hostname"]).to eq(api_tree["meta-data"]["hostname"])
+
+        expect(compare_tree(api_tree["meta-data"], ret, true)).to eq(true)
       end
     end
 

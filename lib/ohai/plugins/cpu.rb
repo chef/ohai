@@ -344,15 +344,23 @@ Ohai.plugin(:CPU) do
     cpuinfo
   end
 
+  # Check if the `lscpu` data looks reasonable
+  def valid_lscpu?(lscpu)
+    return false if lscpu.empty?
+    return false if %i{total real cores}.any? { |key| lscpu[key].to_i == 0 }
+
+    true
+  end
+
   collect_data(:linux) do
     cpuinfo = parse_cpuinfo
     lscpu = parse_lscpu(cpuinfo)
 
-    # If we don't have any data from lscpu then get it from /proc/cpuinfo
-    if lscpu.empty?
-      cpu cpuinfo
-    else
+    # If we don't have any sensible data from lscpu then get it from /proc/cpuinfo
+    if valid_lscpu?(lscpu)
       cpu lscpu
+    else
+      cpu cpuinfo
     end
   end
 

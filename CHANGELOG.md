@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.22 -->
-## [v18.0.22](https://github.com/chef/ohai/tree/v18.0.22) (2022-08-30)
+<!-- latest_release 18.0.23 -->
+## [v18.0.23](https://github.com/chef/ohai/tree/v18.0.23) (2022-09-06)
 
 #### Merged Pull Requests
-- Fall back to /proc/cpuinfo if lscpu doesn&#39;t have CPU totals [#1761](https://github.com/chef/ohai/pull/1761) ([stanhu](https://github.com/stanhu))
+- Use a minimum of 1 thread per core for CPU total calculation [#1756](https://github.com/chef/ohai/pull/1756) ([stanhu](https://github.com/stanhu))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Use a minimum of 1 thread per core for CPU total calculation [#1756](https://github.com/chef/ohai/pull/1756) ([stanhu](https://github.com/stanhu)) <!-- 18.0.23 -->
 - Fall back to /proc/cpuinfo if lscpu doesn&#39;t have CPU totals [#1761](https://github.com/chef/ohai/pull/1761) ([stanhu](https://github.com/stanhu)) <!-- 18.0.22 -->
 - Update rubocop-performance requirement from 1.14.2 to 1.14.3 [#1757](https://github.com/chef/ohai/pull/1757) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.21 -->
 - Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.20 -->

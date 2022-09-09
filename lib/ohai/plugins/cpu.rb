@@ -193,7 +193,8 @@ Ohai.plugin(:CPU) do
           lscpu_real = lscpu_info[:sockets]
           lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         else
-          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core]
+          threads_per_core = [lscpu_info[:threads_per_core], 1].max
+          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * threads_per_core
           lscpu_real = lscpu_info[:sockets]
           lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         end

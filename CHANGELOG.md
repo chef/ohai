@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.25 -->
-## [v18.0.25](https://github.com/chef/ohai/tree/v18.0.25) (2022-10-11)
+<!-- latest_release 18.0.26 -->
+## [v18.0.26](https://github.com/chef/ohai/tree/v18.0.26) (2022-10-11)
 
 #### Merged Pull Requests
-- [ohai][ec2][looks_like_ec2] Do not depend on metadata endpoint [#1768](https://github.com/chef/ohai/pull/1768) ([gbatye](https://github.com/gbatye))
+- Fix linter error [#1770](https://github.com/chef/ohai/pull/1770) ([marcparadise](https://github.com/marcparadise))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix linter error [#1770](https://github.com/chef/ohai/pull/1770) ([marcparadise](https://github.com/marcparadise)) <!-- 18.0.26 -->
 - [ohai][ec2][looks_like_ec2] Do not depend on metadata endpoint [#1768](https://github.com/chef/ohai/pull/1768) ([gbatye](https://github.com/gbatye)) <!-- 18.0.25 -->
 - Update rubocop-performance requirement from 1.14.3 to 1.15.0 [#1769](https://github.com/chef/ohai/pull/1769) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.24 -->
 - Use a minimum of 1 thread per core for CPU total calculation [#1756](https://github.com/chef/ohai/pull/1756) ([stanhu](https://github.com/stanhu)) <!-- 18.0.23 -->

@@ -28,10 +28,8 @@
 
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
-  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::Ec2Metadata
-  include Ohai::Mixin::HttpHelper
 
   provides "ec2"
 
@@ -107,11 +105,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
     return true if hint?("ec2")
-
-    # Even if it looks like EC2 try to connect first
-    if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
-      return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
-    end
+    return true if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
   end
 
   collect_data do

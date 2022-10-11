@@ -104,8 +104,7 @@ Ohai.plugin(:EC2) do
   # a single check that combines all the various detection methods for EC2
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
-    return true if hint?("ec2")
-    return true if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
+    hint?("ec2") || has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
   end
 
   collect_data do

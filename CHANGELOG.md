@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 17.9.1 -->
+## [v17.9.1](https://github.com/chef/ohai/tree/v17.9.1) (2022-11-03)
+
+#### Merged Pull Requests
+- Update chef gems need to refer chef-17 [#1772](https://github.com/chef/ohai/pull/1772) ([vkarve-chef](https://github.com/vkarve-chef))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=18.0.14 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Update chef gems need to refer chef-17 [#1772](https://github.com/chef/ohai/pull/1772) ([vkarve-chef](https://github.com/vkarve-chef)) <!-- 17.9.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

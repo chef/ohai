@@ -151,7 +151,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:role]).to eq("guest")
       expect(plugin[:virtualization][:systems][:parallels]).to eq("guest")
     end
-    
+
     it "sets parallels host if /usr/local/bin/prlctl exists, /usr/sbin/ioreg exists, and ioreg's output does not contain pci1ab8,4000" do
       allow(plugin).to receive(:prlctl_exists?).and_return("/usr/local/bin/prlctl")
       allow(plugin).to receive(:ioreg_exists?).and_return(true)

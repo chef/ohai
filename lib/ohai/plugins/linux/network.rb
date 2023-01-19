@@ -80,9 +80,22 @@ Ohai.plugin(:Network) do
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
       if /\\/.match?(line)
-        parts = line.split('\\')
-        route_dest = parts.shift.strip
-        route_endings = parts
+        # If we have multipath routing, then the first part will be a normal
+        # looking route:
+        #   default proto ra metric 1024 <other options>
+        # Each successive part after that is a hop without those options.
+        # So the first thing we do is grab that first part, and split it into
+        # the route destination ("default"), and the route options.
+        parts = line.split("\\")
+        route_dest, dest_opts = parts.first.split(nil, 2)
+        # Then all the route endings, generally just nexthops.
+        route_endings = parts[1..-1]
+        if dest_opts && !dest_opts.empty?
+          # Route options like proto, metric, etc. only appear once for each
+          # multipath configuration. Prepend this information to the route
+          # endings so the code below will assign the fields properly.
+          route_endings.map! { |e| e.include?("nexthop") ? "#{dest_opts} #{e}" : e }
+        end
       elsif line =~ /^([^\s]+)\s(.*)$/
         route_dest = $1
         route_endings = [$2]
@@ -90,9 +103,24 @@ Ohai.plugin(:Network) do
         next
       end
       route_endings.each do |route_ending|
+        route_entry = Mash.new(destination: route_dest,
+                               family: family[:name])
+        route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
-        else
+        end
+        # does any known interface own the src address?
+        # we try to infer the interface/device from its address if it isn't specified
+        # we want to override the interface set via nexthop but only if possible
+        if line =~ /\bsrc\s+([^\s]+)\b/ && (!route_int || line.include?("nexthop"))
+          # only clobber previously set route_int if we find a match
+          if (match = iface.select { |name, intf| intf.fetch("addresses", {}).any? { |addr, _| addr == $1 } }.keys.first)
+            route_int = match
+            route_entry[:inferred] = true
+          end
+        end
+
+        unless route_int
           logger.trace("Plugin Network: Skipping route entry without a device: '#{line}'")
           next
         end
@@ -103,8 +131,6 @@ Ohai.plugin(:Network) do
           next
         end
 
-        route_entry = Mash.new(destination: route_dest,
-                               family: family[:name])
         %w{via scope metric proto src}.each do |k|
           # http://rubular.com/r/pwTNp65VFf
           route_entry[k] = $1 if route_ending =~ /\b#{k}\s+([^\s]+)/
@@ -273,6 +299,30 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # determine offload features for the interface using ethtool
+  def ethernet_offload_parameters(iface)
+    return iface unless ethtool_binary_path
+
+    iface.each_key do |tmp_int|
+      next unless iface[tmp_int][:encapsulation] == "Ethernet"
+
+      so = shell_out("#{ethtool_binary_path} -k #{tmp_int}")
+      Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
+      iface[tmp_int]["offload_params"] = {}
+      so.stdout.lines.each do |line|
+        next if line.start_with?("Features for")
+        next if line.strip.nil?
+
+        key, val = line.split(/:\s+/)
+        if val
+          offload_key = key.downcase.strip.tr(" ", "_").to_s
+          iface[tmp_int]["offload_params"][offload_key] = val.downcase.gsub(/\[.*\]/, "").strip.to_s
+        end
+      end
+    end
+    iface
+  end
+
   # determine pause parameters for the interface using ethtool
   def ethernet_pause_parameters(iface)
     return iface unless ethtool_binary_path
@@ -326,6 +376,7 @@ Ohai.plugin(:Network) do
     so = shell_out("ip -d -s link")
     tmp_int = nil
     on_rx = true
+    xdp_mode = nil
     so.stdout.lines do |line|
       if line =~ IPROUTE_INT_REGEX
         tmp_int = $2
@@ -400,6 +451,30 @@ Ohai.plugin(:Network) do
       # https://rubular.com/r/JRp6lNANmpcLV5
       if line =~ /\sstate (\w+)/
         iface[tmp_int]["state"] = $1.downcase
+      end
+
+      if line.include?("xdp")
+        mode = line.scan(/\s(xdp|xdpgeneric|xdpoffload|xdpmulti)\s/).flatten[0]
+        # Fetches and sets the mode from the first line.
+        unless mode.nil?
+          iface[tmp_int][:xdp] = {}
+          if mode.eql?("xdp")
+            # In case of xdpdrv, mode is xdp,
+            # to keep it consistent, keeping mode as xdpdrv.
+            mode = "xdpdrv"
+          end
+          xdp_mode = mode
+          iface[tmp_int][:xdp][:attached] = []
+        end
+
+        if line =~ %r{prog/(\w+) id (\d+) tag (\w+)}
+          mode = $1.eql?("xdp") ? xdp_mode : $1
+          iface[tmp_int][:xdp][:attached] << {
+            mode: mode,
+            id: $2,
+            tag: $3,
+          }
+        end
       end
     end
     iface
@@ -583,10 +658,12 @@ Ohai.plugin(:Network) do
       # sorting the selected routes:
       # - getting default routes first
       # - then sort by metric
+      # - then sort by if the device was inferred or not (preferring explicit to inferred)
       # - then by prefixlen
       [
        r[:destination] == "default" ? 0 : 1,
        r[:metric].nil? ? 0 : r[:metric].to_i,
+       r[:inferred] ? 1 : 0,
        # for some reason IPAddress doesn't accept "::/0", it doesn't like prefix==0
        # just a quick workaround: use 0 if IPAddress fails
        begin
@@ -793,6 +870,7 @@ Ohai.plugin(:Network) do
     iface = ethernet_ring_parameters(iface)
     iface = ethernet_channel_parameters(iface)
     iface = ethernet_coalesce_parameters(iface)
+    iface = ethernet_offload_parameters(iface)
     iface = ethernet_driver_info(iface)
     iface = ethernet_pause_parameters(iface)
     counters[:network][:interfaces] = net_counters

@@ -136,7 +136,7 @@ Ohai.plugin(:Packages) do
     collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
     # on 64 bit systems, 32 bit programs are stored here moved before HKEY_CURRENT_USER otherwise it is not collected (impacts both ohai 16 & 17)
     collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall')
-    collect_programs_from_registry_key(Win32::Registry::HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')
+    collect_programs_from_registry_key(Win32::Registry::HKEY_CURRENT_USER, 'Software\Microsoft\Windows\CurrentVersion\Uninstall') rescue nil
     # on 64 bit systems, 32 bit programs are stored here
   end
 

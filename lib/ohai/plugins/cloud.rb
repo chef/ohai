@@ -341,7 +341,7 @@ Ohai.plugin(:Cloud) do
   # OCI
   # ----------------------------------------
 
-  # Is current Oracle Cloud Infraestructure?
+  # Is current Oracle Cloud Infrastructure?
   #
   # === Return
   # true:: If oci Hash is defined

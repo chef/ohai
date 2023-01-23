@@ -351,10 +351,10 @@ Ohai.plugin(:Cloud) do
   end
 
   # Fill cloud hash with OCI values
-  def get_oci_values
-    oci["metadata"]["network"].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic['privateIp'], :private) }
-    @cloud_attr_obj.local_hostname = oci["metadata"]['compute']['hostname']
-    @cloud_attr_obj.provider = "oci"
+  def oci_values
+    oci['metadata']['network']['interface'].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic['privateIp'], :private) }
+    @cloud_attr_obj.local_hostname = oci['metadata']['compute']['hostname']
+    @cloud_attr_obj.provider = 'oci'
   end
 
   collect_data do
@@ -372,7 +372,7 @@ Ohai.plugin(:Cloud) do
     get_digital_ocean_values if on_digital_ocean?
     get_softlayer_values if on_softlayer?
     get_alibaba_values if on_alibaba?
-    get_oci_values if on_oci?
+    oci_values if on_oci?
 
     cloud @cloud_attr_obj.cloud_mash
   end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #
 # Author:: Renato Covarrubias (<rnt@rnt.cl>)
 # License:: Apache License, Version 2.0
@@ -15,15 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "net/http" unless defined?(Net::HTTP)
+require 'net/http' unless defined?(Net::HTTP)
 
 module Ohai
   module Mixin
     module OCIMetadata
-
-      # Trailing dot to host is added to avoid DNS search path
-      OCI_METADATA_ADDR ||= "169.254.169.254"
-      OCI_METADATA_URL ||= "/opc/v2"
+      OCI_METADATA_ADDR = '169.254.169.254'
+      OCI_METADATA_URL = '/opc/v2'
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)
@@ -33,14 +32,14 @@ module Ohai
           uri,
           {
             'Authorization' => 'Bearer Oracle',
-            "User-Agent" => "chef-ohai/#{Ohai::VERSION}",
+            'User-Agent' => "chef-ohai/#{Ohai::VERSION}"
           }
         )
       end
 
-      def fetch_metadata(metadata = "instance")
+      def fetch_metadata(metadata = 'instance')
         response = http_get("#{OCI_METADATA_URL}/#{metadata}")
-        return nil unless response.code == "200"
+        return nil unless response.code == '200'
 
         if json?(response.body)
           data = String(response.body)

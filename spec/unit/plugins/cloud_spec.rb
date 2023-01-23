@@ -87,6 +87,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:gce] = nil
       @plugin[:digital_ocean] = nil
       @plugin[:softlayer] = nil
+      @plugin[:oci] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
     end
@@ -511,4 +512,80 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe 'with OCI mash' do
+    before do
+      @plugin[:oci] = Mash.new
+      @plugin[:oci][:metadata] = {
+        'compute' => {
+          'availabilityDomain' => 'EMIr:PHX-AD-1',
+          'faultDomain' => 'FAULT-DOMAIN-3',
+          'compartmentId' => 'ocid1.tenancy.oc1..exampleuniqueID',
+          'displayName' => 'my-example-instance',
+          'hostname' => 'my-hostname',
+          'id' => 'ocid1.instance.oc1.phx.exampleuniqueID',
+          'image' => 'ocid1.image.oc1.phx.exampleuniqueID',
+          'metadata' => {
+            'ssh_authorized_keys' => 'example-ssh-key'
+          },
+          'region' => 'phx',
+          'canonicalRegionName' => 'us-phoenix-1',
+          'ociAdName' => 'phx-ad-1',
+          'regionInfo' => {
+            'realmKey' => 'oc1',
+            'realmDomainComponent' => 'oraclecloud.com',
+            'regionKey' => 'PHX',
+            'regionIdentifier' => 'us-phoenix-1'
+          },
+          'shape' => 'VM.Standard.E3.Flex',
+          'state' => 'Running',
+          'timeCreated' => 1_600_381_928_581,
+          'agentConfig' => {
+            'monitoringDisabled' => false,
+            'managementDisabled' => false,
+            'allPluginsDisabled' => false,
+            'pluginsConfig' => [
+              { 'name' => 'OS Management Service Agent', 'desiredState' => 'ENABLED' },
+              { 'name' => 'Custom Logs Monitoring', 'desiredState' => 'ENABLED' },
+              { 'name' => 'Compute Instance Run Command', 'desiredState' => 'ENABLED' },
+              { 'name' => 'Compute Instance Monitoring', 'desiredState' => 'ENABLED' }
+            ]
+          },
+          'freeformTags' => {
+            'Department' => 'Finance'
+          },
+          'definedTags' => {
+            'Operations' => {
+              'CostCenter' => '42'
+            }
+          }
+        },
+        'network' => {
+          'interface' => [
+            { 'vnicId' => 'ocid1.vnic.oc1.phx.exampleuniqueID', 'privateIp' => '10.0.3.6', 'vlanTag' => 11,
+              'macAddr' => '00:00:00:00:00:01', 'virtualRouterIp' => '10.0.3.1', 'subnetCidrBlock' => '10.0.3.0/24',
+              'nicIndex' => 0 },
+            { 'vnicId' => 'ocid1.vnic.oc1.phx.exampleuniqueID', 'privateIp' => '10.0.4.3', 'vlanTag' => 12,
+              'macAddr' => '00:00:00:00:00:02', 'virtualRouterIp' => '10.0.4.1', 'subnetCidrBlock' => '10.0.4.0/24',
+              'nicIndex' => 0 }
+          ]
+        }
+      }
+    end
+
+    it "doesn't populates cloud vm_name" do
+      @plugin.run
+      expect(@plugin[:cloud][:vm_name]).not_to eq('testtest')
+    end
+
+    it 'populates cloud local_hostname' do
+      @plugin[:oci]['metadata']['compute']['hostname'] = 'my-hostname'
+      @plugin.run
+      expect(@plugin[:cloud][:local_hostname]).to eq('my-hostname')
+    end
+
+    it 'populates cloud provider' do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq('oci')
+    end
+  end
 end

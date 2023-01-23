@@ -535,9 +535,13 @@ describe Ohai::System, "plugin cloud" do
     end
 
     it 'populates cloud local_hostname' do
-      @plugin[:oci]['metadata']['compute']['hostname'] = 'my-hostname'
       @plugin.run
       expect(@plugin[:cloud][:local_hostname]).to eq('my-hostname')
+    end
+
+    it 'populates cloud private ip' do
+      @plugin.run
+      expect(@plugin[:cloud][:local_ipv4]).to eq(@plugin[:oci][:metadata][:network][:interface][0]['privateIp'])
     end
 
     it 'populates cloud provider' do

@@ -74,9 +74,9 @@ Ohai.plugin(:Oci) do
 
     unless vnics_data.nil?
       metadata['network'] = Mash.new
-      metadata['network']['interfaces'] = []
+      metadata['network']['interface'] = []
       vnics_data.each do |v|
-        metadata['network']['interfaces'].append(v)
+        metadata['network']['interface'].append(v)
       end
     end
 

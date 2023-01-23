@@ -35,7 +35,10 @@ Ohai.plugin(:Timezone) do
     # * [ISO/IEC 8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1)
     # * [Windows-1252](https://en.wikipedia.org/wiki/Windows-1252)
     if time[:timezone].encoding == Encoding::IBM437
+      # Assume encoding is WINDOWS_1252
       time[:timezone] = time[:timezone].force_encoding(Encoding::WINDOWS_1252)
+      # Re-encode in UTF_8. Note: If other encodings have problems converting
+      # it might be worth re-encode everything in UTF_8.
       time[:timezone] = time[:timezone].encode(Encoding::UTF_8)
     end
   end

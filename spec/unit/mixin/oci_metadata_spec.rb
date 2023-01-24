@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
-require 'ohai/mixin/oci_metadata'
+require "spec_helper"
+require "ohai/mixin/oci_metadata"
 
 describe Ohai::Mixin::OCIMetadata do
   let(:mixin) do
@@ -27,26 +27,26 @@ describe Ohai::Mixin::OCIMetadata do
   end
 
   before do
-    logger = instance_double('Mixlib::Log::Child', trace: nil, debug: nil, warn: nil)
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
     allow(mixin).to receive(:logger).and_return(logger)
   end
 
-  describe '#http_get' do
-    it 'gets the passed URI' do
-      http_mock = double('http')
+  describe "#http_get" do
+    it "gets the passed URI" do
+      http_mock = double("http")
       allow(http_mock).to receive(:read_timeout=)
-      allow(Net::HTTP).to receive(:start).with('169.254.169.254').and_return(http_mock)
+      allow(Net::HTTP).to receive(:start).with("169.254.169.254").and_return(http_mock)
 
-      expect(http_mock).to receive(:get).with('169.254.169.254',
-                                              { 'Authorization' => 'Bearer Oracle',
-                                                'User-Agent' => "chef-ohai/#{Ohai::VERSION}" })
-      mixin.http_get('169.254.169.254')
+      expect(http_mock).to receive(:get).with("169.254.169.254",
+                                              { "Authorization" => "Bearer Oracle",
+                                                "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
+      mixin.http_get("169.254.169.254")
     end
   end
 
-  describe '#fetch_metadata' do
-    it 'returns an empty hash given a non-200 response' do
-      http_mock = double('http', { code: '404' })
+  describe "#fetch_metadata" do
+    it "returns an empty hash given a non-200 response" do
+      http_mock = double("http", { code: "404" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).not_to receive(:warn)
@@ -54,13 +54,13 @@ describe Ohai::Mixin::OCIMetadata do
       expect(vals).to eq(nil)
     end
 
-    it 'returns a populated hash given valid JSON response' do
-      http_mock = double('http', { code: '200', body: '{ "foo": "bar"}' })
+    it "returns a populated hash given valid JSON response" do
+      http_mock = double("http", { code: "200", body: '{ "foo": "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).not_to receive(:warn)
       vals = mixin.fetch_metadata
-      expect(vals).to eq({ 'foo' => 'bar' })
+      expect(vals).to eq({ "foo" => "bar" })
     end
   end
 end

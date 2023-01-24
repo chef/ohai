@@ -352,9 +352,9 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with OCI values
   def oci_values
-    oci['metadata']['network']['interface'].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic['privateIp'], :private) }
-    @cloud_attr_obj.local_hostname = oci['metadata']['compute']['hostname']
-    @cloud_attr_obj.provider = 'oci'
+    oci["metadata"]["network"]["interface"].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic["privateIp"], :private) }
+    @cloud_attr_obj.local_hostname = oci["metadata"]["compute"]["hostname"]
+    @cloud_attr_obj.provider = "oci"
   end
 
   collect_data do

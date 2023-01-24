@@ -56,9 +56,12 @@ Ohai.plugin(:VMware) do
           if param == 'hosttime' && vmtools_path =~ /Program Files/
             # popen and %x return stdout encoded as IBM437 in Windows but in a string marked
             # UTF-8. The string doesn't throw an exception when encoded to "UTF-8" but
-            # displays [?] character in Windows without this. .force_encoding(Encoding::ISO_8859_1)
-            # causes the character to be dropped and .force_encoding(Encoding::Windows_1252) displays
-            # the „ character in place of an ä.
+            # displays [?] character in Windows without this.
+            #
+            # .force_encoding(Encoding::ISO_8859_1) causes the character to be dropped
+            # and .force_encoding(Encoding::Windows_1252) displays the „ character in place
+            # of an ä. .force_encoding(Encoding::IBM437) allows for the correct characters
+            # to be displayed.
             vmware[param] = vmware[param].force_encoding(Encoding::IBM437).encode("UTF-8")
           end
           if /UpdateInfo failed/.match?(vmware[param])

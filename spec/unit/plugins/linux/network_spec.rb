@@ -33,11 +33,9 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:1392844460 (1.2 GiB)  TX bytes:691785313 (659.7 MiB)
                 Interrupt:16
-
       eth0:5    Link encap:Ethernet  HWaddr 00:0c:29:41:71:45
                 inet addr:192.168.5.1  Bcast:192.168.5.255  Mask:255.255.255.0
                 UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-
       eth0.11   Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
                 inet addr:192.168.0.16  Bcast:192.168.0.255  Mask:255.255.255.0
                 inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
@@ -48,7 +46,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:3269635153 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:1751940374 (1.6 GiB)  TX bytes:2195567597 (2.0 GiB)
-
       eth0.151  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
                 inet addr:10.151.0.16  Bcast:10.151.0.255  Mask:255.255.255.0
                 inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
@@ -57,7 +54,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:163901336 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:3190792261 (2.9 GiB)  TX bytes:755086548 (720.1 MiB)
-
       eth0.152  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
                 inet addr:10.152.1.16  Bcast:10.152.3.255  Mask:255.255.252.0
                 inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
@@ -66,7 +62,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:55232 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:664957462 (634.1 MiB)  TX bytes:4876434 (4.6 MiB)
-
       eth0.153  Link encap:Ethernet  HWaddr 00:aa:bb:cc:dd:ee
                 inet addr:10.153.1.16  Bcast:10.153.3.255  Mask:255.255.252.0
                 inet6 addr: fe80::2aa:bbff:fecc:ddee/64 Scope:Link
@@ -75,10 +70,8 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:1798627472 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:4047036732 (3.7 GiB)  TX bytes:3451231474 (3.2 GiB)
-
       foo:veth0@eth0 Link encap:Ethernet  HWaddr ca:b3:73:8b:0c:e4
                 BROADCAST MULTICAST  MTU:1500  Metric:1
-
       tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
                 inet addr:172.16.19.39  P-t-P:172.16.19.1  Mask:255.255.255.255
                 UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
@@ -86,21 +79,18 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:100
                 RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
-
       venet0    Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
                 UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
                 RX packets:57200 errors:0 dropped:0 overruns:0 frame:0
                 TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:100
                 RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
-
       venet0:0  Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
                 UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1418  Metric:1
                 RX packets:57200 errors:0 dropped:0 overruns:0 frame:0
                 TX packets:13782 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:100
                 RX bytes:7377600 (7.0 MiB)  TX bytes:1175481 (1.1 MiB)
-
       lo        Link encap:Local Loopback
                 inet addr:127.0.0.1  Mask:255.0.0.0
                 inet6 addr: ::1/128 Scope:Host
@@ -109,7 +99,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:524 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:35224 (34.3 KiB)  TX bytes:35224 (34.3 KiB)
-
       eth3      Link encap:Ethernet  HWaddr E8:39:35:C5:C8:54
                 UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
                 RX packets:13395101 errors:0 dropped:0 overruns:0 frame:0
@@ -117,7 +106,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:1325650573 (1.2 GiB)  TX bytes:1666310189 (1.5 GiB)
                 Interrupt:36 Memory:f4800000-f4ffffff
-
       eth13     Link encap:Ethernet  HWaddr 00:ba:ba:10:21:21
                 inet addr:10.21.21.21  Bcast:10.21.21.255  Mask:255.255.255.0
                 inet6 addr: fe80::2ba:baff:fe10:2121/64 Scope:Link
@@ -127,14 +115,12 @@ describe Ohai::System, "Linux Network Plugin" do
                 collisions:0 txqueuelen:1000
                 RX bytes:21 (2.1 GiB)  TX bytes:21 (2.1 GiB)
                 Interrupt:21
-
       ovs-system Link encap:Ethernet  HWaddr 7A:7A:80:80:6C:24
                 BROADCAST MULTICAST  MTU:1500  Metric:1
                 RX packets:0 errors:0 dropped:0 overruns:0 frame:0
                 TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
-
       xapi1     Link encap:Ethernet  HWaddr E8:39:35:C5:C8:50
                 inet addr:192.168.13.34  Bcast:192.168.13.255  Mask:255.255.255.0
                 UP BROADCAST RUNNING  MTU:1500  Metric:1
@@ -142,7 +128,6 @@ describe Ohai::System, "Linux Network Plugin" do
                 TX packets:6 errors:0 dropped:0 overruns:0 carrier:0
                 collisions:0 txqueuelen:0
                 RX bytes:21515031 (20.5 MiB)  TX bytes:2052 (2.0 KiB)
-
       fwdintf   Link encap:Ethernet  HWaddr 00:00:00:00:00:0a
                 inet6 addr: fe80::200:ff:fe00:a/64 Scope:Link
                 UP RUNNING NOARP MULTICAST  MTU:1496  Metric:1
@@ -386,7 +371,6 @@ describe Ohai::System, "Linux Network Plugin" do
       RX Mini:	0
       RX Jumbo:	0
       TX:		8192
-
     EOM
   end
 
@@ -403,7 +387,6 @@ describe Ohai::System, "Linux Network Plugin" do
       TX:	0
       Other:	0
       Combined:		16
-
     EOM
   end
 
@@ -415,27 +398,32 @@ describe Ohai::System, "Linux Network Plugin" do
       sample-interval: 0
       pkt-rate-low: 0
       pkt-rate-high: 0
-
       rx-usecs: 33
       rx-frames: 88
       rx-usecs-irq: 0
       rx-frames-irq: 0
-
       tx-usecs: 8
       tx-frames: 128
       tx-usecs-irq: 0
       tx-frames-irq: 0
-
       rx-usecs-low: 0
       rx-frame-low: 0
       tx-usecs-low: 0
       tx-frame-low: 0
-
       rx-usecs-high: 0
       rx-frame-high: 0
       tx-usecs-high: 0
       tx-frame-high: 0
+    EOM
+  end
 
+  let(:linux_ethtool_k) do
+    <<~EOM
+      Features for eth0:
+      rx-checksumming: on
+      tx-checksumming: off
+      rx-vlan-offload: on [fixed]
+      rx-gro-hw: off [fixed]
     EOM
   end
 
@@ -451,7 +439,6 @@ describe Ohai::System, "Linux Network Plugin" do
       supports-eeprom-access: no
       supports-register-dump: no
       supports-priv-flags: yes
-
     EOM
   end
 
@@ -461,11 +448,11 @@ describe Ohai::System, "Linux Network Plugin" do
       Autonegotiate:	on
       RX:		off
       TX:		on
-
     EOM
   end
 
   before do
+    allow(File).to receive(:exist?).and_call_original
     allow(plugin).to receive(:collect_os).and_return(:linux)
 
     allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, linux_ip_addr, ""))
@@ -480,6 +467,7 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
+    allow(plugin).to receive(:shell_out).with(/ethtool -k/).and_return(mock_shell_out(0, linux_ethtool_k, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
     allow(plugin).to receive(:shell_out).with(/ethtool -a/).and_return(mock_shell_out(0, linux_ethtool_a, ""))
@@ -727,6 +715,13 @@ describe Ohai::System, "Linux Network Plugin" do
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-register-dump"]).to eq("no")
         expect(plugin["network"]["interfaces"]["eth0"]["driver_info"]["supports-priv-flags"]).to eq("yes")
 
+      end
+
+      it "detects the driver offload features of an ethernet interface" do
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-checksumming"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["tx-checksumming"]).to eq("off")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-vlan-offload"]).to eq("on")
+        expect(plugin["network"]["interfaces"]["eth0"]["offload_params"]["rx-gro-hw"]).to eq("off")
       end
 
       it "detects the pause frame configuration of an ethernet interface" do
@@ -1200,6 +1195,46 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
+      describe "when there're multipath routes" do
+        let(:linux_ip_route) do
+          <<~EOM
+            10.5.4.0/24 proto static \\ nexthop via 10.5.4.1 dev eth0 weight 1\\ nexthop via 10.5.4.2 dev eth0 weight 1
+          EOM
+        end
+
+        let(:linux_ip_route_inet6) do
+          <<~EOM
+            default proto ra metric 1024 expires 1797sec \\        nexthop via fe80::c018:50ff:fe41:ca33 dev eth0.11 weight 1 \\        nexthop via fe80::c018:50ff:fe41:ca33 dev eth0 weight 1 pref medium
+            default proto ra metric 1050 expires 1796sec \\        nexthop via fe80::c018:50ff:fe3f:9184 dev eth3 weight 1 \\        nexthop via fe80::c018:50ff:fe3f:9184 dev eth13 weight 1 pref medium
+          EOM
+        end
+
+        before do
+          plugin.run
+        end
+
+        it "completes the run" do
+          expect(plugin.logger).not_to receive(:trace).with(/Plugin linux::network threw exception/)
+          expect(plugin["network"]).not_to be_nil
+        end
+
+        it "sets default ipv6 interface and gateway" do
+          expect(plugin["network"]["default_inet6_interface"]).to eq("eth0")
+          expect(plugin["network"]["default_inet6_gateway"]).to eq("fe80::c018:50ff:fe41:ca33")
+        end
+
+        it "sets the routes properly" do
+          expect(plugin["network"]["interfaces"]["eth0"]["routes"]).to eq([
+            Mash.new( destination: "10.5.4.0/24", family: "inet", proto: "static", via: "10.5.4.1" ),
+            Mash.new( destination: "10.5.4.0/24", family: "inet", proto: "static", via: "10.5.4.2" ),
+            Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe41:ca33", metric: "1024" ),
+          ])
+          expect(plugin["network"]["interfaces"]["eth0.11"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe41:ca33", metric: "1024" )])
+          expect(plugin["network"]["interfaces"]["eth13"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe3f:9184", metric: "1050" )])
+          expect(plugin["network"]["interfaces"]["eth3"]["routes"]).to eq([Mash.new( destination: "default", family: "inet6", proto: "ra", via: "fe80::c018:50ff:fe3f:9184", metric: "1050" )])
+        end
+      end
+
       describe "when there's a source field in a local route entry but it isnt in the default route" do
         let(:linux_ip_route) do
           <<~EOM
@@ -1273,6 +1308,73 @@ describe Ohai::System, "Linux Network Plugin" do
               expect(plugin["macaddress"]).to be_nil
             end
           end
+        end
+      end
+
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 172.16.19.39 is chosen over 10.116.201.254 because its metric is lower (10 < 20)
+      describe "when there's a source field in a local route entry but no dev in the route" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.254 dev eth0 metric 20 src 10.116.201.74
+            10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+            192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+          EOM
+        end
+        let(:linux_ip_route_inet6) { "" }
+
+        it "maps the no-dev route and sets ipaddress" do
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("172.16.19.39")
+        end
+      end
+
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 10.116.201.254 is chosen over 172.16.19.39 and 10.116.201.1 because its metric is lower (5 < 10, 10)
+      describe "when there's a source field in a local route entry but no dev with a higher priority default route" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default via 10.116.201.254 dev eth0 metric 5 src 10.116.201.74
+            default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.1 dev eth0 metric 10 src 10.116.201.1
+            10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+            192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+          EOM
+        end
+        let(:linux_ip_route_inet6) { "" }
+
+        it "maps the dev route and sets ipaddress" do
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("10.116.201.74")
+        end
+      end
+
+      # notes:
+      # route 172.16.19.39 is the addr of tun0 ; see :linux_ifconfig at top of file
+      # route 10.116.201.0/24 is discarded because it is not a default route
+      # route 192.168.0.0/24 is discarded because src 192.168.0.2 does not match eth0 ("Skipping route entry whose src does not match the interface IP")
+      # route 10.116.201.254 is chosen over 172.16.19.39 because routes with an explict device are preferred over ones that are inferred when metrics are equal
+      describe "when there's a source field in a local route entry but no dev, but a dev route with the same metric" do
+        let(:linux_ip_route) do
+          <<~EOM
+            default proto bird src 172.16.19.39 metric 10 \\      nexthop via 10.1.81.1 dev eth0 weight 20
+            default via 10.116.201.254 dev eth0 metric 10 src 10.116.201.74
+            10.116.201.0/24 dev eth0  proto kernel  src 10.116.201.76
+            192.168.0.0/24 dev eth0  proto kernel  src 192.168.0.2
+          EOM
+        end
+        let(:linux_ip_route_inet6) { "" }
+
+        it "maps the dev route and sets ipaddress" do
+          plugin.run
+          expect(plugin["ipaddress"]).to eq("10.116.201.74")
         end
       end
 
@@ -1571,6 +1673,108 @@ describe Ohai::System, "Linux Network Plugin" do
               { "destination" => "default", "family" => "inet", "metric" => "69", "via" => "fe80::69" },
               { "destination" => "fe80::/64", "family" => "inet6", "metric" => "256", "proto" => "kernel" },
             ]
+          )
+        end
+      end
+
+      describe "gathering xdp counters via ip_link_s_d" do
+        let(:linux_ip_link_s_d) do
+          <<~EOM
+            1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN mode DEFAULT group default
+                link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
+                RX: bytes  packets  errors  dropped overrun mcast
+                35224      524      0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                35224      524      0       0       0       0
+            2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdp qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 9500 tag 1234567acde1892 jited
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            4: eth2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpgeneric qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 8400 tag 5234567acde1892 jited
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            5: eth3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpoffload qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdp id 7400 tag 8234567acde1892
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+            6: eth4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 xdpmulti qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff promiscuity 0
+                prog/xdpdrv id 7400 tag 8234567acde1892 jited
+                prog/xdpoffload id 5400 tag 5234567acde1892
+                RX: bytes  packets  errors  dropped overrun mcast
+                1392844460 2659966  0       0       0       0
+                TX: bytes  packets  errors  dropped carrier collsns
+                691785313  1919690  0       0       0       0
+          EOM
+        end
+        it "adds the xdp information of an interface" do
+          plugin.run
+          expect(plugin["network"]["interfaces"]["lo"]["xdp"]).to be_nil
+          expect(plugin["network"]["interfaces"]["eth0"]["xdp"]).to be_nil
+          expect(plugin["network"]["interfaces"]["eth1"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpdrv",
+                  id: "9500",
+                  tag: "1234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth2"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpgeneric",
+                  id: "8400",
+                  tag: "5234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth3"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpoffload",
+                  id: "7400",
+                  tag: "8234567acde1892",
+                },
+              ],
+            }
+          )
+          expect(plugin["network"]["interfaces"]["eth4"]["xdp"]).to eq(
+            {
+              "attached" => [
+                {
+                  mode: "xdpdrv",
+                  id: "7400",
+                  tag: "8234567acde1892",
+                },
+                {
+                  mode: "xdpoffload",
+                  id: "5400",
+                  tag: "5234567acde1892",
+                },
+              ],
+            }
           )
         end
       end

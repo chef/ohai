@@ -23,6 +23,7 @@ module Ohai
     module OCIMetadata
       OCI_METADATA_ADDR = "169.254.169.254"
       OCI_METADATA_URL = "/opc/v2"
+      CHASSIS_ASSET_TAG_FILE = "/sys/devices/virtual/dmi/id/chassis_asset_tag"
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)

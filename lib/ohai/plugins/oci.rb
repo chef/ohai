@@ -45,8 +45,8 @@ Ohai.plugin(:Oci) do
 
   def oci_chassis_asset_tag?
     has_oci_chassis_asset_tag = false
-    if file_exist?("/sys/devices/virtual/dmi/id/chassis_asset_tag")
-      file_open("/sys/devices/virtual/dmi/id/chassis_asset_tag").each do |line|
+    if file_exist?(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE)
+      file_open(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).each do |line|
         next unless /OracleCloud.com/.match?(line)
 
         logger.trace("Plugin oci: Found OracleCloud.com chassis_asset_tag used by oci.")

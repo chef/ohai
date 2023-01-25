@@ -129,11 +129,11 @@ describe Ohai::System, "plugin oci" do
   describe "without oci hint file not in OCI" do
     before do
       allow(plugin).to receive(:hint?).with("oci").and_return(false)
-      allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/dmi/id/chassis_asset_tag").and_return(true)
-      @double_file = double("/sys/devices/virtual/dmi/id/chassis_asset_tag")
+      allow(plugin).to receive(:file_exist?).with(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).and_return(true)
+      @double_file = double(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE)
       allow(@double_file).to receive(:each)
         .and_yield("")
-      allow(plugin).to receive(:file_open).with("/sys/devices/virtual/dmi/id/chassis_asset_tag").and_return(@double_file)
+      allow(plugin).to receive(:file_open).with(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).and_return(@double_file)
     end
 
     it_behaves_like "!oci"
@@ -142,11 +142,11 @@ describe Ohai::System, "plugin oci" do
   describe "without oci hint file in OCI" do
     before do
       allow(plugin).to receive(:hint?).with("oci").and_return(false)
-      allow(plugin).to receive(:file_exist?).with("/sys/devices/virtual/dmi/id/chassis_asset_tag").and_return(true)
-      @double_file = double("/sys/devices/virtual/dmi/id/chassis_asset_tag")
+      allow(plugin).to receive(:file_exist?).with(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).and_return(true)
+      @double_file = double(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE)
       allow(@double_file).to receive(:each)
         .and_yield("OracleCloud.com")
-      allow(plugin).to receive(:file_open).with("/sys/devices/virtual/dmi/id/chassis_asset_tag").and_return(@double_file)
+      allow(plugin).to receive(:file_open).with(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).and_return(@double_file)
     end
 
     it_behaves_like "oci"

@@ -7,11 +7,13 @@
 - Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
 <!-- latest_release -->
 
-<!-- release_rollup since=18.0.26 -->
+<!-- release_rollup since=16.17.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6)) <!-- 16.17.1 -->
+- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
+- Testing new Linux Network Plugin settings ported from Chef-18 [#1778](https://github.com/chef/ohai/pull/1778) ([johnmccrae](https://github.com/johnmccrae))
+<!-- 16.17.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

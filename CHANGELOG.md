@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 16.17.1 -->
+## [v16.17.1](https://github.com/chef/ohai/tree/v16.17.1) (2023-01-31)
+
+#### Merged Pull Requests
+- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=18.0.26 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6)) <!-- 16.17.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

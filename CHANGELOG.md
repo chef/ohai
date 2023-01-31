@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 16.17.1 -->
-## [v16.17.1](https://github.com/chef/ohai/tree/v16.17.1) (2023-01-31)
+<!-- latest_release 16.17.2 -->
+## [v16.17.2](https://github.com/chef/ohai/tree/v16.17.2) (2023-01-31)
 
 #### Merged Pull Requests
-- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
+- Update changelog.md manually to include previously merged PR [#1783](https://github.com/chef/ohai/pull/1783) ([neha-p6](https://github.com/neha-p6))
 <!-- latest_release -->
 
 <!-- release_rollup since=16.17.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update changelog.md manually to include previously merged PR [#1783](https://github.com/chef/ohai/pull/1783) ([neha-p6](https://github.com/neha-p6)) <!-- 16.17.2 -->
 - Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
 - Testing new Linux Network Plugin settings ported from Chef-18 [#1778](https://github.com/chef/ohai/pull/1778) ([johnmccrae](https://github.com/johnmccrae))
 <!-- 16.17.1 -->

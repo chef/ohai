@@ -1,23 +1,18 @@
 # Change Log
 
-<!-- latest_release 16.17.2 -->
+<!-- latest_release -->
+<!-- latest_release -->
+
+<!-- release_rollup -->
+<!-- release_rollup -->
+
+<!-- latest_stable_release -->
 ## [v16.17.2](https://github.com/chef/ohai/tree/v16.17.2) (2023-01-31)
 
 #### Merged Pull Requests
 - Update changelog.md manually to include previously merged PR [#1783](https://github.com/chef/ohai/pull/1783) ([neha-p6](https://github.com/neha-p6))
-<!-- latest_release -->
-
-<!-- release_rollup since=16.17.0 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update changelog.md manually to include previously merged PR [#1783](https://github.com/chef/ohai/pull/1783) ([neha-p6](https://github.com/neha-p6)) <!-- 16.17.2 -->
-- Manually update the version as expeditor version bump was not working [#1782](https://github.com/chef/ohai/pull/1782) ([neha-p6](https://github.com/neha-p6))
-- Testing new Linux Network Plugin settings ported from Chef-18 [#1778](https://github.com/chef/ohai/pull/1778) ([johnmccrae](https://github.com/johnmccrae))
-<!-- 16.17.1 -->
-<!-- release_rollup -->
-
 <!-- latest_stable_release -->
+
 ## [v16.17.0](https://github.com/chef/ohai/tree/v16.17.0) (2021-11-09)
 
 #### Merged Pull Requests
@@ -25,7 +20,6 @@
 - Update minimum version of chef-config [#1660](https://github.com/chef/ohai/pull/1660) ([pravi](https://github.com/pravi))
 - Backport Linux OS detection improvements from Chef 17 [#1711](https://github.com/chef/ohai/pull/1711) ([tas50](https://github.com/tas50))
 - Bump version to 16.17 and fix changelog [#1716](https://github.com/chef/ohai/pull/1716) ([tas50](https://github.com/tas50))
-<!-- latest_stable_release -->
 
 ## [v16.13.0](https://github.com/chef/ohai/tree/v16.13.0) (2021-04-08)
 

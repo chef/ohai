@@ -38,31 +38,18 @@ module Ohai
         )
       end
 
+      # Fetch metadata from api
       def fetch_metadata(metadata = "instance")
         response = http_get("#{OCI_METADATA_URL}/#{metadata}")
         return nil unless response.code == "200"
 
-        if json?(response.body)
-          data = String(response.body)
-          parser = FFI_Yajl::Parser.new
-          parser.parse(data)
-        else
-          response.body
-        end
-      end
-
-      # @param [String] data that might be JSON
-      #
-      # @return [Boolean] is the data JSON or not?
-      def json?(data)
-        data = String(data)
-        parser = FFI_Yajl::Parser.new
         begin
-          parser.parse(data)
-          true
+          data = String(response.body)
+          metadata = parser.parse(data)
         rescue FFI_Yajl::ParseError
-          false
+          metadata = response.body
         end
+        metadata
       end
     end
   end

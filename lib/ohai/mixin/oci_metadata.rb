@@ -38,18 +38,31 @@ module Ohai
         )
       end
 
+      # parse JSON data from a String to a Hash
+      #
+      # @param [String] response_body json as string to parse
+      #
+      # @return [Hash]
+      def parse_json(response_body)
+        data = String(response_body)
+        parser = FFI_Yajl::Parser.new
+        parser.parse(data)
+      rescue FFI_Yajl::ParseError
+        logger.warn("Mixin OciMetadata: Metadata response is NOT valid JSON")
+        nil
+      end
+
       # Fetch metadata from api
       def fetch_metadata(metadata = "instance")
         response = http_get("#{OCI_METADATA_URL}/#{metadata}")
         return nil unless response.code == "200"
 
-        begin
-          data = String(response.body)
-          metadata = parser.parse(data)
-        rescue FFI_Yajl::ParseError
-          metadata = response.body
+        if response.code == "200"
+          parse_json(response.body)
+        else
+          logger.warn("Mixin OciMetadata: Received response code #{response.code} requesting metadata")
+          nil
         end
-        metadata
       end
     end
   end

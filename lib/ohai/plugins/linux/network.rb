@@ -79,7 +79,8 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
-      if /\\/.match?(line)
+      if line.include?("\\")
+      # if /\\/.match?(line)
         # If we have multipath routing, then the first part will be a normal
         # looking route:
         #   default proto ra metric 1024 <other options>
@@ -218,11 +219,13 @@ Ohai.plugin(:Network) do
         next if line.start_with?("Ring parameters for")
         next if line.strip.nil?
 
-        if /Pre-set maximums/.match?(line)
+        if line.include?("Pre-set maximums")
+        # if /Pre-set maximums/.match?(line)
           type = "max"
           next
         end
-        if /Current hardware settings/.match?(line)
+        if line.include?("Current hardware settings")
+        # if /Current hardware settings/.match?(line)
           type = "current"
           next
         end
@@ -251,11 +254,13 @@ Ohai.plugin(:Network) do
         next if line.start_with?("Channel parameters for")
         next if line.strip.nil?
 
-        if /Pre-set maximums/.match?(line)
+        if line.include?("Pre-set maximums")
+        # if /Pre-set maximums/.match?(line)
           type = "max"
           next
         end
-        if /Current hardware settings/.match?(line)
+        if line.include?("Current hardware settings")
+        # if /Current hardware settings/.match?(line)
           type = "current"
           next
         end

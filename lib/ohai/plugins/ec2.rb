@@ -39,7 +39,8 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if /Amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_vendor"))
+    if file_val_if_exists("/sys/class/dmi/id/bios_vendor").include?("Amazon")
+    # if /Amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_vendor"))
       logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
@@ -54,7 +55,8 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
-    if /amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_version"))
+    if file_val_if_exists("/sys/class/dmi/id/bios_version").include?("amazon")
+    # if /amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_version"))
       logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else

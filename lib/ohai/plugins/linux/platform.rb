@@ -258,7 +258,8 @@ Ohai.plugin(:Platform) do
       platform_version shell_out("/bin/uname -r").stdout.strip
     elsif file_exist?("/usr/lib/os-release")
       contents = file_read("/usr/lib/os-release")
-      if /clear-linux-os/.match?(contents) # Clear Linux https://clearlinux.org/
+      if contents.include?("clear-linux-os")
+      # if /clear-linux-os/.match?(contents) # Clear Linux https://clearlinux.org/
         platform "clearlinux"
         platform_version contents[/VERSION_ID=(\d+)/, 1]
       end

@@ -77,7 +77,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vmware] = "guest"
     end
 
-    if ioreg_exists? && /pci1ab8,4000/.match?(shell_out("ioreg -l").stdout)
+    if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")
       virtualization[:system] = "parallels"
       virtualization[:role] = "guest"
       virtualization[:systems][:parallels] = "guest"
@@ -86,5 +86,25 @@ Ohai.plugin(:Virtualization) do
       virtualization[:role] = "host"
       virtualization[:systems][:parallels] = "host"
     end
+#     if ioreg_exists? && /pci1ab8,4000/.match?(shell_out("ioreg -l").stdout)
+#       virtualization[:system] = "parallels"
+#       virtualization[:role] = "guest"
+#       virtualization[:systems][:parallels] = "guest"
+#     elsif prlctl_exists?
+#       virtualization[:system] = "parallels"
+#       virtualization[:role] = "host"
+#       virtualization[:systems][:parallels] = "host"
+# <<<<<<< HEAD
+# =======
+#     elsif ioreg_exists?
+#       so = shell_out("ioreg -l")
+#       if (so.stdout).include?("pci1ab8,4000")
+#       # if /pci1ab8,4000/.match?(so.stdout)
+#         virtualization[:system] = "parallels"
+#         virtualization[:role] = "guest"
+#         virtualization[:systems][:parallels] = "guest"
+#       end
+# >>>>>>> a8ee7112 (Moving from using Regex matching for simple literals)
+#     end
   end
 end

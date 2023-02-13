@@ -27,7 +27,8 @@ Ohai.plugin(:Scaleway) do
   # looks for `scaleway` keyword in kernel command line
   # @return [Boolean] do we have the keyword or not?
   def has_scaleway_cmdline?
-    if file_exist?("/proc/cmdline") && /scaleway/.match?(file_read("/proc/cmdline"))
+    if file_exist?("/proc/cmdline") && file_read("/proc/cmdline").include?("scaleway")
+    # if file_exist?("/proc/cmdline") && /scaleway/.match?(file_read("/proc/cmdline"))
       logger.trace("Plugin Scaleway: has_scaleway_cmdline? == true")
       return true
     end

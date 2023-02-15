@@ -524,23 +524,23 @@ Ohai.plugin(:CPU) do
         cpu[index] = Mash.new
         cpu[index][:status] = status
         cpu[index][:location] = location
-        if status.include?("Available")
-        # if /Available/.match?(status)
-          cpu[:available] += 1
-          lsattr = shell_out("lsattr -El #{name}").stdout.lines
-          lsattr.each do |attribute|
-            attrib, value = attribute.split
-            if attrib == "type"
-              cpu[index][:model_name] = value
-            elsif attrib == "frequency"
-              cpu[index][:mhz] = value.to_i / (1000 * 1000) # convert from hz to MHz
-            else
-              cpu[index][attrib] = value
+          if status.include?("Available")
+          # if /Available/.match?(status)
+            cpu[:available] += 1
+            lsattr = shell_out("lsattr -El #{name}").stdout.lines
+            lsattr.each do |attribute|
+              attrib, value = attribute.split
+              if attrib == "type"
+                cpu[index][:model_name] = value
+              elsif attrib == "frequency"
+                cpu[index][:mhz] = value.to_i / (1000 * 1000) # convert from hz to MHz
+              else
+                cpu[index][attrib] = value
+              end
             end
+            # IBM is the only maker of CPUs for AIX systems.
+            cpu[index][:vendor_id] = "IBM"
           end
-          # IBM is the only maker of CPUs for AIX systems.
-          cpu[index][:vendor_id] = "IBM"
-        end
       end
     end
   end

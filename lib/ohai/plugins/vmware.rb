@@ -53,7 +53,6 @@ Ohai.plugin(:VMware) do
         # to attribute "vmware[:<parameter>]"
         %w{hosttime speed sessionid balloon swap memlimit memres cpures cpulimit}.each do |param|
           vmware[param] = from_cmd([vmtools_path, "stat", param])
-<<<<<<< HEAD
           if param == "hosttime" && vmtools_path.include?("Program Files")
             # popen and %x return stdout encoded as IBM437 in Windows but in a string marked
             # UTF-8. The string doesn't throw an exception when encoded to "UTF-8" but
@@ -69,11 +68,8 @@ Ohai.plugin(:VMware) do
             # * confirmed that this is broken on Windows Server 2022
             vmware[param] = vmware[param].force_encoding(Encoding::IBM437).encode("UTF-8")
           end
-          if /UpdateInfo failed/.match?(vmware[param])
-=======
           if vmware[param].include?("UpdateInfo failed")
-          # if /UpdateInfo failed/.match?(vmware[param])
->>>>>>> a8ee7112 (Moving from using Regex matching for simple literals)
+            # if /UpdateInfo failed/.match?(vmware[param])
             vmware[param] = nil
           end
         end

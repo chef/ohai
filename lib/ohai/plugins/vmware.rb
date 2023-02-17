@@ -68,7 +68,7 @@ Ohai.plugin(:VMware) do
             # * confirmed that this is broken on Windows Server 2022
             vmware[param] = vmware[param].force_encoding(Encoding::IBM437).encode("UTF-8")
           end
-          if /UpdateInfo failed/.match?(vmware[param])
+          if vmware[param].include?("UpdateInfo failed")
             vmware[param] = nil
           end
         end

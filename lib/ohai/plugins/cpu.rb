@@ -524,7 +524,7 @@ Ohai.plugin(:CPU) do
         cpu[index] = Mash.new
         cpu[index][:status] = status
         cpu[index][:location] = location
-        if /Available/.match?(status)
+        if status.include?("Available")
           cpu[:available] += 1
           lsattr = shell_out("lsattr -El #{name}").stdout.lines
           lsattr.each do |attribute|

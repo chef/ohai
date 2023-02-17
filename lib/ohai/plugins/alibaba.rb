@@ -33,7 +33,7 @@ Ohai.plugin(:Alibaba) do
   # this works even if the system lacks dmidecode use by the Dmi plugin
   # @return [Boolean] do we have Alibaba DMI data?
   def has_ali_dmi?
-    if /Alibaba/.match?(file_val_if_exists("/sys/class/dmi/id/sys_vendor"))
+    if file_val_if_exists("/sys/class/dmi/id/sys_vendor").include?("Alibaba")
       logger.trace("Plugin Alibaba: has_ali_dmi? == true")
       true
     else

@@ -49,7 +49,7 @@ describe Ohai::Mixin::OCIMetadata do
       http_mock = double("http", { code: "404" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
-      expect(mixin.logger).not_to receive(:warn)
+      expect(mixin.logger).to receive(:warn)
       vals = mixin.fetch_metadata
       expect(vals).to eq(nil)
     end

@@ -27,7 +27,7 @@ module ::Ohai::Mixin::DmiDecode
     when /VMware/
       return "vmware"
     when /Microsoft/
-      return "hyperv" if /Virtual Machine/.match?(product)
+      return "hyperv" if product.include?("Virtual Machine")
     when /Amazon EC2/
       return "amazonec2"
     when /QEMU/

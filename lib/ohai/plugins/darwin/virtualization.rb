@@ -77,7 +77,7 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vmware] = "guest"
     end
 
-    if ioreg_exists? && /pci1ab8,4000/.match?(shell_out("ioreg -l").stdout)
+    if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")
       virtualization[:system] = "parallels"
       virtualization[:role] = "guest"
       virtualization[:systems][:parallels] = "guest"

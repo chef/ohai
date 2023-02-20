@@ -28,7 +28,7 @@ Ohai.plugin(:GCE) do
   # this works even if the system lacks dmidecode use by the Dmi plugin
   # @return [Boolean] do we have Google Compute Engine DMI data?
   def has_gce_dmi?
-    if /Google Compute Engine/.match?(file_val_if_exists("/sys/class/dmi/id/product_name"))
+    if file_val_if_exists("/sys/class/dmi/id/product_name").to_s.include?("Google Compute Engine")
       logger.trace("Plugin GCE: has_gce_dmi? == true")
       true
     else

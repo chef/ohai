@@ -118,7 +118,7 @@ Ohai.plugin(:Virtualization) do
     # guests will have the hypervisor cpu feature that hosts don't have
     if file_exist?("/sys/devices/virtual/misc/kvm")
       virtualization[:system] = "kvm"
-      if /hypervisor/.match?(file_read("/proc/cpuinfo"))
+      if file_read("/proc/cpuinfo").include?("hypervisor")
         logger.trace("Plugin Virtualization: /sys/devices/virtual/misc/kvm present and /proc/cpuinfo lists the hypervisor feature. Detecting as kvm guest")
         virtualization[:role] = "guest"
         virtualization[:systems][:kvm] = "guest"
@@ -220,17 +220,17 @@ Ohai.plugin(:Virtualization) do
         virtualization[:system] = $1
         virtualization[:role] = "guest"
         virtualization[:systems][$1.to_sym] = "guest"
-      elsif /container=lxc/.match?(file_read("/proc/1/environ"))
+      elsif file_read("/proc/1/environ").include?("container=lxc")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates lxc container. Detecting as lxc guest")
         virtualization[:system] = "lxc"
         virtualization[:role] = "guest"
         virtualization[:systems][:lxc] = "guest"
-      elsif /container=systemd-nspawn/.match?(file_read("/proc/1/environ"))
+      elsif file_read("/proc/1/environ").include?("container=systemd-nspawn")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates nspawn container. Detecting as nspawn guest")
         virtualization[:system] = "nspawn"
         virtualization[:role] = "guest"
         virtualization[:systems][:nspawn] = "guest"
-      elsif /container=podman/.match?(file_read("/proc/1/environ"))
+      elsif file_read("/proc/1/environ").include?("container=podman")
         logger.trace("Plugin Virtualization: /proc/1/environ indicates podman container. Detecting as podman guest")
         virtualization[:system] = "podman"
         virtualization[:role] = "guest"

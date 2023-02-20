@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.0.27 -->
-## [v18.0.27](https://github.com/chef/ohai/tree/v18.0.27) (2023-02-14)
+<!-- latest_release 18.1.0 -->
+## [v18.1.0](https://github.com/chef/ohai/tree/v18.1.0) (2023-02-20)
 
 #### Merged Pull Requests
-- Add cloud provider oci [#1780](https://github.com/chef/ohai/pull/1780) ([rnt](https://github.com/rnt))
+- Update rubocop-performance requirement from 1.15.2 to 1.16.0 [#1784](https://github.com/chef/ohai/pull/1784) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.0.14 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update rubocop-performance requirement from 1.15.2 to 1.16.0 [#1784](https://github.com/chef/ohai/pull/1784) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.0 -->
 - Add cloud provider oci [#1780](https://github.com/chef/ohai/pull/1780) ([rnt](https://github.com/rnt)) <!-- 18.0.27 -->
 - Fix linter error [#1770](https://github.com/chef/ohai/pull/1770) ([marcparadise](https://github.com/marcparadise)) <!-- 18.0.26 -->
 - [ohai][ec2][looks_like_ec2] Do not depend on metadata endpoint [#1768](https://github.com/chef/ohai/pull/1768) ([gbatye](https://github.com/gbatye)) <!-- 18.0.25 -->

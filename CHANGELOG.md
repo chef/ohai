@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 18.1.1 -->
+## [v18.1.1](https://github.com/chef/ohai/tree/v18.1.1) (2023-02-21)
+
+#### Merged Pull Requests
+- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=18.1.0 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt)) <!-- 18.1.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

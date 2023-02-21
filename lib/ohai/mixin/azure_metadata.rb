@@ -18,6 +18,9 @@
 
 require "net/http" unless defined?(Net::HTTP)
 
+require_relative "../mixin/json_helper"
+include Ohai::Mixin::JsonHelper
+
 module Ohai
   module Mixin
     #
@@ -81,26 +84,16 @@ module Ohai
         conn.get(uri, { "Metadata" => "true" })
       end
 
-      # parse JSON data from a String to a Hash
-      #
-      # @param [String] response_body json as string to parse
-      #
-      # @return [Hash]
-      def parse_json(response_body)
-        data = String(response_body)
-        parser = FFI_Yajl::Parser.new
-        parser.parse(data)
-      rescue FFI_Yajl::ParseError
-        logger.warn("Mixin AzureMetadata: Metadata response is NOT valid JSON")
-        nil
-      end
-
-      def fetch_metadata(api_version = nil)
+      def fetch_metadata(_api_version = nil)
         metadata_url = "/metadata/instance?api-version=#{best_api_version}"
         logger.trace("Mixin AzureMetadata: Fetching metadata from host #{AZURE_METADATA_ADDR} at #{metadata_url}")
         response = http_get(metadata_url)
         if response.code == "200"
-          parse_json(response.body)
+          json_data = parse_json(response.body)
+          if json_data.nil?
+            logger.warn("Mixin AzureMetadata: Metadata response is NOT valid JSON")
+          end
+          json_data
         else
           logger.warn("Mixin AzureMetadata: Received response code #{response.code} requesting metadata")
           nil

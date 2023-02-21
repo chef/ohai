@@ -20,6 +20,9 @@
 
 require "net/http" unless defined?(Net::HTTP)
 
+require_relative "../mixin/json_helper"
+include Ohai::Mixin::JsonHelper
+
 module Ohai
   module Mixin
     ##
@@ -229,9 +232,14 @@ module Ohai
         @fetch_dynamic_data ||= begin
           response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/", { 'X-aws-ec2-metadata-token': v2_token })
 
-          if json?(response.body) && response.code == "200"
-            FFI_Yajl::Parser.parse(response.body)
+          if response.code == "200"
+            json_data = parse_json(response.body, {})
+            if json_data.nil?
+              logger.warn("Mixin Ec2Metadata: Metadata response is NOT valid JSON")
+            end
+            json_data
           else
+            logger.warn("Mixin Ec2Metadata: Received response code #{response.code} requesting metadata")
             {}
           end
         end

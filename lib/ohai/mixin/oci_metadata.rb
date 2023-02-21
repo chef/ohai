@@ -18,6 +18,9 @@
 
 require "net/http" unless defined?(Net::HTTP)
 
+require_relative "../mixin/json_helper"
+include Ohai::Mixin::JsonHelper
+
 module Ohai
   module Mixin
     module OCIMetadata
@@ -38,27 +41,15 @@ module Ohai
         )
       end
 
-      # parse JSON data from a String to a Hash
-      #
-      # @param [String] response_body json as string to parse
-      #
-      # @return [Hash]
-      def parse_json(response_body)
-        data = String(response_body)
-        parser = FFI_Yajl::Parser.new
-        parser.parse(data)
-      rescue FFI_Yajl::ParseError
-        logger.warn("Mixin OciMetadata: Metadata response is NOT valid JSON")
-        nil
-      end
-
       # Fetch metadata from api
       def fetch_metadata(metadata = "instance")
         response = http_get("#{OCI_METADATA_URL}/#{metadata}")
-        return nil unless response.code == "200"
-
         if response.code == "200"
-          parse_json(response.body)
+          json_data = parse_json(response.body)
+          if json_data.nil?
+            logger.warn("Mixin OciMetadata: Metadata response is NOT valid JSON")
+          end
+          json_data
         else
           logger.warn("Mixin OciMetadata: Received response code #{response.code} requesting metadata")
           nil

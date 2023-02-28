@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.1 -->
-## [v18.1.1](https://github.com/chef/ohai/tree/v18.1.1) (2023-02-21)
+<!-- latest_release 18.1.2 -->
+## [v18.1.2](https://github.com/chef/ohai/tree/v18.1.2) (2023-02-28)
 
 #### Merged Pull Requests
-- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
+- [block_device] Record firmware revision of nvme block devices [#1787](https://github.com/chef/ohai/pull/1787) ([saravan2](https://github.com/saravan2))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [block_device] Record firmware revision of nvme block devices [#1787](https://github.com/chef/ohai/pull/1787) ([saravan2](https://github.com/saravan2)) <!-- 18.1.2 -->
 - Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt)) <!-- 18.1.1 -->
 <!-- release_rollup -->
 

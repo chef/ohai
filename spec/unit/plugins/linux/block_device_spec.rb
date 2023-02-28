@@ -29,6 +29,13 @@ describe Ohai::System, "Linux Block Device Plugin" do
       "queue_depth" => "1",
       "vendor" => "ATA",
     },
+    "nvme0n1" => {
+      "size" => "500118192",
+      "removable" => "0",
+      "model" => "KXG50ZNV256G TOSHIBA",
+      "state" => "live",
+      "firmware_rev" => "AAGA4103",
+    },
     "dm-0" => {
       "size" => "7806976",
       "removable" => "0",

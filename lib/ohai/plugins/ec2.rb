@@ -28,10 +28,8 @@
 
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
-  require_relative "../mixin/http_helper"
 
   include Ohai::Mixin::Ec2Metadata
-  include Ohai::Mixin::HttpHelper
 
   provides "ec2"
 
@@ -41,7 +39,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if /Amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_vendor"))
+    if file_val_if_exists("/sys/class/dmi/id/bios_vendor").to_s.include?("Amazon")
       logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
@@ -56,7 +54,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
-    if /amazon/.match?(file_val_if_exists("/sys/class/dmi/id/bios_version"))
+    if file_val_if_exists("/sys/class/dmi/id/bios_version").to_s.include?("amazon")
       logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else
@@ -106,12 +104,7 @@ Ohai.plugin(:EC2) do
   # a single check that combines all the various detection methods for EC2
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
-    return true if hint?("ec2")
-
-    # Even if it looks like EC2 try to connect first
-    if has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
-      return true if can_socket_connect?(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80)
-    end
+    hint?("ec2") || has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
   end
 
   collect_data do

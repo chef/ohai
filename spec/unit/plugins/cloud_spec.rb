@@ -87,6 +87,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:gce] = nil
       @plugin[:digital_ocean] = nil
       @plugin[:softlayer] = nil
+      @plugin[:oci] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
     end
@@ -511,4 +512,41 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe "with OCI mash" do
+    before do
+      @plugin[:oci] = Mash.new
+      @plugin[:oci][:metadata] = {
+        "compute" => {
+          "hostname" => "my-hostname",
+        },
+        "network" => {
+          "interface" => [
+            { "vnicId" => "ocid1.vnic.oc1.phx.exampleuniqueID", "privateIp" => "10.0.3.6", "vlanTag" => 11,
+              "macAddr" => "00:00:00:00:00:01", "virtualRouterIp" => "10.0.3.1", "subnetCidrBlock" => "10.0.3.0/24",
+              "nicIndex" => 0 },
+          ],
+        },
+      }
+    end
+
+    it "doesn't populates cloud vm_name" do
+      @plugin.run
+      expect(@plugin[:cloud][:vm_name]).not_to eq("testtest")
+    end
+
+    it "populates cloud local_hostname" do
+      @plugin.run
+      expect(@plugin[:cloud][:local_hostname]).to eq("my-hostname")
+    end
+
+    it "populates cloud private ip" do
+      @plugin.run
+      expect(@plugin[:cloud][:local_ipv4]).to eq(@plugin[:oci][:metadata][:network][:interface][0]["privateIp"])
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("oci")
+    end
+  end
 end

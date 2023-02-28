@@ -18,6 +18,9 @@
 
 require "net/http" unless defined?(Net::HTTP)
 
+require_relative "../mixin/json_helper"
+include Ohai::Mixin::JsonHelper
+
 module Ohai
   module Mixin
     #
@@ -53,31 +56,10 @@ module Ohai
           response.body.split("\n").each do |sub_attr|
             temp[sanitize_key(sub_attr).gsub(/_$/, "")] = fetch_metadata("#{id}#{sub_attr}", has_trailing_slash?(sub_attr))
           end
-          temp
         else
-          response.body
+          logger.warn("Mixin AlibabaMetadata: Received response code #{response.code} requesting metadata for id='#{id}'")
+          nil
         end
-      end
-
-      # @param [String] data that might be JSON
-      #
-      # @return [Boolean] is the data JSON or not?
-      def json?(data)
-        data = String(data)
-        parser = FFI_Yajl::Parser.new
-        begin
-          parser.parse(data)
-          true
-        rescue FFI_Yajl::ParseError
-          false
-        end
-      end
-
-      # @param data [String]
-      #
-      # @return [Boolean] is there a trailing /?
-      def has_trailing_slash?(data)
-        !!( data =~ %r{/$} )
       end
 
       def sanitize_key(key)

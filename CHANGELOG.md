@@ -1,25 +1,39 @@
 # Change Log
 
-<!-- latest_release 18.0.20 -->
-## [v18.0.20](https://github.com/chef/ohai/tree/v18.0.20) (2022-08-09)
+<!-- latest_release 18.1.1 -->
+## [v18.1.1](https://github.com/chef/ohai/tree/v18.1.1) (2023-02-21)
 
 #### Merged Pull Requests
-- Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
 <!-- latest_release -->
 
-<!-- release_rollup since=18.0.14 -->
+<!-- release_rollup since=18.1.0 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.20 -->
-- Add additional SUSE and openSUSE platforms - micro, hpc [#1753](https://github.com/chef/ohai/pull/1753) ([jamesongithub](https://github.com/jamesongithub)) <!-- 18.0.19 -->
-- Fix FIPS mode detection [#1754](https://github.com/chef/ohai/pull/1754) ([stanhu](https://github.com/stanhu)) <!-- 18.0.18 -->
-- Do not attempt to reinitialize constants [#1758](https://github.com/chef/ohai/pull/1758) ([balasankarc](https://github.com/balasankarc)) <!-- 18.0.17 -->
-- Update rubocop-performance requirement from 1.13.3 to 1.14.2 [#1751](https://github.com/chef/ohai/pull/1751) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.0.16 -->
-- chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan)) <!-- 18.0.15 -->
+- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt)) <!-- 18.1.1 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v18.1.0](https://github.com/chef/ohai/tree/v18.1.0) (2023-02-21)
+
+#### Merged Pull Requests
+- chore: Included githubactions in the dependabot config [#1748](https://github.com/chef/ohai/pull/1748) ([naveensrinivasan](https://github.com/naveensrinivasan))
+- Update rubocop-performance requirement from 1.13.3 to 1.14.2 [#1751](https://github.com/chef/ohai/pull/1751) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Do not attempt to reinitialize constants [#1758](https://github.com/chef/ohai/pull/1758) ([balasankarc](https://github.com/balasankarc))
+- Fix FIPS mode detection [#1754](https://github.com/chef/ohai/pull/1754) ([stanhu](https://github.com/stanhu))
+- Add additional SUSE and openSUSE platforms - micro, hpc [#1753](https://github.com/chef/ohai/pull/1753) ([jamesongithub](https://github.com/jamesongithub))
+- Bump actions/checkout from 2 to 3 [#1752](https://github.com/chef/ohai/pull/1752) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update rubocop-performance requirement from 1.14.2 to 1.14.3 [#1757](https://github.com/chef/ohai/pull/1757) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fall back to /proc/cpuinfo if lscpu doesn&#39;t have CPU totals [#1761](https://github.com/chef/ohai/pull/1761) ([stanhu](https://github.com/stanhu))
+- Use a minimum of 1 thread per core for CPU total calculation [#1756](https://github.com/chef/ohai/pull/1756) ([stanhu](https://github.com/stanhu))
+- Update rubocop-performance requirement from 1.14.3 to 1.15.0 [#1769](https://github.com/chef/ohai/pull/1769) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- [ohai][ec2][looks_like_ec2] Do not depend on metadata endpoint [#1768](https://github.com/chef/ohai/pull/1768) ([gbatye](https://github.com/gbatye))
+- Fix linter error [#1770](https://github.com/chef/ohai/pull/1770) ([marcparadise](https://github.com/marcparadise))
+- Add cloud provider oci [#1780](https://github.com/chef/ohai/pull/1780) ([rnt](https://github.com/rnt))
+- Update rubocop-performance requirement from 1.15.2 to 1.16.0 [#1784](https://github.com/chef/ohai/pull/1784) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_stable_release -->
+
 ## [v18.0.14](https://github.com/chef/ohai/tree/v18.0.14) (2022-06-06)
 
 #### Merged Pull Requests
@@ -40,7 +54,6 @@
 - Update rubocop-performance requirement from 1.13.2 to 1.13.3 [#1740](https://github.com/chef/ohai/pull/1740) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - networking/linux: map src only default routes accordingly [#1741](https://github.com/chef/ohai/pull/1741) ([mattp-](https://github.com/mattp-))
 - Updated Azure Metadata to overcome stale dates which caused test failures [#1747](https://github.com/chef/ohai/pull/1747) ([johnmccrae](https://github.com/johnmccrae))
-<!-- latest_stable_release -->
 
 ## [v17.9.0](https://github.com/chef/ohai/tree/v17.9.0) (2021-12-17)
 

@@ -77,17 +77,14 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vmware] = "guest"
     end
 
-    if prlctl_exists?
+    if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")
+      virtualization[:system] = "parallels"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:parallels] = "guest"
+    elsif prlctl_exists?
       virtualization[:system] = "parallels"
       virtualization[:role] = "host"
       virtualization[:systems][:parallels] = "host"
-    elsif ioreg_exists?
-      so = shell_out("ioreg -l")
-      if /pci1ab8,4000/.match?(so.stdout)
-        virtualization[:system] = "parallels"
-        virtualization[:role] = "guest"
-        virtualization[:systems][:parallels] = "guest"
-      end
     end
   end
 end

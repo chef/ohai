@@ -28,6 +28,7 @@ Ohai.plugin(:Cloud) do
   depends "azure"
   depends "digital_ocean"
   depends "softlayer"
+  depends "oci"
 
   # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
   #
@@ -336,6 +337,26 @@ Ohai.plugin(:Cloud) do
     @cloud_attr_obj.provider = "softlayer"
   end
 
+  # ----------------------------------------
+  # OCI
+  # ----------------------------------------
+
+  # Is current Oracle Cloud Infrastructure?
+  #
+  # === Return
+  # true:: If oci Hash is defined
+  # false:: Otherwise
+  def on_oci?
+    oci != nil
+  end
+
+  # Fill cloud hash with OCI values
+  def oci_values
+    oci["metadata"]["network"]["interface"].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic["privateIp"], :private) }
+    @cloud_attr_obj.local_hostname = oci["metadata"]["compute"]["hostname"]
+    @cloud_attr_obj.provider = "oci"
+  end
+
   collect_data do
     require "ipaddr" unless defined?(IPAddr)
 
@@ -351,6 +372,7 @@ Ohai.plugin(:Cloud) do
     get_digital_ocean_values if on_digital_ocean?
     get_softlayer_values if on_softlayer?
     get_alibaba_values if on_alibaba?
+    oci_values if on_oci?
 
     cloud @cloud_attr_obj.cloud_mash
   end

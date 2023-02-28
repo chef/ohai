@@ -193,7 +193,8 @@ Ohai.plugin(:CPU) do
           lscpu_real = lscpu_info[:sockets]
           lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         else
-          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * lscpu_info[:threads_per_core]
+          threads_per_core = [lscpu_info[:threads_per_core], 1].max
+          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * threads_per_core
           lscpu_real = lscpu_info[:sockets]
           lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         end
@@ -344,15 +345,23 @@ Ohai.plugin(:CPU) do
     cpuinfo
   end
 
+  # Check if the `lscpu` data looks reasonable
+  def valid_lscpu?(lscpu)
+    return false if lscpu.empty?
+    return false if %i{total real cores}.any? { |key| lscpu[key].to_i == 0 }
+
+    true
+  end
+
   collect_data(:linux) do
     cpuinfo = parse_cpuinfo
     lscpu = parse_lscpu(cpuinfo)
 
-    # If we don't have any data from lscpu then get it from /proc/cpuinfo
-    if lscpu.empty?
-      cpu cpuinfo
-    else
+    # If we don't have any sensible data from lscpu then get it from /proc/cpuinfo
+    if valid_lscpu?(lscpu)
       cpu lscpu
+    else
+      cpu cpuinfo
     end
   end
 
@@ -515,7 +524,7 @@ Ohai.plugin(:CPU) do
         cpu[index] = Mash.new
         cpu[index][:status] = status
         cpu[index][:location] = location
-        if /Available/.match?(status)
+        if status.include?("Available")
           cpu[:available] += 1
           lsattr = shell_out("lsattr -El #{name}").stdout.lines
           lsattr.each do |attribute|

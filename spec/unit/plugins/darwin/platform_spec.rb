@@ -41,6 +41,11 @@ describe Ohai::System, "Darwin plugin platform" do
     expect(@plugin[:platform_version]).to eq("10.15.6")
   end
 
+  it "sets platform_version_extra to ProductVersionExtra" do
+    @plugin.run
+    expect(@plugin[:platform_version_extra]).to eq("(a)").or be_nil
+  end
+
   it "sets platform_build to BuildVersion" do
     @plugin.run
     expect(@plugin[:platform_build]).to eq("19G46c")

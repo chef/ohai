@@ -107,15 +107,6 @@ packages:
       end
     end
 
-    ### There's no more /user-data
-    #  context "when fetching user-data" do
-    #   let(:response) { double("Net::HTTP Response", body: CONF_STR, code: "200") }
-    #   it "should not to be continuously requested line by line, and equals to its content" do
-    #     expect { mixin.fetch_metadata("/user-data") }.not_to raise_error
-    #     expect(mixin.fetch_metadata("/user-data")).to eq(CONF_STR)
-    #   end
-    #  end
-
     api_tree = {
       "meta-data" => {
         # plain K-V

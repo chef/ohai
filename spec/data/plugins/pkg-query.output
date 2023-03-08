@@ -33,7 +33,7 @@ rubygem-net-telnet 0.1.1
 rubygem-netrc 0.7.7
 rubygem-ohai 8.8.1
 rubygem-plist 3.1.0
-rubygem-proxifier 1.0.3
+rubygem-proxifier2 1.1.0
 rubygem-pry 0.10.3_2
 rubygem-rack 1.4.7,3
 rubygem-rake 10.5.0

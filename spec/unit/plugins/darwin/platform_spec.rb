@@ -19,36 +19,54 @@
 require "spec_helper"
 
 describe Ohai::System, "Darwin plugin platform" do
+  SW_VERS = "/usr/bin/sw_vers".freeze
+
   before do
     @plugin = get_plugin("darwin/platform")
     allow(@plugin).to receive(:collect_os).and_return(:darwin)
-    @stdout = "ProductName:	Mac OS X\nProductVersion:	10.15.6\nBuildVersion:	19G46c"
-    allow(@plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
+    @stdout = <<~SW_VERS
+      ProductName:         macOS
+      ProductVersion:      13.3
+      BuildVersion:        22E252
+    SW_VERS
+    allow(@plugin).to receive(:shell_out).with("#{SW_VERS}").and_return(mock_shell_out(0, @stdout, ""))
   end
 
   it "runs sw_vers" do
-    expect(@plugin).to receive(:shell_out).with("/usr/bin/sw_vers").and_return(mock_shell_out(0, @stdout, ""))
+    expect(@plugin).to receive(:shell_out).with("#{SW_VERS}").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
   end
 
-  it "sets platform to ProductName, downcased with _ for \\s" do
+  it "sets platform to mac_os_x" do
     @plugin.run
     expect(@plugin[:platform]).to eq("mac_os_x")
   end
 
   it "sets platform_version to ProductVersion" do
     @plugin.run
-    expect(@plugin[:platform_version]).to eq("10.15.6")
+    expect(@plugin[:platform_version]).to eq("13.3")
+  end
+
+  it "sets plaform_version_extra to nil if no ProductVersionExtra" do
+    @plugin.run
+    expect(@plugin[:platform_version_extra]).to be_nil
   end
 
   it "sets platform_version_extra to ProductVersionExtra" do
+    @stdout = <<~SW_VERS
+      ProductName:         macOS
+      ProductVersion:      13.3
+      ProductVersionExtra: (a)
+      BuildVersion:        22E252
+    SW_VERS
+    allow(@plugin).to receive(:shell_out).with("#{SW_VERS}").and_return(mock_shell_out(0, @stdout, ""))
     @plugin.run
-    expect(@plugin[:platform_version_extra]).to eq("(a)").or be_nil
+    expect(@plugin[:platform_version_extra]).to eq("(a)")
   end
 
   it "sets platform_build to BuildVersion" do
     @plugin.run
-    expect(@plugin[:platform_build]).to eq("19G46c")
+    expect(@plugin[:platform_build]).to eq("22E252")
   end
 
   it "sets platform_family to mac_os_x" do

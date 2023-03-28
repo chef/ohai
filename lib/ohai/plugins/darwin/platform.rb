@@ -18,7 +18,7 @@
 #
 
 Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_build", "platform_family"
+  provides "platform", "platform_version", "platform_version_extra", "platform_build", "platform_family"
 
   collect_data(:darwin) do
     so = shell_out(Ohai.abs_path( "/usr/bin/sw_vers" ).to_s)
@@ -26,6 +26,8 @@ Ohai.plugin(:Platform) do
       case line
       when /^ProductVersion:\s+(.+)$/
         platform_version $1
+      when /^ProductVersionExtra:\s+(.+)$/
+        platform_version_extra $1
       when /^BuildVersion:\s+(.+)$/
         platform_build $1
       end

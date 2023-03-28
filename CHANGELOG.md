@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 18.1.4 -->
+## [v18.1.4](https://github.com/chef/ohai/tree/v18.1.4) (2023-03-28)
+
+#### Merged Pull Requests
+- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=18.1.3 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

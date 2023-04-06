@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.4 -->
-## [v18.1.4](https://github.com/chef/ohai/tree/v18.1.4) (2023-03-28)
+<!-- latest_release 18.1.5 -->
+## [v18.1.5](https://github.com/chef/ohai/tree/v18.1.5) (2023-04-06)
 
 #### Merged Pull Requests
-- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss))
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->
 - Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->
 <!-- release_rollup -->
 

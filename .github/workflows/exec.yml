@@ -6,7 +6,7 @@ name: exec
   push:
     branches:
       - main
-      - 1=7-stable
+      - 17-stable
       - 16-stable
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['macos-latest', 'ubuntu-latest', 'windows-latest']
-        ruby: ['2.7', '3.0']
+        ruby: ['3.0']
     name: Exec Ohai on ${{ matrix.os }} with Ruby ${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
     steps:

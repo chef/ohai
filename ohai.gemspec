@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.email = "adam@chef.io"
   s.homepage = "https://github.com/chef/ohai/"
 
-  s.required_ruby_version = ">= 3.0"
+  s.required_ruby_version = ">= 2.7"
 
   s.add_dependency "chef-config", ">= 14.12", "< 18"
   s.add_dependency "chef-utils", ">= 16.0", "< 18"

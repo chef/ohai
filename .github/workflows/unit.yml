@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        ruby: ['3.0']
+        ruby: ['2.7', '3.0']
     name: Unit test on ${{ matrix.os }} with Ruby ${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
     steps:

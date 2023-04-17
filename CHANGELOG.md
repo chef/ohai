@@ -1,20 +1,29 @@
 # Change Log
 
-<!-- latest_release 18.1.1 -->
-## [v18.1.1](https://github.com/chef/ohai/tree/v18.1.1) (2023-02-21)
+<!-- latest_release 18.1.5 -->
+## [v18.1.5](https://github.com/chef/ohai/tree/v18.1.5) (2023-04-06)
 
 #### Merged Pull Requests
-- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish))
 <!-- latest_release -->
 
-<!-- release_rollup since=18.1.0 -->
+<!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt)) <!-- 18.1.1 -->
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->
+- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v18.1.3](https://github.com/chef/ohai/tree/v18.1.3) (2023-03-08)
+
+#### Merged Pull Requests
+- Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
+- [block_device] Record firmware revision of nvme block devices [#1787](https://github.com/chef/ohai/pull/1787) ([saravan2](https://github.com/saravan2))
+- Updating files to account for Proxifier2 [#1789](https://github.com/chef/ohai/pull/1789) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_stable_release -->
+
 ## [v18.1.0](https://github.com/chef/ohai/tree/v18.1.0) (2023-02-21)
 
 #### Merged Pull Requests
@@ -32,7 +41,6 @@
 - Fix linter error [#1770](https://github.com/chef/ohai/pull/1770) ([marcparadise](https://github.com/marcparadise))
 - Add cloud provider oci [#1780](https://github.com/chef/ohai/pull/1780) ([rnt](https://github.com/rnt))
 - Update rubocop-performance requirement from 1.15.2 to 1.16.0 [#1784](https://github.com/chef/ohai/pull/1784) ([dependabot[bot]](https://github.com/dependabot[bot]))
-<!-- latest_stable_release -->
 
 ## [v18.0.14](https://github.com/chef/ohai/tree/v18.0.14) (2022-06-06)
 

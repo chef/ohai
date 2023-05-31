@@ -1,4 +1,10 @@
-adduser	3.113+nmu3	all
-libc-bin	2.19-18+deb8u3	amd64
-libc6	2.19-18+deb8u3	amd64
-tzdata	2015g-0+deb8u1	all
+adduser	3.113+nmu3	all	installed
+libc-bin	2.19-18+deb8u3	amd64	installed
+libc6	2.19-18+deb8u3	amd64	installed
+libnss-systemd	247.3-6	amd64	installed
+libpam-systemd	247.3-6	amd64	installed
+libsystemd0	247.3-6	amd64	installed
+systemd	247.3-6	amd64	installed
+systemd-sysv	247.3-6	amd64	installed
+systemd-timesyncd	247.3-6	amd64	config-files
+tzdata	2015g-0+deb8u1	all	installed

@@ -27,7 +27,7 @@ describe Ohai::System, "plugin packages" do
       end
     end
 
-    let(:format) { '${Package}\t${Version}\t${Architecture}\n' }
+    let(:format) { '${Package}\t${Version}\t${Architecture}\t${db:Status-Status}\n' }
 
     let(:stdout) do
       File.read(File.join(SPEC_PLUGIN_PATH, "dpkg-query.output"))
@@ -51,11 +51,19 @@ describe Ohai::System, "plugin packages" do
     it "gets packages and versions - arch" do
       expect(plugin[:packages]["libc6"][:version]).to eq("2.19-18+deb8u3")
       expect(plugin[:packages]["libc6"][:arch]).to eq("amd64")
+      expect(plugin[:packages]["libc6"][:status]).to eq("installed")
     end
 
     it "gets packages and versions - noarch" do
       expect(plugin[:packages]["tzdata"][:version]).to eq("2015g-0+deb8u1")
       expect(plugin[:packages]["tzdata"][:arch]).to eq("all")
+      expect(plugin[:packages]["tzdata"][:status]).to eq("installed")
+    end
+
+    it "gets packages and versions - removed" do
+      expect(plugin[:packages]["systemd-timesyncd"][:version]).to eq("247.3-6")
+      expect(plugin[:packages]["systemd-timesyncd"][:arch]).to eq("amd64")
+      expect(plugin[:packages]["systemd-timesyncd"][:status]).to eq("config-files")
     end
   end
 

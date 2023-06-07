@@ -33,13 +33,13 @@ Ohai.plugin(:Packages) do
     packages Mash.new
     case platform_family
     when "debian"
-      format = '${Package}\t${Version}\t${Architecture}\n'
+      format = '${Package}\t${Version}\t${Architecture}\t${db:Status-Status}\n'
       so = shell_out("dpkg-query -W -f='#{format}'")
       pkgs = so.stdout.lines
 
       pkgs.each do |pkg|
-        name, version, arch = pkg.split
-        packages[name] = { "version" => version, "arch" => arch }
+        name, version, arch, status = pkg.split
+        packages[name] = { "version" => version, "arch" => arch, "status" => status }
       end
 
     when "rhel", "fedora", "suse", "pld", "amazon"

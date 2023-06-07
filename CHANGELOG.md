@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.6 -->
-## [v18.1.6](https://github.com/chef/ohai/tree/v18.1.6) (2023-05-23)
+<!-- latest_release 18.1.7 -->
+## [v18.1.7](https://github.com/chef/ohai/tree/v18.1.7) (2023-06-07)
 
 #### Merged Pull Requests
-- Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->
 - Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.6 -->
 - Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->
 - Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->

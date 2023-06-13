@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency "chef-config", ">= 14.12", "< 19"
   s.add_dependency "chef-utils", ">= 16.0", "< 19"
   s.add_dependency "ffi", "~> 1.9"
-  s.add_dependency "ffi-yajl", "~> 2.2"
+  s.add_dependency "ffi-yajl", ">= 2.2", "< 4.0"
   s.add_dependency "ipaddress"
   s.add_dependency "mixlib-cli", ">= 1.7.0" # 1.7+ needed to support passing multiple options
   s.add_dependency "mixlib-config", ">= 2.0", "< 4.0"

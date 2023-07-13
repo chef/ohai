@@ -40,7 +40,7 @@ module Ohai
 
       def fetch_metadata(id = "")
         url = "#{GCE_METADATA_URL}/#{id}"
-        url << "?recursive=true" if url.end_with?("/")
+        url = "#{url}?recursive=true" if url.end_with?("/")
         response = http_get(url)
         if response.code == "200"
           json_data = parse_json(response.body)

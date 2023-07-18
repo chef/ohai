@@ -26,7 +26,7 @@ module Ohai
 
       # Trailing dot to host is added to avoid DNS search path
       GCE_METADATA_ADDR ||= "metadata.google.internal."
-      GCE_METADATA_URL ||= "/computeMetadata/v1/?recursive=true"
+      GCE_METADATA_URL ||= "/computeMetadata/v1"
 
       # fetch the meta content with a timeout and the required header
       def http_get(uri)
@@ -39,7 +39,9 @@ module Ohai
       end
 
       def fetch_metadata(id = "")
-        response = http_get("#{GCE_METADATA_URL}/#{id}")
+        url = "#{GCE_METADATA_URL}/#{id}"
+        url = "#{url}?recursive=true" if url.end_with?("/")
+        response = http_get(url)
         if response.code == "200"
           json_data = parse_json(response.body)
           if json_data.nil?

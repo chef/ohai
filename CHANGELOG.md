@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.7 -->
-## [v18.1.7](https://github.com/chef/ohai/tree/v18.1.7) (2023-06-07)
+<!-- latest_release 18.1.8 -->
+## [v18.1.8](https://github.com/chef/ohai/tree/v18.1.8) (2023-07-18)
 
 #### Merged Pull Requests
-- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb))
+- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->
 - Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->
 - Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.6 -->
 - Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->

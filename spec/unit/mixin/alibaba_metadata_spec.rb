@@ -34,12 +34,10 @@ describe Ohai::Mixin::AlibabaMetadata do
 
   JSON_STR = %{{"zone-id":"cn-shanghai-a","region-id":"cn-shanghai","private-ipv4":"192.168.0.200","instance-type":"ecs.4xlarge"}}.freeze
   CONF_STR = %{#cloud-config
-
 # system wide
 timezone: Asia/Shanghai
 locale: en_US.UTF-8
 manage_etc_hosts: localhost
-
 ## apt & packages
 apt:
   disable_suites: [proposed, $RELEASE-proposed-updates]
@@ -55,6 +53,27 @@ packages:
   - ca-certificates
   - curl
 }.freeze
+
+  API_TREE = {
+    "meta-data" => {
+      # plain K-V
+      "a" => "b",
+      # nested structure
+      "c" => {
+        "d" => "e",
+      },
+      # has a new-line but not nested
+      "dns-conf" => "1.1.1.1\n1.0.0.1",
+      "eipv4" => nil,
+      "private_ipv4" => "192.168.2.1",
+      "private_ipv4s" => ["192.168.2.2"],
+      "hostname" => "some-host.example.com",
+    },
+    "json-data" => {
+      "dynamic" => JSON_STR,
+    },
+    "user-data" => CONF_STR,
+  }.freeze
 
   def compare_tree(local, remote, need_sanitize = false)
     local.all? do |k, v|
@@ -107,32 +126,12 @@ packages:
       end
     end
 
-    api_tree = {
-      "meta-data" => {
-        # plain K-V
-        "a" => "b",
-        # nested structure
-        "c" => {
-          "d" => "e",
-        },
-        # has a new-line but not nested
-        "dns-conf" => "1.1.1.1\n1.0.0.1",
-        "eipv4" => nil,
-        "private_ipv4" => "192.168.2.1",
-        "hostname" => "some-host.example.com",
-      },
-      "json-data" => {
-        "dynamic" => JSON_STR,
-      },
-      "user-data" => CONF_STR,
-    }
-
     context "when recursively fetching a tree structure from root" do
       let(:response) { double("Net::HTTP Response", body: "", code: "200") }
 
       it "should be a nested structure" do
         allow(mixin).to receive(:http_get) do |uri|
-          tree = api_tree
+          tree = API_TREE
 
           uri.split("/").each do |part|
             tree = tree[part] unless part == ""
@@ -152,16 +151,12 @@ packages:
 
         ret = mixin.fetch_metadata
 
-        expect(compare_tree(api_tree, ret, true)).to eq(true)
+        expect(compare_tree(API_TREE, ret, true)).to eq(true)
       end
-    end
 
-    context "when fetching config from meta-data API" do
-      let(:response) { double("Net::HTTP Response", body: "", code: "200") }
-
-      it "should be accessible directly without 'meta_data' level" do
+      it "should avoid the key user-data" do
         allow(mixin).to receive(:http_get) do |uri|
-          tree = api_tree["meta-data"]
+          tree = API_TREE
 
           uri.split("/").each do |part|
             tree = tree[part] unless part == ""
@@ -181,16 +176,12 @@ packages:
 
         ret = mixin.fetch_metadata
 
-        expect(ret["meta_data"]).to eq(nil)
+        expect(ret["meta_data"]).not_to be_nil
+        expect(ret["json_data"]).not_to be_nil
+        expect(ret["user_data"]).to eq(nil)
 
-        expect(ret["eipv4"]).to eq(nil)
-        expect(ret["private_ipv4"]).to eq(api_tree["meta-data"]["private_ipv4"])
-        expect(ret["hostname"]).to eq(api_tree["meta-data"]["hostname"])
-
-        expect(compare_tree(api_tree["meta-data"], ret, true)).to eq(true)
       end
     end
 
   end
 end
-

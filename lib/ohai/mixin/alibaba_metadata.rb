@@ -41,28 +41,38 @@ module Ohai
         conn.get("/2016-01-01/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
       end
 
-      def fetch_metadata(id = "")
+      def fetch_metadata(id = "", is_directory = true)
         response = http_get(id)
         if response.code == "200"
-          json_data = parse_json(response.body)
-          if json_data.nil?
-            logger.warn("Mixin AlibabaMetadata: Metadata response is NOT valid JSON for id='#{id}'")
-            if response.body.include?("\n")
-              temp = {}
-              response.body.split("\n").each do |sub_attr|
-                temp[sanitize_key(sub_attr)] = fetch_metadata("#{id}/#{sub_attr}")
-              end
-              temp
-            else
+
+          if !is_directory
+            json_data = parse_json(response.body)
+            if json_data.nil?
               response.body
+            else
+              json_data
             end
-          else
-            json_data
+          elsif is_directory
+            temp = {}
+            response.body.split("\n").each do |sub_attr|
+              if "#{id}/#{sub_attr}" != "/user-data"
+                uri = id == "" ? "#{id}#{sub_attr}/" : "#{id}#{sub_attr}"
+                temp[sanitize_key(sub_attr).gsub(/_$/, "")] = fetch_metadata(uri, has_trailing_slash?(uri))
+              end
+            end
+            temp
           end
         else
           logger.warn("Mixin AlibabaMetadata: Received response code #{response.code} requesting metadata for id='#{id}'")
           nil
         end
+      end
+
+      # @param data [String]
+      #
+      # @return [Boolean] is there a trailing /?
+      def has_trailing_slash?(data)
+        !!(data =~ %r{/$})
       end
 
       def sanitize_key(key)

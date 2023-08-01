@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.8 -->
-## [v18.1.8](https://github.com/chef/ohai/tree/v18.1.8) (2023-07-18)
+<!-- latest_release 18.1.9 -->
+## [v18.1.9](https://github.com/chef/ohai/tree/v18.1.9) (2023-08-01)
 
 #### Merged Pull Requests
-- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls))
+- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->
 - Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->
 - Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->
 - Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.6 -->

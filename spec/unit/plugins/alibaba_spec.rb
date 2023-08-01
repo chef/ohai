@@ -43,8 +43,8 @@ describe Ohai::System, "plugin alibaba" do
     before do
       @http_get = double("Net::HTTP client")
       allow(plugin).to receive(:http_get).with("").and_return(double("Net::HTTP Response", body: "meta-data\n", code: "200"))
-      allow(plugin).to receive(:http_get).with("/meta-data").and_return(double("Net::HTTP Response", body: "hostname\n", code: "200"))
-      allow(plugin).to receive(:http_get).with("/meta-data/hostname").and_return(double("Net::HTTP Response", body: "foo", code: "200"))
+      allow(plugin).to receive(:http_get).with("meta-data/").and_return(double("Net::HTTP Response", body: "hostname\n", code: "200"))
+      allow(plugin).to receive(:http_get).with("meta-data/hostname").and_return(double("Net::HTTP Response", body: "foo", code: "200"))
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)

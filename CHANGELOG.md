@@ -1,7 +1,7 @@
 # Change Log
 
-<!-- latest_release 17.9.2 -->
-## [v17.9.2](https://github.com/chef/ohai/tree/v17.9.2) (2023-08-01)
+<!-- latest_release 17.9.3 -->
+## [v17.9.3](https://github.com/chef/ohai/tree/v17.9.3) (2023-08-01)
 
 #### Merged Pull Requests
 - Fetch the user-data on Alibaba Cloud correctly [#1802](https://github.com/chef/ohai/pull/1802) ([ETiV](https://github.com/ETiV))

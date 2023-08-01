@@ -38,22 +38,27 @@ module Ohai
         conn.get("/2016-01-01/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
       end
 
-      def fetch_metadata(id = "")
+      def fetch_metadata(id = "", is_directory = true)
         response = http_get(id)
         return nil unless response.code == "200"
 
-        if json?(response.body)
-          data = String(response.body)
-          parser = FFI_Yajl::Parser.new
-          parser.parse(data)
-        elsif response.body.include?("\n")
+        if !is_directory
+          if json?(response.body)
+            data = String(response.body)
+            parser = FFI_Yajl::Parser.new
+            parser.parse(data)
+          else
+            response.body
+          end
+        elsif is_directory
           temp = {}
           response.body.split("\n").each do |sub_attr|
-            temp[sanitize_key(sub_attr)] = fetch_metadata("#{id}/#{sub_attr}")
+            if "#{id}/#{sub_attr}" != "/user-data"
+              uri = id == "" ? "#{id}#{sub_attr}/" : "#{id}#{sub_attr}"
+              temp[sanitize_key(sub_attr).gsub(/_$/, "")] = fetch_metadata(uri, has_trailing_slash?(uri))
+            end
           end
           temp
-        else
-          response.body
         end
       end
 
@@ -75,7 +80,7 @@ module Ohai
       #
       # @return [Boolean] is there a trailing /?
       def has_trailing_slash?(data)
-        !!( data =~ %r{/$} )
+        !!(data =~ %r{/$})
       end
 
       def sanitize_key(key)

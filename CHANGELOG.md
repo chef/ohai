@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.9 -->
-## [v18.1.9](https://github.com/chef/ohai/tree/v18.1.9) (2023-08-01)
+<!-- latest_release 18.1.10 -->
+## [v18.1.10](https://github.com/chef/ohai/tree/v18.1.10) (2023-08-22)
 
 #### Merged Pull Requests
-- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV))
+- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->
 - Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->
 - Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->
 - Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->

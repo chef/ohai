@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.10 -->
-## [v18.1.10](https://github.com/chef/ohai/tree/v18.1.10) (2023-08-22)
+<!-- latest_release 18.1.11 -->
+## [v18.1.11](https://github.com/chef/ohai/tree/v18.1.11) (2023-09-05)
 
 #### Merged Pull Requests
-- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov))
+- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->
 - Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->
 - Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->
 - Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->

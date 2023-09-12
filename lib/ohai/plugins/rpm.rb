@@ -22,16 +22,18 @@ Ohai.plugin(:Rpm) do
   provides "rpm"
   optional "true"
 
-  MACROS_MARKER = /========================/.freeze
+  MACROS_MARKER = /========================/.freeze unless defined?(MACROS_MARKER)
 
-  DO_NOT_SPLIT = %w{
-    build_arch
-    build_os
-    install_arch
-    install_os
-    archcolor
-    optflags
-  }.freeze
+  unless defined?(DO_NOT_SPLIT)
+    DO_NOT_SPLIT = %w{
+      build_arch
+      build_os
+      install_arch
+      install_os
+      archcolor
+      optflags
+    }.freeze
+  end
 
   collect_data(:aix, :darwin, :dragonflybsd, :freebsd, :linux, :netbsd, :openbsd, :solaris2) do
     rpm_path = which("rpm")

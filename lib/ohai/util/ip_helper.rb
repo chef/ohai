@@ -21,8 +21,8 @@ module Ohai
       require "ipaddress" unless defined?(IPAddress)
 
       # Corresponding to RFC 4192 + RFC 4193
-      IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress("fe80::/10")
-      IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress("fc00::/7")
+      IPV6_LINK_LOCAL_UNICAST_BLOCK = IPAddress("fe80::/10") unless defined?(IPV6_LINK_LOCAL_UNICAST_BLOCK)
+      IPV6_PRIVATE_ADDRESS_BLOCK = IPAddress("fc00::/7") unless defined?(IPV6_PRIVATE_ADDRESS_BLOCK)
 
       def private_address?(addr)
         ip = IPAddress(addr)

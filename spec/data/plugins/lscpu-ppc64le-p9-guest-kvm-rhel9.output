@@ -1,0 +1,26 @@
+Architecture:                    ppc64le
+Byte Order:                      Little Endian
+CPU(s):                          2
+On-line CPU(s) list:             0,1
+Model name:                      POWER9 (architected), altivec supported
+Model:                           2.2 (pvr 004e 1202)
+Thread(s) per core:              1
+Core(s) per socket:              1
+Socket(s):                       2
+Hypervisor vendor:               KVM
+Virtualization type:             para
+L1d cache:                       64 KiB (2 instances)
+L1i cache:                       64 KiB (2 instances)
+NUMA node(s):                    1
+NUMA node0 CPU(s):               0,1
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Mitigation; RFI Flush
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Mitigation; RFI Flush
+Vulnerability Mmio stale data:   Not affected
+Vulnerability Retbleed:          Not affected
+Vulnerability Spec store bypass: Mitigation; Kernel entry/exit barrier (eieio)
+Vulnerability Spectre v1:        Mitigation; __user pointer sanitization
+Vulnerability Spectre v2:        Vulnerable
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected

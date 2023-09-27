@@ -63,7 +63,8 @@ Ohai.plugin(:CPU) do
   def parse_lscpu(cpu_info)
     lscpu_info = Mash.new
     begin
-      so = shell_out("lscpu")
+      # Pipe to cat to retain previous output on newer util-linux (see lscpu(1))
+      so = shell_out("lscpu | cat")
       cpu_cores = shell_out("lscpu -p=CPU,CORE,SOCKET")
       if so.exitstatus == 0 && cpu_cores.exitstatus == 0
         lscpu_info[:numa_node_cpus] = Mash.new
@@ -96,10 +97,12 @@ Ohai.plugin(:CPU) do
             end
           when /^Thread\(s\) per core:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
             lscpu_info[:threads_per_core] = $1.to_i
-          when /^Core\(s\) per socket:\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
+          when /^Core\(s\) per (?:socket|cluster):\s+(.+)/ # http://rubular.com/r/lOw2pRrw1q
             lscpu_info[:cores_per_socket] = $1.to_i
           when /^Socket\(s\):\s+(.+)/ # http://rubular.com/r/DIzmPtJFvK
             lscpu_info[:sockets] = $1.to_i
+          when /^Clusters\(s\):\s+(.+)/
+            lscpu_info[:clusters] = $1.to_i
           when /^Socket\(s\) per book:\s+(.+)/
             lscpu_info[:sockets_per_book] = $1.to_i
           when /^Book\(s\) per drawer:\s+(.+)/
@@ -110,6 +113,10 @@ Ohai.plugin(:CPU) do
             lscpu_info[:numa_nodes] = $1.to_i
           when /^Vendor ID:\s+(.+)/
             lscpu_info[:vendor_id] = $1
+          when /^BIOS Vendor ID:\s+(.+)/
+            lscpu_info[:bios_vendor_id] = $1
+          when /^BIOS Model name:\s+(.+)/
+            lscpu_info[:bios_model_name] = $1.strip
           when /^Machine type:\s+(.+)/
             lscpu_info[:machine_type] = $1
           when /^CPU family:\s+(.+)/

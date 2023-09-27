@@ -3,16 +3,19 @@
 <!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=17.9.4 -->
+### Changes not yet released to rubygems.org
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.9.4](https://github.com/chef/ohai/tree/v17.9.4) (2023-09-27)
+<!-- latest_stable_release -->
+
 ## [v17.9.4](https://github.com/chef/ohai/tree/v17.9.4) (2023-09-27)
 
 #### Merged Pull Requests
 - Fetch the user-data on Alibaba Cloud correctly [#1802](https://github.com/chef/ohai/pull/1802) ([ETiV](https://github.com/ETiV))
 - [backport] PR1758 [#1808](https://github.com/chef/ohai/pull/1808) ([johnmccrae](https://github.com/johnmccrae))
-<!-- latest_stable_release -->
 
 ## [v17.9.1](https://github.com/chef/ohai/tree/v17.9.1) (2023-04-17)
 

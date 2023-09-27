@@ -1,26 +1,23 @@
 # Change Log
 
-<!-- latest_release 17.9.4 -->
-## [v17.9.4](https://github.com/chef/ohai/tree/v17.9.4) (2023-09-12)
-
-#### Merged Pull Requests
-- [backport] PR1758 [#1808](https://github.com/chef/ohai/pull/1808) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=18.1.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- [backport] PR1758 [#1808](https://github.com/chef/ohai/pull/1808) ([johnmccrae](https://github.com/johnmccrae)) <!-- 17.9.4 -->
-- Fetch the user-data on Alibaba Cloud correctly [#1802](https://github.com/chef/ohai/pull/1802) ([ETiV](https://github.com/ETiV)) <!-- 17.9.2 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v17.9.4](https://github.com/chef/ohai/tree/v17.9.4) (2023-09-27)
+
+#### Merged Pull Requests
+- Fetch the user-data on Alibaba Cloud correctly [#1802](https://github.com/chef/ohai/pull/1802) ([ETiV](https://github.com/ETiV))
+- [backport] PR1758 [#1808](https://github.com/chef/ohai/pull/1808) ([johnmccrae](https://github.com/johnmccrae))
+<!-- latest_stable_release -->
+
 ## [v17.9.1](https://github.com/chef/ohai/tree/v17.9.1) (2023-04-17)
 
 #### Merged Pull Requests
 - Update chef gems need to refer chef-17 [#1772](https://github.com/chef/ohai/pull/1772) ([vkarve-chef](https://github.com/vkarve-chef))
-<!-- latest_stable_release -->
 
 ## [v17.9.0](https://github.com/chef/ohai/tree/v17.9.0) (2021-12-17)
 

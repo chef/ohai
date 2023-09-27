@@ -377,7 +377,7 @@ describe Ohai::System, "General Linux cpu plugin" do
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+    allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(1, "", ""))
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
@@ -471,7 +471,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -516,11 +516,57 @@ describe Ohai::System, "General Linux cpu plugin" do
     end
   end
 
+  context "RHEL9 x86 host cpu with lscpu" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-cores.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{acpi aes aperfmperf apic arat arch_perfmon bts clflush cmov constant_tsc cpuid cx16 cx8 dca de ds_cpl dtes64 dtherm dts epb ept est flexpriority flush_l1d fpu fxsr ht ibpb ibrs ida lahf_lm lm mca mce mmx monitor msr mtrr nonstop_tsc nopl nx pae pat pbe pcid pclmulqdq pdcm pdpe1gb pebs pge pni popcnt pse pse36 pti rdtscp rep_good sep smx ssbd sse sse2 sse4_1 sse4_2 ssse3 stibp syscall tm tm2 tpr_shadow tsc vme vmx vnmi vpid xtopology xtpr}
+    numa_node_cpus = { "0" => [0, 2, 4, 6, 8, 10], "1" => [1, 3, 5, 7, 9, 11] }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      12,                 # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      12,                 # cpus
+      12,                 # cpus_online
+      1,                  # threads_per_core
+      6,                  # cores_per_socket
+      2,                  # sockets
+      2,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "44",               # model
+      "Intel(R) Xeon(R) CPU           X5680  @ 3.33GHz", # model_name
+      "6649.64", # bogomips
+      "384 KiB (12 instances)", # l1d_cache
+      "384 KiB (12 instances)", # l1i_cache
+      "3 MiB (12 instances)",   # l2_cache
+      "24 MiB (2 instances)",   # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+
+    it "has virtualization" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("virtualization")
+      expect(plugin[:cpu]["virtualization"]).to eq("VT-x")
+    end
+  end
+
   context "with a dual-core hyperthreaded /proc/cpuinfo" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-dual-core-hyperthreaded.output")) }
 
     before do
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(1, "", ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
     end
 
@@ -547,7 +593,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -610,7 +656,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -659,7 +705,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -707,6 +753,55 @@ describe Ohai::System, "General Linux cpu plugin" do
     end
   end
 
+  context "x86 RHEL9 guest on kvm (nested)" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-kvm-nested-rhel9.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm-nested-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-kvm-nested-cores-rhel9.output")) }
+
+    before do
+      allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{abm aes apic arat avx avx2 bmi1 bmi2 clflush cmov constant_tsc cpuid cx16 cx8 de ept ept_ad erms f16c flexpriority fma fpu fsgsbase fxsr hypervisor ibpb ibrs invpcid invpcid_single lahf_lm lm mca mce md_clear mmx movbe msr mtrr nopl nx pae pat pcid pclmulqdq pdpe1gb pge pni popcnt pse pse36 pti rdrand rdtscp rep_good sep smep ss ssbd sse sse2 sse4_1 sse4_2 ssse3 stibp syscall tpr_shadow tsc tsc_adjust tsc_deadline_timer tsc_known_freq vme vmx vnmi vpid x2apic xsave xsaveopt xtopology}
+    numa_node_cpus = { "0" => [0, 1] }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      2,                  # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "x86_64",           # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      2,                  # cpus
+      2,                  # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      2,                  # sockets
+      1,                  # numa_nodes
+      "GenuineIntel",     # vendor_id
+      "60",               # model
+      "Intel Core Processor (Haswell, no TSX, IBRS)", # model_name
+      "4788.90", # bogomips
+      "64 KiB (2 instances)", # l1d_cache
+      "64 KiB (2 instances)", # l1i_cache
+      "8 MiB (2 instances)",  # l2_cache
+      "32 MiB (2 instances)", # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "virtualization info",
+      "full",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+
+    it "has virtualization" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("virtualization")
+      expect(plugin[:cpu]["virtualization"]).to eq("VT-x")
+    end
+  end
+
   context "x86 guest on xen" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-x86-guest-xen.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-guest-xen.output")) }
@@ -714,7 +809,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -763,7 +858,7 @@ describe Ohai::System, "General Linux cpu plugin" do
 
     before do
       allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -824,7 +919,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+    allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(1, "", ""))
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
@@ -867,7 +962,7 @@ describe Ohai::System, "S390 linux cpu plugin" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1003,7 +1098,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+    allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(1, "", ""))
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
@@ -1030,7 +1125,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1088,6 +1183,82 @@ describe Ohai::System, "arm64 linux cpu plugin" do
     end
   end
 
+  context "RHEL9 with lscpu data" do
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-host-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-host-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2}
+    numa_node_cpus = { "0" => Range.new(0, 31).to_a }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      32,                 # total_cpu
+      1,                  # real_cpu
+      true,               # ls_cpu
+      "aarch64",          # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      32,                 # cpus
+      32,                 # cpus_online
+      1,                  # threads_per_core
+      32,                 # cores_per_socket
+      1,                  # sockets
+      1,                  # numa_nodes
+      "APM",              # vendor_id
+      "2",                # model
+      nil,                # model_name
+      "80.00",            # bogomips
+      "1 MiB (32 instances)", # l1d_cache
+      "1 MiB (32 instances)", # l1i_cache
+      "4 MiB (16 instances)", # l2_cache
+      nil,                # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "arm64 processor info",
+      0,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
+    it_behaves_like "arm64 processor info",
+      1,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
+
+    it "has a cpu 1" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("1")
+    end
+
+    it "has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_max")
+      expect(plugin[:cpu]["mhz_max"]).to eq("3000.0000")
+    end
+
+    it "has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_min")
+      expect(plugin[:cpu]["mhz_min"]).to eq("375.0000")
+    end
+
+    it "has bios_vendor_id" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("bios_vendor_id")
+      expect(plugin[:cpu]["bios_vendor_id"]).to eq("Ampere(TM)")
+    end
+
+    it "has bios_model_name" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("bios_model_name")
+      expect(plugin[:cpu]["bios_model_name"]).to eq("eMAG")
+    end
+  end
+
   context "aarch64 kvm guest" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-aarch64-guest-kvm.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-guest-kvm.output")) }
@@ -1095,7 +1266,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1132,6 +1303,68 @@ describe Ohai::System, "arm64 linux cpu plugin" do
       flags     # features
   end
 
+  context "aarch64 kvm RHEL9 guest" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-aarch64-guest-kvm-rhel9.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-guest-kvm-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-guest-kvm-cores-rhel9.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    flags = %w{aes asimd cpuid crc32 evtstrm fp pmull sha1 sha2}
+    numa_node_cpus = { "0" => Range.new(0, 1).to_a }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      4,                  # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "aarch64",          # architecture
+      %w{32-bit 64-bit},  # cpu_opmodes
+      "little endian",    # byte_order
+      2,                  # cpus
+      2,                  # cpus_online
+      1,                  # threads_per_core
+      2,                  # cores_per_socket
+      2,                  # sockets
+      1,                  # numa_nodes
+      "APM",              # vendor_id
+      "2",                # model
+      nil,                # model_name
+      "80.00",            # bogomips
+      nil,                # l1d_cache
+      nil,                # l1i_cache
+      nil,                # l2_cache
+      nil,                # l3_cache
+      flags,              # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "arm64 processor info",
+      0,        # cpu_no
+      "80.00",  # bogomips
+      flags     # features
+    it "has vulnerability" do
+      plugin.run
+      vuln = {
+        "itlb_multihit" => "Not affected",
+        "l1tf" => "Not affected",
+        "mds" => "Not affected",
+        "meltdown" => "Mitigation; PTI",
+        "mmio_stale_data" => "Not affected",
+        "retbleed" => "Not affected",
+        "spec_store_bypass" => "Vulnerable",
+        "spectre_v1" => "Mitigation; __user pointer sanitization",
+        "spectre_v2" => "Vulnerable",
+        "srbds" => "Not affected",
+        "tsx_async_abort" => "Not affected",
+      }
+      expect(plugin[:cpu]).to have_key("vulnerability")
+      expect(plugin[:cpu]["vulnerability"]).to eq(vuln)
+    end
+  end
+
   context "aarch64 graviton2 guest" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-aarch64-graviton2.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-aarch64-graviton2.output")) }
@@ -1139,7 +1372,7 @@ describe Ohai::System, "arm64 linux cpu plugin" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1190,7 +1423,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
-    allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(1, "", ""))
+    allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(1, "", ""))
     allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(1, "", ""))
   end
 
@@ -1216,7 +1449,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1286,6 +1519,85 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
     end
   end
 
+  context "POWER9 host on RHEL9" do
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-host-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-host-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus =
+      {
+        "0" => Range.new(0, 63).to_a,
+        "252" => [0],
+        "253" => [0],
+        "254" => [0],
+        "255" => [0],
+        "8" => Range.new(64, 127).to_a,
+      }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      128,                # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      128,                # cpus
+      128,                # cpus_online
+      4,                  # threads_per_core
+      16,                 # cores_per_socket
+      2,                  # sockets
+      6,                  # numa_nodes
+      nil,                # vendor_id
+      "2.3 (pvr 004e 1203)",        # model
+      "POWER9, altivec supported",  # model_name
+      nil, # bogomips
+      "1 MiB (32 instances)",   # l1d_cache
+      "1 MiB (32 instances)",   # l1i_cache
+      "8 MiB (16 instances)",   # l2_cache
+      "160 MiB (16 instances)", # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0,                            # cpu_no
+      "POWER9, altivec supported",  # model_name
+      "2.3 (pvr 004e 1203)",        # model
+      "2166.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "PowerNV",                    # platform
+      "9006-12P",                   # machine_model
+      "PowerNV 9006-12P",           # machine
+      "OPAL",                       # firmware
+      "Radix"                       # mmu
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+
+    it "not have cpus_offline" do
+      plugin.run
+      expect(plugin[:cpu]).to_not have_key("cpus_offline")
+    end
+
+    it "has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_max")
+      expect(plugin[:cpu]["mhz_max"]).to eq("3800.0000")
+    end
+
+    it "has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_min")
+      expect(plugin[:cpu]["mhz_min"]).to eq("2300.0000")
+    end
+  end
+
   context "POWER8 host" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p8-host.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-host.output")) }
@@ -1293,7 +1605,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1365,6 +1677,85 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
     end
   end
 
+  context "POWER8 host on Debian 12" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p8-host.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-host-debian12.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-host-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus =
+      {
+        "0" => [0, 8, 16, 24, 32],
+        "1" => [40, 48, 56, 64, 72],
+        "16" => [80, 88, 96, 104, 112],
+        "17" => [120, 128, 136, 144, 152],
+      }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      20,                 # total_cpu
+      4,                  # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      160,                # cpus
+      20,                 # cpus_online
+      1,                  # threads_per_core
+      5,                  # cores_per_socket
+      4,                  # sockets
+      4,                  # numa_nodes
+      nil,                # vendor_id
+      "2.1 (pvr 004b 0201)",              # model
+      "POWER8E (raw), altivec supported", # model_name
+      nil, # bogomips
+      "1.3 MiB (20 instances)", # l1d_cache
+      "640 KiB (20 instances)", # l1i_cache
+      "10 MiB (20 instances)",  # l2_cache
+      "160 MiB (20 instances)", # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0, # cpu_no
+      "POWER8E (raw), altivec supported", # model_name
+      "2.1 (pvr 004b 0201)",        # model
+      "3690.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "PowerNV",                    # platform
+      "8247-22L",                   # machine_model
+      "PowerNV 8247-22L",           # machine
+      "OPAL",                       # firmware
+      "Hash"                        # mmu
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+
+    it "has cpus_offline" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("cpus_offline")
+      expect(plugin[:cpu]["cpus_offline"]).to eq(99)
+    end
+
+    it "has mhz_max" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_max")
+      expect(plugin[:cpu]["mhz_max"]).to eq("3690.0000")
+    end
+
+    it "has mhz_min" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("mhz_min")
+      expect(plugin[:cpu]["mhz_min"]).to eq("2061.0000")
+    end
+  end
+
   context "POWER8 KVM guest" do
     let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p8-guest-kvm.output")) }
     let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p8-guest-kvm.output")) }
@@ -1372,7 +1763,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1431,7 +1822,7 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
 
     before do
       allow(plugin).to receive(:collect_os).and_return(:linux)
-      allow(plugin).to receive(:shell_out).with("lscpu").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
       allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
     end
 
@@ -1457,6 +1848,65 @@ describe Ohai::System, "ppc64le linux cpu plugin (POWER9)" do
       nil,                # bogomips
       "32K",              # l1d_cache
       "32K",              # l1i_cache
+      nil,                # l2_cache
+      nil,                # l3_cache
+      nil,                # flags
+      numa_node_cpus      # numa_node_cpus
+    it_behaves_like "ppc64le processor info",
+      0, # cpu_no
+      "POWER9 (architected), altivec supported", # model_name
+      "2.2 (pvr 004e 1202)",        # model
+      "2200.000000MHz",             # mhz
+      "512000000",                  # timebase
+      "pSeries",                    # platform
+      "IBM pSeries (emulated by qemu)",       # machine_model
+      "CHRP IBM pSeries (emulated by qemu)",  # machine
+      nil,                          # firmware
+      "Radix"                       # mmu
+
+    it_behaves_like "virtualization info",
+      "para",             # virtualization_type
+      "KVM"               # hypervisor_vendor
+
+    it "has a cpu 0" do
+      plugin.run
+      expect(plugin[:cpu]).to have_key("0")
+    end
+  end
+
+  context "POWER9 KVM guest on RHEL9" do
+    let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-ppc64le-p9-guest-kvm-rhel9.output")) }
+    let(:lscpu) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-guest-kvm-rhel9.output")) }
+    let(:lscpu_cores) { File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-ppc64le-p9-guest-kvm-cores.output")) }
+
+    before do
+      allow(plugin).to receive(:collect_os).and_return(:linux)
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, lscpu, ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, lscpu_cores, ""))
+    end
+
+    numa_node_cpus = { "0" => [0, 1] }
+
+    it_behaves_like "Common cpu info",
+      "0",                # default_cpu
+      2,                  # total_cpu
+      2,                  # real_cpu
+      true,               # ls_cpu
+      "ppc64le",          # architecture
+      nil,                # cpu_opmodes
+      "little endian",    # byte_order
+      2,                  # cpus
+      2,                  # cpus_online
+      1,                  # threads_per_core
+      1,                  # cores_per_socket
+      2,                  # sockets
+      1,                  # numa_nodes
+      nil,                # vendor_id
+      "2.2 (pvr 004e 1202)",                     # model
+      "POWER9 (architected), altivec supported", # model_name
+      nil, # bogomips
+      "64 KiB (2 instances)", # l1d_cache
+      "64 KiB (2 instances)", # l1i_cache
       nil,                # l2_cache
       nil,                # l3_cache
       nil,                # flags

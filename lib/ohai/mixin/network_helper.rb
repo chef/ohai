@@ -19,6 +19,7 @@
 #
 
 require "socket" unless defined?(Socket)
+require "resolv" unless defined?(Resolv)
 
 module Ohai
   module Mixin
@@ -37,6 +38,11 @@ module Ohai
         dec
       end
 
+      def ip?(hostname)
+        !!(canonname =~ Resolv::IPv4::Regex) || !!(canonname =~ Resolv::IPv6::Regex)
+
+      end
+
       # This does a forward and reverse lookup on the hostname to return what should be
       # the FQDN for the host determined by name lookup (generally DNS).  If the forward
       # lookup fails this will throw.  If the reverse lookup fails this will return the
@@ -52,12 +58,21 @@ module Ohai
           .first
 
         canonname = ai&.canonname
-        # use canonname
-        return canonname if canonname != hostname || !ChefUtils.windows?
+        # use canonname if it's an FQDN
+        # This API is preferred as it never gives us an IP address for broken DNS
+        # (see https://github.com/chef/ohai/pull/1705)
+        # However, we have found that Windows hosts that are not joined to a domain
+        # can return a non-qualified hostname)
+        return canonname unless ip?(canonname)
 
-        # canonname does not fully qualify the hostname if on Windows node that
-        # is not joined to a domain, but getnameinfo does.
-        ai&.getnameinfo&.[](0) || hostname
+        # If we got a non-qualified name, then we do a standard reverse resolve
+        # which, assuming DNS is working, will work around that windows bug
+        # (and maybe others)
+        canonname = ai&.getnameinfo&.first
+        return canonname unless ip?(canonname)
+
+        # if all else fails, return the name we were given as a safety
+        hostname
       end
 
       def canonicalize_hostname_with_retries(hostname)

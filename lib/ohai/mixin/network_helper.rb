@@ -47,11 +47,12 @@ module Ohai
       # server), and the method should return the hostname and not the IP address.
       #
       def canonicalize_hostname(hostname)
-        ai = Addrinfo.
-          getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).
-          first
+        ai = Addrinfo
+          .getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME)
+          .first
 
-        return ai&.canonname if ai&.canonname != hostname
+        # use canonname
+        return ai&.canonname if (ai&.canonname != hostname || !ChefUtils.windows?)
 
         # canonname does not fully qualify the hostname if on Windows node that
         # is not joined to a domain, but getnameinfo does.

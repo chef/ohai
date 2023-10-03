@@ -36,6 +36,7 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
       addrinfo = instance_double(Addrinfo)
       expect(Addrinfo).to receive(:getaddrinfo).with(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).and_return([addrinfo])
       expect(addrinfo).to receive(:canonname).and_return(hostname)
+      expect(addrinfo).to receive(:getnameinfo).and_return([hostname, "0"]) if windows?
       expect(mixin.canonicalize_hostname(hostname)).to eql(hostname)
     end
   end

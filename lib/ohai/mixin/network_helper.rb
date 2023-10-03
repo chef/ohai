@@ -51,8 +51,9 @@ module Ohai
           .getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME)
           .first
 
+        canonname = ai&.canonname
         # use canonname
-        return ai&.canonname if (ai&.canonname != hostname || !ChefUtils.windows?)
+        return canonname if (canonname != hostname || !ChefUtils.windows?)
 
         # canonname does not fully qualify the hostname if on Windows node that
         # is not joined to a domain, but getnameinfo does.

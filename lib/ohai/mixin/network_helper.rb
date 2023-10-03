@@ -53,7 +53,7 @@ module Ohai
 
         canonname = ai&.canonname
         # use canonname
-        return canonname if (canonname != hostname || !ChefUtils.windows?)
+        return canonname if canonname != hostname || !ChefUtils.windows?
 
         # canonname does not fully qualify the hostname if on Windows node that
         # is not joined to a domain, but getnameinfo does.

@@ -29,14 +29,53 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
   end
 
   describe "canonicalize hostname" do
-    # this is a brittle test deliberately intended to discourage modifying this API
-    # (see the node in the code on the necessity of manual testing)
-    it "uses the correct ruby API" do
-      hostname = "broken.example.org"
-      addrinfo = instance_double(Addrinfo)
-      expect(Addrinfo).to receive(:getaddrinfo).with(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).and_return([addrinfo])
-      expect(addrinfo).to receive(:canonname).and_return(hostname)
-      expect(mixin.canonicalize_hostname(hostname)).to eql(hostname)
+    [
+      {
+        desc: "canonname == initial hostname returns those",
+        initial_hostname: "fullhostname.example.com",
+        canonname: "fullhostname.example.com",
+        final_hostname: "fullhostname.example.com",
+      },
+      {
+        desc: "canonname(hostname) => fqdn returns fqdn",
+        initial_hostname: "hostnamepart",
+        canonname: "hostnamepart.example.com",
+        final_hostname: "hostnamepart.example.com",
+      },
+      {
+        desc: "hostname only canonname, getnameinfo is tried and succeeds",
+        initial_hostname: "hostnamepart2",
+        canonname: "hostnamepart2",
+        nameinfo: "hostnamepart2.example.com",
+        final_hostname: "hostnamepart2.example.com",
+      },
+      {
+        desc: "hostname only canonname, getnameinfo returns ip => original hostname",
+        initial_hostname: "hostnameip.example.com",
+        canonname: "hostnameip", # totally contrived
+        nameinfo: "192.168.1.1",
+        final_hostname: "hostnameip.example.com",
+      },
+    ].each do |example_hash|
+      # this is a brittle set of tests deliberately intended to discourage modifying
+      # this API (see the note in the code on the necessity of manual testing)
+      example example_hash[:desc] do
+        addrinfo = instance_double(Addrinfo)
+        expect(Addrinfo).to receive(:getaddrinfo)
+          .with(example_hash[:initial_hostname], nil, nil, nil, nil, Socket::AI_CANONNAME)
+          .and_return([addrinfo])
+        expect(addrinfo).to receive(:canonname).and_return(example_hash[:canonname])
+
+        # only expect this call if :nameinfo key is set, otherwise code should not
+        # fall through to getnameinfo
+        if example_hash[:nameinfo]
+          expect(addrinfo).to receive(:getnameinfo).and_return([example_hash[:nameinfo], "0"])
+        end
+
+        # the actual input and output for #canonicalize_hostname method
+        expect(mixin.canonicalize_hostname(example_hash[:initial_hostname]))
+          .to eql(example_hash[:final_hostname])
+      end
     end
   end
 end

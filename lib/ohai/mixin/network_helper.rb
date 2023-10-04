@@ -19,6 +19,7 @@
 #
 
 require "socket" unless defined?(Socket)
+require "resolv" unless defined?(Resolv)
 
 module Ohai
   module Mixin
@@ -37,6 +38,12 @@ module Ohai
         dec
       end
 
+      # Addrinfo#ip*? methods return true on AI_CANONNAME Addrinfo records that match
+      # the ipv* scheme and #ip? always returns true unless a non tcp Addrinfo
+      def ip?(hostname)
+        Resolv::IPv4::Regex.match?(hostname) || Resolv::IPv6::Regex.match?(hostname)
+      end
+
       # This does a forward and reverse lookup on the hostname to return what should be
       # the FQDN for the host determined by name lookup (generally DNS).  If the forward
       # lookup fails this will throw.  If the reverse lookup fails this will return the
@@ -47,7 +54,27 @@ module Ohai
       # server), and the method should return the hostname and not the IP address.
       #
       def canonicalize_hostname(hostname)
-        Addrinfo.getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME).first.canonname
+        ai = Addrinfo
+          .getaddrinfo(hostname, nil, nil, nil, nil, Socket::AI_CANONNAME)
+          .first
+
+        canonname = ai&.canonname
+        # use canonname if it's an FQDN
+        # This API is preferred as it never gives us an IP address for broken DNS
+        # (see https://github.com/chef/ohai/pull/1705)
+        # However, we have found that Windows hosts that are not joined to a domain
+        # can return a non-qualified hostname).
+        # Use a '.' in the canonname as indicator of FQDN
+        return canonname if canonname.include?(".")
+
+        # If we got a non-qualified name, then we do a standard reverse resolve
+        # which, assuming DNS is working, will work around that windows bug
+        # (and maybe others)
+        canonname = ai&.getnameinfo&.first
+        return canonname unless ip?(canonname)
+
+        # if all else fails, return the name we were given as a safety
+        hostname
       end
 
       def canonicalize_hostname_with_retries(hostname)

@@ -65,7 +65,7 @@ module Ohai
         # However, we have found that Windows hosts that are not joined to a domain
         # can return a non-qualified hostname).
         # Use a '.' in the canonname as indicator of FQDN
-        return canonname if /\./.match?(canonname)
+        return canonname if canonname.include?(".")
 
         # If we got a non-qualified name, then we do a standard reverse resolve
         # which, assuming DNS is working, will work around that windows bug

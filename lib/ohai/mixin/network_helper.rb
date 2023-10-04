@@ -38,9 +38,10 @@ module Ohai
         dec
       end
 
+      # Addrinfo#ip*? methods return true on AI_CANONNAME Addrinfo records that match
+      # the ipv* scheme and #ip? always returns true unless a non tcp Addrinfo
       def ip?(hostname)
         !!(canonname =~ Resolv::IPv4::Regex) || !!(canonname =~ Resolv::IPv6::Regex)
-
       end
 
       # This does a forward and reverse lookup on the hostname to return what should be
@@ -62,8 +63,9 @@ module Ohai
         # This API is preferred as it never gives us an IP address for broken DNS
         # (see https://github.com/chef/ohai/pull/1705)
         # However, we have found that Windows hosts that are not joined to a domain
-        # can return a non-qualified hostname)
-        return canonname unless ip?(canonname)
+        # can return a non-qualified hostname).
+        # Use a '.' in the canonname as indicator of FQDN
+        return canonname if canonname =~ /\./
 
         # If we got a non-qualified name, then we do a standard reverse resolve
         # which, assuming DNS is working, will work around that windows bug

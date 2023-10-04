@@ -55,7 +55,7 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
         canonname: "hostnameip", # totally contrived
         nameinfo: "192.168.1.1",
         final_hostname: "hostnameip.example.com",
-      }
+      },
     ].each do |example_hash|
       # this is a brittle set of tests deliberately intended to discourage modifying
       # this API (see the note in the code on the necessity of manual testing)

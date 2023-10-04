@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.11 -->
-## [v18.1.11](https://github.com/chef/ohai/tree/v18.1.11) (2023-09-05)
+<!-- latest_release 18.1.12 -->
+## [v18.1.12](https://github.com/chef/ohai/tree/v18.1.12) (2023-10-04)
 
 #### Merged Pull Requests
-- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw))
+- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.1.12 -->
 - fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->
 - Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->
 - Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->

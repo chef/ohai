@@ -1,10 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 17.9.5 -->
+## [v17.9.5](https://github.com/chef/ohai/tree/v17.9.5) (2023-10-09)
+
+#### Merged Pull Requests
+- ffi less than 1.16.0 [#1811](https://github.com/chef/ohai/pull/1811) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.4 -->
 ### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- ffi less than 1.16.0 [#1811](https://github.com/chef/ohai/pull/1811) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 17.9.5 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

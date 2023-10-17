@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.12 -->
-## [v18.1.12](https://github.com/chef/ohai/tree/v18.1.12) (2023-10-04)
+<!-- latest_release 18.1.13 -->
+## [v18.1.13](https://github.com/chef/ohai/tree/v18.1.13) (2023-10-17)
 
 #### Merged Pull Requests
-- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress))
+- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.13 -->
 - Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.1.12 -->
 - fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->
 - Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->

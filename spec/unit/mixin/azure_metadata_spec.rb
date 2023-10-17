@@ -66,7 +66,7 @@ describe Ohai::Mixin::AzureMetadata do
       let(:response) { double("Net::HTTP Response", code: "404") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2021-10-01")
+        expect(mixin.best_api_version).to eq("2021-12-13")
       end
     end
 

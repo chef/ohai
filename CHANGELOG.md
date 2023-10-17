@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.13 -->
-## [v18.1.13](https://github.com/chef/ohai/tree/v18.1.13) (2023-10-17)
+<!-- latest_release 18.1.14 -->
+## [v18.1.14](https://github.com/chef/ohai/tree/v18.1.14) (2023-10-17)
 
 #### Merged Pull Requests
-- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae))
+- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.14 -->
 - Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.13 -->
 - Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.1.12 -->
 - fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->

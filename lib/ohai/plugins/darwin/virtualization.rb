@@ -43,6 +43,10 @@ Ohai.plugin(:Virtualization) do
     which("docker")
   end
 
+  def sysctl_exists?
+    which("sysctl")
+  end
+
   collect_data(:darwin) do
     virtualization Mash.new unless virtualization
     virtualization[:systems] ||= Mash.new
@@ -75,6 +79,11 @@ Ohai.plugin(:Virtualization) do
       virtualization[:system] = "vmware"
       virtualization[:role] = "guest"
       virtualization[:systems][:vmware] = "guest"
+    end
+
+    if sysctl_exists? && shell_out("sysctl -in kern.hv_vmm_present").stdout.strip.to_i == 1
+      virtualization[:system] = "qemu"
+      virtualization[:role] = "guest"
     end
 
     if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")

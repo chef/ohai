@@ -76,6 +76,7 @@ describe Ohai::System, "Darwin virtualization platform" do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
     allow(plugin).to receive(:prlctl_exists?).and_return(false)
     allow(plugin).to receive(:ioreg_exists?).and_return(false)
+    allow(plugin).to receive(:sysctl_exists?).and_return(false)
     allow(plugin).to receive(:vboxmanage_exists?).and_return(false)
     allow(plugin).to receive(:fusion_exists?).and_return(false)
     allow(plugin).to receive(:docker_exists?).and_return(false)
@@ -111,6 +112,14 @@ describe Ohai::System, "Darwin virtualization platform" do
       expect(plugin[:virtualization][:system]).to eq("vmware")
       expect(plugin[:virtualization][:role]).to eq("guest")
       expect(plugin[:virtualization][:systems][:vmware]).to eq("guest")
+    end
+
+    it "sets qemu guest if kern.hv_vmm_present equals 1" do
+      allow(plugin).to receive(:sysctl_exists?).and_return(true)
+      allow(plugin).to receive(:shell_out).with("sysctl -in kern.hv_vmm_present").and_return(mock_shell_out(0, "1\n", ""))
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("qemu")
+      expect(plugin[:virtualization][:role]).to eq("guest")
     end
 
     it "sets vbox host if /usr/local/bin/VBoxManage exists" do

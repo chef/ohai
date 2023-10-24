@@ -88,7 +88,7 @@ For information on contributing to this project see <https://github.com/chef/che
 
 1. Fork it
 1. Create your feature branch (git checkout -b my-new-feature)
-1. Commit your changes (git commit -am 'Add some feature')
+1. Commit your changes (git commit -am 'Add some feature' --signoff)
 1. Run the tests `bundle exec rake spec`
 1. Run the style tests `bundle exec rake style`
 1. Push to the branch (git push origin my-new-feature)

@@ -82,6 +82,7 @@ describe Ohai::System, "Darwin virtualization platform" do
     allow(plugin).to receive(:docker_exists?).and_return(false)
     plugin[:hardware] = Mash.new
     plugin[:hardware][:boot_rom_version] = "not_a_vm"
+    plugin[:hardware][:machine_model] = "not_a_vm"
   end
 
   describe "when detecting OS X virtualization" do
@@ -180,6 +181,13 @@ describe Ohai::System, "Darwin virtualization platform" do
       allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(shellout)
       plugin.run
       expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+
+    it "sets apple guest if hardware attributes mention VirtualMac" do
+      plugin[:hardware][:machine_model] = "VirtualMac2,1"
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("apple")
+      expect(plugin[:virtualization][:role]).to eq("guest")
     end
   end
 end

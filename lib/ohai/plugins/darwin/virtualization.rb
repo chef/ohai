@@ -95,5 +95,10 @@ Ohai.plugin(:Virtualization) do
       virtualization[:role] = "host"
       virtualization[:systems][:parallels] = "host"
     end
+
+    if hardware["machine_model"].include? "VirtualMac"
+      virtualization[:system] = "apple"
+      virtualization[:role] = "guest"
+    end
   end
 end

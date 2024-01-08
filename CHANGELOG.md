@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.16 -->
-## [v18.1.16](https://github.com/chef/ohai/tree/v18.1.16) (2023-11-14)
+<!-- latest_release 18.1.17 -->
+## [v18.1.17](https://github.com/chef/ohai/tree/v18.1.17) (2024-01-08)
 
 #### Merged Pull Requests
-- determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval))
+- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.17 -->
 - determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval)) <!-- 18.1.16 -->
 - Detect QEMU virtualization on Darwin. [#1813](https://github.com/chef/ohai/pull/1813) ([williamtheaker](https://github.com/williamtheaker)) <!-- 18.1.15 -->
 - Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.14 -->

@@ -75,7 +75,7 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
         # the actual input and output for #canonicalize_hostname method
         expect(mixin.canonicalize_hostname(example_hash[:initial_hostname]))
           .to eql(example_hash[:final_hostname])
-        
+
       end
     end
   end

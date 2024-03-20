@@ -19,7 +19,7 @@
 #
 
 require "socket" unless defined?(Socket)
-require "resolv" unless defined?(Resolv)
+# require "resolv" unless defined?(Resolv)
 
 module Ohai
   module Mixin

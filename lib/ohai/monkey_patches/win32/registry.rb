@@ -22,6 +22,8 @@ require "win32/registry" unless defined?(Win32::Registry)
 module Win32
   class Registry
 
+    puts "I am actually inside the monkey patch now, doing stuff"
+
     # ::Win32::Registry#export_string is used when enumerating child
     # keys and values and re encodes a UTF-16LE to the local codepage.
     # This can result in encoding incompatibilities if the native codepage

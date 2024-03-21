@@ -19,7 +19,7 @@
 #
 
 require "socket" unless defined?(Socket)
-require "resolv" unless defined?(Resolv)
+# require "resolv" unless defined?(Resolv)
 
 puts "[1] - I am in the network helper"
 

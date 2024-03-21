@@ -21,21 +21,21 @@
 require "socket" unless defined?(Socket)
 require "resolv" unless defined?(Resolv)
 
-puts "[1] - I am in the network helper"
+# puts "[1] - I am in the network helper"
 
-if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
-  puts "OOh, just about to load the monkey-patch"
-  module Win32
-    puts "OOH, autoloading the Registry patch"
-    # puts "Here is the contents of the patch"
-    # puts File.expand_path("../../monkey_patches/win32/registry", __dir__)
-    # puts File.expand_path("../../monkey_patches/win32/registry", __FILE__)
-    text = File.read(File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__))
-    puts text
-    autoload :Registry, File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__)
-    puts "OOH, just finished autoloading the Registry patch"
-  end
-end
+# if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+#   puts "OOh, just about to load the monkey-patch"
+#   module Win32
+#     puts "OOH, autoloading the Registry patch"
+#     # puts "Here is the contents of the patch"
+#     # puts File.expand_path("../../monkey_patches/win32/registry", __dir__)
+#     # puts File.expand_path("../../monkey_patches/win32/registry", __FILE__)
+#     text = File.read(File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__))
+#     puts text
+#     autoload :Registry, File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__)
+#     puts "OOH, just finished autoloading the Registry patch"
+#   end
+# end
 
 module Ohai
   module Mixin

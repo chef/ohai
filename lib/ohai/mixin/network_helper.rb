@@ -21,6 +21,12 @@
 require "socket" unless defined?(Socket)
 require "resolv" unless defined?(Resolv)
 
+if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
+  module Win32
+    autoload :Registry, File.expand_path("../monkey_patches/win32/registry", __dir__)
+  end
+end
+
 module Ohai
   module Mixin
     module NetworkHelper

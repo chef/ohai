@@ -19,7 +19,7 @@
 #
 
 require "socket" unless defined?(Socket)
-# require "resolv" unless defined?(Resolv)
+require "resolv" unless defined?(Resolv)
 
 puts "[1] - I am in the network helper"
 
@@ -33,7 +33,6 @@ if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
     text = File.read(File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__))
     puts text
     autoload :Registry, File.expand_path("../../ohai/monkey_patches/win32/registry.rb", __dir__)
-    Registry
     puts "OOH, just finished autoloading the Registry patch"
   end
 end
@@ -47,6 +46,8 @@ module Ohai
           "inet6" => "default_inet6",
         }.freeze
       end
+
+      Registry
 
       def hex_to_dec_netmask(netmask)
         # example 'ffff0000' -> '255.255.0.0'

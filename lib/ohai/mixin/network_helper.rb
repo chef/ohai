@@ -26,7 +26,10 @@ puts "I am in the network helper"
 if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
   puts "OOh, just about to load the monkey-patch"
   module Win32
-    autoload :Registry, File.expand_path("../monkey_patches/win32/registry", __dir__)
+    puts "OOH, autoloading the Registry patch"
+    autoload :Registry, File.expand_path("../../monkey_patches/win32/registry", __dir__)
+    Registry
+    puts "OOH, just finished autoloading the Registry patch"
   end
 end
 

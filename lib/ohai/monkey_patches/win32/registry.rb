@@ -55,6 +55,6 @@ module Win32
     #     check RegDeleteKeyExW(hkey, name.to_wstring, 0, 0)
     #   end
 
-    end
+    # end
   end
 end

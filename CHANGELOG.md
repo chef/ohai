@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 17.9.6 -->
-## [v17.9.6](https://github.com/chef/ohai/tree/v17.9.6) (2024-02-28)
+<!-- latest_release 17.9.7 -->
+## [v17.9.7](https://github.com/chef/ohai/tree/v17.9.7) (2024-03-21)
 
 #### Merged Pull Requests
-- Updating FQDN details for Windows nodes [#1816](https://github.com/chef/ohai/pull/1816) ([johnmccrae](https://github.com/johnmccrae))
+- Removing Ruby 2.7 testing [#1821](https://github.com/chef/ohai/pull/1821) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=17.9.4 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Removing Ruby 2.7 testing [#1821](https://github.com/chef/ohai/pull/1821) ([johnmccrae](https://github.com/johnmccrae)) <!-- 17.9.7 -->
 - Updating FQDN details for Windows nodes [#1816](https://github.com/chef/ohai/pull/1816) ([johnmccrae](https://github.com/johnmccrae)) <!-- 17.9.6 -->
 - ffi less than 1.16.0 [#1811](https://github.com/chef/ohai/pull/1811) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 17.9.5 -->
 <!-- release_rollup -->

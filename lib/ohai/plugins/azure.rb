@@ -75,6 +75,8 @@ Ohai.plugin(:Azure) do
   def tcp_ip_dhcp_domain
     return unless RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
 
+    puts "[3] - I am in the azure.rb file"
+
     require "win32/registry" unless defined?(Win32::Registry)
 
     begin

@@ -131,6 +131,7 @@ Ohai.plugin(:Packages) do
   end
 
   collect_data(:windows) do
+    puts "[4] - I am in the packages.rb file"
     require "win32/registry" unless defined?(Win32::Registry)
     packages Mash.new
     collect_programs_from_registry_key(Win32::Registry::HKEY_LOCAL_MACHINE, 'Software\Microsoft\Windows\CurrentVersion\Uninstall')

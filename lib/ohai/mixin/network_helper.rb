@@ -29,6 +29,7 @@ if RUBY_PLATFORM.match?(/mswin|mingw32|windows/)
     puts "OOH, autoloading the Registry patch"
     puts "Here is the contents of the patch"
     puts File.expand_path("../../monkey_patches/win32/registry", __dir__)
+    puts File.expand_path("../../monkey_patches/win32/registry", __FILE__)
     autoload :Registry, File.expand_path("../../monkey_patches/win32/registry", __dir__)
     Registry
     puts "OOH, just finished autoloading the Registry patch"

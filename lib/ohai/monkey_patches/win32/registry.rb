@@ -20,7 +20,7 @@
 require "win32/registry" unless defined?(Win32::Registry)
 
 module Win32
-  class Registry
+  refine Registry do
 
     puts "[2] - I am actually inside the monkey patch now, doing stuff"
 

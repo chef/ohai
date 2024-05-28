@@ -86,6 +86,14 @@ describe Ohai::System, "Linux lspci plugin" do
       Driver:	nvme
       Module:	nvme
       NUMANode:	0
+
+      Device:	0005:00:00.0
+      Class:  PCI bridge [0604]
+      Vendor: Intel Corporation [8086]
+      Device: C620 Series Chipset Family PCI Express Root Port #1 [a190]
+      Rev:    f9
+      Driver: pcieport
+      NUMANode:       0
     LSPCI
     allow(plugin).to receive(:shell_out).with("lspci -vnnmk").and_return(
       mock_shell_out(0, @stdout, "")
@@ -96,7 +104,7 @@ describe Ohai::System, "Linux lspci plugin" do
     it "lists all devices" do
       plugin.run
       expect(plugin[:pci].keys).to eq(
-        ["00:1f.3", "00:1f.4", "00:1f.6", "02:00.0", "04:00.0", "05:00.0"]
+        ["00:1f.3", "00:1f.4", "00:1f.6", "02:00.0", "04:00.0", "05:00.0", "0005:00:00.0"]
       )
     end
 
@@ -128,6 +136,12 @@ describe Ohai::System, "Linux lspci plugin" do
       plugin.run
       expect(plugin[:pci]["04:00.0"]["driver"]).to eq(["iwlwifi"])
       expect(plugin[:pci]["04:00.0"]["module"]).to eq(["iwlwifi"])
+    end
+
+    it "populates the root port field" do
+      plugin.run
+      expect(plugin[:pci]["0005:00:00.0"]["driver"]).to eq(["pcieport"])
+      expect(plugin[:pci]["0005:00:00.0"]["root_port"]).to eq("0005")
     end
   end
 end

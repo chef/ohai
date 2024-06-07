@@ -25,11 +25,11 @@ Ohai.plugin(:Platform) do
     platform os unless attribute?("platform")
     platform_version os_version unless attribute?("platform_version")
     platform_family platform unless attribute?("platform_family")
-    
+
     platform_backend Mash.new
     platform_backend["type"] = "local"
     platform_backend["uri"] = "local://"
-    
+
     if connection
       platform_backend["type"] = connection.backend_type
       if connection.respond_to?(:uri)

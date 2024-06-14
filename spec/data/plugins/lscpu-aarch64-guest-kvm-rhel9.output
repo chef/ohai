@@ -1,0 +1,29 @@
+Architecture:                    aarch64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+CPU(s):                          2
+On-line CPU(s) list:             0,1
+Vendor ID:                       APM
+BIOS Vendor ID:                  QEMU
+BIOS Model name:                 virt-rhel7.6.0
+Model:                           2
+Thread(s) per core:              1
+Core(s) per cluster:             2
+Socket(s):                       2
+Cluster(s):                      1
+Stepping:                        0x3
+BogoMIPS:                        80.00
+Flags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 cpuid
+NUMA node(s):                    1
+NUMA node0 CPU(s):               0,1
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Mitigation; PTI
+Vulnerability Mmio stale data:   Not affected
+Vulnerability Retbleed:          Not affected
+Vulnerability Spec store bypass: Vulnerable
+Vulnerability Spectre v1:        Mitigation; __user pointer sanitization
+Vulnerability Spectre v2:        Vulnerable
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected

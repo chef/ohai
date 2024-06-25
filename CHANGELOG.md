@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.1.18 -->
-## [v18.1.18](https://github.com/chef/ohai/tree/v18.1.18) (2024-05-28)
+<!-- latest_release 18.2.0 -->
+## [v18.2.0](https://github.com/chef/ohai/tree/v18.2.0) (2024-06-25)
 
 #### Merged Pull Requests
-- [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar))
+- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
 - [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar)) <!-- 18.1.18 -->
 - Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.17 -->
 - determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval)) <!-- 18.1.16 -->

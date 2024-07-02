@@ -6,6 +6,7 @@ name: exec
   push:
     branches:
       - main
+      - 18-stable
       - 17-stable
       - 16-stable
 

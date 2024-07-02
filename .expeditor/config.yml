@@ -26,6 +26,8 @@ github:
 # for building.
 release_branches:
   - main:
+      version_constraint: 19.*
+  - 18-stable:
       version_constraint: 18.*
   - 17-stable:
       version_constraint: 17.*

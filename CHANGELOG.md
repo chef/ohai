@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.0 -->
-## [v18.2.0](https://github.com/chef/ohai/tree/v18.2.0) (2024-07-16)
+<!-- latest_release 19.0.0 -->
+## [v19.0.0](https://github.com/chef/ohai/tree/v19.0.0) (2024-07-16)
 
 #### Merged Pull Requests
-- Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress))
+- Force the major version bump since VERSION appeared modified in the l… [#1827](https://github.com/chef/ohai/pull/1827) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Force the major version bump since VERSION appeared modified in the l… [#1827](https://github.com/chef/ohai/pull/1827) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.0.0 -->
 - Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.0 -->
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
 - [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar)) <!-- 18.1.18 -->

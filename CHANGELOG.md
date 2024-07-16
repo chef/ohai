@@ -1,16 +1,17 @@
 # Change Log
 
 <!-- latest_release 18.2.0 -->
-## [v18.2.0](https://github.com/chef/ohai/tree/v18.2.0) (2024-06-25)
+## [v18.2.0](https://github.com/chef/ohai/tree/v18.2.0) (2024-07-16)
 
 #### Merged Pull Requests
-- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
+- Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.0 -->
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
 - [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar)) <!-- 18.1.18 -->
 - Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.17 -->

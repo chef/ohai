@@ -7,36 +7,40 @@
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
 <!-- latest_release -->
 
-<!-- release_rollup since=18.1.3 -->
+<!-- release_rollup since=18.1.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
-- [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar)) <!-- 18.1.18 -->
-- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.17 -->
-- determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval)) <!-- 18.1.16 -->
-- Detect QEMU virtualization on Darwin. [#1813](https://github.com/chef/ohai/pull/1813) ([williamtheaker](https://github.com/williamtheaker)) <!-- 18.1.15 -->
-- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.14 -->
-- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.13 -->
-- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.1.12 -->
-- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->
-- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->
-- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->
-- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->
-- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->
-- Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.6 -->
-- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->
-- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v18.1.18](https://github.com/chef/ohai/tree/v18.1.18) (2024-07-16)
+
+#### Merged Pull Requests
+- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss))
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish))
+- Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb))
+- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls))
+- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV))
+- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov))
+- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw))
+- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress))
+- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae))
+- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Detect QEMU virtualization on Darwin. [#1813](https://github.com/chef/ohai/pull/1813) ([williamtheaker](https://github.com/williamtheaker))
+- determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval))
+- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae))
+- [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar))
+<!-- latest_stable_release -->
+
 ## [v18.1.3](https://github.com/chef/ohai/tree/v18.1.3) (2023-03-08)
 
 #### Merged Pull Requests
 - Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
 - [block_device] Record firmware revision of nvme block devices [#1787](https://github.com/chef/ohai/pull/1787) ([saravan2](https://github.com/saravan2))
 - Updating files to account for Proxifier2 [#1789](https://github.com/chef/ohai/pull/1789) ([johnmccrae](https://github.com/johnmccrae))
-<!-- latest_stable_release -->
 
 ## [v18.1.0](https://github.com/chef/ohai/tree/v18.1.0) (2023-02-21)
 

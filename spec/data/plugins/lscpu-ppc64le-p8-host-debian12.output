@@ -1,0 +1,34 @@
+Architecture:                    ppc64le
+Byte Order:                      Little Endian
+CPU(s):                          160
+On-line CPU(s) list:             0,8,16,24,32,40,48,56,64,72,80,88,96,104,112,120,128,136,144,152
+Off-line CPU(s) list:            1-7,9-15,17-23,25-31,33-39,41-47,49-55,57-63,65-71,73-79,81-87,89-95,97-103,105-111,11
+9,121-127,129-135,137-143,145-151,153-159
+Model name:                      POWER8E (raw), altivec supported
+Model:                           2.1 (pvr 004b 0201)
+Thread(s) per core:              1
+Core(s) per socket:              5
+Socket(s):                       4
+CPU(s) scaling MHz:              100%
+CPU max MHz:                     3690.0000
+CPU min MHz:                     2061.0000
+L1d cache:                       1.3 MiB (20 instances)
+L1i cache:                       640 KiB (20 instances)
+L2 cache:                        10 MiB (20 instances)
+L3 cache:                        160 MiB (20 instances)
+NUMA node(s):                    4
+NUMA node0 CPU(s):               0,8,16,24,32
+NUMA node1 CPU(s):               40,48,56,64,72
+NUMA node16 CPU(s):              80,88,96,104,112
+NUMA node17 CPU(s):              120,128,136,144,152
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Mitigation; RFI Flush
+Vulnerability Mmio stale data:   Not affected
+Vulnerability Retbleed:          Not affected
+Vulnerability Spec store bypass: Mitigation; Kernel entry/exit barrier (hwsync)
+Vulnerability Spectre v1:        Mitigation; __user pointer sanitization, ori31 speculation barrier enabled
+Vulnerability Spectre v2:        Mitigation; Indirect branch cache disabled, Software link stack flush
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected

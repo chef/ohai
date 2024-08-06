@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.0 -->
-## [v18.2.0](https://github.com/chef/ohai/tree/v18.2.0) (2024-06-25)
+<!-- latest_release 18.2.1 -->
+## [v18.2.1](https://github.com/chef/ohai/tree/v18.2.1) (2024-08-06)
 
 #### Merged Pull Requests
-- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
+- cpu: Fix issues with newer versions of lscpu [#1828](https://github.com/chef/ohai/pull/1828) ([ramereth](https://github.com/ramereth))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- cpu: Fix issues with newer versions of lscpu [#1828](https://github.com/chef/ohai/pull/1828) ([ramereth](https://github.com/ramereth)) <!-- 18.2.1 -->
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
 <!-- release_rollup -->
 

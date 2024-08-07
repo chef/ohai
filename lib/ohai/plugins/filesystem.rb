@@ -276,19 +276,21 @@ Ohai.plugin(:Filesystem) do
     if entry[:fs_type] == "btrfs" && entry["uuid"]
       uuid = entry["uuid"]
       alloc = "/sys/fs/btrfs/#{uuid}/allocation"
-      %w{data metadata system}.each do |bg_type|
-        dir = "#{alloc}/#{bg_type}"
-        %w{single dup}.each do |raid|
-          if file_exist?("#{dir}/#{raid}")
-            btrfs["raid"] = raid
+      if Dir.exist?(alloc)
+        %w{data metadata system}.each do |bg_type|
+          dir = "#{alloc}/#{bg_type}"
+          %w{single dup}.each do |raid|
+            if file_exist?("#{dir}/#{raid}")
+              btrfs["raid"] = raid
+            end
           end
-        end
-        logger.trace("Plugin Filesystem: reading btrfs allocation files at #{dir}")
-        btrfs["allocation"] ||= Mash.new
-        btrfs["allocation"][bg_type] ||= Mash.new
-        %w{total_bytes bytes_used}.each do |field|
-          bytes = file_read("#{dir}/#{field}").chomp.to_i
-          btrfs["allocation"][bg_type][field] = "#{bytes}"
+          logger.trace("Plugin Filesystem: reading btrfs allocation files at #{dir}")
+          btrfs["allocation"] ||= Mash.new
+          btrfs["allocation"][bg_type] ||= Mash.new
+          %w{total_bytes bytes_used}.each do |field|
+            bytes = file_read("#{dir}/#{field}").chomp.to_i
+            btrfs["allocation"][bg_type][field] = "#{bytes}"
+          end
         end
       end
     end

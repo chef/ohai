@@ -41,7 +41,7 @@ bundle exec rspec spec/unit/FILE.rb
 
 ## Style
 
-We use [Chefstyle](https://github.com/chef/chefstyle), as a code [linter](https://en.wikipedia.org/wiki/Lint_(software)), to enforce style guidelines. To run:
+We use [Cookstyle](https://github.com/chef/cookstyle), as a code [linter](https://en.wikipedia.org/wiki/Lint_(software)), to enforce style guidelines. To run:
 
 ```
 bundle exec rake style

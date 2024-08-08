@@ -9,7 +9,7 @@ gem "chef-utils", git: "https://github.com/chef/chef", branch: "chef-18", glob: 
 
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
-  gem "chefstyle", "2.2.2"
+  gem "cookstyle", ">= 7.32.8"
   gem "ipaddr_extensions"
   gem "rake", ">= 10.1.0"
   gem "rspec-collection_matchers", "~> 1.0"

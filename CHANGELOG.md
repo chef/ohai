@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.2 -->
-## [v19.0.2](https://github.com/chef/ohai/tree/v19.0.2) (2024-08-13)
+<!-- latest_release 19.0.3 -->
+## [v19.0.3](https://github.com/chef/ohai/tree/v19.0.3) (2024-08-13)
 
 #### Merged Pull Requests
-- [#1830] Check that sysfs directory exists before reading [#1831](https://github.com/chef/ohai/pull/1831) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.3 -->
 - [#1830] Check that sysfs directory exists before reading [#1831](https://github.com/chef/ohai/pull/1831) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.2 -->
 - cpu: Fix issues with newer versions of lscpu [#1809](https://github.com/chef/ohai/pull/1809) ([ramereth](https://github.com/ramereth)) <!-- 19.0.1 -->
 - Force the major version bump since VERSION appeared modified in the l… [#1827](https://github.com/chef/ohai/pull/1827) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.0.0 -->

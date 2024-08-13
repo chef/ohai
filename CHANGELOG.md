@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.2 -->
-## [v18.2.2](https://github.com/chef/ohai/tree/v18.2.2) (2024-08-06)
+<!-- latest_release 18.2.3 -->
+## [v18.2.3](https://github.com/chef/ohai/tree/v18.2.3) (2024-08-13)
 
 #### Merged Pull Requests
-- [Chef18] Use Chef 18 branches of chef/chef [#1829](https://github.com/chef/ohai/pull/1829) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- [#1830][18-stable] Check that sysfs directory exists before reading [#1832](https://github.com/chef/ohai/pull/1832) ([dafyddcrosby](https://github.com/dafyddcrosby))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [#1830][18-stable] Check that sysfs directory exists before reading [#1832](https://github.com/chef/ohai/pull/1832) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.3 -->
 - [Chef18] Use Chef 18 branches of chef/chef [#1829](https://github.com/chef/ohai/pull/1829) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.2 -->
 - cpu: Fix issues with newer versions of lscpu [#1828](https://github.com/chef/ohai/pull/1828) ([ramereth](https://github.com/ramereth)) <!-- 18.2.1 -->
 - Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->

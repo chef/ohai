@@ -72,6 +72,7 @@ describe Ohai::System, "Linux filesystem plugin" do
 
     btrfs_sysfs_base = "/sys/fs/btrfs/d6efda02-1b73-453c-8c74-7d8dee78fa5e/allocation"
     %w{data metadata system}.each do |bg_type|
+      allow(Dir).to receive(:exist?).with(btrfs_sysfs_base).and_return(true)
       allow(File).to receive(:exist?).with("#{btrfs_sysfs_base}/#{bg_type}/single").and_return(true)
       allow(File).to receive(:exist?).with("#{btrfs_sysfs_base}/#{bg_type}/dup").and_return(false)
       %w{total_bytes bytes_used}.each do |field|

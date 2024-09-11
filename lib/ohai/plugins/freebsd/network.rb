@@ -68,6 +68,7 @@ Ohai.plugin(:Network) do
         end
       end
       if line =~ /\s+inet6 ([a-f0-9\:]+)%?(\w*)\s+prefixlen\s+(\d+)\s*\w*\s*([\da-fx]*)/
+        next if $1 == "::1"
         iface[cint][:addresses] ||= Mash.new
         if $4.empty?
           iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }

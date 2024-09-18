@@ -45,8 +45,8 @@ function Invoke-Build {
         bundle install
 
         gem build ohai.gemspec
-	Write-BuildLine " ** Using gem to  install"
-	gem install ohai-*.gem --no-document
+	    Write-BuildLine " ** Using gem to  install"
+	    gem install ohai-*.gem --no-document
         
 
         If ($lastexitcode -ne 0) { Exit $lastexitcode }

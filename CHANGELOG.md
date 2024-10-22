@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.3 -->
-## [v19.0.3](https://github.com/chef/ohai/tree/v19.0.3) (2024-08-13)
+<!-- latest_release 19.0.4 -->
+## [v19.0.4](https://github.com/chef/ohai/tree/v19.0.4) (2024-10-22)
 
 #### Merged Pull Requests
-- Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld)) <!-- 19.0.4 -->
 - Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.3 -->
 - [#1830] Check that sysfs directory exists before reading [#1831](https://github.com/chef/ohai/pull/1831) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.2 -->
 - cpu: Fix issues with newer versions of lscpu [#1809](https://github.com/chef/ohai/pull/1809) ([ramereth](https://github.com/ramereth)) <!-- 19.0.1 -->

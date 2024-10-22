@@ -80,9 +80,12 @@ Ohai.plugin(:Network) do
         flags = $1.split(",")
         iface[cint][:flags] = flags if flags.length > 0
       end
-      if line =~ /metric: (\d+) mtu: (\d+)/
+      if line =~ /metric (\d+) mtu (\d+)/
         iface[cint][:metric] = $1
         iface[cint][:mtu] = $2
+      end
+      if line =~ /media: (\w+)/
+        iface[cint][:encapsulation] = $1
       end
     end
 
@@ -104,22 +107,44 @@ Ohai.plugin(:Network) do
     # which have been auto-configured (interfaces statically configured
     # into a system, but not located at boot time are not shown).
     so = shell_out("netstat -ibdn")
-    so.stdout.lines do |line|
+    head = so.stdout.lines[0]
+    have_drop = false
+    if head =~ /Idrop/
+      have_drop = true
+      # Name     Mtu Network                  Address                                   Ipkts Ierrs Idrop     Ibytes    Opkts Oerrs     Obytes  Coll  Drop
+      # vtnet0  1500 <Link#1>                 fa:16:3e:ba:3e:25                           579     0     0      46746      210     0      26242     0     0
+      # $1                                    $2                                           $3    $4    $5         $6       $7    $8         $9   $10   $11
+      regex = /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w\d:]*)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+    else
       # Name    Mtu Network       Address              Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop
       # ed0    1500 <Link#1>      54:52:00:68:92:85   333604    26  151905886   175472     0   24897542     0  905
       # $1                        $2                      $3    $4         $5       $6    $7         $8    $9  $10
-      if line =~ /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w:]*)\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+      regex = /^([\w\.\*]+)\s+\d+\s+<Link#\d+>\s+([\w\d:]*)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/
+    end
+    so.stdout.lines do |line|
+      if line =~ regex
         net_counters[$1] ||= Mash.new
         net_counters[$1]["rx"] ||= Mash.new
         net_counters[$1]["tx"] ||= Mash.new
         net_counters[$1]["rx"]["packets"] = $3
         net_counters[$1]["rx"]["errors"] = $4
-        net_counters[$1]["rx"]["bytes"] = $5
-        net_counters[$1]["tx"]["packets"] = $6
-        net_counters[$1]["tx"]["errors"] = $7
-        net_counters[$1]["tx"]["bytes"] = $8
-        net_counters[$1]["tx"]["collisions"] = $9
-        net_counters[$1]["tx"]["dropped"] = $10
+        if have_drop
+          net_counters[$1]["rx"]["dropped"] = $5
+          net_counters[$1]["rx"]["bytes"] = $6
+          net_counters[$1]["tx"]["packets"] = $7
+          net_counters[$1]["tx"]["errors"] = $8
+          net_counters[$1]["tx"]["bytes"] = $9
+          net_counters[$1]["tx"]["collisions"] = $10
+          net_counters[$1]["tx"]["dropped"] = $11
+        else
+          net_counters[$1]["rx"]["bytes"] = $5
+          net_counters[$1]["tx"]["packets"] = $6
+          net_counters[$1]["tx"]["errors"] = $7
+          net_counters[$1]["tx"]["bytes"] = $8
+          net_counters[$1]["tx"]["collisions"] = $9
+          net_counters[$1]["tx"]["dropped"] = $10
+        end
+
       end
     end
 

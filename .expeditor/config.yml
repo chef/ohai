@@ -38,22 +38,7 @@ release_branches:
 
 changelog:
   rollup_header: Changes not yet released to rubygems.org
-pipelines:
-  - habitat/publish:
-      description: Create artiface and publish on BLDR
-      definition: .expeditor/build.habitat.yml
-      env:
-        - HAB_NONINTERACTIVE: "true"
-        - HAB_NOCOLORING: "true"
-        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
-  - habitat/build-test:
-      description: Execute tests against the habitat artifact
-      definition: .expeditor/habitat-test.pipeline.yml
-      env:
-        - HAB_NONINTERACTIVE: "true"
-        - HAB_NOCOLORING: "true"
-        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
-      trigger: pull_request
+
 subscriptions:
   # These actions are taken, in order they are specified, anytime a Pull Request is merged.
   - workload: pull_request_merged:{{github_repo}}:{{release_branch}}:*
@@ -76,6 +61,7 @@ subscriptions:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
       - trigger_pipeline:habitat/build-test:
+          only_if: built_in:bump_version
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"    

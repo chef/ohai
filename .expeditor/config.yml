@@ -71,6 +71,7 @@ subscriptions:
       - built_in:build_gem:
           only_if: built_in:bump_version
       - trigger_pipeline:habitat/publish:
+          only_if: built_in:bump_version
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"

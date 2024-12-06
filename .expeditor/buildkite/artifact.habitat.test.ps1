@@ -9,7 +9,7 @@ $env:HAB_BLDR_CHANNEL = "LTS-2024"
 $env:HAB_ORIGIN = 'ci'
 $env:CHEF_LICENSE = 'accept-no-persist'
 $env:HAB_LICENSE = 'accept-no-persist'
-$Plan = 'chef-cli'
+$Plan = 'ohai'
 
 Write-Host "--- system details"
 $Properties = 'Caption', 'CSName', 'Version', 'BuildType', 'OSArchitecture'

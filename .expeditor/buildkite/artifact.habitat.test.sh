@@ -3,7 +3,7 @@
 set -eo pipefail
 
 export HAB_ORIGIN='ci'
-export PLAN='chef-cli'
+export PLAN='ohai'
 export CHEF_LICENSE="accept-no-persist"
 export HAB_LICENSE="accept-no-persist"
 export HAB_BLDR_CHANNEL="LTS-2024"
@@ -62,7 +62,7 @@ hab pkg install -b "${project_root:?is undefined}/results/${pkg_artifact:?is und
 
 echo "+++ Testing $PLAN"
 
-PATH="$(hab pkg path ci/chef-cli)/bin:$PATH"
+PATH="$(hab pkg path ci/ohai)/bin:$PATH"
 export PATH
 echo "PATH is $PATH"
 

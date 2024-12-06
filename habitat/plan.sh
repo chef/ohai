@@ -1,4 +1,5 @@
-_chef_client_ruby="core/ruby31"
+export HAB_BLDR_CHANNEL="LTS-2024"
+ruby_pkg="core/ruby3_1"
 pkg_name="ohai"
 pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
@@ -6,116 +7,77 @@ pkg_description="The Chef Ohai"
 pkg_license=('Apache-2.0')
 pkg_bin_dirs=(
   bin
-  vendor/bin
 )
 pkg_build_deps=(
   core/make
   core/gcc
   core/git
 )
-pkg_deps=(
-  $_chef_client_ruby
-  core/coreutils
-)
+pkg_deps=(${ruby_pkg} core/coreutils)
+
 pkg_svc_user=root
 
-pkg_version() {
-  cat "${SRC_PATH}/VERSION"
-}
-
-do_before() {
-  do_default_before
-  update_pkg_version
-  # We must wait until we update the pkg_version to use the pkg_version
-  pkg_filename="${pkg_name}-${pkg_version}.tar.gz"
-}
-
-do_download() {
-  build_line "Locally creating archive of latest repository commit at ${HAB_CACHE_SRC_PATH}/${pkg_filename}"
-  # source is in this repo, so we're going to create an archive from the
-  # appropriate path within the repo and place the generated tarball in the
-  # location expected by do_unpack
-  ( cd "${SRC_PATH}" || exit_with "unable to enter hab-src directory" 1
-    git archive --prefix="${pkg_name}-${pkg_version}/" --output="${HAB_CACHE_SRC_PATH}/${pkg_filename}" HEAD
-  )
-}
-
-do_verify() {
-  build_line "Skipping checksum verification on the archive we just created."
-  return 0
-}
-
 do_setup_environment() {
-  push_runtime_env GEM_PATH "${pkg_prefix}/vendor"
+  build_line 'Setting GEM_HOME="$pkg_prefix/vendor"'
+  export GEM_HOME="$pkg_prefix/vendor"
 
-  set_runtime_env APPBUNDLER_ALLOW_RVM "true" # prevent appbundler from clearing out the carefully constructed runtime GEM_PATH
-  set_runtime_env LANG "en_US.UTF-8"
-  set_runtime_env LC_CTYPE "en_US.UTF-8"
+  build_line "Setting GEM_PATH=$GEM_HOME"
+  export GEM_PATH="$GEM_HOME"
 }
 
-do_prepare() {
-  export GEM_HOME="${pkg_prefix}/vendor"
-  export CPPFLAGS="${CPPFLAGS} ${CFLAGS}"
+pkg_version() {
+  cat "$SRC_PATH/VERSION"
+}
+do_before() {
+  update_pkg_version
+}
+do_unpack() {
+  mkdir -pv "$HAB_CACHE_SRC_PATH/$pkg_dirname"
+  cp -RT "$PLAN_CONTEXT"/.. "$HAB_CACHE_SRC_PATH/$pkg_dirname/"
+}
+do_build() {
 
-  ( cd "$CACHE_PATH"
-    bundle config --local jobs "$(nproc)"
-    bundle config --local without server docgen maintenance pry travis integration ci
-    bundle config --local shebang "$(pkg_path_for "$_chef_client_ruby")/bin/ruby"
+    export GEM_HOME="$pkg_prefix/vendor"
+
+    build_line "Setting GEM_PATH=$GEM_HOME"
+    export GEM_PATH="$GEM_HOME"
+    bundle config --local without integration deploy maintenance
+    bundle config --local jobs 4
     bundle config --local retry 5
     bundle config --local silence_root_warning 1
-  )
-  
-  build_line "Setting link for /usr/bin/env to 'coreutils'"
-  if [ ! -f /usr/bin/env ]; then
-    ln -s "$(pkg_interpreter_for core/coreutils bin/env)" /usr/bin/env
-  fi
-}
-
-do_build() {
-  ( cd "$CACHE_PATH" || exit_with "unable to enter hab-cache directory" 1
-    build_line "Installing gem dependencies ..."
-    bundle install --jobs=3 --retry=3
-    build_line "Installing gems from git repos properly ..."
+    bundle install
     ruby ./post-bundle-install.rb
-    build_line "Installing this project's gems ..."
-    bundle exec rake install:local
-  )
+    gem build ohai.gemspec
 }
-
 do_install() {
-  ( cd "$pkg_prefix" || exit_with "unable to enter pkg prefix directory" 1
-    export BUNDLE_GEMFILE="${CACHE_PATH}/Gemfile"
-    build_line "** fixing binstub shebangs"
-    fix_interpreter "${pkg_prefix}/vendor/bin/*" "$_chef_client_ruby" bin/ruby
-    export BUNDLE_GEMFILE="${CACHE_PATH}/Gemfile"
-    for gem in ohai; do
-      build_line "** generating binstubs for $gem with precise version pins"
-      appbundler $CACHE_PATH $pkg_prefix/bin $gem
-    done
-  )
+   export GEM_HOME="$pkg_prefix/vendor"
+
+  build_line "Setting GEM_PATH=$GEM_HOME"
+  export GEM_PATH="$GEM_HOME"
+  gem install ohai-*.gem --no-document
+  set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor"
+  wrap_ruby_bin
+}
+wrap_ruby_bin() {
+  local bin="$pkg_prefix/bin/$pkg_name"
+  local real_bin="$GEM_HOME/gems/ohai-${pkg_version}/bin/ohai"
+  build_line "Adding wrapper $bin to $real_bin"
+  cat <<EOF > "$bin"
+#!$(pkg_path_for core/bash)/bin/bash
+set -e
+
+# Set binary path that allows Ohai to use non-Hab pkg binaries
+export PATH="/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:\$PATH"
+
+# Set Ruby paths defined from 'do_setup_environment()'
+  export GEM_HOME="$pkg_prefix/vendor"
+  export GEM_PATH="$GEM_PATH"
+
+exec $(pkg_path_for ${ruby_pkg})/bin/ruby $real_bin \$@
+EOF
+  chmod -v 755 "$bin"
 }
 
-do_after() {
-  build_line "Trimming the fat ..."
-
-  # We don't need the cache of downloaded .gem files ...
-  rm -r "$pkg_prefix/vendor/cache"
-  # ... or bundler's cache of git-ref'd gems
-  rm -r "$pkg_prefix/vendor/bundler"
-  # We don't need the gem docs.
-  rm -r "$pkg_prefix/vendor/doc"
-  # We don't need to ship the test suites for every gem dependency,
-  # only Chef's for package verification.
-  find "$pkg_prefix/vendor/gems" -name spec -type d | grep -v "ohai-${pkg_version}" \
-      | while read spec_dir; do rm -r "$spec_dir"; done
-}
-
-do_end() {
-  if [ "$(readlink /usr/bin/env)" = "$(pkg_interpreter_for core/coreutils bin/env)" ]; then
-    build_line "Removing the symlink we created for '/usr/bin/env'"
-    rm /usr/bin/env
-  fi
-}
 
 do_strip() {
   return 0

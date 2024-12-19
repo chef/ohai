@@ -14,11 +14,11 @@ artifact_channels:
 
 pipelines:
   - verify:
-      definition: .expeditor/verify.pipeline.yml
+      description: Pull Request validation tests
+      public: true
   
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
-  #checkout
   delete_branch_on_merge: true
   # The tag format to use (e.g. v1.0.0)
   version_tag_format: "v{{version}}"

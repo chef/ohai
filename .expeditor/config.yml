@@ -13,7 +13,8 @@ artifact_channels:
   - dev
 
 pipelines:
-  - verify
+  - verify:
+      definition: .expeditor/verify.pipeline.yml
   
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch

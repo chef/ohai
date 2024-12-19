@@ -5,6 +5,7 @@
 slack:
   notify_channel: chef-infra-notify
 
+
 # This publish is triggered by the `built_in:publish_rubygems` artifact_action.
 rubygems:
   - ohai
@@ -23,6 +24,7 @@ github:
   major_bump_labels:
     - "Expeditor: Bump Version Major"
 
+
 # Which Github branches to build Omnibus releases from, and what versions
 # (as determined by the value in the VERSION file) those branches are responsible
 # for building.
@@ -30,7 +32,7 @@ release_branches:
   - main:
       version_constraint: 19.*
   - workstation-LTS:
-      version_constraint: 19.*    
+      version_constraint: 19.*
   - 18-stable:
       version_constraint: 18.*
   - 17-stable:

@@ -13,7 +13,10 @@ artifact_channels:
   - dev
 
 pipelines:
-  - verify
+  - verify:
+      description: Pull Request validation tests
+      definition: .expeditor/verify.pipeline.yml
+      public: true
   
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
@@ -72,6 +75,9 @@ subscriptions:
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"    
+  - workload: pull_request_opened:{{github_repo}}:{{release_branch}}:*
+    actions:
+      - trigger_pipeline:verify        
 
   - workload: project_promoted:{{agent_id}}:*
     actions:

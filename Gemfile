@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+
 source "https://rubygems.org"
 
 gemspec
 
-# pull these gems from main of chef/chef so that we're testing against what we will release
+# pull these gems from main of chef/chef so that we"re testing against what we will release
+gem "appbundler"
 gem "chef-config", git: "https://github.com/chef/chef", branch: "main", glob: "chef-config/chef-config.gemspec"
 gem "chef-utils", git: "https://github.com/chef/chef", branch: "main", glob: "chef-utils/chef-utils.gemspec"
-
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
   gem "cookstyle", ">= 7.32.8"

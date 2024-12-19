@@ -15,6 +15,7 @@ artifact_channels:
 pipelines:
   - verify:
       description: Pull Request validation tests
+      definition: .expeditor/verify.pipeline.yml
       public: true
   
 github:

@@ -9,8 +9,12 @@ slack:
 # This publish is triggered by the `built_in:publish_rubygems` artifact_action.
 rubygems:
   - ohai
+
 artifact_channels:
   - dev
+  - workstation-build
+  - LTS-2024
+
 
 pipelines:
   - verify:
@@ -38,7 +42,7 @@ release_branches:
   - main:
       version_constraint: 19.*
   - workstation-LTS:
-      version_constraint: 19.*
+      version_constraint: 0.*
   - 18-stable:
       version_constraint: 18.*
   - 17-stable:
@@ -65,26 +69,22 @@ subscriptions:
             - "Expeditor: Skip All"
       - built_in:build_gem:
           only_if: built_in:bump_version
-      - trigger_pipeline:habitat/publish:
-          only_if: built_in:bump_version
-          ignore_labels:
-            - "Expeditor: Skip Habitat"
-            - "Expeditor: Skip All"
-      - trigger_pipeline:habitat/build-test:
-          only_if: built_in:bump_version
-          ignore_labels:
-            - "Expeditor: Skip Habitat"
-            - "Expeditor: Skip All"    
+      # - trigger_pipeline:habitat/publish:
+      #     only_if: built_in:bump_version
+      #     ignore_labels:
+      #       - "Expeditor: Skip Habitat"
+      #       - "Expeditor: Skip All"
+      # - trigger_pipeline:habitat/build-test:
+      #     only_if: built_in:bump_version
+      #     ignore_labels:
+      #       - "Expeditor: Skip Habitat"
+      #       - "Expeditor: Skip All"    
   - workload: pull_request_opened:{{github_repo}}:{{release_branch}}:*
     actions:
       - trigger_pipeline:verify        
 
-  - workload: project_promoted:{{agent_id}}:*
-    actions:
-      - built_in:rollover_changelog
-      - built_in:publish_rubygems
-  - workload: buildkite_hab_build_group_published:{{agent_id}}:*
-    actions:
-      # when all of the hab package publish to the unstable channel, test and promote them
-      - trigger_pipeline:habitat/build-test
-      - built_in:promote_habitat_packages
+  # - workload: buildkite_hab_build_group_published:{{agent_id}}:*
+  #   actions:
+  #     # when all of the hab package publish to the unstable channel, test and promote them
+  #     - trigger_pipeline:habitat/build-test
+  #     - built_in:promote_habitat_packages

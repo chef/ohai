@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.6 -->
-## [v19.0.6](https://github.com/chef/ohai/tree/v19.0.6) (2024-12-23)
+<!-- latest_release 0.1.0 -->
+## [v0.1.0](https://github.com/chef/ohai/tree/v0.1.0) (2025-01-06)
 
 #### Merged Pull Requests
-- added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611))
+- Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.0 -->
 - added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->
 - Unit tests for freebsd network plugin; plus fixes [#1841](https://github.com/chef/ohai/pull/1841) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.5 -->
 - FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld)) <!-- 19.0.4 -->

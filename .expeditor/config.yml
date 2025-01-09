@@ -54,7 +54,7 @@ release_branches:
   - main:
       version_constraint: 19.*
   - workstation-LTS:
-      version_constraint: 0.*
+      version_constraint: 19.*
   - 18-stable:
       version_constraint: 18.*
   - 17-stable:

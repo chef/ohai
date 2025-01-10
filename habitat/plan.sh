@@ -57,6 +57,8 @@ do_install() {
   gem install ohai-*.gem --no-document
   set_runtime_env "GEM_PATH" "${pkg_prefix}/vendor"
   wrap_ruby_bin
+  rm -rf $GEM_PATH/bundler
+  rm -rf $GEM_PATH/cache
 }
 wrap_ruby_bin() {
   local bin="$pkg_prefix/bin/$pkg_name"

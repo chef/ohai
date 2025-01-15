@@ -1,4 +1,4 @@
-export HAB_BLDR_CHANNEL="LTS-2024"
+export HAB_REFRESH_CHANNEL="LTS-2024"
 ruby_pkg="core/ruby3_1"
 pkg_name="ohai"
 pkg_origin="chef"

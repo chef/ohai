@@ -1,16 +1,20 @@
 # Change Log
 
 <!-- latest_release 19.0.5 -->
-## [v19.0.5](https://github.com/chef/ohai/tree/v19.0.5) (2024-10-29)
+## [v19.0.5](https://github.com/chef/ohai/tree/v19.0.5) (2025-01-28)
 
 #### Merged Pull Requests
-- Unit tests for freebsd network plugin; plus fixes [#1841](https://github.com/chef/ohai/pull/1841) ([jaymzh](https://github.com/jaymzh))
+- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.5 -->
+- Test pipelines with empty commit [#1857](https://github.com/chef/ohai/pull/1857) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.1 -->
+- Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.0 -->
+- added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->
 - Unit tests for freebsd network plugin; plus fixes [#1841](https://github.com/chef/ohai/pull/1841) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.5 -->
 - FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld)) <!-- 19.0.4 -->
 - Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.3 -->

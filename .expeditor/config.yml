@@ -9,6 +9,25 @@ slack:
 rubygems:
   - ohai
 
+artifact_channels:
+  - unstable
+  - chef-dke-lts2024
+
+pipelines:
+  - habitat/build:
+      env:
+        - HAB_NONINTERACTIVE: "true"
+        - HAB_NOCOLORING: "true"
+        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
+  - habitat/test:
+      description: Execute tests against the habitat artifact
+      definition: .expeditor/habitat-test.pipeline.yml
+      env:
+        - HAB_NONINTERACTIVE: "true"
+        - HAB_NOCOLORING: "true"
+        - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
+      trigger: pull_request
+  
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
   delete_branch_on_merge: true
@@ -21,13 +40,12 @@ github:
   major_bump_labels:
     - "Expeditor: Bump Version Major"
 
+
 # Which Github branches to build Omnibus releases from, and what versions
 # (as determined by the value in the VERSION file) those branches are responsible
 # for building.
 release_branches:
   - main:
-      version_constraint: 19.*
-  - workstation-LTS:
       version_constraint: 19.*
   - 18-stable:
       version_constraint: 18.*
@@ -55,8 +73,18 @@ subscriptions:
             - "Expeditor: Skip All"
       - built_in:build_gem:
           only_if: built_in:bump_version
+      - trigger_pipeline:habitat/build:
+          only_if: built_in:bump_version
+          ignore_labels:
+            - "Expeditor: Skip Habitat"
+            - "Expeditor: Skip All"
 
   - workload: project_promoted:{{agent_id}}:*
     actions:
       - built_in:rollover_changelog
+
+ # Subscribe to the promotion of the unstable channel to stable(chef-dke-lts2024)
+  - workload: project_promoted:{{agent_id}}:unstable:*
+    actions:
+      - built_in:promote_habitat_packages
       - built_in:publish_rubygems

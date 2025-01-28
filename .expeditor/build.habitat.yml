@@ -1,0 +1,12 @@
+---
+env:
+  HAB_REFRESH_CHANNEL: "LTS-2024"
+
+origin: chef
+
+expeditor:
+  defaults:
+    buildkite:
+      retry:
+        automatic:
+          limit: 1

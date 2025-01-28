@@ -1,4 +1,7 @@
 ---
+env:
+  HAB_REFRESH_CHANNEL: "LTS-2024"
+
 origin: chef
 
 expeditor:

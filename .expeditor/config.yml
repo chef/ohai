@@ -11,9 +11,8 @@ rubygems:
   - ohai
 
 artifact_channels:
-  - dev
-  - workstation-build
-  - LTS-2024
+  - unstable
+  - chef-dke-lts2024
 
 pipelines:
   - verify:
@@ -53,8 +52,6 @@ github:
 release_branches:
   - main:
       version_constraint: 19.*
-  - workstation-LTS:
-      version_constraint: 19.*
   - 18-stable:
       version_constraint: 18.*
   - 17-stable:
@@ -86,20 +83,13 @@ subscriptions:
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
-     
-  - workload: pull_request_opened:{{github_repo}}:{{release_branch}}:*
-    actions:
-      - trigger_pipeline:verify        
 
-  - workload: buildkite_hab_build_group_published:{{agent_id}}:*
+  - workload: project_promoted:{{agent_id}}:*
     actions:
-      # when all of the hab package publish to the unstable channel, test and promote them
-      - built_in:promote_habitat_packages
+      - built_in:rollover_changelog
 
-    # Subscribe to the promotion of the dev channel to acceptance
-  - workload: project_promoted:{{agent_id}}:dev:*
+ # Subscribe to the promotion of the unstable channel to stable(chef-dke-lts2024)
+  - workload: project_promoted:{{agent_id}}:unstable:*
     actions:
       - built_in:promote_habitat_packages
-  - workload: project_promoted:{{agent_id}}:workstation-build:*
-    actions:
-      - built_in:promote_habitat_packages
+      - built_in:publish_rubygems

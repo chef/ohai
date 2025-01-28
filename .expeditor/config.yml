@@ -5,7 +5,6 @@
 slack:
   notify_channel: chef-infra-notify
 
-
 # This publish is triggered by the `built_in:publish_rubygems` artifact_action.
 rubygems:
   - ohai
@@ -15,10 +14,6 @@ artifact_channels:
   - chef-dke-lts2024
 
 pipelines:
-  - verify:
-      description: Pull Request validation tests
-      definition: .expeditor/verify.pipeline.yml
-      public: true
   - habitat/build:
       env:
         - HAB_NONINTERACTIVE: "true"

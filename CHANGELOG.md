@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 0.1.1 -->
-## [v0.1.1](https://github.com/chef/ohai/tree/v0.1.1) (2025-01-06)
+<!-- latest_release 19.0.5 -->
+## [v19.0.5](https://github.com/chef/ohai/tree/v19.0.5) (2025-01-28)
 
 #### Merged Pull Requests
-- Test pipelines with empty commit [#1857](https://github.com/chef/ohai/pull/1857) ([nikhil2611](https://github.com/nikhil2611))
+- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.5 -->
 - Test pipelines with empty commit [#1857](https://github.com/chef/ohai/pull/1857) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.1 -->
 - Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.0 -->
 - added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->

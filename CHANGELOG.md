@@ -1,7 +1,7 @@
 # Change Log
 
-<!-- latest_release 19.0.6 -->
-## [v19.0.6](https://github.com/chef/ohai/tree/v19.0.6) (2025-02-03)
+<!-- latest_release 19.0.7 -->
+## [v19.0.7](https://github.com/chef/ohai/tree/v19.0.7) (2025-02-03)
 
 #### Merged Pull Requests
 - Updating configuration for a symantec version promote and publish [#1862](https://github.com/chef/ohai/pull/1862) ([nikhil2611](https://github.com/nikhil2611))

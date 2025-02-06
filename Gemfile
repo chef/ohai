@@ -10,7 +10,7 @@ gem "chef-config", git: "https://github.com/chef/chef", branch: "main", glob: "c
 gem "chef-utils", git: "https://github.com/chef/chef", branch: "main", glob: "chef-utils/chef-utils.gemspec"
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
-  install_if -> { Gem::Version.new("3.3.0") >= (RUBY_VERSION) } do
+  install_if -> { Gem::Version.new("3.3.0").to_i >= (RUBY_VERSION).to_i } do
     gem "racc", "~> 1.8.0"
   end
   gem "cookstyle", ">= 7.32.8"

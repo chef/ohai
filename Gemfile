@@ -12,6 +12,7 @@ gem "chef-utils", git: "https://github.com/chef/chef", branch: "main", glob: "ch
 group :development do
   install_if -> { Gem::Version.new("3.3.0").to_s >= (RUBY_VERSION).to_s } do
     gem "racc", "~> 1.8.0"
+    gem "base64"
   end
   gem "cookstyle", ">= 7.32.8"
   gem "ipaddr_extensions"

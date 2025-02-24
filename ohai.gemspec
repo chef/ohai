@@ -16,13 +16,13 @@ Gem::Specification.new do |s|
 
   s.add_dependency "chef-config", ">= 14.12", "< 20"
   s.add_dependency "chef-utils", ">= 16.0", "< 20"
-  s.add_dependency "ffi", ">= 1.15.5", "<= 1.17.0"
+  s.add_dependency "ffi", ">= 1.15.5", "< 1.17.0"
   s.add_dependency "ffi-yajl", "~> 2.2"
   s.add_dependency "ipaddress"
   s.add_dependency "mixlib-cli", ">= 1.7.0" # 1.7+ needed to support passing multiple options
   s.add_dependency "mixlib-config", ">= 2.0", "< 4.0"
   s.add_dependency "mixlib-log", ">= 2.0.1", "< 4.0"
-  s.add_dependency "mixlib-shellout", "~> 3.2", ">= 3.2.5"
+  s.add_dependency "mixlib-shellout", "~> 3.3.6"
   s.add_dependency "plist", "~> 3.1"
   s.add_dependency "train-core"
   s.add_dependency "wmi-lite", "~> 1.0"

@@ -22,8 +22,8 @@ begin
   RuboCop::RakeTask.new(:style) do |task|
     task.options += ["--display-cop-names", "--no-color"]
   end
-rescue LoadError
-  puts "cookstyle gem is not installed. bundle install first to make sure all dependencies are installed."
+  rescue LoadError => e
+    puts e.message
 end
 
 task :console do

@@ -81,6 +81,7 @@ function Invoke-Install {
 function Invoke-After {
     # We don't need the cache of downloaded .gem files ...
     Remove-Item $pkg_prefix/vendor/cache -Recurse -Force
+    Remove-Item $pkg_prefix/vendor/bundler -Recurse -Force
     # We don't need the gem docs.
     Remove-Item $pkg_prefix/vendor/doc -Recurse -Force
     # We don't need to ship the test suites for every gem dependency,

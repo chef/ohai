@@ -20,6 +20,7 @@ pipelines:
         - HAB_NOCOLORING: "true"
         - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
   - habitat/test:
+      public: true
       description: Execute tests against the habitat artifact
       definition: .expeditor/habitat-test.pipeline.yml
       env:

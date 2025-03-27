@@ -8,6 +8,7 @@ gemspec
 gem "appbundler"
 gem "chef-config", git: "https://github.com/chef/chef", branch: "main", glob: "chef-config/chef-config.gemspec"
 gem "chef-utils", git: "https://github.com/chef/chef", branch: "main", glob: "chef-utils/chef-utils.gemspec"
+gem "ffi", "~> 1.17", force_ruby_platform: true
 # NOTE: do not submit PRs to add pry as a dep, add to your Gemfile.local
 group :development do
   gem "cookstyle", ">= 7.32.8"

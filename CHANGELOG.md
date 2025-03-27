@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.9 -->
-## [v19.0.9](https://github.com/chef/ohai/tree/v19.0.9) (2025-02-25)
+<!-- latest_release 19.0.10 -->
+## [v19.0.10](https://github.com/chef/ohai/tree/v19.0.10) (2025-03-27)
 
 #### Merged Pull Requests
-- Hab pkg size issue removed cache and bundler folder [#1864](https://github.com/chef/ohai/pull/1864) ([sanghinitin](https://github.com/sanghinitin))
+- Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.10 -->
 - Hab pkg size issue removed cache and bundler folder [#1864](https://github.com/chef/ohai/pull/1864) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.0.9 -->
 - updating ffi for Ohai [#1865](https://github.com/chef/ohai/pull/1865) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.8 -->
 - Updating configuration for a symantec version promote and publish [#1862](https://github.com/chef/ohai/pull/1862) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->

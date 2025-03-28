@@ -1,23 +1,26 @@
 ---
 name: lint
 
-'on':
+on:
   pull_request:
   push:
     branches:
       - main
       - 18-stable
-      - 17-stable
-      - 16-stable
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   chefstyle:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-        bundler-cache: true
-    - uses: r7kamura/rubocop-problem-matchers-action@v1 # this shows the failures in the PR
-    - run: bundle exec rake style
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+      - uses: r7kamura/rubocop-problem-matchers-action@v1  # this shows the failures in the PR
+      - run: |
+          bundle install --jobs 4 --retry 3  
+          bundle exec rake style

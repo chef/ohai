@@ -1,14 +1,12 @@
 ---
 name: unit
 
-'on':
+on:
   pull_request:
   push:
     branches:
       - main
       - 18-stable
-      - 17-stable
-      - 16-stable
 
 permissions:
   contents: read
@@ -19,41 +17,16 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        ruby: ['2.7', '3.0', '3.1', '3.2']
+        ruby: ['3.1', '3.2']
     name: Unit test on ${{ matrix.os }} with Ruby ${{ matrix.ruby }}
     runs-on: ${{ matrix.os }}
     env:
       RUBYOPT: '--disable-error_highlight'
     steps:
       - uses: actions/checkout@v4
-      # Note that ruby 3.0 is a special-case where the bundler is new-enough
-      # that ruby-setup won't force a newer version, but old enough to not
-      # honor BUNDLED_WITH in Gemfile.lock, and thus everything breaks.
-      #
-      # So, for Ruby 3.0 ONLY, we setup ruby wit bundler-cache set to false
-      # then manually update bundler before installing the bundle
-      - name: ruby-setup for most cases
-        if: matrix.ruby != '3.0'
+      - name: ruby-setup
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: ruby-setup for 3.0
-        if: matrix.ruby == '3.0'
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: false
-      - name: work around ruby 3.0 bundler
-        if: matrix.ruby == '3.0'
-        run: |
-          gem install bundler -v 2.5.22 --user-install
-          echo "GEM_PATH=$(ruby -e 'puts Gem.user_dir'):$GEM_PATH" >> $GITHUB_ENV
-          echo "BUNDLE_PATH=$(ruby -e 'puts Gem.user_dir')/bin" >> $GITHUB_ENV
-          echo "BUNDLE_BIN=$(ruby -e 'puts Gem.user_dir')/bin" >> $GITHUB_ENV
-          echo "$(ruby -e 'puts Gem.user_dir')/bin" >> $GITHUB_PATH
-      - name: bundle install for 3.0
-        if: matrix.ruby == '3.0'
-        run: bundle install
-        shell: bash
       - run: bundle exec rake spec

@@ -12,7 +12,7 @@
 
 ## Description
 
-Ohai detects data about your operating system. It can be used standalone, but its primary purpose is to provide node data to Chef.
+Ohai gathers data about your operating system. It can be used standalone, but its primary purpose is to provide node data to Chef.
 
 Ohai will print out a JSON data blob for all the known data about your system. When used with Chef, that data is reported back via node attributes.
 

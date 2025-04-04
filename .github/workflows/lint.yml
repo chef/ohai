@@ -1,14 +1,13 @@
 ---
 name: lint
 
-'on':
+on:
   pull_request:
   push:
     branches:
       - main
       - 18-stable
       - 17-stable
-      - 16-stable
 
 jobs:
   chefstyle:
@@ -17,7 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
+        ruby-version: 3.4
         bundler-cache: true
     - uses: r7kamura/rubocop-problem-matchers-action@v1 # this shows the failures in the PR
     - run: bundle exec rake style

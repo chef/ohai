@@ -108,7 +108,11 @@ Ohai.plugin(:EC2) do
   end
 
   collect_data do
-    require "base64" unless defined?(Base64)
+    begin
+      require "base64" unless defined?(Base64)
+    rescue LoadError
+      logger.warn("Plugin EC2: base64 gem not found. Binary userdata will not be properly encoded.")
+    end
 
     if looks_like_ec2?
       logger.trace("Plugin EC2: looks_like_ec2? == true")

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.11 -->
-## [v19.0.11](https://github.com/chef/ohai/tree/v19.0.11) (2025-03-27)
+<!-- latest_release 19.0.12 -->
+## [v19.0.12](https://github.com/chef/ohai/tree/v19.0.12) (2025-04-14)
 
 #### Merged Pull Requests
-- Make `buildkite/chef-ohai-main-habitat-test` public [#1867](https://github.com/chef/ohai/pull/1867) ([jaymzh](https://github.com/jaymzh))
+- upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.12 -->
 - Make `buildkite/chef-ohai-main-habitat-test` public [#1867](https://github.com/chef/ohai/pull/1867) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.11 -->
 - Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.10 -->
 - Hab pkg size issue removed cache and bundler folder [#1864](https://github.com/chef/ohai/pull/1864) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.0.9 -->

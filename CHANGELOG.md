@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.0.12 -->
-## [v19.0.12](https://github.com/chef/ohai/tree/v19.0.12) (2025-04-14)
+<!-- latest_release 19.1.0 -->
+## [v19.1.0](https://github.com/chef/ohai/tree/v19.1.0) (2025-04-18)
 
 #### Merged Pull Requests
-- upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae))
+- Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6)) <!-- 19.1.0 -->
 - upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.12 -->
 - Make `buildkite/chef-ohai-main-habitat-test` public [#1867](https://github.com/chef/ohai/pull/1867) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.11 -->
 - Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.10 -->

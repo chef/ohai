@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.1"
 
+  s.add_dependency "base64" # For encoding binary data in Ruby 3.4+
   s.add_dependency "chef-config", ">= 14.12", "< 20"
   s.add_dependency "chef-utils", ">= 16.0", "< 20"
   s.add_dependency "ffi", ">= 1.15.5"

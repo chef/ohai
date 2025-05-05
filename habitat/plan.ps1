@@ -1,8 +1,9 @@
 $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
-$env:HAB_BLDR_CHANNEL = "LTS-2024"
-$env:HAB_REFRESH_CHANNEL = "LTS-2024"
+# $env:HAB_AUTH_TOKEN=$(vault kv get -field auth_token account/static/habitat/chef-ci)
+$env:HAB_BLDR_CHANNEL = "Base-2025"
+$env:HAB_REFRESH_CHANNEL = "Base-2025"
 $pkg_name="ohai"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")
@@ -16,13 +17,13 @@ $pkg_bin_dirs=@("bin"
                 "vendor/bin")
 $project_root= (Resolve-Path "$PLAN_CONTEXT/../").Path
 
-function pkg_version {
-    Get-Content "$SRC_PATH/VERSION"
-}
+# function pkg_version {
+#     Get-Content "$SRC_PATH/VERSION"
+# }
 
-function Invoke-Before {
-    Set-PkgVersion
-}
+# function Invoke-Before {
+#     Set-PkgVersion
+# }
 function Invoke-SetupEnvironment {
     Push-RuntimeEnv -IsPath GEM_PATH "$pkg_prefix/vendor"
 

@@ -1,5 +1,7 @@
-export HAB_BLDR_CHANNEL="LTS-2024"
-export HAB_REFRESH_CHANNEL="LTS-2024"
+HAB_AUTH_TOKEN=$(vault kv get -field auth_token account/static/habitat/chef-ci)
+export HAB_AUTH_TOKEN
+export HAB_BLDR_CHANNEL="Base-2025"
+export HAB_REFRESH_CHANNEL="Base-2025"
 ruby_pkg="core/ruby3_1"
 pkg_name="ohai"
 pkg_origin="chef"

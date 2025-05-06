@@ -248,10 +248,11 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = file_name.gsub(/\=.*$/, "/")
+        # Replace '=' only at the start of the string and avoid excessive backtracking
+        path = file_name.sub(/^=+/, "/")
         # ignore "./" and "../"
-        path.gsub(%r{/\.\.?(?:/|$)}, "/")
-          .sub(%r{^\.\.?(?:/|$)}, "")
+        path.gsub(%r{\/\.\.?(?:\/|$)}, "/")
+          .sub(%r{^\.\.?(?:\/|$)}, "")
           .sub(/^$/, "/")
       end
 

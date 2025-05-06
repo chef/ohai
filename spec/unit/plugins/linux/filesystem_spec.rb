@@ -229,18 +229,18 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:shell_out).with("df -iP").and_return(mock_shell_out(0, @inode_stdout, ""))
 
       @stdout = <<~BLKID_TYPE
-        /dev/sdb1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
-        /dev/sdb2: LABEL=\"fuego:1\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" TYPE=\"linux_raid_member\"
-        /dev/sda1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
-        /dev/sda2: LABEL=\"fuego:1\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" TYPE=\"linux_raid_member\"
-        /dev/md0: LABEL=\"/boot\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" TYPE=\"ext3\"
-        /dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" TYPE=\"LVM2_member\"
-        /dev/mapper/sys.vg-root.lv: LABEL=\"/\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
-        /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
+        /dev/sdb1: LABEL="fuego:0" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" TYPE="linux_raid_member"
+        /dev/sdb2: LABEL="fuego:1" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" TYPE="linux_raid_member"
+        /dev/sda1: LABEL="fuego:0" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" TYPE="linux_raid_member"
+        /dev/sda2: LABEL="fuego:1" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" TYPE="linux_raid_member"
+        /dev/md0: LABEL="/boot" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32" TYPE="ext3"
+        /dev/md1: UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK" TYPE="LVM2_member"
+        /dev/mapper/sys.vg-root.lv: LABEL="/" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" TYPE="ext4"
+        /dev/mapper/sys.vg-swap.lv: UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96"  TYPE="swap"
+        /dev/mapper/sys.vg-tmp.lv: LABEL="/tmp" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5" TYPE="ext4"
+        /dev/mapper/sys.vg-usr.lv: LABEL="/usr" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" TYPE="ext4"
         /dev/mapper/sys.vg-var.lv: LABEL="/var" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" TYPE="ext4"
-        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
+        /dev/mapper/sys.vg-home.lv: LABEL="/home" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" TYPE="btrfs"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -292,19 +292,19 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
       allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<~BLKID_TYPE
-        NAME=\"sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-        NAME=\"sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-        NAME=\"sda1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-        NAME=\"sda2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-        NAME=\"md0\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" LABEL=\"/boot\" FSTYPE=\"ext3\"
-        NAME=\"md1\" UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" LABEL=\"\" FSTYPE=\"LVM2_member\"
-        NAME=\"sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-swap.lv\" UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" LABEL=\"\" FSTYPE=\"swap\"
-        NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
-        NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
+        NAME="sdb1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" LABEL="fuego:0" FSTYPE="LVM2_member"
+        NAME="sdb2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" LABEL="fuego:1" FSTYPE="LVM2_member"
+        NAME="sda1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" LABEL="fuego:0" FSTYPE="LVM2_member"
+        NAME="sda2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" LABEL="fuego:1" FSTYPE="LVM2_member"
+        NAME="md0" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32" LABEL="/boot" FSTYPE="ext3"
+        NAME="md1" UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK" LABEL="" FSTYPE="LVM2_member"
+        NAME="sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" LABEL="/" FSTYPE="ext4"
+        NAME="sys.vg-swap.lv" UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96" LABEL="" FSTYPE="swap"
+        NAME="sys.vg-tmp.lv" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5" LABEL="/tmp" FSTYPE="ext4"
+        NAME="sys.vg-usr.lv" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" LABEL="/usr" FSTYPE="ext4"
+        NAME="sys.vg-var.lv" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" LABEL="/var" FSTYPE="ext4"
+        NAME="sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" LABEL="/home" FSTYPE="btrfs"
+        NAME="debian--7-root (dm-0)" UUID="09187faa-3512-4505-81af-7e86d2ccb99a" LABEL="root" FSTYPE="ext4"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
@@ -359,36 +359,36 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
       allow(plugin).to receive(:which).with("blkid").and_return("/sbin/blkid")
       @stdout = <<~BLKID_TYPE
-        NAME=\"sdb1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-        NAME=\"sdb2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-        NAME=\"sda1\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" LABEL=\"fuego:0\" FSTYPE=\"LVM2_member\"
-        NAME=\"sda2\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" LABEL=\"fuego:1\" FSTYPE=\"LVM2_member\"
-        NAME=\"md0\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" LABEL=\"/boot\" FSTYPE=\"ext3\"
-        NAME=\"md1\" UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" LABEL=\"\" FSTYPE=\"LVM2_member\"
-        NAME=\"sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\"
-        NAME=\"sys.vg-swap.lv\" UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\" LABEL=\"\" FSTYPE=\"swap\"
-        NAME=\"sys.vg-tmp.lv\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" LABEL=\"/tmp\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-usr.lv\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" LABEL=\"/usr\"
-        NAME=\"sys.vg-var.lv\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/var\" FSTYPE=\"ext4\"
-        NAME=\"sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/BADhome\" FSTYPE=\"btrfs\"
-        NAME=\"debian--7-root (dm-0)\" UUID=\"09187faa-3512-4505-81af-7e86d2ccb99a\" LABEL=\"root\" FSTYPE=\"ext4\"
+        NAME="sdb1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" LABEL="fuego:0" FSTYPE="LVM2_member"
+        NAME="sdb2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" LABEL="fuego:1" FSTYPE="LVM2_member"
+        NAME="sda1" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" LABEL="fuego:0" FSTYPE="LVM2_member"
+        NAME="sda2" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" LABEL="fuego:1" FSTYPE="LVM2_member"
+        NAME="md0" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32" LABEL="/boot" FSTYPE="ext3"
+        NAME="md1" UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK" LABEL="" FSTYPE="LVM2_member"
+        NAME="sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" LABEL="/"
+        NAME="sys.vg-swap.lv" UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96" LABEL="" FSTYPE="swap"
+        NAME="sys.vg-tmp.lv" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5" LABEL="/tmp" FSTYPE="ext4"
+        NAME="sys.vg-usr.lv" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" LABEL="/usr"
+        NAME="sys.vg-var.lv" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" LABEL="/var" FSTYPE="ext4"
+        NAME="sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" LABEL="/BADhome" FSTYPE="btrfs"
+        NAME="debian--7-root (dm-0)" UUID="09187faa-3512-4505-81af-7e86d2ccb99a" LABEL="root" FSTYPE="ext4"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)
         .and_return(mock_shell_out(0, @stdout, ""))
       @stdout = <<~BLKID_TYPE
-        /dev/sdb1: LABEL=\"fuego:0\" TYPE=\"linux_raid_member\"
-        /dev/sdb2: LABEL=\"fuego:1\" TYPE=\"linux_raid_member\"
-        /dev/sda1: LABEL=\"fuego:0\" UUID=\"bd1197e0-6997-1f3a-e27e-7801388308b5\" TYPE=\"linux_raid_member\"
-        /dev/sda2: LABEL=\"fuego:1\" UUID=\"e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa\" TYPE=\"linux_raid_member\"
-        /dev/md0: LABEL=\"/boot\" UUID=\"37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32\" TYPE=\"ext3\"
-        /dev/md1: UUID=\"YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK\" TYPE=\"LVM2_member\"
-        /dev/mapper/sys.vg-root.lv: LABEL=\"/\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
-        /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
+        /dev/sdb1: LABEL="fuego:0" TYPE="linux_raid_member"
+        /dev/sdb2: LABEL="fuego:1" TYPE="linux_raid_member"
+        /dev/sda1: LABEL="fuego:0" UUID="bd1197e0-6997-1f3a-e27e-7801388308b5" TYPE="linux_raid_member"
+        /dev/sda2: LABEL="fuego:1" UUID="e36d933e-e5b9-cfe5-6845-1f84d0f7fbfa" TYPE="linux_raid_member"
+        /dev/md0: LABEL="/boot" UUID="37b8de8e-0fe3-4b5a-b9b4-dde33e19bb32" TYPE="ext3"
+        /dev/md1: UUID="YsIe0R-fj1y-LXTd-imla-opKo-OuIe-TBoxSK" TYPE="LVM2_member"
+        /dev/mapper/sys.vg-root.lv: LABEL="/" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" TYPE="ext4"
+        /dev/mapper/sys.vg-swap.lv: UUID="9bc2e515-8ddc-41c3-9f63-4eaebde9ce96"  TYPE="swap"
+        /dev/mapper/sys.vg-tmp.lv: LABEL="/tmp" UUID="74cf7eb9-428f-479e-9a4a-9943401e81e5" TYPE="ext4"
+        /dev/mapper/sys.vg-usr.lv: LABEL="/usr" UUID="26ec33c5-d00b-4f88-a550-492def013bbc" TYPE="ext4"
         /dev/mapper/sys.vg-var.lv: LABEL="/var" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" TYPE="ext4"
-        /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
+        /dev/mapper/sys.vg-home.lv: LABEL="/home" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" TYPE="btrfs"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
     end
@@ -498,8 +498,8 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
       allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<~BLKID_TYPE
-        NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
-        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
+        NAME="/dev/mapper/sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" LABEL="/" FSTYPE="ext4"
+        NAME="/dev/mapper/sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" LABEL="/home" FSTYPE="btrfs"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)

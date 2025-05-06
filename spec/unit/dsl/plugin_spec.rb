@@ -512,7 +512,7 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "saves platforms across multiple plugins" do
-      plugin = Ohai.plugin(:Test) { collect_data {} }
+      Ohai.plugin(:Test) { collect_data {} }
       plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) {} }
       %i{aix default sigar}.each do |platform|
         expect(plugin.data_collector).to have_key(platform)

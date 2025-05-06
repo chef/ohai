@@ -239,7 +239,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
         /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
+        /dev/mapper/sys.vg-var.lv: LABEL="/var" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" TYPE="ext4"
         /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))
@@ -387,7 +387,7 @@ describe Ohai::System, "Linux filesystem plugin" do
         /dev/mapper/sys.vg-swap.lv: UUID=\"9bc2e515-8ddc-41c3-9f63-4eaebde9ce96\"  TYPE=\"swap\"
         /dev/mapper/sys.vg-tmp.lv: LABEL=\"/tmp\" UUID=\"74cf7eb9-428f-479e-9a4a-9943401e81e5\" TYPE=\"ext4\"
         /dev/mapper/sys.vg-usr.lv: LABEL=\"/usr\" UUID=\"26ec33c5-d00b-4f88-a550-492def013bbc\" TYPE=\"ext4\"
-        /dev/mapper/sys.vg-var.lv: LABEL=\"/var\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" TYPE=\"ext4\"
+        /dev/mapper/sys.vg-var.lv: LABEL="/var" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" TYPE="ext4"
         /dev/mapper/sys.vg-home.lv: LABEL=\"/home\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" TYPE=\"btrfs\"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out).with("/sbin/blkid", timeout: 60).and_return(mock_shell_out(0, @stdout, ""))

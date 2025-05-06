@@ -248,12 +248,9 @@ module Ohai
       private
 
       def expand_path(file_name)
-        # Replace '=' only at the start of the string and avoid excessive backtracking
-        path = file_name.sub(/^=+/, "=")
-        # ignore "./" and "../"
-        path.gsub(%r{\/\.\.?(?:\/|$)}, "/")
-          .sub(%r{^\.\.?(?:\/|$)}, "")
-          .sub(/^$/, "/")
+        path = file_name.gsub(/\=(.*?)\z/, "/")  # ReDoS-safe
+        path.gsub(%r{/\.\.?(/|\z)}, "/")         # Simplified
+          .sub(%r{^\.\.?(/|\z)}, "")             # Simplified
       end
 
       def metadata_key(key)

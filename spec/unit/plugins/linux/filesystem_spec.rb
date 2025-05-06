@@ -543,10 +543,10 @@ describe Ohai::System, "Linux filesystem plugin" do
       allow(plugin).to receive(:which).with("lsblk").and_return("/sbin/lsblk")
       allow(plugin).to receive(:which).with("blkid").and_return(nil)
       @stdout = <<~BLKID_TYPE
-        NAME=\"/dev/mapper/sys.vg-root.lv\" UUID=\"7742d14b-80a3-4e97-9a32-478be9ea9aea\" LABEL=\"/\" FSTYPE=\"ext4\"
-        NAME=\"/dev/sdb1\" UUID=\"6b559c35-7847-4ae2-b512-c99012d3f5b3\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
-        NAME=\"/dev/sdc1\" UUID=\"7f1e51bf-3608-4351-b7cd-379e39cff36a\" LABEL=\"/mnt\" FSTYPE=\"ext4\"
-        NAME=\"/dev/mapper/sys.vg-home.lv\" UUID=\"d6efda02-1b73-453c-8c74-7d8dee78fa5e\" LABEL=\"/home\" FSTYPE=\"btrfs\"
+        NAME="/dev/mapper/sys.vg-root.lv" UUID="7742d14b-80a3-4e97-9a32-478be9ea9aea" LABEL="/" FSTYPE="ext4"
+        NAME="/dev/sdb1" UUID="6b559c35-7847-4ae2-b512-c99012d3f5b3" LABEL="/mnt" FSTYPE="ext4"
+        NAME="/dev/sdc1" UUID="7f1e51bf-3608-4351-b7cd-379e39cff36a" LABEL="/mnt" FSTYPE="ext4"
+        NAME="/dev/mapper/sys.vg-home.lv" UUID="d6efda02-1b73-453c-8c74-7d8dee78fa5e" LABEL="/home" FSTYPE="btrfs"
       BLKID_TYPE
       allow(plugin).to receive(:shell_out)
         .with("/sbin/lsblk -n -P -o NAME,UUID,LABEL,FSTYPE", timeout: 60)

@@ -10,9 +10,6 @@ name: lint
       - 17-stable
       - 16-stable
 
-permissions:
-  contents: read
-
 jobs:
   chefstyle:
     runs-on: ubuntu-latest

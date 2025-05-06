@@ -248,9 +248,26 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = file_name.gsub(/\=(.*?)\z/, "/")  # ReDoS-safe
-        path.gsub(%r{/\.\.?(/|\z)}, "/")         # Simplified
-          .sub(%r{^\.\.?(/|\z)}, "")             # Simplified
+        # Replace '=' only at the start of the string
+        path = file_name.sub(/^=+/, "=")
+
+        # Normalize the path by removing './' and '../'
+        components = path.split("/")
+        normalized_components = []
+
+        components.each do |component|
+          next if component == "." # Ignore current directory references
+          if component == ".."
+            # Remove the last valid component for parent directory references
+            normalized_components.pop unless normalized_components.empty?
+          else
+            normalized_components << component
+          end
+        end
+
+        # Join the components back into a normalized path
+        normalized_path = normalized_components.join("/")
+        normalized_path.empty? ? "/" : normalized_path
       end
 
       def metadata_key(key)

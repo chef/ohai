@@ -248,11 +248,12 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = file_name.gsub(/\=.*$/, "/")
-        # ignore "./" and "../"
+        # Replace '=' only at the start of the string and avoid excessive backtracking
+        path = file_name.sub(/^=+/, "/")
+        # Ignore "./" and "../"
         path.gsub(%r{/\.\.?(?:/|$)}, "/")
-          .sub(%r{^\.\.?(?:/|$)}, "")
-          .sub(/^$/, "/")
+            .sub(%r{^\.\.?(?:/|$)}, "")
+            .sub(/^$/, "/")
       end
 
       def metadata_key(key)

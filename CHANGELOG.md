@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.5 -->
-## [v18.2.5](https://github.com/chef/ohai/tree/v18.2.5) (2025-01-22)
+<!-- latest_release 18.2.6 -->
+## [v18.2.6](https://github.com/chef/ohai/tree/v18.2.6) (2025-05-08)
 
 #### Merged Pull Requests
-- Limit ffi to 1.17.0 for 18-stable [#1860](https://github.com/chef/ohai/pull/1860) ([tpowell-progress](https://github.com/tpowell-progress))
+- Fixing the security scanning warnings [#1875](https://github.com/chef/ohai/pull/1875) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.18 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing the security scanning warnings [#1875](https://github.com/chef/ohai/pull/1875) ([nikhil2611](https://github.com/nikhil2611)) <!-- 18.2.6 -->
 - Limit ffi to 1.17.0 for 18-stable [#1860](https://github.com/chef/ohai/pull/1860) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.5 -->
 - [18-stable] Migrate from Chefstyle to Cookstyle gem [#1834](https://github.com/chef/ohai/pull/1834) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.4 -->
 - [#1830][18-stable] Check that sysfs directory exists before reading [#1832](https://github.com/chef/ohai/pull/1832) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.3 -->

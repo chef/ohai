@@ -65,8 +65,8 @@ module Ohai
       plugins = []
       attributes.each do |attribute|
         attrs = select_subtree(@map, attribute)
-        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless attrs
-        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs[:_plugins]
+        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: '#{attribute}'" unless attrs
+        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: '#{attribute}'" unless attrs[:_plugins]
 
         plugins += attrs[:_plugins]
       end
@@ -93,7 +93,7 @@ module Ohai
           attrs = select_closest_subtree(@map, attribute)
 
           unless attrs
-            raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'"
+            raise Ohai::Exceptions::AttributeNotFound, "No such attribute: '#{attribute}'"
           end
         end
 
@@ -115,10 +115,10 @@ module Ohai
       plugins = []
       attributes.each do |attribute|
         parts = normalize_and_validate(attribute)
-        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: \'#{attribute}\'" unless @map[parts[0]]
+        raise Ohai::Exceptions::AttributeNotFound, "No such attribute: '#{attribute}'" unless @map[parts[0]]
 
         attrs = select_closest_subtree(@map, attribute)
-        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: \'#{attribute}\'" unless attrs
+        raise Ohai::Exceptions::ProviderNotFound, "Cannot find plugin providing attribute: '#{attribute}'" unless attrs
 
         plugins += attrs[:_plugins]
       end

@@ -38,8 +38,8 @@ describe Ohai::Mixin::OCIMetadata do
       allow(Net::HTTP).to receive(:start).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR).and_return(http_mock)
 
       expect(http_mock).to receive(:get).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR,
-                                              { "Authorization" => "Bearer Oracle",
-                                                "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
+        { "Authorization" => "Bearer Oracle",
+          "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
       mixin.http_get(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR)
     end
   end

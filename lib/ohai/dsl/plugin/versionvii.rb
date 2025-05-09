@@ -149,11 +149,11 @@ module Ohai
         end
 
         def provides(*paths)
-          logger.warn("[UNSUPPORTED OPERATION] \'provides\' is no longer supported in a \'collect_data\' context. Please specify \'provides\' before collecting plugin data. Ignoring command \'provides #{paths.join(", ")}")
+          logger.warn("[UNSUPPORTED OPERATION] 'provides' is no longer supported in a 'collect_data' context. Please specify 'provides' before collecting plugin data. Ignoring command 'provides #{paths.join(", ")}")
         end
 
         def require_plugin(*args)
-          logger.warn("[UNSUPPORTED OPERATION] \'require_plugin\' is no longer supported. Please use \'depends\' instead.\nIgnoring plugin(s) #{args.join(", ")}")
+          logger.warn("[UNSUPPORTED OPERATION] 'require_plugin' is no longer supported. Please use 'depends' instead.\nIgnoring plugin(s) #{args.join(", ")}")
         end
 
         def configuration(option, *options)

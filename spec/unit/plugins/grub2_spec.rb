@@ -26,10 +26,10 @@ describe Ohai::System, "grub2 plugin" do
   end
 
   it "populates grub2 if grub2-editenv is found" do
-    editenv_out = <<-EDITENV_OUT
-saved_entry=f4fd6be6243646e1a76a42d50f219818-5.2.9-229
-boot_success=1
-kernelopts=root=UUID=6db0ffcd-70ec-4333-86c3-873a9e2a0d77 ro
+    editenv_out = <<~EDITENV_OUT
+      saved_entry=f4fd6be6243646e1a76a42d50f219818-5.2.9-229
+      boot_success=1
+      kernelopts=root=UUID=6db0ffcd-70ec-4333-86c3-873a9e2a0d77 ro
     EDITENV_OUT
     allow(plugin).to receive(:which).with("grub2-editenv").and_return("/bin/grub2-editenv")
     allow(plugin).to receive(:shell_out).with("/bin/grub2-editenv list").and_return(mock_shell_out(0, editenv_out, ""))

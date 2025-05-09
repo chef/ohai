@@ -26,11 +26,11 @@ Ohai.plugin(:Kernel) do
 
     uname_so = shell_out("uname -rvp").stdout.split
 
-    kernel[:name] =    "aix" # this is here for historical reasons, but it's always aix
+    kernel[:name] = "aix" # this is here for historical reasons, but it's always aix
     kernel[:release] = uname_so[0]
     kernel[:version] = uname_so[1]
     kernel[:machine] = uname_so[2]
-    kernel[:bits] =    shell_out("getconf KERNEL_BITMODE").stdout.strip
+    kernel[:bits] = shell_out("getconf KERNEL_BITMODE").stdout.strip
 
     modules = Mash.new
     so = shell_out("genkex -d")

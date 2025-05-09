@@ -100,7 +100,7 @@ module Ohai
       contents = ""
       begin
         logger.trace("Loading plugin at #{plugin_path}")
-        contents << IO.read(plugin_path)
+        contents << File.read(plugin_path)
       rescue IOError, Errno::ENOENT
         logger.warn("Unable to open or read plugin at #{plugin_path}")
         return nil

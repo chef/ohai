@@ -31,7 +31,7 @@ Ohai.plugin(:Passwd) do
 
       Etc.group do |entry|
         group_entry = Mash.new(gid: entry.gid,
-                               members: entry.mem.map { |u| fix_encoding(u) })
+          members: entry.mem.map { |u| fix_encoding(u) })
 
         etc[:group][fix_encoding(entry.name)] = group_entry
       end

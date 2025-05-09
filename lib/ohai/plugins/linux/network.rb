@@ -104,7 +104,7 @@ Ohai.plugin(:Network) do
       end
       route_endings.each do |route_ending|
         route_entry = Mash.new(destination: route_dest,
-                               family: family[:name])
+          family: family[:name])
         route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1

@@ -27,9 +27,8 @@ Ohai.plugin(:Interrupts) do
   # each bit is a CPU, right to left ordering (i.e. CPU0 is rightmost)
   def parse_smp_affinity(path, cpus)
     masks = file_read(path).strip
-    bit_masks = []
-    masks.split(",").each do |mask|
-      bit_masks << mask.rjust(8, "0").to_i(16).to_s(2)
+    bit_masks = masks.split(",").map do |mask|
+      mask.rjust(8, "0").to_i(16).to_s(2)
     end
     affinity_mask = bit_masks.join
     affinity_by_cpu = affinity_mask.split("").reverse

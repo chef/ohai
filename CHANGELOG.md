@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.1 -->
-## [v19.1.1](https://github.com/chef/ohai/tree/v19.1.1) (2025-04-24)
+<!-- latest_release 19.1.2 -->
+## [v19.1.2](https://github.com/chef/ohai/tree/v19.1.2) (2025-05-12)
 
 #### Merged Pull Requests
-- The filesystem plugin transition is finally over [#1873](https://github.com/chef/ohai/pull/1873) ([jaymzh](https://github.com/jaymzh))
+- add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.2 -->
 - The filesystem plugin transition is finally over [#1873](https://github.com/chef/ohai/pull/1873) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.1 -->
 - Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6)) <!-- 19.1.0 -->
 - upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.12 -->

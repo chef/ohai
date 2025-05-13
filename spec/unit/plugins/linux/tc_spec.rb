@@ -52,12 +52,12 @@ describe Ohai::System, "Linux tc plugin" do
         "lo" => {
           "qdiscs" => [
             {
-              "type" =>  "noqueue",
+              "type" => "noqueue",
               "parms" => {},
             },
           ],
         },
-        "eth0" =>  {
+        "eth0" => {
           "qdiscs" => [
             {
               "type" => "mq",

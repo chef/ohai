@@ -143,13 +143,13 @@ describe Ohai::System, "plugin c" do
   context "when on Windows" do
     before do
       allow(plugin).to receive(:collect_os).and_return(:windows)
-      allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(0, "", C_CL))
-      allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
+      allow(plugin).to receive(:shell_out).with("cl /?").and_return(mock_shell_out(0, "", C_CL))
+      allow(plugin).to receive(:shell_out).with("devenv.com /?").and_return(mock_shell_out(0, C_VS, ""))
     end
 
     # ms cl
     it "gets the cl version from running cl /?" do
-      expect(plugin).to receive(:shell_out).with("cl /\?")
+      expect(plugin).to receive(:shell_out).with("cl /?")
       plugin.run
     end
 
@@ -164,13 +164,13 @@ describe Ohai::System, "plugin c" do
     end
 
     it "does not set the languages[:c][:cl] tree up if cl command exits nonzero" do
-      allow(plugin).to receive(:shell_out).with("cl /\?").and_return(mock_shell_out(1, "", ""))
+      allow(plugin).to receive(:shell_out).with("cl /?").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:cl)
     end
 
     it "does not set the languages[:c][:cl] tree up if cl command fails" do
-      allow(plugin).to receive(:shell_out).with("cl /\?").and_raise(Ohai::Exceptions::Exec)
+      allow(plugin).to receive(:shell_out).with("cl /?").and_raise(Ohai::Exceptions::Exec)
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:cl)
       expect(plugin[:languages][:c]).not_to be_empty # expect other attributes
@@ -178,7 +178,7 @@ describe Ohai::System, "plugin c" do
 
     # ms vs
     it "gets the vs version from running devenv.com /?" do
-      expect(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(0, C_VS, ""))
+      expect(plugin).to receive(:shell_out).with("devenv.com /?").and_return(mock_shell_out(0, C_VS, ""))
       plugin.run
     end
 
@@ -193,13 +193,13 @@ describe Ohai::System, "plugin c" do
     end
 
     it "does not set the languages[:c][:vs] tree up if devenv command exits nonzero" do
-      allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_return(mock_shell_out(1, "", ""))
+      allow(plugin).to receive(:shell_out).with("devenv.com /?").and_return(mock_shell_out(1, "", ""))
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:vs)
     end
 
     it "does not set the languages[:c][:vs] tree up if devenv command fails" do
-      allow(plugin).to receive(:shell_out).with("devenv.com /\?").and_raise(Ohai::Exceptions::Exec)
+      allow(plugin).to receive(:shell_out).with("devenv.com /?").and_raise(Ohai::Exceptions::Exec)
       plugin.run
       expect(plugin[:languages][:c]).not_to have_key(:vs)
       expect(plugin[:languages][:c]).not_to be_empty # expect other attributes

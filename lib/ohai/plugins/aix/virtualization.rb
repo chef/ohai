@@ -143,7 +143,7 @@ Ohai.plugin(:Virtualization) do
           evalstr = "wpars['#{wpar_name}']"
           breadcrumb = attribute.split(".")
           breadcrumb.each do |node|
-            evalstr << "[\'#{node}\']"
+            evalstr << "['#{node}']"
           end
           wpars[wpar_name][breadcrumb[-1]] = eval evalstr # rubocop: disable Security/Eval
         end

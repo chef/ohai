@@ -248,8 +248,14 @@ module Ohai
       private
 
       def expand_path(file_name)
-        path = file_name.gsub(/\=.*$/, "/")
-        # ignore "./" and "../"
+        # First substitution - exactly matches original behavior but safer
+        path = if file_name.include?("=")
+                 file_name[0...file_name.index("=")] + "/"
+               else
+                 file_name.dup
+               end
+
+        # Handle relative path components
         path.gsub(%r{/\.\.?(?:/|$)}, "/")
           .sub(%r{^\.\.?(?:/|$)}, "")
           .sub(/^$/, "/")

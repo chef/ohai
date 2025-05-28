@@ -512,7 +512,9 @@ describe Ohai::DSL::Plugin::VersionVII do
     end
 
     it "saves platforms across multiple plugins" do
+      # run ohai once for the default set of plugins
       Ohai.plugin(:Test) { collect_data {} }
+      # then run just 2 plugins, and make sure the other plugins' data is preserved.
       plugin = Ohai.plugin(:Test) { collect_data(:aix, :sigar) {} }
       %i{aix default sigar}.each do |platform|
         expect(plugin.data_collector).to have_key(platform)

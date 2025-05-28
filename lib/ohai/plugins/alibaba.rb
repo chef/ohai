@@ -54,7 +54,7 @@ Ohai.plugin(:Alibaba) do
   # a single check that combines all the various detection methods for Alibaba
   # @return [Boolean] Does the system appear to be on Alibaba
   def looks_like_alibaba?
-    true if hint?("alibaba") || has_ali_dmi?
+    hint?("alibaba") || has_ali_dmi?
   end
 
   collect_data do

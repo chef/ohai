@@ -72,7 +72,7 @@ Ohai.plugin(:GCE) do
     return true if hint?("gce")
 
     if has_gce_dmi? || has_gce_system_info?
-      true if can_socket_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
+      can_socket_connect?(Ohai::Mixin::GCEMetadata::GCE_METADATA_ADDR, 80)
     end
   end
 

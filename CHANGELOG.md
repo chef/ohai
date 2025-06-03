@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.2 -->
-## [v19.1.2](https://github.com/chef/ohai/tree/v19.1.2) (2025-05-12)
+<!-- latest_release 19.1.3 -->
+## [v19.1.3](https://github.com/chef/ohai/tree/v19.1.3) (2025-06-03)
 
 #### Merged Pull Requests
-- add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh))
+- Fixing the security scanning warnings [#1877](https://github.com/chef/ohai/pull/1877) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing the security scanning warnings [#1877](https://github.com/chef/ohai/pull/1877) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.3 -->
 - add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.2 -->
 - The filesystem plugin transition is finally over [#1873](https://github.com/chef/ohai/pull/1873) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.1 -->
 - Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6)) <!-- 19.1.0 -->

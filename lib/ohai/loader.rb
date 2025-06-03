@@ -100,7 +100,7 @@ module Ohai
       contents = ""
       begin
         logger.trace("Loading plugin at #{plugin_path}")
-        contents << IO.read(plugin_path)
+        contents << File.read(plugin_path)
       rescue IOError, Errno::ENOENT
         logger.warn("Unable to open or read plugin at #{plugin_path}")
         return nil
@@ -110,9 +110,9 @@ module Ohai
       if contents.include?("Ohai.plugin")
         load_v7_plugin_class(contents, plugin_path)
       else
-        raise Exceptions::IllegalPluginDefinition, "[DEPRECATION] Plugin at #{plugin_path}"\
-        " is a version 6 plugin. Version 6 plugins are no longer supported by Ohai. This"\
-        " plugin will need to be updated to the v7 Ohai plugin format. See"\
+        raise Exceptions::IllegalPluginDefinition, "[DEPRECATION] Plugin at #{plugin_path}" \
+        " is a version 6 plugin. Version 6 plugins are no longer supported by Ohai. This" \
+        " plugin will need to be updated to the v7 Ohai plugin format. See" \
         " https://docs.chef.io/ohai_custom.html for v7 syntax."
       end
     end
@@ -151,7 +151,7 @@ module Ohai
     rescue Ohai::Exceptions::IllegalPluginDefinition => e
       logger.warn("Plugin Definition Error: <#{plugin_path}>: #{e.message}")
     rescue NoMethodError => e
-      logger.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation \'#{e.name}\'")
+      logger.warn("Plugin Method Error: <#{plugin_path}>: unsupported operation '#{e.name}'")
     rescue SyntaxError => e
       # split on occurrences of
       #    <env>: syntax error,

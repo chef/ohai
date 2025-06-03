@@ -120,7 +120,7 @@ Ohai.plugin(:Network) do
           interface = $6
           ifaces[interface][:routes] ||= []
           ifaces[interface][:routes] << Mash.new( destination: $1, family: family,
-                                                  via: $2, flags: $3)
+            via: $2, flags: $3)
         end
       end
     end

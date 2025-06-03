@@ -49,7 +49,7 @@ class Ohai::Application
     short: "-l LEVEL",
     long: "--log_level LEVEL",
     description: "Set the log level (debug, info, warn, error, fatal)",
-    proc: lambda { |l| l.to_sym }
+    proc: lambda(&:to_sym)
 
   option :log_location,
     short: "-L LOGLOCATION",

@@ -119,9 +119,7 @@ module Ohai
     # cycle. Does not include plugins that aren't a part of the cycle
     def get_cycle(plugins, cycle_start)
       cycle = plugins.drop_while { |plugin| !plugin.eql?(cycle_start) }
-      names = []
-      cycle.each { |plugin| names << plugin.name }
-      names
+      cycle.map(&:name)
     end
 
   end

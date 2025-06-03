@@ -115,7 +115,7 @@ Ohai.plugin(:Rackspace) do
   def get_instance_id
     so = shell_out("xenstore-read name")
     if so.exitstatus == 0
-      rackspace[:instance_id] = so.stdout.gsub(/instance-/, "")
+      rackspace[:instance_id] = so.stdout.gsub("instance-", "")
     end
   rescue Ohai::Exceptions::Exec
     logger.trace("Plugin Rackspace: Unable to find xenstore-read, cannot capture instance ID information for Rackspace cloud")

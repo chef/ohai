@@ -18,6 +18,8 @@ steps:
         docker:
           image: ruby:3.1
           privileged: true
+          environment:
+            - HAB_AUTH_TOKEN
 
   - label: ":windows: Validate Habitat Builds of ohai"
     commands:
@@ -30,6 +32,7 @@ steps:
           image: rubydistros/windows-2019:3.1
           user: 'NT AUTHORITY\SYSTEM'
           environment:
+            - HAB_AUTH_TOKEN
             - FORCE_FFI_YAJL=ext
             - EXPIRE_CACHE=true
             - CHEF_LICENSE=accept-no-persist

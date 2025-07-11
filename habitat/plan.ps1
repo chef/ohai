@@ -1,8 +1,8 @@
 $ErrorActionPreference = "Stop"
 $PSDefaultParameterValues['*:ErrorAction']='Stop'
 
-$env:HAB_BLDR_CHANNEL = "LTS-2024"
-$env:HAB_REFRESH_CHANNEL = "LTS-2024"
+$env:HAB_BLDR_CHANNEL = "base-2025"
+$env:HAB_REFRESH_CHANNEL = "base-2025"
 $pkg_name="ohai"
 $pkg_origin="chef"
 $pkg_version=$(Get-Content "$PLAN_CONTEXT/../VERSION")

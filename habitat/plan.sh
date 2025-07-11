@@ -1,5 +1,5 @@
-export HAB_BLDR_CHANNEL="LTS-2024"
-export HAB_REFRESH_CHANNEL="LTS-2024"
+export HAB_BLDR_CHANNEL="base-2025"
+export HAB_REFRESH_CHANNEL="base-2025"
 ruby_pkg="core/ruby3_1"
 pkg_name="ohai"
 pkg_origin="chef"

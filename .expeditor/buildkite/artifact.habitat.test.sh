@@ -2,12 +2,11 @@
 
 set -eo pipefail
 
-export HAB_ORIGIN='ci'
 export PLAN='ohai'
 export CHEF_LICENSE="accept-no-persist"
 export HAB_LICENSE="accept-no-persist"
-export HAB_BLDR_CHANNEL='LTS-2024'
-export HAB_REFRESH_CHANNEL="LTS-2024"
+export HAB_BLDR_CHANNEL='base-2025'
+export HAB_REFRESH_CHANNEL="base-2025"
 
 echo "--- checking if git is installed"
 if ! command -v git &> /dev/null; then
@@ -40,6 +39,10 @@ uname -a
 echo "--- Installing Habitat"
 id -a
 curl https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.sh | bash
+
+# Set HAB_ORIGIN after Habitat installation
+echo "--- Setting HAB_ORIGIN to 'ci' after installation"
+export HAB_ORIGIN='ci'
 
 echo "--- :key: Generating fake origin key"
 hab origin key generate "$HAB_ORIGIN"

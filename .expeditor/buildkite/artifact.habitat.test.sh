@@ -2,7 +2,6 @@
 
 set -eo pipefail
 
-export HAB_ORIGIN='ci'
 export PLAN='ohai'
 export CHEF_LICENSE="accept-no-persist"
 export HAB_LICENSE="accept-no-persist"

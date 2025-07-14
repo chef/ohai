@@ -41,6 +41,10 @@ echo "--- Installing Habitat"
 id -a
 curl https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.sh | bash
 
+# Set HAB_ORIGIN after Habitat installation
+echo "--- Setting HAB_ORIGIN to 'ci' after installation"
+export HAB_ORIGIN='ci'
+
 echo "--- :key: Generating fake origin key"
 hab origin key generate "$HAB_ORIGIN"
 

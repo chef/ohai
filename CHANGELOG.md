@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.4 -->
-## [v19.1.4](https://github.com/chef/ohai/tree/v19.1.4) (2025-07-07)
+<!-- latest_release 19.1.5 -->
+## [v19.1.5](https://github.com/chef/ohai/tree/v19.1.5) (2025-07-14)
 
 #### Merged Pull Requests
-- Fix Style/CollectionQuerying: Use none? instead of count == 0 [#1881](https://github.com/chef/ohai/pull/1881) ([sanjain-progress](https://github.com/sanjain-progress))
+- Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.5 -->
 - Fix Style/CollectionQuerying: Use none? instead of count == 0 [#1881](https://github.com/chef/ohai/pull/1881) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.4 -->
 - Fixing the security scanning warnings [#1877](https://github.com/chef/ohai/pull/1877) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.3 -->
 - add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.2 -->

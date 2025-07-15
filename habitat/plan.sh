@@ -1,6 +1,6 @@
 export HAB_BLDR_CHANNEL="base-2025"
 export HAB_REFRESH_CHANNEL="base-2025"
-ruby_pkg="core/ruby3_1"
+ruby_pkg="core/ruby3_4"
 pkg_name="ohai"
 pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"

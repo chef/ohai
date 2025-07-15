@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.6 -->
-## [v19.1.6](https://github.com/chef/ohai/tree/v19.1.6) (2025-07-14)
+<!-- latest_release 19.1.7 -->
+## [v19.1.7](https://github.com/chef/ohai/tree/v19.1.7) (2025-07-15)
 
 #### Merged Pull Requests
-- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611))
+- let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja)) <!-- 19.1.7 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.6 -->
 - Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.5 -->
 - Fix Style/CollectionQuerying: Use none? instead of count == 0 [#1881](https://github.com/chef/ohai/pull/1881) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.4 -->

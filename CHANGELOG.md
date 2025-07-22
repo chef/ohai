@@ -1,25 +1,24 @@
 # Change Log
 
-<!-- latest_release 18.2.5 -->
-## [v18.2.5](https://github.com/chef/ohai/tree/v18.2.5) (2025-01-22)
-
-#### Merged Pull Requests
-- Limit ffi to 1.17.0 for 18-stable [#1860](https://github.com/chef/ohai/pull/1860) ([tpowell-progress](https://github.com/tpowell-progress))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=18.1.18 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Limit ffi to 1.17.0 for 18-stable [#1860](https://github.com/chef/ohai/pull/1860) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.5 -->
-- [18-stable] Migrate from Chefstyle to Cookstyle gem [#1834](https://github.com/chef/ohai/pull/1834) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.4 -->
-- [#1830][18-stable] Check that sysfs directory exists before reading [#1832](https://github.com/chef/ohai/pull/1832) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.3 -->
-- [Chef18] Use Chef 18 branches of chef/chef [#1829](https://github.com/chef/ohai/pull/1829) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 18.2.2 -->
-- cpu: Fix issues with newer versions of lscpu [#1828](https://github.com/chef/ohai/pull/1828) ([ramereth](https://github.com/ramereth)) <!-- 18.2.1 -->
-- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v18.2.6](https://github.com/chef/ohai/tree/v18.2.6) (2025-05-12)
+
+#### Merged Pull Requests
+- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
+- cpu: Fix issues with newer versions of lscpu [#1828](https://github.com/chef/ohai/pull/1828) ([ramereth](https://github.com/ramereth))
+- [Chef18] Use Chef 18 branches of chef/chef [#1829](https://github.com/chef/ohai/pull/1829) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- [#1830][18-stable] Check that sysfs directory exists before reading [#1832](https://github.com/chef/ohai/pull/1832) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- [18-stable] Migrate from Chefstyle to Cookstyle gem [#1834](https://github.com/chef/ohai/pull/1834) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- Limit ffi to 1.17.0 for 18-stable [#1860](https://github.com/chef/ohai/pull/1860) ([tpowell-progress](https://github.com/tpowell-progress))
+- Fixing the security scanning warnings [#1875](https://github.com/chef/ohai/pull/1875) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_stable_release -->
+
 ## [v18.1.18](https://github.com/chef/ohai/tree/v18.1.18) (2024-07-16)
 
 #### Merged Pull Requests
@@ -38,7 +37,6 @@
 - determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval))
 - Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae))
 - [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar))
-<!-- latest_stable_release -->
 
 ## [v18.1.3](https://github.com/chef/ohai/tree/v18.1.3) (2023-03-08)
 

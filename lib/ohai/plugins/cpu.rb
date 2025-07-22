@@ -637,6 +637,6 @@ Ohai.plugin(:CPU) do
 
     cpu[:total] = logical_processors
     cpu[:cores] = cores
-    cpu[:real] =  processors.length
+    cpu[:real] = processors.length
   end
 end

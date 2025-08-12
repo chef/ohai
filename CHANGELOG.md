@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.7 -->
-## [v19.1.7](https://github.com/chef/ohai/tree/v19.1.7) (2025-07-15)
+<!-- latest_release 19.1.8 -->
+## [v19.1.8](https://github.com/chef/ohai/tree/v19.1.8) (2025-08-12)
 
 #### Merged Pull Requests
-- let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja))
+- Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.8 -->
 - let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja)) <!-- 19.1.7 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.6 -->
 - Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.5 -->

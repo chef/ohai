@@ -1263,33 +1263,33 @@ describe Ohai::System, "Linux Network Plugin" do
       describe "when there're multipath default routes with a loopback src" do
         let(:linux_ip_route) do
           <<~EOM
-          default nhid 18 proto bgp src 10.116.201.76 metric 20 \\ nexthop via 10.117.201.1 dev eth0 weight 1 \\ nexthop via 10.117.202.1 dev eth1 weight 1
+            default nhid 18 proto bgp src 10.116.201.76 metric 20 \\ nexthop via 10.117.201.1 dev eth0 weight 1 \\ nexthop via 10.117.202.1 dev eth1 weight 1
           EOM
         end
 
         let(:linux_ip_addr) do
           <<~EOM
-      1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
-          link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-          inet 127.0.0.1/8 scope host lo
-          inet 10.116.201.76/32 scope global lo
-          inet6 ::1/128 scope host
-             valid_lft forever preferred_lft forever
-      2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-          link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
-          inet 10.117.201.76/24 brd 10.117.201.255 scope global eth0
-          inet6 fe80::1031:3dff:fe02:bea2/64 scope link
-             valid_lft forever preferred_lft forever
-         inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
-             valid_lft 6128sec preferred_lft 2526sec
-      3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
-          link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
-          inet 10.117.202.76/24 brd 10.117.202.255 scope global eth1
-          inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
-          inet6 1111:2222:3333:4444::2/64 scope global
-             valid_lft forever preferred_lft forever
-          inet6 1111:2222:3333:4444::3/64 scope global
-             valid_lft forever preferred_lft forever
+            1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue state UNKNOWN
+                link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+                inet 127.0.0.1/8 scope host lo
+                inet 10.116.201.76/32 scope global lo
+                inet6 ::1/128 scope host
+                   valid_lft forever preferred_lft forever
+            2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+                link/ether 12:31:3d:02:be:a2 brd ff:ff:ff:ff:ff:ff
+                inet 10.117.201.76/24 brd 10.117.201.255 scope global eth0
+                inet6 fe80::1031:3dff:fe02:bea2/64 scope link
+                   valid_lft forever preferred_lft forever
+               inet6 2001:44b8:4160:8f00:a00:27ff:fe13:eacd/64 scope global dynamic
+                   valid_lft 6128sec preferred_lft 2526sec
+            3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+                link/ether 00:aa:bb:cc:dd:ee brd ff:ff:ff:ff:ff:ff
+                inet 10.117.202.76/24 brd 10.117.202.255 scope global eth1
+                inet6 fe80::2e0:81ff:fe2b:48e7/64 scope link
+                inet6 1111:2222:3333:4444::2/64 scope global
+                   valid_lft forever preferred_lft forever
+                inet6 1111:2222:3333:4444::3/64 scope global
+                   valid_lft forever preferred_lft forever
           EOM
         end
 
@@ -1297,8 +1297,8 @@ describe Ohai::System, "Linux Network Plugin" do
           plugin.run
         end
 
-        it 'finds the default interface' do
-          expect(plugin['network']['default_interface']).to eq('lo')
+        it "finds the default interface" do
+          expect(plugin["network"]["default_interface"]).to eq("lo")
         end
       end
 

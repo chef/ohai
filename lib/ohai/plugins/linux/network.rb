@@ -578,7 +578,7 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
-    return '00:00:00:00:00:00' if interfaces[interface][:flags].include?("LOOPBACK")
+    return "00:00:00:00:00:00" if interfaces[interface][:flags].include?("LOOPBACK")
 
     interfaces[interface][:addresses].find { |k, v| v["family"] == "lladdr" }.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
   end

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.8 -->
-## [v19.1.8](https://github.com/chef/ohai/tree/v19.1.8) (2025-08-12)
+<!-- latest_release 19.1.9 -->
+## [v19.1.9](https://github.com/chef/ohai/tree/v19.1.9) (2025-09-02)
 
 #### Merged Pull Requests
-- Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo)) <!-- 19.1.9 -->
 - Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.8 -->
 - let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja)) <!-- 19.1.7 -->
 - Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.6 -->

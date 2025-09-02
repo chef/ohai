@@ -41,7 +41,7 @@ Ohai.plugin(:Network) do
       # If we are running on windows nano or another operating system from the future
       # that does not populate the deprecated win32_* WMI classes, then we should
       # grab data from the newer MSFT_* classes
-      return msft_adapter_data if data[:addresses].count == 0
+      return msft_adapter_data if data[:addresses].none?
 
       data[:adapters] = wmi.instances_of("Win32_NetworkAdapter")
       data

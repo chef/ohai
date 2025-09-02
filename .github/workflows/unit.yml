@@ -23,7 +23,7 @@ jobs:
     env:
       RUBYOPT: '--disable-error_highlight'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:

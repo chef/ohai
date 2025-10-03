@@ -44,17 +44,15 @@ Ohai.plugin(:Oci) do
   end
 
   def oci_chassis_asset_tag?
-    has_oci_chassis_asset_tag = false
-    if file_exist?(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE)
-      file_open(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).each do |line|
-        next unless /OracleCloud.com/.match?(line)
+    asset_tag = chassis_asset_tag
+    return false if asset_tag.nil? || asset_tag.empty?
 
-        logger.trace("Plugin oci: Found OracleCloud.com chassis_asset_tag used by oci.")
-        has_oci_chassis_asset_tag = true
-        break
-      end
+    if /OracleCloud.com/.match?(asset_tag)
+      logger.trace("Plugin oci: Found OracleCloud.com chassis_asset_tag used by oci.")
+      true
+    else
+      false
     end
-    has_oci_chassis_asset_tag
   end
 
   def parse_metadata

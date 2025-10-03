@@ -28,6 +28,39 @@ module Ohai
       OCI_METADATA_URL = "/opc/v2"
       CHASSIS_ASSET_TAG_FILE = "/sys/devices/virtual/dmi/id/chassis_asset_tag"
 
+      # Get the chassis asset tag from DMI information
+      # On Linux: reads from sysfs
+      # On Windows: queries WMI Win32_SystemEnclosure
+      def chassis_asset_tag
+        if RUBY_PLATFORM =~ /mswin|mingw|windows/
+          get_chassis_asset_tag_windows
+        else
+          get_chassis_asset_tag_linux
+        end
+      end
+
+      # Read chassis asset tag from Linux sysfs
+      def get_chassis_asset_tag_linux
+        return nil unless ::File.exist?(CHASSIS_ASSET_TAG_FILE)
+
+        ::File.read(CHASSIS_ASSET_TAG_FILE).strip
+      rescue => e
+        logger.debug("Mixin OciMetadata: Failed to read chassis asset tag from #{CHASSIS_ASSET_TAG_FILE}: #{e}")
+        nil
+      end
+
+      # Read chassis asset tag from Windows WMI
+      def get_chassis_asset_tag_windows
+        require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
+        
+        wmi = WmiLite::Wmi.new
+        enclosure = wmi.first_of("Win32_SystemEnclosure")
+        enclosure&.[]("SMBIOSAssetTag")
+      rescue => e
+        logger.debug("Mixin OciMetadata: Failed to read chassis asset tag from WMI: #{e}")
+        nil
+      end
+
       # fetch the meta content with a timeout and the required header
       def http_get(uri)
         conn = Net::HTTP.start(OCI_METADATA_ADDR)
@@ -51,7 +84,7 @@ module Ohai
           end
           json_data
         else
-          logger.warn("Mixin OciMetadata: Received response code #{response.code} requesting metadata")
+          logger.debug("Mixin OciMetadata: Received response code #{response.code} requesting #{metadata}")
           nil
         end
       end

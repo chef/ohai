@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 #
-# Author:: Jay Vana <jsvana@fb.com>
-# Author:: Davide Cavalca <dcavalca@fb.com>
-# Copyright:: Copyright (c) 2016-2020 Facebook, Inc.
+# Contributed by: Jay Vana <jsvana@fb.com>
+# Contributed by: Davide Cavalca <dcavalca@fb.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

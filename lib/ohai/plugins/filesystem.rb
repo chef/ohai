@@ -1,13 +1,13 @@
 #
-# Author:: Phil Dibowitz <phil@ipom.com>
-# Author:: Adam Jacob <adam@chef.io>
-# Author:: Kurt Yoder (ktyopscode@yoderhome.com)
-# Author:: Deepali Jagtap (<deepali.jagtap@clogeny.com>)
-# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Author:: Isa Farnik (<isa@chef.io>)
-# Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: Copyright (c) 2015 Facebook, Inc.
+# Contributed by: Phil Dibowitz <phil@ipom.com>
+# Contributed by: Adam Jacob <adam@chef.io>
+# Contributed by: Kurt Yoder (ktyopscode@yoderhome.com)
+# Contributed by: Deepali Jagtap (<deepali.jagtap@clogeny.com>)
+# Contributed by: Prabhu Das (<prabhu.das@clogeny.com>)
+# Contributed by: Isa Farnik (<isa@chef.io>)
+# Contributed by: James Gartrell (<jgartrel@gmail.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

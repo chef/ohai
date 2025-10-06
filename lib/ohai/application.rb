@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
-# Author:: Mathieu Sauve-Frankel <msf@kisoku.net>
-# Copyright:: Copyright (c) 2009 Mathieu Sauve-Frankel.
+# Contributed by: Mathieu Sauve-Frankel <msf@kisoku.net>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

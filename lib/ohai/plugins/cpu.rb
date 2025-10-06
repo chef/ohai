@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Author:: Bryan McLellan (btm@loftninjas.org)
-# Author:: Tim Smith (tsmith@chef.io)
-# Author:: Mathieu Sauve-Frankel <msf@kisoku.net>
-# Author:: Nathan L Smith (<nlloyds@gmail.com>)
-# Author:: Joshua Timberman <joshua@chef.io>
-# Author:: Prabhu Das (<prabhu.das@clogeny.com>)
-# Author:: Isa Farnik (<isa@chef.io>)
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Author:: Lance Albertson <lance@osuosl.org>
-# Copyright:: Copyright (c) Chef Software Inc.
+# Contributed by: Adam Jacob (<adam@chef.io>)
+# Contributed by: Bryan McLellan (btm@loftninjas.org)
+# Contributed by: Tim Smith (tsmith@chef.io)
+# Contributed by: Mathieu Sauve-Frankel <msf@kisoku.net>
+# Contributed by: Nathan L Smith (<nlloyds@gmail.com>)
+# Contributed by: Joshua Timberman <joshua@chef.io>
+# Contributed by: Prabhu Das (<prabhu.das@clogeny.com>)
+# Contributed by: Isa Farnik (<isa@chef.io>)
+# Contributed by: Doug MacEachern <dougm@vmware.com>
+# Contributed by: Lance Albertson <lance@osuosl.org>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 #
-# Author:: Joshua Timberman <joshua@chef.io>
-# Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) Chef Software Inc.
+# Contributed by: Joshua Timberman <joshua@chef.io>
+# Contributed by: Isa Farnik (<isa@chef.io>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

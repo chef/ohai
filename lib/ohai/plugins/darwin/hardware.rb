@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
-# Author:: Nate Walck (<nate.walck@gmail.com>)
-# Copyright:: Copyright (c) 2016-present Facebook, Inc.
+# Contributed by: Nate Walck (<nate.walck@gmail.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

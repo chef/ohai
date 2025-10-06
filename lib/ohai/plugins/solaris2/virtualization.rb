@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 #
-# Author:: Sean Walbran (<seanwalbran@gmail.com>)
-# Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: Copyright (c) 2010 Kurt Yoder
+# Contributed by: Sean Walbran (<seanwalbran@gmail.com>)
+# Contributed by: Kurt Yoder (<ktyopscode@yoderhome.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

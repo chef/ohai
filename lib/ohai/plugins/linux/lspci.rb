@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 #
-# Author:: Joerg Herzinger <joerg.herzinger@oiml.at>
-# Author:: Phil Dibowitz <phil@ipom.com>
-# Copyright:: Copyright (c) 2011 GLOBAL 2000/Friends of the Earth Austria
-# Copyright:: Copyright (c) 2017 Facebook, Inc.
+# Contributed by: Joerg Herzinger <joerg.herzinger@oiml.at>
+# Contributed by: Phil Dibowitz <phil@ipom.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

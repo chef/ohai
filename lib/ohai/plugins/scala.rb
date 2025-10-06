@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-# Author:: Christopher M Luciano (<cmlucian@us.ibm.com>)
+# Contributed by: Christopher M Luciano (<cmlucian@us.ibm.com>)
 # © Copyright IBM Corporation 2015.
 # License:: Apache License, Version 2.0
 #

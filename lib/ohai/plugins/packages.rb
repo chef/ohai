@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-# Author:: "Christian Höltje" <choltje@us.ibm.com>
-# Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
-# Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
+# Contributed by: "Christian Höltje" <choltje@us.ibm.com>
+# Contributed by: "Christopher M. Luciano" <cmlucian@us.ibm.com>
+# Contributed by: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
 # Copyright (C) 2015 IBM Corp.
 # Copyright (C) 2015 Bloomberg Finance L.P.
 # License:: Apache License, Version 2.0
@@ -17,7 +17,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 #
 Ohai.plugin(:Packages) do
   provides "packages"

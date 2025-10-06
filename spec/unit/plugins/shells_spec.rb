@@ -1,5 +1,5 @@
 #
-# Author:: Tim Smith (<tsmith@chef.io>)
+# Contributed by: Tim Smith (<tsmith@chef.io>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

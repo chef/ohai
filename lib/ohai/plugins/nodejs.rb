@@ -1,6 +1,6 @@
 #
-# Author:: Jacques Marneweck (<jacques@powertrip.co.za>)
-# Copyright:: Copyright (c) 2012 Jacques Marneweck.  All rights reserved.
+# Contributed by: Jacques Marneweck (<jacques@powertrip.co.za>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

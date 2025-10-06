@@ -1,8 +1,8 @@
 #
-# Author:: Doug MacEachern <dougm@vmware.com>
-# Author:: Tim Smith <tim@cozy.co>
-# Copyright:: Copyright (c) 2009 VMware, Inc.
-# Copyright:: Copyright (c) 2014 Cozy Services, Ltd.
+# Contributed by: Doug MacEachern <dougm@vmware.com>
+# Contributed by: Tim Smith <tim@cozy.co>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

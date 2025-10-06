@@ -1,5 +1,5 @@
 #
-# Author:: Jonathan Amiez (<jonathan.amiez@gmail.com>)
+# Contributed by: Jonathan Amiez (<jonathan.amiez@gmail.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

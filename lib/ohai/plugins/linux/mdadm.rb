@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 #
-# Author:: Tim Smith <tsmith@limelight.com>
-# Author:: Phil Dibowitz <phild@ipomc.com>
-# Copyright:: Copyright (c) 2013-2014, Limelight Networks, Inc.
-# Copyright:: Copyright (c) 2017 Facebook, Inc.
+# Contributed by: Tim Smith <tsmith@limelight.com>
+# Contributed by: Phil Dibowitz <phild@ipomc.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # Plugin:: mdadm
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

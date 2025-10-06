@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
-# Author:: Tollef Fog Heen <tfheen@err.no>
-# Copyright:: Copyright (c) 2010 Tollef Fog Heen
+# Contributed by: Tollef Fog Heen <tfheen@err.no>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

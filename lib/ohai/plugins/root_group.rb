@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 #
-# Author:: Joseph Anthony Pasquale Holsten (<joseph@josephholsten.com>)
-# Copyright:: Copyright (c) 2013 Joseph Anthony Pasquale Holsten
+# Contributed by: Joseph Anthony Pasquale Holsten (<joseph@josephholsten.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

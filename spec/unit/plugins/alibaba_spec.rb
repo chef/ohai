@@ -1,6 +1,6 @@
 #
-# Author:: Ranjib Dey (dey.ranjib@gmail.com)
-# Author:: Tim Smith (tsmith@chef.io)
+# Contributed by: Ranjib Dey (dey.ranjib@gmail.com)
+# Contributed by: Tim Smith (tsmith@chef.io)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

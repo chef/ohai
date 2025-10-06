@@ -1,4 +1,4 @@
-# Author:: Christopher M Luciano (<cmlucian@us.ibm.com>)
+# Contributed by: Christopher M Luciano (<cmlucian@us.ibm.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

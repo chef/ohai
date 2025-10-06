@@ -1,5 +1,5 @@
 #
-# Author:: John Bellone (<jbellone@bloomberg.net>)
+# Contributed by: John Bellone (<jbellone@bloomberg.net>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

@@ -1,6 +1,6 @@
 #
-# Author:: Matthew Massey <matthewmassey@fb.com>
-# Copyright:: Copyright (c) 2021 Facebook
+# Contributed by: Matthew Massey <matthewmassey@fb.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

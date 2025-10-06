@@ -1,5 +1,5 @@
 #
-# Author:: Cary Penniman (<cary@rightscale.com>)
+# Contributed by: Cary Penniman (<cary@rightscale.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

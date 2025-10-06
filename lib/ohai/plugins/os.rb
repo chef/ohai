@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Author:: Isa Farnik (<isa@chef.io>)
-# Author:: Richard Manyanza (<liseki@nyikacraftsmen.com>)
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: Copyright (c) 2014 Richard Manyanza.
+# Contributed by: Adam Jacob (<adam@chef.io>)
+# Contributed by: Isa Farnik (<isa@chef.io>)
+# Contributed by: Richard Manyanza (<liseki@nyikacraftsmen.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

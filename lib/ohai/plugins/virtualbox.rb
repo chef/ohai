@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 #
-# Author:: Tim Smith <tsmith@chef.io>
-# Author:: Joshua Colson <joshua.colson@gmail.com>
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: 2019 Joshua Colson
+# Contributed by: Tim Smith <tsmith@chef.io>
+# Contributed by: Joshua Colson <joshua.colson@gmail.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

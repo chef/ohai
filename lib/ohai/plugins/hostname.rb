@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Author:: Benjamin Black (<nostromo@gmail.com>)
-# Author:: Bryan McLellan (<btm@loftninjas.org>)
-# Author:: Daniel DeLeo (<dan@kallistec.com>)
-# Author:: Doug MacEachern (<dougm@vmware.com>)
-# Author:: James Gartrell (<jgartrel@gmail.com>)
-# Author:: Isa Farnik (<isa@chef.io>)
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: Copyright (c) 2009 Bryan McLellan
-# Copyright:: Copyright (c) 2009 Daniel DeLeo
-# Copyright:: Copyright (c) 2010 VMware, Inc.
+# Contributed by: Adam Jacob (<adam@chef.io>)
+# Contributed by: Benjamin Black (<nostromo@gmail.com>)
+# Contributed by: Bryan McLellan (<btm@loftninjas.org>)
+# Contributed by: Daniel DeLeo (<dan@kallistec.com>)
+# Contributed by: Doug MacEachern (<dougm@vmware.com>)
+# Contributed by: James Gartrell (<jgartrel@gmail.com>)
+# Contributed by: Isa Farnik (<isa@chef.io>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

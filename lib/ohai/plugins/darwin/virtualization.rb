@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 #
-# Author:: Pavel Yudin (<pyudin@parallels.com>)
-# Author:: Tim Smith (<tsmith@chef.io>)
-# Copyright:: Copyright (c) 2015 Pavel Yudin
-# Copyright:: Copyright (c) Chef Software Inc.
+# Contributed by: Pavel Yudin (<pyudin@parallels.com>)
+# Contributed by: Tim Smith (<tsmith@chef.io>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

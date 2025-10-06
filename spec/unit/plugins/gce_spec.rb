@@ -1,5 +1,5 @@
 #
-# Author:: Ranjib Dey (dey.ranjib@gmail.com)
+# Contributed by: Ranjib Dey (dey.ranjib@gmail.com)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

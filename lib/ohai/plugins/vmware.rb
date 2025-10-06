@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 #
-# Author:: "Dan Robinson" <drobinson@chef.io>
-# Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
-# Copyright:: Copyright (c) Chef Software Inc.
+# Contributed by: "Dan Robinson" <drobinson@chef.io>
+# Contributed by: "Christopher M. Luciano" <cmlucian@us.ibm.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #

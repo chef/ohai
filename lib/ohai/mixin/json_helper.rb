@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 #
-# Author:: Renato Covarrubias (<rnt@rnt.cl>)
+# Contributed by: Renato Covarrubias (<rnt@rnt.cl>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

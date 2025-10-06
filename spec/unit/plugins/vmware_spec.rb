@@ -1,5 +1,5 @@
 #
-# Author:: "Christopher M. Luciano" <cmlucian@us.ibm.com>
+# Contributed by: "Christopher M. Luciano" <cmlucian@us.ibm.com>
 # Copyright (C) 2015 IBM Corp.
 # License:: Apache License, Version 2.0
 #

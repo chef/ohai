@@ -1,5 +1,5 @@
 #
-# Author:: Stafford Brunk (<stafford.brunk@gmail.com>)
+# Contributed by: Stafford Brunk (<stafford.brunk@gmail.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

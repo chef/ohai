@@ -1,8 +1,8 @@
 #
-# Author:: Alexey Karpik <alexey.karpik@rightscale.com>
-# Author:: Peter Schroeter <peter.schroeter@rightscale.com>
-# Author:: Stas Turlo <stanislav.turlo@rightscale.com>
-# Copyright:: Copyright (c) 2010-2014 RightScale Inc
+# Contributed by: Alexey Karpik <alexey.karpik@rightscale.com>
+# Contributed by: Peter Schroeter <peter.schroeter@rightscale.com>
+# Contributed by: Stas Turlo <stanislav.turlo@rightscale.com>
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

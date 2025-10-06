@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 #
-# Author:: Aaron Kalin (<akalin@martinisoftware.com>)
+# Contributed by: Aaron Kalin (<akalin@martinisoftware.com>)
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

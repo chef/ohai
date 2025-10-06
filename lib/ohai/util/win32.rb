@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-# Author:: Adam Edwards (<adamed@chef.io>)
+# Contributed by: Adam Edwards (<adamed@chef.io>)
 #
-# Copyright:: Copyright (c) Chef Software Inc.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 #
 # License:: Apache License, Version 2.0
 #

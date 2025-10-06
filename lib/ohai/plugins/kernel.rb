@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 #
-# Author:: Adam Jacob (<adam@chef.io>)
-# Author:: Benjamin Black (<nostromo@gmail.com>)
-# Author:: Bryan McLellan (<btm@loftninjas.org>)
-# Author:: Claire McQuin (<claire@chef.io>)
-# Author:: James Gartrell (<jgartrel@gmail.com>)
-# Copyright:: Copyright (c) Chef Software Inc.
-# Copyright:: Copyright (c) 2009 Bryan McLellan
+# Contributed by: Adam Jacob (<adam@chef.io>)
+# Contributed by: Benjamin Black (<nostromo@gmail.com>)
+# Contributed by: Bryan McLellan (<btm@loftninjas.org>)
+# Contributed by: Claire McQuin (<claire@chef.io>)
+# Contributed by: James Gartrell (<jgartrel@gmail.com>)
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
+# Copyright © 2008-2025 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # License:: Apache License, Version 2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

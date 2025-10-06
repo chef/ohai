@@ -1,5 +1,5 @@
-# Author:: Christopher M. Luciano (<cmlucian@us.ibm.com>)
-# Author:: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
+# Contributed by: Christopher M. Luciano (<cmlucian@us.ibm.com>)
+# Contributed by: Shahul Khajamohideen (<skhajamohid1@bloomberg.net>)
 # Copyright (C) 2015 IBM Corp.
 # Copyright (C) 2015 Bloomberg Finance L.P.
 # License:: Apache License, Version 2.0

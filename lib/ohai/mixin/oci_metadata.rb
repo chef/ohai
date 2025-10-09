@@ -16,17 +16,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "net/http" unless defined?(Net::HTTP)
+require 'net/http' unless defined?(Net::HTTP)
 
-require_relative "../mixin/json_helper"
+require_relative '../mixin/json_helper'
 include Ohai::Mixin::JsonHelper
 
 module Ohai
   module Mixin
     module OCIMetadata
-      OCI_METADATA_ADDR = "169.254.169.254"
-      OCI_METADATA_URL = "/opc/v2"
-      CHASSIS_ASSET_TAG_FILE = "/sys/devices/virtual/dmi/id/chassis_asset_tag"
+      OCI_METADATA_ADDR = '169.254.169.254'
+      OCI_METADATA_URL = '/opc/v2'
+      CHASSIS_ASSET_TAG_FILE = '/sys/devices/virtual/dmi/id/chassis_asset_tag'
 
       # Get the chassis asset tag from DMI information
       # On Linux: reads from sysfs
@@ -41,7 +41,7 @@ module Ohai
 
       # Read chassis asset tag from Linux sysfs
       def get_chassis_asset_tag_linux
-        return nil unless ::File.exist?(CHASSIS_ASSET_TAG_FILE)
+        return unless ::File.exist?(CHASSIS_ASSET_TAG_FILE)
 
         ::File.read(CHASSIS_ASSET_TAG_FILE).strip
       rescue => e
@@ -51,11 +51,11 @@ module Ohai
 
       # Read chassis asset tag from Windows WMI
       def get_chassis_asset_tag_windows
-        require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
-        
+        require 'wmi-lite/wmi' unless defined?(WmiLite::Wmi)
+
         wmi = WmiLite::Wmi.new
-        enclosure = wmi.first_of("Win32_SystemEnclosure")
-        enclosure&.[]("SMBIOSAssetTag")
+        enclosure = wmi.first_of('Win32_SystemEnclosure')
+        enclosure&.[]('SMBIOSAssetTag')
       rescue => e
         logger.debug("Mixin OciMetadata: Failed to read chassis asset tag from WMI: #{e}")
         nil
@@ -68,19 +68,19 @@ module Ohai
         conn.get(
           uri,
           {
-            "Authorization" => "Bearer Oracle",
-            "User-Agent" => "chef-ohai/#{Ohai::VERSION}",
+            'Authorization' => 'Bearer Oracle',
+            'User-Agent' => "chef-ohai/#{Ohai::VERSION}",
           }
         )
       end
 
       # Fetch metadata from api
-      def fetch_metadata(metadata = "instance")
+      def fetch_metadata(metadata = 'instance')
         response = http_get("#{OCI_METADATA_URL}/#{metadata}")
-        if response.code == "200"
+        if response.code == '200'
           json_data = parse_json(response.body)
           if json_data.nil?
-            logger.warn("Mixin OciMetadata: Metadata response is NOT valid JSON")
+            logger.warn('Mixin OciMetadata: Metadata response is NOT valid JSON')
           end
           json_data
         else

@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-require 'spec_helper'
-require 'ohai/mixin/oci_metadata'
+require "spec_helper"
+require "ohai/mixin/oci_metadata"
 
 describe Ohai::Mixin::OCIMetadata do
   let(:mixin) do
@@ -27,26 +27,26 @@ describe Ohai::Mixin::OCIMetadata do
   end
 
   before do
-    logger = instance_double('Mixlib::Log::Child', trace: nil, debug: nil, warn: nil)
+    logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
     allow(mixin).to receive(:logger).and_return(logger)
   end
 
-  describe '#http_get' do
-    it 'gets the passed URI' do
-      http_mock = double('http')
+  describe "#http_get" do
+    it "gets the passed URI" do
+      http_mock = double("http")
       allow(http_mock).to receive(:read_timeout=)
       allow(Net::HTTP).to receive(:start).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR).and_return(http_mock)
 
       expect(http_mock).to receive(:get).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR,
-        { 'Authorization' => 'Bearer Oracle',
-          'User-Agent' => "chef-ohai/#{Ohai::VERSION}" })
+        { "Authorization" => "Bearer Oracle",
+          "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })
       mixin.http_get(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR)
     end
   end
 
-  describe '#fetch_metadata' do
-    it 'returns an empty hash given a non-200 response' do
-      http_mock = double('http', { code: '404' })
+  describe "#fetch_metadata" do
+    it "returns an empty hash given a non-200 response" do
+      http_mock = double("http", { code: "404" })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).to receive(:warn)
@@ -54,57 +54,57 @@ describe Ohai::Mixin::OCIMetadata do
       expect(vals).to eq(nil)
     end
 
-    it 'returns a populated hash given valid JSON response' do
-      http_mock = double('http', { code: '200', body: '{ "foo": "bar"}' })
+    it "returns a populated hash given valid JSON response" do
+      http_mock = double("http", { code: "200", body: '{ "foo": "bar"}' })
       allow(mixin).to receive(:http_get).and_return(http_mock)
 
       expect(mixin.logger).not_to receive(:warn)
       vals = mixin.fetch_metadata
-      expect(vals).to eq({ 'foo' => 'bar' })
+      expect(vals).to eq({ "foo" => "bar" })
     end
   end
 
-  describe '#chassis_asset_tag' do
-    context 'on Windows platform' do
+  describe "#chassis_asset_tag" do
+    context "on Windows platform" do
       before do
-        stub_const('RUBY_PLATFORM', 'mswin')
+        stub_const("RUBY_PLATFORM", "mswin")
       end
 
-      it 'calls get_chassis_asset_tag_windows' do
-        expect(mixin).to receive(:get_chassis_asset_tag_windows).and_return('test-asset-tag')
-        expect(mixin.chassis_asset_tag).to eq('test-asset-tag')
+      it "calls get_chassis_asset_tag_windows" do
+        expect(mixin).to receive(:get_chassis_asset_tag_windows).and_return("test-asset-tag")
+        expect(mixin.chassis_asset_tag).to eq("test-asset-tag")
       end
     end
 
-    context 'on non-Windows platform' do
+    context "on non-Windows platform" do
       before do
-        stub_const('RUBY_PLATFORM', 'linux')
+        stub_const("RUBY_PLATFORM", "linux")
       end
 
-      it 'calls get_chassis_asset_tag_linux' do
-        expect(mixin).to receive(:get_chassis_asset_tag_linux).and_return('test-asset-tag')
-        expect(mixin.chassis_asset_tag).to eq('test-asset-tag')
+      it "calls get_chassis_asset_tag_linux" do
+        expect(mixin).to receive(:get_chassis_asset_tag_linux).and_return("test-asset-tag")
+        expect(mixin.chassis_asset_tag).to eq("test-asset-tag")
       end
     end
   end
 
-  describe '#get_chassis_asset_tag_linux' do
+  describe "#get_chassis_asset_tag_linux" do
     let(:chassis_file) { Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE }
 
-    it 'returns asset tag when file exists and is readable' do
+    it "returns asset tag when file exists and is readable" do
       allow(::File).to receive(:exist?).with(chassis_file).and_return(true)
       allow(::File).to receive(:read).with(chassis_file).and_return("  OracleCloud.com  \n")
 
-      expect(mixin.get_chassis_asset_tag_linux).to eq('OracleCloud.com')
+      expect(mixin.get_chassis_asset_tag_linux).to eq("OracleCloud.com")
     end
 
-    it 'returns nil when file does not exist' do
+    it "returns nil when file does not exist" do
       allow(::File).to receive(:exist?).with(chassis_file).and_return(false)
 
       expect(mixin.get_chassis_asset_tag_linux).to be_nil
     end
 
-    it 'returns nil when file read fails' do
+    it "returns nil when file read fails" do
       allow(::File).to receive(:exist?).with(chassis_file).and_return(true)
       allow(::File).to receive(:read).with(chassis_file).and_raise(Errno::EACCES)
 
@@ -113,36 +113,36 @@ describe Ohai::Mixin::OCIMetadata do
     end
   end
 
-  describe '#get_chassis_asset_tag_windows' do
-    let(:wmi_mock) { double('WmiLite::Wmi') }
-    let(:enclosure_mock) { { 'SMBIOSAssetTag' => 'OracleCloud.com' } }
+  describe "#get_chassis_asset_tag_windows" do
+    let(:wmi_mock) { double("WmiLite::Wmi") }
+    let(:enclosure_mock) { { "SMBIOSAssetTag" => "OracleCloud.com" } }
 
     before do
       allow(mixin).to receive(:require)
-      stub_const('WmiLite::Wmi', double(new: wmi_mock))
+      stub_const("WmiLite::Wmi", double(new: wmi_mock))
     end
 
-    it 'returns asset tag from WMI when available' do
-      allow(wmi_mock).to receive(:first_of).with('Win32_SystemEnclosure').and_return(enclosure_mock)
+    it "returns asset tag from WMI when available" do
+      allow(wmi_mock).to receive(:first_of).with("Win32_SystemEnclosure").and_return(enclosure_mock)
 
-      expect(mixin.get_chassis_asset_tag_windows).to eq('OracleCloud.com')
+      expect(mixin.get_chassis_asset_tag_windows).to eq("OracleCloud.com")
     end
 
-    it 'returns nil when WMI query returns nil' do
-      allow(wmi_mock).to receive(:first_of).with('Win32_SystemEnclosure').and_return(nil)
+    it "returns nil when WMI query returns nil" do
+      allow(wmi_mock).to receive(:first_of).with("Win32_SystemEnclosure").and_return(nil)
 
       expect(mixin.get_chassis_asset_tag_windows).to be_nil
     end
 
-    it 'returns nil when WMI query fails' do
-      allow(wmi_mock).to receive(:first_of).with('Win32_SystemEnclosure').and_raise(StandardError.new('WMI error'))
+    it "returns nil when WMI query fails" do
+      allow(wmi_mock).to receive(:first_of).with("Win32_SystemEnclosure").and_raise(StandardError.new("WMI error"))
 
       expect(mixin.logger).to receive(:debug).with(/Failed to read chassis asset tag from WMI/)
       expect(mixin.get_chassis_asset_tag_windows).to be_nil
     end
 
-    it 'returns nil when SMBIOSAssetTag is not present' do
-      allow(wmi_mock).to receive(:first_of).with('Win32_SystemEnclosure').and_return({})
+    it "returns nil when SMBIOSAssetTag is not present" do
+      allow(wmi_mock).to receive(:first_of).with("Win32_SystemEnclosure").and_return({})
 
       expect(mixin.get_chassis_asset_tag_windows).to be_nil
     end

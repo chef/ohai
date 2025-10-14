@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.10 -->
-## [v19.1.10](https://github.com/chef/ohai/tree/v19.1.10) (2025-09-15)
+<!-- latest_release 19.1.11 -->
+## [v19.1.11](https://github.com/chef/ohai/tree/v19.1.11) (2025-10-14)
 
 #### Merged Pull Requests
-- set up ai assisted development workflow [#1887](https://github.com/chef/ohai/pull/1887) ([rishichawda](https://github.com/rishichawda))
+- Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.11 -->
 - set up ai assisted development workflow [#1887](https://github.com/chef/ohai/pull/1887) ([rishichawda](https://github.com/rishichawda)) <!-- 19.1.10 -->
 - Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo)) <!-- 19.1.9 -->
 - Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.8 -->

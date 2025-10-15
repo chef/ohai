@@ -251,6 +251,8 @@ describe Ohai::System, "Linux Network Plugin" do
           link/tunnel6 :: brd ::
           inet6 fe80::f47a:2aff:fef0:c6ef/64 scope link
              valid_lft forever preferred_lft forever
+      15: ;dummy;: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+          link/ether aa:bb:cc:dd:ee:ff brd ff:ff:ff:ff:ff:ff
     EOM
   end
 
@@ -678,7 +680,7 @@ describe Ohai::System, "Linux Network Plugin" do
 
       it "detects the interfaces" do
         if network_method == "iproute2"
-          expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
+          expect(plugin["network"]["interfaces"].keys.sort).to eq([";dummy;", "eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "ip6tnl0", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         else
           expect(plugin["network"]["interfaces"].keys.sort).to eq(["eth0", "eth0.11", "eth0.151", "eth0.152", "eth0.153", "eth0:5", "eth13", "eth3", "foo:veth0@eth0", "fwdintf", "lo", "ovs-system", "tun0", "venet0", "venet0:0", "xapi1"])
         end

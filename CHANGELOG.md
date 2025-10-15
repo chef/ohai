@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.11 -->
-## [v19.1.11](https://github.com/chef/ohai/tree/v19.1.11) (2025-10-14)
+<!-- latest_release 19.1.12 -->
+## [v19.1.12](https://github.com/chef/ohai/tree/v19.1.12) (2025-10-15)
 
 #### Merged Pull Requests
-- Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh))
+- js/Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1893](https://github.com/chef/ohai/pull/1893) ([justintsteele](https://github.com/justintsteele))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- js/Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1893](https://github.com/chef/ohai/pull/1893) ([justintsteele](https://github.com/justintsteele)) <!-- 19.1.12 -->
 - Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.11 -->
 - set up ai assisted development workflow [#1887](https://github.com/chef/ohai/pull/1887) ([rishichawda](https://github.com/rishichawda)) <!-- 19.1.10 -->
 - Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo)) <!-- 19.1.9 -->

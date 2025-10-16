@@ -22,7 +22,7 @@ Ohai.plugin(:Rpm) do
   provides "rpm"
   optional "true"
 
-  MACROS_MARKER = /========================/.freeze unless defined?(MACROS_MARKER)
+  MACROS_MARKER = /========================/ unless defined?(MACROS_MARKER)
 
   unless defined?(DO_NOT_SPLIT)
     DO_NOT_SPLIT = %w{

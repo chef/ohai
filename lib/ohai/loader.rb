@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Claire McQuin (<claire@chef.io>)
 # Copyright:: Copyright (c) Chef Software Inc.
@@ -97,10 +98,10 @@ module Ohai
     # @return [Object] class object for the ohai plugin defined in the file
     def load_plugin_class(plugin_path)
       # Read the contents of the plugin to understand if it's a V6 or V7 plugin.
-      contents = ""
+      contents = nil
       begin
         logger.trace("Loading plugin at #{plugin_path}")
-        contents << File.read(plugin_path)
+        contents = File.read(plugin_path)
       rescue IOError, Errno::ENOENT
         logger.warn("Unable to open or read plugin at #{plugin_path}")
         return nil

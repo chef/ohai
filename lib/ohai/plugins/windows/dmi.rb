@@ -37,7 +37,7 @@ Ohai.plugin(:DMI) do
   #
   # This cannot handle some property names, eg SMBIOSBIOSVersion.
   # https://rubular.com/r/FBNtXod4wkZGAG
-  SPLIT_REGEX ||= /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/.freeze
+  SPLIT_REGEX ||= /[A-Z][a-z0-9]+|[A-Z]{2,}(?=[A-Z][a-z0-9])|[A-Z]{2,}/
 
   WINDOWS_TO_UNIX_KEYS ||= [
     %w{vendor manufacturer},

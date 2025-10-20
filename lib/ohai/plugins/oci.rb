@@ -78,12 +78,14 @@ Ohai.plugin(:Oci) do
       end
     end
 
-    volume_attachments_data = fetch_metadata("volumeAttachments")
+    volume_attachments_data = fetch_metadata("allVolumeAttachments")
 
     unless volume_attachments_data.nil?
       metadata["volumes"] = Mash.new
-      volume_attachments_data.each do |k, v|
-        metadata["volumes"][k] = v
+      volume_attachments_data.each do |v|
+        if v.is_a?(Hash) && v["id"]
+          metadata["volumes"][v["id"]] = v
+        end
       end
     end
 

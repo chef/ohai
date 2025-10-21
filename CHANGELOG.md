@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.13 -->
-## [v19.1.13](https://github.com/chef/ohai/tree/v19.1.13) (2025-10-16)
+<!-- latest_release 19.1.14 -->
+## [v19.1.14](https://github.com/chef/ohai/tree/v19.1.14) (2025-10-21)
 
 #### Merged Pull Requests
-- adding a tweaks for string freezes [#1895](https://github.com/chef/ohai/pull/1895) ([johnmccrae](https://github.com/johnmccrae))
+- Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio)) <!-- 19.1.14 -->
 - adding a tweaks for string freezes [#1895](https://github.com/chef/ohai/pull/1895) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.1.13 -->
 - js/Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1893](https://github.com/chef/ohai/pull/1893) ([justintsteele](https://github.com/justintsteele)) <!-- 19.1.12 -->
 - Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.11 -->

@@ -32,7 +32,7 @@ module Ohai
       # On Linux: reads from sysfs
       # On Windows: queries WMI Win32_SystemEnclosure
       def chassis_asset_tag
-        if RUBY_PLATFORM =~ /mswin|mingw|windows/
+        if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
           get_chassis_asset_tag_windows
         else
           get_chassis_asset_tag_linux

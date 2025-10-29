@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.7 -->
-## [v18.2.7](https://github.com/chef/ohai/tree/v18.2.7) (2025-07-29)
+<!-- latest_release 18.2.8 -->
+## [v18.2.8](https://github.com/chef/ohai/tree/v18.2.8) (2025-10-29)
 
 #### Merged Pull Requests
-- Adding myself to codeowners for 18 [#1884](https://github.com/chef/ohai/pull/1884) ([jaymzh](https://github.com/jaymzh))
+- Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.0.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.8 -->
 - Adding myself to codeowners for 18 [#1884](https://github.com/chef/ohai/pull/1884) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.7 -->
 <!-- release_rollup -->
 

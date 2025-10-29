@@ -25,6 +25,7 @@ describe Ohai::Mixin::OCIMetadata do
     mixin = Object.new.extend(Ohai::Mixin::OCIMetadata)
     mixin
   end
+  let(:oracle_cloud_dot_com) { "OracleCloud.com" }
 
   before do
     logger = instance_double("Mixlib::Log::Child", trace: nil, debug: nil, warn: nil)
@@ -94,9 +95,9 @@ describe Ohai::Mixin::OCIMetadata do
 
     it "returns asset tag when file exists and is readable" do
       allow(::File).to receive(:exist?).with(chassis_file).and_return(true)
-      allow(::File).to receive(:read).with(chassis_file).and_return("  OracleCloud.com  \n")
+      allow(::File).to receive(:read).with(chassis_file).and_return("  #{oracle_cloud_dot_com}  \n")
 
-      expect(mixin.get_chassis_asset_tag_linux).to eq("OracleCloud.com")
+      expect(mixin.get_chassis_asset_tag_linux).to eq(oracle_cloud_dot_com)
     end
 
     it "returns nil when file does not exist" do
@@ -116,7 +117,7 @@ describe Ohai::Mixin::OCIMetadata do
 
   describe "#get_chassis_asset_tag_windows" do
     let(:wmi_mock) { double("WmiLite::Wmi") }
-    let(:enclosure_mock) { { "SMBIOSAssetTag" => "OracleCloud.com" } }
+    let(:enclosure_mock) { { "SMBIOSAssetTag" => oracle_cloud_dot_com } }
 
     before do
       allow(mixin).to receive(:require)
@@ -126,7 +127,7 @@ describe Ohai::Mixin::OCIMetadata do
     it "returns asset tag from WMI when available" do
       allow(wmi_mock).to receive(:first_of).with("Win32_SystemEnclosure").and_return(enclosure_mock)
 
-      expect(mixin.get_chassis_asset_tag_windows).to eq("OracleCloud.com")
+      expect(mixin.get_chassis_asset_tag_windows).to eq(oracle_cloud_dot_com)
     end
 
     it "returns nil when WMI query returns nil" do

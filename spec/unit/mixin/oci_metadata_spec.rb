@@ -68,11 +68,12 @@ describe Ohai::Mixin::OCIMetadata do
     context "on Windows platform" do
       before do
         stub_const("RUBY_PLATFORM", "mswin")
+        stub_const("TEST_ASSET_TAG", "test-asset-tag")
       end
 
       it "calls get_chassis_asset_tag_windows" do
-        expect(mixin).to receive(:get_chassis_asset_tag_windows).and_return("test-asset-tag")
-        expect(mixin.chassis_asset_tag).to eq("test-asset-tag")
+        expect(mixin).to receive(:get_chassis_asset_tag_windows).and_return(TEST_ASSET_TAG)
+        expect(mixin.chassis_asset_tag).to eq(TEST_ASSET_TAG)
       end
     end
 
@@ -82,8 +83,8 @@ describe Ohai::Mixin::OCIMetadata do
       end
 
       it "calls get_chassis_asset_tag_linux" do
-        expect(mixin).to receive(:get_chassis_asset_tag_linux).and_return("test-asset-tag")
-        expect(mixin.chassis_asset_tag).to eq("test-asset-tag")
+        expect(mixin).to receive(:get_chassis_asset_tag_linux).and_return(TEST_ASSET_TAG)
+        expect(mixin.chassis_asset_tag).to eq(TEST_ASSET_TAG)
       end
     end
   end

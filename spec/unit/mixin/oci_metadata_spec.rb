@@ -65,10 +65,10 @@ describe Ohai::Mixin::OCIMetadata do
   end
 
   describe "#chassis_asset_tag" do
+    before { stub_const("TEST_ASSET_TAG", "test-asset-tag") }
     context "on Windows platform" do
       before do
         stub_const("RUBY_PLATFORM", "mswin")
-        stub_const("TEST_ASSET_TAG", "test-asset-tag")
       end
 
       it "calls get_chassis_asset_tag_windows" do

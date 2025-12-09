@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.15 -->
-## [v19.1.15](https://github.com/chef/ohai/tree/v19.1.15) (2025-11-18)
+<!-- latest_release 19.1.16 -->
+## [v19.1.16](https://github.com/chef/ohai/tree/v19.1.16) (2025-12-09)
 
 #### Merged Pull Requests
-- docs: add AI compliance workflow to copilot instructions [#1899](https://github.com/chef/ohai/pull/1899) ([rishichawda](https://github.com/rishichawda))
+- Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.1.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.16 -->
 - docs: add AI compliance workflow to copilot instructions [#1899](https://github.com/chef/ohai/pull/1899) ([rishichawda](https://github.com/rishichawda)) <!-- 19.1.15 -->
 - Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio)) <!-- 19.1.14 -->
 - adding a tweaks for string freezes [#1895](https://github.com/chef/ohai/pull/1895) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.1.13 -->

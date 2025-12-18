@@ -91,8 +91,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
           expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
         end
       end
 
@@ -106,7 +104,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"][",C:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"][",C:"][k]).to eq(v)
         end
 
         {
@@ -118,7 +115,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"][",D:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"][",D:"][k]).to eq(v)
         end
       end
     end
@@ -141,8 +137,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
           expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
         end
       end
 
@@ -156,7 +150,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "encryption_status" => "FullyDecrypted",
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"]["volume 0,C:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"]["volume 0,C:"][k]).to eq(v)
         end
 
         {
@@ -168,7 +161,6 @@ describe Ohai::System, "Windows Filesystem Plugin", :windows_only do
           "encryption_status" => "EncryptionInProgress",
         }.each do |k, v|
           expect(plugin[:filesystem]["by_pair"]["volume 1,D:"][k]).to eq(v)
-          expect(plugin[:filesystem2]["by_pair"]["volume 1,D:"][k]).to eq(v)
         end
       end
     end

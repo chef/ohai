@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.12 -->
-## [v18.2.12](https://github.com/chef/ohai/tree/v18.2.12) (2025-12-18)
+<!-- latest_release 18.2.13 -->
+## [v18.2.13](https://github.com/chef/ohai/tree/v18.2.13) (2025-12-18)
 
 #### Merged Pull Requests
-- [18-stable:backport] Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1905](https://github.com/chef/ohai/pull/1905) ([rishichawda](https://github.com/rishichawda))
+- [18-stable] update actions checkout from version 4 to 6 [#1906](https://github.com/chef/ohai/pull/1906) ([rishichawda](https://github.com/rishichawda))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.0.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [18-stable] update actions checkout from version 4 to 6 [#1906](https://github.com/chef/ohai/pull/1906) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.13 -->
 - [18-stable:backport] Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1905](https://github.com/chef/ohai/pull/1905) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.12 -->
 - [18-stable:backport] fixing network detection when using multipath route [#1904](https://github.com/chef/ohai/pull/1904) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.11 -->
 - [18-stable:backport] Permit underscores in interface names on FreeBSD [#1903](https://github.com/chef/ohai/pull/1903) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.10 -->

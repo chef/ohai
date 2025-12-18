@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "plist", "~> 3.1"
   s.add_dependency "train-core"
   s.add_dependency "wmi-lite", "~> 1.0"
-  
+
   s.bindir = "bin"
   s.executables = %w{ohai}
 

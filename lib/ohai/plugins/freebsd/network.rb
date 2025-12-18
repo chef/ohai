@@ -43,7 +43,7 @@ Ohai.plugin(:Network) do
     so = shell_out("#{Ohai.abs_path( "/sbin/ifconfig" )} -a")
     cint = nil
     so.stdout.lines do |line|
-      if line =~ /^([0-9a-zA-Z\.]+):\s+/
+      if line =~ /^([0-9a-zA-Z\._]+):\s+/
         cint = $1
         iface[cint] = Mash.new
         if cint =~ /^(\w+)(\d+.*)/

@@ -1,16 +1,18 @@
 # Change Log
 
-<!-- latest_release 18.2.8 -->
-## [v18.2.8](https://github.com/chef/ohai/tree/v18.2.8) (2025-10-29)
+<!-- latest_release 18.2.10 -->
+## [v18.2.10](https://github.com/chef/ohai/tree/v18.2.10) (2025-12-18)
 
 #### Merged Pull Requests
-- Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress))
+- [18-stable:backport] Permit underscores in interface names on FreeBSD [#1903](https://github.com/chef/ohai/pull/1903) ([rishichawda](https://github.com/rishichawda))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.0.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [18-stable:backport] Permit underscores in interface names on FreeBSD [#1903](https://github.com/chef/ohai/pull/1903) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.10 -->
+- [18-stable:backport] filesystem plugin transition [#1902](https://github.com/chef/ohai/pull/1902) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.9 -->
 - Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.8 -->
 - Adding myself to codeowners for 18 [#1884](https://github.com/chef/ohai/pull/1884) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.7 -->
 <!-- release_rollup -->

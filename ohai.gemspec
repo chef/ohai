@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   
   # Conditionally add base64 for Ruby >= 3.4
   if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4.0")
-    spec.add_runtime_dependency "base64"
+    s.add_dependency "base64"
   end
 
   s.bindir = "bin"

@@ -27,11 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency "train-core"
   s.add_dependency "wmi-lite", "~> 1.0"
   
-  # Conditionally add base64 for Ruby >= 3.4
-  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4.0")
-    s.add_dependency "base64"
-  end
-
   s.bindir = "bin"
   s.executables = %w{ohai}
 

@@ -744,10 +744,6 @@ Ohai.plugin(:Filesystem) do
     fs_data["by_mountpoint"] = by_mountpoint
     fs_data["by_pair"] = by_pair
 
-    # Chef 16 added 'filesystem2'
-    # In Chef 17 we made 'filesystem' and 'filesystem2' match (both new-style)
-    # In Chef 18 we will drop 'filesystem2'
     filesystem fs_data
-    filesystem2 fs_data
   end
 end

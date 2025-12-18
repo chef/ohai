@@ -1,16 +1,20 @@
 # Change Log
 
-<!-- latest_release 18.2.8 -->
-## [v18.2.8](https://github.com/chef/ohai/tree/v18.2.8) (2025-10-29)
+<!-- latest_release 18.2.12 -->
+## [v18.2.12](https://github.com/chef/ohai/tree/v18.2.12) (2025-12-18)
 
 #### Merged Pull Requests
-- Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress))
+- [18-stable:backport] Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1905](https://github.com/chef/ohai/pull/1905) ([rishichawda](https://github.com/rishichawda))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.0.3 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- [18-stable:backport] Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1905](https://github.com/chef/ohai/pull/1905) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.12 -->
+- [18-stable:backport] fixing network detection when using multipath route [#1904](https://github.com/chef/ohai/pull/1904) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.11 -->
+- [18-stable:backport] Permit underscores in interface names on FreeBSD [#1903](https://github.com/chef/ohai/pull/1903) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.10 -->
+- [18-stable:backport] filesystem plugin transition [#1902](https://github.com/chef/ohai/pull/1902) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.9 -->
 - Oci-metadata-volumefix (#1897) [#1898](https://github.com/chef/ohai/pull/1898) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.8 -->
 - Adding myself to codeowners for 18 [#1884](https://github.com/chef/ohai/pull/1884) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.7 -->
 <!-- release_rollup -->

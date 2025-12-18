@@ -578,6 +578,8 @@ Ohai.plugin(:Network) do
 
   # returns the macaddress for interface from a hash of interfaces (iface elsewhere in this file)
   def get_mac_for_interface(interfaces, interface)
+    return "00:00:00:00:00:00" if interfaces[interface][:flags].include?("LOOPBACK")
+
     interfaces[interface][:addresses].find { |k, v| v["family"] == "lladdr" }.first unless interfaces[interface][:addresses].nil? || interfaces[interface][:flags].include?("NOARP")
   end
 
@@ -700,7 +702,7 @@ Ohai.plugin(:Network) do
     # Match the lead line for an interface from iproute2
     # 3: eth0.11@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
     # The '@eth0:' portion doesn't exist on primary interfaces and thus is optional in the regex
-    IPROUTE_INT_REGEX ||= /^(\d+): ([0-9a-zA-Z@:\.\-_]*?)(@[0-9a-zA-Z\-_]+|):\s/.freeze
+    IPROUTE_INT_REGEX ||= /^(\d+): ([0-9a-zA-Z@:;\.\-_]*?)(@[0-9a-zA-Z\-_]+|):\s/.freeze
 
     if which("ip")
       # families to get default routes from

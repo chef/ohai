@@ -27,6 +27,10 @@ Ohai.plugin(:Hostnamectl) do
     if hostnamectl_path
       shell_out(hostnamectl_path).stdout.split("\n").each do |line|
         key, val = line.split(": ", 2)
+
+        # strip visual icons produced by newer versions of systemd
+        val.gsub!(/ [^[:ascii]]*$/, "")
+
         hostnamectl[key.chomp.lstrip.tr(" ", "_").downcase] = val
       end
     end

@@ -1,76 +1,73 @@
 # Change Log
 
-<!-- latest_release 19.1.16 -->
-## [v19.1.16](https://github.com/chef/ohai/tree/v19.1.16) (2025-12-09)
-
-#### Merged Pull Requests
-- Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=18.1.3 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.16 -->
-- docs: add AI compliance workflow to copilot instructions [#1899](https://github.com/chef/ohai/pull/1899) ([rishichawda](https://github.com/rishichawda)) <!-- 19.1.15 -->
-- Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio)) <!-- 19.1.14 -->
-- adding a tweaks for string freezes [#1895](https://github.com/chef/ohai/pull/1895) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.1.13 -->
-- js/Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1893](https://github.com/chef/ohai/pull/1893) ([justintsteele](https://github.com/justintsteele)) <!-- 19.1.12 -->
-- Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.11 -->
-- set up ai assisted development workflow [#1887](https://github.com/chef/ohai/pull/1887) ([rishichawda](https://github.com/rishichawda)) <!-- 19.1.10 -->
-- Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo)) <!-- 19.1.9 -->
-- Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.8 -->
-- let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja)) <!-- 19.1.7 -->
-- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.6 -->
-- Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.5 -->
-- Fix Style/CollectionQuerying: Use none? instead of count == 0 [#1881](https://github.com/chef/ohai/pull/1881) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.4 -->
-- Fixing the security scanning warnings [#1877](https://github.com/chef/ohai/pull/1877) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.3 -->
-- add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.2 -->
-- The filesystem plugin transition is finally over [#1873](https://github.com/chef/ohai/pull/1873) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.1 -->
-- Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6)) <!-- 19.1.0 -->
-- upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.12 -->
-- Make `buildkite/chef-ohai-main-habitat-test` public [#1867](https://github.com/chef/ohai/pull/1867) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.11 -->
-- Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.10 -->
-- Hab pkg size issue removed cache and bundler folder [#1864](https://github.com/chef/ohai/pull/1864) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.0.9 -->
-- updating ffi for Ohai [#1865](https://github.com/chef/ohai/pull/1865) ([johnmccrae](https://github.com/johnmccrae)) <!-- 19.0.8 -->
-- Updating configuration for a symantec version promote and publish [#1862](https://github.com/chef/ohai/pull/1862) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->
-- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.5 -->
-- Test pipelines with empty commit [#1857](https://github.com/chef/ohai/pull/1857) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.1 -->
-- Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611)) <!-- 0.1.0 -->
-- added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.0.6 -->
-- Unit tests for freebsd network plugin; plus fixes [#1841](https://github.com/chef/ohai/pull/1841) ([jaymzh](https://github.com/jaymzh)) <!-- 19.0.5 -->
-- FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld)) <!-- 19.0.4 -->
-- Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.3 -->
-- [#1830] Check that sysfs directory exists before reading [#1831](https://github.com/chef/ohai/pull/1831) ([dafyddcrosby](https://github.com/dafyddcrosby)) <!-- 19.0.2 -->
-- cpu: Fix issues with newer versions of lscpu [#1809](https://github.com/chef/ohai/pull/1809) ([ramereth](https://github.com/ramereth)) <!-- 19.0.1 -->
-- Force the major version bump since VERSION appeared modified in the l… [#1827](https://github.com/chef/ohai/pull/1827) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.0.0 -->
-- Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.0 -->
-- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen)) <!-- 18.2.0 -->
-- [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar)) <!-- 18.1.18 -->
-- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.17 -->
-- determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval)) <!-- 18.1.16 -->
-- Detect QEMU virtualization on Darwin. [#1813](https://github.com/chef/ohai/pull/1813) ([williamtheaker](https://github.com/williamtheaker)) <!-- 18.1.15 -->
-- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.14 -->
-- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.1.13 -->
-- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.1.12 -->
-- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw)) <!-- 18.1.11 -->
-- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov)) <!-- 18.1.10 -->
-- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV)) <!-- 18.1.9 -->
-- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls)) <!-- 18.1.8 -->
-- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb)) <!-- 18.1.7 -->
-- Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.1.6 -->
-- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish)) <!-- 18.1.5 -->
-- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss)) <!-- 18.1.4 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v19.1.16](https://github.com/chef/ohai/tree/v19.1.16) (2026-01-05)
+
+#### Merged Pull Requests
+- Add support for macOS Rapid Security Response updates [#1788](https://github.com/chef/ohai/pull/1788) ([nstrauss](https://github.com/nstrauss))
+- Adding files for onboarding the project to SonarQubes [#1792](https://github.com/chef/ohai/pull/1792) ([vinay-satish](https://github.com/vinay-satish))
+- Update rubocop-performance requirement from 1.16.0 to 1.18.0 [#1797](https://github.com/chef/ohai/pull/1797) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Adds status property to dpkg parsed packages [#1799](https://github.com/chef/ohai/pull/1799) ([fretb](https://github.com/fretb))
+- Fix gce metadata recursion issue #1796 [#1801](https://github.com/chef/ohai/pull/1801) ([nvwls](https://github.com/nvwls))
+- Fetch the user-data on Alibaba Cloud correctly [#1803](https://github.com/chef/ohai/pull/1803) ([ETiV](https://github.com/ETiV))
+- Add 3.2 to the list of Ruby CI versions [#1804](https://github.com/chef/ohai/pull/1804) ([igor-drozdov](https://github.com/igor-drozdov))
+- fp/Adjusting IPROUTE_INT_REGEX to match interfaces with an underscore [#1806](https://github.com/chef/ohai/pull/1806) ([fprovencherdrw](https://github.com/fprovencherdrw))
+- Add getnameinfo as a fall through case for fqdn resolution [#1810](https://github.com/chef/ohai/pull/1810) ([tpowell-progress](https://github.com/tpowell-progress))
+- Updated the metadata versions [#1812](https://github.com/chef/ohai/pull/1812) ([johnmccrae](https://github.com/johnmccrae))
+- Bump actions/checkout from 3 to 4 [#1807](https://github.com/chef/ohai/pull/1807) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Detect QEMU virtualization on Darwin. [#1813](https://github.com/chef/ohai/pull/1813) ([williamtheaker](https://github.com/williamtheaker))
+- determine if we are an Apple Virtualization Framework guest [#1814](https://github.com/chef/ohai/pull/1814) ([jazaval](https://github.com/jazaval))
+- Updating metadata [#1815](https://github.com/chef/ohai/pull/1815) ([johnmccrae](https://github.com/johnmccrae))
+- [lspci] Fix handling of more than one PCIe domain [#1822](https://github.com/chef/ohai/pull/1822) ([Babar](https://github.com/Babar))
+- Add platform_backend attribute for Target Mode [#1824](https://github.com/chef/ohai/pull/1824) ([thheinen](https://github.com/thheinen))
+- Bump to 19 version for ohai and chef [#1825](https://github.com/chef/ohai/pull/1825) ([tpowell-progress](https://github.com/tpowell-progress))
+- Force the major version bump since VERSION appeared modified in the l… [#1827](https://github.com/chef/ohai/pull/1827) ([tpowell-progress](https://github.com/tpowell-progress))
+- cpu: Fix issues with newer versions of lscpu [#1809](https://github.com/chef/ohai/pull/1809) ([ramereth](https://github.com/ramereth))
+- [#1830] Check that sysfs directory exists before reading [#1831](https://github.com/chef/ohai/pull/1831) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- Migrate from Chefstyle to Cookstyle gem [#1833](https://github.com/chef/ohai/pull/1833) ([dafyddcrosby](https://github.com/dafyddcrosby))
+- FreeBSD: Permit underscores in interface names [#1837](https://github.com/chef/ohai/pull/1837) ([feld](https://github.com/feld))
+- Unit tests for freebsd network plugin; plus fixes [#1841](https://github.com/chef/ohai/pull/1841) ([jaymzh](https://github.com/jaymzh))
+- added the channel variable [#1854](https://github.com/chef/ohai/pull/1854) ([nikhil2611](https://github.com/nikhil2611))
+- Added the pipelines to build those automatically [#1856](https://github.com/chef/ohai/pull/1856) ([nikhil2611](https://github.com/nikhil2611))
+- Test pipelines with empty commit [#1857](https://github.com/chef/ohai/pull/1857) ([nikhil2611](https://github.com/nikhil2611))
+- Reverted the version back to the old one [#1858](https://github.com/chef/ohai/pull/1858) ([nikhil2611](https://github.com/nikhil2611))
+- Updating configuration for a symantec version promote and publish [#1862](https://github.com/chef/ohai/pull/1862) ([nikhil2611](https://github.com/nikhil2611))
+- updating ffi for Ohai [#1865](https://github.com/chef/ohai/pull/1865) ([johnmccrae](https://github.com/johnmccrae))
+- Hab pkg size issue removed cache and bundler folder [#1864](https://github.com/chef/ohai/pull/1864) ([sanghinitin](https://github.com/sanghinitin))
+- Update ffi lock [#1866](https://github.com/chef/ohai/pull/1866) ([jaymzh](https://github.com/jaymzh))
+- Make `buildkite/chef-ohai-main-habitat-test` public [#1867](https://github.com/chef/ohai/pull/1867) ([jaymzh](https://github.com/jaymzh))
+- upgrading to cookstyle [#1868](https://github.com/chef/ohai/pull/1868) ([johnmccrae](https://github.com/johnmccrae))
+- Ruby bump 3.4.x [#1871](https://github.com/chef/ohai/pull/1871) ([neha-p6](https://github.com/neha-p6))
+- The filesystem plugin transition is finally over [#1873](https://github.com/chef/ohai/pull/1873) ([jaymzh](https://github.com/jaymzh))
+- add myself to codeowners [#1869](https://github.com/chef/ohai/pull/1869) ([jaymzh](https://github.com/jaymzh))
+- Fixing the security scanning warnings [#1877](https://github.com/chef/ohai/pull/1877) ([nikhil2611](https://github.com/nikhil2611))
+- Fix Style/CollectionQuerying: Use none? instead of count == 0 [#1881](https://github.com/chef/ohai/pull/1881) ([sanjain-progress](https://github.com/sanjain-progress))
+- Support private hab bldr of publishing hab pkg and update ruby core package [#1879](https://github.com/chef/ohai/pull/1879) ([sanjain-progress](https://github.com/sanjain-progress))
+- Fixing habitat test builds by declaring HAB_ORIGIN after habitat install [#1883](https://github.com/chef/ohai/pull/1883) ([nikhil2611](https://github.com/nikhil2611))
+- let ohai build with hab base-2025 [#1882](https://github.com/chef/ohai/pull/1882) ([muthuja](https://github.com/muthuja))
+- Bump actions/checkout from 4 to 5 [#1886](https://github.com/chef/ohai/pull/1886) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fixing network detection when using multipath route [#1885](https://github.com/chef/ohai/pull/1885) ([achamo](https://github.com/achamo))
+- set up ai assisted development workflow [#1887](https://github.com/chef/ohai/pull/1887) ([rishichawda](https://github.com/rishichawda))
+- Fixing CI by disabling broken tests [#1894](https://github.com/chef/ohai/pull/1894) ([jaymzh](https://github.com/jaymzh))
+- js/Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1893](https://github.com/chef/ohai/pull/1893) ([justintsteele](https://github.com/justintsteele))
+- adding a tweaks for string freezes [#1895](https://github.com/chef/ohai/pull/1895) ([johnmccrae](https://github.com/johnmccrae))
+- Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio))
+- docs: add AI compliance workflow to copilot instructions [#1899](https://github.com/chef/ohai/pull/1899) ([rishichawda](https://github.com/rishichawda))
+- Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot]))
+<!-- latest_stable_release -->
+
 ## [v18.1.3](https://github.com/chef/ohai/tree/v18.1.3) (2023-03-08)
 
 #### Merged Pull Requests
 - Calling yajl parser only once [#1786](https://github.com/chef/ohai/pull/1786) ([rnt](https://github.com/rnt))
 - [block_device] Record firmware revision of nvme block devices [#1787](https://github.com/chef/ohai/pull/1787) ([saravan2](https://github.com/saravan2))
 - Updating files to account for Proxifier2 [#1789](https://github.com/chef/ohai/pull/1789) ([johnmccrae](https://github.com/johnmccrae))
-<!-- latest_stable_release -->
 
 ## [v18.1.0](https://github.com/chef/ohai/tree/v18.1.0) (2023-02-21)
 

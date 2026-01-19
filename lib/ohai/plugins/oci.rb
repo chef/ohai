@@ -44,24 +44,22 @@ Ohai.plugin(:Oci) do
   end
 
   def oci_chassis_asset_tag?
-    has_oci_chassis_asset_tag = false
-    if file_exist?(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE)
-      file_open(Ohai::Mixin::OCIMetadata::CHASSIS_ASSET_TAG_FILE).each do |line|
-        next unless /OracleCloud.com/.match?(line)
+    asset_tag = chassis_asset_tag
+    return false if asset_tag.nil? || asset_tag.empty?
 
-        logger.trace("Plugin oci: Found OracleCloud.com chassis_asset_tag used by oci.")
-        has_oci_chassis_asset_tag = true
-        break
-      end
+    if /OracleCloud.com/.match?(asset_tag)
+      logger.trace("Plugin oci: Found OracleCloud.com chassis_asset_tag used by oci.")
+      true
+    else
+      false
     end
-    has_oci_chassis_asset_tag
   end
 
   def parse_metadata
-    return nil unless can_socket_connect?(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR, 80)
+    return unless can_socket_connect?(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR, 80)
 
     instance_data = fetch_metadata("instance")
-    return nil if instance_data.nil?
+    return if instance_data.nil?
 
     metadata = Mash.new
     metadata["compute"] = Mash.new
@@ -80,12 +78,14 @@ Ohai.plugin(:Oci) do
       end
     end
 
-    volume_attachments_data = fetch_metadata("volumeAttachments")
+    volume_attachments_data = fetch_metadata("allVolumeAttachments")
 
     unless volume_attachments_data.nil?
       metadata["volumes"] = Mash.new
-      volume_attachments_data.each do |k, v|
-        metadata["volumes"][k] = v
+      volume_attachments_data.each do |v|
+        if v.is_a?(Hash) && v["id"]
+          metadata["volumes"][v["id"]] = v
+        end
       end
     end
 

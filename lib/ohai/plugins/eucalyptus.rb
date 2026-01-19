@@ -29,7 +29,7 @@ Ohai.plugin(:Eucalyptus) do
   provides "eucalyptus"
   depends "network/interfaces"
 
-  MAC_MATCH = /^[dD]0:0[dD]:/.freeze unless defined?(MAC_MATCH)
+  MAC_MATCH = /^[dD]0:0[dD]:/ unless defined?(MAC_MATCH)
 
   # returns the mac address from the collection of all address types
   def get_mac_address(addresses)

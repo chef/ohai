@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 19.1.17 -->
+## [v19.1.17](https://github.com/chef/ohai/tree/v19.1.17) (2026-01-21)
+
+#### Merged Pull Requests
+- Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=19.1.16 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.17 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

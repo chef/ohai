@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.17 -->
-## [v19.1.17](https://github.com/chef/ohai/tree/v19.1.17) (2026-01-21)
+<!-- latest_release 19.1.18 -->
+## [v19.1.18](https://github.com/chef/ohai/tree/v19.1.18) (2026-01-28)
 
 #### Merged Pull Requests
-- Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611))
+- Strip hostnamectl icons [#1909](https://github.com/chef/ohai/pull/1909) ([nvwls](https://github.com/nvwls))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.16 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Strip hostnamectl icons [#1909](https://github.com/chef/ohai/pull/1909) ([nvwls](https://github.com/nvwls)) <!-- 19.1.18 -->
 - Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.17 -->
 <!-- release_rollup -->
 

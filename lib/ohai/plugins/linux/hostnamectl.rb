@@ -25,15 +25,15 @@ Ohai.plugin(:Hostnamectl) do
 
     hostnamectl_path = which("hostnamectl")
     if hostnamectl_path
+      re = /[^\p{ASCII}]/u
+
       shell_out(hostnamectl_path).stdout.split("\n").each do |line|
         key, val = line.split(": ", 2)
 
         key = key.chomp.lstrip.tr(" ", "_").downcase
 
-        if key == "chassis"
-          # strip visual icons produced by newer versions of systemd
-          val = val.gsub(/\p{So}\p{Mn}*/u, "").tr("具", "").squeeze(" ").strip
-        end
+        # strip visual icons produced by newer versions of systemd
+        val = val.gsub(re, "").squeeze(" ").strip
 
         hostnamectl[key] = val
       end

@@ -7,9 +7,9 @@ name: CI Pull Request on Main Branch
 
 on: 
   pull_request:
-    branches: [ nikhil/enable-blackduck-sca, release/** ]
+    branches: [ main, release/** ]
   push:
-    branches: [ nikhil/enable-blackduck-sca, release/** ]
+    branches: [ main, release/** ]
 
   workflow_dispatch:
 

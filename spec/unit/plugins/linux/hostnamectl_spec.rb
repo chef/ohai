@@ -54,6 +54,46 @@ describe Ohai::System, "Linux hostnamectl plugin" do
     })
   end
 
+  {
+    "laptop" => "💻",
+    "desktop" => "🖥️",
+    "server" => "🖳",
+    "tablet" => "具",
+    "watch" => "⌚",
+    "handset" => "🕻",
+    "vm" => "🖴",
+    "container" => "☐",
+  }.each do |chassis, emoji|
+    it "populates hostnamectl when hostnamectl returns #{chassis} emoji" do
+      hostnamectl_out = <<-HOSTNAMECTL_OUT
+    Static hostname: foo
+          Icon name: computer-#{chassis}
+            Chassis: #{chassis} #{emoji}
+         Machine ID: 6f702523e2fc7499eb1dc68e5314dacf
+            Boot ID: e085ae9e65e245a8a7b62912adeebe97
+   Operating System: Debian GNU/Linux 8 (jessie)
+             Kernel: Linux 4.3.0-0.bpo.1-amd64
+        CPE OS Name: cpe:/o:foo:bar:8
+       Architecture: x86-64
+      HOSTNAMECTL_OUT
+
+      allow(plugin).to receive(:which).with("hostnamectl").and_return("/bin/hostnamectl")
+      allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out, ""))
+      plugin.run
+      expect(plugin[:hostnamectl].to_hash).to eq({
+        "static_hostname" => "foo",
+        "icon_name" => "computer-#{chassis}",
+        "chassis" => "#{chassis}",
+        "cpe_os_name" => "cpe:/o:foo:bar:8",
+        "machine_id" => "6f702523e2fc7499eb1dc68e5314dacf",
+        "boot_id" => "e085ae9e65e245a8a7b62912adeebe97",
+        "operating_system" => "Debian GNU/Linux 8 (jessie)",
+        "kernel" => "Linux 4.3.0-0.bpo.1-amd64",
+        "architecture" => "x86-64",
+      })
+    end
+  end
+
   it "does not populate hostnamectl if hostnamectl is not available" do
     allow(plugin).to receive(:which).with("hostnamectl").and_return(false)
     expect(plugin[:hostnamectl]).to eq(nil)

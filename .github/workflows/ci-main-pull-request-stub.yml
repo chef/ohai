@@ -91,13 +91,8 @@ jobs:
       publish-packages: false     # Publish packages (e.g., container from Dockerfile to ECR, go-releaser binary to releases page, omnibus to artifactory, gems, choco, homebrew, other app stores)
 
       # generate and export Software Bill of Materials (SBOM) in various formats
-<<<<<<< HEAD
-      generate-sbom: false
-      export-github-sbom: true      # SPDX JSON artifact on job instance  
-=======
       generate-sbom: true
       export-github-sbom: true      # SPDX JSON artifact on job instance
->>>>>>> ed2a369a (added config to generate gemfile.lock at runtime)
       perform-blackduck-sca-scan: true # combined with generate sbom & generate github-sbom, also needs version above
       blackduck-project-group-name: 'Chef-Agents' # typically one of (Chef), Chef-Agents, Chef-Automate, Chef-Chef360, Chef-Habitat, Chef-Infrastructure-Server, Chef-Shared-Services, Chef-Non-Product'
       blackduck-project-name: 'chef-ohai' # BlackDuck project name, typically the repository name - using chef-ohai as using 'ohai' a name in sbominator fails to generate the notice file with invalid group error
@@ -108,10 +103,5 @@ jobs:
       license_scout: false      # Run license scout for license compliance (uses .license_scout.yml)
 
       # udf1: 'default' # user defined flag 1
-<<<<<<< HEAD
-      # udf2: 'default' # user defined flag 2 
-      # udf3: 'default' # user defined flag 3  
-=======
       # udf2: 'default' # user defined flag 2
       # udf3: 'default' # user defined flag 3
->>>>>>> ed2a369a (added config to generate gemfile.lock at runtime)

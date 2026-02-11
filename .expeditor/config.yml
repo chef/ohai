@@ -95,6 +95,6 @@ subscriptions:
       - built_in:publish_rubygems
 
   # Promote to 'base-2025' after promoting to 'stable'
-  - workload: hab_package_published:stable:berkshelf/8.*
+  - workload: hab_package_published:stable:ohai/19.*
     actions:
       - bash:.expeditor/scripts/base-2025-promote.sh

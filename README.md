@@ -94,6 +94,15 @@ For information on contributing to this project see <https://github.com/chef/che
 1. Push to the branch (git push origin my-new-feature)
 1. Create new Pull Request
 
+## Auto-merge and required checks
+
+This repository has GitHub auto-merge enabled. To help your PR merge quickly:
+
+- Keep your branch up to date. GitHub may prompt you to update your PR branch; please do so to keep checks current.
+- All checks must be green before auto-merge can complete. A workflow named `allchecks` verifies that every configured workflow has passed.
+- Buildkite must be green. A required Buildkite check blocks merging if it is not successful.
+- DCO is required. Ensure commits are signed off (use `--signoff`).
+
 ## License
 
 Ohai - system information application

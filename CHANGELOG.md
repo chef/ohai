@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.19 -->
-## [v19.1.19](https://github.com/chef/ohai/tree/v19.1.19) (2026-02-02)
+<!-- latest_release 19.1.20 -->
+## [v19.1.20](https://github.com/chef/ohai/tree/v19.1.20) (2026-02-17)
 
 #### Merged Pull Requests
-- Update hab pkg with removing lint roller for false cve [#1911](https://github.com/chef/ohai/pull/1911) ([sanghinitin](https://github.com/sanghinitin))
+- Fixing codeowners [#1920](https://github.com/chef/ohai/pull/1920) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.16 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fixing codeowners [#1920](https://github.com/chef/ohai/pull/1920) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.20 -->
 - Update hab pkg with removing lint roller for false cve [#1911](https://github.com/chef/ohai/pull/1911) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.19 -->
 - Strip hostnamectl icons [#1909](https://github.com/chef/ohai/pull/1909) ([nvwls](https://github.com/nvwls)) <!-- 19.1.18 -->
 - Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.17 -->

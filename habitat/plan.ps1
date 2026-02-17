@@ -61,6 +61,17 @@ function Invoke-Build {
 }
 
 function Invoke-Install {
+
+    write-output "*** invoke-install"
+    $NoticeFile = "$PLAN_CONTEXT\..\..\NOTICE"
+
+    if (Test-Path $NoticeFile) {
+        Write-BuildLine "** Copying NOTICE to package directory"
+        Copy-Item -Path $NoticeFile -Destination $pkg_prefix -Force
+    } else {
+        Write-BuildLine "** Warning: NOTICE not found at $NoticeFile"
+    }
+
     Write-BuildLine "** Copy built & cached gems to install directory"
     Copy-Item -Path "$HAB_CACHE_SRC_PATH/$pkg_dirname/*" -Destination $pkg_prefix -Recurse -Force -Exclude @("gem_make.out", "mkmf.log", "Makefile",
                      "*/latest", "latest",

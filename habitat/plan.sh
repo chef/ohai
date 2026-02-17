@@ -52,7 +52,16 @@ do_build() {
     gem build ohai.gemspec
 }
 do_install() {
-   export GEM_HOME="$pkg_prefix/vendor"
+
+  # Copy NOTICE.TXT to the package directory
+  if [[ -f "$PLAN_CONTEXT/../NOTICE" ]]; then
+    build_line "Copying NOTICE to package directory"
+    cp "$PLAN_CONTEXT/../NOTICE" "$pkg_prefix/"
+  else
+    build_line "Warning: NOTICE not found at $PLAN_CONTEXT/../NOTICE"
+  fi
+
+  export GEM_HOME="$pkg_prefix/vendor"
 
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"

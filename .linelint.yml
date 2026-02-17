@@ -1,0 +1,9 @@
+rules:
+  end-of-file:
+    enable: true
+    single-new-line: true
+    ignore:
+      - spec/data/plugins/*.output
+      # these files are changed by automated processes
+      - CHANGELOG.md
+      - VERSION

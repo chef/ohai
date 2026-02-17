@@ -18,9 +18,7 @@
 
 require "spec_helper"
 
-shared_examples "Common cpu info" do |default_cpu, total_cpu, real_cpu, ls_cpu, architecture, cpu_opmodes, byte_order, cpus,
-  cpus_online, threads_per_core, cores_per_socket, sockets, numa_nodes, vendor_id, model, model_name, bogomips,
-  l1d_cache, l1i_cache, l2_cache, l3_cache, flags, numa_node_cpus|
+shared_examples "Common cpu info" do |default_cpu, total_cpu, real_cpu, ls_cpu, architecture, cpu_opmodes, byte_order, cpus, cpus_online, threads_per_core, cores_per_socket, sockets, numa_nodes, vendor_id, model, model_name, bogomips, l1d_cache, l1i_cache, l2_cache, l3_cache, flags, numa_node_cpus|
   describe "cpu" do
     it "has cpu[:total] equals to #{total_cpu}" do
       plugin.run
@@ -297,8 +295,7 @@ shared_examples "arm64 processor info" do |cpu_no, bogomips, features|
   end
 end
 
-shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz, timebase, platform, machine_model,
-  machine, firmware, mmu|
+shared_examples "ppc64le processor info" do |cpu_no, model_name, model, mhz, timebase, platform, machine_model, machine, firmware, mmu|
   describe "ppc64le processor" do
     it "has model_name for cpu #{cpu_no}" do
       plugin.run

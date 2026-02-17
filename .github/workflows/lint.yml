@@ -27,3 +27,12 @@ jobs:
       - run: |
           bundle install --jobs 4 --retry 3  
           bundle exec rake style
+  linelint:
+    runs-on: ubuntu-latest
+    name: Check if all files end in newline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Linelint
+        uses: fernandrone/linelint@master
+        id: linelint

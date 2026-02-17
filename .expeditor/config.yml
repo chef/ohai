@@ -80,9 +80,15 @@ subscriptions:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
 
-  # this works for symantec version promote
+  # Creates current package from unstable package once hab build is completed
+  - workload: artifact_published:unstable:ohai:{{version_constraint}}
+    action:
+     - build_in_promote_habitat_packages
+
+  # Promoting current to base-2025 channel
   - workload: project_promoted:{{agent_id}}:*
     actions:
       - built_in:rollover_changelog
       - built_in:promote_habitat_packages
       - built_in:publish_rubygems
+      - built_in:notify_chefio_slack_channels

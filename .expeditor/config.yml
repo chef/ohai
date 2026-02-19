@@ -10,8 +10,8 @@ rubygems:
   - ohai
 
 artifact_channels:
-  - unstable
-  - chef-dke-lts2024
+  - current
+  - base-2025
 
 pipelines:
   - habitat/build:

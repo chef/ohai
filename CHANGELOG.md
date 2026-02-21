@@ -4,6 +4,7 @@
 ## Unreleased
 
 #### Merged Pull Requests
+- Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
@@ -11,6 +12,7 @@
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
 - Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
 - Update plan.ps1 for git run time dep to build deps [#1925](https://github.com/chef/ohai/pull/1925) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.22 -->
 - Add line-ending lint [#1919](https://github.com/chef/ohai/pull/1919) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.21 -->

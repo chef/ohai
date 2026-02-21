@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.22 -->
-## [v19.1.22](https://github.com/chef/ohai/tree/v19.1.22) (2026-02-19)
+<!-- latest_release unreleased -->
+## Unreleased
 
 #### Merged Pull Requests
-- Update plan.ps1 for git run time dep to build deps [#1925](https://github.com/chef/ohai/pull/1925) ([sanghinitin](https://github.com/sanghinitin))
+- Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.16 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
 - Update plan.ps1 for git run time dep to build deps [#1925](https://github.com/chef/ohai/pull/1925) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.22 -->
 - Add line-ending lint [#1919](https://github.com/chef/ohai/pull/1919) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.21 -->
 - Fixing codeowners [#1920](https://github.com/chef/ohai/pull/1920) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.20 -->

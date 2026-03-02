@@ -10,8 +10,9 @@ rubygems:
   - ohai
 
 artifact_channels:
-  - unstable
-  - chef-dke-lts2024
+  - stable
+  - base-2025-current
+  - base-2025
 
 pipelines:
   - habitat/build:
@@ -28,7 +29,7 @@ pipelines:
         - HAB_NOCOLORING: "true"
         - HAB_STUDIO_SECRET_HAB_NONINTERACTIVE: "true"
       trigger: pull_request
-  
+
 github:
   # This deletes the GitHub PR branch after successfully merged into the release branch
   delete_branch_on_merge: true
@@ -85,4 +86,15 @@ subscriptions:
     actions:
       - built_in:rollover_changelog
       - built_in:promote_habitat_packages
+
+  # Promote to 'current' on successful Habitat testing
+  - workload: buildkite_build_passed:{{agent_id}}:habitat/test:*
+    actions:
+      - built_in:promote_habitat_packages:
+          channel: current
       - built_in:publish_rubygems
+
+  # Promote to 'base-2025' after promoting to 'stable'
+  - workload: hab_package_published:stable:ohai/19.*
+    actions:
+      - bash:.expeditor/scripts/base-2025-promote.sh

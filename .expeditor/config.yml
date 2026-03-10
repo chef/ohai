@@ -10,8 +10,8 @@ rubygems:
   - ohai
 
 artifact_channels:
-  - unstable
-  - chef-dke-lts2024
+  - current
+  - base-2025
 
 pipelines:
   - habitat/build:
@@ -79,10 +79,17 @@ subscriptions:
           ignore_labels:
             - "Expeditor: Skip Habitat"
             - "Expeditor: Skip All"
+          
+  # Promotes from unstable to current hab bldr
+  - workload: buildkite_hab_build_group_published:{{agent_id}}:*
+    actions:
+      - built_in:promote_habitat_packages
 
+  # Promoting current to base-2025 channel
   # this works for symantec version promote
   - workload: project_promoted:{{agent_id}}:*
     actions:
       - built_in:rollover_changelog
       - built_in:promote_habitat_packages
       - built_in:publish_rubygems
+      - built_in:notify_chefio_slack_channels

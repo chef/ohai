@@ -84,10 +84,7 @@ function Invoke-Install {
 function Invoke-After {
     # We don't need the cache of downloaded .gem files ...
     Remove-Item $pkg_prefix/vendor/cache -Recurse -Force
-    # Use cmd rmdir for bundler dir — PowerShell Remove-Item -Recurse
-    # fails on .git directories inside git-sourced gems
-    # with "The directory is not empty" errors on Windows.
-    cmd /c rmdir /s /q "$pkg_prefix\vendor\bundler"
+    Remove-Item $pkg_prefix/vendor/bundler -Recurse -Force
     # We don't need the gem docs.
     Remove-Item $pkg_prefix/vendor/doc -Recurse -Force
     # We don't need to ship the test suites for every gem dependency,

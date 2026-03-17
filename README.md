@@ -108,7 +108,6 @@ This repository has GitHub auto-merge enabled. To help your PR merge quickly:
 Ohai - system information application
 
 - Author:: Adam Jacob ([adam@chef.io](mailto:adam@chef.io))
-- Copyright:: Copyright (c) 2008-2021 Chef Software, Inc.
 - License:: Apache License, Version 2.0
 
 ```text
@@ -124,3 +123,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+# Copyright
+See [COPYRIGHT.md](./COPYRIGHT.md).

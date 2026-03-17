@@ -6,7 +6,7 @@
 # Author:: Doug MacEachern (<dougm@vmware.com>)
 # Author:: Kurt Yoder (<ktyopscode@yoderhome.com>)
 # Author:: Paul Mooring (<paul@chef.io>)
-# Copyright:: Copyright (c) Chef Software Inc.
+# Copyright:: Copyright (c) 2009-2026 Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.
 # Copyright:: Copyright (c) 2009 Bryan McLellan
 # Copyright:: Copyright (c) 2010 VMware, Inc.
 # License:: Apache License, Version 2.0

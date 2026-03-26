@@ -1,18 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.23 -->
-## [v19.1.23](https://github.com/chef/ohai/tree/v19.1.23) (2026-03-11)
+<!-- latest_release 19.1.24 -->
+## [v19.1.24](https://github.com/chef/ohai/tree/v19.1.24) (2026-03-26)
 
 #### Merged Pull Requests
-- Update Expeditor config to promote Habitat packages to current and base-2025 channels and fix hab test pipeline [#1927](https://github.com/chef/ohai/pull/1927) ([nikhil2611](https://github.com/nikhil2611))
-- Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot]))
-- Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.16 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.24 -->
 - Update Expeditor config to promote Habitat packages to current and base-2025 channels and fix hab test pipeline [#1927](https://github.com/chef/ohai/pull/1927) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.23 -->
 - Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
 - Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->

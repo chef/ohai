@@ -16,7 +16,7 @@ Ohai detects data about your operating system. It can be used standalone, but it
 
 Ohai will print out a JSON data blob for all the known data about your system. When used with Chef, that data is reported back via node attributes.
 
-Chef distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the docs:
+Chef distributes ohai as a RubyGem. This README is for developers who want to modify the Ohai source code. For users who want to write plugins for Ohai, see the documentation:
 
 - General documentation: <https://docs.chef.io/ohai/>
 - Writing Ohai Plugins documentation: <https://docs.chef.io/ohai_custom/>

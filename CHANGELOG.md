@@ -1,29 +1,27 @@
 # Change Log
 
-<!-- latest_release 19.1.24 -->
-## [v19.1.24](https://github.com/chef/ohai/tree/v19.1.24) (2026-03-26)
-
-#### Merged Pull Requests
-- Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=19.1.16 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.24 -->
-- Update Expeditor config to promote Habitat packages to current and base-2025 channels and fix hab test pipeline [#1927](https://github.com/chef/ohai/pull/1927) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.23 -->
-- Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
-- Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.22 -->
-- Update plan.ps1 for git run time dep to build deps [#1925](https://github.com/chef/ohai/pull/1925) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.22 -->
-- Add line-ending lint [#1919](https://github.com/chef/ohai/pull/1919) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.21 -->
-- Fixing codeowners [#1920](https://github.com/chef/ohai/pull/1920) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.20 -->
-- Update hab pkg with removing lint roller for false cve [#1911](https://github.com/chef/ohai/pull/1911) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.19 -->
-- Strip hostnamectl icons [#1909](https://github.com/chef/ohai/pull/1909) ([nvwls](https://github.com/nvwls)) <!-- 19.1.18 -->
-- Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.17 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v19.1.24](https://github.com/chef/ohai/tree/v19.1.24) (2026-03-27)
+
+#### Merged Pull Requests
+- Updated channel from LTS-2024 to base-2025 in test script [#1910](https://github.com/chef/ohai/pull/1910) ([nikhil2611](https://github.com/nikhil2611))
+- Strip hostnamectl icons [#1909](https://github.com/chef/ohai/pull/1909) ([nvwls](https://github.com/nvwls))
+- Update hab pkg with removing lint roller for false cve [#1911](https://github.com/chef/ohai/pull/1911) ([sanghinitin](https://github.com/sanghinitin))
+- Fixing codeowners [#1920](https://github.com/chef/ohai/pull/1920) ([jaymzh](https://github.com/jaymzh))
+- Add line-ending lint [#1919](https://github.com/chef/ohai/pull/1919) ([jaymzh](https://github.com/jaymzh))
+- Update plan.ps1 for git run time dep to build deps [#1925](https://github.com/chef/ohai/pull/1925) ([sanghinitin](https://github.com/sanghinitin))
+- Bump wechuli/allcheckspassed from 1 to 2 [#1924](https://github.com/chef/ohai/pull/1924) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update Expeditor config to promote Habitat packages to current and base-2025 channels and fix hab test pipeline [#1927](https://github.com/chef/ohai/pull/1927) ([nikhil2611](https://github.com/nikhil2611))
+- Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_stable_release -->
+
 ## [v19.1.16](https://github.com/chef/ohai/tree/v19.1.16) (2026-01-05)
 
 #### Merged Pull Requests
@@ -77,7 +75,6 @@
 - Oci-metadata-volumefix [#1897](https://github.com/chef/ohai/pull/1897) ([snohio](https://github.com/snohio))
 - docs: add AI compliance workflow to copilot instructions [#1899](https://github.com/chef/ohai/pull/1899) ([rishichawda](https://github.com/rishichawda))
 - Bump actions/checkout from 5 to 6 [#1900](https://github.com/chef/ohai/pull/1900) ([dependabot[bot]](https://github.com/dependabot[bot]))
-<!-- latest_stable_release -->
 
 ## [v18.1.3](https://github.com/chef/ohai/tree/v18.1.3) (2023-03-08)
 

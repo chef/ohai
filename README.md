@@ -2,14 +2,6 @@
 
 [![Build status](https://badge.buildkite.com/aa0b961fc3e5bed315c7035c6d60a4aaee57af9610cbde9a15.svg?branch=main)](https://buildkite.com/chef-oss/chef-ohai-main-verify) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
-**Umbrella Project**: [Chef Infra](https://github.com/chef/chef-oss-practices/blob/main/projects/chef-infra.md)
-
-**Project State**: [Active](https://github.com/chef/chef-oss-practices/blob/main/repo-management/repo-states.md#active)
-
-**Issues Response SLA**: 10 business days
-
-**Pull Request Response SLA**: 10 business days
-
 ## Description
 
 Ohai detects data about your operating system. It can be used standalone, but its primary purpose is to provide node data to Chef.

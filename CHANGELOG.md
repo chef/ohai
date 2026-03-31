@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.25 -->
-## [v19.1.25](https://github.com/chef/ohai/tree/v19.1.25) (2026-03-31)
+<!-- latest_release 19.1.26 -->
+## [v19.1.26](https://github.com/chef/ohai/tree/v19.1.26) (2026-03-31)
 
 #### Merged Pull Requests
-- Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh))
+- Fix CI - only run blackduck on merge [#1931](https://github.com/chef/ohai/pull/1931) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix CI - only run blackduck on merge [#1931](https://github.com/chef/ohai/pull/1931) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.26 -->
 - Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.25 -->
 <!-- release_rollup -->
 

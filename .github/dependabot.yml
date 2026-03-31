@@ -3,11 +3,26 @@ version: 2
 updates:
   - package-ecosystem: bundler
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "daily"
-      time: "06:00"
-      timezone: America/Los_Angeles
-  - package-ecosystem: "github-actions"
+    open-pull-requests-limit: 10
+    labels:
+      - "Type: Chore"
+
+  - package-ecosystem: bundler
     directory: "/"
-    schedule: 
+    target-branch: "18-stable"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    labels:
+      - "Type: Chore"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
       interval: daily
+    open-pull-requests-limit: 10
+    labels:
+      - "Type: Chore"

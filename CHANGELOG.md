@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 19.1.25 -->
+## [v19.1.25](https://github.com/chef/ohai/tree/v19.1.25) (2026-03-31)
+
+#### Merged Pull Requests
+- Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=19.1.24 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.25 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

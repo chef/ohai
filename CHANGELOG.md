@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.13 -->
-## [v18.2.13](https://github.com/chef/ohai/tree/v18.2.13) (2025-12-18)
+<!-- latest_release 18.2.14 -->
+## [v18.2.14](https://github.com/chef/ohai/tree/v18.2.14) (2026-04-02)
 
 #### Merged Pull Requests
-- [18-stable] update actions checkout from version 4 to 6 [#1906](https://github.com/chef/ohai/pull/1906) ([rishichawda](https://github.com/rishichawda))
+- Add allchecks to 18-stable [#1939](https://github.com/chef/ohai/pull/1939) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.2.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Add allchecks to 18-stable [#1939](https://github.com/chef/ohai/pull/1939) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.14 -->
 - [18-stable] update actions checkout from version 4 to 6 [#1906](https://github.com/chef/ohai/pull/1906) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.13 -->
 - [18-stable:backport] Adjusting IPROUTE_INT_REGEX to match interfaces with a semicolon [#1905](https://github.com/chef/ohai/pull/1905) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.12 -->
 - [18-stable:backport] fixing network detection when using multipath route [#1904](https://github.com/chef/ohai/pull/1904) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.11 -->

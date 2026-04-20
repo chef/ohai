@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.28 -->
-## [v19.1.28](https://github.com/chef/ohai/tree/v19.1.28) (2026-04-17)
+<!-- latest_release 19.1.29 -->
+## [v19.1.29](https://github.com/chef/ohai/tree/v19.1.29) (2026-04-20)
 
 #### Merged Pull Requests
-- Dependabot: disable autorebasing [#1941](https://github.com/chef/ohai/pull/1941) ([jaymzh](https://github.com/jaymzh))
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.29 -->
 - Dependabot: disable autorebasing [#1941](https://github.com/chef/ohai/pull/1941) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.28 -->
 - Fixup dependabot for Ohai [#1932](https://github.com/chef/ohai/pull/1932) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.27 -->
 - Fix CI - only run blackduck on merge [#1931](https://github.com/chef/ohai/pull/1931) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.26 -->

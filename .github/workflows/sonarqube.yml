@@ -4,11 +4,8 @@ on:
   # Trigger analysis when pushing to your main branches, and when creating a pull request.
   push:
     branches:
-      - main
-      - develop
-      - 'release/**'
-  pull_request:
-      types: [opened, synchronize, reopened]
+      - "main"
+      - "18-stable"
 
 permissions:
   contents: read

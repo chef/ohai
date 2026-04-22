@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.15 -->
-## [v18.2.15](https://github.com/chef/ohai/tree/v18.2.15) (2026-04-02)
+<!-- latest_release 18.2.16 -->
+## [v18.2.16](https://github.com/chef/ohai/tree/v18.2.16) (2026-04-22)
 
 #### Merged Pull Requests
-- [backport #1909][18-stable] strip hostnamectl icons [#1938](https://github.com/chef/ohai/pull/1938) ([rishichawda](https://github.com/rishichawda))
+- Fix CI on 18-stable [#1942](https://github.com/chef/ohai/pull/1942) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.2.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix CI on 18-stable [#1942](https://github.com/chef/ohai/pull/1942) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.16 -->
 - [backport #1909][18-stable] strip hostnamectl icons [#1938](https://github.com/chef/ohai/pull/1938) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.15 -->
 - Add allchecks to 18-stable [#1939](https://github.com/chef/ohai/pull/1939) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.14 -->
 - [18-stable] update actions checkout from version 4 to 6 [#1906](https://github.com/chef/ohai/pull/1906) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.13 -->

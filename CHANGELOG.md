@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.17 -->
-## [v18.2.17](https://github.com/chef/ohai/tree/v18.2.17) (2026-04-22)
+<!-- latest_release 18.2.18 -->
+## [v18.2.18](https://github.com/chef/ohai/tree/v18.2.18) (2026-04-23)
 
 #### Merged Pull Requests
-- backport sugarjar config to 18-stable [#1943](https://github.com/chef/ohai/pull/1943) ([jaymzh](https://github.com/jaymzh))
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1935](https://github.com/chef/ohai/pull/1935) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.2.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1935](https://github.com/chef/ohai/pull/1935) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.2.18 -->
 - backport sugarjar config to 18-stable [#1943](https://github.com/chef/ohai/pull/1943) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.17 -->
 - Fix CI on 18-stable [#1942](https://github.com/chef/ohai/pull/1942) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.16 -->
 - [backport #1909][18-stable] strip hostnamectl icons [#1938](https://github.com/chef/ohai/pull/1938) ([rishichawda](https://github.com/rishichawda)) <!-- 18.2.15 -->

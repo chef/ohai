@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.30 -->
-## [v19.1.30](https://github.com/chef/ohai/tree/v19.1.30) (2026-04-20)
+<!-- latest_release 19.1.31 -->
+## [v19.1.31](https://github.com/chef/ohai/tree/v19.1.31) (2026-04-23)
 
 #### Merged Pull Requests
-- Update mixlib-shellout requirement from ~&gt; 3.3.6 to &gt;= 3.3.6, &lt; 3.5.0 [#1936](https://github.com/chef/ohai/pull/1936) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.31 -->
 - Update mixlib-shellout requirement from ~&gt; 3.3.6 to &gt;= 3.3.6, &lt; 3.5.0 [#1936](https://github.com/chef/ohai/pull/1936) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.30 -->
 - Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.29 -->
 - Dependabot: disable autorebasing [#1941](https://github.com/chef/ohai/pull/1941) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.28 -->

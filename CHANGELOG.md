@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.18 -->
-## [v18.2.18](https://github.com/chef/ohai/tree/v18.2.18) (2026-04-23)
+<!-- latest_release 18.2.19 -->
+## [v18.2.19](https://github.com/chef/ohai/tree/v18.2.19) (2026-04-23)
 
 #### Merged Pull Requests
-- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1935](https://github.com/chef/ohai/pull/1935) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update ffi requirement from ~&gt; 1.9, &lt;= 1.17.0 to ~&gt; 1.9, &lt;= 1.18.0 [#1933](https://github.com/chef/ohai/pull/1933) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.2.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi requirement from ~&gt; 1.9, &lt;= 1.17.0 to ~&gt; 1.9, &lt;= 1.18.0 [#1933](https://github.com/chef/ohai/pull/1933) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.2.19 -->
 - Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1935](https://github.com/chef/ohai/pull/1935) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.2.18 -->
 - backport sugarjar config to 18-stable [#1943](https://github.com/chef/ohai/pull/1943) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.17 -->
 - Fix CI on 18-stable [#1942](https://github.com/chef/ohai/pull/1942) ([jaymzh](https://github.com/jaymzh)) <!-- 18.2.16 -->

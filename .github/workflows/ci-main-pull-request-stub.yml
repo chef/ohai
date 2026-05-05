@@ -38,7 +38,7 @@ jobs:
       versionFromFile: ${{ steps.set-version-from-file.outputs.versionFromFile }}
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: 'Detect version from file'
         id: set-version-from-file

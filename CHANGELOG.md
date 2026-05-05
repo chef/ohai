@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.31 -->
-## [v19.1.31](https://github.com/chef/ohai/tree/v19.1.31) (2026-04-23)
+<!-- latest_release 19.1.32 -->
+## [v19.1.32](https://github.com/chef/ohai/tree/v19.1.32) (2026-05-05)
 
 #### Merged Pull Requests
-- Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh))
+- Bump actions/checkout from 4 to 6 [#1945](https://github.com/chef/ohai/pull/1945) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Bump actions/checkout from 4 to 6 [#1945](https://github.com/chef/ohai/pull/1945) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.32 -->
 - Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.31 -->
 - Update mixlib-shellout requirement from ~&gt; 3.3.6 to &gt;= 3.3.6, &lt; 3.5.0 [#1936](https://github.com/chef/ohai/pull/1936) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.30 -->
 - Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.29 -->

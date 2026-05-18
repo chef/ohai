@@ -104,6 +104,7 @@ jobs:
       # scc-output-filename: 'scc-output.txt'
       perform-language-linting: false    # Perform language-specific linting and pre-compilation checks
       perform-trufflehog-scan: true
+      fail-trufflehog-on-secrets-found: true
       perform-trivy-scan: true
 
       # grype vulnerability scanning

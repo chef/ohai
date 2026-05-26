@@ -42,7 +42,7 @@ do_build() {
 
     build_line "Setting GEM_PATH=$GEM_HOME"
     export GEM_PATH="$GEM_HOME"
-    bundle config --local without integration deploy maintenance
+    bundle config --local without integration deploy maintenance development debug
     bundle config --local jobs 4
     bundle config --local retry 5
     bundle config --local silence_root_warning 1

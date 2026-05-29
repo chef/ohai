@@ -96,6 +96,7 @@ function Invoke-Install {
 function Invoke-After {
     # We don't need the cache of downloaded .gem files ...
     Remove-Item $pkg_prefix/vendor/cache -Recurse -Force
+    Get-ChildItem "$pkg_prefix/vendor/bundler" -Recurse -Force -Filter ".git" | Remove-Item -Recurse -Force
     Remove-Item $pkg_prefix/vendor/bundler -Recurse -Force
     # We don't need the gem docs.
     Remove-Item $pkg_prefix/vendor/doc -Recurse -Force

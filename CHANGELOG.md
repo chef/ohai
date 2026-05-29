@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.34 -->
-## [v19.1.34](https://github.com/chef/ohai/tree/v19.1.34) (2026-05-27)
+<!-- latest_release 19.1.35 -->
+## [v19.1.35](https://github.com/chef/ohai/tree/v19.1.35) (2026-05-29)
 
 #### Merged Pull Requests
-- Hab pkg not buliding in windows for hab 2.0.X fix [#1949](https://github.com/chef/ohai/pull/1949) ([sanghinitin](https://github.com/sanghinitin))
+- .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.35 -->
 - Hab pkg not buliding in windows for hab 2.0.X fix [#1949](https://github.com/chef/ohai/pull/1949) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.34 -->
 - remove development and debug group gems [#1948](https://github.com/chef/ohai/pull/1948) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.33 -->
 - Bump actions/checkout from 4 to 6 [#1945](https://github.com/chef/ohai/pull/1945) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.32 -->

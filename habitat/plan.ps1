@@ -108,4 +108,7 @@ function Invoke-After {
     # Remove the byproducts of compiling gems with extensions
     Get-ChildItem $pkg_prefix/vendor/gems -Include @("gem_make.out", "mkmf.log", "Makefile") -File -Recurse `
         | Remove-Item -Force
+    # Remove .github directories from vendored gems to avoid CVE false positives
+    Get-ChildItem $pkg_prefix/vendor/gems -Filter ".github" -Directory -Recurse `
+        | Remove-Item -Recurse -Force
 }

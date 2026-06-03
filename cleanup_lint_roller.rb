@@ -1,12 +1,15 @@
 #!/usr/bin/env ruby
-# Removes stray Gemfile.lock shipped inside the lint_roller gem to appease scanners.
+# Removes stray Gemfile.lock shipped inside gems to appease scanners.
 require "rubygems"
 
-def cleanup_lint_roller_lockfile
-  puts "Cleaning up lint_roller Gemfile.lock..."
-  specs = Gem::Specification.find_all_by_name("lint_roller")
+# List of gems that ship with Gemfile.lock files that should be removed
+GEMS_WITH_LOCKFILES = %w{lint_roller stackprof-webnav ohai}.freeze
+
+def cleanup_gem_lockfile(gem_name)
+  puts "Cleaning up #{gem_name} Gemfile.lock..."
+  specs = Gem::Specification.find_all_by_name(gem_name)
   if specs.empty?
-    puts "  No lint_roller gem installed"
+    puts "  No #{gem_name} gem installed"
     return
   end
 
@@ -15,13 +18,13 @@ def cleanup_lint_roller_lockfile
     if File.exist?(gemfile_lock_path)
       puts "  Removing #{gemfile_lock_path}"
       File.delete(gemfile_lock_path)
-      puts "  Successfully removed lint_roller Gemfile.lock"
+      puts "  Successfully removed #{gem_name} Gemfile.lock"
     else
       puts "  No Gemfile.lock found in #{spec.gem_dir}"
     end
   end
 rescue StandardError => e
-  warn "  Warning: Failed to clean up lint_roller Gemfile.lock: #{e.message}"
+  warn "  Warning: Failed to clean up #{gem_name} Gemfile.lock: #{e.message}"
 end
 
-cleanup_lint_roller_lockfile
+GEMS_WITH_LOCKFILES.each { |gem_name| cleanup_gem_lockfile(gem_name) }

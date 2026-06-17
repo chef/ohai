@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.36 -->
-## [v19.1.36](https://github.com/chef/ohai/tree/v19.1.36) (2026-06-03)
+<!-- latest_release 19.1.37 -->
+## [v19.1.37](https://github.com/chef/ohai/tree/v19.1.37) (2026-06-17)
 
 #### Merged Pull Requests
-- use appbundler and habitat scan fixes [#1951](https://github.com/chef/ohai/pull/1951) ([sanjain-progress](https://github.com/sanjain-progress))
+- CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.24 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.37 -->
 - use appbundler and habitat scan fixes [#1951](https://github.com/chef/ohai/pull/1951) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.36 -->
 - .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.35 -->
 - Hab pkg not buliding in windows for hab 2.0.X fix [#1949](https://github.com/chef/ohai/pull/1949) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.34 -->

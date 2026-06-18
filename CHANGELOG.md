@@ -1,32 +1,30 @@
 # Change Log
 
-<!-- latest_release 19.1.37 -->
-## [v19.1.37](https://github.com/chef/ohai/tree/v19.1.37) (2026-06-17)
-
-#### Merged Pull Requests
-- CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=19.1.24 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.37 -->
-- use appbundler and habitat scan fixes [#1951](https://github.com/chef/ohai/pull/1951) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.36 -->
-- .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.35 -->
-- Hab pkg not buliding in windows for hab 2.0.X fix [#1949](https://github.com/chef/ohai/pull/1949) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.34 -->
-- remove development and debug group gems [#1948](https://github.com/chef/ohai/pull/1948) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.33 -->
-- Bump actions/checkout from 4 to 6 [#1945](https://github.com/chef/ohai/pull/1945) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.32 -->
-- Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.31 -->
-- Update mixlib-shellout requirement from ~&gt; 3.3.6 to &gt;= 3.3.6, &lt; 3.5.0 [#1936](https://github.com/chef/ohai/pull/1936) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.30 -->
-- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.29 -->
-- Dependabot: disable autorebasing [#1941](https://github.com/chef/ohai/pull/1941) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.28 -->
-- Fixup dependabot for Ohai [#1932](https://github.com/chef/ohai/pull/1932) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.27 -->
-- Fix CI - only run blackduck on merge [#1931](https://github.com/chef/ohai/pull/1931) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.26 -->
-- Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh)) <!-- 19.1.25 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v19.1.37](https://github.com/chef/ohai/tree/v19.1.37) (2026-06-18)
+
+#### Merged Pull Requests
+- Remove docs team from blockers for MD files [#1930](https://github.com/chef/ohai/pull/1930) ([jaymzh](https://github.com/jaymzh))
+- Fix CI - only run blackduck on merge [#1931](https://github.com/chef/ohai/pull/1931) ([jaymzh](https://github.com/jaymzh))
+- Fixup dependabot for Ohai [#1932](https://github.com/chef/ohai/pull/1932) ([jaymzh](https://github.com/jaymzh))
+- Dependabot: disable autorebasing [#1941](https://github.com/chef/ohai/pull/1941) ([jaymzh](https://github.com/jaymzh))
+- Update ffi-yajl requirement from ~&gt; 2.2 to &gt;= 2.2, &lt; 4.0 [#1937](https://github.com/chef/ohai/pull/1937) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Update mixlib-shellout requirement from ~&gt; 3.3.6 to &gt;= 3.3.6, &lt; 3.5.0 [#1936](https://github.com/chef/ohai/pull/1936) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Sugarjar config for ohai [#1944](https://github.com/chef/ohai/pull/1944) ([jaymzh](https://github.com/jaymzh))
+- Bump actions/checkout from 4 to 6 [#1945](https://github.com/chef/ohai/pull/1945) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- remove development and debug group gems [#1948](https://github.com/chef/ohai/pull/1948) ([sanghinitin](https://github.com/sanghinitin))
+- Hab pkg not buliding in windows for hab 2.0.X fix [#1949](https://github.com/chef/ohai/pull/1949) ([sanghinitin](https://github.com/sanghinitin))
+- .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin))
+- use appbundler and habitat scan fixes [#1951](https://github.com/chef/ohai/pull/1951) ([sanjain-progress](https://github.com/sanjain-progress))
+- CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_stable_release -->
+
 ## [v19.1.24](https://github.com/chef/ohai/tree/v19.1.24) (2026-03-27)
 
 #### Merged Pull Requests
@@ -40,7 +38,6 @@
 - Bump actions/checkout from 5 to 6 [#1923](https://github.com/chef/ohai/pull/1923) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - Update Expeditor config to promote Habitat packages to current and base-2025 channels and fix hab test pipeline [#1927](https://github.com/chef/ohai/pull/1927) ([nikhil2611](https://github.com/nikhil2611))
 - Update docs for version bump [#1929](https://github.com/chef/ohai/pull/1929) ([nikhil2611](https://github.com/nikhil2611))
-<!-- latest_stable_release -->
 
 ## [v19.1.16](https://github.com/chef/ohai/tree/v19.1.16) (2026-01-05)
 

@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 19.1.38 -->
+## [v19.1.38](https://github.com/chef/ohai/tree/v19.1.38) (2026-06-21)
+
+#### Merged Pull Requests
+- Bump actions/checkout from 6 to 7 [#1954](https://github.com/chef/ohai/pull/1954) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=19.1.37 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Bump actions/checkout from 6 to 7 [#1954](https://github.com/chef/ohai/pull/1954) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.38 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

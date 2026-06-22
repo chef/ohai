@@ -12,6 +12,9 @@ updates:
     # don't automatically rebase on every single time we're out of date with
     # base (whith is always) because it kills CI capacity
     rebase-strategy: disabled
+    ignore:
+      - dependency-name: "ffi-yajl"
+        versions: ["3.x"]
 
   - package-ecosystem: bundler
     directory: "/"
@@ -24,6 +27,9 @@ updates:
     # don't automatically rebase on every single time we're out of date with
     # base (whith is always) because it kills CI capacity
     rebase-strategy: disabled
+    ignore:
+      - dependency-name: "ffi-yajl"
+        versions: ["3.x"]
 
   - package-ecosystem: github-actions
     directory: "/"

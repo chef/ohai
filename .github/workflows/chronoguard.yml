@@ -1,0 +1,35 @@
+---
+name: chronoguard
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  chronoguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check for expired fail-after dates
+        run: |
+          failed=0
+          while IFS= read -r line; do
+            file=$(echo "$line" | cut -d: -f1)
+            date=$(echo "$line" | grep -oP 'fail-after:\K[0-9]{4}-[0-9]{2}-[0-9]{2}')
+            if [ -n "$date" ]; then
+              if [ "$(date +%Y-%m-%d)" \> "$date" ] || [ "$(date +%Y-%m-%d)" = "$date" ]; then
+                echo "::error file=${file}::Chronoguard: fail-after date ${date} has passed. Please review this pin."
+                failed=1
+              else
+                echo "✓ ${file}: fail-after ${date} not yet reached"
+              fi
+            fi
+          done < <(grep -rn "fail-after:" .github/dependabot.yml)
+          if [ "$failed" -eq 1 ]; then
+            exit 1
+          fi

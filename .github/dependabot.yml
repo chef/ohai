@@ -12,6 +12,10 @@ updates:
     # don't automatically rebase on every single time we're out of date with
     # base (whith is always) because it kills CI capacity
     rebase-strategy: disabled
+    ignore:
+      - dependency-name: "ffi-yajl"
+        # Locking to 2.x until ffi-yajl 3.x gets the allocator fix https://github.com/chef/ffi-yajl/pull/126 fail-after:2026-08-22
+        versions: ["3.x"]
 
   - package-ecosystem: bundler
     directory: "/"

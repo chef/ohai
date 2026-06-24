@@ -6,13 +6,13 @@
  ----------------------------------------------------------------------------------------------------------------------------
 
  Portions of the Products include certain open source and commercial third-party components listed below ("Third-Party
- Components"). The authors of the Third-Party Components require Progress Software Corporation ("PSC") to include the
- following notices and additional licensing terms as a condition of PSC's use of such Third-Party Components. You
- acknowledge that the authors of the Third-Party Components have no obligation to provide support to you for the Third-Party
- Components or the Product. You hereby undertake to comply with all licenses related to the applicable Third-Party
+ Components"). The authors of the Third-Party Components require Progress Software Corporation ("PSC") to include
+ the following notices and additional licensing terms as a condition of PSC's use of such Third-Party Components. You
+ acknowledge that the authors of the Third-Party Components have no obligation to provide support to you for the Third-
+ Party Components or the Product. You hereby undertake to comply with all licenses related to the applicable Third-Party
  Components. Notwithstanding anything to the contrary, to the extent that any of the terms and conditions of the Progress
- Agreement conflict, vary, or are in addition to the terms and conditions of the aforementioned third-party licenses for these
- technologies, such terms and conditions are offered by PSC alone and not by any other party.
+ Agreement conflict, vary, or are in addition to the terms and conditions of the aforementioned third-party licenses for
+ these technologies, such terms and conditions are offered by PSC alone and not by any other party.
 
  ----------------------------------------------------------------------------------------------------------------------------
  Report Content
@@ -26,28 +26,29 @@
  ----------------------------------------------------------------------------------------------------------------------------
 
  GENERATIVE ARTIFICIAL INTELLIGENCE INTEGRATION
-   If the Software documentation specifies integration with some form of generative artificial intelligence (AI), then the
-   Software will include a configuration to connect to AI. You acknowledge that a separate license or subscription access to
-   AI governed by the terms and conditions of a license agreement from AI licensor will be required for use and access of AI
-   capabilities integrated with the Software. You will be responsible to comply with the terms of such license agreement for a
-   valid use of AI. You acknowledge and accept that Progress is not a party to the license agreement between You and AI
-   licensor for AI use, and as a result Progress does not have any control over AI and its availability, and Progress disclaims
-   any and all liabilities for any output, error, damages, loss, etc., or any other result of Your use of AI integrated with
-   the Software.
+ If the Software documentation specifies integration with some form of generative artificial intelligence (AI), then the
+ Software will include a configuration to connect to AI. You acknowledge that a separate license or subscription access to
+ AI governed by the terms and conditions of a license agreement from AI licensor will be required for use and access of AI
+ capabilities integrated with the Software. You will be responsible to comply with the terms of such license agreement for a
+ valid use of AI. You acknowledge and accept that Progress is not a party to the license agreement between You and AI
+ licensor for AI use, and as a result Progress does not have any control over AI and its availability, and Progress disclaims
+ any and all liabilities for any output, error, damages, loss, etc., or any other result of Your use of AI integrated with
+ the Software.
 
  ----------------------------------------------------------------------------------------------------------------------------
 
- NOTICE FROM PROGRESS SOFTWARE CORPORATION: Additional notices may be included in the release notes or other
- documentation that accompanies updates  received in connection with support of the Product.
+ NOTICE FROM PROGRESS SOFTWARE CORPORATION: Additional notices may be included in the release notes or
+ other documentation that accompanies updates  received in connection with support of the Product.
 
  ----------------------------------------------------------------------------------------------------------------------------
 
  PUBLISH SOURCE REQUIREMENTS
- The Product contains the following third-party technologies licensed to PSC for which User is subject to the terms of a third-
- party license, a copy of which is included herein. PSC will, at Licensee's request, provide a copy of the source code for
- these third-party technologies, including modifications, if any, made by PSC. PSC may charge reasonable shipping and
- handling charges for such distribution. Licensee may also obtain the source code for these third-party technologies through
- http://iue.progress.com/3dpartysoftwares/Pages/default.aspx by following the instructions set forth therein.
+ The Product contains the following third-party technologies licensed to PSC for which User is subject to the terms of a
+ third-party license, a copy of which is included herein. PSC will, at Licensee's request, provide a copy of the source
+ code for these third-party technologies, including modifications, if any, made by PSC. PSC may charge reasonable
+ shipping and handling charges for such distribution. Licensee may also obtain the source code for these third-party
+ technologies through http://iue.progress.com/3dpartysoftwares/Pages/default.aspx by following the instructions set
+ forth therein.
 
   Habitat core_acl | 2.3.2
   Habitat core_attr | 2.5.2
@@ -65,10 +66,10 @@
 
  LGPL LICENSE REQUIREMENTS
  The Product contains the following third-party technologies, which are subject to the terms of the GNU Library General
- Public License Version 2 (LGPL v2), GNU Lesser General Public License Version 2.1 (LGPL v2.1) or GNU Lesser General
- Public License Version 3 (LGPL v3).  In compliance with such Licenses, PSC provides You with reverse-engineering
- permission solely to the extent necessary in order to debug modifications made to libraries licensed under the LGPL v2,
- LGPL v2.1, or LGPL v3 (as identified herein).
+ Public License Version 2 (LGPL v2), GNU Lesser General Public License Version 2.1 (LGPL v2.1) or GNU Lesser
+ General Public License Version 3 (LGPL v3).  In compliance with such Licenses, PSC provides You with reverse-
+ engineering permission solely to the extent necessary in order to debug modifications made to libraries licensed under
+ the LGPL v2, LGPL v2.1, or LGPL v3 (as identified herein).
 
   Habitat core_acl | 2.3.2
   Habitat core_attr | 2.5.2
@@ -88,13 +89,12 @@ Components:
 | ast 2.4.3                              | http://github.com/whitequark/ast      | MIT License                              |
 | base64 0.3.0                           | https://github.com/ruby/base64        | BSD 2-clause "Simplified" License        |
 | bleything's plist 3.7.2                | http://plist.rubyforge.org            | MIT License                              |
-| chef/ohai v19.1.30                     | https://docs.chef.io/ohai.html        | Apache License 2.0                       |
-| concurrent-ruby 1.3.6                  | http://www.concurrent-ruby.com        | MIT License                              |
+| chef/ohai v19.1.36                     | https://docs.chef.io/ohai.html        | Apache License 2.0                       |
 | cookstyle 8.6.10                       | https://github.com/chef/cookstyle     | Apache License 2.0                       |
 | debug_inspector 1.2.0                  | https://github.com/banister/debug_ins | MIT License                              |
 |                                        |   pector                              |                                          |
 | ffi 1.17.4                             | http://wiki.github.com/ffi/ffi        | BSD 3-clause "New" or "Revised" License  |
-| ffi-yajl 3.0.0                         | https://github.com/lamont-granquist/f | MIT License                              |
+| ffi-yajl 2.7.11                        | https://github.com/lamont-granquist/f | MIT License                              |
 |                                        |   fi-yajl                             |                                          |
 | fuzzyurl 0.9.0                         | https://github.com/gamache/fuzzyurl   | MIT License                              |
 | Habitat core_acl 2.3.2                 |                                       | (GNU Lesser General Public License v2.1  |
@@ -175,7 +175,7 @@ Components:
 |                                        |   r-ruby/                             |                                          |
 | sickill's rainbow 3.1.1                | http://sickill.net                    | MIT License                              |
 | tomlrb 2.0.4                           | https://github.com/fbernier/tomlrb    | MIT License                              |
-| train-core 3.16.3                      | https://github.com/chef/train/        | Apache License 2.0                       |
+| train-core 3.16.5                      | https://github.com/chef/train/        | Apache License 2.0                       |
 | unicode-display_width 3.2.0            | https://github.com/janlelis/unicode-d | MIT License                              |
 |                                        |   isplay_width                        |                                          |
 | unicode-emoji 4.2.0                    | https://github.com/janlelis/unicode-e | MIT License                              |
@@ -188,7 +188,7 @@ License Data and Text:
 -------------------------------------------------------------------------------------------------------------------------
 
 Apache License 2.0
-(Addressable URI parser 2.9.0, chef/ohai v19.1.30, cookstyle 8.6.10, libyajl2 2.1.0, mixlib-shellout 3.4.10, opscode-ohai 19.1.24, train-core 3.16.3, wmi-lite 1.0.7)
+(Addressable URI parser 2.9.0, chef/ohai v19.1.36, cookstyle 8.6.10, libyajl2 2.1.0, mixlib-shellout 3.4.10, opscode-ohai 19.1.24, train-core 3.16.5, wmi-lite 1.0.7)
 
 Apache License
 Version 2.0, January 2004
@@ -3553,7 +3553,7 @@ this License. But first, please read
 ---
 
 MIT License
-(ast 2.4.3, bleything's plist 3.7.2, concurrent-ruby 1.3.6, debug_inspector 1.2.0, ffi-yajl 3.0.0, fuzzyurl 0.9.0, Habitat core_libffi 3.4.7, Habitat core_libyaml 0.2.5, Habitat core_ncurses 6.5, halostatue/diff-lcs 1.6.2, ipaddress-gem/ipaddress 0.8.3, IPAddrExtensions 1.0.2, jfelchner/ruby-progressbar 1.13.0, language_server-protocol 3.17.0.5, lint_roller 1.1.0, method_source 1.1.0, mwunsch's prism 1.9.0, net-scp 4.1.0, parser 3.3.11.1, Pry REPL 0.16.0, pry-stack_explorer 0.6.3, Rake 13.4.2, RSpec 3.13.5, RSpec 3.13.6, RSpec 3.13.8, rspec-collection_matchers 1.2.1, rspec-support 3.13.7, rubocop 1.84.2, rubocop-ast 1.49.1, Ruby Public Suffix 7.0.5, ruby-net-ssh 7.3.2, rubychan's coderay 1.1.3, sickill's rainbow 3.1.1, tomlrb 2.0.4, unicode-display_width 3.2.0, unicode-emoji 4.2.0)
+(ast 2.4.3, bleything's plist 3.7.2, debug_inspector 1.2.0, ffi-yajl 2.7.11, fuzzyurl 0.9.0, Habitat core_libffi 3.4.7, Habitat core_libyaml 0.2.5, Habitat core_ncurses 6.5, halostatue/diff-lcs 1.6.2, ipaddress-gem/ipaddress 0.8.3, IPAddrExtensions 1.0.2, jfelchner/ruby-progressbar 1.13.0, language_server-protocol 3.17.0.5, lint_roller 1.1.0, method_source 1.1.0, mwunsch's prism 1.9.0, net-scp 4.1.0, parser 3.3.11.1, Pry REPL 0.16.0, pry-stack_explorer 0.6.3, Rake 13.4.2, RSpec 3.13.5, RSpec 3.13.6, RSpec 3.13.8, rspec-collection_matchers 1.2.1, rspec-support 3.13.7, rubocop 1.84.2, rubocop-ast 1.49.1, Ruby Public Suffix 7.0.5, ruby-net-ssh 7.3.2, rubychan's coderay 1.1.3, sickill's rainbow 3.1.1, tomlrb 2.0.4, unicode-display_width 3.2.0, unicode-emoji 4.2.0)
 
 The MIT License
 ===============

@@ -1,22 +1,20 @@
 # Change Log
 
-<!-- latest_release 19.1.40 -->
-## [v19.1.40](https://github.com/chef/ohai/tree/v19.1.40) (2026-06-24)
-
-#### Merged Pull Requests
-- docs: update NOTICE file [#1959](https://github.com/chef/ohai/pull/1959) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=19.1.37 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- docs: update NOTICE file [#1959](https://github.com/chef/ohai/pull/1959) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.40 -->
-- fix: Constrain ffi-yajl to &lt; 3.0 for Ruby 3.2+ compatibility [#1955](https://github.com/chef/ohai/pull/1955) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.39 -->
-- Bump actions/checkout from 6 to 7 [#1954](https://github.com/chef/ohai/pull/1954) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.38 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v19.1.40](https://github.com/chef/ohai/tree/v19.1.40) (2026-06-24)
+
+#### Merged Pull Requests
+- Bump actions/checkout from 6 to 7 [#1954](https://github.com/chef/ohai/pull/1954) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- fix: Constrain ffi-yajl to &lt; 3.0 for Ruby 3.2+ compatibility [#1955](https://github.com/chef/ohai/pull/1955) ([nikhil2611](https://github.com/nikhil2611))
+- docs: update NOTICE file [#1959](https://github.com/chef/ohai/pull/1959) ([nikhil2611](https://github.com/nikhil2611))
+<!-- latest_stable_release -->
+
 ## [v19.1.37](https://github.com/chef/ohai/tree/v19.1.37) (2026-06-18)
 
 #### Merged Pull Requests
@@ -33,7 +31,6 @@
 - .git folder creating issue when hab pkg build remvoed in vendor [#1950](https://github.com/chef/ohai/pull/1950) ([sanghinitin](https://github.com/sanghinitin))
 - use appbundler and habitat scan fixes [#1951](https://github.com/chef/ohai/pull/1951) ([sanjain-progress](https://github.com/sanjain-progress))
 - CHEF-34832 - docs: update NOTICE [#1953](https://github.com/chef/ohai/pull/1953) ([nikhil2611](https://github.com/nikhil2611))
-<!-- latest_stable_release -->
 
 ## [v19.1.24](https://github.com/chef/ohai/tree/v19.1.24) (2026-03-27)
 

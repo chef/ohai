@@ -1,0 +1,59 @@
+name: macos_habitat_build
+
+"on":
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-habitat-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  habitat-plan:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    env:
+      HAB_ORIGIN: gha
+      HAB_BLDR_CHANNEL: base-2025
+      HAB_REFRESH_CHANNEL: base-2025
+      HAB_AUTH_TOKEN: ${{ secrets.HAB_AUTH_TOKEN }}
+      HAB_LICENSE: accept-no-persist
+      HAB_NONINTERACTIVE: "true"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          clean: true
+
+      - name: Install Habitat CLI
+        run: |
+          curl https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.sh | sudo -E bash -s -- -t aarch64-darwin
+          hab license accept
+          hab --version
+
+      - name: Generate Habitat Origin Key
+        run: hab origin key generate "$HAB_ORIGIN"
+
+      - name: Build Habitat Package
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          hab pkg build habitat/aarch64-darwin
+
+      - name: Install Habitat Package
+        run: |
+          source ./results/last_build.env
+          echo "Installing: $pkg_ident ($pkg_artifact)"
+          sudo -E hab pkg install "./results/$pkg_artifact"
+
+      - name: Run test.darwin.sh
+        run: |
+          source ./results/last_build.env
+          sudo -E ./habitat/tests/test.darwin.sh "$pkg_ident"

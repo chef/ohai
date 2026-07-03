@@ -17,7 +17,7 @@ pkg_deps=(${ruby_pkg} core/coreutils core/libarchive)
 pkg_svc_user=root
 
 pkg_version() {
-  cat "$SRC_PATH/VERSION"
+  cat "$PLAN_CONTEXT/../../VERSION"
 }
 
 do_before() {
@@ -89,6 +89,7 @@ do_install() {
   build_line "Setting GEM_PATH=$GEM_HOME"
   export GEM_PATH="$GEM_HOME"
   gem install ohai-*.gem --no-document
+  gem install racc --no-document
 
   build_line "** fixing binstub shebangs"
   fix_interpreter "${pkg_prefix}/vendor/bin/*" "$ruby_pkg" bin/ruby

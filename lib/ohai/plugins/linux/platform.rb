@@ -290,7 +290,10 @@ Ohai.plugin(:Platform) do
       get_redhatish_version(file_read("/etc/redhat-release").chomp)
     # debian testing and unstable don't have VERSION_ID set
     elsif os_release_info["ID"] == "debian"
-      os_release_info["VERSION_ID"] || file_read("/etc/debian_version").chomp
+      version = os_release_info["DEBIAN_VERSION_FULL"]
+      version = file_read("/etc/debian_version").chomp if version.to_s.empty?
+      version = os_release_info["VERSION_ID"] if version.to_s.empty?
+      version
     else
       os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
     end

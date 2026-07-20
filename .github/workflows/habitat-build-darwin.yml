@@ -1,20 +1,28 @@
 name: macos_habitat_build
 
 "on":
-  pull_request:
+  pull_request_target:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: macos-habitat-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
+  workflow_guard:
+    uses: ./.github/workflows/workflow-change-guard.yml
+    permissions:
+      contents: read
+
   habitat-plan:
+    needs: workflow_guard
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -29,7 +37,7 @@ jobs:
       HAB_LICENSE: accept-no-persist
       HAB_NONINTERACTIVE: "true"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           clean: true
 

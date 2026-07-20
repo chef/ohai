@@ -18,15 +18,7 @@ jobs:
       workflow_changed: ${{ steps.diff.outputs.changed }}
 
     steps:
-      - name: No workflow diff required for non-PR events
-        if: ${{ github.event_name != 'pull_request' && github.event_name != 'pull_request_target' }}
-        id: diff
-        run: |
-          echo "changed=false" >> "$GITHUB_OUTPUT"
-          echo "No workflow changes detected for non-PR event."
-
       - name: Checkout base branch
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         uses: actions/checkout@v7
         with:
           allow-unsafe-pr-checkout: true
@@ -35,7 +27,6 @@ jobs:
           clean: true
 
       - name: Fetch PR head
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         run: git fetch origin ${{ github.event.pull_request.head.sha }}
 
         # NOTE!!
@@ -44,7 +35,6 @@ jobs:
         #   to pull_request_target PRs. That is the ONLY purpose.
 
       - name: Detect workflow file changes
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
         id: diff
         run: |
           set -euo pipefail
@@ -65,8 +55,9 @@ jobs:
 
   approve:
     needs: detect
-    if: github.event_name == 'pull_request_target' && needs.detect.outputs.workflow_changed == 'true'
+    if: (github.event_name == 'pull_request_target' && needs.detect.outputs.workflow_changed == 'true')
     runs-on: ubuntu-latest
+    # Approval happens ONLY here
     environment: workflow_guard
     permissions: {}
     steps:

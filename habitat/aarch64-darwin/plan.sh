@@ -110,6 +110,15 @@ do_install() {
   build_line "** creating wrapper for runtime environment"
   mkdir -p "$pkg_prefix/libexec"
   mv "$pkg_prefix/bin/ohai" "$pkg_prefix/libexec/ohai"
+  # Derive the Ruby API version (e.g. 3.4.0) from the packaged Ruby's on-disk gem layout
+  # rather than executing `ruby -e`. Invoking the hab-provided ruby during the build can
+  # silently fail (its runtime library paths aren't set up here), which would leave
+  # ruby_gem_version empty and corrupt every GEM_PATH entry written below.
+  ruby_gem_version="$(basename "$(pkg_path_for "${ruby_pkg}")/lib/ruby/gems/"*)"
+  if [[ -z "$ruby_gem_version" ]]; then
+    build_line "WARNING: unable to determine Ruby API version from ${ruby_pkg}; falling back to 3.4.0"
+    ruby_gem_version="3.4.0"
+  fi
   cat <<EOF > "$pkg_prefix/bin/ohai"
 #!/bin/bash
 set -e
@@ -117,7 +126,12 @@ set -e
 export PATH="$(pkg_path_for ${ruby_pkg})/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:$pkg_prefix/vendor/bin:\$PATH"
 export DYLD_LIBRARY_PATH="$(pkg_path_for core/libarchive)/lib:\$DYLD_LIBRARY_PATH"
 export GEM_HOME="$pkg_prefix/vendor"
-export GEM_PATH="$pkg_prefix/vendor"
+# GEM_PATH includes the flat vendor tree, the bundler-nested vendor tree
+# (vendor/ruby/VERSION, where train-core and other runtime deps are installed), the
+# standard user gem dir (~/.gem/ruby/VERSION), and the Chef gem dir
+# (~/.chef/ruby/VERSION/gems) so that both ohai's own runtime deps and plugins installed
+# via 'gem install' or 'chef gem install' are found at runtime.
+export GEM_PATH="$pkg_prefix/vendor:$pkg_prefix/vendor/ruby/${ruby_gem_version}:\${HOME}/.gem/ruby/${ruby_gem_version}:\${HOME}/.chef/ruby/${ruby_gem_version}/gems"
 
 exec $(pkg_path_for ${ruby_pkg})/bin/ruby $pkg_prefix/libexec/ohai "\$@"
 EOF

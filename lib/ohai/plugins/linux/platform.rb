@@ -18,7 +18,7 @@
 #
 
 Ohai.plugin(:Platform) do
-  provides "platform", "platform_version", "platform_family"
+  provides "platform", "platform_version", "platform_family", "debian_full_version"
   depends "lsb"
 
   # @deprecated
@@ -284,16 +284,19 @@ Ohai.plugin(:Platform) do
   # available. It should be there for everything, but rolling releases like arch / gentoo
   # where we've traditionally used the kernel as the version
   # @return String the OS version
-  def determine_os_version
+  def determine_os_version(os_release, debian_version_full: false)
     # centos only includes the major version in os-release for some reason
-    if os_release_info["ID"] == "centos"
+    if os_release == "centos"
       get_redhatish_version(file_read("/etc/redhat-release").chomp)
     # debian testing and unstable don't have VERSION_ID set
-    elsif os_release_info["ID"] == "debian"
-      version = os_release_info["DEBIAN_VERSION_FULL"]
-      version = file_read("/etc/debian_version").chomp if version.to_s.empty?
-      version = os_release_info["VERSION_ID"] if version.to_s.empty?
-      version
+    elsif os_release == "debian"
+      if debian_version_full
+        version = os_release_info["DEBIAN_VERSION_FULL"]
+        version = file_read("/etc/debian_version").chomp if version.to_s.empty?
+        version = os_release_info["VERSION_ID"] if version.to_s.empty?
+        return version
+      end
+      os_release_info["VERSION_ID"] || file_read("/etc/debian_version").chomp
     else
       os_release_info["VERSION_ID"] || shell_out("/bin/uname -r").stdout.strip
     end
@@ -306,7 +309,10 @@ Ohai.plugin(:Platform) do
       # fixup os-release names to ohai platform names
       platform platform_id_remap(os_release_info["ID"])
 
-      platform_version determine_os_version
+      os_release = os_release_info["ID"]
+      platform_version determine_os_version(os_release)
+
+      debian_full_version determine_os_version(os_release, debian_version_full: true) if os_release == 'debian'
     else # we're on an old Linux distro
       legacy_platform_detection
     end

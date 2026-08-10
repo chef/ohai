@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 19.1.41 -->
+## [v19.1.41](https://github.com/chef/ohai/tree/v19.1.41) (2026-08-10)
+
+#### Merged Pull Requests
+- CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=19.1.40 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.41 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

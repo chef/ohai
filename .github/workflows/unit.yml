@@ -22,6 +22,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       RUBYOPT: '--disable-error_highlight'
+      # cookstyle/rubocop (the :lint group) is not needed to run rspec and
+      # can trigger transitive dependency-resolution conflicts (e.g.
+      # unicode-display_width) on some platforms; skip installing it here.
+      BUNDLE_WITHOUT: lint
     steps:
       - uses: actions/checkout@v7
       - name: Setup ruby

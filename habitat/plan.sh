@@ -1,6 +1,15 @@
 export HAB_BLDR_CHANNEL="base-2025"
 export HAB_REFRESH_CHANNEL="base-2025"
 ruby_pkg="core/ruby3_4"
+# Derive the Ruby API version (e.g. 3.4.0) from the packaged Ruby's on-disk gem layout
+# rather than executing `ruby -e`. Invoking the hab-provided ruby during the build can
+# silently fail (its runtime library paths aren't set up here), which would leave
+# ruby_gem_version empty and corrupt every GEM_PATH entry that uses it.
+ruby_gem_version="$(basename "$(pkg_path_for "${ruby_pkg}")/lib/ruby/gems/"*)"
+if [[ -z "$ruby_gem_version" ]]; then
+  build_line "WARNING: unable to determine Ruby API version from ${ruby_pkg}; falling back to 3.4.0"
+  ruby_gem_version="3.4.0"
+fi
 pkg_name="ohai"
 pkg_origin="chef"
 pkg_maintainer="The Chef Maintainers <humans@chef.io>"
@@ -92,15 +101,6 @@ do_install() {
   build_line "** creating wrapper for runtime environment"
   mkdir -p "$pkg_prefix/libexec"
   mv "$pkg_prefix/bin/ohai" "$pkg_prefix/libexec/ohai"
-  # Derive the Ruby API version (e.g. 3.4.0) from the packaged Ruby's on-disk gem layout
-  # rather than executing `ruby -e`. Invoking the hab-provided ruby during the build can
-  # silently fail (its runtime library paths aren't set up here), which would leave
-  # ruby_gem_version empty and corrupt every GEM_PATH entry written below.
-  ruby_gem_version="$(basename "$(pkg_path_for "${ruby_pkg}")/lib/ruby/gems/"*)"
-  if [[ -z "$ruby_gem_version" ]]; then
-    build_line "WARNING: unable to determine Ruby API version from ${ruby_pkg}; falling back to 3.4.0"
-    ruby_gem_version="3.4.0"
-  fi
   cat <<EOF > "$pkg_prefix/bin/ohai"
 #!$(pkg_path_for core/bash)/bin/bash
 set -e

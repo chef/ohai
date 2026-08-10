@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.41 -->
-## [v19.1.41](https://github.com/chef/ohai/tree/v19.1.41) (2026-08-10)
+<!-- latest_release 19.1.42 -->
+## [v19.1.42](https://github.com/chef/ohai/tree/v19.1.42) (2026-08-10)
 
 #### Merged Pull Requests
-- CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress))
+- fix: isolate cookstyle to fix flaky Ruby 3.4 Windows unit-test CI [#1965](https://github.com/chef/ohai/pull/1965) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- fix: isolate cookstyle to fix flaky Ruby 3.4 Windows unit-test CI [#1965](https://github.com/chef/ohai/pull/1965) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.42 -->
 - CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.41 -->
 <!-- release_rollup -->
 

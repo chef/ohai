@@ -39,7 +39,7 @@ describe Ohai::System, "Linux hostnamectl plugin" do
     HOSTNAMECTL_OUT
 
     allow(plugin).to receive(:which).with("hostnamectl").and_return("/bin/hostnamectl")
-    allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out, ""))
+    allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out.b, ""))
     plugin.run
     expect(plugin[:hostnamectl].to_hash).to eq({
       "static_hostname" => "foo",
@@ -54,6 +54,8 @@ describe Ohai::System, "Linux hostnamectl plugin" do
     })
   end
 
+  # Mixlib::ShellOut returns stdout as ASCII-8BIT, so the fixtures must be
+  # binary too; UTF-8 fixtures don't exercise the encoding path at all.
   {
     "laptop" => "💻",
     "desktop" => "🖥️",
@@ -78,7 +80,7 @@ describe Ohai::System, "Linux hostnamectl plugin" do
       HOSTNAMECTL_OUT
 
       allow(plugin).to receive(:which).with("hostnamectl").and_return("/bin/hostnamectl")
-      allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out, ""))
+      allow(plugin).to receive(:shell_out).with("/bin/hostnamectl").and_return(mock_shell_out(0, hostnamectl_out.b, ""))
       plugin.run
       expect(plugin[:hostnamectl].to_hash).to eq({
         "static_hostname" => "foo",

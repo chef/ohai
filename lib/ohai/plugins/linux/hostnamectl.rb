@@ -27,7 +27,7 @@ Ohai.plugin(:Hostnamectl) do
     if hostnamectl_path
       re = /[^\p{ASCII}]/u
 
-      shell_out(hostnamectl_path).stdout.split("\n").each do |line|
+      shell_out(hostnamectl_path).stdout.dup.force_encoding("UTF-8").scrub.split("\n").each do |line|
         key, val = line.split(": ", 2)
 
         key = key.chomp.lstrip.tr(" ", "_").downcase

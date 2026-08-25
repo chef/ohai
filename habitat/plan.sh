@@ -114,6 +114,11 @@ export GEM_HOME="$pkg_prefix/vendor"
 # (~/.chef/ruby/VERSION/gems) so that both ohai's own runtime deps and plugins installed
 # via 'gem install' or 'chef gem install' are found at runtime.
 export GEM_PATH="$pkg_prefix/vendor:$pkg_prefix/vendor/ruby/${ruby_gem_version}:\${HOME}/.gem/ruby/${ruby_gem_version}:\${HOME}/.chef/ruby/${ruby_gem_version}/gems"
+# Without this, appbundler's own binstub guard (unless
+# ENV["APPBUNDLER_ALLOW_RVM"] == "true") nils out GEM_HOME/GEM_PATH above
+# whenever ohai is invoked directly (e.g. via "hab pkg binlink") instead of
+# through "hab pkg exec", which otherwise sets this from RUNTIME_ENVIRONMENT.
+export APPBUNDLER_ALLOW_RVM="true"
 
 exec $(pkg_path_for ${ruby_pkg})/bin/ruby $pkg_prefix/libexec/ohai "\$@"
 EOF

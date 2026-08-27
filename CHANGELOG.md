@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.45 -->
-## [v19.1.45](https://github.com/chef/ohai/tree/v19.1.45) (2026-08-11)
+<!-- latest_release 19.1.46 -->
+## [v19.1.46](https://github.com/chef/ohai/tree/v19.1.46) (2026-08-27)
 
 #### Merged Pull Requests
-- Fix Encoding::CompatibilityError in hostnamectl plugin [#1964](https://github.com/chef/ohai/pull/1964) ([slac-chef-ci-cd](https://github.com/slac-chef-ci-cd))
+- fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.46 -->
 - Fix Encoding::CompatibilityError in hostnamectl plugin [#1964](https://github.com/chef/ohai/pull/1964) ([slac-chef-ci-cd](https://github.com/slac-chef-ci-cd)) <!-- 19.1.45 -->
 - Bump actions/checkout from 6 to 7 [#1957](https://github.com/chef/ohai/pull/1957) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.44 -->
 - CHEF-37444: add ~/.chef/ruby/VERSION/gems to GEM_PATH for dynamic plugin loading [#1963](https://github.com/chef/ohai/pull/1963) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.43 -->

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.46 -->
-## [v19.1.46](https://github.com/chef/ohai/tree/v19.1.46) (2026-08-27)
+<!-- latest_release 19.1.47 -->
+## [v19.1.47](https://github.com/chef/ohai/tree/v19.1.47) (2026-09-01)
 
 #### Merged Pull Requests
-- fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611))
+- Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.47 -->
 - fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.46 -->
 - Fix Encoding::CompatibilityError in hostnamectl plugin [#1964](https://github.com/chef/ohai/pull/1964) ([slac-chef-ci-cd](https://github.com/slac-chef-ci-cd)) <!-- 19.1.45 -->
 - Bump actions/checkout from 6 to 7 [#1957](https://github.com/chef/ohai/pull/1957) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.44 -->

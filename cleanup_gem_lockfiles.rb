@@ -3,7 +3,7 @@
 require "rubygems"
 
 # List of gems that ship with Gemfile.lock files that should be removed
-GEMS_WITH_LOCKFILES = %w{lint_roller stackprof-webnav ohai}.freeze
+GEMS_WITH_LOCKFILES = %w{lint_roller stackprof-webnav ohai unicode-emoji}.freeze
 
 def cleanup_gem_lockfile(gem_name)
   puts "Cleaning up #{gem_name} Gemfile.lock..."

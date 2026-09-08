@@ -66,7 +66,7 @@ describe "CloudAttrs object" do
 
   it "throws exception with ipv4 address passed to ipv6" do
     @cloud_attr_obj = ::CloudAttrs.new
-    expect {  @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public) }.to raise_error(RuntimeError)
+    expect { @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public) }.to raise_error(RuntimeError)
   end
 
 end

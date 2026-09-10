@@ -74,7 +74,7 @@ do_build() {
   bundle config --local retry 5
   bundle config --local silence_root_warning 1
   bundle install
-  ruby ./cleanup_lint_roller.rb
+  ruby ./cleanup_gem_lockfiles.rb
   ruby ./post-bundle-install.rb
   gem build ohai.gemspec
 }

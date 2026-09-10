@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.48 -->
-## [v19.1.48](https://github.com/chef/ohai/tree/v19.1.48) (2026-09-09)
+<!-- latest_release 19.1.49 -->
+## [v19.1.49](https://github.com/chef/ohai/tree/v19.1.49) (2026-09-10)
 
 #### Merged Pull Requests
-- CHEF-38086 - fix: rename cleanup_lint_roller to cleanup_gem_lockfiles and fix rdoc CVE false positive [#1972](https://github.com/chef/ohai/pull/1972) ([nikhil2611](https://github.com/nikhil2611))
+- Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot]))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.49 -->
 - CHEF-38086 - fix: rename cleanup_lint_roller to cleanup_gem_lockfiles and fix rdoc CVE false positive [#1972](https://github.com/chef/ohai/pull/1972) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.48 -->
 - Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.47 -->
 - fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.46 -->

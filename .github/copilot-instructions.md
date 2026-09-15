@@ -313,4 +313,8 @@ When making code changes in this repository, follow a red-green TDD workflow:
 2. **Green**: Write the minimal code change needed to make the failing test pass. Re-run the test (locally or in CI) and confirm it now **passes**.
 3. **Refactor**: With the passing test as a safety net, clean up the implementation as needed, re-running tests to ensure they remain green.
 
+## EOF Rule
+
+Every text file must end with a single trailing newline (no missing newline, no extra blank lines) — except files under an EOF Rule ignore path (e.g. `CHANGELOG.md`, `VERSION`). Check this before committing.
+
 Do not write the fix before the failing test exists. This ensures every change is backed by a test that would have caught the issue, and that the fix is verifiably correct.

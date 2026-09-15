@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.49 -->
-## [v19.1.49](https://github.com/chef/ohai/tree/v19.1.49) (2026-09-10)
+<!-- latest_release 19.1.50 -->
+## [v19.1.50](https://github.com/chef/ohai/tree/v19.1.50) (2026-09-15)
 
 #### Merged Pull Requests
-- Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.50 -->
 - Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.49 -->
 - CHEF-38086 - fix: rename cleanup_lint_roller to cleanup_gem_lockfiles and fix rdoc CVE false positive [#1972](https://github.com/chef/ohai/pull/1972) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.48 -->
 - Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.47 -->

@@ -36,6 +36,18 @@ Ohai.plugin(:RootGroup) do
   end
 
   collect_data(:default) do
-    root_group Etc.getgrgid(Etc.getpwnam("root").gid).name
+    if target_mode?
+      # ponytail: Etc.* below always queries the *local* controller's
+      # passwd/group db, which is wrong in Target Mode -- it silently
+      # returns the controller's root group (e.g. "wheel" on macOS) instead
+      # of the target's, breaking any recipe relying on node["root_group"]
+      # downstream (e.g. chef's hostname/ssh_known_hosts_entry resources).
+      # `id -gn root` is supported cross-platform (AIX, Linux, BSD, etc.)
+      # and runs via Train against the actual target.
+      result = transport_connection.run_command("id -gn root")
+      root_group result.stdout.strip if result.exit_status == 0 && !result.stdout.strip.empty?
+    else
+      root_group Etc.getgrgid(Etc.getpwnam("root").gid).name
+    end
   end
 end

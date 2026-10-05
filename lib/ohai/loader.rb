@@ -66,10 +66,11 @@ module Ohai
       collect_v7_plugins
     end
 
-    # load additional plugins classes from a given directory
-    # @param from [String] path to a directory with additional plugins to load
-    def load_additional(from)
-      from = [ Ohai.config[:plugin_path], from].flatten
+    # load additional plugin classes from one or more directories
+    # @param from [Array, String] paths to directories with additional plugins
+    # @param include_default [Boolean] whether to include configured paths
+    def load_additional(from, include_default: true)
+      from = [ Ohai.config[:plugin_path], from].flatten if include_default
       plugin_files_by_dir(from).collect do |plugin_file|
         logger.trace "Loading additional plugin: #{plugin_file}"
         load_v7_plugin(load_plugin_class(plugin_file))

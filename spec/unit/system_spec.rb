@@ -97,6 +97,66 @@ describe "Ohai::System" do
     end
   end
 
+  describe "#add_platform_plugin_path" do
+    when_plugins_directory "contains a platform-specific plugin" do
+      with_plugin("platform_extra.rb", <<~EOF)
+        Ohai.plugin(:PlatformExtra) do
+          provides "platform_extra"
+        end
+      EOF
+
+      before do
+        Ohai.config[:plugin_path] = []
+      end
+
+      it "adds an existing path once" do
+        expect(ohai.add_platform_plugin_path(@plugins_directory)).to eq(true)
+        expect(ohai.add_platform_plugin_path(@plugins_directory)).to eq(false)
+        expect(Ohai.config[:plugin_path]).to eq([File.expand_path(@plugins_directory)])
+      end
+
+      it "rejects a missing path" do
+        expect(ohai.add_platform_plugin_path(File.join(@plugins_directory, "missing"))).to eq(false)
+      end
+    end
+  end
+
+  describe "#target_platform_attributes" do
+    it "extracts platform attributes from the transport" do
+      platform = Struct.new(:platform, :family, :os).new("aix", "unix", "aix")
+      connection = double("transport connection", platform: platform)
+      allow(ohai).to receive(:transport_connection).and_return(connection)
+
+      expect(ohai.target_platform_attributes).to eq(
+        platform: "aix",
+        platform_family: "unix",
+        os: "aix"
+      )
+    end
+
+    it "supports Train platform objects whose name is separate from platform details" do
+      platform = Struct.new(:name, :family, :platform).new(
+        "aix",
+        "unix",
+        { name: "aix", family: "unix" }
+      )
+      connection = double("transport connection", platform: platform)
+      allow(ohai).to receive(:transport_connection).and_return(connection)
+
+      expect(ohai.target_platform_attributes).to eq(
+        platform: "aix",
+        platform_family: "unix",
+        os: "aix"
+      )
+    end
+
+    it "returns an empty hash when the transport has no platform metadata" do
+      allow(ohai).to receive(:transport_connection).and_return(nil)
+
+      expect(ohai.target_platform_attributes).to eq({})
+    end
+  end
+
   when_plugins_directory "contains directories inside" do
     with_plugin("repo1/zoo.rb", <<~EOF)
       Ohai.plugin(:Zoo) do
@@ -412,6 +472,40 @@ describe "Ohai::System" do
         ohai.run_additional_plugins(@plugins_directory)
         expect(ohai.data[:canteloupe][:english][:version]).to eq(2014)
         expect(ohai.data[:canteloupe][:french][:version]).to eq(2012)
+      end
+    end
+  end
+
+  describe "when loading platform-specific additional plugins" do
+    when_plugins_directory "contains default and additional plugins" do
+      with_plugin("default/default_plugin.rb", <<~EOF)
+        Ohai.plugin(:PlatformDefaultPlugin) do
+          provides "platform_default_plugin"
+        end
+      EOF
+
+      with_plugin("additional/additional_plugin.rb", <<~EOF)
+        Ohai.plugin(:PlatformAdditionalPlugin) do
+          provides "platform_additional_plugin"
+        end
+      EOF
+
+      it "can run only the selected additional plugin path" do
+        Ohai.config[:plugin_path] = [path_to("default")]
+
+        ohai.run_additional_plugins(path_to("additional"), include_default: false)
+
+        expect(ohai.data[:platform_additional_plugin]).to be_nil
+        expect(ohai.provides_map.map.keys).to include("platform_additional_plugin")
+        expect(ohai.provides_map.map.keys).not_to include("platform_default_plugin")
+      end
+
+      it "tracks a completed full plugin run" do
+        Ohai.config[:plugin_path] = [path_to("default")]
+
+        expect(ohai.plugins_ran?).to eq(false)
+        ohai.all_plugins
+        expect(ohai.plugins_ran?).to eq(true)
       end
     end
   end

@@ -66,6 +66,7 @@ module Ohai
     def reset_system
       @data = Mash.new
       @provides_map = ProvidesMap.new
+      @plugins_ran = false
 
       configure_ohai
       configure_logging if @cli
@@ -103,6 +104,25 @@ module Ohai
 
       load_plugins
       run_plugins(true, attribute_filter)
+      @plugins_ran = true
+    end
+
+    # Add a platform-selected plugin directory before the next plugin run.
+    #
+    # @param path [String] directory containing additional Ohai plugins
+    # @return [Boolean] true when the path was newly added
+    def add_platform_plugin_path(path)
+      path = File.expand_path(path)
+      return false unless Dir.exist?(path)
+      return false if Ohai.config[:plugin_path].include?(path)
+
+      Ohai.config[:plugin_path] << path
+      true
+    end
+
+    # @return [Boolean] whether a plugin run has completed for this system
+    def plugins_ran?
+      @plugins_ran
     end
 
     # load all plugins by calling Ohai::Loader.load_all
@@ -154,13 +174,39 @@ module Ohai
     #
     # @return [void]
     #
-    def run_additional_plugins(plugin_path)
-      @loader.load_additional(plugin_path).each do |plugin|
+    def run_additional_plugins(plugin_path, include_default: true)
+      paths = include_default ? [Ohai.config[:plugin_path], plugin_path].flatten : Array(plugin_path)
+      @loader.load_additional(paths, include_default: false).each do |plugin|
         logger.trace "Running plugin #{plugin}"
         runner.run_plugin(plugin)
       end
 
       freeze_strings!
+    end
+
+    # Return platform attributes exposed by the target transport before the
+    # full Ohai run. This lets Chef select platform-specific plugins early
+    # enough to replace host-only collectors.
+    #
+    # @return [Hash]
+    def target_platform_attributes
+      connection = transport_connection
+      return {} unless connection && connection.respond_to?(:platform)
+
+      platform = connection.platform
+      platform_name = scalar_platform_value(platform_value(platform, :name))
+      platform_name ||= scalar_platform_value(platform_value(platform, :platform))
+      platform_name ||= scalar_platform_value(platform_value(platform, :os))
+      platform_name ||= platform if platform.is_a?(String) || platform.is_a?(Symbol)
+
+      attributes = {}
+      attributes[:platform] = platform_name unless platform_name.nil?
+      attributes[:platform_family] = platform_value(platform, :family)
+      attributes[:os] = platform_value(platform, :os) || platform_name
+      attributes.delete_if { |_key, value| value.nil? || value.to_s.empty? }
+    rescue StandardError => e
+      logger.debug("Unable to read target platform attributes from transport: #{e.class}: #{e.message}")
+      {}
     end
 
     #
@@ -253,6 +299,25 @@ module Ohai
       return {} unless uri.query
 
       CGI.parse(uri.query).map { |k, v| [k.to_sym, v.first] }.to_h
+    end
+
+    def platform_value(platform, attribute)
+      value = platform.public_send(attribute) if platform.respond_to?(attribute)
+      if value.nil? && platform.respond_to?(:[])
+        begin
+          value = platform[attribute]
+          value = platform[attribute.to_s] if value.nil?
+        rescue IndexError, NameError, TypeError
+          value = nil
+        end
+      end
+      return nil if value.nil? || value.to_s.empty? || value.to_s == "unknown"
+
+      value
+    end
+
+    def scalar_platform_value(value)
+      value if value.is_a?(String) || value.is_a?(Symbol)
     end
   end
 end

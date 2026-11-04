@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 18.2.22 -->
-## [v18.2.22](https://github.com/chef/ohai/tree/v18.2.22) (2026-09-09)
+<!-- latest_release 18.2.23 -->
+## [v18.2.23](https://github.com/chef/ohai/tree/v18.2.23) (2026-11-04)
 
 #### Merged Pull Requests
-- Update rubocop-performance requirement from 1.26.1 to 1.27.0 [#1968](https://github.com/chef/ohai/pull/1968) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Updating FFI-Yajl support [#1974](https://github.com/chef/ohai/pull/1974) ([johnmccrae](https://github.com/johnmccrae))
 <!-- latest_release -->
 
 <!-- release_rollup since=18.2.8 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Updating FFI-Yajl support [#1974](https://github.com/chef/ohai/pull/1974) ([johnmccrae](https://github.com/johnmccrae)) <!-- 18.2.23 -->
 - Update rubocop-performance requirement from 1.26.1 to 1.27.0 [#1968](https://github.com/chef/ohai/pull/1968) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.2.22 -->
 - Backport #1964: Fix Encoding::CompatibilityError in hostnamectl plugin [#1966](https://github.com/chef/ohai/pull/1966) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 18.2.21 -->
 - Update rubocop-performance requirement from 1.18.0 to 1.26.1 [#1934](https://github.com/chef/ohai/pull/1934) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 18.2.20 -->

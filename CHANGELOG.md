@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.51 -->
-## [v19.1.51](https://github.com/chef/ohai/tree/v19.1.51) (2026-10-12)
+<!-- latest_release 19.1.52 -->
+## [v19.1.52](https://github.com/chef/ohai/tree/v19.1.52) (2026-11-06)
 
 #### Merged Pull Requests
-- Support platform-selected target plugins [#1973](https://github.com/chef/ohai/pull/1973) ([tpowell-progress](https://github.com/tpowell-progress))
+- Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.52 -->
 - Support platform-selected target plugins [#1973](https://github.com/chef/ohai/pull/1973) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.51 -->
 - docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.50 -->
 - Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.49 -->

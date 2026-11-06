@@ -28,7 +28,9 @@ function Stop-HabProcess {
 # Installing Habitat
 function Install-Habitat {
   Write-Host "Downloading and installing Habitat..."
-  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.ps1'))
+  # base-2025 has no hab binary on packages.chef.io; install hab from stable
+  $installScript = (New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/habitat-sh/habitat/main/components/hab/install.ps1')
+  & ([scriptblock]::Create($installScript)) -Channel stable
 }
 
 try {

@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.52 -->
-## [v19.1.52](https://github.com/chef/ohai/tree/v19.1.52) (2026-11-06)
+<!-- latest_release 19.1.53 -->
+## [v19.1.53](https://github.com/chef/ohai/tree/v19.1.53) (2026-11-11)
 
 #### Merged Pull Requests
-- Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611))
+- update NOTICE file [#1978](https://github.com/chef/ohai/pull/1978) ([sanjain-progress](https://github.com/sanjain-progress))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.40 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- update NOTICE file [#1978](https://github.com/chef/ohai/pull/1978) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.53 -->
 - Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.52 -->
 - Support platform-selected target plugins [#1973](https://github.com/chef/ohai/pull/1973) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.51 -->
 - docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.50 -->

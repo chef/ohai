@@ -21,6 +21,14 @@ Ohai.plugin(:Network) do
   provides "network", "network/interfaces"
   provides "counters/network", "counters/network/interfaces"
 
+  def scope_lookup(scope)
+    return "Node" if scope.eql?("::1")
+    return "Link" if /^fe80\:/.match?(scope)
+    return "Site" if /^fec0\:/.match?(scope)
+
+    "Global"
+  end
+
   collect_data(:freebsd) do
     network Mash.new unless network
     network[:interfaces] ||= Mash.new
@@ -70,10 +78,10 @@ Ohai.plugin(:Network) do
       if line =~ /\s+inet6 ([a-f0-9\:]+)%?(\w*)\s+prefixlen\s+(\d+)\s*\w*\s*([\da-fx]*)/
         iface[cint][:addresses] ||= Mash.new
         if $4.empty?
-          iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3 }
+          iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $3, "scope" => scope_lookup($1) }
         else
           # found a zone_id / scope
-          iface[cint][:addresses][$1] = { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4 }
+          iface[cint][:addresses][$1] = { "family" => "inet6", "zoneid" => $2, "prefixlen" => $3, "scopeid" => $4, "scope" => scope_lookup($1) }
         end
       end
       if line =~ /flags=\d+<(.+)>/

@@ -1,39 +1,36 @@
 # Change Log
 
-<!-- latest_release 19.1.53 -->
-## [v19.1.53](https://github.com/chef/ohai/tree/v19.1.53) (2026-11-11)
-
-#### Merged Pull Requests
-- update NOTICE file [#1978](https://github.com/chef/ohai/pull/1978) ([sanjain-progress](https://github.com/sanjain-progress))
+<!-- latest_release -->
 <!-- latest_release -->
 
-<!-- release_rollup since=19.1.40 -->
-### Changes not yet released to rubygems.org
-
-#### Merged Pull Requests
-- update NOTICE file [#1978](https://github.com/chef/ohai/pull/1978) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.53 -->
-- Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.52 -->
-- Support platform-selected target plugins [#1973](https://github.com/chef/ohai/pull/1973) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.51 -->
-- docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.50 -->
-- Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.49 -->
-- CHEF-38086 - fix: rename cleanup_lint_roller to cleanup_gem_lockfiles and fix rdoc CVE false positive [#1972](https://github.com/chef/ohai/pull/1972) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.48 -->
-- Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.47 -->
-- fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611)) <!-- 19.1.46 -->
-- Fix Encoding::CompatibilityError in hostnamectl plugin [#1964](https://github.com/chef/ohai/pull/1964) ([slac-chef-ci-cd](https://github.com/slac-chef-ci-cd)) <!-- 19.1.45 -->
-- Bump actions/checkout from 6 to 7 [#1957](https://github.com/chef/ohai/pull/1957) ([dependabot[bot]](https://github.com/dependabot[bot])) <!-- 19.1.44 -->
-- CHEF-37444: add ~/.chef/ruby/VERSION/gems to GEM_PATH for dynamic plugin loading [#1963](https://github.com/chef/ohai/pull/1963) ([sanghinitin](https://github.com/sanghinitin)) <!-- 19.1.43 -->
-- fix: isolate cookstyle to fix flaky Ruby 3.4 Windows unit-test CI [#1965](https://github.com/chef/ohai/pull/1965) ([tpowell-progress](https://github.com/tpowell-progress)) <!-- 19.1.42 -->
-- CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress)) <!-- 19.1.41 -->
+<!-- release_rollup -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->
+## [v19.1.53](https://github.com/chef/ohai/tree/v19.1.53) (2026-11-16)
+
+#### Merged Pull Requests
+- CHEF-37334: Add Linux ARM Habitat test workflow [#1962](https://github.com/chef/ohai/pull/1962) ([sanjain-progress](https://github.com/sanjain-progress))
+- fix: isolate cookstyle to fix flaky Ruby 3.4 Windows unit-test CI [#1965](https://github.com/chef/ohai/pull/1965) ([tpowell-progress](https://github.com/tpowell-progress))
+- CHEF-37444: add ~/.chef/ruby/VERSION/gems to GEM_PATH for dynamic plugin loading [#1963](https://github.com/chef/ohai/pull/1963) ([sanghinitin](https://github.com/sanghinitin))
+- Bump actions/checkout from 6 to 7 [#1957](https://github.com/chef/ohai/pull/1957) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- Fix Encoding::CompatibilityError in hostnamectl plugin [#1964](https://github.com/chef/ohai/pull/1964) ([slac-chef-ci-cd](https://github.com/slac-chef-ci-cd))
+- fix: Revert ffi-yajl constraint to &lt; 4.0 now that 3.x has the allocator fix [#1971](https://github.com/chef/ohai/pull/1971) ([nikhil2611](https://github.com/nikhil2611))
+- Fix binstub_patch.rb/NOTICE path resolution on aarch64-linux builds [#1970](https://github.com/chef/ohai/pull/1970) ([sanjain-progress](https://github.com/sanjain-progress))
+- CHEF-38086 - fix: rename cleanup_lint_roller to cleanup_gem_lockfiles and fix rdoc CVE false positive [#1972](https://github.com/chef/ohai/pull/1972) ([nikhil2611](https://github.com/nikhil2611))
+- Update ffi-yajl requirement from &gt;= 2.2, &lt; 3.0 to &gt;= 2.2, &lt; 4.0 [#1958](https://github.com/chef/ohai/pull/1958) ([dependabot[bot]](https://github.com/dependabot[bot]))
+- docs: add red-green TDD workflow guidance to Copilot instructions [#1967](https://github.com/chef/ohai/pull/1967) ([tpowell-progress](https://github.com/tpowell-progress))
+- Support platform-selected target plugins [#1973](https://github.com/chef/ohai/pull/1973) ([tpowell-progress](https://github.com/tpowell-progress))
+- Fix Windows habitat test pipeline: install hab from stable channel [#1975](https://github.com/chef/ohai/pull/1975) ([nikhil2611](https://github.com/nikhil2611))
+- update NOTICE file [#1978](https://github.com/chef/ohai/pull/1978) ([sanjain-progress](https://github.com/sanjain-progress))
+<!-- latest_stable_release -->
+
 ## [v19.1.40](https://github.com/chef/ohai/tree/v19.1.40) (2026-06-24)
 
 #### Merged Pull Requests
 - Bump actions/checkout from 6 to 7 [#1954](https://github.com/chef/ohai/pull/1954) ([dependabot[bot]](https://github.com/dependabot[bot]))
 - fix: Constrain ffi-yajl to &lt; 3.0 for Ruby 3.2+ compatibility [#1955](https://github.com/chef/ohai/pull/1955) ([nikhil2611](https://github.com/nikhil2611))
 - docs: update NOTICE file [#1959](https://github.com/chef/ohai/pull/1959) ([nikhil2611](https://github.com/nikhil2611))
-<!-- latest_stable_release -->
 
 ## [v19.1.37](https://github.com/chef/ohai/tree/v19.1.37) (2026-06-18)
 

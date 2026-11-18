@@ -193,6 +193,21 @@ describe Ohai::System, "FreeBSD Network Plugin" do
       expect(@plugin["network"]["interfaces"]["lo0"]["addresses"]["::1"]["family"]).to eq("inet6")
     end
 
+    it "detects the scope of the ipv6 addresses" do
+      interfaces = @plugin["network"]["interfaces"]
+      expect(interfaces["vtnet0"]["addresses"]["2605:bc80:3010:506:f816:3eff:feba:3e25"]["scope"]).to eq("Global")
+      expect(interfaces["vtnet0"]["addresses"]["fe80::f816:3eff:feba:3e25"]["scope"]).to eq("Link")
+      expect(interfaces["lo0"]["addresses"]["::1"]["scope"]).to eq("Node")
+      expect(interfaces["lo0"]["addresses"]["fe80::1"]["scope"]).to eq("Link")
+    end
+
+    it "lets the network plugin pick the global ipv6 address rather than ::1" do
+      network = get_plugin("network")
+      network["network"] = @plugin["network"]
+      network.run
+      expect(network["ip6address"]).to eq("2605:bc80:3010:506:f816:3eff:feba:3e25")
+    end
+
     # on FreeBSD, no encapsulation is reported for loopback
     it "detects the flags of the loopback interface" do
       expect(@plugin["network"]["interfaces"]["lo0"]["flags"].sort).to eq(%w{LOOPBACK LOWER_UP MULTICAST RUNNING UP})

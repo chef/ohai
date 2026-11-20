@@ -1,9 +1,17 @@
 # Change Log
 
-<!-- latest_release -->
+<!-- latest_release 19.1.54 -->
+## [v19.1.54](https://github.com/chef/ohai/tree/v19.1.54) (2026-11-20)
+
+#### Merged Pull Requests
+- Collect PowerShell version data from one powershell.exe run [#1980](https://github.com/chef/ohai/pull/1980) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
-<!-- release_rollup -->
+<!-- release_rollup since=19.1.53 -->
+### Changes not yet released to rubygems.org
+
+#### Merged Pull Requests
+- Collect PowerShell version data from one powershell.exe run [#1980](https://github.com/chef/ohai/pull/1980) ([tas50](https://github.com/tas50)) <!-- 19.1.54 -->
 <!-- release_rollup -->
 
 <!-- latest_stable_release -->

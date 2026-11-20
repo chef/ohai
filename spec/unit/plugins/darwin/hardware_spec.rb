@@ -17,6 +17,7 @@
 #
 
 require "spec_helper"
+require "plist"
 require_relative "hardware_system_profiler_output"
 
 describe Ohai::System, "Darwin hardware plugin", :unix_only do
@@ -25,10 +26,14 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
   before do
     allow(plugin).to receive(:collect_os).and_return(:darwin)
     # Make sure it always runs correct commands and mock the data as it calls them
+    # One system_profiler run returns every requested data type in one array
+    combined = %w{HARDWARE STORAGE POWER}.flat_map do |name|
+      Plist.parse_xml(HardwareSystemProfilerOutput.const_get(name))
+    end
     allow(plugin).to receive(:shell_out).with(
-      "system_profiler SPHardwareDataType -xml"
+      "system_profiler SPHardwareDataType SPStorageDataType SPPowerDataType -xml"
     ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::HARDWARE, "")
+      mock_shell_out(0, combined.to_plist, "")
     )
 
     allow(plugin).to receive(:shell_out).with(
@@ -42,18 +47,11 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     ).and_return(
       mock_shell_out(0, "x86_64", "")
     )
+  end
 
-    allow(plugin).to receive(:shell_out).with(
-      "system_profiler SPStorageDataType -xml"
-    ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::STORAGE, "")
-    )
-
-    allow(plugin).to receive(:shell_out).with(
-      "system_profiler SPPowerDataType -xml"
-    ).and_return(
-      mock_shell_out(0, HardwareSystemProfilerOutput::POWER, "")
-    )
+  it "runs system_profiler once for all data types" do
+    plugin.run
+    expect(plugin).to have_received(:shell_out).with(/\Asystem_profiler /).once
   end
 
   it "parses hardware data correctly" do

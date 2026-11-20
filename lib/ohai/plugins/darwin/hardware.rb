@@ -20,11 +20,14 @@
 Ohai.plugin(:Hardware) do
   provides "hardware"
 
-  def system_profiler(datatype)
-    sp_cmd = "system_profiler #{datatype} -xml"
-    # Hardware queries
-    sp_std = shell_out(sp_cmd)
-    Plist.parse_xml(sp_std.stdout)
+  # Query several data types from one system_profiler process. Each run has
+  # a fixed startup cost of a few hundred milliseconds, so one call for all
+  # of them is much faster than one call per type.
+  #
+  # @return [Hash] the "_items" of each data type, keyed by data type
+  def system_profiler(*datatypes)
+    sp_std = shell_out("system_profiler #{datatypes.join(" ")} -xml")
+    Plist.parse_xml(sp_std.stdout).to_h { |entry| [entry["_dataType"], entry["_items"]] }
   end
 
   collect_data(:darwin) do
@@ -37,9 +40,11 @@ Ohai.plugin(:Hardware) do
 
     require "plist"
 
-    hw_hash = system_profiler("SPHardwareDataType")
-    hw_hash[0]["_items"][0].delete("_name")
-    hardware.merge!(hw_hash[0]["_items"][0])
+    profile = system_profiler("SPHardwareDataType", "SPStorageDataType", "SPPowerDataType")
+
+    hw_items = profile["SPHardwareDataType"][0]
+    hw_items.delete("_name")
+    hardware.merge!(hw_items)
 
     # ProductName:	Mac OS X
     # ProductVersion:	10.15.6
@@ -59,8 +64,7 @@ Ohai.plugin(:Hardware) do
 
     # Storage queries
     storage = []
-    storage_hash = system_profiler("SPStorageDataType")
-    drives = storage_hash[0]["_items"]
+    drives = profile["SPStorageDataType"]
     drives.each do |drive_entry|
       drive = Mash.new
       drive[:name] = drive_entry["_name"]
@@ -77,8 +81,7 @@ Ohai.plugin(:Hardware) do
     hardware["storage"] = storage
 
     # Battery queries
-    battery_hash = system_profiler("SPPowerDataType")
-    power_entries = battery_hash[0]["_items"]
+    power_entries = profile["SPPowerDataType"]
     battery = Mash.new
     power_entries.each do |entry|
       if entry.value?("spbattery_information")

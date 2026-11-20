@@ -41,8 +41,11 @@ Ohai.plugin(:Hostname) do
   # hostname and machinename should always exist
   # fqdn and domain may be broken if DNS is broken on the host
 
+  # Each collect_data block reads "hostname" more than once (resolve_fqdn
+  # reads it again), so run each command once per plugin run.
   def from_cmd(cmd)
-    shell_out(cmd).stdout.strip
+    @from_cmd ||= {}
+    @from_cmd[cmd] ||= shell_out(cmd).stdout.strip
   end
 
   # forward and reverse lookup to canonicalize FQDN (hostname -f equivalent)

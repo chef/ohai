@@ -90,6 +90,23 @@ describe Ohai::System, "hostname plugin" do
       expect(@plugin[:fqdn]).to eq("katie.local")
     end
   end
+
+  context "on linux" do
+    before do
+      allow(@plugin).to receive(:collect_os).and_return(:linux)
+      allow(@plugin).to receive(:canonicalize_hostname).with("katie.local").and_return("katie.example.com")
+    end
+
+    it "runs each hostname command once" do
+      expect(@plugin).to receive(:shell_out).with("hostname").once.and_return(mock_shell_out(0, "katie.local", ""))
+      expect(@plugin).to receive(:shell_out).with("hostname -s").once.and_return(mock_shell_out(0, "katie", ""))
+      @plugin.run
+      expect(@plugin[:machinename]).to eq("katie.local")
+      expect(@plugin[:hostname]).to eq("katie")
+      expect(@plugin[:fqdn]).to eq("katie.example.com")
+      expect(@plugin[:domain]).to eq("example.com")
+    end
+  end
 end
 
 describe Ohai::System, "hostname plugin for windows", :windows_only do

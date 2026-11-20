@@ -30,12 +30,24 @@ Ohai.plugin(:Kernel) do
   # @return [Mash] basic kernel properties from uname
   def init_kernel
     kernel Mash.new
-    [["uname -s", :name], ["uname -r", :release],
-     ["uname -v", :version], ["uname -m", :machine],
-     ["uname -p", :processor]].each do |cmd, property|
-       so = shell_out(cmd)
-       kernel[property] = so.stdout.strip
-     end
+    if target_mode?
+      # shell_out runs on the target, so ask its uname
+      [["uname -s", :name], ["uname -r", :release],
+       ["uname -v", :version], ["uname -m", :machine]].each do |cmd, property|
+         kernel[property] = shell_out(cmd).stdout.strip
+       end
+    else
+      # uname -s/-r/-v/-m print the uname(2) fields that Etc.uname returns,
+      # so read them without starting four processes
+      require "etc" unless defined?(Etc)
+      uname = Etc.uname
+      kernel[:name] = uname[:sysname]
+      kernel[:release] = uname[:release]
+      kernel[:version] = uname[:version]
+      kernel[:machine] = uname[:machine]
+    end
+    # uname -p is not part of uname(2) and differs between implementations
+    kernel[:processor] = shell_out("uname -p").stdout.strip
     kernel
   end
 

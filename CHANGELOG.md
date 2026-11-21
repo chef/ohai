@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.55 -->
-## [v19.1.55](https://github.com/chef/ohai/tree/v19.1.55) (2026-11-20)
+<!-- latest_release 19.1.56 -->
+## [v19.1.56](https://github.com/chef/ohai/tree/v19.1.56) (2026-11-21)
 
 #### Merged Pull Requests
-- Run each hostname command once per hostname plugin run [#1982](https://github.com/chef/ohai/pull/1982) ([tas50](https://github.com/tas50))
+- Query only the Win32_Processor properties the CPU plugin uses [#1984](https://github.com/chef/ohai/pull/1984) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.53 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Query only the Win32_Processor properties the CPU plugin uses [#1984](https://github.com/chef/ohai/pull/1984) ([tas50](https://github.com/tas50)) <!-- 19.1.56 -->
 - Run each hostname command once per hostname plugin run [#1982](https://github.com/chef/ohai/pull/1982) ([tas50](https://github.com/tas50)) <!-- 19.1.55 -->
 - Collect PowerShell version data from one powershell.exe run [#1980](https://github.com/chef/ohai/pull/1980) ([tas50](https://github.com/tas50)) <!-- 19.1.54 -->
 <!-- release_rollup -->

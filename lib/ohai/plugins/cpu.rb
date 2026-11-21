@@ -610,7 +610,13 @@ Ohai.plugin(:CPU) do
     logical_processors = 0
 
     wmi = WmiLite::Wmi.new
-    processors = wmi.instances_of("Win32_Processor")
+    # Ask only for the properties used below. Without a property list WMI also
+    # computes LoadPercentage, which samples CPU load for about a second.
+    properties = %w{
+      Description DeviceID Family L2CacheSize Manufacturer MaxClockSpeed Name
+      NumberOfCores NumberOfLogicalProcessors Revision Stepping
+    }
+    processors = wmi.query("SELECT #{properties.join(", ")} FROM Win32_Processor")
 
     processors.each_with_index do |processor, index|
       current_cpu = index.to_s

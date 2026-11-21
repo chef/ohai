@@ -93,11 +93,21 @@ describe Ohai::System, "Windows cpu plugin" do
 
     allow(WmiLite::Wmi).to receive(:new).and_return(@double_wmi_instance)
 
-    allow(@double_wmi_instance).to receive(:instances_of)
-      .with("Win32_Processor")
-      .and_return(@processors)
+    allow(@double_wmi_instance).to receive(:query) do |wql|
+      @wql = wql
+      @processors
+    end
 
     @plugin.run
+  end
+
+  it "asks WMI only for the Win32_Processor properties it uses" do
+    expect(@wql).to match(/\ASELECT .+ FROM Win32_Processor\z/)
+    expect(@wql).not_to include("*")
+    expect(@wql).not_to match(/LoadPercentage/i)
+    properties = %w{numberofcores numberoflogicalprocessors manufacturer family revision
+                    stepping description deviceid name maxclockspeed l2cachesize}
+    properties.each { |property| expect(@wql.downcase).to include(property) }
   end
 
   it "sets total cpu to 2" do

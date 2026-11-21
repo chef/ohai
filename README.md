@@ -1,6 +1,6 @@
 # ohai
 
-[![Build status](https://badge.buildkite.com/aa0b961fc3e5bed315c7035c6d60a4aaee57af9610cbde9a15.svg?branch=main)](https://buildkite.com/chef-oss/chef-ohai-main-verify) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
+[![Build status](https://github.com/chef/ohai/actions/workflows/unit.yml/badge.svg?branch=main)](https://github.com/chef/ohai/actions/workflows/unit.yml?query=branch%3Amain) [![Gem Version](https://badge.fury.io/rb/ohai.svg)](https://badge.fury.io/rb/ohai)
 
 ## Description
 

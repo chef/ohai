@@ -115,6 +115,7 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:softlayer] = nil
       @plugin[:oci] = nil
       @plugin[:scaleway] = nil
+      @plugin[:hetzner] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
     end
@@ -206,6 +207,47 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("alibaba")
+    end
+  end
+
+  describe "with Hetzner mash" do
+    before do
+      @plugin[:hetzner] = Mash.new(
+        "hostname" => "web-1",
+        "instance_id" => 4242,
+        "local_ipv4" => "",
+        "public_ipv4" => "203.0.113.10",
+        "network_config" => {
+          "version" => 1,
+          "config" => [
+            { "type" => "physical", "name" => "eth0", "subnets" => [
+              { "type" => "dhcp", "ipv4" => true },
+              { "type" => "static", "ipv6" => true, "address" => "2001:db8:1:2::1/64", "gateway" => "fe80::1" },
+            ] },
+          ],
+        },
+        "private_networks" => [
+          { "ip" => "10.0.0.2", "alias_ips" => ["10.0.0.3"], "interface_num" => 1, "network_id" => 7 },
+        ]
+      )
+    end
+
+    it "populates cloud values" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("hetzner")
+      expect(@plugin[:cloud][:public_ipv4]).to eq("203.0.113.10")
+      expect(@plugin[:cloud][:public_ipv6]).to eq("2001:db8:1:2::1")
+      expect(@plugin[:cloud][:local_ipv4_addrs]).to eq(["10.0.0.2", "10.0.0.3"])
+      expect(@plugin[:cloud][:local_hostname]).to eq("web-1")
+    end
+
+    it "populates cloud values for an IPv6-only server without private networks" do
+      @plugin[:hetzner]["public_ipv4"] = nil
+      @plugin[:hetzner]["private_networks"] = []
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("hetzner")
+      expect(@plugin[:cloud][:public_ipv4]).to be_nil
+      expect(@plugin[:cloud][:public_ipv6]).to eq("2001:db8:1:2::1")
     end
   end
 

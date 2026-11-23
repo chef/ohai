@@ -29,6 +29,7 @@ Ohai.plugin(:Cloud) do
   depends "digital_ocean"
   depends "softlayer"
   depends "oci"
+  depends "scaleway"
 
   # Class to help enforce the interface exposed to node[:cloud] (OHAI-542)
   #
@@ -55,9 +56,8 @@ Ohai.plugin(:Cloud) do
     end
 
     def add_ipv4_addr(ip, accessibility)
-      return if ip.nil? # just skip if ip is nil
-
       ipaddr = validate_ip_addr(ip, :ipv4)
+      return if ipaddr.nil?
 
       case accessibility
       when :public
@@ -72,11 +72,8 @@ Ohai.plugin(:Cloud) do
     end
 
     def add_ipv6_addr(ip, accessibility)
-      return if ip.nil? # just skip if ip is nil
-
       ipaddr = validate_ip_addr(ip, :ipv6)
-
-      raise "ERROR: invalid ipv6 address of '#{ip}' detected. " unless ipaddr.ipv6?
+      return if ipaddr.nil?
 
       case accessibility
       when :public
@@ -108,15 +105,19 @@ Ohai.plugin(:Cloud) do
 
     private
 
+    # Returns the parsed address, or nil for a blank or invalid one. Metadata
+    # services return empty strings for addresses that aren't assigned, and one
+    # bad value shouldn't cost the node its whole cloud attribute.
     def validate_ip_addr(ip, address_family = :ipv4)
-      ipaddr = ""
-      begin
-        ipaddr = IPAddr.new(ip)
-        raise ArgumentError, "not valid #{address_family} address" unless address_family == :ipv4 ? ipaddr.ipv4? : ipaddr.ipv6?
-      rescue ArgumentError => e
-        raise "ERROR: the ohai 'cloud' plugin failed with an IP address of '#{ip}' : #{e.message}"
-      end
+      return nil if ip.nil? || ip.to_s.strip.empty?
+
+      ipaddr = IPAddr.new(ip.to_s.strip)
+      raise ArgumentError, "not a valid #{address_family} address" unless address_family == :ipv4 ? ipaddr.ipv4? : ipaddr.ipv6?
+
       ipaddr
+    rescue ArgumentError => e
+      Ohai::Log.warn("Plugin Cloud: Ignoring IP address '#{ip}': #{e.message}")
+      nil
     end
   end
 
@@ -129,9 +130,12 @@ Ohai.plugin(:Cloud) do
   end
 
   def get_alibaba_values
-    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["eipv4"], :public)
-    @cloud_attr_obj.add_ipv4_addr(alibaba["meta_data"]["private_ipv4"], :private)
-    @cloud_attr_obj.local_hostname = alibaba["meta_data"]["hostname"]
+    meta_data = alibaba["meta_data"] || {}
+    # eipv4 is only set when an Elastic IP is bound; otherwise the instance's
+    # own public address is in public_ipv4
+    @cloud_attr_obj.add_ipv4_addr(meta_data["eipv4"] || meta_data["public_ipv4"], :public)
+    @cloud_attr_obj.add_ipv4_addr(meta_data["private_ipv4"], :private)
+    @cloud_attr_obj.local_hostname = meta_data["hostname"]
     @cloud_attr_obj.provider = "alibaba"
   end
 
@@ -144,19 +148,14 @@ Ohai.plugin(:Cloud) do
   end
 
   def get_gce_values
-    public_ips = gce["instance"]["networkInterfaces"].collect do |interface|
-      if interface.key?("accessConfigs")
-        interface["accessConfigs"].collect { |ac| ac["externalIp"] unless ac["externalIp"] == "" }
-      end
-    end.flatten.compact
+    instance = gce["instance"] || {}
+    interfaces = Array(instance["networkInterfaces"])
 
-    private_ips = gce["instance"]["networkInterfaces"].filter_map do |interface|
-      interface["ip"]
+    interfaces.each do |interface|
+      Array(interface["accessConfigs"]).each { |ac| @cloud_attr_obj.add_ipv4_addr(ac["externalIp"], :public) }
     end
-
-    public_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
-    private_ips.each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
-    @cloud_attr_obj.local_hostname = gce["instance"]["hostname"]
+    interfaces.each { |interface| @cloud_attr_obj.add_ipv4_addr(interface["ip"], :private) }
+    @cloud_attr_obj.local_hostname = instance["hostname"]
     @cloud_attr_obj.provider = "gce"
   end
 
@@ -313,6 +312,7 @@ Ohai.plugin(:Cloud) do
     @cloud_attr_obj.add_ipv4_addr(digital_ocean["interfaces"]["private"][0]["ipv4"]["ip_address"], :private) rescue NoMethodError
     @cloud_attr_obj.add_ipv6_addr(digital_ocean["interfaces"]["public"][0]["ipv6"]["ip_address"], :public) rescue NoMethodError
     @cloud_attr_obj.add_ipv6_addr(digital_ocean["interfaces"]["private"][0]["ipv6"]["ip_address"], :private) rescue NoMethodError
+    @cloud_attr_obj.local_hostname = digital_ocean["hostname"]
     @cloud_attr_obj.provider = "digital_ocean"
   end
 
@@ -352,9 +352,40 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with OCI values
   def oci_values
-    oci["metadata"]["network"]["interface"].each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic["privateIp"], :private) }
-    @cloud_attr_obj.local_hostname = oci["metadata"]["compute"]["hostname"]
+    Array(oci.dig("metadata", "network", "interface")).each { |vnic| @cloud_attr_obj.add_ipv4_addr(vnic["privateIp"], :private) }
+    @cloud_attr_obj.local_hostname = oci.dig("metadata", "compute", "hostname")
     @cloud_attr_obj.provider = "oci"
+  end
+
+  # ----------------------------------------
+  # scaleway
+  # ----------------------------------------
+
+  # Is current cloud scaleway?
+  #
+  # === Return
+  # true:: If scaleway Hash is defined
+  # false:: Otherwise
+  def on_scaleway?
+    scaleway != nil
+  end
+
+  # Fill cloud hash with scaleway values
+  def get_scaleway_values
+    @cloud_attr_obj.add_ipv4_addr(scaleway.dig("public_ip", "address"), :public)
+    @cloud_attr_obj.add_ipv4_addr(scaleway["private_ip"], :private)
+    @cloud_attr_obj.add_ipv6_addr(scaleway.dig("ipv6", "address"), :public)
+    @cloud_attr_obj.local_hostname = scaleway["hostname"]
+    @cloud_attr_obj.provider = "scaleway"
+  end
+
+  # Runs one provider's getter. Provider data comes from metadata services
+  # that can return partial or unexpected data, and an exception here would
+  # otherwise drop the whole cloud attribute, including other providers' data.
+  def collect_provider_values(provider)
+    yield
+  rescue => e
+    logger.warn("Plugin Cloud: Unable to collect #{provider} values: #{e.class}: #{e.message}")
   end
 
   collect_data do
@@ -362,17 +393,18 @@ Ohai.plugin(:Cloud) do
 
     @cloud_attr_obj = CloudAttrs.new
 
-    get_gce_values if on_gce?
-    get_ec2_values if on_ec2?
-    get_rackspace_values if on_rackspace?
-    get_linode_values if on_linode?
-    get_eucalyptus_values if on_eucalyptus?
-    get_openstack_values if on_openstack?
-    get_azure_values if on_azure?
-    get_digital_ocean_values if on_digital_ocean?
-    get_softlayer_values if on_softlayer?
-    get_alibaba_values if on_alibaba?
-    oci_values if on_oci?
+    collect_provider_values("gce") { get_gce_values } if on_gce?
+    collect_provider_values("ec2") { get_ec2_values } if on_ec2?
+    collect_provider_values("rackspace") { get_rackspace_values } if on_rackspace?
+    collect_provider_values("linode") { get_linode_values } if on_linode?
+    collect_provider_values("eucalyptus") { get_eucalyptus_values } if on_eucalyptus?
+    collect_provider_values("openstack") { get_openstack_values } if on_openstack?
+    collect_provider_values("azure") { get_azure_values } if on_azure?
+    collect_provider_values("digital_ocean") { get_digital_ocean_values } if on_digital_ocean?
+    collect_provider_values("softlayer") { get_softlayer_values } if on_softlayer?
+    collect_provider_values("alibaba") { get_alibaba_values } if on_alibaba?
+    collect_provider_values("oci") { oci_values } if on_oci?
+    collect_provider_values("scaleway") { get_scaleway_values } if on_scaleway?
 
     cloud @cloud_attr_obj.cloud_mash
   end

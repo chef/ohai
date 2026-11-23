@@ -61,7 +61,8 @@ Ohai.plugin(:Alibaba) do
     if looks_like_alibaba?
       logger.trace("Plugin Alibaba: looks_like_alibaba? == true")
       alibaba Mash.new
-      fetch_metadata.each do |k, v|
+      # fetch_metadata returns nil when the metadata server answers with an error
+      (fetch_metadata || {}).each do |k, v|
         alibaba[k] = v
       end
     else

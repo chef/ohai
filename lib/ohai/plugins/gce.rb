@@ -80,7 +80,8 @@ Ohai.plugin(:GCE) do
     if looks_like_gce?
       logger.trace("Plugin GCE: looks_like_gce? == true")
       gce Mash.new
-      fetch_metadata.each { |k, v| gce[k] = v }
+      # fetch_metadata returns nil when the metadata server answers with an error
+      (fetch_metadata || {}).each { |k, v| gce[k] = v }
     else
       logger.trace("Plugin GCE: looks_like_gce? == false")
       false

@@ -62,6 +62,18 @@ describe Ohai::System, "plugin gce" do
 
   end
 
+  describe "with hint file and a metadata server error" do
+    before do
+      allow(plugin).to receive(:hint?).with("gce").and_return({})
+      allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", body: "", code: "503"))
+    end
+
+    it "sets an empty gce attribute without raising" do
+      plugin.run
+      expect(plugin[:gce]).to eq({})
+    end
+  end
+
   describe "without hint file and without metadata connection" do
     before do
       allow(plugin).to receive(:hint?).with("gce").and_return(false)

@@ -20,13 +20,41 @@ Ohai.plugin(:ShardSeed) do
   depends "hostname", "dmi", "machine_id", "machinename", "fips", "hardware", "kernel"
   provides "shard_seed".freeze
 
+  # sysfs files holding the same strings as dmidecode's system, base_board
+  # and chassis sections, in the order get_dmi_property checks them
+  def dmi_sysfs_files(thing)
+    case thing
+    when :serial_number then %w{product_serial board_serial chassis_serial}
+    when :uuid then %w{product_uuid}
+    else []
+    end
+  end
+
   def get_dmi_property(dmi, thing)
     %w{system base_board chassis}.each do |section|
       if dmi[section] && dmi[section][thing] && !dmi[section][thing].strip.empty?
         return dmi[section][thing]
       end
     end
-    Ohai::Log.error("shard_seed: Failed to get dmi property #{thing}: is dmidecode installed?")
+
+    # The dmi attribute comes from dmidecode, which isn't installed on many
+    # minimal and cloud images. The kernel exposes the same strings in sysfs
+    # (product_serial and product_uuid are readable by root only).
+    dmi_sysfs_files(thing).each do |name|
+      path = "/sys/class/dmi/id/#{name}"
+      next unless file_exist?(path)
+
+      value = begin
+                file_read(path).strip
+              rescue SystemCallError
+                ""
+              end
+      return value unless value.empty?
+    end
+
+    # Devices without DMI at all (many ARM boards) can never provide this
+    # source, so this is expected there rather than an error on every run.
+    logger.debug("shard_seed: Failed to get dmi property #{thing} from dmidecode or /sys/class/dmi/id. Set Ohai.config[:plugin][:shard_seed][:sources] to sources this system has.")
     raise "Failed to generate shard_seed"
   end
 

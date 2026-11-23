@@ -2923,4 +2923,104 @@ describe Ohai::System, "Solaris2.X cpu plugin" do
       end
     end
   end
+
+  # Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex with 1 OCPU: one core
+  # with two threads of an AMD EPYC host, under KVM
+  describe "on an x86 KVM guest" do
+    let(:kstat_cpu_info) do
+      [
+        "cpu_info:0:cpu_info0:apicid\t0",
+        "cpu_info:0:cpu_info0:brand\tAMD EPYC 9J14 96-Core Processor",
+        "cpu_info:0:cpu_info0:cache_id\t0",
+        "cpu_info:0:cpu_info0:chip_id\t0",
+        "cpu_info:0:cpu_info0:class\tmisc",
+        "cpu_info:0:cpu_info0:clock_MHz\t2595",
+        "cpu_info:0:cpu_info0:clog_id\t0",
+        "cpu_info:0:cpu_info0:core_id\t0",
+        "cpu_info:0:cpu_info0:cpu_type\ti386",
+        "cpu_info:0:cpu_info0:crtime\t25.54127529",
+        "cpu_info:0:cpu_info0:cstates_count\t592574:592575",
+        "cpu_info:0:cpu_info0:cstates_nsec\t758103822564:216548933848",
+        "cpu_info:0:cpu_info0:current_clock_Hz\t2595142050",
+        "cpu_info:0:cpu_info0:current_cstate\t0",
+        "cpu_info:0:cpu_info0:current_pstate\t0",
+        "cpu_info:0:cpu_info0:family\t25",
+        "cpu_info:0:cpu_info0:fpu_type\ti387 compatible",
+        "cpu_info:0:cpu_info0:implementation\tx86 (chipid 0x0 AuthenticAMD A10F11 family 25 model 17 step 1 clock 2600 MHz)",
+        "cpu_info:0:cpu_info0:lgroup_id\t0",
+        "cpu_info:0:cpu_info0:max_ncpu_per_chip\t2",
+        "cpu_info:0:cpu_info0:max_ncpu_per_core\t2",
+        "cpu_info:0:cpu_info0:max_pwrcap\t0",
+        "cpu_info:0:cpu_info0:model\t17",
+        "cpu_info:0:cpu_info0:ncore_per_chip\t1",
+        "cpu_info:0:cpu_info0:ncpu_per_chip\t2",
+        "cpu_info:0:cpu_info0:pg_id\t1",
+        "cpu_info:0:cpu_info0:pkg_core_id\t0",
+        "cpu_info:0:cpu_info0:pstates_count\tnull",
+        "cpu_info:0:cpu_info0:pstates_nsec\tnull",
+        "cpu_info:0:cpu_info0:snaptime\t949.132293551",
+        "cpu_info:0:cpu_info0:socket_type\tUnknown",
+        "cpu_info:0:cpu_info0:state\ton-line",
+        "cpu_info:0:cpu_info0:state_begin\t1795474358",
+        "cpu_info:0:cpu_info0:stepping\t1",
+        "cpu_info:0:cpu_info0:supported_frequencies_Hz\t2595142050",
+        "cpu_info:0:cpu_info0:supported_max_cstates\t1",
+        "cpu_info:0:cpu_info0:supported_max_pstates\t0",
+        "cpu_info:0:cpu_info0:vendor_id\tAuthenticAMD",
+        "cpu_info:1:cpu_info1:apicid\t1",
+        "cpu_info:1:cpu_info1:brand\tAMD EPYC 9J14 96-Core Processor",
+        "cpu_info:1:cpu_info1:cache_id\t0",
+        "cpu_info:1:cpu_info1:chip_id\t0",
+        "cpu_info:1:cpu_info1:class\tmisc",
+        "cpu_info:1:cpu_info1:clock_MHz\t2595",
+        "cpu_info:1:cpu_info1:clog_id\t1",
+        "cpu_info:1:cpu_info1:core_id\t0",
+        "cpu_info:1:cpu_info1:cpu_type\ti386",
+        "cpu_info:1:cpu_info1:crtime\t25.578313593",
+        "cpu_info:1:cpu_info1:cstates_count\t444899:444901",
+        "cpu_info:1:cpu_info1:cstates_nsec\t777681577210:197049017348",
+        "cpu_info:1:cpu_info1:current_clock_Hz\t2595142050",
+        "cpu_info:1:cpu_info1:current_cstate\t1",
+        "cpu_info:1:cpu_info1:current_pstate\t0",
+        "cpu_info:1:cpu_info1:family\t25",
+        "cpu_info:1:cpu_info1:fpu_type\ti387 compatible",
+        "cpu_info:1:cpu_info1:implementation\tx86 (chipid 0x0 AuthenticAMD A10F11 family 25 model 17 step 1 clock 2600 MHz)",
+        "cpu_info:1:cpu_info1:lgroup_id\t0",
+        "cpu_info:1:cpu_info1:max_ncpu_per_chip\t2",
+        "cpu_info:1:cpu_info1:max_ncpu_per_core\t2",
+        "cpu_info:1:cpu_info1:max_pwrcap\t0",
+        "cpu_info:1:cpu_info1:model\t17",
+        "cpu_info:1:cpu_info1:ncore_per_chip\t1",
+        "cpu_info:1:cpu_info1:ncpu_per_chip\t2",
+        "cpu_info:1:cpu_info1:pg_id\t1",
+        "cpu_info:1:cpu_info1:pkg_core_id\t0",
+        "cpu_info:1:cpu_info1:pstates_count\tnull",
+        "cpu_info:1:cpu_info1:pstates_nsec\tnull",
+        "cpu_info:1:cpu_info1:snaptime\t949.13251744",
+        "cpu_info:1:cpu_info1:socket_type\tUnknown",
+        "cpu_info:1:cpu_info1:state\ton-line",
+        "cpu_info:1:cpu_info1:state_begin\t1795474358",
+        "cpu_info:1:cpu_info1:stepping\t1",
+        "cpu_info:1:cpu_info1:supported_frequencies_Hz\t2595142050",
+        "cpu_info:1:cpu_info1:supported_max_cstates\t1",
+        "cpu_info:1:cpu_info1:supported_max_pstates\t0",
+        "cpu_info:1:cpu_info1:vendor_id\tAuthenticAMD",
+      ].join("\n") + "\n"
+    end
+
+    before do
+      allow(@plugin).to receive(:shell_out).with("kstat -p cpu_info").and_return(mock_shell_out(0, kstat_cpu_info, ""))
+      @plugin.run
+    end
+
+    it "counts one socket with one core and two threads" do
+      expect(@plugin[:cpu]).to include(total: 2, real: 1, cores: 1, corethreads: 2, sockets: 1)
+      expect(@plugin[:cpu][:cpustates]).to eq("on-line" => 2)
+    end
+
+    it "reads each virtual processor" do
+      expect(@plugin[:cpu]["1"]).to include(vendor_id: "AuthenticAMD", family: "25", model: "17", stepping: "1",
+        model_name: "AMD EPYC 9J14 96-Core Processor", core_id: "0", socket: "0", mhz: "2595")
+    end
+  end
 end

@@ -42,7 +42,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
 
   context "fetch_metadata" do
     it "raises error if softlayer api query results with error" do
-      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true })
+      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true, :open_timeout= => true, :read_timeout= => true })
       allow(http_mock).to receive(:get).and_raise(StandardError.new("API return fake error"))
       allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
@@ -51,7 +51,7 @@ describe ::Ohai::Mixin::SoftlayerMetadata do
     end
 
     it "query api service" do
-      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true })
+      http_mock = double("http", { :ssl_version= => true, :use_ssl= => true, :ca_file= => true, :open_timeout= => true, :read_timeout= => true })
       allow(::Net::HTTP).to receive(:new).with("api.service.softlayer.com", 443).and_return(http_mock)
 
       expect(http_mock).to receive(:get).with(make_request("getFullyQualifiedDomainName.txt")).and_return(make_res("abc.host.org")).once

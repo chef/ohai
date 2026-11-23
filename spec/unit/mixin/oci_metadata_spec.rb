@@ -35,7 +35,7 @@ describe Ohai::Mixin::OCIMetadata do
     it "gets the passed URI" do
       http_mock = double("http")
       allow(http_mock).to receive(:read_timeout=)
-      allow(Net::HTTP).to receive(:start).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR).and_return(http_mock)
+      allow(Net::HTTP).to receive(:start).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR, 80, nil, open_timeout: 3).and_return(http_mock)
 
       expect(http_mock).to receive(:get).with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR,
         { "Authorization" => "Bearer Oracle",

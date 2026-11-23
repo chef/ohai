@@ -29,7 +29,6 @@ module Ohai
       #
       # @return [Boolean] can we connect?
       def can_socket_connect?(addr, port, timeout = 2)
-        t = Socket.new(Socket::Constants::AF_INET, Socket::Constants::SOCK_STREAM, 0)
         begin
           saddr = Socket.pack_sockaddr_in(port, addr)
         rescue SocketError => e # generally means dns resolution error
@@ -37,24 +36,22 @@ module Ohai
           return false
         end
 
+        # match the socket to the resolved address so IPv6 endpoints work too
+        t = Socket.new(Addrinfo.new(saddr).afamily, Socket::Constants::SOCK_STREAM, 0)
         connected = false
 
         begin
           t.connect_nonblock(saddr)
+          connected = true
         rescue Errno::EINPROGRESS
           _r, w, _e = IO.select(nil, [t], nil, timeout)
-          if !w.nil?
-            connected = true
-          else
-            begin
-              t.connect_nonblock(saddr)
-            rescue Errno::EISCONN
-              t.close
-              connected = true
-            rescue SystemCallError
-            end
-          end
+          # A socket also becomes writable when the connection fails (for
+          # example ECONNREFUSED from a firewall REJECT rule), so check the
+          # socket's error status rather than treating writable as connected.
+          connected = !w.nil? && t.getsockopt(Socket::Constants::SOL_SOCKET, Socket::Constants::SO_ERROR).int == 0
         rescue SystemCallError
+        ensure
+          t.close
         end
         logger.trace("Mixin HttpHelper: can_socket_connect? == #{connected}")
         connected

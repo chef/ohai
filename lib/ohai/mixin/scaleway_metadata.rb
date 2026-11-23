@@ -26,7 +26,10 @@ module Ohai
 
       # @return [Net::HTTP] net/http object without timeout set to 6
       def http_client
-        Net::HTTP.start(SCALEWAY_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
+        # Connect directly: the metadata service is link-local, so the nil proxy
+        # address keeps Net::HTTP from using http_proxy from the environment,
+        # and open_timeout replaces Net::HTTP's 60 second default.
+        Net::HTTP.start(SCALEWAY_METADATA_ADDR, 80, nil, open_timeout: 3).tap { |h| h.read_timeout = 6 }
       end
 
       # fetch scaleway metadata and parse the resulting JSON

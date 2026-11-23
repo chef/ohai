@@ -44,6 +44,9 @@ module Ohai
     module Ec2Metadata
 
       EC2_METADATA_ADDR ||= "169.254.169.254"
+      # Versions Ohai was originally written against. No longer used to filter:
+      # Ohai uses the newest version the metadata service lists, since newer
+      # versions only add categories (AWS recommends always using "latest").
       EC2_SUPPORTED_VERSIONS ||= %w{ 1.0
                                      2007-01-19
                                      2007-03-01
@@ -79,7 +82,7 @@ module Ohai
       EC2_TOKEN_READ_TIMEOUT ||= 2
 
       #
-      # The latest metadata version in EC2_SUPPORTED_VERSIONS that this instance supports
+      # The newest metadata version this instance supports
       # in AWS supported metadata versions are determined at instance start so we need to be
       # cautious here in case an instance has been running for a long time
       #
@@ -95,18 +98,15 @@ module Ohai
           elsif response.code != "200"
             raise "Mixin EC2: Unable to determine EC2 metadata version (returned #{response.code} response)"
           else
-            # NOTE: Sorting the list of versions may have unintended consequences in
-            # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
-            versions = response.body.split("\n").sort
-            until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
-              pv = versions.pop
-              logger.trace("Mixin EC2: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
-            end
-            logger.trace("Mixin EC2: Latest supported EC2 metadata version: #{versions.last}")
+            # Versions are "1.0" or dated ("2021-07-15"), so a string sort
+            # orders them. Ignore "latest" and anything else an EC2-compatible
+            # service (OpenStack, Eucalyptus) might list.
+            versions = response.body.split("\n").map(&:strip).grep(/\A(1\.0|\d{4}-\d{2}-\d{2})\z/).sort
             if versions.empty?
               raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"
             end
 
+            logger.trace("Mixin EC2: Latest EC2 metadata version: #{versions.last}")
             versions.last
           end
         end

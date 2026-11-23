@@ -49,8 +49,16 @@ describe Ohai::Mixin::Ec2Metadata do
       end
     end
 
+    context "with versions newer than Ohai's original list" do
+      let(:response) { double("Net::HTTP Response", body: "2021-03-23\n2021-07-15\n2022-09-24\nlatest", code: "200") }
+
+      it "returns the newest version the service lists" do
+        expect(mixin.best_api_version).to eq("2022-09-24")
+      end
+    end
+
     context "when no supported versions are found" do
-      let(:response) { double("Net::HTTP Response", body: "2020-01-01\nUnsupported", code: "200") }
+      let(:response) { double("Net::HTTP Response", body: "Unsupported\nlatest", code: "200") }
 
       it "raises an error" do
         expect { mixin.best_api_version }.to raise_error(RuntimeError)

@@ -106,15 +106,24 @@ Ohai.plugin(:Network) do
       # regex: https://rubular.com/r/ZiIHbsnfiWPW1p
       if line =~ /^([0-9a-zA-Z\.\:\-]+): \S+ mtu (\d+)(?: index (\d+))?/
         cint = $1
+        mtu = $2
+        index = $3
+        # ifconfig -a lists an interface once per address family, IPv4
+        # first. Keep that stanza's MTU and combine the flags: an interface
+        # whose IPv6 side isn't configured would otherwise lose UP, IPv4
+        # and DHCP to the later IPv6 stanza.
+        first_stanza = !iface.key?(cint)
         iface[cint] ||= Mash.new
-        iface[cint][:mtu] = $2
-        iface[cint][:index] = $3
+        if first_stanza
+          iface[cint][:mtu] = mtu
+          iface[cint][:index] = index
+        end
         if line =~ / flags\=\d+\<((ADDRCONF|ANYCAST|BROADCAST|CoS|DEPRECATED|DHCP|DUPLICATE|FAILED|FIXEDMTU|INACTIVE|L3PROTECT|LOOPBACK|MIP|MULTI_BCAST|MULTICAST|NOARP|NOFAILOVER|NOLOCAL|NONUD|NORTEXCH|NOXMIT|OFFLINE|PHYSRUNNING|POINTOPOINT|PREFERRED|PRIVATE|ROUTER|RUNNING|STANDBY|TEMPORARY|UNNUMBERED|UP|VIRTUAL|XRESOLV|IPv4|IPv6|,)+)\>\s/
           flags = $1.split(",")
         else
           flags = []
         end
-        iface[cint][:flags] = flags.flatten
+        iface[cint][:flags] = first_stanza ? flags.flatten : iface[cint][:flags] | flags.flatten
         if cint =~ /^(\w+)(\d+.*)/
           iface[cint][:type] = $1
           iface[cint][:number] = $2
@@ -129,7 +138,8 @@ Ohai.plugin(:Network) do
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet", "netmask" => hex_to_dec_netmask($2), "broadcast" => $4 }
       end
-      if line =~ %r{\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)/(\d+)\s*$}
+      # an IPv6 stanza without an address shows "inet6 ::/0"
+      if line =~ %r{\s+inet6 ([a-f0-9\:]+)(\s*|(\%[a-z0-9]+)\s*)/(\d+)\s*$} && !($1 == "::" && $4 == "0")
         iface[cint][:addresses] ||= Mash.new
         iface[cint][:addresses][$1] = { "family" => "inet6", "prefixlen" => $4 }
       end

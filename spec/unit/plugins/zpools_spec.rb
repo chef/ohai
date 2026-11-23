@@ -182,6 +182,7 @@ describe Ohai::System, "zpools plugin" do
     before do
       allow(plugin).to receive(:platform_family).and_return("solaris2")
       allow(plugin).to receive(:collect_os).and_return(:solaris2)
+      allow(Process).to receive(:euid).and_return(0)
       allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, zpool_out, ""))
       allow(plugin).to receive(:shell_out).with("su adm -c \"zpool status rpool\"").and_return(mock_shell_out(0, zpool_status_rpool, ""))
       allow(plugin).to receive(:shell_out).with("su adm -c \"zpool status tank\"").and_return(mock_shell_out(0, zpool_status_tank, ""))
@@ -239,6 +240,50 @@ describe Ohai::System, "zpools plugin" do
       plugin.run
       expect(plugin[:zpools][:rpool][:zpool_version]).to match("34")
       expect(plugin[:zpools][:tank][:zpool_version]).to match("34")
+    end
+  end
+
+  # Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex, with the pool and
+  # disk IDs replaced
+  context "when on Solaris 11.4 as a user other than root" do
+    let(:zpool_list) { "rpool\t49.7G\t13.4G\t36.4G\t26%\t1.00x\tONLINE\t53\n" }
+    let(:zpool_status) do
+      <<~EOSR
+            pool: rpool
+              id: 1234567890123456789
+           state: ONLINE
+            scan: none requested
+          config:
+
+        \tNAME                                     STATE      READ WRITE CKSUM
+        \trpool                                    ONLINE        0     0     0
+        \t  c0t600144F0C0FFEE00000000000000ABCDd0  ONLINE        0     0     0
+
+          errors: No known data errors
+      EOSR
+    end
+
+    before do
+      allow(plugin).to receive(:platform_family).and_return("solaris2")
+      allow(plugin).to receive(:collect_os).and_return(:solaris2)
+      allow(Process).to receive(:euid).and_return(1000)
+      allow(plugin).to receive(:shell_out).with("zpool list -H -o name,size,alloc,free,cap,dedup,health,version").and_return(mock_shell_out(0, zpool_list, ""))
+    end
+
+    it "runs zpool status directly, since su would ask for adm's password" do
+      expect(plugin).not_to receive(:shell_out).with(/su adm/)
+      allow(plugin).to receive(:shell_out).with("zpool status rpool").and_return(mock_shell_out(0, zpool_status, ""))
+      plugin.run
+      expect(plugin[:zpools][:rpool][:devices]).to eq(
+        "c0t600144F0C0FFEE00000000000000ABCDd0" => { "state" => "ONLINE", "errors" => { "read" => "0", "write" => "0", "checksum" => "0" } }
+      )
+    end
+
+    it "reads the pool's sizes and health" do
+      allow(plugin).to receive(:shell_out).with("zpool status rpool").and_return(mock_shell_out(0, zpool_status, ""))
+      plugin.run
+      expect(plugin[:zpools][:rpool]).to include(pool_size: "49.7G", pool_allocated: "13.4G", pool_free: "36.4G",
+        capacity_used: "26%", health: "ONLINE", zpool_version: "53")
     end
   end
 end

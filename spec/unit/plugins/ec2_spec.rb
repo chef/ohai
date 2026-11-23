@@ -40,7 +40,7 @@ describe Ohai::System, "plugin ec2" do
 
   shared_examples_for "ec2" do
     before do
-      @http_client = double("Net::HTTP client")
+      @http_client = double("Net::HTTP client", read_timeout: 10, :read_timeout= => nil)
       allow(plugin).to receive(:http_client).and_return(@http_client)
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
@@ -206,6 +206,48 @@ describe Ohai::System, "plugin ec2" do
       expect(plugin[:ec2]).not_to be_nil
       expect(plugin[:ec2]["network_interfaces_macs"]["12:34:56:78:9a:bc"]["public_hostname"]).to eql("server17.opscode.com")
     end # context with common metadata paths
+
+    it "fetches instance tags whose keys contain spaces or '='" do
+      # AWS Systems Manager requires a "Patch Group" tag; tag keys may also contain "="
+      {
+        "/2012-01-12/meta-data/" => "tags/",
+        "/2012-01-12/meta-data/tags/" => "instance/",
+        "/2012-01-12/meta-data/tags/instance/" => "Patch Group\nenv=prod",
+        "/2012-01-12/meta-data/tags/instance/Patch%20Group" => "critical",
+        "/2012-01-12/meta-data/tags/instance/env=prod" => "yes",
+        "/2012-01-12/user-data/" => "By the pricking of my thumb...",
+        "/2012-01-12/dynamic/instance-identity/document/" => "{\"accountId\":\"4815162342\"}",
+      }.each do |path, body|
+        expect(@http_client).to receive(:get)
+          .with(path, @get_req_token_header)
+          .and_return(double("Net::HTTP Response", body: body, code: "200"))
+      end
+
+      plugin.run
+
+      expect(plugin[:ec2]["tags_instance_Patch Group"]).to eq("critical")
+      expect(plugin[:ec2]["tags_instance_env=prod"]).to eq("yes")
+      expect(plugin[:ec2]["account_id"]).to eq("4815162342")
+    end
+
+    it "keeps the rest of the metadata when a directory listing returns 404" do
+      {
+        "/2012-01-12/meta-data/" => ["instance_type\nspot/", "200"],
+        "/2012-01-12/meta-data/instance_type" => ["c1.medium", "200"],
+        "/2012-01-12/meta-data/spot/" => ["", "404"],
+        "/2012-01-12/user-data/" => ["By the pricking of my thumb...", "200"],
+        "/2012-01-12/dynamic/instance-identity/document/" => ["{\"accountId\":\"4815162342\"}", "200"],
+      }.each do |path, (body, code)|
+        expect(@http_client).to receive(:get)
+          .with(path, @get_req_token_header)
+          .and_return(double("Net::HTTP Response", body: body, code: code))
+      end
+
+      plugin.run
+
+      expect(plugin[:ec2]["instance_type"]).to eq("c1.medium")
+      expect(plugin[:ec2]["account_id"]).to eq("4815162342")
+    end
 
     context "with ec2_iam hint file" do
       before do

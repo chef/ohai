@@ -73,6 +73,10 @@ module Ohai
       EC2_ARRAY_VALUES ||= %w{security-groups local_ipv4s}.freeze
       EC2_ARRAY_DIR    ||= %w{network/interfaces/macs}.freeze
       EC2_JSON_DIR     ||= %w{iam}.freeze
+      # IMDS answers transient failures with these; retry them with a backoff
+      EC2_RETRY_CODES  ||= %w{429 500 503}.freeze
+      EC2_MAX_ATTEMPTS ||= 3
+      EC2_TOKEN_READ_TIMEOUT ||= 2
 
       #
       # The latest metadata version in EC2_SUPPORTED_VERSIONS that this instance supports
@@ -87,23 +91,24 @@ module Ohai
           response = http_client.get("/", { 'X-aws-ec2-metadata-token': v2_token })
           if response.code == "404"
             logger.trace("Mixin EC2: Received HTTP 404 from metadata server while determining API version, assuming 'latest'")
-            return "latest"
+            "latest"
           elsif response.code != "200"
             raise "Mixin EC2: Unable to determine EC2 metadata version (returned #{response.code} response)"
-          end
-          # NOTE: Sorting the list of versions may have unintended consequences in
-          # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
-          versions = response.body.split("\n").sort
-          until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
-            pv = versions.pop
-            logger.trace("Mixin EC2: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
-          end
-          logger.trace("Mixin EC2: Latest supported EC2 metadata version: #{versions.last}")
-          if versions.empty?
-            raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"
-          end
+          else
+            # NOTE: Sorting the list of versions may have unintended consequences in
+            # non-EC2 environments. It appears to be safe in EC2 as of 2013-04-12.
+            versions = response.body.split("\n").sort
+            until versions.empty? || EC2_SUPPORTED_VERSIONS.include?(versions.last)
+              pv = versions.pop
+              logger.trace("Mixin EC2: EC2 lists metadata version: #{pv} not yet supported by Ohai") unless pv == "latest"
+            end
+            logger.trace("Mixin EC2: Latest supported EC2 metadata version: #{versions.last}")
+            if versions.empty?
+              raise "Mixin EC2: Unable to determine EC2 metadata version (no supported entries found)"
+            end
 
-          versions.last
+            versions.last
+          end
         end
       end
 
@@ -127,14 +132,36 @@ module Ohai
       # @return [NilClass, String] API token or nil
       #
       def v2_token
-        @v2_token ||= begin
-            request = http_client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "60" })
-            if request.code == "404" # not on AWS
-              nil
-            else
-              request.body
-            end
-          end
+        # memoize nil too: AWS-like services without IMDSv2 (OpenStack) would
+        # otherwise get a token request before every metadata request
+        return @v2_token if defined?(@v2_token)
+
+        @v2_token = fetch_v2_token
+      end
+
+      # Only a 200 response carries a token. Anything else (404 from AWS-like
+      # services, 403 when IMDS is turned off, 400) or a timeout (inside a
+      # container the default hop limit of 1 drops the response) falls back
+      # to IMDSv1 requests without a token.
+      #
+      # @return [NilClass, String] API token or nil
+      def fetch_v2_token
+        client = http_client
+        read_timeout = client.read_timeout
+        client.read_timeout = EC2_TOKEN_READ_TIMEOUT
+        # the token lasts the whole run, so a long metadata walk can't outlive it
+        response = client.put("/latest/api/token", nil, { 'X-aws-ec2-metadata-token-ttl-seconds': "21600" })
+        if response.code == "200"
+          response.body
+        else
+          logger.trace("Mixin EC2: IMDSv2 token request returned #{response.code}; continuing without a token")
+          nil
+        end
+      rescue Timeout::Error, SystemCallError, IOError => e
+        logger.trace("Mixin EC2: IMDSv2 token request failed (#{e.class}); continuing without a token")
+        nil
+      ensure
+        client.read_timeout = read_timeout if client && read_timeout
       end
 
       # Get metadata for a given path and API version
@@ -143,18 +170,39 @@ module Ohai
       # On certain instance types, traversing the provided metadata path
       # produces a 404 for some unknown reason. In that event, return
       # `nil` and continue the run instead of failing it.
+      #
+      # A 401 means the token expired or was rejected, so it is fetched again
+      # once. 429, 500 and 503 are retried with a short backoff. Any other
+      # error skips this one path instead of failing the whole plugin.
       def metadata_get(id, api_version)
-        path = "/#{api_version}/meta-data/#{id}"
-        logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
-        response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
-        case response.code
-        when "200"
-          response.body
-        when "404"
-          logger.trace("Mixin EC2: Encountered 404 response retrieving EC2 metadata path: #{path} ; continuing.")
-          nil
-        else
-          raise "Mixin EC2: Encountered error retrieving EC2 metadata (#{path} returned #{response.code} response)"
+        path = "/#{api_version}/meta-data/#{escape_metadata_path(id)}"
+        token_refreshed = false
+        attempt = 0
+        loop do
+          attempt += 1
+          logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
+          response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
+          case response.code
+          when "200"
+            return response.body
+          when "404"
+            logger.trace("Mixin EC2: Encountered 404 response retrieving EC2 metadata path: #{path} ; continuing.")
+            return nil
+          when "401"
+            unless token_refreshed
+              token_refreshed = true
+              remove_instance_variable(:@v2_token) if defined?(@v2_token)
+              next
+            end
+          when *EC2_RETRY_CODES
+            if attempt < EC2_MAX_ATTEMPTS
+              sleep(0.5 * attempt)
+              next
+            end
+          end
+
+          logger.warn("Mixin EC2: Skipping EC2 metadata path #{path} after a #{response.code} response")
+          return nil
         end
       end
 
@@ -180,7 +228,8 @@ module Ohai
               elsif EC2_JSON_DIR.include?(name)
                 metadata[sym] = fetch_json_dir_metadata(key, best_api_version)
               else
-                fetch_metadata(key, best_api_version).each { |k, v| metadata[k] = v }
+                # a directory listing that returns 404 comes back as nil
+                (fetch_metadata(key, best_api_version) || {}).each { |k, v| metadata[k] = v }
               end
             end
           end
@@ -251,17 +300,22 @@ module Ohai
       private
 
       def expand_path(file_name)
-        # First substitution - exactly matches original behavior but safer
-        path = if file_name.include?("=")
-                 file_name[0...file_name.index("=")] + "/"
-               else
-                 file_name.dup
-               end
+        # public-keys lists its entries as "<index>=<key name>", and the index
+        # is the directory to descend into. Other names can contain "=" too
+        # (tag keys may), so only rewrite that exact form.
+        path = file_name.sub(%r{(\A|/)(\d+)=[^/]*\z}, "\\1\\2/")
 
         # Handle relative path components
         path.gsub(%r{/\.\.?(?:/|$)}, "/")
           .sub(%r{^\.\.?(?:/|$)}, "")
           .sub(/^$/, "/")
+      end
+
+      # Tag keys can contain characters that aren't valid in a URL path, such
+      # as the space in AWS Systems Manager's "Patch Group" tag. Escape each
+      # path segment, keeping the "/" separators.
+      def escape_metadata_path(id)
+        id.split("/", -1).map { |segment| segment.gsub(/[^A-Za-z0-9\-._~!$&'()*+,;=:@]/) { |c| c.bytes.map { |b| format("%%%02X", b) }.join } }.join("/")
       end
 
       def metadata_key(key)

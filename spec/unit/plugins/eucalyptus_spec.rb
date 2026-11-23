@@ -32,7 +32,7 @@ describe Ohai::System, "plugin eucalyptus" do
 
   shared_examples_for "eucalyptus" do
     before do
-      @http_client = double("Net::HTTP client")
+      @http_client = double("Net::HTTP client", read_timeout: 10, :read_timeout= => nil)
       @token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="
       @get_req_token_header = { 'X-aws-ec2-metadata-token': @token }
       allow(plugin).to receive(:http_client).and_return(@http_client)

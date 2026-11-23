@@ -23,10 +23,9 @@ describe Ohai::System, "plugin alibaba" do
   let(:plugin) { get_plugin("alibaba") }
 
   before do
-    # SMBIOS fields a test doesn't set read as absent
-    allow(plugin).to receive(:file_exist?).with(%r{\A/sys/class/dmi/id/}).and_return(false)
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
     allow(plugin).to receive(:hint?).with("alibaba").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(false)
   end
 
   shared_examples_for "!alibaba" do
@@ -73,8 +72,7 @@ describe Ohai::System, "plugin alibaba" do
 
   describe "with alibaba dmi sys_vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/sys_vendor").and_return("Alibaba Cloud\n")
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Alibaba Cloud")
     end
 
     it_behaves_like "alibaba"
@@ -82,8 +80,7 @@ describe Ohai::System, "plugin alibaba" do
 
   describe "without hint file and non-alibaba dmi sys_vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/sys_vendor").and_return("TimCloud\n")
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("TimCloud")
     end
 
     it_behaves_like "!alibaba"

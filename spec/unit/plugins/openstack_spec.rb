@@ -21,6 +21,11 @@ require "spec_helper"
 describe Ohai::System, "plugin openstack" do
 
   let(:plugin) { get_plugin("openstack") }
+
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
   let(:default_timeout) { 2 }
 
   before do

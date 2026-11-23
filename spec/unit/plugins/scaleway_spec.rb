@@ -21,8 +21,8 @@ describe Ohai::System, "plugin scaleway" do
   let(:plugin) { get_plugin("scaleway") }
 
   before do
-    # SMBIOS fields a test doesn't set read as absent
-    allow(plugin).to receive(:file_exist?).with(%r{\A/sys/class/dmi/id/}).and_return(false)
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(false)

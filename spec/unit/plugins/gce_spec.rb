@@ -21,6 +21,11 @@ require "open-uri"
 describe Ohai::System, "plugin gce" do
   let(:plugin) { get_plugin("gce") }
 
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
+
   shared_examples_for "!gce" do
     it "does NOT attempt to fetch the gce metadata" do
       expect(plugin).not_to receive(:http_get)

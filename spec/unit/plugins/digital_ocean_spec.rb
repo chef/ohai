@@ -20,6 +20,11 @@ require "spec_helper"
 
 describe Ohai::System, "plugin digital_ocean" do
   let(:plugin) { get_plugin("digital_ocean") }
+
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
   let(:hint) do
     {
       "droplet_id" => 12345678,

@@ -24,12 +24,10 @@ describe Ohai::System, "plugin ec2" do
   let(:plugin) { get_plugin("ec2") }
 
   before do
-    # SMBIOS fields a test doesn't set read as absent
-    allow(plugin).to receive(:file_exist?).with(%r{\A/sys/class/dmi/id/}).and_return(false)
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -342,8 +340,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios version data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_version).and_return("4.2.amazon")
     end
 
     it_behaves_like "ec2"
@@ -352,8 +349,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios version data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_version).and_return("1.0")
     end
 
     it_behaves_like "!ec2"
@@ -362,8 +358,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_vendor).and_return("Amazon EC2")
     end
 
     it_behaves_like "ec2"
@@ -372,8 +367,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_vendor).and_return("Xen")
     end
 
     it_behaves_like "!ec2"

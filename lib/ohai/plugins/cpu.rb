@@ -60,6 +60,40 @@ Ohai.plugin(:CPU) do
     end.flatten
   end
 
+  # Hybrid CPUs have more than one type of core: Intel's performance and
+  # efficiency cores since 12th gen, Apple silicon's performance and
+  # efficiency cores. Both platforms report them the same way, by type name:
+  #
+  #   cpu[:core_types] = {
+  #     "performance" => { "cores" => 6, "total" => 12 },
+  #     "efficiency"  => { "cores" => 8, "total" => 8 },
+  #   }
+  #
+  # with "cores" and "total" counting physical cores and logical CPUs as
+  # cpu[:cores] and cpu[:total] do. CPUs with one type of core get no key.
+  #
+  # On Linux, the kernel lists the CPUs of each Intel core type under the
+  # cpu_core and cpu_atom PMU devices. Physical cores are counted from the
+  # per-CPU core and socket IDs already collected.
+  #
+  # @return [Mash, nil]
+  def linux_core_types(cpu_data)
+    types = Mash.new
+    { "performance" => "/sys/devices/cpu_core/cpus", "efficiency" => "/sys/devices/cpu_atom/cpus" }.each do |type, path|
+      next unless file_exist?(path)
+
+      ids = range_str_to_a(file_read(path).strip)
+      next if ids.empty?
+
+      cores = ids.map do |id|
+        info = cpu_data[id.to_s]
+        info && info[:core_id] ? [info[:physical_id], info[:core_id]] : [nil, id]
+      end.uniq.size
+      types[type] = Mash.new(cores: cores, total: ids.size)
+    end
+    types.size > 1 ? types : nil
+  end
+
   def parse_lscpu(cpu_info)
     lscpu_info = Mash.new
     begin
@@ -370,6 +404,9 @@ Ohai.plugin(:CPU) do
     else
       cpu cpuinfo
     end
+
+    core_types = linux_core_types(cpu)
+    cpu[:core_types] = core_types if core_types
   end
 
   collect_data(:freebsd) do
@@ -484,8 +521,12 @@ Ohai.plugin(:CPU) do
 
   collect_data(:darwin) do
     cpu Mash.new
+    perflevels = Hash.new { |h, k| h[k] = {} }
     shell_out("sysctl hw machdep").stdout.lines.each do |line|
       case line
+      # Apple silicon's core types (performance levels): hw.perflevel0.name: Performance
+      when /^hw.perflevel(\d+)\.(name|physicalcpu|logicalcpu): (.*)$/
+        perflevels[Regexp.last_match[1].to_i][Regexp.last_match[2]] = Regexp.last_match[3].strip
       when /^hw.packages: (.*)$/
         cpu[:real] = Regexp.last_match[1].to_i
       when /^hw.physicalcpu: (.*)$/
@@ -506,6 +547,15 @@ Ohai.plugin(:CPU) do
         cpu[:stepping] = Regexp.last_match[1].to_i
       when /^machdep.cpu.features: (.*)$/
         cpu[:flags] = Regexp.last_match[1].downcase.split
+      end
+    end
+
+    if perflevels.size > 1
+      cpu[:core_types] = Mash.new
+      perflevels.sort.each do |_level, info|
+        next unless info["name"]
+
+        cpu[:core_types][info["name"].downcase] = Mash.new(cores: info["physicalcpu"].to_i, total: info["logicalcpu"].to_i)
       end
     end
   end

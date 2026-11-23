@@ -909,6 +909,59 @@ describe Ohai::System, "General Linux cpu plugin" do
   end
 end
 
+describe Ohai::System, "Linux cpu plugin core types" do
+  let(:plugin) { get_plugin("cpu") }
+  let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-no-cores.output")) }
+
+  before do
+    allow(plugin).to receive(:collect_os).and_return(:linux)
+    allow(File).to receive(:open).with("/proc/cpuinfo").and_return(cpuinfo_contents)
+    allow(plugin).to receive(:file_exist?).and_call_original
+    allow(plugin).to receive(:file_exist?).with("/sys/devices/cpu_core/cpus").and_return(false)
+    allow(plugin).to receive(:file_exist?).with("/sys/devices/cpu_atom/cpus").and_return(false)
+  end
+
+  context "with an Intel hybrid cpu" do
+    # Intel Core i5-13500: CPUs 0-11 are the 6 performance cores' 2 threads
+    # each, 12-19 the 8 efficiency cores. The kernel lists each type's CPUs
+    # under the cpu_core and cpu_atom PMU devices.
+    before do
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-hybrid.output")), ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-hybrid-cores.output")), ""))
+      { "/sys/devices/cpu_core/cpus" => "0-11\n", "/sys/devices/cpu_atom/cpus" => "12-19\n" }.each do |path, cpus|
+        allow(plugin).to receive(:file_exist?).with(path).and_return(true)
+        allow(plugin).to receive(:file_read).with(path).and_return(cpus)
+      end
+    end
+
+    it "sets cpu[:core_types] by core type, as on macOS" do
+      plugin.run
+      expect(plugin[:cpu][:core_types]).to eq(
+        "performance" => { "cores" => 6, "total" => 12 },
+        "efficiency" => { "cores" => 8, "total" => 8 }
+      )
+    end
+
+    it "doesn't set cpu[:core_types] when only one type has CPUs listed" do
+      allow(plugin).to receive(:file_exist?).with("/sys/devices/cpu_atom/cpus").and_return(false)
+      plugin.run
+      expect(plugin[:cpu]).not_to have_key(:core_types)
+    end
+  end
+
+  context "with a cpu that has one type of core" do
+    before do
+      allow(plugin).to receive(:shell_out).with("lscpu | cat").and_return(mock_shell_out(0, File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host.output")), ""))
+      allow(plugin).to receive(:shell_out).with("lscpu -p=CPU,CORE,SOCKET").and_return(mock_shell_out(0, File.read(File.join(SPEC_PLUGIN_PATH, "lscpu-x86-host-cores.output")), ""))
+    end
+
+    it "doesn't set cpu[:core_types]" do
+      plugin.run
+      expect(plugin[:cpu]).not_to have_key(:core_types)
+    end
+  end
+end
+
 describe Ohai::System, "S390 linux cpu plugin" do
   let(:plugin) { get_plugin("cpu") }
   let(:cpuinfo_contents) { File.read(File.join(SPEC_PLUGIN_PATH, "cpuinfo-s390x.output")) }

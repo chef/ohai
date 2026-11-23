@@ -82,6 +82,10 @@ describe Ohai::System, "Darwin cpu plugin" do
     @plugin.run
   end
 
+  it "doesn't set cpu[:core_types] for a CPU with one type of core" do
+    expect(@plugin[:cpu]).not_to have_key(:core_types)
+  end
+
   it "sets cpu[:cores] to 4" do
     expect(@plugin[:cpu][:cores]).to eq(4)
   end
@@ -120,5 +124,55 @@ describe Ohai::System, "Darwin cpu plugin" do
 
   it "sets cpu[:flags] to array of flags" do
     expect(@plugin[:cpu][:flags]).to eq(["fpu", "vme", "de", "pse", "tsc", "msr", "pae", "mce", "cx8", "apic", "sep", "mtrr", "pge", "mca", "cmov", "pat", "pse36", "clfsh", "ds", "acpi", "mmx", "fxsr", "sse", "sse2", "ss", "htt", "tm", "pbe", "sse3", "pclmulqdq", "dtes64", "mon", "dscpl", "vmx", "smx", "est", "tm2", "ssse3", "fma", "cx16", "tpr", "pdcm", "sse4.1", "sse4.2", "x2apic", "movbe", "popcnt", "aes", "pcid", "xsave", "osxsave", "seglim64", "tsctmr", "avx1.0", "rdrand", "f16c"])
+  end
+
+  context "on Apple silicon" do
+    # sysctl output from an Apple M4 Pro (10 performance and 4 efficiency cores)
+    before do
+      stdout = <<~CTL
+        hw.ncpu: 14
+        hw.activecpu: 14
+        hw.physicalcpu: 14
+        hw.physicalcpu_max: 14
+        hw.logicalcpu: 14
+        hw.logicalcpu_max: 14
+        hw.packages: 1
+        hw.nperflevels: 2
+        hw.perflevel0.physicalcpu: 10
+        hw.perflevel0.physicalcpu_max: 10
+        hw.perflevel0.logicalcpu: 10
+        hw.perflevel0.logicalcpu_max: 10
+        hw.perflevel0.l1icachesize: 196608
+        hw.perflevel0.l1dcachesize: 131072
+        hw.perflevel0.l2cachesize: 16777216
+        hw.perflevel0.cpusperl2: 5
+        hw.perflevel0.name: Performance
+        hw.perflevel1.physicalcpu: 4
+        hw.perflevel1.physicalcpu_max: 4
+        hw.perflevel1.logicalcpu: 4
+        hw.perflevel1.logicalcpu_max: 4
+        hw.perflevel1.l1icachesize: 131072
+        hw.perflevel1.l1dcachesize: 65536
+        hw.perflevel1.l2cachesize: 4194304
+        hw.perflevel1.cpusperl2: 4
+        hw.perflevel1.name: Efficiency
+        machdep.cpu.brand_string: Apple M4 Pro
+      CTL
+      allow(@plugin).to receive(:shell_out).with("sysctl hw machdep").and_return(mock_shell_out(0, stdout, ""))
+      @plugin.run
+    end
+
+    it "sets cpu[:core_types] by core type" do
+      expect(@plugin[:cpu][:core_types]).to eq(
+        "performance" => { "cores" => 10, "total" => 10 },
+        "efficiency" => { "cores" => 4, "total" => 4 }
+      )
+    end
+
+    it "keeps the overall counts" do
+      expect(@plugin[:cpu][:cores]).to eq(14)
+      expect(@plugin[:cpu][:total]).to eq(14)
+      expect(@plugin[:cpu][:model_name]).to eq("Apple M4 Pro")
+    end
   end
 end

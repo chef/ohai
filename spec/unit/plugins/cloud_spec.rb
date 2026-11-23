@@ -384,6 +384,30 @@ describe Ohai::System, "plugin cloud" do
     end
   end
 
+  describe "with Azure mash without metadata" do
+    before do
+      @plugin[:azure] = Mash.new
+      @plugin[:azure][:metadata] = nil
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("azure")
+    end
+  end
+
+  describe "with Azure mash whose metadata has no network data" do
+    before do
+      @plugin[:azure] = Mash.new
+      @plugin[:azure][:metadata] = { "compute" => { "location" => "westus" } }
+    end
+
+    it "populates cloud provider" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("azure")
+    end
+  end
+
   describe "with digital_ocean mash" do
     before do
       @plugin[:digital_ocean] = Mash.new

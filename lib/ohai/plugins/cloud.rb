@@ -286,10 +286,13 @@ Ohai.plugin(:Cloud) do
 
   # Fill cloud hash with azure values
   def get_azure_values
-    azure["metadata"]["network"]["public_ipv4"].each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
-    azure["metadata"]["network"]["public_ipv6"].each { |ipaddr| @cloud_attr_obj.add_ipv6_addr(ipaddr, :public) }
-    azure["metadata"]["network"]["local_ipv4"].each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
-    azure["metadata"]["network"]["local_ipv6"].each { |ipaddr| @cloud_attr_obj.add_ipv6_addr(ipaddr, :private) }
+    # metadata is nil when the metadata endpoint was unreachable, and network
+    # is absent when the endpoint didn't return it
+    network = azure.dig("metadata", "network") || {}
+    Array(network["public_ipv4"]).each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :public) }
+    Array(network["public_ipv6"]).each { |ipaddr| @cloud_attr_obj.add_ipv6_addr(ipaddr, :public) }
+    Array(network["local_ipv4"]).each { |ipaddr| @cloud_attr_obj.add_ipv4_addr(ipaddr, :private) }
+    Array(network["local_ipv6"]).each { |ipaddr| @cloud_attr_obj.add_ipv6_addr(ipaddr, :private) }
     @cloud_attr_obj.public_hostname = azure["public_fqdn"]
     @cloud_attr_obj.provider = "azure"
   end

@@ -22,6 +22,55 @@ Ohai.plugin(:DMI) do
 
   # dmidecode does not return data without access to /dev/mem (or its equivalent)
 
+  # /sys/class/dmi/id file => [record type, convenience key]. The kernel
+  # exports these strings to any user, except the serial numbers and the
+  # UUID, which are root-only.
+  def dmi_sysfs_fields
+    {
+      "bios_vendor" => %w{bios vendor},
+      "bios_version" => %w{bios version},
+      "bios_date" => %w{bios release_date},
+      "sys_vendor" => %w{system manufacturer},
+      "product_name" => %w{system product_name},
+      "product_version" => %w{system version},
+      "product_serial" => %w{system serial_number},
+      "product_uuid" => %w{system uuid},
+      "product_sku" => %w{system sku_number},
+      "product_family" => %w{system family},
+      "board_vendor" => %w{base_board manufacturer},
+      "board_name" => %w{base_board product_name},
+      "board_version" => %w{base_board version},
+      "board_serial" => %w{base_board serial_number},
+      "board_asset_tag" => %w{base_board asset_tag},
+      "chassis_vendor" => %w{chassis manufacturer},
+      "chassis_version" => %w{chassis version},
+      "chassis_serial" => %w{chassis serial_number},
+      "chassis_asset_tag" => %w{chassis asset_tag},
+    }
+  end
+
+  # When dmidecode isn't installed, or can't read the tables because it
+  # isn't running as root, fill the main records' convenience keys from
+  # sysfs. There are no all_records then: sysfs only has these strings.
+  def collect_dmi_from_sysfs
+    return if dmi.keys.intersect?(%w{bios system base_board chassis})
+
+    dmi_sysfs_fields.each do |file, (type, key)|
+      path = "/sys/class/dmi/id/#{file}"
+      next unless file_exist?(path)
+
+      value = begin
+                file_read(path).strip
+              rescue SystemCallError
+                nil # root-only
+              end
+      next if value.nil? || value.empty?
+
+      dmi[type] ||= Mash.new
+      dmi[type][key] = value
+    end
+  end
+
   collect_data do
     require_relative "../common/dmi"
     dmi Mash.new
@@ -130,5 +179,7 @@ Ohai.plugin(:DMI) do
     rescue Ohai::Exceptions::Exec
       logger.trace('Plugin DMI: Could not shell_out "dmidecode". Skipping data')
     end
+
+    collect_dmi_from_sysfs
   end
 end

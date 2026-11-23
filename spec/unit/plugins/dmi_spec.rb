@@ -154,4 +154,71 @@ describe Ohai::System, "plugin dmi" do
     plugin.run
     expect(plugin[:dmi]).not_to have_key(:physical_memory_array)
   end
+
+  describe "without dmidecode data" do
+    # /sys/class/dmi/id on an EC2 t3.small running Amazon Linux 2023, which
+    # doesn't ship dmidecode; the UUID and instance ID are replaced
+    let(:sysfs) do
+      {
+        "bios_vendor" => "Amazon EC2", "bios_version" => "1.0", "bios_date" => "10/16/2017",
+        "sys_vendor" => "Amazon EC2", "product_name" => "t3.small", "product_version" => "",
+        "product_serial" => "ec2f0000-0000-4000-8000-000000000001", "product_uuid" => "ec2f0000-0000-4000-8000-000000000001",
+        "product_sku" => "", "product_family" => "",
+        "board_vendor" => "Amazon EC2", "board_name" => "", "board_version" => "", "board_serial" => "",
+        "board_asset_tag" => "i-0123456789abcdef0",
+        "chassis_vendor" => "Amazon EC2", "chassis_version" => "", "chassis_serial" => "", "chassis_asset_tag" => "Amazon EC2"
+      }
+    end
+
+    before do
+      allow(plugin).to receive(:file_exist?).and_return(false)
+      sysfs.each do |name, value|
+        allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/#{name}").and_return(true)
+        allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_return("#{value}\n")
+      end
+    end
+
+    context "because dmidecode isn't installed" do
+      before do
+        allow(plugin).to receive(:shell_out).with("dmidecode").and_raise(Ohai::Exceptions::Exec, "No such file or directory - dmidecode")
+        plugin.run
+      end
+
+      it "reads the system, BIOS, base board and chassis strings from sysfs" do
+        expect(plugin[:dmi][:system]).to eq("manufacturer" => "Amazon EC2", "product_name" => "t3.small",
+          "serial_number" => "ec2f0000-0000-4000-8000-000000000001",
+          "uuid" => "ec2f0000-0000-4000-8000-000000000001")
+        expect(plugin[:dmi][:bios]).to eq("vendor" => "Amazon EC2", "version" => "1.0", "release_date" => "10/16/2017")
+        expect(plugin[:dmi][:base_board]).to eq("manufacturer" => "Amazon EC2", "asset_tag" => "i-0123456789abcdef0")
+        expect(plugin[:dmi][:chassis]).to eq("manufacturer" => "Amazon EC2", "asset_tag" => "Amazon EC2")
+      end
+    end
+
+    context "because dmidecode can't read the tables without root" do
+      before do
+        allow(plugin).to receive(:shell_out).with("dmidecode")
+          .and_return(mock_shell_out(1, "# dmidecode 3.6\n", "/sys/firmware/dmi/tables/smbios_entry_point: Permission denied\n/dev/mem: Permission denied\n"))
+        # the root-only files
+        %w{product_serial product_uuid}.each do |name|
+          allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/#{name}").and_raise(Errno::EACCES)
+        end
+        plugin.run
+      end
+
+      it "reads the world-readable strings from sysfs" do
+        expect(plugin[:dmi][:system]).to eq("manufacturer" => "Amazon EC2", "product_name" => "t3.small")
+        expect(plugin[:dmi][:chassis][:asset_tag]).to eq("Amazon EC2")
+      end
+
+      it "keeps the dmidecode version" do
+        expect(plugin[:dmi][:dmidecode_version]).to eq("3.6")
+      end
+    end
+  end
+
+  it "doesn't read sysfs when dmidecode returns records" do
+    expect(plugin).not_to receive(:file_read)
+    plugin.run
+    expect(plugin[:dmi][:system]).not_to be_nil
+  end
 end

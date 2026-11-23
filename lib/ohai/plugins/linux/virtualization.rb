@@ -24,6 +24,21 @@ Ohai.plugin(:Virtualization) do
   require_relative "../../mixin/dmi_decode"
   include Ohai::Mixin::DmiDecode
 
+  # The dmi attribute comes from dmidecode, which needs root and isn't
+  # installed on many minimal images. The kernel exposes the same system
+  # strings in sysfs, readable by any user.
+  #
+  # @return [String, nil]
+  def dmi_sysfs_value(name)
+    path = "/sys/class/dmi/id/#{name}"
+    return nil unless file_exist?(path)
+
+    value = file_read(path).strip
+    value.empty? ? nil : value
+  rescue SystemCallError
+    nil
+  end
+
   def lxc_version_exists?
     which("lxc-version") || which("lxc-start")
   end
@@ -139,8 +154,11 @@ Ohai.plugin(:Virtualization) do
 
     # parse dmi to discover various virtualization guests
     # we do this *after* the kvm detection so that OpenStack isn't detected as KVM
-    logger.trace("Looking up DMI data manufacturer: '#{get_attribute(:dmi, :system, :manufacturer)}' product_name: '#{get_attribute(:dmi, :system, :product_name)}' version: '#{get_attribute(:dmi, :system, :version)}'")
-    guest = guest_from_dmi_data(get_attribute(:dmi, :system, :manufacturer), get_attribute(:dmi, :system, :product_name), get_attribute(:dmi, :system, :version))
+    manufacturer = get_attribute(:dmi, :system, :manufacturer) || dmi_sysfs_value("sys_vendor")
+    product_name = get_attribute(:dmi, :system, :product_name) || dmi_sysfs_value("product_name")
+    version = get_attribute(:dmi, :system, :version) || dmi_sysfs_value("product_version")
+    logger.trace("Looking up DMI data manufacturer: '#{manufacturer}' product_name: '#{product_name}' version: '#{version}'")
+    guest = guest_from_dmi_data(manufacturer, product_name, version)
     if guest
       logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
       virtualization[:system] = guest

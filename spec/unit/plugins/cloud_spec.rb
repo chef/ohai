@@ -400,6 +400,12 @@ describe Ohai::System, "plugin cloud" do
       expect(@plugin[:cloud][:public_ipv4_addrs].first).to eq(@plugin[:linode][:public_ip])
     end
 
+    it "populates cloud public ipv6" do
+      @plugin[:linode]["public_ipv6"] = "2001:db8:1::5"
+      @plugin.run
+      expect(@plugin[:cloud][:public_ipv6]).to eq("2001:db8:1::5")
+    end
+
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("linode")

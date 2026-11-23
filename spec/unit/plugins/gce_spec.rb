@@ -78,4 +78,27 @@ describe Ohai::System, "plugin gce" do
 
   end
 
+  describe "#has_gce_dmi?" do
+    before do
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+    end
+
+    { product_name: "Google Compute Engine", sys_vendor: "Google", bios_vendor: "Google", product_serial: "GoogleCloud-1234ABCD" }.each do |field, value|
+      it "is true when #{field} is #{value}" do
+        allow(plugin).to receive(:smbios_value).with(field).and_return(value)
+        expect(plugin.has_gce_dmi?).to be true
+      end
+    end
+
+    it "is true when the product name is only Google" do
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("Google")
+      expect(plugin.has_gce_dmi?).to be true
+    end
+
+    it "is false for other systems" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Microsoft Corporation")
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("Virtual Machine")
+      expect(plugin.has_gce_dmi?).to be false
+    end
+  end
 end

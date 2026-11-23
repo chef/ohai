@@ -23,8 +23,10 @@
 Ohai.plugin(:Alibaba) do
   require_relative "../mixin/alibaba_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::AlibabaMetadata
+  include Ohai::Mixin::Smbios
   include Ohai::Mixin::HttpHelper
 
   provides "alibaba"
@@ -33,7 +35,7 @@ Ohai.plugin(:Alibaba) do
   # this works even if the system lacks dmidecode use by the Dmi plugin
   # @return [Boolean] do we have Alibaba DMI data?
   def has_ali_dmi?
-    if file_val_if_exists("/sys/class/dmi/id/sys_vendor").to_s.include?("Alibaba")
+    if smbios_value(:sys_vendor).to_s.include?("Alibaba") || smbios_value(:product_name).to_s.include?("Alibaba Cloud")
       logger.trace("Plugin Alibaba: has_ali_dmi? == true")
       true
     else

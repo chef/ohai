@@ -19,16 +19,24 @@
 Ohai.plugin(:DigitalOcean) do
   require_relative "../mixin/do_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::DOMetadata
   include Ohai::Mixin::HttpHelper
+  include Ohai::Mixin::Smbios
 
   provides "digital_ocean"
 
   depends "dmi"
 
-  # look for digitalocean string in dmi bios data
+  # look for DigitalOcean in the SMBIOS data. The system vendor is readable
+  # without root; the dmi attribute needs dmidecode, which needs root.
   def has_do_dmi?
+    if smbios_value(:sys_vendor) == "DigitalOcean" || smbios_value(:bios_vendor) == "DigitalOcean"
+      logger.trace("Plugin DigitalOcean: has_do_dmi? == true")
+      return true
+    end
+
     begin
       # detect a vendor of "DigitalOcean"
       if dmi[:bios][:all_records][0][:Vendor] == "DigitalOcean"

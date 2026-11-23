@@ -16,6 +16,9 @@
 # limitations under the License.
 
 Ohai.plugin(:Linode) do
+  require_relative "../mixin/smbios"
+  include Ohai::Mixin::Smbios
+
   provides "linode"
 
   depends "domain"
@@ -37,12 +40,22 @@ Ohai.plugin(:Linode) do
     file_exist?("/etc/apt/sources.list") && file_read("/etc/apt/sources.list").include?("linode")
   end
 
+  # Linode (Akamai Cloud) instances report "Linode" as the system vendor
+  # and BIOS vendor. Modern images have neither a linode domain nor linode
+  # apt mirrors, so this is the check that finds them.
+  #
+  # @return [Boolean]
+  #
+  def has_linode_dmi?
+    smbios_value(:sys_vendor).to_s.match?(/linode|akamai/i) || smbios_value(:bios_vendor).to_s.match?(/linode/i)
+  end
+
   # Identifies the linode cloud by preferring the hint, then
   #
   # @return [Boolean]
   #
   def looks_like_linode?
-    hint?("linode") || has_linode_domain? || has_linode_apt_repos?
+    hint?("linode") || has_linode_dmi? || has_linode_domain? || has_linode_apt_repos?
   end
 
   # Alters linode mash with new interface based on name parameter

@@ -104,4 +104,16 @@ describe Ohai::System, "plugin digital_ocean" do
     it_behaves_like "digital_ocean"
 
   end
+
+  describe "with the DigitalOcean system vendor and no dmidecode data" do
+    before do
+      plugin[:dmi] = { dmidecode_version: "3.5" }
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("DigitalOcean")
+    end
+
+    it "detects DigitalOcean DMI data" do
+      expect(plugin.has_do_dmi?).to be true
+    end
+  end
 end

@@ -18,9 +18,11 @@
 Ohai.plugin(:Scaleway) do
   require_relative "../mixin/scaleway_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::ScalewayMetadata
   include Ohai::Mixin::HttpHelper
+  include Ohai::Mixin::Smbios
 
   provides "scaleway"
 
@@ -35,16 +37,29 @@ Ohai.plugin(:Scaleway) do
     false
   end
 
+  # Scaleway instances report "Scaleway" as the system vendor and their
+  # commercial type (SCW-..., for example SCW-DEV1-L) as the product name.
+  # The kernel command line check only matched the old Scaleway bootscripts.
+  # @return [Boolean] do we have Scaleway SMBIOS data?
+  def has_scaleway_dmi?
+    if smbios_value(:sys_vendor) == "Scaleway" || smbios_value(:product_name).to_s.start_with?("SCW-")
+      logger.trace("Plugin Scaleway: has_scaleway_dmi? == true")
+      return true
+    end
+    logger.trace("Plugin Scaleway: has_scaleway_dmi? == false")
+    false
+  end
+
   # a single check that combines all the various detection methods for Scaleway
   # @return [Boolean] Does the system appear to be on Scaleway
   def looks_like_scaleway?
     return true if hint?("scaleway")
-    return true if has_scaleway_cmdline? && can_socket_connect?(Ohai::Mixin::ScalewayMetadata::SCALEWAY_METADATA_ADDR, 80)
+    return true if (has_scaleway_dmi? || has_scaleway_cmdline?) && can_socket_connect?(Ohai::Mixin::ScalewayMetadata::SCALEWAY_METADATA_ADDR, 80)
 
     false
   end
 
-  collect_data(:linux) do
+  collect_data do
     if looks_like_scaleway?
       logger.trace("Plugin Scaleway: looks_like_scaleway? == true")
       scaleway Mash.new

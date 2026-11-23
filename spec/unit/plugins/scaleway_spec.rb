@@ -21,6 +21,8 @@ describe Ohai::System, "plugin scaleway" do
   let(:plugin) { get_plugin("scaleway") }
 
   before do
+    # SMBIOS fields a test doesn't set read as absent
+    allow(plugin).to receive(:file_exist?).with(%r{\A/sys/class/dmi/id/}).and_return(false)
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(false)
@@ -91,5 +93,43 @@ describe Ohai::System, "plugin scaleway" do
 
     it_behaves_like "scaleway"
 
+  end
+
+  describe "#has_scaleway_dmi?" do
+    before do
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+    end
+
+    it "is true for the Scaleway system vendor" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Scaleway")
+      expect(plugin.has_scaleway_dmi?).to be true
+    end
+
+    it "is true for an SCW product name" do
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("SCW-DEV1-L")
+      expect(plugin.has_scaleway_dmi?).to be true
+    end
+
+    it "is false for other systems" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("QEMU")
+      expect(plugin.has_scaleway_dmi?).to be false
+    end
+  end
+
+  describe "with Scaleway SMBIOS data and no scaleway in the kernel command line" do
+    before do
+      allow(plugin).to receive(:hint?).with("scaleway").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/proc/cmdline").and_return(true)
+      allow(plugin).to receive(:file_read).with("/proc/cmdline").and_return("BOOT_IMAGE=/vmlinuz root=/dev/sda1 ro")
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Scaleway")
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::ScalewayMetadata::SCALEWAY_METADATA_ADDR, 80)
+        .and_return(true)
+    end
+
+    it "looks like Scaleway" do
+      expect(plugin.looks_like_scaleway?).to be true
+    end
   end
 end

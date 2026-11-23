@@ -23,6 +23,8 @@ describe Ohai::System, "plugin alibaba" do
   let(:plugin) { get_plugin("alibaba") }
 
   before do
+    # SMBIOS fields a test doesn't set read as absent
+    allow(plugin).to receive(:file_exist?).with(%r{\A/sys/class/dmi/id/}).and_return(false)
     allow(plugin).to receive(:hint?).with("alibaba").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(false)
   end
@@ -85,5 +87,16 @@ describe Ohai::System, "plugin alibaba" do
     end
 
     it_behaves_like "!alibaba"
+  end
+
+  describe "with the Alibaba Cloud ECS product name and no system vendor" do
+    before do
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("Alibaba Cloud ECS")
+    end
+
+    it "looks like Alibaba" do
+      expect(plugin.looks_like_alibaba?).to be true
+    end
   end
 end

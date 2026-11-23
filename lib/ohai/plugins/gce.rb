@@ -18,17 +18,25 @@
 Ohai.plugin(:GCE) do
   require_relative "../mixin/gce_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::GCEMetadata
+  include Ohai::Mixin::Smbios
   include Ohai::Mixin::HttpHelper
 
   provides "gce"
 
-  # look for GCE string in dmi vendor bios data within the sys tree.
+  # look for Google in the SMBIOS data. The product name is usually "Google
+  # Compute Engine" but is not guaranteed, so the vendor strings and the
+  # serial number prefix are checked too (as cloud-init does).
   # this works even if the system lacks dmidecode use by the Dmi plugin
   # @return [Boolean] do we have Google Compute Engine DMI data?
   def has_gce_dmi?
-    if file_val_if_exists("/sys/class/dmi/id/product_name").to_s.include?("Google Compute Engine")
+    if smbios_value(:product_name).to_s.include?("Google Compute Engine") ||
+        smbios_value(:product_name) == "Google" ||
+        smbios_value(:sys_vendor) == "Google" ||
+        smbios_value(:bios_vendor) == "Google" ||
+        smbios_value(:product_serial).to_s.start_with?("GoogleCloud-")
       logger.trace("Plugin GCE: has_gce_dmi? == true")
       true
     else

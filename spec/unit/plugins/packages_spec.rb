@@ -165,6 +165,36 @@ describe Ohai::System, "plugin packages" do
       expect(plugin[:packages]["abcde"][:installdate]).to eq("1493998583")
       expect(plugin[:packages]["abcde"][:arch]).to eq("any")
     end
+
+    context "with pacman 7 output" do
+      # real records from an Arch Linux x86_64 cloud image; current pacman
+      # prints the install date as "Sun 01 Nov 2026 12:03:50 PM UTC"
+      let(:stdout) do
+        File.read(File.join(SPEC_PLUGIN_PATH, "pacman-7.output"))
+      end
+
+      it "gets every package" do
+        expect(plugin[:packages].keys).to eq(%w{acl bash ruby})
+      end
+
+      it "gets versions, architectures and install dates" do
+        expect(plugin[:packages]["acl"]).to eq("version" => "2.4.0-1", "installdate" => "1793534630", "arch" => "x86_64")
+        expect(plugin[:packages]["bash"][:version]).to eq("5.3.20-1")
+        expect(plugin[:packages]["ruby"][:installdate]).to eq("1795468976")
+      end
+    end
+
+    context "with an install date that can't be parsed" do
+      let(:stdout) do
+        "Name            : acl\nVersion         : 2.4.0-1\nArchitecture    : x86_64\nInstall Date    : not a date\n\n" \
+          "Name            : bash\nVersion         : 5.3.20-1\nArchitecture    : x86_64\nInstall Date    : Sun 01 Nov 2026 12:03:50 PM UTC\n"
+      end
+
+      it "keeps the package without an install date, and the other packages" do
+        expect(plugin[:packages]["acl"]).to eq("version" => "2.4.0-1", "installdate" => nil, "arch" => "x86_64")
+        expect(plugin[:packages]["bash"][:installdate]).to eq("1793534630")
+      end
+    end
   end
 
   context "when on windows", :windows_only do

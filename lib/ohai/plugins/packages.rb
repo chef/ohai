@@ -96,13 +96,31 @@ Ohai.plugin(:Packages) do
         end
 
         name = pacman_info["name"]
-        installdate = DateTime.strptime(pacman_info["installdate"], "%Ec").strftime("%s")
+        installdate = pacman_installdate(pacman_info["installdate"])
         packages[name] = {
           "version" => pacman_info["version"],
           "installdate" => installdate,
           "arch" => pacman_info["architecture"],
         }
       end
+    end
+  end
+
+  # pacman prints the install date with the C locale's %c on older releases
+  # ("Sun Jul 23 03:25:45 2017") and as "Sun 01 Nov 2026 12:03:50 PM UTC" on
+  # current ones. An unparseable date must not cost the other packages.
+  #
+  # @return [String, nil] seconds since the epoch
+  def pacman_installdate(date)
+    return nil if date.nil?
+
+    DateTime.strptime(date, "%Ec").strftime("%s")
+  rescue Date::Error
+    begin
+      DateTime.parse(date).strftime("%s")
+    rescue Date::Error
+      logger.trace("Plugin Packages: Unable to parse pacman install date #{date.inspect}")
+      nil
     end
   end
 

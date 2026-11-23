@@ -20,19 +20,32 @@ Ohai.plugin(:Powershell) do
   depends "languages".freeze
 
   collect_data(:windows) do
-    so = shell_out("#{powershell_command} \"#{version_table_command}\"")
-    # Sample output, one "name=value" line per $PSVersionTable entry with
-    # array values joined by commas:
-    #
-    # PSVersion=5.1.26100.1
-    # PSEdition=Desktop
-    # PSCompatibleVersions=1.0,2.0,3.0,4.0,5.0,5.1.26100.1
-    # BuildVersion=10.0.26100.1
-    # CLRVersion=4.0.30319.42000
-    # WSManStackVersion=3.0
-    # PSRemotingProtocolVersion=2.3
-    # SerializationVersion=1.1.0.1
+    collect_powershell("#{powershell_command} \"#{version_table_command}\"", "powershell.exe")
+  end
 
+  # PowerShell 7 (pwsh) runs on macOS and Linux too. Run it with an argument
+  # list rather than a command string: a Unix shell would expand
+  # $PSVersionTable and $_ in the script before PowerShell saw them.
+  collect_data(:darwin, :linux) do
+    collect_powershell(["pwsh", "-NoLogo", "-NonInteractive", "-NoProfile", "-Command", version_table_command], "pwsh")
+  end
+
+  # Sample output, one "name=value" line per $PSVersionTable entry with array
+  # values joined by commas. Windows PowerShell 5.1:
+  #
+  # PSVersion=5.1.26100.1
+  # PSEdition=Desktop
+  # PSCompatibleVersions=1.0,2.0,3.0,4.0,5.0,5.1.26100.1
+  # BuildVersion=10.0.26100.1
+  # CLRVersion=4.0.30319.42000
+  # WSManStackVersion=3.0
+  # PSRemotingProtocolVersion=2.3
+  # SerializationVersion=1.1.0.1
+  #
+  # PowerShell 7 adds GitCommitId, Platform and OS and has no CLRVersion or
+  # BuildVersion.
+  def collect_powershell(command, name)
+    so = shell_out(command)
     if so.exitstatus == 0
       version_info = {}
       so.stdout.each_line do |line|
@@ -42,6 +55,7 @@ Ohai.plugin(:Powershell) do
 
       powershell = Mash.new
       powershell[:version] = version_info["PSVersion"]
+      powershell[:edition] = version_info["PSEdition"]
       powershell[:ws_man_stack_version] = version_info["WSManStackVersion"]
       powershell[:serialization_version] = version_info["SerializationVersion"]
       powershell[:clr_version] = version_info["CLRVersion"]
@@ -50,15 +64,15 @@ Ohai.plugin(:Powershell) do
       powershell[:remoting_protocol_version] = version_info["PSRemotingProtocolVersion"]
       languages[:powershell] = powershell if powershell[:version]
     else
-      logger.trace("Plugin Powershell: #{powershell_command} exited #{so.exitstatus}. Skipping plugin")
+      logger.trace("Plugin Powershell: #{name} exited #{so.exitstatus}. Skipping plugin")
     end
   rescue Ohai::Exceptions::Exec => e
     # A timeout is worth surfacing: PowerShell is installed but too slow to
     # start, and languages/powershell silently goes missing.
     if e.cause.is_a?(Mixlib::ShellOut::CommandTimeout)
-      logger.warn("Plugin Powershell: #{powershell_command} timed out. Skipping plugin")
+      logger.warn("Plugin Powershell: #{name} timed out. Skipping plugin")
     else
-      logger.trace("Plugin Powershell: could not run #{powershell_command}. Skipping plugin")
+      logger.trace("Plugin Powershell: could not run #{name}. Skipping plugin")
     end
   end
 

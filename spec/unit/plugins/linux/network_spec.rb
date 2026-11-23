@@ -1746,6 +1746,54 @@ describe Ohai::System, "Linux Network Plugin" do
         end
       end
 
+      describe "with bridge and bond ports" do
+        # "ip -d -s link" adds a detail line with the port's own state
+        let(:linux_ip_link_s_d) do
+          <<~EOM
+            1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+                link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 promiscuity 0
+                RX:  bytes packets errors dropped  missed   mcast
+                     35224     524      0       0       0       0
+                TX:  bytes packets errors dropped carrier collsns
+                     35224     524      0       0       0       0
+            2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master br0 state UP mode DEFAULT group default
+                link/ether 6a:3e:a9:00:00:01 brd ff:ff:ff:ff:ff:ff promiscuity 1 allmulti 1 minmtu 68 maxmtu 65535
+                veth
+                bridge_slave state forwarding priority 32 cost 2 hairpin off guard off root_block off fastleave off learning on flood on port_id 0x8001 port_no 0x1 addrgenmode eui64 numtxqueues 20 numrxqueues 20
+                RX:  bytes packets errors dropped  missed   mcast
+                   3116709   24970      0       0       0       0
+                TX:  bytes packets errors dropped carrier collsns
+                  46338908  213169      0       0       0       0
+            3: eth1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc fq_codel master bond0 state UP mode DEFAULT group default qlen 1000
+                link/ether 6a:3e:a9:00:00:02 brd ff:ff:ff:ff:ff:ff promiscuity 0 allmulti 0 minmtu 68 maxmtu 9000
+                bond_slave state BACKUP mii_status UP link_failure_count 0 perm_hwaddr 6a:3e:a9:00:00:02 queue_id 0 addrgenmode eui64 numtxqueues 1 numrxqueues 1
+                RX:  bytes packets errors dropped  missed   mcast
+                         0       0      0       0       0       0
+                TX:  bytes packets errors dropped carrier collsns
+                         0       0      0       0       0       0
+            4: eth2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop master br0 state DOWN mode DEFAULT group default qlen 1000
+                link/ether 6a:3e:a9:00:00:03 brd ff:ff:ff:ff:ff:ff promiscuity 0 allmulti 0 minmtu 68 maxmtu 9000
+                bridge_slave state disabled priority 32 cost 100 hairpin off guard off root_block off fastleave off learning on flood on port_id 0x8002 port_no 0x2 addrgenmode eui64 numtxqueues 1 numrxqueues 1
+                RX:  bytes packets errors dropped  missed   mcast
+                         0       0      0       0       0       0
+                TX:  bytes packets errors dropped carrier collsns
+                         0       0      0       0       0       0
+          EOM
+        end
+
+        it "reports a bridge port's link state, not its forwarding state" do
+          expect(plugin["network"]["interfaces"]["eth0"]["state"]).to eq("up")
+        end
+
+        it "reports a bond port's link state, not its active/backup state" do
+          expect(plugin["network"]["interfaces"]["eth1"]["state"]).to eq("up")
+        end
+
+        it "reports a down bridge port as down" do
+          expect(plugin["network"]["interfaces"]["eth2"]["state"]).to eq("down")
+        end
+      end
+
       describe "gathering xdp counters via ip_link_s_d" do
         let(:linux_ip_link_s_d) do
           <<~EOM

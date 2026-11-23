@@ -449,7 +449,10 @@ Ohai.plugin(:Network) do
       end
 
       # https://rubular.com/r/JRp6lNANmpcLV5
-      if line =~ /\sstate (\w+)/
+      # Only the interface's own line has its link state. Detail lines for
+      # bridge and bond ports carry their port state ("bridge_slave state
+      # forwarding", "bond_slave state ACTIVE"), which isn't the link state.
+      if line =~ IPROUTE_INT_REGEX && line =~ /\sstate (\w+)/
         iface[tmp_int]["state"] = $1.downcase
       end
 

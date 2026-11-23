@@ -120,6 +120,22 @@ module Ohai
         conn.get(uri, { "Metadata" => "true" })
       end
 
+      # Standard SKU public IPs, the only SKU Azure still offers, are missing
+      # from the instance document's publicIpAddress. IMDS lists them under
+      # /metadata/loadbalancer (API 2020-10-01 or newer), whether the VM is
+      # behind a load balancer or has the address attached directly.
+      #
+      # @return [Hash, nil] the parsed response, or nil when IMDS has none
+      def fetch_loadbalancer_metadata
+        uri = "/metadata/loadbalancer?api-version=#{best_api_version}"
+        logger.trace("Mixin AzureMetadata: Fetching load balancer metadata from host #{AZURE_METADATA_ADDR} at #{uri}")
+        response = http_get_with_retry(uri)
+        return parse_json(response.body) if response.code == "200"
+
+        logger.trace("Mixin AzureMetadata: Received response code #{response.code} requesting load balancer metadata")
+        nil
+      end
+
       def fetch_metadata(_api_version = nil)
         metadata_url = "/metadata/instance?api-version=#{best_api_version}"
         logger.trace("Mixin AzureMetadata: Fetching metadata from host #{AZURE_METADATA_ADDR} at #{metadata_url}")

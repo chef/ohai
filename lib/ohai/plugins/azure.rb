@@ -190,8 +190,40 @@ Ohai.plugin(:Azure) do
           metadata["network"][type].concat val[type] unless val[type].empty?
         end
       end
+
+      if metadata["network"]["public_ipv4"].empty? && metadata["network"]["public_ipv6"].empty?
+        add_loadbalancer_public_ips(metadata)
+      end
     end
 
     metadata
+  end
+
+  # Add the Standard SKU public IPs that IMDS only lists under
+  # /metadata/loadbalancer to the interface that owns each private IP and to
+  # the network totals, and keep the load balancer data itself
+  def add_loadbalancer_public_ips(metadata)
+    data = begin
+             fetch_loadbalancer_metadata
+           rescue => e
+             logger.trace("Plugin Azure: Unable to fetch load balancer metadata: #{e.class}: #{e.message}")
+             nil
+           end
+    loadbalancer = data["loadbalancer"] if data.is_a?(Hash)
+    return unless loadbalancer.is_a?(Hash)
+
+    metadata["loadbalancer"] = loadbalancer
+    Array(loadbalancer["publicIpAddresses"]).each do |address|
+      public_ip = address["frontendIpAddress"]
+      next if public_ip.nil? || public_ip.empty?
+
+      family = public_ip.include?(":") ? "ipv6" : "ipv4"
+      metadata["network"]["public_#{family}"] << public_ip unless metadata["network"]["public_#{family}"].include?(public_ip)
+      metadata["network"]["interfaces"].each_value do |interface|
+        next unless interface["local_#{family}"].include?(address["privateIpAddress"])
+
+        interface["public_#{family}"] << public_ip unless interface["public_#{family}"].include?(public_ip)
+      end
+    end
   end
 end

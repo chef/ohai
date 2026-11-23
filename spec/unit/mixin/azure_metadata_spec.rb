@@ -114,6 +114,27 @@ describe Ohai::Mixin::AzureMetadata do
     end
   end
 
+  describe "#fetch_loadbalancer_metadata" do
+    before do
+      allow(mixin).to receive(:best_api_version).and_return("2026-07-20")
+    end
+
+    it "returns the parsed load balancer metadata" do
+      expect(mixin).to receive(:http_get).with("/metadata/loadbalancer?api-version=2026-07-20")
+        .and_return(double("http", code: "200", body: '{"loadbalancer":{"publicIpAddresses":[{"frontendIpAddress":"203.0.113.18","privateIpAddress":"10.0.0.4"}],"inboundRules":[],"outboundRules":[]}}'))
+      expect(mixin.fetch_loadbalancer_metadata).to eq(
+        "loadbalancer" => { "publicIpAddresses" => [{ "frontendIpAddress" => "203.0.113.18", "privateIpAddress" => "10.0.0.4" }],
+                            "inboundRules" => [], "outboundRules" => [] }
+      )
+    end
+
+    it "returns nil when IMDS rejects the request" do
+      # what IMDS answers for an API version older than 2020-10-01
+      allow(mixin).to receive(:http_get).and_return(double("http", code: "400", body: '{"error":"Bad request: api-version is missing or invalid. The minimum version for this feature is: 2020-10-01."}'))
+      expect(mixin.fetch_loadbalancer_metadata).to be_nil
+    end
+  end
+
   describe "#fetch_metadata" do
     before do
       allow(mixin).to receive(:best_api_version).and_return("2021-10-01")

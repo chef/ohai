@@ -63,6 +63,7 @@ describe Ohai::System, "plugin azure" do
     # agent paths and SMBIOS fields a test doesn't set are absent
     Ohai::Mixin::AzureMetadata::WAAGENT_PATHS.each { |path| allow(plugin).to receive(:file_exist?).with(path).and_return(false) }
     allow(plugin).to receive(:smbios_value).and_return(nil)
+    allow(plugin).to receive(:fetch_loadbalancer_metadata).and_return(nil)
   end
 
   shared_examples_for "!azure" do
@@ -401,6 +402,103 @@ describe Ohai::System, "plugin azure" do
       expect(plugin[:azure][:metadata][:network][:local_ipv4]).to eq(["10.0.1.6"])
       expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq([])
       expect(plugin[:azure][:metadata][:network][:local_ipv6]).to eq([])
+    end
+  end
+
+  describe "with a Standard SKU public IP" do
+    # IMDS on a Standard_B2s VM with a directly attached Standard public IP:
+    # the instance document leaves publicIpAddress empty
+    let(:instance_data) do
+      {
+        "compute" => { "location" => "westus2", "vmSize" => "Standard_B2s" },
+        "network" => { "interface" => [
+          { "interfaceCompartmentId" => "",
+            "ipv4" => { "ipAddress" => [{ "privateIpAddress" => "10.0.0.4", "publicIpAddress" => "" }],
+                        "ipAddressBlock" => [],
+                        "subnet" => [{ "address" => "10.0.0.0", "prefix" => "24" }] },
+            "ipv6" => { "ipAddress" => [], "ipAddressBlock" => [] },
+            "macAddress" => "002248B7BFC7" },
+        ] },
+      }
+    end
+
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return({})
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(instance_data)
+    end
+
+    context "when the load balancer metadata lists it" do
+      let(:loadbalancer_data) do
+        { "loadbalancer" => { "publicIpAddresses" => [{ "frontendIpAddress" => "203.0.113.18", "privateIpAddress" => "10.0.0.4" }],
+                              "inboundRules" => [], "outboundRules" => [] } }
+      end
+
+      before do
+        allow(plugin).to receive(:fetch_loadbalancer_metadata).and_return(loadbalancer_data)
+        plugin.run
+      end
+
+      it "adds the public IP to the interface with the matching private IP" do
+        expect(plugin[:azure][:metadata][:network][:interfaces]["002248B7BFC7"][:public_ipv4]).to eq(["203.0.113.18"])
+      end
+
+      it "adds the public IP to the network's public addresses" do
+        expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq(["203.0.113.18"])
+        expect(plugin[:azure][:metadata][:network][:public_ipv6]).to eq([])
+      end
+
+      it "keeps the load balancer metadata" do
+        expect(plugin[:azure][:metadata][:loadbalancer][:publicIpAddresses]).to eq([{ "frontendIpAddress" => "203.0.113.18", "privateIpAddress" => "10.0.0.4" }])
+      end
+    end
+
+    context "when the VM has only default outbound access" do
+      # without a public IP, IMDS lists the shared outbound SNAT address,
+      # which doesn't accept inbound connections
+      before do
+        allow(plugin).to receive(:fetch_loadbalancer_metadata).and_return(
+          "loadbalancer" => { "publicIpAddresses" => [], "inboundRules" => [],
+                              "outboundRules" => [{ "frontendIpAddress" => "198.51.100.36", "privateIpAddress" => "10.0.0.4" }] }
+        )
+        plugin.run
+      end
+
+      it "reports no public IP" do
+        expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq([])
+        expect(plugin[:azure][:metadata][:network][:interfaces]["002248B7BFC7"][:public_ipv4]).to eq([])
+      end
+    end
+
+    context "when the load balancer metadata request fails" do
+      before do
+        allow(plugin).to receive(:fetch_loadbalancer_metadata).and_raise(Errno::ECONNRESET)
+        plugin.run
+      end
+
+      it "keeps the rest of the metadata" do
+        expect(plugin[:azure][:metadata][:network][:local_ipv4]).to eq(["10.0.0.4"])
+        expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq([])
+        expect(plugin[:azure][:metadata]).not_to have_key(:loadbalancer)
+      end
+    end
+  end
+
+  describe "with a public IP in the instance document" do
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return({})
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(response_data)
+    end
+
+    it "doesn't request the load balancer metadata" do
+      expect(plugin).not_to receive(:fetch_loadbalancer_metadata)
+      plugin.run
+      expect(plugin[:azure][:metadata][:network][:public_ipv4]).to eq(["40.118.212.225"])
     end
   end
 end

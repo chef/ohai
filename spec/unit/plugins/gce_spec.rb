@@ -120,4 +120,16 @@ describe Ohai::System, "plugin gce" do
       expect(plugin.has_gce_dmi?).to be false
     end
   end
+
+  describe "with GCE DMI data and no hint" do
+    before do
+      allow(plugin).to receive(:hint?).with("gce").and_return(false)
+      allow(plugin).to receive(:has_gce_dmi?).and_return(true)
+    end
+
+    it "probes the metadata server by IP address, without a DNS lookup" do
+      expect(plugin).to receive(:can_socket_connect?).with("169.254.169.254", 80).and_return(false)
+      expect(plugin.looks_like_gce?).to be false
+    end
+  end
 end

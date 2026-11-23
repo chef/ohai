@@ -49,6 +49,14 @@ describe "CloudAttrs object" do
     expect(@cloud_attr_obj.cloud_mash).to eq(cloud_node)
   end
 
+  it "ignores blank hostnames" do
+    @cloud_attr_obj = ::CloudAttrs.new
+    @cloud_attr_obj.public_hostname = ""
+    @cloud_attr_obj.local_hostname = " "
+    @cloud_attr_obj.provider = "my_awesome_cloud"
+    expect(@cloud_attr_obj.cloud_mash).to eq("provider" => "my_awesome_cloud")
+  end
+
   it "ignores a bad ipv4 address" do
     @cloud_attr_obj = ::CloudAttrs.new
     @cloud_attr_obj.add_ipv4_addr("somebogusstring", :public)
@@ -248,6 +256,17 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("ec2")
+    end
+
+    # an instance in a VPC without DNS hostnames, where the metadata service
+    # answers public-hostname with an empty body
+    it "leaves out a blank public hostname" do
+      @plugin[:ec2]["public_ipv4"] = "203.0.113.85"
+      @plugin[:ec2]["public_hostname"] = ""
+      @plugin[:ec2]["local_hostname"] = "ip-172-31-2-47.us-west-2.compute.internal"
+      @plugin.run
+      expect(@plugin[:cloud]).not_to have_key(:public_hostname)
+      expect(@plugin[:cloud][:local_hostname]).to eq("ip-172-31-2-47.us-west-2.compute.internal")
     end
   end
 

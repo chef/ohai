@@ -90,8 +90,10 @@ Ohai.plugin(:Cloud) do
     def cloud_mash
       @cloud[:provider] = @provider if @provider
 
-      @cloud[:public_hostname] = @public_hostname if @public_hostname
-      @cloud[:local_hostname] = @local_hostname if @local_hostname
+      # metadata services return an empty string for a hostname that isn't
+      # assigned (EC2 without DNS hostnames in the VPC, for example)
+      @cloud[:public_hostname] = @public_hostname unless @public_hostname.to_s.strip.empty?
+      @cloud[:local_hostname] = @local_hostname unless @local_hostname.to_s.strip.empty?
 
       @cloud[:public_ipv4] = @cloud[:public_ipv4_addrs][0] if @cloud[:public_ipv4_addrs]
       @cloud[:local_ipv4] = @cloud[:local_ipv4_addrs][0] if @cloud[:local_ipv4_addrs]

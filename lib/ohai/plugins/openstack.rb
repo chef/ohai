@@ -40,12 +40,14 @@ Ohai.plugin(:Openstack) do
 
   # chassis asset tags that OpenStack based public clouds set instead of the
   # usual Nova product name (the same values cloud-init's ds-identify uses)
-  OPENSTACK_ASSET_TAGS ||= ["OpenTelekomCloud", "HUAWEICLOUD", "SAP CCloud VM"].freeze
+  def openstack_asset_tags
+    ["OpenTelekomCloud", "HUAWEICLOUD", "SAP CCloud VM"]
+  end
 
   # look for OpenStack in the SMBIOS data directly. The virtualization
   # plugin only sees it through dmidecode, which needs root.
   def openstack_dmi?
-    if smbios_value(:product_name).to_s.match?(/^OpenStack (Nova|Compute)/) || OPENSTACK_ASSET_TAGS.include?(smbios_value(:chassis_asset_tag))
+    if smbios_value(:product_name).to_s.match?(/^OpenStack (Nova|Compute)/) || openstack_asset_tags.include?(smbios_value(:chassis_asset_tag))
       logger.trace("Plugin Openstack: openstack_dmi? == true")
       true
     else

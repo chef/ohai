@@ -1,0 +1,10 @@
+[
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/metadata/v1.json",
+    "status": "200",
+    "content_type": "application/json; charset=UTF-8",
+    "body": "{\"droplet_id\":400000001,\"hostname\":\"ohai-audit-do\",\"vendor_data\":\"#cloud-config\\nmanage_etc_hosts: true\\n\",\"public_keys\":[\"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com\"],\"region\":\"nyc3\",\"interfaces\":{\"private\":[{\"ipv4\":{\"ip_address\":\"10.116.0.2\",\"netmask\":\"255.255.240.0\",\"gateway\":\"10.116.0.1\"},\"mac\":\"02:00:5e:00:00:01\",\"type\":\"private\"}],\"public\":[{\"ipv4\":{\"ip_address\":\"203.0.113.11\",\"netmask\":\"255.255.240.0\",\"gateway\":\"203.0.113.12\"},\"ipv6\":{\"ip_address\":\"2001:db8:0800:0014:0000:0003:E8CF:B000\",\"cidr\":64,\"gateway\":\"2001:db8:0800:0014:0000:0000:0000:0001\"},\"anchor_ipv4\":{\"ip_address\":\"10.20.0.5\",\"netmask\":\"255.255.0.0\",\"gateway\":\"10.20.0.1\"},\"mac\":\"02:00:5e:00:00:02\",\"type\":\"public\"}]},\"floating_ip\":{\"ipv4\":{\"active\":false},\"ipv6\":{\"active\":false}},\"reserved_ip\":{\"ipv4\":{\"active\":false},\"ipv6\":{\"active\":false}},\"virtual_ips\":null,\"dns\":{\"nameservers\":[\"10.116.15.254\"]},\"tags\":null,\"features\":{\"dhcp_enabled\":false,\"vpc_peering_enabled\":false},\"dotty_status\":\"running\",\"ssh_info\":{\"port\":22}}"
+  }
+]

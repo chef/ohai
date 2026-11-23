@@ -1,0 +1,538 @@
+[
+  {
+    "method": "PUT",
+    "address": "169.254.169.254",
+    "path": "/latest/api/token",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "T2hhaUZpeHR1cmVJbWRzVG9rZW4="
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "1.0\n2007-01-19\n2007-03-01\n2007-08-29\n2007-10-10\n2007-12-15\n2008-02-01\n2008-09-01\n2009-04-04\n2011-01-01\n2011-05-01\n2012-01-12\n2014-02-25\n2014-11-05\n2015-10-20\n2016-04-19\n2016-06-30\n2016-09-02\n2018-03-28\n2018-08-17\n2018-09-24\n2019-10-01\n2020-10-27\n2021-01-03\n2021-03-23\n2021-07-15\n2022-09-24\n2024-04-11\n2025-10-04\n2026-04-15\nlatest"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ami-id\nami-launch-index\nami-manifest-path\nblock-device-mapping/\nevents/\nhostname\nidentity-credentials/\ninstance-action\ninstance-id\ninstance-life-cycle\ninstance-type\nlocal-hostname\nlocal-ipv4\nmac\nmetrics/\nnetwork/\nplacement/\nprofile\npublic-hostname\npublic-ipv4\npublic-keys/\nreservation-id\nsecurity-groups\nservices/\nsystem"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/ami-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ami-00000000feed0001"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/ami-launch-index",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "0"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/ami-manifest-path",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "(unknown)"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/block-device-mapping/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ami\nroot"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/block-device-mapping/ami",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "xvda"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/block-device-mapping/root",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "/dev/xvda"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/events/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "maintenance/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/events/maintenance/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "history\nscheduled"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/events/maintenance/history",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "[]"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/events/maintenance/scheduled",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "[]"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/hostname",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ip-172-31-2-47.us-west-2.compute.internal"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/identity-credentials/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ec2/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/identity-credentials/ec2/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "info\nsecurity-credentials/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/identity-credentials/ec2/info",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2026-11-23T22:48:20Z\",\n  \"AccountId\" : \"123456789011\"\n}"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/identity-credentials/ec2/security-credentials/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ec2-instance"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/identity-credentials/ec2/security-credentials/ec2-instance",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "{\n  \"Code\" : \"Success\",\n  \"LastUpdated\" : \"2026-11-23T22:48:25Z\",\n  \"Type\" : \"AWS-HMAC\",\n  \"AccessKeyId\" : \"ASIAOHAIFIXTURE00000\",\n  \"SecretAccessKey\" : \"OhaiFixtureSecretAccessKey00000000000000\",\n  \"Token\" : \"OhaiFixtureSessionToken\",\n  \"Expiration\" : \"2026-11-24T05:18:34Z\"\n}"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/instance-action",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "none"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/instance-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "i-00000000feed0002"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/instance-life-cycle",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "on-demand"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/instance-type",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "t3.small"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/local-hostname",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ip-172-31-2-47.us-west-2.compute.internal"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/local-ipv4",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.2.47"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/mac",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "02:00:5e:00:00:01"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/metrics/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "vhostmd"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/metrics/vhostmd",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "interfaces/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "macs/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "02:00:5e:00:00:01/"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "device-number\ninterface-id\nipv4-associations/\nlocal-hostname\nlocal-ipv4s\nmac\nowner-id\npublic-hostname\npublic-ipv4s\nsecurity-group-ids\nsecurity-groups\nsubnet-id\nsubnet-ipv4-cidr-block\nvpc-id\nvpc-ipv4-cidr-block\nvpc-ipv4-cidr-blocks"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/device-number",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "0"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/interface-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "eni-00000000feed0003"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/ipv4-associations/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "203.0.113.11"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/ipv4-associations/203.0.113.11",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.2.47"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/local-hostname",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ip-172-31-2-47.us-west-2.compute.internal"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/local-ipv4s",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.2.47"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/mac",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "02:00:5e:00:00:01"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/owner-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "123456789011"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/public-hostname",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/public-ipv4s",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "203.0.113.11"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/security-group-ids",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "sg-00000000feed0004"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/security-groups",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ohai-audit"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/subnet-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "subnet-00000000feed0005"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/subnet-ipv4-cidr-block",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.2.0/24"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/vpc-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "vpc-00000000feed0006"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/vpc-ipv4-cidr-block",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.0.0/16"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/network/interfaces/macs/02:00:5e:00:00:01/vpc-ipv4-cidr-blocks",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "172.31.0.0/16"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/placement/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "availability-zone\navailability-zone-id\nregion"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/placement/availability-zone",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "us-west-2a"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/placement/availability-zone-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "usw2-az2"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/placement/region",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "us-west-2"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/profile",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "default-hvm"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/public-hostname",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/public-ipv4",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "203.0.113.11"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/public-keys/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "0=ohai-audit"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/public-keys/0/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "openssh-key"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/public-keys/0/openssh-key",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com\n"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/reservation-id",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "r-00000000feed0007"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/security-groups",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "ohai-audit"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/services/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "domain\npartition"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/services/domain",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "amazonaws.com"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/services/partition",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "aws"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/meta-data/system",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "nitro"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/user-data/",
+    "status": "404",
+    "content_type": "text/html",
+    "body": "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\t \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n <head>\n  <title>404 - Not Found</title>\n </head>\n <body>\n  <h1>404 - Not Found</h1>\n </body>\n</html>\n"
+  },
+  {
+    "method": "GET",
+    "address": "169.254.169.254",
+    "path": "/2026-04-15/dynamic/instance-identity/document/",
+    "status": "200",
+    "content_type": "text/plain",
+    "body": "{\n  \"accountId\" : \"123456789011\",\n  \"architecture\" : \"x86_64\",\n  \"availabilityZone\" : \"us-west-2a\",\n  \"billingProducts\" : null,\n  \"devpayProductCodes\" : null,\n  \"marketplaceProductCodes\" : null,\n  \"imageId\" : \"ami-00000000feed0001\",\n  \"instanceId\" : \"i-00000000feed0002\",\n  \"instanceType\" : \"t3.small\",\n  \"kernelId\" : null,\n  \"pendingTime\" : \"2026-11-23T22:49:01Z\",\n  \"privateIp\" : \"172.31.2.47\",\n  \"ramdiskId\" : null,\n  \"region\" : \"us-west-2\",\n  \"version\" : \"2017-09-30\"\n}"
+  }
+]

@@ -23,12 +23,15 @@ describe "Ohai::Hints" do
   # We are using the plugins directory infrastructure to test hints
   extend IntegrationSupport
 
+  # Ohai::Hints caches what it has read, across hints paths
   before do
     @original_hints = Ohai.config[:hints_path]
+    Ohai::Hints.refresh_hints
   end
 
   after do
     Ohai.config[:hints_path] = @original_hints
+    Ohai::Hints.refresh_hints
   end
 
   when_plugins_directory "doesn't contain any hints" do

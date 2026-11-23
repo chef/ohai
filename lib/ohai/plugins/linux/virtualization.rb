@@ -159,6 +159,12 @@ Ohai.plugin(:Virtualization) do
     version = get_attribute(:dmi, :system, :version) || dmi_sysfs_value("product_version")
     logger.trace("Looking up DMI data manufacturer: '#{manufacturer}' product_name: '#{product_name}' version: '#{version}'")
     guest = guest_from_dmi_data(manufacturer, product_name, version)
+    # Some providers brand the system strings (Hetzner's arm64 servers report
+    # "Hetzner" / "vServer") and leave QEMU's own values on the base board
+    # and chassis. arm64 has no hypervisor CPU flag to fall back on.
+    guest ||= guest_from_dmi_data(get_attribute(:dmi, :base_board, :manufacturer) || dmi_sysfs_value("board_vendor"),
+      get_attribute(:dmi, :base_board, :product_name) || dmi_sysfs_value("board_name"), nil)
+    guest ||= guest_from_dmi_data(get_attribute(:dmi, :chassis, :manufacturer) || dmi_sysfs_value("chassis_vendor"), nil, nil)
     if guest
       logger.trace("Plugin Virtualization: DMI data indicates #{guest} guest")
       virtualization[:system] = guest

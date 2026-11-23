@@ -200,10 +200,20 @@ Ohai.plugin(:CPU) do
           lscpu_real = lscpu_info[:sockets]
           lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         else
-          threads_per_core = [lscpu_info[:threads_per_core], 1].max
-          lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * threads_per_core
+          # "lscpu -p" lists every CPU with its core and socket. Count those:
+          # on hybrid CPUs (Intel performance and efficiency cores, Arm
+          # big.LITTLE) "Thread(s) per core" is the maximum, not every core's
+          # count, so sockets x cores x threads overcounts.
+          topology = cpu_cores.stdout.lines.grep(/\A\d+,\d+,\d+/).map { |l| l.split(",").map(&:to_i) }
+          if topology.empty?
+            threads_per_core = [lscpu_info[:threads_per_core], 1].max
+            lscpu_total = lscpu_info[:sockets] * lscpu_info[:cores_per_socket] * threads_per_core
+            lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
+          else
+            lscpu_total = topology.size
+            lscpu_cores = topology.map { |_cpu, core, socket| [socket, core] }.uniq.size
+          end
           lscpu_real = lscpu_info[:sockets]
-          lscpu_cores = lscpu_info[:sockets] * lscpu_info[:cores_per_socket]
         end
 
         # Enumerate cpus and fill out data to provide backwards compatibility data

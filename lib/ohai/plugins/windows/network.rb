@@ -88,6 +88,9 @@ Ohai.plugin(:Network) do
   def prefer_ipv4(addresses)
     return nil unless addresses.is_a?(Array)
 
+    # collect_data requires it too, but this method is also called on its own
+    require "ipaddress" unless defined?(IPAddress)
+
     addresses.find { |ip| IPAddress.valid_ipv4?(ip) } ||
       addresses.find { |ip| IPAddress.valid_ipv6?(ip) }
   end

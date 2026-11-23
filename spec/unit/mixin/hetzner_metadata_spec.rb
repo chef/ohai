@@ -29,35 +29,39 @@ describe Ohai::Mixin::HetznerMetadata do
     end
   end
 
-  # the shape of a real response; the values are made up
+  # the response from a Hetzner Cloud CAX11 server running Debian 13, with
+  # its identifiers replaced by documentation values
   let(:metadata_yaml) do
-    <<~YAML
-      availability-zone: fsn1-dc14
-      hostname: web-1
-      instance-id: 4242
-      local-ipv4: ''
-      network-config:
-        config:
-        - mac_address: 96:00:00:00:00:01
-          name: eth0
-          subnets:
-          - ipv4: true
-            type: dhcp
-          - address: 2001:db8:1:2::1/64
-            gateway: fe80::1
-            ipv6: true
-            type: static
-          type: physical
-        version: 1
-      network-sysconfig: "DEVICE='eth0'\\nONBOOT='yes'\\n"
-      public-ipv4: 203.0.113.10
-      public-keys:
-      - ssh-ed25519 AAAAexample user@example
+    <<~'YAML'
+      instance-id: 4200001
+      hostname: ohai-audit-arm
       region: eu-central
-      vendor_data: "#cloud-config\\nruncmd: [echo secret]\\n"
+      availability-zone: fsn1-dc14
+      local-ipv4: ""
+      network-config:
+          version: 1
+          config:
+              - type: physical
+                name: eth0
+                mac_address: 02:00:5e:00:00:01
+                subnets:
+                  - type: dhcp
+                    ipv4: true
+                  - type: static
+                    address: 2001:db8:c013:b8d::1/64
+                    ipv6: true
+                    gateway: fe80::1
+                    dns_nameservers:
+                      - 2001:db8:ff00::add:2
+                      - 2001:db8:ff00::add:1
+      vendor_data: "#cloud-config\nmanage_etc_hosts: true\n"
+      public-keys:
+          - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com
+      public-ipv4: 203.0.113.11
     YAML
   end
 
+  # that server had no private network; this is the documented shape
   let(:private_networks_yaml) do
     <<~YAML
       - ip: 10.0.0.2
@@ -88,12 +92,27 @@ describe Ohai::Mixin::HetznerMetadata do
 
     it "parses the metadata with underscored keys" do
       metadata = mixin.fetch_metadata
-      expect(metadata["instance_id"]).to eq(4242)
-      expect(metadata["hostname"]).to eq("web-1")
-      expect(metadata["public_ipv4"]).to eq("203.0.113.10")
+      expect(metadata["instance_id"]).to eq(4200001)
+      expect(metadata["hostname"]).to eq("ohai-audit-arm")
+      expect(metadata["public_ipv4"]).to eq("203.0.113.11")
+      expect(metadata["local_ipv4"]).to eq("")
       expect(metadata["availability_zone"]).to eq("fsn1-dc14")
       expect(metadata["region"]).to eq("eu-central")
-      expect(metadata["network_config"]["config"][0]["subnets"][1]["address"]).to eq("2001:db8:1:2::1/64")
+      expect(metadata["public_keys"]).to eq(["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhaiFixtureKey fixture@example.com"])
+    end
+
+    it "parses the network config with the IPv6 subnet and its name servers" do
+      interface = mixin.fetch_metadata["network_config"]["config"][0]
+      expect(interface["mac_address"]).to eq("02:00:5e:00:00:01")
+      expect(interface["subnets"][1]).to eq(
+        "type" => "static", "address" => "2001:db8:c013:b8d::1/64", "ipv6" => true, "gateway" => "fe80::1",
+        "dns_nameservers" => ["2001:db8:ff00::add:2", "2001:db8:ff00::add:1"]
+      )
+    end
+
+    it "returns an empty private network list for a server without one" do
+      allow(http_client).to receive(:get).with("/hetzner/v1/metadata/private-networks").and_return(response("200", "[]\n"))
+      expect(mixin.fetch_metadata["private_networks"]).to eq([])
     end
 
     it "includes the private networks" do
@@ -103,9 +122,14 @@ describe Ohai::Mixin::HetznerMetadata do
       }])
     end
 
-    it "doesn't keep vendor data or the redundant sysconfig network config" do
-      metadata = mixin.fetch_metadata
-      expect(metadata.keys).not_to include("vendor_data", "network_sysconfig", "network-sysconfig")
+    it "doesn't keep vendor data" do
+      expect(mixin.fetch_metadata.keys).not_to include("vendor_data")
+    end
+
+    it "doesn't keep the sysconfig copy of the network config" do
+      allow(http_client).to receive(:get).with("/hetzner/v1/metadata")
+        .and_return(response("200", metadata_yaml + "network-sysconfig: \"DEVICE='eth0'\\nONBOOT='yes'\\n\"\n"))
+      expect(mixin.fetch_metadata.keys).not_to include("network_sysconfig", "network-sysconfig")
     end
 
     it "never requests user data" do

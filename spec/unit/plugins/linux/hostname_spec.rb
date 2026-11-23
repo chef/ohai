@@ -49,4 +49,43 @@ describe Ohai::System, "Linux hostname plugin" do
 
   end
 
+  describe "when the hostname command isn't installed" do
+    # Arch Linux doesn't install it by default
+    before do
+      allow(@plugin).to receive(:shell_out).with("hostname -s").and_raise(Ohai::Exceptions::Exec, "No such file or directory - hostname")
+      allow(@plugin).to receive(:shell_out).with("hostname").and_raise(Ohai::Exceptions::Exec, "No such file or directory - hostname")
+      allow(@plugin).to receive(:file_read).with("/proc/sys/kernel/hostname").and_return("katie.local\n")
+    end
+
+    it "sets machinename from the kernel hostname" do
+      @plugin.run
+      expect(@plugin[:machinename]).to eq("katie.local")
+    end
+
+    it "sets hostname to the kernel hostname up to the first dot" do
+      @plugin.run
+      expect(@plugin[:hostname]).to eq("katie")
+    end
+
+    it "sets fqdn and domain from the kernel hostname" do
+      @plugin.run
+      expect(@plugin[:fqdn]).to eq("katie.bethell")
+      expect(@plugin[:domain]).to eq("bethell")
+    end
+
+    context "with a short kernel hostname that doesn't resolve" do
+      # a single-label name with no DNS or /etc/hosts entry
+      before do
+        allow(@plugin).to receive(:file_read).with("/proc/sys/kernel/hostname").and_return("archlinux\n")
+        allow(@plugin).to receive(:canonicalize_hostname).with("archlinux").and_raise(RuntimeError)
+      end
+
+      it "sets hostname and machinename, and no fqdn" do
+        @plugin.run
+        expect(@plugin[:hostname]).to eq("archlinux")
+        expect(@plugin[:machinename]).to eq("archlinux")
+        expect(@plugin[:fqdn]).to be_nil
+      end
+    end
+  end
 end

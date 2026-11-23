@@ -107,6 +107,22 @@ Ohai.plugin(:Network) do
       end
     end
 
+    # The IPv6 default route, as the Linux plugin reports it. Its gateway is
+    # usually link-local and printed with its zone ("fe80::1%en0"); drop the
+    # zone, as the Linux attribute has none. Without an IPv6 default route
+    # this exits non-zero with "not in table".
+    so = shell_out("route -n get -inet6 default")
+    if so.exitstatus == 0
+      so.stdout.lines do |line|
+        case line
+        when /^\s*gateway: ([0-9a-fA-F:.]+)/
+          network[:default_inet6_gateway] = $1
+        when /^\s*interface: (\S+)/
+          network[:default_inet6_interface] = $1
+        end
+      end
+    end
+
     iface = Mash.new
     so = shell_out("ifconfig -a")
     cint = nil

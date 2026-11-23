@@ -426,6 +426,8 @@ describe Ohai::System, "Darwin Network Plugin" do
     # @sysctl_lines = darwin_sysctl.split("\n")
 
     allow(@plugin).to receive(:shell_out).with("route -n get default").and_return(mock_shell_out(0, @darwin_route, ""))
+    allow(@plugin).to receive(:shell_out).with("route -n get -inet6 default")
+      .and_return(mock_shell_out(1, "", "route: writing to routing socket: not in table\n"))
     allow(@plugin).to receive(:shell_out).with("netstat -i -d -l -b -n")
   end
 
@@ -547,6 +549,29 @@ describe Ohai::System, "Darwin Network Plugin" do
 
     it "finds the default interface by asking which iface has the default route" do
       expect(@plugin["network"][:default_gateway]).to eq("10.20.10.1")
+    end
+
+    it "doesn't set an IPv6 default route when there is none" do
+      @plugin.run
+      expect(@plugin["network"]).not_to have_key(:default_inet6_gateway)
+      expect(@plugin["network"]).not_to have_key(:default_inet6_interface)
+    end
+
+    it "sets the IPv6 default route without the gateway's zone" do
+      # format of "route -n get -inet6 default" on macOS 27
+      allow(@plugin).to receive(:shell_out).with("route -n get -inet6 default").and_return(mock_shell_out(0, <<~ROUTE, ""))
+           route to: ::
+        destination: ::
+               mask: default
+            gateway: fe80::1%en1
+          interface: en1
+              flags: <UP,GATEWAY,DONE,PRCLONING,GLOBAL>
+         recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+               0         0         0         0         0         0      1500         0
+      ROUTE
+      @plugin.run
+      expect(@plugin["network"][:default_inet6_gateway]).to eq("fe80::1")
+      expect(@plugin["network"][:default_inet6_interface]).to eq("en1")
     end
 
     it "detects network settings" do

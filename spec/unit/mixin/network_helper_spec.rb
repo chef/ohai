@@ -28,6 +28,26 @@ describe Ohai::Mixin::NetworkHelper, "Network Helper Mixin" do
     end
   end
 
+  describe "preserve_hostname_case" do
+    {
+      "a lowercased answer for the same name" => ["build-mac.example.test", "Build-Mac.example.test", "Build-Mac.example.test"],
+      "a domain added to a short name" => ["win-abc123.corp.example.com", "WIN-ABC123", "WIN-ABC123.corp.example.com"],
+      "a different domain for the same host label" => ["web01.example.com", "WEB01.local", "WEB01.example.com"],
+      "an answer that already has the same case" => ["katie.bethell", "katie.local", "katie.bethell"],
+      "an answer for a different host" => ["alias.example.com", "Build-Mac", "alias.example.com"],
+      "no answer" => [nil, "Build-Mac", nil],
+    }.each do |desc, (canonical, hostname, expected)|
+      it "returns #{expected.inspect} for #{desc}" do
+        expect(mixin.preserve_hostname_case(canonical, hostname)).to eq(expected)
+      end
+    end
+
+    it "keeps the machine's case through canonicalize_hostname_with_retries" do
+      allow(mixin).to receive(:canonicalize_hostname).with("Build-Mac.example.test").and_return("build-mac.example.test")
+      expect(mixin.canonicalize_hostname_with_retries("Build-Mac.example.test")).to eq("Build-Mac.example.test")
+    end
+  end
+
   describe "canonicalize hostname" do
     [
       {

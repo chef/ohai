@@ -49,11 +49,14 @@ module Ohai
       # Known versions, newest last. IMDS lists the versions it supports when
       # asked without one, and Ohai uses the newest of those; this list is the
       # fallback when that list can't be read.
+      # https://learn.microsoft.com/en-us/azure/virtual-machines/instance-metadata-service#supported-api-versions
       AZURE_SUPPORTED_VERSIONS ||= %w{ 2018-10-01 2019-02-01 2019-03-11 2019-04-30 2019-06-01
                                        2019-06-04 2019-08-01 2019-08-15 2019-11-01 2020-06-01
                                        2020-07-15 2020-09-01 2020-10-01 2020-12-01 2021-01-01
-                                       2021-02-01 2021-03-01 2021-05-01 2021-10-01 2021-11-01
-                                       2021-11-15 2021-12-13 2023-07-01 }.freeze
+                                       2021-02-01 2021-03-01 2021-05-01 2021-08-01 2021-10-01
+                                       2021-11-01 2021-11-15 2021-12-13 2023-07-01 2023-11-15
+                                       2024-03-15 2024-07-17 2025-04-07 2025-11-15 2026-06-23
+                                       2026-07-20 }.freeze
 
       # IMDS answers 410 while a VM is starting, 429 when callers exceed its
       # rate limit and 500 on transient errors; all are worth retrying

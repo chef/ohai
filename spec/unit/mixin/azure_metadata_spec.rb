@@ -62,11 +62,20 @@ describe Ohai::Mixin::AzureMetadata do
       end
     end
 
+    context "when azure lists the versions it supports" do
+      # IMDS's answer on a Standard_B2s VM in westus2, November 2026
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request. api-version is invalid or was not specified in the request. For more information refer to aka.ms/azureimds\",\"newest-versions\":[\"2026-07-20\",\"2026-06-23\",\"2025-11-15\"]}", code: "400") }
+
+      it "returns the newest of them" do
+        expect(mixin.best_api_version).to eq("2026-07-20")
+      end
+    end
+
     context "when azure lists versions newer than any Ohai knows" do
-      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request.\",\"newest-versions\":[\"2025-04-07\",\"2024-07-17\",\"2024-03-15\"]}", code: "400") }
+      let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request.\",\"newest-versions\":[\"2027-03-01\",\"2026-07-20\",\"2026-06-23\"]}", code: "400") }
 
       it "returns the newest version azure supports" do
-        expect(mixin.best_api_version).to eq("2025-04-07")
+        expect(mixin.best_api_version).to eq("2027-03-01")
       end
     end
 
@@ -74,7 +83,7 @@ describe Ohai::Mixin::AzureMetadata do
       let(:response) { double("Net::HTTP Response", body: "{\"error\":\"Bad request.\"}", code: "400") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2023-07-01")
+        expect(mixin.best_api_version).to eq("2026-07-20")
       end
     end
 
@@ -92,7 +101,7 @@ describe Ohai::Mixin::AzureMetadata do
       let(:response) { double("Net::HTTP Response", code: "404") }
 
       it "returns the most recent version we know of" do
-        expect(mixin.best_api_version).to eq("2023-07-01")
+        expect(mixin.best_api_version).to eq("2026-07-20")
       end
     end
 

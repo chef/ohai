@@ -29,6 +29,7 @@ module Ohai
     # - FreeBSD / DragonFly: kenv smbios.*
     # - OpenBSD: sysctl hw.*
     # - NetBSD: sysctl machdep.dmi.*
+    # - Solaris / illumos: smbios -t <type>
     # - Windows: WMI
     #
     # Plugins that include this must also have the file and shell_out helpers
@@ -40,34 +41,42 @@ module Ohai
       SMBIOS_FIELDS ||= {
         sys_vendor: {
           linux: "sys_vendor", kenv: "smbios.system.maker", openbsd: "hw.vendor",
-          netbsd: "machdep.dmi.system-vendor", wmi: %w{Win32_ComputerSystemProduct vendor}
+          netbsd: "machdep.dmi.system-vendor", wmi: %w{Win32_ComputerSystemProduct vendor},
+          solaris: %w{SMB_TYPE_SYSTEM Manufacturer}
         },
         product_name: {
           linux: "product_name", kenv: "smbios.system.product", openbsd: "hw.product",
-          netbsd: "machdep.dmi.system-product", wmi: %w{Win32_ComputerSystemProduct name}
+          netbsd: "machdep.dmi.system-product", wmi: %w{Win32_ComputerSystemProduct name},
+          solaris: %w{SMB_TYPE_SYSTEM Product}
         },
         product_uuid: {
           linux: "product_uuid", kenv: "smbios.system.uuid", openbsd: "hw.uuid",
-          netbsd: "machdep.dmi.system-uuid", wmi: %w{Win32_ComputerSystemProduct uuid}
+          netbsd: "machdep.dmi.system-uuid", wmi: %w{Win32_ComputerSystemProduct uuid},
+          solaris: %w{SMB_TYPE_SYSTEM UUID}
         },
         product_serial: {
           linux: "product_serial", kenv: "smbios.system.serial", openbsd: "hw.serialno",
-          netbsd: "machdep.dmi.system-serial", wmi: %w{Win32_BIOS serialnumber}
+          netbsd: "machdep.dmi.system-serial", wmi: %w{Win32_BIOS serialnumber},
+          solaris: ["SMB_TYPE_SYSTEM", "Serial Number"]
         },
         bios_vendor: {
           linux: "bios_vendor", kenv: "smbios.bios.vendor",
-          netbsd: "machdep.dmi.bios-vendor", wmi: %w{Win32_BIOS manufacturer}
+          netbsd: "machdep.dmi.bios-vendor", wmi: %w{Win32_BIOS manufacturer},
+          solaris: %w{SMB_TYPE_BIOS Vendor}
         },
         bios_version: {
           linux: "bios_version", kenv: "smbios.bios.version",
-          netbsd: "machdep.dmi.bios-version", wmi: %w{Win32_BIOS smbiosbiosversion}
+          netbsd: "machdep.dmi.bios-version", wmi: %w{Win32_BIOS smbiosbiosversion},
+          solaris: ["SMB_TYPE_BIOS", "Version String"]
         },
         board_asset_tag: {
-          linux: "board_asset_tag", kenv: "smbios.planar.tag", netbsd: "machdep.dmi.board-asset-tag"
+          linux: "board_asset_tag", kenv: "smbios.planar.tag", netbsd: "machdep.dmi.board-asset-tag",
+          solaris: ["SMB_TYPE_BASEBOARD", "Asset Tag"]
         },
         chassis_asset_tag: {
           linux: "chassis_asset_tag", kenv: "smbios.chassis.tag",
-          netbsd: "machdep.dmi.chassis-asset-tag", wmi: %w{Win32_SystemEnclosure smbiosassettag}
+          netbsd: "machdep.dmi.chassis-asset-tag", wmi: %w{Win32_SystemEnclosure smbiosassettag},
+          solaris: ["SMB_TYPE_CHASSIS", "Asset Tag"]
         },
       }.freeze
 
@@ -102,6 +111,8 @@ module Ohai
           read_smbios_command("sysctl -n #{sources[:openbsd]}") if sources[:openbsd]
         when /netbsd/
           read_smbios_command("sysctl -n #{sources[:netbsd]}") if sources[:netbsd]
+        when /solaris/
+          read_smbios_solaris(*sources[:solaris]) if sources[:solaris]
         else
           path = "/sys/class/dmi/id/#{sources[:linux]}"
           file_read(path) if sources[:linux] && file_exist?(path)
@@ -111,6 +122,14 @@ module Ohai
       def read_smbios_command(cmd)
         so = shell_out(cmd)
         so.stdout if so.exitstatus == 0
+      end
+
+      # smbios(8) prints each structure of a type as indented "Label: value"
+      # lines. Several fields share a type, so each type is read only once.
+      def read_smbios_solaris(type, label)
+        @smbios_solaris_output ||= {}
+        output = (@smbios_solaris_output[type] ||= read_smbios_command("smbios -t #{type}").to_s)
+        output[/^\s+#{Regexp.escape(label)}: (.*)$/, 1]
       end
 
       def read_smbios_wmi(wmi_class, property)

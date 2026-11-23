@@ -104,6 +104,90 @@ describe Ohai::Mixin::Smbios do
     end
   end
 
+  context "on Solaris" do
+    before { stub_const("RUBY_PLATFORM", "x86_64-solaris2.11") }
+
+    # smbios(8) output from Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex
+    let(:smbios_chassis) do
+      <<~OUTPUT
+        ID    SIZE TYPE
+        768   53   SMB_TYPE_CHASSIS (system enclosure or chassis)
+
+          Manufacturer: QEMU
+          Version: pc-q35-7.2
+          Asset Tag: OracleCloud.com
+
+          SKU Number:#{" "}
+          OEM Data: 0x0
+          Lock Present: N
+          Chassis Type: 0x1 (other)
+      OUTPUT
+    end
+
+    let(:smbios_system) do
+      <<~OUTPUT
+        ID    SIZE TYPE
+        256   73   SMB_TYPE_SYSTEM (system information)
+
+          Manufacturer: QEMU
+          Product: Standard PC (Q35 + ICH9, 2009)
+          Version: pc-q35-7.2
+
+          UUID: 1c3a2f9e-5b7d-4e61-9a0c-2d8f6b4e7a13
+          Wake-Up Event: 0x6 (power switch)
+          SKU Number:#{" "}
+          Family:#{" "}
+      OUTPUT
+    end
+
+    let(:smbios_bios) do
+      <<~OUTPUT
+        ID    SIZE TYPE
+        0     53   SMB_TYPE_BIOS (BIOS information)
+
+          Vendor: Oracle
+          Version String: 20260902
+          Release Date: Sep-02-2026
+          Characteristics Extension Byte 2: 0x1c
+        	SMB_BIOSXB2_VIRT (SMBIOS describes a virtual machine)
+          Version Number: 0.0
+      OUTPUT
+    end
+
+    it "reads the chassis asset tag with smbios" do
+      allow(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_CHASSIS").and_return(command_result(smbios_chassis))
+      expect(mixin.smbios_value(:chassis_asset_tag)).to eq("OracleCloud.com")
+    end
+
+    it "reads several fields of one type with a single smbios run" do
+      expect(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_SYSTEM").once.and_return(command_result(smbios_system))
+      expect(mixin.smbios_value(:sys_vendor)).to eq("QEMU")
+      expect(mixin.smbios_value(:product_name)).to eq("Standard PC (Q35 + ICH9, 2009)")
+      expect(mixin.smbios_value(:product_uuid)).to eq("1c3a2f9e-5b7d-4e61-9a0c-2d8f6b4e7a13")
+    end
+
+    it "matches the whole label, not a prefix of a longer one" do
+      allow(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_BIOS").and_return(command_result(smbios_bios))
+      expect(mixin.smbios_value(:bios_vendor)).to eq("Oracle")
+      expect(mixin.smbios_value(:bios_version)).to eq("20260902")
+    end
+
+    it "returns nil for a label with an empty value or a missing label" do
+      allow(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_SYSTEM").and_return(command_result(smbios_system))
+      expect(mixin.smbios_value(:product_serial)).to be_nil
+    end
+
+    it "returns nil when the structure type isn't present" do
+      allow(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_BASEBOARD").and_return(command_result(""))
+      expect(mixin.smbios_value(:board_asset_tag)).to be_nil
+    end
+
+    it "returns nil when smbios fails" do
+      allow(mixin).to receive(:shell_out).with("smbios -t SMB_TYPE_CHASSIS").and_return(command_result("", 1))
+      expect(mixin.smbios_value(:chassis_asset_tag)).to be_nil
+    end
+  end
+
   context "on Windows" do
     before { stub_const("RUBY_PLATFORM", "x64-mingw-ucrt") }
 

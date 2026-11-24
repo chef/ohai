@@ -25,7 +25,10 @@ module Ohai
       DO_METADATA_URL ||= "/metadata/v1.json"
 
       def http_client
-        Net::HTTP.start(DO_METADATA_ADDR).tap { |h| h.read_timeout = 6 }
+        # Connect directly: the metadata service is link-local, so the nil proxy
+        # address keeps Net::HTTP from using http_proxy from the environment,
+        # and open_timeout replaces Net::HTTP's 60 second default.
+        Net::HTTP.start(DO_METADATA_ADDR, 80, nil, open_timeout: 3).tap { |h| h.read_timeout = 6 }
       end
 
       def fetch_metadata

@@ -35,7 +35,10 @@ module Ohai
       ALI_METADATA_ADDR ||= "100.100.100.200"
 
       def http_get(uri)
-        conn = Net::HTTP.start(ALI_METADATA_ADDR)
+        # Connect directly: the metadata service is link-local, so the nil proxy
+        # address keeps Net::HTTP from using http_proxy from the environment,
+        # and open_timeout replaces Net::HTTP's 60 second default.
+        conn = Net::HTTP.start(ALI_METADATA_ADDR, 80, nil, open_timeout: 3)
         conn.read_timeout = 6
         conn.keep_alive_timeout = 6
         conn.get("/2016-01-01/#{uri}", { "User-Agent" => "chef-ohai/#{Ohai::VERSION}" })

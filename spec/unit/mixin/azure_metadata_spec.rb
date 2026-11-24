@@ -34,7 +34,7 @@ describe Ohai::Mixin::AzureMetadata do
     it "gets the passed URI" do
       http_mock = double("http")
       allow(http_mock).to receive(:read_timeout=)
-      allow(Net::HTTP).to receive(:start).with("169.254.169.254").and_return(http_mock)
+      allow(Net::HTTP).to receive(:start).with("169.254.169.254", 80, nil, open_timeout: 3).and_return(http_mock)
 
       expect(http_mock).to receive(:get).with("http://www.chef.io", { "Metadata" => "true" })
       mixin.http_get("http://www.chef.io")

@@ -62,6 +62,8 @@ describe Ohai::System, "plugin eucalyptus" do
       allow(IO).to receive(:select).and_return([[], [1], []])
       t = double("connection")
       allow(t).to receive(:connect_nonblock).and_raise(Errno::EINPROGRESS)
+      allow(t).to receive(:getsockopt).and_return(double("sockopt", int: 0))
+      allow(t).to receive(:close)
       allow(Socket).to receive(:new).and_return(t)
       plugin.run
       expect(plugin[:eucalyptus]).not_to be_nil

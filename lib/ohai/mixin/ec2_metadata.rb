@@ -111,7 +111,10 @@ module Ohai
       #
       # @return [Net::HTTP]
       def http_client
-        @conn ||= Net::HTTP.start(EC2_METADATA_ADDR).tap do |h|
+        # Connect directly: the metadata service is link-local, so the nil proxy
+        # address keeps Net::HTTP from using http_proxy from the environment,
+        # and open_timeout replaces Net::HTTP's 60 second default.
+        @conn ||= Net::HTTP.start(EC2_METADATA_ADDR, 80, nil, open_timeout: 3).tap do |h|
           h.read_timeout = 10
           h.keep_alive_timeout = 10
         end

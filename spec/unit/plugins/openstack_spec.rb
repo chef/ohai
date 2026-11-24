@@ -209,7 +209,7 @@ describe Ohai::System, "plugin openstack" do
           .and_return(true)
 
         allow(Net::HTTP).to receive(:start)
-          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR)
+          .with(Ohai::Mixin::Ec2Metadata::EC2_METADATA_ADDR, 80, nil, open_timeout: 3)
           .and_return(http_client)
 
         allow(plugin).to receive(:best_api_version).and_return(metadata_version)

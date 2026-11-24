@@ -21,6 +21,11 @@ require "spec_helper"
 describe Ohai::System, "plugin openstack" do
 
   let(:plugin) { get_plugin("openstack") }
+
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
   let(:default_timeout) { 2 }
 
   before do
@@ -330,6 +335,61 @@ describe Ohai::System, "plugin openstack" do
       it "doesn't set metadata attributes" do
         expect(plugin[:openstack][:instance_id]).to be_nil
       end
+    end
+  end
+
+  describe "with the nova client installed (virtualization host)" do
+    before do
+      allow(plugin).to receive(:hint?).with("openstack").and_return(false)
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      plugin[:virtualization] = { systems: { openstack: "host" } }
+    end
+
+    it "doesn't set the openstack attribute" do
+      expect(plugin).not_to receive(:can_socket_connect?)
+      plugin.run
+      expect(plugin[:openstack]).to be_nil
+    end
+  end
+
+  describe "with OpenStack SMBIOS data and no virtualization data" do
+    before do
+      allow(plugin).to receive(:hint?).with("openstack").and_return(false)
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:can_socket_connect?).and_return(false)
+      plugin[:virtualization] = { systems: {} }
+    end
+
+    it "detects the OpenStack Nova product name" do
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("OpenStack Nova")
+      plugin.run
+      expect(plugin[:openstack]).not_to be_nil
+    end
+
+    it "detects the Red Hat OpenStack Compute product name" do
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("OpenStack Compute")
+      plugin.run
+      expect(plugin[:openstack]).not_to be_nil
+    end
+
+    it "detects an OpenStack-based public cloud from its chassis asset tag" do
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("OpenTelekomCloud")
+      plugin.run
+      expect(plugin[:openstack]).not_to be_nil
+    end
+  end
+
+  describe "when a metadata path returns 404" do
+    before do
+      allow(plugin).to receive(:hint?).with("openstack").and_return(true)
+      allow(plugin).to receive(:can_socket_connect?).and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return({ "instance_id" => "i-1234", "public_ipv4" => nil })
+    end
+
+    it "skips the missing value" do
+      plugin.run
+      expect(plugin[:openstack][:instance_id]).to eq("i-1234")
+      expect(plugin[:openstack]).not_to have_key(:public_ipv4)
     end
   end
 end

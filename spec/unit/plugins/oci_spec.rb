@@ -97,6 +97,7 @@ describe Ohai::System, "plugin oci" do
     allow(plugin).to receive(:can_socket_connect?)
       .with(Ohai::Mixin::OCIMetadata::OCI_METADATA_ADDR, 80)
       .and_return(false)
+    allow(plugin).to receive(:smbios_value).and_return(nil)
   end
 
   shared_examples_for "!oci" do
@@ -129,7 +130,7 @@ describe Ohai::System, "plugin oci" do
   describe "without oci hint file not in OCI" do
     before do
       allow(plugin).to receive(:hint?).with("oci").and_return(false)
-      allow(plugin).to receive(:chassis_asset_tag).and_return("")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("")
     end
 
     it_behaves_like "!oci"
@@ -138,7 +139,7 @@ describe Ohai::System, "plugin oci" do
   describe "without oci hint file in OCI" do
     before do
       allow(plugin).to receive(:hint?).with("oci").and_return(false)
-      allow(plugin).to receive(:chassis_asset_tag).and_return("OracleCloud.com")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("OracleCloud.com")
     end
 
     it_behaves_like "oci"
@@ -190,27 +191,27 @@ describe Ohai::System, "plugin oci" do
 
   describe "#oci_chassis_asset_tag?" do
     it "returns true when chassis asset tag contains OracleCloud.com" do
-      allow(plugin).to receive(:chassis_asset_tag).and_return("OracleCloud.com")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("OracleCloud.com")
       expect(plugin.oci_chassis_asset_tag?).to be true
     end
 
     it "returns false when chassis asset tag is nil" do
-      allow(plugin).to receive(:chassis_asset_tag).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return(nil)
       expect(plugin.oci_chassis_asset_tag?).to be false
     end
 
     it "returns false when chassis asset tag is empty" do
-      allow(plugin).to receive(:chassis_asset_tag).and_return("")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("")
       expect(plugin.oci_chassis_asset_tag?).to be false
     end
 
     it "returns false when chassis asset tag does not contain OracleCloud.com" do
-      allow(plugin).to receive(:chassis_asset_tag).and_return("SomeOtherTag")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("SomeOtherTag")
       expect(plugin.oci_chassis_asset_tag?).to be false
     end
 
     it "returns true when chassis asset tag contains OracleCloud.com with extra content" do
-      allow(plugin).to receive(:chassis_asset_tag).and_return("prefix OracleCloud.com suffix")
+      allow(plugin).to receive(:smbios_value).with(:chassis_asset_tag).and_return("prefix OracleCloud.com suffix")
       expect(plugin.oci_chassis_asset_tag?).to be true
     end
   end

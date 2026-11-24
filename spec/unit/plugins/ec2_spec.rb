@@ -24,10 +24,10 @@ describe Ohai::System, "plugin ec2" do
   let(:plugin) { get_plugin("ec2") }
 
   before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
     allow(plugin).to receive(:hint?).with("ec2").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(false)
   end
 
   shared_examples_for "!ec2" do
@@ -384,8 +384,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios version data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("4.2.amazon\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_version).and_return("4.2.amazon")
     end
 
     it_behaves_like "ec2"
@@ -394,8 +393,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios version data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_version").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_version").and_return("1.0\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_version).and_return("1.0")
     end
 
     it_behaves_like "!ec2"
@@ -404,8 +402,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with amazon dmi bios vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Amazon EC2\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_vendor).and_return("Amazon EC2")
     end
 
     it_behaves_like "ec2"
@@ -414,8 +411,7 @@ describe Ohai::System, "plugin ec2" do
 
   describe "with non-amazon dmi bios vendor data" do
     before do
-      allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/bios_vendor").and_return(true)
-      allow(plugin).to receive(:file_read).with("/sys/class/dmi/id/bios_vendor").and_return("Xen\n")
+      allow(plugin).to receive(:smbios_value).with(:bios_vendor).and_return("Xen")
     end
 
     it_behaves_like "!ec2"
@@ -497,4 +493,43 @@ describe Ohai::System, "plugin ec2" do
 
   end
 
+  describe "#has_ec2_smbios?" do
+    before do
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+    end
+
+    it "is true for the Amazon EC2 system vendor" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Amazon EC2")
+      expect(plugin.has_ec2_smbios?).to be true
+    end
+
+    it "is true for an upper case EC2 UUID" do
+      allow(plugin).to receive(:smbios_value).with(:product_uuid).and_return("EC2E1916-9099-7CAF-FD21-012345ABCDEF")
+      expect(plugin.has_ec2_smbios?).to be true
+    end
+
+    it "is true for a lower case ec2 UUID" do
+      allow(plugin).to receive(:smbios_value).with(:product_uuid).and_return("ec2e1916-9099-7caf-fd21-012345abcdef")
+      expect(plugin.has_ec2_smbios?).to be true
+    end
+
+    it "is false for other systems" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("QEMU")
+      allow(plugin).to receive(:smbios_value).with(:product_uuid).and_return("4C4C4544-0042-3510-8048-B4C04F4B3732")
+      expect(plugin.has_ec2_smbios?).to be false
+    end
+  end
+
+  describe "without a hint, on a platform without /sys" do
+    before do
+      allow(plugin).to receive(:hint?).with("ec2").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/sys/hypervisor/uuid").and_return(false)
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Amazon EC2")
+    end
+
+    it "looks like EC2 from the SMBIOS vendor" do
+      expect(plugin.looks_like_ec2?).to be true
+    end
+  end
 end

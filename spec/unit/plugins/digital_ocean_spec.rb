@@ -20,6 +20,11 @@ require "spec_helper"
 
 describe Ohai::System, "plugin digital_ocean" do
   let(:plugin) { get_plugin("digital_ocean") }
+
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
   let(:hint) do
     {
       "droplet_id" => 12345678,
@@ -105,5 +110,17 @@ describe Ohai::System, "plugin digital_ocean" do
 
     it_behaves_like "digital_ocean"
 
+  end
+
+  describe "with the DigitalOcean system vendor and no dmidecode data" do
+    before do
+      plugin[:dmi] = { dmidecode_version: "3.5" }
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("DigitalOcean")
+    end
+
+    it "detects DigitalOcean DMI data" do
+      expect(plugin.has_do_dmi?).to be true
+    end
   end
 end

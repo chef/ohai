@@ -20,9 +20,11 @@
 Ohai.plugin(:Oci) do
   require_relative "../mixin/oci_metadata"
   require_relative "../mixin/http_helper"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::OCIMetadata
   include Ohai::Mixin::HttpHelper
+  include Ohai::Mixin::Smbios
 
   provides "oci"
 
@@ -44,7 +46,7 @@ Ohai.plugin(:Oci) do
   end
 
   def oci_chassis_asset_tag?
-    asset_tag = chassis_asset_tag
+    asset_tag = smbios_value(:chassis_asset_tag)
     return false if asset_tag.nil? || asset_tag.empty?
 
     if /OracleCloud.com/.match?(asset_tag)

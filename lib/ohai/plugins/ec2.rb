@@ -28,8 +28,10 @@
 
 Ohai.plugin(:EC2) do
   require_relative "../mixin/ec2_metadata"
+  require_relative "../mixin/smbios"
 
   include Ohai::Mixin::Ec2Metadata
+  include Ohai::Mixin::Smbios
 
   provides "ec2"
 
@@ -39,7 +41,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_amazon_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_vendor").to_s.include?("Amazon")
+    if smbios_value(:bios_vendor).to_s.match?(/amazon/i)
       logger.trace("Plugin EC2: has_ec2_amazon_dmi? == true")
       true
     else
@@ -54,7 +56,7 @@ Ohai.plugin(:EC2) do
   # @return [Boolean] do we have Amazon DMI data?
   def has_ec2_xen_dmi?
     # detect a version of '4.2.amazon'
-    if file_val_if_exists("/sys/class/dmi/id/bios_version").to_s.include?("amazon")
+    if smbios_value(:bios_version).to_s.match?(/amazon/i)
       logger.trace("Plugin EC2: has_ec2_xen_dmi? == true")
       true
     else
@@ -66,7 +68,7 @@ Ohai.plugin(:EC2) do
   # looks for a xen UUID that starts with ec2 from within the Linux sys tree
   # @return [Boolean] do we have a Xen UUID or not?
   def has_ec2_xen_uuid?
-    if /^ec2/.match?(file_val_if_exists("/sys/hypervisor/uuid"))
+    if /^ec2/i.match?(file_val_if_exists("/sys/hypervisor/uuid"))
       logger.trace("Plugin EC2: has_ec2_xen_uuid? == true")
       return true
     end
@@ -82,12 +84,28 @@ Ohai.plugin(:EC2) do
     if RUBY_PLATFORM.match?(/mswin|mingw|windows/)
       require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
       wmi = WmiLite::Wmi.new
-      if /^ec2/.match?(wmi.first_of("Win32_ComputerSystemProduct")["identifyingnumber"])
+      if /^ec2/i.match?(wmi.first_of("Win32_ComputerSystemProduct")&.[]("identifyingnumber"))
         logger.trace("Plugin EC2: has_ec2_identifying_number? == true")
         true
       end
     else
       logger.trace("Plugin EC2: has_ec2_identifying_number? == false")
+      false
+    end
+  end
+
+  # Nitro instances report "Amazon EC2" as the system vendor, and every EC2
+  # instance's SMBIOS UUID starts with "ec2" (upper or lower case, depending
+  # on the OS). This covers platforms without /sys, such as the BSDs, and
+  # Windows instances whose identifying number doesn't carry the prefix.
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
+  # @return [Boolean] does SMBIOS identify an EC2 instance?
+  def has_ec2_smbios?
+    if smbios_value(:sys_vendor).to_s.match?(/^Amazon EC2/i) || smbios_value(:product_uuid).to_s.match?(/^ec2/i)
+      logger.trace("Plugin EC2: has_ec2_smbios? == true")
+      true
+    else
+      logger.trace("Plugin EC2: has_ec2_smbios? == false")
       false
     end
   end
@@ -104,7 +122,7 @@ Ohai.plugin(:EC2) do
   # a single check that combines all the various detection methods for EC2
   # @return [Boolean] Does the system appear to be on EC2
   def looks_like_ec2?
-    hint?("ec2") || has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_identifying_number?
+    hint?("ec2") || has_ec2_xen_uuid? || has_ec2_amazon_dmi? || has_ec2_xen_dmi? || has_ec2_smbios? || has_ec2_identifying_number?
   end
 
   collect_data do

@@ -21,6 +21,11 @@ require "open-uri"
 describe Ohai::System, "plugin gce" do
   let(:plugin) { get_plugin("gce") }
 
+  before do
+    # SMBIOS fields a test doesn't set read as absent, on every platform
+    allow(plugin).to receive(:smbios_value).and_return(nil)
+  end
+
   shared_examples_for "!gce" do
     it "does NOT attempt to fetch the gce metadata" do
       expect(plugin).not_to receive(:http_get)
@@ -92,4 +97,27 @@ describe Ohai::System, "plugin gce" do
 
   end
 
+  describe "#has_gce_dmi?" do
+    before do
+      allow(plugin).to receive(:smbios_value).and_return(nil)
+    end
+
+    { product_name: "Google Compute Engine", sys_vendor: "Google", bios_vendor: "Google", product_serial: "GoogleCloud-1234ABCD" }.each do |field, value|
+      it "is true when #{field} is #{value}" do
+        allow(plugin).to receive(:smbios_value).with(field).and_return(value)
+        expect(plugin.has_gce_dmi?).to be true
+      end
+    end
+
+    it "is true when the product name is only Google" do
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("Google")
+      expect(plugin.has_gce_dmi?).to be true
+    end
+
+    it "is false for other systems" do
+      allow(plugin).to receive(:smbios_value).with(:sys_vendor).and_return("Microsoft Corporation")
+      allow(plugin).to receive(:smbios_value).with(:product_name).and_return("Virtual Machine")
+      expect(plugin.has_gce_dmi?).to be false
+    end
+  end
 end

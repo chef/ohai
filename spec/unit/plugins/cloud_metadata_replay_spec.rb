@@ -23,8 +23,11 @@ require "spec_helper"
 # plugin's own spec; here a hint selects the plugin so the examples exercise
 # the requests and the parsing.
 describe "cloud plugins with recorded metadata service responses" do
-  def run_plugin(name, recording)
+  # os pins the platform for plugins that only collect on some, so the
+  # examples run the same on every CI runner.
+  def run_plugin(name, recording, os: nil)
     plugin = get_plugin(name)
+    allow(plugin).to receive(:collect_os).and_return(os) if os
     allow(plugin).to receive(:hint?).and_return(false)
     allow(plugin).to receive(:hint?).with(name).and_return({})
     allow(plugin).to receive(:can_socket_connect?).and_return(true)
@@ -91,7 +94,7 @@ describe "cloud plugins with recorded metadata service responses" do
   end
 
   describe "DigitalOcean, digital_ocean_ubuntu_24_04" do
-    let(:droplet) { run_plugin("digital_ocean", "digital_ocean_ubuntu_24_04")[:digital_ocean] }
+    let(:droplet) { run_plugin("digital_ocean", "digital_ocean_ubuntu_24_04", os: :linux)[:digital_ocean] }
 
     it "reads the droplet's identity" do
       expect(droplet[:droplet_id]).to eq(400000001)

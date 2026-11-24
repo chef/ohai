@@ -49,24 +49,50 @@ describe "CloudAttrs object" do
     expect(@cloud_attr_obj.cloud_mash).to eq(cloud_node)
   end
 
-  it "throws exception with a bad ipv4 address" do
+  it "ignores blank hostnames" do
     @cloud_attr_obj = ::CloudAttrs.new
-    expect { @cloud_attr_obj.add_ipv6_addr("somebogusstring", :public) }.to raise_error(RuntimeError)
+    @cloud_attr_obj.public_hostname = ""
+    @cloud_attr_obj.local_hostname = " "
+    @cloud_attr_obj.provider = "my_awesome_cloud"
+    expect(@cloud_attr_obj.cloud_mash).to eq("provider" => "my_awesome_cloud")
   end
 
-  it "throws exception with a bad ipv6 address" do
+  it "ignores a bad ipv4 address" do
     @cloud_attr_obj = ::CloudAttrs.new
-    expect { @cloud_attr_obj.add_ipv6_addr("FEED:B0B:DEAD:BEEF", :public) }.to raise_error(RuntimeError)
+    @cloud_attr_obj.add_ipv4_addr("somebogusstring", :public)
+    expect(@cloud_attr_obj.cloud_mash).to be_nil
   end
 
-  it "throws exception with ipv6 address passed to ipv4" do
+  it "ignores a bad ipv6 address" do
     @cloud_attr_obj = ::CloudAttrs.new
-    expect { @cloud_attr_obj.add_ipv4_addr("3ffe:506:2::1", :public) }.to raise_error(RuntimeError)
+    @cloud_attr_obj.add_ipv6_addr("FEED:B0B:DEAD:BEEF", :public)
+    expect(@cloud_attr_obj.cloud_mash).to be_nil
   end
 
-  it "throws exception with ipv4 address passed to ipv6" do
+  it "ignores an ipv6 address passed to ipv4" do
     @cloud_attr_obj = ::CloudAttrs.new
-    expect { @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public) }.to raise_error(RuntimeError)
+    @cloud_attr_obj.add_ipv4_addr("3ffe:506:2::1", :public)
+    expect(@cloud_attr_obj.cloud_mash).to be_nil
+  end
+
+  it "ignores an ipv4 address passed to ipv6" do
+    @cloud_attr_obj = ::CloudAttrs.new
+    @cloud_attr_obj.add_ipv6_addr("1.2.3.4", :public)
+    expect(@cloud_attr_obj.cloud_mash).to be_nil
+  end
+
+  it "ignores empty addresses" do
+    @cloud_attr_obj = ::CloudAttrs.new
+    @cloud_attr_obj.add_ipv4_addr("", :public)
+    @cloud_attr_obj.add_ipv6_addr(" ", :private)
+    expect(@cloud_attr_obj.cloud_mash).to be_nil
+  end
+
+  it "keeps the valid addresses alongside a bad one" do
+    @cloud_attr_obj = ::CloudAttrs.new
+    @cloud_attr_obj.add_ipv4_addr("bogus", :public)
+    @cloud_attr_obj.add_ipv4_addr("1.2.3.4", :public)
+    expect(@cloud_attr_obj.cloud_mash[:public_ipv4_addrs]).to eq(["1.2.3.4"])
   end
 
 end
@@ -88,8 +114,62 @@ describe Ohai::System, "plugin cloud" do
       @plugin[:digital_ocean] = nil
       @plugin[:softlayer] = nil
       @plugin[:oci] = nil
+      @plugin[:scaleway] = nil
       @plugin.run
       expect(@plugin[:cloud]).to be_nil
+    end
+  end
+
+  describe "with partial provider data" do
+    # a failed metadata fetch can leave a provider's attribute with little or
+    # nothing in it; the cloud attribute must still be populated
+
+    it "populates cloud provider for an empty Alibaba mash" do
+      @plugin[:alibaba] = Mash.new
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("alibaba")
+    end
+
+    it "populates cloud provider for an empty GCE mash" do
+      @plugin[:gce] = Mash.new
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("gce")
+    end
+
+    it "populates cloud provider for GCE interfaces without access configs" do
+      @plugin[:gce] = Mash.new("instance" => { "networkInterfaces" => [{ "ip" => "10.0.0.2" }] })
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("gce")
+      expect(@plugin[:cloud][:local_ipv4]).to eq("10.0.0.2")
+    end
+
+    it "populates cloud provider for OCI without metadata" do
+      @plugin[:oci] = Mash.new("metadata" => nil)
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("oci")
+    end
+
+    it "populates cloud provider for OCI metadata without network data" do
+      @plugin[:oci] = Mash.new("metadata" => { "compute" => { "hostname" => "oci-host" } })
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("oci")
+      expect(@plugin[:cloud][:local_hostname]).to eq("oci-host")
+    end
+
+    it "populates EC2 values with an empty public address" do
+      @plugin[:ec2] = Mash.new("public_ipv4" => "", "local_ipv4" => "10.0.0.3")
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("ec2")
+      expect(@plugin[:cloud][:public_ipv4]).to be_nil
+      expect(@plugin[:cloud][:local_ipv4]).to eq("10.0.0.3")
+    end
+
+    it "keeps other providers' values when one provider's data is malformed" do
+      @plugin[:gce] = Mash.new("instance" => 5)
+      @plugin[:ec2] = Mash.new("local_ipv4" => "10.0.0.3")
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("ec2")
+      expect(@plugin[:cloud][:local_ipv4]).to eq("10.0.0.3")
     end
   end
 
@@ -117,9 +197,42 @@ describe Ohai::System, "plugin cloud" do
       expect(@plugin[:cloud][:local_ipv4_addrs][0]).to eq("10.252.42.149")
     end
 
+    it "populates cloud public ip from public_ipv4 without an EIP" do
+      @plugin[:alibaba]["meta_data"]["public_ipv4"] = "47.88.1.2"
+      @plugin.run
+      expect(@plugin[:cloud][:public_ipv4]).to eq("47.88.1.2")
+    end
+
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("alibaba")
+    end
+  end
+
+  describe "with Scaleway mash" do
+    before do
+      @plugin[:scaleway] = Mash.new(
+        "hostname" => "sample-hostname",
+        "private_ip" => "10.8.23.7",
+        "public_ip" => { "dynamic" => false, "address" => "5.1.9.3" },
+        "ipv6" => { "address" => "2001:bc8:4400:2500::d:2", "gateway" => "2001:bc8:4400:2500::d:1", "netmask" => "127" }
+      )
+    end
+
+    it "populates cloud values" do
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("scaleway")
+      expect(@plugin[:cloud][:public_ipv4]).to eq("5.1.9.3")
+      expect(@plugin[:cloud][:local_ipv4]).to eq("10.8.23.7")
+      expect(@plugin[:cloud][:public_ipv6]).to eq("2001:bc8:4400:2500::d:2")
+      expect(@plugin[:cloud][:local_hostname]).to eq("sample-hostname")
+    end
+
+    it "populates cloud values without IPv6" do
+      @plugin[:scaleway]["ipv6"] = nil
+      @plugin.run
+      expect(@plugin[:cloud][:provider]).to eq("scaleway")
+      expect(@plugin[:cloud][:public_ipv6]).to be_nil
     end
   end
 
@@ -143,6 +256,17 @@ describe Ohai::System, "plugin cloud" do
     it "populates cloud provider" do
       @plugin.run
       expect(@plugin[:cloud][:provider]).to eq("ec2")
+    end
+
+    # an instance in a VPC without DNS hostnames, where the metadata service
+    # answers public-hostname with an empty body
+    it "leaves out a blank public hostname" do
+      @plugin[:ec2]["public_ipv4"] = "203.0.113.85"
+      @plugin[:ec2]["public_hostname"] = ""
+      @plugin[:ec2]["local_hostname"] = "ip-172-31-2-47.us-west-2.compute.internal"
+      @plugin.run
+      expect(@plugin[:cloud]).not_to have_key(:public_hostname)
+      expect(@plugin[:cloud][:local_hostname]).to eq("ip-172-31-2-47.us-west-2.compute.internal")
     end
   end
 
@@ -494,6 +618,12 @@ describe Ohai::System, "plugin cloud" do
 
     it "populates cloud local_ipv6" do
       expect(@plugin[:cloud][:local_ipv6]).to be_nil
+    end
+
+    it "populates cloud local_hostname" do
+      @plugin[:digital_ocean][:hostname] = "droplet-1"
+      @plugin.run
+      expect(@plugin[:cloud][:local_hostname]).to eq("droplet-1")
     end
 
     it "populates cloud provider" do

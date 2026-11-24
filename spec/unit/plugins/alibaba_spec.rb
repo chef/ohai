@@ -69,6 +69,18 @@ describe Ohai::System, "plugin alibaba" do
     it_behaves_like "alibaba"
   end
 
+  describe "with hint file and a metadata server error" do
+    before do
+      allow(plugin).to receive(:hint?).with("alibaba").and_return({})
+      allow(plugin).to receive(:http_get).and_return(double("Net::HTTP Response", body: "", code: "403"))
+    end
+
+    it "sets an empty alibaba attribute without raising" do
+      plugin.run
+      expect(plugin[:alibaba]).to eq({})
+    end
+  end
+
   describe "with alibaba dmi sys_vendor data" do
     before do
       allow(plugin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(true)

@@ -24,8 +24,14 @@ module Ohai
   module Mixin
     module GCEMetadata
 
-      # Trailing dot to host is added to avoid DNS search path
-      GCE_METADATA_ADDR ||= "metadata.google.internal."
+      # The metadata server's link-local address. Google documents it as an
+      # alternative to metadata.google.internal, and using it avoids a DNS
+      # lookup that fails when the instance uses its own resolvers.
+      GCE_METADATA_ADDR ||= "169.254.169.254"
+      # the metadata server answers 503 while it is temporarily unavailable,
+      # for example during a host maintenance event
+      GCE_RETRY_CODES ||= %w{503}.freeze
+      GCE_MAX_ATTEMPTS ||= 3
       GCE_METADATA_URL ||= "/computeMetadata/v1"
 
       # fetch the meta content with a timeout and the required header
@@ -44,7 +50,7 @@ module Ohai
       def fetch_metadata(id = "")
         url = "#{GCE_METADATA_URL}/#{id}"
         url = "#{url}?recursive=true" if url.end_with?("/")
-        response = http_get(url)
+        response = http_get_with_retry(url)
         if response.code == "200"
           json_data = parse_json(response.body)
           if json_data.nil?
@@ -64,6 +70,22 @@ module Ohai
         else
           logger.warn("Mixin GCEMetadata: Received response code #{response.code} requesting metadata for id='#{id}'")
           nil
+        end
+      end
+
+      # http_get, retrying the responses the metadata server documents as
+      # transient
+      #
+      # @return [Net::HTTPResponse] the last response
+      def http_get_with_retry(uri)
+        attempt = 0
+        loop do
+          attempt += 1
+          response = http_get(uri)
+          return response unless GCE_RETRY_CODES.include?(response.code) && attempt < GCE_MAX_ATTEMPTS
+
+          logger.trace("Mixin GCEMetadata: Received HTTP #{response.code} for #{uri}, retrying")
+          sleep(attempt)
         end
       end
 

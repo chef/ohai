@@ -201,6 +201,44 @@ describe Ohai::System, "plugin azure" do
     it_behaves_like "azure"
   end
 
+  describe "without azure hint file but with agent, on another cloud" do
+    # e.g. a VM moved from Azure to EC2: waagent is still installed and EC2's
+    # metadata service answers on the same address, but not for Azure's path
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(true)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(nil)
+      allow(plugin).to receive(:best_api_version).and_return("2023-07-01")
+      allow(plugin).to receive(:http_get)
+        .with("/metadata/instance?api-version=2023-07-01")
+        .and_return(double("response", code: "404"))
+    end
+
+    it_behaves_like "!azure"
+  end
+
+  describe "without azure hint file but with agent, and a failing metadata service" do
+    before do
+      allow(plugin).to receive(:hint?).with("azure").and_return(false)
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/waagent").and_return(true)
+      allow(plugin).to receive(:dir_exist?).with("C:\\WindowsAzure").and_return(false)
+      allow(plugin).to receive(:can_socket_connect?)
+        .with(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+        .and_return(true)
+      allow(plugin).to receive(:fetch_metadata).and_return(nil)
+      allow(plugin).to receive(:best_api_version).and_return("2023-07-01")
+      allow(plugin).to receive(:http_get)
+        .with("/metadata/instance?api-version=2023-07-01")
+        .and_return(double("response", code: "500"))
+    end
+
+    it_behaves_like "azure"
+  end
+
   describe "without azure hint or agent but with dhcp option" do
     before do
       allow(plugin).to receive(:hint?).with("azure").and_return(false)

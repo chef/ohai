@@ -36,9 +36,17 @@ Ohai.plugin(:Azure) do
       azure_metadata_from_hints.each { |k, v| azure[k] = v }
       azure["metadata"] = parse_metadata
     elsif has_waagent? || has_dhcp_option_245? || has_reddog_dhcp_domain?
-      logger.trace("Plugin Azure: No hints present, but system appears to be on Azure.")
-      azure Mash.new
-      azure["metadata"] = parse_metadata
+      metadata = parse_metadata
+      if metadata.nil? && other_cloud_metadata_service?
+        # The agent and DHCP lease files survive moving a disk to another
+        # cloud, so the metadata service is the better signal here.
+        logger.trace("Plugin Azure: Azure agent or DHCP options found, but the metadata service at #{Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR} has no Azure endpoint. Not on Azure.")
+        false
+      else
+        logger.trace("Plugin Azure: No hints present, but system appears to be on Azure.")
+        azure Mash.new
+        azure["metadata"] = metadata
+      end
     else
       logger.trace("Plugin Azure: No hints present and doesn't appear to be on Azure.")
       false
@@ -115,8 +123,21 @@ Ohai.plugin(:Azure) do
     ips
   end
 
+  # EC2 and other clouds run their own metadata service on the same link-local
+  # address. It accepts the connection but answers 404 for Azure's instance
+  # metadata path, which Azure itself always serves.
+  def other_cloud_metadata_service?
+    return false unless @metadata_endpoint_reachable
+
+    http_get("/metadata/instance?api-version=#{best_api_version}").code == "404"
+  rescue => e
+    logger.trace("Plugin Azure: Unable to query the metadata service: #{e}")
+    false
+  end
+
   def parse_metadata
-    return nil unless can_socket_connect?(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+    @metadata_endpoint_reachable = can_socket_connect?(Ohai::Mixin::AzureMetadata::AZURE_METADATA_ADDR, 80)
+    return nil unless @metadata_endpoint_reachable
 
     endpoint_data = fetch_metadata
     return nil if endpoint_data.nil?

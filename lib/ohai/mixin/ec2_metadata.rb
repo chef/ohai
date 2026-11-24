@@ -310,29 +310,30 @@ module Ohai
       end
 
       def fetch_dynamic_data
-        @fetch_dynamic_data ||= begin
-          path = "/#{best_api_version}/dynamic/instance-identity/document/"
-          response = imds_unreachable?(path) ? nil : http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
-
-          if response.nil?
-            {}
-          elsif response.code == "200"
-            json_data = parse_json(response.body, {})
-            if json_data.nil?
-              logger.warn("Mixin Ec2Metadata: Metadata response is NOT valid JSON")
-            end
-            json_data
-          else
-            logger.warn("Mixin Ec2Metadata: Received response code #{response.code} requesting metadata")
-            {}
-          end
-        rescue *EC2_TRANSPORT_ERRORS => e
-          logger.warn("Mixin Ec2Metadata: Unable to fetch the instance identity document: #{e.class}: #{e.message}")
-          {}
-        end
+        @fetch_dynamic_data ||= read_instance_identity_document
       end
 
       private
+
+      def read_instance_identity_document
+        path = "/#{best_api_version}/dynamic/instance-identity/document/"
+        return {} if imds_unreachable?(path)
+
+        response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
+        if response.code == "200"
+          json_data = parse_json(response.body, {})
+          if json_data.nil?
+            logger.warn("Mixin Ec2Metadata: Metadata response is NOT valid JSON")
+          end
+          json_data
+        else
+          logger.warn("Mixin Ec2Metadata: Received response code #{response.code} requesting metadata")
+          {}
+        end
+      rescue *EC2_TRANSPORT_ERRORS => e
+        logger.warn("Mixin Ec2Metadata: Unable to fetch the instance identity document: #{e.class}: #{e.message}")
+        {}
+      end
 
       def imds_unreachable?(path)
         return false unless @imds_unreachable

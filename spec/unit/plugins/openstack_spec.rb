@@ -184,7 +184,7 @@ describe Ohai::System, "plugin openstack" do
         }'
       end
 
-      let(:http_client) { double("Net::HTTP", { :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
+      let(:http_client) { double("Net::HTTP", { read_timeout: 10, :read_timeout= => nil, :keep_alive_timeout= => nil } ) }
 
       def allow_get(url, response_body)
         token = "AQAEAE4UUd-3NE5EEeYYXKxicVfDOHsx0YSHFFSuCvo2GfCcxzJsvg=="

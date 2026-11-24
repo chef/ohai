@@ -117,32 +117,38 @@ Ohai.plugin(:EC2) do
     if looks_like_ec2?
       logger.trace("Plugin EC2: looks_like_ec2? == true")
       ec2 Mash.new
-      fetch_metadata.each do |k, v|
-        # this includes sensitive data we don't want to store on the node
-        next if k == "identity_credentials_ec2_security_credentials_ec2_instance"
+      begin
+        (fetch_metadata || {}).each do |k, v|
+          # this includes sensitive data we don't want to store on the node
+          next if k == "identity_credentials_ec2_security_credentials_ec2_instance"
 
-        # fetch_metadata returns IAM security credentials, including the IAM user's
-        # secret access key. We'd rather not have ohai send this information
-        # to the server. If the instance is associated with an IAM role we grab
-        # only the "info" key and the IAM role name.
-        # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
-        if k == "iam" && !hint?("iam")
-          ec2[:iam] = v.select { |key, value| key == "info" }
-          if v["security-credentials"] && v["security-credentials"].keys.length == 1
-            ec2[:iam]["role_name"] = v["security-credentials"].keys[0]
+          # fetch_metadata returns IAM security credentials, including the IAM user's
+          # secret access key. We'd rather not have ohai send this information
+          # to the server. If the instance is associated with an IAM role we grab
+          # only the "info" key and the IAM role name.
+          # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
+          if k == "iam" && !hint?("iam")
+            ec2[:iam] = v.select { |key, value| key == "info" }
+            if v["security-credentials"] && v["security-credentials"].keys.length == 1
+              ec2[:iam]["role_name"] = v["security-credentials"].keys[0]
+            end
+          else
+            ec2[k] = v
           end
-        else
-          ec2[k] = v
         end
-      end
-      ec2[:userdata] = fetch_userdata
-      ec2[:account_id] = fetch_dynamic_data["accountId"]
-      ec2[:availability_zone] = fetch_dynamic_data["availabilityZone"]
-      ec2[:region] = fetch_dynamic_data["region"]
+        ec2[:userdata] = fetch_userdata
+        ec2[:account_id] = fetch_dynamic_data["accountId"]
+        ec2[:availability_zone] = fetch_dynamic_data["availabilityZone"]
+        ec2[:region] = fetch_dynamic_data["region"]
 
-      if ec2[:userdata] && ec2[:userdata].encoding == Encoding::BINARY
-        logger.trace("Plugin EC2: Binary UserData Found. Storing in base64")
-        ec2[:userdata] = Base64.encode64(ec2[:userdata])
+        if ec2[:userdata] && ec2[:userdata].encoding == Encoding::BINARY
+          logger.trace("Plugin EC2: Binary UserData Found. Storing in base64")
+          ec2[:userdata] = Base64.encode64(ec2[:userdata])
+        end
+      rescue => e
+        # the instance is on EC2 (it was detected above), but its metadata
+        # service is unreachable or turned off: keep the empty ec2 attribute
+        logger.warn("Plugin EC2: Unable to fetch EC2 metadata: #{e.class}: #{e.message}")
       end
     else
       logger.trace("Plugin EC2: looks_like_ec2? == false")

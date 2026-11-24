@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.59 -->
-## [v19.1.59](https://github.com/chef/ohai/tree/v19.1.59) (2026-11-24)
+<!-- latest_release 19.1.60 -->
+## [v19.1.60](https://github.com/chef/ohai/tree/v19.1.60) (2026-11-24)
 
 #### Merged Pull Requests
-- Keep the cloud attribute when a provider&#39;s metadata is partial [#1987](https://github.com/chef/ohai/pull/1987) ([tas50](https://github.com/tas50))
+- Reach cloud metadata services directly, with a connect timeout [#1988](https://github.com/chef/ohai/pull/1988) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.53 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Reach cloud metadata services directly, with a connect timeout [#1988](https://github.com/chef/ohai/pull/1988) ([tas50](https://github.com/tas50)) <!-- 19.1.60 -->
 - Keep the cloud attribute when a provider&#39;s metadata is partial [#1987](https://github.com/chef/ohai/pull/1987) ([tas50](https://github.com/tas50)) <!-- 19.1.59 -->
 - Don&#39;t report Azure on other clouds, and keep cloud when metadata is missing [#1986](https://github.com/chef/ohai/pull/1986) ([tas50](https://github.com/tas50)) <!-- 19.1.58 -->
 - Run system_profiler once for all macOS hardware data types [#1985](https://github.com/chef/ohai/pull/1985) ([tas50](https://github.com/tas50)) <!-- 19.1.57 -->

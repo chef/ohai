@@ -23,8 +23,10 @@ require "ohai/mixin/smbios"
 describe Ohai::Mixin::Smbios do
   let(:mixin) do
     Object.new.tap do |o|
+      o.extend(Ohai::Mixin::OS)
       o.extend(described_class)
       o.define_singleton_method(:logger) { Ohai::Log }
+      o.define_singleton_method(:target_mode?) { false }
       o.define_singleton_method(:file_exist?) { |_path| false }
       o.define_singleton_method(:file_read) { |_path| raise "unexpected read" }
       o.define_singleton_method(:shell_out) { |_cmd| raise "unexpected command" }
@@ -36,7 +38,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on Linux" do
-    before { stub_const("RUBY_PLATFORM", "x86_64-linux") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("linux") }
 
     it "reads the value from /sys/class/dmi/id" do
       allow(mixin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(true)
@@ -68,7 +70,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on FreeBSD" do
-    before { stub_const("RUBY_PLATFORM", "amd64-freebsd14") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("freebsd") }
 
     it "reads the value with kenv" do
       allow(mixin).to receive(:shell_out).with("kenv -q smbios.system.maker").and_return(command_result("Amazon EC2\n"))
@@ -82,7 +84,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on OpenBSD" do
-    before { stub_const("RUBY_PLATFORM", "x86_64-openbsd7.5") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("openbsd") }
 
     it "reads the value with sysctl" do
       allow(mixin).to receive(:shell_out).with("sysctl -n hw.vendor").and_return(command_result("Google\n"))
@@ -96,7 +98,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on NetBSD" do
-    before { stub_const("RUBY_PLATFORM", "x86_64-netbsd") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("netbsd") }
 
     it "reads the value from the machdep.dmi sysctl tree" do
       allow(mixin).to receive(:shell_out).with("sysctl -n machdep.dmi.system-product").and_return(command_result("OpenStack Nova\n"))
@@ -105,7 +107,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on Solaris" do
-    before { stub_const("RUBY_PLATFORM", "x86_64-solaris2.11") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("solaris2") }
 
     # smbios(8) output from Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex
     let(:smbios_chassis) do
@@ -189,7 +191,7 @@ describe Ohai::Mixin::Smbios do
   end
 
   context "on Windows" do
-    before { stub_const("RUBY_PLATFORM", "x64-mingw-ucrt") }
+    before { allow(mixin).to receive(:collect_os_local).and_return("windows") }
 
     let(:wmi) { double("WmiLite::Wmi") }
 
@@ -210,6 +212,62 @@ describe Ohai::Mixin::Smbios do
     it "returns nil when WMI raises" do
       allow(wmi).to receive(:first_of).and_raise(StandardError, "WMI is unavailable")
       expect(mixin.smbios_value(:bios_vendor)).to be_nil
+    end
+  end
+
+  context "in target mode" do
+    let(:target_os) { double("Train OS", aix?: false, darwin?: false, linux?: false, solaris?: false, windows?: false, family: nil) }
+
+    before do
+      connection = double("Train connection", os: target_os)
+      mixin.define_singleton_method(:target_mode?) { true }
+      mixin.define_singleton_method(:transport_connection) { connection }
+    end
+
+    context "with a Linux runner and a FreeBSD target" do
+      before do
+        allow(mixin).to receive(:collect_os_local).and_return("linux")
+        allow(target_os).to receive(:family).and_return("freebsd")
+      end
+
+      it "reads the target with kenv, not the runner's sysfs" do
+        expect(mixin).not_to receive(:file_exist?)
+        allow(mixin).to receive(:shell_out).with("kenv -q smbios.system.maker").and_return(command_result("Amazon EC2\n"))
+        expect(mixin.smbios_value(:sys_vendor)).to eq("Amazon EC2")
+      end
+    end
+
+    context "with a Windows runner and a Linux target" do
+      before do
+        allow(mixin).to receive(:collect_os_local).and_return("windows")
+        allow(target_os).to receive(:linux?).and_return(true)
+      end
+
+      it "reads the target's sysfs, not the runner's WMI" do
+        allow(mixin).to receive(:file_exist?).with("/sys/class/dmi/id/sys_vendor").and_return(true)
+        allow(mixin).to receive(:file_read).with("/sys/class/dmi/id/sys_vendor").and_return("Google\n")
+        expect(mixin.smbios_value(:sys_vendor)).to eq("Google")
+      end
+    end
+
+    context "with a Windows target" do
+      before do
+        allow(mixin).to receive(:collect_os_local).and_return("windows")
+        allow(target_os).to receive(:windows?).and_return(true)
+      end
+
+      it "reads the target with PowerShell over the transport, not the runner's WMI" do
+        stub_const("WmiLite::Wmi", double("WmiLite::Wmi").tap { |w| expect(w).not_to receive(:new) })
+        allow(mixin).to receive(:shell_out)
+          .with("powershell.exe -NoProfile -NonInteractive -Command \"Get-CimInstance -ClassName Win32_SystemEnclosure | Select-Object -First 1 -ExpandProperty smbiosassettag\"")
+          .and_return(command_result("7783-7084-3265-9085-8269-3286-77\r\n"))
+        expect(mixin.smbios_value(:chassis_asset_tag)).to eq("7783-7084-3265-9085-8269-3286-77")
+      end
+
+      it "returns nil when PowerShell fails" do
+        allow(mixin).to receive(:shell_out).and_return(command_result("", 1))
+        expect(mixin.smbios_value(:sys_vendor)).to be_nil
+      end
     end
   end
 end

@@ -32,8 +32,8 @@ module Ohai
     # - Solaris / illumos: smbios -t <type>
     # - Windows: WMI
     #
-    # Plugins that include this must also have the file and shell_out helpers
-    # every Ohai plugin has.
+    # Plugins that include this must also have the collect_os, target_mode?,
+    # file and shell_out helpers every Ohai plugin has.
     #
     module Smbios
       # field => where each platform keeps it. A missing entry means the
@@ -101,19 +101,21 @@ module Ohai
 
       private
 
+      # Keyed off collect_os, not RUBY_PLATFORM, so target mode reads the
+      # target's SMBIOS with the target's tools rather than the runner's.
       def read_smbios_value(sources)
-        case RUBY_PLATFORM
-        when /mswin|mingw|windows/
-          read_smbios_wmi(*sources[:wmi]) if sources[:wmi]
-        when /freebsd|dragonfly/
+        case collect_os
+        when "windows"
+          read_smbios_windows(*sources[:wmi]) if sources[:wmi]
+        when "freebsd", "dragonflybsd"
           read_smbios_command("kenv -q #{sources[:kenv]}") if sources[:kenv]
-        when /openbsd/
+        when "openbsd"
           read_smbios_command("sysctl -n #{sources[:openbsd]}") if sources[:openbsd]
-        when /netbsd/
+        when "netbsd"
           read_smbios_command("sysctl -n #{sources[:netbsd]}") if sources[:netbsd]
-        when /solaris/
+        when "solaris2"
           read_smbios_solaris(*sources[:solaris]) if sources[:solaris]
-        else
+        when "linux"
           path = "/sys/class/dmi/id/#{sources[:linux]}"
           file_read(path) if sources[:linux] && file_exist?(path)
         end
@@ -132,10 +134,19 @@ module Ohai
         output[/^\s+#{Regexp.escape(label)}: (.*)$/, 1]
       end
 
-      def read_smbios_wmi(wmi_class, property)
-        require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
-        instance = WmiLite::Wmi.new.first_of(wmi_class)
-        instance && instance[property]
+      # WmiLite only queries the local machine, so a remote Windows target is
+      # read with PowerShell, which shell_out runs over the transport.
+      def read_smbios_windows(wmi_class, property)
+        if target_mode?
+          read_smbios_command(
+            "powershell.exe -NoProfile -NonInteractive -Command " \
+            "\"Get-CimInstance -ClassName #{wmi_class} | Select-Object -First 1 -ExpandProperty #{property}\""
+          )
+        else
+          require "wmi-lite/wmi" unless defined?(WmiLite::Wmi)
+          instance = WmiLite::Wmi.new.first_of(wmi_class)
+          instance && instance[property]
+        end
       end
     end
   end

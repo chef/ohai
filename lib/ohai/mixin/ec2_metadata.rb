@@ -80,6 +80,9 @@ module Ohai
       EC2_RETRY_CODES  ||= %w{429 500 503}.freeze
       EC2_MAX_ATTEMPTS ||= 3
       EC2_TOKEN_READ_TIMEOUT ||= 2
+      # errors from the connection itself rather than an HTTP response
+      # (Net::ReadTimeout and Net::OpenTimeout are Timeout::Errors)
+      EC2_TRANSPORT_ERRORS ||= [Timeout::Error, SystemCallError, IOError, SocketError, Net::HTTPBadResponse].freeze
 
       #
       # The newest metadata version this instance supports
@@ -172,16 +175,36 @@ module Ohai
       # `nil` and continue the run instead of failing it.
       #
       # A 401 means the token expired or was rejected, so it is fetched again
-      # once. 429, 500 and 503 are retried with a short backoff. Any other
-      # error skips this one path instead of failing the whole plugin.
+      # once. 429, 500 and 503 and connection errors (timeouts, resets) are
+      # retried with a short backoff. Any other error skips this one path
+      # instead of failing the whole plugin.
+      #
+      # A path whose every attempt fails to connect marks the service
+      # unreachable, and the remaining paths are skipped without a request,
+      # so a metadata service that goes away mid-walk costs one path's
+      # timeouts rather than every path's.
       def metadata_get(id, api_version)
         path = "/#{api_version}/meta-data/#{escape_metadata_path(id)}"
+        return nil if imds_unreachable?(path)
+
         token_refreshed = false
         attempt = 0
         loop do
           attempt += 1
           logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
-          response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
+          begin
+            response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
+          rescue *EC2_TRANSPORT_ERRORS => e
+            if attempt < EC2_MAX_ATTEMPTS
+              sleep(0.5 * attempt)
+              next
+            end
+
+            logger.warn("Mixin EC2: Unable to reach the EC2 metadata service for #{path} (#{e.class}: #{e.message}); skipping the remaining paths")
+            @imds_unreachable = true
+            return nil
+          end
+
           case response.code
           when "200"
             return response.body
@@ -275,16 +298,25 @@ module Ohai
       end
 
       def fetch_userdata
-        logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}/#{best_api_version}/user-data/")
-        response = http_client.get("/#{best_api_version}/user-data/", { 'X-aws-ec2-metadata-token': v2_token })
+        path = "/#{best_api_version}/user-data/"
+        return nil if imds_unreachable?(path)
+
+        logger.trace("Mixin EC2: Fetching http://#{EC2_METADATA_ADDR}#{path}")
+        response = http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
         response.code == "200" ? response.body : nil
+      rescue *EC2_TRANSPORT_ERRORS => e
+        logger.warn("Mixin EC2: Unable to fetch EC2 user data: #{e.class}: #{e.message}")
+        nil
       end
 
       def fetch_dynamic_data
         @fetch_dynamic_data ||= begin
-          response = http_client.get("/#{best_api_version}/dynamic/instance-identity/document/", { 'X-aws-ec2-metadata-token': v2_token })
+          path = "/#{best_api_version}/dynamic/instance-identity/document/"
+          response = imds_unreachable?(path) ? nil : http_client.get(path, { 'X-aws-ec2-metadata-token': v2_token })
 
-          if response.code == "200"
+          if response.nil?
+            {}
+          elsif response.code == "200"
             json_data = parse_json(response.body, {})
             if json_data.nil?
               logger.warn("Mixin Ec2Metadata: Metadata response is NOT valid JSON")
@@ -294,10 +326,20 @@ module Ohai
             logger.warn("Mixin Ec2Metadata: Received response code #{response.code} requesting metadata")
             {}
           end
+        rescue *EC2_TRANSPORT_ERRORS => e
+          logger.warn("Mixin Ec2Metadata: Unable to fetch the instance identity document: #{e.class}: #{e.message}")
+          {}
         end
       end
 
       private
+
+      def imds_unreachable?(path)
+        return false unless @imds_unreachable
+
+        logger.trace("Mixin EC2: Skipping #{path}; the metadata service is unreachable")
+        true
+      end
 
       def expand_path(file_name)
         # public-keys lists its entries as "<index>=<key name>", and the index

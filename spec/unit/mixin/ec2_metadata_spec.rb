@@ -147,6 +147,58 @@ describe Ohai::Mixin::Ec2Metadata do
         expect(mixin.metadata_get("tags/instance/Patch Group", "2012-01-12")).to eq("critical")
       end
     end
+
+    context "when the connection fails" do
+      let(:response) { double("Net::HTTP Response", body: "ip-10-0-0-1.ec2.internal", code: "200") }
+
+      before { allow(mixin).to receive(:sleep) }
+
+      it "retries and returns the value once it succeeds" do
+        calls = 0
+        allow(mixin.http_client).to receive(:get) do
+          calls += 1
+          raise Net::ReadTimeout if calls == 1
+
+          response
+        end
+        expect(mixin.metadata_get("local-hostname", "2012-01-12")).to eq("ip-10-0-0-1.ec2.internal")
+      end
+
+      it "skips the path after three attempts instead of raising" do
+        expect(mixin.http_client).to receive(:get).exactly(3).times.and_raise(Errno::ECONNRESET)
+        expect(mixin.logger).to receive(:warn).with(/ECONNRESET/)
+        expect(mixin.metadata_get("local-hostname", "2012-01-12")).to be_nil
+      end
+
+      it "skips the remaining paths, user data and dynamic data without a request" do
+        allow(mixin).to receive(:best_api_version).and_return("2012-01-12")
+        expect(mixin.http_client).to receive(:get).exactly(3).times.and_raise(SocketError)
+        expect(mixin.metadata_get("local-hostname", "2012-01-12")).to be_nil
+        expect(mixin.metadata_get("instance-id", "2012-01-12")).to be_nil
+        expect(mixin.fetch_userdata).to be_nil
+        expect(mixin.fetch_dynamic_data).to eq({})
+      end
+    end
+  end
+
+  describe "#fetch_userdata" do
+    let(:response) { double("Net::HTTP Response", body: "", code: "200") }
+
+    it "returns nil when the request times out" do
+      allow(mixin).to receive(:best_api_version).and_return("2012-01-12")
+      allow(mixin.http_client).to receive(:get).and_raise(Net::ReadTimeout)
+      expect(mixin.fetch_userdata).to be_nil
+    end
+  end
+
+  describe "#fetch_dynamic_data" do
+    let(:response) { double("Net::HTTP Response", body: "", code: "200") }
+
+    it "returns an empty hash when the request times out" do
+      allow(mixin).to receive(:best_api_version).and_return("2012-01-12")
+      allow(mixin.http_client).to receive(:get).and_raise(Net::ReadTimeout)
+      expect(mixin.fetch_dynamic_data).to eq({})
+    end
   end
 
   describe "#v2_token" do

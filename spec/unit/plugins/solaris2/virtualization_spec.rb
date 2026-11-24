@@ -94,4 +94,35 @@ describe Ohai::System, "Solaris virtualization platform" do
     plugin.run
     expect(plugin[:virtualization][:systems]).to eq({})
   end
+
+  # Oracle Solaris 11.4 on an OCI VM.Standard.E5.Flex: psrinfo shows the
+  # host's CPU model rather than a QEMU/KVM CPU name, so only DMI shows KVM
+  describe "on a KVM guest that passes the host CPU model through" do
+    let(:psrinfo_pv) do
+      [
+        "The physical processor has 2 virtual processors (0-1)",
+        "  x86 (AuthenticAMD A10F11 family 25 model 17 step 1 clock 2600 MHz)",
+        "\tAMD EPYC 9J14 96-Core Processor",
+      ].join("\n") + "\n"
+    end
+
+    before do
+      allow(plugin).to receive(:file_exist?).with("/usr/sbin/psrinfo").and_return(true)
+      allow(plugin).to receive(:shell_out).with("#{Ohai.abs_path( "/usr/sbin/psrinfo" )} -pv").and_return(mock_shell_out(0, psrinfo_pv, ""))
+      allow(File).to receive(:executable?).and_call_original
+      allow(File).to receive(:executable?).with("/usr/sbin/zoneadm").and_return(true)
+      allow(plugin).to receive(:shell_out).with("zoneadm list -pc").and_return(mock_shell_out(0, "0:global:running:/::solaris:shared:-:none::\n", ""))
+      plugin[:dmi] = { system: { manufacturer: "QEMU", product: "Standard PC (Q35 + ICH9, 2009)", version: "pc-q35-7.2" } }
+      plugin.run
+    end
+
+    it "detects the KVM guest from DMI" do
+      expect(plugin[:virtualization][:systems][:kvm]).to eq("guest")
+    end
+
+    it "reports the global zone as a zone host" do
+      expect(plugin[:virtualization][:systems][:zone]).to eq("host")
+      expect(plugin[:virtualization]).not_to have_key(:guests)
+    end
+  end
 end

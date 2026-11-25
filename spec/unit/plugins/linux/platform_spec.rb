@@ -37,6 +37,18 @@ describe Ohai::System, "Linux plugin platform" do
       expect(release_info["COW"]).to eq("MOO")
       expect(release_info["DOG"]).to eq("BARK")
     end
+
+    it "keeps quoted values that contain spaces" do
+      allow(plugin).to receive(:file_exist?).with("/etc/os-release").and_return(true)
+      allow(plugin).to receive(:file_read).with("/etc/os-release").and_return(File.read(File.join(SPEC_PLUGIN_PATH, "os-release-vyos-stream-2026.03.output")))
+      release_info = plugin.read_os_release_info("/etc/os-release")
+
+      expect(release_info["PRETTY_NAME"]).to eq("VyOS 2026.03 (circinus)")
+      expect(release_info["VERSION"]).to eq("2026.03 (circinus)")
+      expect(release_info["ID"]).to eq("vyos")
+      expect(release_info["BUILD_ID"]).to eq("1cac4fd63750b0")
+      expect(release_info.keys).to all(match(/\A[A-Z_]+\z/))
+    end
   end
 
   describe "#os_release_info" do
@@ -213,6 +225,32 @@ describe Ohai::System, "Linux plugin platform" do
 
     it "returns mandriva for mangeia platform" do
       expect(plugin.platform_family_from_platform("mangeia")).to eq("mandriva")
+    end
+
+    %w{ubuntu debian cumulus vyos}.each do |p|
+      it "returns debian for #{p} platform" do
+        expect(plugin.platform_family_from_platform(p)).to eq("debian")
+      end
+    end
+  end
+
+  # /etc/os-release files captured from running Cumulus VX and VyOS systems
+  describe "on network operating systems" do
+    {
+      "os-release-cumulus-5.9.2" => %w{cumulus debian 5.9.2},
+      "os-release-cumulus-5.10.0" => %w{cumulus debian 5.10.0},
+      "os-release-vyos-rolling" => %w{vyos debian 2026.11.25-0017-rolling},
+      "os-release-vyos-stream-2026.03" => %w{vyos debian 2026.03},
+    }.each do |fixture, (platform, family, version)|
+      it "detects #{platform} #{version} from #{fixture}" do
+        allow(plugin).to receive(:collect_os).and_return(:linux)
+        allow(plugin).to receive(:file_exist?).with("/etc/os-release").and_return(true)
+        allow(plugin).to receive(:file_read).with("/etc/os-release").and_return(File.read(File.join(SPEC_PLUGIN_PATH, "#{fixture}.output")))
+        plugin.run
+        expect(plugin[:platform]).to eq(platform)
+        expect(plugin[:platform_family]).to eq(family)
+        expect(plugin[:platform_version]).to eq(version)
+      end
     end
   end
 

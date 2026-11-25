@@ -1,0 +1,12 @@
+PRETTY_NAME="VyOS 2026.03 (circinus)"
+NAME="VyOS"
+VERSION_ID="2026.03"
+VERSION="2026.03 (circinus)"
+VERSION_CODENAME=circinus
+ID=vyos
+BUILD_ID="1cac4fd63750b0"
+HOME_URL="https://vyos.io"
+SUPPORT_URL="https://support.vyos.io"
+BUG_REPORT_URL="https://vyos.dev"
+DOCUMENTATION_URL="https://docs.vyos.io/en/latest"
+

@@ -89,6 +89,46 @@ describe Ohai::System, "Darwin hardware plugin", :unix_only do
     expect(plugin["hardware"]["storage"][0]["partitions"]).to eq(1)
   end
 
+  context "with APFS volumes" do
+    let(:apfs_storage) do
+      [{ "_dataType" => "SPStorageDataType", "_items" => [
+        { "_name" => "Macintosh HD", "bsd_name" => "disk3s1s1", "file_system" => "APFS", "mount_point" => "/",
+          "size_in_bytes" => 994662584320,
+          "physical_drive" => { "device_name" => "APPLE SSD AP1024Z", "is_internal_disk" => "yes", "media_name" => "AppleAPFSMedia",
+                                "medium_type" => "ssd", "partition_map_type" => "unknown_partition_map_type",
+                                "protocol" => "Apple Fabric", "smart_status" => "Verified" } },
+        { "_name" => "Creedence11M6270.SECUREPKITRUSTSTOREASSETS_SECUREPKITRUSTSTORE_Cryptex", "bsd_name" => "disk6s1",
+          "file_system" => "Case-sensitive APFS", "size_in_bytes" => 4194304,
+          "physical_drive" => { "device_name" => "Disk Image", "is_internal_disk" => "no", "media_name" => "AppleAPFSMedia",
+                                "partition_map_type" => "unknown_partition_map_type", "protocol" => "Disk Image" } },
+      ] }]
+    end
+
+    before do
+      combined = %w{HARDWARE POWER}.flat_map do |name|
+        Plist.parse_xml(HardwareSystemProfilerOutput.const_get(name))
+      end
+      allow(plugin).to receive(:shell_out).with(
+        "system_profiler SPHardwareDataType SPStorageDataType SPPowerDataType -xml"
+      ).and_return(mock_shell_out(0, (combined + apfs_storage).to_plist, ""))
+      plugin.run
+    end
+
+    it "reads the drive type and SMART status from the physical drive" do
+      expect(plugin["hardware"]["storage"][0]).to eq(
+        "name" => "Macintosh HD", "bsd_name" => "disk3s1s1", "capacity" => 994662584320,
+        "drive_type" => "ssd", "smart_status" => "Verified"
+      )
+    end
+
+    it "leaves out what a disk image doesn't report" do
+      expect(plugin["hardware"]["storage"][1]).to eq(
+        "name" => "Creedence11M6270.SECUREPKITRUSTSTOREASSETS_SECUREPKITRUSTSTORE_Cryptex", "bsd_name" => "disk6s1",
+        "capacity" => 4194304
+      )
+    end
+  end
+
   it "parses storage data correctly" do
     plugin.run
     expect(plugin["hardware"]["battery"]["current_capacity"]).to eq(5841)

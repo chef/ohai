@@ -74,6 +74,13 @@ Ohai.plugin(:Hardware) do
         drive[:drive_type] = drive_entry["com.apple.corestorage.pv"][0]["medium_type"]
         drive[:smart_status] = drive_entry["com.apple.corestorage.pv"][0]["smart_status"]
         drive[:partitions] = drive_entry["com.apple.corestorage.pv"].count
+      elsif drive_entry.key?("physical_drive")
+        # APFS volumes (macOS 10.13 and later) describe their disk here.
+        # Disk images and some virtual disks have no medium_type or
+        # smart_status, so those keys are only set when present.
+        physical_drive = drive_entry["physical_drive"]
+        drive[:drive_type] = physical_drive["medium_type"] if physical_drive.key?("medium_type")
+        drive[:smart_status] = physical_drive["smart_status"] if physical_drive.key?("smart_status")
       end
       storage << drive
     end

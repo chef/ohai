@@ -1,0 +1,2625 @@
+{
+  "inputs": {
+    "uname": {
+      "sysname": "Darwin",
+      "nodename": "Manageds-Virtual-Machine.local",
+      "release": "24.6.0",
+      "version": "Darwin Kernel Version 24.6.0: Tue Apr 21 20:18:00 PDT 2026; root:xnu-11417.140.69.710.16~1/RELEASE_ARM64_VMAPPLE",
+      "machine": "arm64"
+    },
+    "commands": [
+      {
+        "cmd": "uname -p",
+        "stdout": "arm\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "sysctl -n hw.optional.x86_64",
+        "stdout": "",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "kextstat -k -l",
+        "stdout": "    8   15 0xfffffe00076aa9d0 0x193a0    0x193a0    com.apple.kec.corecrypto (14.0) 315915ED-E992-3658-AC87-56B922CA11C3 <7 6 5 4 3 1>\n    9    0 0xfffffe00071cfee0 0x51f      0x51f      com.apple.kec.AppleEncryptedArchive (1) 3D9CE1AB-0480-352D-A794-4829F5A4DB55 <8 6 5 4>\n   10    0 0xfffffe0007341540 0x4f0      0x4f0      com.apple.kec.Compression (1.0) A2045BF5-FB0D-3078-93AF-D39B9B9B5CC7 <8 6 5 4>\n   11    3 0xfffffe00075bb1f0 0x6c78     0x6c78     com.apple.kec.Libm (1) 170C8EA4-0FDA-3475-851F-6510349F7E3B <4>\n   12    0 0xfffffe00076d5ee0 0xd55      0xd55      com.apple.kec.pthread (1) 82FC373F-3C0C-330C-9C62-4C07C68D9013 <7 6 5 4 3 1>\n   13    5 0xfffffe00074de0a0 0xbbf      0xbbf      com.apple.iokit.IOCryptoAcceleratorFamily (1.0.1) 5E96431D-9F04-3245-9757-8D7324C56006 <7 5 4 3 1>\n   14    2 0xfffffe0007350ae0 0x1b9e     0x1b9e     com.apple.kext.CoreTrust (1) B1ABCE31-65C1-3955-A7D6-5F8CE50AE2D5 <8 6 4>\n   15    4 0xfffffe00071dcc70 0xea31     0xea31     com.apple.security.AppleImage4 (7.0.0) 30A91833-8111-31B0-96B4-E337B3DD3244 <14 13 8 7 6 5 4 3 2 1>\n   16    4 0xfffffe0007341a30 0x3e67     0x3e67     com.apple.iokit.CoreAnalyticsFamily (1) BC0C6D07-0A95-30C9-9A5B-EDC345DF9867 <7 6 5 4 3 1>\n   17    9 0xfffffe000727b180 0x1d6aa    0x1d6aa    com.apple.driver.AppleMobileFileIntegrity (1.0.5) FC72B434-7E6A-3D5C-8126-67155E767414 <16 15 14 8 7 6 5 4 3 2 1>\n   18    2 0xfffffe0007278ce0 0x547      0x547      com.apple.kext.AppleMatch (1.0.0d1) 77C2395E-C07B-3621-A9BA-2DC0532D2C62 <6 4 3 1>\n   19   17 0xfffffe000752f7d0 0x20a0     0x20a0     com.apple.iokit.IOStorageFamily (2.1) 524EFDA1-4A8A-397A-993D-0FCF81B23447 <7 6 5 4 3 1>\n   20    2 0xfffffe00075cfe60 0x28f90    0x28f90    com.apple.security.sandbox (300.0) 14B27A9A-1744-3557-BD6A-E8E03453C0E5 <19 18 17 8 7 6 5 4 3 2 1>\n   21    2 0xfffffe00075c4f40 0xf71      0xf71      com.apple.security.quarantine (4) 5E117E82-FFA3-3792-A732-E9616292296B <20 18 7 6 5 4 3 2 1>\n   22    0 0xfffffe00072d82b0 0x30cd     0x30cd     com.apple.AppleSystemPolicy (2.0.0) FB9C76B8-0F64-36CB-8494-AAED12FEC089 <21 20 17 7 6 5 4 3 2 1>\n   23    7 0xfffffe0007522eb0 0xb66      0xb66      com.apple.iokit.IOReportFamily (47) 8A628F6A-D71D-3DE0-A216-E501A69E3F2D <6 5 4 3>\n   24    1 0xfffffe000752ea70 0xd58      0xd58      com.apple.iokit.IOSlowAdaptiveClockingFamily (1.0.0) CB728F33-061A-3533-8128-3FDD430D9F5B <7 6 5 4 3 1>\n   25   25 0xfffffe00071014f0 0xff5b     0xff5b     com.apple.driver.AppleARMPlatform (1.0.2) 0F3D9398-0D1A-3CE7-9D05-0D76DE15D815 <24 23 19 7 6 5 4 3 1>\n   26    1 0xfffffe00071aaa60 0x167d     0x167d     com.apple.driver.AppleCallbackPowerSource (1) AB72408E-E78C-3D8C-B094-3FE0AC070A2E <6 5 4 3 1>\n   27    9 0xfffffe00075002e0 0x8d90     0x8d90     com.apple.iokit.IOHIDFamily (2.0.0) 7063D4D1-3FD6-35D3-B5E1-A569EE57A87D <23 7 6 5 4 3 2 1>\n   28    9 0xfffffe0007515050 0x1915     0x1915     com.apple.iokit.IONetworkingFamily (3.4) E65E9A7D-B371-331D-B018-14E660AAFEAC <7 6 5 4 3 1>\n   29    9 0xfffffe0007518290 0x63bb     0x63bb     com.apple.iokit.IOPCIFamily (2.9) A7E6DCF6-897C-33FD-9CAF-FB33498D8F79 <7 6 5 4 3>\n   30    5 0xfffffe000752a5f0 0xb6f      0xb6f      com.apple.iokit.IOSerialFamily (11) 1A9CF191-7F77-3E2F-9F7E-1FD8B745960B <7 6 5 4 3 1>\n   31    4 0xfffffe0007331a30 0x2520     0x2520     com.apple.driver.AppleVirtIO (230.100.3) 86076073-60C6-31D0-B911-8915BD834543 <30 29 28 27 19 6 5 4 3 1>\n   32    1 0xfffffe0007333f50 0x28bc     0x28bc     com.apple.iokit.AppleVirtIOStorage (1.0.0) 542E120D-94F8-3BAC-B493-23CA58779CD0 <31 29 25 19 7 6 5 4 3 1>\n   33    1 0xfffffe0007516970 0x191a     0x191a     com.apple.driver.mDNSOffloadUserClient (1.0.1b8) 1DE71744-1DCC-3256-83F5-9A4C661570B6 <28 6 4 3 1>\n   34    3 0xfffffe000752b160 0x3200     0x3200     com.apple.iokit.IOSkywalkFamily (1.0) 23561D36-17FB-3392-AAAB-B05BC0505D8F <33 28 7 6 5 4 3 1>\n   35    1 0xfffffe00072a5ee0 0x20d8     0x20d8     com.apple.driver.AppleOnboardSerial (1.0) 627A12CC-0C3F-3E96-A589-BDC731696AA0 <34 30 7 5 4 3 1>\n   36    4 0xfffffe000749b6c0 0x21ab4    0x21ab4    com.apple.iokit.IOAccessoryManager (1.0.0) 8951EE74-776F-3212-BA75-B92578647874 <35 30 27 25 7 6 5 4 3 1>\n   37    9 0xfffffe00072e7ac0 0xa8f      0xa8f      com.apple.driver.usb.AppleUSBCommon (1.0) EE11208E-E1FC-32C9-A831-838CD32EF372 <5 4 3 1>\n   38    2 0xfffffe0007566700 0x4b6c     0x4b6c     com.apple.iokit.IOUSBDeviceFamily (2.0.0) E8108FA8-90B1-30F1-9EE1-375FD9ABF73C <37 6 5 4 3 1>\n   39    1 0xfffffe0007336810 0x78e8     0x78e8     com.apple.driver.AppleVirtualPlatform (1) 620CBCCF-3D27-3E97-B277-D62BBD17ADC8 <38 36 32 31 30 29 27 26 25 19 17 13 8 7 6 5 4 3 1>\n   40    1 0xfffffe000735f870 0x41870    0x41870    com.apple.driver.FairPlayIOKit (72.13.0) 371F7BAB-110E-3022-9185-FA3B01A98E23 <7 6 5 4 3 1>\n   41    0 0xfffffe00071bca90 0x3bc0     0x3bc0     com.apple.driver.AppleDiskImages2 (385.140.4) F9A63E11-D138-3783-93D6-14C6503C9645 <19 6 5 4 3 1>\n   42    2 0xfffffe00071c0da0 0x1b04     0x1b04     com.apple.driver.AppleEffaceableStorage (1.0) 35AE9A4F-C920-340C-99D2-E07FF376B6BE <7 5 4 3 1>\n   43    0 0xfffffe00071d0400 0xade      0xade      com.apple.driver.AppleFDEKeyStore (28.30) 35AE5108-3597-33CE-B67B-1AC485BC850B <42 8 7 6 5 4 3 1>\n   44    1 0xfffffe0007522650 0x854      0x854      com.apple.iokit.IORSMFamily (1) 9809E8C3-7050-30CE-9FE9-C02198BECFEA <5 4 3 1>\n   45    0 0xfffffe00072b3910 0xc92      0xc92      com.apple.driver.AppleRSMChannel (1) 45C2571C-671D-3103-B22C-A431435ACF51 <44 6 5 4 3 1>\n   46    0 0xfffffe00072e2af0 0x1058     0x1058     com.apple.driver.AppleUIO (1) 18609C48-7F69-3E36-AD52-90E144CDC69F <29 6 5 4 3 1>\n   47    2 0xfffffe00073041c0 0x1716c    0x1716c    com.apple.driver.AppleVPCredentialManager (1.0) C81909FC-34E7-3F22-BFD5-A692380AE71C <8 7 6 5 4 3 1>\n   48    0 0xfffffe000731b330 0x1537e    0x1537e    com.apple.driver.AppleVPKeyStore (2) 951EE721-3256-33BB-B758-7E39425D8AC4 <47 39 17 15 13 8 7 6 5 4 3 1>\n   49    0 0xfffffe0007352680 0xd1e2     0xd1e2     com.apple.iokit.EndpointSecurity (1) B1BCFA79-6332-3FD9-B3D5-FE65397B11C2 <21 17 7 6 5 4 3 2 1>\n   50    4 0xfffffe000752e360 0x706      0x706      com.apple.driver.IOSlaveProcessor (1) 51F9B5C3-E13A-3B37-9E7E-95EB840DE53B <6 5 4 3>\n   51    3 0xfffffe00070fc000 0x14bd     0x14bd     com.apple.driver.AppleA7IOP (1.0.2) ECAB4959-8CEF-3C79-BE3E-768C48FC892A <50 25 5 4 3 1>\n   52    1 0xfffffe00070fe070 0x3474     0x3474     com.apple.driver.AppleARMPMU (1.0) A1515886-3DE0-3ECE-A629-9717501E2D8D <36 25 23 7 6 5 4 3 1>\n   53    1 0xfffffe00071cbf70 0x3360     0x3360     com.apple.driver.AppleEmbeddedTempSensor (1.0.0) 6CA602A8-02F3-3880-81F7-5388B70974E1 <27 25 23 7 5 4 3 1>\n   54    1 0xfffffe00075c5ec0 0x9f98     0x9f98     com.apple.driver.RTBuddy (1.0.0) 69ED306D-6545-3998-96BB-EC06FD2E2C99 <51 50 25 23 16 8 7 6 5 4 3 1>\n   55    1 0xfffffe00072c6f30 0x9056     0x9056     com.apple.driver.AppleSMC (3.1.9) 81D0BB15-67E2-3AD9-8349-6DA4F0CD6FD7 <54 53 52 51 50 36 27 25 6 5 4 3 1>\n   56    3 0xfffffe000758e960 0x6b1      0x6b1      com.apple.driver.AppleUSBHostMergeProperties (1.2) B2CEA17B-FFBC-3DF3-AEF5-4D9D0493CEDC <6 4 3 1>\n   57   12 0xfffffe000756f270 0x13240    0x13240    com.apple.iokit.IOUSBHostFamily (1.2) 593509B3-31B3-3B75-B6A9-315A954AA836 <56 55 37 17 7 6 5 4 3 1>\n   58    0 0xfffffe00074c5320 0xec35     0xec35     com.apple.iokit.IOBluetoothFamily (9.0.0) E1F8FF71-16F2-3056-9C9E-2AD9CEBDA726 <57 25 23 7 6 5 4 3 1>\n   59    1 0xfffffe00074edcc0 0x483d     0x483d     com.apple.iokit.IOGraphicsFamily (599) 7B5E816F-2B7B-3C35-BA2A-5EDCEE2F8FFC <29 7 5 4 3 1>\n   60    5 0xfffffe00074f87c0 0x1eca     0x1eca     com.apple.driver.DiskImages (493.0.0) 873CF5A0-D2A9-3712-A0CA-101BBBC10259 <19 7 6 5 4 3 1>\n   61    0 0xfffffe000750b620 0x6a9      0x6a9      com.apple.iokit.IOKitRegistryCompatibility (1) B34C040E-1B2D-3194-9622-6C3BF911521C <4 3>\n   62    2 0xfffffe0007538970 0xbc78     0xbc78     com.apple.iokit.IOTimeSyncFamily (1340.13) 9F69FE4A-9E95-33B1-BAA7-5AEEE3C07358 <34 28 25 6 5 4 3 1>\n   63    0 0xfffffe0007598060 0x4007     0x4007     com.apple.driver.usb.AppleUSBUserHCI (1) 81FC30B1-1448-344F-B530-6E19CC83AC45 <57 37 6 5 4 3 1>\n   64    1 0xfffffe0007523a20 0x1df0     0x1df0     com.apple.iokit.IOSCSIArchitectureModelFamily (500.120.2) C8B95712-F034-31D3-86C7-7BDBD922A9A6 <6 5 4 3 1>\n   65    0 0xfffffe00075b4510 0x36ca     0x36ca     com.apple.iokit.IOUSBMassStorageDriver (259.100.1) C62F0474-44EE-3939-9B2B-8C52C06ACB66 <64 57 29 19 6 5 4 3 1>\n   66    0 0xfffffe00075b7be0 0x1301     0x1301     com.apple.iokit.IOUserEthernet (1.0.1) D13A81A7-F3F2-32B6-9EB4-35D08FB6A551 <28 17 6 5 4 3 1>\n   67    0 0xfffffe0007273310 0x59ce     0x59ce     com.apple.driver.AppleM68Buttons (1.0.0d1) F708B0FD-1DE1-30AF-9D0F-6C21D2225981 <27 25 7 6 5 4 3 1>\n   68    2 0xfffffe00074dec60 0x2980     0x2980     com.apple.driver.IODARTFamily (1) D2DD2A29-1F16-30F3-A3B9-85DE0AB9A98C <25 6 5 4 3 1>\n   69    1 0xfffffe00072ba120 0xce0f     0xce0f     com.apple.driver.AppleSEPManager (1.0.1) 0C03BB93-C5EB-3233-96C5-612C270D75C3 <68 51 50 25 8 7 6 5 4 3 1>\n   70    0 0xfffffe0007279230 0x1f42     0x1f42     com.apple.driver.AppleMobileApNonce (1) 7D8DFC71-1728-3ACD-B903-474F45BBCD47 <69 25 13 7 6 5 4 3 1>\n   71    0 0xfffffe00072b45b0 0x1a29     0x1a29     com.apple.driver.AppleS8000AES (1) 7CF51585-852C-330B-958E-B2B104C98A64 <25 13 7 6 5 4 3 1>\n   72    0 0xfffffe00070fd4c0 0xba1      0xba1      com.apple.driver.AppleARMGIC (1) 2F06BF51-8994-3607-8B5A-CA5E230F9FF5 <57 37 25 19 7 6 5 4 3 1>\n   73    0 0xfffffe00072a8ff0 0x646      0x646      com.apple.driver.ApplePVPanic (1) 3A8115A3-8B25-322C-9B72-EF8541A9DCA8 <4 3>\n   74    6 0xfffffe0007532070 0x6062     0x6062     com.apple.iokit.IOSurface (372.5.2) 14730A41-2BF6-307A-A733-C4AF3CF908CE <7 6 5 4 3 1>\n   75    2 0xfffffe00072af2b0 0x1e76     0x1e76     com.apple.iokit.AppleParavirtIOSurface (15.0.0) 5B979081-840C-37FF-AFDA-9C11B0AB1D5E <74 25 7 6 5 4 3 1>\n   76    0 0xfffffe000758f020 0x11e1     0x11e1     com.apple.driver.usb.AppleUSBHostPacketFilter (1.0) 50353B05-04A3-3D20-8583-4751616BDED3 <57 37 7 6 5 4 3 1>\n   77    2 0xfffffe00071130b0 0x83b      0x83b      com.apple.driver.AppleAudioClockLibs (420.3) ECD49E33-8BB2-339E-AA1F-9B7AFFD1835E <7 5 4 3 1>\n   78    1 0xfffffe00071dbc10 0x1052     0x1052     com.apple.driver.AppleIISController (440.2) AE6F727D-1D39-3477-A0B7-97F69AAC2F03 <25 7 6 5 4 3 1>\n   79    1 0xfffffe00074bddb0 0x9f0      0x9f0      com.apple.iokit.IOAudio2Family (1.0) CBE3EC20-F823-360D-9FA5-999FF8B82B87 <5 4 3 1>\n   80    1 0xfffffe00074dd660 0xa36      0xa36      com.apple.iokit.IOCECFamily (1) CD13E17E-524B-3DF7-B840-6A2742133CC5 <4 3>\n   81    1 0xfffffe00074f2500 0x62b8     0x62b8     com.apple.iokit.IOHDCPFamily (1.0.0) A2D276E9-D023-39FE-9B8A-F2497541948F <5 4 3>\n   82    2 0xfffffe00074767b0 0x24f04    0x24f04    com.apple.iokit.IOAVFamily (1.0.0) 1805E97C-633D-3BC1-A402-D9E6EB657558 <81 80 79 78 77 25 11 7 6 5 4 3 1>\n   83    1 0xfffffe00074e1df0 0x9dd4     0x9dd4     com.apple.iokit.IOGPUFamily (104.6.3) 36FB1FCF-8310-3404-BFBF-C98F5D14D092 <74 59 29 23 17 7 6 5 4 3 1>\n   84    1 0xfffffe00071f1fb0 0x8135c    0x8135c    com.apple.driver.AppleM2ScalerCSCDriver (265.0.0) 16CDC13A-8DAF-326E-B292-ABDDAD52B6D2 <74 68 25 16 7 6 5 4 3 1>\n   85    1 0xfffffe000750bcd0 0x9374     0x9374     com.apple.iokit.IOMobileGraphicsFamily (343.0.0) E5095A50-56D9-3690-AF02-129AF428D188 <84 82 74 25 17 7 6 5 4 3 1>\n   86    0 0xfffffe00072a9640 0x5c6b     0x5c6b     com.apple.driver.AppleParavirtGPUIOGPUFamily (15.0.0) 42B69248-502A-3E3E-A705-C0D103E78AF0 <85 83 82 75 74 25 6 5 4 3>\n   87    0 0xfffffe00071d0ee0 0xb0d      0xb0d      com.apple.AppleFSCompression.AppleFSCompressionTypeDataless (1.0.0d1) 7964FB21-697D-3966-B112-74440CE6D396 <7 6 4 3 2 1>\n   88    0 0xfffffe00071d19f0 0x4067     0x4067     com.apple.AppleFSCompression.AppleFSCompressionTypeZlib (1.0.0) E1F6B674-871B-3BD0-B70B-AEB70C284E2F <6 4 3 2 1>\n   89    0 0xfffffe00072d7120 0x1183     0x1183     com.apple.driver.AppleSyntheticGameController (12.6.1) F7BE1C84-C44E-321F-8CE3-5009306356DE <27 6 4 3>\n   90    0 0xfffffe000733f660 0x1ede     0x1ede     com.apple.BootCache (40) 3A6C1A1C-66F5-3E10-AD3B-FE0D658B9495 <7 6 5 4 3 1>\n   91    1 0xfffffe00073adb20 0xb5f      0xb5f      com.apple.filesystems.hfs.encodings.kext (1) 54A374E9-9D97-3E5D-A5BC-DFC15A05C95C <7 6 5 4 3 1>\n   92    0 0xfffffe00073a10e0 0xca33     0xca33     com.apple.filesystems.hfs.kext (683.120.3) 428AF4A5-8518-38BF-AC11-808FB23FAB97 <91 7 6 5 4 3 1>\n   93    0 0xfffffe00075380e0 0x887      0x887      com.apple.IOTextEncryptionFamily (1.0.0) EA42EA5F-DE73-3457-A9E0-FD265E4A885D <40 7 5 4 3 1>\n   94    3 0xfffffe00076447c0 0x5893d    0x5893d    com.apple.filesystems.apfs (2332.140.13) C383508B-91E1-3AA1-B9F2-68C58CA1BAB5 <42 19 16 15 8 7 6 5 4 3 2 1>\n   95    0 0xfffffe00076c5cd0 0x3e40     0x3e40     com.apple.filesystems.lifs (1) CA1554EB-18A3-3B83-A365-4849352D1CA1 <7 6 5 4 3 1>\n   96    2 0xfffffe00076f2e60 0x9d0      0x9d0      com.apple.kext.triggers (1.0) BD737205-3C67-3F05-AF98-8FD0499685AA <7 6 5 4 3 1>\n   97    0 0xfffffe00076cc720 0x97bc     0x97bc     com.apple.filesystems.nfs (1) CFC981E8-8DAE-32A4-A983-8CA2DFBD47F7 <96 8 7 6 5 4 3 1>\n   98    0 0xfffffe00071a0bb0 0x68a      0x68a      com.apple.driver.AppleBSDKextStarter (3) A7016AA0-C867-3C9B-B324-0710657F556A <4 3>\n   99    0 0xfffffe00076f2130 0xd2a      0xd2a      com.apple.filesystems.tmpfs (1) 207616C4-4D6F-304F-90CE-3354D9F9B6B4 <7 6 5 4 3 1>\n  100    1 0xfffffe00075c1e70 0x2170     0x2170     com.apple.nke.ppp (1.9) 161706D9-D5C9-352A-BCC9-D5010E2CFFD5 <7 6 5 4 3 1>\n  101    0 0xfffffe00075ba0e0 0x1108     0x1108     com.apple.nke.l2tp (1.9) 61A2EF32-DB91-39A3-9E54-765004164260 <100 7 6 5 4 3 1>\n  102    0 0xfffffe00071d5a60 0x895      0x895      com.apple.driver.AppleFileSystemDriver (3.0.1) DA57A3A4-D87A-3A7B-BF9A-9ED14E34623C <19 4 3>\n  103    1 0xfffffe000751e650 0x4000     0x4000     com.apple.iokit.IOPortFamily (1.0) 2E1BF7B8-F047-30B2-8359-C9B45CB57CA4 <7 6 5 4 3 1>\n  104    1 0xfffffe00075a1be0 0xc303     0xc303     com.apple.driver.usb.AppleUSBXHCI (1.2) 2762DB34-4B1C-3E4A-9B10-77843DA470A5 <103 57 37 36 25 7 6 5 4 3 1>\n  105    0 0xfffffe00075adef0 0x4b80     0x4b80     com.apple.driver.usb.AppleUSBXHCIPCI (1.2) 37735C86-A0B8-3F0C-84A0-3CBD249EFACC <104 57 37 29 25 7 6 5 4 3 1>\n  106    0 0xfffffe00073306b0 0x1380     0x1380     com.apple.driver.AppleVideoToolboxParavirtualization (15.0.0) D4C56659-2994-38CF-B424-371823935CE1 <75 74 31 4 3>\n  107    0 0xfffffe000733eb00 0xb58      0xb58      com.apple.driver.AvpFairPlayDriver (2.8.0) B4D65A53-385D-35B5-880B-8CC62DC96377 <31 4 3>\n  108    2 0xfffffe00072f2e90 0x848      0x848      com.apple.driver.usb.networking (5.0.0) 0D31B86B-3E86-3AE7-AA23-E7BB11C9BEF9 <57 28 6 5 4 3 1>\n  109    0 0xfffffe00072ed520 0x11a9     0x11a9     com.apple.driver.AppleUSBDeviceNCM (5.0.0) 6495F57B-0CA9-3905-97F6-D6C9EDFD580E <108 38 28 25 6 5 4 3 1>\n  110    0 0xfffffe000733e100 0xa00      0xa00      com.apple.driver.AppleXsanScheme (3) 81B11EA5-DB6B-3781-BA00-10DB1F6DE5BA <19 5 4 3 1>\n  111    0 0xfffffe00072f5fe0 0xe1e0     0xe1e0     com.apple.security.AppleVPBootPolicy (1) 1F5C4262-DA5A-37FF-AD88-41D7C3F32CF1 <47 15 8 6 5 4 3>\n  112    4 0xfffffe00074faea0 0xd4d      0xd4d      com.apple.driver.DiskImages.KernelBacked (493.0.0) AE95E1DE-F157-31A1-ADBB-E5A8708AA95D <60 19 7 5 4 3 1>\n  113    0 0xfffffe00074fa690 0x80f      0x80f      com.apple.driver.DiskImages.FileBackingStore (493.0.0) 50D79DF7-BD82-3B40-A047-A35F558F0E49 <112 60 19 7 6 5 4 3 1>\n  114    0 0xfffffe00074fbbf0 0x6a0      0x6a0      com.apple.driver.DiskImages.RAMBackingStore (493.0.0) 519B0C28-F892-36B2-9F13-09ACEC3378BD <112 60 19 7 5 4 3 1>\n  115    0 0xfffffe00074fc8b0 0x3a24     0x3a24     com.apple.driver.DiskImages.UDIFDiskImage (493.0.0) D09C8C9F-887B-35CD-8308-4F116E294FB5 <112 60 19 7 5 4 3 1>\n  116    0 0xfffffe00074fc290 0x620      0x620      com.apple.driver.DiskImages.ReadWriteDiskImage (493.0.0) C29C7DE6-95CC-3C47-B350-C7B5A23DD54F <112 60 19 7 5 4 3 1>\n  117    2 0xfffffe000758dd00 0xc51      0xc51      com.apple.driver.usb.AppleUSBHostCompositeDevice (1.2) 68E746CD-8448-3FD8-998B-7F303FB20F79 <57 37 6 5 4 3 1>\n  118    1 0xfffffe00076f89c0 0x7d0      0x7d0      com.apple.vecLib.kext (1.2.0) 7F97E752-A61B-36CD-B7F1-DAD9E4B87902 <11 7 6 5 4 3>\n  119    1 0xfffffe00074be7a0 0x6350     0x6350     com.apple.iokit.IOAudioFamily (600.2) 314BD7BF-5FEF-32C0-B6B8-7FB6930F99BE <118 5 4 3 1>\n  120    0 0xfffffe00072e3b50 0x3780     0x3780     com.apple.driver.AppleUSBAudio (750.4) DD49E943-08E1-3750-BCEC-77AEC5559F59 <119 117 77 57 56 29 6 5 4 3 1>\n  121    0 0xfffffe00072e72d0 0x7e8      0x7e8      com.apple.driver.usb.cdc (5.0.0) E854B509-222E-390E-B551-181312C075FB <117 108 57 5 4 3 1>\n  122    0 0xfffffe00075b2a70 0x1a9b     0x1a9b     com.apple.driver.usb.IOUSBHostHIDDevice (1.2) E587C7C3-CF60-378A-AEF0-5137F07FCF7E <57 37 27 5 4 3 1>\n  123    1 0xfffffe00075445f0 0x22108    0x22108    com.apple.plugin.IOgPTPPlugin (1340.13) E3819834-0C32-3833-B3FD-A42D42D01C50 <62 34 28 27 11 6 5 4 3 1>\n  124    0 0xfffffe00074573d0 0xc8a0     0xc8a0     com.apple.iokit.IOAVBFamily (1320.3) 7B7FDBC1-B059-3943-BD0B-4FDC1C2D1865 <123 62 28 6 5 4 3 1>\n  125    0 0xfffffe00075b8ef0 0x9d8      0x9d8      com.apple.driver.driverkit.serial (6.0.0) 7769FBD4-F61C-3B52-B473-FEC13AD90B16 <30 5 4 3 1>\n  128    0 0xfffffe00076a0010 0x1727     0x1727     com.apple.filesystems.autofs (3.0) 9E4FC5BC-BFC0-3B72-860F-6520CBF61205 <96 7 6 5 4 3 2 1>\n",
+        "stderr": "Executing: /usr/bin/kmutil showloaded --no-kernel-components --list-only\nNo variant specified, falling back to release\n",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "/usr/bin/sw_vers",
+        "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.7\nBuildVersion:\t\t24G720\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "sysctl hw machdep",
+        "stdout": "hw.ncpu: 4\nhw.byteorder: 1234\nhw.memsize: 8589934592\nhw.activecpu: 4\nhw.perflevel0.physicalcpu: 4\nhw.perflevel0.physicalcpu_max: 4\nhw.perflevel0.logicalcpu: 4\nhw.perflevel0.logicalcpu_max: 4\nhw.perflevel0.l1icachesize: 131072\nhw.perflevel0.l1dcachesize: 65536\nhw.perflevel0.l2cachesize: 4194304\nhw.perflevel0.cpusperl2: 4\nhw.perflevel0.name: Standard\nhw.optional.arm.FEAT_CRC32: 1\nhw.optional.arm.FEAT_FlagM: 1\nhw.optional.arm.FEAT_FlagM2: 1\nhw.optional.arm.FEAT_FHM: 1\nhw.optional.arm.FEAT_DotProd: 1\nhw.optional.arm.FEAT_SHA3: 1\nhw.optional.arm.FEAT_RDM: 1\nhw.optional.arm.FEAT_LSE: 1\nhw.optional.arm.FEAT_SHA256: 1\nhw.optional.arm.FEAT_SHA512: 1\nhw.optional.arm.FEAT_SHA1: 1\nhw.optional.arm.FEAT_AES: 1\nhw.optional.arm.FEAT_PMULL: 1\nhw.optional.arm.FEAT_SPECRES: 0\nhw.optional.arm.FEAT_SPECRES2: 0\nhw.optional.arm.FEAT_SB: 1\nhw.optional.arm.FEAT_FRINTTS: 1\nhw.optional.arm.FEAT_PACIMP: 1\nhw.optional.arm.FEAT_LRCPC: 1\nhw.optional.arm.FEAT_LRCPC2: 1\nhw.optional.arm.FEAT_FCMA: 1\nhw.optional.arm.FEAT_JSCVT: 1\nhw.optional.arm.FEAT_PAuth: 1\nhw.optional.arm.FEAT_PAuth2: 1\nhw.optional.arm.FEAT_FPAC: 1\nhw.optional.arm.FEAT_FPACCOMBINE: 1\nhw.optional.arm.FEAT_DPB: 1\nhw.optional.arm.FEAT_DPB2: 1\nhw.optional.arm.FEAT_BF16: 1\nhw.optional.arm.FEAT_EBF16: 0\nhw.optional.arm.FEAT_I8MM: 1\nhw.optional.arm.FEAT_WFxT: 0\nhw.optional.arm.FEAT_RPRES: 1\nhw.optional.arm.FEAT_CSSC: 0\nhw.optional.arm.FEAT_HBC: 0\nhw.optional.arm.FEAT_ECV: 0\nhw.optional.arm.FEAT_AFP: 1\nhw.optional.arm.FEAT_LSE2: 1\nhw.optional.arm.FEAT_CSV2: 1\nhw.optional.arm.FEAT_CSV3: 1\nhw.optional.arm.FEAT_DIT: 1\nhw.optional.arm.AdvSIMD: 1\nhw.optional.arm.AdvSIMD_HPFPCvt: 1\nhw.optional.arm.FEAT_FP16: 1\nhw.optional.arm.FEAT_SSBS: 0\nhw.optional.arm.FEAT_BTI: 1\nhw.optional.arm.FEAT_SME: 1\nhw.optional.arm.FEAT_SME2: 1\nhw.optional.arm.SME_F32F32: 1\nhw.optional.arm.SME_BI32I32: 1\nhw.optional.arm.SME_B16F32: 1\nhw.optional.arm.SME_F16F32: 1\nhw.optional.arm.SME_I8I32: 1\nhw.optional.arm.SME_I16I32: 1\nhw.optional.arm.FEAT_SME_F64F64: 1\nhw.optional.arm.FEAT_SME_I16I64: 1\nhw.optional.arm.FP_SyncExceptions: 1\nhw.optional.arm.caps: 575914397768085503\nhw.optional.arm.sme_max_svl_b: 64\nhw.optional.floatingpoint: 1\nhw.optional.neon: 1\nhw.optional.neon_hpfp: 1\nhw.optional.neon_fp16: 1\nhw.optional.armv8_crc32: 1\nhw.optional.armv8_gpi: 1\nhw.optional.armv8_1_atomics: 1\nhw.optional.armv8_2_fhm: 1\nhw.optional.armv8_2_sha512: 1\nhw.optional.armv8_2_sha3: 1\nhw.optional.armv8_3_compnum: 1\nhw.optional.watchpoint: 4\nhw.optional.breakpoint: 6\nhw.optional.ucnormal_mem: 0\nhw.optional.arm64: 1\nhw.features.allows_security_research: 0\nhw.physicalcpu: 4\nhw.physicalcpu_max: 4\nhw.logicalcpu: 4\nhw.logicalcpu_max: 4\nhw.cputype: 16777228\nhw.cpusubtype: 2\nhw.cpu64bit_capable: 1\nhw.cpufamily: 0\nhw.cpusubfamily: 0\nhw.cacheconfig: 4 1 4 0 0 0 0 0 0 0\nhw.cachesize: 4283662336 65536 4194304 0 0 0 0 0 0 0\nhw.pagesize: 16384\nhw.pagesize32: 16384\nhw.cachelinesize: 128\nhw.l1icachesize: 131072\nhw.l1dcachesize: 65536\nhw.l2cachesize: 4194304\nhw.tbfrequency: 24000000\nhw.memsize_usable: 8578629632\nhw.packages: 1\nhw.osenvironment: \nhw.ephemeral_storage: 0\nhw.use_recovery_securityd: 0\nhw.use_kernelmanagerd: 1\nhw.serialdebugmode: 0\nhw.nperflevels: 1\nhw.targettype: VMA2MACOS\nmachdep.cpu.cores_per_package: 4\nmachdep.cpu.core_count: 4\nmachdep.cpu.logical_per_package: 4\nmachdep.cpu.thread_count: 4\nmachdep.cpu.brand_string: Apple M4 Pro (Virtual)\nmachdep.wake_abstime: 0\nmachdep.time_since_reset: 3424906089\nmachdep.wake_conttime: 0\nmachdep.virtual_address_size: 47\nmachdep.report_phy_read_delay: 0\nmachdep.report_phy_write_delay: 0\nmachdep.trace_phy_read_delay: 0\nmachdep.trace_phy_write_delay: 0\nmachdep.phy_read_delay_panic: 0\nmachdep.phy_write_delay_panic: 0\nmachdep.ptrauth_enabled: 1\nmachdep.user_idle_level: 0\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "sysctl -n hw.memsize",
+        "stdout": "8589934592\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "vm_stat",
+        "stdout": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                6173.\nPages active:                            230018.\nPages inactive:                          219933.\nPages speculative:                         9945.\nPages throttled:                              0.\nPages wired down:                         57380.\nPages purgeable:                           5397.\n\"Translation faults\":                   2581006.\nPages copy-on-write:                     275638.\nPages zero filled:                       875917.\nPages reactivated:                          124.\nPages purged:                              2034.\nFile-backed pages:                       225685.\nAnonymous pages:                         234211.\nPages stored in compressor:                  23.\nPages occupied by compressor:                 4.\nDecompressions:                               0.\nCompressions:                                23.\nPageins:                                 287434.\nPageouts:                                  1609.\nSwapins:                                      0.\nSwapouts:                                     0.\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "route -n get default",
+        "stdout": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.64.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "ifconfig -a",
+        "stdout": "lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 16384\n\toptions=1203<RXCSUM,TXCSUM,TXSTATUS,SW_TIMESTAMP>\n\tinet 127.0.0.1 netmask 0xff000000\n\tinet6 ::1 prefixlen 128 \n\tinet6 fe80::1%lo0 prefixlen 64 scopeid 0x1 \n\tnd6 options=201<PERFORMNUD,DAD>\ngif0: flags=8010<POINTOPOINT,MULTICAST> mtu 1280\nstf0: flags=0<> mtu 1280\nXHC16: flags=0<> mtu 0\nanpi0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=400<CHANNEL_IO>\n\tether 52:c4:d9:3b:ee:2f\n\tmedia: none\n\tstatus: inactive\nen0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=463<RXCSUM,TXCSUM,TSO4,TSO6,CHANNEL_IO>\n\tether 86:44:0f:12:49:26\n\tinet6 fe80::7c:2ca4:57f2:ba0a%en0 prefixlen 64 secured scopeid 0x6 \n\tinet6 fd21:3187:d082:e052:466:be72:2d53:3754 prefixlen 64 autoconf secured \n\tinet 192.168.64.143 netmask 0xffffff00 broadcast 192.168.64.255\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect <full-duplex,flow-control>\n\tstatus: active\nen1: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=400<CHANNEL_IO>\n\tether 52:c4:d9:3b:ee:0f\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: none\n\tstatus: inactive\nutun0: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1380\n\tinet6 fe80::8835:25ea:88a0:446c%utun0 prefixlen 64 scopeid 0x8 \n\tnd6 options=201<PERFORMNUD,DAD>\nutun1: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1500\n\tinet6 fe80::308:7fc9:3a09:fce1%utun1 prefixlen 64 scopeid 0x9 \n\tnd6 options=201<PERFORMNUD,DAD>\nutun2: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 2000\n\tinet6 fe80::3239:b369:d060:3ef3%utun2 prefixlen 64 scopeid 0xa \n\tnd6 options=201<PERFORMNUD,DAD>\nutun3: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1000\n\tinet6 fe80::ce81:b1c:bd2c:69e%utun3 prefixlen 64 scopeid 0xb \n\tnd6 options=201<PERFORMNUD,DAD>\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "arp -an",
+        "stdout": "? (192.168.64.1) at 86:2f:57:d2:12:64 on en0 ifscope [ethernet]\n? (192.168.64.255) at ff:ff:ff:ff:ff:ff on en0 ifscope [ethernet]\n? (224.0.0.251) at 1:0:5e:0:0:fb on en0 ifscope permanent [ethernet]\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "sysctl net",
+        "stdout": "net.local.stream.sendspace: 8192\nnet.local.stream.recvspace: 8192\nnet.local.stream.tracemdns: 0\nnet.local.dgram.maxdgram: 2048\nnet.local.dgram.recvspace: 4096\nnet.local.inflight: 0\nnet.local.log: 0\nnet.local.pcbcount: 140\nnet.inet.ip.portrange.lowfirst: 1023\nnet.inet.ip.portrange.lowlast: 600\nnet.inet.ip.portrange.first: 49152\nnet.inet.ip.portrange.last: 65535\nnet.inet.ip.portrange.hifirst: 49152\nnet.inet.ip.portrange.hilast: 65535\nnet.inet.ip.portrange.ipport_allow_udp_port_exhaustion: 0\nnet.inet.ip.forwarding: 0\nnet.inet.ip.redirect: 1\nnet.inet.ip.ttl: 64\nnet.inet.ip.rtexpire: 3600\nnet.inet.ip.rtminexpire: 10\nnet.inet.ip.rtmaxcache: 128\nnet.inet.ip.sourceroute: 0\nnet.inet.ip.accept_sourceroute: 0\nnet.inet.ip.gifttl: 30\nnet.inet.ip.mcast.maxgrpsrc: 512\nnet.inet.ip.mcast.maxsocksrc: 128\nnet.inet.ip.mcast.loop: 1\nnet.inet.ip.dummynet.hash_size: 64\nnet.inet.ip.dummynet.curr_time: 0\nnet.inet.ip.dummynet.ready_heap: 0\nnet.inet.ip.dummynet.extract_heap: 0\nnet.inet.ip.dummynet.searches: 0\nnet.inet.ip.dummynet.search_steps: 0\nnet.inet.ip.dummynet.expire: 1\nnet.inet.ip.dummynet.max_chain_len: 16\nnet.inet.ip.dummynet.red_lookup_depth: 256\nnet.inet.ip.dummynet.red_avg_pkt_size: 512\nnet.inet.ip.dummynet.red_max_pkt_size: 1500\nnet.inet.ip.dummynet.debug: 0\nnet.inet.ip.linklocal.in.allowbadttl: 1\nnet.inet.ip.log.privacy: 1\nnet.inet.ip.subnets_are_local: 0\nnet.inet.ip.sendsourcequench: 0\nnet.inet.ip.maxfragpackets: 2048\nnet.inet.ip.fragpackets: 0\nnet.inet.ip.maxfragsperpacket: 128\nnet.inet.ip.adj_clear_hwcksum: 0\nnet.inet.ip.adj_partial_sum: 1\nnet.inet.ip.check_interface: 1\nnet.inet.ip.checkinterface_debug: 0\nnet.inet.ip.rx_chaining: 1\nnet.inet.ip.rx_chainsz: 6\nnet.inet.ip.maxchainsent: 4\nnet.inet.ip.force_ipsum: 0\nnet.inet.ip.select_srcif_debug: 0\nnet.inet.ip.output_perf: 0\nnet.inet.ip.output_perf_bins: 0\nnet.inet.ip.rfc6864: 1\nnet.inet.icmp.maskrepl: 0\nnet.inet.icmp.timestamp: 0\nnet.inet.icmp.drop_redirect: 1\nnet.inet.icmp.log_redirect: 0\nnet.inet.icmp.bmcastecho: 1\nnet.inet.icmp.suppress_icmp_port_unreach: 0\nnet.inet.igmp.recvifkludge: 1\nnet.inet.igmp.sendra: 1\nnet.inet.igmp.sendlocal: 1\nnet.inet.igmp.v1enable: 1\nnet.inet.igmp.v2enable: 1\nnet.inet.igmp.legacysupp: 0\nnet.inet.igmp.default_version: 3\nnet.inet.igmp.gsrdelay: 10\nnet.inet.igmp.debug: 0\nnet.inet.tcp.mssdflt: 512\nnet.inet.tcp.keepidle: 7200000\nnet.inet.tcp.keepintvl: 75000\nnet.inet.tcp.sendspace: 131072\nnet.inet.tcp.recvspace: 131072\nnet.inet.tcp.keepinit: 75000\nnet.inet.tcp.v6mssdflt: 1024\nnet.inet.tcp.log.enable: 4193\nnet.inet.tcp.log.enable_usage: connection:0x00000001 rtt:0x00000002 ka:0x00000004 log:0x00000008 loop:0x00000010 local:0x00000020 gw:0x00000040 syn:0x00000100 fin:0x00000200 rst:0x00000400 dropnecp:0x00001000 droppcb:0x00002000 droppkt:0x00004000 fswflow:0x00008000 state:0x00010000 synrxmt:0x00020000 output:0x00040000 bind:0x00080000 \nnet.inet.tcp.log.rtt_port: 0\nnet.inet.tcp.log.thflags_if_family: 0\nnet.inet.tcp.log.rate_limit: 1000\nnet.inet.tcp.log.rate_duration: 60\nnet.inet.tcp.log.rate_max: 50\nnet.inet.tcp.log.rate_exceeded_total: 0\nnet.inet.tcp.log.rate_current: 56\nnet.inet.tcp.reass.overflows: 0\nnet.inet.tcp.reass.qlen: 0\nnet.inet.tcp.backoff_maximum: 65536\nnet.inet.tcp.ecn_timeout: 60\nnet.inet.tcp.disable_tcp_heuristics: 0\nnet.inet.tcp.mptcp_version_timeout: 1440\nnet.inet.tcp.clear_tfocache: 0\nnet.inet.tcp.flow_control_response: 1\nnet.inet.tcp.log_in_vain: 0\nnet.inet.tcp.ack_strategy: 1\nnet.inet.tcp.blackhole: 0\nnet.inet.tcp.aggressive_rcvwnd_inc: 1\nnet.inet.tcp.delayed_ack: 3\nnet.inet.tcp.recvbg: 0\nnet.inet.tcp.drop_synfin: 1\nnet.inet.tcp.slowlink_wsize: 8192\nnet.inet.tcp.maxseg_unacked: 8\nnet.inet.tcp.rfc3465: 1\nnet.inet.tcp.rfc3465_lim2: 1\nnet.inet.tcp.recv_allowed_iaj: 5\nnet.inet.tcp.doautorcvbuf: 1\nnet.inet.tcp.autotunereorder: 1\nnet.inet.tcp.autorcvbufmax: 4194304\nnet.inet.tcp.disable_access_to_stats: 1\nnet.inet.tcp.challengeack_limit: 10\nnet.inet.tcp.do_rfc5961: 1\nnet.inet.tcp.do_better_lr: 1\nnet.inet.tcp.use_min_curr_rtt: 1\nnet.inet.tcp.awdl_rtobase: 100\nnet.inet.tcp.rcvsspktcnt: 512\nnet.inet.tcp.rexmt_thresh: 3\nnet.inet.tcp.path_mtu_discovery: 1\nnet.inet.tcp.local_slowstart_flightsize: 8\nnet.inet.tcp.tso: 1\nnet.inet.tcp.ecn_setup_percentage: 100\nnet.inet.tcp.accurate_ecn: 0\nnet.inet.tcp.l4s_developer: 0\nnet.inet.tcp.l4s: 0\nnet.inet.tcp.link_heuristics_flags: 63\nnet.inet.tcp.link_heuristics_rto_min: 3000\nnet.inet.tcp.do_ack_compression: 1\nnet.inet.tcp.ack_compression_rate: 5\nnet.inet.tcp.randomize_timestamps: 1\nnet.inet.tcp.ecn_initiate_out: 2\nnet.inet.tcp.ecn_negotiate_in: 2\nnet.inet.tcp.packetchain: 50\nnet.inet.tcp.socket_unlocked_on_output: 1\nnet.inet.tcp.min_iaj_win: 16\nnet.inet.tcp.acc_iaj_react_limit: 200\nnet.inet.tcp.autosndbufinc: 8192\nnet.inet.tcp.autosndbufmax: 4194304\nnet.inet.tcp.rtt_recvbg: 1\nnet.inet.tcp.recv_throttle_minwin: 16384\nnet.inet.tcp.enable_tlp: 1\nnet.inet.tcp.sack: 1\nnet.inet.tcp.sack_maxholes: 128\nnet.inet.tcp.sack_globalmaxholes: 65536\nnet.inet.tcp.sack_globalholes: 0\nnet.inet.tcp.fastopen_key: \nnet.inet.tcp.fastopen_backlog: 10\nnet.inet.tcp.fastopen: 3\nnet.inet.tcp.now_init: 210931975\nnet.inet.tcp.microuptime_init: 620524\nnet.inet.tcp.minmss: 216\nnet.inet.tcp.pcbcount: 7\nnet.inet.tcp.icmp_may_rst: 1\nnet.inet.tcp.rtt_min: 100\nnet.inet.tcp.rexmt_slop: 200\nnet.inet.tcp.randomize_ports: 0\nnet.inet.tcp.win_scale_factor: 3\nnet.inet.tcp.init_rtt_from_cache: 1\nnet.inet.tcp.tso_debug: 0\nnet.inet.tcp.rxt_seg_max: 1024\nnet.inet.tcp.rxt_seg_drop: 0\nnet.inet.tcp.tcbhashsize: 4096\nnet.inet.tcp.keepcnt: 8\nnet.inet.tcp.msl: 15000\nnet.inet.tcp.fin_timeout: 60000\nnet.inet.tcp.max_persist_timeout: 0\nnet.inet.tcp.always_keepalive: 0\nnet.inet.tcp.timer_fastmode_idlemax: 10\nnet.inet.tcp.broken_peer_syn_rexmit_thres: 10\nnet.inet.tcp.tcp_timer_advanced: 0\nnet.inet.tcp.tcp_resched_timerlist: 64\nnet.inet.tcp.pmtud_blackhole_detection: 1\nnet.inet.tcp.pmtud_blackhole_mss: 1200\nnet.inet.tcp.cubic_tcp_friendliness: 0\nnet.inet.tcp.cubic_fast_convergence: 0\nnet.inet.tcp.cubic_use_minrtt: 0\nnet.inet.tcp.cubic_minor_fixes: 1\nnet.inet.tcp.cubic_rfc_compliant: 1\nnet.inet.tcp.rack: 0\nnet.inet.tcp.bg_target_qdelay: 40\nnet.inet.tcp.bg_allowed_increase: 8\nnet.inet.tcp.bg_tether_shift: 1\nnet.inet.tcp.bg_ss_fltsz: 2\nnet.inet.tcp.ledbat_plus_plus: 1\nnet.inet.tcp.rledbat: 1\nnet.inet.tcp.cc_debug: 0\nnet.inet.tcp.newreno_sockets: 0\nnet.inet.tcp.background_sockets: 0\nnet.inet.tcp.use_ledbat: 0\nnet.inet.tcp.cubic_sockets: 7\nnet.inet.tcp.use_newreno: 0\nnet.inet.tcp.mptcp_preferred_version: 1\nnet.inet.udp.checksum: 1\nnet.inet.udp.maxdgram: 9216\nnet.inet.udp.recvspace: 786896\nnet.inet.udp.log.enable: 97\nnet.inet.udp.log.enable_usage: connect:0x00000001 bind:0x00000002 log:0x00000008 loop:0x00000010 local:0x00000020 gw:0x00000040 dropnecp:0x00001000 droppcb:0x00002000 droppkt:0x00004000 \nnet.inet.udp.log.bind_anon_port: 0\nnet.inet.udp.log.local_port_included: 0\nnet.inet.udp.log.remote_port_included: 0\nnet.inet.udp.log.local_port_excluded: 0\nnet.inet.udp.log.remote_port_excluded: 0\nnet.inet.udp.log.rate_limit: 1000\nnet.inet.udp.log.rate_duration: 60\nnet.inet.udp.log.rate_max: 0\nnet.inet.udp.log.rate_exceeded_total: 0\nnet.inet.udp.log.rate_current: 6\nnet.inet.udp.log_in_vain: 0\nnet.inet.udp.blackhole: 0\nnet.inet.udp.pcbcount: 57\nnet.inet.udp.randomize_ports: 1\nnet.inet.ipsec.def_policy: 1\nnet.inet.ipsec.esp_trans_deflev: 1\nnet.inet.ipsec.esp_net_deflev: 1\nnet.inet.ipsec.ah_trans_deflev: 1\nnet.inet.ipsec.ah_net_deflev: 1\nnet.inet.ipsec.ah_cleartos: 1\nnet.inet.ipsec.ah_offsetmask: 0\nnet.inet.ipsec.dfbit: 0\nnet.inet.ipsec.ecn: 0\nnet.inet.ipsec.debug: 0\nnet.inet.ipsec.esp_randpad: -1\nnet.inet.ipsec.bypass: 1\nnet.inet.ipsec.esp_port: 0\nnet.inet.raw.maxdgram: 8192\nnet.inet.raw.recvspace: 8192\nnet.inet.raw.pcbcount: 1\nnet.inet.mptcp.enable: 1\nnet.inet.mptcp.mptcp_cap_retr: 4\nnet.inet.mptcp.dss_csum: 0\nnet.inet.mptcp.fail: 1\nnet.inet.mptcp.keepalive: 840\nnet.inet.mptcp.rtthist_thresh: 600\nnet.inet.mptcp.rto_thresh: 1500\nnet.inet.mptcp.probeto: 1000\nnet.inet.mptcp.probecnt: 5\nnet.inet.mptcp.enable_v1: 1\nnet.inet.mptcp.reass_qlen: 0\nnet.inet.mptcp.pcbcount: 0\nnet.inet.mptcp.alternate_port: 0\nnet.inet.mptcp.allow_aggregate: 0\nnet.inet.mptcp.no_first_party: 0\nnet.inet.mptcp.expected_progress_headstart: 5000\nnet.inet.mptcp.rto: 3\nnet.inet.mptcp.nrto: 3\nnet.inet.mptcp.tw: 60\nnet.inet.log_restricted: 0\nnet.link.generic.system.port_used.verbose: 0\nnet.link.generic.system.port_used.wakeuuid_not_set_last_time: { sec = 0, usec = 0 } Thu Jan  1 00:00:00 1970\nnet.link.generic.system.port_used.wakeuuid_not_set_last_if: \nnet.link.generic.system.port_used.wakeuuid_last_update_time: { sec = 0, usec = 0 } Thu Jan  1 00:00:00 1970\nnet.link.generic.system.port_used.wake_pkt_event_delay_if_families: 0 0\nnet.link.generic.system.management.verbose: 0\nnet.link.generic.system.management.data_unrestricted: 0\nnet.link.generic.system.management.control_unrestricted: 0\nnet.link.generic.system.if_verbose: 0\nnet.link.generic.system.sndq_maxlen: 128\nnet.link.generic.system.rcvq_maxlen: 256\nnet.link.generic.system.delaybased_queue: 1\nnet.link.generic.system.start_delayed: 0\nnet.link.generic.system.start_delay_disabled: 0\nnet.link.generic.system.rcvq_burst_limit: 8192\nnet.link.generic.system.rcvq_trim_pct: 8192\nnet.link.generic.system.tx_chain_len_count: 0\nnet.link.generic.system.rxpoll: 1\nnet.link.generic.system.rxpoll_decay: 2\nnet.link.generic.system.rxpoll_freeze_time: 1000000000\nnet.link.generic.system.rxpoll_sample_time: 10000000\nnet.link.generic.system.rxpoll_interval_time: 1000000\nnet.link.generic.system.rxpoll_interval_pkts: 0\nnet.link.generic.system.rxpoll_wakeups_lowat: 10\nnet.link.generic.system.rxpoll_wakeups_hiwat: 100\nnet.link.generic.system.rxpoll_max: 0\nnet.link.generic.system.dlil_input_threads: 11\nnet.link.generic.system.hwcksum_tx: 1\nnet.link.generic.system.hwcksum_rx: 1\nnet.link.generic.system.hwcksum_in_invalidated: 0\nnet.link.generic.system.hwcksum_dbg: 0\nnet.link.generic.system.hwcksum_dbg_mode: 0\nnet.link.generic.system.hwcksum_dbg_partial_forced: 0\nnet.link.generic.system.hwcksum_dbg_partial_forced_bytes: 0\nnet.link.generic.system.hwcksum_dbg_partial_rxoff_forced: 0\nnet.link.generic.system.hwcksum_dbg_partial_rxoff_adj: 0\nnet.link.generic.system.hwcksum_dbg_verified: 0\nnet.link.generic.system.hwcksum_dbg_bad_cksum: 0\nnet.link.generic.system.hwcksum_dbg_bad_rxoff: 0\nnet.link.generic.system.hwcksum_dbg_adjusted: 0\nnet.link.generic.system.hwcksum_dbg_finalized_hdr: 0\nnet.link.generic.system.hwcksum_dbg_finalized_data: 0\nnet.link.generic.system.flow_advisory: 1\nnet.link.generic.system.threshold_notify: 1\nnet.link.generic.system.threshold_interval: 2\nnet.link.generic.system.dlil_verbose: 0\nnet.link.generic.system.wake_pkt_debug: 0\nnet.link.generic.system.dlil_input_sanity_check: 0\nnet.link.generic.system.enable_netagent: 1\nnet.link.generic.system.link_heuristics_flags: 9\nnet.link.generic.system.link_heuristics_lqm_max: 0\nnet.link.generic.system.link_heuristics_delay: 30000\nnet.link.ether.inet.prune_intvl: 300\nnet.link.ether.inet.probe_intvl: 7\nnet.link.ether.inet.max_age: 1200\nnet.link.ether.inet.host_down_time: 20\nnet.link.ether.inet.arp_llreach_base: 120\nnet.link.ether.inet.arp_unicast_lim: 3\nnet.link.ether.inet.maxtries: 5\nnet.link.ether.inet.maxhold: 16\nnet.link.ether.inet.useloopback: 1\nnet.link.ether.inet.proxyall: 0\nnet.link.ether.inet.sendllconflict: 0\nnet.link.ether.inet.log_arp_warnings: 0\nnet.link.ether.inet.keep_announcements: 1\nnet.link.ether.inet.send_conflicting_probes: 1\nnet.link.ether.inet.verbose: 0\nnet.link.ether.inet.maxhold_total: 1024\nnet.link.droptap.total_tap_count: 0\nnet.link.droptap.verbose: 0\nnet.link.vlan.log_level: 5\nnet.link.vlan.debug: 0\nnet.link.bridge.inherit_mac: 0\nnet.link.bridge.rtable_prune_period: 300\nnet.link.bridge.rtable_hash_size_max: 2048\nnet.link.bridge.txstart: 0\nnet.link.bridge.debug: 0\nnet.link.bridge.log_level: 5\nnet.link.bridge.output_skip_filters: 1\nnet.link.bridge.enable_early_input: 1\nnet.link.bridge.allow_lro_num_seg: 1\nnet.link.bridge.tso_reduce_mss_forwarding: 110\nnet.link.bridge.tso_reduce_mss_tx: 0\nnet.link.pktap.total_tap_count: 0\nnet.link.pktap.count_unknown_if_type: 0\nnet.link.pktap.log: 0\nnet.link.iptap.total_tap_count: 0\nnet.link.iptap.log: 0\nnet.link.bond.debug: 0\nnet.link.bond.log_level: 5\nnet.link.redirect.debug: 0\nnet.link.fake.txstart: 1\nnet.link.fake.hwcsum: 0\nnet.link.fake.vlan_tagging: 1\nnet.link.fake.nxattach: 0\nnet.link.fake.bsd_mode: 1\nnet.link.fake.log_level: 5\nnet.link.fake.debug: 0\nnet.link.fake.wmm_mode: 0\nnet.link.fake.multibuflet: 0\nnet.link.fake.low_latency: 0\nnet.link.fake.switch_combined_mode: 0\nnet.link.fake.switch_mode_frequency: 10\nnet.link.fake.tso_support: 0\nnet.link.fake.expiration_threshold: 500\nnet.link.fake.lro: 0\nnet.link.fake.separate_frame_header: 0\nnet.link.fake.pktpool_mode: 0\nnet.link.fake.link_layer_aggregation_factor: 96\nnet.link.fake.tx_headroom: 32\nnet.link.fake.fcs: 0\nnet.link.fake.trailer_length: 0\nnet.link.fake.tso_buf_size: 16384\nnet.link.fake.max_mtu: 2048\nnet.link.fake.buflet_size: 512\nnet.link.fake.user_access: 0\nnet.link.fake.if_adv_intvl: 0\nnet.link.fake.tx_drops: 0\nnet.link.fake.tx_exp_policy: 0\nnet.link.fake.tx_completion_mode: 0\nnet.link.fake.llink_cnt: 0\nnet.link.fake.qset_cnt: 4\nnet.link.fake.trace_tag: 0\nnet.link.loopback.max_dequeue: 256\nnet.link.loopback.sched_model: 0\nnet.link.loopback.dequeue_sc: 0\nnet.key.debug: 0\nnet.key.spi_trycnt: 1000\nnet.key.spi_minval: 256\nnet.key.spi_maxval: 268435455\nnet.key.int_random: 60\nnet.key.larval_lifetime: 30\nnet.key.blockacq_count: 10\nnet.key.blockacq_lifetime: 20\nnet.key.esp_keymin: 256\nnet.key.esp_auth: 0\nnet.key.ah_keymin: 128\nnet.key.prefered_oldsa: 0\nnet.key.natt_keepalive_interval: 20\nnet.key.pcbcount: 0\nnet.inet6.ip6.forwarding: 0\nnet.inet6.ip6.redirect: 1\nnet.inet6.ip6.hlim: 64\nnet.inet6.ip6.maxfragpackets: 2048\nnet.inet6.ip6.accept_rtadv: 1\nnet.inet6.ip6.keepfaith: 0\nnet.inet6.ip6.log_interval: 5\nnet.inet6.ip6.hdrnestlimit: 15\nnet.inet6.ip6.dad_count: 1\nnet.inet6.ip6.auto_flowlabel: 1\nnet.inet6.ip6.defmcasthlim: 1\nnet.inet6.ip6.gifhlim: 0\nnet.inet6.ip6.kame_version: 2009/apple-darwin\nnet.inet6.ip6.use_deprecated: 1\nnet.inet6.ip6.rr_prune: 5\nnet.inet6.ip6.v6only: 0\nnet.inet6.ip6.rtexpire: 3600\nnet.inet6.ip6.rtminexpire: 10\nnet.inet6.ip6.rtmaxcache: 128\nnet.inet6.ip6.use_tempaddr: 1\nnet.inet6.ip6.temppltime: 86400\nnet.inet6.ip6.tempvltime: 604800\nnet.inet6.ip6.auto_linklocal: 1\nnet.inet6.ip6.prefer_tempaddr: 1\nnet.inet6.ip6.use_defaultzone: 0\nnet.inet6.ip6.maxfrags: 4096\nnet.inet6.ip6.mcast_pmtu: 0\nnet.inet6.ip6.neighborgcthresh: 1024\nnet.inet6.ip6.maxifprefixes: 16\nnet.inet6.ip6.maxifdefrouters: 64\nnet.inet6.ip6.maxdynroutes: 1024\nnet.inet6.ip6.ula_use_tempaddr: 0\nnet.inet6.ip6.mcast.maxgrpsrc: 512\nnet.inet6.ip6.mcast.maxsocksrc: 128\nnet.inet6.ip6.mcast.loop: 1\nnet.inet6.ip6.fragpackets: 0\nnet.inet6.ip6.adj_clear_hwcksum: 0\nnet.inet6.ip6.adj_partial_sum: 1\nnet.inet6.ip6.input_perf: 0\nnet.inet6.ip6.input_perf_bins: 0\nnet.inet6.ip6.check_interface: 1\nnet.inet6.ip6.checkinterface_debug: 0\nnet.inet6.ip6.output_perf: 0\nnet.inet6.ip6.output_perf_bins: 0\nnet.inet6.ip6.select_srcif_debug: 0\nnet.inet6.ip6.select_srcaddr_debug: 0\nnet.inet6.ip6.select_src_expensive_secondary_if: 0\nnet.inet6.ip6.select_src_strong_end: 1\nnet.inet6.ip6.only_allow_rfc4193_prefixes: 0\nnet.inet6.ip6.clat_debug: 0\nnet.inet6.ip6.cga_conflict_retries: 3\nnet.inet6.ip6.compliance_profile: 0\nnet.inet6.ip6.maxchainsent: 1\nnet.inet6.ip6.dad_enhanced: 1\nnet.inet6.ip6.nd6_dad_nonce_max_count: 3\nnet.inet6.ip6.in6_embedded_scope: 1\nnet.inet6.ip6.in6_embedded_scope_debug: 0\nnet.inet6.ipsec6.def_policy: 1\nnet.inet6.ipsec6.esp_trans_deflev: 1\nnet.inet6.ipsec6.esp_net_deflev: 1\nnet.inet6.ipsec6.ah_trans_deflev: 1\nnet.inet6.ipsec6.ah_net_deflev: 1\nnet.inet6.ipsec6.ecn: 0\nnet.inet6.ipsec6.debug: 0\nnet.inet6.ipsec6.esp_randpad: -1\nnet.inet6.icmp6.rediraccept: 1\nnet.inet6.icmp6.redirtimeout: 600\nnet.inet6.icmp6.nd6_prune: 1\nnet.inet6.icmp6.nd6_delay: 5\nnet.inet6.icmp6.nd6_umaxtries: 3\nnet.inet6.icmp6.nd6_mmaxtries: 3\nnet.inet6.icmp6.nd6_useloopback: 1\nnet.inet6.icmp6.nodeinfo: 0\nnet.inet6.icmp6.errppslimit: 746\nnet.inet6.icmp6.nd6_debug: 0\nnet.inet6.icmp6.nd6_accept_6to4: 1\nnet.inet6.icmp6.nd6_optimistic_dad: 63\nnet.inet6.icmp6.errppslimit_random_incr: 500\nnet.inet6.icmp6.nd6_onlink_ns_rfc4861: 0\nnet.inet6.icmp6.suppress_icmp6_port_unreach: 0\nnet.inet6.icmp6.nd6_prune_lazy: 5\nnet.inet6.icmp6.rappslimit: 10\nnet.inet6.icmp6.nd6_process_rti: 1\nnet.inet6.icmp6.nd6_llreach_base: 30\nnet.inet6.icmp6.nd6_maxsolstgt: 8\nnet.inet6.icmp6.nd6_maxproxiedsol: 4\nnet.inet6.icmp6.prproxy_cnt: 0\nnet.inet6.mld.gsrdelay: 10\nnet.inet6.mld.v1enable: 1\nnet.inet6.mld.v2enable: 1\nnet.inet6.mld.use_allow: 1\nnet.inet6.mld.debug: 0\nnet.inet6.send.opmode: 1\nnet.inet6.send.opstate: 1\nnet.systm.kctl.autorcvbufmax: 262144\nnet.systm.kctl.autorcvbufhigh: 0\nnet.systm.kctl.debug: 0\nnet.systm.kctl.pcbcount: 72\nnet.systm.kevt.pcbcount: 12\nnet.ppp.l2tp.nb_threads: 0\nnet.ppp.l2tp.thread_outq_size: 1024\nnet.pktsched.netem.sched_output_ival_ms: 1\nnet.pktsched.netem.heap_size: 2048\nnet.pktsched.verbose: 0\nnet.classq.fq_codel.fq_enable_pacing: 1\nnet.classq.verbose: 0\nnet.classq.def_c_target_qdelay: 0\nnet.classq.def_c_update_interval: 0\nnet.classq.def_l4s_target_qdelay: 0\nnet.classq.def_l4s_update_interval: 0\nnet.classq.ll_c_target_qdelay: 0\nnet.classq.ll_c_update_interval: 0\nnet.classq.ll_l4s_target_qdelay: 0\nnet.classq.ll_l4s_update_interval: 0\nnet.classq.enable_l4s: 1\nnet.restricted_port.enforced: 1\nnet.restricted_port.verbose: 0\nnet.cfil.log: 3\nnet.cfil.log_port: 0\nnet.cfil.log_pid: 0\nnet.cfil.log_proto: 0\nnet.cfil.log_data: 0\nnet.cfil.log_stats: 0\nnet.cfil.debug: 1\nnet.cfil.sock_attached_count: 0\nnet.cfil.active_count: 0\nnet.cfil.close_wait_timeout: 1000\nnet.cfil.behavior_flags: 0\nnet.cfil.sbtrim: 1\nnet.netagent.debug: 5\nnet.netagent.registered_count: 457\nnet.netagent.active_count: 456\nnet.qos.policy.restricted: 0\nnet.qos.policy.restrict_avapps: 0\nnet.qos.policy.wifi_enabled: 0\nnet.qos.policy.capable_enabled: 0\nnet.qos.reset_dscp_to_wifi_ac_map: 0\nnet.qos.verbose: 0\nnet.necp.drop_all_level: 0\nnet.necp.debug: 0\nnet.necp.pass_loopback: 1\nnet.necp.pass_keepalives: 1\nnet.necp.socket_policy_count: 924\nnet.necp.socket_non_app_policy_count: 446\nnet.necp.ip_policy_count: 0\nnet.necp.session_count: 12\nnet.necp.client_fd_count: 84\nnet.necp.client_count: 207\nnet.necp.arena_count: 19\nnet.necp.nexus_flow_count: 31\nnet.necp.socket_flow_count: 0\nnet.necp.if_flow_count: 0\nnet.necp.observer_fd_count: 0\nnet.necp.observer_message_limit: 256\nnet.necp.sysctl_arena_count: 33\nnet.necp.drop_unentitled_level: 0\nnet.necp.pass_interpose: 1\nnet.necp.restrict_multicast: 1\nnet.necp.dedup_policies: 0\nnet.necp.necp_client_tracing_level: 0\nnet.necp.necp_client_tracing_pid: 0\nnet.necp.drop_management_level: 3\nnet.necp.trie_count: 0\nnet.necp.drop_dest_debug: 0\nnet.necp.data_tracing_level: 0\nnet.necp.data_tracing_port: 0\nnet.necp.data_tracing_proto: 0\nnet.necp.data_tracing_pid: 0\nnet.necp.data_tracing_ifindex: 0\nnet.necp.data_tracing_match_all: 0\nnet.necp.data_tracing_session_order: 0\nnet.necp.data_tracing_policy_order: 0\nnet.necp.drop_loopback_count: 0\nnet.mpklog.enabled: 1\nnet.mpklog.type: 0\nnet.mpklog.version: 1\nnet.ipsec.verify_interface_creation: 0\nnet.ipsec.max_pending_input: 512\nnet.ipsec.ring_size: 64\nnet.ipsec.tx_fsw_ring_size: 64\nnet.ipsec.rx_fsw_ring_size: 128\nnet.ipsec.debug: 0\nnet.utun.max_pending_input: 512\nnet.utun.ring_size: 64\nnet.utun.tx_fsw_ring_size: 64\nnet.utun.rx_fsw_ring_size: 128\nnet.stats.debug: 0\nnet.stats.debug_pid: 0\nnet.stats.sendspace: 2048\nnet.stats.recvspace: 8192\nnet.route.verbose: 0\nnet.ndrv.multi_max_count: 1024\nnet.ndrv.pcbcount: 2\nnet.vsock.sendspace: 524288\nnet.vsock.recvspace: 524288\nnet.vsock.pcbcount: 1\nnet.tracker.log: 3\nnet.tracker.idle_timeout: 10\nnet.tracker.extended_idle_timeout: 120\nnet.soflow.log_level: 3\nnet.soflow.log_port: 0\nnet.soflow.log_pid: 0\nnet.soflow.log_proto: 0\nnet.soflow.nstat_disable: 0\nnet.soflow.disable: 0\nnet.soflow.count: 8\nnet.soflow.high_water_mark: 20\nnet.filter_state: \nnet.statistics_privcheck: 0\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "netstat -i -d -l -b -n",
+        "stdout": "Name           Mtu   Network                                 Address                                    Ipkts Ierrs     Ibytes    Opkts Oerrs     Obytes  Coll Drop\nlo0            16384 <Link#1>                                                                             384     0      67302      384     0      67302     0   0\nlo0            16384 127                                     127.0.0.1                                    384     -      67302      384     -      67302     -   -\nlo0            16384 ::1/128                                 ::1                                          384     -      67302      384     -      67302     -   -\nlo0            16384 fe80::1%lo0/64                          fe80:1::1                                    384     -      67302      384     -      67302     -   -\ngif0*          1280  <Link#2>                                                                               0     0          0        0     0          0     0   0\nstf0*          1280  <Link#3>                                                                               0     0          0        0     0          0     0   0\nXHC16*         0     <Link#4>                                                                               0     0          0        0     0          0     0   0\nanpi0          1500  <Link#5>                                52:c4:d9:3b:ee:2f                              0     0          0        0     0          0     0   0\nen0            1500  <Link#6>                                86:44:0f:12:49:26                         269214     0  394052048    30975     0    3039605     0   0\nen0            1500  fe80::7c:2ca4:57f2:ba0a%en0/64          fe80:6::7c:2ca4:57f2:ba0a                 269214     -  394052048    30975     -    3039605     -   -\nen0            1500  fd21:3187:d082:e052:466:be72:2d53:3754/ fd21:3187:d082:e052:466:be72:2d53:3754    269214     -  394052048    30975     -    3039605     -   -\nen0            1500  192.168.64                              192.168.64.143                            269214     -  394052048    30975     -    3039605     -   -\nen1            1500  <Link#7>                                52:c4:d9:3b:ee:0f                              0     0          0        0     0          0     0   0\nutun0          1380  <Link#8>                                                                               0     0          0        3     0        260     0   0\nutun0          1380  fe80::8835:25ea:88a0:446c%utun0/64      fe80:8::8835:25ea:88a0:446c                    0     -          0        3     -        260     -   -\nutun1          1500  <Link#9>                                                                               0     0          0        1     0        100     0   0\nutun1          1500  fe80::308:7fc9:3a09:fce1%utun1/64       fe80:9::308:7fc9:3a09:fce1                     0     -          0        1     -        100     -   -\nutun2          2000  <Link#10>                                                                              0     0          0        4     0        320     0   0\nutun2          2000  fe80::3239:b369:d060:3ef3%utun2/64      fe80:a::3239:b369:d060:3ef3                    0     -          0        4     -        320     -   -\nutun3          1000  <Link#11>                                                                              0     0          0        3     0        260     0   0\nutun3          1000  fe80::ce81:b1c:bd2c:69e%utun3/64        fe80:b::ce81:b1c:bd2c:69e                      0     -          0        3     -        260     -   -\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "df -i",
+        "stdout": "Filesystem     512-blocks     Used Available Capacity iused     ifree %iused  Mounted on\n/dev/disk2s1s1   96632176 22007696  39793672    36%  426863 198968360    0%   /\ndevfs                 390      390         0   100%     676         0  100%   /dev\n/dev/disk2s6     96632176       40  39793672     1%       0 198968360    0%   /System/Volumes/VM\n/dev/disk2s2     96632176 13816696  39793672    26%    1012 198968360    0%   /System/Volumes/Preboot\n/dev/disk2s4     96632176    78328  39793672     1%      53 198968360    0%   /System/Volumes/Update\n/dev/disk1s2      1024000       40   1013488     1%       0   5067440    0%   /System/Volumes/xarts\n/dev/disk1s1      1024000      248   1013488     1%      28   5067440    0%   /System/Volumes/iSCPreboot\n/dev/disk1s3      1024000      504   1013488     1%      18   5067440    0%   /System/Volumes/Hardware\n/dev/disk2s5     96632176 18747648  39793672    33%  318148 198968360    0%   /System/Volumes/Data\n/dev/disk4s1         8192     1352      6152    19%      18     30760    0%   /System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData\nmap auto_home           0        0         0   100%       0         0     -   /System/Volumes/Data/home\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "mount",
+        "stdout": "/dev/disk2s1s1 on / (apfs, sealed, local, read-only, journaled)\ndevfs on /dev (devfs, local, nobrowse)\n/dev/disk2s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)\n/dev/disk2s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)\n/dev/disk2s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)\n/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)\n/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)\n/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)\n/dev/disk2s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, root data)\n/dev/disk4s1 on /System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData (apfs, sealed, local, read-only, journaled, nobrowse)\nmap auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "system_profiler SPHardwareDataType SPStorageDataType SPPowerDataType -xml",
+        "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<array>\n\t<dict>\n\t\t<key>_SPCommandLineArguments</key>\n\t\t<array>\n\t\t\t<string>/usr/sbin/system_profiler</string>\n\t\t\t<string>-nospawn</string>\n\t\t\t<string>-xml</string>\n\t\t\t<string>SPHardwareDataType</string>\n\t\t\t<string>-detailLevel</string>\n\t\t\t<string>full</string>\n\t\t</array>\n\t\t<key>_SPCompletionInterval</key>\n\t\t<real>0.030028939247131348</real>\n\t\t<key>_SPResponseTime</key>\n\t\t<real>0.075067043304443359</real>\n\t\t<key>_dataType</key>\n\t\t<string>SPHardwareDataType</string>\n\t\t<key>_detailLevel</key>\n\t\t<string>-2</string>\n\t\t<key>_items</key>\n\t\t<array>\n\t\t\t<dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>hardware_overview</string>\n\t\t\t\t<key>activation_lock_status</key>\n\t\t\t\t<string>activation_lock_disabled</string>\n\t\t\t\t<key>boot_rom_version</key>\n\t\t\t\t<string>mBoot-18000.120.36</string>\n\t\t\t\t<key>chip_type</key>\n\t\t\t\t<string>Apple M4 Pro (Virtual)</string>\n\t\t\t\t<key>machine_model</key>\n\t\t\t\t<string>VirtualMac2,1</string>\n\t\t\t\t<key>machine_name</key>\n\t\t\t\t<string>Apple Virtual Machine 1</string>\n\t\t\t\t<key>model_number</key>\n\t\t\t\t<string>VM0001LL/A</string>\n\t\t\t\t<key>number_processors</key>\n\t\t\t\t<integer>4</integer>\n\t\t\t\t<key>os_loader_version</key>\n\t\t\t\t<string>11881.140.96.701.1</string>\n\t\t\t\t<key>physical_memory</key>\n\t\t\t\t<string>8 GB</string>\n\t\t\t\t<key>platform_UUID</key>\n\t\t\t\t<string>50DCC3EF-6AD8-5EAA-AC56-451AD340113C</string>\n\t\t\t\t<key>provisioning_UDID</key>\n\t\t\t\t<string>968af9c31d1037e75ecf4710b6a66051408e6e5a</string>\n\t\t\t\t<key>serial_number</key>\n\t\t\t\t<string>ZFQYR4XYHG</string>\n\t\t\t</dict>\n\t\t</array>\n\t\t<key>_parentDataType</key>\n\t\t<string>SPRootDataType</string>\n\t\t<key>_properties</key>\n\t\t<dict>\n\t\t\t<key>LOM_revision</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>85</string>\n\t\t\t</dict>\n\t\t\t<key>Lightshow_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>83</string>\n\t\t\t\t<key>_suppressLocalization</key>\n\t\t\t\t<string>YES</string>\n\t\t\t</dict>\n\t\t\t<key>MMM_state</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>70</string>\n\t\t\t</dict>\n\t\t\t<key>SMC_version_other</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>82</string>\n\t\t\t</dict>\n\t\t\t<key>SMC_version_riser</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>81</string>\n\t\t\t</dict>\n\t\t\t<key>SMC_version_system</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>80</string>\n\t\t\t\t<key>_suppressLocalization</key>\n\t\t\t\t<string>YES</string>\n\t\t\t</dict>\n\t\t\t<key>activation_lock_status</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>99</string>\n\t\t\t</dict>\n\t\t\t<key>apple_rom_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>54</string>\n\t\t\t</dict>\n\t\t\t<key>boot_rom_release_date</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>52</string>\n\t\t\t</dict>\n\t\t\t<key>boot_rom_vendor</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>50</string>\n\t\t\t</dict>\n\t\t\t<key>boot_rom_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>51</string>\n\t\t\t</dict>\n\t\t\t<key>bus_speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>45</string>\n\t\t\t</dict>\n\t\t\t<key>chip_type</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>16</string>\n\t\t\t</dict>\n\t\t\t<key>cores_per_package</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>24</string>\n\t\t\t</dict>\n\t\t\t<key>cpu_interconnect_speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>46</string>\n\t\t\t</dict>\n\t\t\t<key>cpu_type</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>15</string>\n\t\t\t</dict>\n\t\t\t<key>current_processor_speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>17</string>\n\t\t\t</dict>\n\t\t\t<key>enclosure</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>12</string>\n\t\t\t</dict>\n\t\t\t<key>l2_cache</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>26</string>\n\t\t\t</dict>\n\t\t\t<key>l2_cache_core</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>26</string>\n\t\t\t</dict>\n\t\t\t<key>l2_cache_share</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>26</string>\n\t\t\t</dict>\n\t\t\t<key>l2_cache_size</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>26</string>\n\t\t\t</dict>\n\t\t\t<key>l3_cache</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>27</string>\n\t\t\t</dict>\n\t\t\t<key>l3_cache_processor</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>27</string>\n\t\t\t</dict>\n\t\t\t<key>l3_cache_size</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>27</string>\n\t\t\t</dict>\n\t\t\t<key>machine_model</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>11</string>\n\t\t\t</dict>\n\t\t\t<key>machine_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>10</string>\n\t\t\t</dict>\n\t\t\t<key>maximum_processor_speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>19</string>\n\t\t\t</dict>\n\t\t\t<key>minimum_processor_speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>18</string>\n\t\t\t</dict>\n\t\t\t<key>model_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>14</string>\n\t\t\t</dict>\n\t\t\t<key>number_cpus</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>20</string>\n\t\t\t</dict>\n\t\t\t<key>number_processors</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>22</string>\n\t\t\t</dict>\n\t\t\t<key>os_loader_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>53</string>\n\t\t\t</dict>\n\t\t\t<key>packages</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>20</string>\n\t\t\t</dict>\n\t\t\t<key>physical_memory</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>40</string>\n\t\t\t</dict>\n\t\t\t<key>platform_UUID</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>97</string>\n\t\t\t</dict>\n\t\t\t<key>platform_cpu_features</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>30</string>\n\t\t\t</dict>\n\t\t\t<key>platform_cpu_htt</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>28</string>\n\t\t\t</dict>\n\t\t\t<key>platform_cpu_vendor</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>13</string>\n\t\t\t</dict>\n\t\t\t<key>platform_manufacturer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>4</string>\n\t\t\t</dict>\n\t\t\t<key>platform_product_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>2</string>\n\t\t\t</dict>\n\t\t\t<key>platform_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>6</string>\n\t\t\t</dict>\n\t\t\t<key>provisioning_UDID</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>98</string>\n\t\t\t</dict>\n\t\t\t<key>riser_serial_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>92</string>\n\t\t\t</dict>\n\t\t\t<key>sales_order_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>95</string>\n\t\t\t</dict>\n\t\t\t<key>serial_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>90</string>\n\t\t\t</dict>\n\t\t\t<key>volumes</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>_timeStamp</key>\n\t\t<date>2026-11-25T03:58:50Z</date>\n\t\t<key>_versionInfo</key>\n\t\t<dict>\n\t\t\t<key>com.apple.SystemProfiler.SPPlatformReporter</key>\n\t\t\t<string>1500</string>\n\t\t</dict>\n\t</dict>\n\t<dict>\n\t\t<key>_SPCommandLineArguments</key>\n\t\t<array>\n\t\t\t<string>/usr/sbin/system_profiler</string>\n\t\t\t<string>-nospawn</string>\n\t\t\t<string>-xml</string>\n\t\t\t<string>SPStorageDataType</string>\n\t\t\t<string>-detailLevel</string>\n\t\t\t<string>full</string>\n\t\t</array>\n\t\t<key>_SPCompletionInterval</key>\n\t\t<real>0.09269404411315918</real>\n\t\t<key>_SPResponseTime</key>\n\t\t<real>0.17581391334533691</real>\n\t\t<key>_dataType</key>\n\t\t<string>SPStorageDataType</string>\n\t\t<key>_items</key>\n\t\t<array>\n\t\t\t<dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>Data</string>\n\t\t\t\t<key>bsd_name</key>\n\t\t\t\t<string>disk2s5</string>\n\t\t\t\t<key>file_system</key>\n\t\t\t\t<string>APFS</string>\n\t\t\t\t<key>free_space_in_bytes</key>\n\t\t\t\t<integer>20374360064</integer>\n\t\t\t\t<key>ignore_ownership</key>\n\t\t\t\t<string>no</string>\n\t\t\t\t<key>mount_point</key>\n\t\t\t\t<string>/System/Volumes/Data</string>\n\t\t\t\t<key>physical_drive</key>\n\t\t\t\t<dict>\n\t\t\t\t\t<key>is_internal_disk</key>\n\t\t\t\t\t<string>yes</string>\n\t\t\t\t\t<key>media_name</key>\n\t\t\t\t\t<string>AppleAPFSMedia</string>\n\t\t\t\t\t<key>medium_type</key>\n\t\t\t\t\t<string>ssd</string>\n\t\t\t\t\t<key>partition_map_type</key>\n\t\t\t\t\t<string>unknown_partition_map_type</string>\n\t\t\t\t</dict>\n\t\t\t\t<key>size_in_bytes</key>\n\t\t\t\t<integer>49475674112</integer>\n\t\t\t\t<key>volume_uuid</key>\n\t\t\t\t<string>95B689DE-E4AC-4DBE-AEAD-231D5CDED5DB</string>\n\t\t\t\t<key>writable</key>\n\t\t\t\t<string>yes</string>\n\t\t\t</dict>\n\t\t\t<dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>Creedence11M6270.SECUREPKITRUSTSTOREASSETS_SECUREPKITRUSTSTORE_Cryptex</string>\n\t\t\t\t<key>bsd_name</key>\n\t\t\t\t<string>disk4s1</string>\n\t\t\t\t<key>file_system</key>\n\t\t\t\t<string>Case-sensitive APFS</string>\n\t\t\t\t<key>free_space_in_bytes</key>\n\t\t\t\t<integer>3149824</integer>\n\t\t\t\t<key>ignore_ownership</key>\n\t\t\t\t<string>no</string>\n\t\t\t\t<key>mount_point</key>\n\t\t\t\t<string>/System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData</string>\n\t\t\t\t<key>physical_drive</key>\n\t\t\t\t<dict>\n\t\t\t\t\t<key>device_name</key>\n\t\t\t\t\t<string>Disk Image</string>\n\t\t\t\t\t<key>is_internal_disk</key>\n\t\t\t\t\t<string>no</string>\n\t\t\t\t\t<key>media_name</key>\n\t\t\t\t\t<string>AppleAPFSMedia</string>\n\t\t\t\t\t<key>partition_map_type</key>\n\t\t\t\t\t<string>unknown_partition_map_type</string>\n\t\t\t\t\t<key>protocol</key>\n\t\t\t\t\t<string>Disk Image</string>\n\t\t\t\t</dict>\n\t\t\t\t<key>size_in_bytes</key>\n\t\t\t\t<integer>4194304</integer>\n\t\t\t\t<key>volume_uuid</key>\n\t\t\t\t<string>A4B97E21-47AA-4E5E-A5D5-1F7563C37536</string>\n\t\t\t\t<key>writable</key>\n\t\t\t\t<string>no</string>\n\t\t\t</dict>\n\t\t\t<dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>Macintosh HD</string>\n\t\t\t\t<key>bsd_name</key>\n\t\t\t\t<string>disk2s1s1</string>\n\t\t\t\t<key>file_system</key>\n\t\t\t\t<string>APFS</string>\n\t\t\t\t<key>free_space_in_bytes</key>\n\t\t\t\t<integer>20374360064</integer>\n\t\t\t\t<key>ignore_ownership</key>\n\t\t\t\t<string>no</string>\n\t\t\t\t<key>mount_point</key>\n\t\t\t\t<string>/</string>\n\t\t\t\t<key>physical_drive</key>\n\t\t\t\t<dict>\n\t\t\t\t\t<key>is_internal_disk</key>\n\t\t\t\t\t<string>yes</string>\n\t\t\t\t\t<key>media_name</key>\n\t\t\t\t\t<string>AppleAPFSMedia</string>\n\t\t\t\t\t<key>medium_type</key>\n\t\t\t\t\t<string>ssd</string>\n\t\t\t\t\t<key>partition_map_type</key>\n\t\t\t\t\t<string>unknown_partition_map_type</string>\n\t\t\t\t</dict>\n\t\t\t\t<key>size_in_bytes</key>\n\t\t\t\t<integer>49475674112</integer>\n\t\t\t\t<key>volume_uuid</key>\n\t\t\t\t<string>7B4C7300-C2FB-48E5-9BCA-C88448235687</string>\n\t\t\t\t<key>writable</key>\n\t\t\t\t<string>no</string>\n\t\t\t</dict>\n\t\t</array>\n\t\t<key>_parentDataType</key>\n\t\t<string>SPHardwareDataType</string>\n\t\t<key>_properties</key>\n\t\t<dict>\n\t\t\t<key>_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>YES</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>100</string>\n\t\t\t\t<key>_suppressLocalization</key>\n\t\t\t\t<true/>\n\t\t\t</dict>\n\t\t\t<key>bsd_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>180</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>200</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.bytesConverted</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>250</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.conversionState</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>240</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.encrypted</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>220</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.encryptionType</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>225</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.locked</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>230</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.revertible</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>210</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lv.uuid</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>290</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lvg</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>400</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lvg.freeSpace</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>430</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lvg.name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>410</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lvg.size</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>420</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.lvg.uuid</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>440</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.pv</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>500</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.pv.size</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>520</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.pv.status</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>565</string>\n\t\t\t</dict>\n\t\t\t<key>com.apple.corestorage.pv.uuid</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>590</string>\n\t\t\t</dict>\n\t\t\t<key>device_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>505</string>\n\t\t\t</dict>\n\t\t\t<key>file_system</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>140</string>\n\t\t\t</dict>\n\t\t\t<key>free_space_in_bytes</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>110</string>\n\t\t\t</dict>\n\t\t\t<key>ignore_ownership</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>160</string>\n\t\t\t</dict>\n\t\t\t<key>is_internal_disk</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>550</string>\n\t\t\t</dict>\n\t\t\t<key>media_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>510</string>\n\t\t\t</dict>\n\t\t\t<key>medium_type</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>530</string>\n\t\t\t</dict>\n\t\t\t<key>mount_point</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>130</string>\n\t\t\t</dict>\n\t\t\t<key>optical_media_type</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>535</string>\n\t\t\t</dict>\n\t\t\t<key>partition_map_type</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>560</string>\n\t\t\t</dict>\n\t\t\t<key>protocol</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>540</string>\n\t\t\t</dict>\n\t\t\t<key>size_in_bytes</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isByteSize</key>\n\t\t\t\t<string>YES</string>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<true/>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>120</string>\n\t\t\t</dict>\n\t\t\t<key>smart_status</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>570</string>\n\t\t\t</dict>\n\t\t\t<key>volume_uuid</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>190</string>\n\t\t\t</dict>\n\t\t\t<key>volumes</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t</dict>\n\t\t\t<key>writable</key>\n\t\t\t<dict>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>150</string>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>_timeStamp</key>\n\t\t<date>2026-11-25T03:58:50Z</date>\n\t\t<key>_versionInfo</key>\n\t\t<dict>\n\t\t\t<key>com.apple.SystemProfiler.SPStorageReporter</key>\n\t\t\t<string>900</string>\n\t\t</dict>\n\t</dict>\n\t<dict>\n\t\t<key>_SPCommandLineArguments</key>\n\t\t<array>\n\t\t\t<string>/usr/sbin/system_profiler</string>\n\t\t\t<string>-nospawn</string>\n\t\t\t<string>-xml</string>\n\t\t\t<string>SPPowerDataType</string>\n\t\t\t<string>-detailLevel</string>\n\t\t\t<string>full</string>\n\t\t</array>\n\t\t<key>_SPCompletionInterval</key>\n\t\t<real>0.033401966094970703</real>\n\t\t<key>_SPResponseTime</key>\n\t\t<real>0.051807045936584473</real>\n\t\t<key>_dataType</key>\n\t\t<string>SPPowerDataType</string>\n\t\t<key>_detailLevel</key>\n\t\t<string>0</string>\n\t\t<key>_items</key>\n\t\t<array>\n\t\t\t<dict>\n\t\t\t\t<key>AC Power</key>\n\t\t\t\t<dict>\n\t\t\t\t\t<key>Current Power Source</key>\n\t\t\t\t\t<string>TRUE</string>\n\t\t\t\t\t<key>Disk Sleep Timer</key>\n\t\t\t\t\t<integer>0</integer>\n\t\t\t\t\t<key>Display Sleep Timer</key>\n\t\t\t\t\t<integer>0</integer>\n\t\t\t\t\t<key>Sleep On Power Button</key>\n\t\t\t\t\t<string>Yes</string>\n\t\t\t\t\t<key>System Sleep Timer</key>\n\t\t\t\t\t<integer>0</integer>\n\t\t\t\t</dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>sppower_information</string>\n\t\t\t</dict>\n\t\t\t<dict>\n\t\t\t\t<key>_name</key>\n\t\t\t\t<string>sppower_hwconfig_information</string>\n\t\t\t\t<key>sppower_ups_installed</key>\n\t\t\t\t<string>FALSE</string>\n\t\t\t</dict>\n\t\t</array>\n\t\t<key>_parentDataType</key>\n\t\t<string>SPHardwareDataType</string>\n\t\t<key>_properties</key>\n\t\t<dict>\n\t\t\t<key>Automatic Restart On Power Loss</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>107</string>\n\t\t\t</dict>\n\t\t\t<key>Disk Sleep Timer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>102</string>\n\t\t\t</dict>\n\t\t\t<key>Display Sleep Timer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>103</string>\n\t\t\t</dict>\n\t\t\t<key>Dynamic Power Step</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>104</string>\n\t\t\t</dict>\n\t\t\t<key>PCB Lot Code</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>404</string>\n\t\t\t</dict>\n\t\t\t<key>Pack Lot Code</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>403</string>\n\t\t\t</dict>\n\t\t\t<key>Reduce Processor Speed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>105</string>\n\t\t\t</dict>\n\t\t\t<key>Sleep On Power Button</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>106</string>\n\t\t\t</dict>\n\t\t\t<key>System Sleep Timer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>101</string>\n\t\t\t</dict>\n\t\t\t<key>Wake On AC Change</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>108</string>\n\t\t\t</dict>\n\t\t\t<key>Wake On Clamshell Open</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>109</string>\n\t\t\t</dict>\n\t\t\t<key>Wake On LAN</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>110</string>\n\t\t\t</dict>\n\t\t\t<key>Wake On Modem Ring</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>111</string>\n\t\t\t</dict>\n\t\t\t<key>spbattery_information</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>200</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_ID</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>310</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_family</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>313</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_firmware_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>318</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_hardware_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>317</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_information</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>300</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_manufacturer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>316</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>315</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_revision</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>312</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_serial_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>314</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_ac_charger_watts</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>311</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_cannot_charge</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>401</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_cell_revision</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>407</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_charge_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>2</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_charger_connected</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>302</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_depleted</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>203</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_device_name</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>402</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_firmware_version</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>405</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_hardware_revision</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>406</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_health_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>3</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_installed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>201</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_manufacturer</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>401</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_model_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>1</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_battery_serial_number</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>400</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_clamshell_closed</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>401</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_current_amperage</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>206</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_current_voltage</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>207</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_events_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>500</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_hwconfig_information</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>400</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_information</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>100</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_repeating_events_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>520</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_scheduled_events_info</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>510</string>\n\t\t\t</dict>\n\t\t\t<key>sppower_watts</key>\n\t\t\t<dict>\n\t\t\t\t<key>_isColumn</key>\n\t\t\t\t<string>NO</string>\n\t\t\t\t<key>_order</key>\n\t\t\t\t<string>301</string>\n\t\t\t</dict>\n\t\t\t<key>volumes</key>\n\t\t\t<dict>\n\t\t\t\t<key>_detailLevel</key>\n\t\t\t\t<string>0</string>\n\t\t\t</dict>\n\t\t</dict>\n\t\t<key>_timeStamp</key>\n\t\t<date>2026-11-25T03:58:50Z</date>\n\t\t<key>_versionInfo</key>\n\t\t<dict>\n\t\t\t<key>com.apple.SystemProfiler.SPPowerReporter</key>\n\t\t\t<string>150</string>\n\t\t</dict>\n\t</dict>\n</array>\n</plist>\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "sw_vers",
+        "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.7\nBuildVersion:\t\t24G720\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "uname -m",
+        "stdout": "arm64\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "dmidecode",
+        "raised": "Ohai::Exceptions::Exec"
+      },
+      {
+        "cmd": "sysctl -in kern.hv_vmm_present",
+        "stdout": "1\n",
+        "stderr": "",
+        "exitstatus": 0
+      },
+      {
+        "cmd": "ioreg -l",
+        "stdout": "    | |   |   +-o pci106b,1a05@0  <class IOPCIDevice, id 0x10000018e, registered, matched, active, busy 0 (2 ms), retain 8>\n    | |   |   |     \"compatible\" = <\"pci106b,1a05\",\"pciclass,060000\">\n    | |   |   |     \"IOName\" = \"pci106b,1a05\"\n    | |   |   |     \"name\" = <\"pci106b,1a05\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,41\",\"pci1af4,1041\",\"pciclass,020000\">\n    | |   |   +-o pci106b,1a11@5  <class IOPCIDevice, id 0x100000190, registered, matched, active, busy 0 (12 ms), retain 8>\n    | |   |   |     \"compatible\" = <\"pci106b,1a11\",\"pciclass,ff0000\">\n    | |   |   |     \"IOName\" = \"pci106b,1a11\"\n    | |   |   |     \"name\" = <\"pci106b,1a11\">\n    | |   |   +-o pci106b,1a08@6  <class IOPCIDevice, id 0x100000191, registered, matched, active, busy 0 (8 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci106b,1a08\">\n    | |   |   | |   \"compatible\" = <\"pci106b,1a08\",\"pciclass,ff0000\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a08\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a08 0\"})\n    | |   |   +-o pci106b,1a00@7  <class IOPCIDevice, id 0x100000192, registered, matched, active, busy 0 (47 ms), retain 13>\n    | |   |   | |   \"name\" = <\"pci106b,1a00\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,42\",\"pci106b,1a00\",\"pciclass,018000\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a00\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a00 0\"})\n    | |   |   +-o pci106b,1a00@8  <class IOPCIDevice, id 0x100000193, registered, matched, active, busy 0 (15 ms), retain 11>\n    | |   |   | |   \"name\" = <\"pci106b,1a00\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,42\",\"pci106b,1a00\",\"pciclass,018000\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a00\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a00 0\"})\n    | |   |   +-o pci1af4,1053@9  <class IOPCIDevice, id 0x100000194, registered, matched, active, busy 0 (12 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci1af4,1053\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,53\",\"pci1af4,1053\",\"pciclass,078000\">\n    | |   |   | |   \"IOName\" = \"pci1af4,1053\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci1af4,1053 0\"})\n    | |   |   +-o pci106b,1a0d@A  <class IOPCIDevice, id 0x100000195, registered, matched, active, busy 0 (10 ms), retain 8>\n    | |   |   |     \"compatible\" = <\"pci1af4,1a0d\",\"pci106b,1a0d\",\"pciclass,078000\">\n    | |   |   |     \"IOName\" = \"pci106b,1a0d\"\n    | |   |   |     \"name\" = <\"pci106b,1a0d\">\n    | |   |   +-o pci1af4,1059@B  <class IOPCIDevice, id 0x100000196, registered, matched, active, busy 0 (12 ms), retain 11>\n    | |   |   | |   \"name\" = <\"pci1af4,1059\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,59\",\"pci1af4,1059\",\"pciclass,040100\">\n    | |   |   | |   \"IOName\" = \"pci1af4,1059\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci1af4,1059 0\"})\n    | |   |   +-o pci1af4,1044@C  <class IOPCIDevice, id 0x100000197, registered, matched, active, busy 0 (12 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci1af4,1044\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,44\",\"pci1af4,1044\",\"pciclass,100000\">\n    | |   |   | |   \"IOName\" = \"pci1af4,1044\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci1af4,1044 0\"})\n    | |   |   +-o pci106b,1a0c@D  <class IOPCIDevice, id 0x100000198, registered, matched, active, busy 0 (2734 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci106b,1a0c\">\n    | |   |   | |   \"compatible\" = <\"pci106b,1a0c\",\"pciclass,ff0000\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a0c\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a0c 0\"})\n    | |   |   +-o pci1af4,1043@E  <class IOPCIDevice, id 0x100000199, registered, matched, active, busy 0 (8 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci1af4,1043\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,43\",\"pci1af4,1043\",\"pciclass,078000\">\n    | |   |   | |   \"IOName\" = \"pci1af4,1043\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci1af4,1043 0\"})\n    | |   |   +-o pci1af4,1043@F  <class IOPCIDevice, id 0x10000019a, registered, matched, active, busy 0 (9 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci1af4,1043\">\n    | |   |   | |   \"compatible\" = <\"pci1af4,43\",\"pci1af4,1043\",\"pciclass,078000\">\n    | |   |   | |   \"IOName\" = \"pci1af4,1043\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci1af4,1043 0\"})\n    | |   |   +-o pci106b,1a06@10  <class IOPCIDevice, id 0x10000019b, registered, matched, active, busy 0 (227 ms), retain 12>\n    | |   |   | |   \"name\" = <\"pci106b,1a06\">\n    | |   |   | |   \"compatible\" = <\"pci106b,1a06\",\"pciclass,0c0330\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a06\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182070784,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182070785,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182070786,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182070787,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182070788,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a06 1\"})\n    | |   |   +-o pci106b,1a01@11  <class IOPCIDevice, id 0x10000019c, registered, matched, active, busy 0 (13 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci106b,1a01\">\n    | |   |   | |   \"compatible\" = <\"pci106b,1a01\",\"pciclass,0c03fe\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a01\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a01 0\"})\n    | |   |   +-o pci106b,1a04@12  <class IOPCIDevice, id 0x10000019d, registered, matched, active, busy 0 (8 ms), retain 10>\n    | |   |   | |   \"name\" = <\"pci106b,1a04\">\n    | |   |   | |   \"compatible\" = <\"pci106b,1a04\",\"pciclass,000000\">\n    | |   |   | |   \"IOName\" = \"pci106b,1a04\"\n    | |   |   | |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a04 0\"})\n    | |   |   +-o pci106b,1a03@13  <class IOPCIDevice, id 0x10000019e, registered, matched, active, busy 0 (7 ms), retain 10>\n    | |   |     |   \"name\" = <\"pci106b,1a03\">\n    | |   |     |   \"compatible\" = <\"pci106b,1a03\",\"pciclass,120000\">\n    | |   |     |   \"IOName\" = \"pci106b,1a03\"\n    | |   |     |   \"IOReportLegend\" = ({\"IOReportGroupName\"=\"Interrupt Statistics (by index)\",\"IOReportChannels\"=((5291294645182005248,4295098369,\"               First Level Interrupt Handler Count\"),(5291294645182005249,4295098369,\"              Second Level Interrupt Handler Count\"),(5291294645182005250,4295098369,\"        First Level Interrupt Handler Time (MATUs)\"),(5291294645182005251,4295098369,\"   Second Level Interrupt Handler CPU Time (MATUs)\"),(5291294645182005252,4295098369,\"Second Level Interrupt Handler System Time (MATUs)\")),\"IOReportChannelInfo\"={\"IOReportChannelUnit\"=0},\"IOReportSubGroupName\"=\"pci106b,1a03 0\"})\n",
+        "stderr": "",
+        "exitstatus": 0
+      }
+    ],
+    "which": {
+      "docker": false,
+      "VBoxManage": false,
+      "sysctl": "/usr/sbin/sysctl",
+      "ioreg": "/usr/sbin/ioreg",
+      "prlctl": false
+    },
+    "files": {
+      "/Applications/VMware Fusion.app/": {
+        "exist": false
+      },
+      "/etc/shells": {
+        "exist": true,
+        "content": "# List of acceptable shells for chpass(1).\n# Ftpd will not allow users to connect who are not using\n# one of these shells.\n\n/bin/bash\n/bin/csh\n/bin/dash\n/bin/ksh\n/bin/sh\n/bin/tcsh\n/bin/zsh\n"
+      }
+    },
+    "dirs": {}
+  },
+  "expected": {
+    "platform": "mac_os_x",
+    "platform_version": "15.7.7",
+    "platform_build": "24G720",
+    "platform_family": "mac_os_x",
+    "os": "darwin",
+    "os_version": "24.6.0",
+    "kernel": {
+      "name": "Darwin",
+      "release": "24.6.0",
+      "version": "Darwin Kernel Version 24.6.0: Tue Apr 21 20:18:00 PDT 2026; root:xnu-11417.140.69.710.16~1/RELEASE_ARM64_VMAPPLE",
+      "machine": "arm64",
+      "processor": "arm",
+      "os": "Darwin",
+      "modules": {
+        "com.apple.kec.corecrypto": {
+          "version": "14.0",
+          "size": 103328,
+          "index": "8",
+          "refcount": "15"
+        },
+        "com.apple.kec.AppleEncryptedArchive": {
+          "version": "1",
+          "size": 1311,
+          "index": "9",
+          "refcount": "0"
+        },
+        "com.apple.kec.Compression": {
+          "version": "1.0",
+          "size": 1264,
+          "index": "10",
+          "refcount": "0"
+        },
+        "com.apple.kec.Libm": {
+          "version": "1",
+          "size": 27768,
+          "index": "11",
+          "refcount": "3"
+        },
+        "com.apple.kec.pthread": {
+          "version": "1",
+          "size": 3413,
+          "index": "12",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOCryptoAcceleratorFamily": {
+          "version": "1.0.1",
+          "size": 3007,
+          "index": "13",
+          "refcount": "5"
+        },
+        "com.apple.kext.CoreTrust": {
+          "version": "1",
+          "size": 7070,
+          "index": "14",
+          "refcount": "2"
+        },
+        "com.apple.security.AppleImage4": {
+          "version": "7.0.0",
+          "size": 59953,
+          "index": "15",
+          "refcount": "4"
+        },
+        "com.apple.iokit.CoreAnalyticsFamily": {
+          "version": "1",
+          "size": 15975,
+          "index": "16",
+          "refcount": "4"
+        },
+        "com.apple.driver.AppleMobileFileIntegrity": {
+          "version": "1.0.5",
+          "size": 120490,
+          "index": "17",
+          "refcount": "9"
+        },
+        "com.apple.iokit.IOStorageFamily": {
+          "version": "2.1",
+          "size": 8352,
+          "index": "19",
+          "refcount": "17"
+        },
+        "com.apple.security.sandbox": {
+          "version": "300.0",
+          "size": 167824,
+          "index": "20",
+          "refcount": "2"
+        },
+        "com.apple.security.quarantine": {
+          "version": "4",
+          "size": 3953,
+          "index": "21",
+          "refcount": "2"
+        },
+        "com.apple.AppleSystemPolicy": {
+          "version": "2.0.0",
+          "size": 12493,
+          "index": "22",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOReportFamily": {
+          "version": "47",
+          "size": 2918,
+          "index": "23",
+          "refcount": "7"
+        },
+        "com.apple.iokit.IOSlowAdaptiveClockingFamily": {
+          "version": "1.0.0",
+          "size": 3416,
+          "index": "24",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleARMPlatform": {
+          "version": "1.0.2",
+          "size": 65371,
+          "index": "25",
+          "refcount": "25"
+        },
+        "com.apple.driver.AppleCallbackPowerSource": {
+          "version": "1",
+          "size": 5757,
+          "index": "26",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOHIDFamily": {
+          "version": "2.0.0",
+          "size": 36240,
+          "index": "27",
+          "refcount": "9"
+        },
+        "com.apple.iokit.IONetworkingFamily": {
+          "version": "3.4",
+          "size": 6421,
+          "index": "28",
+          "refcount": "9"
+        },
+        "com.apple.iokit.IOPCIFamily": {
+          "version": "2.9",
+          "size": 25531,
+          "index": "29",
+          "refcount": "9"
+        },
+        "com.apple.iokit.IOSerialFamily": {
+          "version": "11",
+          "size": 2927,
+          "index": "30",
+          "refcount": "5"
+        },
+        "com.apple.driver.AppleVirtIO": {
+          "version": "230.100.3",
+          "size": 9504,
+          "index": "31",
+          "refcount": "4"
+        },
+        "com.apple.iokit.AppleVirtIOStorage": {
+          "version": "1.0.0",
+          "size": 10428,
+          "index": "32",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOSkywalkFamily": {
+          "version": "1.0",
+          "size": 12800,
+          "index": "34",
+          "refcount": "3"
+        },
+        "com.apple.driver.AppleOnboardSerial": {
+          "version": "1.0",
+          "size": 8408,
+          "index": "35",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOAccessoryManager": {
+          "version": "1.0.0",
+          "size": 137908,
+          "index": "36",
+          "refcount": "4"
+        },
+        "com.apple.driver.usb.AppleUSBCommon": {
+          "version": "1.0",
+          "size": 2703,
+          "index": "37",
+          "refcount": "9"
+        },
+        "com.apple.iokit.IOUSBDeviceFamily": {
+          "version": "2.0.0",
+          "size": 19308,
+          "index": "38",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleVirtualPlatform": {
+          "version": "1",
+          "size": 30952,
+          "index": "39",
+          "refcount": "1"
+        },
+        "com.apple.driver.FairPlayIOKit": {
+          "version": "72.13.0",
+          "size": 268400,
+          "index": "40",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleDiskImages2": {
+          "version": "385.140.4",
+          "size": 15296,
+          "index": "41",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleEffaceableStorage": {
+          "version": "1.0",
+          "size": 6916,
+          "index": "42",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleFDEKeyStore": {
+          "version": "28.30",
+          "size": 2782,
+          "index": "43",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IORSMFamily": {
+          "version": "1",
+          "size": 2132,
+          "index": "44",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleRSMChannel": {
+          "version": "1",
+          "size": 3218,
+          "index": "45",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleUIO": {
+          "version": "1",
+          "size": 4184,
+          "index": "46",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleVPCredentialManager": {
+          "version": "1.0",
+          "size": 94572,
+          "index": "47",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleVPKeyStore": {
+          "version": "2",
+          "size": 86910,
+          "index": "48",
+          "refcount": "0"
+        },
+        "com.apple.iokit.EndpointSecurity": {
+          "version": "1",
+          "size": 53730,
+          "index": "49",
+          "refcount": "0"
+        },
+        "com.apple.driver.IOSlaveProcessor": {
+          "version": "1",
+          "size": 1798,
+          "index": "50",
+          "refcount": "4"
+        },
+        "com.apple.driver.AppleA7IOP": {
+          "version": "1.0.2",
+          "size": 5309,
+          "index": "51",
+          "refcount": "3"
+        },
+        "com.apple.driver.AppleARMPMU": {
+          "version": "1.0",
+          "size": 13428,
+          "index": "52",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleEmbeddedTempSensor": {
+          "version": "1.0.0",
+          "size": 13152,
+          "index": "53",
+          "refcount": "1"
+        },
+        "com.apple.driver.RTBuddy": {
+          "version": "1.0.0",
+          "size": 40856,
+          "index": "54",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleSMC": {
+          "version": "3.1.9",
+          "size": 36950,
+          "index": "55",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleUSBHostMergeProperties": {
+          "version": "1.2",
+          "size": 1713,
+          "index": "56",
+          "refcount": "3"
+        },
+        "com.apple.iokit.IOUSBHostFamily": {
+          "version": "1.2",
+          "size": 78400,
+          "index": "57",
+          "refcount": "12"
+        },
+        "com.apple.iokit.IOBluetoothFamily": {
+          "version": "9.0.0",
+          "size": 60469,
+          "index": "58",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOGraphicsFamily": {
+          "version": "599",
+          "size": 18493,
+          "index": "59",
+          "refcount": "1"
+        },
+        "com.apple.driver.DiskImages": {
+          "version": "493.0.0",
+          "size": 7882,
+          "index": "60",
+          "refcount": "5"
+        },
+        "com.apple.iokit.IOKitRegistryCompatibility": {
+          "version": "1",
+          "size": 1705,
+          "index": "61",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOTimeSyncFamily": {
+          "version": "1340.13",
+          "size": 48248,
+          "index": "62",
+          "refcount": "2"
+        },
+        "com.apple.driver.usb.AppleUSBUserHCI": {
+          "version": "1",
+          "size": 16391,
+          "index": "63",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOSCSIArchitectureModelFamily": {
+          "version": "500.120.2",
+          "size": 7664,
+          "index": "64",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOUSBMassStorageDriver": {
+          "version": "259.100.1",
+          "size": 14026,
+          "index": "65",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOUserEthernet": {
+          "version": "1.0.1",
+          "size": 4865,
+          "index": "66",
+          "refcount": "0"
+        },
+        "com.apple.driver.IODARTFamily": {
+          "version": "1",
+          "size": 10624,
+          "index": "68",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleSEPManager": {
+          "version": "1.0.1",
+          "size": 52751,
+          "index": "69",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleMobileApNonce": {
+          "version": "1",
+          "size": 8002,
+          "index": "70",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleS8000AES": {
+          "version": "1",
+          "size": 6697,
+          "index": "71",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleARMGIC": {
+          "version": "1",
+          "size": 2977,
+          "index": "72",
+          "refcount": "0"
+        },
+        "com.apple.driver.ApplePVPanic": {
+          "version": "1",
+          "size": 1606,
+          "index": "73",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOSurface": {
+          "version": "372.5.2",
+          "size": 24674,
+          "index": "74",
+          "refcount": "6"
+        },
+        "com.apple.iokit.AppleParavirtIOSurface": {
+          "version": "15.0.0",
+          "size": 7798,
+          "index": "75",
+          "refcount": "2"
+        },
+        "com.apple.driver.usb.AppleUSBHostPacketFilter": {
+          "version": "1.0",
+          "size": 4577,
+          "index": "76",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleAudioClockLibs": {
+          "version": "420.3",
+          "size": 2107,
+          "index": "77",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleIISController": {
+          "version": "440.2",
+          "size": 4178,
+          "index": "78",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOAudio2Family": {
+          "version": "1.0",
+          "size": 2544,
+          "index": "79",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOCECFamily": {
+          "version": "1",
+          "size": 2614,
+          "index": "80",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOHDCPFamily": {
+          "version": "1.0.0",
+          "size": 25272,
+          "index": "81",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOAVFamily": {
+          "version": "1.0.0",
+          "size": 151300,
+          "index": "82",
+          "refcount": "2"
+        },
+        "com.apple.iokit.IOGPUFamily": {
+          "version": "104.6.3",
+          "size": 40404,
+          "index": "83",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleM2ScalerCSCDriver": {
+          "version": "265.0.0",
+          "size": 529244,
+          "index": "84",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOMobileGraphicsFamily": {
+          "version": "343.0.0",
+          "size": 37748,
+          "index": "85",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleParavirtGPUIOGPUFamily": {
+          "version": "15.0.0",
+          "size": 23659,
+          "index": "86",
+          "refcount": "0"
+        },
+        "com.apple.AppleFSCompression.AppleFSCompressionTypeZlib": {
+          "version": "1.0.0",
+          "size": 16487,
+          "index": "88",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleSyntheticGameController": {
+          "version": "12.6.1",
+          "size": 4483,
+          "index": "89",
+          "refcount": "0"
+        },
+        "com.apple.BootCache": {
+          "version": "40",
+          "size": 7902,
+          "index": "90",
+          "refcount": "0"
+        },
+        "com.apple.filesystems.hfs.encodings.kext": {
+          "version": "1",
+          "size": 2911,
+          "index": "91",
+          "refcount": "1"
+        },
+        "com.apple.filesystems.hfs.kext": {
+          "version": "683.120.3",
+          "size": 51763,
+          "index": "92",
+          "refcount": "0"
+        },
+        "com.apple.IOTextEncryptionFamily": {
+          "version": "1.0.0",
+          "size": 2183,
+          "index": "93",
+          "refcount": "0"
+        },
+        "com.apple.filesystems.apfs": {
+          "version": "2332.140.13",
+          "size": 362813,
+          "index": "94",
+          "refcount": "3"
+        },
+        "com.apple.filesystems.lifs": {
+          "version": "1",
+          "size": 15936,
+          "index": "95",
+          "refcount": "0"
+        },
+        "com.apple.kext.triggers": {
+          "version": "1.0",
+          "size": 2512,
+          "index": "96",
+          "refcount": "2"
+        },
+        "com.apple.filesystems.nfs": {
+          "version": "1",
+          "size": 38844,
+          "index": "97",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleBSDKextStarter": {
+          "version": "3",
+          "size": 1674,
+          "index": "98",
+          "refcount": "0"
+        },
+        "com.apple.filesystems.tmpfs": {
+          "version": "1",
+          "size": 3370,
+          "index": "99",
+          "refcount": "0"
+        },
+        "com.apple.nke.ppp": {
+          "version": "1.9",
+          "size": 8560,
+          "index": "100",
+          "refcount": "1"
+        },
+        "com.apple.nke.l2tp": {
+          "version": "1.9",
+          "size": 4360,
+          "index": "101",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleFileSystemDriver": {
+          "version": "3.0.1",
+          "size": 2197,
+          "index": "102",
+          "refcount": "0"
+        },
+        "com.apple.iokit.IOPortFamily": {
+          "version": "1.0",
+          "size": 16384,
+          "index": "103",
+          "refcount": "1"
+        },
+        "com.apple.driver.usb.AppleUSBXHCI": {
+          "version": "1.2",
+          "size": 49923,
+          "index": "104",
+          "refcount": "1"
+        },
+        "com.apple.driver.usb.AppleUSBXHCIPCI": {
+          "version": "1.2",
+          "size": 19328,
+          "index": "105",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleVideoToolboxParavirtualization": {
+          "version": "15.0.0",
+          "size": 4992,
+          "index": "106",
+          "refcount": "0"
+        },
+        "com.apple.driver.AvpFairPlayDriver": {
+          "version": "2.8.0",
+          "size": 2904,
+          "index": "107",
+          "refcount": "0"
+        },
+        "com.apple.driver.usb.networking": {
+          "version": "5.0.0",
+          "size": 2120,
+          "index": "108",
+          "refcount": "2"
+        },
+        "com.apple.driver.AppleUSBDeviceNCM": {
+          "version": "5.0.0",
+          "size": 4521,
+          "index": "109",
+          "refcount": "0"
+        },
+        "com.apple.driver.AppleXsanScheme": {
+          "version": "3",
+          "size": 2560,
+          "index": "110",
+          "refcount": "0"
+        },
+        "com.apple.security.AppleVPBootPolicy": {
+          "version": "1",
+          "size": 57824,
+          "index": "111",
+          "refcount": "0"
+        },
+        "com.apple.driver.DiskImages.KernelBacked": {
+          "version": "493.0.0",
+          "size": 3405,
+          "index": "112",
+          "refcount": "4"
+        },
+        "com.apple.driver.DiskImages.FileBackingStore": {
+          "version": "493.0.0",
+          "size": 2063,
+          "index": "113",
+          "refcount": "0"
+        },
+        "com.apple.driver.DiskImages.RAMBackingStore": {
+          "version": "493.0.0",
+          "size": 1696,
+          "index": "114",
+          "refcount": "0"
+        },
+        "com.apple.driver.DiskImages.UDIFDiskImage": {
+          "version": "493.0.0",
+          "size": 14884,
+          "index": "115",
+          "refcount": "0"
+        },
+        "com.apple.driver.DiskImages.ReadWriteDiskImage": {
+          "version": "493.0.0",
+          "size": 1568,
+          "index": "116",
+          "refcount": "0"
+        },
+        "com.apple.driver.usb.AppleUSBHostCompositeDevice": {
+          "version": "1.2",
+          "size": 3153,
+          "index": "117",
+          "refcount": "2"
+        },
+        "com.apple.vecLib.kext": {
+          "version": "1.2.0",
+          "size": 2000,
+          "index": "118",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOAudioFamily": {
+          "version": "600.2",
+          "size": 25424,
+          "index": "119",
+          "refcount": "1"
+        },
+        "com.apple.driver.AppleUSBAudio": {
+          "version": "750.4",
+          "size": 14208,
+          "index": "120",
+          "refcount": "0"
+        },
+        "com.apple.driver.usb.cdc": {
+          "version": "5.0.0",
+          "size": 2024,
+          "index": "121",
+          "refcount": "0"
+        },
+        "com.apple.driver.usb.IOUSBHostHIDDevice": {
+          "version": "1.2",
+          "size": 6811,
+          "index": "122",
+          "refcount": "0"
+        },
+        "com.apple.plugin.IOgPTPPlugin": {
+          "version": "1340.13",
+          "size": 139528,
+          "index": "123",
+          "refcount": "1"
+        },
+        "com.apple.iokit.IOAVBFamily": {
+          "version": "1320.3",
+          "size": 51360,
+          "index": "124",
+          "refcount": "0"
+        },
+        "com.apple.driver.driverkit.serial": {
+          "version": "6.0.0",
+          "size": 2520,
+          "index": "125",
+          "refcount": "0"
+        },
+        "com.apple.filesystems.autofs": {
+          "version": "3.0",
+          "size": 5927,
+          "index": "128",
+          "refcount": "0"
+        }
+      }
+    },
+    "cpu": {
+      "cores": 4,
+      "total": 4,
+      "real": 1,
+      "model_name": "Apple M4 Pro (Virtual)"
+    },
+    "memory": {
+      "total": "8192MB",
+      "active": "4490MB",
+      "inactive": "3436MB",
+      "free": "264MB"
+    },
+    "network": {
+      "interfaces": {
+        "lo0": {
+          "addresses": {
+            "127.0.0.1": {
+              "family": "inet",
+              "netmask": "255.0.0.0"
+            },
+            "::1": {
+              "family": "inet6",
+              "prefixlen": "128",
+              "scope": "Node"
+            },
+            "fe80::1": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            }
+          },
+          "mtu": "16384",
+          "flags": [
+            "UP",
+            "LOOPBACK",
+            "RUNNING",
+            "MULTICAST"
+          ],
+          "type": "lo",
+          "number": "0",
+          "encapsulation": "Loopback"
+        },
+        "gif0": {
+          "addresses": {},
+          "mtu": "1280",
+          "flags": [
+            "POINTOPOINT",
+            "MULTICAST"
+          ],
+          "type": "gif",
+          "number": "0",
+          "encapsulation": "IPIP"
+        },
+        "stf0": {
+          "addresses": {},
+          "mtu": "1280",
+          "flags": [],
+          "type": "stf",
+          "number": "0",
+          "encapsulation": "6to4"
+        },
+        "XHC16": {
+          "addresses": {},
+          "mtu": "0",
+          "flags": [],
+          "type": "XHC1",
+          "number": "6",
+          "encapsulation": "Unknown"
+        },
+        "anpi0": {
+          "addresses": {
+            "52:c4:d9:3b:ee:2f": {
+              "family": "lladdr"
+            }
+          },
+          "mtu": "1500",
+          "flags": [
+            "UP",
+            "BROADCAST",
+            "SMART",
+            "RUNNING",
+            "SIMPLEX",
+            "MULTICAST"
+          ],
+          "type": "anpi",
+          "number": "0",
+          "encapsulation": "Ethernet"
+        },
+        "en0": {
+          "addresses": {
+            "86:44:0f:12:49:26": {
+              "family": "lladdr"
+            },
+            "fe80::7c:2ca4:57f2:ba0a": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            },
+            "fd21:3187:d082:e052:466:be72:2d53:3754": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Global"
+            },
+            "192.168.64.143": {
+              "family": "inet",
+              "netmask": "255.255.255.0",
+              "broadcast": "192.168.64.255"
+            }
+          },
+          "mtu": "1500",
+          "flags": [
+            "UP",
+            "BROADCAST",
+            "SMART",
+            "RUNNING",
+            "SIMPLEX",
+            "MULTICAST"
+          ],
+          "type": "en",
+          "number": "0",
+          "encapsulation": "Ethernet",
+          "arp": {
+            "192.168.64.1": "86:2f:57:d2:12:64",
+            "192.168.64.255": "ff:ff:ff:ff:ff:ff",
+            "224.0.0.251": "1:0:5e:0:0:fb"
+          }
+        },
+        "en1": {
+          "addresses": {
+            "52:c4:d9:3b:ee:0f": {
+              "family": "lladdr"
+            }
+          },
+          "mtu": "1500",
+          "flags": [
+            "UP",
+            "BROADCAST",
+            "SMART",
+            "RUNNING",
+            "SIMPLEX",
+            "MULTICAST"
+          ],
+          "type": "en",
+          "number": "1",
+          "encapsulation": "Ethernet"
+        },
+        "utun0": {
+          "addresses": {
+            "fe80::8835:25ea:88a0:446c": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            }
+          },
+          "mtu": "1380",
+          "flags": [
+            "UP",
+            "POINTOPOINT",
+            "RUNNING",
+            "MULTICAST"
+          ],
+          "type": "utun",
+          "number": "0",
+          "encapsulation": "Unknown"
+        },
+        "utun1": {
+          "addresses": {
+            "fe80::308:7fc9:3a09:fce1": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            }
+          },
+          "mtu": "1500",
+          "flags": [
+            "UP",
+            "POINTOPOINT",
+            "RUNNING",
+            "MULTICAST"
+          ],
+          "type": "utun",
+          "number": "1",
+          "encapsulation": "Unknown"
+        },
+        "utun2": {
+          "addresses": {
+            "fe80::3239:b369:d060:3ef3": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            }
+          },
+          "mtu": "2000",
+          "flags": [
+            "UP",
+            "POINTOPOINT",
+            "RUNNING",
+            "MULTICAST"
+          ],
+          "type": "utun",
+          "number": "2",
+          "encapsulation": "Unknown"
+        },
+        "utun3": {
+          "addresses": {
+            "fe80::ce81:b1c:bd2c:69e": {
+              "family": "inet6",
+              "prefixlen": "64",
+              "scope": "Link"
+            }
+          },
+          "mtu": "1000",
+          "flags": [
+            "UP",
+            "POINTOPOINT",
+            "RUNNING",
+            "MULTICAST"
+          ],
+          "type": "utun",
+          "number": "3",
+          "encapsulation": "Unknown"
+        }
+      },
+      "default_gateway": "192.168.64.1",
+      "default_interface": "en0",
+      "settings": {
+        "net.local.stream.sendspace": "8192",
+        "net.local.stream.recvspace": "8192",
+        "net.local.stream.tracemdns": "0",
+        "net.local.dgram.maxdgram": "2048",
+        "net.local.dgram.recvspace": "4096",
+        "net.local.inflight": "0",
+        "net.local.log": "0",
+        "net.local.pcbcount": "140",
+        "net.inet.ip.portrange.lowfirst": "1023",
+        "net.inet.ip.portrange.lowlast": "600",
+        "net.inet.ip.portrange.first": "49152",
+        "net.inet.ip.portrange.last": "65535",
+        "net.inet.ip.portrange.hifirst": "49152",
+        "net.inet.ip.portrange.hilast": "65535",
+        "net.inet.ip.portrange.ipport_allow_udp_port_exhaustion": "0",
+        "net.inet.ip.forwarding": "0",
+        "net.inet.ip.redirect": "1",
+        "net.inet.ip.ttl": "64",
+        "net.inet.ip.rtexpire": "3600",
+        "net.inet.ip.rtminexpire": "10",
+        "net.inet.ip.rtmaxcache": "128",
+        "net.inet.ip.sourceroute": "0",
+        "net.inet.ip.accept_sourceroute": "0",
+        "net.inet.ip.gifttl": "30",
+        "net.inet.ip.mcast.maxgrpsrc": "512",
+        "net.inet.ip.mcast.maxsocksrc": "128",
+        "net.inet.ip.mcast.loop": "1",
+        "net.inet.ip.dummynet.hash_size": "64",
+        "net.inet.ip.dummynet.curr_time": "0",
+        "net.inet.ip.dummynet.ready_heap": "0",
+        "net.inet.ip.dummynet.extract_heap": "0",
+        "net.inet.ip.dummynet.searches": "0",
+        "net.inet.ip.dummynet.search_steps": "0",
+        "net.inet.ip.dummynet.expire": "1",
+        "net.inet.ip.dummynet.max_chain_len": "16",
+        "net.inet.ip.dummynet.red_lookup_depth": "256",
+        "net.inet.ip.dummynet.red_avg_pkt_size": "512",
+        "net.inet.ip.dummynet.red_max_pkt_size": "1500",
+        "net.inet.ip.dummynet.debug": "0",
+        "net.inet.ip.linklocal.in.allowbadttl": "1",
+        "net.inet.ip.log.privacy": "1",
+        "net.inet.ip.subnets_are_local": "0",
+        "net.inet.ip.sendsourcequench": "0",
+        "net.inet.ip.maxfragpackets": "2048",
+        "net.inet.ip.fragpackets": "0",
+        "net.inet.ip.maxfragsperpacket": "128",
+        "net.inet.ip.adj_clear_hwcksum": "0",
+        "net.inet.ip.adj_partial_sum": "1",
+        "net.inet.ip.check_interface": "1",
+        "net.inet.ip.checkinterface_debug": "0",
+        "net.inet.ip.rx_chaining": "1",
+        "net.inet.ip.rx_chainsz": "6",
+        "net.inet.ip.maxchainsent": "4",
+        "net.inet.ip.force_ipsum": "0",
+        "net.inet.ip.select_srcif_debug": "0",
+        "net.inet.ip.output_perf": "0",
+        "net.inet.ip.output_perf_bins": "0",
+        "net.inet.ip.rfc6864": "1",
+        "net.inet.icmp.maskrepl": "0",
+        "net.inet.icmp.timestamp": "0",
+        "net.inet.icmp.drop_redirect": "1",
+        "net.inet.icmp.log_redirect": "0",
+        "net.inet.icmp.bmcastecho": "1",
+        "net.inet.icmp.suppress_icmp_port_unreach": "0",
+        "net.inet.igmp.recvifkludge": "1",
+        "net.inet.igmp.sendra": "1",
+        "net.inet.igmp.sendlocal": "1",
+        "net.inet.igmp.v1enable": "1",
+        "net.inet.igmp.v2enable": "1",
+        "net.inet.igmp.legacysupp": "0",
+        "net.inet.igmp.default_version": "3",
+        "net.inet.igmp.gsrdelay": "10",
+        "net.inet.igmp.debug": "0",
+        "net.inet.tcp.mssdflt": "512",
+        "net.inet.tcp.keepidle": "7200000",
+        "net.inet.tcp.keepintvl": "75000",
+        "net.inet.tcp.sendspace": "131072",
+        "net.inet.tcp.recvspace": "131072",
+        "net.inet.tcp.keepinit": "75000",
+        "net.inet.tcp.v6mssdflt": "1024",
+        "net.inet.tcp.log.enable": "4193",
+        "net.inet.tcp.log.enable_usage": "connection:0x00000001 rtt:0x00000002 ka:0x00000004 log:0x00000008 loop:0x00000010 local:0x00000020 gw:0x00000040 syn:0x00000100 fin:0x00000200 rst:0x00000400 dropnecp:0x00001000 droppcb:0x00002000 droppkt:0x00004000 fswflow:0x00008000 state:0x00010000 synrxmt:0x00020000 output:0x00040000 bind:0x00080000 ",
+        "net.inet.tcp.log.rtt_port": "0",
+        "net.inet.tcp.log.thflags_if_family": "0",
+        "net.inet.tcp.log.rate_limit": "1000",
+        "net.inet.tcp.log.rate_duration": "60",
+        "net.inet.tcp.log.rate_max": "50",
+        "net.inet.tcp.log.rate_exceeded_total": "0",
+        "net.inet.tcp.log.rate_current": "56",
+        "net.inet.tcp.reass.overflows": "0",
+        "net.inet.tcp.reass.qlen": "0",
+        "net.inet.tcp.backoff_maximum": "65536",
+        "net.inet.tcp.ecn_timeout": "60",
+        "net.inet.tcp.disable_tcp_heuristics": "0",
+        "net.inet.tcp.mptcp_version_timeout": "1440",
+        "net.inet.tcp.clear_tfocache": "0",
+        "net.inet.tcp.flow_control_response": "1",
+        "net.inet.tcp.log_in_vain": "0",
+        "net.inet.tcp.ack_strategy": "1",
+        "net.inet.tcp.blackhole": "0",
+        "net.inet.tcp.aggressive_rcvwnd_inc": "1",
+        "net.inet.tcp.delayed_ack": "3",
+        "net.inet.tcp.recvbg": "0",
+        "net.inet.tcp.drop_synfin": "1",
+        "net.inet.tcp.slowlink_wsize": "8192",
+        "net.inet.tcp.maxseg_unacked": "8",
+        "net.inet.tcp.rfc3465": "1",
+        "net.inet.tcp.rfc3465_lim2": "1",
+        "net.inet.tcp.recv_allowed_iaj": "5",
+        "net.inet.tcp.doautorcvbuf": "1",
+        "net.inet.tcp.autotunereorder": "1",
+        "net.inet.tcp.autorcvbufmax": "4194304",
+        "net.inet.tcp.disable_access_to_stats": "1",
+        "net.inet.tcp.challengeack_limit": "10",
+        "net.inet.tcp.do_rfc5961": "1",
+        "net.inet.tcp.do_better_lr": "1",
+        "net.inet.tcp.use_min_curr_rtt": "1",
+        "net.inet.tcp.awdl_rtobase": "100",
+        "net.inet.tcp.rcvsspktcnt": "512",
+        "net.inet.tcp.rexmt_thresh": "3",
+        "net.inet.tcp.path_mtu_discovery": "1",
+        "net.inet.tcp.local_slowstart_flightsize": "8",
+        "net.inet.tcp.tso": "1",
+        "net.inet.tcp.ecn_setup_percentage": "100",
+        "net.inet.tcp.accurate_ecn": "0",
+        "net.inet.tcp.l4s_developer": "0",
+        "net.inet.tcp.l4s": "0",
+        "net.inet.tcp.link_heuristics_flags": "63",
+        "net.inet.tcp.link_heuristics_rto_min": "3000",
+        "net.inet.tcp.do_ack_compression": "1",
+        "net.inet.tcp.ack_compression_rate": "5",
+        "net.inet.tcp.randomize_timestamps": "1",
+        "net.inet.tcp.ecn_initiate_out": "2",
+        "net.inet.tcp.ecn_negotiate_in": "2",
+        "net.inet.tcp.packetchain": "50",
+        "net.inet.tcp.socket_unlocked_on_output": "1",
+        "net.inet.tcp.min_iaj_win": "16",
+        "net.inet.tcp.acc_iaj_react_limit": "200",
+        "net.inet.tcp.autosndbufinc": "8192",
+        "net.inet.tcp.autosndbufmax": "4194304",
+        "net.inet.tcp.rtt_recvbg": "1",
+        "net.inet.tcp.recv_throttle_minwin": "16384",
+        "net.inet.tcp.enable_tlp": "1",
+        "net.inet.tcp.sack": "1",
+        "net.inet.tcp.sack_maxholes": "128",
+        "net.inet.tcp.sack_globalmaxholes": "65536",
+        "net.inet.tcp.sack_globalholes": "0",
+        "net.inet.tcp.fastopen_key": "",
+        "net.inet.tcp.fastopen_backlog": "10",
+        "net.inet.tcp.fastopen": "3",
+        "net.inet.tcp.now_init": "210931975",
+        "net.inet.tcp.microuptime_init": "620524",
+        "net.inet.tcp.minmss": "216",
+        "net.inet.tcp.pcbcount": "7",
+        "net.inet.tcp.icmp_may_rst": "1",
+        "net.inet.tcp.rtt_min": "100",
+        "net.inet.tcp.rexmt_slop": "200",
+        "net.inet.tcp.randomize_ports": "0",
+        "net.inet.tcp.win_scale_factor": "3",
+        "net.inet.tcp.init_rtt_from_cache": "1",
+        "net.inet.tcp.tso_debug": "0",
+        "net.inet.tcp.rxt_seg_max": "1024",
+        "net.inet.tcp.rxt_seg_drop": "0",
+        "net.inet.tcp.tcbhashsize": "4096",
+        "net.inet.tcp.keepcnt": "8",
+        "net.inet.tcp.msl": "15000",
+        "net.inet.tcp.fin_timeout": "60000",
+        "net.inet.tcp.max_persist_timeout": "0",
+        "net.inet.tcp.always_keepalive": "0",
+        "net.inet.tcp.timer_fastmode_idlemax": "10",
+        "net.inet.tcp.broken_peer_syn_rexmit_thres": "10",
+        "net.inet.tcp.tcp_timer_advanced": "0",
+        "net.inet.tcp.tcp_resched_timerlist": "64",
+        "net.inet.tcp.pmtud_blackhole_detection": "1",
+        "net.inet.tcp.pmtud_blackhole_mss": "1200",
+        "net.inet.tcp.cubic_tcp_friendliness": "0",
+        "net.inet.tcp.cubic_fast_convergence": "0",
+        "net.inet.tcp.cubic_use_minrtt": "0",
+        "net.inet.tcp.cubic_minor_fixes": "1",
+        "net.inet.tcp.cubic_rfc_compliant": "1",
+        "net.inet.tcp.rack": "0",
+        "net.inet.tcp.bg_target_qdelay": "40",
+        "net.inet.tcp.bg_allowed_increase": "8",
+        "net.inet.tcp.bg_tether_shift": "1",
+        "net.inet.tcp.bg_ss_fltsz": "2",
+        "net.inet.tcp.ledbat_plus_plus": "1",
+        "net.inet.tcp.rledbat": "1",
+        "net.inet.tcp.cc_debug": "0",
+        "net.inet.tcp.newreno_sockets": "0",
+        "net.inet.tcp.background_sockets": "0",
+        "net.inet.tcp.use_ledbat": "0",
+        "net.inet.tcp.cubic_sockets": "7",
+        "net.inet.tcp.use_newreno": "0",
+        "net.inet.tcp.mptcp_preferred_version": "1",
+        "net.inet.udp.checksum": "1",
+        "net.inet.udp.maxdgram": "9216",
+        "net.inet.udp.recvspace": "786896",
+        "net.inet.udp.log.enable": "97",
+        "net.inet.udp.log.enable_usage": "connect:0x00000001 bind:0x00000002 log:0x00000008 loop:0x00000010 local:0x00000020 gw:0x00000040 dropnecp:0x00001000 droppcb:0x00002000 droppkt:0x00004000 ",
+        "net.inet.udp.log.bind_anon_port": "0",
+        "net.inet.udp.log.local_port_included": "0",
+        "net.inet.udp.log.remote_port_included": "0",
+        "net.inet.udp.log.local_port_excluded": "0",
+        "net.inet.udp.log.remote_port_excluded": "0",
+        "net.inet.udp.log.rate_limit": "1000",
+        "net.inet.udp.log.rate_duration": "60",
+        "net.inet.udp.log.rate_max": "0",
+        "net.inet.udp.log.rate_exceeded_total": "0",
+        "net.inet.udp.log.rate_current": "6",
+        "net.inet.udp.log_in_vain": "0",
+        "net.inet.udp.blackhole": "0",
+        "net.inet.udp.pcbcount": "57",
+        "net.inet.udp.randomize_ports": "1",
+        "net.inet.ipsec.def_policy": "1",
+        "net.inet.ipsec.esp_trans_deflev": "1",
+        "net.inet.ipsec.esp_net_deflev": "1",
+        "net.inet.ipsec.ah_trans_deflev": "1",
+        "net.inet.ipsec.ah_net_deflev": "1",
+        "net.inet.ipsec.ah_cleartos": "1",
+        "net.inet.ipsec.ah_offsetmask": "0",
+        "net.inet.ipsec.dfbit": "0",
+        "net.inet.ipsec.ecn": "0",
+        "net.inet.ipsec.debug": "0",
+        "net.inet.ipsec.esp_randpad": "-1",
+        "net.inet.ipsec.bypass": "1",
+        "net.inet.ipsec.esp_port": "0",
+        "net.inet.raw.maxdgram": "8192",
+        "net.inet.raw.recvspace": "8192",
+        "net.inet.raw.pcbcount": "1",
+        "net.inet.mptcp.enable": "1",
+        "net.inet.mptcp.mptcp_cap_retr": "4",
+        "net.inet.mptcp.dss_csum": "0",
+        "net.inet.mptcp.fail": "1",
+        "net.inet.mptcp.keepalive": "840",
+        "net.inet.mptcp.rtthist_thresh": "600",
+        "net.inet.mptcp.rto_thresh": "1500",
+        "net.inet.mptcp.probeto": "1000",
+        "net.inet.mptcp.probecnt": "5",
+        "net.inet.mptcp.enable_v1": "1",
+        "net.inet.mptcp.reass_qlen": "0",
+        "net.inet.mptcp.pcbcount": "0",
+        "net.inet.mptcp.alternate_port": "0",
+        "net.inet.mptcp.allow_aggregate": "0",
+        "net.inet.mptcp.no_first_party": "0",
+        "net.inet.mptcp.expected_progress_headstart": "5000",
+        "net.inet.mptcp.rto": "3",
+        "net.inet.mptcp.nrto": "3",
+        "net.inet.mptcp.tw": "60",
+        "net.inet.log_restricted": "0",
+        "net.link.generic.system.port_used.verbose": "0",
+        "net.link.generic.system.port_used.wakeuuid_not_set_last_time": "{ sec = 0, usec = 0 } Thu Jan  1 00:00:00 1970",
+        "net.link.generic.system.port_used.wakeuuid_not_set_last_if": "",
+        "net.link.generic.system.port_used.wakeuuid_last_update_time": "{ sec = 0, usec = 0 } Thu Jan  1 00:00:00 1970",
+        "net.link.generic.system.port_used.wake_pkt_event_delay_if_families": "0 0",
+        "net.link.generic.system.management.verbose": "0",
+        "net.link.generic.system.management.data_unrestricted": "0",
+        "net.link.generic.system.management.control_unrestricted": "0",
+        "net.link.generic.system.if_verbose": "0",
+        "net.link.generic.system.sndq_maxlen": "128",
+        "net.link.generic.system.rcvq_maxlen": "256",
+        "net.link.generic.system.delaybased_queue": "1",
+        "net.link.generic.system.start_delayed": "0",
+        "net.link.generic.system.start_delay_disabled": "0",
+        "net.link.generic.system.rcvq_burst_limit": "8192",
+        "net.link.generic.system.rcvq_trim_pct": "8192",
+        "net.link.generic.system.tx_chain_len_count": "0",
+        "net.link.generic.system.rxpoll": "1",
+        "net.link.generic.system.rxpoll_decay": "2",
+        "net.link.generic.system.rxpoll_freeze_time": "1000000000",
+        "net.link.generic.system.rxpoll_sample_time": "10000000",
+        "net.link.generic.system.rxpoll_interval_time": "1000000",
+        "net.link.generic.system.rxpoll_interval_pkts": "0",
+        "net.link.generic.system.rxpoll_wakeups_lowat": "10",
+        "net.link.generic.system.rxpoll_wakeups_hiwat": "100",
+        "net.link.generic.system.rxpoll_max": "0",
+        "net.link.generic.system.dlil_input_threads": "11",
+        "net.link.generic.system.hwcksum_tx": "1",
+        "net.link.generic.system.hwcksum_rx": "1",
+        "net.link.generic.system.hwcksum_in_invalidated": "0",
+        "net.link.generic.system.hwcksum_dbg": "0",
+        "net.link.generic.system.hwcksum_dbg_mode": "0",
+        "net.link.generic.system.hwcksum_dbg_partial_forced": "0",
+        "net.link.generic.system.hwcksum_dbg_partial_forced_bytes": "0",
+        "net.link.generic.system.hwcksum_dbg_partial_rxoff_forced": "0",
+        "net.link.generic.system.hwcksum_dbg_partial_rxoff_adj": "0",
+        "net.link.generic.system.hwcksum_dbg_verified": "0",
+        "net.link.generic.system.hwcksum_dbg_bad_cksum": "0",
+        "net.link.generic.system.hwcksum_dbg_bad_rxoff": "0",
+        "net.link.generic.system.hwcksum_dbg_adjusted": "0",
+        "net.link.generic.system.hwcksum_dbg_finalized_hdr": "0",
+        "net.link.generic.system.hwcksum_dbg_finalized_data": "0",
+        "net.link.generic.system.flow_advisory": "1",
+        "net.link.generic.system.threshold_notify": "1",
+        "net.link.generic.system.threshold_interval": "2",
+        "net.link.generic.system.dlil_verbose": "0",
+        "net.link.generic.system.wake_pkt_debug": "0",
+        "net.link.generic.system.dlil_input_sanity_check": "0",
+        "net.link.generic.system.enable_netagent": "1",
+        "net.link.generic.system.link_heuristics_flags": "9",
+        "net.link.generic.system.link_heuristics_lqm_max": "0",
+        "net.link.generic.system.link_heuristics_delay": "30000",
+        "net.link.ether.inet.prune_intvl": "300",
+        "net.link.ether.inet.probe_intvl": "7",
+        "net.link.ether.inet.max_age": "1200",
+        "net.link.ether.inet.host_down_time": "20",
+        "net.link.ether.inet.arp_llreach_base": "120",
+        "net.link.ether.inet.arp_unicast_lim": "3",
+        "net.link.ether.inet.maxtries": "5",
+        "net.link.ether.inet.maxhold": "16",
+        "net.link.ether.inet.useloopback": "1",
+        "net.link.ether.inet.proxyall": "0",
+        "net.link.ether.inet.sendllconflict": "0",
+        "net.link.ether.inet.log_arp_warnings": "0",
+        "net.link.ether.inet.keep_announcements": "1",
+        "net.link.ether.inet.send_conflicting_probes": "1",
+        "net.link.ether.inet.verbose": "0",
+        "net.link.ether.inet.maxhold_total": "1024",
+        "net.link.droptap.total_tap_count": "0",
+        "net.link.droptap.verbose": "0",
+        "net.link.vlan.log_level": "5",
+        "net.link.vlan.debug": "0",
+        "net.link.bridge.inherit_mac": "0",
+        "net.link.bridge.rtable_prune_period": "300",
+        "net.link.bridge.rtable_hash_size_max": "2048",
+        "net.link.bridge.txstart": "0",
+        "net.link.bridge.debug": "0",
+        "net.link.bridge.log_level": "5",
+        "net.link.bridge.output_skip_filters": "1",
+        "net.link.bridge.enable_early_input": "1",
+        "net.link.bridge.allow_lro_num_seg": "1",
+        "net.link.bridge.tso_reduce_mss_forwarding": "110",
+        "net.link.bridge.tso_reduce_mss_tx": "0",
+        "net.link.pktap.total_tap_count": "0",
+        "net.link.pktap.count_unknown_if_type": "0",
+        "net.link.pktap.log": "0",
+        "net.link.iptap.total_tap_count": "0",
+        "net.link.iptap.log": "0",
+        "net.link.bond.debug": "0",
+        "net.link.bond.log_level": "5",
+        "net.link.redirect.debug": "0",
+        "net.link.fake.txstart": "1",
+        "net.link.fake.hwcsum": "0",
+        "net.link.fake.vlan_tagging": "1",
+        "net.link.fake.nxattach": "0",
+        "net.link.fake.bsd_mode": "1",
+        "net.link.fake.log_level": "5",
+        "net.link.fake.debug": "0",
+        "net.link.fake.wmm_mode": "0",
+        "net.link.fake.multibuflet": "0",
+        "net.link.fake.low_latency": "0",
+        "net.link.fake.switch_combined_mode": "0",
+        "net.link.fake.switch_mode_frequency": "10",
+        "net.link.fake.tso_support": "0",
+        "net.link.fake.expiration_threshold": "500",
+        "net.link.fake.lro": "0",
+        "net.link.fake.separate_frame_header": "0",
+        "net.link.fake.pktpool_mode": "0",
+        "net.link.fake.link_layer_aggregation_factor": "96",
+        "net.link.fake.tx_headroom": "32",
+        "net.link.fake.fcs": "0",
+        "net.link.fake.trailer_length": "0",
+        "net.link.fake.tso_buf_size": "16384",
+        "net.link.fake.max_mtu": "2048",
+        "net.link.fake.buflet_size": "512",
+        "net.link.fake.user_access": "0",
+        "net.link.fake.if_adv_intvl": "0",
+        "net.link.fake.tx_drops": "0",
+        "net.link.fake.tx_exp_policy": "0",
+        "net.link.fake.tx_completion_mode": "0",
+        "net.link.fake.llink_cnt": "0",
+        "net.link.fake.qset_cnt": "4",
+        "net.link.fake.trace_tag": "0",
+        "net.link.loopback.max_dequeue": "256",
+        "net.link.loopback.sched_model": "0",
+        "net.link.loopback.dequeue_sc": "0",
+        "net.key.debug": "0",
+        "net.key.spi_trycnt": "1000",
+        "net.key.spi_minval": "256",
+        "net.key.spi_maxval": "268435455",
+        "net.key.int_random": "60",
+        "net.key.larval_lifetime": "30",
+        "net.key.blockacq_count": "10",
+        "net.key.blockacq_lifetime": "20",
+        "net.key.esp_keymin": "256",
+        "net.key.esp_auth": "0",
+        "net.key.ah_keymin": "128",
+        "net.key.prefered_oldsa": "0",
+        "net.key.natt_keepalive_interval": "20",
+        "net.key.pcbcount": "0",
+        "net.inet6.ip6.forwarding": "0",
+        "net.inet6.ip6.redirect": "1",
+        "net.inet6.ip6.hlim": "64",
+        "net.inet6.ip6.maxfragpackets": "2048",
+        "net.inet6.ip6.accept_rtadv": "1",
+        "net.inet6.ip6.keepfaith": "0",
+        "net.inet6.ip6.log_interval": "5",
+        "net.inet6.ip6.hdrnestlimit": "15",
+        "net.inet6.ip6.dad_count": "1",
+        "net.inet6.ip6.auto_flowlabel": "1",
+        "net.inet6.ip6.defmcasthlim": "1",
+        "net.inet6.ip6.gifhlim": "0",
+        "net.inet6.ip6.kame_version": "2009/apple-darwin",
+        "net.inet6.ip6.use_deprecated": "1",
+        "net.inet6.ip6.rr_prune": "5",
+        "net.inet6.ip6.v6only": "0",
+        "net.inet6.ip6.rtexpire": "3600",
+        "net.inet6.ip6.rtminexpire": "10",
+        "net.inet6.ip6.rtmaxcache": "128",
+        "net.inet6.ip6.use_tempaddr": "1",
+        "net.inet6.ip6.temppltime": "86400",
+        "net.inet6.ip6.tempvltime": "604800",
+        "net.inet6.ip6.auto_linklocal": "1",
+        "net.inet6.ip6.prefer_tempaddr": "1",
+        "net.inet6.ip6.use_defaultzone": "0",
+        "net.inet6.ip6.maxfrags": "4096",
+        "net.inet6.ip6.mcast_pmtu": "0",
+        "net.inet6.ip6.neighborgcthresh": "1024",
+        "net.inet6.ip6.maxifprefixes": "16",
+        "net.inet6.ip6.maxifdefrouters": "64",
+        "net.inet6.ip6.maxdynroutes": "1024",
+        "net.inet6.ip6.ula_use_tempaddr": "0",
+        "net.inet6.ip6.mcast.maxgrpsrc": "512",
+        "net.inet6.ip6.mcast.maxsocksrc": "128",
+        "net.inet6.ip6.mcast.loop": "1",
+        "net.inet6.ip6.fragpackets": "0",
+        "net.inet6.ip6.adj_clear_hwcksum": "0",
+        "net.inet6.ip6.adj_partial_sum": "1",
+        "net.inet6.ip6.input_perf": "0",
+        "net.inet6.ip6.input_perf_bins": "0",
+        "net.inet6.ip6.check_interface": "1",
+        "net.inet6.ip6.checkinterface_debug": "0",
+        "net.inet6.ip6.output_perf": "0",
+        "net.inet6.ip6.output_perf_bins": "0",
+        "net.inet6.ip6.select_srcif_debug": "0",
+        "net.inet6.ip6.select_srcaddr_debug": "0",
+        "net.inet6.ip6.select_src_expensive_secondary_if": "0",
+        "net.inet6.ip6.select_src_strong_end": "1",
+        "net.inet6.ip6.only_allow_rfc4193_prefixes": "0",
+        "net.inet6.ip6.clat_debug": "0",
+        "net.inet6.ip6.cga_conflict_retries": "3",
+        "net.inet6.ip6.compliance_profile": "0",
+        "net.inet6.ip6.maxchainsent": "1",
+        "net.inet6.ip6.dad_enhanced": "1",
+        "net.inet6.ip6.nd6_dad_nonce_max_count": "3",
+        "net.inet6.ip6.in6_embedded_scope": "1",
+        "net.inet6.ip6.in6_embedded_scope_debug": "0",
+        "net.inet6.ipsec6.def_policy": "1",
+        "net.inet6.ipsec6.esp_trans_deflev": "1",
+        "net.inet6.ipsec6.esp_net_deflev": "1",
+        "net.inet6.ipsec6.ah_trans_deflev": "1",
+        "net.inet6.ipsec6.ah_net_deflev": "1",
+        "net.inet6.ipsec6.ecn": "0",
+        "net.inet6.ipsec6.debug": "0",
+        "net.inet6.ipsec6.esp_randpad": "-1",
+        "net.inet6.icmp6.rediraccept": "1",
+        "net.inet6.icmp6.redirtimeout": "600",
+        "net.inet6.icmp6.nd6_prune": "1",
+        "net.inet6.icmp6.nd6_delay": "5",
+        "net.inet6.icmp6.nd6_umaxtries": "3",
+        "net.inet6.icmp6.nd6_mmaxtries": "3",
+        "net.inet6.icmp6.nd6_useloopback": "1",
+        "net.inet6.icmp6.nodeinfo": "0",
+        "net.inet6.icmp6.errppslimit": "746",
+        "net.inet6.icmp6.nd6_debug": "0",
+        "net.inet6.icmp6.nd6_accept_6to4": "1",
+        "net.inet6.icmp6.nd6_optimistic_dad": "63",
+        "net.inet6.icmp6.errppslimit_random_incr": "500",
+        "net.inet6.icmp6.nd6_onlink_ns_rfc4861": "0",
+        "net.inet6.icmp6.suppress_icmp6_port_unreach": "0",
+        "net.inet6.icmp6.nd6_prune_lazy": "5",
+        "net.inet6.icmp6.rappslimit": "10",
+        "net.inet6.icmp6.nd6_process_rti": "1",
+        "net.inet6.icmp6.nd6_llreach_base": "30",
+        "net.inet6.icmp6.nd6_maxsolstgt": "8",
+        "net.inet6.icmp6.nd6_maxproxiedsol": "4",
+        "net.inet6.icmp6.prproxy_cnt": "0",
+        "net.inet6.mld.gsrdelay": "10",
+        "net.inet6.mld.v1enable": "1",
+        "net.inet6.mld.v2enable": "1",
+        "net.inet6.mld.use_allow": "1",
+        "net.inet6.mld.debug": "0",
+        "net.inet6.send.opmode": "1",
+        "net.inet6.send.opstate": "1",
+        "net.systm.kctl.autorcvbufmax": "262144",
+        "net.systm.kctl.autorcvbufhigh": "0",
+        "net.systm.kctl.debug": "0",
+        "net.systm.kctl.pcbcount": "72",
+        "net.systm.kevt.pcbcount": "12",
+        "net.ppp.l2tp.nb_threads": "0",
+        "net.ppp.l2tp.thread_outq_size": "1024",
+        "net.pktsched.netem.sched_output_ival_ms": "1",
+        "net.pktsched.netem.heap_size": "2048",
+        "net.pktsched.verbose": "0",
+        "net.classq.fq_codel.fq_enable_pacing": "1",
+        "net.classq.verbose": "0",
+        "net.classq.def_c_target_qdelay": "0",
+        "net.classq.def_c_update_interval": "0",
+        "net.classq.def_l4s_target_qdelay": "0",
+        "net.classq.def_l4s_update_interval": "0",
+        "net.classq.ll_c_target_qdelay": "0",
+        "net.classq.ll_c_update_interval": "0",
+        "net.classq.ll_l4s_target_qdelay": "0",
+        "net.classq.ll_l4s_update_interval": "0",
+        "net.classq.enable_l4s": "1",
+        "net.restricted_port.enforced": "1",
+        "net.restricted_port.verbose": "0",
+        "net.cfil.log": "3",
+        "net.cfil.log_port": "0",
+        "net.cfil.log_pid": "0",
+        "net.cfil.log_proto": "0",
+        "net.cfil.log_data": "0",
+        "net.cfil.log_stats": "0",
+        "net.cfil.debug": "1",
+        "net.cfil.sock_attached_count": "0",
+        "net.cfil.active_count": "0",
+        "net.cfil.close_wait_timeout": "1000",
+        "net.cfil.behavior_flags": "0",
+        "net.cfil.sbtrim": "1",
+        "net.netagent.debug": "5",
+        "net.netagent.registered_count": "457",
+        "net.netagent.active_count": "456",
+        "net.qos.policy.restricted": "0",
+        "net.qos.policy.restrict_avapps": "0",
+        "net.qos.policy.wifi_enabled": "0",
+        "net.qos.policy.capable_enabled": "0",
+        "net.qos.reset_dscp_to_wifi_ac_map": "0",
+        "net.qos.verbose": "0",
+        "net.necp.drop_all_level": "0",
+        "net.necp.debug": "0",
+        "net.necp.pass_loopback": "1",
+        "net.necp.pass_keepalives": "1",
+        "net.necp.socket_policy_count": "924",
+        "net.necp.socket_non_app_policy_count": "446",
+        "net.necp.ip_policy_count": "0",
+        "net.necp.session_count": "12",
+        "net.necp.client_fd_count": "84",
+        "net.necp.client_count": "207",
+        "net.necp.arena_count": "19",
+        "net.necp.nexus_flow_count": "31",
+        "net.necp.socket_flow_count": "0",
+        "net.necp.if_flow_count": "0",
+        "net.necp.observer_fd_count": "0",
+        "net.necp.observer_message_limit": "256",
+        "net.necp.sysctl_arena_count": "33",
+        "net.necp.drop_unentitled_level": "0",
+        "net.necp.pass_interpose": "1",
+        "net.necp.restrict_multicast": "1",
+        "net.necp.dedup_policies": "0",
+        "net.necp.necp_client_tracing_level": "0",
+        "net.necp.necp_client_tracing_pid": "0",
+        "net.necp.drop_management_level": "3",
+        "net.necp.trie_count": "0",
+        "net.necp.drop_dest_debug": "0",
+        "net.necp.data_tracing_level": "0",
+        "net.necp.data_tracing_port": "0",
+        "net.necp.data_tracing_proto": "0",
+        "net.necp.data_tracing_pid": "0",
+        "net.necp.data_tracing_ifindex": "0",
+        "net.necp.data_tracing_match_all": "0",
+        "net.necp.data_tracing_session_order": "0",
+        "net.necp.data_tracing_policy_order": "0",
+        "net.necp.drop_loopback_count": "0",
+        "net.mpklog.enabled": "1",
+        "net.mpklog.type": "0",
+        "net.mpklog.version": "1",
+        "net.ipsec.verify_interface_creation": "0",
+        "net.ipsec.max_pending_input": "512",
+        "net.ipsec.ring_size": "64",
+        "net.ipsec.tx_fsw_ring_size": "64",
+        "net.ipsec.rx_fsw_ring_size": "128",
+        "net.ipsec.debug": "0",
+        "net.utun.max_pending_input": "512",
+        "net.utun.ring_size": "64",
+        "net.utun.tx_fsw_ring_size": "64",
+        "net.utun.rx_fsw_ring_size": "128",
+        "net.stats.debug": "0",
+        "net.stats.debug_pid": "0",
+        "net.stats.sendspace": "2048",
+        "net.stats.recvspace": "8192",
+        "net.route.verbose": "0",
+        "net.ndrv.multi_max_count": "1024",
+        "net.ndrv.pcbcount": "2",
+        "net.vsock.sendspace": "524288",
+        "net.vsock.recvspace": "524288",
+        "net.vsock.pcbcount": "1",
+        "net.tracker.log": "3",
+        "net.tracker.idle_timeout": "10",
+        "net.tracker.extended_idle_timeout": "120",
+        "net.soflow.log_level": "3",
+        "net.soflow.log_port": "0",
+        "net.soflow.log_pid": "0",
+        "net.soflow.log_proto": "0",
+        "net.soflow.nstat_disable": "0",
+        "net.soflow.disable": "0",
+        "net.soflow.count": "8",
+        "net.soflow.high_water_mark": "20",
+        "net.filter_state": "",
+        "net.statistics_privcheck": "0"
+      }
+    },
+    "counters": {
+      "network": {
+        "interfaces": {
+          "lo0": {
+            "rx": {
+              "bytes": "384",
+              "packets": "0",
+              "errors": "67302",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "67302",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "gif0": {
+            "rx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "stf0": {
+            "rx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "XHC16": {
+            "rx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "anpi0": {
+            "rx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "en0": {
+            "rx": {
+              "bytes": "394052048",
+              "packets": "269214",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "3039605",
+              "packets": "30975",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "en1": {
+            "rx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "utun0": {
+            "rx": {
+              "bytes": "3",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "260",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "utun1": {
+            "rx": {
+              "bytes": "1",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "100",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "utun2": {
+            "rx": {
+              "bytes": "4",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "320",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          },
+          "utun3": {
+            "rx": {
+              "bytes": "3",
+              "packets": "0",
+              "errors": "0",
+              "drop": 0,
+              "overrun": 0,
+              "frame": 0,
+              "compressed": 0,
+              "multicast": 0
+            },
+            "tx": {
+              "bytes": "0",
+              "packets": "0",
+              "errors": "260",
+              "drop": 0,
+              "overrun": 0,
+              "collisions": "0",
+              "carrier": 0,
+              "compressed": 0
+            }
+          }
+        }
+      }
+    },
+    "filesystem": {
+      "by_device": {
+        "/dev/disk2s1s1": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "11003848",
+          "kb_available": "19896836",
+          "percent_used": "36%",
+          "inodes_used": "426863",
+          "inodes_available": "198968360",
+          "total_inodes": "199395223",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled"
+          ],
+          "mounts": [
+            "/"
+          ]
+        },
+        "devfs": {
+          "block_size": 512,
+          "kb_size": "195",
+          "kb_used": "195",
+          "kb_available": "0",
+          "percent_used": "100%",
+          "inodes_used": "676",
+          "inodes_available": "0",
+          "total_inodes": "676",
+          "inodes_percent_used": "100%",
+          "fs_type": "devfs",
+          "mount_options": [
+            "local",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/dev"
+          ]
+        },
+        "/dev/disk2s6": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "20",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "198968360",
+          "total_inodes": "198968360",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/VM"
+          ]
+        },
+        "/dev/disk2s2": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "6908348",
+          "kb_available": "19896836",
+          "percent_used": "26%",
+          "inodes_used": "1012",
+          "inodes_available": "198968360",
+          "total_inodes": "198969372",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/Preboot"
+          ]
+        },
+        "/dev/disk2s4": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "39164",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "53",
+          "inodes_available": "198968360",
+          "total_inodes": "198968413",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/Update"
+          ]
+        },
+        "/dev/disk1s2": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "20",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "5067440",
+          "total_inodes": "5067440",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/xarts"
+          ]
+        },
+        "/dev/disk1s1": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "124",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "28",
+          "inodes_available": "5067440",
+          "total_inodes": "5067468",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/iSCPreboot"
+          ]
+        },
+        "/dev/disk1s3": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "252",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "18",
+          "inodes_available": "5067440",
+          "total_inodes": "5067458",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/Hardware"
+          ]
+        },
+        "/dev/disk2s5": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "9373824",
+          "kb_available": "19896836",
+          "percent_used": "33%",
+          "inodes_used": "318148",
+          "inodes_available": "198968360",
+          "total_inodes": "199286508",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse",
+            "root data"
+          ],
+          "mounts": [
+            "/System/Volumes/Data"
+          ]
+        },
+        "/dev/disk4s1": {
+          "block_size": 512,
+          "kb_size": "4096",
+          "kb_used": "676",
+          "kb_available": "3076",
+          "percent_used": "19%",
+          "inodes_used": "18",
+          "inodes_available": "30760",
+          "total_inodes": "30778",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData"
+          ]
+        },
+        "": {
+          "fs_type": "autofs",
+          "mount_options": [
+            "automounted",
+            "nobrowse"
+          ],
+          "mounts": [
+            "/System/Volumes/Data/home"
+          ]
+        }
+      },
+      "by_mountpoint": {
+        "/": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "11003848",
+          "kb_available": "19896836",
+          "percent_used": "36%",
+          "inodes_used": "426863",
+          "inodes_available": "198968360",
+          "total_inodes": "199395223",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled"
+          ],
+          "devices": [
+            "/dev/disk2s1s1"
+          ]
+        },
+        "/dev": {
+          "block_size": 512,
+          "kb_size": "195",
+          "kb_used": "195",
+          "kb_available": "0",
+          "percent_used": "100%",
+          "inodes_used": "676",
+          "inodes_available": "0",
+          "total_inodes": "676",
+          "inodes_percent_used": "100%",
+          "fs_type": "devfs",
+          "mount_options": [
+            "local",
+            "nobrowse"
+          ],
+          "devices": [
+            "devfs"
+          ]
+        },
+        "/System/Volumes/VM": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "20",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "198968360",
+          "total_inodes": "198968360",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk2s6"
+          ]
+        },
+        "/System/Volumes/Preboot": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "6908348",
+          "kb_available": "19896836",
+          "percent_used": "26%",
+          "inodes_used": "1012",
+          "inodes_available": "198968360",
+          "total_inodes": "198969372",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk2s2"
+          ]
+        },
+        "/System/Volumes/Update": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "39164",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "53",
+          "inodes_available": "198968360",
+          "total_inodes": "198968413",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk2s4"
+          ]
+        },
+        "/System/Volumes/xarts": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "20",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "5067440",
+          "total_inodes": "5067440",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk1s2"
+          ]
+        },
+        "/System/Volumes/iSCPreboot": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "124",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "28",
+          "inodes_available": "5067440",
+          "total_inodes": "5067468",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk1s1"
+          ]
+        },
+        "/System/Volumes/Hardware": {
+          "block_size": 512,
+          "kb_size": "512000",
+          "kb_used": "252",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "18",
+          "inodes_available": "5067440",
+          "total_inodes": "5067458",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk1s3"
+          ]
+        },
+        "/System/Volumes/Data": {
+          "block_size": 512,
+          "kb_size": "48316088",
+          "kb_used": "9373824",
+          "kb_available": "19896836",
+          "percent_used": "33%",
+          "inodes_used": "318148",
+          "inodes_available": "198968360",
+          "total_inodes": "199286508",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse",
+            "root data"
+          ],
+          "devices": [
+            "/dev/disk2s5"
+          ]
+        },
+        "/System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData": {
+          "block_size": 512,
+          "kb_size": "4096",
+          "kb_used": "676",
+          "kb_available": "3076",
+          "percent_used": "19%",
+          "inodes_used": "18",
+          "inodes_available": "30760",
+          "total_inodes": "30778",
+          "inodes_percent_used": "0%",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled",
+            "nobrowse"
+          ],
+          "devices": [
+            "/dev/disk4s1"
+          ]
+        },
+        "/System/Volumes/Data/home": {
+          "fs_type": "autofs",
+          "mount_options": [
+            "automounted",
+            "nobrowse"
+          ],
+          "devices": []
+        }
+      },
+      "by_pair": {
+        "/dev/disk2s1s1,/": {
+          "block_size": 512,
+          "device": "/dev/disk2s1s1",
+          "kb_size": "48316088",
+          "kb_used": "11003848",
+          "kb_available": "19896836",
+          "percent_used": "36%",
+          "inodes_used": "426863",
+          "inodes_available": "198968360",
+          "total_inodes": "199395223",
+          "inodes_percent_used": "0%",
+          "mount": "/",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled"
+          ]
+        },
+        "devfs,/dev": {
+          "block_size": 512,
+          "device": "devfs",
+          "kb_size": "195",
+          "kb_used": "195",
+          "kb_available": "0",
+          "percent_used": "100%",
+          "inodes_used": "676",
+          "inodes_available": "0",
+          "total_inodes": "676",
+          "inodes_percent_used": "100%",
+          "mount": "/dev",
+          "fs_type": "devfs",
+          "mount_options": [
+            "local",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk2s6,/System/Volumes/VM": {
+          "block_size": 512,
+          "device": "/dev/disk2s6",
+          "kb_size": "48316088",
+          "kb_used": "20",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "198968360",
+          "total_inodes": "198968360",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/VM",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk2s2,/System/Volumes/Preboot": {
+          "block_size": 512,
+          "device": "/dev/disk2s2",
+          "kb_size": "48316088",
+          "kb_used": "6908348",
+          "kb_available": "19896836",
+          "percent_used": "26%",
+          "inodes_used": "1012",
+          "inodes_available": "198968360",
+          "total_inodes": "198969372",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/Preboot",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk2s4,/System/Volumes/Update": {
+          "block_size": 512,
+          "device": "/dev/disk2s4",
+          "kb_size": "48316088",
+          "kb_used": "39164",
+          "kb_available": "19896836",
+          "percent_used": "1%",
+          "inodes_used": "53",
+          "inodes_available": "198968360",
+          "total_inodes": "198968413",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/Update",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk1s2,/System/Volumes/xarts": {
+          "block_size": 512,
+          "device": "/dev/disk1s2",
+          "kb_size": "512000",
+          "kb_used": "20",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "0",
+          "inodes_available": "5067440",
+          "total_inodes": "5067440",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/xarts",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "noexec",
+            "journaled",
+            "noatime",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk1s1,/System/Volumes/iSCPreboot": {
+          "block_size": 512,
+          "device": "/dev/disk1s1",
+          "kb_size": "512000",
+          "kb_used": "124",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "28",
+          "inodes_available": "5067440",
+          "total_inodes": "5067468",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/iSCPreboot",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk1s3,/System/Volumes/Hardware": {
+          "block_size": 512,
+          "device": "/dev/disk1s3",
+          "kb_size": "512000",
+          "kb_used": "252",
+          "kb_available": "506744",
+          "percent_used": "1%",
+          "inodes_used": "18",
+          "inodes_available": "5067440",
+          "total_inodes": "5067458",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/Hardware",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse"
+          ]
+        },
+        "/dev/disk2s5,/System/Volumes/Data": {
+          "block_size": 512,
+          "device": "/dev/disk2s5",
+          "kb_size": "48316088",
+          "kb_used": "9373824",
+          "kb_available": "19896836",
+          "percent_used": "33%",
+          "inodes_used": "318148",
+          "inodes_available": "198968360",
+          "total_inodes": "199286508",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Volumes/Data",
+          "fs_type": "apfs",
+          "mount_options": [
+            "local",
+            "journaled",
+            "nobrowse",
+            "root data"
+          ]
+        },
+        "/dev/disk4s1,/System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData": {
+          "block_size": 512,
+          "device": "/dev/disk4s1",
+          "kb_size": "4096",
+          "kb_used": "676",
+          "kb_available": "3076",
+          "percent_used": "19%",
+          "inodes_used": "18",
+          "inodes_available": "30760",
+          "total_inodes": "30778",
+          "inodes_percent_used": "0%",
+          "mount": "/System/Library/AssetsV2/com_apple_MobileAsset_PKITrustStore/purpose_auto/6dd55b0d06633a00de6f57ccb910a66a5ba2409a.asset/.AssetData",
+          "fs_type": "apfs",
+          "mount_options": [
+            "sealed",
+            "local",
+            "read-only",
+            "journaled",
+            "nobrowse"
+          ]
+        },
+        "map auto_home,/System/Volumes/Data/home": {
+          "mount": "/System/Volumes/Data/home",
+          "fs_type": "autofs",
+          "mount_options": [
+            "automounted",
+            "nobrowse"
+          ]
+        }
+      }
+    },
+    "hardware": {
+      "activation_lock_status": "activation_lock_disabled",
+      "boot_rom_version": "mBoot-18000.120.36",
+      "chip_type": "Apple M4 Pro (Virtual)",
+      "machine_model": "VirtualMac2,1",
+      "machine_name": "Apple Virtual Machine 1",
+      "model_number": "VM0001LL/A",
+      "number_processors": 4,
+      "os_loader_version": "11881.140.96.701.1",
+      "physical_memory": "8 GB",
+      "platform_UUID": "50DCC3EF-6AD8-5EAA-AC56-451AD340113C",
+      "provisioning_UDID": "968af9c31d1037e75ecf4710b6a66051408e6e5a",
+      "serial_number": "ZFQYR4XYHG",
+      "operating_system": "macOS",
+      "operating_system_version": "15.7.7",
+      "build_version": "24G720",
+      "architecture": "arm64",
+      "storage": [
+        {
+          "name": "Data",
+          "bsd_name": "disk2s5",
+          "capacity": 49475674112
+        },
+        {
+          "name": "Creedence11M6270.SECUREPKITRUSTSTOREASSETS_SECUREPKITRUSTSTORE_Cryptex",
+          "bsd_name": "disk4s1",
+          "capacity": 4194304
+        },
+        {
+          "name": "Macintosh HD",
+          "bsd_name": "disk2s1s1",
+          "capacity": 49475674112
+        }
+      ],
+      "battery": {}
+    },
+    "virtualization": {
+      "systems": {},
+      "system": "apple",
+      "role": "guest"
+    },
+    "shells": [
+      "/bin/bash",
+      "/bin/csh",
+      "/bin/dash",
+      "/bin/ksh",
+      "/bin/sh",
+      "/bin/tcsh",
+      "/bin/zsh"
+    ]
+  }
+}

@@ -39,6 +39,11 @@ Ohai.plugin(:Network) do
     file_exist? "/proc/net/if_inet6"
   end
 
+  # @return [Hash] VRF device name => routing table id, filled in by link_statistics
+  def vrf_tables
+    @vrf_tables ||= {}
+  end
+
   def ethtool_binary_path
     @ethtool ||= which("ethtool")
   end
@@ -139,7 +144,11 @@ Ohai.plugin(:Network) do
   #    the routing table source field.
   # 3) and since we're at it, let's populate some :routes attributes
   # (going to do that for both inet and inet6 addresses)
-  def check_routing_table(family, iface, default_route_table)
+  #
+  # When vrf is given, only the table's default routes are recorded, each
+  # marked with the VRF's name. A VRF's table also holds its local, broadcast
+  # and anycast routes, and an "unreachable default" with a very high metric.
+  def check_routing_table(family, iface, default_route_table, vrf: nil)
     so = shell_out("ip -o -f #{family[:name]} route show table #{default_route_table}")
     so.stdout.lines do |line|
       line.strip!
@@ -167,10 +176,13 @@ Ohai.plugin(:Network) do
       else
         next
       end
+      next if vrf && route_dest != "default"
+
       route_endings = route_endings.flat_map { |route_ending| resolve_nexthop_id(route_ending) }
       route_endings.each do |route_ending|
         route_entry = Mash.new(destination: route_dest,
           family: family[:name])
+        route_entry[:vrf] = vrf if vrf
         route_int = nil
         if route_ending =~ /\bdev\s+([^\s]+)\b/
           route_int = $1
@@ -505,6 +517,11 @@ Ohai.plugin(:Network) do
         net_counters[tmp_int][:tx][:queuelen] = $1
       end
 
+      # a VRF device's detail line; its members print "vrf_slave table N"
+      if line =~ /^\s+vrf table (\d+)/
+        vrf_tables[tmp_int] = $1
+      end
+
       if line =~ /vlan id (\d+)/ || line =~ /vlan protocol ([\w\.]+) id (\d+)/
         if $2
           tmp_prot = $1
@@ -763,10 +780,11 @@ Ohai.plugin(:Network) do
     counters[:network] ||= Mash.new
 
     # ohai.plugin[:network][:default_route_table] = 'default'
-    if configuration(:default_route_table).nil? || configuration(:default_route_table).empty?
-      default_route_table = "main"
-    else
+    default_route_table_configured = !(configuration(:default_route_table).nil? || configuration(:default_route_table).empty?)
+    if default_route_table_configured
       default_route_table = configuration(:default_route_table)
+    else
+      default_route_table = "main"
     end
     logger.trace("Plugin Network: default route table is '#{default_route_table}'")
 
@@ -810,6 +828,17 @@ Ohai.plugin(:Network) do
         routes = parse_routes(family, iface)
 
         default_route = choose_default_route(routes)
+
+        # Cumulus Linux puts eth0 in a management VRF named "mgmt" by default.
+        # Without a data-plane default route, the main table then has no
+        # default route, and the one the host uses for management traffic is
+        # in the VRF's table.
+        if default_route.nil? && !default_route_table_configured && vrf_tables["mgmt"]
+          logger.trace("Plugin Network: no #{family[:name]} default route in the main table, checking the mgmt VRF (table #{vrf_tables["mgmt"]})")
+          iface = check_routing_table(family, iface, vrf_tables["mgmt"], vrf: "mgmt")
+          routes = parse_routes(family, iface)
+          default_route = choose_default_route(routes)
+        end
 
         if default_route.nil? || default_route.empty?
           attribute_name = if family[:name] == "inet"

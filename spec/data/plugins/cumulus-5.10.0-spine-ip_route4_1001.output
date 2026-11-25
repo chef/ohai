@@ -1,0 +1,8 @@
+default via 10.0.2.2 dev eth0 
+unreachable default metric 4278198272 
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 
+local 10.0.2.15 dev eth0 proto kernel scope host src 10.0.2.15 
+broadcast 10.0.2.255 dev eth0 proto kernel scope link src 10.0.2.15 
+127.0.0.0/8 dev mgmt proto kernel scope link src 127.0.0.1 
+local 127.0.0.1 dev mgmt proto kernel scope host src 127.0.0.1 
+broadcast 127.255.255.255 dev mgmt proto kernel scope link src 127.0.0.1 

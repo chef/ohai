@@ -54,6 +54,61 @@ describe Ohai::System, "Linux Network Plugin on network devices" do
     allow(plugin).to receive(:shell_out).with("ip -o -f inet route show table main").and_return(mock_shell_out(0, fixture("#{prefix}-ip_route4_main"), ""))
     allow(plugin).to receive(:shell_out).with("ip -o -f inet6 route show table main").and_return(mock_shell_out(0, fixture("#{prefix}-ip_route6_main"), ""))
     allow(plugin).to receive(:shell_out).with("ip -o nexthop show").and_return(mock_shell_out(0, nexthop ? fixture(nexthop) : "", ""))
+    # the mgmt VRF's table, recorded only for the spine
+    { "inet" => "4", "inet6" => "6" }.each do |family, v|
+      name = "#{prefix}-ip_route#{v}_1001"
+      table_output = File.exist?(File.join(SPEC_PLUGIN_PATH, "#{name}.output")) ? fixture(name) : ""
+      allow(plugin).to receive(:shell_out).with("ip -o -f #{family} route show table 1001").and_return(mock_shell_out(0, table_output, ""))
+    end
+  end
+
+  # cumulus-5.10.0-spine-*: the Cumulus VX 5.10.0 spine the leaf peers with.
+  #   Its only default route is in the mgmt VRF (table 1001), learned by DHCP
+  #   on eth0, as on any Cumulus switch with the default management VRF and no
+  #   data-plane default route.
+  describe "on a Cumulus Linux switch whose only default route is in the mgmt VRF" do
+    before do
+      stub_device("cumulus-5.10.0-spine", nexthop: "cumulus-5.10.0-spine-ip_nexthop")
+      plugin.run
+    end
+
+    it "reports the mgmt VRF's default route" do
+      expect(plugin[:network][:default_interface]).to eq("eth0")
+      expect(plugin[:network][:default_gateway]).to eq("10.0.2.2")
+    end
+
+    it "marks the default route with its VRF" do
+      expect(interfaces["eth0"]["routes"]).to eq([{ "destination" => "default", "family" => "inet", "via" => "10.0.2.2", "vrf" => "mgmt" }])
+    end
+
+    it "ignores the VRF table's unreachable default route" do
+      expect(plugin[:network][:default_inet6_interface]).to be_nil
+      expect(interfaces["lo"]["routes"]).to be_nil
+    end
+
+    it "sets ipaddress to the management address" do
+      network_plugin.run
+      expect(ohai.data[:ipaddress]).to eq("10.0.2.15")
+    end
+  end
+
+  describe "on a Cumulus Linux switch with a default route in the main table" do
+    it "does not read the mgmt VRF's routing table" do
+      stub_device("cumulus-5.9.2-leaf", nexthop: "cumulus-5.9.2-leaf-ip_nexthop")
+      plugin.run
+      expect(plugin[:network][:default_interface]).to eq("swp1")
+      expect(plugin).not_to have_received(:shell_out).with("ip -o -f inet route show table 1001")
+    end
+  end
+
+  describe "when default_route_table is configured" do
+    it "does not fall back to the mgmt VRF" do
+      Ohai.config[:plugin][:network][:default_route_table] = "main"
+      stub_device("cumulus-5.10.0-spine", nexthop: "cumulus-5.10.0-spine-ip_nexthop")
+      plugin.run
+      expect(plugin[:network][:default_interface]).to be_nil
+      expect(plugin).not_to have_received(:shell_out).with("ip -o -f inet route show table 1001")
+    end
   end
 
   describe "on a Cumulus Linux 5.9 leaf" do

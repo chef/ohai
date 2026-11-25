@@ -79,6 +79,16 @@ Ohai.plugin(:Network) do
     so.stdout.lines do |line|
       line.strip!
       logger.trace("Plugin Network: Parsing #{line}")
+
+      # ip prints the route type before the destination unless it is unicast.
+      # Tables other than main, such as a VRF's, also hold local, broadcast
+      # and multicast routes, which are not routes to a destination.
+      if (route_type = line[/\A(unicast|local|broadcast|anycast|multicast|unreachable|blackhole|prohibit|throw|nat)\s/, 1])
+        next unless route_type == "unicast"
+
+        line = line.delete_prefix("unicast").lstrip
+      end
+
       if line.include?("\\")
         # If we have multipath routing, then the first part will be a normal
         # looking route:

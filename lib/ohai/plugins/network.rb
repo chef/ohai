@@ -85,7 +85,10 @@ Ohai.plugin(:NetworkAddresses) do
         v[:iface] == network[int_attr]
       end
       if gw_if_ips.empty?
-        logger.warn("Plugin Network: [#{family}] no ip address on #{network[int_attr]}")
+        # e.g. a router whose default route leaves through an unnumbered port
+        # (BGP unnumbered / RFC 5549), with its address on a loopback
+        r = ips.first
+        logger.trace("Plugin Network: [#{family}] no ip address on #{network[int_attr]}, picking the first ipaddress")
       elsif network[gw_attr] &&
           network["interfaces"][network[int_attr]] &&
           network["interfaces"][network[int_attr]]["addresses"]

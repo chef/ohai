@@ -1,0 +1,8 @@
+fe80::/64 dev swp1 proto kernel metric 256 pref medium
+fe80::/64 dev swp2 proto kernel metric 256 pref medium
+fe80::/64 dev swp1.100 proto kernel metric 256 pref medium
+fe80::/64 dev vxlan48 proto kernel metric 256 pref medium
+fe80::/64 dev br_default proto kernel metric 256 pref medium
+fe80::/64 dev vlan20 proto kernel metric 256 pref medium
+fe80::/64 dev swp1.100.200 proto kernel metric 256 pref medium
+default nhid 40 proto bgp metric 20 pref medium

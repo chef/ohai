@@ -83,6 +83,34 @@ describe Ohai::System, "plugin eucalyptus" do
 
   end
 
+  # gre0 is one of the tunnel devices the kernel creates on load, with no addresses,
+  # as on a stock Ubuntu 24.04 system
+  describe "with an interface that has no addresses before the eucalyptus mac" do
+    before do
+      allow(IO).to receive(:select).and_return([[], [1], []])
+      plugin[:network] = { "interfaces" => {
+        "gre0" => { "mtu" => "1476", "number" => "0", "state" => "down", "type" => "gre" },
+        "eth0" => { "addresses" => { "d0:0d:95:47:6E:ED" => { "family" => "lladdr" } } },
+      } }
+    end
+
+    it_behaves_like "eucalyptus"
+  end
+
+  describe "with an interface that has no addresses and no eucalyptus mac" do
+    before do
+      plugin[:network] = { "interfaces" => {
+        "gre0" => { "mtu" => "1476", "number" => "0", "state" => "down", "type" => "gre" },
+        "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } },
+      } }
+    end
+
+    it "does not raise" do
+      expect { plugin.run }.not_to raise_error
+      expect(plugin[:eucalyptus]).to be_nil
+    end
+  end
+
   describe "without eucalyptus mac and metadata address connected" do
     before do
       plugin[:network] = { "interfaces" => { "eth0" => { "addresses" => { "ff:ff:95:47:6E:ED" => { "family" => "lladdr" } } } } }

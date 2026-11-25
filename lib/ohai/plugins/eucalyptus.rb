@@ -33,6 +33,9 @@ Ohai.plugin(:Eucalyptus) do
 
   # returns the mac address from the collection of all address types
   def get_mac_address(addresses)
+    # interfaces such as down tunnels have no addresses
+    return "" if addresses.nil?
+
     detected_addresses = addresses.detect { |address, keypair| keypair == { "family" => "lladdr" } }
     if detected_addresses
       detected_addresses.first

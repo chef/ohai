@@ -79,6 +79,17 @@ Ohai.plugin(:Network) do
     end
   end
 
+  # A route's source can be any local address, such as a /32 on the loopback,
+  # not only one on the route's own interface.
+  #
+  # @return [Mash, nil] the address's attributes if any interface has it
+  def local_address(iface, address)
+    iface.each_value do |int|
+      return int[:addresses][address] if int[:addresses]&.key?(address)
+    end
+    nil
+  end
+
   # checking the routing tables
   # why ?
   # 1) to set the default gateway and default interfaces attributes
@@ -155,7 +166,7 @@ Ohai.plugin(:Network) do
         # unless the interface has no addresses of this type at all
         if route_entry[:src]
           addr = addresses_with_aliases(iface, route_int)
-          unless addr.empty? || addr.key?(route_entry[:src]) ||
+          unless addr.empty? || local_address(iface, route_entry[:src]) ||
               addr.values.all? { |a| a["family"] != family[:name] }
             logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
             next
@@ -655,9 +666,11 @@ Ohai.plugin(:Network) do
         route_interface = iface[r[:dev]]
         next if route_interface.nil? # the interface specified in the route must exist
 
-        # the interface must have no addresses, or if it has the source address, the address must not
-        # be a link-level address
-        next unless interface_valid_for_route?(Mash.new(addresses: addresses_with_aliases(iface, r[:dev])), r[:src], "inet")
+        # the interface must have no addresses, or the source must be a local address that is not
+        # a link-level address
+        src_address = local_address(iface, r[:src])
+        next unless interface_has_no_addresses_in_family?(Mash.new(addresses: addresses_with_aliases(iface, r[:dev])), "inet") ||
+          (src_address && src_address[:scope].to_s.casecmp("link") != 0)
 
         # the route must either be a default route, or it must have a gateway which is accessible via the route
         next unless route_is_valid_default_route?(r, default_route)

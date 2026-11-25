@@ -29,11 +29,15 @@ Ohai.plugin(:Passwd) do
         etc[:passwd][entry_name] = user_passwd_entry unless etc[:passwd].key?(entry_name)
       end
 
+      # Like getgrnam, keep the first entry for a group. On macOS getgrent
+      # returns each group twice: the Directory Services record with every
+      # member, then the /etc/group copy, which lists only some of them.
       Etc.group do |entry|
-        group_entry = Mash.new(gid: entry.gid,
-          members: entry.mem.map { |u| fix_encoding(u) })
+        entry_name = fix_encoding(entry.name)
+        next if etc[:group].key?(entry_name)
 
-        etc[:group][fix_encoding(entry.name)] = group_entry
+        etc[:group][entry_name] = Mash.new(gid: entry.gid,
+          members: entry.mem.map { |u| fix_encoding(u) })
       end
     end
 

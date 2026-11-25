@@ -1,0 +1,2 @@
+10.20.0.0/30 dev gre1 proto kernel scope link src 10.20.0.1 
+192.0.2.0/24 dev v0 proto kernel scope link src 192.0.2.1 

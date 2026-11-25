@@ -184,7 +184,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} #{tmp_int}")
+      so = shell_out([ethtool_binary_path, tmp_int])
       so.stdout.lines do |line|
         line.chomp!
         logger.trace("Plugin Network: Parsing ethtool output: #{line}")
@@ -210,7 +210,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -g #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-g", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["ring_params"] = {}
@@ -243,7 +243,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -l #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-l", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       type = nil
       iface[tmp_int]["channel_params"] = {}
@@ -276,7 +276,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -c #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-c", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["coalesce_params"] = {}
       so.stdout.lines.each do |line|
@@ -306,7 +306,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -k #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-k", tmp_int])
       Ohai::Log.debug("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["offload_params"] = {}
       so.stdout.lines.each do |line|
@@ -330,7 +330,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -a #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-a", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["pause_params"] = {}
       so.stdout.lines.each do |line|
@@ -354,7 +354,7 @@ Ohai.plugin(:Network) do
     iface.each_key do |tmp_int|
       next unless iface[tmp_int][:encapsulation] == "Ethernet"
 
-      so = shell_out("#{ethtool_binary_path} -i #{tmp_int}")
+      so = shell_out([ethtool_binary_path, "-i", tmp_int])
       logger.trace("Plugin Network: Parsing ethtool output: #{so.stdout}")
       iface[tmp_int]["driver_info"] = {}
       so.stdout.lines.each do |line|

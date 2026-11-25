@@ -31,11 +31,13 @@ describe Ohai::System, "Linux Network Plugin with unusual interface names" do
   let(:plugin) { get_plugin("linux/network") }
   let(:interfaces) { plugin[:network][:interfaces] }
   let(:names) { %w{a+b x#y br-1a2b3c4d5e6f fifteen-chars-x eth0+1 tilde~1 comma,1 excl!1 end+} }
+  let(:ethtool) { nil }
 
   before do
     allow(plugin).to receive(:collect_os).and_return(:linux)
     allow(plugin).to receive(:which).with("ip").and_return("/sbin/ip")
-    allow(plugin).to receive(:which).with("ethtool").and_return(nil)
+    allow(plugin).to receive(:which).with("ethtool").and_return(ethtool)
+    allow(plugin).to receive(:shell_out).with(array_including("/sbin/ethtool")).and_return(mock_shell_out(0, "", ""))
     allow(plugin).to receive(:file_exist?).with("/proc/net/if_inet6").and_return(true)
     allow(plugin).to receive(:file_directory?).and_return(false)
     allow(plugin).to receive(:shell_out).with("ip addr").and_return(mock_shell_out(0, fixture("ip_addr"), ""))
@@ -71,6 +73,19 @@ describe Ohai::System, "Linux Network Plugin with unusual interface names" do
     names.each do |name|
       expect(interfaces[name][:state]).to eq("unknown")
       expect(plugin[:counters][:network][:interfaces][name][:rx][:bytes]).to match(/\A\d+\z/)
+    end
+  end
+
+  describe "with ethtool installed" do
+    let(:ethtool) { "/sbin/ethtool" }
+
+    it "passes each interface name to ethtool as its own argument" do
+      %w{x#y a+b comma,1}.each do |name|
+        expect(plugin).to have_received(:shell_out).with(["/sbin/ethtool", name])
+        %w{-g -l -c -k -a -i}.each do |option|
+          expect(plugin).to have_received(:shell_out).with(["/sbin/ethtool", option, name])
+        end
+      end
     end
   end
 

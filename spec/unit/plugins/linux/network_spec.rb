@@ -492,13 +492,13 @@ describe Ohai::System, "Linux Network Plugin" do
     allow(plugin).to receive(:shell_out).with("route -n").and_return(mock_shell_out(0, linux_route_n, ""))
     allow(plugin).to receive(:shell_out).with("ifconfig -a").and_return(mock_shell_out(0, linux_ifconfig, ""))
     allow(plugin).to receive(:shell_out).with("arp -an").and_return(mock_shell_out(0, linux_arp_an, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -g/).and_return(mock_shell_out(0, linux_ethtool_g, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -l/).and_return(mock_shell_out(0, linux_ethtool_l, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -k/).and_return(mock_shell_out(0, linux_ethtool_k, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -c/).and_return(mock_shell_out(0, linux_ethtool_c, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -i/).and_return(mock_shell_out(0, linux_ethtool_i, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool -a/).and_return(mock_shell_out(0, linux_ethtool_a, ""))
-    allow(plugin).to receive(:shell_out).with(/ethtool [^\-]/).and_return(mock_shell_out(0, linux_ethtool, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-g", anything]).and_return(mock_shell_out(0, linux_ethtool_g, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-l", anything]).and_return(mock_shell_out(0, linux_ethtool_l, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-k", anything]).and_return(mock_shell_out(0, linux_ethtool_k, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-c", anything]).and_return(mock_shell_out(0, linux_ethtool_c, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-i", anything]).and_return(mock_shell_out(0, linux_ethtool_i, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", "-a", anything]).and_return(mock_shell_out(0, linux_ethtool_a, ""))
+    allow(plugin).to receive(:shell_out).with(["/sbin/ethtool", anything]).and_return(mock_shell_out(0, linux_ethtool, ""))
   end
 
   describe "#interface_has_no_addresses_in_family?" do

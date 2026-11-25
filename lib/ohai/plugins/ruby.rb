@@ -28,10 +28,11 @@ Ohai.plugin(:Ruby) do
     default_paths.split(File::PATH_SEPARATOR).reject { |path| embedded.include?(path) }.join(File::PATH_SEPARATOR)
   end
 
+  # @return [String, nil] the command's output, or nil if ruby did not run
   def run_ruby(command)
     cmd = "ruby -e \"require 'rbconfig'; #{command}\""
     so = shell_out(cmd, env: { "PATH" => system_path })
-    so.stdout.strip
+    so.exitstatus == 0 ? so.stdout.strip : nil
   end
 
   collect_data do
@@ -64,7 +65,10 @@ Ohai.plugin(:Ruby) do
     begin
       result = run_ruby "require 'rubygems'; puts %Q(#{env_string.join})"
     rescue Ohai::Exceptions::Exec
-      logger.trace('Plugin Ruby: Could not shell_out "ruby -e". Skipping plugin')
+      result = nil
+    end
+    if result.nil?
+      logger.trace('Plugin Ruby: Could not run "ruby -e". Skipping plugin')
       next
     end
 

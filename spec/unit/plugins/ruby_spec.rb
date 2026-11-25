@@ -61,6 +61,13 @@ describe Ohai::System, "plugin ruby" do
   end
 
   it "does not set languages/ruby when the system has no Ruby" do
+    # what the shell returns on Ubuntu 24.04 with no ruby in PATH
+    allow(plugin).to receive(:shell_out).and_return(mock_shell_out(127, "", "sh: 1: ruby: not found\n"))
+    plugin.run
+    expect(plugin[:languages]).not_to have_key(:ruby)
+  end
+
+  it "does not set languages/ruby when ruby cannot be run" do
     allow(plugin).to receive(:shell_out).and_raise(Ohai::Exceptions::Exec)
     plugin.run
     expect(plugin[:languages]).not_to have_key(:ruby)

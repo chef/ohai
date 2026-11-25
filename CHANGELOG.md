@@ -1,16 +1,17 @@
 # Change Log
 
-<!-- latest_release 19.1.66 -->
-## [v19.1.66](https://github.com/chef/ohai/tree/v19.1.66) (2026-11-25)
+<!-- latest_release 19.1.67 -->
+## [v19.1.67](https://github.com/chef/ohai/tree/v19.1.67) (2026-11-25)
 
 #### Merged Pull Requests
-- Don&#39;t pick unusable IPv6 addresses for ip6address [#2035](https://github.com/chef/ohai/pull/2035) ([tas50](https://github.com/tas50))
+- Keep routes whose source is any local address [#2036](https://github.com/chef/ohai/pull/2036) ([tas50](https://github.com/tas50))
 <!-- latest_release -->
 
 <!-- release_rollup since=19.1.53 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
+- Keep routes whose source is any local address [#2036](https://github.com/chef/ohai/pull/2036) ([tas50](https://github.com/tas50)) <!-- 19.1.67 -->
 - Don&#39;t pick unusable IPv6 addresses for ip6address [#2035](https://github.com/chef/ohai/pull/2035) ([tas50](https://github.com/tas50)) <!-- 19.1.66 -->
 - Test the Solaris cpu and virtualization plugins on a KVM guest [#2015](https://github.com/chef/ohai/pull/2015) ([tas50](https://github.com/tas50)) <!-- 19.1.65 -->
 - Fix two unit spec order dependencies [#2019](https://github.com/chef/ohai/pull/2019) ([tas50](https://github.com/tas50)) <!-- 19.1.64 -->

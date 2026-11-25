@@ -21,7 +21,6 @@ require "chef-config/workstation_config_loader"
 require_relative "../ohai"
 require_relative "log" unless defined?(Ohai::Log)
 require "mixlib/cli" unless defined?(Mixlib::CLI)
-require "benchmark" unless defined?(Benchmark)
 
 # The Application class is what is called by the Ohai CLI binary. It handles:
 #  - CLI options and attribute arguments
@@ -87,10 +86,10 @@ class Ohai::Application
   #
   # @return void
   def run
-    elapsed = Benchmark.realtime do
-      configure_ohai
-      run_application
-    end
+    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    configure_ohai
+    run_application
+    elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
     Ohai::Log.debug("Ohai took #{elapsed} total seconds to run.")
   end
 

@@ -19,7 +19,6 @@
 #
 
 require_relative "dsl"
-require "benchmark" unless defined?(Benchmark)
 
 module Ohai
   class Runner
@@ -47,23 +46,23 @@ module Ohai
     # @return void
     #
     def run_plugin(plugin)
-      elapsed = Benchmark.realtime do
-        unless plugin.is_a?(Ohai::DSL::Plugin)
-          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
-        end
-
-        begin
-          if plugin.version == :version7
-            run_v7_plugin(plugin)
-          else
-            raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
-          end
-        rescue Ohai::Exceptions::Error, SystemExit # SystemExit: abort or exit from plug-in should exit Ohai with failure code
-          raise
-        rescue Exception => e
-          logger.warn("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
-        end
+      start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      unless plugin.is_a?(Ohai::DSL::Plugin)
+        raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin #{plugin} (must be an Ohai::DSL::Plugin or subclass)"
       end
+
+      begin
+        if plugin.version == :version7
+          run_v7_plugin(plugin)
+        else
+          raise Ohai::Exceptions::InvalidPlugin, "Invalid plugin version #{plugin.version} for plugin #{plugin}"
+        end
+      rescue Ohai::Exceptions::Error, SystemExit # SystemExit: abort or exit from plug-in should exit Ohai with failure code
+        raise
+      rescue Exception => e
+        logger.warn("Plugin #{plugin.name} threw exception #{e.inspect} #{e.backtrace.join("\n")}")
+      end
+      elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
       logger.trace("Plugin #{plugin.name} took #{"%f" % elapsed.truncate(6)} seconds to run.")
     end
 

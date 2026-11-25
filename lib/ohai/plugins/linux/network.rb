@@ -67,6 +67,18 @@ Ohai.plugin(:Network) do
     iface
   end
 
+  # An address with a numeric label (eth0:1) is recorded on a separate
+  # "eth0:1" interface, but routes name eth0.
+  #
+  # @return [Mash] the addresses of the interface and of its aliases
+  def addresses_with_aliases(iface, name)
+    iface.each_with_object(Mash.new) do |(int_name, int), addresses|
+      next unless int_name == name || int_name.start_with?("#{name}:")
+
+      addresses.merge!(int[:addresses]) if int[:addresses]
+    end
+  end
+
   # checking the routing tables
   # why ?
   # 1) to set the default gateway and default interfaces attributes
@@ -142,8 +154,8 @@ Ohai.plugin(:Network) do
         # don't report the route entry if the src address isn't set on the node
         # unless the interface has no addresses of this type at all
         if route_entry[:src]
-          addr = iface[route_int][:addresses]
-          unless addr.nil? || addr.key?(route_entry[:src]) ||
+          addr = addresses_with_aliases(iface, route_int)
+          unless addr.empty? || addr.key?(route_entry[:src]) ||
               addr.values.all? { |a| a["family"] != family[:name] }
             logger.trace("Plugin Network: Skipping route entry whose src does not match the interface IP")
             next
@@ -645,7 +657,7 @@ Ohai.plugin(:Network) do
 
         # the interface must have no addresses, or if it has the source address, the address must not
         # be a link-level address
-        next unless interface_valid_for_route?(route_interface, r[:src], "inet")
+        next unless interface_valid_for_route?(Mash.new(addresses: addresses_with_aliases(iface, r[:dev])), r[:src], "inet")
 
         # the route must either be a default route, or it must have a gateway which is accessible via the route
         next unless route_is_valid_default_route?(r, default_route)

@@ -1,0 +1,4 @@
+default via 198.51.100.58 dev v0 src 203.0.113.64 
+10.0.0.0/8 via 10.100.77.130 dev v0 onlink 
+10.100.77.130/31 dev v0 proto kernel scope link src 10.100.77.131 
+198.51.100.58/31 dev v0 proto kernel scope link src 198.51.100.59 

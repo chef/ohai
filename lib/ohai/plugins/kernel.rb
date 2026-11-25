@@ -187,7 +187,9 @@ Ohai.plugin(:Kernel) do
     modules = Mash.new
     so = shell_out("kextstat -k -l")
     so.stdout.lines do |line|
-      if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+([a-zA-Z0-9\.]+) \(([0-9\.]+)\)/
+      # bundle IDs can hold hyphens (com.paragon-software.filesystems.ntfs)
+      # and versions letters (1.0.0d1, 1.0.1b8)
+      if line =~ /(\d+)\s+(\d+)\s+0x[0-9a-f]+\s+0x([0-9a-f]+)\s+0x[0-9a-f]+\s+(\S+) \(([^)\s]+)\)/
         modules[$4] = { version: $5, size: $3.hex, index: $1, refcount: $2 }
       end
     end

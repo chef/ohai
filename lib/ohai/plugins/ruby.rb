@@ -21,14 +21,20 @@ Ohai.plugin(:Ruby) do
   provides "languages/ruby"
   depends "languages"
 
+  # shell_out puts the bin directories of the Ruby that runs Ohai, Chef's
+  # embedded Ruby, first in PATH. Leave them out so this reports the system's Ruby.
+  def system_path
+    embedded = [::RbConfig::CONFIG["bindir"], ::Gem.bindir]
+    default_paths.split(File::PATH_SEPARATOR).reject { |path| embedded.include?(path) }.join(File::PATH_SEPARATOR)
+  end
+
   def run_ruby(command)
     cmd = "ruby -e \"require 'rbconfig'; #{command}\""
-    so = shell_out(cmd)
+    so = shell_out(cmd, env: { "PATH" => system_path })
     so.stdout.strip
   end
 
   collect_data do
-    languages[:ruby] = Mash.new
 
     values = {
       platform: "RUBY_PLATFORM",
@@ -55,9 +61,15 @@ Ohai.plugin(:Ruby) do
     end
 
     # Query the system ruby
-    result = run_ruby "require 'rubygems'; puts %Q(#{env_string.join})"
+    begin
+      result = run_ruby "require 'rubygems'; puts %Q(#{env_string.join})"
+    rescue Ohai::Exceptions::Exec
+      logger.trace('Plugin Ruby: Could not shell_out "ruby -e". Skipping plugin')
+      next
+    end
 
     # Parse results to plugin hash
+    languages[:ruby] = Mash.new
     result.split(",").each do |entry|
       key, value = entry.split("=")
       languages[:ruby][key.to_sym] = value || ""

@@ -41,18 +41,25 @@ Ohai.plugin(:NetworkAddresses) do
       iface_v["addresses"].each do |addr, addr_v|
         next if addr_v.nil? || (!addr_v.key? "family") || addr_v["family"] != family
 
+        # the kernel does not use an IPv6 address that is still tentative or
+        # failed duplicate address detection; a deprecated one only as a last resort
+        tags = addr_v["tags"] || []
+        next if tags.include?("dadfailed") || tags.include?("tentative")
+
         ipaddresses << {
           ipaddress: addr_v["prefixlen"] ? IPAddress("#{addr}/#{addr_v["prefixlen"]}") : IPAddress("#{addr}/#{addr_v["netmask"]}"),
           scope: addr_v["scope"].nil? ? nil : addr_v["scope"].downcase,
+          deprecated: tags.include?("deprecated"),
           iface: iface,
         }
       end
     end
 
-    # sort ip addresses by scope, by prefixlen and then by ip address
+    # sort ip addresses by scope, deprecated last, by prefixlen and then by ip address
     # 128 - prefixlen: longest prefixes first
     ipaddresses.sort_by do |v|
       [ ( scope_prio.index(v[:scope]) || 999999 ),
+        v[:deprecated] ? 1 : 0,
         128 - v[:ipaddress].prefix.to_i,
         v[:ipaddress].to_i,
       ]

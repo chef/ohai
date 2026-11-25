@@ -37,14 +37,16 @@ Ohai.plugin(:Memory) do
                   4096
                 end
 
+    # Pages the memory compressor occupies (OS X 10.9 and later) hold
+    # compressed app memory: they are in use, not free
     vm_stat.split("\n").each do |line|
-      ["wired down", "active", "inactive"].each do |match|
+      ["wired down", "active", "inactive", "occupied by compressor"].each do |match|
         unless line.index("Pages #{match}:").nil?
           pages = line.split.last.to_i
           megabyte_val = (pages * page_size) / 1024 / 1024.0
           total_consumed += megabyte_val
           case match
-          when "wired down", "active"
+          when "wired down", "active", "occupied by compressor"
             active += megabyte_val.to_i
           when "inactive"
             inactive += megabyte_val.to_i

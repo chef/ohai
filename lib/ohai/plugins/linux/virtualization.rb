@@ -173,24 +173,6 @@ Ohai.plugin(:Virtualization) do
       virtualization[:hypervisor_host] = hyperv_host
     end
 
-    # Detect Linux-VServer
-    if file_exist?("/proc/self/status")
-      proc_self_status = file_read("/proc/self/status")
-      vxid = proc_self_status.match(/^(s_context|VxID):\s*(\d+)$/)
-      if vxid && vxid[2]
-        virtualization[:system] = "linux-vserver"
-        if vxid[2] == "0"
-          logger.trace("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a value of 0. Detecting as linux-vserver host")
-          virtualization[:role] = "host"
-          virtualization[:systems]["linux-vserver"] = "host"
-        else
-          logger.trace("Plugin Virtualization: /proc/self/status contains 's_context' or 'VxID' with a non-0 value. Detecting as linux-vserver guest")
-          virtualization[:role] = "guest"
-          virtualization[:systems]["linux-vserver"] = "guest"
-        end
-      end
-    end
-
     # Detect LXC/Docker/Nspawn
     #
     # /proc/self/cgroup will look like this inside a docker container:

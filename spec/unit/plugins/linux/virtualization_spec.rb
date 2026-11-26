@@ -30,7 +30,6 @@ describe Ohai::System, "Linux virtualization platform" do
     allow(plugin).to receive(:file_exist?).with("/proc/modules").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/cpuinfo").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/var/lib/hyperv/.kvp_pool_3").and_return(false)
-    allow(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/bc/0").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/vz").and_return(false)
     allow(plugin).to receive(:file_exist?).with("/proc/self/cgroup").and_return(false)
@@ -257,68 +256,6 @@ describe Ohai::System, "Linux virtualization platform" do
       expect(plugin[:virtualization][:role]).to eq("guest")
       expect(plugin[:virtualization][:systems]["hyperv"]).to eq("guest")
       expect(plugin[:virtualization]["hypervisor_host"]).to eq("hyper_v.example.com")
-    end
-  end
-
-  describe "when we are checking for Linux-VServer" do
-    it "sets Linux-VServer host if /proc/self/status contains s_context: 0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("s_context: 0")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
-    end
-
-    it "sets Linux-VServer host if /proc/self/status contains VxID: 0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("VxID: 0")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
-    end
-
-    it "sets Linux-VServer host if /proc/self/status contains multiple space VxID:   0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("VxID:   0")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
-    end
-
-    it "sets Linux-VServer host if /proc/self/status contains tabbed VxID:\t0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("VxID:\t0")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("host")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("host")
-    end
-
-    it "sets Linux-VServer guest if /proc/self/status contains s_context > 0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("s_context: 2")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("guest")
-    end
-
-    it "sets Linux-VServer guest if /proc/self/status contains VxID > 0" do
-      expect(plugin).to receive(:file_exist?).with("/proc/self/status").and_return(true)
-      allow(plugin).to receive(:file_read).with("/proc/self/status").and_return("VxID: 2")
-      plugin.run
-      expect(plugin[:virtualization][:system]).to eq("linux-vserver")
-      expect(plugin[:virtualization][:role]).to eq("guest")
-      expect(plugin[:virtualization][:systems]["linux-vserver"]).to eq("guest")
-    end
-
-    it "does not set virtualization if Linux-VServer isn't there" do
-      expect(plugin).to receive(:file_exist?).at_least(:once).and_return(false)
-      plugin.run
-      expect(plugin[:virtualization]).to eq({ "systems" => {} })
     end
   end
 

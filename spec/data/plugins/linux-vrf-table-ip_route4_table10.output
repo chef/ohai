@@ -1,0 +1,4 @@
+default via 198.51.100.1 dev v0 
+198.51.100.0/24 dev v0 proto kernel scope link src 198.51.100.2 
+local 198.51.100.2 dev v0 proto kernel scope host src 198.51.100.2 
+broadcast 198.51.100.255 dev v0 proto kernel scope link src 198.51.100.2 

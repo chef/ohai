@@ -1,0 +1,6 @@
+local 2001:db8:1::2 dev v0 proto kernel metric 0 pref medium
+2001:db8:1::/64 dev v0 proto kernel metric 256 pref medium
+local fe80::40d:7eff:feb1:2f59 dev v0 proto kernel metric 0 pref medium
+fe80::/64 dev v0 proto kernel metric 256 pref medium
+multicast ff00::/8 dev v0 proto kernel metric 256 pref medium
+default via 2001:db8:1::1 dev v0 metric 1024 pref medium

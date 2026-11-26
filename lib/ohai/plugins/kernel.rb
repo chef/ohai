@@ -179,11 +179,6 @@ Ohai.plugin(:Kernel) do
     kernel init_kernel
     kernel[:os] = kernel[:name]
 
-    so = shell_out("sysctl -n hw.optional.x86_64")
-    if so.stdout.strip.to_i == 1
-      kernel[:machine] = "x86_64"
-    end
-
     modules = Mash.new
     so = shell_out("kextstat -k -l")
     so.stdout.lines do |line|

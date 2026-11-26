@@ -26,7 +26,6 @@ describe Ohai::System, "Darwin kernel plugin" do
   end
 
   it "populates kernel[:modules] from `kextstat -k -l`" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, <<EOF, ""))
     8    0 0xffffff7f81aed000 0x41000    0x41000    com.apple.kec.corecrypto (1.0) <7 6 5 4 3 1>
     9   22 0xffffff7f807f3000 0x9000     0x9000     com.apple.iokit.IOACPIFamily (1.4) <7 6 4 3>
@@ -42,22 +41,15 @@ EOF
     expect(@plugin[:kernel][:modules]).to eql(modules)
   end
 
-  it "does not set kernel_machine to x86_64" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "0", ""))
+  it "keeps kernel_machine as uname reports it" do
+    allow(@plugin).to receive(:init_kernel).and_return(Mash.new(name: "Darwin", machine: "arm64"))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
-    expect(@plugin[:kernel][:machine]).not_to eq("x86_64")
-  end
-
-  it "sets kernel_machine to x86_64" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
-    allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
-    @plugin.run
-    expect(@plugin[:kernel][:machine]).to eq("x86_64")
+    expect(@plugin[:kernel][:machine]).to eq("arm64")
+    expect(@plugin).not_to have_received(:shell_out).with("sysctl -n hw.optional.x86_64")
   end
 
   it "sets the kernel_os to the kernel_name value" do
-    allow(@plugin).to receive(:shell_out).with("sysctl -n hw.optional.x86_64").and_return(mock_shell_out(0, "1", ""))
     allow(@plugin).to receive(:shell_out).with("kextstat -k -l").and_return(mock_shell_out(0, "", ""))
     @plugin.run
     expect(@plugin[:kernel][:os]).to eq(@plugin[:kernel][:name])

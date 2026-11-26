@@ -193,6 +193,12 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
+    %w{ubuntu debian linuxmint raspbian cumulus kali pop elementary zorin neon deepin}.each do |p|
+      it "returns debian for #{p} platform_family" do
+        expect(plugin.platform_family_from_platform(p)).to eq("debian")
+      end
+    end
+
     %w{nexus ios_xr}.each do |p|
       it "returns wrlinux for #{p} platform_family" do
         expect(plugin.platform_family_from_platform(p)).to eq("wrlinux")

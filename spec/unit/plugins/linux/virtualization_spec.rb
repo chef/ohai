@@ -348,6 +348,34 @@ describe Ohai::System, "Linux virtualization platform" do
     end
   end
 
+  describe "when lscpu reports the hypervisor vendor" do
+    # vendor strings from util-linux sys-utils/lscpu.c hv_vendors
+    { "VMware" => "vmware", "Microsoft" => "hyperv", "Xen" => "xen", "Parallels" => "parallels", "Oracle" => "vbox" }.each do |vendor, system|
+      it "sets #{system} guest from vendor #{vendor} when DMI identifies no guest" do
+        plugin[:cpu] = Mash.new(hypervisor_vendor: vendor, virtualization_type: "full")
+        plugin.run
+        expect(plugin[:virtualization][:system]).to eq(system)
+        expect(plugin[:virtualization][:role]).to eq("guest")
+        expect(plugin[:virtualization][:systems][system]).to eq("guest")
+      end
+    end
+
+    it "keeps the DMI result for a KVM guest that reports Hyper-V enlightenments" do
+      plugin[:cpu] = Mash.new(hypervisor_vendor: "Microsoft", virtualization_type: "full")
+      # https://github.com/chef/dmidecode_collection/blob/main/kvm_PARTIAL
+      plugin[:dmi] = Mash.new(system: { manufacturer: "Red Hat", product_name: "KVM", version: "RHEL 7.0.0 PC (i440FX + PIIX, 1996)" })
+      plugin.run
+      expect(plugin[:virtualization][:system]).to eq("kvm")
+      expect(plugin[:virtualization][:systems]).not_to have_key("hyperv")
+    end
+
+    it "does nothing for a vendor without an Ohai name" do
+      plugin[:cpu] = Mash.new(hypervisor_vendor: "Hitachi", virtualization_type: "full")
+      plugin.run
+      expect(plugin[:virtualization]).to eq({ "systems" => {} })
+    end
+  end
+
   describe "when we are checking for lxd" do
     it "sets lxc guest if /dev/lxd/sock exists" do
       expect(plugin).to receive(:file_exist?).with("/dev/lxd/sock").and_return(true)

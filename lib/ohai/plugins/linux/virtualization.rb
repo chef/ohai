@@ -148,6 +148,27 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][guest.to_sym] = "guest"
     end
 
+    # lscpu names the hypervisor from CPUID on x86 and from the device tree or
+    # DMI elsewhere, without root. Use it when DMI didn't identify the guest.
+    # QEMU with Hyper-V enlightenments reports Microsoft, so DMI goes first.
+    # lscpu's "Hypervisor vendor:" values with an Ohai system name
+    # (util-linux sys-utils/lscpu.c hv_vendors)
+    lscpu_guest = {
+      "KVM" => "kvm",
+      "Xen" => "xen",
+      "Microsoft" => "hyperv",
+      "VMware" => "vmware",
+      "Parallels" => "parallels",
+      "Oracle" => "vbox",
+      "Innotek GmbH" => "vbox",
+    }[get_attribute(:cpu, :hypervisor_vendor)]
+    if guest.nil? && lscpu_guest && /(para|full)/.match?(get_attribute(:cpu, :virtualization_type).to_s)
+      logger.trace("Plugin Virtualization: lscpu reports hypervisor vendor #{get_attribute(:cpu, :hypervisor_vendor)}. Detecting as #{lscpu_guest} guest")
+      virtualization[:system] = lscpu_guest
+      virtualization[:role] = "guest"
+      virtualization[:systems][lscpu_guest.to_sym] = "guest"
+    end
+
     # Detect OpenVZ / Virtuozzo.
     # http://wiki.openvz.org/BC_proc_entries
     if file_exist?("/proc/bc/0")

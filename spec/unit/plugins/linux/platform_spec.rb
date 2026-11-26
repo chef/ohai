@@ -211,8 +211,8 @@ describe Ohai::System, "Linux plugin platform" do
       end
     end
 
-    it "returns mandriva for mangeia platform" do
-      expect(plugin.platform_family_from_platform("mangeia")).to eq("mandriva")
+    it "returns mandriva for mageia platform" do
+      expect(plugin.platform_family_from_platform("mageia")).to eq("mandriva")
     end
   end
 

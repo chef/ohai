@@ -81,11 +81,6 @@ Ohai.plugin(:Virtualization) do
       virtualization[:systems][:vmware] = "guest"
     end
 
-    if sysctl_exists? && shell_out("sysctl -in kern.hv_vmm_present").stdout.strip.to_i == 1
-      virtualization[:system] = "qemu"
-      virtualization[:role] = "guest"
-    end
-
     if ioreg_exists? && shell_out("ioreg -l").stdout.include?("pci1ab8,4000")
       virtualization[:system] = "parallels"
       virtualization[:role] = "guest"
@@ -99,6 +94,16 @@ Ohai.plugin(:Virtualization) do
     if hardware["machine_model"].include? "VirtualMac"
       virtualization[:system] = "apple"
       virtualization[:role] = "guest"
+      virtualization[:systems][:apple] = "guest"
+    end
+
+    # kern.hv_vmm_present is 1 under any hypervisor, so it only names the
+    # guest when none of the checks above identified it
+    if virtualization[:role] != "guest" && sysctl_exists? &&
+        shell_out("sysctl -in kern.hv_vmm_present").stdout.strip.to_i == 1
+      virtualization[:system] = "qemu"
+      virtualization[:role] = "guest"
+      virtualization[:systems][:qemu] = "guest"
     end
   end
 end

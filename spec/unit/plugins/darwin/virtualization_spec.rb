@@ -121,6 +121,45 @@ describe Ohai::System, "Darwin virtualization platform" do
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("qemu")
       expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems]).to eq("qemu" => "guest")
+    end
+
+    context "when kern.hv_vmm_present equals 1 on a guest of a known hypervisor" do
+      before do
+        allow(plugin).to receive(:sysctl_exists?).and_return(true)
+        allow(plugin).to receive(:shell_out).with("sysctl -in kern.hv_vmm_present").and_return(mock_shell_out(0, "1\n", ""))
+      end
+
+      it "keeps vmware as the guest system" do
+        plugin[:hardware][:boot_rom_version] = "VMW71.00V.6997262.B64.1710270607"
+        plugin.run
+        expect(plugin[:virtualization]).to eq("system" => "vmware", "role" => "guest", "systems" => { "vmware" => "guest" })
+      end
+
+      it "keeps vbox as the guest system" do
+        plugin[:hardware][:boot_rom_version] = "VirtualBox"
+        plugin.run
+        expect(plugin[:virtualization]).to eq("system" => "vbox", "role" => "guest", "systems" => { "vbox" => "guest" })
+      end
+
+      it "keeps parallels as the guest system" do
+        allow(plugin).to receive(:ioreg_exists?).and_return(true)
+        allow(plugin).to receive(:shell_out).with("ioreg -l").and_return(mock_shell_out(0, ioreg_vm, ""))
+        plugin.run
+        expect(plugin[:virtualization]).to eq("system" => "parallels", "role" => "guest", "systems" => { "parallels" => "guest" })
+      end
+
+      it "keeps apple as the guest system" do
+        plugin[:hardware][:machine_model] = "VirtualMac2,1"
+        plugin.run
+        expect(plugin[:virtualization]).to eq("system" => "apple", "role" => "guest", "systems" => { "apple" => "guest" })
+      end
+
+      it "still reports qemu as the guest system of a docker host" do
+        allow(plugin).to receive(:docker_exists?).and_return(true)
+        plugin.run
+        expect(plugin[:virtualization]).to eq("system" => "qemu", "role" => "guest", "systems" => { "docker" => "host", "qemu" => "guest" })
+      end
     end
 
     it "sets vbox host if /usr/local/bin/VBoxManage exists" do
@@ -188,6 +227,7 @@ describe Ohai::System, "Darwin virtualization platform" do
       plugin.run
       expect(plugin[:virtualization][:system]).to eq("apple")
       expect(plugin[:virtualization][:role]).to eq("guest")
+      expect(plugin[:virtualization][:systems][:apple]).to eq("guest")
     end
   end
 end
